@@ -30,6 +30,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       onClose,
       onDownload,
       txStatusMessage,
+      txStatusColor = 'blue',
       progress = null,
       totalProgress,
       sourceChain,
@@ -97,7 +98,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   variant="utility"
                   titleClassName="text-mono-200 dark:text-mono-0"
                 />
-                <Chip color="blue">{txStatusMessage}</Chip>
+                <Chip color={txStatusColor}>{txStatusMessage}</Chip>
               </div>
               <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>

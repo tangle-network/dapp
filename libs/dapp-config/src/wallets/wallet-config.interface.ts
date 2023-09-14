@@ -14,20 +14,34 @@ export interface WalletConfig {
   title: string;
   platform: string;
 
-  // Homepage url of the wallet
+  /**
+   * Homepage url of the wallet
+   */
   homeLink: string;
 
-  // Install urls of the wallet in chrome, firefox, etc...
+  /**
+   * Install urls of the wallet in chrome, firefox, etc...
+   */
   installLinks?: Record<SupportedBrowsers, string> | undefined;
 
-  // the wallet isn't live yet
+  /**
+   * the wallet isn't live yet
+   */
   enabled: boolean;
 
-  /// a function that will tell weather the wallet is installed or reachable
+  /**
+   * a function that will tell weather the wallet is installed or reachable
+   */
   detect?(): boolean | Promise<boolean>;
 
+  /**
+   * a list of supported typed chain ids
+   */
   supportedChainIds: number[];
 
+  /**
+   * The wagmi connector for EVM wallets
+   */
   connector?: SupportedConnector;
 }
 

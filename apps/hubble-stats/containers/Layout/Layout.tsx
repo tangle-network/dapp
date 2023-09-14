@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { type FC, type PropsWithChildren } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 
 import { OverviewChipsContainer } from '..';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
-const Layout = async ({ children }: { children?: React.ReactNode }) => {
+const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
+    <>
       <SideBar />
       <main className="flex flex-col justify-between flex-1 px-3 overflow-y-auto md:px-5 lg:px-10">
         <div>
@@ -27,9 +27,9 @@ const Layout = async ({ children }: { children?: React.ReactNode }) => {
         </div>
         <div className="flex-grow" />
         {/* Footer */}
-        <Footer isMinimal className="max-w-none mx-0" />
+        <Footer isMinimal className="mx-0 max-w-none" />
       </main>
-    </body>
+    </>
   );
 };
 

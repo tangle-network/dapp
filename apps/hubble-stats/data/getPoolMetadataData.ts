@@ -1,6 +1,7 @@
 import {
   getDateFromEpoch,
   getWrappingFeesPercentageByFungibleToken,
+  getExplorerUrlByAddressByChains,
 } from '../utils';
 import { VANCHORS_MAP } from '../constants';
 import {
@@ -22,25 +23,24 @@ type PoolMetadataDataType = {
 export default async function getPoolMetadataData(
   poolAddress: string
 ): Promise<PoolMetadataDataType> {
-  const vanchor = VANCHORS_MAP[poolAddress];
-  const creationDate = getDateFromEpoch(vanchor.creationTimestamp);
-
-  const supportedChains = vanchor.supportedChains;
-
-  // TODO: Replace this with the real explorer URLs
-  const explorerUrls = supportedChains.reduce((map, typedChainId) => {
-    return {
-      ...map,
-      [typedChainId]: '#',
-    };
-  }, {});
+  const vAnchor = VANCHORS_MAP[poolAddress];
+  const {
+    creationTimestamp,
+    supportedChains,
+    fungibleTokenName,
+    fungibleTokenSymbol,
+    fungibleTokenAddress,
+    signatureBridge,
+    treasuryAddress,
+  } = vAnchor;
+  const creationDate = getDateFromEpoch(creationTimestamp);
 
   const wrappingFees: WrappingFeesByChainType = {};
   for (const typedChainId of supportedChains) {
     let feesPercentage: number | undefined;
     try {
       feesPercentage = await getWrappingFeesPercentageByFungibleToken(
-        vanchor.fungibleTokenAddress,
+        fungibleTokenAddress,
         typedChainId
       );
     } catch {
@@ -50,17 +50,26 @@ export default async function getPoolMetadataData(
   }
 
   return {
-    name: vanchor.fungibleTokenName,
-    symbol: vanchor.fungibleTokenSymbol,
-    signatureBridge: { address: vanchor.signatureBridge, urls: explorerUrls },
-    vAnchor: { address: poolAddress, urls: explorerUrls },
+    name: fungibleTokenName,
+    symbol: fungibleTokenSymbol,
+    signatureBridge: {
+      address: signatureBridge,
+      urls: getExplorerUrlByAddressByChains(signatureBridge, supportedChains),
+    },
+    vAnchor: {
+      address: poolAddress,
+      urls: getExplorerUrlByAddressByChains(poolAddress, supportedChains),
+    },
     fungibleToken: {
-      address: vanchor.fungibleTokenAddress,
-      urls: explorerUrls,
+      address: fungibleTokenAddress,
+      urls: getExplorerUrlByAddressByChains(
+        fungibleTokenAddress,
+        supportedChains
+      ),
     },
     treasuryAddress: {
-      address: vanchor.treasuryAddress,
-      urls: explorerUrls,
+      address: treasuryAddress,
+      urls: getExplorerUrlByAddressByChains(treasuryAddress, supportedChains),
     },
     wrappingFees,
     creationDate: new Date(creationDate).toLocaleDateString('en-US', {

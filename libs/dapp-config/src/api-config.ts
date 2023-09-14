@@ -43,12 +43,29 @@ export type ApiConfigInput = {
 
 export class ApiConfig {
   constructor(
+    /**
+     * id -> wallet config
+     */
     public wallets: Record<number, WalletConfig>,
+    /**
+     * typed chain id -> chain config
+     */
     public chains: Record<number, ChainConfig>,
+    /**
+     * id -> currency config
+     */
     public currencies: Record<number, CurrencyConfig>,
+    /**
+     * fungible currency id -> bridge config entry
+     */
     public bridgeByAsset: Record<number, BridgeConfigEntry>,
+    /**
+     * fungible currency id -> anchor config entry
+     */
     public anchors: Record<number, AnchorConfigEntry>,
-    // fungible currency id -> typed chain id -> wrappable currency ids
+    /**
+     * fungible currency id -> typed chain id -> wrappable currency ids
+     */
     public fungibleToWrappableMap: Map<number, Map<number, Set<number>>>
   ) {}
 

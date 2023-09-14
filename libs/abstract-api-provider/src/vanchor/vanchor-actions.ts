@@ -18,10 +18,8 @@ import {
   Transaction,
   TransactionState,
 } from '../transaction';
-import type {
-  WebbApiProvider,
-  WebbProviderType,
-} from '../webb-provider.interface';
+import type { WebbApiProvider } from '../webb-provider.interface';
+import { WebbProviderType } from '../types';
 import { NeighborEdge } from './types';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
@@ -239,4 +237,17 @@ export abstract class VAnchorActions<
     fungibleId: number,
     typedChainId?: number
   ): Promise<ReadonlyArray<NeighborEdge>>;
+
+  /**
+   * Validate whether all the input notes are valid
+   * to be spent in the corresponding typed chain id
+   * @param notes the input notes to validate
+   * @param typedChainId the typed chain id where the notes are going to be used
+   * @param fungibleId the fungible id to get the anchor identifier
+   */
+  abstract validateInputNotes(
+    notes: ReadonlyArray<Note>,
+    typedChainId: number,
+    fungibleId: number
+  ): Promise<boolean>;
 }

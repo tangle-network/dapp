@@ -38,9 +38,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
             className="text-mono-140 dark:text-mono-40"
           >
             {typeof value === 'number' && (prefix ?? '')}
-            {typeof value === 'number' && value < 10000
-              ? Math.floor(value * 100) / 100
-              : getRoundedDownNumberWith2Decimals(value)}
+            {getRoundedDownNumberWith2Decimals(value)}
           </Typography>
           {typeof value === 'number' && suffix && (
             <Typography

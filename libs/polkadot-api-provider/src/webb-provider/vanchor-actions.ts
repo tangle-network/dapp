@@ -99,6 +99,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
+    tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
+
     // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
     if (!wrapUnwrapAssetId) {
       const activeBridge = this.inner.state.activeBridge;
@@ -426,6 +428,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     fungibleId: number,
     typedChainId?: number | undefined
   ): Promise<readonly NeighborEdge[]> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
+  }
+
+  async validateInputNotes(
+    notes: readonly Note[],
+    typedChainId: number,
+    fungibleId: number
+  ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 

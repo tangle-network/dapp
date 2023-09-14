@@ -2,17 +2,32 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
 import { AMOUNT_KEY } from '../constants';
+import { StringParam, useQueryParam } from 'use-query-params';
 
 const useAmountWithRoute = (key = AMOUNT_KEY) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const amountStr = useMemo(() => {
     const amountStr = searchParams.get(key) ?? '';
+    if (amountStr.length === 0) {
+      return '';
+    }
 
-    return amountStr.length ? formatEther(BigInt(amountStr)) : '';
+    try {
+      return formatEther(BigInt(amountStr));
+    } catch (error) {
+      console.error(error);
+      return '';
+    }
   }, [key, searchParams]);
 
   const [amount, setAmount] = useState(amountStr);
+
+  useEffect(() => {
+    setAmount(amountStr);
+  }, [amountStr]);
+
+  const [, setAmountParam] = useQueryParam(AMOUNT_KEY, StringParam);
 
   const onAmountChange = useCallback(
     (amount: string) => {
@@ -29,18 +44,15 @@ const useAmountWithRoute = (key = AMOUNT_KEY) => {
   useEffect(() => {
     function updateParams() {
       if (!amount) {
-        return setSearchParams((prev) => {
-          const nextParams = new URLSearchParams(prev);
-          nextParams.delete(key);
-          return nextParams;
-        });
+        setAmountParam(undefined);
+        return;
       }
 
-      setSearchParams((prev) => {
-        const nextParams = new URLSearchParams(prev);
-        nextParams.set(key, `${parseEther(amount)}`);
-        return nextParams;
-      });
+      try {
+        setAmountParam(parseEther(amount).toString());
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     const timeout = setTimeout(updateParams, 500);
@@ -48,11 +60,7 @@ const useAmountWithRoute = (key = AMOUNT_KEY) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [amount, key, setSearchParams]);
-
-  useEffect(() => {
-    setAmount(amountStr);
-  }, [amountStr]);
+  }, [amount, key, setAmountParam]);
 
   return [amount, onAmountChange] as const;
 };

@@ -12,7 +12,11 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatUnits } from 'viem';
-import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
+import {
+  useCurrentTx,
+  useEnqueueSubmittedTx,
+  useLatestTransactionStage,
+} from '../../hooks';
 import {
   captureSentryException,
   getCardTitle,
@@ -52,7 +56,6 @@ const DepositConfirmContainer = forwardRef<
     const [totalStep, setTotalStep] = useState<number | undefined>();
 
     const stage = useLatestTransactionStage(txId);
-
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
       [stage]
@@ -60,6 +63,8 @@ const DepositConfirmContainer = forwardRef<
 
     const { activeApi, activeAccount, activeChain, apiConfig, txQueue } =
       useWebContext();
+
+    const currentTx = useCurrentTx(txQueue.txQueue, txId);
 
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
@@ -239,12 +244,16 @@ const DepositConfirmContainer = forwardRef<
     );
 
     const cardTitle = useMemo(() => {
-      return getCardTitle(stage, wrappingFlow).trim();
-    }, [stage, wrappingFlow]);
+      if (!currentTx) {
+        return undefined;
+      }
 
-    const [txStatusMessage, currentStep] = useMemo(() => {
+      return getCardTitle(stage, currentTx.name, wrappingFlow).trim();
+    }, [currentTx, stage, wrappingFlow]);
+
+    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
       if (!txId) {
-        return ['', undefined];
+        return ['', undefined, undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
@@ -253,7 +262,9 @@ const DepositConfirmContainer = forwardRef<
         : '';
 
       const step = txPayload?.currentStep;
-      return [message, step];
+      const status = txPayload?.txStatus.status;
+
+      return [message, step, status];
     }, [txId, txPayloads]);
 
     return (
@@ -285,6 +296,13 @@ const DepositConfirmContainer = forwardRef<
         sourceChain={sourceChain}
         destChain={destChain}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
+        txStatusColor={
+          txStatus === 'completed'
+            ? 'green'
+            : txStatus === 'warning'
+            ? 'red'
+            : undefined
+        }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
       />

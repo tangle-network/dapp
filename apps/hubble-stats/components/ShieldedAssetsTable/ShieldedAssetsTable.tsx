@@ -1,6 +1,7 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   createColumnHelper,
   useReactTable,
@@ -10,6 +11,7 @@ import {
   getPaginationRowModel,
   ColumnDef,
   Table as RTTable,
+  Row,
 } from '@tanstack/react-table';
 import {
   Typography,
@@ -34,7 +36,6 @@ const columns: ColumnDef<ShieldedAssetType, any>[] = [
       <ShieldedCell
         title={props.row.original.symbol}
         address={props.row.original.address}
-        poolAddress={props.row.original.poolAddress}
       />
     ),
   }),
@@ -99,6 +100,8 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   data = [],
   pageSize,
 }) => {
+  const router = useRouter();
+
   const table = useReactTable({
     data,
     columns,
@@ -117,15 +120,24 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const onRowClick = useCallback(
+    (row: Row<ShieldedAssetType>) => {
+      router.push(`/pool/${row.original.poolAddress}`);
+    },
+    [router]
+  );
+
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180 border border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0"
+        trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
+        onRowClick={onRowClick}
       />
     </div>
   );

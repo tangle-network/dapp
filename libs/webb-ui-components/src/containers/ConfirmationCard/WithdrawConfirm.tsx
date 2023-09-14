@@ -53,6 +53,7 @@ export const WithdrawConfirm = forwardRef<
       relayerAddress,
       relayerAvatarTheme,
       txStatusMessage,
+      txStatusColor = 'blue',
       relayerExternalUrl,
       remainingAmount,
       sourceChain,
@@ -126,7 +127,7 @@ export const WithdrawConfirm = forwardRef<
                   variant="utility"
                   titleClassName="text-mono-200 dark:text-mono-0"
                 />
-                <Chip color="blue">{txStatusMessage}</Chip>
+                <Chip color={txStatusColor}>{txStatusMessage}</Chip>
               </div>
               <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>

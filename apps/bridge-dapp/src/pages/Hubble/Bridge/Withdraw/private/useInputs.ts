@@ -1,23 +1,38 @@
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { useEffect, useState } from 'react';
+import { BooleanParam, StringParam, useQueryParams } from 'use-query-params';
 import {
   HAS_REFUND_KEY,
   IS_CUSTOM_AMOUNT_KEY,
   RECIPIENT_KEY,
 } from '../../../../../constants';
 import useAmountWithRoute from '../../../../../hooks/useAmountWithRoute';
-import useStateWithRoute from '../../../../../hooks/useStateWithRoute';
+import useDefaultChainAndPool from '../../../../../hooks/useDefaultChainAndPool';
+import objectToSearchString from '../../../../../utils/objectToSearchString';
 
 const useInputs = () => {
   const [amount, setAmount] = useAmountWithRoute();
 
-  const [recipient, setRecipient] = useStateWithRoute(RECIPIENT_KEY);
+  const [query, setQuery] = useQueryParams(
+    {
+      [RECIPIENT_KEY]: StringParam,
+      [HAS_REFUND_KEY]: BooleanParam,
+      [IS_CUSTOM_AMOUNT_KEY]: BooleanParam,
+    },
+    {
+      objectToSearchString,
+    }
+  );
 
-  const [hasRefund, setHasRefund] = useStateWithRoute(HAS_REFUND_KEY);
-
-  const [isCustom, setIsCustom] = useStateWithRoute(IS_CUSTOM_AMOUNT_KEY);
+  const {
+    [RECIPIENT_KEY]: recipient,
+    [HAS_REFUND_KEY]: hasRefund,
+    [IS_CUSTOM_AMOUNT_KEY]: isCustom,
+  } = query;
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
+
+  useDefaultChainAndPool();
 
   // Validate recipient input address after 1s
   useEffect(() => {
@@ -35,12 +50,15 @@ const useInputs = () => {
   return {
     amount,
     setAmount,
-    recipient,
-    setRecipient,
-    hasRefund,
-    setHasRefund,
-    isCustom,
-    setIsCustom,
+    recipient: recipient ?? '',
+    hasRefund: Boolean(hasRefund),
+    isCustom: Boolean(isCustom),
+    setRecipient: (recipient: string) =>
+      setQuery({ [RECIPIENT_KEY]: recipient }),
+    setHasRefund: (hasRefund: boolean) =>
+      setQuery({ [HAS_REFUND_KEY]: hasRefund }),
+    setCustomAmount: (isCustom: boolean) =>
+      setQuery({ [IS_CUSTOM_AMOUNT_KEY]: isCustom }),
     recipientErrorMsg,
   };
 };

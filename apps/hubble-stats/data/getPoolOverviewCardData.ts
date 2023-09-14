@@ -3,7 +3,12 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvlByVAnchor, getDeposit24hByVAnchor } from './reusable';
 import { ACTIVE_SUBGRAPH_URLS, VANCHORS_MAP } from '../constants';
-import { getValidDatesToQuery } from '../utils';
+import {
+  getValidDatesToQuery,
+  getChangeRate,
+  getEpochStart,
+  getEpoch24H,
+} from '../utils';
 
 import { PoolType } from '../components/PoolTypeChip/types';
 
@@ -21,10 +26,38 @@ export default async function getPoolOverviewCardData(
   poolAddress: string
 ): Promise<PoolOverviewType> {
   const vanchor = VANCHORS_MAP[poolAddress];
-  const [dateNow, date24h, date48h] = getValidDatesToQuery();
+  const [_, date24h, date48h] = getValidDatesToQuery();
+  const epochStart = getEpochStart();
+  const epoch24h = getEpoch24H();
 
   const tvl = await getTvlByVAnchor(poolAddress);
   const deposit24h = await getDeposit24hByVAnchor(poolAddress);
+
+  let tvl24h: number | undefined;
+  try {
+    const latestTvlByChains = await Promise.all(
+      ACTIVE_SUBGRAPH_URLS.map(async (subgraphUrl) => {
+        const latestTvlByVAnchorByChain =
+          await vAnchorClient.TotalValueLocked.GetVAnchorByChainLatestTVLInTimeRange(
+            subgraphUrl,
+            poolAddress,
+            epochStart,
+            epoch24h
+          );
+        return latestTvlByVAnchorByChain.totalValueLocked;
+      })
+    );
+
+    tvl24h = latestTvlByChains.reduce(
+      (total, latestTvlByChain) =>
+        total + +formatEther(BigInt(latestTvlByChain ?? 0)),
+      0
+    );
+  } catch {
+    tvl24h = undefined;
+  }
+
+  const tvlChangeRate = getChangeRate(tvl, tvl24h);
 
   let deposit48h: number | undefined;
   try {
@@ -51,10 +84,7 @@ export default async function getPoolOverviewCardData(
     deposit48h = undefined;
   }
 
-  const depositChangeRate =
-    deposit24h && deposit48h
-      ? ((deposit24h - deposit48h) / deposit48h) * 100
-      : undefined;
+  const depositChangeRate = getChangeRate(deposit24h, deposit48h);
 
   return {
     name: vanchor.fungibleTokenName,
@@ -63,7 +93,6 @@ export default async function getPoolOverviewCardData(
     deposit24h,
     depositChangeRate,
     tvl,
-    // tvl calculation for 24h is not correct at the moment
-    tvlChangeRate: undefined,
+    tvlChangeRate,
   };
 }

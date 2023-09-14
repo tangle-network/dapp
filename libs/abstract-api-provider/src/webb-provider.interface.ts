@@ -6,6 +6,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { BridgeStorage } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
+import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
@@ -23,6 +24,7 @@ import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
+import { WebbProviderType } from './types';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -189,8 +191,6 @@ export type NotificationHandler = ((
   remove(key: string | number): void;
 };
 
-export type WebbProviderType = 'web3' | 'polkadot';
-
 /**
  * The representation of an api provider
  *
@@ -224,7 +224,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   endSession?(): Promise<void>;
 
-  relayerManager: WebbRelayerManager<WebbProviderType>;
+  relayerManager: WebbRelayerManager<WebbProviderType, RelayerCMDBase>;
 
   getProvider(): any;
 

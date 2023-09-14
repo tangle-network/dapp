@@ -15,9 +15,11 @@ const TableComp = <T extends RowData>(
     totalRecords = 0,
     tableClassName,
     thClassName,
+    trClassName,
     tdClassName,
     paginationClassName,
     title,
+    onRowClick,
     ...props
   }: TableProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
@@ -45,7 +47,14 @@ const TableComp = <T extends RowData>(
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="group/tr">
+            <tr
+              key={row.id}
+              className={twMerge('group/tr', trClassName)}
+              onClick={(e) => {
+                e.preventDefault();
+                if (onRowClick !== undefined) onRowClick(row);
+              }}
+            >
               {row.getVisibleCells().map((cell) => (
                 <TData className={tdClassName} key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

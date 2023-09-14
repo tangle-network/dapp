@@ -18,9 +18,14 @@ import {
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
-import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
+import {
+  useCurrentTx,
+  useEnqueueSubmittedTx,
+  useLatestTransactionStage,
+} from '../../hooks';
 import {
   captureSentryException,
+  getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -94,7 +99,7 @@ const TransferConfirmContainer = forwardRef<
         : undefined,
     });
 
-    const isTransfering = useMemo(
+    const isTransferring = useMemo(
       () => stage !== TransactionState.Ideal,
       [stage]
     );
@@ -122,7 +127,7 @@ const TransferConfirmContainer = forwardRef<
           return;
         }
 
-        if (isTransfering) {
+        if (isTransferring) {
           txQueueApi.startNewTransaction();
           onResetState?.();
           return;
@@ -248,7 +253,7 @@ const TransferConfirmContainer = forwardRef<
             await removeNoteFromNoteManager(note);
           }
         } catch (error) {
-          console.error('Error occured while transfering', error);
+          console.error('Error occured while transferring', error);
           changeNote && (await removeNoteFromNoteManager(changeNote));
           tx.txHash = getTransactionHash(error);
 
@@ -271,12 +276,22 @@ const TransferConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, refundAmount, refundRecipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inputNotes, isTransferring, noteManager, onResetState, recipient, refundAmount, refundRecipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
     );
 
-    const [txStatusMessage, currentStep] = useMemo(() => {
+    const currentTx = useCurrentTx(txQueue.txQueue, txId);
+
+    const cardTitle = useMemo(() => {
+      if (!currentTx) {
+        return;
+      }
+
+      return getCardTitle(stage, currentTx.name);
+    }, [currentTx, stage]);
+
+    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
       if (!txId) {
-        return ['', undefined];
+        return ['', undefined, undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
@@ -284,7 +299,9 @@ const TransferConfirmContainer = forwardRef<
         ? txPayload.txStatus.message?.replace('...', '')
         : '';
 
-      return [message, txPayload?.currentStep];
+      const txStatus = txPayload?.txStatus.status;
+
+      return [message, txPayload?.currentStep, txStatus];
     }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
@@ -304,7 +321,7 @@ const TransferConfirmContainer = forwardRef<
         {...props}
         className="min-h-[var(--card-height)]"
         ref={ref}
-        title={isTransfering ? 'Transfer in Progress...' : undefined}
+        title={cardTitle}
         totalProgress={totalStep}
         progress={currentStep}
         amount={amount}
@@ -339,8 +356,15 @@ const TransferConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: changeNote ? !isChecked : false,
           onClick: handleTransferExecute,
-          children: isTransfering ? 'Make Another Transaction' : 'Transfer',
+          children: isTransferring ? 'Make Another Transaction' : 'Transfer',
         }}
+        txStatusColor={
+          txStatus === 'completed'
+            ? 'green'
+            : txStatus === 'warning'
+            ? 'red'
+            : undefined
+        }
         txStatusMessage={txStatusMessage}
         refundAmount={
           typeof refundAmount === 'bigint'

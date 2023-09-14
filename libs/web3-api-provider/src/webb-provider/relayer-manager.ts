@@ -27,7 +27,9 @@ import { VAnchor__factory } from '@webb-tools/contracts';
 import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
 import { GetContractReturnType, PublicClient } from 'viem';
 
-export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
+export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
+  cmdKey = 'evm' as const;
+
   mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number

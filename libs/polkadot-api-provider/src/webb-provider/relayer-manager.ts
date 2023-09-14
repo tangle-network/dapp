@@ -20,8 +20,12 @@ import { BridgeStorage } from '@webb-tools/browser-utils';
 import Storage from '@webb-tools/dapp-types/Storage';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 
-export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
+export class PolkadotRelayerManager extends WebbRelayerManager<
+  'polkadot',
+  'substrate'
+> {
   supportedPallet = 'VAnchorBn254';
+  cmdKey = 'substrate' as const;
 
   mapRelayerIntoActive(
     relayer: OptionalRelayer,

@@ -14,11 +14,15 @@ import {
   TransactionState,
 } from '../transaction';
 import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
-import { WebbProviderType } from '../webb-provider.interface';
+import { WebbProviderType } from '../types';
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
+import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 
-export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
+export abstract class WebbRelayerManager<
+  Provider extends WebbProviderType,
+  CMDKey extends RelayerCMDBase
+> {
   protected supportedPallet: string | undefined;
 
   protected readonly logger = LoggerService.get('RelayerManager');
@@ -34,6 +38,8 @@ export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
 
   protected relayers: WebbRelayer[];
   public activeRelayer: OptionalActiveRelayer = null;
+
+  abstract cmdKey: CMDKey;
 
   constructor(relayers: WebbRelayer[]) {
     this.relayers = relayers;

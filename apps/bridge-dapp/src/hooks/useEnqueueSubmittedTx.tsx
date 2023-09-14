@@ -1,5 +1,5 @@
 import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { type ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { useCallback } from 'react';

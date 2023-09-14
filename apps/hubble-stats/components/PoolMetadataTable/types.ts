@@ -1,5 +1,5 @@
 export type WrappingFeesByChainType = Record<number, number | undefined>;
-export type ExplorerUrlsByChainType = Record<number, string>;
+export type ExplorerUrlsByChainType = Record<number, string | undefined>;
 
 export type AddressWithExplorerUrlsType = {
   address: string;
@@ -9,8 +9,6 @@ export type AddressWithExplorerUrlsType = {
 export type PoolAttributeType = {
   name: string;
   detail?: string | AddressWithExplorerUrlsType | WrappingFeesByChainType;
-  externalLink?: string;
-  isAddress?: boolean;
 };
 
 export interface PoolMetadataTableProps {

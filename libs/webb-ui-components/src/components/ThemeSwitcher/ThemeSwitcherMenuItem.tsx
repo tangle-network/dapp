@@ -28,7 +28,7 @@ const ThemeSwitcherMenuItem = (props: ThemeSwitcherMenuItemProps) => {
 
   return (
     <MenuItem
-      onClick={() => toggleThemeMode(isDarkMode ? 'light' : 'dark')}
+      onClick={() => toggleThemeMode()}
       icon={Icon}
       className={props.className}
     >

@@ -1,10 +1,10 @@
 import type { Transaction } from '@webb-tools/abstract-api-provider/transaction';
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/webb-provider.interface';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 import {
-  getExplorerURI,
   getTxMessageFromStatus,
   transactionItemStatusFromTxStatus,
 } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import TxProgressor from '@webb-tools/webb-ui-components/components/TxProgressor';
 import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
