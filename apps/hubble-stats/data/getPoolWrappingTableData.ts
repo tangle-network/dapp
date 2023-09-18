@@ -2,7 +2,7 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { PoolWrappingDataType } from '../components/PoolWrappingTable/types';
-import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
+import { ACTIVE_CHAINS, VANCHORS_MAP, ACTIVE_SUBGRAPH_MAP } from '../constants';
 import { getAggregateValue } from '../utils';
 
 export type PoolWrappingTableDataType = {
@@ -27,7 +27,7 @@ export default async function getPoolWrappingTableData(
     let twlByVAnchorByChain: number | undefined;
     try {
       const twlData = await vAnchorClient.TWL.GetVAnchorTWLByChain(
-        LIVE_SUBGRAPH_MAP[typedChainId],
+        ACTIVE_SUBGRAPH_MAP[typedChainId],
         poolAddress
       );
 
@@ -58,7 +58,7 @@ export default async function getPoolWrappingTableData(
         try {
           const twlData =
             await vAnchorClient.TWL.GetVAnchorTWLByChainAndByToken(
-              LIVE_SUBGRAPH_MAP[typedChainId],
+              ACTIVE_SUBGRAPH_MAP[typedChainId],
               poolAddress,
               // query for native token needs to convert to ETH
               token === nativeTokenByChain[typedChainId] ? 'ETH' : token
@@ -90,7 +90,7 @@ export default async function getPoolWrappingTableData(
     try {
       const wrappingFeesData =
         await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChain(
-          LIVE_SUBGRAPH_MAP[typedChainId],
+          ACTIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress
         );
 
@@ -126,7 +126,7 @@ export default async function getPoolWrappingTableData(
         try {
           const wrappingFeesData =
             await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChainAndByToken(
-              LIVE_SUBGRAPH_MAP[typedChainId],
+              ACTIVE_SUBGRAPH_MAP[typedChainId],
               poolAddress,
               // query for native token needs to convert to ETH
               token === nativeTokenByChain[typedChainId] ? 'ETH' : token
