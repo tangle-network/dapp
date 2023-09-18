@@ -311,28 +311,28 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Testnet Explorer',
-        url: 'https://tangle-testnet-explorer.webb.tools',
+        url: 'https://explorer.tangle.tools',
       },
     },
     rpcUrls: {
       default: {
         http: [
-          'https://tangle-standalone-archive.webb.tools',
-          'https://tangle-standalone1.webb.tools',
-          'https://tangle-standalone2.webb.tools',
-          'https://tangle-standalone3.webb.tools',
-          'https://tangle-standalone4.webb.tools',
-          'https://tangle-standalone5.webb.tools',
+          'https://rpc-archive.tangle.tools',
+          'https://rpc1.tangle.tools',
+          'https://rpc2.tangle.tools',
+          'https://rpc3.tangle.tools',
+          'https://rpc4.tangle.tools',
+          'https://rpc5.tangle.tools',
         ],
       },
       public: {
         http: [
-          'https://tangle-standalone-archive.webb.tools',
-          'https://tangle-standalone1.webb.tools',
-          'https://tangle-standalone2.webb.tools',
-          'https://tangle-standalone3.webb.tools',
-          'https://tangle-standalone4.webb.tools',
-          'https://tangle-standalone5.webb.tools',
+          'https://rpc-archive.tangle.tools',
+          'https://rpc1.tangle.tools',
+          'https://rpc2.tangle.tools',
+          'https://rpc3.tangle.tools',
+          'https://rpc4.tangle.tools',
+          'https://rpc5.tangle.tools',
         ],
       },
     },

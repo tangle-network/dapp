@@ -1,14 +1,14 @@
 import {
   BookOpenLineIcon,
+  FaucetIcon,
   FlaskLineIcon,
   HelpLineIcon,
   InformationLine,
-  FaucetIcon,
 } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { WEBB_DOCS_URL } from '../../constants';
 import { Typography } from '../../typography/Typography';
-
 import {
   Collapsible,
   CollapsibleButton,
@@ -82,7 +82,7 @@ export const NavigationMenuContent = forwardRef<
         <MenuItem
           icon={<BookOpenLineIcon size="lg" />}
           onClick={() => {
-            window.open('https://docs.webb.tools', '_blank');
+            window.open(WEBB_DOCS_URL, '_blank');
           }}
         >
           Docs

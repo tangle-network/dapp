@@ -10,7 +10,20 @@ import {
 import { IconBase } from '@webb-tools/icons/types';
 import Link from 'next/link';
 import { ComponentProps, useState } from 'react';
+import capitalize from 'lodash/capitalize';
 
+import {
+  BRIDGE_URL,
+  SOCIAL_ICONS_RECORD,
+  SOCIAL_URLS_RECORD,
+  STATS_URL,
+  TANGLE_MKT_URL,
+  WEBB_AVAIABLE_SOCIALS,
+  WEBB_CAREERS_URL,
+  WEBB_DOCS_URL,
+  WEBB_MKT_URL,
+  WEBB_WHITEPAPER_URL,
+} from '../../constants';
 import { Typography } from '../../typography';
 import { Logo } from '../Logo';
 import { InternalOrExternalLink } from '../Navbar/InternalOrExternalLink';
@@ -36,27 +49,27 @@ const navLinks: Array<NavLinkType> = [
     links: [
       {
         label: 'Github',
-        url: 'https://github.com/webb-tools',
+        url: SOCIAL_URLS_RECORD.github,
         isInternal: false,
       },
       {
         label: 'Telegram',
-        url: 'https://t.me/webbprotocol',
+        url: SOCIAL_URLS_RECORD.telegram,
         isInternal: false,
       },
       {
         label: 'Discord',
-        url: 'https://discord.com/invite/cv8EfJu3Tn',
+        url: SOCIAL_URLS_RECORD.discord,
         isInternal: false,
       },
       {
         label: 'Twitter',
-        url: 'https://twitter.com/webbprotocol',
+        url: SOCIAL_URLS_RECORD.twitter,
         isInternal: false,
       },
       {
         label: 'Commonwealth',
-        url: 'https://commonwealth.im/webb',
+        url: SOCIAL_URLS_RECORD.commonwealth,
         isInternal: false,
       },
     ],
@@ -66,17 +79,17 @@ const navLinks: Array<NavLinkType> = [
     links: [
       {
         label: 'Tangle',
-        url: 'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer',
+        url: TANGLE_MKT_URL,
         isInternal: false,
       },
       {
         label: 'DKG Explorer',
-        url: 'https://stats.webb.tools/',
+        url: STATS_URL,
         isInternal: false,
       },
       {
         label: 'Hubble Bridge',
-        url: 'https://app.webb.tools/',
+        url: BRIDGE_URL,
         isInternal: false,
       },
     ],
@@ -86,17 +99,17 @@ const navLinks: Array<NavLinkType> = [
     links: [
       {
         label: 'Documentation',
-        url: 'https://docs.webb.tools/',
+        url: WEBB_DOCS_URL,
         isInternal: false,
       },
       {
         label: 'Source Code',
-        url: 'https://github.com/webb-tools',
+        url: SOCIAL_URLS_RECORD.github,
         isInternal: false,
       },
       {
         label: 'Whitepaper',
-        url: 'https://eprint.iacr.org/2023/260',
+        url: WEBB_WHITEPAPER_URL,
         isInternal: false,
       },
     ],
@@ -106,12 +119,12 @@ const navLinks: Array<NavLinkType> = [
     links: [
       {
         label: 'About Us',
-        url: 'https://webb.tools',
+        url: WEBB_MKT_URL,
         isInternal: false,
       },
       {
         label: 'Careers',
-        url: 'https://angel.co/company/webb-4/jobs',
+        url: WEBB_CAREERS_URL,
         isInternal: false,
       },
       {
@@ -138,43 +151,14 @@ const navLinks: Array<NavLinkType> = [
   },
 ];
 
-const socials: Array<SocialType> = [
-  {
-    Icon: Common2Icon,
-    name: 'Commonwealth',
-    href: 'https://commonwealth.im/webb',
-  },
-  {
-    name: 'Telegram',
-    Icon: TelegramFill,
-    href: 'https://t.me/webbprotocol',
-  },
-  {
-    name: 'Discord',
-    Icon: DiscordFill,
-    href: 'https://discord.com/invite/cv8EfJu3Tn',
-  },
-  {
-    name: 'LinkedIn',
-    Icon: LinkedInFill,
-    href: 'https://www.linkedin.com/company/webb-protocol/',
-  },
-  {
-    name: 'Twitter',
-    Icon: TwitterFill,
-    href: 'https://twitter.com/webbprotocol',
-  },
-  {
-    name: 'Github',
-    Icon: GithubFill,
-    href: 'https://github.com/webb-tools',
-  },
-  {
-    name: 'YouTube',
-    Icon: YouTubeFill,
-    href: 'https://webb.tools/blog/videos',
-  },
-];
+const socials = WEBB_AVAIABLE_SOCIALS.map(
+  (name) =>
+    ({
+      name: capitalize(name),
+      Icon: SOCIAL_ICONS_RECORD[name],
+      href: SOCIAL_URLS_RECORD[name],
+    } as const satisfies SocialType)
+);
 
 type WebsiteFooterPropsType = {
   type: 'webbsite' | 'tangle';
@@ -185,7 +169,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
   const [success, setSuccess] = useState(false);
 
   return (
-    <footer className="dark pb-4 bg-mono-200 space-y-6">
+    <footer className="pb-4 space-y-6 dark bg-mono-200">
       {/** Newsletter */}
       <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}
@@ -202,7 +186,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
             <div className="space-y-6">
               <Typography
                 variant="mkt-subheading"
-                className="text-lg leading-6 dark:text-mono-80 font-black"
+                className="text-lg font-black leading-6 dark:text-mono-80"
               >
                 Follow for Updates
               </Typography>
@@ -211,7 +195,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
 
               <Typography
                 variant="mkt-body2"
-                className="dark:text-mono-100 font-medium"
+                className="font-medium dark:text-mono-100"
               >
                 By signing up you agree to{' '}
                 <InternalOrExternalLink
@@ -257,7 +241,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
                 {links.map(({ label, ...restProps }) => (
                   <Typography
                     variant="mkt-body2"
-                    className="hover:underline font-medium"
+                    className="font-medium hover:underline"
                     key={label}
                   >
                     <InternalOrExternalLink {...restProps}>

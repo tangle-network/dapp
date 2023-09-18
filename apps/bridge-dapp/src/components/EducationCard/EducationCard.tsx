@@ -1,23 +1,28 @@
+import { Transition } from '@headlessui/react';
 import { Close, HelpLineIcon, UsageGuideIcon } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { forwardRef, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { EducationCardProps } from './types';
-import { Transition } from '@headlessui/react';
+import { BRIDGE_OVERVIEW_PATH, USAGE_GUIDE_PATH } from '../../constants/links';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { EducationCardProps } from './types';
 
 const links = [
   {
     label: 'Usage Guide',
     getLink: (tab: EducationCardProps['currentTab']) => {
-      return `https://docs.webb.tools/docs/projects/hubble-bridge/usage-guide/${tab.toLowerCase()}/`;
+      return new URL(
+        `${USAGE_GUIDE_PATH}/${tab.toLowerCase()}`,
+        WEBB_DOCS_URL
+      ).toString();
     },
     Icon: UsageGuideIcon,
   },
   {
     label: 'Getting Started',
-    href: 'https://docs.webb.tools/docs/projects/hubble-bridge/overview/',
+    href: new URL(BRIDGE_OVERVIEW_PATH, WEBB_DOCS_URL).toString(),
     Icon: UsageGuideIcon,
   },
 ];

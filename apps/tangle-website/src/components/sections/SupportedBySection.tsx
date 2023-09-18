@@ -15,7 +15,7 @@ const cardItems: Array<SupportedBySectionCardType> = [
   {
     logo: () => <Logo />,
     name: 'Webb',
-    href: 'https://webb.tools/',
+    href: WEBB_MKT_URL,
   },
   {
     logo: '/static/svgs/commonwealth.svg',

@@ -11,4 +11,4 @@ export const NODE_OPERATORS_URL =
   'https://docs.webb.tools/docs/tangle-network/node-operators/quickstart/#deploy-quickly';
 
 export const POLKADOT_TANGLE_URL =
-  'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/democracy';
+  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-archive.tangle.tools#/query';

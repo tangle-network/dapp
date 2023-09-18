@@ -4,16 +4,17 @@ import {
   DocumentationIcon,
   ExchangeFunds,
   ForumIcon,
-  GithubFill,
   TelegramFill,
   TwitterFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
+import { Typography, WebsiteCommunity } from '@webb-tools/webb-ui-components';
 import {
-  Button,
-  Typography,
-  WebsiteCommunity,
-} from '@webb-tools/webb-ui-components';
+  BRIDGE_URL,
+  SOCIAL_ICONS_RECORD,
+  SOCIAL_URLS_RECORD,
+  WEBB_DOCS_URL,
+} from '@webb-tools/webb-ui-components/constants';
 import { NextSeo } from 'next-seo';
 import { ResearchAndDevelopmentSection } from '../components';
 
@@ -28,43 +29,43 @@ const links: Array<LinksType> = [
   {
     Icon: ExchangeFunds,
     name: 'Bridge',
-    href: 'https://app.webb.tools/#/bridge',
+    href: BRIDGE_URL,
     description: 'Private multi-asset bridging made easy',
   },
   {
     name: 'Github',
-    Icon: GithubFill,
-    href: 'https://github.com/webb-tools',
+    Icon: SOCIAL_ICONS_RECORD.github,
+    href: SOCIAL_URLS_RECORD.github,
     description: 'Explore the source code and get involved',
   },
   {
     name: 'Documentation',
     Icon: DocumentationIcon,
-    href: 'https://docs.webb.tools/docs',
+    href: WEBB_DOCS_URL,
     description: 'Learn how it works under the hood',
   },
   {
     name: 'Telegram',
-    Icon: TelegramFill,
-    href: 'https://t.me/webbprotocol',
+    Icon: SOCIAL_ICONS_RECORD.telegram,
+    href: SOCIAL_URLS_RECORD.telegram,
     description: 'Have question, join us on Telegram',
   },
   {
     name: 'Discord',
-    Icon: DiscordFill,
-    href: 'https://discord.com/invite/cv8EfJu3Tn',
+    Icon: SOCIAL_ICONS_RECORD.discord,
+    href: SOCIAL_URLS_RECORD.discord,
     description: 'Come chat about all things Webb',
   },
   {
     name: 'Twitter',
-    Icon: TwitterFill,
-    href: 'https://twitter.com/webbprotocol',
+    Icon: SOCIAL_ICONS_RECORD.twitter,
+    href: SOCIAL_URLS_RECORD.twitter,
     description: 'Say hi on the Webb Twitter',
   },
   {
-    Icon: Common2Icon,
     name: 'Commonwealth',
-    href: 'https://commonwealth.im/webb',
+    Icon: SOCIAL_ICONS_RECORD.commonwealth,
+    href: SOCIAL_URLS_RECORD.commonwealth,
     description: 'Join the conversation on Commonwealth',
   },
   {
@@ -84,7 +85,7 @@ const Community = () => {
         <div className="max-w-[900px]">
           <Typography
             variant="mkt-h3"
-            className="px-4 text-center font-black text-mono-200"
+            className="px-4 font-black text-center text-mono-200"
           >
             Get Started
           </Typography>
