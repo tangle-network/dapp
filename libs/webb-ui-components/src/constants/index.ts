@@ -100,7 +100,7 @@ export const webbNetworks: webbNetworksType[] = [
         name: 'Tangle Standalone',
         networkType: 'testnet',
         networkNodeType: 'standalone',
-        subqueryEndpoint: 'https://standalone-subql.webb.tools/graphql',
+        subqueryEndpoint: 'https://standalone-subql.tangle.tools/graphql',
         polkadotEndpoint: 'wss://tangle-standalone-archive.webb.tools',
         polkadotExplorer: TANGLE_STANDALONE_EXPLORER_URL,
         avatar: '',
