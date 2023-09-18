@@ -1,14 +1,11 @@
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import onChainDataJson from '@webb-tools/api-provider-environment/generated/on-chain-config.json';
 
+import { ACTIVE_SUBGRAPH_MAP } from './subgraphs';
 import { getVAnchorMapFromOnChainData } from '../utils';
 
-export const ACTIVE_CHAINS = [
-  PresetTypedChainId.HermesOrbit,
-  PresetTypedChainId.DemeterOrbit,
-  PresetTypedChainId.AthenaOrbit,
-  PresetTypedChainId.TangleTestnet,
-];
+export const ACTIVE_CHAINS = Object.keys(ACTIVE_SUBGRAPH_MAP).map(
+  (typedChainedId) => +typedChainedId
+);
 
 export const VANCHORS_MAP = getVAnchorMapFromOnChainData(
   onChainDataJson,
