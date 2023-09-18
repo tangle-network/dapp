@@ -2,7 +2,7 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { PoolOverviewDataType } from '../components/PoolOverviewTable/types';
-import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
+import { ACTIVE_CHAINS, VANCHORS_MAP, ACTIVE_SUBGRAPH_MAP } from '../constants';
 import { getAggregateValue, getValidDatesToQuery } from '../utils';
 
 export type PoolOverviewTableDataType = {
@@ -26,7 +26,7 @@ export default async function getPoolOverviewTableData(
     try {
       const deposit24hData =
         await vAnchorClient.Deposit.GetVAnchorDepositByChain15MinsInterval(
-          LIVE_SUBGRAPH_MAP[typedChainId],
+          ACTIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress,
           date24h,
           dateNow
@@ -49,7 +49,7 @@ export default async function getPoolOverviewTableData(
     try {
       const withdrawal24hData =
         await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChain15MinsInterval(
-          LIVE_SUBGRAPH_MAP[typedChainId],
+          ACTIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress,
           date24h,
           dateNow
@@ -75,7 +75,7 @@ export default async function getPoolOverviewTableData(
     try {
       const relayerEarningsData =
         await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChain(
-          LIVE_SUBGRAPH_MAP[typedChainId],
+          ACTIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress
         );
       relayerEarningsByVAnchorByChain = +formatEther(

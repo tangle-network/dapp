@@ -1,7 +1,7 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-export const LIVE_SUBGRAPH_MAP = {
+const LIVE_SUBGRAPH_MAP = {
   [PresetTypedChainId.AthenaOrbit]:
     vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
   [PresetTypedChainId.HermesOrbit]:
@@ -12,13 +12,21 @@ export const LIVE_SUBGRAPH_MAP = {
     vAnchorClient.SubgraphUrl.vAnchorTangleTestnet,
 };
 
-const LIVE_SUBGRAPH_URLS = Object.values(LIVE_SUBGRAPH_MAP);
+const LOCAL_SUBGRAPH_MAP = {
+  [PresetTypedChainId.AthenaLocalnet]:
+    vAnchorClient.SubgraphUrl.vAnchorAthenaLocal,
+  [PresetTypedChainId.HermesLocalnet]:
+    vAnchorClient.SubgraphUrl.vAnchorHermesLocal,
+  [PresetTypedChainId.DemeterLocalnet]:
+    vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
+};
 
-export const LOCAL_SUBGRAPH_URLS = [
-  vAnchorClient.SubgraphUrl.vAnchorAthenaLocal,
-  vAnchorClient.SubgraphUrl.vAnchorHermesLocal,
-  vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
-];
+const LIVE_SUBGRAPH_URLS = Object.values(LIVE_SUBGRAPH_MAP);
+const LOCAL_SUBGRAPH_URLS = Object.values(LOCAL_SUBGRAPH_MAP);
+
+export const ACTIVE_SUBGRAPH_MAP = process.env.USING_LOCAL_SUBGRAPHS
+  ? LOCAL_SUBGRAPH_MAP
+  : LIVE_SUBGRAPH_MAP;
 
 export const ACTIVE_SUBGRAPH_URLS = process.env.USING_LOCAL_SUBGRAPHS
   ? LOCAL_SUBGRAPH_URLS

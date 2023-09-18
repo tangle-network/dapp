@@ -3,7 +3,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import {
   VANCHORS_MAP,
-  LIVE_SUBGRAPH_MAP,
+  ACTIVE_SUBGRAPH_MAP,
   ACTIVE_SUBGRAPH_URLS,
 } from '../constants';
 import { getTimePassedByEpoch } from '../utils';
@@ -20,9 +20,9 @@ export default async function getPoolTransactionsData(
 ): Promise<PoolTransactionDataType> {
   const { nativeTokenByChain } = VANCHORS_MAP[poolAddress];
 
-  const subgraphByTypedChainIdMap = Object.keys(LIVE_SUBGRAPH_MAP).reduce(
+  const subgraphByTypedChainIdMap = Object.keys(ACTIVE_SUBGRAPH_MAP).reduce(
     (map, typedChainId) => {
-      map[LIVE_SUBGRAPH_MAP[+typedChainId]] = +typedChainId;
+      map[ACTIVE_SUBGRAPH_MAP[+typedChainId]] = +typedChainId;
       return map;
     },
     {} as Record<string, number>

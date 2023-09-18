@@ -7,6 +7,12 @@ const { composePlugins, withNx } = require('@nx/next');
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  // at default environment variable is only accessible by the server, resulting in hydration mismatch
+  // make environment variable accessible by both the server and client
+  env: {
+    USING_LOCAL_SUBGRAPHS: process.env.USING_LOCAL_SUBGRAPHS ?? '',
+  },
+
   nx: {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr

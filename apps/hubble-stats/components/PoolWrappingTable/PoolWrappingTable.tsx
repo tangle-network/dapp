@@ -70,8 +70,7 @@ const staticColumns: ColumnDef<PoolWrappingDataType, any>[] = [
       />
     ),
     cell: (props) => {
-      const currency =
-        props.row.getParentRow()?.original.symbol ?? props.row.original.symbol;
+      const currency = props.row.original.symbol;
       return <NumberCell value={props.getValue()} suffix={` ${currency}`} />;
     },
   }),
@@ -104,9 +103,7 @@ const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
             </div>
           ),
           cell: (props) => {
-            const currency =
-              props.row.getParentRow()?.original.symbol ??
-              props.row.original.symbol;
+            const currency = props.row.original.symbol;
 
             return typeof props.row.original.chainsData[typedChainId] ===
               'number' ? (
