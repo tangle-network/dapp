@@ -8,7 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
 import {
-  STATS_URL,
+  DKG_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
@@ -43,7 +43,7 @@ const items: SideBarItemProps[] = [
       {
         name: 'DKG Explorer',
         isInternal: false,
-        href: STATS_URL,
+        href: DKG_STATS_URL,
       },
       {
         name: 'Homepage',

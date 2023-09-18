@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Socials, Typography } from '@webb-tools/webb-ui-components';
 import {
   WEBB_DOCS_URL,
-  STATS_URL,
+  DKG_STATS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 import { LinkButton } from '..';
@@ -35,7 +35,7 @@ export const HeroSection = () => {
                 >
                   Read Docs
                 </LinkButton>
-                <LinkButton href={STATS_URL} className="px-5 md:px-9">
+                <LinkButton href={DKG_STATS_URL} className="px-5 md:px-9">
                   View Network
                 </LinkButton>
               </div>

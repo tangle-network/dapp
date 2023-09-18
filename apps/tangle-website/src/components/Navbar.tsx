@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import {
-  STATS_URL,
+  DKG_STATS_URL,
   WEBB_DOC_ROUTES_RECORD,
 } from '@webb-tools/webb-ui-components/constants';
 import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
@@ -104,7 +104,7 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <LinkButton href={STATS_URL} className="px-5 md:px-9">
+          <LinkButton href={DKG_STATS_URL} className="px-5 md:px-9">
             View Network
           </LinkButton>
         </li>
