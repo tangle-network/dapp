@@ -60,7 +60,7 @@ const getVAnchorMapFromOnChainData = (
             treasuryAddress,
             creationTimestamp,
             composition: isNativeAllowed
-              ? [wrappableTokens, nativeCurrency.symbol]
+              ? [...wrappableTokens, nativeCurrency.symbol]
               : wrappableTokens,
             supportedChains: [+typedChainId],
             nativeTokenByChain: {
