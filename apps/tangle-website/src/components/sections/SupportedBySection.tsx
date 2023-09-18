@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { Button, Logo, Typography } from '@webb-tools/webb-ui-components';
 import {
+  WEBB_DOC_ROUTES_RECORD,
   WEBB_MKT_URL,
-  TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 
 type SupportedBySectionCardType = {
   logo: string | (() => JSX.Element);
@@ -55,7 +56,9 @@ export const SupportedBySection = () => {
           </Typography>
           <div className="flex gap-4 mt-3">
             <Button
-              href={TANGLE_DOCS_URL}
+              href={populateDocsUrl(
+                WEBB_DOC_ROUTES_RECORD['tangle-network'].overview
+              )}
               target="_blank"
               rel="noreferrer"
               variant="secondary"

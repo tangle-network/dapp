@@ -8,6 +8,7 @@ export * from './getRoundedAmountString';
 export { default as isScientificNotation } from './isScientificNotation';
 export { default as isSideBarItemActive } from './isSideBarItemActive';
 export { default as numberToString } from './numberToString';
+export { default as populateDocsUrl } from './populateDocsUrl';
 export * from './range';
 export * from './shortenHex';
 export * from './shortenString';

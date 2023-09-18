@@ -1,8 +1,10 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { UseCase1Svg, UseCase2Svg, UseCase3Svg, UseCase4Svg } from '../svgs';
 
 const tangleUseCases = [
@@ -11,28 +13,34 @@ const tangleUseCases = [
     title: 'General Messaging Passing & Public Bridges',
     description:
       'Seamlessly facilitate public and transparent cross-chain interactions. Experience unparalleled efficiency and security through a dynamic TSS-based system, where multiple participants collaborate harmoniously.',
-    link: 'https://docs.webb.tools/docs/anchor-system/overview/',
+    link: populateDocsUrl(
+      WEBB_DOC_ROUTES_RECORD.concepts['anchor-system'].overview
+    ),
   },
   {
     icon: <UseCase2Svg />,
     title: 'Connected Shielded Pool Protocols',
     description:
       'Unleash the true potential of interconnected ecosystems to empower private movement and the seamless transfer of assets between blockchains. Unleash the true potential of interconnected ecosystems.',
-    link: 'https://docs.webb.tools/docs/protocols/asset-transfer/overview/',
+    link: populateDocsUrl(
+      WEBB_DOC_ROUTES_RECORD.protocols['single-asset-shielded-pool'].overview
+    ),
   },
   {
     icon: <UseCase3Svg />,
     title: 'Connected Shielded Identity Protocols',
     description:
       'Harness the revolutionary privacy of the Network to forge identities and establish meaningful connections between diverse blockchains. Bridge the gaps and unite digital realms like never before.',
-    link: 'https://docs.webb.tools/docs/protocols/identity/',
+    link: populateDocsUrl(WEBB_DOC_ROUTES_RECORD.protocols['identity'].route),
   },
   {
     icon: <UseCase4Svg />,
     title: 'Oracle System and Data Feeds',
     description:
       'Empower financial, identity, and other applications with trustworthy information through the next-gen Webb DKG (Distributed Key Generation) to securely sign payloads from data feeds.',
-    link: 'https://docs.webb.tools/docs/protocols/dkg/overview/',
+    link: populateDocsUrl(
+      WEBB_DOC_ROUTES_RECORD.concepts['distributed-key-gen'].route
+    ),
   },
 ];
 

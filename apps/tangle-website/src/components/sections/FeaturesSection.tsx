@@ -1,11 +1,12 @@
-import { FC } from 'react';
-import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
+import Image from 'next/image';
+import { FC } from 'react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { LinkButton } from '..';
 import { WANT_TO_LEARN_MORE_URL } from '../../constants';
@@ -23,7 +24,7 @@ const tangleFeatures = [
     title: 'Proof-of-Stake Authority Selection',
     description:
       'The Tangle Network uses a cutting-edge selection system based on Proof-of-Stake, allowing anyone to participate in securing private cross-chain applications.',
-    link: TANGLE_DOCS_URL,
+    link: populateDocsUrl(WEBB_DOC_ROUTES_RECORD['tangle-network'].overview),
   },
   {
     title: 'Multi-Stage Governance for Signing',
@@ -53,7 +54,7 @@ export const FeaturesSection = () => {
             </Typography>
             <Typography
               variant="mkt-h3"
-              className="text-center font-black text-mono-200"
+              className="font-black text-center text-mono-200"
             >
               What makes Tangle Unique?
             </Typography>

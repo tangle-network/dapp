@@ -1,8 +1,10 @@
 import cx from 'classnames';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
-import links from '@webb-tools/dapp-config/links';
-
-const { SHIELDED_POOL_DOC_URL, WEBB_GITHUB_URL } = links;
+import {
+  SOCIAL_URLS_RECORD,
+  WEBB_DOC_ROUTES_RECORD,
+} from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 
 export const ShieldedPoolHeroSection = () => {
   return (
@@ -13,7 +15,7 @@ export const ShieldedPoolHeroSection = () => {
         'flex justify-center items-center'
       )}
     >
-      <div className="m-auto px-4 md:px-0 flex flex-col items-center gap-6 md:gap-9">
+      <div className="flex flex-col items-center gap-6 px-4 m-auto md:px-0 md:gap-9">
         <Typography
           variant="mkt-h3"
           className={cx(
@@ -25,7 +27,7 @@ export const ShieldedPoolHeroSection = () => {
         </Typography>
         <div className="flex gap-2">
           <Button
-            href={WEBB_GITHUB_URL}
+            href={SOCIAL_URLS_RECORD.github}
             target="_blank"
             rel="noreferrer"
             className="button-base button-primary"
@@ -34,7 +36,10 @@ export const ShieldedPoolHeroSection = () => {
           </Button>
           <Button
             variant="secondary"
-            href={SHIELDED_POOL_DOC_URL}
+            href={populateDocsUrl(
+              WEBB_DOC_ROUTES_RECORD.protocols['single-asset-shielded-pool']
+                .overview
+            )}
             target="_blank"
             rel="noreferrer"
             className="button-base button-secondary"
