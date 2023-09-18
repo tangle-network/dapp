@@ -1,22 +1,23 @@
+import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
 import { FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
+import isSideBarItemActive from '../../utils/isSideBarItemActive';
 
 import { Typography } from '../../typography/Typography';
-import {
-  SideBarItemsProps,
-  SideBarItemProps,
-  SideBarExtraItemProps,
-} from './types';
-import { SubItem } from './SubItem';
 import { Link } from '../Link';
+import { SubItem } from './SubItem';
+import {
+  SideBarExtraItemProps,
+  SideBarItemProps,
+  SideBarItemsProps,
+} from './types';
 
 export const SideBarItems: FC<SideBarItemsProps> = ({
   items,
   isExpanded,
   className,
 }) => {
-  const [activeItem, setActiveItem] = useState<number | null>(0);
+  const [activeItem, setActiveItem] = useState<number | null>(null);
 
   return (
     <div
@@ -26,15 +27,21 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
         className
       )}
     >
-      {items.map((itemProps, idx) => (
-        <SideBarItem
-          key={idx}
-          {...itemProps}
-          isExpanded={isExpanded}
-          isActive={activeItem === idx}
-          setIsActive={() => setActiveItem(idx)}
-        />
-      ))}
+      {items.map((itemProps, idx) => {
+        const itemHrefActive =
+          isSideBarItemActive(itemProps.href) ||
+          isSideBarItemActive(itemProps.subItems.map((i) => i.href));
+
+        return (
+          <SideBarItem
+            key={idx}
+            {...itemProps}
+            isExpanded={isExpanded}
+            isActive={activeItem === idx || itemHrefActive}
+            setIsActive={() => setActiveItem(idx)}
+          />
+        );
+      })}
     </div>
   );
 };
@@ -50,7 +57,7 @@ export const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   setIsActive,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeSubItem, setActiveSubItem] = useState<number | null>(0);
+  const [activeSubItem, setActiveSubItem] = useState<number | null>(null);
 
   useEffect(() => {
     if (isActive) {
@@ -73,7 +80,7 @@ export const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   return (
     <>
       <div onClick={setItemAsActiveAndToggleDropdown}>
-        <Link href={href} aTagProps={{ target: '_blank' }}>
+        <Link href={href} target="_blank">
           <div
             className={twMerge(
               'cursor-pointer select-none rounded-full',
@@ -126,7 +133,7 @@ export const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
             <SubItem
               key={index}
               {...subItemProps}
-              isActive={activeSubItem === index && isActive ? true : false}
+              isActive={activeSubItem === index && isActive}
               setItemIsActive={setIsActive}
               setSubItemIsActive={() => setActiveSubItem(index)}
             />

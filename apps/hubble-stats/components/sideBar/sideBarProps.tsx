@@ -29,7 +29,7 @@ const sideBarItems: SideBarItemProps[] = [
       {
         name: 'Explorer',
         isInternal: true,
-        href: '',
+        href: '/',
       },
       {
         name: 'Faucet',

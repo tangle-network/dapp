@@ -1,5 +1,6 @@
 import { ExternalLinkLine } from '@webb-tools/icons';
-import React from 'react';
+import React, { useMemo } from 'react';
+import isSideBarItemActive from '../../utils/isSideBarItemActive';
 import { Typography } from '../../typography/Typography';
 import { Link } from '../Link';
 import cx from 'classnames';
@@ -11,7 +12,7 @@ export const SubItem: React.FC<
   name,
   isInternal,
   href,
-  isActive,
+  isActive: isActiveProp,
   setItemIsActive,
   setSubItemIsActive,
 }) => {
@@ -22,47 +23,46 @@ export const SubItem: React.FC<
     }
   };
 
+  const isActive = useMemo(() => {
+    return isActiveProp || isSideBarItemActive(href);
+  }, [href, isActiveProp]);
+
   return (
-    <div
+    <Link
+      href={href}
+      target="_blank"
       onClick={setIsActive}
       className={cx(
-        'px-6 py-3 rounded-full group hover:bg-mono-20 dark:hover:bg-mono-160',
-        {
-          'bg-mono-20 dark:bg-mono-160': isActive,
-        }
+        'px-6 py-3 rounded-full',
+        'group hover:bg-mono-20 dark:hover:bg-mono-160',
+        { 'pointer-events-none bg-mono-20 dark:bg-mono-160': isActive }
       )}
     >
-      <Link
-        href={href}
-        aTagProps={{ target: '_blank' }}
-        className={cx({ 'pointer-events-none': isActive })}
-      >
-        <li className="select-none">
-          <div
-            className={cx('flex items-center justify-between cursor-pointer', {
-              'text-mono-200 dark:text-mono-0': isActive && isInternal,
-              'text-mono-100 dark:text-mono-100': !isActive || !isInternal,
-            })}
-          >
-            <div className="flex items-center gap-4 !text-inherit">
-              <DotIcon width={20} height={20} />
+      <li className="select-none">
+        <div
+          className={cx('flex items-center justify-between cursor-pointer', {
+            'text-mono-200 dark:text-mono-0': isActive && isInternal,
+            'text-mono-100 dark:text-mono-100': !isActive || !isInternal,
+          })}
+        >
+          <div className="flex items-center gap-4 !text-inherit">
+            <DotIcon width={20} height={20} />
 
-              <Typography
-                variant="body1"
-                fw={isActive ? 'bold' : undefined}
-                className="!text-inherit"
-              >
-                {name}
-              </Typography>
-            </div>
-
-            {!isInternal && href && (
-              <ExternalLinkLine className="hidden group-hover:block !fill-current" />
-            )}
+            <Typography
+              variant="body1"
+              fw={isActive ? 'bold' : undefined}
+              className="!text-inherit"
+            >
+              {name}
+            </Typography>
           </div>
-        </li>
-      </Link>
-    </div>
+
+          {!isInternal && href && (
+            <ExternalLinkLine className="hidden group-hover:block !fill-current" />
+          )}
+        </div>
+      </li>
+    </Link>
   );
 };
 
