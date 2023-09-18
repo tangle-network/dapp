@@ -14,12 +14,11 @@ import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
   const pathname = usePathname();
-  const parts = pathname.split('/');
 
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
-    // check if current path is /pool/<poolAddress>
-    if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
-      const poolAddress = parts[2];
+    // check if current path is /pool/<0x...>
+    if (/^\/pool\/0x\w+/.test(pathname)) {
+      const poolAddress = pathname.split('/')[2];
       if (VANCHORS_MAP[poolAddress]) {
         return [
           {
@@ -46,7 +45,7 @@ const Breadcrumbs: FC = () => {
         href: '/',
       },
     ];
-  }, [parts]);
+  }, [pathname]);
 
   return (
     <BreadcrumbsCmp>
