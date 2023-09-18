@@ -16,7 +16,7 @@ import {
   BRIDGE_URL,
   SOCIAL_ICONS_RECORD,
   SOCIAL_URLS_RECORD,
-  STATS_URL,
+  DKG_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_AVAIABLE_SOCIALS,
   WEBB_CAREERS_URL,
@@ -84,7 +84,7 @@ const navLinks: Array<NavLinkType> = [
       },
       {
         label: 'DKG Explorer',
-        url: STATS_URL,
+        url: DKG_STATS_URL,
         isInternal: false,
       },
       {

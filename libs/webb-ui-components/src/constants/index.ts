@@ -48,7 +48,7 @@ export type webbNetworksType = {
 };
 
 export const BRIDGE_URL = 'https://app.webb.tools';
-export const STATS_URL = 'https://stats.tangle.tools';
+export const DKG_STATS_URL = 'https://stats.tangle.tools';
 export const WEBB_MKT_URL = 'https://webb.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.webb.tools';
@@ -72,6 +72,9 @@ export const GITHUB_REQUEST_FEATURE_URL =
 
 export const POLKADOT_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-archive.tangle.tools#/explorer/query';
+
+export const FOLLOW_WEBB_TWITTER_URL =
+  'https://twitter.com/intent/follow?screen_name=webbprotocol';
 
 export const WEBB_DOC_ROUTES_RECORD = {
   concepts: {
