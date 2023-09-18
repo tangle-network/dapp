@@ -10,50 +10,43 @@ import {
 import { CoinIcon, ContrastLine } from '@webb-tools/icons';
 
 import { VANCHORS_MAP } from '../../constants';
-
 import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
   const pathname = usePathname();
   const parts = pathname.split('/');
-  let activeItem = parts[parts.length - 1];
 
-  // check if current path is /pool/<poolAddress>
-  if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
-    const poolAddress = parts[2];
-    // if invalid poolAddress, the breadcrumb only show the default item
-    if (!VANCHORS_MAP[poolAddress]) {
-      activeItem = '';
-    } else {
-      activeItem = VANCHORS_MAP[poolAddress].fungibleTokenName;
+  const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
+    // check if current path is /pool/<poolAddress>
+    if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
+      const poolAddress = parts[2];
+      if (VANCHORS_MAP[poolAddress]) {
+        return [
+          {
+            label: 'Hubble Overview',
+            isLast: false,
+            icon: <ContrastLine className="!fill-mono-120" />,
+            href: '/',
+          },
+          {
+            label: VANCHORS_MAP[poolAddress].fungibleTokenName,
+            isLast: true,
+            icon: <CoinIcon />,
+            href: '#',
+          },
+        ];
+      }
     }
-  }
 
-  const breadCrumbs = useMemo(() => {
-    const breadCrumbItems: BreadcrumbType[] = [
+    return [
       {
         label: 'Hubble Overview',
-        isLast: activeItem === '',
-        icon: (
-          <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
-        ),
+        isLast: true,
+        icon: <ContrastLine />,
         href: '/',
-        textClassName: '!text-[12px] lg:!text-[16px] normal-case',
       },
     ];
-
-    if (activeItem !== '') {
-      breadCrumbItems.push({
-        label: activeItem,
-        isLast: true,
-        icon: <CoinIcon />,
-        href: '',
-        textClassName: '!text-[12px] lg:!text-[16px] normal-case',
-      });
-    }
-
-    return breadCrumbItems;
-  }, [activeItem]);
+  }, [parts]);
 
   return (
     <BreadcrumbsCmp>
@@ -62,7 +55,7 @@ const Breadcrumbs: FC = () => {
           <BreadcrumbsItem
             icon={breadcrumb.icon}
             className={breadcrumb.className}
-            textClassName={breadcrumb.textClassName}
+            textClassName="!text-[12px] lg:!text-[16px] normal-case"
             isLast={breadcrumb.isLast}
           >
             {breadcrumb.label}
