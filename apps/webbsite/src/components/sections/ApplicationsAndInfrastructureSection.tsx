@@ -1,12 +1,10 @@
-import links from '@webb-tools/dapp-config/links';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import {
+  TANGLE_MKT_URL,
+  WEBB_DOC_ROUTES_RECORD,
+} from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 import cx from 'classnames';
-
-const {
-  CONNECTED_SHIELDED_IDENTITY_URL,
-  SHIELDED_POOL_DOC_URL,
-  TANGLE_NETWORK_URL,
-} = links;
 
 export const ApplicationsAndInfrastructureSection = () => {
   return (
@@ -14,14 +12,14 @@ export const ApplicationsAndInfrastructureSection = () => {
       <div className="pb-9 space-y-9 px-4 max-w-[900px] mx-auto">
         <Typography
           variant="mkt-h3"
-          className="text-center font-black text-mono-200"
+          className="font-black text-center text-mono-200"
         >
           Applications & Infrastructure
         </Typography>
 
         <Typography
           variant="mkt-body1"
-          className="text-center text-mono-140 md:px-24 font-medium"
+          className="font-medium text-center text-mono-140 md:px-24"
         >
           Webb Builds private cross-chain applications and infrastructure that
           enable web3 privacy ecosystems to scale
@@ -31,12 +29,12 @@ export const ApplicationsAndInfrastructureSection = () => {
       <div className="px-4 space-y-[72px]">
         <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
           <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
-            <Typography variant="mkt-h4" className="text-mono-200 font-black">
+            <Typography variant="mkt-h4" className="font-black text-mono-200">
               Tangle Network
             </Typography>
             <Typography
               variant="mkt-body1"
-              className="mt-2 text-mono-140 font-medium"
+              className="mt-2 font-medium text-mono-140"
             >
               Cross-chain private applications require governance and trustless
               proof of events. Tangle provides that using threshold multi-party
@@ -45,7 +43,7 @@ export const ApplicationsAndInfrastructureSection = () => {
 
             <Button
               className="mt-6 button-base button-primary"
-              href={TANGLE_NETWORK_URL}
+              href={TANGLE_MKT_URL}
               target="_blank"
               rel="noreferrer"
             >
@@ -70,18 +68,21 @@ export const ApplicationsAndInfrastructureSection = () => {
           />
 
           <div className="self-start md:w-[calc(50%-12.5px)] md:!my-auto">
-            <Typography variant="mkt-h4" className="text-mono-200 font-black">
+            <Typography variant="mkt-h4" className="font-black text-mono-200">
               Connected Shielded Pool Protocols
             </Typography>
             <Typography
               variant="mkt-body1"
-              className="mt-2 text-mono-140 font-medium"
+              className="mt-2 font-medium text-mono-140"
             >
               A cross-chain private transaction system for privately moving and
               privately transferring assets between blockchains.
             </Typography>
             <Button
-              href={SHIELDED_POOL_DOC_URL}
+              href={populateDocsUrl(
+                WEBB_DOC_ROUTES_RECORD.protocols['single-asset-shielded-pool']
+                  .overview
+              )}
               target="_blank"
               rel="noreferrer"
               className="mt-6 button-base button-primary"
@@ -93,18 +94,20 @@ export const ApplicationsAndInfrastructureSection = () => {
 
         <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
           <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
-            <Typography variant="mkt-h4" className="text-mono-200 font-black">
+            <Typography variant="mkt-h4" className="font-black text-mono-200">
               Connected Shielded Identity Protocols
             </Typography>
             <Typography
               variant="mkt-body1"
-              className="mt-2 text-mono-140 font-medium"
+              className="mt-2 font-medium text-mono-140"
             >
               A cross-chain system for creating identities and connecting groups
               between blockchains.
             </Typography>
             <Button
-              href={CONNECTED_SHIELDED_IDENTITY_URL}
+              href={populateDocsUrl(
+                WEBB_DOC_ROUTES_RECORD.protocols['identity'].route
+              )}
               target="_blank"
               rel="noreferrer"
               className="mt-6 button-base button-primary"

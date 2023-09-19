@@ -1,42 +1,20 @@
 import { Link as ReactRouterLink } from 'react-router-dom';
 import NextLink from 'next/link';
-import { LinkProps } from './types';
+import { LinkProps, isNextLinkProps, isReactRouterLinkProps } from './types';
+import { Fragment } from 'react';
 
-export const Link: React.FC<LinkProps> = ({
-  href,
-  children,
-  isNext,
-  aTagProps,
-  nextLinkProps,
-  reactRouterLinkProps,
-  ...props
-}) => {
-  if (!href) {
-    return <>{children}</>;
+export const Link: React.FC<LinkProps> = (props) => {
+  if (isNextLinkProps(props)) {
+    return <NextLink {...props} />;
   }
 
-  const isExternal =
-    href && (href.startsWith('http://') || href.startsWith('https://'));
-
-  if (isExternal) {
-    return (
-      <a href={href} {...aTagProps} {...props}>
-        {children}
-      </a>
-    );
+  if (isReactRouterLinkProps(props)) {
+    return <ReactRouterLink {...props} />;
   }
 
-  if (isNext) {
-    return (
-      <NextLink href={href} {...nextLinkProps} {...props}>
-        {children}
-      </NextLink>
-    );
+  if (!props.href?.length) {
+    return <Fragment key={props.key}>{props.children}</Fragment>;
   }
 
-  return (
-    <ReactRouterLink to={href} {...reactRouterLinkProps} {...props}>
-      {children}
-    </ReactRouterLink>
-  );
+  return <a {...props} />;
 };

@@ -1,7 +1,11 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 import { twMerge } from 'tailwind-merge';
 
-const manifestoUrl = 'https://docs.webb.tools/docs/overview/privacy-manifesto/';
+const manifestoUrl = populateDocsUrl(
+  WEBB_DOC_ROUTES_RECORD.overview['privacy-manifesto']
+);
 
 export const HeroSection = () => {
   return (

@@ -1,10 +1,13 @@
-import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
-
 import { Button, Logo, Navbar } from '@webb-tools/webb-ui-components';
 import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
 import Link from 'next/link';
 import { ComponentProps, useEffect, useState } from 'react';
+import {
+  BRIDGE_URL,
+  WEBB_BLOG_URL,
+  WEBB_DOCS_URL,
+} from '@webb-tools/webb-ui-components/constants';
 
 const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
   {
@@ -21,13 +24,13 @@ const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
     ],
   },
   { label: 'community', url: '/community', isInternal: true },
-  { label: 'docs', url: links.WEBB_DOCS_URL },
-  { label: 'blog', url: links.WEBB_BLOG_URL, isInternal: true },
+  { label: 'docs', url: WEBB_DOCS_URL },
+  { label: 'blog', url: WEBB_BLOG_URL, isInternal: true },
 ];
 
 const buttonProps: Array<ComponentProps<typeof Button>> = [
   {
-    href: links.BRIDGE_URL,
+    href: BRIDGE_URL,
     target: '_blank',
     rel: 'noreferrer',
     children: 'Bridge',

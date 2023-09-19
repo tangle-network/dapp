@@ -7,6 +7,7 @@ import {
   WebbUIProvider,
   WebsiteFooter,
 } from '@webb-tools/webb-ui-components';
+import { WEBB_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import { DefaultSeo } from 'next-seo';
 import { AppProps } from 'next/app';
 import Script from 'next/script';
@@ -36,7 +37,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         openGraph={{
           type: 'website',
           locale: 'en_US',
-          url: 'https://webb.tools/',
+          url: WEBB_MKT_URL,
           images: [
             {
               url: 'https://webb-assets.s3.amazonaws.com/og-optimize.png',
@@ -59,7 +60,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
         <Script
           defer
-          data-domain="webb.tools"
+          data-domain={WEBB_MKT_URL}
           src="https://plausible.io/js/script.js"
         />
       </main>

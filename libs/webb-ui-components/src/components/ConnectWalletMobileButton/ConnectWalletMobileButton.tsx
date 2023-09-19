@@ -8,7 +8,8 @@ import {
   BottomDialogPortal,
 } from '../BottomDialog';
 import { ConnectWalletMobileButtonProps } from './types';
-import { BRIDGE_URL, BRIDGE_DOCS_URL } from '../../constants';
+import { BRIDGE_URL, WEBB_DOC_ROUTES_RECORD } from '../../constants';
+import populateDocsUrl from '../../utils/populateDocsUrl';
 
 const actionButtonsProps: Array<ButtonProps> = [
   {
@@ -19,7 +20,9 @@ const actionButtonsProps: Array<ButtonProps> = [
     children: 'Learn more',
     variant: 'secondary',
     isFullWidth: true,
-    href: BRIDGE_DOCS_URL,
+    href: populateDocsUrl(
+      WEBB_DOC_ROUTES_RECORD.projects['hubble-bridge'].overview
+    ),
   },
 ];
 

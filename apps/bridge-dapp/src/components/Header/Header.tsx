@@ -10,6 +10,13 @@ import {
   NavigationMenuTrigger,
   SideBarMenu,
 } from '@webb-tools/webb-ui-components';
+import {
+  GITHUB_REQUEST_FEATURE_URL,
+  TANGLE_STANDALONE_EXPLORER_URL,
+  WEBB_FAUCET_URL,
+  WEBB_MKT_URL,
+  SOCIAL_URLS_RECORD,
+} from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
@@ -104,26 +111,18 @@ export const Header: FC<HeaderProps> = () => {
           <NavigationMenuContent
             version={process.env.BRIDGE_VERSION}
             onTestnetClick={() =>
-              window.open(
-                'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
-                '_blank'
-              )
+              window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
             }
             onFaucetClick={() => {
-              window.open('https://faucet.webb.tools/', '_blank');
+              window.open(WEBB_FAUCET_URL, '_blank');
             }}
             onHelpCenterClick={() =>
-              window.open('https://t.me/webbprotocol', '_blank')
+              window.open(SOCIAL_URLS_RECORD.telegram, '_blank')
             }
             onRequestFeaturesClick={() =>
-              window.open(
-                'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=',
-                '_blank'
-              )
+              window.open(GITHUB_REQUEST_FEATURE_URL, '_blank')
             }
-            onAboutClick={() =>
-              window.open('https://www.webb.tools/', '_blank')
-            }
+            onAboutClick={() => window.open(WEBB_MKT_URL, '_blank')}
           />
         </NavigationMenu>
       </div>

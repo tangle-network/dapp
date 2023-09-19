@@ -1,30 +1,31 @@
 import {
-  webbAppConfig,
-  tangleLogoConfig,
-  headerNavs,
-  NetworkType,
-  STATS_DOCUS_URL,
-} from '@webb-tools/webb-ui-components/constants';
+  BookOpenLineIcon,
+  ExternalLinkLine,
+  ThreeDotsVerticalIcon,
+} from '@webb-tools/icons';
 import {
   Button,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   MenuItem,
-  ThemeSwitcherButton,
   TangleLogo,
+  ThemeSwitcherButton,
 } from '@webb-tools/webb-ui-components';
 import {
-  BookOpenLineIcon,
-  ThreeDotsVerticalIcon,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
+  Network,
+  NetworkType,
+  WEBB_DOC_ROUTES_RECORD,
+  headerNavs,
+  tangleLogoConfig,
+  webbAppConfig,
+} from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 import cx from 'classnames';
 import { FC, PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
 import { NetworkSelector } from '../NetworkSelector/NetworkSelector';
-import { Network } from '@webb-tools/webb-ui-components/constants';
 
 type HeaderProps = {
   selectedNetwork: Network;
@@ -78,7 +79,7 @@ export const Header: FC<HeaderProps> = ({
 
               <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
                 <MenuItem
-                  className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
+                  className="p-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
                     window.open(selectedNetwork.polkadotExplorer, '_blank');
@@ -90,10 +91,15 @@ export const Header: FC<HeaderProps> = ({
                 </MenuItem>
 
                 <MenuItem
-                  className="px-4 py-3.5 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0  dark:hover:bg-mono-180"
+                  className="p-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
                   icon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
-                    window.open(STATS_DOCUS_URL, '_blank');
+                    window.open(
+                      populateDocsUrl(
+                        WEBB_DOC_ROUTES_RECORD.projects['stats-dapp'].overview
+                      ),
+                      '_blank'
+                    );
                   }}
                 >
                   <Typography variant="label" fw="bold">

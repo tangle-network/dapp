@@ -1,4 +1,3 @@
-import './styles.css';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
@@ -16,6 +15,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-const container = document.getElementById('root');
+const container =
+  document.getElementById('root') ?? document.createElement('div');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
 root.render(<App />);

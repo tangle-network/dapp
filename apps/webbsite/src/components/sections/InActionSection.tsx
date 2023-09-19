@@ -1,4 +1,3 @@
-import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
 
 import {
@@ -10,8 +9,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
-
-const { BRIDGE_URL, STATS_URL } = links;
+import {
+  BRIDGE_URL,
+  DKG_STATS_URL,
+} from '@webb-tools/webb-ui-components/constants';
 
 export const InActionSection = () => {
   return (
@@ -23,14 +24,14 @@ export const InActionSection = () => {
     >
       <Typography
         variant="mkt-h3"
-        className="px-4 text-center font-black text-mono-200"
+        className="px-4 font-black text-center text-mono-200"
       >
         Shielded Protocols in Action
       </Typography>
 
       <Typography
         variant="mkt-subheading"
-        className="px-4 text-center text-mono-180 font-medium"
+        className="px-4 font-medium text-center text-mono-180"
       >
         {"Try out the applications we're building."}
       </Typography>
@@ -51,14 +52,14 @@ export const InActionSection = () => {
           <div className="pt-4 px-4 md:pt-9 md:px-9 space-y-4 md:max-w-[378px]">
             <Typography
               variant="mkt-subheading"
-              className="text-mono-200 font-black"
+              className="font-black text-mono-200"
             >
               Zero-Knowledge Cross-Chain Bridging
             </Typography>
 
             <Typography
               variant="mkt-body2"
-              className="text-mono-160 font-medium"
+              className="font-medium text-mono-160"
             >
               A truly zero-knowledge cross-chain environment to deposit,
               transfer, and withdraw funds.
@@ -85,20 +86,20 @@ export const InActionSection = () => {
             <div className="space-y-4 md:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
               <Typography
                 variant="mkt-subheading"
-                className="text-mono-200 font-black"
+                className="font-black text-mono-200"
               >
                 Explore the Tangle Network with the stats page
               </Typography>
 
               <Typography
                 variant="mkt-body2"
-                className="text-mono-160 font-medium"
+                className="font-medium text-mono-160"
               >
                 Monitor the health of the Tangle Network, watch proposals and
                 more on the stats page.
               </Typography>
 
-              <Button href={STATS_URL} target="_blank" rel="noreferrer">
+              <Button href={DKG_STATS_URL} target="_blank" rel="noreferrer">
                 Explore Tangle
               </Button>
             </div>

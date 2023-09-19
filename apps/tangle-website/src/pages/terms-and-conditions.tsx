@@ -5,14 +5,15 @@ import { NextSeo } from 'next-seo';
 import { ExtendedRecordMap } from 'notion-types';
 import { NotionRenderer } from 'react-notion-x';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
-import links from '@webb-tools/dapp-config/links';
 import { Notion, TERMS_AND_CONDITIONS_PAGE_ID } from '../libs/notion';
-
-const { TANGLE_MARKETING_URL, WEBB_MARKETING_URL } = links;
+import {
+  TANGLE_MKT_URL,
+  WEBB_MKT_URL,
+} from '@webb-tools/webb-ui-components/constants';
 
 const TermsAndConditions: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
   return (
-    <div className="bg-body bg-repeat-y bg-top">
+    <div className="bg-top bg-repeat-y bg-body">
       <NextSeo
         title="Terms and Conditions"
         description="Terms and Conditions of Webb"
@@ -28,14 +29,14 @@ const TermsAndConditions: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
           Link: ({ children, ...restProps }) => {
             const textContent = children.props.children;
             return typeof textContent === 'string' &&
-              textContent.includes(WEBB_MARKETING_URL) ? ( // Replace the link to Webbsite with Tangle website
+              textContent.includes(WEBB_MKT_URL) ? ( // Replace the link to Webbsite with Tangle website
               <Button
                 className="inline"
                 variant="link"
                 {...restProps}
-                href={TANGLE_MARKETING_URL}
+                href={TANGLE_MKT_URL}
               >
-                {textContent.replace(WEBB_MARKETING_URL, TANGLE_MARKETING_URL)}
+                {textContent.replace(WEBB_MKT_URL, TANGLE_MKT_URL)}
               </Button>
             ) : (
               <Button className="inline" variant="link" {...restProps}>

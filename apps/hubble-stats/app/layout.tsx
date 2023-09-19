@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
+      <body className="flex h-screen bg-body">
         <NextThemeProvider>
           <Layout>{children}</Layout>
         </NextThemeProvider>

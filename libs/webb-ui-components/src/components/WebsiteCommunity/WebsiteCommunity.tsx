@@ -67,13 +67,13 @@ export const WebsiteCommunity = ({
             <Icon className="w-8 h-8 !fill-current" />
             <Typography
               variant="mkt-subheading"
-              className="text-mono-200 font-black"
+              className="font-black text-mono-200"
             >
               {name}
             </Typography>
           </span>
 
-          <Typography variant="mkt-body1" className="text-mono-140 font-medium">
+          <Typography variant="mkt-body1" className="font-medium text-mono-140">
             {description}
           </Typography>
 

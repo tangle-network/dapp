@@ -1,4 +1,3 @@
-import links from '@webb-tools/dapp-config/links';
 import {
   Button,
   Logo,
@@ -6,20 +5,26 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
+import {
+  BRIDGE_URL,
+  TANGLE_MKT_URL,
+  WEBB_DOCS_URL,
+  WEBB_MKT_URL,
+} from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
 import { ComponentProps, useEffect, useState } from 'react';
 
 const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
-  { label: 'community', url: 'https://webb.tools/community' },
-  { label: 'docs', url: links.WEBB_DOCS_URL },
-  { label: 'tangle network', url: links.TANGLE_MARKETING_URL },
+  { label: 'community', url: new URL('community', WEBB_MKT_URL).toString() },
+  { label: 'docs', url: WEBB_DOCS_URL },
+  { label: 'tangle network', url: TANGLE_MKT_URL },
 ];
 
 const buttonProps: Array<ComponentProps<typeof Button>> = [
   {
     children: 'Hubble Bridge',
-    href: links.BRIDGE_URL,
+    href: BRIDGE_URL,
     rel: 'noreferrer',
     target: '_blank',
   },

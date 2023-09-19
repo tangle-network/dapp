@@ -18,6 +18,7 @@ export interface SideBarFooterProps extends SideBarFooterType {
 export interface SideBarLogoProps {
   Logo: React.FC<LogoProps>;
   logoLink?: string;
+  isExpanded?: boolean;
 }
 
 export interface SidebarProps extends SideBarLogoProps {

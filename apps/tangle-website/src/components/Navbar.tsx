@@ -1,8 +1,6 @@
 import { AccordionTrigger } from '@radix-ui/react-accordion';
-import cx from 'classnames';
 import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
 import {
-  Typography,
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -10,13 +8,16 @@ import {
   DropdownBasicButton,
   DropdownBody,
   MenuItem,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import {
-  TANGLE_DOCS_URL,
-  STATS_URL,
+  DKG_STATS_URL,
+  WEBB_DOC_ROUTES_RECORD,
 } from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
+import cx from 'classnames';
 
-import { InternalOrExternalLink, IInternalOrExternalLink, LinkButton } from '.';
+import { IInternalOrExternalLink, InternalOrExternalLink, LinkButton } from '.';
 
 type NavItem = IInternalOrExternalLink;
 
@@ -30,7 +31,10 @@ const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
     url: '#community',
     isInternal: true,
   },
-  { label: 'docs', url: TANGLE_DOCS_URL },
+  {
+    label: 'docs',
+    url: populateDocsUrl(WEBB_DOC_ROUTES_RECORD['tangle-network'].overview),
+  },
   {
     label: 'ecosystem',
     url: '#',
@@ -100,7 +104,7 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <LinkButton href={STATS_URL} className="px-5 md:px-9">
+          <LinkButton href={DKG_STATS_URL} className="px-5 md:px-9">
             View Network
           </LinkButton>
         </li>

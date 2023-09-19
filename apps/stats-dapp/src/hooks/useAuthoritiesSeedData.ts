@@ -1,6 +1,6 @@
 import { randBic, randBrand, randCountryCode, randNumber } from '@ngneat/falso';
+import { WEBB_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
-
 import { AuthorityRowType } from '../containers/KeyDetail/types';
 
 /**
@@ -14,7 +14,7 @@ const getNewAuthority = (): AuthorityRowType => {
     location: randCountryCode(),
     uptime: randNumber({ min: 90, max: 100 }),
     reputation: randNumber({ min: 90, max: 100 }),
-    detaillUrl: 'https://webb.tools',
+    detaillUrl: WEBB_MKT_URL,
   };
 };
 
