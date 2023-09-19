@@ -1,4 +1,4 @@
-import links from '@webb-tools/dapp-config/links';
+import { FOLLOW_WEBB_TWITTER_URL } from '@webb-tools/webb-ui-components/constants';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import cx from 'classnames';
 import { forwardRef } from 'react';
@@ -11,7 +11,7 @@ const TwitterLink = forwardRef<
   (
     {
       className,
-      href = links.FOLLOW_WEBB_TWITTER_URL,
+      href = FOLLOW_WEBB_TWITTER_URL,
       rel = 'noopener noreferrer',
       target = '_blank',
       children = '@webbprotocol',

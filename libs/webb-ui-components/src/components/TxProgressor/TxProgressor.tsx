@@ -99,8 +99,14 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
 
   return (
     <div {...props} className={twMerge('space-y-2', className)}>
-      <div className="flex items-center gap-2">
-        <ChainChip chainName={chain.name} chainType={chain.group} />
+      <div
+        className={cx('flex items-center gap-2', { 'justify-end': !isSource })}
+      >
+        <ChainChip
+          className="px-2 py-1"
+          chainName={chain.name}
+          chainType={chain.group}
+        />
 
         {walletAddress && (
           <Chip
@@ -122,8 +128,8 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
               className="inline-block text-mono-120 dark:text-mono-60"
             >
               {isHex(walletAddress)
-                ? shortenHex(walletAddress, 3)
-                : shortenString(walletAddress, 3)}
+                ? shortenHex(walletAddress, 2)
+                : shortenString(walletAddress, 2)}
             </Typography>
           </Chip>
         )}
@@ -166,7 +172,7 @@ const TxProgressorBody = forwardRef<
     <div
       {...props}
       ref={ref}
-      className={twMerge('flex items-start justify-between mt-2', className)}
+      className={twMerge('flex items-center justify-between mt-2', className)}
     >
       <TxProgressorBodyItem {...txSourceInfo} isSource />
 

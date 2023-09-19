@@ -7,10 +7,8 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useState } from 'react';
-
-// TODO: Correct the learn more link here.
-const LEARN_MORE_LINK = 'https://docs.webb.tools';
 
 export const ClearDataModal: FC<{
   isOpen: boolean;
@@ -72,7 +70,7 @@ export const ClearDataModal: FC<{
             Confirm
           </Button>
           <Button
-            href={LEARN_MORE_LINK}
+            href={WEBB_DOCS_URL}
             target="_blank"
             rel="noopener noreferrer"
             isFullWidth

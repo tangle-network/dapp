@@ -23,6 +23,7 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
+        "port": 4300,
         "buildTarget": "faucet:build",
         "dev": true
       },

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
+import { DKG_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 
 import { WhatIsTssSvg, HowTssWorksSvg } from '../svgs';
 import { LinkButton } from '..';
@@ -71,7 +71,7 @@ export const GovernanceSystemSection = () => {
               >
                 Read Docs
               </LinkButton>
-              <LinkButton href={STATS_URL} className="px-5 md:px-9">
+              <LinkButton href={DKG_STATS_URL} className="px-5 md:px-9">
                 View Network
               </LinkButton>
             </div>

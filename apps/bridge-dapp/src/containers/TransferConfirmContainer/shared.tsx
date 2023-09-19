@@ -1,7 +1,5 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
-
-const RECIPIENT_PUBLIC_KEY_DOCS_URL =
-  'https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/transfer/#6-input-recipient-shielded-address';
+import { RECIPIENT_PUBLIC_KEY_DOCS_URL } from '../../constants';
 
 export const RecipientPublicKeyTooltipContent = () => (
   <div className="py-2">

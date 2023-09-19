@@ -99,6 +99,7 @@ export * from './UsageGuideIcon';
 export * from './UserStarFillIcon';
 export { default as WalletFillIcon } from './WalletFillIcon';
 export { default as WalletLineIcon } from './WalletLineIcon';
+export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 
 // Wallet icons

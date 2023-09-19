@@ -29,3 +29,17 @@
 :root {
   --adjust-amount-width: 160px;
 }
+
+.bg-body-base {
+  @apply bg-cover bg-center bg-no-repeat bg-fixed object-fill;
+}
+
+.bg-body {
+  @apply bg-body-base;
+  background-image: url(./assets/body-bg.jpeg);
+}
+
+.dark .bg-body {
+  @apply bg-body-base;
+  background-image: url(./assets/body-bg-dark.jpeg);
+}

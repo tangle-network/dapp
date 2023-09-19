@@ -42,14 +42,14 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
               {...overrideContentProps}
               className={twMerge(
                 'w-[280px] h-full outline-none overflow-auto py-6 px-4',
-                '!bg-mono-0 dark:!bg-mono-160 fixed left-0',
+                'bg-mono-0 dark:bg-mono-180 fixed left-0',
                 'animate-[sideBarSlideLeftToRight_400ms]',
                 'flex flex-col justify-between',
                 overrideContentProps?.className
               )}
             >
               <div>
-                <SideBarLogo logoLink={logoLink} Logo={Logo} />
+                <SideBarLogo logoLink={logoLink} Logo={Logo} isExpanded />
                 <SideBarItems items={items} isExpanded />
               </div>
 

@@ -1,6 +1,8 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
+import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
 
 export type Section = {
   icon: React.ReactNode;
@@ -16,7 +18,9 @@ const sections: Array<Section> = [
     title: 'Anchor System',
     description: `A technical protocol for connecting many cryptographic accumulators together and enabling zero-knowledge proofs of membership between them.`,
     sourceCodeUrl: 'https://github.com/webb-tools/protocol-solidity',
-    documentationUrl: 'https://docs.webb.tools/docs/anchor-system/overview/',
+    documentationUrl: populateDocsUrl(
+      WEBB_DOC_ROUTES_RECORD.concepts['anchor-system'].overview
+    ),
   },
   {
     icon: <DistributedKeygenIcon />,
@@ -24,7 +28,10 @@ const sections: Array<Section> = [
     description:
       'We leverage multi-party computation protocols used to decentralize trust over a set of parties to facilitate governance and operation of Anchor System instances.',
     sourceCodeUrl: 'https://github.com/webb-tools/dkg-substrate',
-    documentationUrl: 'https://docs.webb.tools/docs/protocols/dkg/overview/',
+    documentationUrl: populateDocsUrl(
+      WEBB_DOC_ROUTES_RECORD.protocols['mpc-protocols']['dkg-substrate']
+        .overview
+    ),
   },
   {
     icon: <ZkMessagingIcon />,
@@ -43,7 +50,7 @@ export const ResearchAndDevelopmentSection = () => {
       <div className="max-w-[900px]">
         <Typography
           variant="mkt-h3"
-          className="px-4 text-center font-black text-mono-200"
+          className="px-4 font-black text-center text-mono-200"
         >
           Research & Development
         </Typography>
@@ -67,13 +74,13 @@ export const ResearchAndDevelopmentSection = () => {
               <div>
                 <Typography
                   variant="mkt-h4"
-                  className="text-mono-200 font-black"
+                  className="font-black text-mono-200"
                 >
                   {section.title}
                 </Typography>
                 <Typography
                   variant="mkt-body1"
-                  className="mt-2 text-mono-160 font-medium"
+                  className="mt-2 font-medium text-mono-160"
                 >
                   {section.description}
                 </Typography>
