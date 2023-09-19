@@ -43,3 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of the Hubble Stats app
 - Include the overview page of the Hubble Bridge system
 - Include the pool detail page
+
+## [0.0.2] - 2023-09-19
+
+### Chaged, Added and Fixed
+
+- Fix Bugs in Pool Wrapping Table
+- Add TVL change rate + Add Explorer Urls
+- Fix Hubble Stats Theme Flickering

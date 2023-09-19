@@ -141,3 +141,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed, Changed and Added
 
 - DKG Stats Bug Fixes and UI enhancements ([#1560](https://github.com/webb-tools/webb-dapp/pull/1560))
+
+## [0.0.15] - 2023-09-19
+
+### Fixed, Changed and Added
+
+- UI improvements
+- Unifying backend to `webb-ui-kit`
