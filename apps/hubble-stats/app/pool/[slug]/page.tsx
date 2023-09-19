@@ -11,6 +11,9 @@ import {
 } from '../../../containers';
 import { VANCHORS_MAP } from '../../../constants';
 
+// revalidate every 5 seconds
+export const revalidate = 5;
+
 export default function Pool({ params }: { params: { slug: string } }) {
   const poolAddress = params.slug;
 
