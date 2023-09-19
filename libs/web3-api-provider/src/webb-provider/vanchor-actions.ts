@@ -159,8 +159,8 @@ export class Web3VAnchorActions extends VAnchorActions<
         transferUtxo,
         notes,
         feeAmount,
-        refundAmount = ZERO_BIG_INT,
-        refundRecipient = ZERO_ADDRESS,
+        refundAmount,
+        refundRecipient,
       } = payload;
 
       const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
@@ -171,8 +171,13 @@ export class Web3VAnchorActions extends VAnchorActions<
       // If no relayer is set, then the fee is 0, otherwise it is the fee amount
       const feeVal = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
       const refund = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
+
       const recipient =
-        relayer === ZERO_ADDRESS ? ZERO_ADDRESS : refundRecipient;
+        relayer === ZERO_ADDRESS
+          ? ZERO_ADDRESS
+          : refundRecipient.length === 0
+          ? ZERO_ADDRESS
+          : refundRecipient;
 
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
