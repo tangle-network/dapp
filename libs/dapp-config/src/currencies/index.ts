@@ -8,3 +8,10 @@ export const DEFAULT_EVM_CURRENCY = {
   decimals: 18,
   address: zeroAddress,
 } as const;
+
+export const ORBIT_NATIVE_CURRENCY = {
+  name: 'Orbit ETH',
+  symbol: 'ORBt',
+  decimals: 18,
+  address: zeroAddress,
+} as const;
