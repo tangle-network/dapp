@@ -8,13 +8,8 @@ import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
-import {
-  BRIDGE_TABS,
-  DEST_CHAIN_KEY,
-  POOL_KEY,
-  SOURCE_CHAIN_KEY,
-  TOKEN_KEY,
-} from '../../../constants';
+import { BRIDGE_TABS, POOL_KEY, TOKEN_KEY } from '../../../constants';
+import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
 const SelectToken: FC = () => {
@@ -28,42 +23,14 @@ const SelectToken: FC = () => {
 
   const { apiConfig } = useWebContext();
 
-  const [srcTypedChainId, destTypedChainId] = useMemo(() => {
-    const srcTypedId = searhParams.get(SOURCE_CHAIN_KEY)
-      ? Number(searhParams.get(SOURCE_CHAIN_KEY))
-      : undefined;
-
-    const destTypedId = searhParams.get(DEST_CHAIN_KEY)
-      ? Number(searhParams.get(DEST_CHAIN_KEY))
-      : undefined;
-
-    return [srcTypedId, destTypedId];
-  }, [searhParams]);
-
-  const [srcChainCfg, destChainCfg] = useMemo(() => {
-    const srcChainCfg =
-      typeof srcTypedChainId === 'number'
-        ? apiConfig.chains[srcTypedChainId]
-        : undefined;
-
-    const destChainCfg =
-      typeof destTypedChainId === 'number'
-        ? apiConfig.chains[destTypedChainId]
-        : undefined;
-
-    return [srcChainCfg, destChainCfg];
-  }, [apiConfig.chains, destTypedChainId, srcTypedChainId]);
+  const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
 
   const blockExplorer = useMemo(() => {
-    if (currentTxType === 'deposit' && srcChainCfg) {
-      return srcChainCfg.blockExplorers?.default.url;
-    } else if (currentTxType === 'withdraw' && destChainCfg) {
-      return destChainCfg.blockExplorers?.default.url;
-    }
-  }, [currentTxType, destChainCfg, srcChainCfg]);
+    return srcChainCfg?.blockExplorers?.default.url;
+  }, [srcChainCfg]);
 
   const { allCurrencies, allCurrencyCfgs } = useCurrenciesFromRoute(
-    currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
+    srcTypedChainId ?? undefined
   );
 
   const fungibleAddress = useMemo(() => {
@@ -77,16 +44,16 @@ const SelectToken: FC = () => {
       return;
     }
 
-    if (typeof destTypedChainId === 'number') {
-      return fungible.addresses.get(destTypedChainId);
+    if (typeof srcTypedChainId === 'number') {
+      return fungible.addresses.get(srcTypedChainId);
     }
 
     return undefined;
-  }, [apiConfig.currencies, destTypedChainId, searhParams]);
+  }, [apiConfig.currencies, searhParams, srcTypedChainId]);
 
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
     allCurrencies,
-    currentTxType === 'withdraw' ? destTypedChainId : srcTypedChainId,
+    srcTypedChainId ?? undefined,
     currentTxType === 'withdraw' ? fungibleAddress : undefined
   );
 
@@ -107,7 +74,7 @@ const SelectToken: FC = () => {
           currentTxType
         );
 
-        const address = getAddress(currencyCfg, srcTypedChainId);
+        const address = getAddress(currencyCfg, srcTypedChainId ?? undefined);
         const explorerUrl = getExplorerUrl(address, blockExplorer);
 
         return {
