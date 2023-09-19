@@ -79,3 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.6] - 2023-08-07
 
 - Improve the Faucet UI ([#1454](https://github.com/webb-tools/webb-dapp/pull/1454)).
+
+## [0.0.7] - 2023-09-19
+
+- Unifying background to webb-ui-kit
