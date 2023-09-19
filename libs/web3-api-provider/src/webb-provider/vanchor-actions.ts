@@ -173,9 +173,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       const refund = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
 
       const recipient =
-        relayer === ZERO_ADDRESS
-          ? ZERO_ADDRESS
-          : refundRecipient.length === 0
+        relayer === ZERO_ADDRESS || refundRecipient.length === 0
           ? ZERO_ADDRESS
           : refundRecipient;
 
