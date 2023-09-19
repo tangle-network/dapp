@@ -3,6 +3,7 @@ export * from './ChartTooltip';
 export * from './CopyIconWithTooltip';
 export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';
+export * from './LoadingScreen';
 export * from './PoolMetadataTable';
 export * from './PoolOverviewCardItem';
 export * from './PoolOverviewTable';
