@@ -14,7 +14,10 @@ const NumberCell: FC<NumberCellProps> = ({
 }) => {
   return (
     <div
-      className={twMerge('flex items-center gap-1 justify-center', className)}
+      className={twMerge(
+        'flex items-center gap-1 justify-center whitespace-nowrap',
+        className
+      )}
     >
       <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
         {typeof value === 'number' && (prefix ?? '')}

@@ -17,21 +17,32 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
 }) => {
   return (
     <div className={cx('px-2', className)}>
-      <div className="flex justify-center items-center gap-1">
-        <div className="flex items-center gap-0.5">
-          <Typography variant="h5" fw="black">
-            {typeof value === 'number' && prefix}
-            {getRoundedDownNumberWith2Decimals(value)}
+      <div className="flex items-center justify-center gap-0.5">
+        <Typography variant="h5" fw="black">
+          {typeof value === 'number' && prefix}
+          {getRoundedDownNumberWith2Decimals(value)}
+        </Typography>
+        {typeof value === 'number' && (
+          <Typography
+            variant="body2"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {suffix}
           </Typography>
-          {typeof value === 'number' && (
-            <Typography
-              variant="body2"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {suffix}
-            </Typography>
+        )}
+      </div>
+
+      <div className="flex justify-center items-center gap-1">
+        <Typography
+          variant="utility"
+          tw="black"
+          className={cx(
+            'uppercase block text-center !text-[10px] md:!text-[12px]',
+            'text-mono-120 dark:text-mono-80'
           )}
-        </div>
+        >
+          {title}
+        </Typography>
         {typeof changeRate === 'number' && (
           <Typography
             variant="utility"
@@ -55,17 +66,6 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
           </Typography>
         )}
       </div>
-
-      <Typography
-        variant="utility"
-        tw="black"
-        className={cx(
-          'w-full uppercase block text-center !text-[10px] md:!text-[12px]',
-          'text-mono-120 dark:text-mono-80'
-        )}
-      >
-        {title}
-      </Typography>
     </div>
   );
 };

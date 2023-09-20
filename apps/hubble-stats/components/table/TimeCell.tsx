@@ -8,7 +8,10 @@ const TimeCell: FC<TimeCellProps> = ({ time, className }) => {
   return (
     <Typography
       variant="body1"
-      className={twMerge('text-mono-140 dark:text-mono-40', className)}
+      className={twMerge(
+        'text-mono-140 dark:text-mono-40 whitespace-nowrap',
+        className
+      )}
     >
       {time ?? '-'}
     </Typography>
