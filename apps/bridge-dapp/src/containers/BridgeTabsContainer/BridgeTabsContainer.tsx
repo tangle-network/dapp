@@ -1,11 +1,9 @@
-import SettingsFillIcon from '@webb-tools/icons/SettingsFillIcon';
 import cx from 'classnames';
 import { FC } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { BRIDGE_TABS } from '../../constants';
 import { BridgeTabsContainerProps } from './types';
-import { IconButton } from '@webb-tools/webb-ui-components';
 
 const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
   children,
@@ -49,12 +47,6 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
             </Link>
           </li>
         ))}
-
-        <li key={`button`} className="last:ml-auto" title="Setting">
-          <IconButton {...settingBtnProps}>
-            <SettingsFillIcon size="lg" />
-          </IconButton>
-        </li>
       </ul>
 
       {children}
