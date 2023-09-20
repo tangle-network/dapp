@@ -4,7 +4,6 @@ import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
 import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { FC, useCallback, useMemo } from 'react';
 import { useConnectWallet } from '../../hooks';
-import { getActiveSourceChains } from '../../utils/getActiveSourceChains';
 import { ChainListCardWrapperProps } from './types';
 
 /**
@@ -27,7 +26,6 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const {
     activeChain,
     activeWallet,
-    apiConfig,
     chains: chainsConfig,
     loading,
     switchChain,
@@ -51,13 +49,15 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const chains = useMemo(() => {
     if (chainsProps) return chainsProps;
 
-    return getActiveSourceChains(apiConfig.chains).map((val) => {
-      return {
-        name: val.name,
-        tag: val.tag,
-      } satisfies ChainType;
-    });
-  }, [apiConfig, chainsProps]);
+    // Temporary remove the usage of `getActiveSourceChains` here to avoid the error
+    // as this component will be removed soon
+    return [
+      {
+        name: 'Unknown',
+        tag: 'test',
+      },
+    ] satisfies Array<ChainType>;
+  }, [chainsProps]);
 
   const handleChainChange = useCallback<NonNullable<typeof onChange>>(
     async (selectedChain) => {
