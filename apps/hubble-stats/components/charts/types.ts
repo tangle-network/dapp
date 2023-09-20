@@ -27,3 +27,18 @@ export interface VolumeChartProps
     withdrawal: number;
   }>;
 }
+
+export interface ChartTooltipContentProps {
+  date: Date;
+  info: Array<{
+    color: string;
+    label: string;
+    value: number;
+    valuePrefix?: string;
+    valueSuffix?: string;
+  }>;
+  /**
+   * A function to call when the content of Tooltip is being displayed
+   */
+  onContentDisplayedFnc: () => void;
+}

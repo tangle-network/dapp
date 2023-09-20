@@ -1,5 +1,4 @@
 export * from './Breadcrumbs';
-export * from './ChartTooltip';
 export * from './CopyIconWithTooltip';
 export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';

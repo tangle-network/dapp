@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
 import { useNextDarkMode as useDarkMode } from '@webb-tools/webb-ui-components';
 
-import { ChartTooltip } from '..';
+import ChartTooltipContent from './ChartToolTipContent';
 import { VolumeChartProps } from './types';
 
 const VolumeChart: FC<VolumeChartProps> = ({
@@ -48,10 +48,8 @@ const VolumeChart: FC<VolumeChartProps> = ({
           cursor={{ opacity: isDarkMode ? 0.2 : 1 }}
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
-              setValue && setValue(payload[0].payload['deposit']);
-              setDate && setDate(payload[0].payload['date']);
               return (
-                <ChartTooltip
+                <ChartTooltipContent
                   date={payload[0].payload['date']}
                   info={[
                     {
@@ -69,6 +67,10 @@ const VolumeChart: FC<VolumeChartProps> = ({
                       valueSuffix: tooltipValueSuffix,
                     },
                   ]}
+                  onContentDisplayedFnc={() => {
+                    setValue && setValue(payload[0].payload['deposit']);
+                    setDate && setDate(payload[0].payload['date']);
+                  }}
                 />
               );
             }
