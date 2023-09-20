@@ -17,7 +17,7 @@ import {
   sepolia,
   type Chain,
 } from 'viem/chains';
-import { DEFAULT_EVM_CURRENCY } from '../../currencies';
+import { DEFAULT_EVM_CURRENCY, ORBIT_NATIVE_CURRENCY } from '../../currencies';
 import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
 const hostedOrbitMulticall3Address =
@@ -36,6 +36,11 @@ const hermesOrbitMulticall3DeploymentBlock = process.env
 const demeterOrbitMulticall3DeploymentBlock = process.env
   .BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
   ? parseInt(process.env.BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
+const tangleMulticall3DeploymentBlock = process.env
+  .BRIDGE_DAPP_TANGLE_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_TANGLE_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
 const localOrbitMulticall3Address =
@@ -207,7 +212,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
+    nativeCurrency: ORBIT_NATIVE_CURRENCY,
     blockExplorers: {
       default: {
         name: 'Hermes Orbit Explorer',
@@ -239,7 +244,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
+    nativeCurrency: ORBIT_NATIVE_CURRENCY,
     blockExplorers: {
       default: {
         name: 'Athena Orbit Explorer',
@@ -271,7 +276,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
+    nativeCurrency: ORBIT_NATIVE_CURRENCY,
     blockExplorers: {
       default: {
         name: 'Demeter Orbit Explorer',
@@ -336,6 +341,14 @@ export const chainsConfig: Record<number, ChainConfig> = {
         ],
       },
     },
+    contracts: hostedOrbitMulticall3Address
+      ? {
+          multicall3: {
+            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
+            blockCreated: tangleMulticall3DeploymentBlock,
+          },
+        }
+      : undefined,
   } satisfies ChainConfig,
 
   // Localnet

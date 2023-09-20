@@ -83,3 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.7] - 2023-09-19
 
 - Unifying background to webb-ui-kit
+
+## [0.0.8] - 2023-09-20
+
+- Update new deployment
