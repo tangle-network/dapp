@@ -52,20 +52,20 @@ export const anchorSignatureBridge: ChainWithAnchorsMapType = {
   },
 
   [PresetTypedChainId.HermesOrbit]: {
-    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb':
-      '0xBA0a0f0Da0481c72c003B7Ce09bcF6AD17375b35',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb':
-      '0xBA0a0f0Da0481c72c003B7Ce09bcF6AD17375b35',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb':
-      '0xBA0a0f0Da0481c72c003B7Ce09bcF6AD17375b35',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
   [PresetTypedChainId.TangleTestnet]: {
-    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb':
-      '0xBA0a0f0Da0481c72c003B7Ce09bcF6AD17375b35',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
 
   ...localAnchorRecord,
