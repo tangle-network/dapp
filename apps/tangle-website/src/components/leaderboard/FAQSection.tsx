@@ -1,6 +1,8 @@
 import { Typography } from '@webb-tools/webb-ui-components';
+import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 
-import { FAQAccordion } from '..';
+import { FAQAccordion } from '../FAQAccordion';
 
 const faqItems = [
   {
@@ -17,7 +19,9 @@ const faqItems = [
     question: 'What activities are rewarded with points?',
     answer: (
       <a
-        href="https://docs.webb.tools/docs/tangle-network/overview/"
+        href={populateDocsUrl(
+          WEBB_DOC_ROUTES_RECORD['tangle-network'].overview
+        )}
         target="_blank"
         rel="noopener noreferrer"
         className="text-left text-mono-160 decoration-mono-160 hover:underline"

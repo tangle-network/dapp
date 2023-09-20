@@ -2,6 +2,10 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
 import { Footer, useDarkMode } from '@webb-tools/webb-ui-components';
+import {
+  WEBB_FAUCET_URL,
+  WEBB_MKT_URL,
+} from '@webb-tools/webb-ui-components/constants';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 import { useEffect } from 'react';
@@ -12,13 +16,13 @@ import Provider from '../provider';
 export const metadata: DefaultSeoProps = {
   additionalLinkTags: [
     {
-      href: 'https://webb.tools/static/assets/favicon.png',
+      href: new URL('/static/assets/favicon.png', WEBB_MKT_URL).toString(),
       rel: 'icon',
     },
   ],
   defaultTitle: 'Webb Faucet',
   description:
-    'Our easy-to-use crypto faucet website allows you to claim free WebTNT with just a few clicks. Start earning fast and hassle-free payouts today!',
+    'Our easy-to-use testnet faucet allows you to claim test tokens with just a few clicks. Start experimenting with Hubble Bridge today.',
   openGraph: {
     images: [
       {
@@ -31,7 +35,7 @@ export const metadata: DefaultSeoProps = {
     locale: 'en_US',
     siteName: 'Webb Faucet',
     type: 'website',
-    url: 'https://faucet.webb.tools/',
+    url: WEBB_FAUCET_URL,
   },
   themeColor: '#ffffff',
   titleTemplate: 'Webb | %s',
@@ -53,7 +57,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <div className="hero-bg">
+      <div>
         <Header />
 
         <main className="mt-[72px]">

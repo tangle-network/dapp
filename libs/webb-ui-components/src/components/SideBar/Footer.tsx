@@ -17,9 +17,15 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
   useNextThemesForThemeToggle,
 }) => {
   return (
-    <div className={twMerge('flex items-center justify-between', className)}>
+    <div
+      className={twMerge(
+        'flex items-center',
+        isExpanded ? 'justify-between' : 'justify-center',
+        className
+      )}
+    >
       <div className="flex items-center justify-between group">
-        <Link href={href} aTagProps={{ target: '_blank' }}>
+        <Link href={href} target="_blank">
           <Icon
             width={24}
             height={24}
@@ -30,7 +36,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
         {isExpanded && (
           <>
             <div className={isExpanded ? 'pl-2' : ''}>
-              <Link href={href} aTagProps={{ target: '_blank' }}>
+              <Link href={href} target="_blank">
                 <Typography
                   variant="body1"
                   className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
@@ -42,7 +48,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
 
             {!isInternal ? (
               <div className={isExpanded ? 'pl-[26px]' : ''}>
-                <Link href={href} aTagProps={{ target: '_blank' }}>
+                <Link href={href} target="_blank">
                   <ExternalLinkLine
                     className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
                     width={24}

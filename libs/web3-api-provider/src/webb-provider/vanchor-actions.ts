@@ -1,20 +1,22 @@
 import {
   ActiveWebbRelayer,
-  calculateProvingLeavesAndCommitmentIndex,
-  generateCircomCommitment,
-  isVAnchorDepositPayload,
-  isVAnchorTransferPayload,
-  isVAnchorWithdrawPayload,
   NewNotesTxResult,
-  padHexString,
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
   Transaction,
   TransactionPayloadType,
   TransactionState,
-  utxoFromVAnchorNote,
   VAnchorActions,
+  calculateProvingLeavesAndCommitmentIndex,
+  generateCircomCommitment,
+  isVAnchorDepositPayload,
+  isVAnchorTransferPayload,
+  isVAnchorWithdrawPayload,
+  padHexString,
+  utxoFromVAnchorNote,
+  type TransferTransactionPayloadType,
+  type WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import validateNoteLeafIndex from '@webb-tools/abstract-api-provider/utils/validateNoteLeafIndex';
 import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
@@ -27,34 +29,34 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import { ApiConfig, ensureHex, ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { ApiConfig, ZERO_BIG_INT, ensureHex } from '@webb-tools/dapp-config';
 import gasLimitConfig from '@webb-tools/dapp-config/gasLimitConfig';
 import {
-  checkNativeAddress,
   WebbError,
   WebbErrorCodes,
+  checkNativeAddress,
 } from '@webb-tools/dapp-types';
 import {
   ChainType,
   Keypair,
   Note,
-  parseTypedChainId,
   ResourceId,
-  toFixedHex,
   Utxo,
+  parseTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
-  hexToU8a,
-  u8aToHex,
   ZERO_ADDRESS,
   ZERO_BYTES32,
+  hexToU8a,
+  u8aToHex,
 } from '@webb-tools/utils';
 import {
   Address,
-  getContract,
   GetContractReturnType,
   Hash,
   PublicClient,
+  getContract,
 } from 'viem';
 import { getPublicClient } from 'wagmi/actions';
 import { handleVAnchorTxState } from '../utils';
@@ -98,95 +100,11 @@ export class Web3VAnchorActions extends VAnchorActions<
     tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
 
     if (isVAnchorDepositPayload(payload)) {
-      // Get the wrapped token and check the balance and approvals
-      const tokenWrapper = await this.getTokenWrapperContract(payload);
-      if (wrapUnwrapToken === '') wrapUnwrapToken = tokenWrapper.address;
-
-      await this.checkHasBalance(payload, wrapUnwrapToken);
-
-      await this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
-
-      const secrets = payload.note.secrets.split(':');
-      const depositUtxo = await this.inner.generateUtxo({
-        curve: payload.note.curve,
-        backend: payload.note.backend,
-        amount: payload.note.amount,
-        originChainId: payload.note.sourceChainId.toString(),
-        chainId: payload.note.targetChainId.toString(),
-        keypair: new Keypair(`0x${secrets[2]}`),
-        blinding: hexToU8a(`0x${secrets[3]}`),
-        index: this.inner.state.defaultUtxoIndex.toString(),
-      });
-
-      return Promise.resolve([
-        tx, // tx
-        ensureHex(payload.note.sourceIdentifyingData), // contractAddress
-        [], // inputs
-        [depositUtxo], // outputs
-        ZERO_BIG_INT, // fee
-        ZERO_BIG_INT, // refund
-        ZERO_ADDRESS, // recipient
-        ZERO_ADDRESS, // relayer
-        wrapUnwrapToken, // wrapUnwrapToken
-        {}, // leavesMap,
-      ]);
+      return this.prepareDeposit(tx, payload, wrapUnwrapToken);
     } else if (isVAnchorWithdrawPayload(payload)) {
-      const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
-
-      const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
-
-      const relayer =
-        this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
-
-      // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-      const feeVal = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
-
-      return Promise.resolve([
-        tx, // tx
-        ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
-        inputUtxos, // inputs
-        [changeUtxo], // outputs
-        feeVal, // fee
-        refundAmount, // refund
-        ensureHex(recipient), // recipient
-        ensureHex(relayer), // relayer
-        wrapUnwrapToken, // wrapUnwrapToken
-        leavesMap, // leavesMap
-      ]);
+      return this.prepareWithdraw(tx, payload, wrapUnwrapToken);
     } else if (isVAnchorTransferPayload(payload)) {
-      const {
-        changeUtxo,
-        transferUtxo,
-        notes,
-        feeAmount,
-        refundAmount = ZERO_BIG_INT,
-        refundRecipient = ZERO_ADDRESS,
-      } = payload;
-
-      const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
-
-      const relayer =
-        this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
-
-      // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-      const feeVal = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
-      const refund = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
-      const recipient =
-        relayer === ZERO_ADDRESS ? ZERO_ADDRESS : refundRecipient;
-
-      // set the anchor to make the transfer on (where the notes are being spent for the transfer)
-      return Promise.resolve([
-        tx, // tx
-        ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
-        inputUtxos, // inputs
-        [changeUtxo, transferUtxo], // outputs
-        feeVal, // fee
-        refund, // refund
-        ensureHex(recipient), // recipient
-        ensureHex(relayer), // relayer
-        '', // wrapUnwrapToken (not used for transfers)
-        leavesMap, // leavesMap,
-      ]);
+      return this.prepareTransfer(tx, payload, wrapUnwrapToken);
     } else {
       // Handle by outer try/catch
       throw new Error('Invalid payload');
@@ -696,6 +614,121 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   // ================== PRIVATE METHODS ===================
+
+  private async prepareDeposit(
+    tx: Transaction<NewNotesTxResult>,
+    payload: Note,
+    wrapToken: string
+  ): Promise<ParametersOfTransactMethod<'web3'>> | never {
+    // Get the wrapped token and check the balance and approvals
+    const tokenWrapper = await this.getTokenWrapperContract(payload);
+    if (wrapToken === '') {
+      wrapToken = tokenWrapper.address;
+    }
+
+    await this.checkHasBalance(payload, wrapToken);
+
+    await this.checkApproval(tx, payload, wrapToken, tokenWrapper);
+
+    const secrets = payload.note.secrets.split(':');
+    const depositUtxo = await this.inner.generateUtxo({
+      curve: payload.note.curve,
+      backend: payload.note.backend,
+      amount: payload.note.amount,
+      originChainId: payload.note.sourceChainId.toString(),
+      chainId: payload.note.targetChainId.toString(),
+      keypair: new Keypair(`0x${secrets[2]}`),
+      blinding: hexToU8a(`0x${secrets[3]}`),
+      index: this.inner.state.defaultUtxoIndex.toString(),
+    });
+
+    return Promise.resolve([
+      tx, // tx
+      ensureHex(payload.note.sourceIdentifyingData), // contractAddress
+      [], // inputs
+      [depositUtxo], // outputs
+      ZERO_BIG_INT, // fee
+      ZERO_BIG_INT, // refund
+      ZERO_ADDRESS, // recipient
+      ZERO_ADDRESS, // relayer
+      wrapToken, // wrapUnwrapToken
+      {}, // leavesMap,
+    ]);
+  }
+
+  private async prepareWithdraw(
+    tx: Transaction<NewNotesTxResult>,
+    payload: WithdrawTransactionPayloadType,
+    unwrapToken: string
+  ): Promise<ParametersOfTransactMethod<'web3'>> | never {
+    const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    // If no relayer is set, then the fee is 0, otherwise it is the fee amount
+    const fee = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
+
+    return Promise.resolve([
+      tx, // tx
+      ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo], // outputs
+      fee, // fee
+      refundAmount, // refund
+      ensureHex(recipient), // recipient
+      ensureHex(relayer), // relayer
+      unwrapToken, // wrapUnwrapToken
+      leavesMap, // leavesMap
+    ]);
+  }
+
+  private async prepareTransfer(
+    tx: Transaction<NewNotesTxResult>,
+    payload: TransferTransactionPayloadType,
+    unwrapToken: string
+  ): Promise<ParametersOfTransactMethod<'web3'>> | never {
+    const {
+      changeUtxo,
+      transferUtxo,
+      notes,
+      feeAmount,
+      refundAmount,
+      refundRecipient: _refundRecipient,
+    } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    // If no relayer is set, then the fee is 0, otherwise it is the fee amount
+    const feeValue = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
+    const refundValue = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
+
+    // The recipient is the refund recipient
+    // if the relayer is set and the refund recipient is set
+    const refundRecipient =
+      relayer === ZERO_ADDRESS || _refundRecipient.length === 0
+        ? ZERO_ADDRESS
+        : _refundRecipient;
+
+    // set the anchor to make the transfer on (where the notes are being spent for the transfer)
+    return Promise.resolve([
+      tx, // tx
+      ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo, transferUtxo], // outputs
+      feeValue, // fee
+      refundValue, // refund
+      ensureHex(refundRecipient), // recipient
+      ensureHex(relayer), // relayer
+      '', // wrapUnwrapToken (not used for transfers)
+      leavesMap, // leavesMap,
+    ]);
+  }
 
   private async fetchNoteLeaves(
     note: Note,

@@ -35,7 +35,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         openGraph={{
           type: 'website',
           locale: 'en_US',
-          url: 'https://tangle.webb.tools/',
+          url: 'https://tangle.tools/',
           images: [
             {
               url: 'https://webb-cms.s3.amazonaws.com/tangle_seo.png',
@@ -63,7 +63,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
         <Script
           defer
-          data-domain="tangle.webb.tools"
+          data-domain="tangle.tools"
           src="https://plausible.io/js/script.js"
         />
       </main>

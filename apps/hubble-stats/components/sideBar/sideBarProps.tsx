@@ -1,17 +1,16 @@
-import {
-  Logo,
-  LogoWithoutName,
-  SideBarItemProps,
-  SideBarFooterType,
-  SidebarProps,
-} from '@webb-tools/webb-ui-components';
 import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 import {
+  Logo,
+  SideBarFooterType,
+  SideBarItemProps,
+  SidebarProps,
+} from '@webb-tools/webb-ui-components';
+import {
   BRIDGE_URL,
-  WEBB_FAUCET_URL,
-  STATS_URL,
+  DKG_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
+  WEBB_FAUCET_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
@@ -30,7 +29,7 @@ const sideBarItems: SideBarItemProps[] = [
       {
         name: 'Explorer',
         isInternal: true,
-        href: '',
+        href: '/',
       },
       {
         name: 'Faucet',
@@ -48,7 +47,7 @@ const sideBarItems: SideBarItemProps[] = [
       {
         name: 'DKG Explorer',
         isInternal: false,
-        href: STATS_URL,
+        href: DKG_STATS_URL,
       },
       {
         name: 'Homepage',
@@ -69,7 +68,6 @@ const sideBarFooter: SideBarFooterType = {
 
 const sideBarProps: SidebarProps = {
   Logo,
-  ClosedLogo: LogoWithoutName,
   items: sideBarItems,
   footer: sideBarFooter,
   logoLink: WEBB_MKT_URL,

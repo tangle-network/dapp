@@ -1,5 +1,5 @@
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
-
+import { WEBB_MKT_URL } from '../../constants';
 import { NetworkThresholdsCardDataProps } from './types';
 
 export function useNetworkThresholdsSeedData(): NetworkThresholdsCardDataProps {
@@ -13,6 +13,6 @@ export function useNetworkThresholdsSeedData(): NetworkThresholdsCardDataProps {
     thresholdType: 'current',
     sessionNumber: randNumber({ min: 100, max: 1000 }),
     keyValue: '0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7',
-    viewHistoryUrl: 'https://webb.tools',
+    viewHistoryUrl: WEBB_MKT_URL,
   };
 }

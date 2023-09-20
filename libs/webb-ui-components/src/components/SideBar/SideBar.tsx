@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, forwardRef } from 'react';
+import { ChevronLeft, ChevronRight, WebbLogoIcon } from '@webb-tools/icons';
 import cx from 'classnames';
-import useLocalStorageState from 'use-local-storage-state';
+import { FC, forwardRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChevronLeft, ChevronRight } from '@webb-tools/icons';
-
-import { SideBarLogo, SideBarItems, SideBarFooter } from '.';
+import useLocalStorageState from 'use-local-storage-state';
+import { SideBarFooter, SideBarItems, SideBarLogo } from '.';
+import { LogoProps } from '../Logo/types';
 import { SidebarProps } from './types';
 
 /**
@@ -28,7 +28,18 @@ import { SidebarProps } from './types';
  * ```
  */
 export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
-  ({ Logo, ClosedLogo, logoLink, items, footer, className, ...props }, ref) => {
+  (
+    {
+      Logo,
+      ClosedLogo = DefaulClosedIcon,
+      logoLink,
+      items,
+      footer,
+      className,
+      ...props
+    },
+    ref
+  ) => {
     const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
       'isSidebarOpen',
       {
@@ -48,15 +59,17 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       >
         <div
           className={twMerge(
-            'h-full flex flex-col justify-between py-12 px-4 bg-mono-0 dark:bg-mono-160 transition-all duration-200 ease-in-out',
-            isSidebarOpen ? 'w-72' : 'w-16'
+            'h-full flex flex-col justify-between py-12',
+            'bg-mono-0 dark:bg-mono-180 transition-all duration-200 ease-in-out',
+            isSidebarOpen ? 'w-72 px-4' : 'w-16 px-2'
           )}
         >
           <div>
             <div className={isSidebarOpen ? 'px-2' : ''}>
               <SideBarLogo
                 logoLink={logoLink}
-                Logo={!isSidebarOpen && ClosedLogo ? ClosedLogo : Logo}
+                Logo={!isSidebarOpen ? ClosedLogo : Logo}
+                isExpanded={isSidebarOpen}
               />
             </div>
 
@@ -100,3 +113,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
     );
   }
 );
+
+const DefaulClosedIcon: FC<LogoProps> = ({ size: _, ...props }) => {
+  return <WebbLogoIcon {...props} width={28} height={28} />;
+};

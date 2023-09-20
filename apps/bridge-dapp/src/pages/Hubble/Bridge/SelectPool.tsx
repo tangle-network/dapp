@@ -11,12 +11,8 @@ import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { formatEther } from 'viem';
 import SlideAnimation from '../../../components/SlideAnimation';
-import {
-  BRIDGE_TABS,
-  DEST_CHAIN_KEY,
-  POOL_KEY,
-  SOURCE_CHAIN_KEY,
-} from '../../../constants';
+import { BRIDGE_TABS, POOL_KEY } from '../../../constants';
+import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
 const SelectPool: FC = () => {
@@ -30,42 +26,14 @@ const SelectPool: FC = () => {
 
   const { apiConfig } = useWebContext();
 
-  const [srcTypedChainId, destTypedChainId] = useMemo(() => {
-    const srcTypedId = searhParams.get(SOURCE_CHAIN_KEY)
-      ? Number(searhParams.get(SOURCE_CHAIN_KEY))
-      : undefined;
-
-    const destTypedId = searhParams.get(DEST_CHAIN_KEY)
-      ? Number(searhParams.get(DEST_CHAIN_KEY))
-      : undefined;
-
-    return [srcTypedId, destTypedId];
-  }, [searhParams]);
-
-  const [srcChainCfg, destChainCfg] = useMemo(() => {
-    const srcChainCfg =
-      typeof srcTypedChainId === 'number'
-        ? apiConfig.chains[srcTypedChainId]
-        : undefined;
-
-    const destChainCfg =
-      typeof destTypedChainId === 'number'
-        ? apiConfig.chains[destTypedChainId]
-        : undefined;
-
-    return [srcChainCfg, destChainCfg];
-  }, [apiConfig.chains, destTypedChainId, srcTypedChainId]);
+  const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
 
   const blockExplorer = useMemo(() => {
-    if (currentTxType === 'deposit' && srcChainCfg) {
-      return srcChainCfg.blockExplorers?.default.url;
-    } else if (currentTxType === 'withdraw' && destChainCfg) {
-      return destChainCfg.blockExplorers?.default.url;
-    }
-  }, [currentTxType, destChainCfg, srcChainCfg]);
+    return srcChainCfg?.blockExplorers?.default.url;
+  }, [srcChainCfg]);
 
   const { fungibleCurrencies } = useCurrenciesFromRoute(
-    currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
+    srcTypedChainId ?? undefined
   );
 
   const { balances: balancesFromNotes } = useBalancesFromNotes();
@@ -77,23 +45,16 @@ const SelectPool: FC = () => {
           currencyCfg,
           balancesFromNotes,
           currentTxType,
-          srcTypedChainId,
-          destTypedChainId
+          srcTypedChainId
         );
 
         const chainName = getChainName(
           apiConfig.chains,
           currentTxType,
-          srcTypedChainId,
-          destTypedChainId
+          srcTypedChainId
         );
 
-        const addr = getAddress(
-          currencyCfg,
-          currentTxType,
-          srcTypedChainId,
-          destTypedChainId
-        );
+        const addr = getAddress(currencyCfg, currentTxType, srcTypedChainId);
 
         const explorerUrl = getExplorerUrl(blockExplorer, addr);
 
@@ -108,7 +69,7 @@ const SelectPool: FC = () => {
       });
     },
     // prettier-ignore
-    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, destTypedChainId, fungibleCurrencies, srcTypedChainId]
+    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, srcTypedChainId]
   );
 
   const unavailableTokens = useMemo<Array<AssetType>>(
@@ -122,17 +83,7 @@ const SelectPool: FC = () => {
         const currency = apiConfig.currencies[+id];
 
         Object.entries(balanceRec).forEach(([typedId, balance]) => {
-          if (
-            currentTxType === 'withdraw' &&
-            typedId === destTypedChainId?.toString()
-          ) {
-            return;
-          }
-
-          if (
-            currentTxType === 'transfer' &&
-            typedId === srcTypedChainId?.toString()
-          ) {
+          if (currentTxType && typedId === srcTypedChainId?.toString()) {
             return;
           }
 
@@ -154,7 +105,7 @@ const SelectPool: FC = () => {
       }, [] as Array<AssetType>);
     },
     // prettier-ignore
-    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, destTypedChainId, srcTypedChainId]
+    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, srcTypedChainId]
   );
 
   const handleClose = useCallback(
@@ -205,14 +156,10 @@ export default SelectPool;
 const getAddress = (
   currencyCfg: CurrencyConfig,
   txType?: string,
-  srcTypedChainId?: number,
-  destTypedChainId?: number
+  srcTypedChainId?: number | null
 ) =>
-  (txType === 'deposit' || txType === 'transfer') &&
-  typeof srcTypedChainId === 'number'
+  txType && typeof srcTypedChainId === 'number'
     ? currencyCfg.addresses.get(srcTypedChainId)
-    : txType === 'withdraw' && typeof destTypedChainId === 'number'
-    ? currencyCfg.addresses.get(destTypedChainId)
     : undefined;
 
 const getExplorerUrl = (blockExplorer?: string, address?: string) =>
@@ -224,19 +171,9 @@ const getBalanceProps = (
   currency: CurrencyConfig,
   balances: BalancesFromNotesType,
   txType?: string,
-  srcTypedChainId?: number,
-  destTypedChainId?: number
+  srcTypedChainId?: number | null
 ) => {
-  if (txType === 'withdraw' && typeof destTypedChainId === 'number') {
-    const balance = balances[currency.id]?.[destTypedChainId];
-    if (typeof balance === 'bigint') {
-      return {
-        balance: +formatEther(balance),
-      };
-    }
-  }
-
-  if (txType === 'transfer' && typeof srcTypedChainId === 'number') {
+  if (txType && typeof srcTypedChainId === 'number') {
     const balance = balances[currency.id]?.[srcTypedChainId];
     if (typeof balance === 'bigint') {
       return {
@@ -251,14 +188,9 @@ const getBalanceProps = (
 const getChainName = (
   chainsConfig: Record<number, ChainConfig>,
   txType?: string,
-  srcTypedChainId?: number,
-  destTypedChainId?: number
+  srcTypedChainId?: number | null
 ) => {
-  if (txType === 'withdraw' && typeof destTypedChainId === 'number') {
-    return chainsConfig[destTypedChainId]?.name;
-  }
-
-  if (txType && txType !== 'withdraw' && typeof srcTypedChainId === 'number') {
+  if (txType && typeof srcTypedChainId === 'number') {
     return chainsConfig[srcTypedChainId]?.name;
   }
 

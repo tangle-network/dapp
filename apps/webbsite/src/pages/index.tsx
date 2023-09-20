@@ -8,6 +8,7 @@ import {
   PrivacyScaleSection,
   ResearchAndDevelopmentSection,
 } from '../components';
+import { WEBB_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 
 const description =
   'Webb builds infrastructure for connecting zero-knowledge applications empowering developers to unlock user privacy in the Web3 ecosystem.';
@@ -17,11 +18,11 @@ export function Index() {
     <>
       <NextSeo
         description={description}
-        canonical="https://webb.tools/"
+        canonical={WEBB_MKT_URL}
         openGraph={{
           title: 'Privacy that Brings Blockchains Together',
           description,
-          url: 'https://webb.tools/',
+          url: WEBB_MKT_URL,
         }}
       />
 

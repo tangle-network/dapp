@@ -20,16 +20,16 @@ export function Index() {
     <>
       <NextSeo
         description={description}
-        canonical="https://tangle.webb.tools/"
+        canonical="https://tangle.tools/"
         openGraph={{
           title:
             'The next-generation TSS based blockchain powering cross-chain zero-knowledge messaging and applications',
           description,
-          url: 'https://tangle.webb.tools/',
+          url: 'https://tangle.tools/',
         }}
       />
 
-      <div className="bg-body bg-repeat-y bg-top block">
+      <div className="block bg-top bg-repeat-y bg-body">
         <div className="mx-auto">
           <HeroSection />
 
