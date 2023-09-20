@@ -18,14 +18,9 @@ import {
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
-import {
-  useCurrentTx,
-  useEnqueueSubmittedTx,
-  useLatestTransactionStage,
-} from '../../hooks';
+import { useEnqueueSubmittedTx } from '../../hooks';
 import {
   captureSentryException,
-  getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -34,6 +29,7 @@ import {
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
+import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -78,12 +74,21 @@ const TransferConfirmContainer = forwardRef<
     const { activeApi, activeChain, apiConfig, txQueue, noteManager } =
       useWebContext();
 
-    const { api: txQueueApi, txPayloads } = txQueue;
+    const { api: txQueueApi } = txQueue;
 
-    const [txId, setTxId] = useState('');
-    const [totalStep, setTotalStep] = useState<number | undefined>();
-
-    const stage = useLatestTransactionStage(txId);
+    const {
+      cardTitle,
+      currentStep,
+      inProgressTxId,
+      setInProgressTxId,
+      setTotalStep,
+      totalStep,
+      txStatus,
+      txStatusMessage,
+    } = useInProgressTxInfo(
+      false, // Wrap/unwrap doesn't support on transfer flow
+      onResetState
+    );
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.id),
@@ -98,11 +103,6 @@ const TransferConfirmContainer = forwardRef<
         ? activeApi.state.activeBridge.targets[targetChainId]
         : undefined,
     });
-
-    const isTransferring = useMemo(
-      () => stage !== TransactionState.Ideal,
-      [stage]
-    );
 
     // The callback for the transfer button
     const handleTransferExecute = useCallback(
@@ -127,7 +127,7 @@ const TransferConfirmContainer = forwardRef<
           return;
         }
 
-        if (isTransferring) {
+        if (inProgressTxId.length > 0) {
           txQueueApi.startNewTransaction();
           onResetState?.();
           return;
@@ -170,7 +170,7 @@ const TransferConfirmContainer = forwardRef<
           recipient,
         });
 
-        setTxId(tx.id);
+        setInProgressTxId(tx.id);
         setTotalStep(tx.totalSteps);
         txQueueApi.registerTransaction(tx);
 
@@ -276,33 +276,8 @@ const TransferConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inputNotes, isTransferring, noteManager, onResetState, recipient, refundAmount, refundRecipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inProgressTxId.length, inputNotes, noteManager, onResetState, recipient, refundAmount, refundRecipient, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, transferUtxo, txQueueApi, vAnchorApi]
     );
-
-    const currentTx = useCurrentTx(txQueue.txQueue, txId);
-
-    const cardTitle = useMemo(() => {
-      if (!currentTx) {
-        return;
-      }
-
-      return getCardTitle(stage, currentTx.name);
-    }, [currentTx, stage]);
-
-    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
-      if (!txId) {
-        return ['', undefined, undefined];
-      }
-
-      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      const message = txPayload
-        ? txPayload.txStatus.message?.replace('...', '')
-        : '';
-
-      const txStatus = txPayload?.txStatus.status;
-
-      return [message, txPayload?.currentStep, txStatus];
-    }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
       if (!feeAmount) {
@@ -356,7 +331,8 @@ const TransferConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: changeNote ? !isChecked : false,
           onClick: handleTransferExecute,
-          children: isTransferring ? 'Make Another Transaction' : 'Transfer',
+          children:
+            inProgressTxId.length > 0 ? 'Make Another Transaction' : 'Transfer',
         }}
         txStatusColor={
           txStatus === 'completed'

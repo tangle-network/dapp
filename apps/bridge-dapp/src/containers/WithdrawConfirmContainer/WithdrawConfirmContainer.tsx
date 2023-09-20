@@ -21,14 +21,10 @@ import {
   formatEther,
   formatUnits,
 } from 'viem';
-import {
-  useCurrentTx,
-  useEnqueueSubmittedTx,
-  useLatestTransactionStage,
-} from '../../hooks';
+import { useEnqueueSubmittedTx } from '../../hooks';
+import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
   captureSentryException,
-  getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -78,12 +74,7 @@ const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, txQueue } = useWebContext();
 
-    const { api: txQueueApi, txPayloads } = txQueue;
-
-    const [txId, setTxId] = useState('');
-    const [totalStep, setTotalStep] = useState<number | undefined>();
-
-    const stage = useLatestTransactionStage(txId);
+    const { api: txQueueApi } = txQueue;
 
     const {
       relayersState: { activeRelayer },
@@ -96,25 +87,25 @@ const WithdrawConfirmContainer = forwardRef<
 
     const [checked, setChecked] = useState(false);
 
-    const withdrawTxInProgress = useMemo(() => {
-      return stage !== TransactionState.Ideal;
-    }, [stage]);
+    const {
+      cardTitle,
+      currentStep,
+      inProgressTxId,
+      setInProgressTxId,
+      setTotalStep,
+      totalStep,
+      txStatus,
+      txStatusMessage,
+    } = useInProgressTxInfo(
+      typeof unwrapCurrency !== 'undefined',
+      onResetState
+    );
 
     const avatarTheme = useMemo(() => {
       return chainsPopulated[targetTypedChainId].chainType === ChainType.EVM
         ? 'ethereum'
         : 'substrate';
     }, [targetTypedChainId]);
-
-    const currentTx = useCurrentTx(txQueue.txQueue, txId);
-
-    const cardTitle = useMemo(() => {
-      if (!currentTx) {
-        return;
-      }
-
-      return getCardTitle(stage, currentTx.name, Boolean(unwrapCurrency));
-    }, [currentTx, stage, unwrapCurrency]);
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
@@ -130,7 +121,7 @@ const WithdrawConfirmContainer = forwardRef<
           return;
         }
 
-        if (withdrawTxInProgress) {
+        if (inProgressTxId.length > 0) {
           txQueueApi.startNewTransaction();
           onResetState?.();
           return;
@@ -177,7 +168,7 @@ const WithdrawConfirmContainer = forwardRef<
           address: sourceIdentifyingData,
           recipient,
         });
-        setTxId(tx.id);
+        setInProgressTxId(tx.id);
         setTotalStep(tx.totalSteps);
         txQueueApi.registerTransaction(tx);
 
@@ -287,22 +278,8 @@ const WithdrawConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]
+      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi]
     );
-
-    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
-      if (!txId) {
-        return ['', undefined, undefined];
-      }
-
-      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      const message = txPayload
-        ? txPayload.txStatus.message?.replace('...', '')
-        : '';
-
-      const txStatus = txPayload?.txStatus.status;
-      return [message, txPayload?.currentStep, txStatus];
-    }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
       const feeInEthers = formatEther(fee);
@@ -356,12 +333,8 @@ const WithdrawConfirmContainer = forwardRef<
           type: chainsPopulated[targetTypedChainId].group ?? 'webb-dev',
         }}
         actionBtnProps={{
-          isDisabled: withdrawTxInProgress
-            ? false
-            : changeAmount
-            ? !checked
-            : false,
-          children: withdrawTxInProgress
+          isDisabled: inProgressTxId ? false : changeAmount ? !checked : false,
+          children: inProgressTxId
             ? 'Make Another Transaction'
             : unwrapCurrency
             ? 'Unwrap And Withdraw'
@@ -370,7 +343,7 @@ const WithdrawConfirmContainer = forwardRef<
         }}
         checkboxProps={{
           isChecked: checked,
-          isDisabled: withdrawTxInProgress,
+          isDisabled: Boolean(inProgressTxId),
           children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}

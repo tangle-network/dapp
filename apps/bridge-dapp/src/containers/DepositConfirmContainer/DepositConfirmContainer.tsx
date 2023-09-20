@@ -12,14 +12,10 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatUnits } from 'viem';
-import {
-  useCurrentTx,
-  useEnqueueSubmittedTx,
-  useLatestTransactionStage,
-} from '../../hooks';
+import { useEnqueueSubmittedTx } from '../../hooks';
+import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
   captureSentryException,
-  getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -52,32 +48,12 @@ const DepositConfirmContainer = forwardRef<
       removeNoteFromNoteManager,
     } = useVAnchor();
 
-    const [txId, setTxId] = useState('');
-    const [totalStep, setTotalStep] = useState<number | undefined>();
-
-    const stage = useLatestTransactionStage(txId);
-    const depositTxInProgress = useMemo(
-      () => stage !== TransactionState.Ideal,
-      [stage]
-    );
-
     const { activeApi, activeAccount, activeChain, apiConfig, txQueue } =
       useWebContext();
 
-    const currentTx = useCurrentTx(txQueue.txQueue, txId);
-
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
-    const { api: txQueueApi, txPayloads } = txQueue;
-
-    // Download for the deposit confirm
-    const downloadNote = useCallback((note: Note) => {
-      const noteStr = note.serialize();
-      downloadString(
-        JSON.stringify(noteStr),
-        noteStr.slice(-noteStr.length) + '.json'
-      );
-    }, []);
+    const { api: txQueueApi } = txQueue;
 
     const fungibleToken = useMemo(() => {
       return new Currency(apiConfig.currencies[fungibleTokenId]);
@@ -96,6 +72,26 @@ const DepositConfirmContainer = forwardRef<
       [wrappableTokenId]
     );
 
+    const {
+      cardTitle,
+      currentStep,
+      inProgressTxId,
+      setInProgressTxId,
+      setTotalStep,
+      totalStep,
+      txStatus,
+      txStatusMessage,
+    } = useInProgressTxInfo(wrappingFlow, onResetState);
+
+    // Download for the deposit confirm
+    const downloadNote = useCallback((note: Note) => {
+      const noteStr = note.serialize();
+      downloadString(
+        JSON.stringify(noteStr),
+        noteStr.slice(-noteStr.length) + '.json'
+      );
+    }, []);
+
     const handleExecuteDeposit = useCallback(
       async () => {
         if (!api || !activeApi || !activeChain) {
@@ -109,7 +105,7 @@ const DepositConfirmContainer = forwardRef<
 
         // Set transaction payload for transaction processing card
         // Start a new transaction
-        if (depositTxInProgress) {
+        if (inProgressTxId.length > 0) {
           startNewTransaction();
           onResetState?.();
           return;
@@ -167,7 +163,7 @@ const DepositConfirmContainer = forwardRef<
           address: activeAccount?.address,
           recipient: targetIdentifyingData,
         });
-        setTxId(tx.id);
+        setInProgressTxId(tx.id);
         setTotalStep(tx.totalSteps);
         txQueueApi.registerTransaction(tx);
 
@@ -240,32 +236,8 @@ const DepositConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [api, activeApi, activeChain, depositTxInProgress, note, wrappableToken, apiConfig, activeAccount?.address, txQueueApi, startNewTransaction, onResetState, fungibleTokenId, downloadNote, addNoteToNoteManager, enqueueSubmittedTx, removeNoteFromNoteManager]
+      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, downloadNote, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken]
     );
-
-    const cardTitle = useMemo(() => {
-      if (!currentTx) {
-        return undefined;
-      }
-
-      return getCardTitle(stage, currentTx.name, wrappingFlow).trim();
-    }, [currentTx, stage, wrappingFlow]);
-
-    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
-      if (!txId) {
-        return ['', undefined, undefined];
-      }
-
-      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      const message = txPayload
-        ? txPayload.txStatus.message?.replace('...', '')
-        : '';
-
-      const step = txPayload?.currentStep;
-      const status = txPayload?.txStatus.status;
-
-      return [message, step, status];
-    }, [txId, txPayloads]);
 
     return (
       <DepositConfirm
@@ -274,8 +246,8 @@ const DepositConfirmContainer = forwardRef<
         ref={ref}
         note={note.note.serialize()}
         actionBtnProps={{
-          isDisabled: depositTxInProgress ? false : !checked,
-          children: depositTxInProgress
+          isDisabled: inProgressTxId ? false : !checked,
+          children: inProgressTxId
             ? 'Make Another Transaction'
             : wrappingFlow
             ? 'Wrap And Deposit'
@@ -284,7 +256,7 @@ const DepositConfirmContainer = forwardRef<
         }}
         checkboxProps={{
           isChecked: checked,
-          isDisabled: depositTxInProgress,
+          isDisabled: Boolean(inProgressTxId),
           onChange: () => setChecked((prev) => !prev),
         }}
         totalProgress={totalStep}
