@@ -104,7 +104,11 @@ const AmountChip = () => {
   }
 
   return (
-    <Chip isDisabled={!twitterHandle} color="blue" className="rounded-lg">
+    <Chip
+      isDisabled={!twitterHandle}
+      color="blue"
+      className="normal-case rounded-lg"
+    >
       {amount} {token}
     </Chip>
   );
