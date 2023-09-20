@@ -52,16 +52,16 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 
   [PresetTypedChainId.HermesOrbit]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76': 3_395,
+    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb': 92_178,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76': 3_283,
+    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb': 92_061,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76': 3_523,
+    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb': 92_309,
   },
   [PresetTypedChainId.TangleTestnet]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76': 447_534,
+    '0xFb7dAF524a1cD3a9b6e08412eC99C1F135e578cb': 665_187,
   },
 
   ...localAnchorRecord,
