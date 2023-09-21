@@ -148,3 +148,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - UI improvements
 - Unifying backend to `webb-ui-kit`
+
+## [0.0.16] - 2023-09-21
+
+### Fixed, Changed and Added
+
+- DKG stats-dapp QA (Sept 13, 2023) fixes part 1 ([#1639](https://github.com/webb-tools/webb-dapp/pull/1639))

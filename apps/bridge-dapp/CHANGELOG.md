@@ -180,3 +180,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adding SEO for Hubble Bridge
 - New Orbit & Tangle bridge deployment
+
+## [1.0.3] - 2023-09-21
+
+### Fixed, Changed and Added
+
+- Iterative Improvement For Hubble Bridge ([#1662](https://github.com/webb-tools/webb-dapp/pull/1662))

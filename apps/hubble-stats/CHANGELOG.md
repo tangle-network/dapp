@@ -51,3 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Bugs in Pool Wrapping Table
 - Add TVL change rate + Add Explorer Urls
 - Fix Hubble Stats Theme Flickering
+
+## [0.0.3] - 2023-09-21
+
+### Chaged, Added and Fixed
+
+- Fix current major issues on Hubble Stats ([#1651](https://github.com/webb-tools/webb-dapp/pull/1651))
+- Fix chart tooltip bug ([#1664](https://github.com/webb-tools/webb-dapp/pull/1664))
