@@ -83,10 +83,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
         throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
       }
 
-      const msg = createSignInMessage(
-        account.address,
-        await activeApi.getChainId()
-      );
+      const msg = createSignInMessage(account.address);
 
       const signedString = await activeApi.sign(msg);
 
