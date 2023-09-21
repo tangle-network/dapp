@@ -1,10 +1,18 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 
-import { ChartTooltipProps } from './types';
+import { ChartTooltipContentProps } from './types';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
-const ChartTooltip: FC<ChartTooltipProps> = ({ date, info }) => {
+const ChartTooltipContent: FC<ChartTooltipContentProps> = ({
+  date,
+  info,
+  onContentDisplayedFnc,
+}) => {
+  useEffect(() => {
+    onContentDisplayedFnc();
+  }, [onContentDisplayedFnc]);
+
   return (
     <div className="rounded-lg p-2 bg-[rgba(255,255,255,0.70)] dark:bg-[rgba(31,29,43,0.70)]">
       <Typography variant="body2">
@@ -31,4 +39,4 @@ const ChartTooltip: FC<ChartTooltipProps> = ({ date, info }) => {
   );
 };
 
-export default ChartTooltip;
+export default ChartTooltipContent;

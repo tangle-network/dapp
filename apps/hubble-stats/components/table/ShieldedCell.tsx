@@ -13,7 +13,7 @@ const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
         <Typography
           variant="body1"
           fw="bold"
-          className="text-mono-140 dark:text-mono-40"
+          className="text-mono-140 dark:text-mono-40 whitespace-nowrap"
         >
           {title}
         </Typography>
@@ -21,7 +21,7 @@ const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
         <div className="flex items-center gap-1">
           <Typography
             variant="body1"
-            className="text-mono-140 dark:text-mono-40"
+            className="text-mono-140 dark:text-mono-40 whitespace-nowrap"
           >
             {shortenHex(address, 4)}
           </Typography>
