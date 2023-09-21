@@ -78,3 +78,7 @@ export interface Threshold {
 
   pending: number;
 }
+export type AuthorityReputation = {
+  authority: string;
+  reputation: string;
+};

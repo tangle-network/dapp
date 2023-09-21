@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useStatsContext } from '../stats-provider';
+import { ApiPromise } from '@polkadot/api';
+import { AuthorityReputation } from './types';
 
-const getAuthorityReputations = async (currentAuthorities: any, api: any) => {
-  const promises = currentAuthorities.map(async (item: any) => {
+const getAuthorityReputations = async (
+  currentAuthorities: string[],
+  api: ApiPromise
+) => {
+  const promises = currentAuthorities.map(async (item: string) => {
     const reputation = await api.query.dkg.authorityReputations(item);
     return {
       authority: item,
@@ -27,28 +32,32 @@ export const useReputations = () => {
     dkgDataFromPolkadotAPI: { currentAuthorities },
   } = useStatsContext();
 
-  const [authorityReputations, setAuthorityReputations] = useState<any[]>([]);
+  const [authorityReputations, setAuthorityReputations] = useState<
+    AuthorityReputation[]
+  >([]);
   const [highestReputationScore, setHighestReputationScore] = useState<number>(
     -Infinity
   );
 
   useEffect(() => {
-    const fetchReputations = async () => {
-      const reputations = await getAuthorityReputations(
-        currentAuthorities,
-        api
-      );
+    if (api) {
+      const fetchReputations = async () => {
+        const reputations = await getAuthorityReputations(
+          currentAuthorities,
+          api
+        );
 
-      const maxReputation = reputations.reduce((max, entry) => {
-        const reputationValue = Number(entry.reputation);
-        return reputationValue > max ? reputationValue : max;
-      }, -Infinity);
+        const maxReputation = reputations.reduce((max, entry) => {
+          const reputationValue = Number(entry.reputation);
+          return reputationValue > max ? reputationValue : max;
+        }, -Infinity);
 
-      setAuthorityReputations(reputations);
-      setHighestReputationScore(maxReputation);
-    };
+        setAuthorityReputations(reputations);
+        setHighestReputationScore(maxReputation);
+      };
 
-    fetchReputations();
+      fetchReputations();
+    }
   }, [api, currentAuthorities]);
 
   return {
