@@ -558,7 +558,14 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query, activeSession, sessionHeight, blockTime, authoritiesUptimes]);
+  }, [
+    callSessionKeys,
+    query,
+    activeSession,
+    sessionHeight,
+    blockTime,
+    authoritiesUptimes,
+  ]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable
