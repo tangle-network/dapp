@@ -29,11 +29,11 @@ export interface VolumeChartProps
 }
 
 export interface ChartTooltipContentProps {
-  date: Date;
+  date?: Date;
   info: Array<{
     color: string;
     label: string;
-    value: number;
+    value?: number;
     valuePrefix?: string;
     valueSuffix?: string;
   }>;
@@ -41,4 +41,5 @@ export interface ChartTooltipContentProps {
    * A function to call when the content of Tooltip is being displayed
    */
   onContentDisplayedFnc: () => void;
+  hide: boolean;
 }

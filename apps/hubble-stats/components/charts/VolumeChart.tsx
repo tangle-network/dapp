@@ -47,34 +47,32 @@ const VolumeChart: FC<VolumeChartProps> = ({
         <Tooltip
           cursor={{ opacity: isDarkMode ? 0.2 : 1 }}
           content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              return (
-                <ChartTooltipContent
-                  date={payload[0].payload['date']}
-                  info={[
-                    {
-                      color: '#624FBE',
-                      label: 'Deposits',
-                      value: payload[0].payload['deposit'],
-                      valuePrefix: tooltipValuePrefix,
-                      valueSuffix: tooltipValueSuffix,
-                    },
-                    {
-                      color: '#B5A9F2',
-                      label: 'Withdrawals',
-                      value: payload[0].payload['withdrawal'],
-                      valuePrefix: tooltipValuePrefix,
-                      valueSuffix: tooltipValueSuffix,
-                    },
-                  ]}
-                  onContentDisplayedFnc={() => {
-                    setValue && setValue(payload[0].payload['deposit']);
-                    setDate && setDate(payload[0].payload['date']);
-                  }}
-                />
-              );
-            }
-            return null;
+            return (
+              <ChartTooltipContent
+                date={payload?.[0]?.payload['date']}
+                info={[
+                  {
+                    color: '#624FBE',
+                    label: 'Deposits',
+                    value: payload?.[0]?.payload['deposit'],
+                    valuePrefix: tooltipValuePrefix,
+                    valueSuffix: tooltipValueSuffix,
+                  },
+                  {
+                    color: '#B5A9F2',
+                    label: 'Withdrawals',
+                    value: payload?.[0]?.payload['withdrawal'],
+                    valuePrefix: tooltipValuePrefix,
+                    valueSuffix: tooltipValueSuffix,
+                  },
+                ]}
+                onContentDisplayedFnc={() => {
+                  setValue && setValue(payload?.[0]?.payload['deposit']);
+                  setDate && setDate(payload?.[0]?.payload['date']);
+                }}
+                hide={!(active && payload && payload.length)}
+              />
+            );
           }}
         />
         <Bar dataKey="deposit" fill="#624FBE" />
