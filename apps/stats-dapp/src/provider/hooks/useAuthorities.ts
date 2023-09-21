@@ -301,7 +301,7 @@ export function useAuthorities(
 
   const authoritiesUptime = useAuthorityUptimesQuery({
     pollInterval: 1000,
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const authoritiesUptimes = useMemo(() => {
@@ -385,7 +385,7 @@ export function useAuthorities(
       })
       .subscribe(setAuthorities);
     return () => subscription.unsubscribe();
-  }, [query]);
+  }, [query, authoritiesUptimes, authorityReputations]);
 
   return authorities;
 }
@@ -559,7 +559,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
       })
       .subscribe(setStats);
     return () => subscription.unsubscribe();
-  }, [queryValidatorOfSession]);
+  }, [queryValidatorOfSession, authorityReputations]);
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }
 

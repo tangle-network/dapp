@@ -138,13 +138,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div
-      className={cx(
-        'flex flex-col min-h-screen',
-        "bg-[url('assets/stats-bg.jpeg')] dark:bg-[url('assets/stats-dark-bg.jpeg')]",
-        'bg-no-repeat bg-cover bg-fixed'
-      )}
-    >
+    <div className={cx('w-full mx-auto flex-1 bg-body')}>
       <Header
         selectedNetwork={selectedNetwork}
         setUserSelectedNetwork={setUserSelectedNetwork}
@@ -152,17 +146,15 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
         setSelectedNetworkType={setSelectedNetworkType}
       />
 
-      <div className="flex-1 overflow-hidden">
-        <ApolloProvider client={apolloClient}>
-          <StatsProvider
-            subqueryEndpoint={subqueryEndpoint}
-            polkadotEndpoint={polkadotEndpoint}
-          >
-            <NavBoxInfoContainer />
-            <main className="max-w-[1160px] mx-auto">{children}</main>
-          </StatsProvider>
-        </ApolloProvider>
-      </div>
+      <ApolloProvider client={apolloClient}>
+        <StatsProvider
+          subqueryEndpoint={subqueryEndpoint}
+          polkadotEndpoint={polkadotEndpoint}
+        >
+          <NavBoxInfoContainer />
+          <main className="max-w-[1160px] mx-auto">{children}</main>
+        </StatsProvider>
+      </ApolloProvider>
 
       <div className="max-w-[1160px] mx-auto">
         <Footer logoType="tangle" />
