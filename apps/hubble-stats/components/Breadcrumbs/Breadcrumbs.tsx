@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useMemo } from 'react';
+import cx from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -53,7 +54,7 @@ const Breadcrumbs: FC = () => {
         <Link key={index} href={breadcrumb.href}>
           <BreadcrumbsItem
             icon={breadcrumb.icon}
-            className={breadcrumb.className}
+            className={cx('whitespace-nowrap', breadcrumb.className)}
             textClassName="!text-[12px] lg:!text-[16px] normal-case"
             isLast={breadcrumb.isLast}
           >

@@ -14,8 +14,8 @@ export default async function OverviewChipsContainer() {
   const { tvl, deposit } = await getOverviewChipsData();
 
   return (
-    <div className="hidden md:flex items-center gap-4">
-      <Chip color="blue" className="normal-case">
+    <div className="hidden md:flex items-center gap-2 lg:gap-4">
+      <Chip color="blue" className="normal-case whitespace-nowrap">
         <DatabaseLine size="lg" className="fill-blue-90 dark:fill-blue-30" />
         TVL:{' '}
         {typeof tvl === 'number'
@@ -26,7 +26,7 @@ export default async function OverviewChipsContainer() {
 
       <Tooltip>
         <TooltipTrigger>
-          <Chip color="blue" className="normal-case">
+          <Chip color="blue" className="normal-case whitespace-nowrap">
             <ArrowRightUp
               size="lg"
               className="fill-blue-90 dark:fill-blue-30"

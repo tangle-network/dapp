@@ -22,6 +22,11 @@ const localAnchorRecord = process.env.BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS
     }, {})
   : {};
 
+/**
+ * The anchor -> signature bridge record
+ *
+ * typed chain id -> anchor address -> signature bridge address
+ */
 export const anchorSignatureBridge: ChainWithAnchorsMapType = {
   // EVM
   [PresetTypedChainId.ArbitrumTestnet]: {
@@ -47,20 +52,20 @@ export const anchorSignatureBridge: ChainWithAnchorsMapType = {
   },
 
   [PresetTypedChainId.HermesOrbit]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76':
-      '0x0447bc20C5360D62e73dB3Ea0bB1848EBbdc5ee6',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76':
-      '0x0447bc20C5360D62e73dB3Ea0bB1848EBbdc5ee6',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76':
-      '0x0447bc20C5360D62e73dB3Ea0bB1848EBbdc5ee6',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
   [PresetTypedChainId.TangleTestnet]: {
-    '0x9b5404eBc174a7eE36b0d248b2735382B320EC76':
-      '0x0447bc20C5360D62e73dB3Ea0bB1848EBbdc5ee6',
+    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
+      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
   },
 
   ...localAnchorRecord,

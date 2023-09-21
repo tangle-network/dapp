@@ -8,8 +8,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <SideBar />
-      <main className="flex flex-col justify-between flex-1 px-3 overflow-y-auto md:px-5 lg:px-10">
-        <div>
+      <main className="h-full flex flex-col justify-between flex-1 px-3 overflow-y-auto md:px-5 lg:px-10">
+        <div className="flex-[1]">
           {/* Header */}
           <div className="flex items-center justify-between pt-6 pb-4">
             <div className="flex items-center gap-2">
@@ -25,7 +25,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           {/* Body */}
           {children}
         </div>
-        <div className="flex-grow" />
+
         {/* Footer */}
         <Footer isMinimal className="mx-0 max-w-none" />
       </main>

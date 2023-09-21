@@ -164,3 +164,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New complete transaction flow with modal
 - Refund feature on the transfer flow
 - Leaf index validation with edge data on chain on withdraw and transfer flow
+
+## [1.0.1] - 2023-09-19
+
+### Fixed, Changed and Added
+
+- UI improvements
+- Leaf Index Checking & Relayer State
+- Adopt use-query-params Hook, Eliminate Excessive useEffect for Default State Handling
+- Fix Invalid BigNumber String on Tranfer flow
+
+## [1.0.2] - 2023-09-20
+
+### Fixed, Changed and Added
+
+- Adding SEO for Hubble Bridge
+- New Orbit & Tangle bridge deployment

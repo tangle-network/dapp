@@ -22,7 +22,7 @@ export const metadata: DefaultSeoProps = {
   ],
   defaultTitle: 'Webb Faucet',
   description:
-    'Our easy-to-use crypto faucet website allows you to claim free WebTNT with just a few clicks. Start earning fast and hassle-free payouts today!',
+    'Our easy-to-use testnet faucet allows you to claim test tokens with just a few clicks. Start experimenting with Hubble Bridge today.',
   openGraph: {
     images: [
       {

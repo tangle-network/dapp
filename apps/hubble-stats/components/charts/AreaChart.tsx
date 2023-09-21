@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { useNextDarkMode as useDarkMode } from '@webb-tools/webb-ui-components';
 
-import { ChartTooltip } from '..';
+import ChartTooltipContent from './ChartToolTipContent';
 import { AreaChartProps } from './types';
 
 const AreaChart: FC<AreaChartProps> = ({
@@ -56,33 +56,33 @@ const AreaChart: FC<AreaChartProps> = ({
           tickMargin={16}
           interval="preserveStartEnd"
         />
-        <Tooltip
-          contentStyle={{ display: 'none' }}
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              setValue && setValue(payload[0].payload['value']);
-              setDate && setDate(payload[0].payload['date']);
-              if (!showTooltip) {
-                return null;
+        {showTooltip && (
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <ChartTooltipContent
+                    date={payload[0].payload['date']}
+                    info={[
+                      {
+                        color: fillColor,
+                        label: tooltipLabel,
+                        value: payload[0].payload['value'],
+                        valuePrefix: tooltipValuePrefix,
+                        valueSuffix: tooltipValueSuffix,
+                      },
+                    ]}
+                    onContentDisplayedFnc={() => {
+                      setValue && setValue(payload[0].payload['value']);
+                      setDate && setDate(payload[0].payload['date']);
+                    }}
+                  />
+                );
               }
-              return (
-                <ChartTooltip
-                  date={payload[0].payload['date']}
-                  info={[
-                    {
-                      color: fillColor,
-                      label: tooltipLabel,
-                      value: payload[0].payload['value'],
-                      valuePrefix: tooltipValuePrefix,
-                      valueSuffix: tooltipValueSuffix,
-                    },
-                  ]}
-                />
-              );
-            }
-            return null;
-          }}
-        />
+              return null;
+            }}
+          />
+        )}
         <Area
           dataKey="value"
           stroke={fillColor}
