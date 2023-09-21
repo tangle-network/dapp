@@ -56,33 +56,29 @@ const AreaChart: FC<AreaChartProps> = ({
           tickMargin={16}
           interval="preserveStartEnd"
         />
-        {showTooltip && (
-          <Tooltip
-            content={({ active, payload }) => {
-              if (active && payload && payload.length) {
-                return (
-                  <ChartTooltipContent
-                    date={payload[0].payload['date']}
-                    info={[
-                      {
-                        color: fillColor,
-                        label: tooltipLabel,
-                        value: payload[0].payload['value'],
-                        valuePrefix: tooltipValuePrefix,
-                        valueSuffix: tooltipValueSuffix,
-                      },
-                    ]}
-                    onContentDisplayedFnc={() => {
-                      setValue && setValue(payload[0].payload['value']);
-                      setDate && setDate(payload[0].payload['date']);
-                    }}
-                  />
-                );
-              }
-              return null;
-            }}
-          />
-        )}
+        <Tooltip
+          content={({ active, payload }) => {
+            return (
+              <ChartTooltipContent
+                date={payload?.[0]?.payload['date']}
+                info={[
+                  {
+                    color: fillColor,
+                    label: tooltipLabel,
+                    value: payload?.[0]?.payload['value'],
+                    valuePrefix: tooltipValuePrefix,
+                    valueSuffix: tooltipValueSuffix,
+                  },
+                ]}
+                onContentDisplayedFnc={() => {
+                  setValue && setValue(payload?.[0]?.payload['value']);
+                  setDate && setDate(payload?.[0]?.payload['date']);
+                }}
+                hide={!showTooltip || !(active && payload && payload.length)}
+              />
+            );
+          }}
+        />
         <Area
           dataKey="value"
           stroke={fillColor}

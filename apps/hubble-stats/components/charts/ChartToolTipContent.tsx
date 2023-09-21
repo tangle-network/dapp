@@ -8,10 +8,15 @@ const ChartTooltipContent: FC<ChartTooltipContentProps> = ({
   date,
   info,
   onContentDisplayedFnc,
+  hide,
 }) => {
   useEffect(() => {
     onContentDisplayedFnc();
   }, [onContentDisplayedFnc]);
+
+  if (hide || date === undefined) {
+    return null;
+  }
 
   return (
     <div className="rounded-lg p-2 bg-[rgba(255,255,255,0.70)] dark:bg-[rgba(31,29,43,0.70)]">
