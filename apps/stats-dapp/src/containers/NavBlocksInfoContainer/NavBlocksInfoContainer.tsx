@@ -43,7 +43,7 @@ export const NavBoxInfoContainer = () => {
   }, [blocksData]);
 
   return (
-    <div className="flex items-center justify-between py-2 mb-4 max-w-[1160px] mx-auto">
+    <div className="flex items-center justify-between py-2 my-4 max-w-[1160px] mx-auto">
       <Breadcrumbs>
         <NavLink to="/">
           <BreadcrumbsItem icon={<GridFillIcon />}>

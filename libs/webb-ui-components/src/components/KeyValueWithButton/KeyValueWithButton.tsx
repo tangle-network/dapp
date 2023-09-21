@@ -61,7 +61,7 @@ export const KeyValueWithButton = forwardRef<
           ? shortenFn
             ? shortenFn(keyValue)
             : shortenHex(keyValue, 5)
-          : keyValue,
+          : shortenHex(keyValue, 5).replace('0x', ''),
       [hasShortenValue, keyValue, shortenFn]
     );
 

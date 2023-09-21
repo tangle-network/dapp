@@ -7,3 +7,4 @@ export * from './mappers';
 export * from './useSession';
 export * from './useBlocks';
 export * from './useProposals';
+export * from './useReputation';

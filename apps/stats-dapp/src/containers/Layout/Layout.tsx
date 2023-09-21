@@ -138,28 +138,26 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div>
-      <div className={cx('w-full mx-auto flex-1 bg-body')}>
-        <Header
-          selectedNetwork={selectedNetwork}
-          setUserSelectedNetwork={setUserSelectedNetwork}
-          selectedNetworkType={selectedNetworkType}
-          setSelectedNetworkType={setSelectedNetworkType}
-        />
+    <div className={cx('w-full mx-auto flex-1 bg-body')}>
+      <Header
+        selectedNetwork={selectedNetwork}
+        setUserSelectedNetwork={setUserSelectedNetwork}
+        selectedNetworkType={selectedNetworkType}
+        setSelectedNetworkType={setSelectedNetworkType}
+      />
 
-        <ApolloProvider client={apolloClient}>
-          <StatsProvider
-            subqueryEndpoint={subqueryEndpoint}
-            polkadotEndpoint={polkadotEndpoint}
-          >
-            <NavBoxInfoContainer />
-            <main className="max-w-[1160px] mx-auto">{children}</main>
-          </StatsProvider>
-        </ApolloProvider>
+      <ApolloProvider client={apolloClient}>
+        <StatsProvider
+          subqueryEndpoint={subqueryEndpoint}
+          polkadotEndpoint={polkadotEndpoint}
+        >
+          <NavBoxInfoContainer />
+          <main className="max-w-[1160px] mx-auto">{children}</main>
+        </StatsProvider>
+      </ApolloProvider>
 
-        <div className="max-w-[1160px] mx-auto">
-          <Footer logoType="tangle" />
-        </div>
+      <div className="max-w-[1160px] mx-auto">
+        <Footer logoType="tangle" />
       </div>
     </div>
   );

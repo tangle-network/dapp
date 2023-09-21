@@ -55,6 +55,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
           keyValue={props.getValue<string>()}
           size="sm"
           isHiddenLabel
+          hasShortenValue={false}
         />
       </div>
     ),
@@ -92,7 +93,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={Number(parseFloat(props.getValue()).toFixed(2))}
         className="w-[100px]"
         suffixLabel="%"
       />

@@ -15,7 +15,6 @@ import {
   WrappingFeeUpdateProposal,
 } from '@webb-tools/proposals';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
-import { AnchorCreateProposal } from '@webb-tools/sdk-core';
 
 export function getProposalsData(
   propType: ProposalType,

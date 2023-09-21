@@ -23,6 +23,7 @@ import {
   SessionKeyStatus,
   Threshold,
 } from './types';
+import { useReputations } from './useReputation';
 
 /**
  *  Public key shared content
@@ -446,12 +447,14 @@ export function useKey(id: string): PublicKeyDetailsPage {
 
   const authoritiesUptime = useAuthorityUptimesQuery({
     pollInterval: 1000,
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const authoritiesUptimes = useMemo(() => {
     return authoritiesUptime.data?.authorityUpTimes?.nodes;
   }, [authoritiesUptime]);
+
+  const authorityReputations = useReputations();
 
   useEffect(() => {
     call({
@@ -470,7 +473,6 @@ export function useKey(id: string): PublicKeyDetailsPage {
 
   useEffect(() => {
     const subscription = query.observable
-
       .map((res): Loadable<PublicKeyDetails> => {
         if (res.data) {
           const publicKey = res.data.publicKey;
@@ -496,7 +498,10 @@ export function useKey(id: string): PublicKeyDetailsPage {
                 account: auth.id,
                 id: auth.id,
                 location: 'any',
-                reputation: Number(auth.reputation) * Math.pow(10, -7),
+                reputation:
+                  (Number(auth.reputation) /
+                    authorityReputations.highestReputationScore) *
+                  100,
                 uptime: uptime,
               };
             });
@@ -553,7 +558,14 @@ export function useKey(id: string): PublicKeyDetailsPage {
         setKey(val);
       });
     return () => subscription.unsubscribe();
-  }, [callSessionKeys, query, activeSession, sessionHeight, blockTime]);
+  }, [
+    callSessionKeys,
+    query,
+    activeSession,
+    sessionHeight,
+    blockTime,
+    authoritiesUptimes,
+  ]);
 
   useEffect(() => {
     const subscription = sessionKeysQuery.observable

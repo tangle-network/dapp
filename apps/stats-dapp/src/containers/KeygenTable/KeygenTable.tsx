@@ -361,7 +361,7 @@ export const KeygenTable: FC = () => {
           </Accordion>
         </Filter>
       }
-      className="h-[780px]"
+      className="h-fit-content"
     >
       {data.length > 0 ? (
         <Table
@@ -372,7 +372,7 @@ export const KeygenTable: FC = () => {
           title="Keys"
         />
       ) : (
-        <div className="h-[780px] flex items-center flex-col justify-center">
+        <div className="h-[720px] flex items-center flex-col justify-center">
           <Spinner size="xl" />
         </div>
       )}

@@ -183,16 +183,19 @@ const Authorities = () => {
                 <Typography variant="body2" fw="semibold">
                   /
                 </Typography>
-                <KeyValueWithButton
-                  size="sm"
-                  label="key:"
-                  keyValue={currentKey}
-                />
+                <Link to={`/keys/drawer/${currentKey}`}>
+                  <KeyValueWithButton
+                    size="sm"
+                    label="key:"
+                    keyValue={currentKey}
+                    className="hover:underline"
+                  />
+                </Link>
               </div>
 
-              <Button variant="link" size="sm">
+              {/* <Button variant="link" size="sm">
                 <Link to="history">View history</Link>
-              </Button>
+              </Button> */}
             </div>
           </>
         )}
