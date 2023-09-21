@@ -321,24 +321,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     rpcUrls: {
       default: {
-        http: [
-          'https://rpc-archive.tangle.tools',
-          'https://rpc1.tangle.tools',
-          'https://rpc2.tangle.tools',
-          'https://rpc3.tangle.tools',
-          'https://rpc4.tangle.tools',
-          'https://rpc5.tangle.tools',
-        ],
+        http: ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
       },
       public: {
-        http: [
-          'https://rpc-archive.tangle.tools',
-          'https://rpc1.tangle.tools',
-          'https://rpc2.tangle.tools',
-          'https://rpc3.tangle.tools',
-          'https://rpc4.tangle.tools',
-          'https://rpc5.tangle.tools',
-        ],
+        http: ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
       },
     },
     contracts: hostedOrbitMulticall3Address

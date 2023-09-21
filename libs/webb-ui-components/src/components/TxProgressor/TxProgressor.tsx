@@ -125,7 +125,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
               variant="body4"
               fw="bold"
               component="span"
-              className="inline-block text-mono-120 dark:text-mono-60"
+              className="inline-block normal-case text-mono-120 dark:text-mono-60"
             >
               {isHex(walletAddress)
                 ? shortenHex(walletAddress, 2)
