@@ -11058,6 +11058,11 @@
   resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-126.tgz#6062d028ca426eb03ae9d37eb789b6ab32b361a0"
   integrity sha512-jdXU5ymruJUkfY7fxtzoL7Q25yjqdkMDzU0vBtZZDjhhJiCMxhzB5y9KkFI00VrysqRbCDHL1GiKnRtkntAUag==
 
+"@webb-tools/wasm-utils@0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.8.tgz#04635bda3246ede4792b722f44d705393cae7fc4"
+  integrity sha512-Uu5vnlYznwOsWARDrbTdV0c2b0h/2k3EIUomqTSYUKu/XC6MHibx+G661oE3v7afwVljlfOPUVS61BhOmv5UuQ==
+
 "@webpack-cli/configtest@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@webpack-cli/configtest/-/configtest-2.1.1.tgz#3b2f852e91dac6e3b85fb2a314fb8bef46d94646"
