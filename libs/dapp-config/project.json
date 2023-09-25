@@ -11,7 +11,8 @@
         "outputPath": "dist/libs/dapp-config",
         "main": "libs/dapp-config/src/index.ts",
         "tsConfig": "libs/dapp-config/tsconfig.lib.json",
-        "assets": ["libs/dapp-config/*.md"]
+        "assets": ["libs/dapp-config/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

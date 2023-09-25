@@ -11,7 +11,8 @@
         "outputPath": "dist/libs/note-manager",
         "main": "libs/note-manager/src/index.ts",
         "tsConfig": "libs/note-manager/tsconfig.lib.json",
-        "assets": ["libs/note-manager/*.md"]
+        "assets": ["libs/note-manager/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {
