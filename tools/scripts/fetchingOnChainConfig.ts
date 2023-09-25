@@ -1,6 +1,8 @@
 import { config } from 'dotenv';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
+import yargs, { type Argv, type Options } from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 config({
   path: path.join(workspaceRoot, '.env'),
@@ -38,7 +40,28 @@ import mergeConfig from './utils/on-chain-utils/mergeConfig';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
+const cliOptions = {
+  'skip-fetching': {
+    type: 'boolean',
+    default: false,
+    description:
+      'Skip fetching on chain config (useful for development and testing)',
+  } satisfies Options,
+  'skip-merging': {
+    type: 'boolean',
+    default: false,
+    description:
+      'Use the fetched config directly without merging with the existing one',
+  } satisfies Options,
+};
+
+type Arguments = {
+  skipFetching: boolean;
+  skipMerging: boolean;
+};
+
 interface Ctx {
+  args?: Awaited<Argv<Arguments>['argv']>;
   typedChainIds: number[];
   nativeRecord: Record<number, ICurrency>;
   anchorMetadataRecord: Record<number, AnchorMetadata[]>;
@@ -46,6 +69,7 @@ interface Ctx {
 }
 
 const ctx: Ctx = {
+  args: undefined,
   typedChainIds: Object.keys(anchorDeploymentBlock).map((id) => +id),
   nativeRecord: {},
   anchorMetadataRecord: {},
@@ -227,7 +251,8 @@ async function fetchAnchorMetadataTask(
 async function writeFileTask(
   typedChainIds: number[],
   nativeRecord: Record<number, ICurrency>,
-  metadataRecord: Record<number, AnchorMetadata[]>
+  metadataRecord: Record<number, AnchorMetadata[]>,
+  skipMerging = false
 ): Promise<void> {
   const fetchedCfg = typedChainIds.reduce((acc, typedChainId) => {
     const native = nativeRecord[typedChainId];
@@ -245,7 +270,9 @@ async function writeFileTask(
     return acc;
   }, {} as ConfigType);
 
-  const writableConfig = mergeConfig(configPath, fetchedCfg);
+  const writableConfig = skipMerging
+    ? fetchedCfg
+    : mergeConfig(configPath, fetchedCfg);
 
   // Ensure directories are created
   const dir = path.dirname(configPath);
@@ -265,8 +292,23 @@ async function writeFileTask(
 const tasks = new Listr<Ctx>(
   [
     {
+      title: color.cyan('Parsing arguments...'),
+      options: { persistentOutput: true },
+      task: async (ctx, task) => {
+        const parser = yargs(hideBin(process.argv)).options(cliOptions);
+
+        const args = await parser.argv;
+        ctx.args = args;
+
+        task.output = color.green(
+          `Parsed arguments: ${JSON.stringify(args, null, 2)}`
+        );
+      },
+    },
+    {
       title: color.cyan('Filtering active chains...'),
       options: { persistentOutput: true },
+      skip: (ctx) => ctx.args?.skipFetching,
       task: async (ctx, task) => {
         // Filter out the active chains
         const evmTypedChainIds = await filterActiveEVMChains(ctx.typedChainIds);
@@ -300,6 +342,7 @@ const tasks = new Listr<Ctx>(
     {
       title: color.cyan('Fetching on chain config...'),
       options: { persistentOutput: true },
+      skip: (ctx) => ctx.args?.skipFetching,
       task: async (ctx, task) =>
         task.newListr<Ctx>(
           [
@@ -357,12 +400,14 @@ const tasks = new Listr<Ctx>(
     {
       title: color.cyan(`Writing config to ${configPath}...`),
       options: { persistentOutput: true },
+      skip: (ctx) => ctx.args?.skipFetching,
       task: async (ctx, task) => {
         try {
           await writeFileTask(
             ctx.typedChainIds,
             ctx.nativeRecord,
-            ctx.anchorMetadataRecord
+            ctx.anchorMetadataRecord,
+            ctx.args?.skipMerging
           );
 
           task.output = color.green(
