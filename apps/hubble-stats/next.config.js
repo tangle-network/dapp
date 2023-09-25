@@ -2,11 +2,14 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
+const nextConfigBase = require('../../next.config.js');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  ...nextConfigBase,
+
   // at default environment variable is only accessible by the server, resulting in hydration mismatch
   // make environment variable accessible by both the server and client
   env: {
