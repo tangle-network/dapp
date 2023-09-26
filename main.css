@@ -976,6 +976,10 @@ video {
   flex-basis: 0px;
 }.basis-1{
   flex-basis: 0.25rem;
+}.basis-12{
+  flex-basis: 3rem;
+}.basis-6{
+  flex-basis: 1.5rem;
 }.basis-full{
   flex-basis: 100%;
 }.table-auto{
@@ -1196,12 +1200,8 @@ video {
   gap: 1rem;
 }.gap-6{
   gap: 1.5rem;
-}.gap-7{
-  gap: 1.75rem;
 }.gap-9{
   gap: 2.25rem;
-}.gap-\[16px\]{
-  gap: 16px;
 }.gap-\[2px\]{
   gap: 2px;
 }.gap-x-2{
@@ -1549,12 +1549,12 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }.bg-mono-0\/10{
   background-color: rgb(255 255 255 / 0.1);
-}.bg-mono-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(156 160 176 / var(--tw-bg-opacity));
 }.bg-mono-120{
   --tw-bg-opacity: 1;
   background-color: rgb(108 113 128 / var(--tw-bg-opacity));
+}.bg-mono-160{
+  --tw-bg-opacity: 1;
+  background-color: rgb(58 62 83 / var(--tw-bg-opacity));
 }.bg-mono-170{
   --tw-bg-opacity: 1;
   background-color: rgb(46 50 68 / var(--tw-bg-opacity));
@@ -1644,6 +1644,8 @@ video {
   fill: #3A3E53;
 }.fill-mono-200{
   fill: #1F1D2B;
+}.fill-mono-40{
+  fill: #E2E5EB;
 }.fill-mono-60{
   fill: #D3D8E2;
 }.fill-purple-10{
@@ -1678,6 +1680,8 @@ video {
   stroke: #3D7BCE;
 }.stroke-mono-20{
   stroke: #F7F8F7;
+}.stroke-mono-200{
+  stroke: #1F1D2B;
 }.stroke-mono-40{
   stroke: #E2E5EB;
 }.stroke-mono-60{
@@ -1711,6 +1715,9 @@ video {
   padding: 2px;
 }.p-\[3px\]{
   padding: 3px;
+}.px-1{
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }.px-2{
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1785,8 +1792,6 @@ video {
   padding-bottom: 1.5rem;
 }.pl-1{
   padding-left: 0.25rem;
-}.pl-12{
-  padding-left: 3rem;
 }.pl-2{
   padding-left: 0.5rem;
 }.pl-3{
@@ -1807,8 +1812,6 @@ video {
   padding-right: 0.75rem;
 }.pr-4{
   padding-right: 1rem;
-}.pr-5{
-  padding-right: 1.25rem;
 }.pr-8{
   padding-right: 2rem;
 }.pt-0{
@@ -2615,6 +2618,29 @@ main{
   fill: #3D7BCE !important;
 }:root {
   --adjust-amount-width: 160px;
+}.bg-body-base{
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  -o-object-fit: fill;
+     object-fit: fill;
+}.bg-body{
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  -o-object-fit: fill;
+     object-fit: fill;
+  background-image: url('body-bg.jpeg');
+}.dark .bg-body{
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  -o-object-fit: fill;
+     object-fit: fill;
+  background-image: url('body-bg-dark.jpeg');
 }.placeholder\:text-\[16px\]::-moz-placeholder{
   font-size: 16px;
 }.placeholder\:text-\[16px\]::placeholder{
@@ -2968,8 +2994,6 @@ main{
   width: 10px;
 }.radix-orientation-vertical\:w-\[1px\][data-orientation="vertical"]{
   width: 1px;
-}.hover\:rounded-full:hover{
-  border-radius: 9999px;
 }.hover\:border-blue-40:hover{
   --tw-border-opacity: 1;
   border-color: rgb(129 179 247 / var(--tw-border-opacity));
@@ -3274,9 +3298,6 @@ main{
 }:is(.dark .dark\:bg-mono-160){
   --tw-bg-opacity: 1;
   background-color: rgb(58 62 83 / var(--tw-bg-opacity));
-}:is(.dark .dark\:bg-mono-170){
-  --tw-bg-opacity: 1;
-  background-color: rgb(46 50 68 / var(--tw-bg-opacity));
 }:is(.dark .dark\:bg-mono-180){
   --tw-bg-opacity: 1;
   background-color: rgb(43 47 64 / var(--tw-bg-opacity));
@@ -3292,9 +3313,6 @@ main{
 }:is(.dark .dark\:bg-mono-40){
   --tw-bg-opacity: 1;
   background-color: rgb(226 229 235 / var(--tw-bg-opacity));
-}:is(.dark .dark\:bg-mono-60){
-  --tw-bg-opacity: 1;
-  background-color: rgb(211 216 226 / var(--tw-bg-opacity));
 }:is(.dark .dark\:bg-purple-120){
   --tw-bg-opacity: 1;
   background-color: rgb(46 40 77 / var(--tw-bg-opacity));
@@ -3309,8 +3327,6 @@ main{
   background-color: rgb(63 53 23 / var(--tw-bg-opacity));
 }:is(.dark .dark\:bg-opacity-70){
   --tw-bg-opacity: 0.7;
-}:is(.dark .dark\:\!fill-mono-0){
-  fill: #fff !important;
 }:is(.dark .dark\:\!fill-mono-60){
   fill: #D3D8E2 !important;
 }:is(.dark .dark\:fill-blue-120){
@@ -3367,6 +3383,8 @@ main{
   stroke: #6C7180;
 }:is(.dark .dark\:stroke-mono-140){
   stroke: #4E5463;
+}:is(.dark .dark\:stroke-mono-40){
+  stroke: #E2E5EB;
 }:is(.dark .dark\:\!text-mono-80){
   --tw-text-opacity: 1 !important;
   color: rgb(194 200 212 / var(--tw-text-opacity)) !important;
@@ -3847,6 +3865,8 @@ main{
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}.\[\&_\*\]\:cursor-pointer *{
+  cursor: pointer;
 }
 
 body {
