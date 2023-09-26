@@ -15,6 +15,8 @@ import {
   WrappingFeeUpdateProposal,
 } from '@webb-tools/proposals';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { chainsConfig } from '@webb-tools/dapp-config';
 
 export function getProposalsData(
   propType: ProposalType,
@@ -27,10 +29,19 @@ export function getProposalsData(
   switch (propType) {
     case ProposalType.AnchorUpdate: {
       const decoded = AnchorUpdateProposal.fromBytes(bytes);
+
+      const chainTypedChainId = calculateTypedChainId(
+        decoded.header.resourceId.chainType,
+        decoded.header.resourceId.chainId
+      );
+
+      const chain = chainsConfig[chainTypedChainId];
+
       return {
         merkleRoot: decoded.merkleRoot,
         functionSignature: u8aToHex(decoded.header.functionSignature),
         nonce: String(decoded.header.nonce),
+        chainName: chain.name,
         chainType: String(decoded.header.resourceId.chainType),
         chainId: String(decoded.header.resourceId.chainId),
         targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
