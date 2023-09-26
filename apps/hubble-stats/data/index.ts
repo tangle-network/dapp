@@ -1,15 +1,11 @@
 export { default as getKeyMetricsData } from './getKeyMetricsData';
-export {
-  default as getOverviewChartsData,
-  type OverviewChartsDataType,
-} from './getOverviewChartsData';
 export { default as getOverviewChipsData } from './getOverviewChipsData';
+export { default as getPoolMetadataData } from './getPoolMetadataData';
+export { default as getPoolOverviewCardData } from './getPoolOverviewCardData';
 export {
   default as getPoolOverviewChartsData,
   type PoolOverviewChartsDataType,
 } from './getPoolOverviewChartsData';
-export { default as getPoolMetadataData } from './getPoolMetadataData';
-export { default as getPoolOverviewCardData } from './getPoolOverviewCardData';
 export {
   default as getPoolOverviewTableData,
   type PoolOverviewTableDataType,
@@ -27,3 +23,5 @@ export {
   type PoolWrappingTableDataType,
 } from './getPoolWrappingTableData';
 export { default as getShieldedTablesData } from './getShieldedTablesData';
+export { default as getTvlChartData } from './getTvlChartData';
+export { default as getVolumeChartData } from './getVolumeChartData';
