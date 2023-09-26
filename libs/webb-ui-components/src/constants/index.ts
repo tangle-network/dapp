@@ -49,6 +49,7 @@ export type webbNetworksType = {
 
 export const BRIDGE_URL = 'https://app.webb.tools';
 export const DKG_STATS_URL = 'https://stats.tangle.tools';
+export const HUBBLE_STATS_URL = 'https://hubble-stats.webb.tools/';
 export const WEBB_MKT_URL = 'https://webb.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
