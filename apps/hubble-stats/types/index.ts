@@ -7,3 +7,8 @@ export type ChartDataRecord = { [epoch: string]: number };
 export type EpochResponse = {
   [epoch: string]: bigint;
 };
+
+export type MetricType = {
+  value?: number;
+  changeRate?: number;
+};

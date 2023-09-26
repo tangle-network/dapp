@@ -5,7 +5,7 @@ import {
 } from '../containers';
 import TvlChartContainer from '../containers/charts/TvlChartContainer';
 import { VolumeChartContainer } from '../containers/charts/VolumeChartContainer';
-import { getEpochStart, getNumDatesFromStart } from '../utils';
+import { getEpoch24H, getEpochStart, getNumDatesFromStart } from '../utils';
 import { LoadingScreen } from '../components';
 
 // force homepage to be dynamic
@@ -15,9 +15,13 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 5;
 
 export default async function Index() {
+  const startingEpoch = getEpochStart();
+
+  const epoch24h = getEpoch24H();
+
   const chartProps: ComponentProps<typeof TvlChartContainer> = {
     numDatesFromStart: getNumDatesFromStart(),
-    startingEpoch: getEpochStart(),
+    startingEpoch,
   };
 
   return (
@@ -33,7 +37,10 @@ export default async function Index() {
         </Suspense>
       </div>
 
-      {/* <KeyMetricsTableContainer /> */}
+      <KeyMetricsTableContainer
+        epochStart={startingEpoch}
+        epoch24h={epoch24h}
+      />
 
       {/* <ShieldedTablesContainer /> */}
     </div>
