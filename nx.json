@@ -39,7 +39,9 @@
         "default",
         "^production",
         "{workspaceRoot}/libs/webb-ui-components/.storybook/**/*",
-        "{workspaceRoot}/.storybook/**/*"
+        "{workspaceRoot}/.storybook/**/*",
+        "{projectRoot}/.storybook/**/*",
+        "{projectRoot}/tsconfig.storybook.json"
       ]
     },
     "e2e": {
@@ -57,7 +59,9 @@
       "!{projectRoot}/libs/webb-ui-components/.storybook/**/*",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
       "!{projectRoot}/.storybook/**/*",
-      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)"
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/tsconfig.storybook.json"
     ],
     "sharedGlobals": ["{workspaceRoot}/babel.config.json"]
   },

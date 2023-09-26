@@ -14,7 +14,8 @@
         "tsConfig": "libs/webb-ui-components/tsconfig.lib.json",
         "format": ["esm", "cjs"],
         "rollupConfig": ["libs/webb-ui-components/rollup.config.js"],
-        "external": ["react", "react-dom"]
+        "external": ["react", "react-dom"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

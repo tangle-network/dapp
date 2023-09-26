@@ -14,7 +14,8 @@
         "tsConfig": "libs/icons/tsconfig.lib.json",
         "format": ["esm", "cjs"],
         "rollupConfig": ["libs/icons/rollup.config.js"],
-        "external": ["react", "react-dom"]
+        "external": ["react", "react-dom"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

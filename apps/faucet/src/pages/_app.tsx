@@ -2,10 +2,7 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
 import { Footer, useDarkMode } from '@webb-tools/webb-ui-components';
-import {
-  WEBB_FAUCET_URL,
-  WEBB_MKT_URL,
-} from '@webb-tools/webb-ui-components/constants';
+import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 import { useEffect } from 'react';
@@ -16,7 +13,7 @@ import Provider from '../provider';
 export const metadata: DefaultSeoProps = {
   additionalLinkTags: [
     {
-      href: new URL('/static/assets/favicon.png', WEBB_MKT_URL).toString(),
+      href: '/static/assets/favicon.png',
       rel: 'icon',
     },
   ],
