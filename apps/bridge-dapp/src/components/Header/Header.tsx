@@ -16,6 +16,7 @@ import {
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
   SOCIAL_URLS_RECORD,
+  WEBB_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -110,6 +111,7 @@ export const Header: FC<HeaderProps> = () => {
           {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
           <NavigationMenuContent
             version={process.env.BRIDGE_VERSION}
+            onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
             onTestnetClick={() =>
               window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
             }
