@@ -7,7 +7,7 @@ import { NextThemeProvider } from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Welcome to Hubble Stats!',
+    default: 'Hubble Stats',
     template: 'Hubble Stats | %s',
   },
   description: 'Welcome to Hubble Stats!',
