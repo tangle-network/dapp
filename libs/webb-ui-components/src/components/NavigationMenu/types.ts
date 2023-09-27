@@ -38,6 +38,11 @@ export interface NavigationMenuContentProps
   onAboutClick?: ComponentProps<typeof MenuItem>['onClick'];
 
   /**
+   * The callback when user hits docs menu item
+   */
+  onDocsClick?: ComponentProps<typeof MenuItem>['onClick'];
+
+  /**
    * The app version
    */
   version?: string;
