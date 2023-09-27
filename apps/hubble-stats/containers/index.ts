@@ -1,6 +1,6 @@
 export { KeyMetricsTableContainer } from './KeyMetricsTableContainer';
 export { Layout } from './Layout';
-export { OverviewChipsContainer } from './OverviewChipsContainer';
+export { HeaderChipsContainer } from './HeaderChipsContainer';
 export { PoolMetadataTableContainer } from './PoolMetadataTableContainer';
 export { PoolOverviewCardContainer } from './PoolOverviewCardContainer';
 export { PoolOverviewChartsContainer } from './PoolOverviewChartsContainer';

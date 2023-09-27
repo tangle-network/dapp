@@ -1,13 +1,16 @@
 import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
 
 import { HeaderChipItem } from '../../components';
-import { getTvl } from '../../data';
-import { getHistoricalDepositData } from '../../data/headerChips';
+import { getTvlData, getHistoricalDepositData } from '../../data/headerChips';
 
-export default async function OverviewChipsContainer() {
+export default async function HeaderChipsContainer() {
   return (
     <div className="hidden md:flex items-center gap-2 lg:gap-4">
-      <HeaderChipItem Icon={DatabaseLine} label="TVL" dataFetcher={getTvl} />
+      <HeaderChipItem
+        Icon={DatabaseLine}
+        label="TVL"
+        dataFetcher={getTvlData}
+      />
 
       <HeaderChipItem
         Icon={ArrowRightUp}

@@ -1,7 +1,7 @@
 import React, { Suspense, type FC, type PropsWithChildren } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 
-import { OverviewChipsContainer } from '..';
+import { HeaderChipsContainer } from '..';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
@@ -18,7 +18,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             </div>
 
             <Suspense>
-              <OverviewChipsContainer />
+              <HeaderChipsContainer />
             </Suspense>
           </div>
 

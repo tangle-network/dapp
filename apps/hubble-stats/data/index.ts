@@ -25,5 +25,3 @@ export {
 export { default as getShieldedTablesData } from './getShieldedTablesData';
 export { default as getTvlChartData } from './getTvlChartData';
 export { default as getVolumeChartData } from './getVolumeChartData';
-
-export * from './reusable';
