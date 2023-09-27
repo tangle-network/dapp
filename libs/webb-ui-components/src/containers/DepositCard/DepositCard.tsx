@@ -81,7 +81,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
                 <TokenInput
                   {...bridgingTokenProps}
                   title="Shielded Pool"
-                  info="Shielded pools hold mixed crypotcurrency and are used to maintain privacy of the transaction."
+                  info="Shielded pools hold shielded cryptocurrency and are used to maintain privacy of the transaction."
                   className="grow shrink-0 basis-1"
                 />
               )}
