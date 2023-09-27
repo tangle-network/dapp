@@ -1,7 +1,9 @@
-import { ChartDataRecord } from '../types';
+import { ChartDataRecord, FormattedBasicChartDataType } from '../types';
 import { getDateFromEpoch } from './date';
 
-const getFormattedDataForBasicChart = (data: ChartDataRecord) => {
+const getFormattedDataForBasicChart = (
+  data: ChartDataRecord
+): FormattedBasicChartDataType => {
   return Object.keys(data).map((epoch) => {
     return {
       date: JSON.parse(

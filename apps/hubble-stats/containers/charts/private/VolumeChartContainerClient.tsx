@@ -1,15 +1,15 @@
 'use client';
 
-import { ChartContainer } from '@webb-tools/webb-ui-components';
 import { useState } from 'react';
-import VolumeChart from '../../../components/charts/VolumeChart';
-import getFormattedDataForVolumeChart from '../../../utils/getFormattedDataForVolumeChart';
+import { ChartContainer } from '@webb-tools/webb-ui-components';
 
-export default function VolumeChartClient(props: {
-  deposit24h?: number;
-  volumeData: ReturnType<typeof getFormattedDataForVolumeChart>;
-}) {
-  const { deposit24h, volumeData } = props;
+import { VolumeChartContainerProps } from './types';
+import VolumeChart from '../../../components/charts/VolumeChart';
+
+export default function VolumeChartContainerClient(
+  props: VolumeChartContainerProps
+) {
+  const { deposit24h, data } = props;
 
   const [volumeValue, setVolumeValue] = useState<number | null>(null);
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
@@ -24,7 +24,7 @@ export default function VolumeChartClient(props: {
       className="bg-glass dark:bg-glass_dark"
     >
       <VolumeChart
-        data={volumeData}
+        data={data}
         setDate={setVolumeDate}
         setValue={setVolumeValue}
         tooltipValueSuffix=" webbtTNT"

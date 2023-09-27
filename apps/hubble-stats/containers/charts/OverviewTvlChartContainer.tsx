@@ -1,8 +1,8 @@
 import getTvlChartData from '../../data/getTvlChartData';
-import TvlChartClient from './private/TvlChartClient';
+import { AreaChartContainerClient } from './private';
 import { ChartProps } from './types';
 
-export default async function TvlChartContainer(props: ChartProps) {
+export default async function OverviewTvlChartContainer(props: ChartProps) {
   const { numDatesFromStart, startingEpoch } = props;
 
   const { tvlData, currentTvl } = await getTvlChartData(
@@ -10,5 +10,5 @@ export default async function TvlChartContainer(props: ChartProps) {
     numDatesFromStart
   );
 
-  return <TvlChartClient currentTvl={currentTvl} tvlData={tvlData} />;
+  return <AreaChartContainerClient currentValue={currentTvl} data={tvlData} />;
 }

@@ -1,10 +1,12 @@
-import { ComponentProps, Suspense } from 'react';
+import { Suspense } from 'react';
 import {
   KeyMetricsTableContainer,
   ShieldedTablesContainer,
 } from '../containers';
-import TvlChartContainer from '../containers/charts/TvlChartContainer';
-import { VolumeChartContainer } from '../containers/charts/VolumeChartContainer';
+import {
+  OverviewTvlChartContainer,
+  OverviewVolumeChartContainer,
+} from '../containers/charts';
 import { getEpoch24H, getEpochStart, getNumDatesFromStart } from '../utils';
 import { LoadingScreen } from '../components';
 
@@ -16,10 +18,9 @@ export const revalidate = 5;
 
 export default async function Index() {
   const startingEpoch = getEpochStart();
-
   const epoch24h = getEpoch24H();
 
-  const chartProps: ComponentProps<typeof TvlChartContainer> = {
+  const chartProps = {
     numDatesFromStart: getNumDatesFromStart(),
     startingEpoch,
   };
@@ -29,11 +30,11 @@ export default async function Index() {
       {/** Overview charts */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Suspense fallback={<LoadingScreen />}>
-          <TvlChartContainer {...chartProps} />
+          <OverviewTvlChartContainer {...chartProps} />
         </Suspense>
 
         <Suspense fallback={<LoadingScreen />}>
-          <VolumeChartContainer {...chartProps} />
+          <OverviewVolumeChartContainer {...chartProps} />
         </Suspense>
       </div>
 

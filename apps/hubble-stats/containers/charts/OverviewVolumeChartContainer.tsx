@@ -1,8 +1,8 @@
 import getVolumeChartData from '../../data/getVolumeChartData';
-import VolumeChartClient from './private/VolumeChartClient';
+import { VolumeChartContainerClient } from './private';
 import { ChartProps } from './types';
 
-export async function VolumeChartContainer(props: ChartProps) {
+export default async function OverviewVolumeChartContainer(props: ChartProps) {
   const { numDatesFromStart, startingEpoch } = props;
 
   const { volumeData, deposit24h } = await getVolumeChartData(
@@ -10,5 +10,7 @@ export async function VolumeChartContainer(props: ChartProps) {
     numDatesFromStart
   );
 
-  return <VolumeChartClient deposit24h={deposit24h} volumeData={volumeData} />;
+  return (
+    <VolumeChartContainerClient deposit24h={deposit24h} data={volumeData} />
+  );
 }

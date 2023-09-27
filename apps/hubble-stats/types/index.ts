@@ -12,3 +12,14 @@ export type MetricType = {
   value?: number;
   changeRate?: number;
 };
+
+export type FormattedBasicChartDataType = {
+  date: Date;
+  value: number;
+}[];
+
+export type FormattedVolumeChartDataType = {
+  date: Date;
+  deposit: number;
+  withdrawal: number;
+}[];
