@@ -2,7 +2,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../constants';
 import type { ChartDataRecord } from '../types';
 import { getFormattedDataForVolumeChart, serializeEpochData } from '../utils';
-import { getDeposit24h } from './reusable';
+import { getDeposit24h } from './utils';
 
 async function getDepositDataByDateRange(
   startingEpoch: number,

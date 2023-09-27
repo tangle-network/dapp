@@ -1,5 +1,3 @@
-export { default as getKeyMetricsData } from './getKeyMetricsData';
-export { default as getOverviewChipsData } from './getOverviewChipsData';
 export { default as getPoolMetadataData } from './getPoolMetadataData';
 export { default as getPoolOverviewCardData } from './getPoolOverviewCardData';
 export {

@@ -1,7 +1,7 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { getTvlByVAnchor, getDeposit24hByVAnchor } from './reusable';
+import { getTvlByVAnchor, getDeposit24hByVAnchor } from './utils';
 import { getValidDatesToQuery } from '../utils';
 import {
   ACTIVE_SUBGRAPH_URLS,

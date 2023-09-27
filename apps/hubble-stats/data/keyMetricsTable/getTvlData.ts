@@ -3,7 +3,7 @@ import { formatEther } from 'viem';
 import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
 import { MetricType } from '../../types';
 import { getChangeRate } from '../../utils';
-import { getTvl } from '../reusable';
+import { getTvl } from '../utils';
 
 async function getTvl24h(epochStart: number, epoch24h: number) {
   try {

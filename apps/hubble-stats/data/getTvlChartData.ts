@@ -2,7 +2,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../constants';
 import type { ChartDataRecord } from '../types';
 import { getFormattedDataForBasicChart, serializeEpochData } from '../utils';
-import { getTvl } from './reusable';
+import { getTvl } from './utils';
 
 async function getTvlDataByDateRange(
   startingEpoch: number,

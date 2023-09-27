@@ -4,7 +4,7 @@ import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
 import type { MetricType } from '../../types';
 import { getValidDatesToQuery } from '../../utils/date';
 import getChangeRate from '../../utils/getChangeRate';
-import { getDeposit24h } from '../reusable';
+import { getDeposit24h } from '../utils';
 
 async function getDeposit48h(date24h: Date, date48h: Date) {
   try {

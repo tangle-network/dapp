@@ -5,7 +5,7 @@ import {
   getRelayerFeesData,
   getTvlData,
   getWrappingFeesData,
-} from '../../data/metrics';
+} from '../../data/keyMetricsTable';
 
 export default function KeyMetricsTableContainer(props: {
   epochStart: number;
