@@ -1,47 +1,21 @@
-import {
-  Chip,
-  Tooltip,
-  TooltipBody,
-  TooltipTrigger,
-  Typography,
-} from '@webb-tools/webb-ui-components';
 import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
 
-import { getOverviewChipsData } from '../../data';
-import { getRoundedDownNumberWith2Decimals } from '../../utils';
+import { HeaderChipItem } from '../../components';
+import { getTvl } from '../../data';
+import { getHistoricalDepositData } from '../../data/headerChips';
 
 export default async function OverviewChipsContainer() {
-  const { tvl, deposit } = await getOverviewChipsData();
-
   return (
     <div className="hidden md:flex items-center gap-2 lg:gap-4">
-      <Chip color="blue" className="normal-case whitespace-nowrap">
-        <DatabaseLine size="lg" className="fill-blue-90 dark:fill-blue-30" />
-        TVL:{' '}
-        {typeof tvl === 'number'
-          ? getRoundedDownNumberWith2Decimals(tvl)
-          : '-'}{' '}
-        webbtTNT
-      </Chip>
+      <HeaderChipItem Icon={DatabaseLine} label="TVL" dataFetcher={getTvl} />
 
-      <Tooltip>
-        <TooltipTrigger>
-          <Chip color="blue" className="normal-case whitespace-nowrap">
-            <ArrowRightUp
-              size="lg"
-              className="fill-blue-90 dark:fill-blue-30"
-            />
-            DEPOSITS:{' '}
-            {typeof deposit === 'number'
-              ? getRoundedDownNumberWith2Decimals(deposit)
-              : '-'}{' '}
-            webbtTNT
-          </Chip>
-        </TooltipTrigger>
-        <TooltipBody>
-          <Typography variant="body2">Historical Deposit Volume</Typography>
-        </TooltipBody>
-      </Tooltip>
+      <HeaderChipItem
+        Icon={ArrowRightUp}
+        label="DEPOSITS"
+        hasTooltip
+        tooltipContent="Historical Deposit Volume"
+        dataFetcher={getHistoricalDepositData}
+      />
     </div>
   );
 }

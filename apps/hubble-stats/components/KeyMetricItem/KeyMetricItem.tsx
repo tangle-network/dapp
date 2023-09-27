@@ -1,7 +1,7 @@
+import { FC, Suspense } from 'react';
+import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
-import cx from 'classnames';
-import { FC, Suspense } from 'react';
 
 import { InfoIconWithTooltip } from '..';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
@@ -24,7 +24,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
       <Suspense
         fallback={
           <div className="animate-pulse">
-            <div className="w-20 h-6 rounded-md bg-slate-200 dark:bg-mono-160" />
+            <div className="w-full h-6 rounded-md bg-slate-200 dark:bg-mono-160" />
           </div>
         }
       >

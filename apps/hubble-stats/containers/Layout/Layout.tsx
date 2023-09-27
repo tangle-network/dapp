@@ -27,7 +27,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         </div>
 
         {/* Footer */}
-        <Footer isMinimal className="mx-0 max-w-none" />
+        <Footer isMinimal className="mx-0 max-w-none py-12" />
       </main>
     </>
   );
