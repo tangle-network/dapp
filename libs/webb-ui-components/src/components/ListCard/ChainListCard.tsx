@@ -100,7 +100,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     // Move the current active chain to the top of the list
     const sortedChains = useMemo(() => {
       if (!currentActiveChain) {
-        return filteredChains;
+        return filteredChains.sort((a, b) => a.name.localeCompare(b.name));
       }
 
       const currentActiveChainIndex = filteredChains.findIndex(
@@ -108,14 +108,14 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       );
 
       if (currentActiveChainIndex === -1) {
-        return filteredChains;
+        return filteredChains.sort((a, b) => a.name.localeCompare(b.name));
       }
 
       const activeChain = filteredChains[currentActiveChainIndex];
 
       return [
         activeChain,
-        ...filteredChains.filter((chain) => chain.name !== activeChain.name),
+        ...filteredChains.filter((chain) => chain.name !== activeChain.name).sort((a, b) => a.name.localeCompare(b.name))
       ];
     }, [currentActiveChain, filteredChains]);
 
@@ -150,7 +150,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           />
         </div>
 
-        {/** Token list */}
+        {/** Chain list */}
         <ScrollArea
           {...overrideScrollAreaProps}
           className={twMerge(
