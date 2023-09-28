@@ -9,7 +9,6 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-
 import { useConnectWallet } from '../../hooks';
 import { getDefaultConnection } from '../../utils';
 
@@ -28,21 +27,25 @@ export const WalletModal: FC = () => {
 
   const { notificationApi } = useWebbUI();
 
-  const { apiConfig, chains } = useWebContext();
+  const { apiConfig, chains, activeChain } = useWebContext();
 
-  const chain = useMemo(() => {
-    if (!selectedChain) {
-      return getDefaultConnection(chains);
+  const chainToSwitchTo = useMemo(() => {
+    if (!activeChain) {
+      if (!selectedChain) {
+        return getDefaultConnection(chains);
+      }
+
+      return selectedChain;
     }
 
-    return selectedChain;
-  }, [chains, selectedChain]);
+    return activeChain;
+  }, [activeChain, selectedChain, chains]);
 
   const supportedWalletCfgs = useMemo(() => {
-    return chain.wallets
+    return chainToSwitchTo.wallets
       .map((walletId) => apiConfig.wallets[walletId])
       .filter((w) => !!w);
-  }, [apiConfig.wallets, chain.wallets]);
+  }, [apiConfig.wallets, chainToSwitchTo.wallets]);
 
   // Get the current failed or connecting wallet
   const getCurrentWallet = useCallback(() => {
@@ -51,12 +54,17 @@ export const WalletModal: FC = () => {
       return undefined;
     }
 
-    if (!chain.wallets.includes(walletId)) {
+    if (!chainToSwitchTo.wallets.includes(walletId)) {
       return undefined;
     }
 
     return apiConfig.wallets[walletId];
-  }, [failedWalletId, connectingWalletId, chain.wallets, apiConfig.wallets]);
+  }, [
+    failedWalletId,
+    connectingWalletId,
+    chainToSwitchTo.wallets,
+    apiConfig.wallets,
+  ]);
 
   const isNotInstalledError = useMemo(() => {
     if (!connectError) {
@@ -103,9 +111,9 @@ export const WalletModal: FC = () => {
 
   const handleWalletSelect = useCallback(
     (wallet: WalletConfig) => {
-      switchWallet(chain, wallet);
+      switchWallet(chainToSwitchTo, wallet);
     },
-    [chain, switchWallet]
+    [switchWallet, chainToSwitchTo]
   );
 
   const handleDownloadBtnClick = useCallback(() => {
@@ -132,12 +140,12 @@ export const WalletModal: FC = () => {
       return;
     }
 
-    await switchWallet(chain, selectedWallet);
+    await switchWallet(chainToSwitchTo, selectedWallet);
   }, [
     selectedWallet,
     isNotInstalledError,
     switchWallet,
-    chain,
+    chainToSwitchTo,
     notificationApi,
     handleDownloadBtnClick,
   ]);
