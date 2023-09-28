@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: 'Hubble Stats',
     description: 'Welcome to Hubble Stats!',
     url: HUBBLE_STATS_URL,
-    siteName: 'Hubble Stats', 
+    siteName: 'Hubble Stats',
     images: [
       {
         alt: 'Optimized Og Image Alt',
