@@ -1,8 +1,11 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
-import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../constants';
-import type { ChartDataRecord } from '../types';
-import { getFormattedDataForVolumeChart, serializeEpochData } from '../utils';
-import { getDeposit24h } from './utils';
+import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
+import type { ChartDataRecord } from '../../types';
+import {
+  getFormattedDataForVolumeChart,
+  serializeEpochData,
+} from '../../utils';
+import { getDeposit24h } from '../utils';
 
 async function getDepositDataByDateRange(
   startingEpoch: number,
@@ -46,7 +49,7 @@ async function getWithdrawDataByDateRange(
   return {};
 }
 
-export default async function getVolumeChartData(
+export default async function getOverviewVolumeChartData(
   startingEpoch: number,
   numDatesFromStart: number
 ): Promise<{

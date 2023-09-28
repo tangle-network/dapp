@@ -1,8 +1,8 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
-import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../constants';
-import type { ChartDataRecord } from '../types';
-import { getFormattedDataForBasicChart, serializeEpochData } from '../utils';
-import { getTvl } from './utils';
+import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
+import type { ChartDataRecord } from '../../types';
+import { getFormattedDataForBasicChart, serializeEpochData } from '../../utils';
+import { getTvl } from '../utils';
 
 async function getTvlDataByDateRange(
   startingEpoch: number,
@@ -25,7 +25,7 @@ async function getTvlDataByDateRange(
   return {};
 }
 
-export default async function getTvlChartData(
+export default async function getOverviewTvlChartData(
   startingEpoch: number,
   numDatesFromStart: number
 ): Promise<{
