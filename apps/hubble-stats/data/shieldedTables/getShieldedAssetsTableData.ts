@@ -1,20 +1,13 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { getTvlByVAnchor, getDeposit24hByVAnchor } from './utils';
-import { getValidDatesToQuery } from '../utils';
+import { getValidDatesToQuery } from '../../utils';
 import {
   ACTIVE_SUBGRAPH_URLS,
   VANCHORS_MAP,
   VANCHOR_ADDRESSES,
-} from '../constants';
-import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
-import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
-
-type ShieldedTablesDataType = {
-  assetsData: ShieldedAssetType[];
-  poolsData: ShieldedPoolType[];
-};
+} from '../../constants';
+import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
 
 const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
@@ -88,33 +81,10 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
   };
 };
 
-const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
-  const vanchor = VANCHORS_MAP[vAnchorAddress];
-
-  // plus one for fungible token
-  const tokenNum = vanchor.composition.length + 1;
-
-  const deposits24h = await getDeposit24hByVAnchor(vAnchorAddress);
-  const tvl = await getTvlByVAnchor(vAnchorAddress);
-
-  return {
-    address: vAnchorAddress,
-    symbol: vanchor.fungibleTokenName,
-    poolType: vanchor.poolType,
-    token: tokenNum,
-    deposits24h,
-    tvl,
-    currency: vanchor.fungibleTokenSymbol,
-    typedChainIds: vanchor.supportedChains,
-  };
-};
-
-export default async function getShieldedTablesData(): Promise<ShieldedTablesDataType> {
-  const assetsData = await Promise.all(
+export default async function getShieldedAssetsTableData(): Promise<
+  ShieldedAssetType[]
+> {
+  return await Promise.all(
     VANCHOR_ADDRESSES.map((vanchor) => getAssetInfoFromVAnchor(vanchor))
   );
-  const poolsData = await Promise.all(
-    VANCHOR_ADDRESSES.map((vanchor) => getPoolInfoFromVAnchor(vanchor))
-  );
-  return { assetsData, poolsData };
 }

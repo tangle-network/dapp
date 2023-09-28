@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useCallback } from 'react';
+import { type FC, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   createColumnHelper,

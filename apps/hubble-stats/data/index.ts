@@ -20,6 +20,5 @@ export {
   default as getPoolWrappingTableData,
   type PoolWrappingTableDataType,
 } from './getPoolWrappingTableData';
-export { default as getShieldedTablesData } from './getShieldedTablesData';
 export { default as getTvlChartData } from './charts/getOverviewTvlChartData';
 export { default as getVolumeChartData } from './charts/getOverviewVolumeChartData';

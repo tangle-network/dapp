@@ -21,7 +21,6 @@ export default function KeyMetricsTableContainer(props: {
         'border-2 border-mono-0 dark:border-mono-160'
       )}
     >
-      {/* Tablet and Desktop */}
       <div
         className={cx(
           'grid gap-1 grid-cols-2 md:grid-cols-4',

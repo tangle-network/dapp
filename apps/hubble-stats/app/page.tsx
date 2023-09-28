@@ -43,7 +43,7 @@ export default async function Index() {
         epoch24h={epoch24h}
       />
 
-      {/* <ShieldedTablesContainer /> */}
+      <ShieldedTablesContainer />
     </div>
   );
 }

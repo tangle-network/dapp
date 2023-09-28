@@ -1,15 +1,19 @@
+import { Suspense } from 'react';
 import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
 
-import { ShieldedAssetsTable, ShieldedPoolsTable } from '../../components';
-import { getShieldedTablesData } from '../../data';
+import ShieldedAssetsTableContainer from './ShieldedAssetsTableContainer';
+import ShieldedPoolsTableContainer from './ShieldedPoolsTableContainer';
+import {
+  getShieldedAssetsTableData,
+  getShieldedPoolsTableData,
+} from '../../data/shieldedTables';
+import { TableSkeletonLoader } from 'apps/hubble-stats/components';
 
 const pageSize = 5;
 const assetsTableTab = 'Shielded Assets';
 const poolsTableTab = 'Shielded Pools';
 
-export default async function ShieldedTablesContainer() {
-  const { assetsData, poolsData } = await getShieldedTablesData();
-
+export default function ShieldedTablesContainer() {
   return (
     <TableAndChartTabs
       tabs={[assetsTableTab, poolsTableTab]}
@@ -17,12 +21,22 @@ export default async function ShieldedTablesContainer() {
     >
       {/* Shielded Assets Table */}
       <TabContent value={assetsTableTab}>
-        <ShieldedAssetsTable data={assetsData} pageSize={pageSize} />
+        <Suspense fallback={<TableSkeletonLoader />}>
+          <ShieldedAssetsTableContainer
+            dataFetcher={getShieldedAssetsTableData}
+            pageSize={pageSize}
+          />
+        </Suspense>
       </TabContent>
 
       {/* Shielded Pools Table */}
       <TabContent value={poolsTableTab}>
-        <ShieldedPoolsTable data={poolsData} pageSize={pageSize} />
+        <Suspense fallback={<TableSkeletonLoader />}>
+          <ShieldedPoolsTableContainer
+            dataFetcher={getShieldedPoolsTableData}
+            pageSize={pageSize}
+          />
+        </Suspense>
       </TabContent>
     </TableAndChartTabs>
   );
