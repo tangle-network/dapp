@@ -2,23 +2,29 @@ import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 
-const TableSkeletonLoader: FC = () => {
+import { ContainerSkeletonProps } from './types';
+
+const ContainerSkeleton: FC<ContainerSkeletonProps> = ({
+  numOfRows = 2,
+  className,
+}) => {
   return (
     <div
       className={twMerge(
-        'rounded-lg bg-mono-0 dark:bg-mono-180 border border-mono-40 dark:border-mono-160',
+        'rounded-lg border border-mono-40 dark:border-mono-160',
+        'bg-glass dark:bg-glass_dark px-6 py-5',
         'flex flex-col gap-5',
-        'px-6 py-5'
+        className
       )}
     >
-      <SkeletonRow />
-      <SkeletonRow />
-      <SkeletonRow />
+      {[...Array(numOfRows)].map((_, i) => (
+        <SkeletonRow key={i} />
+      ))}
     </div>
   );
 };
 
-export default TableSkeletonLoader;
+export default ContainerSkeleton;
 
 const SkeletonRow: FC = () => {
   return (
