@@ -4604,7 +4604,7 @@
   resolved "https://registry.yarnpkg.com/@netlify/open-api/-/open-api-2.23.0.tgz#a57449303fb30bc6840c5464eca9654847b1ad9b"
   integrity sha512-v3IAP/iiCNfmEdxkP1bAwPeWqWtbIRRYMUcCc0qyhIzhDuQCOzVBq1OOMQotWKKLs2GbgrR/a9qYTjhcY9j44g==
 
-"@netlify/plugin-nextjs@^4.39.3":
+"@netlify/plugin-nextjs@^4.40.1":
   version "4.40.1"
   resolved "https://registry.yarnpkg.com/@netlify/plugin-nextjs/-/plugin-nextjs-4.40.1.tgz#ccb10b08fe9081df29437f709ad4448cae2bd329"
   integrity sha512-FVXQEzBCymJHu2JYnJs03hUXjJAIAHcLMsrbcrnSjqmib4yF65YZ9yJYmrajV2D6LRqN/TxWhzTEgGr9eYpRHQ==
