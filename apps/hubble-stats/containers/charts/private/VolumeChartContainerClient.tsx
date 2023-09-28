@@ -17,7 +17,7 @@ export default function VolumeChartContainerClient(
   return (
     <ChartContainer
       heading="Volume 24H"
-      currentValue={deposit24h}
+      defaultValue={deposit24h}
       value={volumeValue}
       date={volumeDate}
       valueSuffix=" webbtTNT"

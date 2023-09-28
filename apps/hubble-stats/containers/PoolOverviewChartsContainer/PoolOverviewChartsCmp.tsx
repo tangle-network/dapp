@@ -44,7 +44,7 @@ const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
       {/* TVL */}
       <TabContent value={tvlTab}>
         <ChartContainer
-          currentValue={tvl}
+          defaultValue={tvl}
           value={tvlValue}
           valueSuffix={numberSuffix}
           date={tvlDate}
@@ -63,7 +63,7 @@ const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
       {/* Volume */}
       <TabContent value={volumeTab}>
         <ChartContainer
-          currentValue={deposit24h}
+          defaultValue={deposit24h}
           value={volumeValue}
           valueSuffix={numberSuffix}
           date={volumeDate}
@@ -81,7 +81,7 @@ const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
       {/* Relayer Earnings */}
       <TabContent value={relayerEarningTab}>
         <ChartContainer
-          currentValue={relayerEarnings}
+          defaultValue={relayerEarnings}
           value={relayerEarningsValue}
           valueSuffix={numberSuffix}
           date={relayerEarningsDate}

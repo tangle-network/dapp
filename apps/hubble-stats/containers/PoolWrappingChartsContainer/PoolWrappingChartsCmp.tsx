@@ -37,7 +37,7 @@ const PoolWrappingChartsCmp: FC<PoolWrappingChartsDataType> = ({
       {/* TWL */}
       <TabContent value={twlTab}>
         <ChartContainer
-          currentValue={twl}
+          defaultValue={twl}
           value={twlValue}
           valueSuffix={numberSuffix}
           date={twlDate}
@@ -56,7 +56,7 @@ const PoolWrappingChartsCmp: FC<PoolWrappingChartsDataType> = ({
       {/* Wrapping Fees */}
       <TabContent value={wrappingFeesTab}>
         <ChartContainer
-          currentValue={wrappingFees}
+          defaultValue={wrappingFees}
           value={wrappingFeesValue}
           valueSuffix={numberSuffix}
           date={wrappingFeesDate}

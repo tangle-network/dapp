@@ -11,8 +11,8 @@ import { getRoundedAmountString } from '../../utils';
  * Props for this component:
  *
  * - heading - Heading of the chart (Optional) - E.g. TVL, Volume 24H, etc.
- * - currentValue - Latest value - E.g. $1.2m, $2.3k, etc.
- * - value - Value to be displayed in currentValue's place when hovering over the chart (Tooltip response)
+ * - defaultValue - Default value when users not hovering on any part of the chart
+ * - value - Value to be displayed when hovering a specific item over the chart (Tooltip response)
  * - date - Date corresponding to the value displayed beside value when hovering over the chart (Tooltip response)
  * - filterType - Type of filter to be displayed (Optional) - E.g. days (days, week, month), tokens and chains
  * - daysFilterType - Type of days filter to be displayed (Optional) - E.g. day, week, month
@@ -23,7 +23,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
   (
     {
       heading,
-      currentValue,
+      defaultValue,
       value,
       valuePrefix = '',
       valueSuffix = '',
@@ -66,7 +66,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
                   className="!text-[24px] !leading-[36px] text-mono-200 dark:text-mono-0"
                 >
                   {`${valuePrefix}
-                ${getRoundedAmountString(value ?? currentValue, 2, {
+                ${getRoundedAmountString(value ?? defaultValue, 2, {
                   roundingFunction: Math.floor,
                   totalLength: 0,
                 })}`}

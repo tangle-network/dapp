@@ -1,6 +1,6 @@
 export type ChartContainerProps = {
   heading?: string;
-  currentValue?: number;
+  defaultValue?: number;
   value: number | null;
   date: Date | null;
   filterType?: 'days' | 'tokensAndChains';

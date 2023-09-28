@@ -4,7 +4,7 @@ import {
 } from '../../../types';
 
 export interface BasicChartContainerProps {
-  currentValue?: number;
+  defaultValue?: number;
   data: FormattedBasicChartDataType;
 }
 

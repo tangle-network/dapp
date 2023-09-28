@@ -9,7 +9,7 @@ import AreaChart from '../../../components/charts/AreaChart';
 export default function AreaChartContainerClient(
   props: AreaChartContainerProps
 ) {
-  const { currentValue, data } = props;
+  const { defaultValue, data } = props;
 
   const [value, setValue] = useState<number | null>(null);
   const [date, setDate] = useState<Date | null>(null);
@@ -17,7 +17,7 @@ export default function AreaChartContainerClient(
   return (
     <ChartContainer
       heading="TVL"
-      currentValue={currentValue}
+      defaultValue={defaultValue}
       value={value}
       date={date}
       valueSuffix=" webbtTNT"

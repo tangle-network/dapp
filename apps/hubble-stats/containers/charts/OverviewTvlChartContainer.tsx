@@ -10,5 +10,5 @@ export default async function OverviewTvlChartContainer(props: ChartProps) {
     numDatesFromStart
   );
 
-  return <AreaChartContainerClient currentValue={currentTvl} data={tvlData} />;
+  return <AreaChartContainerClient defaultValue={currentTvl} data={tvlData} />;
 }
