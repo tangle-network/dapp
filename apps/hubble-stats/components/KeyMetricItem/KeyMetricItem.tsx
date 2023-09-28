@@ -1,6 +1,6 @@
 import { FC, Suspense } from 'react';
 import cx from 'classnames';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Typography, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
 import { InfoIconWithTooltip } from '..';
@@ -21,13 +21,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
         {tooltip && <InfoIconWithTooltip content={tooltip} />}
       </div>
 
-      <Suspense
-        fallback={
-          <div className="animate-pulse">
-            <div className="w-full h-6 rounded-md bg-slate-200 dark:bg-mono-160" />
-          </div>
-        }
-      >
+      <Suspense fallback={<SkeletonLoader size="lg" />}>
         <KeyMetricItemValue {...restProps} />
       </Suspense>
     </div>

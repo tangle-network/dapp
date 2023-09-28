@@ -1,10 +1,11 @@
-import { Suspense, type FC } from 'react';
+import { Suspense, type FC, useMemo } from 'react';
 import {
   Chip,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
+  SkeletonLoader,
 } from '@webb-tools/webb-ui-components';
 
 import { HeaderChipItemProps } from './types';
@@ -17,20 +18,17 @@ const HeaderChipItem: FC<HeaderChipItemProps> = ({
   tooltipContent,
   dataFetcher,
 }: HeaderChipItemProps) => {
-  const mainContent = (
-    <Chip color="blue" className="normal-case whitespace-nowrap">
-      <Icon size="lg" className="fill-blue-90 dark:fill-blue-30" />
-      {label}:{' '}
-      <Suspense
-        fallback={
-          <div className="animate-pulse">
-            <div className="w-[100px] h-6 rounded-md bg-slate-200 dark:bg-mono-160" />
-          </div>
-        }
-      >
-        <HeaderChipItemValue dataFetcher={dataFetcher} />
-      </Suspense>
-    </Chip>
+  const mainContent = useMemo(
+    () => (
+      <Chip color="blue" className="normal-case whitespace-nowrap">
+        <Icon size="lg" className="fill-blue-90 dark:fill-blue-30" />
+        {label}:{' '}
+        <Suspense fallback={<SkeletonLoader className="w-[100px]" />}>
+          <HeaderChipItemValue dataFetcher={dataFetcher} />
+        </Suspense>
+      </Chip>
+    ),
+    [Icon, label, dataFetcher]
   );
 
   if (hasTooltip && tooltipContent) {
