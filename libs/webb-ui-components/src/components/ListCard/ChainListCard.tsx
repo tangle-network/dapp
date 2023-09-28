@@ -115,7 +115,9 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
       return [
         activeChain,
-        ...filteredChains.filter((chain) => chain.name !== activeChain.name).sort((a, b) => a.name.localeCompare(b.name))
+        ...filteredChains
+          .filter((chain) => chain.name !== activeChain.name)
+          .sort((a, b) => a.name.localeCompare(b.name)),
       ];
     }, [currentActiveChain, filteredChains]);
 
