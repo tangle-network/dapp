@@ -690,6 +690,9 @@ video {
 }.my-0{
   margin-top: 0px;
   margin-bottom: 0px;
+}.my-1{
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }.-ml-0{
   margin-left: -0px;
 }.-ml-0\.5{
