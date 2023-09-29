@@ -150,7 +150,7 @@ const getBalanceProps = (
   balances[currencyCfg.id] &&
   (txType !== 'withdraw' || currencyCfg.role !== CurrencyRole.Governable)
     ? { balance: balances[currencyCfg.id] }
-    : undefined;
+    : { balance: 0 };
 
 const getBadgeProps = (
   currencyCfg: CurrencyConfig,
