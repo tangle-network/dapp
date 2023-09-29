@@ -12,7 +12,7 @@ export * from './PoolTypeChip';
 export * from './PoolWrappingTable';
 export * from './ShieldedAssetsTable';
 export * from './ShieldedPoolsTable';
-export * from './ContainerSkeleton';
 
-export * from './sideBar';
 export * from './charts';
+export * from './sideBar';
+export * from './skeleton';

@@ -1,30 +1,57 @@
-import PoolOverviewChartsCmp from './PoolOverviewChartsCmp';
-import { getPoolOverviewChartsData } from '../../data';
+import { Suspense } from 'react';
+import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
+
+import {
+  PoolRelayerEarningsChartContainer,
+  PoolTvlChartContainer,
+  PoolVolumeChartContainer,
+} from '../charts';
+import { PoolChartSkeleton } from '../../components';
+import { PoolChartPropsType } from '../charts/types';
+
+const tvlTab = 'TVL';
+const volumeTab = 'Volume';
+const relayerEarningTab = 'Relayer Earnings';
 
 export default async function PoolOverviewChartsContainer({
   poolAddress,
-}: {
-  poolAddress: string;
-}) {
-  const {
-    tvl,
-    deposit24h,
-    relayerEarnings,
-    tvlData,
-    volumeData,
-    relayerEarningsData,
-    currency,
-  } = await getPoolOverviewChartsData(poolAddress);
-
+  numDatesFromStart,
+  startingEpoch,
+}: PoolChartPropsType) {
   return (
-    <PoolOverviewChartsCmp
-      tvl={tvl}
-      deposit24h={deposit24h}
-      relayerEarnings={relayerEarnings}
-      tvlData={tvlData}
-      volumeData={volumeData}
-      relayerEarningsData={relayerEarningsData}
-      currency={currency}
-    />
+    <TableAndChartTabs tabs={[tvlTab, volumeTab, relayerEarningTab]}>
+      {/* TVL */}
+      <TabContent value={tvlTab}>
+        <Suspense fallback={<PoolChartSkeleton />}>
+          <PoolTvlChartContainer
+            poolAddress={poolAddress}
+            numDatesFromStart={numDatesFromStart}
+            startingEpoch={startingEpoch}
+          />
+        </Suspense>
+      </TabContent>
+
+      {/* Volume */}
+      <TabContent value={volumeTab}>
+        <Suspense fallback={<PoolChartSkeleton />}>
+          <PoolVolumeChartContainer
+            poolAddress={poolAddress}
+            numDatesFromStart={numDatesFromStart}
+            startingEpoch={startingEpoch}
+          />
+        </Suspense>
+      </TabContent>
+
+      {/* Relayer Earnings */}
+      <TabContent value={relayerEarningTab}>
+        <Suspense fallback={<PoolChartSkeleton />}>
+          <PoolRelayerEarningsChartContainer
+            poolAddress={poolAddress}
+            numDatesFromStart={numDatesFromStart}
+            startingEpoch={startingEpoch}
+          />
+        </Suspense>
+      </TabContent>
+    </TableAndChartTabs>
   );
 }

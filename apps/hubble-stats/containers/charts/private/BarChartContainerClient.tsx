@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { ChartContainer } from '@webb-tools/webb-ui-components/components/ChartContainer';
 
-import { AreaChartContainerProps } from './types';
-import AreaChart from '../../../components/charts/AreaChart';
+import { BarChartContainerProps } from './types';
+import BarChart from '../../../components/charts/BarChart';
 
 export default function AreaChartContainerClient(
-  props: AreaChartContainerProps
+  props: BarChartContainerProps
 ) {
   const { defaultValue, data, heading } = props;
 
@@ -23,7 +23,7 @@ export default function AreaChartContainerClient(
       valueSuffix=" webbtTNT"
       className="bg-glass dark:bg-glass_dark"
     >
-      <AreaChart
+      <BarChart
         data={data}
         setDate={setDate}
         setValue={setValue}

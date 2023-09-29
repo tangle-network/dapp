@@ -9,14 +9,14 @@ import VolumeChart from '../../../components/charts/VolumeChart';
 export default function VolumeChartContainerClient(
   props: VolumeChartContainerProps
 ) {
-  const { deposit24h, data } = props;
+  const { deposit24h, data, heading } = props;
 
   const [volumeValue, setVolumeValue] = useState<number | null>(null);
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
 
   return (
     <ChartContainer
-      heading="Volume 24H"
+      heading={heading}
       defaultValue={deposit24h}
       value={volumeValue}
       date={volumeDate}

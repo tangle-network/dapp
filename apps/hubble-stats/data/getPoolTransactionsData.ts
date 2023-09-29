@@ -28,35 +28,40 @@ export default async function getPoolTransactionsData(
     {} as Record<string, number>
   );
 
-  const fetchedTransactions =
-    await vAnchorClient.Transaction.GetVAnchorTransactionsByChains(
-      ACTIVE_SUBGRAPH_URLS,
-      poolAddress,
-      TRANSACTIONS_LIMIT
-    );
+  let transactions: PoolTransactionType[] = [];
+  try {
+    const fetchedTransactions =
+      await vAnchorClient.Transaction.GetVAnchorTransactionsByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        poolAddress,
+        TRANSACTIONS_LIMIT
+      );
 
-  const transactions: PoolTransactionType[] = fetchedTransactions.map((tx) => {
-    const amount = +formatEther(BigInt(tx.amount));
-    const activity =
-      amount > 0 ? 'deposit' : amount < 0 ? 'withdraw' : 'transfer';
+    transactions = fetchedTransactions.map((tx) => {
+      const amount = +formatEther(BigInt(tx.amount));
+      const activity =
+        amount > 0 ? 'deposit' : amount < 0 ? 'withdraw' : 'transfer';
 
-    const sourceTypedChainId = subgraphByTypedChainIdMap[tx.subgraphUrl];
-    // check for native token
-    const tokenSymbol =
-      BigInt(tx.tokenAddress) === BigInt(0)
-        ? nativeTokenByChain[sourceTypedChainId]
-        : tx.tokenSymbol;
+      const sourceTypedChainId = subgraphByTypedChainIdMap[tx.subgraphUrl];
+      // check for native token
+      const tokenSymbol =
+        BigInt(tx.tokenAddress) === BigInt(0)
+          ? nativeTokenByChain[sourceTypedChainId]
+          : tx.tokenSymbol;
 
-    return {
-      txHash: tx.txHash,
-      activity,
-      tokenAmount: Math.abs(amount),
-      tokenSymbol,
-      sourceTypedChainId,
-      destinationTypedChainId: undefined,
-      time: getTimePassedByEpoch(tx.timestamp),
-    };
-  });
+      return {
+        txHash: tx.txHash,
+        activity,
+        tokenAmount: Math.abs(amount),
+        tokenSymbol,
+        sourceTypedChainId,
+        destinationTypedChainId: undefined,
+        time: getTimePassedByEpoch(tx.timestamp),
+      };
+    });
+  } catch {
+    transactions = [];
+  }
 
   return {
     transactions,

@@ -76,3 +76,10 @@ export const getTimePassedByEpoch = (epoch: number): string => {
     return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`;
   }
 };
+
+export const getDatePropsForChart = () => {
+  return {
+    startingEpoch: getEpochStart(),
+    numDatesFromStart: getNumDatesFromStart(),
+  };
+};
