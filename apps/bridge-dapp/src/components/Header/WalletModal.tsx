@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
 import { WalletConfig } from '@webb-tools/dapp-config';
-import { WebbError } from '@webb-tools/dapp-types';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import {
   Modal,
   ModalContent,
@@ -71,7 +71,9 @@ export const WalletModal: FC = () => {
       return false;
     }
 
-    return WebbError.isWalletNotInstalledError(connectError);
+    return (
+      connectError instanceof WalletNotInstalledError && connectError.walletId
+    );
   }, [connectError]);
 
   const errorMessage = useMemo(() => {
@@ -79,7 +81,7 @@ export const WalletModal: FC = () => {
       return undefined;
     }
 
-    return WebbError.getErrorMessage(connectError.code).message;
+    return connectError.message;
   }, [connectError]);
 
   // If the error about not installed wallet is shown,
