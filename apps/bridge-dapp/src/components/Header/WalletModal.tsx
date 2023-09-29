@@ -116,12 +116,12 @@ export const WalletModal: FC = () => {
     [switchWallet, chainToSwitchTo]
   );
 
-  const handleDownloadBtnClick = useCallback(() => {
+  const downloadURL = useMemo(() => {
     const { id } = getPlatformMetaData();
     const wallet = getCurrentWallet();
 
     if (wallet?.installLinks?.[id]) {
-      window.open(wallet.installLinks[id], '_blank');
+      return new URL(wallet.installLinks[id]);
     }
   }, [getCurrentWallet]);
 
@@ -136,7 +136,7 @@ export const WalletModal: FC = () => {
     }
 
     if (isNotInstalledError) {
-      handleDownloadBtnClick();
+      window.open(downloadURL, '_blank');
       return;
     }
 
@@ -147,7 +147,7 @@ export const WalletModal: FC = () => {
     switchWallet,
     chainToSwitchTo,
     notificationApi,
-    handleDownloadBtnClick,
+    downloadURL,
   ]);
 
   return (
@@ -166,7 +166,7 @@ export const WalletModal: FC = () => {
           errorMessage={errorMessage}
           failedWalletId={failedWalletId}
           onTryAgainBtnClick={handleTryAgainBtnClick}
-          onDownloadBtnClick={handleDownloadBtnClick}
+          downloadWalletURL={downloadURL}
         />
       </ModalContent>
     </Modal>

@@ -48,14 +48,14 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
   onClose?: PropsOf<'button'>['onClick'];
 
   /**
-   * The callback which is invoked when user hits the download button
+   * The URL to download the wallet
    */
-  onDownloadBtnClick?: PropsOf<'button'>['onClick'];
+  downloadWalletURL?: URL;
 
   /**
-   * The callback which is invoked when user hits the help button
+   * The URL to the wallet help page
    */
-  onHelpBtnClick?: PropsOf<'button'>['onClick'];
+  getHelpURL?: URL;
 
   /**
    * The callback which is invoked when user hits the try again button.
