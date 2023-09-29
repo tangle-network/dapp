@@ -5,10 +5,6 @@ import serverConfig from '../../../../config/server';
 import handleTwitterApiError from '../../../../utils/handleTwitterApiError';
 import parseTwitterLoginBody from '../../../../utils/parseTwitterLoginBody';
 
-export const config = {
-  runtime: 'edge',
-};
-
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   return new Promise((resolve) => {
     parseTwitterLoginBody(req.body).match(

@@ -5,10 +5,6 @@ import handleTwitterApiError from '../../../..//utils/handleTwitterApiError';
 import parseTwitterRefreshTokensBody from '../../../..//utils/parseTwitterRefreshTokensBody';
 import serverConfig from '../../../../config/server';
 
-export const config = {
-  runtime: 'edge',
-};
-
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   return new Promise((resolve) => {
     parseTwitterRefreshTokensBody(req.body).match(
