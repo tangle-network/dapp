@@ -31,6 +31,7 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
@@ -523,6 +524,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
               }
 
+              const connProvider = await connector.getProvider();
+              if (!connProvider) {
+                throw new WalletNotInstalledError(wallet.id);
+              }
+
               const chainId = chain.id;
 
               const relayerManager =
@@ -694,6 +700,8 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
           if (isViemError(e)) {
             errorMessage = e.shortMessage;
+          } else if (e instanceof Error) {
+            errorMessage = e.message;
           }
 
           notificationApi({

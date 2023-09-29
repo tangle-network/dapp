@@ -17,7 +17,7 @@ const walletsConfig = {
     platform: 'EVM',
     enabled: true,
     detect() {
-      const hasWeb3 = web3 !== 'undefined';
+      const hasWeb3 = 'web3' in window;
       if (hasWeb3) {
         return window.web3.__isMetaMaskShim__;
       }
