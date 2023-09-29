@@ -5,19 +5,15 @@ import {
   VANCHORS_MAP,
   ACTIVE_SUBGRAPH_MAP,
   ACTIVE_SUBGRAPH_URLS,
-} from '../constants';
-import { getTimePassedByEpoch } from '../utils';
-import { PoolTransactionType } from '../components/PoolTransactionsTable/types';
+} from '../../constants';
+import { getTimePassedByEpoch } from '../../utils';
+import { PoolTransactionType } from '../../components/PoolTransactionsTable/types';
 
 const TRANSACTIONS_LIMIT = 100;
 
-export type PoolTransactionDataType = {
-  transactions: PoolTransactionType[];
-};
-
-export default async function getPoolTransactionsData(
+export default async function getPoolTransactionsTableData(
   poolAddress: string
-): Promise<PoolTransactionDataType> {
+): Promise<PoolTransactionType[]> {
   const { nativeTokenByChain } = VANCHORS_MAP[poolAddress];
 
   const subgraphByTypedChainIdMap = Object.keys(ACTIVE_SUBGRAPH_MAP).reduce(
@@ -63,7 +59,5 @@ export default async function getPoolTransactionsData(
     transactions = [];
   }
 
-  return {
-    transactions,
-  };
+  return transactions;
 }

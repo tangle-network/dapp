@@ -1,4 +1,4 @@
-import { type FC, Suspense } from 'react';
+import { Suspense } from 'react';
 import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
 
 import ShieldedAssetsTableContainer from './ShieldedAssetsTableContainer';

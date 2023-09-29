@@ -52,8 +52,9 @@ export default function Pool({ params }: { params: { slug: string } }) {
         <PoolWrappingTableContainer {...tableProps} />
       </div>
 
-      {/* <PoolTransactionsTableContainer poolAddress={poolAddress} />
-      <PoolMetadataTableContainer poolAddress={poolAddress} /> */}
+      <PoolTransactionsTableContainer poolAddress={poolAddress} />
+
+      {/* <PoolMetadataTableContainer poolAddress={poolAddress} /> */}
     </div>
   );
 }
