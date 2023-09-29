@@ -58,3 +58,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix current major issues on Hubble Stats ([#1651](https://github.com/webb-tools/webb-dapp/pull/1651))
 - Fix chart tooltip bug ([#1664](https://github.com/webb-tools/webb-dapp/pull/1664))
+
+## [0.0.4] - 2023-09-30
+
+### Chaged, Added and Fixed
+
+- Upgrade next apps to latest version to support adding features and fixing bugs ([#1684](https://github.com/webb-tools/webb-dapp/pull/1684))
+- Add metadata in layout in Hubble Stats ([#1688](https://github.com/webb-tools/webb-dapp/pull/1688))
