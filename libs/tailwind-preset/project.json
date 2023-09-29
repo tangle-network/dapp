@@ -13,7 +13,8 @@
         "entryFile": "libs/tailwind-preset/index.js",
         "tsConfig": "libs/tailwind-preset/tsconfig.lib.json",
         "format": ["esm", "cjs"],
-        "rollupConfig": ["libs/tailwind-preset/rollup.config.js"]
+        "rollupConfig": ["libs/tailwind-preset/rollup.config.js"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

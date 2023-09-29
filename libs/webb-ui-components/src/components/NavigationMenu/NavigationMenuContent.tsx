@@ -4,19 +4,13 @@ import {
   FlaskLineIcon,
   HelpLineIcon,
   InformationLine,
+  TangleIcon,
 } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { WEBB_DOCS_URL } from '../../constants';
 import { Typography } from '../../typography/Typography';
-import {
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
-} from '../Collapsible';
 import { DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem/MenuItem';
-import { ThemeSwitcherMenuItem } from '../ThemeSwitcher/';
 import { NavigationMenuContentProps } from './types';
 
 /**
@@ -29,6 +23,7 @@ export const NavigationMenuContent = forwardRef<
   (
     {
       className,
+      onDocsClick,
       onAboutClick,
       onDevelopmentClick,
       onFaucetClick,
@@ -50,27 +45,19 @@ export const NavigationMenuContent = forwardRef<
         )}
         ref={ref}
       >
-        <ThemeSwitcherMenuItem />
-
-        <Collapsible>
-          <CollapsibleButton>Network Settings</CollapsibleButton>
-          <CollapsibleContent className="p-0">
-            <MenuItem onClick={onTestnetClick}>Testnet</MenuItem>
-            <MenuItem onClick={onDevelopmentClick}>Development</MenuItem>
-          </CollapsibleContent>
-        </Collapsible>
-
-        <NavigationMenuDivider />
+        <MenuItem icon={<BookOpenLineIcon size="lg" />} onClick={onDocsClick}>
+          Docs
+        </MenuItem>
 
         <MenuItem icon={<FaucetIcon size="lg" />} onClick={onFaucetClick}>
           Faucet
         </MenuItem>
 
+        <NavigationMenuDivider />
+
         <MenuItem icon={<HelpLineIcon size="lg" />} onClick={onHelpCenterClick}>
           Help Center
         </MenuItem>
-
-        <NavigationMenuDivider />
 
         <MenuItem
           icon={<FlaskLineIcon size="lg" />}
@@ -79,13 +66,10 @@ export const NavigationMenuContent = forwardRef<
           Request Features
         </MenuItem>
 
-        <MenuItem
-          icon={<BookOpenLineIcon size="lg" />}
-          onClick={() => {
-            window.open(WEBB_DOCS_URL, '_blank');
-          }}
-        >
-          Docs
+        <NavigationMenuDivider />
+
+        <MenuItem icon={<TangleIcon size="lg" />} onClick={onTestnetClick}>
+          Substrate Portal
         </MenuItem>
 
         <MenuItem icon={<InformationLine size="lg" />} onClick={onAboutClick}>
@@ -110,5 +94,5 @@ export const NavigationMenuContent = forwardRef<
 );
 
 const NavigationMenuDivider = () => {
-  return <div className="border-b border-mono-80 dark:border-mono-120" />;
+  return <div className="border-b border-mono-80 dark:border-mono-120 my-1" />;
 };

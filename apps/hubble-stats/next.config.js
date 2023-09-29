@@ -1,12 +1,14 @@
 //@ts-check
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
+const nextConfigBase = require('../../next.config.js');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  ...nextConfigBase,
+
   // at default environment variable is only accessible by the server, resulting in hydration mismatch
   // make environment variable accessible by both the server and client
   env: {
@@ -20,28 +22,12 @@ const nextConfig = {
   },
 
   experimental: {
-    appDir: true,
+    serverActions: true,
   },
 
   // webpack config for wasm support
   // following this approach: https://github.com/vercel/next.js/issues/29362#issuecomment-1149903338
-  webpack: (config, { isServer }) => {
-    // it makes a WebAssembly modules async modules
-    config.experiments = {
-      ...config.experiments,
-      syncWebAssembly: true,
-      asyncWebAssembly: true,
-      layers: true,
-    };
-
-    // generate wasm module in ".next/server" for ssr & ssg
-    if (isServer) {
-      config.output.webassemblyModuleFilename =
-        './../static/wasm/[modulehash].wasm';
-    } else {
-      config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
-    }
-
+  webpack: (config) => {
     // Hide Critical dependency warning from @graphql-mesh/* packages
     // https://github.com/i18next/next-i18next/issues/1545#issuecomment-1005990731
     // NOTE: This is a workaround as

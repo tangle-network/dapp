@@ -11,7 +11,7 @@ import {
   SessionKeyStatus,
   useKey,
 } from '../../provider/hooks';
-import { useSubQLtime } from '../../provider/stats-provider';
+import { useStatsContext, useSubQLtime } from '../../provider/stats-provider';
 import {
   Avatar,
   AvatarGroup,
@@ -41,7 +41,7 @@ import {
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-import { forwardRef, useCallback, useMemo } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 import { ECPairFactory } from 'ecpair';
@@ -55,7 +55,20 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
     const { key, prevAndNextKey: prevAndNextKeyResp } = useKey(keyId);
 
+    const { sessionHeight } = useStatsContext();
+
+    const keysList = useMemo(() => {
+      const keys = localStorage.getItem('keys');
+
+      return keys ? JSON.parse(keys) : [];
+    }, [keyId]);
+
+    const { key: latestKey } = useKey(keysList[0]);
+
     const { error, isFailed, isLoading, val: keyDetail } = key;
+
+    const { val: latestKeyDetail } = latestKey;
+
     const { val: prevAndNextKey } = prevAndNextKeyResp;
 
     const commonCardClsx = useMemo(
@@ -63,6 +76,22 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
       []
     );
     const time = useSubQLtime();
+
+    useEffect(() => {
+      const isKeyMatch =
+        keysList && keysList.length > 1 && keysList[1] === keyId;
+
+      if (isKeyMatch && latestKeyDetail?.start && keyDetail?.start) {
+        const latestKeyStartTime =
+          new Date(latestKeyDetail.start).getTime() / 1000;
+        const currentKeyStartTime = new Date(keyDetail.start).getTime() / 1000;
+        const timeDifference = latestKeyStartTime - currentKeyStartTime;
+
+        if (timeDifference < sessionHeight) {
+          keyDetail.end = latestKeyDetail.start;
+        }
+      }
+    }, [keyId, keyDetail, latestKeyDetail]);
 
     const onNextKey = useCallback(() => {
       if (prevAndNextKey?.nextKeyId) {

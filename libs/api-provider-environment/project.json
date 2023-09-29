@@ -11,7 +11,8 @@
         "outputPath": "dist/libs/api-provider-environment",
         "main": "libs/api-provider-environment/src/index.ts",
         "tsConfig": "libs/api-provider-environment/tsconfig.lib.json",
-        "assets": ["libs/api-provider-environment/*.md"]
+        "assets": ["libs/api-provider-environment/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "dependsOn": ["fetch-on-chain-config", "^build"]
     },

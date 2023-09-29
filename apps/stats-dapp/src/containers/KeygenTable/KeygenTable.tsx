@@ -224,6 +224,16 @@ export const KeygenTable: FC = () => {
 
   const keysStats = useKeys(pageQuery, currentKey);
 
+  useEffect(() => {
+    if (keysStats.val) {
+      const keysList = keysStats.val.items.map((item) => {
+        return item.compressed;
+      });
+
+      localStorage.setItem('keys', JSON.stringify(keysList));
+    }
+  }, [keysStats]);
+
   const data = useMemo(() => {
     if (keysStats.val) {
       return keysStats.val.items
