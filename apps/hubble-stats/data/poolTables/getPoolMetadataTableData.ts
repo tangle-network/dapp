@@ -2,12 +2,12 @@ import {
   getDateFromEpoch,
   getWrappingFeesPercentageByFungibleToken,
   getExplorerUrlByAddressByChains,
-} from '../utils';
-import { VANCHORS_MAP } from '../constants';
+} from '../../utils';
+import { VANCHORS_MAP } from '../../constants';
 import {
   WrappingFeesByChainType,
   AddressWithExplorerUrlsType,
-} from '../components/PoolMetadataTable/types';
+} from '../../components/PoolMetadataTable/types';
 
 type PoolMetadataDataType = {
   name: string;
@@ -20,7 +20,7 @@ type PoolMetadataDataType = {
   creationDate: string;
 };
 
-export default async function getPoolMetadataData(
+export default async function getPoolMetadataTableData(
   poolAddress: string
 ): Promise<PoolMetadataDataType> {
   const vAnchor = VANCHORS_MAP[poolAddress];

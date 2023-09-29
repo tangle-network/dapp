@@ -54,7 +54,7 @@ export default function Pool({ params }: { params: { slug: string } }) {
 
       <PoolTransactionsTableContainer poolAddress={poolAddress} />
 
-      {/* <PoolMetadataTableContainer poolAddress={poolAddress} /> */}
+      <PoolMetadataTableContainer poolAddress={poolAddress} />
     </div>
   );
 }
