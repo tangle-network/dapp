@@ -9,8 +9,12 @@ import {
   PoolWrappingTableContainer,
   PoolMetadataTableContainer,
 } from '../../../containers';
-import { VANCHORS_MAP } from '../../../constants';
-import { getEpochStart, getNumDatesFromStart } from '../../../utils';
+import { VANCHORS_MAP, ACTIVE_CHAINS } from '../../../constants';
+import {
+  getEpochStart,
+  getEpochNow,
+  getNumDatesFromStart,
+} from '../../../utils';
 
 // revalidate every 5 seconds
 export const revalidate = 5;
@@ -23,12 +27,16 @@ export default function Pool({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  const startingEpoch = getEpochStart();
-
   const chartProps = {
     poolAddress,
     numDatesFromStart: getNumDatesFromStart(),
-    startingEpoch,
+    startingEpoch: getEpochStart(),
+  };
+
+  const tableProps = {
+    poolAddress,
+    epochNow: getEpochNow(),
+    availableTypedChainIds: ACTIVE_CHAINS,
   };
 
   return (
@@ -39,12 +47,12 @@ export default function Pool({ params }: { params: { slug: string } }) {
         <PoolWrappingChartsContainer {...chartProps} />
       </div>
 
-      {/* <div className="space-y-12">
-        <PoolOverviewTableContainer poolAddress={poolAddress} />
-        <PoolWrappingTableContainer poolAddress={poolAddress} />
+      <div className="space-y-12">
+        <PoolOverviewTableContainer {...tableProps} />
+        <PoolWrappingTableContainer {...tableProps} />
       </div>
 
-      <PoolTransactionsTableContainer poolAddress={poolAddress} />
+      {/* <PoolTransactionsTableContainer poolAddress={poolAddress} />
       <PoolMetadataTableContainer poolAddress={poolAddress} /> */}
     </div>
   );

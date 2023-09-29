@@ -18,7 +18,7 @@ export const getEpochArray = (
   );
 };
 
-const EPOCH_DAY_INTERVAL = 24 * 60 * 60;
+export const EPOCH_DAY_INTERVAL = 24 * 60 * 60;
 
 export const getEpochNow = () => getEpochFromDate(new Date());
 export const getEpoch24H = () =>
