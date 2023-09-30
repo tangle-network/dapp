@@ -164,18 +164,16 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(
     undefined
   );
+
   const [loading, setLoading] = useState(true);
 
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(
     null
   );
-  const [noteManager, setNoteManager] = useState<NoteManager | null>(null);
 
-  // TODO resolve the account inner type issue
   const [accounts, setAccounts] = useState<Array<Account>>([]);
 
-  // TODO resolve the account inner type issue
-  const [activeAccount, _setActiveAccount] = useState<Account | null>(null);
+  const [activeAccount, setActiveAccount] = useState<Account | null>(null);
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -183,6 +181,15 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
     InteractiveFeedback[]
   >([]);
+
+  const {
+    loginIfExist,
+    loginNoteAccount,
+    logoutNoteAccount,
+    noteManager,
+    purgeNoteAccount,
+    setNoteManager,
+  } = useNoteAccount(activeApi);
 
   /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
@@ -211,7 +218,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
   /// callback for setting active account
   /// it will store on the provider and the storage of the network
-  const setActiveAccount = useCallback(
+  const setActiveAccountWithStorage = useCallback(
     async (
       account: Account,
       options: {
@@ -244,10 +251,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         return;
       }
 
-      _setActiveAccount(account);
+      setActiveAccount(account);
       await innerActiveApi.accounts.setActiveAccount(account);
+      await loginIfExist(account.address);
     },
-    [activeApi, activeChain, networkStorage]
+    [activeApi, activeChain, loginIfExist, networkStorage]
   );
 
   /// this will set the active api and the accounts
@@ -257,60 +265,64 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       chain: Chain,
       _networkStorage?: NetworkStorage | null
     ): Promise<void> => {
-      if (nextActiveApi) {
-        let hasSetFromStorage = false;
-        const accounts = await nextActiveApi.accounts.accounts();
+      if (!nextActiveApi) {
+        setActiveApi(nextActiveApi);
+        setAccounts([]);
+        setActiveAccount(null);
+        setNoteManager(null);
+        return;
+      }
 
-        const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
+      let hasSetFromStorage = false;
+      const accounts = await nextActiveApi.accounts.accounts();
 
-        setAccounts(accounts);
+      const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
-        if (_networkStorage) {
-          const networkDefaultConfig = await _networkStorage.get(
-            'networksConfig'
-          );
-          let defaultAccount =
-            networkDefaultConfig?.[typedChainId]?.defaultAccount;
-          defaultAccount = defaultAccount ?? accounts[0]?.address;
-          const defaultFromSettings = accounts.find(
-            (account) => account.address === defaultAccount
-          );
-          if (defaultFromSettings) {
-            _setActiveAccount(defaultFromSettings);
-            await nextActiveApi.accounts.setActiveAccount(defaultFromSettings);
-            hasSetFromStorage = true;
-          }
+      setAccounts(accounts);
+
+      if (_networkStorage) {
+        const networkDefaultConfig = await _networkStorage.get(
+          'networksConfig'
+        );
+
+        const defaultAccount =
+          networkDefaultConfig?.[typedChainId]?.defaultAccount;
+        const defaultFromSettings = accounts.find(
+          (account) => account.address === defaultAccount
+        );
+
+        if (defaultFromSettings) {
+          setActiveAccount(defaultFromSettings);
+          await nextActiveApi.accounts.setActiveAccount(defaultFromSettings);
+          await loginIfExist(defaultFromSettings.address);
+          hasSetFromStorage = true;
         }
+      }
 
-        if (!hasSetFromStorage) {
-          await setActiveAccount(accounts[0], {
-            networkStorage: _networkStorage,
+      if (!hasSetFromStorage) {
+        await setActiveAccountWithStorage(accounts[0], {
+          networkStorage: _networkStorage,
+          chain,
+          activeApi: nextActiveApi,
+        });
+      }
+
+      setActiveApi(nextActiveApi);
+      nextActiveApi.on('newAccounts', async (accounts) => {
+        const acs = await accounts.accounts();
+        const active = acs[0];
+        setAccounts(acs);
+
+        if (active) {
+          setActiveAccountWithStorage(active, {
+            networkStorage: _networkStorage ?? networkStorage,
             chain,
             activeApi: nextActiveApi,
           });
         }
-
-        setActiveApi(nextActiveApi);
-        nextActiveApi?.on('newAccounts', async (accounts) => {
-          const acs = await accounts.accounts();
-          const active = acs[0] || null;
-          setAccounts(acs);
-
-          if (active) {
-            setActiveAccount(active, {
-              networkStorage: _networkStorage ?? networkStorage,
-              chain,
-              activeApi: nextActiveApi,
-            });
-          }
-        });
-      } else {
-        setActiveApi(nextActiveApi);
-        setAccounts([]);
-        _setActiveAccount(null);
-      }
+      });
     },
-    [networkStorage, setActiveAccount]
+    [loginIfExist, networkStorage, setActiveAccountWithStorage, setNoteManager]
   );
 
   /// Error handler for the `WebbError`
@@ -358,68 +370,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }
     },
     [appEvent]
-  );
-
-  const loginNoteAccount = useCallback(
-    async (key: string, walletAddress: string): Promise<NoteManager> => {
-      // Set the keypair
-      const accountKeypair = new Keypair(key);
-
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      multipleKeypairStorage.set(walletAddress, key);
-
-      // create a NoteManager instance
-      const noteStorage = await noteStorageFactory();
-      const noteManager = await NoteManager.initAndDecryptNotes(
-        noteStorage,
-        accountKeypair
-      );
-
-      // set the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = noteManager;
-      }
-
-      setNoteManager(noteManager);
-      return noteManager;
-    },
-    [activeApi]
-  );
-
-  const logoutNoteAccount = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      multipleKeypairStorage.set(walletAddress, null);
-
-      // clear the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = null;
-      }
-      setNoteManager(null);
-    },
-    [activeApi]
-  );
-
-  const purgeNoteAccount = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
-
-      if (!currentPrivKey) {
-        return;
-      }
-
-      resetNoteStorage();
-
-      multipleKeypairStorage.set(walletAddress, null);
-
-      // clear the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = null;
-      }
-      setNoteManager(null);
-    },
-    [activeApi]
   );
 
   /// Network switcher
@@ -825,21 +775,16 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
               storedKeypair,
               defaultAddr
             );
-            setNoteManager(createdNoteManager);
           }
 
           if (!activeApi.noteManager) {
             activeApi.noteManager = createdNoteManager;
           }
 
-          _setActiveAccount(defaultFromSettings);
-          await activeApi.accounts.setActiveAccount(defaultFromSettings);
-          _networkStorage?.set('networksConfig', {
-            ...networkDefaultConfig,
-            [net]: {
-              ...chainConfig,
-              defaultAccount: defaultAddr,
-            },
+          setActiveAccountWithStorage(defaultFromSettings, {
+            networkStorage: _networkStorage,
+            chain: chainConfig,
+            activeApi,
           });
         }
       } else {
@@ -852,6 +797,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       setIsConnecting(false);
       setLoading(false);
     });
+
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
       // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
@@ -867,7 +813,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       switchChainAndStore(chain, wallet);
     });
     appEvent.on('setActiveAccount', (nextAccount) => {
-      setActiveAccount(nextAccount);
+      setActiveAccountWithStorage(nextAccount);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -889,14 +835,15 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         activeApi,
         accounts,
         activeAccount,
-        setActiveAccount,
+        setActiveAccount: setActiveAccountWithStorage,
         apiConfig,
         switchChain: switchChainAndStore,
         isConnecting,
         async inactivateApi(): Promise<void> {
           if (activeApi) {
             setAccounts([]);
-            _setActiveAccount(null);
+            setActiveAccount(null);
+            setNoteManager(null);
             setActiveWallet(undefined);
             setActiveChain(activeChain);
             await activeApi.destroy();
@@ -940,3 +887,93 @@ export const WebbProvider: FC<WebbProviderProps> = (props) => {
     </WagmiConfig>
   );
 };
+
+function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
+  const [noteManager, setNoteManager] = useState<NoteManager | null>(null);
+
+  const loginNoteAccount = useCallback(
+    async (key: string, walletAddress: string): Promise<NoteManager> => {
+      // Set the keypair
+      const accountKeypair = new Keypair(key);
+
+      const multipleKeypairStorage = await multipleKeypairStorageFactory();
+      multipleKeypairStorage.set(walletAddress, key);
+
+      // create a NoteManager instance
+      const noteStorage = await noteStorageFactory();
+      const noteManager = await NoteManager.initAndDecryptNotes(
+        noteStorage,
+        accountKeypair
+      );
+
+      // set the noteManager instance on the activeApi if it exists
+      if (activeApi) {
+        activeApi.noteManager = noteManager;
+      }
+
+      setNoteManager(noteManager);
+      return noteManager;
+    },
+    [activeApi]
+  );
+
+  const logoutNoteAccount = useCallback(
+    async (walletAddress: string) => {
+      const multipleKeypairStorage = await multipleKeypairStorageFactory();
+      multipleKeypairStorage.set(walletAddress, null);
+
+      // clear the noteManager instance on the activeApi if it exists
+      if (activeApi) {
+        activeApi.noteManager = null;
+      }
+      setNoteManager(null);
+    },
+    [activeApi]
+  );
+
+  const purgeNoteAccount = useCallback(
+    async (walletAddress: string) => {
+      const multipleKeypairStorage = await multipleKeypairStorageFactory();
+      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
+
+      if (!currentPrivKey) {
+        return;
+      }
+
+      resetNoteStorage();
+
+      multipleKeypairStorage.set(walletAddress, null);
+
+      // clear the noteManager instance on the activeApi if it exists
+      if (activeApi) {
+        activeApi.noteManager = null;
+      }
+      setNoteManager(null);
+    },
+    [activeApi]
+  );
+
+  const loginIfExist = useCallback(
+    async (walletAddress: string) => {
+      const multipleKeypairStorage = await multipleKeypairStorageFactory();
+      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
+
+      if (!currentPrivKey) {
+        setNoteManager(null);
+        return;
+      }
+
+      await loginNoteAccount(currentPrivKey, walletAddress);
+    },
+    [loginNoteAccount]
+  );
+
+  return {
+    loginIfExist,
+    loginNoteAccount,
+    logoutNoteAccount,
+    noteManager,
+    purgeNoteAccount,
+    setNoteManager,
+  };
+}

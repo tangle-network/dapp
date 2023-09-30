@@ -176,20 +176,26 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
 
         notificationApi.addToQueue({
           variant: 'success',
-          message: 'Note(s) successfully added to account',
-          secondaryMessage: (
-            <Typography variant="body1">
-              <Button
-                variant="link"
-                as="span"
-                className="inline-block"
-                onClick={() => onNewNotes?.(notes)}
-              >
-                {notes.length} new note(s){' '}
-              </Button>{' '}
-              added to your account
-            </Typography>
-          ),
+          message:
+            notes.length > 0
+              ? `Note${
+                  notes.length > 1 ? 's' : ''
+                } successfully added to account`
+              : 'Successfully synced notes',
+          secondaryMessage:
+            notes.length > 0 ? (
+              <Typography variant="body1">
+                <Button
+                  variant="link"
+                  as="span"
+                  className="inline-block"
+                  onClick={() => onNewNotes?.(notes)}
+                >
+                  {notes.length} new note(s){' '}
+                </Button>{' '}
+                added to your account
+              </Typography>
+            ) : undefined,
         });
       } catch (error) {
         let msg = 'Something went wrong while syncing notes';
