@@ -27,22 +27,29 @@ export default function Pool({ params }: { params: { slug: string } }) {
     notFound();
   }
 
+  const startingEpoch = getEpochStart();
+  const epochNow = getEpochNow();
+
   const chartProps = {
     poolAddress,
     numDatesFromStart: getNumDatesFromStart(),
-    startingEpoch: getEpochStart(),
+    startingEpoch,
   };
 
   const tableProps = {
     poolAddress,
-    epochNow: getEpochNow(),
+    epochNow,
     availableTypedChainIds: ACTIVE_CHAINS,
   };
 
   return (
     <div className="py-4 space-y-8">
       <div className="grid grid-cols-1 items-end lg:grid-cols-[auto_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
-        {/* <PoolOverviewCardContainer poolAddress={poolAddress} /> */}
+        <PoolOverviewCardContainer
+          poolAddress={poolAddress}
+          epochStart={startingEpoch}
+          epochNow={epochNow}
+        />
         <PoolOverviewChartsContainer {...chartProps} />
         <PoolWrappingChartsContainer {...chartProps} />
       </div>

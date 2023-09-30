@@ -1,5 +1,6 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 import { formatEther } from 'viem';
+
 import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
 import { MetricType } from '../../types';
 import { getChangeRate } from '../../utils';

@@ -1,6 +1,6 @@
-import { FC } from 'react';
+import { type FC, Suspense } from 'react';
 import cx from 'classnames';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Typography, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 import { ArrowRight } from '@webb-tools/icons';
 
@@ -9,20 +9,43 @@ import { PoolOverviewCardItemProps } from './types';
 
 const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
   title,
-  value,
-  changeRate,
   prefix = '',
   suffix = '',
   className,
+  dataFetcher,
 }) => {
   return (
     <div className={cx('px-2', className)}>
+      <Suspense fallback={<SuspenseFallback title={title} />}>
+        <PoolOverviewCardItemValue
+          title={title}
+          prefix={prefix}
+          suffix={suffix}
+          dataFetcher={dataFetcher}
+        />
+      </Suspense>
+    </div>
+  );
+};
+
+export default PoolOverviewCardItem;
+
+async function PoolOverviewCardItemValue({
+  dataFetcher,
+  title,
+  prefix,
+  suffix,
+}: Omit<PoolOverviewCardItemProps, 'className'>) {
+  const { value, changeRate } = await dataFetcher();
+
+  return (
+    <>
       <div className="flex items-center justify-center gap-0.5">
         <Typography variant="h5" fw="black">
           {typeof value === 'number' && prefix}
           {getRoundedDownNumberWith2Decimals(value)}
         </Typography>
-        {typeof value === 'number' && (
+        {typeof value === 'number' && suffix && (
           <Typography
             variant="body2"
             className="text-mono-200 dark:text-mono-0"
@@ -66,8 +89,31 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
           </Typography>
         )}
       </div>
-    </div>
+    </>
+  );
+}
+
+const SuspenseFallback: FC<Pick<PoolOverviewCardItemProps, 'title'>> = ({
+  title,
+}) => {
+  return (
+    <>
+      <div className="flex items-center justify-center gap-0.5 mb-1">
+        <SkeletonLoader size="lg" className="w-[100px]" />
+      </div>
+
+      <div className="flex justify-center items-center gap-1">
+        <Typography
+          variant="utility"
+          tw="black"
+          className={cx(
+            'uppercase block text-center !text-[10px] md:!text-[12px]',
+            'text-mono-120 dark:text-mono-80'
+          )}
+        >
+          {title}
+        </Typography>
+      </div>
+    </>
   );
 };
-
-export default PoolOverviewCardItem;

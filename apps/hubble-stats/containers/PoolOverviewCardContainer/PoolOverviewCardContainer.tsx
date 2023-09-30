@@ -2,32 +2,34 @@ import { ShieldedAssetIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
+
 import {
   CopyIconWithTooltip,
   PoolOverviewCardItem,
   PoolTypeChip,
 } from '../../components';
-import { getPoolOverviewCardData } from '../../data';
+import { VANCHORS_MAP } from '../../constants';
+import {
+  getPoolInfoCardTvlData,
+  getPoolInfoCardDepositData,
+} from '../../data/poolInfoCard';
 
 export default async function PoolOverviewCardContainer({
   poolAddress,
+  epochStart,
+  epochNow,
 }: {
   poolAddress: string;
+  epochStart: number;
+  epochNow: number;
 }) {
-  const {
-    name,
-    fungibleTokenSymbol,
-    type,
-    deposit24h,
-    depositChangeRate,
-    tvl,
-    tvlChangeRate,
-  } = await getPoolOverviewCardData(poolAddress);
+  const { fungibleTokenName: name, fungibleTokenSymbol: symbol } =
+    VANCHORS_MAP[poolAddress];
 
   return (
     <div
       className={cx(
-        'w-full lg:min-h-[278px] p-6 rounded-lg',
+        'w-full lg:min-h-[284px] p-6 rounded-lg',
         'bg-glass dark:bg-glass_dark',
         'border-2 border-mono-0 dark:border-mono-160',
         'lg:flex lg:items-center'
@@ -55,27 +57,26 @@ export default async function PoolOverviewCardContainer({
             <CopyIconWithTooltip textToCopy={poolAddress} />
           </div>
 
-          {/* Type */}
-          <PoolTypeChip
-            type={type}
-            name={type === 'single' ? 'Single Asset' : 'Multi Asset'}
-          />
+          {/* Type (only single for now) */}
+          <PoolTypeChip type="single" name="Single Asset" />
         </div>
 
         {/* 24h deposits + TVL + 24h fees */}
         <div className="grid grid-cols-2">
           <PoolOverviewCardItem
             title="tvl"
-            value={tvl}
-            changeRate={tvlChangeRate}
-            suffix={` ${fungibleTokenSymbol}`}
+            suffix={` ${symbol}`}
+            dataFetcher={() =>
+              getPoolInfoCardTvlData(poolAddress, epochStart, epochNow)
+            }
           />
           <PoolOverviewCardItem
             title="Deposits 24H"
-            value={deposit24h}
-            changeRate={depositChangeRate}
-            suffix={` ${fungibleTokenSymbol}`}
+            suffix={` ${symbol}`}
             className="border-l border-mono-40 dark:border-mono-140"
+            dataFetcher={() =>
+              getPoolInfoCardDepositData(poolAddress, epochNow)
+            }
           />
         </div>
       </div>
