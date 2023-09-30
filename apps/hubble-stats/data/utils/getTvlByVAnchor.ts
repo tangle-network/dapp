@@ -1,16 +1,17 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
+import { SubgraphUrlType } from '../../types';
 
 const getTvlByVAnchor = async (
-  vAnchorAddress: string
+  vAnchorAddress: string,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<number | undefined> => {
   let tvl: number | undefined;
   try {
     const tvlVAnchorByChainsData =
       await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress
       );
 

@@ -9,7 +9,7 @@ import {
   PoolWrappingTableContainer,
   PoolMetadataTableContainer,
 } from '../../../containers';
-import { VANCHORS_MAP, ACTIVE_CHAINS } from '../../../constants';
+import { VANCHORS_MAP } from '../../../constants';
 import { getDateDataForPage } from '../../../utils';
 
 // revalidate every 5 seconds
@@ -35,7 +35,7 @@ export default function Pool({ params }: { params: { slug: string } }) {
   const tableProps = {
     poolAddress,
     epochNow,
-    availableTypedChainIds: ACTIVE_CHAINS,
+    availableTypedChainIds: VANCHORS_MAP[poolAddress].supportedChains,
   };
 
   return (

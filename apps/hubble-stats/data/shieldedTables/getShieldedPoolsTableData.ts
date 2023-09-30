@@ -15,9 +15,10 @@ const getPoolInfoFromVAnchor = async (
   const deposits24h = await getDepositInTimeRangeByVAnchor(
     vAnchorAddress,
     epochNow - EPOCH_DAY_INTERVAL,
-    epochNow
+    epochNow,
+    vAnchor.supportedSubgraphs
   );
-  const tvl = await getTvlByVAnchor(vAnchorAddress);
+  const tvl = await getTvlByVAnchor(vAnchorAddress, vAnchor.supportedSubgraphs);
 
   return {
     address: vAnchorAddress,

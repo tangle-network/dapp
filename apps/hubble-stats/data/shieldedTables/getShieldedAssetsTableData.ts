@@ -3,11 +3,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { EPOCH_DAY_INTERVAL, getDateFromEpoch } from '../../utils';
 import { getDepositInTimeRangeByVAnchor } from '../utils';
-import {
-  ACTIVE_SUBGRAPH_URLS,
-  VANCHORS_MAP,
-  VANCHOR_ADDRESSES,
-} from '../../constants';
+import { VANCHORS_MAP, VANCHOR_ADDRESSES } from '../../constants';
 import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
 
 const getAssetInfoFromVAnchor = async (
@@ -15,19 +11,20 @@ const getAssetInfoFromVAnchor = async (
   epochNow: number
 ) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
-  const tokenSymbol = vanchor.fungibleTokenSymbol;
+  const { fungibleTokenSymbol: tokenSymbol, supportedSubgraphs } = vanchor;
 
   const deposits24h = await getDepositInTimeRangeByVAnchor(
     vAnchorAddress,
     epochNow - EPOCH_DAY_INTERVAL,
-    epochNow
+    epochNow,
+    supportedSubgraphs
   );
 
   let withdrawals24h: number | undefined;
   try {
     const withdrawalVAnchorsByChainsData =
       await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChainsAndByToken15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
+        supportedSubgraphs,
         vAnchorAddress,
         tokenSymbol,
         getDateFromEpoch(epochNow - EPOCH_DAY_INTERVAL),

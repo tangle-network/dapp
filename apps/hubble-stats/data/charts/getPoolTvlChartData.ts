@@ -1,19 +1,20 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import type { ChartDataRecord } from '../../types';
+import { VANCHORS_MAP } from '../../constants';
+import type { ChartDataRecord, SubgraphUrlType } from '../../types';
 import { getFormattedDataForBasicChart, serializeEpochData } from '../../utils';
 import { getTvlByVAnchor } from '../utils';
 
 async function getVAnchorTvlDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<ChartDataRecord> {
   try {
     const fetchedTvlData =
       await vAnchorClient.TotalValueLocked.GetVAnchorTVLByChainsByDateRange(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         startingEpoch,
         numDatesFromStart
@@ -35,9 +36,16 @@ export default async function getPoolTvlChartData(
   currentPoolTvl?: number;
   poolTvlData: ReturnType<typeof getFormattedDataForBasicChart>;
 }> {
+  const subgraphUrls = VANCHORS_MAP[poolAddress].supportedSubgraphs;
+
   const [currentPoolTvl, poolTvlData] = await Promise.all([
-    getTvlByVAnchor(poolAddress),
-    getVAnchorTvlDataByDateRange(poolAddress, startingEpoch, numDatesFromStart),
+    getTvlByVAnchor(poolAddress, subgraphUrls),
+    getVAnchorTvlDataByDateRange(
+      poolAddress,
+      startingEpoch,
+      numDatesFromStart,
+      subgraphUrls
+    ),
   ] as const);
 
   return {

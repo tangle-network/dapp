@@ -1,16 +1,19 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 import { formatEther } from 'viem';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import type { ChartDataRecord } from '../../types';
+import { VANCHORS_MAP } from '../../constants';
+import type { ChartDataRecord, SubgraphUrlType } from '../../types';
 import { getFormattedDataForBasicChart } from '../../utils';
 
-async function getVAnchorRelayerEarningsData(vAnchorAddress: string) {
+async function getVAnchorRelayerEarningsData(
+  vAnchorAddress: string,
+  subgraphUrls: SubgraphUrlType[]
+) {
   let relayerEarnings: number | undefined;
   try {
     const fetchedRelayerEarningsData =
       await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChains(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress
       );
 
@@ -29,12 +32,13 @@ async function getVAnchorRelayerEarningsData(vAnchorAddress: string) {
 async function getVAnchorRelayerEarningsDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<ChartDataRecord> {
   try {
     const fetchedRelayerFeesData =
       await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChainsByDateRange(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         startingEpoch,
         numDatesFromStart
@@ -68,12 +72,15 @@ export default async function getPoolRelayerEarningsChartData(
   relayerEarnings?: number;
   poolRelayerEarningsData: ReturnType<typeof getFormattedDataForBasicChart>;
 }> {
+  const { supportedSubgraphs } = VANCHORS_MAP[poolAddress];
+
   const [relayerEarnings, poolRelayerEarningsData] = await Promise.all([
-    getVAnchorRelayerEarningsData(poolAddress),
+    getVAnchorRelayerEarningsData(poolAddress, supportedSubgraphs),
     getVAnchorRelayerEarningsDataByDateRange(
       poolAddress,
       startingEpoch,
-      numDatesFromStart
+      numDatesFromStart,
+      supportedSubgraphs
     ),
   ] as const);
 

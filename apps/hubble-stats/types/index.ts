@@ -1,3 +1,5 @@
+import { ACTIVE_SUBGRAPH_MAP } from '../constants';
+
 export type ChartDataRecord = { [epoch: string]: number };
 
 /**
@@ -23,3 +25,6 @@ export type FormattedVolumeChartDataType = {
   deposit: number;
   withdrawal: number;
 }[];
+
+export type SubgraphUrlType =
+  (typeof ACTIVE_SUBGRAPH_MAP)[keyof typeof ACTIVE_SUBGRAPH_MAP];

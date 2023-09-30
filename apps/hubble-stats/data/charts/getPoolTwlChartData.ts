@@ -1,16 +1,19 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import type { ChartDataRecord } from '../../types';
+import { VANCHORS_MAP } from '../../constants';
+import type { ChartDataRecord, SubgraphUrlType } from '../../types';
 import { getFormattedDataForBasicChart, serializeEpochData } from '../../utils';
 
-async function getVAnchorTwl(vAnchorAddress: string) {
+async function getVAnchorTwl(
+  vAnchorAddress: string,
+  subgraphUrls: SubgraphUrlType[]
+) {
   let twl: number | undefined;
   try {
     const twlVAnchorByChainsData =
       await vAnchorClient.TWL.GetVAnchorTWLByChains(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress
       );
 
@@ -28,12 +31,13 @@ async function getVAnchorTwl(vAnchorAddress: string) {
 async function getVAnchorTwlDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<ChartDataRecord> {
   try {
     const fetchedTwlData =
       await vAnchorClient.TWL.GetVAnchorTWLByChainsByDateRange(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         startingEpoch,
         numDatesFromStart
@@ -55,9 +59,16 @@ export default async function getPoolTwlChartData(
   currentPoolTwl?: number;
   poolTwlData: ReturnType<typeof getFormattedDataForBasicChart>;
 }> {
+  const { supportedSubgraphs } = VANCHORS_MAP[poolAddress];
+
   const [currentPoolTwl, poolTwlData] = await Promise.all([
-    getVAnchorTwl(poolAddress),
-    getVAnchorTwlDataByDateRange(poolAddress, startingEpoch, numDatesFromStart),
+    getVAnchorTwl(poolAddress, supportedSubgraphs),
+    getVAnchorTwlDataByDateRange(
+      poolAddress,
+      startingEpoch,
+      numDatesFromStart,
+      supportedSubgraphs
+    ),
   ] as const);
 
   return {

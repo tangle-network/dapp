@@ -1,19 +1,20 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 import { formatEther } from 'viem';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import { MetricType } from '../../types';
+import { VANCHORS_MAP } from '../../constants';
+import { MetricType, SubgraphUrlType } from '../../types';
 import { getChangeRate, EPOCH_DAY_INTERVAL } from '../../utils';
 import { getTvlByVAnchor } from '../utils';
 
 async function getTvl24hByVAnchor(
   poolAddress: string,
   epochStart: number,
-  epochNow: number
+  epochNow: number,
+  subgraphUrls: SubgraphUrlType[]
 ) {
   try {
     const latestTvlByChains = await Promise.all(
-      ACTIVE_SUBGRAPH_URLS.map(async (subgraphUrl) => {
+      subgraphUrls.map(async (subgraphUrl) => {
         const latestTvlByVAnchorByChain =
           await vAnchorClient.TotalValueLocked.GetVAnchorByChainLatestTVLInTimeRange(
             subgraphUrl,
@@ -42,9 +43,11 @@ export default async function getPoolInfoCardTvlData(
   epochStart: number,
   epochNow: number
 ): Promise<MetricType> {
+  const subgraphUrls = VANCHORS_MAP[poolAddress].supportedSubgraphs;
+
   const [tvl, tvl24h] = await Promise.all([
-    getTvlByVAnchor(poolAddress),
-    getTvl24hByVAnchor(poolAddress, epochStart, epochNow),
+    getTvlByVAnchor(poolAddress, subgraphUrls),
+    getTvl24hByVAnchor(poolAddress, epochStart, epochNow, subgraphUrls),
   ] as const);
 
   const tvlChangeRate = getChangeRate(tvl, tvl24h);

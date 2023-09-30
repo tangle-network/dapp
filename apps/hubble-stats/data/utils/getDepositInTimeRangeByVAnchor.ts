@@ -1,19 +1,20 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
 import { getDateFromEpoch } from '../../utils';
+import { SubgraphUrlType } from '../../types';
 
 export default async function getDepositInTimeRangeByVAnchor(
   vAnchorAddress: string,
   epochStart: number,
-  epochEnd: number
+  epochEnd: number,
+  subgraphUrls: SubgraphUrlType[]
 ) {
   let deposit: number | undefined;
   try {
     const depositVAnchorByChainsData =
       await vAnchorClient.Deposit.GetVAnchorDepositByChains15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         getDateFromEpoch(epochStart),
         getDateFromEpoch(epochEnd)

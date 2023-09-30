@@ -1,7 +1,7 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import type { ChartDataRecord } from '../../types';
+import { VANCHORS_MAP } from '../../constants';
+import type { ChartDataRecord, SubgraphUrlType } from '../../types';
 import {
   getFormattedDataForVolumeChart,
   serializeEpochData,
@@ -12,12 +12,13 @@ import { getDepositInTimeRangeByVAnchor } from '../utils';
 async function getVAnchorDepositDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<ChartDataRecord> {
   try {
     const fetchedDepositData =
       await vAnchorClient.Deposit.GetVAnchorDepositByChainsByDateRange(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         startingEpoch,
         numDatesFromStart
@@ -33,12 +34,13 @@ async function getVAnchorDepositDataByDateRange(
 async function getVAnchorWithdrawalDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<ChartDataRecord> {
   try {
     const fetchedWithdrawalData =
       await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChainsByDateRange(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         startingEpoch,
         numDatesFromStart
@@ -61,22 +63,27 @@ export default async function getPoolVolumeChartData(
   poolDeposit24h?: number;
   poolVolumeData: ReturnType<typeof getFormattedDataForVolumeChart>;
 }> {
+  const subgraphUrls = VANCHORS_MAP[poolAddress].supportedSubgraphs;
+
   const [poolDeposit24h, poolDepositData, poolWithdrawalData] =
     await Promise.all([
       getDepositInTimeRangeByVAnchor(
         poolAddress,
         epochNow - EPOCH_DAY_INTERVAL,
-        epochNow
+        epochNow,
+        subgraphUrls
       ),
       getVAnchorDepositDataByDateRange(
         poolAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
+        subgraphUrls
       ),
       getVAnchorWithdrawalDataByDateRange(
         poolAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
+        subgraphUrls
       ),
     ] as const);
 

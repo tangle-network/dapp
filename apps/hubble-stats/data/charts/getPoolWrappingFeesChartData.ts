@@ -1,16 +1,19 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import type { ChartDataRecord } from '../../types';
+import { VANCHORS_MAP } from '../../constants';
+import type { ChartDataRecord, SubgraphUrlType } from '../../types';
 import { getFormattedDataForBasicChart, serializeEpochData } from '../../utils';
 
-async function getVAnchorWrappingFees(vAnchorAddress: string) {
+async function getVAnchorWrappingFees(
+  vAnchorAddress: string,
+  subgraphUrls: SubgraphUrlType[]
+) {
   let wrappingFees: number | undefined;
   try {
     const wrappingFeesVAnchorByChainsData =
       await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChains(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress
       );
 
@@ -29,12 +32,13 @@ async function getVAnchorWrappingFees(vAnchorAddress: string) {
 async function getVAnchorWrappingFeesDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
+  subgraphUrls: SubgraphUrlType[]
 ): Promise<ChartDataRecord> {
   try {
     const fetchedWrappingFeesData =
       await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChainsByDateRange(
-        ACTIVE_SUBGRAPH_URLS,
+        subgraphUrls,
         vAnchorAddress,
         startingEpoch,
         numDatesFromStart
@@ -56,12 +60,15 @@ export default async function getPoolWrappingFeesChartData(
   poolWrappingFees?: number;
   poolWrappingFeesData: ReturnType<typeof getFormattedDataForBasicChart>;
 }> {
+  const { supportedSubgraphs } = VANCHORS_MAP[poolAddress];
+
   const [poolWrappingFees, poolWrappingFeesData] = await Promise.all([
-    getVAnchorWrappingFees(poolAddress),
+    getVAnchorWrappingFees(poolAddress, supportedSubgraphs),
     getVAnchorWrappingFeesDataByDateRange(
       poolAddress,
       startingEpoch,
-      numDatesFromStart
+      numDatesFromStart,
+      supportedSubgraphs
     ),
   ] as const);
 

@@ -1,11 +1,7 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import {
-  VANCHORS_MAP,
-  ACTIVE_SUBGRAPH_MAP,
-  ACTIVE_SUBGRAPH_URLS,
-} from '../../constants';
+import { VANCHORS_MAP, ACTIVE_SUBGRAPH_MAP } from '../../constants';
 import { getTimePassedByEpoch } from '../../utils';
 import { PoolTransactionType } from '../../components/PoolTransactionsTable/types';
 
@@ -14,7 +10,7 @@ const TRANSACTIONS_LIMIT = 100;
 export default async function getPoolTransactionsTableData(
   poolAddress: string
 ): Promise<PoolTransactionType[]> {
-  const { nativeTokenByChain } = VANCHORS_MAP[poolAddress];
+  const { nativeTokenByChain, supportedSubgraphs } = VANCHORS_MAP[poolAddress];
 
   const subgraphByTypedChainIdMap = Object.keys(ACTIVE_SUBGRAPH_MAP).reduce(
     (map, typedChainId) => {
@@ -28,7 +24,7 @@ export default async function getPoolTransactionsTableData(
   try {
     const fetchedTransactions =
       await vAnchorClient.Transaction.GetVAnchorTransactionsByChains(
-        ACTIVE_SUBGRAPH_URLS,
+        supportedSubgraphs,
         poolAddress,
         TRANSACTIONS_LIMIT
       );
