@@ -32,14 +32,16 @@ export const bridgeStorageFactory = (resourceId: string) => {
   });
 };
 
-/// The `KeypairStorage` is used to store the keypairs of the user.
-export type KeypairStorage = Record<string, { keypair: string | null }>;
-export const keypairStorageFactory = () => {
-  return Storage.newFromCache<KeypairStorage>('keypair', {
-    async commit(key: string, data: KeypairStorage): Promise<void> {
+export type MultipleKeyPairStorage = {
+  [walletAddress: string]: string | null;
+};
+
+export const multipleKeypairStorageFactory = () =>
+  Storage.newFromCache<MultipleKeyPairStorage>('keypairs', {
+    async commit(key: string, data: MultipleKeyPairStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },
-    async fetch(key: string): Promise<KeypairStorage> {
+    async fetch(key: string): Promise<MultipleKeyPairStorage> {
       const storageCached = localStorage.getItem(key);
 
       if (storageCached) {
@@ -51,13 +53,15 @@ export const keypairStorageFactory = () => {
       return {};
     },
   });
-};
 
 /// The `NoteStorage` is used to store the encrypted notes of the user.
 /// The key is the public key of the user.
 /// The `NoteStorage` is used to store the encrypted notes of the user.
 /// The key is the resource id.
-export type NoteStorage = Record<string, string[]>;
+export type NoteStorage = {
+  [resourceId: string]: Array<string>;
+};
+
 const NOTE_STORAGE_KEY = 'encryptedNotes';
 
 export const resetNoteStorage = () => {

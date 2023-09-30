@@ -36,13 +36,8 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
   // Clear data modal
   const [isOpen, setIsOpen] = useState(false);
 
-  const {
-    activeApi,
-    activeChain,
-    noteManager,
-    purgeNoteAccount,
-    inactivateApi,
-  } = useWebContext();
+  const { activeApi, activeChain, noteManager, inactivateApi } =
+    useWebContext();
 
   // Get all note, syncNotes and isSyncingNote function
   const {
@@ -167,12 +162,10 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
       currentManagedWallet.endSession();
     }
 
-    await purgeNoteAccount();
-
     await inactivateApi();
 
     setMainComponent(undefined);
-  }, [currentManagedWallet, purgeNoteAccount, inactivateApi, setMainComponent]);
+  }, [currentManagedWallet, inactivateApi, setMainComponent]);
 
   return (
     <>
