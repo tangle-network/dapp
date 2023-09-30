@@ -7,8 +7,8 @@ export default async function OverviewVolumeChartContainer(props: ChartProps) {
 
   const { volumeData, deposit24h } = await getOverviewVolumeChartData(
     startingEpoch,
-    numDatesFromStart,
-    epochNow
+    epochNow,
+    numDatesFromStart
   );
 
   return (
