@@ -1,5 +1,5 @@
 import { ChartDataRecord, FormattedVolumeChartDataType } from '../types';
-import { getEpochDailyFromStart, getDateFromEpoch } from './date';
+import { getDateFromEpoch } from './date';
 
 type VolumeDataType = {
   [epoch: string]: { deposit: number; withdrawal: number };
@@ -9,7 +9,7 @@ const getFormattedDataForVolumeChart = (
   depositData: ChartDataRecord,
   withdrawalData: ChartDataRecord
 ): FormattedVolumeChartDataType => {
-  const volumeData: VolumeDataType = getEpochDailyFromStart().reduce(
+  const volumeData: VolumeDataType = Object.keys(depositData).reduce(
     (volumeMap, epoch) => {
       volumeMap[epoch] = {
         deposit: depositData[epoch] ? depositData[epoch] : 0,

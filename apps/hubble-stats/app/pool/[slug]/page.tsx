@@ -10,11 +10,7 @@ import {
   PoolMetadataTableContainer,
 } from '../../../containers';
 import { VANCHORS_MAP, ACTIVE_CHAINS } from '../../../constants';
-import {
-  getEpochStart,
-  getEpochNow,
-  getNumDatesFromStart,
-} from '../../../utils';
+import { getDateDataForPage } from '../../../utils';
 
 // revalidate every 5 seconds
 export const revalidate = 5;
@@ -27,13 +23,13 @@ export default function Pool({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  const startingEpoch = getEpochStart();
-  const epochNow = getEpochNow();
+  const { epochStart, epochNow, numDatesFromStart } = getDateDataForPage();
 
   const chartProps = {
     poolAddress,
-    numDatesFromStart: getNumDatesFromStart(),
-    startingEpoch,
+    numDatesFromStart,
+    startingEpoch: epochStart,
+    epochNow,
   };
 
   const tableProps = {
@@ -47,7 +43,7 @@ export default function Pool({ params }: { params: { slug: string } }) {
       <div className="grid grid-cols-1 items-end lg:grid-cols-[auto_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
         <PoolOverviewCardContainer
           poolAddress={poolAddress}
-          epochStart={startingEpoch}
+          epochStart={epochStart}
           epochNow={epochNow}
         />
         <PoolOverviewChartsContainer {...chartProps} />

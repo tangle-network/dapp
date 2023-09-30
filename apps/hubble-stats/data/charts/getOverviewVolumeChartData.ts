@@ -4,8 +4,9 @@ import type { ChartDataRecord } from '../../types';
 import {
   getFormattedDataForVolumeChart,
   serializeEpochData,
+  EPOCH_DAY_INTERVAL,
 } from '../../utils';
-import { getDeposit24h } from '../utils';
+import { getDepositInTimeRange } from '../utils';
 
 async function getDepositDataByDateRange(
   startingEpoch: number,
@@ -51,13 +52,14 @@ async function getWithdrawDataByDateRange(
 
 export default async function getOverviewVolumeChartData(
   startingEpoch: number,
+  epochNow: number,
   numDatesFromStart: number
 ): Promise<{
   deposit24h?: number;
   volumeData: ReturnType<typeof getFormattedDataForVolumeChart>;
 }> {
   const [deposit24h, depositData, withdrawalData] = await Promise.all([
-    getDeposit24h(),
+    getDepositInTimeRange(epochNow - EPOCH_DAY_INTERVAL, epochNow),
     getDepositDataByDateRange(startingEpoch, numDatesFromStart),
     getWithdrawDataByDateRange(startingEpoch, numDatesFromStart),
   ] as const);

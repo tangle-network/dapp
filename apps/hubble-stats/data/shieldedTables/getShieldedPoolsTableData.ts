@@ -1,14 +1,22 @@
 import { VANCHORS_MAP, VANCHOR_ADDRESSES } from '../../constants';
 import { ShieldedPoolType } from '../../components/ShieldedPoolsTable/types';
-import { getTvlByVAnchor, getDeposit24hByVAnchor } from '../utils';
+import { getTvlByVAnchor, getDepositInTimeRangeByVAnchor } from '../utils';
+import { EPOCH_DAY_INTERVAL } from '../../utils';
 
-const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
+const getPoolInfoFromVAnchor = async (
+  vAnchorAddress: string,
+  epochNow: number
+) => {
   const vAnchor = VANCHORS_MAP[vAnchorAddress];
 
   // plus one for fungible token
   const tokenNum = vAnchor.composition.length + 1;
 
-  const deposits24h = await getDeposit24hByVAnchor(vAnchorAddress);
+  const deposits24h = await getDepositInTimeRangeByVAnchor(
+    vAnchorAddress,
+    epochNow - EPOCH_DAY_INTERVAL,
+    epochNow
+  );
   const tvl = await getTvlByVAnchor(vAnchorAddress);
 
   return {
@@ -23,10 +31,12 @@ const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
   };
 };
 
-export default async function getShieldedPoolsTableData(): Promise<
-  ShieldedPoolType[]
-> {
+export default async function getShieldedPoolsTableData(
+  epochNow: number
+): Promise<ShieldedPoolType[]> {
   return await Promise.all(
-    VANCHOR_ADDRESSES.map((vAnchor) => getPoolInfoFromVAnchor(vAnchor))
+    VANCHOR_ADDRESSES.map((vAnchor) =>
+      getPoolInfoFromVAnchor(vAnchor, epochNow)
+    )
   );
 }

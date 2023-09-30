@@ -5,8 +5,9 @@ import type { ChartDataRecord } from '../../types';
 import {
   getFormattedDataForVolumeChart,
   serializeEpochData,
+  EPOCH_DAY_INTERVAL,
 } from '../../utils';
-import { getDeposit24hByVAnchor } from '../utils';
+import { getDepositInTimeRangeByVAnchor } from '../utils';
 
 async function getVAnchorDepositDataByDateRange(
   vAnchorAddress: string,
@@ -54,6 +55,7 @@ async function getVAnchorWithdrawalDataByDateRange(
 export default async function getPoolVolumeChartData(
   poolAddress: string,
   startingEpoch: number,
+  epochNow: number,
   numDatesFromStart: number
 ): Promise<{
   poolDeposit24h?: number;
@@ -61,7 +63,11 @@ export default async function getPoolVolumeChartData(
 }> {
   const [poolDeposit24h, poolDepositData, poolWithdrawalData] =
     await Promise.all([
-      getDeposit24hByVAnchor(poolAddress),
+      getDepositInTimeRangeByVAnchor(
+        poolAddress,
+        epochNow - EPOCH_DAY_INTERVAL,
+        epochNow
+      ),
       getVAnchorDepositDataByDateRange(
         poolAddress,
         startingEpoch,

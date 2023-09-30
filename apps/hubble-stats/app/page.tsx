@@ -7,7 +7,7 @@ import {
   OverviewTvlChartContainer,
   OverviewVolumeChartContainer,
 } from '../containers/charts';
-import { getEpoch24H, getEpochStart, getNumDatesFromStart } from '../utils';
+import { getDateDataForPage } from '../utils';
 import { ContainerSkeleton } from '../components';
 
 // force homepage to be dynamic
@@ -17,12 +17,12 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 5;
 
 export default async function Index() {
-  const startingEpoch = getEpochStart();
-  const epoch24h = getEpoch24H();
+  const { epochStart, epochNow, numDatesFromStart } = getDateDataForPage();
 
   const chartProps = {
-    numDatesFromStart: getNumDatesFromStart(),
-    startingEpoch,
+    numDatesFromStart,
+    startingEpoch: epochStart,
+    epochNow,
   };
 
   return (
@@ -38,12 +38,9 @@ export default async function Index() {
         </Suspense>
       </div>
 
-      <KeyMetricsTableContainer
-        epochStart={startingEpoch}
-        epoch24h={epoch24h}
-      />
+      <KeyMetricsTableContainer epochStart={epochStart} epochNow={epochNow} />
 
-      <ShieldedTablesContainer />
+      <ShieldedTablesContainer epochNow={epochNow} />
     </div>
   );
 }

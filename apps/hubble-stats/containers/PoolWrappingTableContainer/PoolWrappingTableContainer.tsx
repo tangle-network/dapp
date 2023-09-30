@@ -19,7 +19,7 @@ const PoolWrappingTableContainer: FC<{
   poolAddress: string;
   epochNow: number;
   availableTypedChainIds: number[];
-}> = ({ poolAddress, epochNow, availableTypedChainIds }) => {
+}> = ({ poolAddress, availableTypedChainIds }) => {
   return (
     <div className="space-y-1">
       <TableAndChartTabs

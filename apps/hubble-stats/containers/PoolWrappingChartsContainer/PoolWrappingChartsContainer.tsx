@@ -15,6 +15,7 @@ export default async function PoolWrappingChartsContainer({
   poolAddress,
   numDatesFromStart,
   startingEpoch,
+  epochNow
 }: PoolChartPropsType) {
   return (
     <TableAndChartTabs tabs={[twlTab, wrappingFeesTab]}>
@@ -25,6 +26,7 @@ export default async function PoolWrappingChartsContainer({
             poolAddress={poolAddress}
             numDatesFromStart={numDatesFromStart}
             startingEpoch={startingEpoch}
+            epochNow={epochNow}
           />
         </Suspense>
       </TabContent>
@@ -36,6 +38,7 @@ export default async function PoolWrappingChartsContainer({
             poolAddress={poolAddress}
             numDatesFromStart={numDatesFromStart}
             startingEpoch={startingEpoch}
+            epochNow={epochNow}
           />
         </Suspense>
       </TabContent>

@@ -2,22 +2,23 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../../constants';
-import { getValidDatesToQuery } from '../../utils';
+import { getDateFromEpoch } from '../../utils';
 
-const getDeposit24h = async (): Promise<number | undefined> => {
-  const [dateNow, date24h] = getValidDatesToQuery();
-
-  let deposit24h: number | undefined;
+export default async function getDepositInTimeRange(
+  epochStart: number,
+  epochEnd: number
+) {
+  let deposit: number | undefined;
   try {
     const depositVAnchorsByChainsData =
       await vAnchorClient.Deposit.GetVAnchorsDepositByChains15MinsInterval(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        date24h,
-        dateNow
+        getDateFromEpoch(epochStart),
+        getDateFromEpoch(epochEnd)
       );
 
-    deposit24h = depositVAnchorsByChainsData?.reduce(
+    deposit = depositVAnchorsByChainsData?.reduce(
       (depositTotal, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
           (depositTotalByChain, vAnchor) =>
@@ -29,10 +30,8 @@ const getDeposit24h = async (): Promise<number | undefined> => {
       0
     );
   } catch {
-    deposit24h = undefined;
+    deposit = undefined;
   }
 
-  return deposit24h;
-};
-
-export default getDeposit24h;
+  return deposit;
+}

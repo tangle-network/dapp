@@ -9,9 +9,9 @@ import {
 
 export default function KeyMetricsTableContainer(props: {
   epochStart: number;
-  epoch24h: number;
+  epochNow: number;
 }) {
-  const { epoch24h, epochStart } = props;
+  const { epochNow, epochStart } = props;
 
   return (
     <div
@@ -32,12 +32,12 @@ export default function KeyMetricsTableContainer(props: {
         <KeyMetricItem
           title="TVL"
           suffix=" webbtTNT"
-          dataFetcher={() => getTvlData(epochStart, epoch24h)}
+          dataFetcher={() => getTvlData(epochStart, epochNow)}
         />
         <KeyMetricItem
           title="Deposits 24H"
           suffix=" webbtTNT"
-          dataFetcher={getDepositData}
+          dataFetcher={() => getDepositData(epochNow)}
         />
         <KeyMetricItem
           title="Relayer Earnings"

@@ -3,17 +3,17 @@ import { formatEther } from 'viem';
 
 import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
 import { MetricType } from '../../types';
-import { getChangeRate } from '../../utils';
+import { getChangeRate, EPOCH_DAY_INTERVAL } from '../../utils';
 import { getTvl } from '../utils';
 
-async function getTvl24h(epochStart: number, epoch24h: number) {
+async function getTvl24h(epochStart: number, epochNow: number) {
   try {
     const latestTvlByVAnchorsByChains =
       await vAnchorClient.TotalValueLocked.GetVAnchorsByChainsLatestTVLInTimeRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         epochStart,
-        epoch24h
+        epochNow - EPOCH_DAY_INTERVAL
       );
 
     return Object.values(latestTvlByVAnchorsByChains).reduce(
@@ -35,11 +35,11 @@ async function getTvl24h(epochStart: number, epoch24h: number) {
 
 export default async function getTvlData(
   epochStart: number,
-  epoch24h: number
+  epochNow: number
 ): Promise<MetricType> {
   const [tvl, tvl24h] = await Promise.all([
     getTvl(),
-    getTvl24h(epochStart, epoch24h),
+    getTvl24h(epochStart, epochNow),
   ] as const);
 
   const tvlChangeRate = getChangeRate(tvl, tvl24h);

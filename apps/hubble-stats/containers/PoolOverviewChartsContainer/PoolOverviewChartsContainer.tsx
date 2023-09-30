@@ -13,10 +13,11 @@ const tvlTab = 'TVL';
 const volumeTab = 'Volume';
 const relayerEarningTab = 'Relayer Earnings';
 
-export default async function oPoolOverviewChartsContainer({
+export default async function PoolOverviewChartsContainer({
   poolAddress,
   numDatesFromStart,
   startingEpoch,
+  epochNow,
 }: PoolChartPropsType) {
   return (
     <TableAndChartTabs tabs={[tvlTab, volumeTab, relayerEarningTab]}>
@@ -27,6 +28,7 @@ export default async function oPoolOverviewChartsContainer({
             poolAddress={poolAddress}
             numDatesFromStart={numDatesFromStart}
             startingEpoch={startingEpoch}
+            epochNow={epochNow}
           />
         </Suspense>
       </TabContent>
@@ -38,6 +40,7 @@ export default async function oPoolOverviewChartsContainer({
             poolAddress={poolAddress}
             numDatesFromStart={numDatesFromStart}
             startingEpoch={startingEpoch}
+            epochNow={epochNow}
           />
         </Suspense>
       </TabContent>
@@ -49,6 +52,7 @@ export default async function oPoolOverviewChartsContainer({
             poolAddress={poolAddress}
             numDatesFromStart={numDatesFromStart}
             startingEpoch={startingEpoch}
+            epochNow={epochNow}
           />
         </Suspense>
       </TabContent>

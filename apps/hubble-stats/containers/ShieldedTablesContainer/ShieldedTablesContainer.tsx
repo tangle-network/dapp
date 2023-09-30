@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { type FC, Suspense } from 'react';
 import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
 
 import ShieldedAssetsTableContainer from './ShieldedAssetsTableContainer';
@@ -13,7 +13,9 @@ const pageSize = 5;
 const assetsTableTab = 'Shielded Assets';
 const poolsTableTab = 'Shielded Pools';
 
-export default function ShieldedTablesContainer() {
+const ShieldedTablesContainer: FC<{
+  epochNow: number;
+}> = ({ epochNow }) => {
   return (
     <TableAndChartTabs
       tabs={[assetsTableTab, poolsTableTab]}
@@ -23,7 +25,7 @@ export default function ShieldedTablesContainer() {
       <TabContent value={assetsTableTab}>
         <Suspense fallback={<ContainerSkeleton />}>
           <ShieldedAssetsTableContainer
-            dataFetcher={getShieldedAssetsTableData}
+            dataFetcher={() => getShieldedAssetsTableData(epochNow)}
             pageSize={pageSize}
           />
         </Suspense>
@@ -33,11 +35,13 @@ export default function ShieldedTablesContainer() {
       <TabContent value={poolsTableTab}>
         <Suspense fallback={<ContainerSkeleton />}>
           <ShieldedPoolsTableContainer
-            dataFetcher={getShieldedPoolsTableData}
+            dataFetcher={() => getShieldedPoolsTableData(epochNow)}
             pageSize={pageSize}
           />
         </Suspense>
       </TabContent>
     </TableAndChartTabs>
   );
-}
+};
+
+export default ShieldedTablesContainer;

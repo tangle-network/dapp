@@ -3,11 +3,12 @@ import { VolumeChartContainerClient } from './private';
 import { ChartProps } from './types';
 
 export default async function OverviewVolumeChartContainer(props: ChartProps) {
-  const { numDatesFromStart, startingEpoch } = props;
+  const { numDatesFromStart, startingEpoch, epochNow } = props;
 
   const { volumeData, deposit24h } = await getOverviewVolumeChartData(
     startingEpoch,
-    numDatesFromStart
+    numDatesFromStart,
+    epochNow
   );
 
   return (

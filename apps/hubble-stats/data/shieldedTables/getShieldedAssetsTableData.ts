@@ -1,7 +1,8 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { getValidDatesToQuery } from '../../utils';
+import { EPOCH_DAY_INTERVAL, getDateFromEpoch } from '../../utils';
+import { getDepositInTimeRangeByVAnchor } from '../utils';
 import {
   ACTIVE_SUBGRAPH_URLS,
   VANCHORS_MAP,
@@ -9,37 +10,18 @@ import {
 } from '../../constants';
 import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
 
-const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
+const getAssetInfoFromVAnchor = async (
+  vAnchorAddress: string,
+  epochNow: number
+) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
   const tokenSymbol = vanchor.fungibleTokenSymbol;
 
-  const [dateNow, date24h] = getValidDatesToQuery();
-
-  let deposits24h: number | undefined;
-  try {
-    const depositVAnchorsByChainsData =
-      await vAnchorClient.Deposit.GetVAnchorDepositByChainsAndByToken15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
-        vAnchorAddress,
-        tokenSymbol,
-        date24h,
-        dateNow
-      );
-
-    deposits24h = depositVAnchorsByChainsData.reduce(
-      (deposit, vAnchorsByChain) => {
-        const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (depositByChain, vAnchorDeposit) =>
-            depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
-          0
-        );
-        return deposit + depositVAnchorsByChain;
-      },
-      0
-    );
-  } catch {
-    deposits24h = undefined;
-  }
+  const deposits24h = await getDepositInTimeRangeByVAnchor(
+    vAnchorAddress,
+    epochNow - EPOCH_DAY_INTERVAL,
+    epochNow
+  );
 
   let withdrawals24h: number | undefined;
   try {
@@ -48,8 +30,8 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
         tokenSymbol,
-        date24h,
-        dateNow
+        getDateFromEpoch(epochNow - EPOCH_DAY_INTERVAL),
+        getDateFromEpoch(epochNow)
       );
 
     withdrawals24h = withdrawalVAnchorsByChainsData.reduce(
@@ -81,10 +63,12 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
   };
 };
 
-export default async function getShieldedAssetsTableData(): Promise<
-  ShieldedAssetType[]
-> {
+export default async function getShieldedAssetsTableData(
+  epochNow: number
+): Promise<ShieldedAssetType[]> {
   return await Promise.all(
-    VANCHOR_ADDRESSES.map((vanchor) => getAssetInfoFromVAnchor(vanchor))
+    VANCHOR_ADDRESSES.map((vanchor) =>
+      getAssetInfoFromVAnchor(vanchor, epochNow)
+    )
   );
 }
