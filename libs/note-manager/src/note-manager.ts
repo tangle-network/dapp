@@ -61,18 +61,25 @@ export class NoteManager {
 
   private constructor(
     private noteStorage: Storage<NoteStorage>,
-    private keypair: Keypair
+    private keypair: Keypair,
+    private activeWalletAddress: string
   ) {
     this.notesMap = new Map();
   }
 
   static async initAndDecryptNotes(
     noteStorage: Storage<NoteStorage>,
-    keypair: Keypair
+    keypair: Keypair,
+    activeWalletAddress: string
   ): Promise<NoteManager> {
-    const noteManager = new NoteManager(noteStorage, keypair);
+    const noteManager = new NoteManager(
+      noteStorage,
+      keypair,
+      activeWalletAddress
+    );
 
-    const encryptedNotesRecord = await noteStorage.dump();
+    const noteStorageData = await noteStorage.dump();
+    const encryptedNotesRecord = noteStorageData[activeWalletAddress] ?? {};
 
     // 32-bytes size resource id where each byte is represented by 2 characters
     const resourceIdSize = 32 * 2;
@@ -353,16 +360,23 @@ export class NoteManager {
 
   async updateStorage() {
     if (this.notesMap.size !== 0) {
-      await this.noteStorage.reset({});
+      await this.noteStorage.set(this.activeWalletAddress, {});
 
       const promises = [...this.notesMap.entries()].map(
-        async ([chain, notes]) => {
+        async ([resourceId, notes]) => {
           const encNoteStrings = notes.map((note) => {
             const noteStr = note.serialize();
             return this.keypair.encrypt(Buffer.from(noteStr));
           });
 
-          await this.noteStorage.set(chain, encNoteStrings);
+          const storedNoteRecord = await this.noteStorage.get(
+            this.activeWalletAddress
+          );
+
+          await this.noteStorage.set(this.activeWalletAddress, {
+            ...storedNoteRecord,
+            [resourceId]: encNoteStrings,
+          });
         }
       );
 

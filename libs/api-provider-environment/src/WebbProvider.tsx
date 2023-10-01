@@ -903,7 +903,8 @@ function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
       const noteStorage = await noteStorageFactory();
       const noteManager = await NoteManager.initAndDecryptNotes(
         noteStorage,
-        accountKeypair
+        accountKeypair,
+        walletAddress
       );
 
       // set the noteManager instance on the activeApi if it exists

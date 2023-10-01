@@ -54,12 +54,10 @@ export const multipleKeypairStorageFactory = () =>
     },
   });
 
-/// The `NoteStorage` is used to store the encrypted notes of the user.
-/// The key is the public key of the user.
-/// The `NoteStorage` is used to store the encrypted notes of the user.
-/// The key is the resource id.
 export type NoteStorage = {
-  [resourceId: string]: Array<string>;
+  [walletAddress: string]: {
+    [resourceId: string]: Array<string>;
+  };
 };
 
 const NOTE_STORAGE_KEY = 'encryptedNotes';
