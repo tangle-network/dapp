@@ -1,6 +1,6 @@
 import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
-import { cloneElement, forwardRef, useMemo } from 'react';
+import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
@@ -21,8 +21,8 @@ export const WalletConnectionCard = forwardRef<
       failedWalletId,
       onWalletSelect,
       onClose,
-      onDownloadBtnClick,
-      onHelpBtnClick,
+      downloadWalletURL,
+      getHelpURL,
       onTryAgainBtnClick,
       wallets,
       ...props
@@ -54,46 +54,7 @@ export const WalletConnectionCard = forwardRef<
         )}
         ref={ref}
       >
-        {/** Wallets list */}
-        <div className="w-[288px] border-r border-r-mono-40 dark:border-r-mono-160">
-          <div className="px-6 py-4">
-            <Typography variant="h5" fw="bold">
-              Connect a Wallet
-            </Typography>
-          </div>
-
-          <div className="pb-4">
-            <Typography
-              variant="body2"
-              fw="semibold"
-              className="px-6 py-2 text-mono-100 dark:text-mono-40"
-            >
-              Select below
-            </Typography>
-
-            <ul>
-              {wallets.map((wallet) => (
-                <ListItem
-                  key={wallet.id}
-                  className="cursor-pointer"
-                  onClick={() => onWalletSelect?.(wallet)}
-                >
-                  <div className="flex items-center gap-2">
-                    {wallet.Logo}
-
-                    <Typography
-                      variant="body1"
-                      fw="bold"
-                      className="capitalize"
-                    >
-                      {wallet.title}
-                    </Typography>
-                  </div>
-                </ListItem>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
 
         {/** Wallet frame */}
         <div className="w-[432px] h-[504px] flex flex-col">
@@ -116,27 +77,37 @@ export const WalletConnectionCard = forwardRef<
           </div>
 
           {/** Bottom */}
-          <div className="flex items-center justify-between w-full px-6 py-4">
-            <Typography
-              variant="body2"
-              fw="bold"
-              className="text-mono-100 dark:text-mono-40"
-            >
-              Don't have a wallet?
-            </Typography>
-
-            {(!failedWallet && !connectingWallet) ||
-            typeof onDownloadBtnClick === 'function' ? (
-              <Button variant="utility" size="sm" onClick={onDownloadBtnClick}>
-                Download{' '}
-                {connectingWallet?.name ?? failedWallet?.name ?? 'Wallet'}
-              </Button>
-            ) : (
-              <Button variant="utility" size="sm" onClick={onHelpBtnClick}>
-                Help
-              </Button>
-            )}
-          </div>
+          {downloadWalletURL || getHelpURL ? (
+            <div className="flex items-center justify-between w-full px-6 py-4">
+              <Typography
+                variant="body2"
+                fw="bold"
+                className="text-mono-100 dark:text-mono-40"
+              >
+                Don't have a wallet?
+              </Typography>
+              {downloadWalletURL ? (
+                <Button
+                  variant="utility"
+                  size="sm"
+                  target="_blank"
+                  href={downloadWalletURL.toString()}
+                >
+                  Download{' '}
+                  {connectingWallet?.name ?? failedWallet?.name ?? 'Wallet'}
+                </Button>
+              ) : getHelpURL ? (
+                <Button
+                  variant="utility"
+                  size="sm"
+                  target="_blank"
+                  href={getHelpURL.toString()}
+                >
+                  Help
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -249,3 +220,45 @@ const WalletContent = forwardRef<
     );
   }
 );
+
+const WalletList: FC<
+  Pick<WalletConnectionCardProps, 'wallets' | 'onWalletSelect'>
+> = ({ wallets, onWalletSelect }) => {
+  return (
+    <div className="w-[288px] border-r border-r-mono-40 dark:border-r-mono-160">
+      <div className="px-6 py-4">
+        <Typography variant="h5" fw="bold">
+          Connect a Wallet
+        </Typography>
+      </div>
+
+      <div className="pb-4">
+        <Typography
+          variant="body2"
+          fw="semibold"
+          className="px-6 py-2 text-mono-100 dark:text-mono-40"
+        >
+          Select below
+        </Typography>
+
+        <ul>
+          {wallets.map((wallet) => (
+            <ListItem
+              key={wallet.id}
+              className="cursor-pointer"
+              onClick={() => onWalletSelect?.(wallet)}
+            >
+              <div className="flex items-center gap-2">
+                {wallet.Logo}
+
+                <Typography variant="body1" fw="bold" className="capitalize">
+                  {wallet.title}
+                </Typography>
+              </div>
+            </ListItem>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};

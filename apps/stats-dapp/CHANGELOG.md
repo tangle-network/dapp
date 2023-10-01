@@ -153,4 +153,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed, Changed and Added
 
-- DKG stats-dapp QA (Sept 13, 2023) fixes part 1 ([#1639](https://github.com/webb-tools/webb-dapp/pull/1639))
+- DKG stats-dapp QA (Sept 13, 2023) fixes part 1 ([#1639](https://github.com/webb-tools/webb-dapp/pull/1639)).
+
+## [0.0.17] - 2023-09-30
+
+### Fixed, Changed and Added
+
+- Show chain name in proposal detail ([#1689](https://github.com/webb-tools/webb-dapp/pull/1689)).
+- Fix prev session's active period incorrect progress bar ([#1713](https://github.com/webb-tools/webb-dapp/pull/1713)).
+
+## [0.0.18] - 2023-09-30
+
+### Fixed, Changed and Added
+
+- Update DKG Stats favicon to match with Tangle Marketing favicon [#1725](https://github.com/webb-tools/webb-dapp/pull/1725).

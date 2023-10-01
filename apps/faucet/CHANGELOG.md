@@ -87,3 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.8] - 2023-09-20
 
 - Update new deployment
+
+## [0.0.9] - 2023-09-30
+
+- Downgrade next to 13.4.19 to fix netlify/next runtime issue [#1724](https://github.com/webb-tools/webb-dapp/pull/1724).

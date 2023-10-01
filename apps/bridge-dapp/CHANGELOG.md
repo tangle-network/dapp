@@ -186,3 +186,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed, Changed and Added
 
 - Iterative Improvement For Hubble Bridge ([#1662](https://github.com/webb-tools/webb-dapp/pull/1662))
+
+## [1.0.4] - 2023-09-30
+
+### Fixed, Changed and Added
+
+- Content fixes, spelling fix ([#1685](https://github.com/webb-tools/webb-dapp/pull/1695))
+- Updates bridge header dropdown menu items ([#1701](https://github.com/webb-tools/webb-dapp/pull/1701))
+- Remove forced goerli connection on wallet reconnect ([#1709](https://github.com/webb-tools/webb-dapp/pull/1709))
+- Fix warning badge 0 balance state ([#1715](https://github.com/webb-tools/webb-dapp/pull/1715))
+- Sort all non-active chains alphabetically ([#1716](https://github.com/webb-tools/webb-dapp/pull/1716))
+
+## [1.0.5] - 2023-09-30
+
+### Fixed, Changed and Added
+
+- Fix Connect Wallet Modal When Connect Wallet Button Is Clicked [#1723](https://github.com/webb-tools/webb-dapp/pull/1723)

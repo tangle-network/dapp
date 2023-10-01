@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
 import { WalletConfig } from '@webb-tools/dapp-config';
-import { WebbError } from '@webb-tools/dapp-types';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import {
   Modal,
   ModalContent,
@@ -9,7 +9,6 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-
 import { useConnectWallet } from '../../hooks';
 import { getDefaultConnection } from '../../utils';
 
@@ -28,21 +27,25 @@ export const WalletModal: FC = () => {
 
   const { notificationApi } = useWebbUI();
 
-  const { apiConfig, chains } = useWebContext();
+  const { apiConfig, chains, activeChain } = useWebContext();
 
-  const chain = useMemo(() => {
-    if (!selectedChain) {
-      return getDefaultConnection(chains);
+  const chainToSwitchTo = useMemo(() => {
+    if (!activeChain) {
+      if (!selectedChain) {
+        return getDefaultConnection(chains);
+      }
+
+      return selectedChain;
     }
 
-    return selectedChain;
-  }, [chains, selectedChain]);
+    return activeChain;
+  }, [activeChain, selectedChain, chains]);
 
   const supportedWalletCfgs = useMemo(() => {
-    return chain.wallets
+    return chainToSwitchTo.wallets
       .map((walletId) => apiConfig.wallets[walletId])
       .filter((w) => !!w);
-  }, [apiConfig.wallets, chain.wallets]);
+  }, [apiConfig.wallets, chainToSwitchTo.wallets]);
 
   // Get the current failed or connecting wallet
   const getCurrentWallet = useCallback(() => {
@@ -51,19 +54,26 @@ export const WalletModal: FC = () => {
       return undefined;
     }
 
-    if (!chain.wallets.includes(walletId)) {
+    if (!chainToSwitchTo.wallets.includes(walletId)) {
       return undefined;
     }
 
     return apiConfig.wallets[walletId];
-  }, [failedWalletId, connectingWalletId, chain.wallets, apiConfig.wallets]);
+  }, [
+    failedWalletId,
+    connectingWalletId,
+    chainToSwitchTo.wallets,
+    apiConfig.wallets,
+  ]);
 
   const isNotInstalledError = useMemo(() => {
     if (!connectError) {
       return false;
     }
 
-    return WebbError.isWalletNotInstalledError(connectError);
+    return (
+      connectError instanceof WalletNotInstalledError && connectError.walletId
+    );
   }, [connectError]);
 
   const errorMessage = useMemo(() => {
@@ -71,7 +81,7 @@ export const WalletModal: FC = () => {
       return undefined;
     }
 
-    return WebbError.getErrorMessage(connectError.code).message;
+    return connectError.message;
   }, [connectError]);
 
   // If the error about not installed wallet is shown,
@@ -103,17 +113,17 @@ export const WalletModal: FC = () => {
 
   const handleWalletSelect = useCallback(
     (wallet: WalletConfig) => {
-      switchWallet(chain, wallet);
+      switchWallet(chainToSwitchTo, wallet);
     },
-    [chain, switchWallet]
+    [switchWallet, chainToSwitchTo]
   );
 
-  const handleDownloadBtnClick = useCallback(() => {
+  const downloadURL = useMemo(() => {
     const { id } = getPlatformMetaData();
     const wallet = getCurrentWallet();
 
     if (wallet?.installLinks?.[id]) {
-      window.open(wallet.installLinks[id], '_blank');
+      return new URL(wallet.installLinks[id]);
     }
   }, [getCurrentWallet]);
 
@@ -128,18 +138,18 @@ export const WalletModal: FC = () => {
     }
 
     if (isNotInstalledError) {
-      handleDownloadBtnClick();
+      window.open(downloadURL, '_blank');
       return;
     }
 
-    await switchWallet(chain, selectedWallet);
+    await switchWallet(chainToSwitchTo, selectedWallet);
   }, [
     selectedWallet,
     isNotInstalledError,
     switchWallet,
-    chain,
+    chainToSwitchTo,
     notificationApi,
-    handleDownloadBtnClick,
+    downloadURL,
   ]);
 
   return (
@@ -158,7 +168,7 @@ export const WalletModal: FC = () => {
           errorMessage={errorMessage}
           failedWalletId={failedWalletId}
           onTryAgainBtnClick={handleTryAgainBtnClick}
-          onDownloadBtnClick={handleDownloadBtnClick}
+          downloadWalletURL={downloadURL}
         />
       </ModalContent>
     </Modal>

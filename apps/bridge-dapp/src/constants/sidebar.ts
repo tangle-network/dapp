@@ -13,6 +13,7 @@ import {
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
+  HUBBLE_STATS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
@@ -26,6 +27,11 @@ const items: SideBarItemProps[] = [
         name: 'Bridge',
         isInternal: true,
         href: '/bridge',
+      },
+      {
+        name: 'Explorer',
+        isInternal: false,
+        href: HUBBLE_STATS_URL,
       },
       {
         name: 'Faucet',

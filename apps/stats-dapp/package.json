@@ -1,5 +1,5 @@
 {
   "name": "@webb-tools/stats-dapp",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "main": "./src/index.js"
 }
