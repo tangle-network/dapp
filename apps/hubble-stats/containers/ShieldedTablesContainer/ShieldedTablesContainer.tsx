@@ -7,7 +7,7 @@ import {
   getShieldedAssetsTableData,
   getShieldedPoolsTableData,
 } from '../../data/shieldedTables';
-import { ContainerSkeleton } from 'apps/hubble-stats/components';
+import { ContainerSkeleton } from '../../components';
 
 const pageSize = 5;
 const assetsTableTab = 'Shielded Assets';
