@@ -1,5 +1,5 @@
-import { getPoolTvlChartData } from '../../data/charts';
-import { AreaChartContainerClient } from './private';
+import { getPoolTvlChartData } from '../../data';
+import { AreaChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
 export default async function PoolTvlChartContainer(props: PoolChartPropsType) {

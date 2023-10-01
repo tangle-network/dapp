@@ -1,2 +1,2 @@
-export { default as getHistoricalDepositData } from './getHistoricalDepositData';
-export { getTvl as getTvlData } from '../utils';
+export { default as getHeaderChipsDepositData } from './getHistoricalDepositData';
+export { getTvl as getHeaderChipsTvlData } from '../utils';

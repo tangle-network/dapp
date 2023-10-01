@@ -1,4 +1,4 @@
-export { default as getDepositData } from './getDepositData';
-export { default as getRelayerFeesData } from './getRelayerFeesData';
-export { default as getTvlData } from './getTvlData';
-export { default as getWrappingFeesData } from './getWrappingFeesData';
+export { default as getKeyMetricDepositData } from './getKeyMetricDepositData';
+export { default as getKeyMetricRelayerFeesData } from './getKeyMetricRelayerFeesData';
+export { default as getKeyMetricTvlData } from './getKeyMetricTvlData';
+export { default as getKeyMetricWrappingFeesData } from './getKeyMetricWrappingFeesData';

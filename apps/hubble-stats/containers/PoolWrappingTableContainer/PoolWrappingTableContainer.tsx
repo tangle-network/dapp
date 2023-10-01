@@ -7,10 +7,7 @@ import {
 
 import { PoolWrappingTable, ContainerSkeleton } from '../../components';
 import { PoolWrappingDataType } from '../../components/PoolWrappingTable/types';
-import {
-  getPoolTwlTableData,
-  getPoolWrappingFeesTableData,
-} from '../../data/poolTables';
+import { getPoolTwlTableData, getPoolWrappingFeesTableData } from '../../data';
 
 const twlTab = 'TWL';
 const wrappingFeesTab = 'Wrapping Fees';

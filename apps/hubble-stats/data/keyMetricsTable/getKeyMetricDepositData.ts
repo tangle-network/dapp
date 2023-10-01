@@ -3,7 +3,7 @@ import { EPOCH_DAY_INTERVAL } from '../../utils/date';
 import getChangeRate from '../../utils/getChangeRate';
 import { getDepositInTimeRange } from '../utils';
 
-export default async function getDepositData(
+export default async function getKeyMetricDepositData(
   epochNow: number
 ): Promise<MetricType> {
   const [deposit24h, deposit48h] = await Promise.all([

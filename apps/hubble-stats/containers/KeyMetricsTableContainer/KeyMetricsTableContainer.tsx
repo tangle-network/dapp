@@ -1,11 +1,12 @@
 import cx from 'classnames';
+
 import { KeyMetricItem } from '../../components/KeyMetricItem';
 import {
-  getDepositData,
-  getRelayerFeesData,
-  getTvlData,
-  getWrappingFeesData,
-} from '../../data/keyMetricsTable';
+  getKeyMetricDepositData,
+  getKeyMetricRelayerFeesData,
+  getKeyMetricTvlData,
+  getKeyMetricWrappingFeesData,
+} from '../../data';
 
 export default function KeyMetricsTableContainer(props: {
   epochStart: number;
@@ -32,23 +33,23 @@ export default function KeyMetricsTableContainer(props: {
         <KeyMetricItem
           title="TVL"
           suffix=" webbtTNT"
-          dataFetcher={() => getTvlData(epochStart, epochNow)}
+          dataFetcher={() => getKeyMetricTvlData(epochStart, epochNow)}
         />
         <KeyMetricItem
           title="Deposits 24H"
           suffix=" webbtTNT"
-          dataFetcher={() => getDepositData(epochNow)}
+          dataFetcher={() => getKeyMetricDepositData(epochNow)}
         />
         <KeyMetricItem
           title="Relayer Earnings"
           suffix=" webbtTNT"
           tooltip="The net earnings made by relayers after transaction costs."
-          dataFetcher={getRelayerFeesData}
+          dataFetcher={getKeyMetricRelayerFeesData}
         />
         <KeyMetricItem
           title="Wrapping Fees"
           suffix=" webbtTNT"
-          dataFetcher={getWrappingFeesData}
+          dataFetcher={getKeyMetricWrappingFeesData}
         />
       </div>
     </div>

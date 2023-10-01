@@ -1,5 +1,5 @@
-import getOverviewTvlChartData from '../../data/charts/getOverviewTvlChartData';
-import { AreaChartContainerClient } from './private';
+import { getOverviewTvlChartData } from '../../data';
+import { AreaChartContainerClient } from './client';
 import { ChartProps } from './types';
 
 export default async function OverviewTvlChartContainer(props: ChartProps) {

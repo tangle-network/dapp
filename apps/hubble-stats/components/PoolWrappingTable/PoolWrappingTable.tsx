@@ -20,7 +20,7 @@ import { TokenIcon, CornerDownRightLine } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { PoolWrappingDataType, PoolWrappingTableProps } from './types';
-import { HeaderCell, NumberCell } from '../table';
+import { HeaderCell, NumberCell } from '../tableCells';
 import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
 
 const columnHelper = createColumnHelper<PoolWrappingDataType>();

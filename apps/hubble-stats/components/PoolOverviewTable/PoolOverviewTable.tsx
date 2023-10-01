@@ -18,7 +18,7 @@ import {
 import { FC, useMemo } from 'react';
 
 import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
-import { HeaderCell, NumberCell } from '../table';
+import { HeaderCell, NumberCell } from '../tableCells';
 import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
 
 const columnHelper = createColumnHelper<PoolOverviewDataType>();

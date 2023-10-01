@@ -14,9 +14,9 @@ import {
 import { TokenIcon, ChevronDown } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
-import { FilterButtonProps } from './types';
+import { TableFilterButtonProps } from './types';
 
-const FilterButton: FC<FilterButtonProps> = ({
+const TableFilterButton: FC<TableFilterButtonProps> = ({
   tokens,
   selectedTokens,
   setSelectedTokens,
@@ -135,4 +135,4 @@ const FilterButton: FC<FilterButtonProps> = ({
   );
 };
 
-export default FilterButton;
+export default TableFilterButton;

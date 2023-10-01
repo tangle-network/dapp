@@ -33,7 +33,7 @@ async function getTvl24h(epochStart: number, epochNow: number) {
   }
 }
 
-export default async function getTvlData(
+export default async function getKeyMetricTvlData(
   epochStart: number,
   epochNow: number
 ): Promise<MetricType> {

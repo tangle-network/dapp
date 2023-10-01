@@ -23,7 +23,7 @@ import {
   HeaderCell,
   NumberCell,
   TimeCell,
-} from '../table';
+} from '../tableCells';
 
 const columnHelper = createColumnHelper<PoolTransactionType>();
 

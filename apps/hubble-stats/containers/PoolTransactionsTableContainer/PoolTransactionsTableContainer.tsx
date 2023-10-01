@@ -2,7 +2,7 @@ import { type FC, Suspense } from 'react';
 import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
 
 import { PoolTransactionsTable, ContainerSkeleton } from '../../components';
-import { getPoolTransactionsTableData } from '../../data/poolTables';
+import { getPoolTransactionsTableData } from '../../data';
 
 const pageSize = 10;
 

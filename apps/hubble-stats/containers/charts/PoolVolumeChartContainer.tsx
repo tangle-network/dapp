@@ -1,5 +1,5 @@
-import { getPoolVolumeChartData } from '../../data/charts';
-import { VolumeChartContainerClient } from './private';
+import { getPoolVolumeChartData } from '../../data';
+import { VolumeChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
 export default async function PoolVolumeChartContainer(

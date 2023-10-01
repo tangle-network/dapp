@@ -1,7 +1,7 @@
 import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
 
 import { HeaderChipItem } from '../../components';
-import { getTvlData, getHistoricalDepositData } from '../../data/headerChips';
+import { getHeaderChipsTvlData, getHeaderChipsDepositData } from '../../data';
 
 export default async function HeaderChipsContainer() {
   return (
@@ -9,7 +9,7 @@ export default async function HeaderChipsContainer() {
       <HeaderChipItem
         Icon={DatabaseLine}
         label="TVL"
-        dataFetcher={getTvlData}
+        dataFetcher={getHeaderChipsTvlData}
       />
 
       <HeaderChipItem
@@ -17,7 +17,7 @@ export default async function HeaderChipsContainer() {
         label="DEPOSITS"
         hasTooltip
         tooltipContent="Historical Deposit Volume"
-        dataFetcher={getHistoricalDepositData}
+        dataFetcher={getHeaderChipsDepositData}
       />
     </div>
   );

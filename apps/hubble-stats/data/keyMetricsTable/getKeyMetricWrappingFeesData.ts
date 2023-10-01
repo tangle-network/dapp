@@ -3,7 +3,7 @@ import { formatEther } from 'viem';
 import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../../constants';
 import { MetricType } from '../../types';
 
-export default async function getRelayerFeesData(): Promise<MetricType> {
+export default async function getKeyMetricWrappingFeesData(): Promise<MetricType> {
   try {
     const fetchedWrappingFeesData =
       await vAnchorClient.WrappingFee.GetVAnchorsWrappingFeeByChains(

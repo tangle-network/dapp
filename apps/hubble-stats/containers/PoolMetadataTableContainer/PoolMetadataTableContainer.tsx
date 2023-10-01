@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 
 import { PoolMetadataTable } from '../../components';
 import { PoolAttributeType } from '../../components/PoolMetadataTable/types';
-import { getPoolMetadataTableData } from '../../data/poolTables';
+import { getPoolMetadataTableData } from '../../data';
 
 export default async function PoolMetadataTableContainer({
   poolAddress,

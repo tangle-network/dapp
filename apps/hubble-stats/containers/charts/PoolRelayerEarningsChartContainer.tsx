@@ -1,5 +1,5 @@
-import { getPoolRelayerEarningsChartData } from '../../data/charts';
-import { BarChartContainerClient } from './private';
+import { getPoolRelayerEarningsChartData } from '../../data';
+import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
 export default async function PoolRelayerEarningsChartContainer(

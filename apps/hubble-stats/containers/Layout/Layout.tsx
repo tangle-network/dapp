@@ -1,4 +1,4 @@
-import React, { Suspense, type FC, type PropsWithChildren } from 'react';
+import React, { type FC, type PropsWithChildren } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 
 import { HeaderChipsContainer } from '..';
@@ -17,9 +17,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               <Breadcrumbs />
             </div>
 
-            <Suspense>
-              <HeaderChipsContainer />
-            </Suspense>
+            <HeaderChipsContainer />
           </div>
 
           {/* Body */}

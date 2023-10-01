@@ -11,7 +11,7 @@ import {
   getPoolDepositTableData,
   getPoolWithdrawalTableData,
   getPoolRelayerEarningsTableData,
-} from '../../data/poolTables';
+} from '../../data';
 
 const deposit24hTab = 'Deposits 24H' as const;
 const withdrawal24hTab = 'Withdrawals 24H' as const;

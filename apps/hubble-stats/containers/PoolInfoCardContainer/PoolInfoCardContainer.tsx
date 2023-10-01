@@ -1,7 +1,7 @@
+import cx from 'classnames';
 import { ShieldedAssetIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import cx from 'classnames';
 
 import {
   CopyIconWithTooltip,
@@ -9,12 +9,9 @@ import {
   PoolTypeChip,
 } from '../../components';
 import { VANCHORS_MAP } from '../../constants';
-import {
-  getPoolInfoCardTvlData,
-  getPoolInfoCardDepositData,
-} from '../../data/poolInfoCard';
+import { getPoolInfoCardTvlData, getPoolInfoCardDepositData } from '../../data';
 
-export default async function PoolOverviewCardContainer({
+export default async function PoolInfoCardContainer({
   poolAddress,
   epochStart,
   epochNow,

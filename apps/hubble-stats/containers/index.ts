@@ -2,7 +2,7 @@ export { KeyMetricsTableContainer } from './KeyMetricsTableContainer';
 export { Layout } from './Layout';
 export { HeaderChipsContainer } from './HeaderChipsContainer';
 export { PoolMetadataTableContainer } from './PoolMetadataTableContainer';
-export { PoolOverviewCardContainer } from './PoolOverviewCardContainer';
+export { PoolInfoCardContainer } from './PoolInfoCardContainer';
 export { PoolOverviewChartsContainer } from './PoolOverviewChartsContainer';
 export { PoolOverviewTableContainer } from './PoolOverviewTableContainer';
 export { PoolTransactionsTableContainer } from './PoolTransactionsTableContainer';

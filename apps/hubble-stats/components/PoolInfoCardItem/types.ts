@@ -1,6 +1,6 @@
 import type { MetricType } from '../../types';
 
-export interface PoolOverviewCardItemProps {
+export interface PoolInfoCardItemProps {
   title: string;
   prefix?: string;
   suffix?: string;

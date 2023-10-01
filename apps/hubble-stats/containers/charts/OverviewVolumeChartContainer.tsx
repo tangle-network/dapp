@@ -1,5 +1,5 @@
-import getOverviewVolumeChartData from '../../data/charts/getOverviewVolumeChartData';
-import { VolumeChartContainerClient } from './private';
+import { getOverviewVolumeChartData } from '../../data';
+import { VolumeChartContainerClient } from './client';
 import { ChartProps } from './types';
 
 export default async function OverviewVolumeChartContainer(props: ChartProps) {

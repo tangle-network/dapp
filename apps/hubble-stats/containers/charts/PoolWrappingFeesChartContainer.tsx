@@ -1,5 +1,5 @@
-import { getPoolWrappingFeesChartData } from '../../data/charts';
-import { BarChartContainerClient } from './private';
+import { getPoolWrappingFeesChartData } from '../../data';
+import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
 export default async function PoolWrappingFeesChartContainer(

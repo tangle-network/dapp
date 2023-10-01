@@ -5,9 +5,9 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 import { ArrowRight } from '@webb-tools/icons';
 
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
-import { PoolOverviewCardItemProps } from './types';
+import { PoolInfoCardItemProps } from './types';
 
-const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
+const PoolInfoCardItem: FC<PoolInfoCardItemProps> = ({
   title,
   prefix = '',
   suffix = '',
@@ -17,7 +17,7 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
   return (
     <div className={cx('px-2', className)}>
       <Suspense fallback={<SuspenseFallback title={title} />}>
-        <PoolOverviewCardItemValue
+        <PoolInfoCardItemValue
           title={title}
           prefix={prefix}
           suffix={suffix}
@@ -28,14 +28,14 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
   );
 };
 
-export default PoolOverviewCardItem;
+export default PoolInfoCardItem;
 
-async function PoolOverviewCardItemValue({
+async function PoolInfoCardItemValue({
   dataFetcher,
   title,
   prefix,
   suffix,
-}: Omit<PoolOverviewCardItemProps, 'className'>) {
+}: Omit<PoolInfoCardItemProps, 'className'>) {
   const { value, changeRate } = await dataFetcher();
 
   return (
@@ -93,7 +93,7 @@ async function PoolOverviewCardItemValue({
   );
 }
 
-const SuspenseFallback: FC<Pick<PoolOverviewCardItemProps, 'title'>> = ({
+const SuspenseFallback: FC<Pick<PoolInfoCardItemProps, 'title'>> = ({
   title,
 }) => {
   return (
