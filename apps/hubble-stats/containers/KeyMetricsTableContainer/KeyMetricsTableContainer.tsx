@@ -1,52 +1,18 @@
 import cx from 'classnames';
 
-import { KeyMetricItem } from '../../components';
-import { getKeyMetricsData } from '../../data';
+import { KeyMetricItem } from '../../components/KeyMetricItem';
+import {
+  getKeyMetricDepositData,
+  getKeyMetricRelayerFeesData,
+  getKeyMetricTvlData,
+  getKeyMetricWrappingFeesData,
+} from '../../data';
 
-export default async function KeyMetricsTableContainer() {
-  const {
-    tvl,
-    tvlChangeRate,
-    deposit24h,
-    depositChangeRate,
-    relayerFees,
-    wrappingFees,
-  } = await getKeyMetricsData();
-
-  const Tvl = (
-    <KeyMetricItem
-      title="TVL"
-      suffix=" webbtTNT"
-      value={tvl}
-      changeRate={tvlChangeRate}
-    />
-  );
-
-  const Deposit = (
-    <KeyMetricItem
-      title="Deposits 24H"
-      suffix=" webbtTNT"
-      value={deposit24h}
-      changeRate={depositChangeRate}
-    />
-  );
-
-  const RelayerFees = (
-    <KeyMetricItem
-      title="Relayer Earnings"
-      suffix=" webbtTNT"
-      value={relayerFees}
-      tooltip="The net earnings made by relayers after transaction costs."
-    />
-  );
-
-  const WrappingFees = (
-    <KeyMetricItem
-      title="Wrapping Fees"
-      suffix=" webbtTNT"
-      value={wrappingFees}
-    />
-  );
+export default function KeyMetricsTableContainer(props: {
+  epochStart: number;
+  epochNow: number;
+}) {
+  const { epochNow, epochStart } = props;
 
   return (
     <div
@@ -56,24 +22,35 @@ export default async function KeyMetricsTableContainer() {
         'border-2 border-mono-0 dark:border-mono-160'
       )}
     >
-      {/* Tablet and Desktop */}
-      <div className="w-full hidden md:table table-fixed border-collapse">
-        {Tvl}
-        {Deposit}
-        {RelayerFees}
-        {WrappingFees}
-      </div>
-
-      {/* Mobile */}
-      <div className="block md:hidden">
-        <div className="w-full table table-fixed border-collapse">
-          {Tvl}
-          {Deposit}
-        </div>
-        <div className="w-full table table-fixed border-collapse">
-          {RelayerFees}
-          {WrappingFees}
-        </div>
+      <div
+        className={cx(
+          'grid gap-1 grid-cols-2 md:grid-cols-4',
+          '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
+          '[&>div]:even:border-none',
+          'md:[&>div]:even:border-r'
+        )}
+      >
+        <KeyMetricItem
+          title="TVL"
+          suffix=" webbtTNT"
+          dataFetcher={() => getKeyMetricTvlData(epochStart, epochNow)}
+        />
+        <KeyMetricItem
+          title="Deposits 24H"
+          suffix=" webbtTNT"
+          dataFetcher={() => getKeyMetricDepositData(epochNow)}
+        />
+        <KeyMetricItem
+          title="Relayer Earnings"
+          suffix=" webbtTNT"
+          tooltip="The net earnings made by relayers after transaction costs."
+          dataFetcher={getKeyMetricRelayerFeesData}
+        />
+        <KeyMetricItem
+          title="Wrapping Fees"
+          suffix=" webbtTNT"
+          dataFetcher={getKeyMetricWrappingFeesData}
+        />
       </div>
     </div>
   );

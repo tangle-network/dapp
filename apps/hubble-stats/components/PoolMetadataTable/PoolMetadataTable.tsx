@@ -14,7 +14,7 @@ import { Table, fuzzyFilter, Typography } from '@webb-tools/webb-ui-components';
 import ExplorerUrlsDropdown from './ExplorerUrlsDropdown';
 import WrappingFeesDropdown from './WrappingFeesDropdown';
 import { PoolAttributeType, PoolMetadataTableProps } from './types';
-import { HeaderCell } from '../table';
+import { HeaderCell } from '../tableCells';
 
 const columnHelper = createColumnHelper<PoolAttributeType>();
 

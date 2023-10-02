@@ -1,4 +1,4 @@
-import { ActivityType } from '../table/types';
+import { ActivityType } from '../tableCells/types';
 
 export type PoolTransactionType = {
   txHash: string;

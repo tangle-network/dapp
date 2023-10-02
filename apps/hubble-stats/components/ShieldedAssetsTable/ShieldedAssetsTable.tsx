@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useCallback } from 'react';
+import { type FC, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   createColumnHelper,
@@ -21,7 +21,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
-import { HeaderCell, NumberCell, ShieldedCell } from '../table';
+import { HeaderCell, NumberCell, ShieldedCell } from '../tableCells';
 import { PoolTypeChip } from '..';
 import { getChainNamesByTypedId } from '../../utils';
 
