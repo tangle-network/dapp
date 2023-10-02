@@ -4828,7 +4828,7 @@
   dependencies:
     "@nx/devkit" "16.9.1"
 
-"@nrwl/eslint-plugin-nx@*", "@nrwl/eslint-plugin-nx@16.9.1":
+"@nrwl/eslint-plugin-nx@16.9.1":
   version "16.9.1"
   resolved "https://registry.yarnpkg.com/@nrwl/eslint-plugin-nx/-/eslint-plugin-nx-16.9.1.tgz#25b50c7a4e684abc039554a26f8a7e08616b4366"
   integrity sha512-G1bHWYgZuuXz51leJgleFltiyVzXpE5jKcApnSMnzbnP0HzeJO9QHruCX+t7bST3SXDV1uVXgovLyqfffCkNNA==
@@ -4965,22 +4965,6 @@
     ignore "^5.0.4"
     semver "7.5.3"
     tmp "~0.2.1"
-    tslib "^2.3.0"
-
-"@nx/eslint-plugin@16.9.0":
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/@nx/eslint-plugin/-/eslint-plugin-16.9.0.tgz#e37949cd0b1fe2806ae7bc020f8bf2892b7bbba3"
-  integrity sha512-fM9ZZuLOxlZQ+V6OvPgZ20kgXbfONiVtXeqxQMHfCVRLOQKkeGn79qJDhM99smXlv2DukQ2WPaihRjKN3ADMIw==
-  dependencies:
-    "@nrwl/eslint-plugin-nx" "*"
-    "@nx/devkit" "16.9.0"
-    "@nx/js" "16.9.0"
-    "@typescript-eslint/type-utils" "^5.60.1"
-    "@typescript-eslint/utils" "^5.60.1"
-    chalk "^4.1.0"
-    confusing-browser-globals "^1.0.9"
-    jsonc-eslint-parser "^2.1.0"
-    semver "7.5.3"
     tslib "^2.3.0"
 
 "@nx/eslint-plugin@16.9.1":
