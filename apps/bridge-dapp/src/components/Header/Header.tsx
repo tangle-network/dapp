@@ -5,20 +5,29 @@ import {
   BreadcrumbsItem,
   Button,
   ChainButton,
+  MenuItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   SideBarMenu,
+  getHumanFileSize,
 } from '@webb-tools/webb-ui-components';
 import {
   GITHUB_REQUEST_FEATURE_URL,
+  SOCIAL_URLS_RECORD,
   TANGLE_STANDALONE_EXPLORER_URL,
+  WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
-  SOCIAL_URLS_RECORD,
-  WEBB_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { FC, useCallback, useMemo } from 'react';
+import {
+  ComponentProps,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
 import sidebarProps from '../../constants/sidebar';
@@ -125,9 +134,66 @@ export const Header: FC<HeaderProps> = () => {
               window.open(GITHUB_REQUEST_FEATURE_URL, '_blank')
             }
             onAboutClick={() => window.open(WEBB_MKT_URL, '_blank')}
+            extraMenuItems={[<ClearCacheMenuItem />]}
           />
         </NavigationMenu>
       </div>
     </header>
   );
 };
+
+function ClearCacheMenuItem(): React.ReactElement<
+  ComponentProps<typeof MenuItem>,
+  typeof MenuItem
+> {
+  const [storageSize, setStorageSize] = useState<number | undefined>();
+
+  useEffect(() => {
+    let isSubscribed = true;
+
+    async function getStorageSize() {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      const { quota, usage } = await window.navigator.storage.estimate();
+      console.log(quota, usage);
+
+      if (isSubscribed) {
+        setStorageSize(usage);
+      }
+    }
+
+    getStorageSize();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, []);
+
+  const handleClearCache = useCallback(async () => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    const cachesKeys = await caches.keys();
+    await Promise.all(cachesKeys.map((key) => caches.delete(key)));
+
+    // Reload the page
+    window.location.reload();
+  }, []);
+
+  return (
+    <MenuItem onClick={handleClearCache}>
+      Clear cache{' '}
+      {typeof storageSize === 'number' ? (
+        <i>{`(${getHumanFileSize(storageSize, true)})`}</i>
+      ) : (
+        ''
+      )}
+    </MenuItem>
+  );
+}
