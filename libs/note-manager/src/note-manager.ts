@@ -48,6 +48,8 @@ export class NoteManager {
    */
   private static syncNotesProgressSubject = new BehaviorSubject(NaN);
 
+  static #abortController = new AbortController();
+
   static readonly defaultNoteGenInput: DefaultNoteGenInput = {
     curve: 'Bn254',
     denomination: '18',
@@ -65,6 +67,13 @@ export class NoteManager {
     private activeWalletAddress: string
   ) {
     this.notesMap = new Map();
+    NoteManager.syncNotesProgressSubject.next(NaN);
+
+    // Abort the sync notes progress when the note manager is destroyed
+    NoteManager.#abortController.abort();
+
+    // Create a new abort controller
+    NoteManager.#abortController = new AbortController();
   }
 
   static async initAndDecryptNotes(
@@ -242,6 +251,10 @@ export class NoteManager {
 
   static set syncNotesProgress(value: number) {
     this.syncNotesProgressSubject.next(value);
+  }
+
+  static get abortController() {
+    return this.#abortController;
   }
 
   getKeypair() {

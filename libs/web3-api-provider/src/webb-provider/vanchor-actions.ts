@@ -387,14 +387,16 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   async syncNotesForKeypair(
     anchorAddress: string,
-    owner: Keypair
+    owner: Keypair,
+    abortSignal?: AbortSignal
   ): Promise<Note[]> {
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(anchorAddress);
 
     const notes = await this.inner.getVAnchorNotesFromChain(
       vAnchorContract,
-      owner
+      owner,
+      abortSignal
     );
 
     return notes;

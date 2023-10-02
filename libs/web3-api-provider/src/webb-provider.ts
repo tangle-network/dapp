@@ -444,17 +444,21 @@ export class WebbWeb3Provider
       typeof VAnchor__factory.abi,
       PublicClient
     >,
-    owner: Keypair
+    owner: Keypair,
+    abortSignal?: AbortSignal
   ): Promise<Note[]> {
     const evmId = await vAnchorContract.read.getChainId();
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
       +evmId.toString()
     );
+
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
     if (!tokenSymbol) {
       throw new Error('Currency not found'); // Development error
     }
+
+    abortSignal?.throwIfAborted();
 
     const anchorId = vAnchorContract.address;
 
@@ -474,13 +478,18 @@ export class WebbWeb3Provider
         );
 
         NoteManager.syncNotesProgress = progress;
-      }
+      },
+      abortSignal
     );
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
+    abortSignal?.throwIfAborted();
+
     const notes = Promise.all(
       utxos.map(async (utxo) => {
+        abortSignal?.throwIfAborted();
+
         console.log(utxo.serialize());
 
         const secrets = [
@@ -510,6 +519,8 @@ export class WebbWeb3Provider
 
     // Reset the progress
     NoteManager.syncNotesProgress = Number.NaN;
+
+    abortSignal?.throwIfAborted();
 
     return notes;
   }
@@ -743,7 +754,8 @@ export class WebbWeb3Provider
     >,
     fromBlock: bigint,
     toBlock: bigint,
-    onCurrentProcessingBlock?: (block: bigint) => void
+    onCurrentProcessingBlock?: (block: bigint) => void,
+    abortSignal?: AbortSignal
   ) {
     const isTheSameBlock = fromBlock === toBlock;
 
@@ -756,8 +768,9 @@ export class WebbWeb3Provider
     const maxBlockStep =
       maxBlockStepCfg[typedChainId] ?? maxBlockStepCfg.default;
 
+    // TODO: use the abi from the contract
     const event = parseAbiItem(
-      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
+      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)'
     );
 
     const commonGetLogsProps = {
@@ -766,16 +779,22 @@ export class WebbWeb3Provider
       strict: true,
     } as const;
 
+    abortSignal?.throwIfAborted();
+
     if (isTheSameBlock || toBlock - fromBlock <= maxBlockStep) {
       onCurrentProcessingBlock?.(fromBlock);
       // Use getLogs instead of createEventFilter.NewCommitment because
       // createEventFilter.NewCommitment does not work without wss connection
-      return retryPromise(() =>
-        publicClient.getLogs({
-          ...commonGetLogsProps,
-          fromBlock,
-          toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
-        })
+      return retryPromise(
+        () =>
+          publicClient.getLogs({
+            ...commonGetLogsProps,
+            fromBlock,
+            toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
+          }),
+        undefined,
+        undefined,
+        abortSignal
       );
     }
 
@@ -785,14 +804,24 @@ export class WebbWeb3Provider
     let currentBlock = fromBlock;
 
     while (currentBlock < toBlock) {
+      console.log(
+        `Fetching logs from block ${currentBlock} to block ${
+          currentBlock + BigInt(maxBlockStep) - BigInt(1)
+        }`
+      );
+
       onCurrentProcessingBlock?.(currentBlock);
 
-      const logsChunk = await retryPromise(() =>
-        publicClient.getLogs({
-          ...commonGetLogsProps,
-          fromBlock: currentBlock,
-          toBlock: currentBlock + BigInt(maxBlockStep) - BigInt(1),
-        })
+      const logsChunk = await retryPromise(
+        () =>
+          publicClient.getLogs({
+            ...commonGetLogsProps,
+            fromBlock: currentBlock,
+            toBlock: currentBlock + BigInt(maxBlockStep) - BigInt(1),
+          }),
+        undefined,
+        undefined,
+        abortSignal
       );
 
       logs.push(...logsChunk);
@@ -855,7 +884,8 @@ export class WebbWeb3Provider
       fromBlock: bigint,
       toBlock: bigint,
       currentBlock: bigint
-    ) => void
+    ) => void,
+    abortSignal?: AbortSignal
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
     const publicClient = getPublicClient({
@@ -870,13 +900,16 @@ export class WebbWeb3Provider
       startingBlock,
       latestBlock,
       (currentBlock) =>
-        onBlockProcessed?.(startingBlock, latestBlock, currentBlock)
+        onBlockProcessed?.(startingBlock, latestBlock, currentBlock),
+      abortSignal
     );
 
     const parsedLogs = logs.map((log) => ({
       encryptedOutput: log.args.encryptedOutput,
       leafIndex: log.args.leafIndex,
     }));
+
+    abortSignal?.throwIfAborted();
 
     const utxosWithNull = await Promise.all(
       parsedLogs.map(({ encryptedOutput, leafIndex }) =>
@@ -892,6 +925,8 @@ export class WebbWeb3Provider
       filteredUtxos,
       vAnchorContract.address
     );
+
+    abortSignal?.throwIfAborted();
 
     return spendableUtxos;
   }
