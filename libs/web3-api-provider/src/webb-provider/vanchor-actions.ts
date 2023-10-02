@@ -135,7 +135,8 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
-      this.inner.publicClient
+      this.inner.publicClient,
+      tx
     );
 
     // Pad the input & output utxo
@@ -245,7 +246,8 @@ export class Web3VAnchorActions extends VAnchorActions<
   ) {
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
-      this.inner.publicClient
+      this.inner.publicClient,
+      tx
     );
 
     tx.txHash = '';
@@ -975,8 +977,12 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const srcVAnchor = await this.inner.getVAnchorInstance(
       ensureHex(payload.note.sourceIdentifyingData),
-      this.inner.publicClient
+      this.inner.publicClient,
+      tx,
+      true
     );
+
+    console.log('srcVAnchor: ', srcVAnchor);
 
     const currentFungibleToken = srcVAnchor.getWebbToken();
 

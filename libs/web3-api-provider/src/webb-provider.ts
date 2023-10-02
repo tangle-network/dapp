@@ -12,6 +12,7 @@ import {
   RelayChainMethods,
   Transaction,
   TransactionState,
+  FixturesStatus,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -719,17 +720,64 @@ export class WebbWeb3Provider
    * The the VAnchor instance for the the logic inside this class,
    * we not use this for signing transactions. In the future we will
    * refactor the VAnchor class itself not require a signer.
+   * @param address the address of the vAnchor contract
+   * @param provider the viem public client to use
+   * @param tx the transaction to update the transaction state
+   * @param useDummyFixtures whether to use dummy fixtures or not
    */
   async getVAnchorInstance(
     address: string,
-    provider: PublicClient
+    provider: PublicClient,
+    tx?: Transaction<NewNotesTxResult>,
+    useDummyFixtures?: boolean
   ): Promise<VAnchor> {
+    if (useDummyFixtures) {
+      const dummyFixtures = {
+        wasm: Buffer.from(''),
+        zkey: new Uint8Array(),
+        witnessCalculator: null,
+      } satisfies ZkComponents;
+
+      return VAnchor.connect(
+        ensureHex(address),
+        dummyFixtures,
+        dummyFixtures,
+        provider
+      );
+    }
+
     const maxEdges = await this.getVAnchorMaxEdges(address, provider);
+
+    const fixturesList = new Map<string, FixturesStatus>();
+
+    fixturesList.set('small fixtures', 'Waiting');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+
+    const smallZkFixtures = await this.getZkFixtures(maxEdges, true);
+
+    fixturesList.set('small fixtures', 'Done');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+
+    fixturesList.set('large fixtures', 'Waiting');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+
+    const largeZkFixtures = await this.getZkFixtures(maxEdges, false);
+
+    fixturesList.set('large fixtures', 'Done');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
 
     return VAnchor.connect(
       ensureHex(address),
-      await this.getZkFixtures(maxEdges, true),
-      await this.getZkFixtures(maxEdges, false),
+      smallZkFixtures,
+      largeZkFixtures,
       provider
     );
   }
