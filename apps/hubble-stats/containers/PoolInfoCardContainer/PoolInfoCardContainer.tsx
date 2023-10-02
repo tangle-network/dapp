@@ -11,7 +11,7 @@ import {
 import { VANCHORS_MAP } from '../../constants';
 import { getPoolInfoCardTvlData, getPoolInfoCardDepositData } from '../../data';
 
-export default async function PoolInfoCardContainer({
+export default function PoolInfoCardContainer({
   poolAddress,
   epochStart,
   epochNow,

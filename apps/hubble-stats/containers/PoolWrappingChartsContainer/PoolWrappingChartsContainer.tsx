@@ -11,7 +11,7 @@ import { PoolChartPropsType } from '../charts/types';
 const twlTab = 'TWL';
 const wrappingFeesTab = 'Wrapping Fees';
 
-export default async function PoolWrappingChartsContainer({
+export default function PoolWrappingChartsContainer({
   poolAddress,
   numDatesFromStart,
   startingEpoch,
