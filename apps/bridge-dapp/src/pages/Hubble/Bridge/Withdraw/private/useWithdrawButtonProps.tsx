@@ -139,9 +139,6 @@ function useWithdrawButtonProps({
 
     const amountFloat = parseFloat(amount);
     const balance = balances[fungibleCfg.id]?.[srcTypedChainId];
-    if (typeof balance !== 'bigint' && amountFloat > 0) {
-      return true;
-    }
 
     if (!balance || amountFloat <= 0) {
       return false;

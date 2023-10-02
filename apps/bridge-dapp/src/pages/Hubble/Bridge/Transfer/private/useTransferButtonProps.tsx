@@ -97,11 +97,8 @@ function useTransferButtonProps({
     }
 
     const balance = balances[fungibleCfg.id]?.[srcTypedChainId];
-    if (typeof balance !== 'bigint') {
-      return true;
-    }
 
-    if (typeof receivingAmount !== 'number') {
+    if (!balance || typeof receivingAmount !== 'number') {
       return false;
     }
 
