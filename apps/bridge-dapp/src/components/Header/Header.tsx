@@ -156,8 +156,7 @@ function ClearCacheMenuItem(): React.ReactElement<
         return;
       }
 
-      const { quota, usage } = await window.navigator.storage.estimate();
-      console.log(quota, usage);
+      const { usage } = await window.navigator.storage.estimate();
 
       if (isSubscribed) {
         setStorageSize(usage);
