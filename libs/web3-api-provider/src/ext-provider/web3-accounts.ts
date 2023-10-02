@@ -6,7 +6,8 @@ import {
   AccountsAdapter,
   PromiseOrT,
 } from '@webb-tools/abstract-api-provider/account';
-import { Address, JsonRpcAccount, WalletClient } from 'viem';
+import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
+import { Address, WalletClient } from 'viem';
 import { getAccount } from 'wagmi/actions';
 
 export class Web3Account extends Account<WalletClient['account']> {
@@ -60,7 +61,10 @@ export class Web3Accounts extends AccountsAdapter<
     );
   }
 
-  setActiveAccount(_: Account): PromiseOrT<void> {
-    return undefined;
+  setActiveAccount(nextAccount: Account): PromiseOrT<void> {
+    this.inner.account = {
+      type: 'json-rpc',
+      address: ensureHex(nextAccount.address),
+    } satisfies WalletClient['account'];
   }
 }

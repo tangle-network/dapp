@@ -313,13 +313,15 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         const active = acs[0];
         setAccounts(acs);
 
-        if (active) {
-          setActiveAccountWithStorage(active, {
-            networkStorage: _networkStorage ?? networkStorage,
-            chain,
-            activeApi: nextActiveApi,
-          });
+        if (!active) {
+          return;
         }
+
+        setActiveAccountWithStorage(active, {
+          networkStorage: _networkStorage ?? networkStorage,
+          chain,
+          activeApi: nextActiveApi,
+        });
       });
     },
     [loginIfExist, networkStorage, setActiveAccountWithStorage, setNoteManager]

@@ -982,8 +982,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       true
     );
 
-    console.log('srcVAnchor: ', srcVAnchor);
-
     const currentFungibleToken = srcVAnchor.getWebbToken();
 
     const amountBI = BigInt(amount);
