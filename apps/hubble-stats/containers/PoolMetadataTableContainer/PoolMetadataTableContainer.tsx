@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 
 import { PoolMetadataTable } from '../../components';
 import { PoolAttributeType } from '../../components/PoolMetadataTable/types';
-import { getPoolMetadataData } from '../../data';
+import { getPoolMetadataTableData } from '../../data';
 
 export default async function PoolMetadataTableContainer({
   poolAddress,
@@ -18,7 +18,7 @@ export default async function PoolMetadataTableContainer({
     treasuryAddress,
     wrappingFees,
     creationDate,
-  } = await getPoolMetadataData(poolAddress);
+  } = await getPoolMetadataTableData(poolAddress);
 
   const metadata: PoolAttributeType[] = [
     {

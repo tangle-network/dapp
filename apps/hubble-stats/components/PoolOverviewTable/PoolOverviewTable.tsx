@@ -18,7 +18,7 @@ import {
 import { FC, useMemo } from 'react';
 
 import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
-import { HeaderCell, NumberCell } from '../table';
+import { HeaderCell, NumberCell } from '../tableCells';
 import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
 
 const columnHelper = createColumnHelper<PoolOverviewDataType>();
@@ -58,7 +58,7 @@ const staticColumns: ColumnDef<PoolOverviewDataType, any>[] = [
 const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
   typedChainIds = [],
   data = [],
-  prefixUnit = '$',
+  prefixUnit = '',
 }) => {
   const sortedTypedChainIds = useMemo(
     () => getSortedTypedChainIds(typedChainIds),

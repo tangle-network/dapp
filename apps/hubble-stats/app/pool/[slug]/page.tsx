@@ -1,8 +1,7 @@
-import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 
 import {
-  PoolOverviewCardContainer,
+  PoolInfoCardContainer,
   PoolOverviewChartsContainer,
   PoolWrappingChartsContainer,
   PoolTransactionsTableContainer,
@@ -10,8 +9,8 @@ import {
   PoolWrappingTableContainer,
   PoolMetadataTableContainer,
 } from '../../../containers';
-import { LoadingScreen } from '../../../components';
 import { VANCHORS_MAP } from '../../../constants';
+import { getDateDataForPage } from '../../../utils';
 
 // revalidate every 5 seconds
 export const revalidate = 5;
@@ -24,23 +23,41 @@ export default function Pool({ params }: { params: { slug: string } }) {
     notFound();
   }
 
+  const { epochStart, epochNow, numDatesFromStart } = getDateDataForPage();
+
+  const chartProps = {
+    poolAddress,
+    numDatesFromStart,
+    startingEpoch: epochStart,
+    epochNow,
+  };
+
+  const tableProps = {
+    poolAddress,
+    epochNow,
+    availableTypedChainIds: VANCHORS_MAP[poolAddress].supportedChains,
+  };
+
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <div className="py-4 space-y-8">
-        <div className="grid grid-cols-1 items-end lg:grid-cols-[auto_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
-          <PoolOverviewCardContainer poolAddress={poolAddress} />
-          <PoolOverviewChartsContainer poolAddress={poolAddress} />
-          <PoolWrappingChartsContainer poolAddress={poolAddress} />
-        </div>
-
-        <div className="space-y-12">
-          <PoolOverviewTableContainer poolAddress={poolAddress} />
-          <PoolWrappingTableContainer poolAddress={poolAddress} />
-        </div>
-
-        <PoolTransactionsTableContainer poolAddress={poolAddress} />
-        <PoolMetadataTableContainer poolAddress={poolAddress} />
+    <div className="py-4 space-y-8">
+      <div className="grid grid-cols-1 items-end lg:grid-cols-[auto_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
+        <PoolInfoCardContainer
+          poolAddress={poolAddress}
+          epochStart={epochStart}
+          epochNow={epochNow}
+        />
+        <PoolOverviewChartsContainer {...chartProps} />
+        <PoolWrappingChartsContainer {...chartProps} />
       </div>
-    </Suspense>
+
+      <div className="space-y-12">
+        <PoolOverviewTableContainer {...tableProps} />
+        <PoolWrappingTableContainer {...tableProps} />
+      </div>
+
+      <PoolTransactionsTableContainer poolAddress={poolAddress} />
+
+      <PoolMetadataTableContainer poolAddress={poolAddress} />
+    </div>
   );
 }

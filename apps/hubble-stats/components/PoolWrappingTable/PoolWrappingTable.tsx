@@ -20,7 +20,7 @@ import { TokenIcon, CornerDownRightLine } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { PoolWrappingDataType, PoolWrappingTableProps } from './types';
-import { HeaderCell, NumberCell } from '../table';
+import { HeaderCell, NumberCell } from '../tableCells';
 import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
 
 const columnHelper = createColumnHelper<PoolWrappingDataType>();
@@ -79,7 +79,7 @@ const staticColumns: ColumnDef<PoolWrappingDataType, any>[] = [
 const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
   typedChainIds = [],
   data = [],
-  prefixUnit = '$',
+  prefixUnit = '',
 }) => {
   const sortedTypedChainIds = useMemo(
     () => getSortedTypedChainIds(typedChainIds),

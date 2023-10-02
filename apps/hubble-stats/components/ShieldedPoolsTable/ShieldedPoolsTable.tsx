@@ -16,7 +16,7 @@ import {
 import { Table, IconsGroup, fuzzyFilter } from '@webb-tools/webb-ui-components';
 
 import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
-import { HeaderCell, NumberCell, ShieldedCell } from '../table';
+import { HeaderCell, NumberCell, ShieldedCell } from '../tableCells';
 import { PoolTypeChip } from '..';
 import { getChainNamesByTypedId } from '../../utils';
 

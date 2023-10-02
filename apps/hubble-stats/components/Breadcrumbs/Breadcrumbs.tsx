@@ -1,14 +1,14 @@
 'use client';
 
-import { FC, useEffect, useMemo } from 'react';
-import cx from 'classnames';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { CoinIcon, ContrastLine } from '@webb-tools/icons';
 import {
   Breadcrumbs as BreadcrumbsCmp,
   BreadcrumbsItem,
 } from '@webb-tools/webb-ui-components';
-import { CoinIcon, ContrastLine } from '@webb-tools/icons';
+import cx from 'classnames';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { type FC, useMemo, useEffect } from 'react';
 
 import { VANCHORS_MAP } from '../../constants';
 import { BreadcrumbType } from './types';

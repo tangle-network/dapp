@@ -52,6 +52,7 @@ export * from './Progress';
 export * from './ProposalsBadgeGroup';
 export * from './Radio';
 export * from './SideBar';
+export { default as SkeletonLoader } from './SkeletonLoader';
 export * from './Slider';
 export * from './Socials';
 export * from './Stats';
