@@ -7,7 +7,6 @@ import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { NoteManager } from '@webb-tools/note-manager/';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
-import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import { useVAnchor } from '@webb-tools/react-hooks/vanchor/useVAnchor';
 import { Keypair, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
@@ -24,7 +23,7 @@ import {
 } from '../../../../../constants';
 import TransferConfirmContainer from '../../../../../containers/TransferConfirmContainer/TransferConfirmContainer';
 import useChainsFromRoute from '../../../../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
+import useConnectButtonProps from '../../../../../hooks/useConnectButtonProps';
 import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 import handleTxError from '../../../../../utils/handleTxError';
 
@@ -55,15 +54,8 @@ function useTransferButtonProps({
 }: UseTransferButtonPropsArgs) {
   const navigate = useNavigate();
 
-  const {
-    activeApi,
-    activeChain,
-    isConnecting,
-    loading,
-    switchChain,
-    activeWallet,
-    noteManager,
-  } = useWebContext();
+  const { activeApi, activeChain, isConnecting, loading, noteManager } =
+    useWebContext();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -88,9 +80,8 @@ function useTransferButtonProps({
 
   const { fungibleCfg } = useCurrenciesFromRoute();
 
-  const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
-
-  const { isWalletConnected, toggleModal } = useConnectWallet();
+  const { content: connectBtnCnt, handleConnect } =
+    useConnectButtonProps(srcTypedChainId);
 
   const isValidAmount = useMemo(() => {
     if (!fungibleCfg) {
@@ -124,23 +115,6 @@ function useTransferButtonProps({
       return false;
     }
   }, [amount, balances, srcTypedChainId, fungibleCfg, receivingAmount]);
-
-  const connCnt = useMemo(() => {
-    if (!activeApi) {
-      return 'Connect Wallet';
-    }
-
-    if (!hasNoteAccount) {
-      return 'Create Note Account';
-    }
-
-    const activeId = activeApi.typedChainidSubject.getValue();
-    if (activeId !== srcTypedChainId) {
-      return 'Switch Chain';
-    }
-
-    return undefined;
-  }, [activeApi, srcTypedChainId, hasNoteAccount]);
 
   const inputCnt = useMemo(
     () => {
@@ -178,19 +152,23 @@ function useTransferButtonProps({
   );
 
   const btnText = useMemo(() => {
+    if (connectBtnCnt) {
+      return connectBtnCnt;
+    }
+
     if (inputCnt) {
       return inputCnt;
     }
 
-    if (connCnt) {
-      return connCnt;
-    }
-
     return 'Transfer';
-  }, [connCnt, inputCnt]);
+  }, [connectBtnCnt, inputCnt]);
 
   const isDisabled = useMemo(
     () => {
+      if (connectBtnCnt) {
+        return false;
+      }
+
       const allInputsFilled =
         typeof amount === 'string' &&
         amount.length > 0 &&
@@ -210,10 +188,6 @@ function useTransferButtonProps({
         return true;
       }
 
-      if (!isWalletConnected || !hasNoteAccount) {
-        return false;
-      }
-
       const isSrcChainActive =
         srcChain &&
         srcChain.id === activeChain?.id &&
@@ -226,7 +200,7 @@ function useTransferButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, hasRefund, isFeeLoading, isValidAmount, isWalletConnected, recipient, refundRecipient, refundRecipientError, srcChain]
+    [activeChain, amount, connectBtnCnt, destTypedChainId, fungibleCfg, hasRefund, isFeeLoading, isValidAmount, recipient, refundRecipient, refundRecipientError, srcChain]
   );
 
   const isLoading = useMemo(() => {
@@ -241,43 +215,14 @@ function useTransferButtonProps({
       typeof TransferConfirmContainer
     > | null>(null);
 
-  const handleSwitchChain = useCallback(
-    async () => {
-      if (typeof srcTypedChainId !== 'number') {
-        return;
-      }
-
-      const nextChain = chainsPopulated[srcTypedChainId];
-      if (!nextChain) {
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-      }
-
-      const isNextChainActive =
-        activeChain?.id === nextChain.id &&
-        activeChain?.chainType === nextChain.chainType;
-
-      if (!isWalletConnected || !isNextChainActive) {
-        if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-          await switchChain(nextChain, activeWallet);
-        } else {
-          toggleModal(true, nextChain);
-        }
-        return;
-      }
-
-      if (!hasNoteAccount) {
-        setOpenNoteAccountModal(true);
-      }
-    },
-    // prettier-ignore
-    [activeChain?.chainType, activeChain?.id, activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedChainId, switchChain, toggleModal]
-  );
-
   const handleTransferBtnClick = useCallback(
     async () => {
       try {
-        if (connCnt) {
-          return await handleSwitchChain();
+        if (connectBtnCnt && typeof srcTypedChainId === 'number') {
+          const connected = await handleConnect(srcTypedChainId);
+          if (!connected) {
+            return;
+          }
         }
 
         // For type assertion
@@ -445,7 +390,7 @@ function useTransferButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, activeRelayer, amount, connCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, vAnchorApi]
+    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, vAnchorApi]
   );
 
   return {
