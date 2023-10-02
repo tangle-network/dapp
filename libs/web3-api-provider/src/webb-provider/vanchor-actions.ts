@@ -815,7 +815,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       commitmentIndex = leafIndex;
     } else {
       const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
-        u8aToHex(leaf)
+        toFixedHex(leaf)
       );
 
       tx?.next(TransactionState.ValidatingLeaves, undefined);
