@@ -63,8 +63,7 @@ export class NoteManager {
 
   private constructor(
     private noteStorage: Storage<NoteStorage>,
-    private keypair: Keypair,
-    private activeWalletAddress: string
+    private keypair: Keypair
   ) {
     this.notesMap = new Map();
     NoteManager.syncNotesProgressSubject.next(NaN);
@@ -78,17 +77,14 @@ export class NoteManager {
 
   static async initAndDecryptNotes(
     noteStorage: Storage<NoteStorage>,
-    keypair: Keypair,
-    activeWalletAddress: string
+    keypair: Keypair
   ): Promise<NoteManager> {
-    const noteManager = new NoteManager(
-      noteStorage,
-      keypair,
-      activeWalletAddress
-    );
+    const noteManager = new NoteManager(noteStorage, keypair);
 
     const noteStorageData = await noteStorage.dump();
-    const encryptedNotesRecord = noteStorageData[activeWalletAddress] ?? {};
+
+    const pubKey = keypair.getPubKey();
+    const encryptedNotesRecord = noteStorageData[pubKey] ?? {};
 
     // 32-bytes size resource id where each byte is represented by 2 characters
     const resourceIdSize = 32 * 2;
@@ -373,7 +369,8 @@ export class NoteManager {
 
   async updateStorage() {
     if (this.notesMap.size !== 0) {
-      await this.noteStorage.set(this.activeWalletAddress, {});
+      const pubKey = this.keypair.getPubKey();
+      await this.noteStorage.set(pubKey, {});
 
       const promises = [...this.notesMap.entries()].map(
         async ([resourceId, notes]) => {
@@ -382,11 +379,8 @@ export class NoteManager {
             return this.keypair.encrypt(Buffer.from(noteStr));
           });
 
-          const storedNoteRecord = await this.noteStorage.get(
-            this.activeWalletAddress
-          );
-
-          await this.noteStorage.set(this.activeWalletAddress, {
+          const storedNoteRecord = await this.noteStorage.get(pubKey);
+          await this.noteStorage.set(pubKey, {
             ...storedNoteRecord,
             [resourceId]: encNoteStrings,
           });

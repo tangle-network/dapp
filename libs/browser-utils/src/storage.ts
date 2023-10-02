@@ -3,8 +3,10 @@
 
 import Storage from '@webb-tools/dapp-types/Storage';
 
-/// The `BridgeStorage` is used to store the leaves of the merkle tree
-/// of the underlying VAnchor contract. The key is the resource id
+/**
+ * The `BridgeStorage` is used to store the leaves of the merkle tree
+ * of the underlying VAnchor contract. The key is the resource id
+ */
 export type BridgeStorage = {
   lastQueriedBlock: number;
   leaves: string[];
@@ -32,7 +34,16 @@ export const bridgeStorageFactory = (resourceId: string) => {
   });
 };
 
+/**
+ * The `KeyPairStorage` is used to store the keypair of the user.
+ * The key is the wallet address of the user.
+ * The value is the note account priv key of the user.
+ */
 export type MultipleKeyPairStorage = {
+  /**
+   * The key is the wallet address of the user.
+   * The value is the note account priv key of the user.
+   */
   [walletAddress: string]: string | null;
 };
 
@@ -54,8 +65,21 @@ export const multipleKeypairStorageFactory = () =>
     },
   });
 
+/**
+ * The `NoteStorage` is used to store the encrypted notes of the user.
+ * The key is the note account public key of the user.
+ * The value is the encrypted note record.
+ * The encrypted note record is a map of resource id to encrypted notes array.
+ */
 export type NoteStorage = {
-  [walletAddress: string]: {
+  /**
+   * The key is the note account public key of the user.
+   * The value is the encrypted note record.
+   */
+  [pubKey: string]: {
+    /**
+     * The encrypted note record is a map of resource id to encrypted notes array.
+     */
     [resourceId: string]: Array<string>;
   };
 };
@@ -89,6 +113,7 @@ export const noteStorageFactory = () => {
 // The key is the note account public key of the user. The values are
 // the registered public keys for a given VAnchor.
 export type RegistrationStorage = Record<string, string[]>;
+
 export const registrationStorageFactory = (account: string) => {
   return Storage.newFromCache<RegistrationStorage>(account, {
     async commit(key: string, data: RegistrationStorage): Promise<void> {
@@ -119,7 +144,9 @@ export type NetworkStore = {
   defaultNetwork?: number;
   defaultWallet?: number;
 };
+
 export type NetworkStorage = Storage<NetworkStore>;
+
 export const netStorageFactory = () => {
   return Storage.newFromCache<NetworkStore>('app', {
     async commit(key: string, data: NetworkStore): Promise<void> {
