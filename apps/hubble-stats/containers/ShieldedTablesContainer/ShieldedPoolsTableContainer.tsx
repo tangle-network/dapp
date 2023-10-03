@@ -8,7 +8,9 @@ export default async function ShieldedPoolsTableContainer({
   pageSize: number;
   dataFetcher: () => Promise<ShieldedPoolType[]>;
 }) {
+  console.time('ShieldedPoolsTableContainer');
   const data = await dataFetcher();
+  console.timeEnd('ShieldedPoolsTableContainer');
 
   return <ShieldedPoolsTable data={data} pageSize={pageSize} />;
 }

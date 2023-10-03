@@ -1,12 +1,17 @@
 import cx from 'classnames';
-
+import { cache } from 'react';
 import { KeyMetricItem } from '../../components/KeyMetricItem';
 import {
-  getKeyMetricDepositData,
-  getKeyMetricRelayerFeesData,
-  getKeyMetricTvlData,
-  getKeyMetricWrappingFeesData,
+  getKeyMetricDepositData as getDeposit,
+  getKeyMetricRelayerFeesData as getRealyerFees,
+  getKeyMetricTvlData as getTVL,
+  getKeyMetricWrappingFeesData as getWrappingFees,
 } from '../../data';
+
+const getKeyMetricDepositData = cache(getDeposit);
+const getKeyMetricRelayerFeesData = cache(getRealyerFees);
+const getKeyMetricTvlData = cache(getTVL);
+const getKeyMetricWrappingFeesData = cache(getWrappingFees);
 
 export default function KeyMetricsTableContainer(props: {
   epochStart: number;

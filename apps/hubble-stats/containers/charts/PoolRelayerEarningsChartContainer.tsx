@@ -1,6 +1,9 @@
-import { getPoolRelayerEarningsChartData } from '../../data';
+import { cache } from 'react';
+import { getPoolRelayerEarningsChartData as getData } from '../../data';
 import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
+
+const getPoolRelayerEarningsChartData = cache(getData);
 
 export default async function PoolRelayerEarningsChartContainer(
   props: PoolChartPropsType
