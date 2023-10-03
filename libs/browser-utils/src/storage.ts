@@ -71,21 +71,21 @@ export const multipleKeypairStorageFactory = () =>
  * The value is the encrypted notes array.
  * @deprecated We will migrate to `MultiAccountNoteStorage` soon.
  */
-export type NoteStorage = Record<string, string[]>;
+type NoteStorage = Record<string, string[]>;
 
 const NOTE_STORAGE_KEY = 'encryptedNotes';
 
 /**
  * @deprecated Use `MultiAccountNoteStorage` instead.
  */
-export const resetNoteStorage = () => {
+const resetNoteStorage = () => {
   localStorage.removeItem(NOTE_STORAGE_KEY);
 };
 
 /**
  * @deprecated Use `MultiAccountNoteStorage` instead.
  */
-export const noteStorageFactory = () => {
+const noteStorageFactory = () => {
   return Storage.newFromCache<NoteStorage>(NOTE_STORAGE_KEY, {
     async commit(key: string, data: NoteStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
@@ -102,6 +102,36 @@ export const noteStorageFactory = () => {
       return {};
     },
   });
+};
+
+export const getV1NotesRecord = async () => {
+  const noteStorage = await noteStorageFactory();
+  const encryptedNotesRecord = await noteStorage.dump();
+
+  // 32-bytes size resource id where each byte is represented by 2 characters
+  const resourceIdSize = 32 * 2;
+
+  // Only get the stored notes with the key is the resource id
+  const encryptedNotesMap = Object.entries(encryptedNotesRecord).reduce(
+    (acc, [resourceIdOrTypedChainId, notes]) => {
+      // Only get the notes where the key if resource id
+      if (
+        resourceIdOrTypedChainId.replace('0x', '').length === resourceIdSize
+      ) {
+        acc[resourceIdOrTypedChainId] = notes;
+      }
+
+      return acc;
+    },
+    {} as Record<string, Array<string>>
+  );
+
+  if (Object.keys(encryptedNotesMap).length === 0) {
+    // Reset the note storage if there is no notes
+    resetNoteStorage();
+  }
+
+  return encryptedNotesMap;
 };
 
 // The `RegistrationStorage` is used to store the registered public keys.
