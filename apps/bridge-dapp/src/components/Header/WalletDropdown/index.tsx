@@ -72,12 +72,20 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
   // Disconnect function
   // TODO: The disconnect function does not work properly
   const handleDisconnect = useCallback(async () => {
-    if (currentManagedWallet && currentManagedWallet.canEndSession) {
-      currentManagedWallet.endSession();
-    }
+    try {
+      if (currentManagedWallet && currentManagedWallet.canEndSession) {
+        currentManagedWallet.endSession();
+      }
 
-    await inactivateApi();
-  }, [currentManagedWallet, inactivateApi]);
+      await inactivateApi();
+    } catch {
+      const message = WebbError.getErrorMessage(
+        WebbErrorCodes.FailedToDisconnect
+      ).message;
+
+      notificationApi({ variant: 'error', message });
+    }
+  }, [currentManagedWallet, inactivateApi, notificationApi]);
 
   return (
     <Dropdown>
