@@ -1,15 +1,16 @@
 import { notFound } from 'next/navigation';
 
+import { Suspense } from 'react';
+import { VANCHORS_MAP } from '../../../constants';
 import {
   PoolInfoCardContainer,
-  PoolOverviewChartsContainer,
-  PoolWrappingChartsContainer,
-  PoolTransactionsTableContainer,
-  PoolOverviewTableContainer,
-  PoolWrappingTableContainer,
   PoolMetadataTableContainer,
+  PoolOverviewChartsContainer,
+  PoolOverviewTableContainer,
+  PoolTransactionsTableContainer,
+  PoolWrappingChartsContainer,
+  PoolWrappingTableContainer,
 } from '../../../containers';
-import { VANCHORS_MAP } from '../../../constants';
 import { getDateDataForPage } from '../../../utils';
 
 // revalidate every 5 seconds
@@ -57,7 +58,9 @@ export default function Pool({ params }: { params: { slug: string } }) {
 
       <PoolTransactionsTableContainer poolAddress={poolAddress} />
 
-      <PoolMetadataTableContainer poolAddress={poolAddress} />
+      <Suspense>
+        <PoolMetadataTableContainer poolAddress={poolAddress} />
+      </Suspense>
     </div>
   );
 }
