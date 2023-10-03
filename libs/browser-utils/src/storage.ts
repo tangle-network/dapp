@@ -67,29 +67,24 @@ export const multipleKeypairStorageFactory = () =>
 
 /**
  * The `NoteStorage` is used to store the encrypted notes of the user.
- * The key is the note account public key of the user.
- * The value is the encrypted note record.
- * The encrypted note record is a map of resource id to encrypted notes array.
+ * The key is the resource id.
+ * The value is the encrypted notes array.
+ * @deprecated We will migrate to `MultiAccountNoteStorage` soon.
  */
-export type NoteStorage = {
-  /**
-   * The key is the note account public key of the user.
-   * The value is the encrypted note record.
-   */
-  [pubKey: string]: {
-    /**
-     * The encrypted note record is a map of resource id to encrypted notes array.
-     */
-    [resourceId: string]: Array<string>;
-  };
-};
+export type NoteStorage = Record<string, string[]>;
 
 const NOTE_STORAGE_KEY = 'encryptedNotes';
 
+/**
+ * @deprecated Use `MultiAccountNoteStorage` instead.
+ */
 export const resetNoteStorage = () => {
-  localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify({}));
+  localStorage.removeItem(NOTE_STORAGE_KEY);
 };
 
+/**
+ * @deprecated Use `MultiAccountNoteStorage` instead.
+ */
 export const noteStorageFactory = () => {
   return Storage.newFromCache<NoteStorage>(NOTE_STORAGE_KEY, {
     async commit(key: string, data: NoteStorage): Promise<void> {
@@ -168,4 +163,64 @@ export const netStorageFactory = () => {
       return store;
     },
   });
+};
+
+/**
+ * The `MultipleAccountNoteStorage` is used to store the encrypted notes of the user.
+ * The key is the note account public key of the user.
+ * The value is the encrypted note record.
+ * The encrypted note record is a map of resource id to encrypted notes array.
+ */
+export type MultiAccountNoteStorage = {
+  /**
+   * The key is the note account public key of the user.
+   * The value is the encrypted note record.
+   */
+  [pubKey: string]: {
+    /**
+     * The encrypted note record is a map of resource id to encrypted notes array.
+     */
+    [resourceId: string]: Array<string>;
+  };
+};
+
+const MULTI_ACCOUNT_NOTE_STORAGE_KEY = 'multiAccountEncryptedNotes';
+
+export const resetMultiAccountNoteStorage = (pubKey: string) => {
+  const storage = localStorage.getItem(MULTI_ACCOUNT_NOTE_STORAGE_KEY);
+  if (!storage) {
+    return;
+  }
+
+  const parsedStorage = JSON.parse(storage);
+  if (!parsedStorage[pubKey]) {
+    return;
+  }
+
+  localStorage.setItem(
+    MULTI_ACCOUNT_NOTE_STORAGE_KEY,
+    JSON.stringify({ ...parsedStorage, [pubKey]: {} })
+  );
+};
+
+export const multiAccountNoteStorageFactory = () => {
+  return Storage.newFromCache<MultiAccountNoteStorage>(
+    MULTI_ACCOUNT_NOTE_STORAGE_KEY,
+    {
+      async commit(key: string, data: MultiAccountNoteStorage): Promise<void> {
+        localStorage.setItem(key, JSON.stringify(data));
+      },
+      async fetch(key: string): Promise<MultiAccountNoteStorage> {
+        const storageCached = localStorage.getItem(key);
+
+        if (storageCached) {
+          return {
+            ...JSON.parse(storageCached),
+          };
+        }
+
+        return {};
+      },
+    }
+  );
 };

@@ -8,10 +8,9 @@ import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
   NetworkStorage,
-  netStorageFactory,
-  noteStorageFactory,
-  resetNoteStorage,
   multipleKeypairStorageFactory,
+  netStorageFactory,
+  resetMultiAccountNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
@@ -902,11 +901,7 @@ function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
       multipleKeypairStorage.set(walletAddress, key);
 
       // create a NoteManager instance
-      const noteStorage = await noteStorageFactory();
-      const noteManager = await NoteManager.initAndDecryptNotes(
-        noteStorage,
-        accountKeypair
-      );
+      const noteManager = await NoteManager.initAndDecryptNotes(accountKeypair);
 
       // set the noteManager instance on the activeApi if it exists
       if (activeApi) {
@@ -942,7 +937,7 @@ function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
         return;
       }
 
-      resetNoteStorage();
+      resetMultiAccountNoteStorage(new Keypair(currentPrivKey).getPubKey());
 
       multipleKeypairStorage.set(walletAddress, null);
 
