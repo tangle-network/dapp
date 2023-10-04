@@ -20,11 +20,14 @@ export interface WebbContextState<T = unknown> {
   activeChain?: Chain;
   noteManager: NoteManager | null;
 
-  loginNoteAccount(key: string): Promise<NoteManager | null>;
+  loginNoteAccount(
+    key: string,
+    walletAddress: string
+  ): Promise<NoteManager | null>;
 
-  logoutNoteAccount(): Promise<void>;
+  logoutNoteAccount(walletAddress: string): Promise<void>;
 
-  purgeNoteAccount(): Promise<void>;
+  purgeNoteAccount(walletAddress: string): Promise<void>;
 
   apiConfig: ApiConfig;
   accounts: Account[];
@@ -56,13 +59,13 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
   loading: true,
   activeAccount: null,
   noteManager: null,
-  loginNoteAccount(key: string) {
+  loginNoteAccount(key: string, walletAddress: string) {
     return Promise.resolve(null);
   },
-  logoutNoteAccount() {
+  logoutNoteAccount(walletAddress: string) {
     return Promise.resolve();
   },
-  purgeNoteAccount() {
+  purgeNoteAccount(walletAddress: string) {
     return Promise.resolve();
   },
   isConnecting: false,

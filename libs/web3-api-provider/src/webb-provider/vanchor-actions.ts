@@ -135,7 +135,8 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
-      this.inner.publicClient
+      this.inner.publicClient,
+      tx
     );
 
     // Pad the input & output utxo
@@ -245,7 +246,8 @@ export class Web3VAnchorActions extends VAnchorActions<
   ) {
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
-      this.inner.publicClient
+      this.inner.publicClient,
+      tx
     );
 
     tx.txHash = '';
@@ -387,14 +389,16 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   async syncNotesForKeypair(
     anchorAddress: string,
-    owner: Keypair
+    owner: Keypair,
+    abortSignal?: AbortSignal
   ): Promise<Note[]> {
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(anchorAddress);
 
     const notes = await this.inner.getVAnchorNotesFromChain(
       vAnchorContract,
-      owner
+      owner,
+      abortSignal
     );
 
     return notes;
@@ -811,7 +815,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       commitmentIndex = leafIndex;
     } else {
       const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
-        u8aToHex(leaf)
+        toFixedHex(leaf)
       );
 
       tx?.next(TransactionState.ValidatingLeaves, undefined);
@@ -973,7 +977,9 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const srcVAnchor = await this.inner.getVAnchorInstance(
       ensureHex(payload.note.sourceIdentifyingData),
-      this.inner.publicClient
+      this.inner.publicClient,
+      tx,
+      true
     );
 
     const currentFungibleToken = srcVAnchor.getWebbToken();
