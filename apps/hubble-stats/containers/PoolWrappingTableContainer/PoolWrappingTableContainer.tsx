@@ -1,13 +1,19 @@
-import { type FC, Suspense } from 'react';
 import {
-  TableAndChartTabs,
   TabContent,
+  TableAndChartTabs,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { Suspense, cache, type FC } from 'react';
 
-import { PoolWrappingTable, ContainerSkeleton } from '../../components';
+import { ContainerSkeleton, PoolWrappingTable } from '../../components';
 import { PoolWrappingDataType } from '../../components/PoolWrappingTable/types';
-import { getPoolTwlTableData, getPoolWrappingFeesTableData } from '../../data';
+import {
+  getPoolTwlTableData as getTwl,
+  getPoolWrappingFeesTableData as getWrappingFees,
+} from '../../data';
+
+const getPoolTwlTableData = cache(getTwl);
+const getPoolWrappingFeesTableData = cache(getWrappingFees);
 
 const twlTab = 'TWL';
 const wrappingFeesTab = 'Wrapping Fees';

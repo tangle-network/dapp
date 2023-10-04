@@ -1,8 +1,11 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 
+import { cache } from 'react';
 import { PoolMetadataTable } from '../../components';
 import { PoolAttributeType } from '../../components/PoolMetadataTable/types';
-import { getPoolMetadataTableData } from '../../data';
+import { getPoolMetadataTableData as getData } from '../../data';
+
+const getPoolMetadataTableData = cache(getData);
 
 export default async function PoolMetadataTableContainer({
   poolAddress,

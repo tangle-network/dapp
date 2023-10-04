@@ -9,7 +9,14 @@ import {
   PoolTypeChip,
 } from '../../components';
 import { VANCHORS_MAP } from '../../constants';
-import { getPoolInfoCardTvlData, getPoolInfoCardDepositData } from '../../data';
+import {
+  getPoolInfoCardTvlData as getPoolTvl,
+  getPoolInfoCardDepositData as getPoolDeposit,
+} from '../../data';
+import { cache } from 'react';
+
+const getPoolInfoCardTvlData = cache(getPoolTvl);
+const getPoolInfoCardDepositData = cache(getPoolDeposit);
 
 export default function PoolInfoCardContainer({
   poolAddress,

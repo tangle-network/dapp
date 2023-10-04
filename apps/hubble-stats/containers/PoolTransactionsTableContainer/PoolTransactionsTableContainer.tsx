@@ -1,10 +1,12 @@
-import { type FC, Suspense } from 'react';
-import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
+import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { Suspense, cache, type FC } from 'react';
 
-import { PoolTransactionsTable, ContainerSkeleton } from '../../components';
-import { getPoolTransactionsTableData } from '../../data';
+import { ContainerSkeleton, PoolTransactionsTable } from '../../components';
+import { getPoolTransactionsTableData as getData } from '../../data';
 
 const pageSize = 10;
+
+const getPoolTransactionsTableData = cache(getData);
 
 const allTab = 'All Transactions' as const;
 const depositsTab = 'Deposits' as const;

@@ -1,17 +1,16 @@
 import { notFound } from 'next/navigation';
-
+import { Suspense } from 'react';
+import { VANCHORS_MAP } from '../../../constants';
 import {
   PoolInfoCardContainer,
-  PoolOverviewChartsContainer,
-  PoolWrappingChartsContainer,
-  PoolTransactionsTableContainer,
-  PoolOverviewTableContainer,
-  PoolWrappingTableContainer,
   PoolMetadataTableContainer,
+  PoolOverviewChartsContainer,
+  PoolOverviewTableContainer,
+  PoolTransactionsTableContainer,
+  PoolWrappingChartsContainer,
+  PoolWrappingTableContainer,
 } from '../../../containers';
-import { VANCHORS_MAP } from '../../../constants';
 import { getDateDataForPage } from '../../../utils';
-import { Suspense } from 'react';
 
 // revalidate every 5 seconds
 export const revalidate = 5;

@@ -1,17 +1,21 @@
-import { type FC, Suspense } from 'react';
 import {
-  TableAndChartTabs,
   TabContent,
+  TableAndChartTabs,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { Suspense, cache, type FC } from 'react';
 
-import { PoolOverviewTable, ContainerSkeleton } from '../../components';
+import { ContainerSkeleton, PoolOverviewTable } from '../../components';
 import { PoolOverviewDataType } from '../../components/PoolOverviewTable/types';
 import {
-  getPoolDepositTableData,
-  getPoolWithdrawalTableData,
-  getPoolRelayerEarningsTableData,
+  getPoolDepositTableData as getDeposit,
+  getPoolRelayerEarningsTableData as getRelayerEarnings,
+  getPoolWithdrawalTableData as getWithdrawal,
 } from '../../data';
+
+const getPoolDepositTableData = cache(getDeposit);
+const getPoolWithdrawalTableData = cache(getWithdrawal);
+const getPoolRelayerEarningsTableData = cache(getRelayerEarnings);
 
 const deposit24hTab = 'Deposits 24H' as const;
 const withdrawal24hTab = 'Withdrawals 24H' as const;

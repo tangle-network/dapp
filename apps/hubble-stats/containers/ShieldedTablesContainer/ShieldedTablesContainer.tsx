@@ -1,13 +1,16 @@
-import { type FC, Suspense } from 'react';
-import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
+import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { Suspense, cache, type FC } from 'react';
 
+import { ContainerSkeleton } from '../../components';
+import {
+  getShieldedAssetsTableData as getShieldedAssets,
+  getShieldedPoolsTableData as getShieldedPools,
+} from '../../data/shieldedTables';
 import ShieldedAssetsTableContainer from './ShieldedAssetsTableContainer';
 import ShieldedPoolsTableContainer from './ShieldedPoolsTableContainer';
-import {
-  getShieldedAssetsTableData,
-  getShieldedPoolsTableData,
-} from '../../data/shieldedTables';
-import { ContainerSkeleton } from '../../components';
+
+const getShieldedAssetsTableData = cache(getShieldedAssets);
+const getShieldedPoolsTableData = cache(getShieldedPools);
 
 const pageSize = 5;
 const assetsTableTab = 'Shielded Assets';
