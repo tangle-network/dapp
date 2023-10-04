@@ -70,4 +70,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chaged, Added and Fixed
 
-- Downgrade next to 13.4.19 to fix netlify/next runtime issue [#1724](https://github.com/webb-tools/webb-dapp/pull/1724).
+- Downgrade next to 13.4.19 to fix netlify/next runtime issue ([#1724](https://github.com/webb-tools/webb-dapp/pull/1724)).
+
+## [0.0.6] - 2023-10-04
+
+### Chaged, Added and Fixed
+
+- Hubble Stats Streaming Data ([#1694](https://github.com/webb-tools/webb-dapp/pull/1694)).
+- Improve Hubble Stats Timeout ([#1732](https://github.com/webb-tools/webb-dapp/pull/1732)).
