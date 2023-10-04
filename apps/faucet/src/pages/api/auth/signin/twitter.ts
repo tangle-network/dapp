@@ -3,6 +3,7 @@ import { TwitterApi } from 'twitter-api-v2';
 
 import serverConfig from '../../../../config/server';
 import handleTwitterApiError from '../../../../utils/handleTwitterApiError';
+import isTwitterRateLimitError from '../../../../utils/isTwitterRateLimitError';
 import parseTwitterLoginBody from '../../../../utils/parseTwitterLoginBody';
 
 async function POST(req: NextApiRequest, res: NextApiResponse) {
@@ -24,14 +25,14 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
             client: loggedClient,
           } = await client.loginWithOAuth2({ code, codeVerifier, redirectUri });
 
-          const { data: userObject } = await loggedClient.v2.me();
+          const twitterHandle = await getTwitterHandle(loggedClient);
 
           resolve(
             res.status(200).json({
               accessToken,
               expiresIn,
               refreshToken,
-              twitterHandle: userObject.username,
+              twitterHandle,
             })
           );
         } catch (error) {
@@ -55,5 +56,33 @@ export default function route(req: NextApiRequest, res: NextApiResponse) {
     return POST(req, res);
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });
+  }
+}
+
+async function getTwitterHandle(authorizedClient: TwitterApi) {
+  try {
+    const { data } = await authorizedClient.v2.me();
+    return data.username;
+  } catch (error) {
+    // Return a fallback value if the error is a rate limit error
+    if (isTwitterRateLimitError(error)) {
+      if (error.rateLimit) {
+        console.warn(
+          `You just hit the rate limit! Limit for this endpoint is ${error.rateLimit.limit} requests!`
+        );
+        const resetDate = new Date(error.rateLimit.reset * 1000); // Convert seconds to milliseconds
+        const resetLocaleTime = resetDate.toLocaleTimeString();
+        const resetLocaleDate = resetDate.toLocaleDateString();
+        console.log(
+          `Request counter will reset at timestamp ${resetLocaleDate} ${resetLocaleTime}.`
+        );
+        console.log(
+          `You have ${error.rateLimit.remaining} requests left before hitting the rate limit.`
+        );
+      }
+      return 'Unknown';
+    }
+
+    throw error;
   }
 }

@@ -193,7 +193,11 @@ export abstract class VAnchorActions<
   ): Promise<boolean>;
 
   // A function to retrieve notes from chain that are spendable by a keypair
-  abstract syncNotesForKeypair(target: string, owner: Keypair): Promise<Note[]>;
+  abstract syncNotesForKeypair(
+    target: string,
+    owner: Keypair,
+    abortSignal?: AbortSignal
+  ): Promise<Note[]>;
 
   // A function to prepare the parameters for a transaction
   abstract prepareTransaction(

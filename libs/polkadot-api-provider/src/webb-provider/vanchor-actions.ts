@@ -325,7 +325,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
   async syncNotesForKeypair(
     anchorAddress: string,
-    owner: Keypair
+    owner: Keypair,
+    abortSignal?: AbortSignal
   ): Promise<Note[]> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }

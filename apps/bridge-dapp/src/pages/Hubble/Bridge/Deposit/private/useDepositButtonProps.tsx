@@ -2,10 +2,10 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 import { formatEther, parseEther } from 'viem';
 import {
   AMOUNT_KEY,
@@ -17,9 +17,8 @@ import {
   TOKEN_KEY,
 } from '../../../../../constants';
 import DepositConfirmContainer from '../../../../../containers/DepositConfirmContainer/DepositConfirmContainer';
-import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
+import useConnectButtonProps from '../../../../../hooks/useConnectButtonProps';
 import handleTxError from '../../../../../utils/handleTxError';
-import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
 function useDepositButtonProps({
   balance,
@@ -28,20 +27,8 @@ function useDepositButtonProps({
   balance?: number;
   fungible?: CurrencyConfig;
 }) {
-  const {
-    activeApi,
-    activeWallet,
-    activeChain,
-    switchChain,
-    apiConfig,
-    noteManager,
-    loading,
-    isConnecting,
-  } = useWebContext();
-
-  const { toggleModal, isWalletConnected } = useConnectWallet();
-
-  const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
+  const { activeApi, apiConfig, noteManager, loading, isConnecting } =
+    useWebContext();
 
   const navigate = useNavigate();
 
@@ -68,6 +55,9 @@ function useDepositButtonProps({
     [SOURCE_CHAIN_KEY]: srcTypedId,
     [DEST_CHAIN_KEY]: destTypedId,
   } = query;
+
+  const { content: connectBtnCnt, handleConnect } =
+    useConnectButtonProps(srcTypedId);
 
   const validAmount = useMemo(() => {
     if (typeof amount !== 'string' || amount.length === 0) {
@@ -116,23 +106,6 @@ function useDepositButtonProps({
     return undefined;
   }, [amount, destTypedId, poolId, srcTypedId, tokenId]);
 
-  const conncnt = useMemo(() => {
-    if (!activeApi) {
-      return 'Connect Wallet';
-    }
-
-    if (!hasNoteAccount) {
-      return 'Create Note Account';
-    }
-
-    const activeId = activeApi.typedChainidSubject.getValue();
-    if (activeId !== srcTypedId) {
-      return 'Switch Chain';
-    }
-
-    return undefined;
-  }, [activeApi, hasNoteAccount, srcTypedId]);
-
   const amountCnt = useMemo(() => {
     if (typeof amount !== 'string' || BigInt(amount) === ZERO_BIG_INT) {
       return 'Enter amount';
@@ -144,6 +117,10 @@ function useDepositButtonProps({
   }, [amount, validAmount]);
 
   const children = useMemo(() => {
+    if (connectBtnCnt) {
+      return connectBtnCnt;
+    }
+
     if (inputCnt) {
       return inputCnt;
     }
@@ -152,27 +129,31 @@ function useDepositButtonProps({
       return amountCnt;
     }
 
-    if (conncnt) {
-      return conncnt;
-    }
-
     if (tokenId !== poolId) {
       return 'Wrap and Deposit';
     }
 
     return 'Deposit';
-  }, [amountCnt, conncnt, inputCnt, poolId, tokenId]);
+  }, [amountCnt, connectBtnCnt, inputCnt, poolId, tokenId]);
 
-  const isDisabled = useMemo(() => {
-    const allInputsFilled =
-      !!amount && !!tokenId && !!poolId && !!srcTypedId && !!destTypedId;
+  const isDisabled = useMemo(
+    () => {
+      if (connectBtnCnt) {
+        return false;
+      }
 
-    if (!allInputsFilled || !validAmount) {
-      return true;
-    }
+      const allInputsFilled =
+        !!amount && !!tokenId && !!poolId && !!srcTypedId && !!destTypedId;
 
-    return false;
-  }, [amount, destTypedId, poolId, srcTypedId, tokenId, validAmount]); // prettier-ignore
+      if (!allInputsFilled || !validAmount) {
+        return true;
+      }
+
+      return false;
+    },
+    // prettier-ignore
+    [amount, connectBtnCnt, destTypedId, poolId, srcTypedId, tokenId, validAmount]
+  );
 
   const isLoading = useMemo(() => {
     return loading || isConnecting || generatingNote;
@@ -186,39 +167,14 @@ function useDepositButtonProps({
     return 'Connecting...';
   }, [generatingNote]);
 
-  const handleSwitchChain = useCallback(
-    async () => {
-      const nextChain = chainsPopulated[Number(srcTypedId)];
-      if (!nextChain) {
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-      }
-
-      const isNextChainActive =
-        activeChain?.id === nextChain.id &&
-        activeChain?.chainType === nextChain.chainType;
-
-      if (!isWalletConnected || !isNextChainActive) {
-        if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-          await switchChain(nextChain, activeWallet);
-        } else {
-          toggleModal(true, nextChain);
-        }
-        return;
-      }
-
-      if (!hasNoteAccount) {
-        setOpenNoteAccountModal(true);
-      }
-    },
-    // prettier-ignore
-    [activeChain?.chainType, activeChain?.id, activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]
-  );
-
   const handleBtnClick = useCallback(
     async () => {
       try {
-        if (conncnt) {
-          return await handleSwitchChain();
+        if (connectBtnCnt && typeof srcTypedId === 'number') {
+          const connected = await handleConnect(srcTypedId);
+          if (!connected) {
+            return;
+          }
         }
 
         if (!noteManager || !activeApi) {
@@ -314,7 +270,7 @@ function useDepositButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, apiConfig, conncnt, destTypedId, fungible, handleSwitchChain, navigate, noteManager, poolId, srcTypedId, tokenId]
+    [activeApi, amount, apiConfig, connectBtnCnt, destTypedId, fungible, handleConnect, navigate, noteManager, poolId, srcTypedId, tokenId]
   );
 
   return {

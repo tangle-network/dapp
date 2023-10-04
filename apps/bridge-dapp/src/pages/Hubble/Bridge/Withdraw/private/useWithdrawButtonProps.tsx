@@ -1,7 +1,6 @@
 import { Currency } from '@webb-tools/abstract-api-provider/currency/currency';
 import utxoFromVAnchorNote from '@webb-tools/abstract-api-provider/utils/utxoFromVAnchorNote';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
@@ -9,7 +8,6 @@ import { NoteManager } from '@webb-tools/note-manager/note-manager';
 import {
   useBalancesFromNotes,
   useCurrencyBalance,
-  useNoteAccount,
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
@@ -25,7 +23,7 @@ import {
 } from '../../../../../constants';
 import WithdrawConfirmContainer from '../../../../../containers/WithdrawConfirmContainer/WithdrawConfirmContainer';
 import useChainsFromRoute from '../../../../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
+import useConnectButtonProps from '../../../../../hooks/useConnectButtonProps';
 import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 import handleTxError from '../../../../../utils/handleTxError';
 
@@ -48,15 +46,8 @@ function useWithdrawButtonProps({
 }: UseWithdrawButtonPropsArgs) {
   const navigate = useNavigate();
 
-  const {
-    activeApi,
-    activeChain,
-    isConnecting,
-    loading,
-    switchChain,
-    activeWallet,
-    noteManager,
-  } = useWebContext();
+  const { activeApi, activeChain, isConnecting, loading, noteManager } =
+    useWebContext();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -85,6 +76,9 @@ function useWithdrawButtonProps({
   const { fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
   const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
 
+  const { content: connectBtnCnt, handleConnect } =
+    useConnectButtonProps(srcTypedChainId);
+
   const fungibleAddress = useMemo(() => {
     if (typeof srcTypedChainId !== 'number' || !fungibleCfg) {
       return undefined;
@@ -100,10 +94,6 @@ function useWithdrawButtonProps({
     fungibleAddress,
     srcTypedChainId ?? undefined
   );
-
-  const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
-
-  const { isWalletConnected, toggleModal } = useConnectWallet();
 
   const isSucficientLiq = useMemo(() => {
     if (!wrappableCfg) {
@@ -149,9 +139,6 @@ function useWithdrawButtonProps({
 
     const amountFloat = parseFloat(amount);
     const balance = balances[fungibleCfg.id]?.[srcTypedChainId];
-    if (typeof balance !== 'bigint' && amountFloat > 0) {
-      return true;
-    }
 
     if (!balance || amountFloat <= 0) {
       return false;
@@ -163,23 +150,6 @@ function useWithdrawButtonProps({
 
     return parseEther(amount) <= balance && receivingAmount >= 0;
   }, [amount, balances, srcTypedChainId, fungibleCfg, receivingAmount]);
-
-  const connCnt = useMemo(() => {
-    if (!activeApi) {
-      return 'Connect Wallet';
-    }
-
-    if (!hasNoteAccount) {
-      return 'Create Note Account';
-    }
-
-    const activeId = activeApi.typedChainidSubject.getValue();
-    if (activeId !== srcTypedChainId) {
-      return 'Switch Chain';
-    }
-
-    return undefined;
-  }, [activeApi, srcTypedChainId, hasNoteAccount]);
 
   const inputCnt = useMemo(
     () => {
@@ -216,12 +186,12 @@ function useWithdrawButtonProps({
   );
 
   const btnText = useMemo(() => {
-    if (inputCnt) {
-      return inputCnt;
+    if (connectBtnCnt) {
+      return connectBtnCnt;
     }
 
-    if (connCnt) {
-      return connCnt;
+    if (inputCnt) {
+      return inputCnt;
     }
 
     if (fungibleCfg && fungibleCfg.id !== wrappableCfg?.id) {
@@ -229,10 +199,14 @@ function useWithdrawButtonProps({
     }
 
     return 'Withdraw';
-  }, [connCnt, fungibleCfg, inputCnt, wrappableCfg?.id]);
+  }, [connectBtnCnt, fungibleCfg, inputCnt, wrappableCfg?.id]);
 
   const isDisabled = useMemo(
     () => {
+      if (connectBtnCnt) {
+        return false;
+      }
+
       const allInputsFilled =
         !!amount && !!fungibleCfg && !!wrappableCfg && !!recipient;
 
@@ -241,10 +215,6 @@ function useWithdrawButtonProps({
 
       if (!userInputValid || isFeeLoading) {
         return true;
-      }
-
-      if (!isWalletConnected || !hasNoteAccount) {
-        return false;
       }
 
       const isChainActive =
@@ -258,7 +228,7 @@ function useWithdrawButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, fungibleCfg, hasNoteAccount, isFeeLoading, isSucficientLiq, isValidAmount, isWalletConnected, recipient, srcChainCfg, wrappableCfg]
+    [activeChain, amount, connectBtnCnt, fungibleCfg, isFeeLoading, isSucficientLiq, isValidAmount, recipient, srcChainCfg, wrappableCfg]
   );
 
   const isLoading = useMemo(() => {
@@ -273,43 +243,14 @@ function useWithdrawButtonProps({
       typeof WithdrawConfirmContainer
     > | null>(null);
 
-  const handleSwitchChain = useCallback(
-    async () => {
-      if (typeof srcTypedChainId !== 'number') {
-        return;
-      }
-
-      const nextChain = chainsPopulated[srcTypedChainId];
-      if (!nextChain) {
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-      }
-
-      const isNextChainActive =
-        activeChain?.id === nextChain.id &&
-        activeChain?.chainType === nextChain.chainType;
-
-      if (!isWalletConnected || !isNextChainActive) {
-        if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-          await switchChain(nextChain, activeWallet);
-        } else {
-          toggleModal(true, nextChain);
-        }
-        return;
-      }
-
-      if (!hasNoteAccount) {
-        setOpenNoteAccountModal(true);
-      }
-    },
-    // prettier-ignore
-    [activeChain?.chainType, activeChain?.id, activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedChainId, switchChain, toggleModal]
-  );
-
   const handleWithdrawBtnClick = useCallback(
     async () => {
       try {
-        if (connCnt) {
-          return await handleSwitchChain();
+        if (connectBtnCnt && typeof srcTypedChainId === 'number') {
+          const connected = await handleConnect(srcTypedChainId);
+          if (!connected) {
+            return;
+          }
         }
 
         // For type assertion
@@ -460,7 +401,7 @@ function useWithdrawButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, connCnt, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, srcChainCfg, srcTypedChainId, totalFeeWei, vAnchorApi, wrappableCfg]
+    [activeApi, amount, connectBtnCnt, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, srcChainCfg, srcTypedChainId, totalFeeWei, vAnchorApi, wrappableCfg]
   );
 
   return {

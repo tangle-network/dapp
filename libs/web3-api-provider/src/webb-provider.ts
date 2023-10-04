@@ -12,6 +12,7 @@ import {
   RelayChainMethods,
   Transaction,
   TransactionState,
+  FixturesStatus,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -444,17 +445,21 @@ export class WebbWeb3Provider
       typeof VAnchor__factory.abi,
       PublicClient
     >,
-    owner: Keypair
+    owner: Keypair,
+    abortSignal?: AbortSignal
   ): Promise<Note[]> {
     const evmId = await vAnchorContract.read.getChainId();
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
       +evmId.toString()
     );
+
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
     if (!tokenSymbol) {
       throw new Error('Currency not found'); // Development error
     }
+
+    abortSignal?.throwIfAborted();
 
     const anchorId = vAnchorContract.address;
 
@@ -474,13 +479,18 @@ export class WebbWeb3Provider
         );
 
         NoteManager.syncNotesProgress = progress;
-      }
+      },
+      abortSignal
     );
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
+    abortSignal?.throwIfAborted();
+
     const notes = Promise.all(
       utxos.map(async (utxo) => {
+        abortSignal?.throwIfAborted();
+
         console.log(utxo.serialize());
 
         const secrets = [
@@ -510,6 +520,8 @@ export class WebbWeb3Provider
 
     // Reset the progress
     NoteManager.syncNotesProgress = Number.NaN;
+
+    abortSignal?.throwIfAborted();
 
     return notes;
   }
@@ -708,17 +720,64 @@ export class WebbWeb3Provider
    * The the VAnchor instance for the the logic inside this class,
    * we not use this for signing transactions. In the future we will
    * refactor the VAnchor class itself not require a signer.
+   * @param address the address of the vAnchor contract
+   * @param provider the viem public client to use
+   * @param tx the transaction to update the transaction state
+   * @param useDummyFixtures whether to use dummy fixtures or not
    */
   async getVAnchorInstance(
     address: string,
-    provider: PublicClient
+    provider: PublicClient,
+    tx?: Transaction<NewNotesTxResult>,
+    useDummyFixtures?: boolean
   ): Promise<VAnchor> {
+    if (useDummyFixtures) {
+      const dummyFixtures = {
+        wasm: Buffer.from(''),
+        zkey: new Uint8Array(),
+        witnessCalculator: null,
+      } satisfies ZkComponents;
+
+      return VAnchor.connect(
+        ensureHex(address),
+        dummyFixtures,
+        dummyFixtures,
+        provider
+      );
+    }
+
     const maxEdges = await this.getVAnchorMaxEdges(address, provider);
+
+    const fixturesList = new Map<string, FixturesStatus>();
+
+    fixturesList.set('small fixtures', 'Waiting');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+
+    const smallZkFixtures = await this.getZkFixtures(maxEdges, true);
+
+    fixturesList.set('small fixtures', 'Done');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+
+    fixturesList.set('large fixtures', 'Waiting');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+
+    const largeZkFixtures = await this.getZkFixtures(maxEdges, false);
+
+    fixturesList.set('large fixtures', 'Done');
+    tx?.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
 
     return VAnchor.connect(
       ensureHex(address),
-      await this.getZkFixtures(maxEdges, true),
-      await this.getZkFixtures(maxEdges, false),
+      smallZkFixtures,
+      largeZkFixtures,
       provider
     );
   }
@@ -743,7 +802,8 @@ export class WebbWeb3Provider
     >,
     fromBlock: bigint,
     toBlock: bigint,
-    onCurrentProcessingBlock?: (block: bigint) => void
+    onCurrentProcessingBlock?: (block: bigint) => void,
+    abortSignal?: AbortSignal
   ) {
     const isTheSameBlock = fromBlock === toBlock;
 
@@ -756,8 +816,9 @@ export class WebbWeb3Provider
     const maxBlockStep =
       maxBlockStepCfg[typedChainId] ?? maxBlockStepCfg.default;
 
+    // TODO: use the abi from the contract
     const event = parseAbiItem(
-      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
+      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)'
     );
 
     const commonGetLogsProps = {
@@ -766,16 +827,22 @@ export class WebbWeb3Provider
       strict: true,
     } as const;
 
+    abortSignal?.throwIfAborted();
+
     if (isTheSameBlock || toBlock - fromBlock <= maxBlockStep) {
       onCurrentProcessingBlock?.(fromBlock);
       // Use getLogs instead of createEventFilter.NewCommitment because
       // createEventFilter.NewCommitment does not work without wss connection
-      return retryPromise(() =>
-        publicClient.getLogs({
-          ...commonGetLogsProps,
-          fromBlock,
-          toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
-        })
+      return retryPromise(
+        () =>
+          publicClient.getLogs({
+            ...commonGetLogsProps,
+            fromBlock,
+            toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
+          }),
+        undefined,
+        undefined,
+        abortSignal
       );
     }
 
@@ -785,14 +852,24 @@ export class WebbWeb3Provider
     let currentBlock = fromBlock;
 
     while (currentBlock < toBlock) {
+      console.log(
+        `Fetching logs from block ${currentBlock} to block ${
+          currentBlock + BigInt(maxBlockStep) - BigInt(1)
+        }`
+      );
+
       onCurrentProcessingBlock?.(currentBlock);
 
-      const logsChunk = await retryPromise(() =>
-        publicClient.getLogs({
-          ...commonGetLogsProps,
-          fromBlock: currentBlock,
-          toBlock: currentBlock + BigInt(maxBlockStep) - BigInt(1),
-        })
+      const logsChunk = await retryPromise(
+        () =>
+          publicClient.getLogs({
+            ...commonGetLogsProps,
+            fromBlock: currentBlock,
+            toBlock: currentBlock + BigInt(maxBlockStep) - BigInt(1),
+          }),
+        undefined,
+        undefined,
+        abortSignal
       );
 
       logs.push(...logsChunk);
@@ -855,7 +932,8 @@ export class WebbWeb3Provider
       fromBlock: bigint,
       toBlock: bigint,
       currentBlock: bigint
-    ) => void
+    ) => void,
+    abortSignal?: AbortSignal
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
     const publicClient = getPublicClient({
@@ -870,13 +948,16 @@ export class WebbWeb3Provider
       startingBlock,
       latestBlock,
       (currentBlock) =>
-        onBlockProcessed?.(startingBlock, latestBlock, currentBlock)
+        onBlockProcessed?.(startingBlock, latestBlock, currentBlock),
+      abortSignal
     );
 
     const parsedLogs = logs.map((log) => ({
       encryptedOutput: log.args.encryptedOutput,
       leafIndex: log.args.leafIndex,
     }));
+
+    abortSignal?.throwIfAborted();
 
     const utxosWithNull = await Promise.all(
       parsedLogs.map(({ encryptedOutput, leafIndex }) =>
@@ -892,6 +973,8 @@ export class WebbWeb3Provider
       filteredUtxos,
       vAnchorContract.address
     );
+
+    abortSignal?.throwIfAborted();
 
     return spendableUtxos;
   }

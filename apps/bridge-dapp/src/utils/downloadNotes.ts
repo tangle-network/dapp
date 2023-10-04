@@ -1,5 +1,5 @@
 import { downloadString } from '@webb-tools/browser-utils';
-import { Note } from '@webb-tools/sdk-core';
+import type { Note } from '@webb-tools/sdk-core';
 
 /**
  * Convert notes to strings and download them as json file
