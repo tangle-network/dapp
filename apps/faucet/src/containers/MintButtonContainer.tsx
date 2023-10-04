@@ -91,7 +91,8 @@ const mintTokens = async (
     faucet: {
       onlyNativeToken,
       typedChainId: {
-        [typedChainIdReq.type]: typedChainIdReq.id,
+        id: typedChainIdReq.id,
+        type: typedChainIdReq.type,
       },
       walletAddress: {
         type: recepientAddressType,
