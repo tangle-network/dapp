@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-
 import { Suspense } from 'react';
 import { VANCHORS_MAP } from '../../../constants';
 import {
@@ -12,7 +11,6 @@ import {
   PoolWrappingTableContainer,
 } from '../../../containers';
 import { getDateDataForPage } from '../../../utils';
-import { Suspense } from 'react';
 
 // revalidate every 5 seconds
 export const revalidate = 5;
