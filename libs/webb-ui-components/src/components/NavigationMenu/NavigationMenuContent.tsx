@@ -6,7 +6,7 @@ import {
   InformationLine,
   TangleIcon,
 } from '@webb-tools/icons';
-import { forwardRef } from 'react';
+import { Fragment, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { DropdownBody } from '../Dropdown';
@@ -30,6 +30,7 @@ export const NavigationMenuContent = forwardRef<
       onHelpCenterClick,
       onRequestFeaturesClick,
       onTestnetClick,
+      extraMenuItems,
       version,
       ...props
     },
@@ -76,6 +77,16 @@ export const NavigationMenuContent = forwardRef<
           About
         </MenuItem>
 
+        <NavigationMenuDivider />
+
+        {extraMenuItems && (
+          <>
+            {extraMenuItems.map((item, idx) => (
+              <Fragment key={idx}>{item}</Fragment>
+            ))}
+          </>
+        )}
+
         {/** Bottom version */}
         {version && (
           <div className="px-4 pt-1.5 pb-2">
@@ -94,5 +105,5 @@ export const NavigationMenuContent = forwardRef<
 );
 
 const NavigationMenuDivider = () => {
-  return <div className="border-b border-mono-80 dark:border-mono-120 my-1" />;
+  return <div className="my-1 border-b border-mono-80 dark:border-mono-120" />;
 };

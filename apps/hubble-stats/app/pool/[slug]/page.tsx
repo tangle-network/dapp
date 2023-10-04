@@ -12,6 +12,7 @@ import {
   PoolWrappingTableContainer,
 } from '../../../containers';
 import { getDateDataForPage } from '../../../utils';
+import { Suspense } from 'react';
 
 // revalidate every 5 seconds
 export const revalidate = 5;

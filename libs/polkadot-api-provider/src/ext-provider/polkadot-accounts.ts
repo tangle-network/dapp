@@ -61,7 +61,5 @@ export class PolkadotAccounts extends AccountsAdapter<
 
   setActiveAccount(account: PolkadotAccount): PromiseOrT<void> {
     this.activeAccount = account;
-
-    return undefined;
   }
 }

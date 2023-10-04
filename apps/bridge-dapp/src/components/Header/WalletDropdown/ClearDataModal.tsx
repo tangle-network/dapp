@@ -10,7 +10,7 @@ import {
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useState } from 'react';
 
-export const ClearDataModal: FC<{
+const ClearDataModal: FC<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onClearData: () => void;
@@ -83,3 +83,5 @@ export const ClearDataModal: FC<{
     </Modal>
   );
 };
+
+export default ClearDataModal;

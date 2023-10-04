@@ -138,6 +138,8 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
         return;
       }
 
+      const abortController = NoteManager.abortController;
+
       try {
         // Syncing notes
         noteManager.isSyncingNote = true;
@@ -147,7 +149,8 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
             activeApi.state.activeBridge.targets[
               calculateTypedChainId(activeChain.chainType, activeChain.id)
             ],
-            noteManager.getKeypair()
+            noteManager.getKeypair(),
+            abortController.signal
           );
 
         const notes = await Promise.all(
@@ -176,34 +179,43 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
 
         notificationApi.addToQueue({
           variant: 'success',
-          message: 'Note(s) successfully added to account',
-          secondaryMessage: (
-            <Typography variant="body1">
-              <Button
-                variant="link"
-                as="span"
-                className="inline-block"
-                onClick={() => onNewNotes?.(notes)}
-              >
-                {notes.length} new note(s){' '}
-              </Button>{' '}
-              added to your account
-            </Typography>
-          ),
+          message:
+            notes.length > 0
+              ? `Note${
+                  notes.length > 1 ? 's' : ''
+                } successfully added to account`
+              : 'Successfully synced notes',
+          secondaryMessage:
+            notes.length > 0 ? (
+              <Typography variant="body1">
+                <Button
+                  variant="link"
+                  as="span"
+                  className="inline-block"
+                  onClick={() => onNewNotes?.(notes)}
+                >
+                  {notes.length} new note(s){' '}
+                </Button>{' '}
+                added to your account
+              </Typography>
+            ) : undefined,
         });
       } catch (error) {
-        let msg = 'Something went wrong while syncing notes';
+        // If the abort controller is not aborted, then we will show the error
+        if (!abortController.signal.aborted) {
+          let msg = 'Something went wrong while syncing notes';
 
-        if (isViemError(error)) {
-          msg = error.shortMessage;
+          if (isViemError(error)) {
+            msg = error.shortMessage;
+          }
+
+          console.error('Error while syncing notes', error);
+          console.dir(error);
+          notificationApi.addToQueue({
+            variant: 'error',
+            message: msg,
+          });
         }
-
-        console.error('Error while syncing notes', error);
-        console.dir(error);
-        notificationApi.addToQueue({
-          variant: 'error',
-          message: msg,
-        });
       } finally {
         noteManager.isSyncingNote = false;
       }
