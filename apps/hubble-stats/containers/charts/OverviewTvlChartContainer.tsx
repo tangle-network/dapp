@@ -8,12 +8,10 @@ const getOverviewTvlChartData = cache(getData);
 export default async function OverviewTvlChartContainer(props: ChartProps) {
   const { numDatesFromStart, startingEpoch } = props;
 
-  console.time('getOverviewTvlChartData');
   const { tvlData, currentTvl } = await getOverviewTvlChartData(
     startingEpoch,
     numDatesFromStart
   );
-  console.timeEnd('getOverviewTvlChartData');
 
   return (
     <AreaChartContainerClient

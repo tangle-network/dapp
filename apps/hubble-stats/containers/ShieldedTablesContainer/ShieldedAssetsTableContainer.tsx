@@ -8,9 +8,7 @@ export default async function ShieldedAssetsTableContainer({
   pageSize: number;
   dataFetcher: () => Promise<ShieldedAssetType[]>;
 }) {
-  console.time('ShieldedAssetsTableContainer');
   const data = await dataFetcher();
-  console.timeEnd('ShieldedAssetsTableContainer');
 
   return <ShieldedAssetsTable data={data} pageSize={pageSize} />;
 }

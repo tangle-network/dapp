@@ -22,7 +22,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
       </div>
 
       <Suspense fallback={<SkeletonLoader size="lg" />}>
-        <KeyMetricItemValue {...restProps} title={title} />
+        <KeyMetricItemValue {...restProps} />
       </Suspense>
     </div>
   );
@@ -30,12 +30,12 @@ const KeyMetricItem: FC<MetricItemProps> = ({
 
 export default KeyMetricItem;
 
-const KeyMetricItemValue = async (props: Omit<MetricItemProps, 'tooltip'>) => {
-  const { dataFetcher, prefix, suffix, title } = props;
+const KeyMetricItemValue = async (
+  props: Omit<MetricItemProps, 'title' | 'tooltip'>
+) => {
+  const { dataFetcher, prefix, suffix } = props;
 
-  console.time(title);
   const { value, changeRate } = await dataFetcher();
-  console.timeEnd(title);
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
