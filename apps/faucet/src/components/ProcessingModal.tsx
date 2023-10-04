@@ -135,10 +135,7 @@ const ProcessingModal = () => {
               : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
           </Typography>
 
-          <MintTxLinkOrHash
-            isSuccess={isSuccess}
-            mintTokenResult={mintTokenRes}
-          />
+          <MintTxLinkOrHash mintTokenResult={mintTokenRes} />
         </div>
 
         {/* Hide the footer while transaction is in-progress */}
@@ -196,9 +193,8 @@ export default ProcessingModal;
 
 const MintTxLinkOrHash = (props: {
   mintTokenResult: MintTokenResult | null;
-  isSuccess: boolean;
 }) => {
-  const { isSuccess, mintTokenResult } = props;
+  const { mintTokenResult } = props;
 
   const txLinkOrTxHash = useMemo(() => {
     if (!mintTokenResult) return '';
@@ -234,13 +230,14 @@ const MintTxLinkOrHash = (props: {
     }
   }, [mintTokenResult]);
 
+  if (!txLinkOrTxHash) return null;
+
   if (isValidUrl(txLinkOrTxHash)) {
     return (
       <Button
         {...sharedExternalLinkProps}
         href={txLinkOrTxHash}
         isDisabled={!txLinkOrTxHash}
-        className={cx({ hidden: !isSuccess })}
         variant="link"
       >
         View on Explorer
