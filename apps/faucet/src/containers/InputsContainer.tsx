@@ -36,10 +36,8 @@ const InputsContainer = () => {
           <RecipientAddressInput />
         </InputWrapper>
 
-        {/** Token Address */}
-        <InputWrapper align="horizontal" title="Token Contract Address:">
-          <TokenAddressLink />
-        </InputWrapper>
+        {/** Token info */}
+        <TokenInfo />
 
         {/** Amount */}
         <InputWrapper title="Amount:" align="horizontal">
@@ -114,7 +112,7 @@ const AmountChip = () => {
   );
 };
 
-const TokenAddressLink = () => {
+const TokenInfo = () => {
   const { inputValues$ } = useFaucetContext();
 
   const tokenAddress = useObservableState<string | undefined>(
@@ -125,6 +123,18 @@ const TokenAddressLink = () => {
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );
 
+  const tokenSymbol = useObservableState(
+    inputValues$.pipe(map((inputValue) => inputValue.token))
+  );
+
+  const isNative = useMemo(() => {
+    if (!tokenAddress) {
+      return false;
+    }
+
+    return BigInt(tokenAddress) === ZERO_BIG_INT;
+  }, [tokenAddress]);
+
   // Calculate the token explorer link
   const tokenExplorerLink = useMemo(() => {
     if (!tokenAddress || !typedChainId) return '';
@@ -132,26 +142,33 @@ const TokenAddressLink = () => {
     return `${chainsConfig[typedChainId]?.blockExplorers?.default.url}/token/${tokenAddress}`;
   }, [tokenAddress, typedChainId]);
 
-  return tokenAddress && BigInt(tokenAddress) !== ZERO_BIG_INT ? (
-    <Button
-      variant="link"
-      size="sm"
-      href={tokenExplorerLink}
-      target="_blank"
-      className="normal-case"
-      rightIcon={<ExternalLinkLine className="!fill-current" />}
+  return (
+    <InputWrapper
+      align="horizontal"
+      title={isNative ? 'Native token:' : 'Token Contract Address:'}
     >
-      <Typography
-        component="span"
-        variant="body2"
-        className="font-bold text-inherit"
-      >
-        {shortenHex(tokenAddress)}
-      </Typography>
-    </Button>
-  ) : (
-    <Typography variant="mkt-body2" className="font-black">
-      --
-    </Typography>
+      {!tokenAddress || isNative ? (
+        <Typography variant="mkt-body2" className="font-black">
+          {tokenSymbol ?? '--'}
+        </Typography>
+      ) : (
+        <Button
+          variant="link"
+          size="sm"
+          href={tokenExplorerLink}
+          target="_blank"
+          className="normal-case"
+          rightIcon={<ExternalLinkLine className="!fill-current" />}
+        >
+          <Typography
+            component="span"
+            variant="body2"
+            className="font-bold text-inherit"
+          >
+            {shortenHex(tokenAddress)}
+          </Typography>
+        </Button>
+      )}
+    </InputWrapper>
   );
 };
