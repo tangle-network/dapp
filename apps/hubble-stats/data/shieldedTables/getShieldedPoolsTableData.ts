@@ -12,13 +12,15 @@ const getPoolInfoFromVAnchor = async (
   // plus one for fungible token
   const tokenNum = vAnchor.composition.length + 1;
 
-  const deposits24h = await getDepositInTimeRangeByVAnchor(
-    vAnchorAddress,
-    epochNow - EPOCH_DAY_INTERVAL,
-    epochNow,
-    vAnchor.supportedSubgraphs
-  );
-  const tvl = await getTvlByVAnchor(vAnchorAddress, vAnchor.supportedSubgraphs);
+  const [deposits24h, tvl] = await Promise.all([
+    getDepositInTimeRangeByVAnchor(
+      vAnchorAddress,
+      epochNow - EPOCH_DAY_INTERVAL,
+      epochNow,
+      vAnchor.supportedSubgraphs
+    ),
+    getTvlByVAnchor(vAnchorAddress, vAnchor.supportedSubgraphs),
+  ]);
 
   return {
     address: vAnchorAddress,
