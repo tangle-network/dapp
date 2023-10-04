@@ -1,7 +1,5 @@
 import { Transition } from '@headlessui/react';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { RecipientInput } from '@webb-tools/webb-ui-components/components/BridgeInputs/RecipientInput';
@@ -20,6 +18,7 @@ import { map } from 'rxjs';
 import { useFaucetContext } from '../provider';
 import useStore, { StoreKey } from '../store';
 import type { AddressType } from '../types';
+import isAllowSubstrateAddress from '../utils/isAllowSubstrateAddress';
 
 const RecipientAddressInput = () => {
   const { inputValues$ } = useFaucetContext();
@@ -70,6 +69,7 @@ const RecipientAddressInput = () => {
       const inputValues = inputValues$.getValue();
       inputValues$.next({
         ...inputValues,
+        isValidRecipientAddress: isValidAddr,
         recepient: address,
         recepientAddressType: addrType,
       });
@@ -122,23 +122,6 @@ const RecipientAddressInput = () => {
 };
 
 export default RecipientAddressInput;
-
-const isAllowSubstrateAddress = (
-  typedChainId: number,
-  tokenAddress?: string
-) => {
-  let isNative = false;
-
-  try {
-    if (tokenAddress) {
-      isNative = BigInt(tokenAddress) === ZERO_BIG_INT;
-    }
-  } catch {
-    // Ignore error
-  }
-
-  return typedChainId === PresetTypedChainId.TangleTestnet && isNative;
-};
 
 const getInputPlaceholder = (typedChainId?: number, tokenAddress?: string) => {
   if (typeof typedChainId !== 'number') {

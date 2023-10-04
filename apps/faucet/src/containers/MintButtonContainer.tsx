@@ -1,5 +1,6 @@
 import { LoggerService } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { SubstrateChainId } from '@webb-tools/dapp-types/SubstrateChainId';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { Button } from '@webb-tools/webb-ui-components';
 import { err, ok, Result } from 'neverthrow';
@@ -16,10 +17,12 @@ import {
 } from '../provider';
 import useStore, { StoreKey } from '../store';
 import {
+  ChainType,
   MintTokenBody,
   MintTokenErrorCodes,
   TooManyClaimResponse,
 } from '../types';
+import isAllowSubstrateAddress from '../utils/isAllowSubstrateAddress';
 import isTooManyClaimResponse from '../utils/isTooManyClaimResponse';
 import safeParseJSON from '../utils/safeParseJSON';
 
@@ -27,15 +30,17 @@ const logger = LoggerService.get('MintButtonContainer');
 
 const mintTokens = async (
   accessToken: string,
-  {
+  inputValues: InputValuesType,
+  config: FaucetContextType['config'],
+  abortSignal?: AbortSignal
+): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
+  const {
     chain: typedChainId,
     recepient,
     recepientAddressType,
     contractAddress,
-  }: InputValuesType,
-  config: FaucetContextType['config'],
-  abortSignal?: AbortSignal
-): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
+  } = inputValues;
+
   if (!contractAddress) {
     return err(FaucetError.from(FaucetErrorCode.MISSING_CONTRACT_ADDRESS));
   }
@@ -59,13 +64,34 @@ const mintTokens = async (
     'Content-Type': 'application/x-www-form-urlencoded',
   } as const satisfies HeadersInit;
 
+  type T = {
+    [chainType in ChainType]: {
+      type: chainType;
+      id: number;
+    };
+  }[ChainType];
+
+  const useSubstrate =
+    isAllowSubstrateAddress(typedChainId, contractAddress) &&
+    recepientAddressType === 'substrate';
+
+  const typedChainIdReq: T = useSubstrate
+    ? {
+        id: SubstrateChainId.TangleStandaloneTestnet,
+        type: 'Substrate',
+      }
+    : {
+        id: chain.chainId,
+        type: chain.type,
+      };
+
   const onlyNativeToken = BigInt(contractAddress) === ZERO_BIG_INT;
 
   const body = {
     faucet: {
       onlyNativeToken,
       typedChainId: {
-        [chain.type]: chain.chainId,
+        [typedChainIdReq.type]: typedChainIdReq.id,
       },
       walletAddress: {
         type: recepientAddressType,
@@ -161,41 +187,44 @@ const MintButtonContainer = () => {
     );
   }, [inputValues.recepient, inputValues?.recepientAddressType]);
 
-  const isDisabled = useMemo(() => {
-    return (
-      !inputValues?.token ||
-      !inputValues?.chain ||
-      !inputValues?.contractAddress ||
-      !isValidRecipient ||
-      !twitterHandle
-    );
-  }, [
-    inputValues?.chain,
-    inputValues?.contractAddress,
-    inputValues?.token,
-    isValidRecipient,
-    twitterHandle,
-  ]);
+  const isDisabled = useMemo(
+    () => {
+      return (
+        !inputValues?.token ||
+        !inputValues?.chain ||
+        !inputValues?.contractAddress ||
+        !isValidRecipient ||
+        !twitterHandle ||
+        !inputValues.isValidRecipientAddress
+      );
+    },
+    // prettier-ignore
+    [inputValues?.chain, inputValues?.contractAddress, inputValues.isValidRecipientAddress, inputValues?.token, isValidRecipient, twitterHandle]
+  );
 
   // Mocked implementation of minting tokens
-  const handleMintTokens = useCallback(async () => {
-    if (!accessToken) {
-      return;
-    }
+  const handleMintTokens = useCallback(
+    async () => {
+      if (!accessToken) {
+        return;
+      }
 
       isMintingModalOpen$.next(true);
       const result = await mintTokens(accessToken, inputValues, config);
       result.match(
         (res) => {
           mintTokenResult$.next(res);
-          isMintingSuccess$.next(true)
+          isMintingSuccess$.next(true);
         },
         (err) => {
           logger.error('Minting tokens failed', err.message);
           mintTokenResult$.next(err);
-        },
-      )
-  }, [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$]); // prettier-ignore
+        }
+      );
+    },
+    // prettier-ignore
+    [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$]
+  );
 
   return (
     <>
