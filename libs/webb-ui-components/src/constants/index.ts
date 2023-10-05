@@ -71,6 +71,9 @@ export const WEBB_FAUCET_URL = 'https://faucet.tangle.tools';
 export const GITHUB_REQUEST_FEATURE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=';
 
+export const GITHUB_BUG_REPORT_URL =
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=bug_report.md&title=%5BBUG%5D+';
+
 export const POLKADOT_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-archive.tangle.tools#/explorer/query';
 

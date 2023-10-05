@@ -69,6 +69,8 @@ export enum WebbErrorCodes {
   SwitchChainFailed,
   // Failed to send the transaction to the relayer
   FailedToSendTx,
+  // Failed to disconnect the wallet
+  FailedToDisconnect,
   // Key pair not found
   KeyPairNotFound,
   // Notes are not ready
@@ -328,6 +330,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Invalid amount',
+        };
+
+      case WebbErrorCodes.FailedToDisconnect:
+        return {
+          code,
+          message: 'Failed to disconnect',
         };
 
       default:

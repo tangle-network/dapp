@@ -2,6 +2,7 @@ import { ComponentProps } from 'react';
 
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem';
+import type { MenuItemProps } from '../MenuItem/types';
 
 export interface NavigationMenuProps extends ComponentProps<typeof Dropdown> {}
 
@@ -41,6 +42,11 @@ export interface NavigationMenuContentProps
    * The callback when user hits docs menu item
    */
   onDocsClick?: ComponentProps<typeof MenuItem>['onClick'];
+
+  /**
+   * The extra menu items to be rendered
+   */
+  extraMenuItems?: Array<React.ReactElement<MenuItemProps, typeof MenuItem>>;
 
   /**
    * The app version
