@@ -318,7 +318,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
             )}
           >
             <Typography variant="h4" fw="bold" className="block">
-              {keyDetail.keyGenThreshold}
+              {keyDetail.keyGenThreshold ?? '--'}
             </Typography>
             <Typography variant="body1" fw="bold" className="block">
               Keygen Threshold
