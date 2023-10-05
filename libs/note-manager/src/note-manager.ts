@@ -112,7 +112,7 @@ export class NoteManager {
     mergeWith(
       notesRecord,
       multiAccNotesRecord,
-      (objectValue: Array<Note>, sourceValue: Array<Note>) => {
+      (objectValue: Array<Note> = [], sourceValue: Array<Note> = []) => {
         return uniqBy(objectValue.concat(sourceValue), (note) =>
           note.serialize()
         );
