@@ -10,7 +10,7 @@ function populateBlockExplorerStub(connString: string): string {
     `?${params.toString()}`,
     'https://polkadot.js.org/apps/'
   ).toString();
-  return url + '#';
+  return url;
 }
 
 // All substrate chains temporary use in `development` environment now

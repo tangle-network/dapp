@@ -95,3 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.10] - 2023-10-04
 
 - Substrate Support on Faucet [#1735](https://github.com/webb-tools/webb-dapp/pull/1735)
+
+## [0.0.11] - 2023-10-05
+
+- Hotfix the faucet respone object.

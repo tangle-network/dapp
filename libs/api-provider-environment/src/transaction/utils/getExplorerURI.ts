@@ -11,7 +11,7 @@ export const getExplorerURI = (
       return new URL(`${variant}/${addOrTxHash}`, explorerUri);
 
     case 'polkadot': {
-      const path = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
+      const path = variant === 'tx' ? `#/explorer/query/${addOrTxHash}` : '';
       return new URL(`${path}`, explorerUri);
     }
 
