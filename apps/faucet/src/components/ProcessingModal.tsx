@@ -1,3 +1,4 @@
+import getExplorerURI from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { MetaMaskIcon, WalletLineIcon } from '@webb-tools/icons';
@@ -201,32 +202,32 @@ const MintTxLinkOrHash = (props: {
 
     if (FaucetError.isFaucetError(mintTokenResult)) return '';
 
-    const { transactionHash, typedChainId, isSubstrate } =
+    const { hash, typedChainId, isSubstrate } =
       parseMintResult(mintTokenResult);
 
     const chain = chainsConfig[typedChainId];
 
     if (!chain) {
-      alert(`Typed chain id ${typedChainId} is not in the chains config`);
-      return transactionHash;
+      console.warn(
+        `Typed chain id ${typedChainId} is not in the chains config`
+      );
+      return hash;
     }
 
-    if (isSubstrate) {
-      return transactionHash;
-    }
-
-    if (!chain.blockExplorers || !transactionHash) {
-      return transactionHash;
+    if (!chain.blockExplorers || !hash) {
+      return hash;
     }
 
     try {
-      return new URL(
-        `/tx/${transactionHash}`,
-        chain.blockExplorers.default.url
+      return getExplorerURI(
+        chain.blockExplorers.default.url,
+        hash,
+        'tx',
+        isSubstrate ? 'polkadot' : 'web3'
       ).toString();
     } catch (error) {
       console.error(error);
-      return transactionHash;
+      return hash;
     }
   }, [mintTokenResult]);
 
@@ -276,31 +277,29 @@ const getSuccesMessage = () => {
   );
 };
 
-const parseMintResult = (result: MintTokenBody) => {
-  const {
-    tx_result: { Evm: txReceipt, Substrate: txHash },
-    typed_chain_id: { Evm: evmChainId, Substrate: substrateChainId },
-  } = result;
+const parseMintResult = (
+  result: MintTokenBody
+): {
+  isSubstrate: boolean;
+  hash: string;
+  typedChainId: number;
+} => {
+  const { typed_chain_id, tx_result } = result;
 
-  let typedChainId: number;
-  let transactionHash: string;
-  let isSubstrate = false;
-
-  if (substrateChainId) {
-    typedChainId = calculateTypedChainId(ChainType.Substrate, substrateChainId);
-    transactionHash = txHash ?? '';
-    isSubstrate = true;
-  } else if (evmChainId) {
-    typedChainId = calculateTypedChainId(ChainType.EVM, evmChainId);
-    transactionHash = txReceipt?.transactionHash ?? '';
-  } else {
-    typedChainId = -1;
-    transactionHash = '';
+  if ('Substrate' in tx_result) {
+    return {
+      hash: tx_result.Substrate.block_hash,
+      isSubstrate: true,
+      typedChainId: calculateTypedChainId(
+        ChainType.Substrate,
+        typed_chain_id.id
+      ),
+    };
   }
 
   return {
-    isSubstrate,
-    transactionHash,
-    typedChainId,
+    hash: tx_result.Evm.transactionHash,
+    isSubstrate: false,
+    typedChainId: calculateTypedChainId(ChainType.EVM, typed_chain_id.id),
   };
 };

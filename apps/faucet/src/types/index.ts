@@ -155,7 +155,8 @@ export type MintTokenBody = {
    * The typed chain id
    */
   typed_chain_id: {
-    [type in ChainType]: number;
+    id: number;
+    type: ChainType;
   };
 
   /**
@@ -171,10 +172,16 @@ export type MintTokenBody = {
   /**
    * The transaction receipt
    */
-  tx_result: {
-    Evm?: TransactionReceipt;
-    Substrate?: string;
-  };
+  tx_result:
+    | {
+        Evm: TransactionReceipt;
+      }
+    | {
+        Substrate: {
+          block_hash: string;
+          tx_hash: string;
+        };
+      };
 };
 
 export type TooManyClaimResponse = {
