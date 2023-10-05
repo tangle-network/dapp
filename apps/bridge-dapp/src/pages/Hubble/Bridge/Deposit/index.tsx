@@ -113,6 +113,10 @@ const Deposit = () => {
                 placeHolder: 'Select pool',
                 onClick: () => navigate(SELECT_SHIELDED_POOL_PATH),
               }}
+              customAmountProps={{
+                isDisabled: true,
+                className: 'text-mono-200 dark:text-mono-0 cursor-not-allowed',
+              }}
             />
           </TransactionInputCard.Root>
         </div>

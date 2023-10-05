@@ -280,7 +280,12 @@ const Withdraw = () => {
                 onClick: () => handleTokenClick(),
               }}
               fixedAmountProps={{
+                isDisabled: true,
                 step: 0.01,
+              }}
+              customAmountProps={{
+                isDisabled: true,
+                className: 'text-mono-200 dark:text-mono-0 cursor-not-allowed',
               }}
             />
           </TransactionInputCard.Root>
