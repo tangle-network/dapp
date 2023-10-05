@@ -407,24 +407,21 @@ export class NoteManager {
       const pubKey = this.keypair.getPubKey();
       await this.multiAccountNoteStorage.set(pubKey, {});
 
-      const promises = [...this.notesMap.entries()].map(
-        async ([resourceId, notes]) => {
+      const encryptedNotesRecord = Array.from(this.notesMap.entries()).reduce(
+        (prev, [resourceId, notes]) => {
           const encNoteStrings = notes.map((note) => {
             const noteStr = note.serialize();
             return this.keypair.encrypt(Buffer.from(noteStr));
           });
 
-          const storedNoteRecord = await this.multiAccountNoteStorage.get(
-            pubKey
-          );
-          await this.multiAccountNoteStorage.set(pubKey, {
-            ...storedNoteRecord,
-            [resourceId]: encNoteStrings,
-          });
-        }
+          prev[resourceId] = encNoteStrings;
+
+          return prev;
+        },
+        {} as MultiAccountNoteStorage[string]
       );
 
-      await Promise.all(promises);
+      await this.multiAccountNoteStorage.set(pubKey, encryptedNotesRecord);
     } else {
       resetMultiAccountNoteStorage(this.keypair.getPubKey());
     }
