@@ -27,6 +27,8 @@ export interface SidebarProps extends SideBarLogoProps {
   footer: SideBarFooterType;
   className?: string;
   overrideContentProps?: DialogContentProps;
+  isExpandedAtDefault?: boolean;
+  onSideBarToggle?: () => void;
 }
 
 export interface SideBarItemsProps {

@@ -31,11 +31,13 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
   (
     {
       Logo,
-      ClosedLogo = DefaulClosedIcon,
+      ClosedLogo = DefaultClosedIcon,
       logoLink,
       items,
       footer,
       className,
+      isExpandedAtDefault = true,
+      onSideBarToggle,
       ...props
     },
     ref
@@ -43,7 +45,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
     const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
       'isSidebarOpen',
       {
-        defaultValue: true,
+        defaultValue: isExpandedAtDefault,
       }
     );
 
@@ -78,7 +80,10 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
 
           <div
             className="flex-grow"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={() => {
+              setIsSidebarOpen(!isSidebarOpen);
+              onSideBarToggle && onSideBarToggle();
+            }}
           />
 
           <SideBarFooter
@@ -96,6 +101,6 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
   }
 );
 
-const DefaulClosedIcon: FC<LogoProps> = ({ size: _, ...props }) => {
+const DefaultClosedIcon: FC<LogoProps> = ({ size: _, ...props }) => {
   return <WebbLogoIcon {...props} width={28} height={28} />;
 };
