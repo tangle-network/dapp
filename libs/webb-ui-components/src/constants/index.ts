@@ -320,3 +320,8 @@ export const defaultSocialConfigs = WEBB_AVAIABLE_SOCIALS.map(
       rel: 'noopener noreferrer',
     } as const satisfies SocialConfigsType)
 );
+
+/**
+ * The key for the sidebar open state in the cookie and localStorage
+ */
+export const SIDEBAR_OPEN_KEY = 'isSidebarOpen';

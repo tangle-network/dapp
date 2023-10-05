@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, WebbLogoIcon } from '@webb-tools/icons';
+import { WebbLogoIcon } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -8,6 +8,7 @@ import useLocalStorageState from 'use-local-storage-state';
 import { SideBarFooter, SideBarItems, SideBarLogo } from '.';
 import { LogoProps } from '../Logo/types';
 import { SidebarProps } from './types';
+import { SIDEBAR_OPEN_KEY } from '../../constants';
 
 /**
  * Sidebar Navigation Menu Component
@@ -43,7 +44,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
     ref
   ) => {
     const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
-      'isSidebarOpen',
+      SIDEBAR_OPEN_KEY,
       {
         defaultValue: isExpandedAtDefault,
       }

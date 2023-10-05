@@ -1,19 +1,12 @@
-import React, { type PropsWithChildren } from 'react';
-import { cookies } from 'next/headers';
+import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 
 import { HeaderChipsContainer } from '..';
+import { getSideBarStateFromCookie } from '../../components/sideBar/sideBarActions';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
-export default async function Layout({ children }: PropsWithChildren) {
-  const cookieStore = cookies();
-  const sideBarStateFromCookie = cookieStore.get('isSidebarOpen');
-  const isSideBarInitiallyExpanded =
-    sideBarStateFromCookie === undefined
-      ? undefined
-      : sideBarStateFromCookie.value === 'true'
-      ? true
-      : false;
+const Layout: FC<PropsWithChildren> = ({ children }) => {
+  const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
 
   return (
     <>
@@ -39,4 +32,6 @@ export default async function Layout({ children }: PropsWithChildren) {
       </main>
     </>
   );
-}
+};
+
+export default Layout;
