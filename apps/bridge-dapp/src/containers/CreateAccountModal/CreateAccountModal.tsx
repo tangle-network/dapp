@@ -87,7 +87,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
 
       const signedString = await activeApi.sign(msg);
 
-      await loginNoteAccount(signedString.slice(0, 66));
+      await loginNoteAccount(signedString.slice(0, 66), account.address);
 
       setIsSuccess?.(true);
     } catch (error) {

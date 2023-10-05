@@ -207,7 +207,7 @@ export type NotificationHandler = ((
  *
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
-  accounts: AccountsAdapter<any>;
+  accounts: AccountsAdapter<unknown>;
   state: WebbState;
   methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
   backend: Backend;

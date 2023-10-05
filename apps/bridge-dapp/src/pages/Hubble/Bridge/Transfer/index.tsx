@@ -283,6 +283,10 @@ const Transfer = () => {
                 placeHolder: 'Select pool',
                 onClick: () => handleTokenClick(),
               }}
+              customAmountProps={{
+                isDisabled: true,
+                className: 'text-mono-200 dark:text-mono-0 cursor-not-allowed',
+              }}
             />
           </TransactionInputCard.Root>
 

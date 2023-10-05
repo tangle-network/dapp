@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     template: 'Hubble Stats | %s',
   },
   description: 'Welcome to Hubble Stats!',
+  metadataBase: process.env.URL ? new URL(process.env.URL) : null,
   openGraph: {
     title: 'Hubble Stats',
     description: 'Welcome to Hubble Stats!',

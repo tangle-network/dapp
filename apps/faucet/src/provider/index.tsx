@@ -4,7 +4,6 @@ import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
-import sharedConfig from '../config/shared';
 import tokens from '../config/tokens';
 import { AddressType, FaucetChainDataType, MintTokenResult } from '../types';
 
@@ -36,6 +35,11 @@ export type InputValuesType = {
    * The recipient address type
    */
   recepientAddressType?: AddressType;
+
+  /**
+   * Boolean to check if the recipient address is valid or not
+   */
+  isValidRecipientAddress?: boolean;
 };
 
 /**

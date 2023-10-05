@@ -91,3 +91,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.9] - 2023-09-30
 
 - Downgrade next to 13.4.19 to fix netlify/next runtime issue [#1724](https://github.com/webb-tools/webb-dapp/pull/1724).
+
+## [0.0.10] - 2023-10-04
+
+- Substrate Support on Faucet [#1735](https://github.com/webb-tools/webb-dapp/pull/1735)
+
+## [0.0.11] - 2023-10-05
+
+- Hotfix the faucet respone object.

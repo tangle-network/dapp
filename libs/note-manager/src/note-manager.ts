@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  NoteStorage,
-  resetNoteStorage,
+  MultiAccountNoteStorage,
+  getV1NotesRecord,
+  multiAccountNoteStorageFactory,
+  resetMultiAccountNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import Storage from '@webb-tools/dapp-types/Storage';
@@ -18,6 +20,9 @@ import {
 } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
+import mergeWith from 'lodash/mergeWith';
+import transform from 'lodash/transform';
+import uniqBy from 'lodash/uniqBy';
 import { BehaviorSubject } from 'rxjs';
 
 type DefaultNoteGenInput = Pick<
@@ -34,11 +39,13 @@ type DefaultNoteGenInput = Pick<
 
 // A NoteManager will manage the notes for a keypair.
 export class NoteManager {
-  // A notesMap will organize notes by typedChainId
+  // Map that stores notes grouped by their associated string keys.
   private notesMap: Map<string, Note[]>;
 
+  // A subject that emits when the notes are updated.
   private notesUpdatedSubject = new BehaviorSubject(false);
 
+  // A subject that emits when the notes are being synced.
   private isSyncingNoteSubject = new BehaviorSubject(false);
 
   /**
@@ -48,6 +55,10 @@ export class NoteManager {
    */
   private static syncNotesProgressSubject = new BehaviorSubject(NaN);
 
+  // A static abort controller for aborting the sync notes progress
+  static #abortController = new AbortController();
+
+  // The default note generation input
   static readonly defaultNoteGenInput: DefaultNoteGenInput = {
     curve: 'Bn254',
     denomination: '18',
@@ -60,84 +71,68 @@ export class NoteManager {
   };
 
   private constructor(
-    private noteStorage: Storage<NoteStorage>,
+    private multiAccountNoteStorage: Storage<MultiAccountNoteStorage>,
     private keypair: Keypair
   ) {
     this.notesMap = new Map();
+    NoteManager.syncNotesProgressSubject.next(NaN);
+
+    // Abort the sync notes progress when the note manager is destroyed
+    NoteManager.#abortController.abort();
+
+    // Create a new abort controller
+    NoteManager.#abortController = new AbortController();
   }
 
-  static async initAndDecryptNotes(
-    noteStorage: Storage<NoteStorage>,
-    keypair: Keypair
-  ): Promise<NoteManager> {
-    const noteManager = new NoteManager(noteStorage, keypair);
-
-    const encryptedNotesRecord = await noteStorage.dump();
-
-    // 32-bytes size resource id where each byte is represented by 2 characters
-    const resourceIdSize = 32 * 2;
-
-    // Only get the stored notes with the key is the resource id
-    const encryptedNotesMap = Object.entries(encryptedNotesRecord).reduce(
-      (acc, [resourceIdOrTypedChainId, notes]) => {
-        // Only get the notes where the key if resource id
-        if (
-          resourceIdOrTypedChainId.replace('0x', '').length === resourceIdSize
-        ) {
-          acc[resourceIdOrTypedChainId] = notes;
-        }
-
-        return acc;
-      },
-      {} as Record<string, Array<string>>
+  // Initialize the note manager with the given keypair.
+  static async initAndDecryptNotes(keypair: Keypair): Promise<NoteManager> {
+    const notesRecord = await NoteManager.decryptNotes(
+      await getV1NotesRecord(),
+      keypair
     );
 
-    if (Object.keys(encryptedNotesMap).length > 0) {
-      // decrypt notes and populate the notesMap of the noteManager
-      await Promise.allSettled(
-        Object.entries(encryptedNotesMap).map(
-          async ([resourceIdStr, encryptedNotes]) => {
-            // First decrypt the notes
-            const decryptedNoteStrings = encryptedNotes
-              .map((encNote) => {
-                try {
-                  return noteManager.keypair.decrypt(encNote).toString();
-                } catch {
-                  console.error(
-                    `Failed to decrypt note: ${encNote}, keypair: ${noteManager.keypair}`
-                  );
-                  return null;
-                }
-              })
-              .filter((note) => Boolean(note));
+    const multiAccNoteStorage = await multiAccountNoteStorageFactory();
+    const noteManager = new NoteManager(multiAccNoteStorage, keypair);
 
-            const notes: Note[] = [];
+    const multiAccountNotesData = await multiAccNoteStorage.dump();
+    const accountPubKey = keypair.getPubKey();
 
-            // Deserialize the decrypted notes
-            for (const decNote of decryptedNoteStrings) {
-              try {
-                notes.push(await Note.deserialize(decNote));
-              } catch (error) {
-                console.error(
-                  `Failed to deserialize note: ${decNote}, error: ${error}`
-                );
-              }
-            }
+    const encNotes = multiAccountNotesData[accountPubKey] ?? {};
 
-            // TODO: Filter / other validation can occur on initialization as a
-            // check against loading into the noteManager (maybe the note was stored,
-            // but spent elsewhere?)
-            if (notes.length > 0) {
-              const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
-              noteManager.notesMap.set(resourceId.toString(), notes);
-            }
-          }
-        )
-      );
-    } else {
-      // Set the encryptedNotes value in localStorage
-      resetNoteStorage();
+    if (Object.keys(encNotes).length === 0) {
+      resetMultiAccountNoteStorage(accountPubKey);
     }
+
+    const multiAccNotesRecord = await NoteManager.decryptNotes(
+      encNotes,
+      keypair
+    );
+
+    // Merge the v1 notes record with the multi account note record
+    mergeWith(
+      notesRecord,
+      multiAccNotesRecord,
+      (objectValue: Array<Note> = [], sourceValue: Array<Note> = []) => {
+        return uniqBy(objectValue.concat(sourceValue), (note) =>
+          note.serialize()
+        );
+      }
+    );
+
+    const isEqual = compareNotesRecord(notesRecord, multiAccNotesRecord);
+
+    // If the encNotes is not equal to the noteRecord,
+    // then update the multi account note storage
+    if (!isEqual) {
+      await multiAccNoteStorage.set(
+        accountPubKey,
+        transform(notesRecord, (result, value, key) => {
+          result[key] = value.map((note) => note.serialize());
+        })
+      );
+    }
+
+    noteManager.notesMap = new Map(Object.entries(notesRecord));
 
     return noteManager;
   }
@@ -161,9 +156,58 @@ export class NoteManager {
     return currentAmount >= targetAmount ? currentNotes : null;
   }
 
+  // Retrieve the keypair from a note
   static keypairFromNote(note: Note): Keypair {
     const secrets = note.note.secrets.split(':');
     return new Keypair(`0x${secrets[2]}`);
+  }
+
+  // Decrypt the notes and return a record of notes grouped by their resource id.
+  static async decryptNotes(
+    encryptedNotes: MultiAccountNoteStorage[string],
+    keypair: Keypair
+  ) {
+    const notesRecord: Record<string, Note[]> = {};
+
+    // decrypt notes and populate the notesMap of the noteManager
+    await Promise.allSettled(
+      Object.entries(encryptedNotes).map(
+        async ([resourceIdStr, encryptedNotes]) => {
+          // First decrypt the notes
+          const decryptedNoteStrings = encryptedNotes
+            .map((encNote) => {
+              try {
+                return keypair.decrypt(encNote).toString();
+              } catch {
+                // Ignore the note if it cannot be decrypted
+                return null;
+              }
+            })
+            .filter((note) => Boolean(note));
+
+          const notes: Note[] = [];
+
+          // Deserialize the decrypted notes
+          for (const decNote of decryptedNoteStrings) {
+            try {
+              notes.push(await Note.deserialize(decNote));
+            } catch {
+              // Ignore the note if it cannot be deserialized
+            }
+          }
+
+          // TODO: Filter / other validation can occur on initialization as a
+          // check against loading into the noteManager (maybe the note was stored,
+          // but spent elsewhere?)
+          if (notes.length > 0) {
+            const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
+            notesRecord[resourceId.toString()] = notes;
+          }
+        }
+      )
+    );
+
+    return notesRecord;
   }
 
   /**
@@ -237,14 +281,21 @@ export class NoteManager {
     this.syncNotesProgressSubject.next(value);
   }
 
+  static get abortController() {
+    return this.#abortController;
+  }
+
+  // Get the keypair associated with this note manager.
   getKeypair() {
     return this.keypair;
   }
 
+  // Get all the notes managed by this note manager.
   getAllNotes(): Map<string, Note[]> {
     return this.notesMap;
   }
 
+  // Get the notes associated with a resource id.
   getNotesOfChain(resourceId: string): Note[] | undefined {
     return this.notesMap.get(resourceId);
   }
@@ -353,22 +404,29 @@ export class NoteManager {
 
   async updateStorage() {
     if (this.notesMap.size !== 0) {
-      await this.noteStorage.reset({});
+      const pubKey = this.keypair.getPubKey();
+      await this.multiAccountNoteStorage.set(pubKey, {});
 
       const promises = [...this.notesMap.entries()].map(
-        async ([chain, notes]) => {
+        async ([resourceId, notes]) => {
           const encNoteStrings = notes.map((note) => {
             const noteStr = note.serialize();
             return this.keypair.encrypt(Buffer.from(noteStr));
           });
 
-          await this.noteStorage.set(chain, encNoteStrings);
+          const storedNoteRecord = await this.multiAccountNoteStorage.get(
+            pubKey
+          );
+          await this.multiAccountNoteStorage.set(pubKey, {
+            ...storedNoteRecord,
+            [resourceId]: encNoteStrings,
+          });
         }
       );
 
       await Promise.all(promises);
     } else {
-      resetNoteStorage();
+      resetMultiAccountNoteStorage(this.keypair.getPubKey());
     }
   }
 
@@ -426,4 +484,48 @@ export class NoteManager {
 
     return Note.generateNote(noteInput);
   }
+}
+
+type NoteRecord = Record<string, Note[]>;
+
+function compareNotesRecord(
+  notesRecord: NoteRecord,
+  otherNotesRecord: NoteRecord
+) {
+  if (
+    Object.keys(notesRecord).length !== Object.keys(otherNotesRecord).length
+  ) {
+    return false;
+  }
+
+  function compareLeftRight(left: NoteRecord, right: NoteRecord) {
+    for (const [key, notes] of Object.entries(left)) {
+      const otherNotes = right[key];
+
+      if (!otherNotes) {
+        return false;
+      }
+
+      if (notes.length !== otherNotes.length) {
+        return false;
+      }
+
+      for (const note of notes) {
+        if (
+          !otherNotes.find(
+            (otherNote) => otherNote.serialize() === note.serialize()
+          )
+        ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  return (
+    compareLeftRight(notesRecord, otherNotesRecord) &&
+    compareLeftRight(otherNotesRecord, notesRecord)
+  );
 }

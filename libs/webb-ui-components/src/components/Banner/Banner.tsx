@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from '../buttons';
 import { BannerPropsType } from './types';
-import { BlockIcon, Close, GraphIcon } from '@webb-tools/icons';
+import { Close, GraphIcon, ContrastTwoLine } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 
 /**
@@ -59,9 +59,9 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerPropsType>(
         <span className="flex items-center">
           {dappName === 'bridge' ? (
             <span className="mr-2">
-              <BlockIcon
+              <ContrastTwoLine
                 size="lg"
-                className="stroke-blue-70 dark:stroke-mono-0"
+                className="fill-blue-70 dark:fill-mono-0"
               />
             </span>
           ) : dappName === 'stats' ? (

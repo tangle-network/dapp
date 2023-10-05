@@ -91,24 +91,6 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
             className={isSidebarOpen ? 'p-2' : 'pl-1'}
           />
         </div>
-
-        {isHovering && (
-          <div
-            className="absolute top-0 right-0 px-3 pt-12"
-            style={{ transform: 'translateX(100%)' }}
-          >
-            <div
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-1 rounded-full shadow-lg cursor-pointer bg-mono-0 dark:bg-mono-180"
-            >
-              {isSidebarOpen ? (
-                <ChevronLeft size="md" />
-              ) : (
-                <ChevronRight size="md" />
-              )}
-            </div>
-          </div>
-        )}
       </div>
     );
   }

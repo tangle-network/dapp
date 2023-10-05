@@ -13,7 +13,7 @@ const tvlTab = 'TVL';
 const volumeTab = 'Volume';
 const relayerEarningTab = 'Relayer Earnings';
 
-export default async function PoolOverviewChartsContainer({
+export default function PoolOverviewChartsContainer({
   poolAddress,
   numDatesFromStart,
   startingEpoch,

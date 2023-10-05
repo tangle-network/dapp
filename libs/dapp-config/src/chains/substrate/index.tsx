@@ -10,7 +10,7 @@ function populateBlockExplorerStub(connString: string): string {
     `?${params.toString()}`,
     'https://polkadot.js.org/apps/'
   ).toString();
-  return url + '#';
+  return url;
 }
 
 // All substrate chains temporary use in `development` environment now
@@ -45,7 +45,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
-  [PresetTypedChainId.LocalTangleStandalone]: {
+  /* [PresetTypedChainId.LocalTangleStandalone]: {
     chainType: ChainType.Substrate,
     id: SubstrateChainId.LocalTangleStandalone,
     name: 'Tangle',
@@ -74,20 +74,37 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-  },
-  /*   [PresetTypedChainId.TangleStandaloneTestnet]: {
-    chainType: ChainType.Substrate,
-    group: 'webb',
-    tag: 'test',
-    chainId: SubstrateChainId.TangleStandaloneTestnet,
-    logo: WEBBLogo,
-    url: 'wss://tangle-standalone-archive.webb.tools',
-    blockExplorerStub: populateBlockExplorerStub(
-      'wss://tangle-standalone-archive.webb.tools'
-    ),
-    name: 'Tangle Standalone Testnet',
-    env: ['development'],
   }, */
+  [PresetTypedChainId.TangleStandaloneTestnet]: {
+    chainType: ChainType.Substrate,
+    group: 'tangle',
+    tag: 'test',
+    id: SubstrateChainId.TangleStandaloneTestnet,
+    name: 'Tangle Standalone Testnet',
+    network: 'Substrate',
+    nativeCurrency: {
+      name: 'Tangle',
+      symbol: 'tTNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Explorer',
+        url: populateBlockExplorerStub('wss://rpc-archive.tangle.tools'),
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rpc-archive.tangle.tools', 'wss://rpc.tangle.tools'],
+      },
+      public: {
+        http: [],
+        webSocket: ['wss://rpc-archive.tangle.tools', 'wss://rpc.tangle.tools'],
+      },
+    },
+    env: ['development'],
+  },
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
     id: SubstrateChainId.Kusama,

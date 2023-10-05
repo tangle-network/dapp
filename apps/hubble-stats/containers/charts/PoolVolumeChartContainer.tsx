@@ -1,6 +1,9 @@
-import { getPoolVolumeChartData } from '../../data';
+import { cache } from 'react';
+import { getPoolVolumeChartData as getData } from '../../data';
 import { VolumeChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
+
+const getPoolVolumeChartData = cache(getData);
 
 export default async function PoolVolumeChartContainer(
   props: PoolChartPropsType

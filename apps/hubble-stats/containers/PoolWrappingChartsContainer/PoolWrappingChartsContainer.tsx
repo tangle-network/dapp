@@ -1,17 +1,17 @@
-import { type FC, Suspense } from 'react';
-import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
+import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { Suspense } from 'react';
 
+import { PoolChartSkeleton } from '../../components';
 import {
   PoolTwlChartContainer,
   PoolWrappingFeesChartContainer,
 } from '../charts';
-import { PoolChartSkeleton } from '../../components';
 import { PoolChartPropsType } from '../charts/types';
 
 const twlTab = 'TWL';
 const wrappingFeesTab = 'Wrapping Fees';
 
-export default async function PoolWrappingChartsContainer({
+export default function PoolWrappingChartsContainer({
   poolAddress,
   numDatesFromStart,
   startingEpoch,

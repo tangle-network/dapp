@@ -202,3 +202,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed, Changed and Added
 
 - Fix Connect Wallet Modal When Connect Wallet Button Is Clicked [#1723](https://github.com/webb-tools/webb-dapp/pull/1723)
+
+## [1.0.6] - 2023-10-04
+
+### Fixed, Changed and Added
+
+- Adds faucet banner link to bridge dapp [#1734](https://github.com/webb-tools/webb-dapp/pull/1734)
+- Adding Support For Multiple Note Accounts [#1731](https://github.com/webb-tools/webb-dapp/pull/1731)
+- Fixes hubble bridge layout issues [#1738](https://github.com/webb-tools/webb-dapp/pull/1738)

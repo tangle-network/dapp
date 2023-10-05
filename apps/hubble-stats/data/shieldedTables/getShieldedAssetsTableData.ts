@@ -5,22 +5,14 @@ import { EPOCH_DAY_INTERVAL, getDateFromEpoch } from '../../utils';
 import { getDepositInTimeRangeByVAnchor } from '../utils';
 import { VANCHORS_MAP, VANCHOR_ADDRESSES } from '../../constants';
 import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
+import { SubgraphUrlType } from '../../types';
 
-const getAssetInfoFromVAnchor = async (
+const getWithdrawals24h = async (
+  supportedSubgraphs: Array<SubgraphUrlType>,
   vAnchorAddress: string,
+  tokenSymbol: string,
   epochNow: number
 ) => {
-  const vanchor = VANCHORS_MAP[vAnchorAddress];
-  const { fungibleTokenSymbol: tokenSymbol, supportedSubgraphs } = vanchor;
-
-  const deposits24h = await getDepositInTimeRangeByVAnchor(
-    vAnchorAddress,
-    epochNow - EPOCH_DAY_INTERVAL,
-    epochNow,
-    supportedSubgraphs
-  );
-
-  let withdrawals24h: number | undefined;
   try {
     const withdrawalVAnchorsByChainsData =
       await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChainsAndByToken15MinsInterval(
@@ -31,7 +23,7 @@ const getAssetInfoFromVAnchor = async (
         getDateFromEpoch(epochNow)
       );
 
-    withdrawals24h = withdrawalVAnchorsByChainsData.reduce(
+    return withdrawalVAnchorsByChainsData.reduce(
       (withdrawal, vAnchorsByChain) => {
         const withdrawalVAnchorsByChain = vAnchorsByChain.reduce(
           (withdrawalByChain, vAnchorWithdrawal) =>
@@ -44,8 +36,31 @@ const getAssetInfoFromVAnchor = async (
       0
     );
   } catch {
-    withdrawals24h = undefined;
+    return;
   }
+};
+
+const getAssetInfoFromVAnchor = async (
+  vAnchorAddress: string,
+  epochNow: number
+) => {
+  const vanchor = VANCHORS_MAP[vAnchorAddress];
+  const { fungibleTokenSymbol: tokenSymbol, supportedSubgraphs } = vanchor;
+
+  const [deposits24h, withdrawals24h] = await Promise.all([
+    getDepositInTimeRangeByVAnchor(
+      vAnchorAddress,
+      epochNow - EPOCH_DAY_INTERVAL,
+      epochNow,
+      supportedSubgraphs
+    ),
+    getWithdrawals24h(
+      supportedSubgraphs,
+      vAnchorAddress,
+      tokenSymbol,
+      epochNow
+    ),
+  ]);
 
   return {
     address: vanchor.fungibleTokenAddress,
