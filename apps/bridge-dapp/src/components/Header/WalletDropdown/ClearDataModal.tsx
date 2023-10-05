@@ -28,6 +28,7 @@ const ClearDataModal: FC<{
   return (
     <Modal open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <ModalContent
+        usePortal
         isCenter
         className="bg-mono-0 dark:bg-mono-160 rounded-xl w-[420px]"
         isOpen={isOpen}

@@ -554,7 +554,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     );
 
     // Get the leaf index of the note
-    const depositedCommitment = generateCircomCommitment(note.note);
+    const depositedCommitment = await generateCircomCommitment(note.note);
     const log = logs.find((log) => log.args.commitment === depositedCommitment);
     if (!log) {
       console.error(
@@ -769,7 +769,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const destRelayedRoot = toFixedHex(destRelayedRootBI);
 
     // The commitment of the note
-    const commitment = generateCircomCommitment(parsedNote);
+    const commitment = await generateCircomCommitment(parsedNote);
 
     let commitmentIndex: number;
 

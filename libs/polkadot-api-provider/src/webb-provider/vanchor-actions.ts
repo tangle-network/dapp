@@ -946,7 +946,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     destRelayedRoot = toFixedHex(destRelayedRoot);
 
     // The commitment of the note
-    const commitment = generateCircomCommitment(note.note);
+    const commitment = await generateCircomCommitment(note.note);
 
     let commitmentIndex: number;
 
