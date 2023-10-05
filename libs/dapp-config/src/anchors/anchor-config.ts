@@ -65,11 +65,6 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 
   ...localAnchorRecord,
-
-  // Substrate
-  [PresetTypedChainId.LocalTangleStandalone]: {
-    '1': NaN,
-  },
 };
 
 export const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(

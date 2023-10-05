@@ -167,3 +167,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed, Changed and Added
 
 - Update DKG Stats favicon to match with Tangle Marketing favicon [#1725](https://github.com/webb-tools/webb-dapp/pull/1725).
+
+## [0.0.19] - 2023-10-05
+
+### Fixed, Changed and Added
+
+- Fixes incorrect threshold values in key detail page [#1743](https://github.com/webb-tools/webb-dapp/pull/1743).
+- Updated SEO description [#1744](https://github.com/webb-tools/webb-dapp/pull/1744).

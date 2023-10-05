@@ -61,7 +61,11 @@ const App = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </main>
 
-        <Footer isMinimal isNext className="py-12 m-0 mx-auto mt-4" />
+        <Footer
+          isMinimal
+          isNext
+          className="py-12 mx-auto mt-4 max-w-[1160px]"
+        />
       </div>
     </Provider>
   );
