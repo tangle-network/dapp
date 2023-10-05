@@ -53,7 +53,7 @@ const TxProgressDropdown = () => {
 
       <DropdownBody
         align="start"
-        className="mt-4 max-h-80 w-[30rem] overflow-scroll overflow-x-hidden"
+        className="mt-4 -ml-14 max-h-80 w-[30rem] overflow-scroll overflow-x-hidden"
       >
         {sortedTxQueue.map((tx) => {
           return <TxItem key={tx.id} tx={tx} />;

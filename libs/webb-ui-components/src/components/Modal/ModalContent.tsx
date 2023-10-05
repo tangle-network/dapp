@@ -6,8 +6,11 @@ import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
 
 export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
-  ({ children, isOpen = false, isCenter, className, ...props }, ref) => {
-    return (
+  (
+    { children, isOpen = false, isCenter, usePortal, className, ...props },
+    ref
+  ) => {
+    const inner = (
       <Transition.Root show={isOpen}>
         <Transition.Child
           as={Fragment}
@@ -51,5 +54,11 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
         </Transition.Child>
       </Transition.Root>
     );
+
+    if (usePortal) {
+      return <DialogPrimitive.Portal>{inner}</DialogPrimitive.Portal>;
+    }
+
+    return inner;
   }
 );
