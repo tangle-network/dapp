@@ -247,7 +247,7 @@ const Transfer = () => {
               <TransactionInputCard.ChainSelector
                 onClick={() => handleChainClick()}
               />
-              <TransactionInputCard.MaxAmountButton />
+              <TransactionInputCard.MaxAmountButton accountType="note" />
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body
@@ -263,7 +263,7 @@ const Transfer = () => {
           <TransactionInputCard.Root
             typedChainId={destTypedChainId ?? undefined}
             tokenSymbol={fungibleCfg?.symbol}
-            amount={amount}
+            amount={receivingAmount?.toString().slice(0, 10)}
             onAmountChange={setAmount}
           >
             <TransactionInputCard.Header>
@@ -380,8 +380,6 @@ const Transfer = () => {
               refundToken={destChainCfg?.nativeCurrency.symbol}
               remaining={remainingBalance}
               remainingToken={fungibleCfg?.symbol}
-              receivingAmount={receivingAmount}
-              receivingToken={fungibleCfg?.symbol}
             />
           </div>
 

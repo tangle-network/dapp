@@ -233,7 +233,10 @@ const Withdraw = () => {
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
-              <TransactionInputCard.MaxAmountButton />
+              <TransactionInputCard.MaxAmountButton
+                accountType="note"
+                disabled={!isCustom}
+              />
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body
@@ -260,9 +263,8 @@ const Withdraw = () => {
           <TransactionInputCard.Root
             typedChainId={srcTypedChainId ?? undefined}
             tokenSymbol={wrappableCfg?.symbol}
-            amount={amount}
+            amount={receivingAmount?.toString().slice(0, 10)}
             onAmountChange={setAmount}
-            isFixedAmount={!isCustom}
             onIsFixedAmountChange={() => setCustomAmount(!isCustom)}
           >
             <TransactionInputCard.Header>
@@ -278,10 +280,6 @@ const Withdraw = () => {
             <TransactionInputCard.Body
               tokenSelectorProps={{
                 onClick: () => handleTokenClick(),
-              }}
-              fixedAmountProps={{
-                isDisabled: true,
-                step: 0.01,
               }}
               customAmountProps={{
                 isDisabled: true,
@@ -399,8 +397,6 @@ const Withdraw = () => {
               refundToken={activeChain?.nativeCurrency.symbol}
               remaining={remainingBalance}
               remainingToken={fungibleCfg?.symbol}
-              receivingAmount={receivingAmount}
-              receivingToken={wrappableCfg?.symbol}
             />
           </div>
 

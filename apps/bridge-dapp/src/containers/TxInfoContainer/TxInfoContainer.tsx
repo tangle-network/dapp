@@ -4,16 +4,12 @@ import ShieldKeyholeFillIcon from '@webb-tools/icons/ShieldKeyholeFillIcon';
 
 const TxInfoContainer = ({
   hasRefund,
-  receivingAmount,
-  receivingToken,
   refundAmount,
   refundToken,
   remaining,
   remainingToken,
 }: {
   hasRefund?: boolean;
-  receivingAmount?: number;
-  receivingToken?: string;
   refundAmount?: string;
   refundToken?: string;
   remaining?: number;
@@ -21,21 +17,6 @@ const TxInfoContainer = ({
 }) => {
   return (
     <div className="space-y-2">
-      <TxInfoItem
-        leftContent={{
-          title: 'Receiving',
-        }}
-        rightIcon={<WalletFillIcon />}
-        rightText={
-          typeof receivingAmount === 'number'
-            ? receivingAmount < 0
-              ? '< 0'
-              : `${receivingAmount.toString().slice(0, 10)} ${
-                  receivingToken ?? ''
-                }`.trim()
-            : '--'
-        }
-      />
       {refundAmount && hasRefund && (
         <TxInfoItem
           leftContent={{
