@@ -78,3 +78,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Hubble Stats Streaming Data ([#1694](https://github.com/webb-tools/webb-dapp/pull/1694)).
 - Improve Hubble Stats Timeout ([#1732](https://github.com/webb-tools/webb-dapp/pull/1732)).
+
+## [0.0.7] - 2023-10-05
+
+### Chaged, Added and Fixed
+
+- Fix Sidebar not keep consistent state when refreshing pages ([#1740](https://github.com/webb-tools/webb-dapp/pull/1740))

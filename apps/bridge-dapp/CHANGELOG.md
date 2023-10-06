@@ -210,3 +210,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds faucet banner link to bridge dapp [#1734](https://github.com/webb-tools/webb-dapp/pull/1734)
 - Adding Support For Multiple Note Accounts [#1731](https://github.com/webb-tools/webb-dapp/pull/1731)
 - Fixes hubble bridge layout issues [#1738](https://github.com/webb-tools/webb-dapp/pull/1738)
+
+## [1.0.7] - 2023-10-05
+
+### Fixed, Changed and Added
+
+- Fix UI issues on bridge dapp
+- Disable amount input for destination accross flows [#1739](https://github.com/webb-tools/webb-dapp/pull/1739)

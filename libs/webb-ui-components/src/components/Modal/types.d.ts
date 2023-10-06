@@ -12,6 +12,11 @@ export interface ModalContentProps extends DialogContentProps {
    * Centered the modal
    */
   isCenter?: boolean;
+
+  /**
+   * Whether using portal to render modal
+   */
+  usePortal?: boolean;
 }
 
 export interface ModalHeaderProps extends PropsOf<'div'> {

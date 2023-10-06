@@ -98,4 +98,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.11] - 2023-10-05
 
-- Hotfix the faucet respone object.
+- Hotfix faucet respone object.
+
+## [0.0.12] - 2023-10-05
+
+- Hotfix faucet footer width.

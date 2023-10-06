@@ -1,13 +1,16 @@
-import React, { type FC, type PropsWithChildren } from 'react';
+import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 
 import { HeaderChipsContainer } from '..';
+import { getSideBarStateFromCookie } from '../../components/sideBar/sideBarActions';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
+  const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
+
   return (
     <>
-      <SideBar />
+      <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
       <main className="flex flex-col justify-between flex-1 h-full px-3 overflow-y-auto md:px-5 lg:px-10">
         <div className="flex-[1]">
           {/* Header */}

@@ -52,8 +52,8 @@ function useConnectButtonProps(typedChainId?: number | null) {
       }
 
       if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-        await switchChain(nextChain, activeWallet);
-        return true;
+        const newApi = await switchChain(nextChain, activeWallet);
+        return Boolean(newApi);
       } else {
         toggleModal(true, nextChain);
         return false;
