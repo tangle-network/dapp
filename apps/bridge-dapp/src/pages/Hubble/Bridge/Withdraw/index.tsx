@@ -266,7 +266,10 @@ const Withdraw = () => {
             onIsFixedAmountChange={() => setCustomAmount(!isCustom)}
           >
             <TransactionInputCard.Header>
-              <TransactionInputCard.ChainSelector onClick={handleChainClick} />
+              <TransactionInputCard.ChainSelector
+                onClick={handleChainClick}
+                disabled
+              />
               <TransactionInputCard.Button
                 Icon={<SettingsFillIcon />}
                 onClick={() => navigate(SELECT_RELAYER_PATH)}
