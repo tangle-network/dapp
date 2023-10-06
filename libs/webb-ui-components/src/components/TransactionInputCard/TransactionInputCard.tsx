@@ -92,7 +92,7 @@ TransactionInputCardRoot.displayName = 'TransactionInputCardRoot';
 const TransactionChainSelector = forwardRef<
   React.ElementRef<'button'>,
   TransactionChainSelectorProps
->(({ typedChainId: typedChainIdProps, className, ...props }, ref) => {
+>(({ typedChainId: typedChainIdProps, className, disabled, ...props }, ref) => {
   const context = useContext(TransactionInputCardContext);
 
   const typedChainId = typedChainIdProps ?? context.typedChainId;
@@ -101,6 +101,7 @@ const TransactionChainSelector = forwardRef<
   return (
     <button
       {...props}
+      disabled={disabled}
       ref={ref}
       className={twMerge('flex items-center gap-1 p-2 group', className)}
     >
@@ -117,10 +118,12 @@ const TransactionChainSelector = forwardRef<
         </Typography>
       </p>
 
-      <ChevronDown
-        size="lg"
-        className="rounded-lg group-hover:bg-mono-40 dark:group-hover:bg-mono-160"
-      />
+      {!disabled && (
+        <ChevronDown
+          size="lg"
+          className="rounded-lg group-hover:bg-mono-40 dark:group-hover:bg-mono-160"
+        />
+      )}
     </button>
   );
 });
