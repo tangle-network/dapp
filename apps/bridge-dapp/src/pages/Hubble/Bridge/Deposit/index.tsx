@@ -1,5 +1,7 @@
 import { ArrowRight, GasStationFill } from '@webb-tools/icons';
+import { formatEther } from 'viem';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -39,11 +41,16 @@ const Deposit = () => {
     wrappableCfg,
   } = useWatchSearchParams();
 
-  const { balances } = useCurrenciesBalances(allCurrencies, srcTypedChainId);
+  const { balances: walletBalances } = useCurrenciesBalances(
+    allCurrencies,
+    srcTypedChainId
+  );
+
+  const { balances: shieldedBalances } = useBalancesFromNotes();
 
   const { depositConfirmComponent, ...depositBtnProps } = useDepositButtonProps(
     {
-      balance: wrappableCfg ? balances[wrappableCfg.id] : undefined,
+      balance: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
       fungible: fungibleCfg,
     }
   );
@@ -55,6 +62,18 @@ const Deposit = () => {
     }),
     [amount, onAmountChange]
   );
+
+  const totalFungibleAmount = useMemo(() => {
+    if (typeof srcTypedChainId !== 'number') {
+      return;
+    }
+
+    if (fungibleCfg && shieldedBalances[fungibleCfg.id]?.[srcTypedChainId]) {
+      return Number(
+        formatEther(shieldedBalances[fungibleCfg.id][srcTypedChainId])
+      );
+    }
+  }, [shieldedBalances, fungibleCfg, srcTypedChainId]);
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
@@ -76,7 +95,9 @@ const Deposit = () => {
           <TransactionInputCard.Root
             typedChainId={srcTypedChainId}
             tokenSymbol={wrappableCfg?.symbol}
-            maxAmount={wrappableCfg ? balances[wrappableCfg.id] : undefined}
+            maxAmount={
+              wrappableCfg ? walletBalances[wrappableCfg.id] : undefined
+            }
             {...amountProps}
           >
             <TransactionInputCard.Header>
@@ -98,14 +119,17 @@ const Deposit = () => {
           <TransactionInputCard.Root
             typedChainId={destTypedChainId}
             tokenSymbol={fungibleCfg?.symbol}
-            maxAmount={fungibleCfg ? balances[fungibleCfg.id] : undefined}
+            maxAmount={totalFungibleAmount}
             {...amountProps}
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector
                 onClick={() => navigate(SELECT_DESTINATION_CHAIN_PATH)}
               />
-              <TransactionInputCard.MaxAmountButton />
+              <TransactionInputCard.MaxAmountButton
+                accountType="note"
+                disabled
+              />
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body

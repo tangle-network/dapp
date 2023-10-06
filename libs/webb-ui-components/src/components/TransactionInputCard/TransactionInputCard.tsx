@@ -21,6 +21,7 @@ import { Typography } from '../../typography';
 import { getRoundedAmountString, toFixed } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
+import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
 import TextField from '../TextField';
 import { TitleWithInfo } from '../TitleWithInfo';
 import TokenSelector from '../TokenSelector';
@@ -177,6 +178,7 @@ const TransactionMaxAmountButton = forwardRef<
       maxAmount: maxAmountProp,
       accountType: accountTypeProp,
       onAmountChange: onAmountChangeProp,
+      disabled: disabledProp,
       ...props
     },
     ref
@@ -197,32 +199,45 @@ const TransactionMaxAmountButton = forwardRef<
       return `${fmtAmount} ${tokenSym}`.trim();
     }, [maxAmount, tokenSymbol]);
 
+    const disabled = useMemo(
+      () => disabledProp ?? typeof maxAmount !== 'number',
+      [disabledProp, maxAmount]
+    );
+
     return (
-      <TransactionButton
-        {...props}
-        ref={ref}
-        disabled={props.disabled ?? typeof maxAmount !== 'number'}
-        onClick={
-          typeof maxAmount === 'number'
-            ? () => onAmountChange?.(`${toFixed(maxAmount, 5)}`)
-            : undefined
-        }
-        Icon={
-          accountType === 'note' ? (
-            <>
-              <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-              <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-            </>
-          ) : (
-            <>
-              <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-              <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-            </>
-          )
-        }
-      >
-        {buttonCnt}
-      </TransactionButton>
+      <Tooltip>
+        <TooltipTrigger>
+          <TransactionButton
+            {...props}
+            ref={ref}
+            disabled={disabled}
+            onClick={
+              typeof maxAmount === 'number'
+                ? () => onAmountChange?.(`${toFixed(maxAmount, 5)}`)
+                : undefined
+            }
+            Icon={
+              accountType === 'note' ? (
+                <>
+                  <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+                  <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                </>
+              ) : (
+                <>
+                  <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+                  <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                </>
+              )
+            }
+            className={disabled ? 'cursor-not-allowed' : ''}
+          >
+            {buttonCnt}
+          </TransactionButton>
+        </TooltipTrigger>
+        <TooltipBody>
+          {accountType === 'note' ? 'Shielded Balance' : 'Wallet Balance'}
+        </TooltipBody>
+      </Tooltip>
     );
   }
 );
