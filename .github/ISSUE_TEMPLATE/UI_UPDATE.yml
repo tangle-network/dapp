@@ -1,0 +1,50 @@
+name: UI Update
+description: Description of UI improvement
+title: '[UI] <title>'
+labels: ['design-system 🎨']
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Is your UI update related to a problem? Please describe.
+      description: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Describe the solution you'd like (include image or link to prototype)
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Describe alternatives you've considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Technical considerations
+      description: Include any important CSS values that are relavant to this update.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: |
+        Links? References? Anything that will give us more context about the issue you are encountering!
+
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: false
