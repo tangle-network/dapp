@@ -51,6 +51,10 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
 ];
 
+const metaMaskConnector = new MetaMaskConnector({
+  chains: Object.values(evmChainsConfig),
+});
+
 export const walletsConfig: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
   // https://wagmi.sh/examples/custom-connector
@@ -86,9 +90,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'EVM',
     enabled: true,
     async detect() {
-      const provier = await new MetaMaskConnector({
-        chains: Object.values(evmChainsConfig),
-      }).getProvider();
+      const provier = await metaMaskConnector.getProvider();
 
       return Boolean(provier);
     },
@@ -100,9 +102,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
-    connector: new MetaMaskConnector({
-      chains: Object.values(evmChainsConfig),
-    }),
+    connector: metaMaskConnector,
   },
   [WalletId.WalletConnectV2]: {
     id: WalletId.WalletConnectV2,
