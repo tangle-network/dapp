@@ -171,7 +171,11 @@ export type TokenType = 'shielded' | 'unshielded';
 export type PropsOf<T extends React.ElementType<any>> =
   React.ComponentPropsWithoutRef<T>;
 
-export type NullableUnknownType = unknown | null | undefined;
+export type Maybe<T> = T | undefined;
+
+export type Nullable<T> = T | null | undefined;
+
+export type NullableUnknownType = Nullable<unknown>;
 
 export type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
