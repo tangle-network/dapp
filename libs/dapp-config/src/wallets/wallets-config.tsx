@@ -10,7 +10,8 @@ import {
 } from '@webb-tools/icons';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-
+import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
+import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { WalletConfig } from './wallet-config.interface';
 
@@ -61,7 +62,12 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     async detect() {
-      return true;
+      const extension = await getPolkadotBasedWallet(
+        HUBBLE_BRIDGE_DAPP_NAME,
+        'polkadot-js'
+      );
+
+      return Boolean(extension);
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
@@ -79,12 +85,12 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: `MetaMask`,
     platform: 'EVM',
     enabled: true,
-    detect() {
-      const hasWeb3 = typeof (window as any).web3 !== 'undefined';
-      if (hasWeb3) {
-        return (window as any).web3.__isMetaMaskShim__ as boolean;
-      }
-      return false;
+    async detect() {
+      const provier = await new MetaMaskConnector({
+        chains: Object.values(evmChainsConfig),
+      }).getProvider();
+
+      return Boolean(provier);
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
@@ -123,8 +129,13 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: 'Talisman',
     platform: 'Substrate',
     enabled: true,
-    detect() {
-      return true;
+    async detect() {
+      const extension = await getPolkadotBasedWallet(
+        HUBBLE_BRIDGE_DAPP_NAME,
+        'talisman'
+      );
+
+      return Boolean(extension);
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
@@ -142,8 +153,13 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: 'SubWallet',
     platform: 'Substrate',
     enabled: true,
-    detect() {
-      return true;
+    async detect() {
+      const extension = await getPolkadotBasedWallet(
+        HUBBLE_BRIDGE_DAPP_NAME,
+        'subwallet-js'
+      );
+
+      return Boolean(extension);
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://www.subwallet.app/',

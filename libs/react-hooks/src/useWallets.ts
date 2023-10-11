@@ -29,6 +29,7 @@ export const useWallets = () => {
             if (connected) {
               return {
                 ...walletConfig,
+                detect,
                 enabled: isDetected,
                 connected,
                 endSession: async () => {
@@ -45,6 +46,7 @@ export const useWallets = () => {
 
             return {
               ...walletConfig,
+              detect,
               enabled: isDetected,
               connected,
               // eslint-disable-next-line @typescript-eslint/no-empty-function

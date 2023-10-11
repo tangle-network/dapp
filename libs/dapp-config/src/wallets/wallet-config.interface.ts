@@ -32,7 +32,7 @@ export interface WalletConfig {
   /**
    * a function that will tell weather the wallet is installed or reachable
    */
-  detect?(): boolean | Promise<boolean>;
+  detect(): boolean | Promise<boolean>;
 
   /**
    * a list of supported typed chain ids
