@@ -1,11 +1,11 @@
-import { useActiveWallet } from '@webb-tools/api-provider-environment/WebbProvider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { WalletConfig } from '@webb-tools/dapp-config';
-import { WalletId, WebbError } from '@webb-tools/dapp-types';
+import { useActiveWallet } from '@webb-tools/api-provider-environment/WebbProvider';
+import { type WalletConfig } from '@webb-tools/dapp-config';
+import type { WalletId, WebbError } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
-import store, { WalletState } from './subjects';
+import subjects, { WalletState } from './subjects';
 
 export type UseConnectWalletReturnType = {
   /**
@@ -67,13 +67,14 @@ export type UseConnectWalletReturnType = {
  */
 export const useConnectWallet = (): UseConnectWalletReturnType => {
   // Get the states from the subjects
-  const isModalOpen = useObservableState(store.isWalletModalOpenSubject);
-  const selectedWallet = useObservableState(store.selectedWalletSubject);
+  const isModalOpen = useObservableState(subjects.isWalletModalOpenSubject);
+  const selectedWallet = useObservableState(subjects.selectedWalletSubject);
 
-  const walletState = useObservableState(store.walletStateSubject);
-  const connectError = useObservableState(store.connectErrorSubject);
+  const walletState = useObservableState(subjects.walletStateSubject);
+  const connectError = useObservableState(subjects.connectErrorSubject);
 
   const { appEvent, loading } = useWebContext();
+
   const [activeWallet, setActiveWallet] = useActiveWallet();
 
   const connectingWalletId = useMemo<number | undefined>(
@@ -100,24 +101,24 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
       switch (state.status) {
         case 'failed': {
           if (isSubscribed) {
-            store.setWalletState(WalletState.FAILED);
-            store.setConnectError(state.error);
+            subjects.setWalletState(WalletState.FAILED);
+            subjects.setConnectError(state.error);
           }
           break;
         }
 
         case 'loading': {
-          isSubscribed && store.setWalletState(WalletState.CONNECTING);
+          isSubscribed && subjects.setWalletState(WalletState.CONNECTING);
           break;
         }
 
         case 'sucess': {
-          isSubscribed && store.setWalletState(WalletState.SUCCESS);
+          isSubscribed && subjects.setWalletState(WalletState.SUCCESS);
           break;
         }
 
         case 'idle': {
-          isSubscribed && store.setWalletState(WalletState.IDLE);
+          isSubscribed && subjects.setWalletState(WalletState.IDLE);
           break;
         }
 
@@ -139,27 +140,27 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
    * and set the next chain
    */
   const toggleModal = useCallback((isOpenArg?: boolean) => {
-    const isOpen = isOpenArg ?? !store.isWalletModalOpenSubject.getValue();
+    const isOpen = isOpenArg ?? !subjects.isWalletModalOpenSubject.getValue();
 
-    store.setWalletModalOpen(isOpen);
+    subjects.setWalletModalOpen(isOpen);
   }, []);
 
   const connectWallet = useCallback(
     async (nextWallet: WalletConfig) => {
-      store.setSelectedWallet(nextWallet);
-      store.setWalletState(WalletState.CONNECTING);
+      subjects.setSelectedWallet(nextWallet);
+      subjects.setWalletState(WalletState.CONNECTING);
 
-      const isDetected = await nextWallet.detect();
+      const provider = await nextWallet.detect();
 
-      if (!isDetected) {
-        store.setWalletState(WalletState.FAILED);
-        store.setConnectError(new WalletNotInstalledError(nextWallet.id));
+      if (!provider) {
+        subjects.setWalletState(WalletState.FAILED);
+        subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
         return;
       }
 
-      store.setConnectError(undefined);
-      store.setWalletState(WalletState.SUCCESS);
-      store.setWalletModalOpen(false);
+      subjects.setConnectError(undefined);
+      subjects.setWalletState(WalletState.SUCCESS);
+      subjects.setWalletModalOpen(false);
       setActiveWallet(nextWallet);
     },
     [setActiveWallet]
@@ -169,10 +170,10 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
    * Function to reset the wallet state to idle
    */
   const resetState = useCallback(() => {
-    store.setConnectError(undefined);
-    store.setWalletModalOpen(false);
-    store.setWalletState(WalletState.IDLE);
-    store.setSelectedWallet(undefined);
+    subjects.setConnectError(undefined);
+    subjects.setWalletModalOpen(false);
+    subjects.setWalletState(WalletState.IDLE);
+    subjects.setSelectedWallet(undefined);
   }, []);
 
   return {

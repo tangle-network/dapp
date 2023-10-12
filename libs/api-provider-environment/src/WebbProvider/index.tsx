@@ -77,6 +77,8 @@ const apiConfig = ApiConfig.init({
   wallets: walletsConfig,
 });
 
+const appNetworkStoragePromise = netStorageFactory();
+
 const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeWallet, setActiveWallet] = useActiveWallet();
 
@@ -87,10 +89,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   );
 
   const [loading, setLoading] = useState(true);
-
-  const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(
-    null
-  );
 
   const [accounts, setAccounts] = useState<Array<Account>>([]);
 
@@ -148,7 +146,8 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         activeApi?: WebbApiProvider<any> | undefined;
       } = {}
     ) => {
-      const innerNetworkStorage = options.networkStorage ?? networkStorage;
+      const innerNetworkStorage =
+        options.networkStorage ?? (await appNetworkStoragePromise);
       const innerChain = options.chain ?? activeChain;
       const innerActiveApi = options.activeApi ?? activeApi;
 
@@ -168,15 +167,14 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         });
       }
 
-      if (!innerActiveApi) {
-        return;
+      if (innerActiveApi) {
+        await innerActiveApi.accounts.setActiveAccount(account);
       }
 
       setActiveAccount(account);
-      await innerActiveApi.accounts.setActiveAccount(account);
       await loginIfExist(account.address);
     },
-    [activeApi, activeChain, loginIfExist, networkStorage]
+    [activeApi, activeChain, loginIfExist]
   );
 
   /// this will set the active api and the accounts
@@ -238,14 +236,16 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           return;
         }
 
+        const networkStorage = _networkStorage ?? (await netStorageFactory());
+
         setActiveAccountWithStorage(active, {
-          networkStorage: _networkStorage ?? networkStorage,
+          networkStorage,
           chain,
           activeApi: nextActiveApi,
         });
       });
     },
-    [loginIfExist, networkStorage, setActiveAccountWithStorage, setNoteManager]
+    [loginIfExist, setActiveAccountWithStorage, setNoteManager]
   );
 
   /// Error handler for the `WebbError`
@@ -324,6 +324,8 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         });
 
         const relayerManagerFactory = await getRelayerManagerFactory();
+        const networkStorage =
+          _networkStorage ?? (await appNetworkStoragePromise);
 
         /// init the active api value
         let localActiveApi: WebbApiProvider<any> | null = null;
@@ -367,7 +369,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await setActiveApiWithAccounts(
                 webbPolkadot,
                 chain,
-                _networkStorage ?? networkStorage
+                _networkStorage ?? (await appNetworkStoragePromise)
               );
 
               localActiveApi = webbPolkadot;
@@ -589,7 +591,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, catchWebbError, networkStorage, noteManager, setActiveApiWithAccounts, setActiveWallet]
+    [activeApi, appEvent, catchWebbError, noteManager, setActiveApiWithAccounts, setActiveWallet]
   );
 
   /// a util will store the network/wallet config before switching
@@ -603,7 +605,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
          * Suggestion: use `useRef` instead of `useState`
          * for the `networkStorage` because state update asynchronous
          * */
-        const _networkStorage = networkStorage ?? (await netStorageFactory());
+        const _networkStorage = await appNetworkStoragePromise;
         if (provider && _networkStorage) {
           await Promise.all([
             _networkStorage.set(
@@ -618,15 +620,14 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setIsConnecting(false);
       }
     },
-    [networkStorage, switchChain]
+    [switchChain]
   );
 
   useEffect(() => {
     /// init the dApp
     const init = async () => {
       setIsConnecting(true);
-      const _networkStorage = await netStorageFactory();
-      setNetworkStorage(_networkStorage);
+      const _networkStorage = await appNetworkStoragePromise;
       /// get the default wallet and network from storage
       const [net, wallet] = await Promise.all([
         _networkStorage.get('defaultNetwork'),
@@ -770,8 +771,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
             await activeApi.destroy();
             setActiveApi(undefined);
             // remove app config from local storage
-            const _networkStorage =
-              networkStorage ?? (await netStorageFactory());
+            const _networkStorage = await appNetworkStoragePromise;
             if (_networkStorage) {
               await Promise.all([
                 _networkStorage.set('defaultNetwork', undefined),
