@@ -44,7 +44,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                 <Typography
                   variant="h5"
                   fw="black"
-                  className="!text-current !text-[20px] !leading-[30px]"
+                  className="!text-[18px] md:!text-[20px] md:!leading-[30px] !text-inherit"
                 >
                   {tab}
                 </Typography>

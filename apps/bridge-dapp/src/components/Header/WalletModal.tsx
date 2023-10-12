@@ -8,7 +8,7 @@ import {
   WalletConnectionCard,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { useConnectWallet } from '../../hooks';
 import { getDefaultConnection } from '../../utils';
 
@@ -118,14 +118,35 @@ export const WalletModal: FC = () => {
     [switchWallet, chainToSwitchTo]
   );
 
+  const platformId = useMemo(() => {
+    try {
+      const { id } = getPlatformMetaData();
+      return id;
+    } catch (error) {
+      return undefined;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof platformId === 'undefined') {
+      notificationApi.addToQueue({
+        variant: 'warning',
+        message: 'Unsupported platform',
+        secondaryMessage:
+          'Please siwtch to a supported platform - Chrome or Firefox',
+      });
+    }
+  }, [platformId, notificationApi]);
+
   const downloadURL = useMemo(() => {
-    const { id } = getPlatformMetaData();
+    if (!platformId) return undefined;
+
     const wallet = getCurrentWallet();
 
-    if (wallet?.installLinks?.[id]) {
-      return new URL(wallet.installLinks[id]);
+    if (wallet?.installLinks?.[platformId]) {
+      return new URL(wallet.installLinks[platformId]);
     }
-  }, [getCurrentWallet]);
+  }, [getCurrentWallet, platformId]);
 
   const handleTryAgainBtnClick = useCallback(async () => {
     if (!selectedWallet) {

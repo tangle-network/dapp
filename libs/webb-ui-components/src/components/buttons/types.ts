@@ -182,6 +182,21 @@ export type ChainButtonProps = PropsOf<'button'> & {
    * The status of the chain
    */
   status?: StatusIndicatorProps['variant'];
+
+  /**
+   * The classname of the icon
+   */
+  iconClassname?: string;
+
+  /**
+   * The classname of the chain name
+   */
+  nameClassname?: string;
+
+  /**
+   * The classname of the dropdown icon
+   */
+  dropdownClassname?: string;
 };
 
 /**
@@ -197,6 +212,8 @@ export type WalletButtonProps = PropsOf<'button'> & {
    * The current address of the wallet
    */
   address: string;
+
+  addressClassname?: string;
 };
 
 export type LoadingPillStatus = 'success' | 'loading' | 'error';

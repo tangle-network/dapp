@@ -1,5 +1,5 @@
 import { getFlexBasic } from '@webb-tools/icons/utils';
-import { cloneElement, forwardRef } from 'react';
+import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
 import { shortenHex, shortenString } from '../../utils';
@@ -7,7 +7,11 @@ import { WalletButtonProps } from './types';
 import { Typography } from '../../typography/Typography';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
-  ({ wallet, address, className, ...props }, ref) => {
+  ({ wallet, address, className, addressClassname, ...props }, ref) => {
+    const addressClx = useMemo(() => {
+      return twMerge('dark:text-mono-0', addressClassname);
+    }, [addressClassname]);
+
     return (
       <button
         {...props}
@@ -34,7 +38,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
             variant="body1"
             fw="bold"
             component="p"
-            className="dark:text-mono-0"
+            className={addressClx}
           >
             {isHex(address)
               ? `${shortenHex(address)}`

@@ -152,7 +152,7 @@ export const Input: React.FC<InputProps> = (props) => {
               inputClsxDisabled
             )
           : cx(
-              `border-none w-full bg-transparent focus:ring-0 p-0 text-[20px] leading-[30px] font-bold`,
+              `border-none w-full bg-transparent focus:ring-0 p-0 h4 leading-[30px] font-bold`,
               'text-mono-200 dark:text-mono-0'
             )
       ),

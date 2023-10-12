@@ -5,12 +5,14 @@ import {
   BreadcrumbsItem,
   Button,
   ChainButton,
+  ConnectWalletMobileButton,
   MenuItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   SideBarMenu,
   getHumanFileSize,
+  useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import {
   GITHUB_REQUEST_FEATURE_URL,
@@ -46,6 +48,8 @@ export const Header: FC<HeaderProps> = () => {
 
   const { toggleModal } = useConnectWallet();
 
+  const { isMobile } = useCheckMobile();
+
   // On connect wallet button click - connect to the default chain(ETH Goerli)
   const handleConnectWalletClick = useCallback(() => {
     toggleModal(true);
@@ -69,7 +73,7 @@ export const Header: FC<HeaderProps> = () => {
           className="lg:hidden"
           overrideContentProps={{ className: 'top-0' }}
         />
-        <Breadcrumbs>
+        <Breadcrumbs className="hidden md:flex">
           {items.map((item, index) => {
             return (
               <NavLink key={index} to={'/'}>
@@ -94,25 +98,28 @@ export const Header: FC<HeaderProps> = () => {
         activeAccount &&
         activeWallet &&
         activeChain ? (
-          <div className="hidden lg:!flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <ChainButton
               chain={activeChain}
               status="success"
               onClick={() =>
                 navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`)
               }
+              nameClassname="hidden md:block"
             />
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
           </div>
-        ) : (
+        ) : !isMobile ? (
           <Button
             isLoading={loading}
             loadingText="Connecting..."
             onClick={handleConnectWalletClick}
-            className="hidden lg:!flex justify-center items-center"
+            className="flex justify-center items-center"
           >
             Connect wallet
           </Button>
+        ) : (
+          <ConnectWalletMobileButton />
         )}
 
         <NavigationMenu>
