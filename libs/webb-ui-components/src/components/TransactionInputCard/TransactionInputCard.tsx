@@ -206,7 +206,7 @@ const TransactionMaxAmountButton = forwardRef<
 
     return (
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <TransactionButton
             {...props}
             ref={ref}

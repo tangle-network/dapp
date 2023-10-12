@@ -30,11 +30,7 @@ const getPlatformMetaData = (): PlatformMetaData => {
         storeName: 'Chrome web store',
       };
     default:
-      return {
-        id: SupportedBrowsers.Chrome,
-        name: 'chrome',
-        storeName: 'Chrome web store',
-      };
+      throw new Error('Unsupported browser');
   }
 };
 
