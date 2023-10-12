@@ -26,21 +26,23 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
         <SideBar {...sidebarProps} className="hidden lg:flex" />
 
         <div className="flex flex-col w-full mx-auto overflow-y-auto">
-          <Transition show={showBanner}>
-            <Banner
-              className="py-2"
-              onClose={onCloseHandler}
-              dappName="bridge"
-              buttonText="ACCESS FAUCET"
-              bannerText="Explore Hubble Bridge Beta, get test tokens to experience private bridging."
-              buttonProps={{
-                href: WEBB_FAUCET_URL,
-                target: '_blank',
-              }}
-            />
-          </Transition>
+          <div className="hidden lg:!block">
+            <Transition show={showBanner}>
+              <Banner
+                className="py-2"
+                onClose={onCloseHandler}
+                dappName="bridge"
+                buttonText="ACCESS FAUCET"
+                bannerText="Explore Hubble Bridge Beta, get test tokens to experience private bridging."
+                buttonProps={{
+                  href: WEBB_FAUCET_URL,
+                  target: '_blank',
+                }}
+              />
+            </Transition>
+          </div>
 
-          <div className="max-w-[1565px] mx-auto w-full px-10 h-full flex flex-col justify-between">
+          <div className="max-w-[1565px] mx-auto w-full h-full flex flex-col justify-between px-4">
             <div className="space-y-6">
               <Header />
 

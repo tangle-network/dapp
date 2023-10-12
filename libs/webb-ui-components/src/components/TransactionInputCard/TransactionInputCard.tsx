@@ -64,7 +64,7 @@ const TransactionInputCardRoot = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'w-full max-w-lg rounded-lg px-3 py-1.5 space-y-2',
+          'w-full rounded-lg px-3 py-1.5 space-y-2',
           'bg-mono-20 dark:bg-mono-180',
           'hover:bg-[#E2E5EB]/30 dark:hover:bg-mono-170',
           className

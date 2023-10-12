@@ -69,21 +69,25 @@ export const Header: FC<HeaderProps> = () => {
           className="lg:hidden"
           overrideContentProps={{ className: 'top-0' }}
         />
-        <Breadcrumbs>
-          {items.map((item, index) => {
-            return (
-              <NavLink key={index} to={'/'}>
-                <BreadcrumbsItem
-                  isLast={index === items.length - 1}
-                  icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
-                  className="capitalize"
-                >
-                  {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
-                </BreadcrumbsItem>
-              </NavLink>
-            );
-          })}
-        </Breadcrumbs>
+        <div className="hidden md:block">
+          <Breadcrumbs>
+            {items.map((item, index) => {
+              return (
+                <NavLink key={index} to={'/'}>
+                  <BreadcrumbsItem
+                    isLast={index === items.length - 1}
+                    icon={
+                      index === 0 ? <ContrastTwoLine size="lg" /> : undefined
+                    }
+                    className="capitalize"
+                  >
+                    {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
+                  </BreadcrumbsItem>
+                </NavLink>
+              );
+            })}
+          </Breadcrumbs>
+        </div>
       </div>
 
       <div className="flex items-center space-x-2">
@@ -94,13 +98,14 @@ export const Header: FC<HeaderProps> = () => {
         activeAccount &&
         activeWallet &&
         activeChain ? (
-          <div className="hidden lg:!flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <ChainButton
               chain={activeChain}
               status="success"
               onClick={() =>
                 navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`)
               }
+              nameClassname="hidden md:block"
             />
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
           </div>
@@ -109,7 +114,7 @@ export const Header: FC<HeaderProps> = () => {
             isLoading={loading}
             loadingText="Connecting..."
             onClick={handleConnectWalletClick}
-            className="hidden lg:!flex justify-center items-center"
+            className="flex justify-center items-center"
           >
             Connect wallet
           </Button>
