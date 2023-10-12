@@ -5,12 +5,14 @@ import {
   BreadcrumbsItem,
   Button,
   ChainButton,
+  ConnectWalletMobileButton,
   MenuItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   SideBarMenu,
   getHumanFileSize,
+  useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import {
   GITHUB_REQUEST_FEATURE_URL,
@@ -45,6 +47,8 @@ export const Header: FC<HeaderProps> = () => {
   const navigate = useNavigateWithPersistParams();
 
   const { toggleModal } = useConnectWallet();
+
+  const { isMobile } = useCheckMobile();
 
   // On connect wallet button click - connect to the default chain(ETH Goerli)
   const handleConnectWalletClick = useCallback(() => {
@@ -109,7 +113,7 @@ export const Header: FC<HeaderProps> = () => {
             />
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
           </div>
-        ) : (
+        ) : !isMobile ? (
           <Button
             isLoading={loading}
             loadingText="Connecting..."
@@ -118,6 +122,8 @@ export const Header: FC<HeaderProps> = () => {
           >
             Connect wallet
           </Button>
+        ) : (
+          <ConnectWalletMobileButton />
         )}
 
         <NavigationMenu>
