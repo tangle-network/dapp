@@ -73,25 +73,21 @@ export const Header: FC<HeaderProps> = () => {
           className="lg:hidden"
           overrideContentProps={{ className: 'top-0' }}
         />
-        <div className="hidden md:block">
-          <Breadcrumbs>
-            {items.map((item, index) => {
-              return (
-                <NavLink key={index} to={'/'}>
-                  <BreadcrumbsItem
-                    isLast={index === items.length - 1}
-                    icon={
-                      index === 0 ? <ContrastTwoLine size="lg" /> : undefined
-                    }
-                    className="capitalize"
-                  >
-                    {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
-                  </BreadcrumbsItem>
-                </NavLink>
-              );
-            })}
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs className="hidden md:flex">
+          {items.map((item, index) => {
+            return (
+              <NavLink key={index} to={'/'}>
+                <BreadcrumbsItem
+                  isLast={index === items.length - 1}
+                  icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
+                  className="capitalize"
+                >
+                  {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
+                </BreadcrumbsItem>
+              </NavLink>
+            );
+          })}
+        </Breadcrumbs>
       </div>
 
       <div className="flex items-center space-x-2">
