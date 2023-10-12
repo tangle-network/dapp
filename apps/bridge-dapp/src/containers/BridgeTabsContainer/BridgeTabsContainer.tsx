@@ -31,7 +31,7 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
         className
       )}
     >
-      <ul className="flex items-center gap-4 overflow-x-scroll mx-auto pb-2">
+      <ul className="flex items-center gap-4 overflow-x-scroll pb-2">
         {BRIDGE_TABS.map((tab, idx) => (
           <li key={`${tab}-${idx}`}>
             <Link
