@@ -108,7 +108,7 @@ const TextFieldInput = forwardRef<
         disabled={context?.isDisabled ?? isDisabled}
         ref={forwardedRef}
         className={twMerge(
-          'h5 font-bold grow bg-transparent focus-visible:outline-none',
+          'h4 font-bold grow bg-transparent focus-visible:outline-none',
           'focus:ring-0 border-0 p-0 w-full',
           cx({
             'text-mono-200 dark:text-mono-0': !isDisabled,
