@@ -12,14 +12,14 @@ config({
   path: path.join(workspaceRoot, 'apps/bridge-dapp', '.env'),
 });
 
-import { ApiPromise } from '@polkadot/api';
+import type { ApiPromise } from '@polkadot/api';
 import {
   anchorDeploymentBlock,
   parsedAnchorConfig,
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
 import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
-import {
+import type {
   AnchorMetadata,
   ConfigType,
   ICurrency,

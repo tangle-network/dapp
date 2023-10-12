@@ -25,6 +25,8 @@ import {
   parseSubstrateTargetSystem,
 } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
+import values from 'lodash/values';
+import keys from 'lodash/keys';
 
 export type Chain = ChainConfig & {
   wallets: Array<Wallet['id']>;
@@ -42,6 +44,13 @@ export type ApiConfigInput = {
 };
 
 export class ApiConfig {
+  /**
+   * All supported typed chain ids set,
+   * it is calculated from the anchor config
+   * which is fetched from the on-chain config
+   */
+  readonly supportedTypedChainIds: ReadonlySet<number>;
+
   constructor(
     /**
      * id -> wallet config
@@ -67,7 +76,17 @@ export class ApiConfig {
      * fungible currency id -> typed chain id -> wrappable currency ids
      */
     public fungibleToWrappableMap: Map<number, Map<number, Set<number>>>
-  ) {}
+  ) {
+    const typedChainIdsSet = new Set<number>();
+
+    values(this.anchors).forEach((anchorsRecord) => {
+      keys(anchorsRecord).forEach((typedChainId) => {
+        typedChainIdsSet.add(+typedChainId);
+      });
+    });
+
+    this.supportedTypedChainIds = typedChainIdsSet;
+  }
 
   static init = (config: ApiConfigInput) => {
     const currencies = config.currencies ?? {};
@@ -238,5 +257,17 @@ export class ApiConfig {
     // parse the target system and compare the tree id
     const { treeId } = parseSubstrateTargetSystem(targetSystemHex);
     return +anchorIdentifier === treeId;
+  }
+
+  /**
+   * Get all supported wallets that have at least one supported chain id
+   * in the given supported typed chain ids
+   */
+  getSupportedWallets(): WalletConfig[] {
+    return values(this.wallets).filter((walletCfg) => {
+      return walletCfg.supportedChainIds.some((typedChainId) =>
+        this.supportedTypedChainIds.has(typedChainId)
+      );
+    });
   }
 }

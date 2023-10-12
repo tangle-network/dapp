@@ -37,7 +37,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
       }
 
       if (!isWalletConnected) {
-        toggleModal(true, nextChain);
+        toggleModal(true);
         return false;
       }
 
@@ -55,7 +55,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
         const newApi = await switchChain(nextChain, activeWallet);
         return Boolean(newApi);
       } else {
-        toggleModal(true, nextChain);
+        toggleModal(true);
         return false;
       }
     },

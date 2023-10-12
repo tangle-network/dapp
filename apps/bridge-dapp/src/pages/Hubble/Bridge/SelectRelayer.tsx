@@ -1,5 +1,4 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { Search } from '@webb-tools/icons/Search';
 import { Spinner } from '@webb-tools/icons/Spinner';
@@ -152,13 +151,7 @@ const SelectRelayer = () => {
 
   const handleConnectWallet = useCallback(() => {
     if (chainCfg) {
-      toggleModal(
-        true,
-        Object.values(chainsPopulated).find(
-          (chain) =>
-            chain.chainType === chainCfg.chainType && chain.id === chainCfg.id
-        )
-      );
+      toggleModal(true);
     } else {
       navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
     }

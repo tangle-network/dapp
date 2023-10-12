@@ -91,7 +91,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
       if (activeWallet && chain.wallets.includes(activeWallet.id)) {
         await switchChain(chain, activeWallet);
       } else {
-        toggleModal(true, chain);
+        toggleModal(true);
       }
 
       handleClose();

@@ -46,12 +46,6 @@ export const Header: FC<HeaderProps> = () => {
 
   const { toggleModal } = useConnectWallet();
 
-  // On connect wallet button click - connect to the default chain(ETH Goerli)
-  const handleConnectWalletClick = useCallback(() => {
-    toggleModal(true);
-  }, [toggleModal]);
-
-  // Boolean to display the network switcher and wallet button
   const isDisplayNetworkSwitcherAndWalletButton = useMemo(
     () => [!loading, activeAccount, activeWallet, activeChain].every(Boolean),
     [activeAccount, activeChain, activeWallet, loading]
@@ -108,7 +102,7 @@ export const Header: FC<HeaderProps> = () => {
           <Button
             isLoading={loading}
             loadingText="Connecting..."
-            onClick={handleConnectWalletClick}
+            onClick={() => toggleModal(true)}
             className="hidden lg:!flex justify-center items-center"
           >
             Connect wallet
