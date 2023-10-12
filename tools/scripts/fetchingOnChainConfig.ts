@@ -37,6 +37,7 @@ import merge from 'lodash/merge';
 import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import mergeConfig from './utils/on-chain-utils/mergeConfig';
+import { HttpRequestError } from 'viem';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
@@ -93,7 +94,15 @@ async function filterActiveEVMChains(
             await provider.getChainId();
             return typedChainId;
           } catch (error) {
-            console.log(error);
+            // Ignore the error if the url is 127.0.0.1
+            if (
+              error instanceof HttpRequestError &&
+              error.url.includes('127.0.0.1')
+            ) {
+              // Do nothing
+            } else {
+              console.log(error);
+            }
             return null;
           }
         })
@@ -114,6 +123,15 @@ async function filterActiveSubstrateChains(
       try {
         return await substrateProviderFactory(+typedChainId);
       } catch (error) {
+        // Ignore the error if the url is 127.0.0.1
+        if (
+          error instanceof HttpRequestError &&
+          error.url.includes('127.0.0.1')
+        ) {
+          // Do nothing
+        } else {
+          console.log(error);
+        }
         return null;
       }
     })
