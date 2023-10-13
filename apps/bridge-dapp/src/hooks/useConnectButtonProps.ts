@@ -4,20 +4,27 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useCurrentTypedChainId from '@webb-tools/react-hooks/useCurrentTypedChainId';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import { useCallback, useMemo } from 'react';
+import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../constants';
 import { useConnectWallet } from './useConnectWallet';
+import useNavigateWithPersistParams from './useNavigateWithPersistParams';
 
 function useConnectButtonProps(typedChainId?: number | null) {
   const { activeWallet, switchChain } = useWebContext();
 
-  const { toggleModal, isWalletConnected } = useConnectWallet();
+  const { toggleModal } = useConnectWallet();
 
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const activeTypedChainId = useCurrentTypedChainId();
+  const navigate = useNavigateWithPersistParams();
 
   const content = useMemo(() => {
-    if (!isWalletConnected || typeof activeTypedChainId !== 'number') {
+    if (!activeWallet) {
       return 'Connect Wallet' as const;
+    }
+
+    if (typeof activeTypedChainId !== 'number') {
+      return 'Select Chain' as const;
     }
 
     if (!hasNoteAccount) {
@@ -27,7 +34,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
     if (activeTypedChainId !== typedChainId) {
       return 'Switch Chain' as const;
     }
-  }, [activeTypedChainId, hasNoteAccount, isWalletConnected, typedChainId]);
+  }, [activeTypedChainId, activeWallet, hasNoteAccount, typedChainId]);
 
   const handleConnect = useCallback(
     async (typedChainId: number) => {
@@ -36,8 +43,13 @@ function useConnectButtonProps(typedChainId?: number | null) {
         throw WebbError.from(WebbErrorCodes.UnsupportedChain);
       }
 
-      if (!isWalletConnected) {
+      if (!activeWallet) {
         toggleModal(true);
+        return false;
+      }
+
+      if (typeof activeTypedChainId !== 'number') {
+        navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
         return false;
       }
 
@@ -51,7 +63,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
         return true;
       }
 
-      if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
+      if (nextChain.wallets.includes(activeWallet.id)) {
         const newApi = await switchChain(nextChain, activeWallet);
         return Boolean(newApi);
       } else {
@@ -60,7 +72,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
       }
     },
     // prettier-ignore
-    [activeTypedChainId, activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, switchChain, toggleModal]
+    [activeTypedChainId, activeWallet, hasNoteAccount, navigate, setOpenNoteAccountModal, switchChain, toggleModal]
   );
 
   return {

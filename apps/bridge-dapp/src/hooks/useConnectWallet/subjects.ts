@@ -1,6 +1,6 @@
 import type { WalletConfig } from '@webb-tools/dapp-config';
 import type { WebbError } from '@webb-tools/dapp-types/WebbError';
-import type { Maybe } from '@webb-tools/webb-ui-components/types';
+import { Maybe } from '@webb-tools/dapp-types/utils/types';
 import { BehaviorSubject } from 'rxjs';
 
 /**

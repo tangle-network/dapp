@@ -53,9 +53,9 @@ import { WebbContext } from '../webb-context';
 import {
   notificationHandler,
   registerInteractiveFeedback,
-  useActiveWallet,
   useNoteAccount,
 } from './private';
+import { useActiveAccount, useActiveChain, useActiveWallet } from './subjects';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -81,8 +81,8 @@ const appNetworkStoragePromise = netStorageFactory();
 
 const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeWallet, setActiveWallet] = useActiveWallet();
-
-  const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
+  const [activeChain, setActiveChain] = useActiveChain();
+  const [activeAccount, setActiveAccount] = useActiveAccount();
 
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(
     undefined
@@ -91,8 +91,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [loading, setLoading] = useState(true);
 
   const [accounts, setAccounts] = useState<Array<Account>>([]);
-
-  const [activeAccount, setActiveAccount] = useState<Account | null>(null);
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -174,7 +172,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       setActiveAccount(account);
       await loginIfExist(account.address);
     },
-    [activeApi, activeChain, loginIfExist]
+    [activeApi, activeChain, loginIfExist, setActiveAccount]
   );
 
   /// this will set the active api and the accounts
@@ -245,7 +243,8 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         });
       });
     },
-    [loginIfExist, setActiveAccountWithStorage, setNoteManager]
+    // prettier-ignore
+    [loginIfExist, setActiveAccount, setActiveAccountWithStorage, setNoteManager]
   );
 
   /// Error handler for the `WebbError`
@@ -292,7 +291,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           alert(code);
       }
     },
-    [appEvent]
+    [appEvent, setActiveChain]
   );
 
   /// Network switcher
@@ -591,7 +590,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, catchWebbError, noteManager, setActiveApiWithAccounts, setActiveWallet]
+    [activeApi, appEvent, catchWebbError, noteManager, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
   );
 
   /// a util will store the network/wallet config before switching
@@ -808,5 +807,3 @@ export const WebbProvider: FC<WebbProviderProps> = (props) => {
     </WagmiConfig>
   );
 };
-
-export { useActiveWallet };

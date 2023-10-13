@@ -6,7 +6,10 @@ import { twMerge } from 'tailwind-merge';
 import { ChainButtonProps } from './types';
 
 const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
-  ({ className, chain, status, ...props }, ref) => {
+  (
+    { className, chain, status, placeholder = 'Select Chain', ...props },
+    ref
+  ) => {
     return (
       <button
         {...props}
@@ -22,13 +25,15 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
         ref={ref}
       >
         <div className="flex items-center gap-1">
-          <ChainIcon
-            status={status}
-            size="lg"
-            className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-            name={chain.name}
-          />
-          <p className="font-bold">{chain.name}</p>
+          {chain && (
+            <ChainIcon
+              status={status}
+              size="lg"
+              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+              name={chain.name}
+            />
+          )}
+          <p className="font-bold">{chain?.name ?? placeholder}</p>
           <ChevronDown
             size="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}

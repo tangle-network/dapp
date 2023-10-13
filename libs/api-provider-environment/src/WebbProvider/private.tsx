@@ -6,16 +6,12 @@ import {
   multipleKeypairStorageFactory,
   resetMultiAccountNoteStorage,
 } from '@webb-tools/browser-utils/storage';
-import type { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
 import type { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons/Spinner';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Keypair } from '@webb-tools/sdk-core';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
-import type { Maybe } from '@webb-tools/webb-ui-components/src/types';
-import { useObservableState } from 'observable-hooks';
 import { useCallback, useState } from 'react';
-import { BehaviorSubject } from 'rxjs';
 
 export const registerInteractiveFeedback = (
   setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
@@ -175,13 +171,4 @@ export function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
     purgeNoteAccount,
     setNoteManager,
   };
-}
-
-const activeWalletSubject = new BehaviorSubject<Maybe<WalletConfig>>(undefined);
-const setActiveWallet = (wallet: Maybe<WalletConfig>) =>
-  activeWalletSubject.next(wallet);
-
-export function useActiveWallet() {
-  const activeWallet = useObservableState(activeWalletSubject);
-  return [activeWallet, setActiveWallet] as const;
 }

@@ -4,7 +4,6 @@ import {
   Breadcrumbs,
   BreadcrumbsItem,
   Button,
-  ChainButton,
   MenuItem,
   NavigationMenu,
   NavigationMenuContent,
@@ -20,18 +19,11 @@ import {
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import {
-  ComponentProps,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ComponentProps, FC, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
 import sidebarProps from '../../constants/sidebar';
-import { useConnectWallet, useNavigateWithPersistParams } from '../../hooks';
+import { useConnectWallet } from '../../hooks';
+import ChainButton from './ChainButton';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
@@ -40,16 +32,10 @@ import { HeaderProps } from './types';
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
-  const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
-
-  const navigate = useNavigateWithPersistParams();
+  const { activeAccount, activeWallet, loading, isConnecting } =
+    useWebContext();
 
   const { toggleModal } = useConnectWallet();
-
-  const isDisplayNetworkSwitcherAndWalletButton = useMemo(
-    () => [!loading, activeAccount, activeWallet, activeChain].every(Boolean),
-    [activeAccount, activeChain, activeWallet, loading]
-  );
 
   const location = useLocation();
 
@@ -83,22 +69,7 @@ export const Header: FC<HeaderProps> = () => {
       <div className="flex items-center space-x-2">
         <TxProgressDropdown />
 
-        {/** Wallet is actived */}
-        {isDisplayNetworkSwitcherAndWalletButton &&
-        activeAccount &&
-        activeWallet &&
-        activeChain ? (
-          <div className="hidden lg:!flex items-center space-x-2">
-            <ChainButton
-              chain={activeChain}
-              status="success"
-              onClick={() =>
-                navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`)
-              }
-            />
-            <WalletDropdown account={activeAccount} wallet={activeWallet} />
-          </div>
-        ) : (
+        {isConnecting || loading || !activeWallet || !activeAccount ? (
           <Button
             isLoading={loading}
             loadingText="Connecting..."
@@ -107,6 +78,11 @@ export const Header: FC<HeaderProps> = () => {
           >
             Connect wallet
           </Button>
+        ) : (
+          <div className="hidden lg:!flex items-center space-x-2">
+            <ChainButton />
+            <WalletDropdown account={activeAccount} wallet={activeWallet} />
+          </div>
         )}
 
         <NavigationMenu>

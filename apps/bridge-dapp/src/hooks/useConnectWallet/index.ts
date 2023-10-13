@@ -1,8 +1,21 @@
+import {
+  useActiveChain,
+  useActiveWallet,
+} from '@webb-tools/api-provider-environment/WebbProvider/subjects';
+import getDefaultAccount from '@webb-tools/api-provider-environment/utils/getDefaultAccount';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { useActiveWallet } from '@webb-tools/api-provider-environment/WebbProvider';
-import { type WalletConfig } from '@webb-tools/dapp-config';
-import type { WalletId, WebbError } from '@webb-tools/dapp-types';
+import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
+import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import {
+  WebbError,
+  WebbErrorCodes,
+  type WalletId,
+} from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import subjects, { WalletState } from './subjects';
@@ -73,9 +86,10 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
   const walletState = useObservableState(subjects.walletStateSubject);
   const connectError = useObservableState(subjects.connectErrorSubject);
 
-  const { appEvent, loading } = useWebContext();
+  const { appEvent, loading, setActiveAccount } = useWebContext();
 
   const [activeWallet, setActiveWallet] = useActiveWallet();
+  const [, setActiveChain] = useActiveChain();
 
   const connectingWalletId = useMemo<number | undefined>(
     () =>
@@ -147,23 +161,44 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
 
   const connectWallet = useCallback(
     async (nextWallet: WalletConfig) => {
-      subjects.setSelectedWallet(nextWallet);
-      subjects.setWalletState(WalletState.CONNECTING);
+      try {
+        subjects.setSelectedWallet(nextWallet);
+        subjects.setWalletState(WalletState.CONNECTING);
 
-      const provider = await nextWallet.detect();
+        const provider = await nextWallet.detect();
 
-      if (!provider) {
+        if (!provider) {
+          subjects.setWalletState(WalletState.FAILED);
+          subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
+          return;
+        }
+
+        if ('connect' in provider) {
+          const {
+            chain: { id, unsupported },
+          } = await provider.connect();
+
+          const chain = getChain(id, ChainType.EVM);
+          setActiveChain(unsupported || !chain ? null : chain);
+        }
+
+        subjects.setConnectError(undefined);
+        subjects.setWalletState(WalletState.SUCCESS);
+        subjects.setWalletModalOpen(false);
+
+        const account = await getDefaultAccount(provider);
+        setActiveAccount(account);
+        setActiveWallet(nextWallet);
+      } catch (error) {
         subjects.setWalletState(WalletState.FAILED);
-        subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
-        return;
+        subjects.setConnectError(
+          error instanceof WebbError
+            ? error
+            : WebbError.from(WebbErrorCodes.FailedToConnectWallet)
+        );
       }
-
-      subjects.setConnectError(undefined);
-      subjects.setWalletState(WalletState.SUCCESS);
-      subjects.setWalletModalOpen(false);
-      setActiveWallet(nextWallet);
     },
-    [setActiveWallet]
+    [setActiveAccount, setActiveChain, setActiveWallet]
   );
 
   /**
@@ -189,3 +224,8 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
     connectWallet,
   };
 };
+
+function getChain(chainId: number, chainType: ChainType): Chain | undefined {
+  const typedChainId = calculateTypedChainId(chainType, chainId);
+  return chainsPopulated[typedChainId];
+}

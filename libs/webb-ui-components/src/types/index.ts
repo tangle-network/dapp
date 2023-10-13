@@ -1,7 +1,8 @@
-import { RankingInfo } from '@tanstack/match-sorter-utils';
-import { IconBase } from '@webb-tools/icons/types';
-import { FilterFn } from '@tanstack/react-table';
-import React from 'react';
+import type { RankingInfo } from '@tanstack/match-sorter-utils';
+import type { IconBase } from '@webb-tools/icons/types';
+import type { FilterFn } from '@tanstack/react-table';
+import type { Nullable, Maybe } from '@webb-tools/dapp-types/utils/types';
+import type React from 'react';
 
 /******************
  * DECLARE GLOBAL *
@@ -171,11 +172,7 @@ export type TokenType = 'shielded' | 'unshielded';
 export type PropsOf<T extends React.ElementType<any>> =
   React.ComponentPropsWithoutRef<T>;
 
-export type Maybe<T> = T | undefined;
-
-export type Nullable<T> = T | null | undefined;
-
-export type NullableUnknownType = Nullable<unknown>;
+export type NullableUnknownType = Nullable<Maybe<unknown>>;
 
 export type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;

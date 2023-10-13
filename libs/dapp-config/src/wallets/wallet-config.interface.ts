@@ -13,7 +13,9 @@ export interface WalletConfig {
   Logo: React.ReactElement;
   name: string;
   title: string;
-  platform: string;
+
+  /** The wallet platform "EVM" or "Substrate" */
+  platform: 'EVM' | 'Substrate';
 
   /**
    * Homepage url of the wallet
