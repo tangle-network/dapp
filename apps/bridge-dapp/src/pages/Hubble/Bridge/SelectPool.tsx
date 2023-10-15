@@ -5,24 +5,24 @@ import {
   BalancesFromNotesType,
   useBalancesFromNotes,
 } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { formatEther } from 'viem';
 import SlideAnimation from '../../../components/SlideAnimation';
-import { BRIDGE_TABS, POOL_KEY } from '../../../constants';
+import { POOL_KEY, SOURCE_CHAIN_KEY } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 
 const SelectPool: FC = () => {
   const [searhParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const currentTxType = useMemo(() => {
-    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
+  const currentTxType = useTxTabFromRoute();
 
   const { apiConfig } = useWebContext();
 
@@ -41,15 +41,16 @@ const SelectPool: FC = () => {
   const pools = useMemo<Array<AssetType>>(
     () => {
       return fungibleCurrencies.map((currencyCfg) => {
-        const assetBalanceProps = getBalanceProps(
-          currencyCfg,
-          balancesFromNotes,
+        const chainName = getChainName(
+          apiConfig.chains,
           currentTxType,
           srcTypedChainId
         );
 
-        const chainName = getChainName(
-          apiConfig.chains,
+        const assetBalanceProps = getBalanceProps(
+          currencyCfg,
+          balancesFromNotes,
+          chainName,
           currentTxType,
           srcTypedChainId
         );
@@ -73,7 +74,7 @@ const SelectPool: FC = () => {
     [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, initialized, srcTypedChainId]
   );
 
-  const unavailableTokens = useMemo<Array<AssetType>>(
+  const poolsFromBalance = useMemo<Array<AssetType>>(
     () => {
       if (currentTxType === 'deposit') {
         return [];
@@ -112,10 +113,21 @@ const SelectPool: FC = () => {
   );
 
   const handleClose = useCallback(
-    (selectedCfg?: CurrencyConfig) => {
+    (selectedCfg?: CurrencyConfig, chainName?: string) => {
       const params = new URLSearchParams(searhParams);
       if (selectedCfg) {
         params.set(POOL_KEY, `${selectedCfg.id}`);
+      }
+
+      const chain = chainName
+        ? Object.values(apiConfig.chains).find((cfg) => cfg.name === chainName)
+        : undefined;
+
+      if (chain) {
+        params.set(
+          SOURCE_CHAIN_KEY,
+          calculateTypedChainId(chain.chainType, chain.id).toString()
+        );
       }
 
       const path = pathname.split('/').slice(0, -1).join('/');
@@ -124,16 +136,16 @@ const SelectPool: FC = () => {
         search: params.toString(),
       });
     },
-    [navigate, pathname, searhParams]
+    [apiConfig.chains, navigate, pathname, searhParams]
   );
 
   const handleTokenChange = useCallback(
-    ({ name, symbol }: AssetType) => {
+    ({ name, symbol, chainName }: AssetType) => {
       const currencyCfg = Object.values(apiConfig.currencies).find(
         (cfg) => cfg.name === name && cfg.symbol === symbol
       );
 
-      handleClose(currencyCfg);
+      handleClose(currencyCfg, chainName);
     },
     [apiConfig.currencies, handleClose]
   );
@@ -143,9 +155,10 @@ const SelectPool: FC = () => {
       <TokenListCard
         className="h-[var(--card-height)]"
         title={`Select pool to ${currentTxType}`}
+        type="pool"
         popularTokens={[]}
-        selectTokens={pools}
-        unavailableTokens={unavailableTokens}
+        selectTokens={pools.concat(poolsFromBalance)}
+        unavailableTokens={[]}
         onChange={handleTokenChange}
         onClose={() => handleClose()}
         txnType={currentTxType}
@@ -173,19 +186,20 @@ const getExplorerUrl = (blockExplorer?: string, address?: string) =>
 const getBalanceProps = (
   currency: CurrencyConfig,
   balances: BalancesFromNotesType,
+  chainName?: string,
   txType?: string,
   srcTypedChainId?: number | null
 ) => {
-  if (txType && typeof srcTypedChainId === 'number') {
-    const balance = balances[currency.id]?.[srcTypedChainId];
-    if (typeof balance === 'bigint') {
-      return {
-        balance: +formatEther(balance),
-      };
-    }
+  if (!txType || typeof srcTypedChainId !== 'number') {
+    return;
   }
 
-  return undefined;
+  const balance = balances[currency.id]?.[srcTypedChainId] ?? 0;
+
+  return {
+    balance: +formatEther(balance),
+    subContent: chainName,
+  };
 };
 
 const getChainName = (
@@ -193,9 +207,9 @@ const getChainName = (
   txType?: string,
   srcTypedChainId?: number | null
 ) => {
-  if (txType && typeof srcTypedChainId === 'number') {
-    return chainsConfig[srcTypedChainId]?.name;
+  if (!txType || typeof srcTypedChainId !== 'number') {
+    return;
   }
 
-  return undefined;
+  return chainsConfig[srcTypedChainId]?.name;
 };
