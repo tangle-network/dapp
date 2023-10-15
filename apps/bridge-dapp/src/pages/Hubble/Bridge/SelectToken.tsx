@@ -84,6 +84,7 @@ const SelectToken: FC = () => {
           explorerUrl: explorerUrl,
           assetBalanceProps: balanceProps,
           assetBadgeProps: badgeProps,
+          isLoadingMetadata: isBalancesLoading,
         } satisfies AssetType;
       }),
     // prettier-ignore
@@ -170,5 +171,5 @@ const getBadgeProps = (
 
 const getExplorerUrl = (addr?: string, blockExplorer?: string) =>
   blockExplorer && addr && BigInt(addr) !== ZERO_BIG_INT
-    ? new URL(`/address${addr}`, blockExplorer).toString()
+    ? new URL(`/address/${addr}`, blockExplorer).toString()
     : undefined;

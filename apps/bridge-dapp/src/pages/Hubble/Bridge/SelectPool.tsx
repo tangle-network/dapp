@@ -36,7 +36,7 @@ const SelectPool: FC = () => {
     srcTypedChainId ?? undefined
   );
 
-  const { balances: balancesFromNotes } = useBalancesFromNotes();
+  const { balances: balancesFromNotes, initialized } = useBalancesFromNotes();
 
   const pools = useMemo<Array<AssetType>>(
     () => {
@@ -65,11 +65,12 @@ const SelectPool: FC = () => {
           explorerUrl,
           assetBalanceProps,
           chainName,
+          isLoadingMetadata: !initialized,
         } satisfies AssetType;
       });
     },
     // prettier-ignore
-    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, srcTypedChainId]
+    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, initialized, srcTypedChainId]
   );
 
   const unavailableTokens = useMemo<Array<AssetType>>(
@@ -95,8 +96,10 @@ const SelectPool: FC = () => {
               tokenType: 'shielded',
               assetBalanceProps: {
                 balance: +formatEther(balance),
+                subContent: `${chainCfg.name}`,
               },
               chainName: chainCfg.name,
+              isLoadingMetadata: !initialized,
             } satisfies AssetType);
           }
         });
@@ -105,7 +108,7 @@ const SelectPool: FC = () => {
       }, [] as Array<AssetType>);
     },
     // prettier-ignore
-    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, srcTypedChainId]
+    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, initialized, srcTypedChainId]
   );
 
   const handleClose = useCallback(

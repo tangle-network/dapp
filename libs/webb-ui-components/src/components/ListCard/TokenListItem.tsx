@@ -11,6 +11,7 @@ import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 import Badge from '../Badge';
 import { IconWithTooltip } from '../IconWithTooltip';
+import SkeletonLoader from '../SkeletonLoader';
 import { Button } from '../buttons';
 import { ListItem } from './ListItem';
 import { AssetBadgeInfoType, AssetBalanceType, AssetType } from './types';
@@ -124,6 +125,7 @@ const TokenListItem = forwardRef<
       onAddToken,
       symbol,
       tokenType = 'unshielded',
+      isLoadingMetadata,
       ...props
     },
     ref
@@ -175,6 +177,7 @@ const TokenListItem = forwardRef<
                   target="_blank"
                   rel="noreferrer noopener"
                   className="!text-inherit"
+                  onClick={(event) => event.stopPropagation()}
                 >
                   <ExternalLinkLine className="inline-block !fill-current" />
                 </a>
@@ -185,6 +188,8 @@ const TokenListItem = forwardRef<
 
         {typeof handleTokenIconClick === 'function' && !isDisabled ? (
           <AddToWalletButton onClick={handleTokenIconClick} />
+        ) : isLoadingMetadata ? (
+          <SkeletonLoader size="lg" className="w-14" />
         ) : typeof assetBalanceProps === 'object' ? (
           <Balance {...assetBalanceProps} />
         ) : typeof assetBadgeProps === 'object' ? (
