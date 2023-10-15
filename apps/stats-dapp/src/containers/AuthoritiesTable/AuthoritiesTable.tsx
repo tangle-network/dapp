@@ -44,7 +44,7 @@ import { Spinner } from '@webb-tools/icons';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
-const columns: ColumnDef<AuthorityListItem, any>[] = [
+const columns = [
   columnHelper.accessor('id', {
     header: 'Participant',
     enableColumnFilter: false,
@@ -80,7 +80,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={parseInt(props.getValue().toString())}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -93,7 +93,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={Number(parseFloat(props.getValue()).toFixed(2))}
+        value={Number(parseFloat(props.getValue().toString()).toFixed(2))}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -270,7 +270,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     >
       {!authorities.isLoading ? (
         <Table
-          tableProps={table as RTTable<unknown>}
+          tableProps={table}
           isPaginated
           totalRecords={totalItems}
           title="DKG Authorities"

@@ -74,7 +74,7 @@ export const headerConfig = {
   },
 };
 
-const columns: ColumnDef<KeygenType, any>[] = [
+const columns = [
   columnHelper.accessor('height', {
     header: () => (
       <TitleWithInfo
@@ -305,7 +305,7 @@ export const KeygenTable: FC = () => {
   );
 
   const getSliderDefaultValue = useCallback(
-    (column: Column<KeygenType, unknown>) =>
+    (column: Column<KeygenType>) =>
       column.getFacetedMinMaxValues()?.[0] ===
       column.getFacetedMinMaxValues()?.[1]
         ? [
@@ -375,7 +375,7 @@ export const KeygenTable: FC = () => {
     >
       {data.length > 0 ? (
         <Table
-          tableProps={table as RTTable<unknown>}
+          tableProps={table}
           totalRecords={totalItems}
           isPaginated
           tdClassName="text-center"

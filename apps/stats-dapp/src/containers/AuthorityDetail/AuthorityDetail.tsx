@@ -54,7 +54,7 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
-const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
+const columns = [
   columnHelper.accessor('height', {
     header: () => (
       <TitleWithInfo {...headerConfig['common']} {...headerConfig['height']} />
@@ -204,11 +204,7 @@ export const AuthorityDetail = () => {
           variant: 'h5',
         }}
       >
-        <Table
-          tableProps={table as RTTable<unknown>}
-          isPaginated={true}
-          title="Keygens"
-        />
+        <Table tableProps={table} isPaginated={true} title="Keygens" />
       </CardTable>
     </div>
   );

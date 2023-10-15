@@ -1,9 +1,7 @@
 import {
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
 import { useWebContext } from '@webb-tools/api-provider-environment';
@@ -17,12 +15,12 @@ import {
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
-  formatTokenAmount,
-  fuzzyFilter,
-  IconsGroup,
   IconWithTooltip,
+  IconsGroup,
   Table,
   Typography,
+  formatTokenAmount,
+  fuzzyFilter,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -37,7 +35,7 @@ import {
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
-const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
+const staticColumns = [
   columnHelper.accessor('chain', {
     header: 'Chain',
     cell: (props) => (
@@ -95,7 +93,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {formatTokenAmount(props.getValue())}
+        {formatTokenAmount(props.getValue().toString())}
       </Typography>
     ),
   }),
@@ -112,7 +110,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
       </Typography>
     ),
   }),
-];
+] as const;
 
 export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
@@ -188,7 +186,7 @@ export const ShieldedAssetsTableContainer: FC<
     ]
   );
 
-  const columns = useMemo<Array<ColumnDef<ShieldedAssetDataType, any>>>(
+  const columns = useMemo(
     () => [
       ...staticColumns,
 
@@ -260,7 +258,7 @@ export const ShieldedAssetsTableContainer: FC<
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
       <Table
         thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         isPaginated
         totalRecords={data.length}
         title="assets"

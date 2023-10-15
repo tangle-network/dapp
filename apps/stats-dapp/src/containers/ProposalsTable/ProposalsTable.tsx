@@ -45,7 +45,7 @@ import {
 
 const columnHelper = createColumnHelper<ProposalBatch>();
 
-const columns: ColumnDef<ProposalBatch, any>[] = [
+const columns = [
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (props) => (
@@ -293,7 +293,7 @@ export const ProposalsTable = () => {
     >
       {data.length > 0 ? (
         <Table
-          tableProps={table as RTTable<unknown>}
+          tableProps={table}
           isPaginated
           totalRecords={totalItems}
           title="Proposals"

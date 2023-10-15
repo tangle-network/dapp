@@ -1,29 +1,41 @@
-import React, { forwardRef } from 'react';
+import { flexRender, Row, RowData } from '@tanstack/react-table';
+import React, { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { flexRender, RowData } from '@tanstack/react-table';
 
 import { Pagination } from '../Pagination';
 import { TData } from './TData';
 import { THeader } from './THeader';
 import { TableProps } from './types';
 
-const TableComp = <T extends RowData>(
-  {
-    isDisplayFooter,
-    isPaginated,
-    tableProps: table,
-    totalRecords = 0,
-    tableClassName,
-    thClassName,
-    trClassName,
-    tdClassName,
-    paginationClassName,
-    title,
-    onRowClick,
-    ...props
-  }: TableProps<T>,
-  ref: React.ForwardedRef<HTMLDivElement>
-) => {
+export const Table = <T extends RowData>({
+  isDisplayFooter,
+  isPaginated,
+  tableProps: table,
+  totalRecords = 0,
+  tableClassName,
+  thClassName,
+  trClassName,
+  tdClassName,
+  paginationClassName,
+  title,
+  onRowClick,
+  ref,
+  ...props
+}: TableProps<T, HTMLDivElement>) => {
+  const getRowClickHandler = useCallback(
+    (row: Row<T>) => {
+      if (typeof onRowClick !== 'function') {
+        return;
+      }
+
+      return (eve: React.MouseEvent<HTMLTableRowElement>) => {
+        eve.preventDefault();
+        onRowClick(row);
+      };
+    },
+    [onRowClick]
+  );
+
   return (
     <div {...props} ref={ref}>
       <table
@@ -50,10 +62,7 @@ const TableComp = <T extends RowData>(
             <tr
               key={row.id}
               className={twMerge('group/tr', trClassName)}
-              onClick={(e) => {
-                e.preventDefault();
-                if (onRowClick !== undefined) onRowClick(row);
-              }}
+              onClick={() => getRowClickHandler(row)}
             >
               {row.getVisibleCells().map((cell) => (
                 <TData className={tdClassName} key={cell.id}>
@@ -105,5 +114,3 @@ const TableComp = <T extends RowData>(
     </div>
   );
 };
-
-export const Table = forwardRef(TableComp);

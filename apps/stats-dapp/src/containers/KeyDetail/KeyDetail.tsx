@@ -343,7 +343,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
 const columnHelper = createColumnHelper<KeyGenAuthority>();
 
-const columns: ColumnDef<KeyGenAuthority, any>[] = [
+const columns = [
   columnHelper.accessor('id', {
     header: 'Participant',
     cell: (props) => (
@@ -380,7 +380,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={parseInt(props.getValue().toString())}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -392,7 +392,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={parseInt(props.getValue().toString())}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -427,7 +427,7 @@ const KeyGenAuthoredTable: React.FC<KeyGenAuthoredTableProps> = ({ data }) => {
   });
   return (
     <Table
-      tableProps={table as RTTable<unknown>}
+      tableProps={table}
       totalRecords={data.length}
       title="DKG Authorities"
     />
