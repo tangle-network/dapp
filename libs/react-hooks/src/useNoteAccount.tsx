@@ -76,9 +76,13 @@ export type UseNoteAccountReturnType = {
   setSuccessfullyCreatedNoteAccount: (isSuccess: boolean) => void;
 };
 
-let isOpenNoteAccountModalSubject: BehaviorSubject<boolean>;
+const isOpenNoteAccountModalSubject = new BehaviorSubject(false);
+const setIsOpenNoteAccountModal = (isOpen: boolean) =>
+  isOpenNoteAccountModalSubject.next(isOpen);
 
-let isSuccessfullyCreatedNoteAccountSubject: BehaviorSubject<boolean>;
+const isSuccessfullyCreatedNoteAccountSubject = new BehaviorSubject(false);
+const setIsSuccessfullyCreatedNoteAccount = (isSuccess: boolean) =>
+  isSuccessfullyCreatedNoteAccountSubject.next(isSuccess);
 
 export const useNoteAccount = (): UseNoteAccountReturnType => {
   const { noteManager, activeApi, activeChain } = useWebContext();
@@ -91,25 +95,18 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
   const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
   const [allNotesInitialized, setAllNotesInitialized] = useState(false);
 
-  const [isOpenNoteAccountModal, setIsOpenNoteAccountModal] = useState(false);
-
-  const [
-    isSuccessfullyCreatedNoteAccount,
-    setIsSuccessfullyCreatedNoteAccount,
-  ] = useState(false);
-
   const syncNotesProgress = useObservableState(
     NoteManager.$syncNotesProgress,
     NaN
   );
 
-  if (!isOpenNoteAccountModalSubject) {
-    isOpenNoteAccountModalSubject = new BehaviorSubject(false);
-  }
+  const isOpenNoteAccountModal = useObservableState(
+    isOpenNoteAccountModalSubject
+  );
 
-  if (!isSuccessfullyCreatedNoteAccountSubject) {
-    isSuccessfullyCreatedNoteAccountSubject = new BehaviorSubject(false);
-  }
+  const isSuccessfullyCreatedNoteAccount = useObservableState(
+    isSuccessfullyCreatedNoteAccountSubject
+  );
 
   const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
 
@@ -223,31 +220,6 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     [activeApi, activeChain, noteManager, notificationApi]
   );
 
-  const setOpenNoteAccountModal = useCallback(
-    (isOpen: boolean) => {
-      isOpenNoteAccountModalSubject.next(isOpen);
-
-      const isNoteAccountCreated =
-        isSuccessfullyCreatedNoteAccountSubject.value;
-
-      // If the modal close and the user has a note account
-      // then we will sync the notes
-      if (!isOpen && isNoteAccountCreated) {
-        handleSyncNotes().catch((error) => {
-          console.log('Error while syncing notes', error);
-        });
-      }
-    },
-    [handleSyncNotes]
-  );
-
-  const setSuccessfullyCreatedNoteAccount = useCallback(
-    (isSuccess: boolean) => {
-      isSuccessfullyCreatedNoteAccountSubject.next(isSuccess);
-    },
-    []
-  );
-
   // Effect to subscribe to noteManager
   useEffect(() => {
     if (!noteManager) {
@@ -274,27 +246,6 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     };
   }, [noteManager]);
 
-  // Subscribe to the behavior subject
-  useEffect(() => {
-    const isOpenNoteAccountModalSub = isOpenNoteAccountModalSubject.subscribe(
-      (isOpenNoteAccountModal) => {
-        setIsOpenNoteAccountModal(isOpenNoteAccountModal);
-      }
-    );
-
-    const isSuccessfullyCreatedNoteAccountSub =
-      isSuccessfullyCreatedNoteAccountSubject.subscribe(
-        (isSuccessfullyCreatedNoteAccount) => {
-          setIsSuccessfullyCreatedNoteAccount(isSuccessfullyCreatedNoteAccount);
-        }
-      );
-
-    return () => {
-      isOpenNoteAccountModalSub.unsubscribe();
-      isSuccessfullyCreatedNoteAccountSub.unsubscribe();
-    };
-  }, []);
-
   return {
     allNotes,
     allNotesInitialized,
@@ -303,8 +254,8 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isSuccessfullyCreatedNoteAccount,
     isSyncingNote,
     syncNotesProgress,
-    setOpenNoteAccountModal,
-    setSuccessfullyCreatedNoteAccount,
+    setOpenNoteAccountModal: setIsOpenNoteAccountModal,
+    setSuccessfullyCreatedNoteAccount: setIsSuccessfullyCreatedNoteAccount,
     syncNotes: handleSyncNotes,
   };
 };
