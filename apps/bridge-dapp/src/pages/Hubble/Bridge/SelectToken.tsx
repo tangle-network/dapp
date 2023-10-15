@@ -5,10 +5,11 @@ import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
-import { BRIDGE_TABS, POOL_KEY, TOKEN_KEY } from '../../../constants';
+import { POOL_KEY, TOKEN_KEY } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
@@ -17,9 +18,7 @@ const SelectToken: FC = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const currentTxType = useMemo(() => {
-    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
+  const currentTxType = useTxTabFromRoute();
 
   const { apiConfig } = useWebContext();
 
@@ -122,7 +121,7 @@ const SelectToken: FC = () => {
     <SlideAnimation>
       <TokenListCard
         className="h-[var(--card-height)]"
-        title="Select a token"
+        title={`Select ${currentTxType ?? 'a'} token`}
         popularTokens={[]}
         selectTokens={selectTokens}
         unavailableTokens={[]} // TODO: Add unavailable tokens
@@ -151,7 +150,7 @@ const getBalanceProps = (
   balances[currencyCfg.id] &&
   (txType !== 'withdraw' || currencyCfg.role !== CurrencyRole.Governable)
     ? { balance: balances[currencyCfg.id] }
-    : { balance: 0 };
+    : { balance: currencyCfg.role === CurrencyRole.Governable ? Infinity : 0 };
 
 const getBadgeProps = (
   currencyCfg: CurrencyConfig,
