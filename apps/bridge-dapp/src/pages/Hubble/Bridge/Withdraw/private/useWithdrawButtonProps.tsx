@@ -4,11 +4,11 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import type { Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager/note-manager';
 import {
   useBalancesFromNotes,
   useCurrencyBalance,
-  useVAnchor,
 } from '@webb-tools/react-hooks';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -235,8 +235,6 @@ function useWithdrawButtonProps({
     return loading || isConnecting;
   }, [isConnecting, loading]);
 
-  const { api: vAnchorApi } = useVAnchor();
-
   const [withdrawConfirmComponent, setWithdrawConfirmComponent] =
     useState<React.ReactElement<
       ComponentProps<typeof WithdrawConfirmContainer>,
@@ -245,28 +243,37 @@ function useWithdrawButtonProps({
 
   const handleWithdrawBtnClick = useCallback(
     async () => {
-      let actualApi = activeApi;
+      let actualApi: Nullable<typeof activeApi> = activeApi;
+
+      // For type assertion
+      const _validAmount =
+        isValidAmount && !!amount && typeof receivingAmount === 'number';
+
+      const allInputsFilled =
+        !!srcChainCfg &&
+        !!fungibleCfg &&
+        !!srcTypedChainId &&
+        !!recipient &&
+        _validAmount;
 
       try {
         if (connectBtnCnt && typeof srcTypedChainId === 'number') {
           const nextApi = await handleConnect(srcTypedChainId);
-          if (!nextApi?.noteManager) {
+
+          const nextApiReady = [
+            nextApi?.noteManager,
+            nextApi?.state.activeBridge,
+            nextApi?.methods.variableAnchor.actions,
+            allInputsFilled,
+          ].every((key) => Boolean(key));
+          if (!nextApiReady) {
             return;
           }
 
           actualApi = nextApi;
         }
 
-        // For type assertion
-        const _validAmount =
-          isValidAmount && !!amount && typeof receivingAmount === 'number';
-
-        const allInputsFilled =
-          !!srcChainCfg &&
-          !!fungibleCfg &&
-          !!srcTypedChainId &&
-          !!recipient &&
-          _validAmount;
+        const vAnchorApi = actualApi?.methods.variableAnchor.actions.inner;
 
         const doesApiReady =
           !!actualApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
@@ -405,7 +412,7 @@ function useWithdrawButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, connectBtnCnt, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, srcChainCfg, srcTypedChainId, totalFeeWei, vAnchorApi, wrappableCfg]
+    [activeApi, amount, connectBtnCnt, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, srcChainCfg, srcTypedChainId, totalFeeWei, wrappableCfg]
   );
 
   return {
