@@ -1,5 +1,6 @@
-import { chainsConfig } from '@webb-tools/dapp-config';
-import { FilterIcon2, Search } from '@webb-tools/icons';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { ChainIcon, FilterIcon2, Search } from '@webb-tools/icons';
 import {
   Accordion,
   AccordionButton,
@@ -13,8 +14,8 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
-import { FilterButtonProps } from './types';
+import { useMemo, type FC } from 'react';
+import { type FilterButtonProps } from './types';
 
 export const FilterButton: FC<FilterButtonProps> = ({
   destinationChains,
@@ -25,11 +26,13 @@ export const FilterButton: FC<FilterButtonProps> = ({
   setGlobalSearchText,
   clearAllFilters,
 }) => {
+  const { apiConfig } = useWebContext();
+
   const chains = useMemo(() => {
-    return Object.keys(chainsConfig)
-      .map((key: any) => [String(key), chainsConfig[key]])
-      .filter((val: any) => destinationChains.includes(val['1'].name));
-  }, [destinationChains]);
+    return Object.keys(apiConfig.chains)
+      .map<[string, ChainConfig]>((key) => [key, apiConfig.chains[Number(key)]])
+      .filter((val) => destinationChains.includes(val['1'].name));
+  }, [apiConfig.chains, destinationChains]);
 
   return (
     <Dropdown>
@@ -85,10 +88,10 @@ export const FilterButton: FC<FilterButtonProps> = ({
                   }}
                   iconGetter={([_key, chainConfig]) => (
                     <div className="max-w-[20px] max-h-[20px] overflow-hidden ">
-                      {<chainConfig.logo />}
+                      <ChainIcon name={chainConfig.name} />
                     </div>
                   )}
-                  labelGetter={([_, chain]: any) => chain.name}
+                  labelGetter={([_, chain]) => chain.name}
                   keyGetter={([chainId]) => `Filter_proposals${chainId}`}
                 />
               </div>
