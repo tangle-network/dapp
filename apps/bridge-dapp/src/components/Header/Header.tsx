@@ -22,7 +22,8 @@ import {
 import { ComponentProps, FC, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import sidebarProps from '../../constants/sidebar';
-import { useConnectWallet } from '../../hooks';
+import useChainsFromRoute from '../../hooks/useChainsFromRoute';
+import { useConnectWallet } from '../../hooks/useConnectWallet';
 import ChainButton from './ChainButton';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
@@ -36,6 +37,7 @@ export const Header: FC<HeaderProps> = () => {
     useWebContext();
 
   const { toggleModal } = useConnectWallet();
+  const { srcTypedChainId } = useChainsFromRoute();
 
   const location = useLocation();
 
@@ -69,21 +71,21 @@ export const Header: FC<HeaderProps> = () => {
       <div className="flex items-center space-x-2">
         <TxProgressDropdown />
 
-        {isConnecting || loading || !activeWallet || !activeAccount ? (
-          <Button
-            isLoading={loading}
-            loadingText="Connecting..."
-            onClick={() => toggleModal(true)}
-            className="hidden lg:!flex justify-center items-center"
-          >
-            Connect wallet
-          </Button>
-        ) : (
-          <div className="hidden lg:!flex items-center space-x-2">
-            <ChainButton />
+        <div className="hidden lg:!flex items-center space-x-2">
+          <ChainButton />
+          {isConnecting || loading || !activeWallet || !activeAccount ? (
+            <Button
+              isLoading={loading}
+              loadingText="Connecting..."
+              onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
+              className="hidden lg:!flex justify-center items-center"
+            >
+              Connect wallet
+            </Button>
+          ) : (
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
-          </div>
-        )}
+          )}
+        </div>
 
         <NavigationMenu>
           <NavigationMenuTrigger />

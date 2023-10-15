@@ -10,6 +10,7 @@ export const useWallets = () => {
 
   const { activeApi, activeChain, activeWallet, apiConfig, inactivateApi } =
     useWebContext();
+
   useEffect(() => {
     let isSubscribed = true;
 

@@ -9,13 +9,14 @@ import { useConnectWallet } from './useConnectWallet';
 import useNavigateWithPersistParams from './useNavigateWithPersistParams';
 
 function useConnectButtonProps(typedChainId?: number | null) {
-  const { activeWallet, switchChain } = useWebContext();
+  const { activeApi = null, activeWallet, switchChain } = useWebContext();
 
   const { toggleModal } = useConnectWallet();
 
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const activeTypedChainId = useCurrentTypedChainId();
+
   const navigate = useNavigateWithPersistParams();
 
   const content = useMemo(() => {
@@ -23,8 +24,16 @@ function useConnectButtonProps(typedChainId?: number | null) {
       return 'Connect Wallet' as const;
     }
 
-    if (typeof activeTypedChainId !== 'number') {
-      return 'Select Chain' as const;
+    const chainName =
+      typeof typedChainId === 'number'
+        ? chainsPopulated[typedChainId]?.name
+        : undefined;
+
+    // There is a case where the user has a wallet connected but the chain is not supported
+    if (activeTypedChainId === null) {
+      return chainName
+        ? `Switch to ${chainName}`
+        : 'Switch to a supported chain';
     }
 
     if (!hasNoteAccount) {
@@ -32,7 +41,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
     }
 
     if (activeTypedChainId !== typedChainId) {
-      return 'Switch Chain' as const;
+      return `Switch ${chainName ? `to ${chainName}` : 'Chain'}` as const;
     }
   }, [activeTypedChainId, activeWallet, hasNoteAccount, typedChainId]);
 
@@ -44,35 +53,41 @@ function useConnectButtonProps(typedChainId?: number | null) {
       }
 
       if (!activeWallet) {
-        toggleModal(true);
-        return false;
+        toggleModal(true, typedChainId);
+        return null;
       }
 
-      if (typeof activeTypedChainId !== 'number') {
-        navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
-        return false;
+      const nextChainSupported = nextChain.wallets.includes(activeWallet.id);
+
+      // Handle the case where the user has a wallet connected but the chain is not supported
+      if (activeTypedChainId === null) {
+        if (nextChainSupported) {
+          return switchChain(nextChain, activeWallet);
+        } else {
+          navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
+          return null;
+        }
       }
 
       if (!hasNoteAccount) {
         setOpenNoteAccountModal(true);
-        return false;
+        return null;
       }
 
       const isNextChainActive = activeTypedChainId === typedChainId;
       if (isNextChainActive) {
-        return true;
+        return activeApi;
       }
 
       if (nextChain.wallets.includes(activeWallet.id)) {
-        const newApi = await switchChain(nextChain, activeWallet);
-        return Boolean(newApi);
+        return switchChain(nextChain, activeWallet);
       } else {
-        toggleModal(true);
-        return false;
+        toggleModal(true, typedChainId);
+        return null;
       }
     },
     // prettier-ignore
-    [activeTypedChainId, activeWallet, hasNoteAccount, navigate, setOpenNoteAccountModal, switchChain, toggleModal]
+    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, navigate, setOpenNoteAccountModal, switchChain, toggleModal]
   );
 
   return {
@@ -83,8 +98,8 @@ function useConnectButtonProps(typedChainId?: number | null) {
 
     /**
      * The callback to handle connect
-     * return `true` if successfully connected,
-     * `false` if not connected but modal is opened,
+     * return the active api if connected,
+     * `null` if perform other actions or failed to connect
      * **throw `UnsupportedChain` error** if the `typedChainId` is not supported
      */
     handleConnect,

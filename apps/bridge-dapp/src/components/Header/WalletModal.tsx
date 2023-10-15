@@ -20,15 +20,12 @@ export const WalletModal: FC = () => {
     connectWallet,
     toggleModal,
     connectError,
+    supportedWallets,
   } = useConnectWallet();
 
   const { notificationApi } = useWebbUI();
 
   const { apiConfig } = useWebContext();
-
-  const supportedWalletCfgs = useMemo(() => {
-    return apiConfig.getSupportedWallets();
-  }, [apiConfig]);
 
   // Get the current failed or connecting wallet
   const getCurrentWallet = useCallback(() => {
@@ -124,7 +121,7 @@ export const WalletModal: FC = () => {
         isCenter
       >
         <WalletConnectionCard
-          wallets={supportedWalletCfgs}
+          wallets={supportedWallets}
           onWalletSelect={(nextWallet) => connectWallet(nextWallet)}
           onClose={() => toggleModal(false)}
           connectingWalletId={connectingWalletId}

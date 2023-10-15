@@ -151,7 +151,7 @@ const SelectRelayer = () => {
 
   const handleConnectWallet = useCallback(() => {
     if (chainCfg) {
-      toggleModal(true);
+      toggleModal(true, calculateTypedChainId(chainCfg.chainType, chainCfg.id));
     } else {
       navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
     }

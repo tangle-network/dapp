@@ -245,12 +245,16 @@ function useWithdrawButtonProps({
 
   const handleWithdrawBtnClick = useCallback(
     async () => {
+      let actualApi = activeApi;
+
       try {
         if (connectBtnCnt && typeof srcTypedChainId === 'number') {
-          const connected = await handleConnect(srcTypedChainId);
-          if (!connected) {
+          const nextApi = await handleConnect(srcTypedChainId);
+          if (!nextApi?.noteManager) {
             return;
           }
+
+          actualApi = nextApi;
         }
 
         // For type assertion
@@ -265,17 +269,17 @@ function useWithdrawButtonProps({
           _validAmount;
 
         const doesApiReady =
-          !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
+          !!actualApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
 
-        if (!allInputsFilled || !doesApiReady) {
+        if (!allInputsFilled || !doesApiReady || !actualApi) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
-        if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
+        if (actualApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
           throw WebbError.from(WebbErrorCodes.InvalidArguments);
         }
 
-        const anchorId = activeApi.state.activeBridge.targets[srcTypedChainId];
+        const anchorId = actualApi.state.activeBridge.targets[srcTypedChainId];
         if (!anchorId) {
           throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
         }
@@ -334,7 +338,7 @@ function useWithdrawButtonProps({
         const changeNote =
           changeAmount > 0
             ? await noteManager.generateNote(
-                activeApi.backend,
+                actualApi.backend,
                 srcTypedChainId,
                 anchorId,
                 srcTypedChainId,
@@ -351,14 +355,14 @@ function useWithdrawButtonProps({
               changeNote.note,
               changeNote.note.index ? parseInt(changeNote.note.index) : 0
             )
-          : await activeApi.generateUtxo({
+          : await actualApi.generateUtxo({
               curve: noteManager.defaultNoteGenInput.curve,
-              backend: activeApi.backend,
+              backend: actualApi.backend,
               amount: changeAmount.toString(),
               chainId: `${srcTypedChainId}`,
               keypair,
               originChainId: `${srcTypedChainId}`,
-              index: activeApi.state.defaultUtxoIndex.toString(),
+              index: actualApi.state.defaultUtxoIndex.toString(),
             });
 
         setWithdrawConfirmComponent(

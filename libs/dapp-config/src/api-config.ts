@@ -261,10 +261,20 @@ export class ApiConfig {
 
   /**
    * Get all supported wallets that have at least one supported chain id
-   * in the given supported typed chain ids
+   * in the given supported typed chain ids if the typed chain id is not provided,
+   * otherwise, first filter the wallets by the given typed chain id
+   * @param typedChainId the typed chain id to filter the wallets
+   * @returns all supported wallets that have at least one supported chain id
    */
-  getSupportedWallets(): WalletConfig[] {
-    return values(this.wallets).filter((walletCfg) => {
+  getSupportedWallets(typedChainId?: number): WalletConfig[] {
+    const wallets =
+      typeof typedChainId === 'number'
+        ? values(this.wallets).filter((walletCfg) =>
+            walletCfg.supportedChainIds.includes(typedChainId)
+          )
+        : values(this.wallets);
+
+    return wallets.filter((walletCfg) => {
       return walletCfg.supportedChainIds.some((typedChainId) =>
         this.supportedTypedChainIds.has(typedChainId)
       );

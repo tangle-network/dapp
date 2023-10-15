@@ -15,6 +15,7 @@ import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInst
 import {
   ChainType,
   calculateTypedChainId,
+  parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -28,8 +29,10 @@ export type UseConnectWalletReturnType = {
 
   /**
    * Toggle or set state of the wallet modal
+   * if the typedChainId is provided, the modal will
+   * open with the supported wallet for that chain
    */
-  toggleModal: (isOpen?: boolean) => void;
+  toggleModal: (isOpen?: boolean, typedChainId?: number) => void;
 
   /**
    * Function to connect wallet
@@ -72,40 +75,30 @@ export type UseConnectWalletReturnType = {
    * @returns void
    */
   resetState: () => void;
+
+  /**
+   * Supported wallets
+   */
+  supportedWallets: WalletConfig[];
 };
 
 /**
  * Hook contains the logic to connect open the wallet modal
  * and connect to a wallet
  */
-export const useConnectWallet = (): UseConnectWalletReturnType => {
+const useConnectWallet = (): UseConnectWalletReturnType => {
   // Get the states from the subjects
   const isModalOpen = useObservableState(subjects.isWalletModalOpenSubject);
   const selectedWallet = useObservableState(subjects.selectedWalletSubject);
 
   const walletState = useObservableState(subjects.walletStateSubject);
   const connectError = useObservableState(subjects.connectErrorSubject);
+  const typedChainId = useObservableState(subjects.walletTypedChainIdSubject);
 
-  const { appEvent, loading, setActiveAccount } = useWebContext();
+  const { appEvent, setActiveAccount, switchChain } = useWebContext();
 
-  const [activeWallet, setActiveWallet] = useActiveWallet();
+  const [, setActiveWallet] = useActiveWallet();
   const [, setActiveChain] = useActiveChain();
-
-  const connectingWalletId = useMemo<number | undefined>(
-    () =>
-      walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
-    [selectedWallet?.id, walletState]
-  );
-
-  const failedWalletId = useMemo<number | undefined>(
-    () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
-    [selectedWallet?.id, walletState]
-  );
-
-  const isWalletConnected = useMemo(
-    () => [activeWallet, !loading].every(Boolean),
-    [activeWallet, loading]
-  );
 
   // Subscribe to app events
   useEffect(() => {
@@ -153,11 +146,22 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
    * Toggle or set state of the wallet modal
    * and set the next chain
    */
-  const toggleModal = useCallback((isOpenArg?: boolean) => {
-    const isOpen = isOpenArg ?? !subjects.isWalletModalOpenSubject.getValue();
+  const toggleModal = useCallback(
+    (isOpenArg?: boolean, typedChainId?: number) => {
+      const isOpen = isOpenArg ?? !subjects.isWalletModalOpenSubject.getValue();
 
-    subjects.setWalletModalOpen(isOpen);
-  }, []);
+      subjects.setWalletModalOpen(isOpen);
+
+      // If the modal is open and the typedChainId is provided
+      // set the next chain
+      if (isOpen && typeof typedChainId === 'number') {
+        subjects.setWalletTypedChainId(typedChainId);
+      } else {
+        subjects.setWalletTypedChainId(undefined);
+      }
+    },
+    []
+  );
 
   const connectWallet = useCallback(
     async (nextWallet: WalletConfig) => {
@@ -173,22 +177,40 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
           return;
         }
 
+        // If the provider has a connect method, it is a web3 provider
         if ('connect' in provider) {
           const {
             chain: { id, unsupported },
-          } = await provider.connect();
+          } = await provider.connect({
+            chainId:
+              typeof typedChainId === 'number'
+                ? parseTypedChainId(typedChainId).chainId
+                : undefined,
+          });
 
           const chain = getChain(id, ChainType.EVM);
-          setActiveChain(unsupported || !chain ? null : chain);
+          if (unsupported || !chain) {
+            setActiveChain(null);
+          } else {
+            await switchChain(chain, nextWallet);
+          }
+        } else {
+          if (
+            typeof typedChainId === 'number' &&
+            !chainsPopulated[typedChainId]
+          ) {
+            await switchChain(chainsPopulated[typedChainId], nextWallet);
+          } else {
+            const account = await getDefaultAccount(provider);
+            setActiveAccount(account);
+            setActiveWallet(nextWallet);
+            setActiveChain(null);
+          }
         }
 
         subjects.setConnectError(undefined);
         subjects.setWalletState(WalletState.SUCCESS);
         subjects.setWalletModalOpen(false);
-
-        const account = await getDefaultAccount(provider);
-        setActiveAccount(account);
-        setActiveWallet(nextWallet);
       } catch (error) {
         subjects.setWalletState(WalletState.FAILED);
         subjects.setConnectError(
@@ -198,7 +220,8 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
         );
       }
     },
-    [setActiveAccount, setActiveChain, setActiveWallet]
+    // prettier-ignore
+    [setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId]
   );
 
   /**
@@ -211,12 +234,16 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
     subjects.setSelectedWallet(undefined);
   }, []);
 
+  const memoValues = useMemoValues({
+    walletState,
+    typedChainId,
+    selectedWallet,
+  });
+
   return {
-    connectingWalletId,
+    ...memoValues,
     connectError,
-    failedWalletId,
     isModalOpen,
-    isWalletConnected,
     resetState,
     selectedWallet,
     toggleModal,
@@ -225,7 +252,48 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
   };
 };
 
+export { useConnectWallet };
+
+/** @internal */
 function getChain(chainId: number, chainType: ChainType): Chain | undefined {
   const typedChainId = calculateTypedChainId(chainType, chainId);
   return chainsPopulated[typedChainId];
+}
+
+/** @internal */
+function useMemoValues(props: {
+  walletState: WalletState;
+  selectedWallet?: WalletConfig;
+  typedChainId?: number;
+}) {
+  const { walletState, selectedWallet, typedChainId } = props;
+  const { apiConfig, activeWallet, loading } = useWebContext();
+
+  const connectingWalletId = useMemo<number | undefined>(
+    () =>
+      walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
+    [selectedWallet?.id, walletState]
+  );
+
+  const failedWalletId = useMemo<number | undefined>(
+    () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
+    [selectedWallet?.id, walletState]
+  );
+
+  const isWalletConnected = useMemo(
+    () => [activeWallet, !loading].every(Boolean),
+    [activeWallet, loading]
+  );
+
+  const supportedWallets = useMemo(
+    () => apiConfig.getSupportedWallets(typedChainId),
+    [apiConfig, typedChainId]
+  );
+
+  return {
+    connectingWalletId,
+    failedWalletId,
+    isWalletConnected,
+    supportedWallets,
+  };
 }

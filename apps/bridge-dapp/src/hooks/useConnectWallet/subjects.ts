@@ -30,6 +30,10 @@ const selectedWalletSubject = new BehaviorSubject<Maybe<WalletConfig>>(
 const setSelectedWallet = (wallet: Maybe<WalletConfig>) =>
   selectedWalletSubject.next(wallet);
 
+const walletTypedChainIdSubject = new BehaviorSubject<Maybe<number>>(undefined);
+const setWalletTypedChainId = (chainId: Maybe<number>) =>
+  walletTypedChainIdSubject.next(chainId);
+
 export default {
   isWalletModalOpenSubject,
   setWalletModalOpen,
@@ -39,4 +43,6 @@ export default {
   setConnectError,
   selectedWalletSubject,
   setSelectedWallet,
+  walletTypedChainIdSubject,
+  setWalletTypedChainId,
 };

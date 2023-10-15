@@ -30,6 +30,7 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
@@ -84,9 +85,8 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeChain, setActiveChain] = useActiveChain();
   const [activeAccount, setActiveAccount] = useActiveAccount();
 
-  const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(
-    undefined
-  );
+  const [activeApi, setActiveApi] =
+    useState<Maybe<WebbApiProvider<unknown>>>(undefined);
 
   const [loading, setLoading] = useState(true);
 
@@ -141,7 +141,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       options: {
         networkStorage?: NetworkStorage | undefined | null;
         chain?: Chain | undefined;
-        activeApi?: WebbApiProvider<any> | undefined;
+        activeApi?: Maybe<WebbApiProvider<unknown>>;
       } = {}
     ) => {
       const innerNetworkStorage =
@@ -327,7 +327,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           _networkStorage ?? (await appNetworkStoragePromise);
 
         /// init the active api value
-        let localActiveApi: WebbApiProvider<any> | null = null;
+        let localActiveApi: Nullable<WebbApiProvider<unknown>> = null;
 
         switch (wallet.id) {
           case WalletId.Polkadot:
