@@ -96,6 +96,7 @@ const SelectPool: FC = () => {
               tokenType: 'shielded',
               assetBalanceProps: {
                 balance: +formatEther(balance),
+                subContent: chainCfg.name,
               },
               chainName: chainCfg.name,
               isLoadingMetadata: !initialized,
