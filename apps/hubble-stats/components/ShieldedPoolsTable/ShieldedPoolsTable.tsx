@@ -1,28 +1,26 @@
 'use client';
 
-import { FC, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import {
+  Row,
   createColumnHelper,
-  useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
-  getSortedRowModel,
   getPaginationRowModel,
-  ColumnDef,
-  Table as RTTable,
-  Row,
+  getSortedRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
-import { Table, IconsGroup, fuzzyFilter } from '@webb-tools/webb-ui-components';
+import { IconsGroup, Table, fuzzyFilter } from '@webb-tools/webb-ui-components';
+import { useRouter } from 'next/navigation';
+import { FC, useCallback } from 'react';
 
-import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
-import { HeaderCell, NumberCell, ShieldedCell } from '../tableCells';
 import { PoolTypeChip } from '..';
 import { getChainNamesByTypedId } from '../../utils';
+import { HeaderCell, NumberCell, ShieldedCell } from '../tableCells';
+import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
 
 const columnHelper = createColumnHelper<ShieldedPoolType>();
 
-const columns: ColumnDef<ShieldedPoolType, any>[] = [
+const columns = [
   columnHelper.accessor('address', {
     header: () => (
       <HeaderCell title="Shielded Pools" className="justify-start" />
@@ -108,13 +106,13 @@ const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
   );
 
   return (
-    <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180 border border-mono-40 dark:border-mono-160">
+    <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0"
         trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         isPaginated
         totalRecords={data.length}
         onRowClick={onRowClick}

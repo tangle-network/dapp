@@ -1,22 +1,30 @@
-import { RowData, useReactTable, Row } from '@tanstack/react-table';
-import { PropsOf, WebbComponentBase, IWebbComponentBase } from '../../types';
+import { useReactTable, type Row, type RowData } from '@tanstack/react-table';
+import type {
+  IWebbComponentBase,
+  PropsOf,
+  WebbComponentBase,
+} from '../../types';
 
 /**
  * The `Table` props
  */
-export interface TableProps<T extends RowData> extends WebbComponentBase {
+export interface TableProps<T extends RowData, E extends HTMLElement>
+  extends WebbComponentBase {
   /**
    * The table object, the return result of `useReactTable` hook
    */
-  tableProps: ReturnType<typeof useReactTable>;
+  tableProps: ReturnType<typeof useReactTable<T>>;
+
   /**
    * Whether the table has pagination. If `true`, the `paginationProps` must be provided
    */
   isPaginated?: boolean;
+
   /**
    * If `true`, the table footer will be displayed
    */
   isDisplayFooter?: boolean;
+
   /**
    * The total number of records in the table.
    * This usually will be the number return from backend
@@ -57,7 +65,12 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
   /**
    * Handle when the row is clicked
    */
-  onRowClick?: (row: Row<any>) => void;
+  onRowClick?: (row: Row<T>) => void;
+
+  /**
+   * The optional ref to forward to the table component
+   */
+  ref?: React.Ref<E>;
 }
 
 /**

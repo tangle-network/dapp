@@ -12,7 +12,6 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   ConnectWalletMobileButton,
-  FeeDetails,
   IconWithTooltip,
   TextField,
   TitleWithInfo,
@@ -22,11 +21,11 @@ import {
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BooleanParam, useQueryParam } from 'use-query-params';
 import { formatEther, parseEther } from 'viem';
+import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
@@ -147,6 +146,7 @@ const Withdraw = () => {
     gasFeeInfo,
     isLoading: isFeeLoading,
     refundAmount,
+    relayerFeeInfo,
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
@@ -365,29 +365,15 @@ const Withdraw = () => {
               }}
             />
 
-            <FeeDetails
-              isTotalLoading={isFeeLoading}
-              totalFee={
-                typeof totalFeeWei === 'bigint'
-                  ? parseFloat(formatEther(totalFeeWei))
-                  : undefined
-              }
-              totalFeeToken={
-                typeof totalFeeWei === 'bigint' ? totalFeeToken : undefined
-              }
-              items={
-                [
-                  typeof gasFeeInfo === 'bigint'
-                    ? ({
-                        name: 'Gas',
-                        isLoading: isFeeLoading,
-                        Icon: <GasStationFill />,
-                        value: parseFloat(formatEther(gasFeeInfo)),
-                        tokenSymbol: srcChainCfg?.nativeCurrency.symbol,
-                      } satisfies FeeItem)
-                    : undefined,
-                ].filter((item) => Boolean(item)) as Array<FeeItem>
-              }
+            <RelayerFeeDetails
+              totalFeeWei={totalFeeWei}
+              totalFeeToken={totalFeeToken}
+              gasFeeInfo={gasFeeInfo}
+              relayerFeeInfo={relayerFeeInfo}
+              isFeeLoading={isFeeLoading}
+              srcChainCfg={srcChainCfg}
+              fungibleCfg={fungibleCfg}
+              activeRelayer={activeRelayer}
             />
 
             <TxInfoContainer

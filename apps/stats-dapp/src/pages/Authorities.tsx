@@ -32,7 +32,7 @@ import { getChipColorByKeyType } from '../utils';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
 
-const columns: ColumnDef<UpcomingThreshold, any>[] = [
+const columns = [
   columnHelper.accessor('stats', {
     header: 'Status',
     cell: (props) => (
@@ -213,7 +213,7 @@ const Authorities = () => {
             <Spinner size="xl" />
           </div>
         ) : (
-          <Table tableProps={table as RTTable<unknown>} title="Thresholds" />
+          <Table tableProps={table} title="Thresholds" />
         )}
       </CardTable>
 

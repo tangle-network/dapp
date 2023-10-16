@@ -4,6 +4,7 @@ export * from './errors';
 export * from './getCardTitle';
 export * from './getDefaultConnection';
 export { default as getParam } from './getParam';
+export { default as getRelayerFeePercentage } from './getRelayerFeePercentage';
 export * from './getTokenURI';
 export { default as getVAnchorActionClass } from './getVAnchorActionClass';
 export { default as handleMutateNoteIndex } from './handleMutateNoteIndex';

@@ -1,20 +1,18 @@
 import {
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Table as RTTable } from '@tanstack/table-core';
 import {
-  KeyGenAuthority,
-  SessionKeyStatus,
-  useKey,
-} from '../../provider/hooks';
-import { useStatsContext, useSubQLtime } from '../../provider/stats-provider';
+  ArrowLeft,
+  ArrowRight,
+  Close,
+  Expand,
+  Spinner,
+} from '@webb-tools/icons';
 import {
   Avatar,
-  AvatarGroup,
   Button,
   CardTable,
   Chip,
@@ -30,23 +28,22 @@ import {
   TitleWithInfo,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { getChipColorByKeyStatus } from '../../utils';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Close,
-  Expand,
-  Spinner,
-} from '@webb-tools/icons';
+import { POLKADOT_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
+import { ECPairFactory } from 'ecpair';
 import { forwardRef, useCallback, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
-import { ECPairFactory } from 'ecpair';
 import * as tinysecp from 'tiny-secp256k1';
-import { POLKADOT_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
+import {
+  KeyGenAuthority,
+  SessionKeyStatus,
+  useKey,
+} from '../../provider/hooks';
+import { useStatsContext, useSubQLtime } from '../../provider/stats-provider';
+import { getChipColorByKeyStatus } from '../../utils';
+import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
   ({ isPage }, ref) => {
@@ -343,7 +340,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
 const columnHelper = createColumnHelper<KeyGenAuthority>();
 
-const columns: ColumnDef<KeyGenAuthority, any>[] = [
+const columns = [
   columnHelper.accessor('id', {
     header: 'Participant',
     cell: (props) => (
@@ -380,7 +377,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={parseInt(props.getValue().toString())}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -392,7 +389,7 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={parseInt(props.getValue().toString())}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -427,7 +424,7 @@ const KeyGenAuthoredTable: React.FC<KeyGenAuthoredTableProps> = ({ data }) => {
   });
   return (
     <Table
-      tableProps={table as RTTable<unknown>}
+      tableProps={table}
       totalRecords={data.length}
       title="DKG Authorities"
     />

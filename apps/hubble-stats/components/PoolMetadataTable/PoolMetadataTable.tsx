@@ -1,24 +1,22 @@
 'use client';
 
-import { FC } from 'react';
-import cx from 'classnames';
 import {
   createColumnHelper,
-  useReactTable,
   getCoreRowModel,
-  ColumnDef,
-  Table as RTTable,
+  useReactTable,
 } from '@tanstack/react-table';
-import { Table, fuzzyFilter, Typography } from '@webb-tools/webb-ui-components';
+import { Table, Typography, fuzzyFilter } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
+import { FC } from 'react';
 
+import { HeaderCell } from '../tableCells';
 import ExplorerUrlsDropdown from './ExplorerUrlsDropdown';
 import WrappingFeesDropdown from './WrappingFeesDropdown';
 import { PoolAttributeType, PoolMetadataTableProps } from './types';
-import { HeaderCell } from '../tableCells';
 
 const columnHelper = createColumnHelper<PoolAttributeType>();
 
-const columns: ColumnDef<PoolAttributeType, any>[] = [
+const columns = [
   columnHelper.accessor('name', {
     header: () => <HeaderCell title="Attribute" />,
     cell: (props) => (
@@ -78,12 +76,12 @@ const PoolMetadataTable: FC<PoolMetadataTableProps> = ({ data }) => {
   });
 
   return (
-    <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
+    <div className="overflow-hidden border rounded-lg border-mono-40 dark:border-mono-160">
       <Table
         thClassName="w-1/2 border-t-0 bg-mono-0 border-r last-of-type:border-r-0 first:pl-2 last:pr-2"
         tdClassName="h-[85px] border-r last-of-type:border-r-0 first:pl-2 last:pr-2"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         totalRecords={data.length}
       />
     </div>
