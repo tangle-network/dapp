@@ -83,6 +83,7 @@ const SelectToken: FC = () => {
           explorerUrl: explorerUrl,
           assetBalanceProps: balanceProps,
           assetBadgeProps: badgeProps,
+          isLoadingMetadata: isBalancesLoading,
         } satisfies AssetType;
       }),
     // prettier-ignore

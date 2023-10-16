@@ -11,18 +11,17 @@ import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { formatEther } from 'viem';
 import SlideAnimation from '../../../components/SlideAnimation';
-import { BRIDGE_TABS, POOL_KEY } from '../../../constants';
+import { POOL_KEY } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 
 const SelectPool: FC = () => {
   const [searhParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const currentTxType = useMemo(() => {
-    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
+  const currentTxType = useTxTabFromRoute();
 
   const { apiConfig } = useWebContext();
 
@@ -36,7 +35,7 @@ const SelectPool: FC = () => {
     srcTypedChainId ?? undefined
   );
 
-  const { balances: balancesFromNotes } = useBalancesFromNotes();
+  const { balances: balancesFromNotes, initialized } = useBalancesFromNotes();
 
   const pools = useMemo<Array<AssetType>>(
     () => {
@@ -65,11 +64,12 @@ const SelectPool: FC = () => {
           explorerUrl,
           assetBalanceProps,
           chainName,
+          isLoadingMetadata: !initialized,
         } satisfies AssetType;
       });
     },
     // prettier-ignore
-    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, srcTypedChainId]
+    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, initialized, srcTypedChainId]
   );
 
   const unavailableTokens = useMemo<Array<AssetType>>(
@@ -97,6 +97,7 @@ const SelectPool: FC = () => {
                 balance: +formatEther(balance),
               },
               chainName: chainCfg.name,
+              isLoadingMetadata: !initialized,
             } satisfies AssetType);
           }
         });
@@ -105,7 +106,7 @@ const SelectPool: FC = () => {
       }, [] as Array<AssetType>);
     },
     // prettier-ignore
-    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, srcTypedChainId]
+    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, initialized, srcTypedChainId]
   );
 
   const handleClose = useCallback(
