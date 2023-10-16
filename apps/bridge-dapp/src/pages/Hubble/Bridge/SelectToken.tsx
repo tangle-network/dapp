@@ -5,7 +5,6 @@ import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
