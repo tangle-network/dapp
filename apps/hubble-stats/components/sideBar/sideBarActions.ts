@@ -6,10 +6,10 @@ import { SIDEBAR_OPEN_KEY } from '@webb-tools/webb-ui-components/src/constants';
 export const setSideBarCookieOnToggle = () => {
   const sideBarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
 
-  if (sideBarStateFromCookie?.value === 'false') {
-    cookies().set(SIDEBAR_OPEN_KEY, 'true');
-  } else {
+  if (sideBarStateFromCookie?.value === 'true') {
     cookies().set(SIDEBAR_OPEN_KEY, 'false');
+  } else {
+    cookies().set(SIDEBAR_OPEN_KEY, 'true');
   }
 };
 

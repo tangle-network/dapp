@@ -54,18 +54,14 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <div>
+      <div className="mx-10 space-y-4">
         <Header />
 
-        <main className="mt-[72px]">
+        <main>
           <Component {...pageProps} />
         </main>
 
-        <Footer
-          isMinimal
-          isNext
-          className="py-12 mx-auto mt-4 max-w-[1160px]"
-        />
+        <Footer isMinimal isNext className="py-12 mx-auto" />
       </div>
     </Provider>
   );

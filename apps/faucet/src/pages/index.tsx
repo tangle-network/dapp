@@ -22,7 +22,7 @@ export const metadata: NextSeoProps = {
 
 const Page = () => {
   return (
-    <div className={cx('max-w-[100vw] py-16')}>
+    <div className={cx('max-w-[100vw]')}>
       <NextSeo {...metadata} />
 
       {/** The Faucet Card */}
