@@ -40,15 +40,16 @@ const SelectPool: FC = () => {
   const pools = useMemo<Array<AssetType>>(
     () => {
       return fungibleCurrencies.map((currencyCfg) => {
-        const assetBalanceProps = getBalanceProps(
-          currencyCfg,
-          balancesFromNotes,
+        const chainName = getChainName(
+          apiConfig.chains,
           currentTxType,
           srcTypedChainId
         );
 
-        const chainName = getChainName(
-          apiConfig.chains,
+        const assetBalanceProps = getBalanceProps(
+          currencyCfg,
+          balancesFromNotes,
+          chainName,
           currentTxType,
           srcTypedChainId
         );
@@ -171,19 +172,19 @@ const getExplorerUrl = (blockExplorer?: string, address?: string) =>
 const getBalanceProps = (
   currency: CurrencyConfig,
   balances: BalancesFromNotesType,
+  chainName?: string,
   txType?: string,
   srcTypedChainId?: number | null
 ) => {
-  if (txType && typeof srcTypedChainId === 'number') {
-    const balance = balances[currency.id]?.[srcTypedChainId];
-    if (typeof balance === 'bigint') {
-      return {
-        balance: +formatEther(balance),
-      };
-    }
+  if (!txType || typeof srcTypedChainId !== 'number') {
+    return;
   }
+  const balance = balances[currency.id]?.[srcTypedChainId] ?? 0;
 
-  return undefined;
+  return {
+    balance: +formatEther(balance),
+    subContent: chainName,
+  };
 };
 
 const getChainName = (
@@ -191,9 +192,9 @@ const getChainName = (
   txType?: string,
   srcTypedChainId?: number | null
 ) => {
-  if (txType && typeof srcTypedChainId === 'number') {
-    return chainsConfig[srcTypedChainId]?.name;
+  if (!txType || typeof srcTypedChainId !== 'number') {
+    return;
   }
 
-  return undefined;
+  return chainsConfig[srcTypedChainId]?.name;
 };
