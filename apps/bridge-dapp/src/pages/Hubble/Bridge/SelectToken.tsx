@@ -8,18 +8,17 @@ import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
-import { BRIDGE_TABS, POOL_KEY, TOKEN_KEY } from '../../../constants';
+import { POOL_KEY, TOKEN_KEY } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 
 const SelectToken: FC = () => {
   const [searhParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const currentTxType = useMemo(() => {
-    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
+  const currentTxType = useTxTabFromRoute();
 
   const { apiConfig } = useWebContext();
 
@@ -170,5 +169,5 @@ const getBadgeProps = (
 
 const getExplorerUrl = (addr?: string, blockExplorer?: string) =>
   blockExplorer && addr && BigInt(addr) !== ZERO_BIG_INT
-    ? new URL(`/address${addr}`, blockExplorer).toString()
+    ? new URL(`/address/${addr}`, blockExplorer).toString()
     : undefined;
