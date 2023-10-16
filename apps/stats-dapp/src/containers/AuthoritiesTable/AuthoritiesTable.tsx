@@ -1,5 +1,4 @@
 import {
-  ColumnDef,
   ColumnFiltersState,
   createColumnHelper,
   getCoreRowModel,
@@ -9,15 +8,10 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   PaginationState,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCountriesQuery } from '../../generated/graphql';
-import {
-  AuthorisesQuery,
-  AuthorityListItem,
-  useAuthorities,
-} from '../../provider/hooks';
+import { Spinner } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 import {
   Accordion,
   AccordionButton,
@@ -26,25 +20,29 @@ import {
   Avatar,
   Button,
   CardTable,
+  Divider,
   Filter,
   KeyValueWithButton,
   Progress,
   Slider,
   Table,
-  Divider,
 } from '@webb-tools/webb-ui-components/components';
-import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthoritiesTableProps } from './types';
 import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
-import { Spinner } from '@webb-tools/icons';
+import { useCountriesQuery } from '../../generated/graphql';
+import {
+  AuthorisesQuery,
+  AuthorityListItem,
+  useAuthorities,
+} from '../../provider/hooks';
+import { AuthoritiesTableProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
-const columns: ColumnDef<AuthorityListItem, any>[] = [
+const columns = [
   columnHelper.accessor('id', {
     header: 'Participant',
     enableColumnFilter: false,
@@ -80,7 +78,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={parseInt(props.getValue())}
+        value={parseInt(props.getValue().toString())}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -93,7 +91,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     cell: (props) => (
       <Progress
         size="sm"
-        value={Number(parseFloat(props.getValue()).toFixed(2))}
+        value={Number(parseFloat(props.getValue().toString()).toFixed(2))}
         className="w-[100px]"
         suffixLabel="%"
       />
@@ -270,7 +268,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     >
       {!authorities.isLoading ? (
         <Table
-          tableProps={table as RTTable<unknown>}
+          tableProps={table}
           isPaginated
           totalRecords={totalItems}
           title="DKG Authorities"

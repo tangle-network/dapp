@@ -1,22 +1,19 @@
 'use client';
 
-import { FC } from 'react';
 import {
+  Row,
   createColumnHelper,
-  useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
-  getSortedRowModel,
   getPaginationRowModel,
-  ColumnDef,
-  Table as RTTable,
-  Row,
+  getSortedRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
-import { Table, fuzzyFilter, ChainChip } from '@webb-tools/webb-ui-components';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { ChainChip, Table, fuzzyFilter } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 
-import { PoolTransactionType, PoolTransactionsTableProps } from './types';
 import {
   ActivityCell,
   DestinationCell,
@@ -24,10 +21,11 @@ import {
   NumberCell,
   TimeCell,
 } from '../tableCells';
+import { PoolTransactionType, PoolTransactionsTableProps } from './types';
 
 const columnHelper = createColumnHelper<PoolTransactionType>();
 
-const columns: ColumnDef<PoolTransactionType, any>[] = [
+const columns = [
   columnHelper.accessor('activity', {
     header: () => <HeaderCell title="Pool Type" className="justify-start" />,
     cell: (props) => <ActivityCell activity={props.row.original.activity} />,
@@ -107,13 +105,13 @@ const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
+    <div className="overflow-hidden border rounded-lg border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0"
         trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         isPaginated
         totalRecords={data.length}
         onRowClick={onRowClick}
