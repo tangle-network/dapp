@@ -4,9 +4,14 @@ import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.in
 import type { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
 import GasStationFill from '@webb-tools/icons/GasStationFill';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import { FeeDetails } from '@webb-tools/webb-ui-components/components/FeeDetails';
 import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import type { ComponentProps } from 'react';
 import { formatEther } from 'viem';
 
 const RelayerFeeDetails = (props: {
@@ -29,6 +34,11 @@ const RelayerFeeDetails = (props: {
     totalFeeToken,
     totalFeeWei,
   } = props;
+
+  const relayerFeePercentage = useRealyerFeePercentage({
+    activeRelayer,
+    srcChainCfg,
+  });
 
   return (
     <FeeDetails
@@ -54,7 +64,11 @@ const RelayerFeeDetails = (props: {
             : undefined,
           typeof relayerFeeInfo !== 'undefined'
             ? ({
-                name: `Relayer Fee`,
+                name: `Relayer Fee ${
+                  typeof relayerFeePercentage === 'number'
+                    ? `(${relayerFeePercentage.toFixed(2)}%)`
+                    : ''
+                }`.trim(),
                 isLoading: isFeeLoading,
                 value: parseFloat(
                   formatEther(relayerFeeInfo.estimatedFee).slice(0, 10)
@@ -93,3 +107,31 @@ const RelayerFeeDetails = (props: {
 };
 
 export default RelayerFeeDetails;
+
+type Args = Pick<
+  ComponentProps<typeof RelayerFeeDetails>,
+  'activeRelayer' | 'srcChainCfg'
+>;
+
+const useRealyerFeePercentage = (args: Args) => {
+  const { activeRelayer, srcChainCfg } = args;
+
+  if (!srcChainCfg) return;
+
+  const typedChainId = calculateTypedChainId(
+    srcChainCfg.chainType,
+    srcChainCfg.id
+  );
+
+  const supportedChains = activeRelayer?.capabilities?.supportedChains;
+  if (!supportedChains) return;
+
+  const chain =
+    srcChainCfg.chainType === ChainType.Substrate
+      ? supportedChains.substrate.get(typedChainId)
+      : supportedChains.evm.get(typedChainId);
+
+  if (!chain) return;
+
+  return chain?.relayerFeeConfig.relayerProfitPercent;
+};
