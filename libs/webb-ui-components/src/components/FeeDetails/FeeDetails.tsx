@@ -65,7 +65,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       <Accordion
         {...props}
         className={twMerge(
-          'rounded-lg w-full max-w-lg',
+          'rounded-lg w-full',
           'bg-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
           className
         )}
@@ -179,18 +179,22 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                         </div>
                       ) : (
                         <>
-                          <Typography
-                            variant="body1"
-                            fw="bold"
-                            className="text-mono-200 dark:text-mono-40"
-                          >
-                            {typeof value === 'number'
-                              ? `~${numberToString(value).slice(
-                                  0,
-                                  10
-                                )} ${tokenSymbol}`.trim()
-                              : '-'}
-                          </Typography>
+                          {!value || typeof value == 'number' ? (
+                            <Typography
+                              variant="body1"
+                              fw="bold"
+                              className="text-mono-200 dark:text-mono-40"
+                            >
+                              {typeof value === 'number'
+                                ? `~${numberToString(value).slice(
+                                    0,
+                                    10
+                                  )} ${tokenSymbol}`.trim()
+                                : '-'}
+                            </Typography>
+                          ) : (
+                            value
+                          )}
 
                           {typeof valueInUsd === 'number' && (
                             <Typography

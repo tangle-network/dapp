@@ -105,6 +105,7 @@ const SelectRelayer = () => {
           externalUrl: relayer.infoUri,
           theme,
           isDisabled: Boolean(noRelayer),
+          percentage: relayerData.relayerFeeConfig?.maxRefundAmount,
         };
 
         return r;

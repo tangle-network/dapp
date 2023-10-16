@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  ColumnDef,
-  Table as RTTable,
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
@@ -17,9 +15,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
+import { getShortenChainName, getSortedTypedChainIds } from '../../utils';
 import { HeaderCell, NumberCell } from '../tableCells';
-import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
+import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
 
 const columnHelper = createColumnHelper<PoolOverviewDataType>();
 

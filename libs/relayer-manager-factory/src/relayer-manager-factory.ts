@@ -1,16 +1,17 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import {
+import type {
   Capabilities,
   ChainNameIntoChainId,
+  RelayedChainConfig,
   RelayerInfo,
-  WebbRelayer,
 } from '@webb-tools/abstract-api-provider/relayer';
+import { WebbRelayer } from '@webb-tools/abstract-api-provider/relayer';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
-  RelayerCMDBase,
-  RelayerConfig,
+  type RelayerCMDBase,
+  type RelayerConfig,
   chainNameAdapter,
   relayerConfig,
 } from '@webb-tools/dapp-config/relayer-config';
@@ -69,6 +70,9 @@ export class WebbRelayerManagerFactory {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
+    const evmMap = new Map<number, RelayedChainConfig<'evm'>>();
+    const substrateMap = new Map<number, RelayedChainConfig<'substrate'>>();
+
     return {
       hasIpService: true,
       features: info.features,
@@ -83,8 +87,8 @@ export class WebbRelayerManagerFactory {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
 
                 return m;
-              }, new Map())
-          : new Map(),
+              }, evmMap)
+          : evmMap,
         substrate: info.substrate
           ? Object.keys(info.substrate)
               .filter(
@@ -100,8 +104,8 @@ export class WebbRelayerManagerFactory {
                 m.set(typedChainId, info.substrate[key]);
 
                 return m;
-              }, new Map())
-          : new Map(),
+              }, substrateMap)
+          : substrateMap,
       },
     };
   }

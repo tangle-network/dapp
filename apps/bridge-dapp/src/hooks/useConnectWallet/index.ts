@@ -4,6 +4,7 @@ import {
 } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import getDefaultAccount from '@webb-tools/api-provider-environment/utils/getDefaultAccount';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
@@ -20,12 +21,18 @@ import {
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
 import subjects, { WalletState } from './subjects';
+import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 
 export type UseConnectWalletReturnType = {
   /**
    * Boolean to check if the wallet modal is open
    */
   isModalOpen: boolean;
+
+  /**
+   * The current browser platform id
+   */
+  platformId?: SupportedBrowsers;
 
   /**
    * Toggle or set state of the wallet modal
@@ -166,6 +173,9 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
   const connectWallet = useCallback(
     async (nextWallet: WalletConfig) => {
       try {
+        // Call the getPlatformMetaData function to get check if the browser is supported
+        getPlatformMetaData();
+
         subjects.setSelectedWallet(nextWallet);
         subjects.setWalletState(WalletState.CONNECTING);
 

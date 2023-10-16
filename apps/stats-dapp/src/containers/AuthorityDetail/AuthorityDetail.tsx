@@ -1,21 +1,22 @@
 import {
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
   PaginationState,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  AuthorityQuery,
-  AuthorityStats,
-  AuthoritySet,
-  KeyGenKeyListItem,
-  useAuthority,
-  useAuthorityAccount,
-} from '../../provider/hooks';
-import { useStatsContext } from '../../provider/stats-provider';
+  ArrowLeft,
+  CheckboxBlankCircleLine,
+  Close,
+  Expand,
+  KeyIcon,
+  Link as LinkIcon,
+  Mail,
+  QRCode,
+  Spinner,
+  TwitterFill,
+} from '@webb-tools/icons';
 import {
   Avatar,
   AvatarGroup,
@@ -29,28 +30,25 @@ import {
   TitleWithInfo,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import {
-  ArrowLeft,
-  CheckboxBlankCircleLine,
-  Close,
-  Expand,
-  KeyIcon,
-  Link as LinkIcon,
-  Mail,
-  QRCode,
-  Spinner,
-  TwitterFill,
-} from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
+import {
+  AuthorityQuery,
+  AuthoritySet,
+  AuthorityStats,
+  KeyGenKeyListItem,
+  useAuthority,
+  useAuthorityAccount,
+} from '../../provider/hooks';
+import { useStatsContext } from '../../provider/stats-provider';
 
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
 import { headerConfig } from '../KeygenTable';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 

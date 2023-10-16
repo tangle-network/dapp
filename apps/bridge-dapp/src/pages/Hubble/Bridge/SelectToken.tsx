@@ -12,6 +12,7 @@ import SlideAnimation from '../../../components/SlideAnimation';
 import { POOL_KEY, TOKEN_KEY } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 
 const SelectToken: FC = () => {
   const [searhParams] = useSearchParams();

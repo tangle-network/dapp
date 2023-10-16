@@ -64,7 +64,7 @@ const TransactionInputCardRoot = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'w-full max-w-lg rounded-lg px-3 py-1.5 space-y-2',
+          'w-full rounded-lg px-3 py-1.5 space-y-2',
           'bg-mono-20 dark:bg-mono-180',
           'hover:bg-[#E2E5EB]/30 dark:hover:bg-mono-170',
           className
@@ -307,13 +307,13 @@ const TransactionInputCardBody = forwardRef<
           className
         )}
       >
-        <div className="grow">
+        <div className="grow min-h-[52px] flex items-center">
           {isFixedAmount ? (
             <AdjustAmount
               min={0}
               {...fixedAmountProps}
               className={twMerge(
-                'max-w-[var(--adjust-amount-width)]',
+                'max-w-[var(--adjust-amount-width)] h-full',
                 fixedAmountProps?.className
               )}
               value={typeof amount === 'string' ? Number(amount) : undefined}
@@ -370,14 +370,6 @@ const TransactionInputCardFooter = forwardRef<
     const onIsFixedAmountChange =
       onIsFixedAmountChangeProp ?? context.onIsFixedAmountChange;
 
-    const title = useMemo(() => {
-      if (labelWithTooltipProps?.title) {
-        return labelWithTooltipProps.title;
-      }
-
-      return isFixedAmount ? 'Fixed amount' : 'Custom amount';
-    }, [isFixedAmount, labelWithTooltipProps?.title]);
-
     return (
       <div
         {...props}
@@ -386,7 +378,7 @@ const TransactionInputCardFooter = forwardRef<
       >
         <TitleWithInfo
           {...labelWithTooltipProps}
-          title={title}
+          title="Fixed amount"
           className="text-mono-100 dark:text-mono-100"
         />
 

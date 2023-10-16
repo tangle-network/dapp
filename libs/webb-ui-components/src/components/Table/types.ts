@@ -1,8 +1,8 @@
-import { type RowData, useReactTable, type Row } from '@tanstack/react-table';
+import { useReactTable, type Row, type RowData } from '@tanstack/react-table';
 import type {
+  IWebbComponentBase,
   PropsOf,
   WebbComponentBase,
-  IWebbComponentBase,
 } from '../../types';
 
 /**

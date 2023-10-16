@@ -1,42 +1,40 @@
 import {
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
   PaginationState,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
-import { getChipColorByProposalType, mapChainNameToLogo } from '../../utils';
+import { ChainIcon, Spinner } from '@webb-tools/icons';
 import {
   Accordion,
   AccordionButton,
   AccordionContent,
   AccordionItem,
+  Button,
   CardTable,
   CheckBoxMenuGroup,
   Chip,
-  Filter,
-  Table,
   Divider,
+  Filter,
   ProposalsBadgeGroup,
-  Button,
+  Table,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { ChainIcon, Spinner } from '@webb-tools/icons';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  ProposalBatchesOrderBy,
   ProposalBatchStatus,
   ProposalType,
-  ProposalBatchesOrderBy,
 } from '../../generated/graphql';
 import {
-  ProposalBatch,
   BatchedProposalsQuery,
+  ProposalBatch,
   useBatchedProposals,
 } from '../../provider/hooks';
+import { getChipColorByProposalType, mapChainNameToLogo } from '../../utils';
 import {
   mapProposalStatusToChipColor,
   PROPOSAL_STATUS,

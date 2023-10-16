@@ -86,12 +86,12 @@ export const FilterButton: FC<FilterButtonProps> = ({
                   onChange={(v) => {
                     setSelectedChains(v);
                   }}
-                  iconGetter={([_key, chainConfig]) => (
+                  iconGetter={([, chainConfig]) => (
                     <div className="max-w-[20px] max-h-[20px] overflow-hidden ">
                       <ChainIcon name={chainConfig.name} />
                     </div>
                   )}
-                  labelGetter={([_, chain]) => chain.name}
+                  labelGetter={([, chain]) => chain.name}
                   keyGetter={([chainId]) => `Filter_proposals${chainId}`}
                 />
               </div>

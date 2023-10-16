@@ -29,6 +29,7 @@ const ChainButton = () => {
       status="success"
       placeholder={activeChain === null ? 'Unsupported Chain' : undefined}
       onClick={() => navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`)}
+      textClassname="hidden md:block"
     />
   );
 };

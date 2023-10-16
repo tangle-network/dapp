@@ -1,5 +1,4 @@
 import {
-  ColumnDef,
   ColumnFiltersState,
   createColumnHelper,
   getCoreRowModel,
@@ -9,15 +8,10 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   PaginationState,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCountriesQuery } from '../../generated/graphql';
-import {
-  AuthorisesQuery,
-  AuthorityListItem,
-  useAuthorities,
-} from '../../provider/hooks';
+import { Spinner } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 import {
   Accordion,
   AccordionButton,
@@ -26,21 +20,25 @@ import {
   Avatar,
   Button,
   CardTable,
+  Divider,
   Filter,
   KeyValueWithButton,
   Progress,
   Slider,
   Table,
-  Divider,
 } from '@webb-tools/webb-ui-components/components';
-import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthoritiesTableProps } from './types';
 import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
-import { Spinner } from '@webb-tools/icons';
+import { useCountriesQuery } from '../../generated/graphql';
+import {
+  AuthorisesQuery,
+  AuthorityListItem,
+  useAuthorities,
+} from '../../provider/hooks';
+import { AuthoritiesTableProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 

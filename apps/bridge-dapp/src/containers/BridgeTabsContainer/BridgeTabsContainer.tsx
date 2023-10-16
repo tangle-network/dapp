@@ -24,14 +24,14 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
       className={twMerge(
         'w-full max-w-xl min-h-[var(--card-height)]',
         'h-full bg-mono-0 dark:bg-mono-190',
-        'p-9 mx-auto rounded-xl space-y-4 grow',
-        'border border-mono-40 dark:border-mono-160',
+        'mx-auto rounded-xl space-y-4 grow',
+        'border border-mono-40 dark:border-mono-160 py-8 px-4 md:!px-9',
         'flex flex-col',
         'shadow-webb-lg dark:shadow-webb-lg-dark',
         className
       )}
     >
-      <ul className="flex items-center gap-4 pb-4 overflow-x-scroll">
+      <ul className="flex items-center gap-4 overflow-x-scroll pb-2">
         {BRIDGE_TABS.map((tab, idx) => (
           <li key={`${tab}-${idx}`}>
             <Link

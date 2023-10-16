@@ -1,15 +1,26 @@
 import { ChainIcon, ChevronDown } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainButtonProps } from './types';
 
 const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
   (
-    { className, chain, status, placeholder = 'Select Chain', ...props },
+    {
+      className,
+      chain,
+      status,
+      textClassname,
+      placeholder = 'Select Chain',
+      ...props
+    },
     ref
   ) => {
+    const textClsx = useMemo(() => {
+      return twMerge('font-bold', textClassname);
+    }, [textClassname]);
+
     return (
       <button
         {...props}
@@ -33,7 +44,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
               name={chain.name}
             />
           )}
-          <p className="font-bold">{chain?.name ?? placeholder}</p>
+          <p className={textClsx}>{chain?.name ?? placeholder}</p>
           <ChevronDown
             size="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}

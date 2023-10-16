@@ -9,16 +9,17 @@ export const useCheckMobile = (): UseCheckMobileReturnType => {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      const isMobile =
+      const isMobileCheck =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
         );
-      setIsMobile(isMobile);
+      setIsMobile(isMobileCheck);
     };
 
     checkIsMobile();
 
-    // Clean up the event listener on component unmount
+    window.addEventListener('resize', checkIsMobile);
+
     return () => {
       window.removeEventListener('resize', checkIsMobile);
     };

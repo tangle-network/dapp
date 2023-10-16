@@ -31,7 +31,7 @@ export const WalletModal: FC = () => {
   const getCurrentWallet = useCallback(() => {
     const walletId = failedWalletId ?? connectingWalletId;
     if (!walletId) {
-      return undefined;
+      return;
     }
 
     return apiConfig.wallets[walletId];
@@ -49,7 +49,7 @@ export const WalletModal: FC = () => {
 
   const errorMessage = useMemo(() => {
     if (!connectError) {
-      return undefined;
+      return;
     }
 
     return connectError.message;
@@ -59,12 +59,12 @@ export const WalletModal: FC = () => {
   // we should show download button text
   const errorBtnText = useMemo(() => {
     if (!connectError || !isNotInstalledError) {
-      return undefined;
+      return;
     }
 
     const wallet = getCurrentWallet();
     if (!wallet) {
-      return undefined;
+      return;
     }
 
     const walletName = wallet?.name ?? 'Wallet';
@@ -82,14 +82,24 @@ export const WalletModal: FC = () => {
     resetState();
   }, [resetState]);
 
+  const platformId = useMemo(() => {
+    try {
+      const { id } = getPlatformMetaData();
+      return id;
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   const downloadURL = useMemo(() => {
-    const { id } = getPlatformMetaData();
+    if (!platformId) return;
+
     const wallet = getCurrentWallet();
 
-    if (wallet?.installLinks?.[id]) {
-      return new URL(wallet.installLinks[id]);
+    if (wallet?.installLinks?.[platformId]) {
+      return new URL(wallet.installLinks[platformId]);
     }
-  }, [getCurrentWallet]);
+  }, [getCurrentWallet, platformId]);
 
   const handleTryAgainBtnClick = useCallback(
     async () => {

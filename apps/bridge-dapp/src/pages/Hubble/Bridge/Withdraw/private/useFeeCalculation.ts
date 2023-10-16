@@ -59,19 +59,19 @@ export default function useFeeCalculation(args: {
     useMaxFeeInfo(feeArgs);
 
   const gasFeeInfo = useMemo(() => {
-    if (typeof feeInfo === 'bigint') {
-      return feeInfo;
+    if (typeof feeInfo !== 'bigint') {
+      return;
     }
 
-    return undefined;
+    return feeInfo;
   }, [feeInfo]);
 
   const relayerFeeInfo = useMemo(() => {
-    if (typeof feeInfo === 'object' && feeInfo != null) {
-      return feeInfo;
+    if (typeof feeInfo !== 'object' || feeInfo == null) {
+      return;
     }
 
-    return undefined;
+    return feeInfo;
   }, [feeInfo]);
 
   const refundAmount = useMemo(() => {
@@ -157,6 +157,7 @@ export default function useFeeCalculation(args: {
   return {
     gasFeeInfo,
     isLoading,
+    relayerFeeInfo,
     refundAmount,
     resetMaxFeeInfo,
     totalFeeToken,

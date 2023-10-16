@@ -4,12 +4,14 @@ import {
   Breadcrumbs,
   BreadcrumbsItem,
   Button,
+  ConnectWalletMobileButton,
   MenuItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   SideBarMenu,
   getHumanFileSize,
+  useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import {
   GITHUB_REQUEST_FEATURE_URL,
@@ -24,10 +26,10 @@ import { NavLink, useLocation } from 'react-router-dom';
 import sidebarProps from '../../constants/sidebar';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../hooks/useConnectWallet';
-import ChainButton from './ChainButton';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
+import ChainButton from './ChainButton';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -38,6 +40,8 @@ export const Header: FC<HeaderProps> = () => {
 
   const { toggleModal } = useConnectWallet();
   const { srcTypedChainId } = useChainsFromRoute();
+
+  const { isMobile } = useCheckMobile();
 
   const location = useLocation();
 
@@ -51,7 +55,7 @@ export const Header: FC<HeaderProps> = () => {
           className="lg:hidden"
           overrideContentProps={{ className: 'top-0' }}
         />
-        <Breadcrumbs>
+        <Breadcrumbs className="hidden md:flex">
           {items.map((item, index) => {
             return (
               <NavLink key={index} to={'/'}>
@@ -74,14 +78,18 @@ export const Header: FC<HeaderProps> = () => {
         <div className="hidden lg:!flex items-center space-x-2">
           <ChainButton />
           {isConnecting || loading || !activeWallet || !activeAccount ? (
-            <Button
-              isLoading={loading}
-              loadingText="Connecting..."
-              onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
-              className="hidden lg:!flex justify-center items-center"
-            >
-              Connect wallet
-            </Button>
+            isMobile ? (
+              <ConnectWalletMobileButton />
+            ) : (
+              <Button
+                isLoading={loading}
+                loadingText="Connecting..."
+                onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
+                className="hidden lg:!flex justify-center items-center"
+              >
+                Connect wallet
+              </Button>
+            )
           ) : (
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
           )}

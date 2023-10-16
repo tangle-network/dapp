@@ -1,4 +1,4 @@
-import { flexRender, Row, RowData } from '@tanstack/react-table';
+import { type Row, type RowData, flexRender } from '@tanstack/react-table';
 import React, { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 

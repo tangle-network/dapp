@@ -97,7 +97,7 @@ const SelectPool: FC = () => {
               tokenType: 'shielded',
               assetBalanceProps: {
                 balance: +formatEther(balance),
-                subContent: `${chainCfg.name}`,
+                subContent: chainCfg.name,
               },
               chainName: chainCfg.name,
               isLoadingMetadata: !initialized,
@@ -193,7 +193,6 @@ const getBalanceProps = (
   if (!txType || typeof srcTypedChainId !== 'number') {
     return;
   }
-
   const balance = balances[currency.id]?.[srcTypedChainId] ?? 0;
 
   return {
