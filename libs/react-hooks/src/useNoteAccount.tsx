@@ -152,48 +152,57 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
             abortController.signal
           );
 
-        const notes = await Promise.all(
-          chainNotes
-            // Do not display notes that have zero value.
-            .filter((note) => note.note.amount !== '0')
-            .map(async (note) => {
-              // Either contract address or tree id
-              const targetIdentifier = note.note.targetIdentifyingData;
-              const { chainType, chainId } = parseTypedChainId(
-                +note.note.targetChainId
-              );
+        const newNotes: Note[] = [];
 
-              // Index the note by destination resource id
-              const resourceId =
-                await activeApi.methods.variableAnchor.actions.inner.getResourceId(
-                  targetIdentifier,
-                  chainId,
-                  chainType
-                );
+        for (const note of chainNotes) {
+          abortController.signal.throwIfAborted();
 
-              await noteManager.addNote(resourceId, note);
-              return note;
-            })
-        );
+          // Not process the note with amount 0
+          if (note.note.amount === '0') {
+            continue;
+          }
+
+          const targetIdentifier = note.note.targetIdentifyingData;
+          const { chainType, chainId } = parseTypedChainId(
+            +note.note.targetChainId
+          );
+
+          // Index the note by destination resource id
+          const resourceId =
+            await activeApi.methods.variableAnchor.actions.inner.getResourceId(
+              targetIdentifier,
+              chainId,
+              chainType
+            );
+
+          const existed = noteManager
+            .getNotesOfChain(resourceId.toString())
+            ?.find((storedNote) => storedNote.serialize() === note.serialize());
+
+          if (!existed) {
+            await noteManager.addNote(resourceId, note);
+            newNotes.push(note);
+          }
+        }
 
         notificationApi.addToQueue({
           variant: 'success',
           message:
-            notes.length > 0
+            newNotes.length > 0
               ? `Note${
-                  notes.length > 1 ? 's' : ''
+                  newNotes.length > 1 ? 's' : ''
                 } successfully added to account`
               : 'Successfully synced notes',
           secondaryMessage:
-            notes.length > 0 ? (
+            newNotes.length > 0 ? (
               <Typography variant="body1">
                 <Button
                   variant="link"
                   as="span"
                   className="inline-block"
-                  onClick={() => onNewNotes?.(notes)}
+                  onClick={() => onNewNotes?.(newNotes)}
                 >
-                  {notes.length} new note(s){' '}
+                  {newNotes.length} new note(s){' '}
                 </Button>{' '}
                 added to your account
               </Typography>

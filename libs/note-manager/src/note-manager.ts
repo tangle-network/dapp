@@ -378,21 +378,11 @@ export class NoteManager {
       // Create a new entry into the notes map
       this.notesMap.set(resourceIdStr, [note]);
     } else {
-      // Check if this same note has already been added
-      if (
-        targetNotes.find(
-          (storedNote) => storedNote.serialize() === note.serialize()
-        )
-      ) {
-        return;
-      }
-
-      // Append the note to the existing available notes
-      targetNotes.push(note);
-      this.notesMap.set(resourceIdStr, targetNotes);
+      const newTargetNotes = addNoteWithoutDuplicates(targetNotes, note);
+      this.notesMap.set(resourceIdStr, newTargetNotes);
     }
-    this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
 
+    this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
     await this.updateStorage();
   }
 
@@ -557,4 +547,49 @@ function compareNotesRecord(
     compareLeftRight(notesRecord, otherNotesRecord) &&
     compareLeftRight(otherNotesRecord, notesRecord)
   );
+}
+
+/**
+ * There is a case where the new note has a different index
+ * with the stored note but the same other properties.
+ * In this case, we should remove the stored note and add the new note.
+ * This function will modify the passed array in place.
+ * @param arr the existing notes
+ * @param newNote the new note to be added
+ */
+function addNoteWithoutDuplicates(arr: Note[], newNote: Note) {
+  const noteWithoutIndex = newNote
+    .serialize()
+    .split('&')
+    .filter((part) => !part.startsWith('index'))
+    .join('&');
+
+  const matchedIndex = arr.findIndex((storedNote) => {
+    const storedNoteWithoutIndex = storedNote
+      .serialize()
+      .split('&')
+      .filter((part) => !part.startsWith('index'))
+      .join('&');
+
+    return storedNoteWithoutIndex === noteWithoutIndex;
+  });
+
+  const newArr = arr.slice();
+
+  // If the stored note has the same index as the note to be added,
+  // then ignore the note to be added
+  if (
+    matchedIndex !== -1 &&
+    arr[matchedIndex].note.index === newNote.note.index
+  ) {
+    return;
+  } else if (matchedIndex !== -1) {
+    // If the stored note has a different index with the note to be added,
+    // then remove the stored note
+    newArr.splice(matchedIndex, 1);
+  }
+
+  // Append the note to the existing available notes
+  newArr.push(newNote);
+  return newArr;
 }

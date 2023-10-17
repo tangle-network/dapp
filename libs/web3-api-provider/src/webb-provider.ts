@@ -832,7 +832,7 @@ export class WebbWeb3Provider
           publicClient.getLogs({
             ...commonGetLogsProps,
             fromBlock,
-            toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
+            toBlock,
           }),
         undefined,
         undefined,
@@ -846,10 +846,11 @@ export class WebbWeb3Provider
     let currentBlock = fromBlock;
 
     while (currentBlock < toBlock) {
+      const maybeToBlock = currentBlock + BigInt(maxBlockStep) - BigInt(1);
+      const _toBlock = maybeToBlock > toBlock ? toBlock : maybeToBlock;
+
       console.log(
-        `Fetching logs from block ${currentBlock} to block ${
-          currentBlock + BigInt(maxBlockStep) - BigInt(1)
-        }`
+        `Fetching logs from block ${currentBlock} to block ${_toBlock}`
       );
 
       onCurrentProcessingBlock?.(currentBlock);
@@ -859,7 +860,7 @@ export class WebbWeb3Provider
           publicClient.getLogs({
             ...commonGetLogsProps,
             fromBlock: currentBlock,
-            toBlock: currentBlock + BigInt(maxBlockStep) - BigInt(1),
+            toBlock: _toBlock,
           }),
         undefined,
         undefined,
