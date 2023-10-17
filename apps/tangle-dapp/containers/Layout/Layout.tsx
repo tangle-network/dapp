@@ -9,10 +9,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           {/* Header */}
           <div className="flex items-center justify-between pt-6 pb-4">
             <div className="flex items-center gap-2">
-              <div>Sidebar</div>
-              <div>Breadcrumbs</div>
+              {/* Sidebar */}
+              <div></div>
             </div>
-            <div>Header Chips Container</div>
           </div>
 
           {/* Body */}
