@@ -28,7 +28,7 @@ const Page = () => {
       {/** The Faucet Card */}
       <div
         className={cx(
-          'px-12 py-9 max-w-[956px] rounded-2xl mx-auto',
+          'px-12 py-9 max-w-[964px] rounded-2xl mx-auto',
           'border-4 border-mono-0'
         )}
         style={{

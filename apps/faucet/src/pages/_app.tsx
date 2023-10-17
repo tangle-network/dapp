@@ -1,13 +1,15 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
-import { Footer, useDarkMode } from '@webb-tools/webb-ui-components';
+import { Footer, SideBar, useDarkMode } from '@webb-tools/webb-ui-components';
 import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
+import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 import { useEffect } from 'react';
 
 import Header from '../components/Header';
+import sidebarProps from '../constants/sidebar';
 import Provider from '../provider';
 
 export const metadata: DefaultSeoProps = {
@@ -54,15 +56,22 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <div className="mx-10 space-y-4">
-        <Header />
+      <NextThemeProvider>
+        <div className="h-screen flex">
+          <SideBar {...sidebarProps} className="hidden lg:flex" />
+          <main className="flex-[1] h-full overflow-y-auto">
+            <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
+              <Header />
 
-        <main>
-          <Component {...pageProps} />
-        </main>
+              <main>
+                <Component {...pageProps} />
+              </main>
 
-        <Footer isMinimal isNext className="py-12 mx-auto" />
-      </div>
+              <Footer isMinimal isNext className="py-12 mx-auto" />
+            </div>
+          </main>
+        </div>
+      </NextThemeProvider>
     </Provider>
   );
 };
