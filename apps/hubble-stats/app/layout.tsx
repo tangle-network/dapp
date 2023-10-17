@@ -1,9 +1,9 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import { Metadata } from 'next';
+import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 
 import { Layout } from '../containers';
-import { NextThemeProvider } from './providers';
 
 export const metadata: Metadata = {
   title: {

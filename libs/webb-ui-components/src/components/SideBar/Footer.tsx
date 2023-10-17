@@ -47,7 +47,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
             </div>
 
             {!isInternal ? (
-              <div className={isExpanded ? 'pl-[26px]' : ''}>
+              <div className={isExpanded ? 'pl-[20px]' : ''}>
                 <Link href={href} target="_blank">
                   <ExternalLinkLine
                     className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
