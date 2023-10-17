@@ -145,12 +145,33 @@ const getBalanceProps = (
   balances: Record<number, number>,
   isLoading?: boolean,
   txType?: string
-) =>
-  !isLoading &&
-  balances[currencyCfg.id] &&
-  (txType !== 'withdraw' || currencyCfg.role !== CurrencyRole.Governable)
-    ? { balance: balances[currencyCfg.id] }
-    : { balance: currencyCfg.role === CurrencyRole.Governable ? Infinity : 0 };
+) => {
+  if (isLoading) {
+    return;
+  }
+
+  const currencyBalance = balances[currencyCfg.id];
+
+  // Deposit means wrap tokens, uses the users balance from balances record
+  if (txType === 'deposit' && currencyBalance) {
+    return {
+      balance: currencyBalance,
+    };
+  }
+
+  // Withdraw means unwrap tokens
+  if (txType === 'withdraw') {
+    // For fungible/governable tokens, users can withdraw unlimited amount
+    if (currencyCfg.role === CurrencyRole.Governable) {
+      return { balance: Infinity };
+    }
+
+    // For non-fungible/non-governable tokens, use the balance from balances record
+    if (currencyBalance) {
+      return { balance: currencyBalance };
+    }
+  }
+};
 
 const getBadgeProps = (
   currencyCfg: CurrencyConfig,
