@@ -1,12 +1,12 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
+import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { Footer, SideBar, useDarkMode } from '@webb-tools/webb-ui-components';
 import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
-import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
 
 import Header from '../components/Header';
 import sidebarProps from '../constants/sidebar';

@@ -1,11 +1,11 @@
-import { type FC } from 'react';
+import { FaucetIcon,ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import {
-  Button,
   Breadcrumbs,
   BreadcrumbsItem,
+  Button,
   SideBarMenu,
 } from '@webb-tools/webb-ui-components';
-import { ThreeDotsVerticalIcon, FaucetIcon } from '@webb-tools/icons';
+import { type FC } from 'react';
 
 import sideBarProps from '../constants/sidebar';
 

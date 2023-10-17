@@ -1,28 +1,28 @@
 import {
-  TangleIcon,
-  GridFillIcon,
-  FundsLine,
-  KeyIcon,
-  FaucetIcon,
   AppsLine,
-  GlobalLine,
   DocumentationIcon,
+  FaucetIcon,
+  FundsLine,
+  GlobalLine,
+  GridFillIcon,
+  KeyIcon,
+  TangleIcon,
 } from '@webb-tools/icons';
 import {
-  TangleLogo,
   type SideBarFooterType,
   type SideBarItemProps,
   type SidebarProps,
+  TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
 import {
-  DKG_STATS_KEYS_URL,
   DKG_STATS_AUTHORITIES_URL,
+  DKG_STATS_KEYS_URL,
   DKG_STATS_PROPOSALS_URL,
   TANGLE_MKT_URL,
-  WEBB_DOCS_URL,
   TANGLE_STANDALONE_EXPLORER_URL,
   TANGLE_TESTNET_EXPLORER_URL,
+  WEBB_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
@@ -42,64 +42,64 @@ const items: SideBarItemProps[] = [
   //   subItems: [],
   // },
   {
-    name: 'DKG Explorer',
-    isInternal: false,
-    href: '',
     Icon: KeyIcon,
+    href: '',
+    isInternal: false,
+    name: 'DKG Explorer',
     subItems: [
       {
-        name: 'Keys',
-        isInternal: false,
         href: DKG_STATS_KEYS_URL,
+        isInternal: false,
+        name: 'Keys',
       },
       {
-        name: 'Authorities',
-        isInternal: false,
         href: DKG_STATS_AUTHORITIES_URL,
+        isInternal: false,
+        name: 'Authorities',
       },
       {
-        name: 'Proposals',
-        isInternal: false,
         href: DKG_STATS_PROPOSALS_URL,
+        isInternal: false,
+        name: 'Proposals',
       },
     ],
   },
   {
-    name: 'Faucet',
-    isInternal: true,
-    href: '/',
     Icon: FaucetIcon,
+    href: '/',
+    isInternal: true,
+    name: 'Faucet',
     subItems: [],
   },
   {
-    name: 'Substrate Portal',
-    isInternal: false,
-    href: TANGLE_STANDALONE_EXPLORER_URL,
     Icon: AppsLine,
+    href: TANGLE_STANDALONE_EXPLORER_URL,
+    isInternal: false,
+    name: 'Substrate Portal',
     subItems: [],
   },
   {
-    name: 'EVM Explorer',
-    isInternal: false,
-    href: TANGLE_TESTNET_EXPLORER_URL,
     Icon: GlobalLine,
+    href: TANGLE_TESTNET_EXPLORER_URL,
+    isInternal: false,
+    name: 'EVM Explorer',
     subItems: [],
   },
 ];
 
 const footer: SideBarFooterType = {
-  name: 'Tangle Docs',
-  isInternal: false,
-  href: WEBB_DOCS_URL,
   Icon: DocumentationIcon,
+  href: WEBB_DOCS_URL,
+  isInternal: false,
+  name: 'Tangle Docs',
   useNextThemesForThemeToggle: true,
 };
 
 const sidebar: SidebarProps = {
-  Logo: TangleLogo,
   ClosedLogo: SidebarTangleClosedIcon,
-  items: items,
+  Logo: TangleLogo,
   footer: footer,
+  items: items,
   logoLink: TANGLE_MKT_URL,
 };
 
