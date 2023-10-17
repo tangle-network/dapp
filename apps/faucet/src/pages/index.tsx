@@ -22,13 +22,13 @@ export const metadata: NextSeoProps = {
 
 const Page = () => {
   return (
-    <div className={cx('max-w-[100vw] py-16')}>
+    <div className={cx('max-w-[100vw]')}>
       <NextSeo {...metadata} />
 
       {/** The Faucet Card */}
       <div
         className={cx(
-          'px-12 py-9 max-w-[956px] rounded-2xl mx-auto',
+          'px-4 md:px-12 py-12 max-w-[964px] rounded-2xl mx-auto',
           'border-4 border-mono-0'
         )}
         style={{

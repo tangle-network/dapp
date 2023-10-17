@@ -9,5 +9,4 @@ export interface TangleLogoProps extends Omit<IconBase, 'size'> {
    * @default "md"
    */
   size?: 'sm' | 'md' | 'lg';
-  hideNameOnMobile?: boolean;
 }
