@@ -80,6 +80,10 @@ export const POLKADOT_EXPLORER_URL =
 export const FOLLOW_WEBB_TWITTER_URL =
   'https://twitter.com/intent/follow?screen_name=webbprotocol';
 
+export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
+export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
+export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
+
 export const WEBB_DOC_ROUTES_RECORD = {
   concepts: {
     'anchor-system': {

@@ -1,67 +1,94 @@
-import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine';
-import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
-import { Tangle } from '@webb-tools/icons/Tangle';
 import {
+  TangleIcon,
+  GridFillIcon,
+  FundsLine,
+  KeyIcon,
+  FaucetIcon,
+  AppsLine,
+  GlobalLine,
+  DocumentationIcon,
+} from '@webb-tools/icons';
+import {
+  TangleLogo,
   type SideBarFooterType,
   type SideBarItemProps,
   type SidebarProps,
 } from '@webb-tools/webb-ui-components';
-import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
+import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
 import {
-  DKG_STATS_URL,
+  DKG_STATS_KEYS_URL,
+  DKG_STATS_AUTHORITIES_URL,
+  DKG_STATS_PROPOSALS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
-  WEBB_MKT_URL,
-  HUBBLE_STATS_URL,
-  BRIDGE_URL,
+  TANGLE_STANDALONE_EXPLORER_URL,
+  TANGLE_TESTNET_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
+  // NOTE: these are under development
+  // {
+  //   name: 'Dashboard',
+  //   isInternal: false,
+  //   href: '/',
+  //   Icon: GridFillIcon,
+  //   subItems: [],
+  // },
+  // {
+  //   name: 'EVM Staking',
+  //   isInternal: false,
+  //   href: '/',
+  //   Icon: FundsLine,
+  //   subItems: [],
+  // },
   {
-    name: 'Hubble',
-    isInternal: true,
+    name: 'DKG Explorer',
+    isInternal: false,
     href: '',
-    Icon: ContrastTwoLine,
+    Icon: KeyIcon,
     subItems: [
       {
-        name: 'Bridge',
+        name: 'Keys',
         isInternal: false,
-        href: BRIDGE_URL,
+        href: DKG_STATS_KEYS_URL,
       },
       {
-        name: 'Explorer',
+        name: 'Authorities',
         isInternal: false,
-        href: HUBBLE_STATS_URL,
+        href: DKG_STATS_AUTHORITIES_URL,
       },
       {
-        name: 'Faucet',
-        isInternal: true,
-        href: '/',
+        name: 'Proposals',
+        isInternal: false,
+        href: DKG_STATS_PROPOSALS_URL,
       },
     ],
   },
   {
-    name: 'Tangle Network',
+    name: 'Faucet',
+    isInternal: true,
+    href: '/',
+    Icon: FaucetIcon,
+    subItems: [],
+  },
+  {
+    name: 'Substrate Portal',
     isInternal: false,
-    href: '',
-    Icon: Tangle,
-    subItems: [
-      {
-        name: 'DKG Explorer',
-        isInternal: false,
-        href: DKG_STATS_URL,
-      },
-      {
-        name: 'Homepage',
-        isInternal: false,
-        href: TANGLE_MKT_URL,
-      },
-    ],
+    href: TANGLE_STANDALONE_EXPLORER_URL,
+    Icon: AppsLine,
+    subItems: [],
+  },
+  {
+    name: 'EVM Explorer',
+    isInternal: false,
+    href: TANGLE_TESTNET_EXPLORER_URL,
+    Icon: GlobalLine,
+    subItems: [],
   },
 ];
 
 const footer: SideBarFooterType = {
-  name: 'Webb Docs',
+  name: 'Tangle Docs',
   isInternal: false,
   href: WEBB_DOCS_URL,
   Icon: DocumentationIcon,
@@ -69,10 +96,11 @@ const footer: SideBarFooterType = {
 };
 
 const sidebar: SidebarProps = {
-  Logo,
+  Logo: TangleLogo,
+  ClosedLogo: SidebarTangleClosedIcon,
   items: items,
   footer: footer,
-  logoLink: WEBB_MKT_URL,
+  logoLink: TANGLE_MKT_URL,
 };
 
 export default sidebar;

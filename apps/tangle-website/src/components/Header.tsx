@@ -42,7 +42,7 @@ export const Header: FC<HeaderProps> = (props) => {
       <div className="w-full max-w-[1440px] mx-auto px-[20px] lg:px-0 py-4 lg:order-1">
         <div className="lg:px-[11.25%] flex items-center justify-between">
           <Link href="/">
-            <TangleLogo hideNameOnMobile />
+            <TangleLogo />
           </Link>
           <Navbar />
         </div>
