@@ -6,7 +6,7 @@ import { Footer, SideBar, useDarkMode } from '@webb-tools/webb-ui-components';
 import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Header from '../components/Header';
 import sidebarProps from '../constants/sidebar';

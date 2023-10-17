@@ -1,4 +1,4 @@
-import { FaucetIcon,ThreeDotsVerticalIcon } from '@webb-tools/icons';
+import { FaucetIcon, ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
