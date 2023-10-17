@@ -2,11 +2,8 @@ import {
   AppsLine,
   DocumentationIcon,
   FaucetIcon,
-  FundsLine,
   GlobalLine,
-  GridFillIcon,
   KeyIcon,
-  TangleIcon,
 } from '@webb-tools/icons';
 import {
   type SideBarFooterType,
@@ -22,7 +19,7 @@ import {
   TANGLE_MKT_URL,
   TANGLE_STANDALONE_EXPLORER_URL,
   TANGLE_TESTNET_EXPLORER_URL,
-  WEBB_DOCS_URL,
+  WEBB_TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
@@ -89,7 +86,7 @@ const items: SideBarItemProps[] = [
 
 const footer: SideBarFooterType = {
   Icon: DocumentationIcon,
-  href: WEBB_DOCS_URL,
+  href: WEBB_TANGLE_DOCS_URL,
   isInternal: false,
   name: 'Tangle Docs',
   useNextThemesForThemeToggle: true,
