@@ -1,6 +1,5 @@
 import {
   Column,
-  ColumnDef,
   ColumnFiltersState,
   createColumnHelper,
   getCoreRowModel,
@@ -11,15 +10,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  PageInfoQuery,
-  useKeys,
-  PublicKey,
-  useActiveKeys,
-} from '../../provider/hooks';
+import { Spinner } from '@webb-tools/icons';
 import {
   Accordion,
   AccordionButton,
@@ -29,18 +22,23 @@ import {
   AvatarGroup,
   Button,
   CardTable,
+  Divider,
   Filter,
   KeyValueWithButton,
   Slider,
   Table,
   TitleWithInfo,
-  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-tools/webb-ui-components/types';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Spinner } from '@webb-tools/icons';
+import {
+  PageInfoQuery,
+  PublicKey,
+  useActiveKeys,
+  useKeys,
+} from '../../provider/hooks';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
@@ -74,7 +72,7 @@ export const headerConfig = {
   },
 };
 
-const columns: ColumnDef<KeygenType, any>[] = [
+const columns = [
   columnHelper.accessor('height', {
     header: () => (
       <TitleWithInfo
@@ -305,7 +303,7 @@ export const KeygenTable: FC = () => {
   );
 
   const getSliderDefaultValue = useCallback(
-    (column: Column<KeygenType, unknown>) =>
+    (column: Column<KeygenType>) =>
       column.getFacetedMinMaxValues()?.[0] ===
       column.getFacetedMinMaxValues()?.[1]
         ? [
@@ -375,7 +373,7 @@ export const KeygenTable: FC = () => {
     >
       {data.length > 0 ? (
         <Table
-          tableProps={table as RTTable<unknown>}
+          tableProps={table}
           totalRecords={totalItems}
           isPaginated
           tdClassName="text-center"

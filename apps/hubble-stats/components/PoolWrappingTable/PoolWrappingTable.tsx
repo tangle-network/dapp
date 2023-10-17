@@ -1,31 +1,29 @@
 'use client';
 
-import { FC, useMemo } from 'react';
-import cx from 'classnames';
 import {
-  useReactTable,
   createColumnHelper,
-  getExpandedRowModel,
   getCoreRowModel,
-  ColumnDef,
-  Table as RTTable,
+  getExpandedRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { CornerDownRightLine, TokenIcon } from '@webb-tools/icons';
 import {
   ChainChip,
   Table,
-  fuzzyFilter,
   Typography,
+  fuzzyFilter,
 } from '@webb-tools/webb-ui-components';
-import { TokenIcon, CornerDownRightLine } from '@webb-tools/icons';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import cx from 'classnames';
+import { FC, useMemo } from 'react';
 
-import { PoolWrappingDataType, PoolWrappingTableProps } from './types';
+import { getShortenChainName, getSortedTypedChainIds } from '../../utils';
 import { HeaderCell, NumberCell } from '../tableCells';
-import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
+import { PoolWrappingDataType, PoolWrappingTableProps } from './types';
 
 const columnHelper = createColumnHelper<PoolWrappingDataType>();
 
-const staticColumns: ColumnDef<PoolWrappingDataType, any>[] = [
+const staticColumns = [
   columnHelper.accessor('symbol', {
     header: () => null,
     cell: (props) => {
@@ -86,7 +84,7 @@ const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
     [typedChainIds]
   );
 
-  const columns = useMemo<ColumnDef<PoolWrappingDataType, any>[]>(
+  const columns = useMemo(
     () => [
       ...staticColumns,
       ...sortedTypedChainIds.map((typedChainId) =>
@@ -146,12 +144,12 @@ const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-mono-40 dark:border-mono-160">
+    <div className="overflow-x-auto border rounded-lg border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="lg:table-fixed block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
         thClassName="lg:first:w-[200px] border-t-0 bg-mono-0 border-r first:px-3 last:border-r-0 last:pr-2"
         tdClassName="border-r last:border-r-0 first:px-3 last:pr-2"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         totalRecords={data.length}
       />
     </div>

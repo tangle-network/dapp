@@ -164,6 +164,7 @@ export default function useFeeCalculation(args: {
     gasFeeInfo,
     isLoading,
     refundAmount,
+    relayerFeeInfo,
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,

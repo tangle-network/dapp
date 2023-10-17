@@ -307,13 +307,13 @@ const TransactionInputCardBody = forwardRef<
           className
         )}
       >
-        <div className="grow">
+        <div className="grow min-h-[52px] flex items-center">
           {isFixedAmount ? (
             <AdjustAmount
               min={0}
               {...fixedAmountProps}
               className={twMerge(
-                'max-w-[var(--adjust-amount-width)]',
+                'max-w-[var(--adjust-amount-width)] h-full',
                 fixedAmountProps?.className
               )}
               value={typeof amount === 'string' ? Number(amount) : undefined}
@@ -370,14 +370,6 @@ const TransactionInputCardFooter = forwardRef<
     const onIsFixedAmountChange =
       onIsFixedAmountChangeProp ?? context.onIsFixedAmountChange;
 
-    const title = useMemo(() => {
-      if (labelWithTooltipProps?.title) {
-        return labelWithTooltipProps.title;
-      }
-
-      return isFixedAmount ? 'Fixed amount' : 'Custom amount';
-    }, [isFixedAmount, labelWithTooltipProps?.title]);
-
     return (
       <div
         {...props}
@@ -386,7 +378,7 @@ const TransactionInputCardFooter = forwardRef<
       >
         <TitleWithInfo
           {...labelWithTooltipProps}
-          title={title}
+          title="Fixed amount"
           className="text-mono-100 dark:text-mono-100"
         />
 

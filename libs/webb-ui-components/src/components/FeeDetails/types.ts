@@ -1,6 +1,6 @@
 import { AccordionSingleProps } from '@radix-ui/react-accordion';
-import { TitleWithInfoProps } from '../TitleWithInfo/types';
 import { IconBase } from '@webb-tools/icons/types';
+import { TitleWithInfoProps } from '../TitleWithInfo/types';
 
 /**
  * The fee item to display in the FeeDetails component.
@@ -24,7 +24,7 @@ export type FeeItem = {
   /**
    * The formated fee value.
    */
-  value?: number;
+  value?: number | React.ReactElement;
 
   /**
    * The fee token symbol.

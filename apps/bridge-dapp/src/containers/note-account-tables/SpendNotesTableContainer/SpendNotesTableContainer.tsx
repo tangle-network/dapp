@@ -1,9 +1,7 @@
 import {
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
 import {
@@ -14,15 +12,15 @@ import {
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
-  formatTokenAmount,
-  fuzzyFilter,
   IconWithTooltip,
+  IconsGroup,
   KeyValueWithButton,
-  shortenString,
   Table,
   TitleWithInfo,
-  IconsGroup,
   Typography,
+  formatTokenAmount,
+  fuzzyFilter,
+  shortenString,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -34,7 +32,7 @@ import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
 
-const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
+const staticColumns = [
   columnHelper.accessor('chain', {
     header: 'Chain',
     cell: (props) => (
@@ -92,7 +90,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {formatTokenAmount(props.getValue())}
+        {formatTokenAmount(props.getValue().toString())}
       </Typography>
     ),
   }),
@@ -125,7 +123,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
       </div>
     ),
   }),
-];
+] as const;
 
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
@@ -176,7 +174,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
     ]
   );
 
-  const columns = useMemo<Array<ColumnDef<SpendNoteDataType, any>>>(() => {
+  const columns = useMemo(() => {
     return [
       ...staticColumns,
 
@@ -246,7 +244,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
       <Table
         thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
         tdClassName="min-w-max"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         isPaginated
         totalRecords={data.length}
         title="notes"

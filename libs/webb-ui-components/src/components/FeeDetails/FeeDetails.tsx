@@ -179,18 +179,22 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                         </div>
                       ) : (
                         <>
-                          <Typography
-                            variant="body1"
-                            fw="bold"
-                            className="text-mono-200 dark:text-mono-40"
-                          >
-                            {typeof value === 'number'
-                              ? `~${numberToString(value).slice(
-                                  0,
-                                  10
-                                )} ${tokenSymbol}`.trim()
-                              : '-'}
-                          </Typography>
+                          {!value || typeof value == 'number' ? (
+                            <Typography
+                              variant="body1"
+                              fw="bold"
+                              className="text-mono-200 dark:text-mono-40"
+                            >
+                              {typeof value === 'number'
+                                ? `~${numberToString(value).slice(
+                                    0,
+                                    10
+                                  )} ${tokenSymbol}`.trim()
+                                : '-'}
+                            </Typography>
+                          ) : (
+                            value
+                          )}
 
                           {typeof valueInUsd === 'number' && (
                             <Typography

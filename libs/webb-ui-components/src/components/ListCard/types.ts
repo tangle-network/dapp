@@ -59,12 +59,17 @@ export type AssetBalanceType = {
   /**
    * The asset balance of user
    */
-  balance?: number;
+  balance: number;
 
   /**
    * The asset balance in USD
    */
   balanceInUsd?: number;
+} & {
+  /**
+   * The asset balance of user
+   */
+  balance: number;
 
   /**
    * The sub content below the balance
@@ -105,6 +110,11 @@ export type AssetType = {
    * @default 'unshielded'
    */
   tokenType?: TokenType;
+
+  /**
+   * Boolean to indicate if the token metadata (balance, price) is loading
+   */
+  isLoadingMetadata?: boolean;
 
   /**
    * The asset balance props

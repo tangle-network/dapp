@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  ColumnDef,
-  Table as RTTable,
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
@@ -17,13 +15,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
+import { getShortenChainName, getSortedTypedChainIds } from '../../utils';
 import { HeaderCell, NumberCell } from '../tableCells';
-import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
+import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
 
 const columnHelper = createColumnHelper<PoolOverviewDataType>();
 
-const staticColumns: ColumnDef<PoolOverviewDataType, any>[] = [
+const staticColumns = [
   columnHelper.accessor('symbol', {
     header: () => null,
     cell: (props) => (
@@ -65,7 +63,7 @@ const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
     [typedChainIds]
   );
 
-  const columns = useMemo<ColumnDef<PoolOverviewDataType, any>[]>(
+  const columns = useMemo(
     () => [
       ...staticColumns,
       ...sortedTypedChainIds.map((typedChainId) =>
@@ -121,7 +119,7 @@ const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
         tableClassName="lg:table-fixed block overflow-x-auto max-w-[-moz-fit-content] md:table md:max-w-none"
         thClassName="lg:first:w-[200px] border-t-0 bg-mono-0 border-r first:px-3 last:border-r-0 last:pr-2"
         tdClassName="border-r last:border-r-0 first:px-3 last:pr-2"
-        tableProps={table as RTTable<unknown>}
+        tableProps={table}
         totalRecords={data.length}
       />
     </div>
