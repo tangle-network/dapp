@@ -56,6 +56,8 @@ export const WEBB_MKT_URL = 'https://webb.tools';
 export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
+export const WEBB_TANGLE_DOCS_URL =
+  'https://docs.webb.tools/docs/tangle-network/overview/';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
@@ -80,6 +82,10 @@ export const POLKADOT_EXPLORER_URL =
 
 export const FOLLOW_WEBB_TWITTER_URL =
   'https://twitter.com/intent/follow?screen_name=webbprotocol';
+
+export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
+export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
+export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 
 export const WEBB_DOC_ROUTES_RECORD = {
   concepts: {

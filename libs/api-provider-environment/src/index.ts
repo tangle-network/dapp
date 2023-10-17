@@ -1,3 +1,4 @@
+export { default as NextThemeProvider } from './NextThemeProvider';
 export * from './RouterProvider';
 export * from './WebbProvider';
 export * from './app-event';
