@@ -85,7 +85,7 @@ export const Header: FC<HeaderProps> = () => {
                 isLoading={loading}
                 loadingText="Connecting..."
                 onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
-                className="hidden lg:!flex justify-center items-center"
+                className="hidden lg:!flex justify-center items-center px-6"
               >
                 Connect wallet
               </Button>

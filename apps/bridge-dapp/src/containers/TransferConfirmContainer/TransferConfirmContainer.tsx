@@ -8,8 +8,13 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import {
+  useNoteAccount,
+  useRelayers,
+  useVAnchor,
+} from '@webb-tools/react-hooks';
+import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import {
@@ -110,6 +115,7 @@ const TransferConfirmContainer = forwardRef<
       inProgressTxId,
       setInProgressTxId,
       setTotalStep,
+      targetTypedChainId: targetChainId,
     });
 
     const formattedFee = useMemo(() => {
@@ -207,6 +213,7 @@ type Args = Pick<
     'inProgressTxId' | 'setInProgressTxId' | 'setTotalStep'
   > & {
     activeRelayer: OptionalActiveRelayer;
+    targetTypedChainId: number;
   };
 
 const useTransferExecuteHandler = (args: Args) => {
@@ -226,18 +233,22 @@ const useTransferExecuteHandler = (args: Args) => {
     note: changeNote,
     activeRelayer,
     currency,
+    targetTypedChainId,
   } = args;
 
   const {
     activeApi,
     apiConfig,
     noteManager,
+    activeChain,
     txQueue: { api: txQueueApi },
   } = useWebContext();
 
   const { addNoteToNoteManager, removeNoteFromNoteManager } = useVAnchor();
 
   const enqueueSubmittedTx = useEnqueueSubmittedTx();
+
+  const { syncNotes } = useNoteAccount();
 
   return async () => {
     if (inputNotes.length === 0) {
@@ -252,7 +263,7 @@ const useTransferExecuteHandler = (args: Args) => {
 
     const vAnchorApi = activeApi?.methods.variableAnchor.actions.inner;
 
-    if (!vAnchorApi || !activeApi) {
+    if (!vAnchorApi || !activeApi || !activeChain) {
       logger.error('No vAnchor API provided');
       captureSentryException(
         new Error('No vAnchor API provided'),
@@ -268,17 +279,15 @@ const useTransferExecuteHandler = (args: Args) => {
       return;
     }
 
-    const note: Note = inputNotes[0];
-    const {
-      sourceChainId: sourceTypedChainId,
-      targetChainId: destTypedChainId,
-      sourceIdentifyingData,
-      tokenSymbol,
-    } = note.note;
+    const tokenSymbol = currency.view.symbol;
+    const srcTypedChainId = calculateTypedChainId(
+      activeChain.chainType,
+      activeChain.id
+    );
 
     const destCurrency = apiConfig.getCurrencyBySymbolAndTypedChainId(
       tokenSymbol,
-      +destTypedChainId
+      +targetTypedChainId
     );
     if (!destCurrency) {
       console.error(`Currency not found for symbol ${tokenSymbol}`);
@@ -289,14 +298,14 @@ const useTransferExecuteHandler = (args: Args) => {
       );
       return;
     }
-    const tokenURI = getTokenURI(destCurrency, destTypedChainId);
+    const tokenURI = getTokenURI(destCurrency, targetTypedChainId.toString());
 
     const tx = Transaction.new<NewNotesTxResult>('Transfer', {
       amount,
       tokens: [tokenSymbol, tokenSymbol],
       wallets: {
-        src: +sourceTypedChainId,
-        dest: +destTypedChainId,
+        src: srcTypedChainId,
+        dest: targetTypedChainId,
       },
       token: tokenSymbol,
       tokenURI,
@@ -310,6 +319,20 @@ const useTransferExecuteHandler = (args: Args) => {
     txQueueApi.registerTransaction(tx);
 
     try {
+      const srcAnchorId = apiConfig.getAnchorIdentifier(
+        currency.id,
+        srcTypedChainId
+      );
+
+      const destAnchorId = apiConfig.getAnchorIdentifier(
+        currency.id,
+        targetTypedChainId
+      );
+
+      if (!srcAnchorId || !destAnchorId) {
+        throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
+      }
+
       const txPayload: TransferTransactionPayloadType = {
         notes: inputNotes,
         changeUtxo,
@@ -326,9 +349,14 @@ const useTransferExecuteHandler = (args: Args) => {
       const outputNotes = changeNote ? [changeNote] : [];
 
       let indexBeforeInsert: number | undefined;
+
+      // Use for auto sync note if the recipient is the same as the sender
+      const blockNumberBeforeInsert =
+        activeApi.getBlockNumber() ?? ZERO_BIG_INT;
+
       if (changeNote) {
         const nextIdx = Number(
-          await vAnchorApi.getNextIndex(+sourceTypedChainId, currency.id)
+          await vAnchorApi.getNextIndex(srcTypedChainId, currency.id)
         );
 
         indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
@@ -347,7 +375,7 @@ const useTransferExecuteHandler = (args: Args) => {
 
         enqueueSubmittedTx(
           transactionHash,
-          apiConfig.chains[+sourceTypedChainId],
+          apiConfig.chains[srcTypedChainId],
           'transfer'
         );
       } else {
@@ -355,7 +383,7 @@ const useTransferExecuteHandler = (args: Args) => {
 
         enqueueSubmittedTx(
           transactionHash,
-          apiConfig.chains[+sourceTypedChainId],
+          apiConfig.chains[srcTypedChainId],
           'transfer'
         );
 
@@ -376,7 +404,7 @@ const useTransferExecuteHandler = (args: Args) => {
           transactionHash,
           changeNote,
           indexBeforeInsert,
-          sourceIdentifyingData
+          srcAnchorId
         );
 
         await removeNoteFromNoteManager(changeNote);
@@ -386,6 +414,13 @@ const useTransferExecuteHandler = (args: Args) => {
       // Cleanup NoteAccount state
       for (const note of inputNotes) {
         await removeNoteFromNoteManager(note);
+      }
+
+      const isSendToSelf = recipient === noteManager?.getKeypair().toString();
+      // Sync note to add the transfered note if the recipient is the same as the sender
+      // This is to make sure the note is added to the note account
+      if (isSendToSelf) {
+        await syncNotes(undefined, undefined, blockNumberBeforeInsert);
       }
     } catch (error) {
       console.error('Error occured while transferring', error);

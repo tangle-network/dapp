@@ -15,6 +15,7 @@ import {
   Note,
   NoteGenInput,
   ResourceId,
+  Utxo,
   UtxoGenInput,
   toFixedHex,
 } from '@webb-tools/sdk-core';
@@ -84,6 +85,66 @@ export class NoteManager {
     NoteManager.#abortController = new AbortController();
   }
 
+  // Trim the available notes to get the notes needed for a target amount.
+  // It is assumed the notes passed are grouped for the same target and asset.
+  static getNotesFifo(notes: Note[], targetAmount: bigint): Note[] | null {
+    let currentAmount = ZERO_BIG_INT;
+    const currentNotes: Note[] = [];
+
+    const sortedNotes = NoteManager.sortNotes(notes);
+    for (const note of sortedNotes) {
+      if (currentAmount >= targetAmount) {
+        break;
+      }
+
+      currentAmount += BigInt(note.note.amount);
+      currentNotes.push(note);
+    }
+
+    return currentAmount >= targetAmount ? currentNotes : null;
+  }
+
+  // Retrieve the keypair from a note
+  static keypairFromNote(note: Note): Keypair {
+    const secrets = note.note.secrets.split(':');
+    return new Keypair(`0x${secrets[2]}`);
+  }
+
+  /**
+   * Sort the notes by indx in ascending order
+   * and the zero and undefined index will be put at the end
+   * @param notes the notes to sort
+   */
+  static sortNotes(notes: ReadonlyArray<Note>): ReadonlyArray<Note> {
+    return notes.slice().sort((a, b) => {
+      // Place undefined values at the end
+      if (!a.note.index) {
+        return 1;
+      }
+
+      if (!b.note.index) {
+        return -1;
+      }
+
+      const aIndex = BigInt(a.note.index);
+      const bIndex = BigInt(b.note.index);
+
+      // Place zero values before undefined but after other numbers
+      if (aIndex === ZERO_BIG_INT) {
+        return 1;
+      }
+
+      if (bIndex === ZERO_BIG_INT) {
+        return -1;
+      }
+
+      // Regular ascending sort for other numbers
+      const idx = aIndex - bIndex;
+
+      return idx > 0 ? 1 : idx < 0 ? -1 : 0;
+    });
+  }
+
   // Initialize the note manager with the given keypair.
   static async initAndDecryptNotes(keypair: Keypair): Promise<NoteManager> {
     const notesRecord = await NoteManager.decryptNotes(
@@ -137,31 +198,6 @@ export class NoteManager {
     return noteManager;
   }
 
-  // Trim the available notes to get the notes needed for a target amount.
-  // It is assumed the notes passed are grouped for the same target and asset.
-  static getNotesFifo(notes: Note[], targetAmount: bigint): Note[] | null {
-    let currentAmount = ZERO_BIG_INT;
-    const currentNotes: Note[] = [];
-
-    const sortedNotes = NoteManager.sortNotes(notes);
-    for (const note of sortedNotes) {
-      if (currentAmount >= targetAmount) {
-        break;
-      }
-
-      currentAmount += BigInt(note.note.amount);
-      currentNotes.push(note);
-    }
-
-    return currentAmount >= targetAmount ? currentNotes : null;
-  }
-
-  // Retrieve the keypair from a note
-  static keypairFromNote(note: Note): Keypair {
-    const secrets = note.note.secrets.split(':');
-    return new Keypair(`0x${secrets[2]}`);
-  }
-
   // Decrypt the notes and return a record of notes grouped by their resource id.
   static async decryptNotes(
     encryptedNotes: MultiAccountNoteStorage[string],
@@ -210,38 +246,33 @@ export class NoteManager {
     return notesRecord;
   }
 
-  /**
-   * Sort the notes by indx in ascending order
-   * and the zero and undefined index will be put at the end
-   * @param notes the notes to sort
-   */
-  static sortNotes(notes: ReadonlyArray<Note>): ReadonlyArray<Note> {
-    return notes.slice().sort((a, b) => {
-      // Place undefined values at the end
-      if (!a.note.index) {
-        return 1;
-      }
+  static async noteFromUtxo(
+    utxo: Utxo,
+    backend: Backend,
+    srcTypedChainId: number,
+    srcAnchorId: string,
+    destAnchorId: string,
+    tokenSymbol: string
+  ): Promise<Note> {
+    const secrets = [
+      toFixedHex(utxo.chainId, 8),
+      toFixedHex(utxo.amount),
+      utxo.secret_key,
+      utxo.blinding,
+    ].join(':');
 
-      if (!b.note.index) {
-        return -1;
-      }
-
-      const aIndex = BigInt(a.note.index);
-      const bIndex = BigInt(b.note.index);
-
-      // Place zero values before undefined but after other numbers
-      if (aIndex === ZERO_BIG_INT) {
-        return 1;
-      }
-
-      if (bIndex === ZERO_BIG_INT) {
-        return -1;
-      }
-
-      // Regular ascending sort for other numbers
-      const idx = aIndex - bIndex;
-
-      return idx > 0 ? 1 : idx < 0 ? -1 : 0;
+    return Note.generateNote({
+      ...NoteManager.defaultNoteGenInput,
+      amount: utxo.amount,
+      backend: backend,
+      index: utxo.index,
+      privateKey: hexToU8a(utxo.secret_key),
+      secrets,
+      sourceChain: srcTypedChainId.toString(),
+      sourceIdentifyingData: srcAnchorId,
+      targetChain: utxo.chainId,
+      targetIdentifyingData: destAnchorId,
+      tokenSymbol: tokenSymbol,
     });
   }
 
@@ -485,6 +516,7 @@ export class NoteManager {
 
 type NoteRecord = Record<string, Note[]>;
 
+/** @internal */
 function compareNotesRecord(
   notesRecord: NoteRecord,
   otherNotesRecord: NoteRecord

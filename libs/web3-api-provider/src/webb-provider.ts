@@ -264,6 +264,10 @@ export class WebbWeb3Provider
     return this.walletClient;
   }
 
+  getBlockNumber(): bigint | null {
+    return this._newBlock.getValue();
+  }
+
   // Web3 has the evm, so the "api interface" should always be available.
   async ensureApiInterface(): Promise<boolean> {
     return Promise.resolve(true);
@@ -446,6 +450,7 @@ export class WebbWeb3Provider
       PublicClient
     >,
     owner: Keypair,
+    startingBlockArg?: bigint,
     abortSignal?: AbortSignal
   ): Promise<Note[]> {
     const evmId = await vAnchorContract.read.getChainId();
@@ -462,10 +467,13 @@ export class WebbWeb3Provider
     abortSignal?.throwIfAborted();
 
     const anchorId = vAnchorContract.address;
+    const startingBlock =
+      startingBlockArg ??
+      BigInt(getAnchorDeploymentBlockNumber(typedChainId, anchorId) || 1);
 
     const utxos = await this.getSpendableUtxosFromChain(
       owner,
-      BigInt(getAnchorDeploymentBlockNumber(typedChainId, anchorId) || 1),
+      startingBlock,
       vAnchorContract,
       (fromBlock, toBlock, currenctBlock) => {
         const fromBlockNumber = +fromBlock.toString();
@@ -493,28 +501,14 @@ export class WebbWeb3Provider
 
         console.log(utxo.serialize());
 
-        const secrets = [
-          toFixedHex(utxo.chainId, 8),
-          toFixedHex(utxo.amount),
-          utxo.secret_key,
-          utxo.blinding,
-        ].join(':');
-
-        const note: Note = await Note.generateNote({
-          ...NoteManager.defaultNoteGenInput,
-          amount: utxo.amount,
-          backend: this.backend,
-          index: utxo.index,
-          privateKey: hexToU8a(utxo.secret_key),
-          secrets,
-          sourceChain: typedChainId.toString(),
-          sourceIdentifyingData: anchorId,
-          targetChain: utxo.chainId,
-          targetIdentifyingData: anchorId,
-          tokenSymbol: tokenSymbol.view.symbol,
-        });
-
-        return note;
+        return await NoteManager.noteFromUtxo(
+          utxo,
+          this.backend,
+          typedChainId,
+          anchorId,
+          anchorId,
+          tokenSymbol.view.symbol
+        );
       })
     );
 

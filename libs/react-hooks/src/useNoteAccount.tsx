@@ -51,7 +51,8 @@ export type UseNoteAccountReturnType = {
    */
   syncNotes: (
     onNewNotes?: OnNewNotesCB,
-    onTryAgain?: OnTryAgainCB
+    onTryAgain?: OnTryAgainCB,
+    startingBlock?: bigint
   ) => Promise<void>;
 
   /**
@@ -111,7 +112,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
   const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
 
   const handleSyncNotes = useCallback<UseNoteAccountReturnType['syncNotes']>(
-    async (onNewNotes, onTryAgain) => {
+    async (onNewNotes, onTryAgain, startingBlock) => {
       // Not ready for syncing notes
       if (!activeApi?.state?.activeBridge || !activeChain || !noteManager) {
         notificationApi.addToQueue({
@@ -147,6 +148,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
               calculateTypedChainId(activeChain.chainType, activeChain.id)
             ],
             noteManager.getKeypair(),
+            startingBlock,
             abortController.signal
           );
 
