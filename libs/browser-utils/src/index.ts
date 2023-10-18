@@ -7,4 +7,3 @@ export * from './platform';
 export * from './retryPromise';
 export { default as retryPromise } from './retryPromise';
 export * from './storage';
-export * from './sideBarState';

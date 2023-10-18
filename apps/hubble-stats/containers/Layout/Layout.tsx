@@ -1,7 +1,7 @@
 import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 import { HeaderChipsContainer } from '..';
-import { getSideBarStateFromCookie } from '@webb-tools/browser-utils';
+import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
@@ -27,7 +27,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         </div>
 
         {/* Footer */}
-        <Footer isMinimal className="mx-0 max-w-none py-12" />
+        <Footer isMinimal className="py-12 mx-0 max-w-none" />
       </main>
     </>
   );

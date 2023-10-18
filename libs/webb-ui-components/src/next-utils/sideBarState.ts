@@ -1,7 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { SIDEBAR_OPEN_KEY } from '../../webb-ui-components/src/constants';
+import { SIDEBAR_OPEN_KEY } from '../constants';
 
 export const setSideBarCookieOnToggle = () => {
   const sideBarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
