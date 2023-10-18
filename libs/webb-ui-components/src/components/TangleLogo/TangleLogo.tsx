@@ -1,5 +1,5 @@
 import { createIcon } from '@webb-tools/icons/create-icon';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { randNumber } from '@ngneat/falso';
 
 import { TangleLogoProps } from './types';
@@ -12,6 +12,8 @@ const defaultTangleLogoSize = {
 
 export const TangleLogo: React.FC<TangleLogoProps> = (props) => {
   const { darkMode, size = 'md', ...restProps } = props;
+
+  const [isMounted, setIsMounted] = useState(false);
 
   const { height, width } = useMemo(() => {
     switch (size) {
@@ -45,6 +47,15 @@ export const TangleLogo: React.FC<TangleLogoProps> = (props) => {
   // non-unique ids problem with svg: https://stackoverflow.com/a/55846525
   // create id for each svg items in case there are multiple logos appear at the same time in html
   const paintId = useMemo(() => randNumber().toString(), []);
+
+  // prevent hydration mismatch with paintId
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return createIcon({
     ...restProps,
