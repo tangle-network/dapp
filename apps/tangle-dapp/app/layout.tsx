@@ -2,7 +2,7 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 import { Metadata } from 'next';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
 import { Layout } from '../containers';
-import { NextThemeProvider } from './providers';
+import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 
 export const metadata: Metadata = {
   title: {

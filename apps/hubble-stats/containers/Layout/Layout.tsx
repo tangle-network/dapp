@@ -1,8 +1,7 @@
 import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
-
 import { HeaderChipsContainer } from '..';
-import { getSideBarStateFromCookie } from '../../components/sideBar/sideBarActions';
+import { getSideBarStateFromCookie } from '@webb-tools/browser-utils';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
