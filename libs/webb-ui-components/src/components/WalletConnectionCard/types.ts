@@ -1,4 +1,4 @@
-import { Wallet } from '../../../../dapp-config';
+import { Wallet } from '@webb-tools/dapp-config';
 import { WalletId } from '@webb-tools/dapp-types';
 import { PropsOf } from '../../types';
 

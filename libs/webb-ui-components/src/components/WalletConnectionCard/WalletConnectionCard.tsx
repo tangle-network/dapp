@@ -1,4 +1,4 @@
-import { Wallet } from '../../../../dapp-config';
+import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

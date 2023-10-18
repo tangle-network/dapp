@@ -1,6 +1,6 @@
 import { IconBase } from '@webb-tools/icons/types';
 import { IWebbComponentBase, PropsOf, WebbComponentBase } from '../../types';
-import { ChainConfig } from '../../../../dapp-config';
+import { ChainConfig } from '@webb-tools/dapp-config';
 import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 import { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
 

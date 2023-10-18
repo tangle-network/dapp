@@ -7,7 +7,7 @@ import type {
   ChipColors,
   TitleWithInfo,
 } from '../../components';
-import type { ChainGroup } from '../../../../dapp-config';
+import type { ChainGroup } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
