@@ -197,6 +197,10 @@ export class WebbPolkadot
     return this.provider;
   }
 
+  getBlockNumber(): bigint | null {
+    return this._newBlock.getValue();
+  }
+
   async getChainId(): Promise<number> {
     const chainIdentifier =
       this.provider.api.consts.linkableTreeBn254.chainIdentifier;

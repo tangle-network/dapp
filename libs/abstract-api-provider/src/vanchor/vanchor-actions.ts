@@ -196,6 +196,7 @@ export abstract class VAnchorActions<
   abstract syncNotesForKeypair(
     target: string,
     owner: Keypair,
+    startingBlock?: bigint,
     abortSignal?: AbortSignal
   ): Promise<Note[]>;
 

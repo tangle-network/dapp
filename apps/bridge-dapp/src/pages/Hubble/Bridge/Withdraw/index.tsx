@@ -158,7 +158,7 @@ const Withdraw = () => {
 
   const receivingAmount = useMemo(() => {
     if (!amount) {
-      return;
+      return 0;
     }
 
     const parsedAmount = parseFloat(amount);
@@ -263,8 +263,7 @@ const Withdraw = () => {
           <TransactionInputCard.Root
             typedChainId={srcTypedChainId ?? undefined}
             tokenSymbol={wrappableCfg?.symbol}
-            amount={receivingAmount?.toString().slice(0, 10)}
-            onAmountChange={setAmount}
+            amount={receivingAmount.toString().slice(0, 10)}
             onIsFixedAmountChange={() => setCustomAmount(!isCustom)}
           >
             <TransactionInputCard.Header>

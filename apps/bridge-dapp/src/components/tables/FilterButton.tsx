@@ -14,8 +14,8 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
-import { FilterButtonProps } from './types';
+import { useMemo, type FC } from 'react';
+import { type FilterButtonProps } from './types';
 
 export const FilterButton: FC<FilterButtonProps> = ({
   destinationChains,
@@ -30,10 +30,7 @@ export const FilterButton: FC<FilterButtonProps> = ({
 
   const chains = useMemo(() => {
     return Object.keys(apiConfig.chains)
-      .map<[string, ChainConfig]>((key) => [
-        String(key),
-        apiConfig.chains[Number(key)],
-      ])
+      .map<[string, ChainConfig]>((key) => [key, apiConfig.chains[Number(key)]])
       .filter((val) => destinationChains.includes(val['1'].name));
   }, [apiConfig.chains, destinationChains]);
 

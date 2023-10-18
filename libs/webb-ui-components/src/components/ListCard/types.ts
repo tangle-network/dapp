@@ -255,6 +255,12 @@ export interface TokenListCardProps
   title: string;
 
   /**
+   * The type of token list card
+   * @default "token"
+   */
+  type?: 'token' | 'pool';
+
+  /**
    * The popular token list
    */
   popularTokens: AssetType[];

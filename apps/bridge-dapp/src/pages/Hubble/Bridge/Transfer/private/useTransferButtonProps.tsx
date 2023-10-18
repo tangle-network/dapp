@@ -5,9 +5,9 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import type { Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager/';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
-import { useVAnchor } from '@webb-tools/react-hooks/vanchor/useVAnchor';
 import { Keypair, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -204,8 +204,6 @@ function useTransferButtonProps({
     return loading || isConnecting;
   }, [isConnecting, loading]);
 
-  const { api: vAnchorApi } = useVAnchor();
-
   const [transferConfirmComponent, setTransferConfirmComponent] =
     useState<React.ReactElement<
       ComponentProps<typeof TransferConfirmContainer>,
@@ -214,39 +212,53 @@ function useTransferButtonProps({
 
   const handleTransferBtnClick = useCallback(
     async () => {
+      let actualApi: Nullable<typeof activeApi> = activeApi;
+
+      // For type assertion
+      const _validAmount =
+        isValidAmount && !!amount && typeof receivingAmount === 'number';
+
+      const allInputsFilled =
+        !!srcChain &&
+        !!fungibleCfg &&
+        !!srcTypedChainId &&
+        !!destTypedChainId &&
+        !!recipient &&
+        (hasRefund ? !!refundRecipient : true) &&
+        _validAmount;
+
       try {
         if (connectBtnCnt && typeof srcTypedChainId === 'number') {
-          const connected = await handleConnect(srcTypedChainId);
-          if (!connected) {
+          const nextApi = await handleConnect(srcTypedChainId);
+
+          const nextApiReady = [
+            nextApi?.noteManager,
+            nextApi?.state.activeBridge,
+            nextApi?.methods.variableAnchor.actions,
+            allInputsFilled,
+          ].every((v) => Boolean(v));
+
+          if (!nextApiReady) {
             return;
           }
+
+          actualApi = nextApi;
         }
 
-        // For type assertion
-        const _validAmount =
-          isValidAmount && !!amount && typeof receivingAmount === 'number';
-
-        const allInputsFilled =
-          !!srcChain &&
-          !!fungibleCfg &&
-          !!srcTypedChainId &&
-          !!destTypedChainId &&
-          !!recipient &&
-          (hasRefund ? !!refundRecipient : true) &&
-          _validAmount;
+        const vAnchorApi = actualApi?.methods.variableAnchor.actions.inner;
 
         const doesApiReady =
-          !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
+          !!actualApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
 
-        if (!allInputsFilled || !doesApiReady || !destChain) {
+        if (!allInputsFilled || !doesApiReady || !destChain || !actualApi) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
-        if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
+        if (actualApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
           throw WebbError.from(WebbErrorCodes.InvalidArguments);
         }
 
-        const anchorId = activeApi.state.activeBridge.targets[srcTypedChainId];
+        const anchorId = actualApi.state.activeBridge.targets[srcTypedChainId];
         if (!anchorId) {
           throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
         }
@@ -309,20 +321,20 @@ function useTransferButtonProps({
             ? amountBig - totalFeeWei
             : amountBig;
 
-        const transferUtxo = await activeApi.generateUtxo({
+        const transferUtxo = await actualApi.generateUtxo({
           curve: noteManager.defaultNoteGenInput.curve,
-          backend: activeApi.backend,
+          backend: actualApi.backend,
           amount: utxoAmount.toString(),
           chainId: destTypedChainId.toString(),
           keypair: recipientKeypair,
           originChainId: srcTypedChainId.toString(),
-          index: activeApi.state.defaultUtxoIndex.toString(),
+          index: actualApi.state.defaultUtxoIndex.toString(),
         });
 
         const changeNote =
           changeAmount > 0
             ? await noteManager.generateNote(
-                activeApi.backend,
+                actualApi.backend,
                 srcTypedChainId,
                 anchorId,
                 srcTypedChainId,
@@ -339,14 +351,14 @@ function useTransferButtonProps({
               changeNote.note,
               changeNote.note.index ? parseInt(changeNote.note.index) : 0
             )
-          : await activeApi.generateUtxo({
+          : await actualApi.generateUtxo({
               curve: noteManager.defaultNoteGenInput.curve,
-              backend: activeApi.backend,
+              backend: actualApi.backend,
               amount: changeAmount.toString(),
               chainId: `${srcTypedChainId}`,
               keypair,
               originChainId: `${srcTypedChainId}`,
-              index: activeApi.state.defaultUtxoIndex.toString(),
+              index: actualApi.state.defaultUtxoIndex.toString(),
             });
 
         setTransferConfirmComponent(
@@ -387,7 +399,7 @@ function useTransferButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, vAnchorApi]
+    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei]
   );
 
   return {

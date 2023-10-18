@@ -1,4 +1,4 @@
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
   ChainType,
   calculateTypedChainId,

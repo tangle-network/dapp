@@ -390,6 +390,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async syncNotesForKeypair(
     anchorAddress: string,
     owner: Keypair,
+    startingBlock?: bigint,
     abortSignal?: AbortSignal
   ): Promise<Note[]> {
     const vAnchorContract =
@@ -398,6 +399,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const notes = await this.inner.getVAnchorNotesFromChain(
       vAnchorContract,
       owner,
+      startingBlock,
       abortSignal
     );
 

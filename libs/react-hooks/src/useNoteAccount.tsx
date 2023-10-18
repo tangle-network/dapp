@@ -51,7 +51,8 @@ export type UseNoteAccountReturnType = {
    */
   syncNotes: (
     onNewNotes?: OnNewNotesCB,
-    onTryAgain?: OnTryAgainCB
+    onTryAgain?: OnTryAgainCB,
+    startingBlock?: bigint
   ) => Promise<void>;
 
   /**
@@ -76,9 +77,13 @@ export type UseNoteAccountReturnType = {
   setSuccessfullyCreatedNoteAccount: (isSuccess: boolean) => void;
 };
 
-let isOpenNoteAccountModalSubject: BehaviorSubject<boolean>;
+const isOpenNoteAccountModalSubject = new BehaviorSubject(false);
+const setIsOpenNoteAccountModal = (isOpen: boolean) =>
+  isOpenNoteAccountModalSubject.next(isOpen);
 
-let isSuccessfullyCreatedNoteAccountSubject: BehaviorSubject<boolean>;
+const isSuccessfullyCreatedNoteAccountSubject = new BehaviorSubject(false);
+const setIsSuccessfullyCreatedNoteAccount = (isSuccess: boolean) =>
+  isSuccessfullyCreatedNoteAccountSubject.next(isSuccess);
 
 export const useNoteAccount = (): UseNoteAccountReturnType => {
   const { noteManager, activeApi, activeChain } = useWebContext();
@@ -91,30 +96,23 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
   const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
   const [allNotesInitialized, setAllNotesInitialized] = useState(false);
 
-  const [isOpenNoteAccountModal, setIsOpenNoteAccountModal] = useState(false);
-
-  const [
-    isSuccessfullyCreatedNoteAccount,
-    setIsSuccessfullyCreatedNoteAccount,
-  ] = useState(false);
-
   const syncNotesProgress = useObservableState(
     NoteManager.$syncNotesProgress,
     NaN
   );
 
-  if (!isOpenNoteAccountModalSubject) {
-    isOpenNoteAccountModalSubject = new BehaviorSubject(false);
-  }
+  const isOpenNoteAccountModal = useObservableState(
+    isOpenNoteAccountModalSubject
+  );
 
-  if (!isSuccessfullyCreatedNoteAccountSubject) {
-    isSuccessfullyCreatedNoteAccountSubject = new BehaviorSubject(false);
-  }
+  const isSuccessfullyCreatedNoteAccount = useObservableState(
+    isSuccessfullyCreatedNoteAccountSubject
+  );
 
   const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
 
   const handleSyncNotes = useCallback<UseNoteAccountReturnType['syncNotes']>(
-    async (onNewNotes, onTryAgain) => {
+    async (onNewNotes, onTryAgain, startingBlock) => {
       // Not ready for syncing notes
       if (!activeApi?.state?.activeBridge || !activeChain || !noteManager) {
         notificationApi.addToQueue({
@@ -150,51 +148,61 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
               calculateTypedChainId(activeChain.chainType, activeChain.id)
             ],
             noteManager.getKeypair(),
+            startingBlock,
             abortController.signal
           );
 
-        const notes = await Promise.all(
-          chainNotes
-            // Do not display notes that have zero value.
-            .filter((note) => note.note.amount !== '0')
-            .map(async (note) => {
-              // Either contract address or tree id
-              const targetIdentifier = note.note.targetIdentifyingData;
-              const { chainType, chainId } = parseTypedChainId(
-                +note.note.targetChainId
-              );
+        const newNotes: Note[] = [];
 
-              // Index the note by destination resource id
-              const resourceId =
-                await activeApi.methods.variableAnchor.actions.inner.getResourceId(
-                  targetIdentifier,
-                  chainId,
-                  chainType
-                );
+        for (const note of chainNotes) {
+          abortController.signal.throwIfAborted();
 
-              await noteManager.addNote(resourceId, note);
-              return note;
-            })
-        );
+          // Not process the note with amount 0
+          if (note.note.amount === '0') {
+            continue;
+          }
+
+          const targetIdentifier = note.note.targetIdentifyingData;
+          const { chainType, chainId } = parseTypedChainId(
+            +note.note.targetChainId
+          );
+
+          // Index the note by destination resource id
+          const resourceId =
+            await activeApi.methods.variableAnchor.actions.inner.getResourceId(
+              targetIdentifier,
+              chainId,
+              chainType
+            );
+
+          const existed = noteManager
+            .getNotesOfChain(resourceId.toString())
+            ?.find((storedNote) => storedNote.serialize() === note.serialize());
+
+          if (!existed) {
+            await noteManager.addNote(resourceId, note);
+            newNotes.push(note);
+          }
+        }
 
         notificationApi.addToQueue({
           variant: 'success',
           message:
-            notes.length > 0
+            newNotes.length > 0
               ? `Note${
-                  notes.length > 1 ? 's' : ''
+                  newNotes.length > 1 ? 's' : ''
                 } successfully added to account`
               : 'Successfully synced notes',
           secondaryMessage:
-            notes.length > 0 ? (
+            newNotes.length > 0 ? (
               <Typography variant="body1">
                 <Button
                   variant="link"
                   as="span"
                   className="inline-block"
-                  onClick={() => onNewNotes?.(notes)}
+                  onClick={() => onNewNotes?.(newNotes)}
                 >
-                  {notes.length} new note(s){' '}
+                  {newNotes.length} new note(s){' '}
                 </Button>{' '}
                 added to your account
               </Typography>
@@ -223,31 +231,6 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     [activeApi, activeChain, noteManager, notificationApi]
   );
 
-  const setOpenNoteAccountModal = useCallback(
-    (isOpen: boolean) => {
-      isOpenNoteAccountModalSubject.next(isOpen);
-
-      const isNoteAccountCreated =
-        isSuccessfullyCreatedNoteAccountSubject.value;
-
-      // If the modal close and the user has a note account
-      // then we will sync the notes
-      if (!isOpen && isNoteAccountCreated) {
-        handleSyncNotes().catch((error) => {
-          console.log('Error while syncing notes', error);
-        });
-      }
-    },
-    [handleSyncNotes]
-  );
-
-  const setSuccessfullyCreatedNoteAccount = useCallback(
-    (isSuccess: boolean) => {
-      isSuccessfullyCreatedNoteAccountSubject.next(isSuccess);
-    },
-    []
-  );
-
   // Effect to subscribe to noteManager
   useEffect(() => {
     if (!noteManager) {
@@ -274,27 +257,6 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     };
   }, [noteManager]);
 
-  // Subscribe to the behavior subject
-  useEffect(() => {
-    const isOpenNoteAccountModalSub = isOpenNoteAccountModalSubject.subscribe(
-      (isOpenNoteAccountModal) => {
-        setIsOpenNoteAccountModal(isOpenNoteAccountModal);
-      }
-    );
-
-    const isSuccessfullyCreatedNoteAccountSub =
-      isSuccessfullyCreatedNoteAccountSubject.subscribe(
-        (isSuccessfullyCreatedNoteAccount) => {
-          setIsSuccessfullyCreatedNoteAccount(isSuccessfullyCreatedNoteAccount);
-        }
-      );
-
-    return () => {
-      isOpenNoteAccountModalSub.unsubscribe();
-      isSuccessfullyCreatedNoteAccountSub.unsubscribe();
-    };
-  }, []);
-
   return {
     allNotes,
     allNotesInitialized,
@@ -303,8 +265,8 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isSuccessfullyCreatedNoteAccount,
     isSyncingNote,
     syncNotesProgress,
-    setOpenNoteAccountModal,
-    setSuccessfullyCreatedNoteAccount,
+    setOpenNoteAccountModal: setIsOpenNoteAccountModal,
+    setSuccessfullyCreatedNoteAccount: setIsSuccessfullyCreatedNoteAccount,
     syncNotes: handleSyncNotes,
   };
 };

@@ -17,6 +17,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       popularTokens,
       selectTokens,
       title = 'Select a Token',
+      type = 'token',
       unavailableTokens,
       value: selectedAsset,
       txnType,
@@ -66,7 +67,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         {filteredPopular.length > 0 ? (
           <div className="flex flex-col p-2 space-y-2">
             <Typography variant="utility" className="uppercase mb-0.5">
-              Popular tokens
+              Popular {type}
             </Typography>
 
             <div className="flex flex-wrap gap-2">
@@ -91,7 +92,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               className="uppercase text-mono-200 dark:text-mono-0"
               fw="bold"
             >
-              Select token
+              Select {type}
             </Typography>
 
             {/** Token list */}
@@ -116,7 +117,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 className="uppercase text-mono-200 dark:text-mono-0"
                 fw="bold"
               >
-                Unavailable token
+                Unavailable {type}
               </Typography>
 
               {/** Token list */}

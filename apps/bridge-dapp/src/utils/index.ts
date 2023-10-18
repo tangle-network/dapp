@@ -2,7 +2,6 @@ export * from './captureSentryException';
 export * from './downloadNotes';
 export * from './errors';
 export * from './getCardTitle';
-export * from './getDefaultConnection';
 export { default as getParam } from './getParam';
 export { default as getRelayerFeePercentage } from './getRelayerFeePercentage';
 export * from './getTokenURI';

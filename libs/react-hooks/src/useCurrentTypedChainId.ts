@@ -1,30 +1,24 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { useObservableState } from 'observable-hooks';
-import { useEffect } from 'react';
-import { BehaviorSubject } from 'rxjs';
+import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 
-const typedChainIdSub = new BehaviorSubject<number | undefined>(undefined);
+/**
+ * Get the current typed chain id of the active chain.
+ * - `undefined` if there is no active chain.
+ * - `null` if the active chain is not supported.
+ * - `number` if the active chain is supported.
+ * @returns the current typed chain id of the active chain,
+ * or undefined if there is no active chain,
+ * or null if the active chain is not supported.
+ */
+const useCurrentTypedChainId = (): Nullable<Maybe<number>> => {
+  const { activeChain } = useWebContext();
 
-const useCurrentTypedChainId = (): number | undefined => {
-  const { activeApi } = useWebContext();
+  if (activeChain == null) {
+    return activeChain;
+  }
 
-  useEffect(() => {
-    if (!activeApi) return;
-
-    const subscription = activeApi.typedChainidSubject.subscribe(
-      (nextTypedChainId) => {
-        if (nextTypedChainId !== typedChainIdSub.getValue()) {
-          typedChainIdSub.next(nextTypedChainId);
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [activeApi]);
-
-  return useObservableState(typedChainIdSub);
+  return calculateTypedChainId(activeChain.chainType, activeChain.id);
 };
 
 export default useCurrentTypedChainId;

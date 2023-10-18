@@ -8,11 +8,11 @@ import { FC, useCallback, useState } from 'react';
 import { useConnectWallet } from './useConnectWallet';
 
 export const useTryAnotherWalletWithView = () => {
-  const { switchWallet, connectingWalletId, failedWalletId, selectedWallet } =
+  const { connectingWalletId, failedWalletId, selectedWallet } =
     useConnectWallet();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { activeChain: chain, apiConfig } = useWebContext();
+  const { activeChain: chain, apiConfig, switchChain } = useWebContext();
 
   const TryAnotherWalletModal = useCallback<FC>(
     () => {
@@ -26,7 +26,7 @@ export const useTryAnotherWalletWithView = () => {
             <WalletConnectionCard
               wallets={chain.wallets.map((id) => apiConfig.wallets[id])}
               onWalletSelect={async (wallet) => {
-                await switchWallet(chain, wallet);
+                await switchChain(chain, wallet);
               }}
               onClose={() => setIsModalOpen(false)}
               connectingWalletId={connectingWalletId}
@@ -37,7 +37,7 @@ export const useTryAnotherWalletWithView = () => {
                     'There is no wallet selected. Please select a wallet and try again.'
                   );
                 }
-                await switchWallet(chain, selectedWallet);
+                await switchChain(chain, selectedWallet);
               }}
             />
           </ModalContent>
@@ -45,7 +45,7 @@ export const useTryAnotherWalletWithView = () => {
       );
     },
     // prettier-ignore
-    [apiConfig.wallets, chain, connectingWalletId, failedWalletId, isModalOpen, selectedWallet, switchWallet]
+    [apiConfig.wallets, chain, connectingWalletId, failedWalletId, isModalOpen, selectedWallet, switchChain]
   );
 
   const onTryAnotherWallet = useCallback(() => {
