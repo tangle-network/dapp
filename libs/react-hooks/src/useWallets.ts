@@ -10,6 +10,7 @@ export const useWallets = () => {
 
   const { activeApi, activeChain, activeWallet, apiConfig, inactivateApi } =
     useWebContext();
+
   useEffect(() => {
     let isSubscribed = true;
 
@@ -22,13 +23,14 @@ export const useWallets = () => {
       const wallets = await Promise.all(
         walletsFromActiveChain.map(
           async ({ detect, ...walletConfig }): Promise<ManagedWallet> => {
-            const isDetected = (await detect?.()) ?? false;
+            const isDetected = Boolean(await detect()) ?? false;
             const connected =
               activeWallet?.id === walletConfig.id && !!activeApi;
 
             if (connected) {
               return {
                 ...walletConfig,
+                detect,
                 enabled: isDetected,
                 connected,
                 endSession: async () => {
@@ -45,6 +47,7 @@ export const useWallets = () => {
 
             return {
               ...walletConfig,
+              detect,
               enabled: isDetected,
               connected,
               // eslint-disable-next-line @typescript-eslint/no-empty-function

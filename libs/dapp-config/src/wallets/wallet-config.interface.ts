@@ -1,9 +1,10 @@
 // Copyright 2023 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import type { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 export type SupportedConnector = MetaMaskConnector | WalletConnectConnector;
 
@@ -12,7 +13,9 @@ export interface WalletConfig {
   Logo: React.ReactElement;
   name: string;
   title: string;
-  platform: string;
+
+  /** The wallet platform "EVM" or "Substrate" */
+  platform: 'EVM' | 'Substrate';
 
   /**
    * Homepage url of the wallet
@@ -32,7 +35,7 @@ export interface WalletConfig {
   /**
    * a function that will tell weather the wallet is installed or reachable
    */
-  detect?(): boolean | Promise<boolean>;
+  detect(): Promise<SupportedConnector | InjectedExtension | undefined>;
 
   /**
    * a list of supported typed chain ids

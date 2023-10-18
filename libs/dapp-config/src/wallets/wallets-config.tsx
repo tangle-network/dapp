@@ -10,7 +10,8 @@ import {
 } from '@webb-tools/icons';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-
+import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
+import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { WalletConfig } from './wallet-config.interface';
 
@@ -50,6 +51,17 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
 ];
 
+export const connectors = {
+  [WalletId.MetaMask]: new MetaMaskConnector({
+    chains: Object.values(evmChainsConfig),
+  }),
+  [WalletId.WalletConnectV2]: new WalletConnectConnector({
+    options: {
+      projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
+    },
+  }),
+};
+
 export const walletsConfig: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
   // https://wagmi.sh/examples/custom-connector
@@ -61,7 +73,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     async detect() {
-      return true;
+      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'polkadot-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
@@ -79,12 +91,14 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: `MetaMask`,
     platform: 'EVM',
     enabled: true,
-    detect() {
-      const hasWeb3 = typeof (window as any).web3 !== 'undefined';
-      if (hasWeb3) {
-        return (window as any).web3.__isMetaMaskShim__ as boolean;
+    async detect() {
+      const metaMaskConnector = connectors[WalletId.MetaMask];
+      const provier = await metaMaskConnector.getProvider();
+      if (!provier) {
+        return;
       }
-      return false;
+
+      return metaMaskConnector;
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
@@ -94,9 +108,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
-    connector: new MetaMaskConnector({
-      chains: Object.values(evmChainsConfig),
-    }),
+    connector: connectors[WalletId.MetaMask],
   },
   [WalletId.WalletConnectV2]: {
     id: WalletId.WalletConnectV2,
@@ -105,16 +117,12 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: `Wallet Connect`,
     platform: 'EVM',
     enabled: true,
-    detect() {
-      return true;
+    async detect() {
+      return connectors[WalletId.WalletConnectV2];
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
-    connector: new WalletConnectConnector({
-      options: {
-        projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
-      },
-    }),
+    connector: connectors[WalletId.WalletConnectV2],
   },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,
@@ -124,7 +132,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     detect() {
-      return true;
+      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'talisman');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
@@ -143,7 +151,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     detect() {
-      return true;
+      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'subwallet-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://www.subwallet.app/',

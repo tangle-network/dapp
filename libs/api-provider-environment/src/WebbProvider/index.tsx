@@ -1,7 +1,6 @@
 import {
   Account,
   Currency,
-  NotificationPayload,
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
@@ -10,11 +9,11 @@ import {
   NetworkStorage,
   multipleKeypairStorageFactory,
   netStorageFactory,
-  resetMultiAccountNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   Chain,
+  HUBBLE_BRIDGE_DAPP_NAME,
   Wallet,
   chainsConfig,
   chainsPopulated,
@@ -31,32 +30,33 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import { Spinner } from '@webb-tools/icons';
+import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
-import {
-  ChainType,
-  Keypair,
-  calculateTypedChainId,
-} from '@webb-tools/sdk-core';
+import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Web3RelayerManager,
   WebbWeb3Provider,
   isViemError,
 } from '@webb-tools/web3-api-provider';
-import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
+import { notificationApi } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { WagmiConfig } from 'wagmi';
-import { TAppEvent } from './app-event';
-import constants from './constants';
-import { unsupportedChain } from './error';
-import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
-import onChainDataJson from './generated/on-chain-config.json';
-import ModalQueueManagerProvider from './modal-queue-manager/ModalQueueManagerProvider';
-import { StoreProvider } from './store';
-import { useTxApiQueue } from './transaction';
-import { WebbContext } from './webb-context';
+import { TAppEvent } from '../app-event';
+import { unsupportedChain } from '../error';
+import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
+import onChainDataJson from '../generated/on-chain-config.json';
+import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
+import { StoreProvider } from '../store';
+import { useTxApiQueue } from '../transaction';
+import { WebbContext } from '../webb-context';
+import {
+  notificationHandler,
+  registerInteractiveFeedback,
+  useNoteAccount,
+} from './private';
+import { useActiveAccount, useActiveChain, useActiveWallet } from './subjects';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -66,19 +66,6 @@ interface WebbProviderProps extends BareProps {
 
 const chains = chainsPopulated;
 const logger = LoggerService.get('WebbProvider');
-
-const registerInteractiveFeedback = (
-  setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
-  interactiveFeedback: InteractiveFeedback
-) => {
-  let off: any;
-  setter((p) => [...p, interactiveFeedback]);
-  // eslint-disable-next-line prefer-const
-  off = interactiveFeedback.on('canceled', () => {
-    setter((p) => p.filter((entry) => entry !== interactiveFeedback));
-    off && off?.();
-  });
-};
 
 const { currencies, anchors, fungibleToWrappableMap } =
   parseOnChainData(onChainDataJson);
@@ -91,88 +78,19 @@ const apiConfig = ApiConfig.init({
   wallets: walletsConfig,
 });
 
-function notificationHandler(notification: NotificationPayload) {
-  switch (notification.name) {
-    case 'Transaction': {
-      const isFailed = notification.level === 'error';
-      const isFinalized = notification.level === 'success';
-      const description = notification.data ? (
-        <div>
-          {Object.keys(notification.data).map((i, idx) => (
-            <Typography variant="body1" key={`${i}${idx}`}>
-              {notification.data?.[i]}
-            </Typography>
-          ))}
-        </div>
-      ) : (
-        notification.description
-      );
-      if (isFinalized) {
-        const key = notificationApi({
-          extras: {
-            persist: false,
-          },
-          message: notification.message ?? 'Submit Transaction Success',
-          secondaryMessage: description,
-          key: notification.key,
-          variant: 'success',
-        });
-        setTimeout(() => notificationApi.remove(notification.key), 6000);
-        return key;
-      } else if (isFailed) {
-        return notificationApi({
-          extras: {
-            persist: false,
-          },
-          key: notification.key,
-          message: notification.message,
-          secondaryMessage: description,
-          variant: 'error',
-        });
-      } else {
-        return notificationApi({
-          extras: {
-            persist: true,
-          },
-          key: notification.key,
-          message: notification.message,
-          secondaryMessage: description,
-          variant: 'info',
-          // eslint-disable-next-line sort-keys
-          Icon: <Spinner />,
-          transparent: true,
-        });
-      }
-    }
-    default:
-      return '';
-  }
-}
-
-notificationHandler.remove = (key: string | number) => {
-  notificationApi.remove(key);
-};
+const appNetworkStoragePromise = netStorageFactory();
 
 const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
-  const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(
-    undefined
-  );
+  const [activeWallet, setActiveWallet] = useActiveWallet();
+  const [activeChain, setActiveChain] = useActiveChain();
+  const [activeAccount, setActiveAccount] = useActiveAccount();
 
-  const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
-
-  const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(
-    undefined
-  );
+  const [activeApi, setActiveApi] =
+    useState<Maybe<WebbApiProvider<unknown>>>(undefined);
 
   const [loading, setLoading] = useState(true);
 
-  const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(
-    null
-  );
-
   const [accounts, setAccounts] = useState<Array<Account>>([]);
-
-  const [activeAccount, setActiveAccount] = useState<Account | null>(null);
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -223,10 +141,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       options: {
         networkStorage?: NetworkStorage | undefined | null;
         chain?: Chain | undefined;
-        activeApi?: WebbApiProvider<any> | undefined;
+        activeApi?: Maybe<WebbApiProvider<unknown>>;
       } = {}
     ) => {
-      const innerNetworkStorage = options.networkStorage ?? networkStorage;
+      const innerNetworkStorage =
+        options.networkStorage ?? (await appNetworkStoragePromise);
       const innerChain = options.chain ?? activeChain;
       const innerActiveApi = options.activeApi ?? activeApi;
 
@@ -246,15 +165,14 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         });
       }
 
-      if (!innerActiveApi) {
-        return;
+      if (innerActiveApi) {
+        await innerActiveApi.accounts.setActiveAccount(account);
       }
 
       setActiveAccount(account);
-      await innerActiveApi.accounts.setActiveAccount(account);
       await loginIfExist(account.address);
     },
-    [activeApi, activeChain, loginIfExist, networkStorage]
+    [activeApi, activeChain, loginIfExist, setActiveAccount]
   );
 
   /// this will set the active api and the accounts
@@ -316,14 +234,17 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           return;
         }
 
+        const networkStorage = _networkStorage ?? (await netStorageFactory());
+
         setActiveAccountWithStorage(active, {
-          networkStorage: _networkStorage ?? networkStorage,
+          networkStorage,
           chain,
           activeApi: nextActiveApi,
         });
       });
     },
-    [loginIfExist, networkStorage, setActiveAccountWithStorage, setNoteManager]
+    // prettier-ignore
+    [loginIfExist, setActiveAccount, setActiveAccountWithStorage, setNoteManager]
   );
 
   /// Error handler for the `WebbError`
@@ -370,19 +291,17 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           alert(code);
       }
     },
-    [appEvent]
+    [appEvent, setActiveChain]
   );
 
   /// Network switcher
   const switchChain = useCallback(
     async (
       chain: Chain,
-      _wallet: Wallet,
+      wallet: Wallet,
       _networkStorage?: NetworkStorage | undefined,
       _bridge?: Bridge | undefined
     ) => {
-      const wallet = _wallet || activeWallet;
-
       const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
       const sharedWalletConnectionPayload = {
@@ -404,9 +323,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         });
 
         const relayerManagerFactory = await getRelayerManagerFactory();
+        const networkStorage =
+          _networkStorage ?? (await appNetworkStoragePromise);
 
         /// init the active api value
-        let localActiveApi: WebbApiProvider<any> | null = null;
+        let localActiveApi: Nullable<WebbApiProvider<unknown>> = null;
 
         switch (wallet.id) {
           case WalletId.Polkadot:
@@ -423,7 +344,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
               }
 
               const webbPolkadot = await WebbPolkadot.init(
-                constants.APP_NAME,
+                HUBBLE_BRIDGE_DAPP_NAME,
                 Array.from(webSocketUrls),
                 {
                   onError: (feedback: InteractiveFeedback) => {
@@ -447,7 +368,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await setActiveApiWithAccounts(
                 webbPolkadot,
                 chain,
-                _networkStorage ?? networkStorage
+                _networkStorage ?? (await appNetworkStoragePromise)
               );
 
               localActiveApi = webbPolkadot;
@@ -669,7 +590,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }
     },
     // prettier-ignore
-    [activeApi, activeWallet, appEvent, catchWebbError, networkStorage, noteManager, setActiveApiWithAccounts]
+    [activeApi, appEvent, catchWebbError, noteManager, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
   );
 
   /// a util will store the network/wallet config before switching
@@ -683,7 +604,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
          * Suggestion: use `useRef` instead of `useState`
          * for the `networkStorage` because state update asynchronous
          * */
-        const _networkStorage = networkStorage ?? (await netStorageFactory());
+        const _networkStorage = await appNetworkStoragePromise;
         if (provider && _networkStorage) {
           await Promise.all([
             _networkStorage.set(
@@ -698,15 +619,14 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setIsConnecting(false);
       }
     },
-    [networkStorage, switchChain]
+    [switchChain]
   );
 
   useEffect(() => {
     /// init the dApp
     const init = async () => {
       setIsConnecting(true);
-      const _networkStorage = await netStorageFactory();
-      setNetworkStorage(_networkStorage);
+      const _networkStorage = await appNetworkStoragePromise;
       /// get the default wallet and network from storage
       const [net, wallet] = await Promise.all([
         _networkStorage.get('defaultNetwork'),
@@ -850,8 +770,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
             await activeApi.destroy();
             setActiveApi(undefined);
             // remove app config from local storage
-            const _networkStorage =
-              networkStorage ?? (await netStorageFactory());
+            const _networkStorage = await appNetworkStoragePromise;
             if (_networkStorage) {
               await Promise.all([
                 _networkStorage.set('defaultNetwork', undefined),
@@ -888,89 +807,3 @@ export const WebbProvider: FC<WebbProviderProps> = (props) => {
     </WagmiConfig>
   );
 };
-
-function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
-  const [noteManager, setNoteManager] = useState<NoteManager | null>(null);
-
-  const loginNoteAccount = useCallback(
-    async (key: string, walletAddress: string): Promise<NoteManager> => {
-      // Set the keypair
-      const accountKeypair = new Keypair(key);
-
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      multipleKeypairStorage.set(walletAddress, key);
-
-      // create a NoteManager instance
-      const noteManager = await NoteManager.initAndDecryptNotes(accountKeypair);
-
-      // set the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = noteManager;
-      }
-
-      setNoteManager(noteManager);
-      return noteManager;
-    },
-    [activeApi]
-  );
-
-  const logoutNoteAccount = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      multipleKeypairStorage.set(walletAddress, null);
-
-      // clear the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = null;
-      }
-      setNoteManager(null);
-    },
-    [activeApi]
-  );
-
-  const purgeNoteAccount = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
-
-      if (!currentPrivKey) {
-        return;
-      }
-
-      resetMultiAccountNoteStorage(new Keypair(currentPrivKey).getPubKey());
-
-      multipleKeypairStorage.set(walletAddress, null);
-
-      // clear the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = null;
-      }
-      setNoteManager(null);
-    },
-    [activeApi]
-  );
-
-  const loginIfExist = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
-
-      if (!currentPrivKey) {
-        setNoteManager(null);
-        return;
-      }
-
-      await loginNoteAccount(currentPrivKey, walletAddress);
-    },
-    [loginNoteAccount]
-  );
-
-  return {
-    loginIfExist,
-    loginNoteAccount,
-    logoutNoteAccount,
-    noteManager,
-    purgeNoteAccount,
-    setNoteManager,
-  };
-}

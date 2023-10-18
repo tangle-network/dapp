@@ -4,7 +4,6 @@ import {
   Breadcrumbs,
   BreadcrumbsItem,
   Button,
-  ChainButton,
   ConnectWalletMobileButton,
   MenuItem,
   NavigationMenu,
@@ -22,44 +21,27 @@ import {
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import {
-  ComponentProps,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ComponentProps, FC, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
 import sidebarProps from '../../constants/sidebar';
-import { useConnectWallet, useNavigateWithPersistParams } from '../../hooks';
+import useChainsFromRoute from '../../hooks/useChainsFromRoute';
+import { useConnectWallet } from '../../hooks/useConnectWallet';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
+import ChainButton from './ChainButton';
 
 /**
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
-  const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
-
-  const navigate = useNavigateWithPersistParams();
+  const { activeAccount, activeWallet, loading, isConnecting } =
+    useWebContext();
 
   const { toggleModal } = useConnectWallet();
+  const { srcTypedChainId } = useChainsFromRoute();
 
   const { isMobile } = useCheckMobile();
-
-  // On connect wallet button click - connect to the default chain(ETH Goerli)
-  const handleConnectWalletClick = useCallback(() => {
-    toggleModal(true);
-  }, [toggleModal]);
-
-  // Boolean to display the network switcher and wallet button
-  const isDisplayNetworkSwitcherAndWalletButton = useMemo(
-    () => [!loading, activeAccount, activeWallet, activeChain].every(Boolean),
-    [activeAccount, activeChain, activeWallet, loading]
-  );
 
   const location = useLocation();
 
@@ -93,34 +75,25 @@ export const Header: FC<HeaderProps> = () => {
       <div className="flex items-center space-x-2">
         <TxProgressDropdown />
 
-        {/** Wallet is actived */}
-        {isDisplayNetworkSwitcherAndWalletButton &&
-        activeAccount &&
-        activeWallet &&
-        activeChain ? (
-          <div className="flex items-center space-x-2">
-            <ChainButton
-              chain={activeChain}
-              status="success"
-              onClick={() =>
-                navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`)
-              }
-              nameClassname="hidden md:block"
-            />
+        <div className="hidden lg:!flex items-center space-x-2">
+          <ChainButton />
+          {isConnecting || loading || !activeWallet || !activeAccount ? (
+            isMobile ? (
+              <ConnectWalletMobileButton />
+            ) : (
+              <Button
+                isLoading={loading}
+                loadingText="Connecting..."
+                onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
+                className="hidden lg:!flex justify-center items-center px-6"
+              >
+                Connect wallet
+              </Button>
+            )
+          ) : (
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
-          </div>
-        ) : !isMobile ? (
-          <Button
-            isLoading={loading}
-            loadingText="Connecting..."
-            onClick={handleConnectWalletClick}
-            className="flex justify-center items-center"
-          >
-            Connect wallet
-          </Button>
-        ) : (
-          <ConnectWalletMobileButton />
-        )}
+          )}
+        </div>
 
         <NavigationMenu>
           <NavigationMenuTrigger />

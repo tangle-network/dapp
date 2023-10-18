@@ -18,7 +18,7 @@ import {
   type Chain,
 } from 'viem/chains';
 import { DEFAULT_EVM_CURRENCY, ORBIT_NATIVE_CURRENCY } from '../../currencies';
-import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
+import type { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
 const hostedOrbitMulticall3Address =
   process.env.BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS;

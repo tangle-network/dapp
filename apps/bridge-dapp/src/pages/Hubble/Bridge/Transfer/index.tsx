@@ -168,7 +168,7 @@ const Transfer = () => {
 
   const receivingAmount = useMemo(() => {
     if (!amount) {
-      return;
+      return 0;
     }
 
     const parsedAmount = parseFloat(amount);
@@ -263,8 +263,7 @@ const Transfer = () => {
           <TransactionInputCard.Root
             typedChainId={destTypedChainId ?? undefined}
             tokenSymbol={fungibleCfg?.symbol}
-            amount={receivingAmount?.toString().slice(0, 10)}
-            onAmountChange={setAmount}
+            amount={receivingAmount.toString().slice(0, 10)}
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector

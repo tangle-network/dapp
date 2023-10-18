@@ -242,6 +242,9 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // new block observable
   newBlock: Observable<bigint | null>;
 
+  /** Get the latest block number */
+  getBlockNumber(): bigint | null;
+
   // get zk fixtures
   getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
 
