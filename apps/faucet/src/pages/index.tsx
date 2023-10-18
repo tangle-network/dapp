@@ -29,13 +29,10 @@ const Page = () => {
       <div
         className={cx(
           'px-4 md:px-12 py-12 max-w-[964px] rounded-2xl mx-auto',
-          'border-4 border-mono-0'
+          'border-4 border-mono-0 dark:border-mono-170',
+          'bg-glass dark:bg-glass_dark'
         )}
-        style={{
-          backdropFilter: 'blur(15px)',
-          background:
-            'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%)',
-        }}
+        style={{ backdropFilter: 'blur(15px)' }}
       >
         <div className="max-w-[564px] mx-auto">
           {/** Static content */}
