@@ -46,38 +46,55 @@ export const NavigationMenuContent = forwardRef<
         )}
         ref={ref}
       >
-        <MenuItem icon={<BookOpenLineIcon size="lg" />} onClick={onDocsClick}>
-          Docs
-        </MenuItem>
+        {onDocsClick && (
+          <MenuItem icon={<BookOpenLineIcon size="lg" />} onClick={onDocsClick}>
+            Docs
+          </MenuItem>
+        )}
 
-        <MenuItem icon={<FaucetIcon size="lg" />} onClick={onFaucetClick}>
-          Faucet
-        </MenuItem>
+        {onFaucetClick && (
+          <MenuItem icon={<FaucetIcon size="lg" />} onClick={onFaucetClick}>
+            Faucet
+          </MenuItem>
+        )}
 
-        <NavigationMenuDivider />
+        {(onHelpCenterClick || onRequestFeaturesClick) && (
+          <NavigationMenuDivider />
+        )}
 
-        <MenuItem icon={<HelpLineIcon size="lg" />} onClick={onHelpCenterClick}>
-          Help Center
-        </MenuItem>
+        {onHelpCenterClick && (
+          <MenuItem
+            icon={<HelpLineIcon size="lg" />}
+            onClick={onHelpCenterClick}
+          >
+            Help Center
+          </MenuItem>
+        )}
 
-        <MenuItem
-          icon={<FlaskLineIcon size="lg" />}
-          onClick={onRequestFeaturesClick}
-        >
-          Request Features
-        </MenuItem>
+        {onRequestFeaturesClick && (
+          <MenuItem
+            icon={<FlaskLineIcon size="lg" />}
+            onClick={onRequestFeaturesClick}
+          >
+            Request Features
+          </MenuItem>
+        )}
 
-        <NavigationMenuDivider />
+        {(onTestnetClick || onAboutClick) && <NavigationMenuDivider />}
 
-        <MenuItem icon={<TangleIcon size="lg" />} onClick={onTestnetClick}>
-          Substrate Portal
-        </MenuItem>
+        {onTestnetClick && (
+          <MenuItem icon={<TangleIcon size="lg" />} onClick={onTestnetClick}>
+            Substrate Portal
+          </MenuItem>
+        )}
 
-        <MenuItem icon={<InformationLine size="lg" />} onClick={onAboutClick}>
-          About
-        </MenuItem>
+        {onAboutClick && (
+          <MenuItem icon={<InformationLine size="lg" />} onClick={onAboutClick}>
+            About
+          </MenuItem>
+        )}
 
-        <NavigationMenuDivider />
+        {(extraMenuItems || version) && <NavigationMenuDivider />}
 
         {extraMenuItems && (
           <>

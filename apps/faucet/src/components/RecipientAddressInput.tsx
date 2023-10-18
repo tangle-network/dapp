@@ -87,7 +87,7 @@ const RecipientAddressInput = () => {
     <div>
       <RecipientInput
         className={cx(
-          '!max-w-none input-height border',
+          '!max-w-none input-height border dark:bg-mono-160',
           'transition-[border-color] duration-150',
           error ? 'border-red-70 dark:border-red-50' : 'border-transparent'
         )}
