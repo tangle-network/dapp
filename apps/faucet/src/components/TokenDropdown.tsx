@@ -88,7 +88,7 @@ const TokenDropdown = () => {
         className="h-full group focus-visible:outline-none"
         isFullWidth
       >
-        <TokenInput className="h-full" token={tokenInputVal} />
+        <TokenInput className="h-full dark:bg-mono-160" token={tokenInputVal} />
       </DropdownBasicButton>
 
       <DropdownBody

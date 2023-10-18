@@ -50,7 +50,7 @@ const ChainDropdown: FC = () => {
         isFullWidth
       >
         <ChainInput
-          className="h-full"
+          className="h-full dark:bg-mono-160"
           chain={chainInputVal}
           title="Network"
           chainType="source"

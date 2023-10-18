@@ -29,6 +29,12 @@ module.exports = {
           'sans-serif',
         ],
       },
+      backgroundImage: {
+        glass:
+          'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%)',
+        glass_dark:
+          'linear-gradient(180deg, rgba(100, 103, 120, 0.20) 0%, rgba(33, 34, 45, 0.20) 100%)',
+      },
     },
   },
 };

@@ -1,12 +1,10 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
-import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
-import { Footer, SideBar, useDarkMode } from '@webb-tools/webb-ui-components';
+import { Footer, SideBar } from '@webb-tools/webb-ui-components';
 import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
-import { useEffect, useState } from 'react';
 
 import Header from '../components/Header';
 import sidebarProps from '../constants/sidebar';
@@ -46,51 +44,24 @@ export const metadata: DefaultSeoProps = {
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [, setIsDarkMode] = useDarkMode();
-  const [shouldShowSidebar, setShouldShowSidebar] = useState(true);
-
-  // Dynamic loading the lottie player in client side
-  useEffect(() => {
-    setIsDarkMode('light');
-  }, [setIsDarkMode]);
-
-  // need to check for screen size to hide sidebar on mobile because of non-unique ids problem with svg: https://stackoverflow.com/a/55846525
-  // if check with className, the Tangle logo icon will disappear on mobile and tablet since there will be 2 SVG with same id
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setShouldShowSidebar(false);
-      } else {
-        setShouldShowSidebar(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <NextThemeProvider>
-        <div className="h-screen flex">
-          {shouldShowSidebar && <SideBar {...sidebarProps} />}
-          <main className="flex-[1] h-full overflow-y-auto">
-            <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
-              <Header />
 
-              <main>
-                <Component {...pageProps} />
-              </main>
+      <div className="h-screen flex">
+        <SideBar {...sidebarProps} className="z-0 hidden lg:block" />
+        <main className="flex-[1] h-full overflow-y-auto">
+          <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
+            <Header />
 
-              <Footer isMinimal isNext className="py-12 mx-auto" />
-            </div>
-          </main>
-        </div>
-      </NextThemeProvider>
+            <main>
+              <Component {...pageProps} />
+            </main>
+
+            <Footer isMinimal isNext className="py-12 mx-auto" />
+          </div>
+        </main>
+      </div>
     </Provider>
   );
 };
