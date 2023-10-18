@@ -24,12 +24,12 @@ import {
 import cx from 'classnames';
 import Lottie from 'lottie-react';
 import { useObservableState } from 'observable-hooks';
-import { type ComponentProps, useCallback, useMemo } from 'react';
+import { type FC, type ComponentProps, useCallback, useMemo } from 'react';
 
 import FaucetError from '../errors/FaucetError';
 import failedAnimation from '../lottie/failed.json';
 import processingAnimation from '../lottie/processing.json';
-import sucessAnimation from '../lottie/success.json';
+import successAnimation from '../lottie/success.json';
 import { useFaucetContext } from '../provider';
 import type { MintTokenBody, MintTokenResult } from '../types';
 import addTokenToMetamask from '../utils/addTokenToMetamask';
@@ -40,7 +40,7 @@ const sharedExternalLinkProps = {
   target: '_blank',
 } satisfies ComponentProps<'a'>;
 
-const ProcessingModal = () => {
+const ProcessingModal: FC = () => {
   const {
     isMintingModalOpen$,
     isMintingSuccess$,
@@ -64,7 +64,7 @@ const ProcessingModal = () => {
   const animationData = useMemo(
     () =>
       isSuccess
-        ? sucessAnimation
+        ? successAnimation
         : isFailed // If there is an error, use the failed animation
         ? failedAnimation
         : processingAnimation,
@@ -108,7 +108,7 @@ const ProcessingModal = () => {
     <Modal open={isModalOpen}>
       <ModalContent
         onCloseAutoFocus={handleCloseAutoFocus}
-        className="bg-mono-0 rounded-xl w-modal"
+        className="bg-mono-0 dark:bg-mono-160 rounded-xl w-modal"
         isOpen={isModalOpen}
         isCenter
       >
@@ -130,7 +130,7 @@ const ProcessingModal = () => {
 
           <Typography fw="semibold" ta="center" variant="body1">
             {isSuccess
-              ? getSuccesMessage()
+              ? getSuccessMessage()
               : isFailed
               ? errorMessage
               : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
@@ -260,7 +260,7 @@ const usageUrl = populateDocsUrl(
   WEBB_DOC_ROUTES_RECORD['projects']['hubble-bridge']['usage-guide'].route
 );
 
-const getSuccesMessage = () => {
+const getSuccessMessage = () => {
   return (
     <>
       This transfer has been made to your wallet address. Experience private

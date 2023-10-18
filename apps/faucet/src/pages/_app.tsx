@@ -77,7 +77,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       <DefaultSeo {...metadata} />
       <NextThemeProvider>
         <div className="h-screen flex">
-          {shouldShowSidebar && <SideBar {...sidebarProps} />}
+          {shouldShowSidebar && <SideBar {...sidebarProps} className="z-0" />}
           <main className="flex-[1] h-full overflow-y-auto">
             <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
               <Header />
