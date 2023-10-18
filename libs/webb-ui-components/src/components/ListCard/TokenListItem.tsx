@@ -177,7 +177,7 @@ const TokenListItem = forwardRef<
                   target="_blank"
                   rel="noreferrer noopener"
                   className="!text-inherit"
-                  onClick={(eve) => eve.stopPropagation()}
+                  onClick={(event) => event.stopPropagation()}
                 >
                   <ExternalLinkLine className="inline-block !fill-current" />
                 </a>

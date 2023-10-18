@@ -4,28 +4,23 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import '@webb-tools/protocol-substrate-types';
 
-import { ApiInitHandler } from '@webb-tools/abstract-api-provider';
-import { Wallet } from '@webb-tools/dapp-config';
-import {
-  WalletId,
-  InteractiveFeedback,
-  WebbError,
-  WebbErrorCodes,
-} from '@webb-tools/dapp-types';
-import { options as apiOptions } from '@webb-tools/api';
-import { EventBus } from '@webb-tools/app-util';
-import lodash from 'lodash';
-
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import {
   InjectedExtension,
   MetadataDef,
 } from '@polkadot/extension-inject/types';
-
+import { ApiInitHandler } from '@webb-tools/abstract-api-provider';
+import { options as apiOptions } from '@webb-tools/api';
+import { EventBus } from '@webb-tools/app-util';
+import { LoggerService } from '@webb-tools/browser-utils';
+import { Wallet } from '@webb-tools/dapp-config';
+import getPolkadotBasedWallet from '@webb-tools/dapp-config/utils/getPolkadotBasedWallet';
+import { InteractiveFeedback } from '@webb-tools/dapp-types';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+import lodash from 'lodash';
 import { PolkaTXBuilder } from '../transaction';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
-import { LoggerService } from '@webb-tools/browser-utils';
 
 const { isNumber } = lodash;
 
@@ -240,35 +235,12 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     onError: ApiInitHandler['onError'],
     wallet: Wallet
   ): Promise<[ApiPromise, InjectedExtension]> {
-    // Import web3Enable for hooking with the browser extension
-    const { web3Enable } = await import('@polkadot/extension-dapp');
-    // Enable the app
-    const extensions = await web3Enable(appName);
-
-    logger.info('Extensions', extensions);
-
     // Check whether the extension is existed or not
-    const currentExtension = extensions.find((ex) => ex.name === wallet.name);
+    const currentExtension = await getPolkadotBasedWallet(appName, wallet.name);
+
     if (!currentExtension) {
       logger.warn(`${wallet.title} extension isn't installed`);
-
-      switch (wallet.id) {
-        case WalletId.Polkadot: {
-          throw WebbError.from(WebbErrorCodes.PolkaDotExtensionNotInstalled);
-        }
-
-        case WalletId.Talisman: {
-          throw WebbError.from(WebbErrorCodes.TalismanExtensionNotInstalled);
-        }
-
-        case WalletId.SubWallet: {
-          throw WebbError.from(WebbErrorCodes.SubWalletExtensionNotInstalled);
-        }
-
-        default: {
-          throw WebbError.from(WebbErrorCodes.UnknownWallet);
-        }
-      }
+      throw new WalletNotInstalledError(wallet.id);
     }
 
     // Initialize an ApiPromise

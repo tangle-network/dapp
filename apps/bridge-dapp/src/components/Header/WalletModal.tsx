@@ -1,6 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
-import { WalletConfig } from '@webb-tools/dapp-config';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import {
   Modal,
@@ -8,63 +7,35 @@ import {
   WalletConnectionCard,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useConnectWallet } from '../../hooks';
-import { getDefaultConnection } from '../../utils';
 
 export const WalletModal: FC = () => {
   const {
-    chain: selectedChain,
     connectingWalletId,
     failedWalletId,
     isModalOpen,
     resetState,
     selectedWallet,
-    switchWallet,
+    connectWallet,
     toggleModal,
     connectError,
+    supportedWallets,
   } = useConnectWallet();
 
   const { notificationApi } = useWebbUI();
 
-  const { apiConfig, chains, activeChain } = useWebContext();
-
-  const chainToSwitchTo = useMemo(() => {
-    if (!activeChain) {
-      if (!selectedChain) {
-        return getDefaultConnection(chains);
-      }
-
-      return selectedChain;
-    }
-
-    return activeChain;
-  }, [activeChain, selectedChain, chains]);
-
-  const supportedWalletCfgs = useMemo(() => {
-    return chainToSwitchTo.wallets
-      .map((walletId) => apiConfig.wallets[walletId])
-      .filter((w) => !!w);
-  }, [apiConfig.wallets, chainToSwitchTo.wallets]);
+  const { apiConfig } = useWebContext();
 
   // Get the current failed or connecting wallet
   const getCurrentWallet = useCallback(() => {
     const walletId = failedWalletId ?? connectingWalletId;
     if (!walletId) {
-      return undefined;
-    }
-
-    if (!chainToSwitchTo.wallets.includes(walletId)) {
-      return undefined;
+      return;
     }
 
     return apiConfig.wallets[walletId];
-  }, [
-    failedWalletId,
-    connectingWalletId,
-    chainToSwitchTo.wallets,
-    apiConfig.wallets,
-  ]);
+  }, [apiConfig.wallets, connectingWalletId, failedWalletId]);
 
   const isNotInstalledError = useMemo(() => {
     if (!connectError) {
@@ -78,7 +49,7 @@ export const WalletModal: FC = () => {
 
   const errorMessage = useMemo(() => {
     if (!connectError) {
-      return undefined;
+      return;
     }
 
     return connectError.message;
@@ -88,12 +59,12 @@ export const WalletModal: FC = () => {
   // we should show download button text
   const errorBtnText = useMemo(() => {
     if (!connectError || !isNotInstalledError) {
-      return undefined;
+      return;
     }
 
     const wallet = getCurrentWallet();
     if (!wallet) {
-      return undefined;
+      return;
     }
 
     const walletName = wallet?.name ?? 'Wallet';
@@ -111,35 +82,17 @@ export const WalletModal: FC = () => {
     resetState();
   }, [resetState]);
 
-  const handleWalletSelect = useCallback(
-    (wallet: WalletConfig) => {
-      switchWallet(chainToSwitchTo, wallet);
-    },
-    [switchWallet, chainToSwitchTo]
-  );
-
   const platformId = useMemo(() => {
     try {
       const { id } = getPlatformMetaData();
       return id;
     } catch (error) {
-      return undefined;
+      console.error(error);
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof platformId === 'undefined') {
-      notificationApi.addToQueue({
-        variant: 'warning',
-        message: 'Unsupported platform',
-        secondaryMessage:
-          'Please siwtch to a supported platform - Chrome or Firefox',
-      });
-    }
-  }, [platformId, notificationApi]);
-
   const downloadURL = useMemo(() => {
-    if (!platformId) return undefined;
+    if (!platformId) return;
 
     const wallet = getCurrentWallet();
 
@@ -148,30 +101,27 @@ export const WalletModal: FC = () => {
     }
   }, [getCurrentWallet, platformId]);
 
-  const handleTryAgainBtnClick = useCallback(async () => {
-    if (!selectedWallet) {
-      notificationApi.addToQueue({
-        variant: 'warning',
-        message: 'Failed to switch wallet',
-        secondaryMessage: 'No wallet selected. Please try again.',
-      });
-      return;
-    }
+  const handleTryAgainBtnClick = useCallback(
+    async () => {
+      if (!selectedWallet) {
+        notificationApi.addToQueue({
+          variant: 'warning',
+          message: 'Failed to switch wallet',
+          secondaryMessage: 'No wallet selected. Please try again.',
+        });
+        return;
+      }
 
-    if (isNotInstalledError) {
-      window.open(downloadURL, '_blank');
-      return;
-    }
+      if (isNotInstalledError) {
+        window.open(downloadURL, '_blank');
+        return;
+      }
 
-    await switchWallet(chainToSwitchTo, selectedWallet);
-  }, [
-    selectedWallet,
-    isNotInstalledError,
-    switchWallet,
-    chainToSwitchTo,
-    notificationApi,
-    downloadURL,
-  ]);
+      await connectWallet(selectedWallet);
+    },
+    // prettier-ignore
+    [connectWallet, downloadURL, isNotInstalledError, notificationApi, selectedWallet]
+  );
 
   return (
     <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
@@ -181,8 +131,8 @@ export const WalletModal: FC = () => {
         isCenter
       >
         <WalletConnectionCard
-          wallets={supportedWalletCfgs}
-          onWalletSelect={handleWalletSelect}
+          wallets={supportedWallets}
+          onWalletSelect={(nextWallet) => connectWallet(nextWallet)}
           onClose={() => toggleModal(false)}
           connectingWalletId={connectingWalletId}
           errorBtnText={errorBtnText}

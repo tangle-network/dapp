@@ -176,7 +176,12 @@ export type ChainButtonProps = PropsOf<'button'> & {
   /**
    * The chain to display in the button
    */
-  chain: ChainConfig;
+  chain?: ChainConfig;
+
+  /**
+   * The placeholder to display when the chain is not available
+   */
+  placeholder?: string;
 
   /**
    * The status of the chain
@@ -191,7 +196,7 @@ export type ChainButtonProps = PropsOf<'button'> & {
   /**
    * The classname of the chain name
    */
-  nameClassname?: string;
+  textClassname?: string;
 
   /**
    * The classname of the dropdown icon

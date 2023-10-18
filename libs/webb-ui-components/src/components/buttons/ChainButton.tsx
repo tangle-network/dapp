@@ -6,10 +6,20 @@ import { twMerge } from 'tailwind-merge';
 import { ChainButtonProps } from './types';
 
 const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
-  ({ className, chain, status, nameClassname, ...props }, ref) => {
-    const nameClx = useMemo(() => {
-      return twMerge('font-bold', nameClassname);
-    }, [nameClassname]);
+  (
+    {
+      className,
+      chain,
+      status,
+      textClassname,
+      placeholder = 'Select Chain',
+      ...props
+    },
+    ref
+  ) => {
+    const textClsx = useMemo(() => {
+      return twMerge('font-bold', textClassname);
+    }, [textClassname]);
 
     return (
       <button
@@ -26,13 +36,15 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
         ref={ref}
       >
         <div className="flex items-center gap-1">
-          <ChainIcon
-            status={status}
-            size="lg"
-            className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-            name={chain.name}
-          />
-          <p className={nameClx}>{chain.name}</p>
+          {chain && (
+            <ChainIcon
+              status={status}
+              size="lg"
+              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+              name={chain.name}
+            />
+          )}
+          <p className={textClsx}>{chain?.name ?? placeholder}</p>
           <ChevronDown
             size="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}

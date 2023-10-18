@@ -169,15 +169,19 @@ function useDepositButtonProps({
 
   const handleBtnClick = useCallback(
     async () => {
+      let actualApi = activeApi;
+
       try {
         if (connectBtnCnt && typeof srcTypedId === 'number') {
-          const connected = await handleConnect(srcTypedId);
-          if (!connected) {
+          const nextApi = await handleConnect(srcTypedId);
+          if (!nextApi?.noteManager) {
             return;
           }
+
+          actualApi = nextApi;
         }
 
-        if (!noteManager || !activeApi) {
+        if (!noteManager || !actualApi) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
@@ -226,7 +230,7 @@ function useDepositButtonProps({
 
         const amountBig = BigInt(amount);
         const transactNote = await noteManager.generateNote(
-          activeApi.backend,
+          actualApi.backend,
           srcTypedIdNum,
           srcAnchorId,
           destTypedIdNum,

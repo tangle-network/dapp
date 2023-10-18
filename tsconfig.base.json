@@ -45,6 +45,9 @@
       "@webb-tools/polkadot-api-provider": [
         "libs/polkadot-api-provider/src/index.ts"
       ],
+      "@webb-tools/polkadot-api-provider/*": [
+        "libs/polkadot-api-provider/src/*"
+      ],
       "@webb-tools/react-components": ["libs/react-components/src/index.ts"],
       "@webb-tools/react-components/*": ["libs/react-components/src/*"],
       "@webb-tools/react-hooks": ["libs/react-hooks/src/index.ts"],
@@ -59,6 +62,7 @@
       "@webb-tools/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
       "@webb-tools/tailwind-preset": ["libs/tailwind-preset"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
+      "@webb-tools/web3-api-provider/*": ["libs/web3-api-provider/src/*"],
       "@webb-tools/webb-ui-components": [
         "libs/webb-ui-components/src/index.ts"
       ],

@@ -1,83 +1,87 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2023 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-// list of know error codes of the dApp
+/* List of know error codes of the dApp */
 export enum WebbErrorCodes {
-  // Api is not ready
+  /* Api is not ready */
   ApiNotReady,
-  // No currency is available
+  /* No currency is available */
   NoCurrencyAvailable,
-  // No fungible token is available
+  /* No fungible token is available */
   NoFungibleTokenAvailable,
-  // Unsupported provider
+  /* Unsupported provider */
   UnsupportedProvider,
-  // Unsupported chain is switch via the extension
+  /* Unsupported chain is switch via the extension */
   UnsupportedChain,
-  // Unsupported wallet
+  /* Unsupported wallet */
   UnsupportedWallet,
-  // Unselected chain is a mismatch between provider and application
+  /* Unselected chain is a mismatch between provider and application */
   UnselectedChain,
-  // No accounts are available
+  /* Unsupported browser */
+  UnsupportedBrowser,
+  /* No accounts are available */
   NoAccountAvailable,
-  // No active bridge
+  /* No active bridge */
   NoActiveBridge,
-  // Missing endpoints in the configuration
+  /* Missing endpoints in the configuration */
   NoEndpointsConfigured,
-  // Failed to parse deposit note
+  /* Failed to parse deposit note */
   NoteParsingFailure,
-  // PolkaDot extension not installed
+  /* PolkaDot extension not installed */
   PolkaDotExtensionNotInstalled,
-  // Talisman extension not installed
+  /* Talisman extension not installed */
   TalismanExtensionNotInstalled,
-  // SubWallet extension not installed
+  /* SubWallet extension not installed */
   SubWalletExtensionNotInstalled,
-  // MetaMasK extension not installed
+  /* MetaMasK extension not installed */
   MetaMaskExtensionNotInstalled,
-  // Unknown wallet
+  /* Unknown wallet */
   UnknownWallet,
-  // Runtime Error on the provider
+  /* Runtime Error on the provider */
   InsufficientProviderInterface,
-  // EVM session already ended
+  /* EVM session already ended */
   EVMSessionAlreadyEnded,
-  // Relayer does not support the functionality
+  /* Relayer does not support the functionality */
   NoRelayerSupport,
-  // Relayer is not operating properly (sending bad leaves, etc.)
+  /* Relayer is not operating properly (sending bad leaves, etc.) */
   RelayerMisbehaving,
-  // Failed to parse the chainId
+  /* Failed to parse the chainId */
   ChainIdTypeUnformatted,
-  // Invalid amount to withdraw,
+  /* Invalid amount to withdraw, */
   AmountToWithdrawExceedsTheDepositedAmount,
-  /// Transaction is cancelled
+  /* Transaction is cancelled */
   TransactionCancelled,
-  /// There is a transaction in progress
+  /* There is a transaction in progress */
   TransactionInProgress,
-  // Not implemented
+  /* Not implemented */
   NotImplemented,
-  /// The anchor identifier is not found
+  //* The anchor identifier is not found */
   AnchorIdNotFound,
-  // Insufficient disk space
+  /* Insufficient disk space */
   InsufficientDiskSpace,
-  // Invalid arguments
+  /* Invalid arguments */
   InvalidArguments,
-  // No connector configured for the wallet
+  /* No connector configured for the wallet */
   NoConnectorConfigured,
-  // Relayer has not yet relayed the commitment to the destination chain
+  /* Relayer has not yet relayed the commitment to the destination chain */
   CommitmentNotInTree,
-  // Switch account failed
+  /* Switch account failed */
   SwitchAccountFailed,
-  // Switch chain failed
+  /* Switch chain failed */
   SwitchChainFailed,
-  // Failed to send the transaction to the relayer
+  /* Failed to send the transaction to the relayer */
   FailedToSendTx,
-  // Failed to disconnect the wallet
+  /** Failed to connect wallet */
+  FailedToConnectWallet,
+  /* Failed to disconnect the wallet */
   FailedToDisconnect,
-  // Key pair not found
+  /* Key pair not found */
   KeyPairNotFound,
-  // Notes are not ready
+  /* Notes are not ready */
   NotesNotReady,
-  // Invalid amount
+  /* Invalid amount */
   InvalidAmount,
-  // Unknown error
+  /* Unknown error */
   UnknownError,
 }
 
@@ -147,6 +151,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'User did not select the chain',
+        };
+
+      case WebbErrorCodes.UnsupportedBrowser:
+        return {
+          code,
+          message: 'Unsupported browser',
         };
 
       case WebbErrorCodes.NoAccountAvailable:
@@ -330,6 +340,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Invalid amount',
+        };
+
+      case WebbErrorCodes.FailedToConnectWallet:
+        return {
+          code,
+          message: 'Failed to connect wallet',
         };
 
       case WebbErrorCodes.FailedToDisconnect:
