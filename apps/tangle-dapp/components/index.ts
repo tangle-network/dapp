@@ -1,1 +1,2 @@
-export * from './sideBar';
+export * from './Sidebar';
+export * from './Breadcrumbs';

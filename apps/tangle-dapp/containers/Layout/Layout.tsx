@@ -1,7 +1,7 @@
 import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
-import { SideBar, SideBarMenu } from '../../components';
+import { SideBar, SideBarMenu, Breadcrumbs } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
@@ -9,13 +9,17 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
-      <main className="flex flex-col justify-between flex-1 h-full overflow-y-auto max-w-[1448px] m-auto py-4 px-4 2xl:px-0">
+
+      <main className="flex flex-col justify-between flex-1 h-full overflow-y-auto max-w-[1448px] m-auto py-4 px-4">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex items-center space-x-4 lg:space-x-0">
             <SideBarMenu />
+
+            <Breadcrumbs />
           </div>
 
-          <div>wallet connection</div>
+          {/* Wallet Connection */}
+          <div></div>
         </div>
 
         {children}
