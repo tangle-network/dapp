@@ -4,7 +4,6 @@
     "module": "esnext",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noPropertyAccessFromIndexSignature": true,
     "noFallthroughCasesInSwitch": true,
     "declaration": true
   },
