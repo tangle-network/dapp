@@ -5,7 +5,6 @@ import { Footer, SideBar } from '@webb-tools/webb-ui-components';
 import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
-import { useEffect, useState } from 'react';
 
 import Header from '../components/Header';
 import sidebarProps from '../constants/sidebar';
@@ -45,32 +44,12 @@ export const metadata: DefaultSeoProps = {
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [shouldShowSidebar, setShouldShowSidebar] = useState(true);
-
-  // need to check for screen size to hide sidebar on mobile because of non-unique ids problem with svg: https://stackoverflow.com/a/55846525
-  // if check with className, the Tangle logo icon will disappear on mobile and tablet since there will be 2 SVG with same id
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setShouldShowSidebar(false);
-      } else {
-        setShouldShowSidebar(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   return (
     <Provider>
       <DefaultSeo {...metadata} />
 
       <div className="h-screen flex">
-        {shouldShowSidebar && <SideBar {...sidebarProps} className="z-0" />}
+        <SideBar {...sidebarProps} className="z-0 hidden lg:block" />
         <main className="flex-[1] h-full overflow-y-auto">
           <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
             <Header />

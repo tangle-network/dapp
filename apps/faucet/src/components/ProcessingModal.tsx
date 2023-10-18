@@ -24,7 +24,7 @@ import {
 import cx from 'classnames';
 import Lottie from 'lottie-react';
 import { useObservableState } from 'observable-hooks';
-import { type FC, type ComponentProps, useCallback, useMemo } from 'react';
+import { type ComponentProps, type FC, useCallback, useMemo } from 'react';
 
 import FaucetError from '../errors/FaucetError';
 import failedAnimation from '../lottie/failed.json';
