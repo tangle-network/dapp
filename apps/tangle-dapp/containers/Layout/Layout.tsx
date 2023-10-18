@@ -1,8 +1,7 @@
 import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
-import { HeaderChipsContainer } from '..';
 import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
-import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+import { SideBar, SideBarMenu } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
@@ -16,10 +15,10 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           <div className="flex items-center justify-between pt-6 pb-4">
             <div className="flex items-center gap-2">
               <SideBarMenu />
-              <Breadcrumbs />
+              {/* Breadcrumbs will go here! */}
             </div>
 
-            <HeaderChipsContainer />
+            {/* Wallet connection will go here! */}
           </div>
 
           {/* Body */}

@@ -3,7 +3,7 @@
 import { type FC } from 'react';
 import { SideBar as SideBarCmp } from '@webb-tools/webb-ui-components';
 import { setSideBarCookieOnToggle } from '@webb-tools/webb-ui-components/next-utils';
-import sideBarProps from './sideBarProps';
+import SideBarProps from './sideBarProps';
 
 interface SideBarProps {
   isExpandedAtDefault?: boolean;
@@ -12,7 +12,7 @@ interface SideBarProps {
 const SideBar: FC<SideBarProps> = ({ isExpandedAtDefault }) => {
   return (
     <SideBarCmp
-      {...sideBarProps}
+      {...SideBarProps}
       className="hidden lg:block"
       isExpandedAtDefault={isExpandedAtDefault}
       onSideBarToggle={() => setSideBarCookieOnToggle()}

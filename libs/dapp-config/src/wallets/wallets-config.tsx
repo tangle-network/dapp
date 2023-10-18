@@ -10,9 +10,9 @@ import {
 } from '@webb-tools/icons';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
-import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
