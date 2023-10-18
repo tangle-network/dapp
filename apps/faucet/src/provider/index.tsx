@@ -1,6 +1,6 @@
+import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
@@ -115,7 +115,7 @@ const FaucetContext = createContext<FaucetContextType>(defaultContextValue);
 const Provider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <FaucetContext.Provider value={defaultContextValue}>
-      <WebbUIProvider defaultThemeMode="light">{children}</WebbUIProvider>
+      <NextThemeProvider>{children}</NextThemeProvider>
     </FaucetContext.Provider>
   );
 };
