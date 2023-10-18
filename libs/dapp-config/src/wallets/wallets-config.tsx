@@ -1,4 +1,4 @@
-import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import { SupportedBrowsers } from '../../../browser-utils';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
 import {

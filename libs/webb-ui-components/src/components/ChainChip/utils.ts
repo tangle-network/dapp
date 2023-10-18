@@ -1,4 +1,4 @@
-import { ChainGroup } from '@webb-tools/dapp-config';
+import { ChainGroup } from '../../../../dapp-config';
 import { ChainChipClassNames } from './types';
 
 const classNames: ChainChipClassNames = {
