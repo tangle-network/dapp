@@ -10,21 +10,23 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     <>
       <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
 
-      <main className="flex flex-col justify-between flex-1 h-full overflow-y-auto max-w-[1448px] m-auto py-4 px-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 lg:space-x-0">
-            <SideBarMenu />
+      <main className="flex flex-col justify-between flex-1 h-full overflow-y-auto max-w-[1448px] m-auto px-10">
+        <div className="flex flex-col justify-between">
+          <div className="flex items-center justify-between py-6 mb-10">
+            <div className="flex items-center space-x-4 lg:space-x-0">
+              <SideBarMenu />
 
-            <Breadcrumbs />
+              <Breadcrumbs />
+            </div>
+
+            {/* Wallet Connection */}
+            <div></div>
           </div>
 
-          {/* Wallet Connection */}
-          <div></div>
+          {children}
         </div>
 
-        {children}
-
-        <Footer isMinimal className="py-3" />
+        <Footer isMinimal className="py-8" />
       </main>
     </>
   );
