@@ -34,15 +34,6 @@ const Breadcrumbs: FC = () => {
     ];
   }, []);
 
-  /**
-   * Pages not reload server data when navigating to a page when go back and forth in the browser
-   * Therefore, need to refresh the page when the user navigates to a page
-   * This keeps all client-side components still remain their states
-   */
-  useEffect(() => {
-    router.refresh();
-  }, [router, pathname]);
-
   return (
     <BreadcrumbsCmp>
       {breadCrumbs.map((breadcrumb, index) => (
