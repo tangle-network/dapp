@@ -1,8 +1,8 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { POLKADOT_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 
 export const getPolkadotApi = async (
-  endpoint: string = POLKADOT_ENDPOINT
+  endpoint: string = TANGLE_RPC_ENDPOINT
 ): Promise<ApiPromise | undefined> => {
   try {
     const wsProvider = new WsProvider(endpoint);
