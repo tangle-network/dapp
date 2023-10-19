@@ -3,7 +3,7 @@ import { getPolkadotApi } from '../../constants';
 export const getSession = async (): Promise<number> => {
   const api = await getPolkadotApi();
 
-  if (!api) return 0;
+  if (!api) return NaN;
 
   try {
     const currentDKGPublicKey: any = await api.query.dkg.dkgPublicKey();
