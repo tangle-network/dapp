@@ -1,11 +1,22 @@
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Footer, SideBar, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
+import type { GetServerSideProps } from 'next';
 import { NextSeo, NextSeoProps } from 'next-seo';
 
+import Header from '../components/Header';
 import ProcessingModal from '../components/ProcessingModal';
 import TwitterLink from '../components/TwitterLink';
+import sideBarProps from '../constants/sidebar';
 import InputsContainer from '../containers/InputsContainer';
 import LoginWithTwitter from '../containers/LoginWithTwitter';
+import {
+  getSideBarStateFromCookie,
+  setSideBarCookieOnToggle,
+} from '../utils/sidebar';
+
+interface PageProps {
+  sideBarInitialState?: boolean;
+}
 
 export const metadata: NextSeoProps = {
   additionalMetaTags: [
@@ -20,10 +31,18 @@ export const metadata: NextSeoProps = {
   ],
 };
 
-const Page = () => {
+export default function Page({ sideBarInitialState }: PageProps) {
   return (
-    <div className={cx('max-w-[100vw]')}>
-      <NextSeo {...metadata} />
+    <div className="h-screen flex">
+      <SideBar
+        {...sideBarProps}
+        isExpandedAtDefault={sideBarInitialState}
+        onSideBarToggle={setSideBarCookieOnToggle}
+        className="!z-0 hidden lg:block"
+      />
+      <main className="flex-[1] h-full overflow-y-auto">
+        <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
+          <Header />
 
       {/** The Faucet Card */}
       <div
@@ -70,17 +89,31 @@ const Page = () => {
             </Typography>
           </div>
 
-          {/** Logic content */}
-          <div className="mt-16 space-y-8">
-            <LoginWithTwitter />
-            <InputsContainer />
-          </div>
-        </div>
-      </div>
+                {/** Logic content */}
+                <div className="mt-16 space-y-8">
+                  <LoginWithTwitter />
+                  <InputsContainer />
+                </div>
+              </div>
+            </div>
 
-      <ProcessingModal />
+            <ProcessingModal />
+          </main>
+
+          <Footer isMinimal isNext className="py-12 mx-auto" />
+        </div>
+      </main>
     </div>
   );
-};
+}
 
-export default Page;
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+  req,
+  res,
+}) => {
+  return {
+    props: {
+      sideBarInitialState: getSideBarStateFromCookie({ req, res }),
+    },
+  };
+};

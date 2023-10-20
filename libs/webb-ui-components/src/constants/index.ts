@@ -87,6 +87,10 @@ export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
 export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
 export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 
+export const TANGLE_RPC_ENDPOINT = 'wss://rpc-archive.tangle.tools';
+export const SUBQUERY_ENDPOINT =
+  'https://standalone-subql.tangle.tools/graphql';
+
 export const WEBB_DOC_ROUTES_RECORD = {
   concepts: {
     'anchor-system': {
@@ -203,8 +207,8 @@ export const webbNetworks: webbNetworksType[] = [
         name: 'Tangle Standalone',
         networkType: 'testnet',
         networkNodeType: 'standalone',
-        subqueryEndpoint: 'https://standalone-subql.tangle.tools/graphql',
-        polkadotEndpoint: 'wss://rpc-archive.tangle.tools',
+        subqueryEndpoint: SUBQUERY_ENDPOINT,
+        polkadotEndpoint: TANGLE_RPC_ENDPOINT,
         polkadotExplorer: TANGLE_STANDALONE_EXPLORER_URL,
         avatar: '',
       },
