@@ -108,9 +108,11 @@ const ProcessingModal: FC = () => {
     <Modal open={isModalOpen}>
       <ModalContent
         onCloseAutoFocus={handleCloseAutoFocus}
-        className="bg-mono-0 dark:bg-mono-160 rounded-xl w-modal"
+        className={cx(
+          'bg-mono-0 dark:bg-mono-160 rounded-xl !w-full md:!w-[500px]',
+          'top-auto bottom-0 md:-translate-x-1/2 md:-translate-y-1/2 md:top-1/2 md:bottom-auto md:left-1/2'
+        )}
         isOpen={isModalOpen}
-        isCenter
       >
         <ModalHeader onClose={() => handleOpenChange(false)} />
 
@@ -120,7 +122,12 @@ const ProcessingModal: FC = () => {
             animationData={animationData}
           />
 
-          <Typography fw="bold" ta="center" variant="h5">
+          <Typography
+            fw="black"
+            ta="center"
+            variant="h5"
+            className="!text-[24px] !leading-[40px]"
+          >
             {isSuccess
               ? 'Transfer Successful'
               : isFailed
