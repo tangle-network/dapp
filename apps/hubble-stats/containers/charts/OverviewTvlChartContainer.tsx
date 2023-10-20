@@ -1,17 +1,22 @@
-import { cache } from 'react';
-import { getOverviewTvlChartData as getData } from '../../data';
+'use client';
+
+import useSWR from 'swr';
+import ContainerSkeleton from '../../components/skeleton/ContainerSkeleton';
+import { getOverviewTvlChartData } from '../../data';
 import { AreaChartContainerClient } from './client';
 import { ChartProps } from './types';
 
-const getOverviewTvlChartData = cache(getData);
-
-export default async function OverviewTvlChartContainer(props: ChartProps) {
+export default function OverviewTvlChartContainer(props: ChartProps) {
   const { numDatesFromStart, startingEpoch } = props;
 
-  const { tvlData, currentTvl } = await getOverviewTvlChartData(
-    startingEpoch,
-    numDatesFromStart
+  const { data: { tvlData, currentTvl } = {}, isLoading } = useSWR(
+    'OverviewTvlChartContainer-getOverviewTvlChartData',
+    () => getOverviewTvlChartData(startingEpoch, numDatesFromStart)
   );
+
+  if (isLoading || !tvlData) {
+    return <ContainerSkeleton numOfRows={1} className="min-h-[330px]" />;
+  }
 
   return (
     <AreaChartContainerClient
