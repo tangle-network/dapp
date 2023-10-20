@@ -12,7 +12,7 @@ export default async function Index() {
         <HeaderChipsContainer />
       </div>
 
-      <div className='mt-12'>
+      <div className="mt-12">
         <KeyMetricsTableContainer />
       </div>
     </div>
