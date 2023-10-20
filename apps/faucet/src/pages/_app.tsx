@@ -17,9 +17,9 @@ export const metadata: DefaultSeoProps = {
       rel: 'icon',
     },
   ],
-  defaultTitle: 'Webb Faucet',
+  defaultTitle: 'Tangle Network Faucet',
   description:
-    'Our easy-to-use testnet faucet allows you to claim test tokens with just a few clicks. Start experimenting with Hubble Bridge today.',
+    'Receive Test Tokens on Devnet and Testnet supported by Tangle Network and Webb Protocol for development and experimental purposes.',
   openGraph: {
     images: [
       {
@@ -30,7 +30,7 @@ export const metadata: DefaultSeoProps = {
       },
     ],
     locale: 'en_US',
-    siteName: 'Webb Faucet',
+    siteName: 'Tangle Network Faucet',
     type: 'website',
     url: WEBB_FAUCET_URL,
   },

@@ -48,21 +48,22 @@ const Page = () => {
                 variant="mkt-h3"
                 className="font-black text-center text-mono-200"
               >
-                Hubble Bridge Faucet
+                Tangle Network Faucet
               </Typography>
             </div>
             <Typography
               variant="mkt-body1"
               className="font-medium text-center text-mono-140"
             >
-              This faucet sends various test tokens on networks supported by the
-              Hubble Bridge.
+              Receive Test Tokens on Devnet and Testnet supported by Tangle
+              Network and Webb Protocol for development and experimental
+              purposes.
             </Typography>
             <Typography
               variant="mkt-body1"
               className="font-medium text-center text-mono-140"
             >
-              To receive tokens, follow <TwitterLink />
+              Follow <TwitterLink />
               {
                 " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
               }
