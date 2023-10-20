@@ -1,15 +1,11 @@
 import { getPolkadotApi } from '../../constants';
-
-interface ActiveAndDelegationCount {
-  active: number;
-  delegation: number;
-}
+import { MetricReturnType } from '../../types';
 
 export const getActiveAndDelegationCount =
-  async (): Promise<ActiveAndDelegationCount> => {
+  async (): Promise<MetricReturnType> => {
     const api = await getPolkadotApi();
 
-    if (!api) return { active: NaN, delegation: NaN };
+    if (!api) return { value1: NaN, value2: NaN };
 
     try {
       const totalNominatorCount =
@@ -39,12 +35,12 @@ export const getActiveAndDelegationCount =
       const activeNominatorsCount = activeNominators.size;
 
       return {
-        active: activeNominatorsCount,
-        delegation: Number(totalNominatorCount.toString()),
+        value1: activeNominatorsCount,
+        value2: Number(totalNominatorCount.toString()),
       };
     } catch (e: any) {
       console.error(e);
 
-      return { active: NaN, delegation: NaN };
+      return { value1: NaN, value2: NaN };
     }
   };

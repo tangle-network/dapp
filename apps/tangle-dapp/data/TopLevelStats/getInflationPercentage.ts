@@ -1,23 +1,29 @@
 import { getPolkadotApi } from '../../constants';
 import { BN_ZERO } from '@polkadot/util';
 import { calculateInflation } from '../../utils';
+import { MetricReturnType } from '../../types';
 
-export const getInflationPercentage = async (): Promise<number> => {
+export const getInflationPercentage = async (): Promise<MetricReturnType> => {
   const api = await getPolkadotApi();
 
-  if (!api) return NaN;
+  if (!api)
+    return {
+      value1: NaN,
+    };
 
   try {
     const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
 
     const inflationPercentage = inflation.inflation;
 
-    console.log('inflationPercentage', inflationPercentage);
-
-    return inflationPercentage;
+    return {
+      value1: inflationPercentage,
+    };
   } catch (e: any) {
     console.error(e);
 
-    return NaN;
+    return {
+      value1: NaN,
+    };
   }
 };

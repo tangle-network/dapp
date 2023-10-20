@@ -1,18 +1,32 @@
 import { getPolkadotApi } from '../../constants';
+import { MetricReturnType } from '../../types';
 
-export const getValidatorsCount = async (): Promise<number> => {
+export const getValidatorsCount = async (): Promise<MetricReturnType> => {
   const api = await getPolkadotApi();
 
-  if (!api) return NaN;
+  if (!api)
+    return {
+      value1: NaN,
+      value2: NaN,
+    };
 
   try {
-    const overview = await api.derive.staking.overview();
-    const validatorsCount = overview.validatorCount;
+    const activeValidators = await api.query.session.validators();
+    const activeValidatorsCount = activeValidators.length;
 
-    return Number(validatorsCount.toString());
+    const overview = await api.derive.staking.overview();
+    const totalValidatorsCount = overview.validatorCount;
+
+    return {
+      value1: activeValidatorsCount,
+      value2: Number(totalValidatorsCount.toString()),
+    };
   } catch (e: any) {
     console.error(e);
 
-    return NaN;
+    return {
+      value1: NaN,
+      value2: NaN,
+    };
   }
 };

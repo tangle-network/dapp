@@ -1,17 +1,25 @@
 import { getPolkadotApi } from '../../constants';
+import { MetricReturnType } from '../../types';
 
-export const getWaitingCount = async (): Promise<number> => {
+export const getWaitingCount = async (): Promise<MetricReturnType> => {
   const api = await getPolkadotApi();
 
-  if (!api) return NaN;
+  if (!api)
+    return {
+      value1: NaN,
+    };
 
   try {
     const waitingInfo = await api.derive.staking.waitingInfo();
 
-    return Number(waitingInfo.waiting.length.toString());
+    return {
+      value1: Number(waitingInfo.waiting.length.toString()),
+    };
   } catch (e: any) {
     console.error(e);
 
-    return NaN;
+    return {
+      value1: NaN,
+    };
   }
 };
