@@ -1,13 +1,10 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
-import { Footer, SideBar } from '@webb-tools/webb-ui-components';
 import { WEBB_FAUCET_URL } from '@webb-tools/webb-ui-components/constants';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 
-import Header from '../components/Header';
-import sidebarProps from '../constants/sidebar';
 import Provider from '../provider';
 
 export const metadata: DefaultSeoProps = {
@@ -48,20 +45,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     <Provider>
       <DefaultSeo {...metadata} />
 
-      <div className="h-screen flex">
-        <SideBar {...sidebarProps} className="z-0 hidden lg:block" />
-        <main className="flex-[1] h-full overflow-y-auto">
-          <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
-            <Header />
-
-            <main>
-              <Component {...pageProps} />
-            </main>
-
-            <Footer isMinimal isNext className="py-12 mx-auto" />
-          </div>
-        </main>
-      </div>
+      <main>
+        <Component {...pageProps} />
+      </main>
     </Provider>
   );
 };
