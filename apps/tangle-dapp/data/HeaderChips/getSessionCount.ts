@@ -1,6 +1,6 @@
 import { getPolkadotApi } from '../../constants';
 
-export const getSession = async (): Promise<number> => {
+export const getSessionCount = async (): Promise<number> => {
   const api = await getPolkadotApi();
 
   if (!api) return NaN;
@@ -13,6 +13,6 @@ export const getSession = async (): Promise<number> => {
   } catch (e: any) {
     console.error(e);
 
-    return 0;
+    return NaN;
   }
 };
