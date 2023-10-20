@@ -6,4 +6,5 @@ export interface MetricItemProps {
   suffix?: string;
   tooltip?: string;
   dataFetcher: () => Promise<MetricReturnType>;
+  className?: string;
 }

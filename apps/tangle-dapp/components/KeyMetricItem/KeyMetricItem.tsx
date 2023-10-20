@@ -3,14 +3,16 @@ import { Typography, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { InfoIconWithTooltip } from '..';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
 import { MetricItemProps } from './types';
+import { twMerge } from 'tailwind-merge';
 
 export const KeyMetricItem: FC<MetricItemProps> = ({
   title,
   tooltip,
+  className,
   ...restProps
 }) => {
   return (
-    <div className="px-2 py-2 space-y-2 md:px-4">
+    <div className={twMerge('px-2 py-2 space-y-2 md:px-4', className)}>
       <div className="flex items-center gap-0.5">
         <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
           {title}

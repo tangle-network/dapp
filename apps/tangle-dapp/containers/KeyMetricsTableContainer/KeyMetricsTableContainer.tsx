@@ -26,14 +26,12 @@ export const KeyMetricsTableContainer = () => {
     >
       <div
         className={cx(
-          'grid gap-1 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+          'grid gap-1 grid-cols-2 lg:grid-cols-5',
           '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
           '[&>div]:even:border-none',
-          'md:[&>div]:even:border-r',
+          'lg:[&>div]:even:border-r',
           '[&>div]:border-b [&>div]:border-b-mono-40 [&>div]:dark:border-b-mono-160',
-          'xl:[&>div]:nth-last-child(-n+5):border-b-0',
-          'lg:[&>div]:nth-last-child(-n+4):border-b-0',
-          'md:[&>div]:nth-last-child(-n+3):border-b-0',
+          'lg:[&>div]:nth-last-child(-n+5):border-b-0',
           '[&>div]:nth-last-child(-n+2):border-b-0'
         )}
       >
@@ -42,6 +40,7 @@ export const KeyMetricsTableContainer = () => {
           title="Validators"
           tooltip="Current # of active validators out of the total allowed."
           dataFetcher={() => getValidatorsCountData()}
+          className="col-span-2 lg:col-span-1"
         />
         {/* Waiting */}
         <KeyMetricItem
