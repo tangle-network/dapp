@@ -7,7 +7,11 @@ export const HeaderChipsContainer = () => {
     <div className="items-center hidden gap-2 md:flex lg:gap-4">
       <HeaderChip Icon={BlockIcon} label="ERA" dataFetcher={getEraCount} />
 
-      <HeaderChip Icon={BlockIcon} label="Session" dataFetcher={getSessionCount} />
+      <HeaderChip
+        Icon={BlockIcon}
+        label="Session"
+        dataFetcher={getSessionCount}
+      />
     </div>
   );
 };
