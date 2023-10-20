@@ -10,12 +10,6 @@ import {
 import { getDateDataForPage } from '../utils';
 import { ContainerSkeleton } from '../components';
 
-// force homepage to be dynamic
-export const dynamic = 'force-dynamic';
-
-// revalidate every 5 seconds
-export const revalidate = 5;
-
 export default async function Index() {
   const { epochStart, epochNow, numDatesFromStart } = getDateDataForPage();
 

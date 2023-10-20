@@ -1,15 +1,28 @@
-import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
+'use client';
 
+import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
+import useSWR from 'swr';
 import { HeaderChipItem } from '../../components';
-import { getHeaderChipsTvlData, getHeaderChipsDepositData } from '../../data';
+import { getHeaderChipsDepositData, getHeaderChipsTvlData } from '../../data';
 
 export default function HeaderChipsContainer() {
+  const { data: tvlValue, isLoading: tvlLoading } = useSWR(
+    'ChipsTvlData',
+    getHeaderChipsTvlData
+  );
+
+  const { data: depositValue, isLoading: depositLoading } = useSWR(
+    'ChipsDepositData',
+    getHeaderChipsDepositData
+  );
+
   return (
     <div className="items-center hidden gap-2 md:flex lg:gap-4">
       <HeaderChipItem
         Icon={DatabaseLine}
         label="TVL"
-        dataFetcher={getHeaderChipsTvlData}
+        isLoading={tvlLoading}
+        value={tvlValue}
       />
 
       <HeaderChipItem
@@ -17,7 +30,8 @@ export default function HeaderChipsContainer() {
         label="DEPOSITS"
         hasTooltip
         tooltipContent="Historical Deposit Volume"
-        dataFetcher={getHeaderChipsDepositData}
+        isLoading={depositLoading}
+        value={depositValue}
       />
     </div>
   );
