@@ -7,14 +7,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useMemo, type FC } from 'react';
 
 import { VANCHORS_MAP } from '../../constants';
 import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
-  const router = useRouter();
   const pathname = usePathname();
 
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {

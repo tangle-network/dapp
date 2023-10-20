@@ -10,7 +10,7 @@ import {
 import { getDateDataForPage } from '../utils';
 import { ContainerSkeleton } from '../components';
 
-export default async function Index() {
+export default function Index() {
   const { epochStart, epochNow, numDatesFromStart } = getDateDataForPage();
 
   const chartProps = {
