@@ -2,5 +2,5 @@
   "name": "@webb-tools/stats-dapp",
   "version": "0.0.19",
   "main": "./src/index.js",
-  "license": "APACHE-2.0"
+  "license": "Apache-2.0"
 }
