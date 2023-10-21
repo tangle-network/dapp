@@ -1,4 +1,5 @@
 {
   "name": "@webb-tools/hubble-stats",
-  "version": "0.0.7"
+  "version": "0.0.7",
+  "license": "APACHE-2.0"
 }

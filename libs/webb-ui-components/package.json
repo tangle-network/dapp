@@ -13,7 +13,7 @@
   ],
   "homepage": "https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components#readme",
   "bugs": "https://github.com/webb-tools/webb-dapp/issues/new/choose",
-  "license": "Apache 2.0",
+  "license": "APACHE-2.0",
   "author": "Webb Developers",
   "repository": {
     "type": "git",
