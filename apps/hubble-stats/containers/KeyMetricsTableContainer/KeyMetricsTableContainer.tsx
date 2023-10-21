@@ -1,23 +1,40 @@
-import cx from 'classnames';
-import { cache } from 'react';
-import { KeyMetricItem } from '../../components/KeyMetricItem';
-import {
-  getKeyMetricDepositData as getDeposit,
-  getKeyMetricRelayerFeesData as getRealyerFees,
-  getKeyMetricTvlData as getTVL,
-  getKeyMetricWrappingFeesData as getWrappingFees,
-} from '../../data';
+'use client';
 
-const getKeyMetricDepositData = cache(getDeposit);
-const getKeyMetricRelayerFeesData = cache(getRealyerFees);
-const getKeyMetricTvlData = cache(getTVL);
-const getKeyMetricWrappingFeesData = cache(getWrappingFees);
+import cx from 'classnames';
+import useSWR from 'swr';
+import KeyMetricItem from '../../components/KeyMetricItem/KeyMetricItem';
+import {
+  getKeyMetricDepositData,
+  getKeyMetricRelayerFeesData,
+  getKeyMetricTvlData,
+  getKeyMetricWrappingFeesData,
+} from '../../data';
 
 export default function KeyMetricsTableContainer(props: {
   epochStart: number;
   epochNow: number;
 }) {
   const { epochNow, epochStart } = props;
+
+  const { data: tvlData, isLoading: tvlLoading } = useSWR(
+    'KeyMetricsTableContainer-getKeyMetricTvlData',
+    () => getKeyMetricTvlData(epochStart, epochNow)
+  );
+
+  const { data: depositData, isLoading: depositLoading } = useSWR(
+    'KeyMetricsTableContainer-getKeyMetricDepositData',
+    () => getKeyMetricDepositData(epochNow)
+  );
+
+  const { data: relayerFeesData, isLoading: relayerFeesLoading } = useSWR(
+    'KeyMetricsTableContainer-getKeyMetricRelayerFeesData',
+    getKeyMetricRelayerFeesData
+  );
+
+  const { data: wrappingFeesData, isLoading: wrappingFeesLoading } = useSWR(
+    'KeyMetricsTableContainer-getKeyMetricWrappingFeesData',
+    getKeyMetricWrappingFeesData
+  );
 
   return (
     <div
@@ -38,23 +55,27 @@ export default function KeyMetricsTableContainer(props: {
         <KeyMetricItem
           title="TVL"
           suffix=" webbtTNT"
-          dataFetcher={() => getKeyMetricTvlData(epochStart, epochNow)}
+          isLoading={tvlLoading}
+          value={tvlData}
         />
         <KeyMetricItem
           title="Deposits 24H"
           suffix=" webbtTNT"
-          dataFetcher={() => getKeyMetricDepositData(epochNow)}
+          isLoading={depositLoading}
+          value={depositData}
         />
         <KeyMetricItem
           title="Relayer Earnings"
           suffix=" webbtTNT"
           tooltip="The net earnings made by relayers after transaction costs."
-          dataFetcher={getKeyMetricRelayerFeesData}
+          isLoading={relayerFeesLoading}
+          value={relayerFeesData}
         />
         <KeyMetricItem
           title="Wrapping Fees"
           suffix=" webbtTNT"
-          dataFetcher={getKeyMetricWrappingFeesData}
+          isLoading={wrappingFeesLoading}
+          value={wrappingFeesData}
         />
       </div>
     </div>

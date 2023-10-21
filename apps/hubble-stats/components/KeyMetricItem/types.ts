@@ -1,9 +1,10 @@
 import type { MetricType } from '../../types';
 
-export interface MetricItemProps {
+export interface MetricItemProps<LoadingType extends boolean> {
   title: string;
   prefix?: string;
   suffix?: string;
   tooltip?: string;
-  dataFetcher: () => Promise<MetricType>;
+  value: LoadingType extends true ? undefined : MetricType;
+  isLoading: LoadingType;
 }
