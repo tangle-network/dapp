@@ -1,43 +1,43 @@
-import { type FC, Suspense } from 'react';
-import cx from 'classnames';
-import { Typography, SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 import { ArrowRight } from '@webb-tools/icons';
+import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
+import cx from 'classnames';
 
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
 import { PoolInfoCardItemProps } from './types';
 
-const PoolInfoCardItem: FC<PoolInfoCardItemProps> = ({
+function PoolInfoCardItem<T extends boolean>({
   title,
   prefix = '',
   suffix = '',
   className,
-  dataFetcher,
-}) => {
+  isLoading,
+  value,
+}: PoolInfoCardItemProps<T>) {
   return (
     <div className={cx('px-2', className)}>
-      <Suspense fallback={<SuspenseFallback title={title} />}>
+      {isLoading || !value ? (
+        <SuspenseFallback title={title} />
+      ) : (
         <PoolInfoCardItemValue
+          value={value}
           title={title}
           prefix={prefix}
           suffix={suffix}
-          dataFetcher={dataFetcher}
         />
-      </Suspense>
+      )}
     </div>
   );
-};
+}
 
 export default PoolInfoCardItem;
 
-async function PoolInfoCardItemValue({
-  dataFetcher,
+function PoolInfoCardItemValue<T extends boolean>({
   title,
   prefix,
   suffix,
-}: Omit<PoolInfoCardItemProps, 'className'>) {
-  const { value, changeRate } = await dataFetcher();
-
+  value: { value, changeRate } = {},
+}: Omit<PoolInfoCardItemProps<T>, 'className' | 'isLoading'>) {
   return (
     <>
       <div className="flex items-center justify-center gap-0.5">
@@ -55,7 +55,7 @@ async function PoolInfoCardItemValue({
         )}
       </div>
 
-      <div className="flex justify-center items-center gap-1">
+      <div className="flex items-center justify-center gap-1">
         <Typography
           variant="utility"
           tw="black"
@@ -93,16 +93,16 @@ async function PoolInfoCardItemValue({
   );
 }
 
-const SuspenseFallback: FC<Pick<PoolInfoCardItemProps, 'title'>> = ({
+function SuspenseFallback<T extends boolean>({
   title,
-}) => {
+}: Pick<PoolInfoCardItemProps<T>, 'title'>) {
   return (
     <>
       <div className="flex items-center justify-center gap-0.5 mb-1">
         <SkeletonLoader size="lg" className="w-[100px]" />
       </div>
 
-      <div className="flex justify-center items-center gap-1">
+      <div className="flex items-center justify-center gap-1">
         <Typography
           variant="utility"
           tw="black"
@@ -116,4 +116,4 @@ const SuspenseFallback: FC<Pick<PoolInfoCardItemProps, 'title'>> = ({
       </div>
     </>
   );
-};
+}
