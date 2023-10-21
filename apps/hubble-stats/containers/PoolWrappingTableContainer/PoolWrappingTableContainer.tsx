@@ -1,19 +1,15 @@
+'use client';
+
 import {
   TabContent,
   TableAndChartTabs,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { Suspense, cache, type FC } from 'react';
+import { type FC } from 'react';
 
+import useSWR from 'swr';
 import { ContainerSkeleton, PoolWrappingTable } from '../../components';
-import { PoolWrappingDataType } from '../../components/PoolWrappingTable/types';
-import {
-  getPoolTwlTableData as getTwl,
-  getPoolWrappingFeesTableData as getWrappingFees,
-} from '../../data';
-
-const getPoolTwlTableData = cache(getTwl);
-const getPoolWrappingFeesTableData = cache(getWrappingFees);
+import { getPoolTwlTableData, getPoolWrappingFeesTableData } from '../../data';
 
 const twlTab = 'TWL';
 const wrappingFeesTab = 'Wrapping Fees';
@@ -23,6 +19,16 @@ const PoolWrappingTableContainer: FC<{
   epochNow: number;
   availableTypedChainIds: number[];
 }> = ({ poolAddress, availableTypedChainIds }) => {
+  const { data: twlData, isLoading: twlLoading } = useSWR(
+    'PoolWrappingTableContainer-getPoolTwlTableData',
+    () => getPoolTwlTableData(poolAddress, availableTypedChainIds)
+  );
+
+  const { data: wrappingFeesData, isLoading: wrappingFeesLoading } = useSWR(
+    'PoolWrappingTableContainer-getPoolWrappingFeesTableData',
+    () => getPoolWrappingFeesTableData(poolAddress, availableTypedChainIds)
+  );
+
   return (
     <div className="space-y-1">
       <TableAndChartTabs
@@ -32,14 +38,14 @@ const PoolWrappingTableContainer: FC<{
       >
         {/* Deposit 24h */}
         <TabContent value={twlTab}>
-          <Suspense fallback={<ContainerSkeleton />}>
-            <PoolWrappingTableCmp
-              dataFetcher={() =>
-                getPoolTwlTableData(poolAddress, availableTypedChainIds)
-              }
-              availableTypedChainIds={availableTypedChainIds}
+          {twlLoading ? (
+            <ContainerSkeleton />
+          ) : (
+            <PoolWrappingTable
+              data={twlData}
+              typedChainIds={availableTypedChainIds}
             />
-          </Suspense>
+          )}
           <Typography
             variant="body2"
             className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
@@ -50,17 +56,14 @@ const PoolWrappingTableContainer: FC<{
 
         {/* Withdrawal 24h */}
         <TabContent value={wrappingFeesTab}>
-          <Suspense fallback={<ContainerSkeleton />}>
-            <PoolWrappingTableCmp
-              dataFetcher={() =>
-                getPoolWrappingFeesTableData(
-                  poolAddress,
-                  availableTypedChainIds
-                )
-              }
-              availableTypedChainIds={availableTypedChainIds}
+          {wrappingFeesLoading ? (
+            <ContainerSkeleton />
+          ) : (
+            <PoolWrappingTable
+              data={wrappingFeesData}
+              typedChainIds={availableTypedChainIds}
             />
-          </Suspense>
+          )}
           <Typography
             variant="body2"
             className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
@@ -74,17 +77,3 @@ const PoolWrappingTableContainer: FC<{
 };
 
 export default PoolWrappingTableContainer;
-
-async function PoolWrappingTableCmp({
-  dataFetcher,
-  availableTypedChainIds,
-}: {
-  dataFetcher: () => Promise<PoolWrappingDataType[]>;
-  availableTypedChainIds: number[];
-}) {
-  const data = await dataFetcher();
-
-  return (
-    <PoolWrappingTable data={data} typedChainIds={availableTypedChainIds} />
-  );
-}

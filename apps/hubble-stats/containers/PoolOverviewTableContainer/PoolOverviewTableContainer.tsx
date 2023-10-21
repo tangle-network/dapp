@@ -1,21 +1,19 @@
+'use client';
+
 import {
   TabContent,
   TableAndChartTabs,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { Suspense, cache, type FC } from 'react';
+import { type FC } from 'react';
 
+import useSWR from 'swr';
 import { ContainerSkeleton, PoolOverviewTable } from '../../components';
-import { PoolOverviewDataType } from '../../components/PoolOverviewTable/types';
 import {
-  getPoolDepositTableData as getDeposit,
-  getPoolRelayerEarningsTableData as getRelayerEarnings,
-  getPoolWithdrawalTableData as getWithdrawal,
+  getPoolDepositTableData,
+  getPoolRelayerEarningsTableData,
+  getPoolWithdrawalTableData,
 } from '../../data';
-
-const getPoolDepositTableData = cache(getDeposit);
-const getPoolWithdrawalTableData = cache(getWithdrawal);
-const getPoolRelayerEarningsTableData = cache(getRelayerEarnings);
 
 const deposit24hTab = 'Deposits 24H' as const;
 const withdrawal24hTab = 'Withdrawals 24H' as const;
@@ -26,6 +24,22 @@ const PoolOverviewTableContainer: FC<{
   epochNow: number;
   availableTypedChainIds: number[];
 }> = ({ poolAddress, epochNow, availableTypedChainIds }) => {
+  const { data: depositData, isLoading: depositLoading } = useSWR(
+    'PoolOverviewTableContainer-getPoolDepositTableData',
+    () => getPoolDepositTableData(poolAddress, epochNow, availableTypedChainIds)
+  );
+
+  const { data: withdrawalData, isLoading: withdrawalLoading } = useSWR(
+    'PoolOverviewTableContainer-getPoolWithdrawalTableData',
+    () =>
+      getPoolWithdrawalTableData(poolAddress, epochNow, availableTypedChainIds)
+  );
+
+  const { data: relayerEarningsData, isLoading: relayerEarningsLoading } =
+    useSWR('PoolOverviewTableContainer-getPoolRelayerEarningsTableData', () =>
+      getPoolRelayerEarningsTableData(poolAddress, availableTypedChainIds)
+    );
+
   return (
     <div className="space-y-1">
       <TableAndChartTabs
@@ -35,49 +49,38 @@ const PoolOverviewTableContainer: FC<{
       >
         {/* Deposit 24h */}
         <TabContent value={deposit24hTab}>
-          <Suspense fallback={<ContainerSkeleton numOfRows={1} />}>
-            <PoolOverviewTableCmp
-              dataFetcher={() =>
-                getPoolDepositTableData(
-                  poolAddress,
-                  epochNow,
-                  availableTypedChainIds
-                )
-              }
-              availableTypedChainIds={availableTypedChainIds}
+          {depositLoading ? (
+            <ContainerSkeleton numOfRows={1} />
+          ) : (
+            <PoolOverviewTable
+              data={depositData}
+              typedChainIds={availableTypedChainIds}
             />
-          </Suspense>
+          )}
         </TabContent>
 
         {/* Withdrawal 24h */}
         <TabContent value={withdrawal24hTab}>
-          <Suspense fallback={<ContainerSkeleton numOfRows={1} />}>
-            <PoolOverviewTableCmp
-              dataFetcher={() =>
-                getPoolWithdrawalTableData(
-                  poolAddress,
-                  epochNow,
-                  availableTypedChainIds
-                )
-              }
-              availableTypedChainIds={availableTypedChainIds}
+          {withdrawalLoading ? (
+            <ContainerSkeleton numOfRows={1} />
+          ) : (
+            <PoolOverviewTable
+              data={withdrawalData}
+              typedChainIds={availableTypedChainIds}
             />
-          </Suspense>
+          )}
         </TabContent>
 
         {/* Relayer Earnings */}
         <TabContent value={relayerEarningsTab}>
-          <Suspense fallback={<ContainerSkeleton numOfRows={1} />}>
-            <PoolOverviewTableCmp
-              dataFetcher={() =>
-                getPoolRelayerEarningsTableData(
-                  poolAddress,
-                  availableTypedChainIds
-                )
-              }
-              availableTypedChainIds={availableTypedChainIds}
+          {relayerEarningsLoading ? (
+            <ContainerSkeleton numOfRows={1} />
+          ) : (
+            <PoolOverviewTable
+              data={relayerEarningsData}
+              typedChainIds={availableTypedChainIds}
             />
-          </Suspense>
+          )}
           <Typography
             variant="body2"
             className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
@@ -91,17 +94,3 @@ const PoolOverviewTableContainer: FC<{
 };
 
 export default PoolOverviewTableContainer;
-
-async function PoolOverviewTableCmp({
-  dataFetcher,
-  availableTypedChainIds,
-}: {
-  dataFetcher: () => Promise<PoolOverviewDataType[]>;
-  availableTypedChainIds: number[];
-}) {
-  const data = await dataFetcher();
-
-  return (
-    <PoolOverviewTable data={data} typedChainIds={availableTypedChainIds} />
-  );
-}

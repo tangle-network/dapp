@@ -1,18 +1,22 @@
-import { cache } from 'react';
-import { getPoolTvlChartData as getData } from '../../data';
+'use client';
+
+import useSWR from 'swr';
+import PoolChartSkeleton from '../../components/skeleton/PoolChartSkeleton';
+import { getPoolTvlChartData } from '../../data';
 import { AreaChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
-const getPoolTvlChartData = cache(getData);
-
-export default async function PoolTvlChartContainer(props: PoolChartPropsType) {
+export default function PoolTvlChartContainer(props: PoolChartPropsType) {
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
-  const { currentPoolTvl, poolTvlData } = await getPoolTvlChartData(
-    poolAddress,
-    startingEpoch,
-    numDatesFromStart
+  const { data: { currentPoolTvl, poolTvlData } = {}, isLoading } = useSWR(
+    'PoolTvlChartContainer-getPoolTvlChartData',
+    () => getPoolTvlChartData(poolAddress, startingEpoch, numDatesFromStart)
   );
+
+  if (isLoading || !poolTvlData) {
+    return <PoolChartSkeleton />;
+  }
 
   return (
     <AreaChartContainerClient

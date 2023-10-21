@@ -1,21 +1,28 @@
-import { cache } from 'react';
-import { getPoolWrappingFeesChartData as getData } from '../../data';
+'use client';
+
+import useSWR from 'swr';
+import PoolChartSkeleton from '../../components/skeleton/PoolChartSkeleton';
+import { getPoolWrappingFeesChartData } from '../../data';
 import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
-const getPoolWrappingFeesChartData = cache(getData);
-
-export default async function PoolWrappingFeesChartContainer(
+export default function PoolWrappingFeesChartContainer(
   props: PoolChartPropsType
 ) {
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
-  const { poolWrappingFees, poolWrappingFeesData } =
-    await getPoolWrappingFeesChartData(
-      poolAddress,
-      startingEpoch,
-      numDatesFromStart
+  const { data: { poolWrappingFeesData, poolWrappingFees } = {}, isLoading } =
+    useSWR('PoolWrappingFeesChartContainer-getPoolWrappingFeesChartData', () =>
+      getPoolWrappingFeesChartData(
+        poolAddress,
+        startingEpoch,
+        numDatesFromStart
+      )
     );
+
+  if (isLoading || !poolWrappingFeesData) {
+    return <PoolChartSkeleton />;
+  }
 
   return (
     <BarChartContainerClient
