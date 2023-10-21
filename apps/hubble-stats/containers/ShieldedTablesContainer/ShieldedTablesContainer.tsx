@@ -1,6 +1,8 @@
-import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
-import { Suspense, cache, type FC } from 'react';
+'use client';
 
+import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { cache, type FC } from 'react';
+import useSWR from 'swr';
 import { ContainerSkeleton } from '../../components';
 import {
   getShieldedAssetsTableData as getShieldedAssets,
@@ -19,6 +21,16 @@ const poolsTableTab = 'Shielded Pools';
 const ShieldedTablesContainer: FC<{
   epochNow: number;
 }> = ({ epochNow }) => {
+  const { data: shieldedAssetsData, isLoading: shieldedAssetLoading } = useSWR(
+    'ShieldedTablesContainer-getShieldedAssetsTableData',
+    () => getShieldedAssetsTableData(epochNow)
+  );
+
+  const { data: shieldedPoolsData, isLoading: shieldedPoolsLoading } = useSWR(
+    'ShieldedTablesContainer-getShieldedPoolsTableData',
+    () => getShieldedPoolsTableData(epochNow)
+  );
+
   return (
     <TableAndChartTabs
       tabs={[assetsTableTab, poolsTableTab]}
@@ -26,22 +38,26 @@ const ShieldedTablesContainer: FC<{
     >
       {/* Shielded Assets Table */}
       <TabContent value={assetsTableTab}>
-        <Suspense fallback={<ContainerSkeleton />}>
+        {shieldedAssetLoading || !shieldedAssetsData ? (
+          <ContainerSkeleton />
+        ) : (
           <ShieldedAssetsTableContainer
-            dataFetcher={() => getShieldedAssetsTableData(epochNow)}
+            value={shieldedAssetsData}
             pageSize={pageSize}
           />
-        </Suspense>
+        )}
       </TabContent>
 
       {/* Shielded Pools Table */}
       <TabContent value={poolsTableTab}>
-        <Suspense fallback={<ContainerSkeleton />}>
+        {shieldedPoolsLoading || !shieldedPoolsData ? (
+          <ContainerSkeleton />
+        ) : (
           <ShieldedPoolsTableContainer
-            dataFetcher={() => getShieldedPoolsTableData(epochNow)}
+            value={shieldedPoolsData}
             pageSize={pageSize}
           />
-        </Suspense>
+        )}
       </TabContent>
     </TableAndChartTabs>
   );

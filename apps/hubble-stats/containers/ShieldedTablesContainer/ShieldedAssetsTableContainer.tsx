@@ -1,14 +1,12 @@
 import { ShieldedAssetsTable } from '../../components';
 import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
 
-export default async function ShieldedAssetsTableContainer({
+export default function ShieldedAssetsTableContainer({
   pageSize,
-  dataFetcher,
+  value,
 }: {
   pageSize: number;
-  dataFetcher: () => Promise<ShieldedAssetType[]>;
+  value: ShieldedAssetType[];
 }) {
-  const data = await dataFetcher();
-
-  return <ShieldedAssetsTable data={data} pageSize={pageSize} />;
+  return <ShieldedAssetsTable data={value} pageSize={pageSize} />;
 }
