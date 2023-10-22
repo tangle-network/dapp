@@ -24,7 +24,7 @@ import {
   WEBB_FAUCET_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
-const SideBarItems: SideBarItemProps[] = [
+const sideBarItems: SideBarItemProps[] = [
   {
     name: 'EVM Staking',
     href: '/',
@@ -78,7 +78,7 @@ const SideBarItems: SideBarItemProps[] = [
   },
 ];
 
-const SideBarFooter: SideBarFooterType = {
+const sideBarFooter: SideBarFooterType = {
   Icon: DocumentationIcon,
   href: WEBB_TANGLE_DOCS_URL,
   isInternal: false,
@@ -86,12 +86,12 @@ const SideBarFooter: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-const SideBarProps: SidebarProps = {
+const sideBarProps: SidebarProps = {
   ClosedLogo: SidebarTangleClosedIcon,
   Logo: TangleLogo,
-  footer: SideBarFooter,
-  items: SideBarItems,
+  footer: sideBarFooter,
+  items: sideBarItems,
   logoLink: TANGLE_MKT_URL,
 };
 
-export default SideBarProps;
+export default sideBarProps;
