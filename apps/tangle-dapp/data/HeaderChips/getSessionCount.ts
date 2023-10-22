@@ -1,7 +1,7 @@
-import { getPolkadotApi } from '../../constants';
+import { getPolkadotApiPromise } from '../../constants';
 
 export const getSessionCount = async (): Promise<number> => {
-  const api = await getPolkadotApi();
+  const api = await getPolkadotApiPromise();
 
   if (!api) return NaN;
 
