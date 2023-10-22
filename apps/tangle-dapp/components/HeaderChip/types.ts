@@ -1,8 +1,7 @@
 import type { IconBase } from '@webb-tools/icons/types';
-import type React from 'react';
 
 export interface HeaderChipItemProps {
-  Icon: React.ReactElement<IconBase>;
+  Icon: (props: IconBase) => JSX.Element;
   label: string;
   hasTooltip?: boolean;
   tooltipContent?: string;

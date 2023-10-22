@@ -6,9 +6,9 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { type FC, Suspense, useMemo } from 'react';
+import { Suspense, useMemo, type FC } from 'react';
 
-import { getRoundedDownNumberWith2Decimals } from '../../utils';
+import ChipValueClient from './ChipValueClient';
 import { HeaderChipItemProps } from './types';
 
 export const HeaderChip: FC<HeaderChipItemProps> = ({
@@ -50,5 +50,5 @@ const HeaderChipValue = async ({
 }: Pick<HeaderChipItemProps, 'dataFetcher'>) => {
   const value = await dataFetcher();
 
-  return <>{getRoundedDownNumberWith2Decimals(value)}</>;
+  return <ChipValueClient value={value} />;
 };

@@ -4,7 +4,8 @@
     "next",
     "next/core-web-vitals",
     "../../.eslintrc.json",
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:react-hooks/recommended"
   ],
   "plugins": ["unused-imports", "simple-import-sort"],
   "parser": "@typescript-eslint/parser",
