@@ -10,8 +10,8 @@ export default function PoolTwlChartContainer(props: PoolChartPropsType) {
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
   const { data: { poolTwlData, currentPoolTwl } = {}, isLoading } = useSWR(
-    'PoolTwlChartContainer-getPoolTwlChartData',
-    () => getPoolTwlChartData(poolAddress, startingEpoch, numDatesFromStart)
+    [getPoolTwlChartData.name, poolAddress, startingEpoch, numDatesFromStart],
+    ([, ...args]) => getPoolTwlChartData(...args)
   );
 
   if (isLoading || !poolTwlData) {

@@ -13,13 +13,13 @@ export default function ItemsContainer(props: {
   const { symbol, epochNow, epochStart, poolAddress } = props;
 
   const { data: tvlData, isLoading: tvlDataLoading } = useSWR(
-    'ItemsContainer-getPoolInfoCardTvlData',
-    () => getPoolInfoCardTvlData(poolAddress, epochStart, epochNow)
+    [getPoolInfoCardTvlData.name, poolAddress, epochStart, epochNow],
+    ([, ...args]) => getPoolInfoCardTvlData(...args)
   );
 
   const { data: depositData, isLoading: depositDataLoading } = useSWR(
-    'ItemsContainer-getPoolInfoCardDepositData',
-    () => getPoolInfoCardDepositData(poolAddress, epochNow)
+    [getPoolInfoCardDepositData.name, poolAddress, epochNow],
+    ([, ...args]) => getPoolInfoCardDepositData(...args)
   );
 
   return (

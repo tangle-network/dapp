@@ -13,13 +13,13 @@ export default function PoolRelayerEarningsChartContainer(
 
   const { data: { poolRelayerEarningsData, relayerEarnings } = {}, isLoading } =
     useSWR(
-      'PoolRelayerEarningsChartContainer-getPoolRelayerEarningsChartData',
-      () =>
-        getPoolRelayerEarningsChartData(
-          poolAddress,
-          startingEpoch,
-          numDatesFromStart
-        )
+      [
+        getPoolRelayerEarningsChartData.name,
+        poolAddress,
+        startingEpoch,
+        numDatesFromStart,
+      ],
+      ([, ...args]) => getPoolRelayerEarningsChartData(...args)
     );
 
   if (isLoading || !poolRelayerEarningsData) {

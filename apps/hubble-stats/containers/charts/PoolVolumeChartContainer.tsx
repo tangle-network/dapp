@@ -10,14 +10,14 @@ export default function PoolVolumeChartContainer(props: PoolChartPropsType) {
   const { poolAddress, numDatesFromStart, startingEpoch, epochNow } = props;
 
   const { data: { poolVolumeData, poolDeposit24h } = {}, isLoading } = useSWR(
-    'PoolVolumeChartContainer-getPoolVolumeChartData',
-    () =>
-      getPoolVolumeChartData(
-        poolAddress,
-        startingEpoch,
-        epochNow,
-        numDatesFromStart
-      )
+    [
+      getPoolVolumeChartData.name,
+      poolAddress,
+      startingEpoch,
+      epochNow,
+      numDatesFromStart,
+    ],
+    ([, ...args]) => getPoolVolumeChartData(...args)
   );
 
   if (isLoading || !poolVolumeData) {

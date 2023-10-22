@@ -12,12 +12,14 @@ export default function PoolWrappingFeesChartContainer(
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
   const { data: { poolWrappingFeesData, poolWrappingFees } = {}, isLoading } =
-    useSWR('PoolWrappingFeesChartContainer-getPoolWrappingFeesChartData', () =>
-      getPoolWrappingFeesChartData(
+    useSWR(
+      [
+        getPoolWrappingFeesChartData.name,
         poolAddress,
         startingEpoch,
-        numDatesFromStart
-      )
+        numDatesFromStart,
+      ],
+      ([, ...args]) => getPoolWrappingFeesChartData(...args)
     );
 
   if (isLoading || !poolWrappingFeesData) {

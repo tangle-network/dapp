@@ -20,13 +20,13 @@ const PoolWrappingTableContainer: FC<{
   availableTypedChainIds: number[];
 }> = ({ poolAddress, availableTypedChainIds }) => {
   const { data: twlData, isLoading: twlLoading } = useSWR(
-    'PoolWrappingTableContainer-getPoolTwlTableData',
-    () => getPoolTwlTableData(poolAddress, availableTypedChainIds)
+    [getPoolTwlTableData.name, poolAddress, availableTypedChainIds],
+    ([, ...args]) => getPoolTwlTableData(...args)
   );
 
   const { data: wrappingFeesData, isLoading: wrappingFeesLoading } = useSWR(
-    'PoolWrappingTableContainer-getPoolWrappingFeesTableData',
-    () => getPoolWrappingFeesTableData(poolAddress, availableTypedChainIds)
+    [getPoolWrappingFeesTableData.name, poolAddress, availableTypedChainIds],
+    ([, ...args]) => getPoolWrappingFeesTableData(...args)
   );
 
   return (

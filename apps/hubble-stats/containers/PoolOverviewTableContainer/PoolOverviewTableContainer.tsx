@@ -25,19 +25,33 @@ const PoolOverviewTableContainer: FC<{
   availableTypedChainIds: number[];
 }> = ({ poolAddress, epochNow, availableTypedChainIds }) => {
   const { data: depositData, isLoading: depositLoading } = useSWR(
-    'PoolOverviewTableContainer-getPoolDepositTableData',
-    () => getPoolDepositTableData(poolAddress, epochNow, availableTypedChainIds)
+    [
+      getPoolDepositTableData.name,
+      poolAddress,
+      epochNow,
+      availableTypedChainIds,
+    ],
+    ([, ...args]) => getPoolDepositTableData(...args)
   );
 
   const { data: withdrawalData, isLoading: withdrawalLoading } = useSWR(
-    'PoolOverviewTableContainer-getPoolWithdrawalTableData',
-    () =>
-      getPoolWithdrawalTableData(poolAddress, epochNow, availableTypedChainIds)
+    [
+      getPoolWithdrawalTableData.name,
+      poolAddress,
+      epochNow,
+      availableTypedChainIds,
+    ],
+    ([, ...args]) => getPoolWithdrawalTableData(...args)
   );
 
   const { data: relayerEarningsData, isLoading: relayerEarningsLoading } =
-    useSWR('PoolOverviewTableContainer-getPoolRelayerEarningsTableData', () =>
-      getPoolRelayerEarningsTableData(poolAddress, availableTypedChainIds)
+    useSWR(
+      [
+        getPoolRelayerEarningsTableData.name,
+        poolAddress,
+        availableTypedChainIds,
+      ],
+      ([, ...args]) => getPoolRelayerEarningsTableData(...args)
     );
 
   return (

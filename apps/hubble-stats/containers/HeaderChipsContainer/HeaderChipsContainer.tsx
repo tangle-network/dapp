@@ -7,12 +7,12 @@ import { getHeaderChipsDepositData, getHeaderChipsTvlData } from '../../data';
 
 export default function HeaderChipsContainer() {
   const { data: tvlValue, isLoading: tvlLoading } = useSWR(
-    'HeaderChipsContainer-getHeaderChipsTvlData',
+    getHeaderChipsTvlData.name,
     getHeaderChipsTvlData
   );
 
   const { data: depositValue, isLoading: depositLoading } = useSWR(
-    'HeaderChipsContainer-getHeaderChipsDepositData',
+    getHeaderChipsDepositData.name,
     getHeaderChipsDepositData
   );
 

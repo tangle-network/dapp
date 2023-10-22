@@ -10,8 +10,13 @@ export default function OverviewVolumeChartContainer(props: ChartProps) {
   const { numDatesFromStart, startingEpoch, epochNow } = props;
 
   const { data: { volumeData, deposit24h } = {}, isLoading } = useSWR(
-    'OverviewVolumeChartContainer-getOverviewVolumeChartData',
-    () => getOverviewVolumeChartData(startingEpoch, epochNow, numDatesFromStart)
+    [
+      getOverviewVolumeChartData.name,
+      startingEpoch,
+      epochNow,
+      numDatesFromStart,
+    ],
+    ([, ...args]) => getOverviewVolumeChartData(...args)
   );
 
   if (isLoading || !volumeData) {

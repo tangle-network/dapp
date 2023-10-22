@@ -17,22 +17,22 @@ export default function KeyMetricsTableContainer(props: {
   const { epochNow, epochStart } = props;
 
   const { data: tvlData, isLoading: tvlLoading } = useSWR(
-    'KeyMetricsTableContainer-getKeyMetricTvlData',
-    () => getKeyMetricTvlData(epochStart, epochNow)
+    [getKeyMetricTvlData.name, epochStart, epochNow],
+    ([, ...args]) => getKeyMetricTvlData(...args)
   );
 
   const { data: depositData, isLoading: depositLoading } = useSWR(
-    'KeyMetricsTableContainer-getKeyMetricDepositData',
-    () => getKeyMetricDepositData(epochNow)
+    [getKeyMetricDepositData.name, epochNow],
+    ([, ...args]) => getKeyMetricDepositData(...args)
   );
 
   const { data: relayerFeesData, isLoading: relayerFeesLoading } = useSWR(
-    'KeyMetricsTableContainer-getKeyMetricRelayerFeesData',
+    getKeyMetricRelayerFeesData.name,
     getKeyMetricRelayerFeesData
   );
 
   const { data: wrappingFeesData, isLoading: wrappingFeesLoading } = useSWR(
-    'KeyMetricsTableContainer-getKeyMetricWrappingFeesData',
+    getKeyMetricWrappingFeesData.name,
     getKeyMetricWrappingFeesData
   );
 
