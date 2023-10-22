@@ -1,7 +1,8 @@
-import { getPolkadotApi } from '../../constants';
 import { BN_ZERO } from '@polkadot/util';
-import { calculateInflation } from '../../utils';
+
+import { getPolkadotApi } from '../../constants';
 import { MetricReturnType } from '../../types';
+import { calculateInflation } from '../../utils';
 
 export const getInflationPercentage = async (): Promise<MetricReturnType> => {
   const api = await getPolkadotApi();

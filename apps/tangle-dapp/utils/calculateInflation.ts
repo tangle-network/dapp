@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
-import { BN, BN_MILLION } from '@polkadot/util';
 import { getInflationParams } from '@polkadot/apps-config';
+import { BN, BN_MILLION } from '@polkadot/util';
 
 // Source - https://github.com/polkadot-js/apps/blob/80759592b9f01996e67175e5dd4bdd89b58322ad/packages/react-hooks/src/useInflation.ts#L19C50-L19C50
 export const calculateInflation = (

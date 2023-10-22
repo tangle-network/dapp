@@ -1,9 +1,10 @@
+import { SkeletonLoader,Typography } from '@webb-tools/webb-ui-components';
 import { FC, Suspense } from 'react';
-import { Typography, SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { InfoIconWithTooltip } from '..';
-import { getRoundedDownNumberWith2Decimals } from '../../utils';
-import { MetricItemProps } from './types';
 import { twMerge } from 'tailwind-merge';
+
+import { getRoundedDownNumberWith2Decimals } from '../../utils';
+import { InfoIconWithTooltip } from '..';
+import { MetricItemProps } from './types';
 
 export const KeyMetricItem: FC<MetricItemProps> = ({
   title,

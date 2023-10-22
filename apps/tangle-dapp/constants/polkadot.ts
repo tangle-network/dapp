@@ -6,7 +6,10 @@ export const getPolkadotApi = async (
 ): Promise<ApiPromise | undefined> => {
   try {
     const wsProvider = new WsProvider(endpoint);
-    const apiPromise = await ApiPromise.create({ provider: wsProvider });
+    const apiPromise = await ApiPromise.create({
+      provider: wsProvider,
+      noInitWarn: true,
+    });
 
     return apiPromise;
   } catch (e) {

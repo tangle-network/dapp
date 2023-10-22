@@ -1,4 +1,5 @@
 import { Typography } from '@webb-tools/webb-ui-components';
+
 import { HeaderChipsContainer, KeyMetricsTableContainer } from '../containers';
 
 export default async function Index() {

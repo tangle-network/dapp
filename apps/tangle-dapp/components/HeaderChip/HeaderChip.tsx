@@ -1,14 +1,15 @@
-import { Suspense, type FC, useMemo } from 'react';
 import {
   Chip,
+  SkeletonLoader,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
-  SkeletonLoader,
 } from '@webb-tools/webb-ui-components';
-import { HeaderChipItemProps } from './types';
+import { type FC, Suspense, useMemo } from 'react';
+
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
+import { HeaderChipItemProps } from './types';
 
 export const HeaderChip: FC<HeaderChipItemProps> = ({
   Icon,
