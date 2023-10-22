@@ -8,6 +8,7 @@ import {
   SkeletonLoader,
 } from '@webb-tools/webb-ui-components';
 import { HeaderChipItemProps } from './types';
+import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
 export const HeaderChip: FC<HeaderChipItemProps> = ({
   Icon,
@@ -48,5 +49,5 @@ const HeaderChipValue = async ({
 }: Pick<HeaderChipItemProps, 'dataFetcher'>) => {
   const value = await dataFetcher();
 
-  return <>{value}</>;
+  return <>{getRoundedDownNumberWith2Decimals(value)}</>;
 };

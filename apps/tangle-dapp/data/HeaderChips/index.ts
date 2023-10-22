@@ -1,2 +1,2 @@
-export * from './getEra';
-export * from './getSession';
+export * from './getEraCount';
+export * from './getSessionCount';

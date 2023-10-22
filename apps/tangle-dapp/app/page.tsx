@@ -1,14 +1,20 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { HeaderChipsContainer } from '../containers/HeaderChipsContainer';
+import { HeaderChipsContainer, KeyMetricsTableContainer } from '../containers';
 
 export default async function Index() {
   return (
-    <div className="flex items-center justify-between">
-      <Typography variant="h4" fw="bold">
-        Staking Overview
-      </Typography>
+    <div>
+      <div className="flex items-center justify-between">
+        <Typography variant="h4" fw="bold">
+          Staking Overview
+        </Typography>
 
-      <HeaderChipsContainer />
+        <HeaderChipsContainer />
+      </div>
+
+      <div className="mt-12">
+        <KeyMetricsTableContainer />
+      </div>
     </div>
   );
 }
