@@ -265,7 +265,10 @@ export const StatsProvider: React.FC<
   useEffect(() => {
     const getPromiseApi = async (): Promise<void> => {
       const wsProvider = new WsProvider(props.polkadotEndpoint);
-      const apiPromise = await ApiPromise.create({ provider: wsProvider });
+      const apiPromise = await ApiPromise.create({
+        provider: wsProvider,
+        noInitWarn: true,
+      });
       setApi(apiPromise);
 
       // Get session height from Polkadot API

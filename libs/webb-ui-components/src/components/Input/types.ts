@@ -1,5 +1,4 @@
-import { PropsOf, IWebbComponentBase } from '../../types';
-import { EventHandler } from 'react';
+import { IWebbComponentBase, PropsOf } from '../../types';
 
 type OmittedKeys = 'disabled' | 'required' | 'readOnly' | 'size' | 'onChange';
 

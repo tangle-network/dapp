@@ -9,7 +9,7 @@ import {
   CrowdloanFundInfo,
 } from '@webb-tools/abstract-api-provider/crowdloan';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import '@webb-tools/protocol-substrate-types';
+import '@webb-tools/tangle-substrate-types';
 
 import { LoggerService } from '@webb-tools/app-util';
 

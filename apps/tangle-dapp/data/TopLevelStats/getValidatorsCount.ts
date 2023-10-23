@@ -1,8 +1,8 @@
-import { getPolkadotApi } from '../../constants';
+import { getPolkadotApiPromise } from '../../constants';
 import { MetricReturnType } from '../../types';
 
 export const getValidatorsCount = async (): Promise<MetricReturnType> => {
-  const api = await getPolkadotApi();
+  const api = await getPolkadotApiPromise();
 
   if (!api)
     return {
@@ -19,9 +19,9 @@ export const getValidatorsCount = async (): Promise<MetricReturnType> => {
 
     return {
       value1: activeValidatorsCount,
-      value2: Number(totalValidatorsCount.toString()),
+      value2: totalValidatorsCount.toNumber(),
     };
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
 
     return {

@@ -1,7 +1,7 @@
 'use client';
 
-import { FC } from 'react';
 import { SideBarMenu as SideBarMenuCmp } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 
 import sideBarProps from './sideBarProps';
 

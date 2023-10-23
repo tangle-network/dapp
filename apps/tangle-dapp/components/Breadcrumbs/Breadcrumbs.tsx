@@ -1,21 +1,18 @@
 'use client';
 
 import { FundsLine } from '@webb-tools/icons';
+import { getIconSizeInPixel } from '@webb-tools/icons/utils';
 import {
   Breadcrumbs as BreadcrumbsCmp,
   BreadcrumbsItem,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { type FC, useMemo, useEffect } from 'react';
+import { type FC, useMemo } from 'react';
+
 import { BreadcrumbType } from './types';
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
 
 const Breadcrumbs: FC = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
     const md = getIconSizeInPixel('md');
     const lg = getIconSizeInPixel('lg');

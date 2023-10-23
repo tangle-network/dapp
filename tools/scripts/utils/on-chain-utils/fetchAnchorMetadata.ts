@@ -18,7 +18,7 @@ import {
   ZERO_BIG_INT,
 } from '@webb-tools/dapp-config/src/constants';
 import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
-import '@webb-tools/protocol-substrate-types';
+import '@webb-tools/tangle-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import getViemClient from '@webb-tools/web3-api-provider/src/utils/getViemClient';
