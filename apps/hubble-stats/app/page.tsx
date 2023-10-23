@@ -1,4 +1,3 @@
-import { type FC, Suspense } from 'react';
 import {
   KeyMetricsTableContainer,
   ShieldedTablesContainer,
@@ -8,15 +7,8 @@ import {
   OverviewVolumeChartContainer,
 } from '../containers/charts';
 import { getDateDataForPage } from '../utils';
-import { ContainerSkeleton } from '../components';
 
-// force homepage to be dynamic
-export const dynamic = 'force-dynamic';
-
-// revalidate every 5 seconds
-export const revalidate = 5;
-
-export default async function Index() {
+export default function Index() {
   const { epochStart, epochNow, numDatesFromStart } = getDateDataForPage();
 
   const chartProps = {
@@ -29,13 +21,9 @@ export default async function Index() {
     <div className="py-4 space-y-6">
       {/** Overview charts */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Suspense fallback={<ChartSkeleton />}>
-          <OverviewTvlChartContainer {...chartProps} />
-        </Suspense>
+        <OverviewTvlChartContainer {...chartProps} />
 
-        <Suspense fallback={<ChartSkeleton />}>
-          <OverviewVolumeChartContainer {...chartProps} />
-        </Suspense>
+        <OverviewVolumeChartContainer {...chartProps} />
       </div>
 
       <KeyMetricsTableContainer epochStart={epochStart} epochNow={epochNow} />
@@ -44,7 +32,3 @@ export default async function Index() {
     </div>
   );
 }
-
-const ChartSkeleton: FC = () => {
-  return <ContainerSkeleton numOfRows={1} className="min-h-[330px]" />;
-};

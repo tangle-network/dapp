@@ -1,21 +1,30 @@
-import { cache } from 'react';
-import { getPoolRelayerEarningsChartData as getData } from '../../data';
+'use client';
+
+import useSWR from 'swr';
+import PoolChartSkeleton from '../../components/skeleton/PoolChartSkeleton';
+import { getPoolRelayerEarningsChartData } from '../../data';
 import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
-const getPoolRelayerEarningsChartData = cache(getData);
-
-export default async function PoolRelayerEarningsChartContainer(
+export default function PoolRelayerEarningsChartContainer(
   props: PoolChartPropsType
 ) {
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
-  const { relayerEarnings, poolRelayerEarningsData } =
-    await getPoolRelayerEarningsChartData(
-      poolAddress,
-      startingEpoch,
-      numDatesFromStart
+  const { data: { poolRelayerEarningsData, relayerEarnings } = {}, isLoading } =
+    useSWR(
+      [
+        getPoolRelayerEarningsChartData.name,
+        poolAddress,
+        startingEpoch,
+        numDatesFromStart,
+      ],
+      ([, ...args]) => getPoolRelayerEarningsChartData(...args)
     );
+
+  if (isLoading || !poolRelayerEarningsData) {
+    return <PoolChartSkeleton />;
+  }
 
   return (
     <BarChartContainerClient

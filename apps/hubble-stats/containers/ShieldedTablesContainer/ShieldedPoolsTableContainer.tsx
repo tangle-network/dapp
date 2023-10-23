@@ -1,14 +1,12 @@
 import { ShieldedPoolsTable } from '../../components';
 import { ShieldedPoolType } from '../../components/ShieldedPoolsTable/types';
 
-export default async function ShieldedPoolsTableContainer({
+export default function ShieldedPoolsTableContainer({
   pageSize,
-  dataFetcher,
+  value,
 }: {
   pageSize: number;
-  dataFetcher: () => Promise<ShieldedPoolType[]>;
+  value: ShieldedPoolType[];
 }) {
-  const data = await dataFetcher();
-
-  return <ShieldedPoolsTable data={data} pageSize={pageSize} />;
+  return <ShieldedPoolsTable data={value} pageSize={pageSize} />;
 }

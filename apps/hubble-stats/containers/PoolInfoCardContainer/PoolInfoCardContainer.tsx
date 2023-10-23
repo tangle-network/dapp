@@ -1,22 +1,11 @@
-import cx from 'classnames';
 import { ShieldedAssetIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
+import cx from 'classnames';
 
-import {
-  CopyIconWithTooltip,
-  PoolOverviewCardItem,
-  PoolTypeChip,
-} from '../../components';
+import { CopyIconWithTooltip, PoolTypeChip } from '../../components';
 import { VANCHORS_MAP } from '../../constants';
-import {
-  getPoolInfoCardTvlData as getPoolTvl,
-  getPoolInfoCardDepositData as getPoolDeposit,
-} from '../../data';
-import { cache } from 'react';
-
-const getPoolInfoCardTvlData = cache(getPoolTvl);
-const getPoolInfoCardDepositData = cache(getPoolDeposit);
+import ItemsContainer from './ItemsContainer';
 
 export default function PoolInfoCardContainer({
   poolAddress,
@@ -66,23 +55,12 @@ export default function PoolInfoCardContainer({
         </div>
 
         {/* 24h deposits + TVL + 24h fees */}
-        <div className="grid grid-cols-2">
-          <PoolOverviewCardItem
-            title="tvl"
-            suffix={` ${symbol}`}
-            dataFetcher={() =>
-              getPoolInfoCardTvlData(poolAddress, epochStart, epochNow)
-            }
-          />
-          <PoolOverviewCardItem
-            title="Deposits 24H"
-            suffix={` ${symbol}`}
-            className="border-l border-mono-40 dark:border-mono-140"
-            dataFetcher={() =>
-              getPoolInfoCardDepositData(poolAddress, epochNow)
-            }
-          />
-        </div>
+        <ItemsContainer
+          symbol={symbol}
+          poolAddress={poolAddress}
+          epochNow={epochNow}
+          epochStart={epochStart}
+        />
       </div>
     </div>
   );

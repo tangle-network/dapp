@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/tangle-website",
   "version": "0.0.6",
-  "license": "APACHE-2.0",
+  "license": "Apache-2.0",
   "description": "Official Tangle Network website"
 }

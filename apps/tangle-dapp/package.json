@@ -1,3 +1,5 @@
 {
-  "name": "@webb-tools/tangle-dapp"
+  "name": "@webb-tools/tangle-dapp",
+  "version": "0.0.1",
+  "license": "Apache-2.0"
 }

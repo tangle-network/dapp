@@ -7,14 +7,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { type FC, useMemo, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { useMemo, type FC } from 'react';
 
 import { VANCHORS_MAP } from '../../constants';
 import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
-  const router = useRouter();
   const pathname = usePathname();
 
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
@@ -48,15 +47,6 @@ const Breadcrumbs: FC = () => {
       },
     ];
   }, [pathname]);
-
-  /**
-   * Pages not reload server data when navigating to a page when go back and forth in the browser
-   * Therefore, need to refresh the page when the user navigates to a page
-   * This keeps all client-side components still remain their states
-   */
-  useEffect(() => {
-    router.refresh();
-  }, [router, pathname]);
 
   return (
     <BreadcrumbsCmp>

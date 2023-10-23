@@ -1,17 +1,26 @@
+'use client';
+
 import { Typography } from '@webb-tools/webb-ui-components';
 
-import { cache } from 'react';
 import { PoolMetadataTable } from '../../components';
 import { PoolAttributeType } from '../../components/PoolMetadataTable/types';
-import { getPoolMetadataTableData as getData } from '../../data';
+import { getPoolMetadataTableData } from '../../data';
+import useSWR from 'swr';
 
-const getPoolMetadataTableData = cache(getData);
-
-export default async function PoolMetadataTableContainer({
+export default function PoolMetadataTableContainer({
   poolAddress,
 }: {
   poolAddress: string;
 }) {
+  const { data, isLoading } = useSWR(
+    [getPoolMetadataTableData.name, poolAddress],
+    ([, args]) => getPoolMetadataTableData(args)
+  );
+
+  if (isLoading || !data) {
+    return null;
+  }
+
   const {
     name,
     symbol,
@@ -21,7 +30,7 @@ export default async function PoolMetadataTableContainer({
     treasuryAddress,
     wrappingFees,
     creationDate,
-  } = await getPoolMetadataTableData(poolAddress);
+  } = data;
 
   const metadata: PoolAttributeType[] = [
     {

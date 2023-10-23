@@ -1,9 +1,10 @@
 import { type IconBase } from '@webb-tools/icons/types';
 
-export interface HeaderChipItemProps {
+export interface HeaderChipItemProps<T> {
   Icon: (props: IconBase) => JSX.Element;
   label: string;
   hasTooltip?: boolean;
   tooltipContent?: string;
-  dataFetcher: () => Promise<number | undefined>;
+  isLoading?: boolean;
+  value?: T;
 }

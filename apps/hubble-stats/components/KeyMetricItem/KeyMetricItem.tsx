@@ -1,17 +1,18 @@
-import { FC, Suspense } from 'react';
-import cx from 'classnames';
-import { Typography, SkeletonLoader } from '@webb-tools/webb-ui-components';
+import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
+import cx from 'classnames';
 
 import { InfoIconWithTooltip } from '..';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
 import { MetricItemProps } from './types';
 
-const KeyMetricItem: FC<MetricItemProps> = ({
+function KeyMetricItem<T extends boolean>({
   title,
   tooltip,
+  isLoading,
+  value,
   ...restProps
-}) => {
+}: MetricItemProps<T>) {
   return (
     <div className="px-4 py-2 space-y-2">
       <div className="flex items-center gap-0.5">
@@ -21,21 +22,21 @@ const KeyMetricItem: FC<MetricItemProps> = ({
         {tooltip && <InfoIconWithTooltip content={tooltip} />}
       </div>
 
-      <Suspense fallback={<SkeletonLoader size="lg" />}>
-        <KeyMetricItemValue {...restProps} />
-      </Suspense>
+      {isLoading || !value ? (
+        <SkeletonLoader size="lg" />
+      ) : (
+        <KeyMetricItemValue {...restProps} value={value} />
+      )}
     </div>
   );
-};
+}
 
 export default KeyMetricItem;
 
-const KeyMetricItemValue = async (
-  props: Omit<MetricItemProps, 'title' | 'tooltip'>
-) => {
-  const { dataFetcher, prefix, suffix } = props;
-
-  const { value, changeRate } = await dataFetcher();
+function KeyMetricItemValue<T extends boolean>(
+  props: Omit<MetricItemProps<T>, 'title' | 'tooltip' | 'isLoading'>
+) {
+  const { value: { changeRate, value } = {}, prefix, suffix } = props;
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
@@ -78,4 +79,4 @@ const KeyMetricItemValue = async (
         )}
     </div>
   );
-};
+}
