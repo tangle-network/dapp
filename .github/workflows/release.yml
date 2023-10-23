@@ -51,15 +51,15 @@ jobs:
         with:
           paths: apps/faucet
 
-      - uses: marceloprado/has-changed-path@v1
-        id: changed-webbsite
-        with:
-          paths: apps/webbsite
+      # - uses: marceloprado/has-changed-path@v1
+      #   id: changed-webbsite
+      #   with:
+      #     paths: apps/webbsite
 
-      - uses: marceloprado/has-changed-path@v1
-        id: changed-tangle
-        with:
-          paths: apps/tangle-website
+      # - uses: marceloprado/has-changed-path@v1
+      #   id: changed-tangle
+      #   with:
+      #     paths: apps/tangle-website
 
       - uses: marceloprado/has-changed-path@v1
         id: changed-hubble-stats
@@ -120,19 +120,19 @@ jobs:
           package-path: apps/faucet
           repo-token: ${{ secrets.REPO_TOKEN }}
 
-      - name: Release webbsite
-        if: steps.changed-webbsite.outputs.changed == 'true'
-        uses: ./.github/actions/create-release
-        with:
-          package-path: apps/webbsite
-          repo-token: ${{ secrets.REPO_TOKEN }}
+      # - name: Release webbsite
+      #   if: steps.changed-webbsite.outputs.changed == 'true'
+      #   uses: ./.github/actions/create-release
+      #   with:
+      #     package-path: apps/webbsite
+      #     repo-token: ${{ secrets.REPO_TOKEN }}
 
-      - name: Release tangle
-        if: steps.changed-tangle.outputs.changed == 'true'
-        uses: ./.github/actions/create-release
-        with:
-          package-path: apps/tangle-website
-          repo-token: ${{ secrets.REPO_TOKEN }}
+      # - name: Release tangle
+      #   if: steps.changed-tangle.outputs.changed == 'true'
+      #   uses: ./.github/actions/create-release
+      #   with:
+      #     package-path: apps/tangle-website
+      #     repo-token: ${{ secrets.REPO_TOKEN }}
 
       - name: Release hubble stats
         if: steps.changed-hubble-stats.outputs.changed == 'true'

@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/bridge-dapp",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "./src/index.js",
   "license": "Apache-2.0"
 }

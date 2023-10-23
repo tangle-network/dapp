@@ -6,7 +6,7 @@ name: deploy-webbsite 🌐
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: [develop]
+    branches: []
     paths:
       - 'apps/webbsite/**'
 
