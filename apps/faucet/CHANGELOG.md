@@ -103,3 +103,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.12] - 2023-10-05
 
 - Hotfix faucet footer width.
+
+## [0.0.13] - 2023-10-24
+
+### Fixed, Changed and Added
+
+- Add Tangle Sidebar to Faucet [#1774](https://github.com/webb-tools/webb-dapp/pull/1774)
+- chore: ui update on buttons and containers [#1778](https://github.com/webb-tools/webb-dapp/pull/1778)
+- Faucet Responsive + Fix Flicker [#1782](https://github.com/webb-tools/webb-dapp/pull/1782)
+- Update faucet SEO metadata & container texts [#1785](https://github.com/webb-tools/webb-dapp/pull/1785)
