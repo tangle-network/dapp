@@ -20,7 +20,7 @@ export const getIdealStakedPercentage = async (): Promise<MetricReturnType> => {
     return {
       value1: idealStakePercentage,
     };
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
 
     return {

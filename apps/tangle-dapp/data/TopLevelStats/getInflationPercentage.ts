@@ -20,7 +20,7 @@ export const getInflationPercentage = async (): Promise<MetricReturnType> => {
     return {
       value1: inflationPercentage,
     };
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
 
     return {

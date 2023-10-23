@@ -8,7 +8,7 @@ export default function ChipValueClient(props: {
   type: ChipType;
   value?: number;
 }) {
-  const era = dataHooks[props.type]();
+  const era = dataHooks[props.type](props.value);
 
   return <>{getRoundedDownNumberWith2Decimals(era)}</>;
 }

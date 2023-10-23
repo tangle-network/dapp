@@ -19,9 +19,9 @@ export const getValidatorsCount = async (): Promise<MetricReturnType> => {
 
     return {
       value1: activeValidatorsCount,
-      value2: Number(totalValidatorsCount.toString()),
+      value2: totalValidatorsCount.toNumber(),
     };
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
 
     return {

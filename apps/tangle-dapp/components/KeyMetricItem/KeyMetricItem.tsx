@@ -1,9 +1,9 @@
-import { SkeletonLoader,Typography } from '@webb-tools/webb-ui-components';
+import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, Suspense } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { getRoundedDownNumberWith2Decimals } from '../../utils';
 import { InfoIconWithTooltip } from '..';
+import KeyMetricItemValueClient from './KeyMetricItemValueClient';
 import { MetricItemProps } from './types';
 
 export const KeyMetricItem: FC<MetricItemProps> = ({
@@ -22,42 +22,24 @@ export const KeyMetricItem: FC<MetricItemProps> = ({
       </div>
 
       <Suspense fallback={<SkeletonLoader size="lg" />}>
-        <KeyMetricItemValue {...restProps} />
+        <KeyMetricItemValue {...restProps} title={title} />
       </Suspense>
     </div>
   );
 };
 
-const KeyMetricItemValue = async (
-  props: Omit<MetricItemProps, 'title' | 'tooltip'>
-) => {
-  const { dataFetcher, prefix, suffix } = props;
+const KeyMetricItemValue = async (props: Omit<MetricItemProps, 'tooltip'>) => {
+  const { dataFetcher, prefix, suffix, title } = props;
 
   const { value1, value2 } = await dataFetcher();
 
   return (
-    <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
-      <div className="flex items-center gap-0.5">
-        <Typography
-          variant="h4"
-          fw="bold"
-          className="text-mono-140 dark:text-mono-40"
-        >
-          {typeof value1 === 'number' && (prefix ?? '')}
-          {getRoundedDownNumberWith2Decimals(value1)}
-          {value2 && <> / {getRoundedDownNumberWith2Decimals(value2)}</>}
-        </Typography>
-
-        {typeof value1 === 'number' && suffix && (
-          <Typography
-            variant="h4"
-            fw="bold"
-            className="text-mono-140 dark:text-mono-40"
-          >
-            {suffix}
-          </Typography>
-        )}
-      </div>
-    </div>
+    <KeyMetricItemValueClient
+      prefix={prefix}
+      suffix={suffix}
+      value1={value1}
+      value2={value2}
+      title={title}
+    />
   );
 };

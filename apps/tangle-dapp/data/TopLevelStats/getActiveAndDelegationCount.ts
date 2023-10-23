@@ -19,7 +19,7 @@ export const getActiveAndDelegationCount =
       const currentValidators = await api.query.session.validators();
 
       // Collection of unique nominator addresses - Set is used to avoid duplicates, as a nominator can nominate multiple validators
-      const activeNominators = new Set();
+      const activeNominators = new Set<string>();
 
       // For each validator, get their nominators
       for (const validator of currentValidators) {
@@ -36,9 +36,9 @@ export const getActiveAndDelegationCount =
 
       return {
         value1: activeNominatorsCount,
-        value2: Number(totalNominatorCount.toString()),
+        value2: totalNominatorCount.toNumber(),
       };
-    } catch (e: any) {
+    } catch (e) {
       console.error(e);
 
       return { value1: NaN, value2: NaN };
