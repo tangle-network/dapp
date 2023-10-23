@@ -12,9 +12,6 @@ import {
 } from '../../../containers';
 import { getDateDataForPage } from '../../../utils';
 
-// revalidate every 5 seconds
-export const revalidate = 5;
-
 export default function Pool({ params }: { params: { slug: string } }) {
   const poolAddress = params.slug;
 

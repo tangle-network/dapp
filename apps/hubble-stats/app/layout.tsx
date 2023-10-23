@@ -1,7 +1,8 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
-import { Metadata } from 'next';
-import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
+
+import Providers from './providers';
 import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
+import { Metadata } from 'next';
 
 import { Layout } from '../containers';
 
@@ -39,9 +40,6 @@ export const metadata: Metadata = {
   },
 };
 
-// revalidate every 5 seconds
-export const revalidate = 5;
-
 export default function RootLayout({
   children,
 }: {
@@ -50,9 +48,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex h-screen bg-body">
-        <NextThemeProvider>
+        <Providers>
           <Layout>{children}</Layout>
-        </NextThemeProvider>
+        </Providers>
       </body>
     </html>
   );

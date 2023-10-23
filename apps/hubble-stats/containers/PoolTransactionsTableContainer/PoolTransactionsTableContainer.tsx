@@ -1,17 +1,9 @@
-import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
-import { Suspense, cache, type FC } from 'react';
+import { TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { Suspense, type FC } from 'react';
 
-import { ContainerSkeleton, PoolTransactionsTable } from '../../components';
-import { getPoolTransactionsTableData as getData } from '../../data';
-
-const pageSize = 10;
-
-const getPoolTransactionsTableData = cache(getData);
-
-const allTab = 'All Transactions' as const;
-const depositsTab = 'Deposits' as const;
-const transfersTab = 'Transfers' as const;
-const withdrawalsTab = 'Withdrawals' as const;
+import { ContainerSkeleton } from '../../components';
+import TransactionsTable from './TransactionsTable';
+import { allTab, depositsTab, transfersTab, withdrawalsTab } from './tabs';
 
 const PoolTransactionsTableContainer: FC<{
   poolAddress: string;
@@ -30,29 +22,3 @@ const PoolTransactionsTableContainer: FC<{
 };
 
 export default PoolTransactionsTableContainer;
-
-async function TransactionsTable({ poolAddress }: { poolAddress: string }) {
-  const allTransactions = await getPoolTransactionsTableData(poolAddress);
-  const deposits = allTransactions.filter((tx) => tx.activity === 'deposit');
-  const transfers = allTransactions.filter((tx) => tx.activity === 'transfer');
-  const withdrawals = allTransactions.filter(
-    (tx) => tx.activity === 'withdraw'
-  );
-
-  return (
-    <>
-      <TabContent value={allTab}>
-        <PoolTransactionsTable data={allTransactions} pageSize={pageSize} />
-      </TabContent>
-      <TabContent value={depositsTab}>
-        <PoolTransactionsTable data={deposits} pageSize={pageSize} />
-      </TabContent>
-      <TabContent value={transfersTab}>
-        <PoolTransactionsTable data={transfers} pageSize={pageSize} />
-      </TabContent>
-      <TabContent value={withdrawalsTab}>
-        <PoolTransactionsTable data={withdrawals} pageSize={pageSize} />
-      </TabContent>
-    </>
-  );
-}

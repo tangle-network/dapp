@@ -62,7 +62,7 @@ export const Table = <T extends RowData>({
             <tr
               key={row.id}
               className={twMerge('group/tr', trClassName)}
-              onClick={() => getRowClickHandler(row)}
+              onClick={getRowClickHandler(row)}
             >
               {row.getVisibleCells().map((cell) => (
                 <TData className={tdClassName} key={cell.id}>
