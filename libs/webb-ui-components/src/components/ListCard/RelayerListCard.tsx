@@ -1,9 +1,10 @@
 import { ExternalLinkLine, Search } from '@webb-tools/icons';
 import cx from 'classnames';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 
+import { getFlexBasic } from '@webb-tools/icons/utils';
 import { Avatar } from '../Avatar';
 import { Input } from '../Input';
 import { RadioGroup, RadioItem } from '../Radio';
@@ -12,7 +13,6 @@ import { Button } from '../buttons';
 import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
 import { RelayerListCardProps } from './types';
-import { getFlexBasic } from '@webb-tools/icons/utils';
 
 /**
  * The relayer list card component

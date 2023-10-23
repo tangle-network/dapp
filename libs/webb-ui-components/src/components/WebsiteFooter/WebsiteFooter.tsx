@@ -1,22 +1,13 @@
-import {
-  Common2Icon,
-  DiscordFill,
-  GithubFill,
-  LinkedInFill,
-  TelegramFill,
-  TwitterFill,
-  YouTubeFill,
-} from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
+import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
 import { ComponentProps, useState } from 'react';
-import capitalize from 'lodash/capitalize';
 
 import {
   BRIDGE_URL,
+  DKG_STATS_URL,
   SOCIAL_ICONS_RECORD,
   SOCIAL_URLS_RECORD,
-  DKG_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_AVAIABLE_SOCIALS,
   WEBB_CAREERS_URL,

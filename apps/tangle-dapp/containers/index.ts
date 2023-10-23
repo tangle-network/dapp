@@ -1,3 +1,3 @@
-export { Layout } from './Layout';
-export * from './KeyMetricsTableContainer';
 export * from './HeaderChipsContainer';
+export * from './KeyMetricsTableContainer';
+export { Layout } from './Layout';

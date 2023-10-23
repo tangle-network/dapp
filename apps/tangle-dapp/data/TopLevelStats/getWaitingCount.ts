@@ -1,8 +1,8 @@
-import { getPolkadotApi } from '../../constants';
+import { getPolkadotApiPromise } from '../../constants';
 import { MetricReturnType } from '../../types';
 
 export const getWaitingCount = async (): Promise<MetricReturnType> => {
-  const api = await getPolkadotApi();
+  const api = await getPolkadotApiPromise();
 
   if (!api)
     return {
@@ -13,9 +13,9 @@ export const getWaitingCount = async (): Promise<MetricReturnType> => {
     const waitingInfo = await api.derive.staking.waitingInfo();
 
     return {
-      value1: Number(waitingInfo.waiting.length.toString()),
+      value1: waitingInfo.waiting.length,
     };
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
 
     return {

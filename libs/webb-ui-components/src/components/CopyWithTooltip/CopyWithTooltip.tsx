@@ -1,5 +1,5 @@
 import { FileCopyLine } from '@webb-tools/icons';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks';
 

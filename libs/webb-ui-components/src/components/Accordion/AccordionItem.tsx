@@ -2,7 +2,7 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { AccordionContentProps, AccordionItemProps } from './types';
+import { AccordionItemProps } from './types';
 
 /**
  * The style wrapper around Radix Accordion, must use inside `<Accordion></Accordion>` tag

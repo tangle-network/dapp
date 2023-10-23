@@ -1,10 +1,11 @@
-import { getPolkadotApi } from '../../constants';
 import { BN_ZERO } from '@polkadot/util';
-import { calculateInflation } from '../../utils';
+
+import { getPolkadotApiPromise } from '../../constants';
 import { MetricReturnType } from '../../types';
+import { calculateInflation } from '../../utils';
 
 export const getIdealStakedPercentage = async (): Promise<MetricReturnType> => {
-  const api = await getPolkadotApi();
+  const api = await getPolkadotApiPromise();
 
   if (!api)
     return {
@@ -19,7 +20,7 @@ export const getIdealStakedPercentage = async (): Promise<MetricReturnType> => {
     return {
       value1: idealStakePercentage,
     };
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
 
     return {

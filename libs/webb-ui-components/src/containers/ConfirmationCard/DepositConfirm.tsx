@@ -57,18 +57,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       return `${formatedAmount} ${symbolStr}`;
     }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
-    const feeContent = useMemo(() => {
-      if (typeof fee === 'number' || typeof fee === 'string') {
-        const formatedFee =
-          typeof fee === 'number'
-            ? getRoundedAmountString(fee, 3, { roundingFunction: Math.round })
-            : fee;
-        return `${formatedFee} ${feeToken ?? ''}`;
-      }
-
-      return '--';
-    }, [fee, feeToken]);
-
     return (
       <div
         {...props}

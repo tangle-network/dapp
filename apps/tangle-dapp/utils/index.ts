@@ -1,2 +1,2 @@
 export * from './calculateInflation';
-export * from './getRoundedDownNumberWith2Decimals';
+export { default as getRoundedDownNumberWith2Decimals } from './getRoundedDownNumberWith2Decimals';

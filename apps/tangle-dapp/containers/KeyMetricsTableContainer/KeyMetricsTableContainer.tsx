@@ -1,12 +1,13 @@
 import cx from 'classnames';
 import { cache } from 'react';
+
 import { KeyMetricItem } from '../../components/KeyMetricItem';
 import {
-  getValidatorsCount,
-  getWaitingCount,
   getActiveAndDelegationCount,
   getIdealStakedPercentage,
   getInflationPercentage,
+  getValidatorsCount,
+  getWaitingCount,
 } from '../../data';
 
 const getValidatorsCountData = cache(getValidatorsCount);
