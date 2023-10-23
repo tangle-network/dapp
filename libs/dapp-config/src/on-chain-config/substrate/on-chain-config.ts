@@ -1,19 +1,22 @@
+import '@webb-tools/protocol-substrate-types';
 import '@webb-tools/tangle-substrate-types';
 
-import { ApiPromise } from '@polkadot/api';
-import { Option } from '@polkadot/types';
+import type { ApiPromise } from '@polkadot/api';
+import type { Option } from '@polkadot/types';
 import {
   PalletAssetRegistryAssetDetails,
   PalletAssetRegistryAssetMetadata,
 } from '@polkadot/types/lookup';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-
-import { ChainAddressConfig } from '../../anchors';
+import type { ChainAddressConfig } from '../../anchors';
 import { chainsConfig } from '../../chains';
 import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from '../../constants';
 import { CurrencyConfig } from '../../currencies';
-import { ICurrency } from '../../types';
-import { CurrencyResponse, OnChainConfigBase } from '../on-chain-config-base';
+import type { ICurrency } from '../../types';
+import {
+  OnChainConfigBase,
+  type CurrencyResponse,
+} from '../on-chain-config-base';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;

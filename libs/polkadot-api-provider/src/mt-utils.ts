@@ -1,7 +1,4 @@
-import '@webb-tools/tangle-substrate-type';
-
 import { Note } from '@webb-tools/sdk-core';
-
 import { ApiPromise } from '@polkadot/api';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
