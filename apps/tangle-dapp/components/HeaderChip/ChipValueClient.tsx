@@ -1,10 +1,14 @@
 'use client';
 
-import useEraCountSubscription from '../../data/HeaderChips/useEraCountSubscription';
 import getRoundedDownNumberWith2Decimals from '../../utils/getRoundedDownNumberWith2Decimals';
+import dataHooks from './dataHooks';
+import { ChipType } from './types';
 
-export default function ChipValueClient(props: { value?: number }) {
-  const era = useEraCountSubscription(props.value);
+export default function ChipValueClient(props: {
+  type: ChipType;
+  value?: number;
+}) {
+  const era = dataHooks[props.type]();
 
   return <>{getRoundedDownNumberWith2Decimals(era)}</>;
 }
