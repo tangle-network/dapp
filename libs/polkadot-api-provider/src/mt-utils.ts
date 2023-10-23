@@ -1,4 +1,4 @@
-import '@webb-tools/protocol-substrate-types';
+import '@webb-tools/tangle-substrate-type';
 
 import { Note } from '@webb-tools/sdk-core';
 

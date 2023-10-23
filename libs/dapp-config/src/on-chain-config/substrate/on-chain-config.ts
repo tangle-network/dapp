@@ -1,4 +1,4 @@
-import '@webb-tools/protocol-substrate-types';
+import '@webb-tools/tangle-substrate-types';
 
 import { ApiPromise } from '@polkadot/api';
 import { Option } from '@polkadot/types';

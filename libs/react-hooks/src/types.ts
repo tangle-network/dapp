@@ -6,11 +6,7 @@
 // TODO: Resolve the below issue with new types package.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {
-  AccountId,
-  CurrencyId,
-  // @ts-ignore
-} from '@webb-tools/protocol-substrate-types/interfaces';
+import { AccountId, CurrencyId } from '@webb-tools/tangle-substrate-types';
 
 export type CallParam = any;
 
