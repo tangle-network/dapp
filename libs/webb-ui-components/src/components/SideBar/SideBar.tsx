@@ -1,14 +1,14 @@
 'use client';
 
-import { WebbLogoIcon, TangleIcon } from '@webb-tools/icons';
+import { TangleIcon, WebbLogoIcon } from '@webb-tools/icons';
 import cx from 'classnames';
-import { FC, forwardRef, useState } from 'react';
+import { FC, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useLocalStorageState from 'use-local-storage-state';
 import { SideBarFooter, SideBarItems, SideBarLogo } from '.';
+import { SIDEBAR_OPEN_KEY } from '../../constants';
 import { LogoProps } from '../Logo/types';
 import { SidebarProps } from './types';
-import { SIDEBAR_OPEN_KEY } from '../../constants';
 
 /**
  * Sidebar Navigation Menu Component
@@ -50,13 +50,9 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       }
     );
 
-    const [isHovering, setIsHovering] = useState(false);
-
     return (
       <div
         className={cx('flex gap-2 top-0 left-0 z-50 relative', className)}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
         {...props}
         ref={ref}
       >

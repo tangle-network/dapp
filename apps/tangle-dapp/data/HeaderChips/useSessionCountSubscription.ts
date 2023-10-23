@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
+
 import { getPolkadotApiRx } from '../../constants/polkadot';
 
-function useSessionCountSubscription(defaultValue: number = NaN) {
+function useSessionCountSubscription(defaultValue = NaN) {
   const [session, setSession] = useState(defaultValue);
 
   useEffect(() => {

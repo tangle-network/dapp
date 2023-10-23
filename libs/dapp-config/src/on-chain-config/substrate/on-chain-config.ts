@@ -21,13 +21,6 @@ import {
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;
 
-// Cache the currencies config
-let cachedCurrenciesConfig: {
-  currenciesConfig: Record<number, CurrencyConfig>;
-  fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
-  anchorConfig: Record<number, ChainAddressConfig>;
-};
-
 export class SubstrateOnChainConfig extends OnChainConfigBase {
   private constructor() {
     super();
@@ -341,7 +334,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       existedFungibleToWrappableMap,
       existedAnchorConfig
     );
-    cachedCurrenciesConfig = config;
+
     return config;
   }
 }

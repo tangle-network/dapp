@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { Suspense, useMemo, type FC } from 'react';
+import { type FC, Suspense, useMemo } from 'react';
 
 import ChipValueClient from './ChipValueClient';
 import { HeaderChipItemProps } from './types';

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
+
 import { getPolkadotApiRx } from '../../constants/polkadot';
 import { MetricReturnType } from '../../types';
 

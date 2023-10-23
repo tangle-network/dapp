@@ -1,8 +1,8 @@
 import { Footer } from '@webb-tools/webb-ui-components';
 import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
-import React, { type FC,type PropsWithChildren } from 'react';
+import React, { type FC, type PropsWithChildren } from 'react';
 
-import { Breadcrumbs,SideBar, SideBarMenu } from '../../components';
+import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();

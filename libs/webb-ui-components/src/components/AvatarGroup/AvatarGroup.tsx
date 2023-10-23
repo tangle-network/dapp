@@ -48,6 +48,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
         <div className="translate-x-1">
           {children.slice(0, max).map((child, index) => {
             return React.cloneElement(child, {
+              key: index,
               ...child.props,
               size: 'md',
               className: 'mx-[-4px] last:mx-0',

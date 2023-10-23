@@ -7,10 +7,9 @@ import {
   BridgeInputGroup,
   Button,
   ChainInput,
+  ConnectWalletMobileButton,
   InfoItem,
   TokenInput,
-  ConnectWalletMobileButton,
-  Alert,
 } from '../../components';
 import { useCheckMobile } from '../../hooks';
 import { getRoundedAmountString } from '../../utils';
@@ -35,7 +34,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     ref
   ) => {
     const { isMobile } = useCheckMobile();
-    const { amount, fee } = useMemo(() => {
+    const { amount } = useMemo(() => {
       const amount = !amountInputProps.amount
         ? '--'
         : `${getRoundedAmountString(Number(amountInputProps.amount), 3, {
@@ -71,7 +70,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           <BridgeInputGroup className="flex flex-col space-y-2">
             <ChainInput {...sourceChainProps} chainType="source" />
 
-            <div className="hidden lg:flex space-x-2">
+            <div className="hidden space-x-2 lg:flex">
               <TokenInput
                 {...tokenInputProps}
                 className="grow shrink-0 basis-1"
@@ -87,7 +86,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
               )}
             </div>
 
-            <div className="flex lg:hidden gap-2">
+            <div className="flex gap-2 lg:hidden">
               <TokenInput title="Deposit" className="grow shrink-0 basis-1" />
               <TokenInput
                 title="Shielded Pool"
