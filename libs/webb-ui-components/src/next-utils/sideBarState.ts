@@ -6,10 +6,10 @@ import { SIDEBAR_OPEN_KEY } from '../constants';
 export const setSideBarCookieOnToggle = () => {
   const sideBarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
 
-  if (sideBarStateFromCookie?.value === 'true') {
-    cookies().set(SIDEBAR_OPEN_KEY, 'false');
-  } else {
+  if (sideBarStateFromCookie?.value === 'false') {
     cookies().set(SIDEBAR_OPEN_KEY, 'true');
+  } else {
+    cookies().set(SIDEBAR_OPEN_KEY, 'false');
   }
 };
 
