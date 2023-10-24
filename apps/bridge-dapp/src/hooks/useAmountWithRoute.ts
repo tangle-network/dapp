@@ -48,6 +48,13 @@ const useAmountWithRoute = (key = AMOUNT_KEY) => {
         return;
       }
 
+      // users need to type 0.00 before getting to 0.001
+      // we need to check for zero number (ex: 0.00, .00, 00.0) to prevent the input to reset to 0 in those cases
+      const zeroNumberRegex = /^0*\.0*$/;
+      if (zeroNumberRegex.test(amount)) {
+        return;
+      }
+
       try {
         setAmountParam(parseEther(amount).toString());
       } catch (error) {
