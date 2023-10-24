@@ -25,12 +25,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
       <div className={cx('flex', heightClsx)}>
         <SideBar {...sidebarProps} className="hidden lg:flex" />
 
-        <div
-          className={cx(
-            'flex flex-col w-full mx-auto overflow-y-auto',
-            'px-3 md:!px-5 lg:!px-10'
-          )}
-        >
+        <div className="flex flex-col w-full mx-auto overflow-y-auto px-3 md:!px-5 lg:!px-10">
           <Transition show={showBanner} className="hidden lg:!block">
             <Banner
               className="py-2"
@@ -45,12 +40,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
             />
           </Transition>
 
-          <div
-            className={cx(
-              'max-w-[1565px] mx-auto w-full h-full',
-              'flex flex-col justify-between'
-            )}
-          >
+          <div className="max-w-[1565px] mx-auto w-full h-full flex flex-col justify-between">
             <div className="space-y-6">
               <Header />
 
