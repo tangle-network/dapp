@@ -217,3 +217,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix UI issues on bridge dapp
 - Disable amount input for destination accross flows [#1739](https://github.com/webb-tools/webb-dapp/pull/1739)
+
+## [1.0.8] - 2023-10-24
+
+### Fixed, Changed and Added
+
+- Improve balance display across all flows on Hubble Bridge [#1746](https://github.com/webb-tools/webb-dapp/pull/1746)
+- Removal of Chain Selection Option in Withdrawal Flow on Destination Input [#1747](https://github.com/webb-tools/webb-dapp/pull/1747)
+- Fix bridge mobile view [#1765](https://github.com/webb-tools/webb-dapp/pull/1765)
+- Fix Hubble Bridge QA Checklist 2 [#1771](https://github.com/webb-tools/webb-dapp/pull/1771)
+- Improve Wallet Connection Flow [#1768](https://github.com/webb-tools/webb-dapp/pull/1768)
