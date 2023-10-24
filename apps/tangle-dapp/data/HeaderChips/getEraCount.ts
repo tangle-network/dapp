@@ -1,16 +1,19 @@
-import { getPolkadotApi } from '../../constants';
+import { getPolkadotApiPromise } from '../../constants';
 
 export const getEraCount = async (): Promise<number> => {
-  const api = await getPolkadotApi();
+  const api = await getPolkadotApiPromise();
 
   if (!api) return NaN;
 
   try {
-    let activeEra = await api.query.staking.activeEra();
-    activeEra = JSON.parse(JSON.stringify(activeEra)).index;
+    const activeEra = await api.query.staking.activeEra();
+    const value = activeEra.unwrapOr(null);
+    if (value == null) {
+      return NaN;
+    }
 
-    return Number(activeEra.toString());
-  } catch (e: any) {
+    return value.index.toNumber();
+  } catch (e) {
     console.error(e);
 
     return NaN;

@@ -18,12 +18,13 @@ export type NotificationContextProps = {
   remove(key: SnackbarKey): void;
 };
 
-export const NotificationCTXDefaultValue = {
-  addToQueue(opts: Omit<SnackBarOpts, 'close'>): SnackbarKey {
+export const NotificationCTXDefaultValue: NotificationContextProps = {
+  addToQueue(): SnackbarKey {
     return 0;
   },
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  remove(key: SnackbarKey) {},
-};
+  remove() {
+    // do nothing
+  },
+} as const satisfies NotificationContextProps;
 export const NotificationContext =
   React.createContext<NotificationContextProps>(NotificationCTXDefaultValue);

@@ -1,14 +1,15 @@
-import { Suspense, type FC, useMemo } from 'react';
 import {
   Chip,
+  SkeletonLoader,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
-  SkeletonLoader,
 } from '@webb-tools/webb-ui-components';
+import { type FC, Suspense, useMemo } from 'react';
+
+import ChipValueClient from './ChipValueClient';
 import { HeaderChipItemProps } from './types';
-import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
 export const HeaderChip: FC<HeaderChipItemProps> = ({
   Icon,
@@ -23,7 +24,7 @@ export const HeaderChip: FC<HeaderChipItemProps> = ({
         <Icon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
         {label}:{' '}
         <Suspense fallback={<SkeletonLoader className="w-[100px]" />}>
-          <HeaderChipValue dataFetcher={dataFetcher} />
+          <HeaderChipValue label={label} dataFetcher={dataFetcher} />
         </Suspense>
       </Chip>
     ),
@@ -46,8 +47,9 @@ export const HeaderChip: FC<HeaderChipItemProps> = ({
 
 const HeaderChipValue = async ({
   dataFetcher,
-}: Pick<HeaderChipItemProps, 'dataFetcher'>) => {
+  label,
+}: Pick<HeaderChipItemProps, 'dataFetcher' | 'label'>) => {
   const value = await dataFetcher();
 
-  return <>{getRoundedDownNumberWith2Decimals(value)}</>;
+  return <ChipValueClient type={label} value={value} />;
 };

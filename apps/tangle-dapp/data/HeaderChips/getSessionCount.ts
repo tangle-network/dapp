@@ -1,18 +1,17 @@
-import { getPolkadotApi } from '../../constants';
+import { getPolkadotApiPromise } from '../../constants';
 
 export const getSessionCount = async (): Promise<number> => {
-  const api = await getPolkadotApi();
+  const api = await getPolkadotApiPromise();
 
   if (!api) return NaN;
 
   try {
-    const currentDKGPublicKey: any = await api.query.dkg.dkgPublicKey();
+    const currentDKGPublicKey = await api.query.dkg.dkgPublicKey();
     const currentSessionNumber = currentDKGPublicKey[0];
 
-    return Number(currentSessionNumber.toString());
-  } catch (e: any) {
+    return currentSessionNumber.toNumber();
+  } catch (e) {
     console.error(e);
-
     return NaN;
   }
 };

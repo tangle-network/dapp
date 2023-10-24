@@ -84,3 +84,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Chaged, Added and Fixed
 
 - Fix Sidebar not keep consistent state when refreshing pages ([#1740](https://github.com/webb-tools/webb-dapp/pull/1740))
+
+## [0.0.8] - 2023-10-24
+
+### Chaged, Added and Fixed
+
+- Bump Netlify Next.js Runtime ([#1780](https://github.com/webb-tools/webb-dapp/pull/1780)).
+- Client Side Fetching for Hubble Stats ([#1787](https://github.com/webb-tools/webb-dapp/pull/1787)).

@@ -1,6 +1,6 @@
-import { FC } from 'react';
-import { IconWithTooltip } from '@webb-tools/webb-ui-components';
 import { InformationLine } from '@webb-tools/icons';
+import { IconWithTooltip } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 
 import { InfoIconWithTooltipProps } from './types';
 

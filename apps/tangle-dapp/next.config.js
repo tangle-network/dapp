@@ -9,6 +9,8 @@ const nextConfigBase = require('../../next.config.js');
 const nextConfig = {
   ...nextConfigBase,
 
+  reactStrictMode: true,
+
   // at default environment variable is only accessible by the server, resulting in hydration mismatch
   // make environment variable accessible by both the server and client
   env: {},

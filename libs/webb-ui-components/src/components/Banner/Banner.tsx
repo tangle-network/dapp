@@ -27,7 +27,6 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerPropsType>(
       buttonText,
       buttonProps,
       buttonClassName: buttonClassNameProp,
-      children,
       className: bannerClassNameProp,
       dappName,
       bannerText,

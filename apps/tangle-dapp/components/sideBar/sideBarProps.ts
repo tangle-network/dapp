@@ -2,9 +2,9 @@ import {
   AppsLine,
   DocumentationIcon,
   FaucetIcon,
+  FundsLine,
   GlobalLine,
   KeyIcon,
-  FundsLine,
 } from '@webb-tools/icons';
 import {
   type SideBarFooterType,
@@ -20,8 +20,8 @@ import {
   TANGLE_MKT_URL,
   TANGLE_STANDALONE_EXPLORER_URL,
   TANGLE_TESTNET_EXPLORER_URL,
-  WEBB_TANGLE_DOCS_URL,
   WEBB_FAUCET_URL,
+  WEBB_TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const sideBarItems: SideBarItemProps[] = [
