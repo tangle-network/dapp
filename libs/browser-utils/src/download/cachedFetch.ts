@@ -7,7 +7,7 @@ async function cachedFetch(
   ...params: Parameters<typeof fetch>
 ): Promise<Uint8Array> {
   const fixturesCache = await caches.open('fixtures');
-  const reqInput: string | URL | Request = params[0];
+  const reqInput = params[0];
   let url = '';
 
   if (typeof reqInput === 'string') {
