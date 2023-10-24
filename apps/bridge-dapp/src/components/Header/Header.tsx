@@ -48,7 +48,7 @@ export const Header: FC<HeaderProps> = () => {
   const items = location.pathname.split('/').filter((item) => item !== '');
 
   return (
-    <header className="flex justify-between py-4">
+    <header className="flex justify-between pt-6 pb-4">
       <div className="flex items-center gap-2">
         <SideBarMenu
           {...sidebarProps}
