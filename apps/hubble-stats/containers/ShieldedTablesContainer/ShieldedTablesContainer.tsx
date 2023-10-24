@@ -1,18 +1,15 @@
 'use client';
 
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
-import { cache, type FC } from 'react';
+import { type FC } from 'react';
 import useSWR from 'swr';
 import { ContainerSkeleton } from '../../components';
 import {
-  getShieldedAssetsTableData as getShieldedAssets,
-  getShieldedPoolsTableData as getShieldedPools,
+  getShieldedAssetsTableData,
+  getShieldedPoolsTableData,
 } from '../../data/shieldedTables';
 import ShieldedAssetsTableContainer from './ShieldedAssetsTableContainer';
 import ShieldedPoolsTableContainer from './ShieldedPoolsTableContainer';
-
-const getShieldedAssetsTableData = cache(getShieldedAssets);
-const getShieldedPoolsTableData = cache(getShieldedPools);
 
 const pageSize = 5;
 const assetsTableTab = 'Shielded Assets';
