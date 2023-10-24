@@ -7,10 +7,10 @@ import { getCookie, setCookie } from 'cookies-next';
 export const setSideBarCookieOnToggle = () => {
   const sideBarStateFromCookie = getCookie(SIDEBAR_OPEN_KEY);
 
-  if (sideBarStateFromCookie === 'true') {
-    setCookie(SIDEBAR_OPEN_KEY, 'false');
-  } else {
+  if (sideBarStateFromCookie === 'false') {
     setCookie(SIDEBAR_OPEN_KEY, 'true');
+  } else {
+    setCookie(SIDEBAR_OPEN_KEY, 'false');
   }
 };
 
@@ -24,10 +24,5 @@ export function getSideBarStateFromCookie(
   options: Parameters<typeof getCookie>[1]
 ) {
   const sideBarStateFromCookie = getCookie(SIDEBAR_OPEN_KEY, options);
-
-  return sideBarStateFromCookie === undefined
-    ? undefined
-    : sideBarStateFromCookie === 'true'
-    ? true
-    : false;
+  return sideBarStateFromCookie === 'false' ? false : true;
 }

@@ -2,13 +2,14 @@
 
 import { TangleIcon, WebbLogoIcon } from '@webb-tools/icons';
 import cx from 'classnames';
-import { FC, forwardRef } from 'react';
+import { type FC, forwardRef, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useLocalStorageState from 'use-local-storage-state';
 import { SideBarFooter, SideBarItems, SideBarLogo } from '.';
 import { SIDEBAR_OPEN_KEY } from '../../constants';
 import { LogoProps } from '../Logo/types';
 import { SidebarProps } from './types';
+import { getCookieItem } from '../../utils';
 
 /**
  * Sidebar Navigation Menu Component
@@ -49,6 +50,19 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
         defaultValue: isExpandedAtDefault,
       }
     );
+
+    // Make sure sidebar state in local storage match with cookie when page is loaded
+    useEffect(() => {
+      const sideBarStateFromCookie = getCookieItem(SIDEBAR_OPEN_KEY);
+      const isSideBarOpen =
+        sideBarStateFromCookie === 'true'
+          ? true
+          : sideBarStateFromCookie === 'false'
+          ? false
+          : isExpandedAtDefault;
+
+      setIsSidebarOpen(isSideBarOpen);
+    }, [setIsSidebarOpen]);
 
     return (
       <div

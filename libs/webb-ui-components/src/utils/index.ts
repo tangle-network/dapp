@@ -2,6 +2,7 @@ export * from './arrayFrom';
 export * from './calculateDateProgress';
 export * from './formatDateToUtc';
 export * from './formatTokenAmount';
+export { default as getCookieItem } from './getCookieItem';
 export * from './getHumanFileSize';
 export * from './getPaginationItems';
 export * from './getRoundedAmountString';
