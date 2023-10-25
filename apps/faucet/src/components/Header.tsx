@@ -1,4 +1,4 @@
-import { FaucetIcon } from '@webb-tools/icons';
+import { FaucetIcon, TangleIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
@@ -7,6 +7,7 @@ import {
   NavigationMenuContent,
   NavigationMenuTrigger,
   SideBarMenu,
+  TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import {
   BRIDGE_URL,
@@ -25,7 +26,12 @@ const Header: FC = () => {
     <header className="flex items-center justify-between pt-6 pb-4">
       <div className="flex items-center gap-2">
         <SideBarMenu {...sideBarProps} className="lg:hidden" />
-        <Breadcrumbs className="hidden md:block">
+
+        <TangleIcon className="md:hidden" size="lg" />
+
+        <TangleLogo className="hidden md:block lg:hidden" />
+
+        <Breadcrumbs className="hidden lg:block">
           <BreadcrumbsItem icon={<FaucetIcon />} isLast={true}>
             Faucet
           </BreadcrumbsItem>
