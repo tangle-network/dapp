@@ -75,7 +75,7 @@ export const Header: FC<HeaderProps> = () => {
 
   return (
     <div>
-      <header className="flex justify-between py-4">
+      <header className="flex justify-between py-6">
         <div className="flex items-center gap-2">
           <SideBarMenu
             {...sidebarProps}

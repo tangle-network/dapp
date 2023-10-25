@@ -11,7 +11,7 @@ import {
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { DKG_STATS_URL } from '@webb-tools/webb-ui-components/constants';
+import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -196,7 +196,7 @@ const Bridge: FC = () => {
           <Outlet />
 
           <a
-            href={DKG_STATS_URL}
+            href={HUBBLE_STATS_URL}
             target="_blank"
             rel="noreferrer"
             className={cx(
