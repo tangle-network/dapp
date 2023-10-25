@@ -11,19 +11,21 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     <>
       <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
       <main className="flex-1 h-full px-3 overflow-y-auto md:px-5 lg:px-10">
-        <div className="mx-auto max-w-[1565px]">
-          {/* Header */}
-          <div className="flex items-center justify-between pt-6 pb-4">
-            <div className="flex items-center gap-2">
-              <SideBarMenu />
-              <Breadcrumbs />
+        <div className="h-full flex flex-col justify-between mx-auto max-w-[1565px]">
+          <div>
+            {/* Header */}
+            <div className="flex items-center justify-between pt-6 pb-4">
+              <div className="flex items-center gap-2">
+                <SideBarMenu />
+                <Breadcrumbs />
+              </div>
+
+              <HeaderChipsContainer />
             </div>
 
-            <HeaderChipsContainer />
+            {/* Body */}
+            {children}
           </div>
-
-          {/* Body */}
-          {children}
 
           {/* Footer */}
           <Footer isMinimal className="py-12 w-full" />

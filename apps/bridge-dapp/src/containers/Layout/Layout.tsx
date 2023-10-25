@@ -40,7 +40,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
             />
           </Transition>
 
-          <div className="px-3 md:!px-5 lg:!px-10">
+          <div className="flex-1 px-3 md:!px-5 lg:!px-10">
             <div className="max-w-[1565px] mx-auto w-full h-full flex flex-col justify-between">
               <div className="space-y-6">
                 <Header />
