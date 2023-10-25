@@ -1,6 +1,6 @@
 import { RouterConfigData } from '@webb-tools/api-provider-environment';
-import { Spinner } from '@webb-tools/icons';
-import { FC, PropsWithChildren, Suspense, lazy } from 'react';
+import CSuspense from '@webb-tools/webb-ui-components/components/Suspense';
+import { lazy } from 'react';
 import { Layout } from '../containers';
 
 const PageAuthorities = lazy(() => import('../pages/Authorities'));
@@ -22,20 +22,6 @@ const PageProposalDetailDrawer = lazy(
   () => import('../pages/ProposalDetailDrawer')
 );
 const PageProposalDetail = lazy(() => import('../pages/ProposalDetailPage'));
-
-const CSuspense: FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center min-w-full min-h-screen">
-          <Spinner size="xl" />
-        </div>
-      }
-    >
-      {children}
-    </Suspense>
-  );
-};
 
 export const routes: RouterConfigData[] = [
   {
