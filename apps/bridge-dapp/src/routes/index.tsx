@@ -1,3 +1,4 @@
+import RequireNoteAccountRoute from '@webb-tools/api-provider-environment/RequireNoteAccountRoute';
 import CSuspense from '@webb-tools/webb-ui-components/components/Suspense';
 import { AnimatePresence } from 'framer-motion';
 import qs from 'query-string';
@@ -138,7 +139,9 @@ const AppRoutes = () => {
                 path={NOTE_ACCOUNT_PATH}
                 element={
                   <CSuspense>
-                    <Account />
+                    <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                      <Account />
+                    </RequireNoteAccountRoute>
                   </CSuspense>
                 }
               />

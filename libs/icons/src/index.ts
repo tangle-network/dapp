@@ -11,7 +11,7 @@ export * from './ArrowRightUp';
 export * from './AuctionLine';
 export * from './BankLine';
 export * from './BellIcon';
-export * from './BillFill';
+export { default as BillFillIcon } from './BillFillIcon';
 export * from './BlockIcon';
 export * from './BookOpenLineIcon';
 export * from './ChainIcon';

@@ -1,3 +1,4 @@
+import BillFillIcon from '@webb-tools/icons/BillFillIcon';
 import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import { Tangle } from '@webb-tools/icons/Tangle';
@@ -9,14 +10,21 @@ import {
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
 import {
   DKG_STATS_URL,
+  HUBBLE_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
-  HUBBLE_STATS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
+  {
+    name: 'Account',
+    isInternal: true,
+    href: '/account',
+    Icon: BillFillIcon,
+    subItems: [],
+  },
   {
     name: 'Hubble',
     isInternal: true,
