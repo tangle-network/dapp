@@ -1,8 +1,9 @@
 import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
-import { HeaderChipsContainer } from '..';
 import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
-import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+
+import Header from './Header';
+import { SideBar } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
@@ -14,14 +15,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <div className="h-full flex flex-col justify-between mx-auto max-w-[1565px]">
           <div>
             {/* Header */}
-            <div className="flex items-center justify-between pt-6 pb-4">
-              <div className="flex items-center gap-2">
-                <SideBarMenu />
-                <Breadcrumbs />
-              </div>
-
-              <HeaderChipsContainer />
-            </div>
+            <Header />
 
             {/* Body */}
             {children}
