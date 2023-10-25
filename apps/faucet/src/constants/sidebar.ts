@@ -65,6 +65,7 @@ const items: SideBarItemProps[] = [
     Icon: FaucetIcon,
     href: '/',
     isInternal: true,
+    isNext: true,
     name: 'Faucet',
     subItems: [],
   },

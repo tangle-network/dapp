@@ -8,6 +8,7 @@ import { Typography } from '../../typography/Typography';
 import { Link } from '../Link';
 import { SubItem } from './SubItem';
 import { SideBarExtraItemProps, SideBarItemProps } from './types';
+import useLinkProps from './useLinkProps';
 
 const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   name,
@@ -15,6 +16,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   href,
   Icon,
   subItems,
+  isNext,
   isExpanded,
   isActive,
   setIsActive,
@@ -46,12 +48,14 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
     }
   };
 
+  const linkProps = useLinkProps({ href, isInternal, isNext });
+
   if (!isMounted) return null;
 
   return (
     <>
       <div onClick={setItemAsActiveAndToggleDropdown}>
-        <Link href={href} target="_blank">
+        <Link {...linkProps}>
           <div
             className={twMerge(
               'group cursor-pointer select-none rounded-full',

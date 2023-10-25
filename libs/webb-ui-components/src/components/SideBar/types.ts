@@ -39,6 +39,7 @@ export interface SideBarItemsProps {
 
 export type SideBarItemProps = {
   name: string;
+  isNext?: boolean;
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
@@ -53,6 +54,7 @@ export type SideBarExtraItemProps = {
 
 export type SideBarSubItemProps = {
   name: string;
+  isNext?: boolean;
   isInternal: boolean;
   href: string;
 };

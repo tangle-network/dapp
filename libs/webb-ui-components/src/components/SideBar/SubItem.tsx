@@ -5,6 +5,7 @@ import { Typography } from '../../typography/Typography';
 import { Link } from '../Link';
 import cx from 'classnames';
 import { SideBarExtraSubItemProps, SideBarSubItemProps } from './types';
+import useLinkProps from './useLinkProps';
 
 export const SubItem: React.FC<
   SideBarSubItemProps & SideBarExtraSubItemProps
@@ -12,10 +13,13 @@ export const SubItem: React.FC<
   name,
   isInternal,
   href,
+  isNext,
   isActive: isActiveProp,
   setItemIsActive,
   setSubItemIsActive,
 }) => {
+  const linkProps = useLinkProps({ href, isInternal, isNext });
+
   const setIsActive = () => {
     if (setItemIsActive && setSubItemIsActive && isInternal) {
       setItemIsActive();
@@ -29,8 +33,7 @@ export const SubItem: React.FC<
 
   return (
     <Link
-      href={href}
-      target="_blank"
+      {...linkProps}
       onClick={setIsActive}
       className={cx(
         'px-6 py-3 rounded-full',
