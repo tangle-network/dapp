@@ -16,6 +16,7 @@ import {
   TANGLE_MKT_URL,
   TANGLE_STANDALONE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
+import Link from 'next/link';
 import { type FC } from 'react';
 
 import { TANGLE_DOCS_URL } from '../constants';
@@ -27,11 +28,13 @@ const Header: FC = () => {
       <div className="flex items-center gap-2">
         <SideBarMenu {...sideBarProps} className="lg:hidden" />
 
-        {/* Show Icon on mobile */}
-        <TangleIcon className="md:hidden" size="lg" />
+        <Link href="/">
+          {/* Show Icon on mobile */}
+          <TangleIcon className="md:hidden" size="lg" />
 
-        {/* Show Logo with name on mobile */}
-        <TangleLogo className="hidden md:block lg:hidden" />
+          {/* Show Logo with name on mobile */}
+          <TangleLogo className="hidden md:block lg:hidden" />
+        </Link>
 
         <Breadcrumbs className="hidden lg:block">
           <BreadcrumbsItem icon={<FaucetIcon />} isLast={true}>
