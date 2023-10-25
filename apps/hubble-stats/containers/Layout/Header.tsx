@@ -1,46 +1,39 @@
-import { FaucetIcon, TangleIcon } from '@webb-tools/icons';
+'use client';
+
+import React, { type FC } from 'react';
 import {
-  Breadcrumbs,
-  BreadcrumbsItem,
   Button,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  SideBarMenu,
-  TangleLogo,
+  Logo,
 } from '@webb-tools/webb-ui-components';
+import { WebbLogoIcon } from '@webb-tools/icons';
+import { Breadcrumbs, SideBarMenu } from '../../components';
 import {
   BRIDGE_URL,
+  WEBB_DOCS_URL,
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
   TANGLE_MKT_URL,
   TANGLE_STANDALONE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { type FC } from 'react';
-
-import { TANGLE_DOCS_URL } from '../constants';
-import sideBarProps from '../constants/sidebar';
 
 const Header: FC = () => {
   return (
-    <header className="flex items-center justify-between pt-6 pb-4">
+    <div className="flex items-center justify-between pt-6 pb-4">
       <div className="flex items-center gap-2">
-        <SideBarMenu {...sideBarProps} className="lg:hidden" />
+        <SideBarMenu />
 
-        {/* Show Icon on mobile */}
-        <TangleIcon className="md:hidden" size="lg" />
+        {/* Show Logo without name on mobile */}
+        <WebbLogoIcon className="md:hidden" size="lg" />
 
-        {/* Show Logo with name on mobile */}
-        <TangleLogo className="hidden md:block lg:hidden" />
+        {/* Show Logo with name on tablet */}
+        <Logo className="hidden md:block lg:hidden" />
 
-        <Breadcrumbs className="hidden lg:block">
-          <BreadcrumbsItem icon={<FaucetIcon />} isLast={true}>
-            Faucet
-          </BreadcrumbsItem>
-        </Breadcrumbs>
+        <Breadcrumbs className="hidden lg:flex" />
       </div>
 
-      {/* <HeaderChipsContainer /> */}
       <div className="flex items-center gap-2">
         <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
           Webb dApp
@@ -48,9 +41,8 @@ const Header: FC = () => {
 
         <NavigationMenu>
           <NavigationMenuTrigger />
-          {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
           <NavigationMenuContent
-            onDocsClick={() => window.open(TANGLE_DOCS_URL, '_blank')}
+            onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
             onTestnetClick={() =>
               window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
             }
@@ -64,7 +56,7 @@ const Header: FC = () => {
           />
         </NavigationMenu>
       </div>
-    </header>
+    </div>
   );
 };
 

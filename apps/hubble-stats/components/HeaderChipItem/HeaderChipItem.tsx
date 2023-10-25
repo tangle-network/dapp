@@ -30,7 +30,7 @@ function HeaderChipItem<T>({
           <>
             {typeof value === 'number'
               ? getRoundedDownNumberWith2Decimals(value)
-              : '-'}
+              : '-'}{' '}
             webbtTNT
           </>
         )}
