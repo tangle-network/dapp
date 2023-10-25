@@ -41,69 +41,71 @@ export default function Page({ sideBarInitialState }: PageProps) {
         className="!z-0 hidden lg:block"
       />
       <main className="flex-[1] h-full overflow-y-auto">
-        <div className="mx-3 md:mx-5 lg:mx-10 space-y-4">
-          <Header />
+        <div className="flex flex-col justify-between h-full px-3 md:px-5 lg:px-10 space-y-4">
+          <div className="flex-1">
+            <Header />
 
-          <main className="max-w-[100vw]">
-            <NextSeo {...metadata} />
+            <main className="max-w-[100vw]">
+              <NextSeo {...metadata} />
 
-            {/** The Faucet Card */}
-            <div
-              className={cx(
-                'px-4 md:px-12 py-12 max-w-[964px] rounded-2xl mx-auto',
-                'border-4 border-mono-0 dark:border-mono-170',
-                'bg-glass dark:bg-glass_dark'
-              )}
-              style={{ backdropFilter: 'blur(15px)' }}
-            >
-              <div className="max-w-[564px] mx-auto">
-                {/** Static content */}
-                <div className="flex flex-col gap-4">
-                  <div>
+              {/** The Faucet Card */}
+              <div
+                className={cx(
+                  'px-4 md:px-12 py-12 max-w-[964px] rounded-2xl mx-auto',
+                  'border-4 border-mono-0 dark:border-mono-170',
+                  'bg-glass dark:bg-glass_dark'
+                )}
+                style={{ backdropFilter: 'blur(15px)' }}
+              >
+                <div className="max-w-[564px] mx-auto">
+                  {/** Static content */}
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <Typography
+                        variant="mkt-small-caps"
+                        className="font-black text-center text-blue-70"
+                      >
+                        Get tokens
+                      </Typography>
+                      <Typography
+                        variant="mkt-h3"
+                        className="font-black text-center text-mono-200"
+                      >
+                        Tangle Network Faucet
+                      </Typography>
+                    </div>
                     <Typography
-                      variant="mkt-small-caps"
-                      className="font-black text-center text-blue-70"
+                      variant="mkt-body1"
+                      className="font-medium text-center text-mono-140"
                     >
-                      Get tokens
+                      Receive Test Tokens on Devnet and Testnet supported by
+                      Tangle Network and Webb Protocol for development and
+                      experimental purposes.
                     </Typography>
                     <Typography
-                      variant="mkt-h3"
-                      className="font-black text-center text-mono-200"
+                      variant="mkt-body1"
+                      className="font-medium text-center text-mono-140"
                     >
-                      Tangle Network Faucet
+                      Follow <TwitterLink />
+                      {
+                        " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
+                      }
                     </Typography>
                   </div>
-                  <Typography
-                    variant="mkt-body1"
-                    className="font-medium text-center text-mono-140"
-                  >
-                    Receive Test Tokens on Devnet and Testnet supported by
-                    Tangle Network and Webb Protocol for development and
-                    experimental purposes.
-                  </Typography>
-                  <Typography
-                    variant="mkt-body1"
-                    className="font-medium text-center text-mono-140"
-                  >
-                    Follow <TwitterLink />
-                    {
-                      " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
-                    }
-                  </Typography>
-                </div>
 
-                {/** Logic content */}
-                <div className="mt-16 space-y-8">
-                  <LoginWithTwitter />
-                  <InputsContainer />
+                  {/** Logic content */}
+                  <div className="mt-16 space-y-8">
+                    <LoginWithTwitter />
+                    <InputsContainer />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <ProcessingModal />
-          </main>
+              <ProcessingModal />
+            </main>
+          </div>
 
-          <Footer isMinimal isNext className="py-12 mx-auto" />
+          <Footer isMinimal isNext className="py-12 w-full" />
         </div>
       </main>
     </div>
