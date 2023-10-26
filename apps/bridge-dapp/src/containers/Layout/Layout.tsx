@@ -5,7 +5,7 @@ import {
   SideBar,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import { Outlet } from 'react-router';
 import { Header } from '../../components/Header';
 import { WEBB_FAUCET_URL } from '../../constants';
@@ -40,16 +40,18 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
             />
           </Transition>
 
-          <div className="max-w-[1565px] mx-auto w-full h-full flex flex-col justify-between px-4">
-            <div className="space-y-6">
-              <Header />
+          <div className="flex-1 px-3 md:!px-5 lg:!px-10">
+            <div className="max-w-[1565px] mx-auto w-full h-full flex flex-col justify-between">
+              <div className="space-y-6">
+                <Header />
 
-              <main className="w-full">
-                <Outlet />
-              </main>
+                <main className="w-full">
+                  <Outlet />
+                </main>
+              </div>
+
+              <Footer isMinimal className="w-full py-12" />
             </div>
-
-            <Footer isMinimal className="w-full py-12" />
           </div>
         </div>
       </div>

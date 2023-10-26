@@ -26,12 +26,14 @@ function HeaderChipItem<T>({
         {label}:{' '}
         {isLoading ? (
           <SkeletonLoader className="w-[100px]" />
-        ) : typeof value === 'number' ? (
-          getRoundedDownNumberWith2Decimals(value)
         ) : (
-          '-'
-        )}{' '}
-        webbtTNT
+          <>
+            {typeof value === 'number'
+              ? getRoundedDownNumberWith2Decimals(value)
+              : '-'}{' '}
+            webbtTNT
+          </>
+        )}
       </Chip>
     ),
     [Icon, isLoading, label, value]
