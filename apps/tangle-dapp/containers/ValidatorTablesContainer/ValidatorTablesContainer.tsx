@@ -12,7 +12,7 @@ import ValidatorTableContainer from './ValidatorTableContainer';
 
 const pageSize = 10;
 const activeValidatorsTableTab = 'Active Validators';
-const waitingValidatorsTableTab = 'Waiting Validators';
+const waitingValidatorsTableTab = 'Waiting';
 
 const ShieldedTablesContainer = () => {
   const { data: activeValidatorsData, isLoading: activeValidatorsDataLoading } =
