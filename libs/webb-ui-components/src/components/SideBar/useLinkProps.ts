@@ -13,9 +13,8 @@ function useLinkProps(args: Pick<Props, 'isInternal' | 'href' | 'isNext'>) {
     if (!isInternal) {
       return {
         href,
-        isInternal,
         target: '_blank',
-      } as const satisfies PropsOf<'a'> & { isInternal: false };
+      } as const satisfies PropsOf<'a'>;
     }
 
     if (isInternal && isNext) {

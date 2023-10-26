@@ -38,11 +38,20 @@ export interface SideBarItemsProps {
 }
 
 export type SideBarItemProps = {
+  /** The item name */
   name: string;
+  /** Indicate the item is next.js link */
   isNext?: boolean;
+  /** Indicate the item is app internal link */
   isInternal: boolean;
+  /** The item link */
   href: string;
+  /** The item icon */
   Icon: (props: IconBase) => JSX.Element;
+  /** The extra info tooltip for the item */
+  info?: string | React.ReactElement;
+
+  /** The item sub items */
   subItems: SideBarSubItemProps[];
 };
 
@@ -53,10 +62,16 @@ export type SideBarExtraItemProps = {
 };
 
 export type SideBarSubItemProps = {
+  /** Sub item name */
   name: string;
+  /** Indicate the item is next.js link */
   isNext?: boolean;
+  /** Indicate the item is app internal link */
   isInternal: boolean;
+  /** The item link */
   href: string;
+  /** The extra info tooltip for the item */
+  info?: string | React.ReactElement;
 };
 
 export type SideBarExtraSubItemProps = {

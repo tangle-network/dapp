@@ -23,6 +23,7 @@ const items: SideBarItemProps[] = [
     isInternal: true,
     href: '/account',
     Icon: BillFillIcon,
+    info: 'Connect your wallet and create a note account to access this feature.',
     subItems: [],
   },
   {

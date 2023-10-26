@@ -13,7 +13,7 @@ import sidebarProps from '../../constants/sidebar';
 
 const heightClsx = cx('h-screen');
 
-export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const Layout: FC = () => {
   const [showBanner, setShowBanner] = useState(true);
 
   const onCloseHandler = () => {
