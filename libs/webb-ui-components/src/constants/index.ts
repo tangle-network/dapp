@@ -91,6 +91,9 @@ export const TANGLE_RPC_ENDPOINT = 'wss://rpc-archive.tangle.tools';
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 
+export const TANGLE_STAKING_URL =
+  'https://polkadot.js.org/apps/?rpc=wss://rpc-archive.tangle.tools#/staking';
+
 export const WEBB_DOC_ROUTES_RECORD = {
   concepts: {
     'anchor-system': {
