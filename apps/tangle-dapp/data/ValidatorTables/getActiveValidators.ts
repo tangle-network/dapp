@@ -2,7 +2,6 @@ import {
   formatTokenBalance,
   getMinimumStake,
   getPolkadotApiPromise,
-  getTotalBlocksProducedInLastEra,
   getTotalNumberOfNominators,
   getValidatorIdentity,
 } from '../../constants';
@@ -49,12 +48,6 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
         const delegationsValue = await getTotalNumberOfNominators(address);
         const delegations = delegationsValue?.toString();
 
-        // Blocks Produced in Last Era
-        const blocksProducedValue = await getTotalBlocksProducedInLastEra(
-          address
-        );
-        const blocksProduced = blocksProducedValue?.toString();
-
         return {
           address: address ?? '',
           identity: identity ?? '',
@@ -62,7 +55,6 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
           effectiveAmountStaked: effectiveAmountStaked ?? '',
           delegations: delegations ?? '',
           minimumStake: minimumStake ?? '',
-          blocksProduced: blocksProduced ?? '',
         };
       })
     );

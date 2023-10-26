@@ -10,5 +10,4 @@ export type Validator = {
   effectiveAmountStaked: string;
   delegations: string;
   minimumStake: string;
-  blocksProduced: string;
 };

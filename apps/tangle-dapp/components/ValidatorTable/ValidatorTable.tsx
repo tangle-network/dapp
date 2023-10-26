@@ -62,17 +62,9 @@ const columns = [
     cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('minimumStake', {
-    header: () => (
-      <HeaderCell title="Minimum stake" className="justify-start" />
-    ),
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
-  columnHelper.accessor('blocksProduced', {
-    header: () => (
-      <HeaderCell title="Blocks last round" className="justify-end" />
-    ),
+    header: () => <HeaderCell title="Minimum stake" className="justify-end" />,
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-right" />
+      <StringCell value={`${props.getValue()} TTNT`} className="text-right" />
     ),
   }),
 ];

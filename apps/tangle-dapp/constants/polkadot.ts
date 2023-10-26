@@ -121,33 +121,6 @@ export const getTotalNumberOfNominators = async (
   }
 };
 
-export const getTotalBlocksProducedInLastEra = async (
-  validatorAddress: string
-): Promise<number | undefined> => {
-  try {
-    const api = await getPolkadotApiPromise();
-
-    if (!api) return NaN;
-
-    const currentEra = await api.query.staking.currentEra();
-    const lastEra = currentEra.unwrap().subn(1);
-    const startSession = await api.query.staking.erasStartSessionIndex(lastEra);
-    const sessionValue = startSession.unwrap();
-    const blocksProducedValue = await api.query.imOnline.authoredBlocks(
-      sessionValue,
-      validatorAddress
-    );
-    const blocksProduced = blocksProducedValue.toString();
-
-    return Number(blocksProduced);
-  } catch (error) {
-    throw new Error(
-      'Failed to get total blocks produced in last era for validator address - ' +
-        validatorAddress
-    );
-  }
-};
-
 export const getValidatorIdentity = async (
   validatorAddress: string
 ): Promise<string | undefined> => {
