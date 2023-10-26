@@ -88,7 +88,7 @@ export const getMinimumStake = async (): Promise<number | undefined> => {
 
     return Number(minimumStake);
   } catch (error) {
-    throw new Error('Failed to get minimum stake');
+    throw new Error('Failed to get minimum stake required');
   }
 };
 
@@ -115,7 +115,7 @@ export const getTotalNumberOfNominators = async (
     return Number(delegations);
   } catch (error) {
     throw new Error(
-      'Failed to get total number of validators for address - ' +
+      'Failed to get total number of validators for validator address - ' +
         validatorAddress
     );
   }
@@ -142,8 +142,43 @@ export const getTotalBlocksProducedInLastEra = async (
     return Number(blocksProduced);
   } catch (error) {
     throw new Error(
-      'Failed to get total blocks produced in last era by address - ' +
+      'Failed to get total blocks produced in last era for validator address - ' +
         validatorAddress
+    );
+  }
+};
+
+export const getValidatorIdentity = async (
+  validatorAddress: string
+): Promise<string | undefined> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) return '';
+
+    const identityOption = await api.query.identity.identityOf(
+      validatorAddress
+    );
+
+    let name = '';
+
+    if (identityOption.isSome) {
+      const { info } = identityOption.unwrap();
+      const displayNameInfo = info.display.toString();
+      const displayNameObject = JSON.parse(displayNameInfo);
+
+      if (displayNameObject.raw) {
+        const hexString = displayNameObject.raw;
+        name = Buffer.from(hexString.slice(2), 'hex').toString('utf8');
+      }
+    } else {
+      name = validatorAddress;
+    }
+
+    return name;
+  } catch (error) {
+    throw new Error(
+      'Failed to get identity for validator address - ' + validatorAddress
     );
   }
 };

@@ -4,6 +4,7 @@ import {
   getPolkadotApiPromise,
   getTotalBlocksProducedInLastEra,
   getTotalNumberOfNominators,
+  getValidatorIdentity,
 } from '../../constants';
 import { Validator } from '../../types';
 
@@ -26,6 +27,9 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
       validators.map(async (validator): Promise<Validator> => {
         // Validator Address
         const address = validator.toString();
+
+        // Validator Identity
+        const identity = await getValidatorIdentity(address);
 
         // Self Staked Amount & Effective Amount Staked
         const exposure = await api.query.staking.erasStakers(
@@ -53,6 +57,7 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
 
         return {
           address: address ?? '',
+          identity: identity ?? '',
           selfStaked: selfStaked ?? '',
           effectiveAmountStaked: effectiveAmountStaked ?? '',
           delegations: delegations ?? '',

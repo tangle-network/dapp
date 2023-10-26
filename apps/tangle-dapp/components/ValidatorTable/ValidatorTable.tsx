@@ -28,19 +28,24 @@ const columnHelper = createColumnHelper<Validator>();
 const columns = [
   columnHelper.accessor('address', {
     header: () => <HeaderCell title="Indentity" className="justify-start" />,
-    cell: (props) => (
-      <div className="flex space-x-1 items-center">
-        <Avatar sourceVariant="address" value={props.getValue()}>
-          hello
-        </Avatar>
+    cell: (props) => {
+      const address = props.getValue();
+      const identity = props.row.original.identity;
 
-        <Typography variant="body1" fw="normal" className="truncate">
-          {shortenString(props.getValue())}
-        </Typography>
+      return (
+        <div className="flex space-x-1 items-center">
+          <Avatar sourceVariant="address" value={address}>
+            hello
+          </Avatar>
 
-        <ExternalLinkLine />
-      </div>
-    ),
+          <Typography variant="body1" fw="normal" className="truncate">
+            {identity === address ? shortenString(address, 6) : identity}
+          </Typography>
+
+          <ExternalLinkLine />
+        </div>
+      );
+    },
   }),
   columnHelper.accessor('selfStaked', {
     header: () => <HeaderCell title="Self-staked" className="justify-start" />,
