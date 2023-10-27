@@ -23,13 +23,13 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import { ComponentProps, FC, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import sidebarProps from '../../constants/sidebar';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../hooks/useConnectWallet';
+import useSidebarProps from '../../hooks/useSidebarProps';
+import ChainButton from './ChainButton';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
-import ChainButton from './ChainButton';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -46,6 +46,8 @@ export const Header: FC<HeaderProps> = () => {
   const location = useLocation();
 
   const items = location.pathname.split('/').filter((item) => item !== '');
+
+  const sidebarProps = useSidebarProps();
 
   return (
     <header className="flex justify-between pt-6 pb-4">

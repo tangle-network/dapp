@@ -14,6 +14,7 @@ export { default as useNavigateWithPersistParams } from './useNavigateWithPersis
 export * from './useRelayerManager';
 export { default as useRelayerWithRoute } from './useRelayerWithRoute';
 export * from './useShieldedAssets';
+export { default as useSidebarProps } from './useSidebarProps';
 export * from './useSpendNotes';
 export { default as useStateWithRoute } from './useStateWithRoute';
 export * from './useTryAnotherWalletWithView';

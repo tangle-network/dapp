@@ -1,4 +1,3 @@
-import BillFillIcon from '@webb-tools/icons/BillFillIcon';
 import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import { Tangle } from '@webb-tools/icons/Tangle';
@@ -18,14 +17,6 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
-  {
-    name: 'Account',
-    isInternal: true,
-    href: '/account',
-    Icon: BillFillIcon,
-    info: 'Connect your wallet and create a note account to access this feature.',
-    subItems: [],
-  },
   {
     name: 'Hubble',
     isInternal: true,

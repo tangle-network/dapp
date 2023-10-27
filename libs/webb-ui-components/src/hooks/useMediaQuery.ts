@@ -12,6 +12,8 @@ function useMediaQuery(query: string) {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
+    setMatches(mediaQuery.matches);
+
     const handler = (event: MediaQueryListEvent) => {
       setMatches(event.matches);
     };

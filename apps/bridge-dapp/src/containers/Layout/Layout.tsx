@@ -5,11 +5,11 @@ import {
   SideBar,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
-import { type FC, useState } from 'react';
+import { useState, type FC } from 'react';
 import { Outlet } from 'react-router';
 import { Header } from '../../components/Header';
 import { WEBB_FAUCET_URL } from '../../constants';
-import sidebarProps from '../../constants/sidebar';
+import useSidebarProps from '../../hooks/useSidebarProps';
 
 const heightClsx = cx('h-screen');
 
@@ -19,6 +19,8 @@ export const Layout: FC = () => {
   const onCloseHandler = () => {
     setShowBanner(false);
   };
+
+  const sidebarProps = useSidebarProps();
 
   return (
     <div className={cx('bg-body', heightClsx)}>
