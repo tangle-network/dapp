@@ -30,6 +30,7 @@ import ChainButton from './ChainButton';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
+import { BREADCRUMBS_RECORD } from '../../constants';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -60,13 +61,17 @@ export const Header: FC<HeaderProps> = () => {
         <Breadcrumbs className="hidden md:flex">
           {items.map((item, index) => {
             return (
-              <NavLink key={index} to={'/'}>
+              <NavLink key={index} to={item}>
                 <BreadcrumbsItem
                   isLast={index === items.length - 1}
                   icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
                   className="capitalize"
                 >
-                  {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
+                  {item in BREADCRUMBS_RECORD
+                    ? BREADCRUMBS_RECORD[
+                        item as keyof typeof BREADCRUMBS_RECORD
+                      ]
+                    : item.split('-').join(' ')}
                 </BreadcrumbsItem>
               </NavLink>
             );

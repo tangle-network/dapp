@@ -56,3 +56,10 @@ export const BRIDGE_TABS = [
   TRANSFER_PATH,
   WITHDRAW_PATH,
 ] as const;
+
+export const BREADCRUMBS_RECORD = {
+  [BRIDGE_PATH]: 'Hubble Bridge',
+  [WRAP_UNWRAP_PATH]: 'Wrap & Unwrap',
+  [NOTE_ACCOUNT_PATH]: 'Account Dashboard',
+  [ECOSYSTEM_PATH]: 'Ecosystem',
+} as const;
