@@ -26,7 +26,7 @@ export const Section = forwardRef<HTMLDivElement, PropsOf<'div'>>(
       <div
         {...props}
         className={twMerge(
-          'px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-140',
+          'px-4 py-2 rounded-lg bg-[rgba(247,248,247,0.4)] dark:bg-mono-180',
           className
         )}
         ref={ref}

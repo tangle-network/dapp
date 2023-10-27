@@ -4,24 +4,22 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
   ArrowRight,
   ExternalLinkLine,
-  ShieldKeyholeLineIcon,
   ShieldedAssetIcon,
   StatusIndicator,
   TokenIcon,
-  WalletLineIcon,
 } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { isHex } from 'viem';
 import useTimeAgo from '../../hooks/useTimeAgo';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { shortenHex, shortenString } from '../../utils';
 import { ChainChip } from '../ChainChip/ChainChip';
 import { Chip, ChipProps } from '../Chip';
 import SteppedProgress from '../Progress/SteppedProgress';
 import { Button } from '../buttons';
+import { TitleWithInfo } from '../TitleWithInfo';
+import AddressChip from '../AddressChip';
 import {
   TxInfo,
   TxProgressorBodyProps,
@@ -99,6 +97,14 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
 
   return (
     <div {...props} className={twMerge('space-y-2', className)}>
+      <TitleWithInfo
+        title={isSource ? 'Source Chain' : 'Destination Chain'}
+        variant="utility"
+        info={isSource ? 'Source Chain' : 'Destination Chain'}
+        titleClassName="text-mono-100 dark:text-mono-80"
+        className="text-mono-100 dark:text-mono-80"
+      />
+
       <div
         className={cx('flex items-center gap-2', { 'justify-end': !isSource })}
       >
@@ -108,31 +114,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
           chainType={chain.group}
         />
 
-        {walletAddress && (
-          <Chip
-            color="grey"
-            className={twMerge(
-              'flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1'
-            )}
-          >
-            {accountType === 'note' ? (
-              <ShieldKeyholeLineIcon />
-            ) : (
-              <WalletLineIcon />
-            )}
-
-            <Typography
-              variant="body4"
-              fw="bold"
-              component="span"
-              className="inline-block normal-case text-mono-120 dark:text-mono-60"
-            >
-              {isHex(walletAddress)
-                ? shortenHex(walletAddress, 2)
-                : shortenString(walletAddress, 2)}
-            </Typography>
-          </Chip>
-        )}
+        {walletAddress && <AddressChip address={walletAddress} />}
       </div>
 
       <div

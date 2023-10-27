@@ -1,0 +1,39 @@
+import { forwardRef } from 'react';
+import { isHex } from 'viem';
+import { twMerge } from 'tailwind-merge';
+import { WalletLineIcon, ShieldKeyholeLineIcon } from '@webb-tools/icons';
+
+import { AddressChipProps } from './types';
+import { Typography } from '../../typography';
+import { Chip } from '../Chip';
+import {
+  shortenHex,
+  shortenString,
+} from '@webb-tools/webb-ui-components/utils';
+
+const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
+  ({ className: classNameProp, address, isNoteAccount = false }) => {
+    return (
+      <Chip
+        color="grey"
+        className={twMerge(
+          'flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1',
+          classNameProp
+        )}
+      >
+        {isNoteAccount ? <ShieldKeyholeLineIcon /> : <WalletLineIcon />}
+
+        <Typography
+          variant="body4"
+          fw="bold"
+          component="span"
+          className="inline-block uppercase text-mono-120 dark:text-mono-60"
+        >
+          {isHex(address) ? shortenHex(address, 2) : shortenString(address, 2)}
+        </Typography>
+      </Chip>
+    );
+  }
+);
+
+export default AddressChip;

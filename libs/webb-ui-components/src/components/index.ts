@@ -1,4 +1,5 @@
 export * from './Accordion';
+export { default as AddressChip } from './AddressChip';
 export * from './Alert';
 export * from './AmountMenu';
 export * from './Avatar';

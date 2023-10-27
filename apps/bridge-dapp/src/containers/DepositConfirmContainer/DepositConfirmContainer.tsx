@@ -263,10 +263,12 @@ const DepositConfirmContainer = forwardRef<
         progress={currentStep}
         onDownload={() => downloadNote(note)}
         amount={amount}
-        wrappingAmount={String(amount)}
+        wrappingAmount={amount}
         fungibleTokenSymbol={fungibleToken.view.symbol}
-        sourceChain={sourceChain}
-        destChain={destChain}
+        sourceTypedChainId={+note.note.sourceChainId}
+        destTypedChainId={+note.note.targetChainId}
+        sourceAddress={note.note.sourceIdentifyingData}
+        destAddress={note.note.targetIdentifyingData}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusColor={
           txStatus === 'completed'

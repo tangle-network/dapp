@@ -11,9 +11,19 @@ import type { ChainGroup } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
+   * Source Address
+   */
+  sourceAddress?: string;
+
+  /**
+   * Destination Address
+   */
+  destAddress?: string;
+
+  /**
    * The transaction amount
    */
-  amount?: number | string;
+  amount: number;
 
   /**
    * The card title
@@ -32,20 +42,14 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   actionBtnProps?: ComponentProps<typeof Button>;
 
   /**
-   * The source chain symbol
+   * The source typed chain id
    */
-  sourceChain?: {
-    type: ChainGroup;
-    name: string;
-  };
+  sourceTypedChainId: number;
 
   /**
-   * The destination chain symbol
+   * The destination typed chain id
    */
-  destChain?: {
-    type: ChainGroup;
-    name: string;
-  };
+  destTypedChainId: number;
 
   /**
    * The transaction progress
@@ -109,7 +113,7 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
   /**
    * Due to wrapping fee, a wrapping amount would be larger than the bridged amount.
    */
-  wrappingAmount?: string;
+  wrappingAmount?: number;
 }
 
 export interface WithdrawConfirmationProps extends ConfirmationCardProps {
