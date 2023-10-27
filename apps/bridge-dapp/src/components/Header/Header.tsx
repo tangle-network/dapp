@@ -97,7 +97,7 @@ export const Header: FC<HeaderProps> = () => {
         <div className="flex items-center space-x-2">
           <TxProgressDropdown />
 
-          <div className="hidden lg:!flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <ChainButton />
             {isConnecting || loading || !activeWallet || !activeAccount ? (
               isMobile ? (
@@ -109,7 +109,7 @@ export const Header: FC<HeaderProps> = () => {
                   onClick={() =>
                     toggleModal(true, srcTypedChainId ?? undefined)
                   }
-                  className="hidden lg:!flex justify-center items-center px-6"
+                  className="flex justify-center items-center px-6"
                 >
                   Connect
                 </Button>
