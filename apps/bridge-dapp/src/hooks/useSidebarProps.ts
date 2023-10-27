@@ -3,7 +3,7 @@ import BillFillIcon from '@webb-tools/icons/BillFillIcon';
 import sidebar from '../constants/sidebar';
 import type { SideBarItemProps } from '@webb-tools/webb-ui-components/components/SideBar/types';
 
-const accountItem = {
+const accountItemCfg = {
   name: 'Account',
   isInternal: true,
   href: '/account',
@@ -17,15 +17,17 @@ const accountItem = {
  */
 function useSidebarProps() {
   const { noteManager } = useWebContext();
-  const info = noteManager?.getKeypair()
-    ? undefined
-    : 'Connect your wallet and create a note account to access this feature.';
+
+  const accountItem = {
+    ...accountItemCfg,
+    info: noteManager?.getKeypair()
+      ? undefined
+      : 'Connect your wallet and create a note account to access this feature.',
+    isDisabled: !noteManager?.getKeypair(),
+  } satisfies SideBarItemProps;
 
   sidebar.items = [
-    {
-      ...accountItem,
-      info,
-    },
+    accountItem,
     ...sidebar.items.filter((item) => item.name !== accountItem.name),
   ];
 

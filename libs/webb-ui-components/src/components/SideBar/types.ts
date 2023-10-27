@@ -42,6 +42,8 @@ export type SideBarItemProps = {
   name: string;
   /** Indicate the item is next.js link */
   isNext?: boolean;
+  /** If `true`, the item will be disabled */
+  isDisabled?: boolean;
   /** Indicate the item is app internal link */
   isInternal: boolean;
   /** The item link */
@@ -66,6 +68,8 @@ export type SideBarSubItemProps = {
   name: string;
   /** Indicate the item is next.js link */
   isNext?: boolean;
+  /** If `true`, the item will be disabled */
+  isDisabled?: boolean;
   /** Indicate the item is app internal link */
   isInternal: boolean;
   /** The item link */

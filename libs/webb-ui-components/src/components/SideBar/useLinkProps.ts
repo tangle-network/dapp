@@ -6,10 +6,18 @@ import type { SideBarExtraItemProps, SideBarItemProps } from './types';
 
 type Props = SideBarItemProps & SideBarExtraItemProps;
 
-function useLinkProps(args: Pick<Props, 'isInternal' | 'href' | 'isNext'>) {
-  const { isInternal, isNext, href } = args;
+function useLinkProps(
+  args: Pick<Props, 'isInternal' | 'href' | 'isNext' | 'isDisabled'> & {
+    hasSubItem?: boolean;
+  }
+) {
+  const { isInternal, isNext, href, isDisabled, hasSubItem } = args;
 
   return useMemo(() => {
+    if (isDisabled || hasSubItem) {
+      return {};
+    }
+
     if (!isInternal) {
       return {
         href,
@@ -32,7 +40,7 @@ function useLinkProps(args: Pick<Props, 'isInternal' | 'href' | 'isNext'>) {
     }
 
     return {};
-  }, [href, isInternal, isNext]);
+  }, [hasSubItem, href, isDisabled, isInternal, isNext]);
 }
 
 export default useLinkProps;

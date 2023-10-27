@@ -21,6 +21,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   isExpanded,
   isActive,
   setIsActive,
+  isDisabled,
   info,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -41,6 +42,10 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   }, [isActive]);
 
   const setItemAsActiveAndToggleDropdown = () => {
+    if (isDisabled) {
+      return;
+    }
+
     if (!isExpanded && setIsActive && isInternal) {
       setIsActive();
     }
@@ -50,18 +55,28 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
     }
   };
 
-  const linkProps = useLinkProps({ href, isInternal, isNext });
+  const linkProps = useLinkProps({
+    href,
+    isInternal,
+    isNext,
+    isDisabled,
+    hasSubItem: subItems.length > 0,
+  });
 
   if (!isMounted) return null;
 
   return (
     <>
       <WithInfo info={info}>
-        <div onClick={setItemAsActiveAndToggleDropdown}>
+        <div
+          onClick={setItemAsActiveAndToggleDropdown}
+          className={isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+        >
           <Link {...linkProps}>
             <div
               className={twMerge(
-                'group cursor-pointer select-none rounded-full',
+                'group select-none rounded-full',
+                isDisabled ? 'pointer-events-none' : '',
                 !isExpanded ? 'px-3 py-2' : 'flex items-center',
                 isActive && (subItems.length === 0 || !isExpanded)
                   ? 'text-mono-200 dark:text-mono-0'

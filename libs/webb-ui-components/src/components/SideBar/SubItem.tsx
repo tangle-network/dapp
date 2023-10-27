@@ -16,11 +16,12 @@ export const SubItem: React.FC<
   href,
   isNext,
   isActive: isActiveProp,
+  isDisabled,
   setItemIsActive,
   setSubItemIsActive,
   info,
 }) => {
-  const linkProps = useLinkProps({ href, isInternal, isNext });
+  const linkProps = useLinkProps({ href, isInternal, isNext, isDisabled });
 
   const setIsActive = () => {
     if (setItemIsActive && setSubItemIsActive && isInternal) {
@@ -41,14 +42,16 @@ export const SubItem: React.FC<
         className={cx(
           'px-6 py-3 rounded-full',
           'group hover:bg-mono-20 dark:hover:bg-mono-160',
-          { 'pointer-events-none bg-mono-20 dark:bg-mono-160': isActive }
+          { 'pointer-events-none bg-mono-20 dark:bg-mono-160': isActive },
+          isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
         )}
       >
         <li className="select-none">
           <div
-            className={cx('flex items-center justify-between cursor-pointer', {
+            className={cx('flex items-center justify-between', {
               'text-mono-200 dark:text-mono-0': isActive && isInternal,
               'text-mono-100 dark:text-mono-100': !isActive || !isInternal,
+              'pointer-events-none': isDisabled,
             })}
           >
             <div className="flex items-center gap-4 !text-inherit">
