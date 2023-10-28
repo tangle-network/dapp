@@ -27,7 +27,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   info,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(isActive ?? false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(Boolean(isActive));
   const [activeSubItem, setActiveSubItem] = useState<number>(() => {
     const activeSubItemIndex = subItems.findIndex((subItem) =>
       isSideBarItemActive(subItem.href, pathnameOrHash)
@@ -48,6 +48,12 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   useEffect(() => {
     setIsMounted(true);
   }, [setIsMounted]);
+
+  useEffect(() => {
+    if (isActive) {
+      setIsDropdownOpen(true);
+    }
+  }, [isActive]);
 
   const setItemAsActiveAndToggleDropdown = () => {
     if (isDisabled) {

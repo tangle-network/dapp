@@ -1,8 +1,8 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import BillFillIcon from '@webb-tools/icons/BillFillIcon';
-import sidebar from '../constants/sidebar';
 import type { SideBarItemProps } from '@webb-tools/webb-ui-components/components/SideBar/types';
 import { useLocation } from 'react-router';
+import sidebar from '../constants/sidebar';
 
 const accountItemCfg = {
   name: 'Account',
@@ -18,7 +18,7 @@ const accountItemCfg = {
  */
 function useSidebarProps() {
   const { noteManager } = useWebContext();
-  const { hash } = useLocation();
+  const { pathname } = useLocation();
 
   const accountItem = {
     ...accountItemCfg,
@@ -35,7 +35,7 @@ function useSidebarProps() {
 
   return {
     ...sidebar,
-    pathnameOrHash: hash,
+    pathnameOrHash: pathname,
   } satisfies typeof sidebar;
 }
 
