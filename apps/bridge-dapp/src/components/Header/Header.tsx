@@ -1,5 +1,4 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ContrastTwoLine } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
@@ -23,6 +22,7 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import { ComponentProps, FC, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../hooks/useConnectWallet';
 import useSidebarProps from '../../hooks/useSidebarProps';
@@ -30,7 +30,6 @@ import ChainButton from './ChainButton';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
-import { BREADCRUMBS_RECORD } from '../../constants';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -60,18 +59,16 @@ export const Header: FC<HeaderProps> = () => {
         />
         <Breadcrumbs className="hidden md:flex">
           {items.map((item, index) => {
+            const preCfgBreadcrumb = BREADCRUMBS_RECORD[item];
+
             return (
               <NavLink key={index} to={item}>
                 <BreadcrumbsItem
                   isLast={index === items.length - 1}
-                  icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
+                  icon={preCfgBreadcrumb?.Icon}
                   className="capitalize"
                 >
-                  {item in BREADCRUMBS_RECORD
-                    ? BREADCRUMBS_RECORD[
-                        item as keyof typeof BREADCRUMBS_RECORD
-                      ]
-                    : item.split('-').join(' ')}
+                  {preCfgBreadcrumb?.label ?? item.split('-').join(' ')}
                 </BreadcrumbsItem>
               </NavLink>
             );
