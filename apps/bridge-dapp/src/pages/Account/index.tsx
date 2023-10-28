@@ -26,7 +26,7 @@ const Account = () => {
   >(shieldedAssetsTab);
 
   const { notificationApi } = useWebbUI();
-  const { allNotes, hasNoteAccount } = useNoteAccount();
+  const { allNotes, hasNoteAccount, allNotesInitialized } = useNoteAccount();
 
   const { uploadModalOpen, setUploadModalOpen, openUploadModal } =
     useNoteUploadModalProps();
@@ -74,7 +74,7 @@ const Account = () => {
       [globalSearchText, openUploadModal]
     );
 
-  if (!hasNoteAccount) {
+  if (!hasNoteAccount || !allNotesInitialized) {
     return null;
   }
 
@@ -130,6 +130,7 @@ const Account = () => {
 
 export default Account;
 
+/** @internal */
 function useNoteUploadModalProps() {
   // Upload modal state
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -150,8 +151,10 @@ function useNoteUploadModalProps() {
   };
 }
 
+/** @internal */
 type SelectedChain = 'all' | [string, ChainConfig][];
 
+/** @internal */
 function useFilterProps() {
   const [selectedChains, setSelectedChains] = useState<SelectedChain>('all');
 
@@ -171,6 +174,7 @@ function useFilterProps() {
   };
 }
 
+/** @internal */
 function RightButtonsContainer(
   props: {
     onUpload: () => void;
@@ -203,6 +207,7 @@ function RightButtonsContainer(
   );
 }
 
+/** @internal */
 function getFilterData<T extends Array<{ chain: string }>>(
   selectedChains: SelectedChain,
   data: T

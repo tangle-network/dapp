@@ -22,12 +22,13 @@ import {
   fuzzyFilter,
   shortenString,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
 import { EmptyTable, LoadingTable } from '../../../components/tables';
 import { downloadNotes } from '../../../utils';
 import { ActionWithTooltip } from '../ActionWithTooltip';
 import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
+import useNoteAction from '../useNoteAction';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
@@ -127,52 +128,13 @@ const staticColumns = [
 
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
-  onActiveTabChange,
-  onDefaultDestinationChainChange,
-  onDefaultFungibleCurrencyChange,
   onDeleteNotesChange,
   onUploadSpendNote,
   globalSearchText,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
-  const onQuickTransfer = useCallback(
-    (data: SpendNoteDataType) => {
-      const { rawChain, rawFungibleCurrency } = data;
-
-      onActiveTabChange?.('Transfer');
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      onDefaultFungibleCurrencyChange,
-    ]
-  );
-
-  const onQuickWithdraw = useCallback(
-    (data: SpendNoteDataType) => {
-      const { rawChain, rawFungibleCurrency } = data;
-
-      onActiveTabChange?.('Withdraw');
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      onDefaultFungibleCurrencyChange,
-    ]
-  );
+  const noteActionHandler = useNoteAction();
 
   const columns = useMemo(() => {
     return [
@@ -187,14 +149,26 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
             <div className="flex items-center space-x-1">
               <ActionWithTooltip
                 tooltipContent="Quick Transfer"
-                onClick={() => onQuickTransfer(data)}
+                onClick={() =>
+                  noteActionHandler(
+                    'transfer',
+                    data.rawChain,
+                    data.rawFungibleCurrency
+                  )
+                }
               >
                 <SendPlanLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
               <ActionWithTooltip
                 tooltipContent="Quick Withdraw"
-                onClick={() => onQuickWithdraw(data)}
+                onClick={() =>
+                  noteActionHandler(
+                    'withdraw',
+                    data.rawChain,
+                    data.rawFungibleCurrency
+                  )
+                }
               >
                 <WalletLineIcon className="!fill-current" />
               </ActionWithTooltip>
@@ -208,7 +182,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
         },
       }),
     ];
-  }, [onDeleteNotesChange, onQuickTransfer, onQuickWithdraw]);
+  }, [noteActionHandler, onDeleteNotesChange]);
 
   const table = useReactTable({
     data,
