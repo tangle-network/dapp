@@ -12,6 +12,7 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
+import TxConfirmationRing from '../../components/ConfirmationRing';
 import { formatTokenAmount, getRoundedAmountString } from '../../utils';
 import { Section } from './WrapperSection';
 import { DepositConfirmProps } from './types';
@@ -39,6 +40,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       destTypedChainId,
       title = 'Confirm Deposit',
       fungibleTokenSymbol,
+      poolAddress,
       wrappableTokenSymbol,
       ...props
     },
@@ -117,6 +119,21 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               }}
             />
           </Section>
+
+          <TxConfirmationRing
+            source={{
+              address: sourceAddress,
+              typedChainId: sourceTypedChainId,
+              isNoteAccount: false,
+            }}
+            dest={{
+              address: destAddress,
+              typedChainId: destTypedChainId,
+              isNoteAccount: true,
+            }}
+            poolAddress={poolAddress}
+            poolName={fungibleTokenSymbol}
+          />
 
           <Section>
             <div className="space-y-1">

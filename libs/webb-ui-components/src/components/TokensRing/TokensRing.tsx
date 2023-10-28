@@ -6,7 +6,7 @@ import { forwardRef } from 'react';
 import { Chip } from '../Chip';
 import { TokensRingProps } from './types';
 
-export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
+const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
   (
     {
       amount = 0,
@@ -51,7 +51,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute -translate-y-1/2 -translate-x-1/2 top-[15%] left-[15%] z-[1]',
               {
-                'border-2 border-purple-40 dark:border-purple-90 rounded-full':
+                'border-2 border-purple-40 dark:border-purple-90 rounded-lg':
                   sourceChain === 'dot' || destChain === 'dot',
               }
             )}
@@ -69,7 +69,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -94,7 +94,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -114,7 +114,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute top-0 -translate-x-1/2 -translate-y-1/2 left-1/2 z-[1]',
               {
-                'border-2 border-purple-40 dark:border-purple-90 rounded-full':
+                'border-2 border-purple-40 dark:border-purple-90 rounded-lg':
                   sourceChain === 'avax' || destChain === 'avax',
               }
             )}
@@ -134,7 +134,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -161,7 +161,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -181,7 +181,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute top-[15%] right-[15%] translate-x-1/2 -translate-y-1/2 z-[1]',
               {
-                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-full':
+                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-lg':
                   sourceChain === 'ksm' || destChain === 'ksm',
               }
             )}
@@ -199,7 +199,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -224,7 +224,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -244,7 +244,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute right-0 translate-x-1/2 -translate-y-1/2 top-1/2 z-[1]',
               {
-                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-full':
+                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-lg':
                   sourceChain === 'eth' || destChain === 'eth',
               }
             )}
@@ -264,7 +264,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -291,7 +291,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -311,7 +311,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute bottom-[15%] right-[15%] translate-x-1/2 translate-y-1/2 z-[1]',
               {
-                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-full':
+                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-lg':
                   sourceChain === 'matic' || destChain === 'matic',
               }
             )}
@@ -329,7 +329,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -354,7 +354,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -374,7 +374,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute bottom-0 -translate-x-1/2 translate-y-1/2 left-1/2 z-[1]',
               {
-                'border-2 border-purple-40 dark:border-purple-90 rounded-full':
+                'border-2 border-purple-40 dark:border-purple-90 rounded-lg':
                   sourceChain === 'op' && destChain === 'op',
               }
             )}
@@ -394,7 +394,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -421,7 +421,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
                   )}
                 />
@@ -441,7 +441,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute bottom-[15px] left-0 translate-x-1/2 z-[1]',
               {
-                'border-2 border-purple-40 dark:border-purple-90 rounded-full':
+                'border-2 border-purple-40 dark:border-purple-90 rounded-lg':
                   sourceChain === 'arbitrum' || destChain === 'arbitrum',
               }
             )}
@@ -459,7 +459,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -486,7 +486,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -506,7 +506,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
             className={cx(
               'absolute left-0 -translate-x-1/2 -translate-y-1/2 top-1/2 z-[1]',
               {
-                'border-2 border-purple-40 dark:border-purple-90 rounded-full':
+                'border-2 border-purple-40 dark:border-purple-90 rounded-lg':
                   sourceChain === 'one' || destChain === 'one',
               }
             )}
@@ -526,7 +526,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -553,7 +553,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
                 <span
                   className={cx(
                     'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
+                    'border-2 border-purple-40 dark:border-purple-90 rounded-lg',
                     'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
                   )}
                 />
@@ -571,7 +571,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
           <div
             className={cx(
               'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-              'rounded-full bg-mono-0 dark:bg-mono-160 border-2 border-purple-40 dark:border-purple-90',
+              'rounded-lg bg-mono-0 dark:bg-mono-160 border-2 border-purple-40 dark:border-purple-90',
               'w-[133px] h-[133px] flex flex-col justify-center items-center'
             )}
           >
@@ -597,3 +597,5 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
     );
   }
 );
+
+export default TokensRing;

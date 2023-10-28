@@ -21,7 +21,11 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
           classNameProp
         )}
       >
-        {isNoteAccount ? <ShieldKeyholeLineIcon /> : <WalletLineIcon />}
+        {isNoteAccount ? (
+          <ShieldKeyholeLineIcon className="fill-mono-120 dark:fill-mono-60" />
+        ) : (
+          <WalletLineIcon className="fill-mono-120 dark:fill-mono-60" />
+        )}
 
         <Typography
           variant="body4"

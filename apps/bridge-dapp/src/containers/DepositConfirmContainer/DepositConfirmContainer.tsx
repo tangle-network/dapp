@@ -30,12 +30,12 @@ const DepositConfirmContainer = forwardRef<
   (
     {
       amount,
-      destChain,
       fungibleTokenId,
       note,
       onResetState,
       onClose,
-      sourceChain,
+      sourceTypedChainId,
+      destTypedChainId,
       wrappableTokenId,
     },
     ref
@@ -265,10 +265,13 @@ const DepositConfirmContainer = forwardRef<
         amount={amount}
         wrappingAmount={amount}
         fungibleTokenSymbol={fungibleToken.view.symbol}
-        sourceTypedChainId={+note.note.sourceChainId}
-        destTypedChainId={+note.note.targetChainId}
-        sourceAddress={note.note.sourceIdentifyingData}
+        sourceTypedChainId={sourceTypedChainId ?? +note.note.sourceChainId}
+        destTypedChainId={destTypedChainId ?? +note.note.targetChainId}
+        sourceAddress={activeAccount?.address ?? ''}
         destAddress={note.note.targetIdentifyingData}
+        poolAddress={
+          apiConfig.anchors[fungibleTokenId][+note.note.targetChainId]
+        }
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusColor={
           txStatus === 'completed'

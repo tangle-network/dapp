@@ -7,18 +7,17 @@ import type {
   ChipColors,
   TitleWithInfo,
 } from '../../components';
-import type { ChainGroup } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * Source Address
    */
-  sourceAddress?: string;
+  sourceAddress: string;
 
   /**
    * Destination Address
    */
-  destAddress?: string;
+  destAddress: string;
 
   /**
    * The transaction amount
@@ -104,6 +103,11 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
    * The fungible token symbol
    */
   fungibleTokenSymbol: string;
+
+  /**
+   * The address of the pool contract that the user is depositing to
+   */
+  poolAddress: string;
 
   /**
    * The wrappable token symbol
