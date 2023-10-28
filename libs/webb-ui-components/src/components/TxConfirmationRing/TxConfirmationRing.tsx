@@ -64,6 +64,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
               <Typography
                 variant="body1"
                 fw="bold"
+                ta="center"
                 className="text-mono-140 dark:text-mono-80"
               >
                 {poolName}

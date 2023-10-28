@@ -12,7 +12,7 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
-import TxConfirmationRing from '../../components/ConfirmationRing';
+import TxConfirmationRing from '../../components/TxConfirmationRing';
 import { formatTokenAmount, getRoundedAmountString } from '../../utils';
 import { Section } from './WrapperSection';
 import { DepositConfirmProps } from './types';
