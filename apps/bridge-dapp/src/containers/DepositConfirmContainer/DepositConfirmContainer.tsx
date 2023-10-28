@@ -5,9 +5,7 @@ import {
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { downloadString } from '@webb-tools/browser-utils';
 import { useVAnchor } from '@webb-tools/react-hooks';
-import { Note } from '@webb-tools/sdk-core';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
@@ -16,6 +14,7 @@ import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
   captureSentryException,
+  downloadNotes,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -82,15 +81,6 @@ const DepositConfirmContainer = forwardRef<
       txStatus,
       txStatusMessage,
     } = useInProgressTxInfo(wrappingFlow, onResetState);
-
-    // Download for the deposit confirm
-    const downloadNote = useCallback((note: Note) => {
-      const noteStr = note.serialize();
-      downloadString(
-        JSON.stringify(noteStr),
-        noteStr.slice(-noteStr.length) + '.json'
-      );
-    }, []);
 
     const handleExecuteDeposit = useCallback(
       async () => {
@@ -185,7 +175,7 @@ const DepositConfirmContainer = forwardRef<
 
           const transactionHash = await api.transact(...args);
 
-          downloadNote(note);
+          downloadNotes([note]);
           await addNoteToNoteManager(note);
 
           enqueueSubmittedTx(
@@ -236,7 +226,7 @@ const DepositConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, downloadNote, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken]
+      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken]
     );
 
     return (
@@ -261,7 +251,7 @@ const DepositConfirmContainer = forwardRef<
         }}
         totalProgress={totalStep}
         progress={currentStep}
-        onDownload={() => downloadNote(note)}
+        onDownload={() => downloadNotes([note])}
         amount={amount}
         wrappingAmount={String(amount)}
         fungibleTokenSymbol={fungibleToken.view.symbol}
