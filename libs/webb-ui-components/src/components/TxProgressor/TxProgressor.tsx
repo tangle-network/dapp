@@ -101,25 +101,26 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         title={isSource ? 'Source Chain' : 'Destination Chain'}
         variant="utility"
         info={isSource ? 'Source Chain' : 'Destination Chain'}
-        titleClassName="text-mono-100 dark:text-mono-80"
-        className="text-mono-100 dark:text-mono-80"
+        titleClassName="text-mono-120 dark:text-mono-80"
+        className="text-mono-120 dark:text-mono-80"
       />
 
-      <div
-        className={cx('flex items-center gap-2', { 'justify-end': !isSource })}
-      >
+      <div className="flex flex-col md:flex-row md:items-center gap-2">
         <ChainChip
           className="px-2 py-1"
           chainName={chain.name}
           chainType={chain.group}
         />
 
-        {walletAddress && <AddressChip address={walletAddress} />}
+        {walletAddress && (
+          <AddressChip
+            address={walletAddress}
+            isNoteAccount={accountType === 'note'}
+          />
+        )}
       </div>
 
-      <div
-        className={cx('flex items-center gap-1', { 'justify-end': !isSource })}
-      >
+      <div className="flex items-center gap-1">
         <Typography
           variant="h5"
           fw="semibold"
@@ -136,9 +137,9 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         </Typography>
 
         {tokenType === 'shielded' ? (
-          <ShieldedAssetIcon />
+          <ShieldedAssetIcon size="lg" />
         ) : (
-          <TokenIcon name={tokenSymbol} />
+          <TokenIcon name={tokenSymbol} size="lg" />
         )}
       </div>
     </div>

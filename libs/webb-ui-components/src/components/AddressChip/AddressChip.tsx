@@ -17,7 +17,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
       <Chip
         color="grey"
         className={twMerge(
-          'flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1',
+          'w-fit flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1',
           classNameProp
         )}
       >

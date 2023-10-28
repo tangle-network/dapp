@@ -8,10 +8,13 @@ import { isHex } from 'viem';
 import { TxConfirmationRingProps } from './types';
 import { Typography } from '../../typography';
 import AddressChip from '../AddressChip';
+import { useDarkMode } from '../../hooks/useDarkMode';
 import { shortenHex } from '../../utils';
 
 const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
   ({ source, dest, poolName, poolAddress, className, ...props }, ref) => {
+    const [isDarkMode] = useDarkMode();
+
     const poolExplorerUrl = useMemo(() => {
       const blockExplorerUrl =
         chainsConfig[dest.typedChainId].blockExplorers?.default.url;
@@ -97,7 +100,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                 <AddressChip
                   address={source.address}
                   isNoteAccount={source.isNoteAccount}
-                  className="absolute top-1/2 translate-y-[-50%]"
+                  className="absolute top-1/2 translate-y-[-50%] px-[6.25px]"
                 />
               </foreignObject>
 
@@ -106,7 +109,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                 <AddressChip
                   address={dest.address}
                   isNoteAccount={dest.isNoteAccount}
-                  className="absolute top-1/2 translate-y-[-50%] right-0"
+                  className="absolute top-1/2 translate-y-[-50%] right-0 px-[6.25px]"
                 />
               </foreignObject>
             </g>
@@ -197,12 +200,12 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
               cx="87"
               cy="104.082"
               r="2.5"
-              stroke="#B5A9F2"
+              stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
               strokeWidth="2"
             />
             <path
               d="M105.5 104.082L89.5 104.082"
-              stroke="#B5A9F2"
+              stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
               strokeWidth="2"
             />
             <path d="M117.5 104.082L297.5 104.082" stroke="#E2E5EB" />
@@ -212,7 +215,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
               width="26"
               height="26"
               rx="5"
-              stroke="#B5A9F2"
+              stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
               strokeWidth="2"
             />
             <rect
@@ -221,7 +224,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
               width="26"
               height="26"
               rx="5"
-              stroke="#B5A9F2"
+              stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
               strokeWidth="2"
             />
             <circle
@@ -229,12 +232,12 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
               cy="104.082"
               r="2.5"
               transform="rotate(-180 328 104.082)"
-              stroke="#B5A9F2"
+              stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
               strokeWidth="2"
             />
             <path
               d="M309.5 104.082L325.5 104.082"
-              stroke="#B5A9F2"
+              stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
               strokeWidth="2"
             />
             <path d="M207.5 14V194" stroke="#9CA0B0" />
