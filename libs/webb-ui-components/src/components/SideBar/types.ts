@@ -29,12 +29,14 @@ export interface SidebarProps extends SideBarLogoProps {
   overrideContentProps?: DialogContentProps;
   isExpandedAtDefault?: boolean;
   onSideBarToggle?: () => void;
+  pathnameOrHash?: string;
 }
 
 export interface SideBarItemsProps {
   items: SideBarItemProps[];
   isExpanded: boolean;
   className?: string;
+  pathnameOrHash?: string;
 }
 
 export type SideBarItemProps = {
@@ -52,6 +54,8 @@ export type SideBarItemProps = {
   Icon: (props: IconBase) => JSX.Element;
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
+
+  pathnameOrHash?: string;
 
   /** The item sub items */
   subItems: SideBarSubItemProps[];
@@ -76,6 +80,8 @@ export type SideBarSubItemProps = {
   href: string;
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
+
+  pathnameOrHash?: string;
 };
 
 export type SideBarExtraSubItemProps = {

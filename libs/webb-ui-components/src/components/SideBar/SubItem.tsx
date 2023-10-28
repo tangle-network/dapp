@@ -20,6 +20,7 @@ export const SubItem: React.FC<
   setItemIsActive,
   setSubItemIsActive,
   info,
+  pathnameOrHash,
 }) => {
   const linkProps = useLinkProps({ href, isInternal, isNext, isDisabled });
 
@@ -31,8 +32,8 @@ export const SubItem: React.FC<
   };
 
   const isActive = useMemo(() => {
-    return isActiveProp || isSideBarItemActive(href);
-  }, [href, isActiveProp]);
+    return isActiveProp || isSideBarItemActive(href, pathnameOrHash);
+  }, [href, isActiveProp, pathnameOrHash]);
 
   return (
     <WithInfo info={info}>

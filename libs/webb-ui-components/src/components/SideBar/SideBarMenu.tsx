@@ -18,6 +18,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
       footer,
       className,
       overrideContentProps,
+      pathnameOrHash,
       ...props
     },
     ref
@@ -50,7 +51,11 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
             >
               <div>
                 <SideBarLogo logoLink={logoLink} Logo={Logo} isExpanded />
-                <SideBarItems items={items} isExpanded />
+                <SideBarItems
+                  items={items}
+                  isExpanded
+                  pathnameOrHash={pathnameOrHash}
+                />
               </div>
 
               <SideBarFooter

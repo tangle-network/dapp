@@ -5,11 +5,12 @@ import { FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography/Typography';
+import isSideBarItemActive from '../../utils/isSideBarItemActive';
 import { Link } from '../Link';
 import { SubItem } from './SubItem';
+import WithInfo from './WithInfo';
 import { SideBarExtraItemProps, SideBarItemProps } from './types';
 import useLinkProps from './useLinkProps';
-import WithInfo from './WithInfo';
 
 const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   name,
@@ -22,24 +23,31 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   isActive,
   setIsActive,
   isDisabled,
+  pathnameOrHash,
   info,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeSubItem, setActiveSubItem] = useState<number | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(isActive ?? false);
+  const [activeSubItem, setActiveSubItem] = useState<number>(() => {
+    const activeSubItemIndex = subItems.findIndex((subItem) =>
+      isSideBarItemActive(subItem.href, pathnameOrHash)
+    );
+
+    return activeSubItemIndex;
+  });
+
+  useEffect(() => {
+    const idx = subItems.findIndex((subItem) =>
+      isSideBarItemActive(subItem.href, pathnameOrHash)
+    );
+
+    setActiveSubItem(idx);
+  }, [pathnameOrHash, subItems]);
 
   // handle mounting to tackle `className` did not match between server and client
   useEffect(() => {
     setIsMounted(true);
   }, [setIsMounted]);
-
-  useEffect(() => {
-    if (isActive) {
-      setIsDropdownOpen(true);
-    } else {
-      setIsDropdownOpen(false);
-    }
-  }, [isActive]);
 
   const setItemAsActiveAndToggleDropdown = () => {
     if (isDisabled) {
@@ -122,10 +130,11 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
       </WithInfo>
 
       {isExpanded && isDropdownOpen && (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-1 empty:hidden">
           {subItems.map((subItemProps, index) => (
             <SubItem
               key={index}
+              pathnameOrHash={pathnameOrHash}
               {...subItemProps}
               isActive={activeSubItem === index && isActive}
               setItemIsActive={setIsActive}
