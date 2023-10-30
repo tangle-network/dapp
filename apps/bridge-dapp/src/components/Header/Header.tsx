@@ -103,6 +103,7 @@ export const Header: FC<HeaderProps> = () => {
           <NavigationMenuTrigger />
           {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
           <NavigationMenuContent
+            className="mt-5"
             version={process.env.BRIDGE_VERSION}
             onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
             onTestnetClick={() =>
