@@ -26,7 +26,7 @@ import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../hooks/useConnectWallet';
 import useSidebarProps from '../../hooks/useSidebarProps';
-import ChainButton from './ChainButton';
+import ActiveChainDropdown from './ActiveChainDropdown';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
@@ -80,7 +80,7 @@ export const Header: FC<HeaderProps> = () => {
         <TxProgressDropdown />
 
         <div className="hidden lg:!flex items-center space-x-2">
-          <ChainButton />
+          <ActiveChainDropdown />
           {isConnecting || loading || !activeWallet || !activeAccount ? (
             isMobile ? (
               <ConnectWalletMobileButton />

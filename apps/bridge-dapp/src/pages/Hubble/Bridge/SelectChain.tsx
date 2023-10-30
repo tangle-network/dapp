@@ -20,7 +20,6 @@ import {
   TOKEN_KEY,
 } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
@@ -29,15 +28,13 @@ import getParam from '../../../utils/getParam';
 const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   chainType,
 }) => {
-  const { activeWallet, activeChain, loading, switchChain } = useWebContext();
-  const { toggleModal } = useConnectWallet();
+  const { activeChain, loading } = useWebContext();
 
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigateWithPersistParams();
 
   const chainsCfg = useChains(chainType);
-  const currentTab = useTxTabFromRoute();
 
   const updateParams = useUpdateParams();
 
@@ -80,22 +77,9 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         return;
       }
 
-      // If the source chain is render on the bridge tab,
-      // we just need to set the query param and close the modal
-      if (currentTab) {
-        return handleClose(calculateTypedChainId(chain.chainType, chain.id));
-      }
-
-      // Otherwise perform the switch chain action
-      if (activeWallet && chain.wallets.includes(activeWallet.id)) {
-        await switchChain(chain, activeWallet);
-      } else {
-        toggleModal(true, calculateTypedChainId(chain.chainType, chain.id));
-      }
-
-      handleClose();
+      return handleClose(calculateTypedChainId(chain.chainType, chain.id));
     },
-    [activeWallet, currentTab, handleClose, switchChain, toggleModal]
+    [handleClose]
   );
 
   const { defaultCategory, onlyCategory } = useChainCategoryProps(chainType);
