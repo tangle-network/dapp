@@ -1,4 +1,4 @@
-import { ArrowRight, Close, Download } from '@webb-tools/icons';
+import { ArrowRight, Close, FileShieldLine, Download } from '@webb-tools/icons';
 import { TxProgressorBody } from '@webb-tools/webb-ui-components/components';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -15,6 +15,7 @@ import { Typography } from '../../typography';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
 import { formatTokenAmount, getRoundedAmountString } from '../../utils';
 import { Section } from './WrapperSection';
+import SpendNoteInput from './SpendNoteInput';
 import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
@@ -135,53 +136,38 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             poolName={fungibleTokenSymbol}
           />
 
-          <Section>
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <TitleWithInfo
-                  title="New Spend Note"
-                  info="New Spend Note"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
-                <div className="flex space-x-2">
-                  <CopyWithTooltip textToCopy={note ?? ''} />
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    className="p-2"
-                    onClick={onDownload}
-                  >
-                    <Download className="!fill-current" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between max-w-[470px]">
-                <Typography
-                  variant="h5"
-                  fw="bold"
-                  className="block truncate text-mono-140 dark:text-mono-0"
-                >
-                  {note}
-                </Typography>
-              </div>
-
-              <CheckBox
-                {...checkboxProps}
-                wrapperClassName={twMerge(
-                  'flex items-center',
-                  checkboxProps?.wrapperClassName
-                )}
-              >
-                {checkboxProps?.children ?? 'I have copied the spend note'}
-              </CheckBox>
+          {/** Spend Note info */}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-0.5">
+              <FileShieldLine className="fill-mono-120 dark:fill-mono-120" />
+              <TitleWithInfo
+                title="Spend Note"
+                info="Spend Note"
+                variant="utility"
+                titleClassName="text-mono-120 dark:text-mono-100"
+                className="text-mono-120 dark:text-mono-100"
+              />
             </div>
-          </Section>
+
+            <Section>
+              <SpendNoteInput note={note ?? ''} />
+            </Section>
+          </div>
+
+          {/* Copy Spend Note Checkbox */}
+          <CheckBox
+            {...checkboxProps}
+            wrapperClassName={twMerge(
+              'flex items-center',
+              checkboxProps?.wrapperClassName
+            )}
+          >
+            {checkboxProps?.children ??
+              "I confirm that I've copied and saved above spend note."}
+          </CheckBox>
 
           {/** Transaction Details */}
-          <div className="px-4 space-y-2">
+          {/* <div className="px-4 space-y-2">
             <div className="space-y-1">
               <InfoItem
                 leftTextProps={{
@@ -192,7 +178,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 rightContent={depositingInfoStr}
               />
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col gap-2">
