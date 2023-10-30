@@ -1,21 +1,33 @@
+import { DropdownMenuTrigger as DropdownButton } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import ArrowLeftRightLineIcon from '@webb-tools/icons/ArrowLeftRightLineIcon';
+import { ArrowRightUp } from '@webb-tools/icons/ArrowRightUp';
 import { ChevronDown } from '@webb-tools/icons/ChevronDown';
 import EyeLineIcon from '@webb-tools/icons/EyeLineIcon';
+import QRScanLineIcon from '@webb-tools/icons/QRScanLineIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
+import type { IconBase } from '@webb-tools/icons/types';
 import { MenuItem } from '@webb-tools/webb-ui-components';
 import {
   Dropdown,
   DropdownBody,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { DropdownMenuTrigger as DropdownButton } from '@radix-ui/react-dropdown-menu';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import type { ElementRef } from 'react';
+import capitalize from 'lodash/capitalize';
+import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import NoteAccountAvatarWithKey from '../../components/NoteAccountAvatarWithKey';
+import {
+  BRIDGE_PATH,
+  DEPOSIT_PATH,
+  TRANSFER_PATH,
+  WITHDRAW_PATH,
+} from '../../constants';
+import { useNavigate } from 'react-router';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
@@ -54,6 +66,8 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
             console.log(token);
           }}
         />
+
+        <Actions />
       </div>
     );
   }
@@ -124,6 +138,52 @@ function TotalShieldedBalance(props: {
           </DropdownBody>
         </Dropdown>
       </div>
+    </div>
+  );
+}
+
+const paths = [DEPOSIT_PATH, TRANSFER_PATH, WITHDRAW_PATH] as const;
+const icons = [
+  <ArrowRightUp size="lg" />,
+  <ArrowLeftRightLineIcon size="lg" />,
+  <ArrowRightUp size="lg" className="rotate-90" />,
+] as const;
+
+const actionItems = paths.map((path, idx) => ({
+  label: capitalize(path),
+  path: `/${BRIDGE_PATH}/${path}`,
+  icon: icons[idx],
+}));
+
+const ActionItem = (props: {
+  icon: React.ReactElement<IconBase>;
+  label: string;
+  onClick?: ComponentProps<'button'>['onClick'];
+}) => {
+  const { icon, label, onClick } = props;
+
+  return (
+    <p className="space-y-2">
+      <IconButton className="block mx-auto" onClick={onClick}>
+        {icon}
+      </IconButton>
+
+      <Typography component="span" variant="body1" className="block">
+        {label}
+      </Typography>
+    </p>
+  );
+};
+
+function Actions() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex items-center gap-6">
+      <ActionItem icon={<QRScanLineIcon size="lg" />} label="Receive" />
+      {actionItems.map(({ path, ...restItem }) => (
+        <ActionItem key={path} {...restItem} onClick={() => navigate(path)} />
+      ))}
     </div>
   );
 }
