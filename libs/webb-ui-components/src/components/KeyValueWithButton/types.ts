@@ -7,8 +7,9 @@ export type KeyValueWithButtonSize = 'sm' | 'md';
 
 type KeyValueWithButtonBasePickedKeys =
   | 'isHiddenLabel'
-  | 'valueVariant'
-  | 'labelVariant';
+  | 'labelVariant'
+  | 'valueFontWeight'
+  | 'valueVariant';
 
 export type KeyValueWithButtonBaseProps = Pick<
   LabelWithValueProps,

@@ -12,6 +12,7 @@ export * from './AuctionLine';
 export * from './BankLine';
 export * from './BellIcon';
 export { default as BillFillIcon } from './BillFillIcon';
+export { default as EyeLineIcon } from './EyeLineIcon';
 export * from './BlockIcon';
 export * from './BookOpenLineIcon';
 export * from './ChainIcon';

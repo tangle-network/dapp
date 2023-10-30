@@ -16,6 +16,7 @@ import type { NoteAccountTableContainerProps } from '../../containers/note-accou
 import { useShieldedAssets } from '../../hooks/useShieldedAssets';
 import { useSpendNotes } from '../../hooks/useSpendNotes';
 import { downloadNotes } from '../../utils/downloadNotes';
+import AccountSummaryCard from './AccountSummaryCard';
 
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
@@ -80,10 +81,14 @@ const Account = () => {
 
   return (
     <>
-      <div className="mx-auto mt-6">
+      <div className="mx-auto space-y-4">
+        <div className="flex items-end justify-between gap-4">
+          <AccountSummaryCard />
+        </div>
+
         <TableAndChartTabs
           tabs={[shieldedAssetsTab, spendNotesTab]}
-          className="space-y-4"
+          className="py-4 space-y-4"
           onValueChange={(val) => setActiveTable(val as typeof activeTable)}
           filterComponent={
             <RightButtonsContainer

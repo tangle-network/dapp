@@ -30,6 +30,7 @@ export const KeyValueWithButton = forwardRef<
       keyValue,
       labelVariant,
       size = 'md',
+      valueFontWeight,
       valueVariant,
       label = '',
       shortenFn,
@@ -78,6 +79,7 @@ export const KeyValueWithButton = forwardRef<
               <TooltipTrigger onClick={() => copy(keyValue)} asChild>
                 <LabelWithValue
                   labelVariant={labelVariant}
+                  valueFontWeight={valueFontWeight}
                   valueVariant={valueVariant}
                   isHiddenLabel={isHiddenLabel}
                   label={label}

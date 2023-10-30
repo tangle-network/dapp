@@ -1,6 +1,9 @@
-import { WebbComponentBase } from '../../types';
-import { WebbTypographyVariant } from '../../typography/types';
-import { ReactElement } from 'react';
+import type { WebbComponentBase } from '../../types';
+import type {
+  TypographyFontWeightValues,
+  WebbTypographyVariant,
+} from '../../typography/types';
+import type { ReactElement } from 'react';
 
 /**
  * The `LabelWithValue` props
@@ -33,4 +36,9 @@ export interface LabelWithValueProps extends WebbComponentBase {
    * Usually use for shorten hex string
    */
   valueTooltip?: string | ReactElement;
+  /**
+   * The typography font weight for the value
+   * @default "semibold"
+   */
+  valueFontWeight?: TypographyFontWeightValues;
 }

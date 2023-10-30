@@ -71,7 +71,7 @@ const ActiveChainDropdown = () => {
         />
       </DropdownButton>
       <DropdownBody className="mt-2">
-        <ScrollArea className="h-[var(--active-chain-dropdown-height)]">
+        <ScrollArea className="h-[var(--dropdown-height)]">
           <ul>
             {selectableChains.map((chain) => {
               return (
