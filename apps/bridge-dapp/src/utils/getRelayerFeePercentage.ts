@@ -22,7 +22,7 @@ function getRelayerFeePercentage(
     return;
   }
 
-  return cap.relayerFeeConfig.relayerProfitPercent;
+  return cap.relayerFeeConfig?.relayerProfitPercent;
 }
 
 export default getRelayerFeePercentage;

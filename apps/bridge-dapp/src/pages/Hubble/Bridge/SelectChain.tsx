@@ -2,7 +2,6 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import { type ApiConfig } from '@webb-tools/dapp-config/api-config';
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import ChainListCard from '@webb-tools/webb-ui-components/components/ListCard/ChainListCard';
 import type {
@@ -133,7 +132,7 @@ const useChains = (
   const { fungibleCfg } = useCurrenciesFromRoute();
 
   if (chainType === 'source') {
-    return getSrcChains(apiConfig.anchors, apiConfig.chains);
+    return apiConfig.getSupportedChains({ withEnv: true });
   }
 
   if (!fungibleCfg) {
@@ -302,32 +301,4 @@ const useUpdateParams = () => {
     },
     [apiConfig.anchors, apiConfig.fungibleToWrappableMap]
   );
-};
-
-const getSrcChains = (
-  anchorsCfg: ApiConfig['anchors'],
-  chainsCfg: ApiConfig['chains']
-): Array<ChainConfig> => {
-  const currentEnv =
-    process.env.NODE_ENV && isAppEnvironmentType(process.env.NODE_ENV)
-      ? process.env.NODE_ENV
-      : 'development';
-
-  // Populate the set of typed chain ids that are supported in the anchors config
-  const typedChainIdSet = new Set<number>();
-  Object.values(anchorsCfg).forEach((anchorRecord) => {
-    Object.keys(anchorRecord).forEach((typedChainId) => {
-      typedChainIdSet.add(parseInt(typedChainId));
-    });
-  });
-
-  return Object.values(chainsCfg).filter((chain) => {
-    // If the chain.env is defined, check whether the current env is included
-    // Otherwise, it is supported
-    const isSupported = chain.env ? chain.env.includes(currentEnv) : true;
-
-    const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
-
-    return typedChainIdSet.has(typedChainId) && isSupported;
-  });
 };

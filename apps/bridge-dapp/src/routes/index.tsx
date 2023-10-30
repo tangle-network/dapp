@@ -117,12 +117,6 @@ const AppRoutes = () => {
                   />
                 </Route>
 
-                {/** Select connected chain */}
-                <Route
-                  path={SELECT_SOURCE_CHAIN_PATH}
-                  element={<SelectChain chainType="source" />}
-                />
-
                 <Route path="*" element={<Navigate to={DEPOSIT_PATH} />} />
               </Route>
 
