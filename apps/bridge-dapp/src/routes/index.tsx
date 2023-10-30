@@ -43,7 +43,12 @@ const AppRoutes = () => {
           adapter={ReactRouter6Adapter}
           options={{
             searchStringToObject: qs.parse,
-            objectToSearchString: qs.stringify,
+            objectToSearchString: (encodedParams) =>
+              qs.stringify(encodedParams, {
+                skipEmptyString: true,
+                skipNull: true,
+              }),
+            updateType: 'replaceIn',
           }}
         >
           <Routes>
