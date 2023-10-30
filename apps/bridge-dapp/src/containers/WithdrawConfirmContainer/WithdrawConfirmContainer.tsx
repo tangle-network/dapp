@@ -324,14 +324,6 @@ const WithdrawConfirmContainer = forwardRef<
         title={cardTitle}
         totalProgress={totalStep}
         progress={currentStep}
-        sourceChain={{
-          name: chainsPopulated[sourceTypedChainId].name,
-          type: chainsPopulated[sourceTypedChainId].group ?? 'webb-dev',
-        }}
-        destChain={{
-          name: chainsPopulated[targetTypedChainId].name,
-          type: chainsPopulated[targetTypedChainId].group ?? 'webb-dev',
-        }}
         actionBtnProps={{
           isDisabled: inProgressTxId ? false : changeAmount ? !checked : false,
           children: inProgressTxId
@@ -357,6 +349,15 @@ const WithdrawConfirmContainer = forwardRef<
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
         recipientAddress={recipient}
+        sourceTypedChainId={sourceTypedChainId}
+        destTypedChainId={targetTypedChainId}
+        sourceAddress={
+          availableNotes.length > 0
+            ? availableNotes[0].note.sourceIdentifyingData
+            : ''
+        }
+        destAddress={recipient}
+        poolAddress={apiConfig.anchors[fungibleCurrency.id][targetTypedChainId]}
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}
         relayerAvatarTheme={avatarTheme}

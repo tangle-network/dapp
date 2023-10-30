@@ -69,7 +69,7 @@ const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const { activeApi, activeChain } = useWebContext();
+    const { apiConfig, activeApi, activeChain, noteManager } = useWebContext();
 
     const {
       cardTitle,
@@ -83,6 +83,11 @@ const TransferConfirmContainer = forwardRef<
     } = useInProgressTxInfo(
       false, // Wrap/unwrap doesn't support on transfer flow
       onResetState
+    );
+
+    const srcTypedChainId = useMemo(
+      () => calculateTypedChainId(activeChain!.chainType, activeChain!.id),
+      []
     );
 
     const targetChainId = useMemo(
@@ -140,15 +145,12 @@ const TransferConfirmContainer = forwardRef<
         progress={currentStep}
         amount={amount}
         changeAmount={changeAmount}
-        sourceChain={{
-          name: activeChain?.name ?? '',
-          type: activeChain?.group ?? 'webb-dev',
-        }}
-        destChain={{
-          name: destChain.name,
-          type: destChain.group ?? 'webb-dev',
-        }}
         note={changeNote?.serialize()}
+        sourceTypedChainId={srcTypedChainId}
+        destTypedChainId={targetChainId}
+        sourceAddress={noteManager?.getKeypair().toString() ?? ''}
+        destAddress={recipient}
+        poolAddress={apiConfig.anchors[currency.id][targetChainId]}
         recipientTitleProps={{
           info: <RecipientPublicKeyTooltipContent />,
         }}

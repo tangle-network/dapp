@@ -18,12 +18,15 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography/Typography';
+import { TxProgressorBody } from '../../components/TxProgressor';
+import TxConfirmationRing from '../../components/TxConfirmationRing';
 import {
   formatTokenAmount,
   getRoundedAmountString,
   shortenString,
 } from '../../utils';
 import { Section, WrapperSection } from './WrapperSection';
+import SpendNoteInput from './SpendNoteInput';
 import { TransferConfirmProps } from './types';
 
 const defaultRecipientTitleProps: NonNullable<
@@ -44,7 +47,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       changeAmount,
       checkboxProps,
       className,
-      destChain,
       fee,
       feeToken,
       note,
@@ -57,10 +59,14 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       relayerAddress,
       relayerExternalUrl,
       relayerAvatarTheme,
-      sourceChain,
       txStatusColor = 'blue',
       txStatusMessage,
       title = 'Confirm Transfer',
+      sourceAddress,
+      destAddress,
+      sourceTypedChainId,
+      destTypedChainId,
+      poolAddress,
       fungibleTokenSymbol: token1Symbol,
       refundAmount,
       refundToken,
@@ -124,7 +130,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-190 flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -155,50 +161,45 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
             </div>
           ) : null}
 
+          {/* Transfer info */}
+          <Section>
+            <TxProgressorBody
+              txSourceInfo={{
+                isSource: true,
+                typedChainId: sourceTypedChainId,
+                amount: amount * -1,
+                tokenSymbol: token1Symbol,
+                walletAddress: sourceAddress,
+                accountType: 'note',
+                tokenType: 'shielded',
+              }}
+              txDestinationInfo={{
+                typedChainId: destTypedChainId,
+                amount: amount,
+                tokenSymbol: token1Symbol,
+                walletAddress: destAddress,
+                accountType: 'note',
+                tokenType: 'shielded',
+              }}
+            />
+          </Section>
+
+          <TxConfirmationRing
+            source={{
+              address: sourceAddress,
+              typedChainId: sourceTypedChainId,
+              isNoteAccount: true,
+            }}
+            dest={{
+              address: destAddress,
+              typedChainId: destTypedChainId,
+              isNoteAccount: true,
+            }}
+            poolAddress={poolAddress}
+            poolName={token1Symbol}
+          />
+
           <WrapperSection>
-            {/* Transfer info */}
-            <Section>
-              <div className="flex items-end justify-between gap-6">
-                <div className="flex flex-col gap-3">
-                  <TitleWithInfo
-                    title="Source Chain"
-                    variant="utility"
-                    info="Source Chain"
-                    titleClassName="text-mono-100 dark:text-mono-80"
-                    className="text-mono-100 dark:text-mono-80"
-                  />
-                  <ChainChip
-                    chainType={sourceChain?.type ?? 'webb-dev'}
-                    chainName={sourceChain?.name ?? ''}
-                  />
-                  <TokenWithAmount
-                    token1Symbol={token1Symbol ?? ''}
-                    amount={formatTokenAmount(amount?.toString() ?? '')}
-                  />
-                </div>
-
-                <ArrowRight size="lg" />
-
-                <div className="flex flex-col gap-3">
-                  <TitleWithInfo
-                    title="Destination Chain"
-                    variant="utility"
-                    info="Destination Chain"
-                    titleClassName="text-mono-100 dark:text-mono-80"
-                    className="text-mono-100 dark:text-mono-80"
-                  />
-                  <ChainChip
-                    chainType={destChain?.type ?? 'webb-dev'}
-                    chainName={destChain?.name ?? ''}
-                  />
-                  <TokenWithAmount
-                    token1Symbol={token1Symbol ?? ''}
-                    amount={formatTokenAmount(amount?.toString() ?? '')}
-                  />
-                </div>
-              </div>
-            </Section>
-
             <div
               className={cx(
                 'grid gap-2',

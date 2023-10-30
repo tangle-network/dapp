@@ -96,6 +96,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * @default 'blue'
    */
   txStatusColor?: ChipColors;
+
+  /**
+   * The address of the pool contract that the user is depositing to
+   */
+  poolAddress: string;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
@@ -103,11 +108,6 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
    * The fungible token symbol
    */
   fungibleTokenSymbol: string;
-
-  /**
-   * The address of the pool contract that the user is depositing to
-   */
-  poolAddress: string;
 
   /**
    * The wrappable token symbol
@@ -193,7 +193,7 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  fungibleTokenSymbol?: string;
+  fungibleTokenSymbol: string;
 
   /**
    * The relayer address

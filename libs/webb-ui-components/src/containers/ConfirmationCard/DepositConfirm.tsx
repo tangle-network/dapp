@@ -1,7 +1,7 @@
 import { ArrowRight, Close, FileShieldLine, Download } from '@webb-tools/icons';
-import { TxProgressorBody } from '@webb-tools/webb-ui-components/components';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { TxProgressorBody } from '../../components/TxProgressor';
 import { InfoItem } from '../../components/BridgeInputs/InfoItem';
 import { ChainChip } from '../../components/ChainChip/ChainChip';
 import { CheckBox } from '../../components/CheckBox/Checkbox';

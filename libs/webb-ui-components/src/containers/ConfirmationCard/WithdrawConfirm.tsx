@@ -18,6 +18,8 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
+import { TxProgressorBody } from '../../components/TxProgressor';
+import TxConfirmationRing from '../../components/TxConfirmationRing';
 import {
   formatTokenAmount,
   getRoundedAmountString,
@@ -37,10 +39,10 @@ export const WithdrawConfirm = forwardRef<
       changeAmount,
       checkboxProps,
       className,
-      destChain,
       fee,
       feeInfo,
       fungibleTokenSymbol: token1Symbol,
+      wrappableTokenSymbol: token2Symbol,
       note,
       onClose,
       onDownload,
@@ -56,9 +58,12 @@ export const WithdrawConfirm = forwardRef<
       txStatusColor = 'blue',
       relayerExternalUrl,
       remainingAmount,
-      sourceChain,
       title = 'Confirm Withdrawal',
-      wrappableTokenSymbol: token2Symbol,
+      sourceAddress,
+      destAddress,
+      sourceTypedChainId,
+      destTypedChainId,
+      poolAddress,
       ...props
     },
     ref
@@ -102,7 +107,7 @@ export const WithdrawConfirm = forwardRef<
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-190 flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -133,52 +138,45 @@ export const WithdrawConfirm = forwardRef<
             </div>
           ) : null}
 
+          {/** Withdraw info */}
+          <Section>
+            <TxProgressorBody
+              txSourceInfo={{
+                isSource: true,
+                typedChainId: sourceTypedChainId,
+                amount: amount * -1,
+                tokenSymbol: token1Symbol,
+                walletAddress: sourceAddress,
+                accountType: 'note',
+                tokenType: 'shielded',
+              }}
+              txDestinationInfo={{
+                typedChainId: destTypedChainId,
+                amount: amount,
+                tokenSymbol: token2Symbol ?? token1Symbol,
+                walletAddress: destAddress,
+                accountType: 'wallet',
+                tokenType: 'unshielded',
+              }}
+            />
+          </Section>
+
+          <TxConfirmationRing
+            source={{
+              address: sourceAddress,
+              typedChainId: sourceTypedChainId,
+              isNoteAccount: true,
+            }}
+            dest={{
+              address: destAddress,
+              typedChainId: destTypedChainId,
+              isNoteAccount: false,
+            }}
+            poolAddress={poolAddress}
+            poolName={token1Symbol}
+          />
+
           <WrapperSection>
-            {/** Unwrapping\Withdrawing info */}
-            <Section>
-              <div className="flex items-end justify-between">
-                <div className="flex flex-col max-w-[200px] gap-y-3">
-                  <TitleWithInfo
-                    title="Source Chain"
-                    variant="utility"
-                    info="Souce Chain"
-                    titleClassName="text-mono-100 dark:text-mono-80"
-                    className="text-mono-100 dark:text-mono-80"
-                  />
-                  <ChainChip
-                    chainType={sourceChain?.type ?? 'webb-dev'}
-                    chainName={sourceChain?.name ?? ''}
-                  />
-                  <TokenWithAmount
-                    token1Symbol={token1Symbol}
-                    amount={formatTokenAmount(amount?.toString() ?? '')}
-                  />
-                </div>
-
-                <div className="h-full">
-                  <ArrowRight size="lg" />
-                </div>
-
-                <div className="flex flex-col max-w-[200px] gap-y-3">
-                  <TitleWithInfo
-                    title="Destination Chain"
-                    variant="utility"
-                    info="Destination Chain"
-                    titleClassName="text-mono-100 dark:text-mono-80"
-                    className="text-mono-100 dark:text-mono-80"
-                  />
-                  <ChainChip
-                    chainType={destChain?.type ?? 'webb-dev'}
-                    chainName={destChain?.name ?? ''}
-                  />
-                  <TokenWithAmount
-                    token1Symbol={token2Symbol ?? token1Symbol}
-                    amount={formatTokenAmount(amount?.toString() ?? '')}
-                  />
-                </div>
-              </div>
-            </Section>
-
             <div
               className={cx(
                 'grid gap-2',
