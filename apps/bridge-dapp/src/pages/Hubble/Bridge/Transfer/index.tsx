@@ -363,8 +363,9 @@ const Transfer = () => {
                   : undefined
               }
               refundToken={destChainCfg?.nativeCurrency.symbol}
-              remaining={remainingBalance}
-              remainingToken={fungibleCfg?.symbol}
+              newBalance={remainingBalance}
+              newBalanceToken={fungibleCfg?.symbol}
+              txType="transfer"
             />
           </div>
 

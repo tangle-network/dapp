@@ -383,8 +383,9 @@ const Withdraw = () => {
                   : undefined
               }
               refundToken={activeChain?.nativeCurrency.symbol}
-              remaining={remainingBalance}
-              remainingToken={fungibleCfg?.symbol}
+              newBalance={remainingBalance}
+              newBalanceToken={fungibleCfg?.symbol}
+              txType="withdraw"
             />
           </div>
 
