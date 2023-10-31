@@ -6,6 +6,7 @@ import {
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
@@ -71,6 +72,8 @@ const TransferConfirmContainer = forwardRef<
 
     const { apiConfig, activeApi, activeChain, noteManager } = useWebContext();
 
+    const { balances } = useBalancesFromNotes();
+
     const {
       cardTitle,
       currentStep,
@@ -123,6 +126,14 @@ const TransferConfirmContainer = forwardRef<
       targetTypedChainId: targetChainId,
     });
 
+    const newBalance = useMemo(() => {
+      const currentBalance = balances?.[currency.id]?.[srcTypedChainId];
+      if (!currentBalance) return undefined;
+      const updatedBalance = Number(formatEther(currentBalance)) - amount;
+      if (updatedBalance < 0) return undefined;
+      return updatedBalance;
+    }, [balances, currency.id, srcTypedChainId, amount]);
+
     const formattedFee = useMemo(() => {
       if (!feeInWei) {
         return undefined;
@@ -165,7 +176,6 @@ const TransferConfirmContainer = forwardRef<
         feeToken={feeToken}
         onClose={onClose}
         checkboxProps={{
-          children: 'I have copied the change note',
           isChecked,
           onChange: () => setIsChecked((prev) => !prev),
         }}
@@ -185,10 +195,12 @@ const TransferConfirmContainer = forwardRef<
         txStatusMessage={txStatusMessage}
         refundAmount={
           typeof refundAmount === 'bigint'
-            ? formatEther(refundAmount)
+            ? Number(formatEther(refundAmount))
             : undefined
         }
         refundToken={refundToken}
+        refundRecipient={refundRecipient}
+        newBalance={newBalance}
       />
     );
   }

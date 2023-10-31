@@ -9,7 +9,7 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
-import { getRoundedAmountString } from '../../utils';
+import { formatTokenAmount } from './utils';
 import AmountInfo from './AmountInfo';
 import SpendNoteInput from './SpendNoteInput';
 import { Section } from './WrapperSection';
@@ -144,17 +144,13 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           <div className="flex flex-col gap-2">
             <AmountInfo
               label="Note Amount"
-              amount={getRoundedAmountString(amount, 3, {
-                roundingFunction: Math.round,
-              })}
+              amount={formatTokenAmount(amount)}
               tokenSymbol={fungibleTokenSymbol}
               tooltipContent="The value associated with the spend note."
             />
             <AmountInfo
               label="New Balance"
-              amount={getRoundedAmountString(newBalance, 3, {
-                roundingFunction: Math.round,
-              })}
+              amount={formatTokenAmount(newBalance)}
               tokenSymbol={fungibleTokenSymbol}
               tooltipContent={`Your updated shielded balance of ${fungibleTokenSymbol} on destination chain after deposit.`}
             />

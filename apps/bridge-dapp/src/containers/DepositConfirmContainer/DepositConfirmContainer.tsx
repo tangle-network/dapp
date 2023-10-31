@@ -12,12 +12,7 @@ import { Note } from '@webb-tools/sdk-core';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-import {
-  ContractFunctionRevertedError,
-  formatUnits,
-  formatEther,
-  parseEther,
-} from 'viem';
+import { ContractFunctionRevertedError, formatUnits, formatEther } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
@@ -107,7 +102,7 @@ const DepositConfirmContainer = forwardRef<
         ];
       if (!balance) return amount;
       return Number(formatEther(balance)) + amount;
-    }, []);
+    }, [balances, fungibleTokenId, destTypedChainId, note, amount]);
 
     const handleExecuteDeposit = useCallback(
       async () => {

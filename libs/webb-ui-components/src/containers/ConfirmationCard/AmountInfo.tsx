@@ -9,7 +9,7 @@ import {
 
 interface AmountInfoProps {
   label: string;
-  amount: number | string;
+  amount?: number | string;
   tokenSymbol: string;
   tooltipContent?: string;
 }
@@ -52,7 +52,7 @@ const AmountInfo: FC<AmountInfoProps> = ({
         fw="bold"
         className="text-mono-190 dark:text-mono-40"
       >
-        {amount} {tokenSymbol}
+        {amount ?? '--'} {tokenSymbol}
       </Typography>
     </div>
   );

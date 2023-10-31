@@ -105,7 +105,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * New balance if users decide to proceed with the transaction
    */
-  newBalance: number;
+  newBalance?: number;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
@@ -193,7 +193,7 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The change amount
    */
-  changeAmount?: number | string;
+  changeAmount?: number;
 
   /**
    * The first token symbol
@@ -229,10 +229,15 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The refund amount
    */
-  refundAmount?: number | string;
+  refundAmount?: number;
 
   /**
    * The refund token symbol
    */
   refundToken?: string;
+
+  /**
+   * The address that will receive the refund
+   */
+  refundRecipient?: string;
 }
