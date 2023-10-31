@@ -12,7 +12,11 @@ const RequireNoteAccountRoute: FC<
     redirect: NavigateProps['to'];
   }>
 > = ({ redirect, children }) => {
-  const { noteManager } = useWebContext();
+  const { noteManager, isConnecting, loading } = useWebContext();
+
+  if (isConnecting || loading) {
+    return null;
+  }
 
   if (!noteManager?.getKeypair()) {
     return <Navigate to={redirect} />;
