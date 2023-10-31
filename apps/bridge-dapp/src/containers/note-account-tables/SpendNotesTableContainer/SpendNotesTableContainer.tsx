@@ -20,6 +20,7 @@ import {
   Typography,
   formatTokenAmount,
   fuzzyFilter,
+  numberToString,
   shortenString,
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
@@ -31,6 +32,7 @@ import { ActionWithTooltip } from '../ActionWithTooltip';
 import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
 import useNoteAction from '../useNoteAction';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
+import { parseEther } from 'viem';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
 
@@ -156,7 +158,8 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
                   noteActionHandler(
                     'transfer',
                     data.rawChain,
-                    data.rawFungibleCurrency
+                    data.rawFungibleCurrency,
+                    parseEther(numberToString(data.balance))
                   )
                 }
               >
@@ -169,7 +172,8 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
                   noteActionHandler(
                     'withdraw',
                     data.rawChain,
-                    data.rawFungibleCurrency
+                    data.rawFungibleCurrency,
+                    parseEther(numberToString(data.balance))
                   )
                 }
               >

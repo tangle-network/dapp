@@ -18,6 +18,7 @@ import {
   Typography,
   formatTokenAmount,
   fuzzyFilter,
+  numberToString,
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
@@ -31,6 +32,7 @@ import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
 } from './types';
+import { parseEther } from 'viem';
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
@@ -142,7 +144,8 @@ export const ShieldedAssetsTableContainer: FC<
                   noteActionHandler(
                     'transfer',
                     shieldedAsset.rawChain,
-                    shieldedAsset.rawFungibleCurrency
+                    shieldedAsset.rawFungibleCurrency,
+                    parseEther(numberToString(shieldedAsset.availableBalance))
                   )
                 }
               >
@@ -155,7 +158,8 @@ export const ShieldedAssetsTableContainer: FC<
                   noteActionHandler(
                     'withdraw',
                     shieldedAsset.rawChain,
-                    shieldedAsset.rawFungibleCurrency
+                    shieldedAsset.rawFungibleCurrency,
+                    parseEther(numberToString(shieldedAsset.availableBalance))
                   )
                 }
               >

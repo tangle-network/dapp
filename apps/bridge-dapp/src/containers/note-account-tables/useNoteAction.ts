@@ -4,6 +4,7 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import {
+  AMOUNT_KEY,
   BRIDGE_PATH,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
@@ -18,7 +19,8 @@ function useNoteAction() {
     async (
       action: 'transfer' | 'withdraw',
       chain: Chain,
-      fungibleCurrency?: Currency
+      fungibleCurrency?: Currency,
+      amount?: bigint
     ) => {
       const actionPaths: {
         [key in typeof action]: string;
@@ -35,6 +37,10 @@ function useNoteAction() {
 
       if (fungibleCurrency) {
         searchParams.set(POOL_KEY, fungibleCurrency.id.toString());
+      }
+
+      if (typeof amount === 'bigint') {
+        searchParams.set(AMOUNT_KEY, amount.toString());
       }
 
       navigate({
