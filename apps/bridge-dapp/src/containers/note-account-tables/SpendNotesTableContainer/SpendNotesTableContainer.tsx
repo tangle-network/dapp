@@ -24,6 +24,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
+import HiddenValue from '../../../components/HiddenValue';
 import { EmptyTable, LoadingTable } from '../../../components/tables';
 import { downloadNotes } from '../../../utils';
 import { ActionWithTooltip } from '../ActionWithTooltip';
@@ -91,7 +92,9 @@ const staticColumns = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {formatTokenAmount(props.getValue().toString())}
+        <HiddenValue>
+          {formatTokenAmount(props.getValue().toString())}
+        </HiddenValue>
       </Typography>
     ),
   }),

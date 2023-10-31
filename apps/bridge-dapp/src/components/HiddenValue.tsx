@@ -4,15 +4,15 @@ function HiddenValue(props: {
   /** The children must be a string */
   children: string;
 
-  /** Number of star to display. @default 3 */
+  /** Number of star to display. @default to children.length */
   numberOfStars?: number;
 }) {
-  const { numberOfStars = 3 } = props;
+  const { numberOfStars } = props;
 
   const [isHidden] = useHiddenValue();
 
   if (isHidden) {
-    return Array.from({ length: numberOfStars })
+    return Array.from({ length: numberOfStars ?? props.children.length })
       .map(() => '*')
       .join('');
   }
