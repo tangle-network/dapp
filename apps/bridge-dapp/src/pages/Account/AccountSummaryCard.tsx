@@ -21,6 +21,7 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
@@ -116,7 +117,7 @@ function TotalShieldedBalance() {
   const balances = useShieldedBalances();
 
   useEffect(() => {
-    if (!balances) {
+    if (!balances || balances.size === 0) {
       return;
     }
 
@@ -126,12 +127,12 @@ function TotalShieldedBalance() {
 
   const formatedBalance = useMemo(() => {
     if (!balances || typeof currencyId !== 'number') {
-      return '';
+      return '0';
     }
 
     const balance = balances.get(currencyId);
     if (typeof balance !== 'bigint') {
-      return '';
+      return '0';
     }
 
     return getRoundedAmountString(Number(formatEther(balance)));
@@ -141,9 +142,6 @@ function TotalShieldedBalance() {
     if (typeof currencyId !== 'number') {
       return '';
     }
-
-    const c = apiConfig.currencies[currencyId];
-    console.log('currencyId', currencyId, c);
 
     return apiConfig.currencies[currencyId]?.symbol ?? '';
   }, [apiConfig.currencies, currencyId]);
@@ -177,8 +175,13 @@ function TotalShieldedBalance() {
 
         <Dropdown>
           <DropdownButton
-            className="flex items-center gap-1 disabled:cursor-not-allowed"
-            disabled={availableCurrencyCfgs.length === 0}
+            className={cx(
+              'flex items-center gap-1 disabled:cursor-not-allowed',
+              {
+                hidden: !tokenSymbol,
+              }
+            )}
+            disabled={availableCurrencyCfgs.length === 0 || !tokenSymbol}
           >
             <Typography
               component="span"
