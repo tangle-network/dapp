@@ -87,6 +87,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
   typedChainId,
   isSource,
   walletAddress,
+  tooltipContent,
   ...props
 }) => {
   const chain = chainsConfig[typedChainId];
@@ -100,7 +101,9 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
       <TitleWithInfo
         title={isSource ? 'Source Chain' : 'Destination Chain'}
         variant="utility"
-        info={isSource ? 'Source Chain' : 'Destination Chain'}
+        info={
+          tooltipContent ?? (isSource ? 'Source Chain' : 'Destination Chain')
+        }
         titleClassName="text-mono-120 dark:text-mono-80"
         className="text-mono-120 dark:text-mono-80"
       />

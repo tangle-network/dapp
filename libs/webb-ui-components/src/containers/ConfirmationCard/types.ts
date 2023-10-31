@@ -101,6 +101,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The address of the pool contract that the user is depositing to
    */
   poolAddress: string;
+
+  /**
+   * New balance if users decide to proceed with the transaction
+   */
+  newBalance: number;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {

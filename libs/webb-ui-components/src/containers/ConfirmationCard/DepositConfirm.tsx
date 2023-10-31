@@ -1,21 +1,18 @@
-import { ArrowRight, Close, FileShieldLine, Download } from '@webb-tools/icons';
-import { forwardRef, useMemo } from 'react';
+import { Close, FileShieldLine } from '@webb-tools/icons';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { TxProgressorBody } from '../../components/TxProgressor';
-import { InfoItem } from '../../components/BridgeInputs/InfoItem';
-import { ChainChip } from '../../components/ChainChip/ChainChip';
 import { CheckBox } from '../../components/CheckBox/Checkbox';
 import { Chip } from '../../components/Chip/Chip';
-import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
 import SteppedProgress from '../../components/Progress/SteppedProgress';
 import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
-import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
-import { formatTokenAmount, getRoundedAmountString } from '../../utils';
-import { Section } from './WrapperSection';
+import { getRoundedAmountString } from '../../utils';
+import AmountInfo from './AmountInfo';
 import SpendNoteInput from './SpendNoteInput';
+import { Section } from './WrapperSection';
 import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
@@ -43,26 +40,11 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       fungibleTokenSymbol,
       poolAddress,
       wrappableTokenSymbol,
+      newBalance,
       ...props
     },
     ref
   ) => {
-    const depositingInfoStr = useMemo(() => {
-      let symbolStr = '';
-      if (wrappableTokenSymbol) {
-        symbolStr += `${wrappableTokenSymbol.trim()}/`;
-      }
-
-      symbolStr += fungibleTokenSymbol;
-
-      const formatedAmount =
-        typeof amount === 'number'
-          ? getRoundedAmountString(amount, 3, { roundingFunction: Math.round })
-          : amount ?? '0';
-
-      return `${formatedAmount} ${symbolStr}`;
-    }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
-
     return (
       <div
         {...props}
@@ -109,6 +91,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 walletAddress: sourceAddress,
                 accountType: 'wallet',
                 tokenType: 'unshielded',
+                tooltipContent:
+                  'Originating chain & wallet address of depositing funds.',
               }}
               txDestinationInfo={{
                 typedChainId: destTypedChainId,
@@ -117,6 +101,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 walletAddress: destAddress,
                 accountType: 'note',
                 tokenType: 'shielded',
+                tooltipContent:
+                  'Target chain & note account of shielded funds being deposited to.',
               }}
             />
           </Section>
@@ -139,10 +125,10 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           {/** Spend Note info */}
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-0.5">
-              <FileShieldLine className="fill-mono-120 dark:fill-mono-120" />
+              <FileShieldLine className="fill-mono-120 dark:fill-mono-100" />
               <TitleWithInfo
                 title="Spend Note"
-                info="Spend Note"
+                info="Unique identifier for your deposit in the shielded pool."
                 variant="utility"
                 titleClassName="text-mono-120 dark:text-mono-100"
                 className="text-mono-120 dark:text-mono-100"
@@ -154,31 +140,37 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             </Section>
           </div>
 
+          {/** Amount Details */}
+          <div className="flex flex-col gap-2">
+            <AmountInfo
+              label="Note Amount"
+              amount={getRoundedAmountString(amount, 3, {
+                roundingFunction: Math.round,
+              })}
+              tokenSymbol={fungibleTokenSymbol}
+              tooltipContent="The value associated with the spend note."
+            />
+            <AmountInfo
+              label="New Balance"
+              amount={getRoundedAmountString(newBalance, 3, {
+                roundingFunction: Math.round,
+              })}
+              tokenSymbol={fungibleTokenSymbol}
+              tooltipContent={`Your updated shielded balance of ${fungibleTokenSymbol} on destination chain after deposit.`}
+            />
+          </div>
+
           {/* Copy Spend Note Checkbox */}
           <CheckBox
             {...checkboxProps}
             wrapperClassName={twMerge(
-              'flex items-center',
+              'flex items-start',
               checkboxProps?.wrapperClassName
             )}
           >
             {checkboxProps?.children ??
-              "I confirm that I've copied and saved above spend note."}
+              "I acknowledge that I've saved the spend note, essential for future transactions and fund access."}
           </CheckBox>
-
-          {/** Transaction Details */}
-          {/* <div className="px-4 space-y-2">
-            <div className="space-y-1">
-              <InfoItem
-                leftTextProps={{
-                  variant: 'utility',
-                  title: 'Depositing',
-                  info: 'Depositing',
-                }}
-                rightContent={depositingInfoStr}
-              />
-            </div>
-          </div> */}
         </div>
 
         <div className="flex flex-col gap-2">

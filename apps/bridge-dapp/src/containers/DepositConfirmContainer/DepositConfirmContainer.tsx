@@ -5,13 +5,19 @@ import {
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { downloadString } from '@webb-tools/browser-utils';
 import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { ContractFunctionRevertedError, formatUnits } from 'viem';
+import {
+  ContractFunctionRevertedError,
+  formatUnits,
+  formatEther,
+  parseEther,
+} from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
@@ -55,6 +61,8 @@ const DepositConfirmContainer = forwardRef<
 
     const { api: txQueueApi } = txQueue;
 
+    const { balances } = useBalancesFromNotes();
+
     const fungibleToken = useMemo(() => {
       return new Currency(apiConfig.currencies[fungibleTokenId]);
     }, [apiConfig.currencies, fungibleTokenId]);
@@ -90,6 +98,15 @@ const DepositConfirmContainer = forwardRef<
         JSON.stringify(noteStr),
         noteStr.slice(-noteStr.length) + '.json'
       );
+    }, []);
+
+    const newBalance = useMemo(() => {
+      const balance =
+        balances?.[fungibleTokenId]?.[
+          destTypedChainId ?? +note.note.targetChainId
+        ];
+      if (!balance) return amount;
+      return Number(formatEther(balance)) + amount;
     }, []);
 
     const handleExecuteDeposit = useCallback(
@@ -272,6 +289,7 @@ const DepositConfirmContainer = forwardRef<
         poolAddress={
           apiConfig.anchors[fungibleTokenId][+note.note.targetChainId]
         }
+        newBalance={newBalance}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusColor={
           txStatus === 'completed'
