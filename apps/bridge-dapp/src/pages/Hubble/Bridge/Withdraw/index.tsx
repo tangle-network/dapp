@@ -45,7 +45,7 @@ import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
-import useFeeCalculation from './private/useFeeCalculation';
+import useWithdrawFeeCalculation from '../../../../hooks/useWithdrawFeeCalculation';
 import useInputs from './private/useInputs';
 import useWithdrawButtonProps from './private/useWithdrawButtonProps';
 
@@ -150,7 +150,7 @@ const Withdraw = () => {
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-  } = useFeeCalculation({
+  } = useWithdrawFeeCalculation({
     activeRelayer,
     recipientErrorMsg,
     typedChainId: srcTypedChainId,

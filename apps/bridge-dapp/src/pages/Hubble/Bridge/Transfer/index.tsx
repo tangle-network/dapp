@@ -40,7 +40,7 @@ import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
-import useFeeCalculation from './private/useFeeCalculation';
+import useTransferFeeCalculation from '../../../../hooks/useTransferFeeCalculation';
 import useInputs from './private/useInputs';
 import useTransferButtonProps from './private/useTransferButtonProps';
 
@@ -159,7 +159,7 @@ const Transfer = () => {
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-  } = useFeeCalculation({
+  } = useTransferFeeCalculation({
     typedChainId: typedChainId,
     activeRelayer,
     recipientErrorMsg,

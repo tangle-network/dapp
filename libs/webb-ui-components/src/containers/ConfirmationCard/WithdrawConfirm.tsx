@@ -7,7 +7,7 @@ import Button from '../../components/buttons/Button';
 import { Chip } from '../../components/Chip/Chip';
 import { CheckBox } from '../../components/CheckBox/Checkbox';
 import SteppedProgress from '../../components/Progress/SteppedProgress';
-import FeeDetails from '../../components/FeeDetails/FeeDetails';
+import RelayerFeeDetails from '../../components/FeeDetails/RelayerFeeDetails';
 import SpendNoteInput from './SpendNoteInput';
 import RefundAmount from './RefundAmount';
 import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
