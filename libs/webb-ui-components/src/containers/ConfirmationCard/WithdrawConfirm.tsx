@@ -116,6 +116,7 @@ export const WithdrawConfirm = forwardRef<
             />
           </WrapperSection>
 
+          {/* Ring */}
           <TxConfirmationRing
             source={{
               address: sourceAddress,
@@ -166,6 +167,14 @@ export const WithdrawConfirm = forwardRef<
               tooltipContent={`Your updated shielded balance of ${token1Symbol} on destination chain after deposit.`}
             />
           </div>
+
+          {/* Fee Details */}
+          {/* <FeeDetails
+            fee={fee}
+            feeInfo={feeInfo}
+            tokenSymbol={token1Symbol}
+            tooltipContent="The fee for the transaction."
+          /> */}
 
           {/* Refund */}
           {refundAmount && (

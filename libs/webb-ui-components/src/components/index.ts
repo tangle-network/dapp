@@ -28,6 +28,7 @@ export * from './Dropdown';
 export * from './DropdownMenu';
 export * from './ErrorFallback';
 export { default as FeeDetails } from './FeeDetails';
+export * from './FeeDetails';
 export * from './FileUploads';
 export * from './Filter';
 export * from './Footer';

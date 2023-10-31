@@ -20,12 +20,12 @@ import {
   useCheckMobile,
   useCopyable,
   useWebbUI,
+  RelayerFeeDetails,
 } from '@webb-tools/webb-ui-components';
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BooleanParam, useQueryParam } from 'use-query-params';
 import { formatEther, parseEther } from 'viem';
-import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
