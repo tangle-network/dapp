@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - feature/**
     paths: [
         'libs/webb-ui-components/src/stories/**',
         'libs/webb-ui-components/.storybook/**',
