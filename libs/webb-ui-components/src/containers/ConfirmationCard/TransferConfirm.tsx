@@ -150,9 +150,11 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               />
             </div>
 
-            <Section>
-              <SpendNoteInput note={note ?? ''} />
-            </Section>
+            {typeof note === 'string' && (
+              <Section>
+                <SpendNoteInput note={note} />
+              </Section>
+            )}
           </div>
 
           {/** Amount Details */}

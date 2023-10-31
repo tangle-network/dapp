@@ -129,7 +129,7 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The change amount
    */
-  changeAmount?: number | string;
+  changeAmount?: number;
 
   /**
    * The first token symbol
@@ -156,7 +156,7 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The refund amount
    */
-  refundAmount?: number | string;
+  refundAmount?: number;
 
   /**
    * The refund token symbol
@@ -182,11 +182,6 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
    * The relayer external url
    */
   relayerExternalUrl?: string;
-
-  /**
-   * The recipient address
-   */
-  recipientAddress: string;
 }
 
 export interface TransferConfirmProps extends ConfirmationCardProps {

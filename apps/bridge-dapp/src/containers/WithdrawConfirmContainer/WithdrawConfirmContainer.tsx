@@ -1,6 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
@@ -74,6 +75,8 @@ const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, txQueue } = useWebContext();
 
+    const { balances } = useBalancesFromNotes();
+
     const { api: txQueueApi } = txQueue;
 
     const {
@@ -106,6 +109,15 @@ const WithdrawConfirmContainer = forwardRef<
         ? 'ethereum'
         : 'substrate';
     }, [targetTypedChainId]);
+
+    const newBalance = useMemo(() => {
+      const currentBalance =
+        balances?.[fungibleCurrency.id]?.[sourceTypedChainId];
+      if (!currentBalance) return undefined;
+      const updatedBalance = Number(formatEther(currentBalance)) - amount;
+      if (updatedBalance < 0) return undefined;
+      return updatedBalance;
+    }, [balances, fungibleCurrency.id, sourceTypedChainId, amount]);
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
@@ -296,18 +308,6 @@ const WithdrawConfirmContainer = forwardRef<
       return `${feeInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
     }, [activeRelayer, fee, fungibleCurrency.view.symbol, refundToken]);
 
-    const formattedRefund = useMemo(() => {
-      if (!refundAmount) {
-        return undefined;
-      }
-
-      const refundInEthers = Number(formatEther(refundAmount));
-
-      return getRoundedAmountString(refundInEthers, 3, {
-        roundingFunction: Math.round,
-      });
-    }, [refundAmount]);
-
     const remainingAmount = useMemo(() => {
       const amountInEthers = Number(formatEther(amountAfterFee));
 
@@ -336,10 +336,13 @@ const WithdrawConfirmContainer = forwardRef<
         checkboxProps={{
           isChecked: checked,
           isDisabled: Boolean(inProgressTxId),
-          children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
-        refundAmount={isRefund ? formattedRefund : undefined}
+        refundAmount={
+          isRefund && refundAmount
+            ? Number(formatEther(refundAmount))
+            : undefined
+        }
         refundToken={isRefund ? refundToken : undefined}
         receivingInfo={receivingInfo}
         amount={amount}
@@ -348,7 +351,6 @@ const WithdrawConfirmContainer = forwardRef<
         fee={formattedFee}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
-        recipientAddress={recipient}
         sourceTypedChainId={sourceTypedChainId}
         destTypedChainId={targetTypedChainId}
         sourceAddress={
@@ -358,6 +360,7 @@ const WithdrawConfirmContainer = forwardRef<
         }
         destAddress={recipient}
         poolAddress={apiConfig.anchors[fungibleCurrency.id][targetTypedChainId]}
+        newBalance={newBalance}
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}
         relayerAvatarTheme={avatarTheme}
