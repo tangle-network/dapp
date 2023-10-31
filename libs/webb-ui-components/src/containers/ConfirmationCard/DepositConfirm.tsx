@@ -12,7 +12,7 @@ import TxConfirmationRing from '../../components/TxConfirmationRing';
 import { formatTokenAmount } from './utils';
 import AmountInfo from './AmountInfo';
 import SpendNoteInput from './SpendNoteInput';
-import { Section } from './WrapperSection';
+import WrapperSection from './WrapperSection';
 import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
@@ -81,7 +81,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           ) : null}
 
           {/** Wrapping info */}
-          <Section>
+          <WrapperSection>
             <TxProgressorBody
               txSourceInfo={{
                 isSource: true,
@@ -105,7 +105,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   'Target chain & note account of shielded funds being deposited to.',
               }}
             />
-          </Section>
+          </WrapperSection>
 
           <TxConfirmationRing
             source={{
@@ -135,9 +135,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               />
             </div>
 
-            <Section>
+            <WrapperSection>
               <SpendNoteInput note={note ?? ''} />
-            </Section>
+            </WrapperSection>
           </div>
 
           {/** Amount Details */}

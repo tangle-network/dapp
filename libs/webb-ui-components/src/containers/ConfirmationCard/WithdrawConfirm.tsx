@@ -1,19 +1,21 @@
-import { Close, FileShieldLine } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Close, FileShieldLine } from '@webb-tools/icons';
+
+import AmountInfo from './AmountInfo';
+import Button from '../../components/buttons/Button';
 import { Chip } from '../../components/Chip/Chip';
 import { CheckBox } from '../../components/CheckBox/Checkbox';
 import SteppedProgress from '../../components/Progress/SteppedProgress';
+import FeeDetails from '../../components/FeeDetails/FeeDetails';
+import SpendNoteInput from './SpendNoteInput';
+import RefundAmount from './RefundAmount';
 import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
-import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
 import { TxProgressorBody } from '../../components/TxProgressor';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
+import WrapperSection from './WrapperSection';
 import { formatTokenAmount } from './utils';
-import AmountInfo from './AmountInfo';
-import RefundAmount from './RefundAmount';
-import SpendNoteInput from './SpendNoteInput';
-import { Section } from './WrapperSection';
 import { WithdrawConfirmationProps } from './types';
 
 export const WithdrawConfirm = forwardRef<
@@ -92,7 +94,7 @@ export const WithdrawConfirm = forwardRef<
           ) : null}
 
           {/** Withdraw info */}
-          <Section>
+          <WrapperSection>
             <TxProgressorBody
               txSourceInfo={{
                 isSource: true,
@@ -112,7 +114,7 @@ export const WithdrawConfirm = forwardRef<
                 tokenType: 'unshielded',
               }}
             />
-          </Section>
+          </WrapperSection>
 
           <TxConfirmationRing
             source={{
@@ -143,9 +145,9 @@ export const WithdrawConfirm = forwardRef<
             </div>
 
             {typeof note === 'string' && (
-              <Section>
+              <WrapperSection>
                 <SpendNoteInput note={note} />
-              </Section>
+              </WrapperSection>
             )}
           </div>
 

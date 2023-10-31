@@ -13,7 +13,7 @@ import { formatTokenAmount } from './utils';
 import AmountInfo from './AmountInfo';
 import RefundAmount from './RefundAmount';
 import SpendNoteInput from './SpendNoteInput';
-import { Section } from './WrapperSection';
+import WrapperSection from './WrapperSection';
 import { TransferConfirmProps } from './types';
 
 const defaultRecipientTitleProps: NonNullable<
@@ -99,7 +99,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           ) : null}
 
           {/* Transfer info */}
-          <Section>
+          <WrapperSection>
             <TxProgressorBody
               txSourceInfo={{
                 isSource: true,
@@ -119,7 +119,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 tokenType: 'shielded',
               }}
             />
-          </Section>
+          </WrapperSection>
 
           {/* Ring */}
           <TxConfirmationRing
@@ -151,9 +151,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
             </div>
 
             {typeof note === 'string' && (
-              <Section>
+              <WrapperSection>
                 <SpendNoteInput note={note} />
-              </Section>
+              </WrapperSection>
             )}
           </div>
 
