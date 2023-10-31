@@ -19,7 +19,9 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import capitalize from 'lodash/capitalize';
 import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef } from 'react';
+import { useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
+import HiddenValue from '../../components/HiddenValue';
 import NoteAccountAvatarWithKey from '../../components/NoteAccountAvatarWithKey';
 import {
   BRIDGE_PATH,
@@ -27,7 +29,7 @@ import {
   TRANSFER_PATH,
   WITHDRAW_PATH,
 } from '../../constants';
-import { useNavigate } from 'react-router';
+import useHiddenValue from '../../hooks/useHiddenValue';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
@@ -48,6 +50,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
           'w-full max-w-[556px]',
           className
         )}
+        ref={ref}
       >
         <header>
           <NoteAccountAvatarWithKey
@@ -85,6 +88,8 @@ function TotalShieldedBalance(props: {
   const { availableTokens, formatedBalance, onTokenChange, tokenSymbol } =
     props;
 
+  const [, setIsHiddenValue] = useHiddenValue();
+
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -92,14 +97,14 @@ function TotalShieldedBalance(props: {
           Total Shielded Balance
         </Typography>
 
-        <IconButton>
+        <IconButton onClick={() => setIsHiddenValue((prev) => !prev)}>
           <EyeLineIcon />
         </IconButton>
       </div>
 
       <div className="flex items-center gap-4">
         <Typography variant="h2" component="p" fw="bold">
-          {formatedBalance}
+          <HiddenValue>{formatedBalance}</HiddenValue>
         </Typography>
 
         <Dropdown>

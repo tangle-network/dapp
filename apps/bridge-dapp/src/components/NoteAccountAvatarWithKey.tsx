@@ -5,6 +5,9 @@ import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import useHiddenValue from '../hooks/useHiddenValue';
+import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
 
 type Props = {
   keyValue: string;
@@ -26,6 +29,10 @@ const NoteAccountAvatarWithKey = forwardRef<
     ...divProps
   } = props;
 
+  const [isHiddenValue] = useHiddenValue();
+
+  const copyableResult = useCopyable();
+
   return (
     <div
       {...divProps}
@@ -41,7 +48,19 @@ const NoteAccountAvatarWithKey = forwardRef<
         className="mt-0.5"
         label={label}
         isHiddenLabel={!label}
-        keyValue={keyValue}
+        keyValue={
+          isHiddenValue
+            ? Array.from({ length: 130 })
+                .map(() => '*')
+                .join('')
+            : keyValue
+        }
+        shortenFn={isHiddenValue ? shortenString : undefined}
+        isDisabledTooltip={isHiddenValue}
+        copyProps={isHiddenValue ? copyableResult : undefined}
+        onCopyButtonClick={
+          isHiddenValue ? () => copyableResult.copy(keyValue) : undefined
+        }
         valueFontWeight={fontWeight}
         size="sm"
         labelVariant="body1"

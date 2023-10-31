@@ -7,6 +7,7 @@ export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
 export { default as useCurrentTx } from './useCurrentTx';
 export { default as useDefaultChainAndPool } from './useDefaultChainAndPool';
 export { default as useEnqueueSubmittedTx } from './useEnqueueSubmittedTx';
+export { default as useHiddenValue } from './useHiddenValue';
 export { default as useInProgressTxInfo } from './useInProgressTxInfo';
 export * from './useLatestTransactionStage';
 export * from './useMaxFeeInfo';
