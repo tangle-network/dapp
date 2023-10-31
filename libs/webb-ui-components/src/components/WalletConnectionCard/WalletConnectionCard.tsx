@@ -46,70 +46,100 @@ export const WalletConnectionCard = forwardRef<
     }, [failedWalletId, wallets]);
 
     return (
-      <div
-        {...props}
-        className={twMerge(
-          'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
-          className
-        )}
-        ref={ref}
-      >
-        <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
+      <>
+        {/* Desktop */}
+        <div
+          {...props}
+          className={twMerge(
+            'hidden lg:flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
+            className
+          )}
+          ref={ref}
+        >
+          <div className="w-[288px] lg:border-r border-r-mono-40 dark:border-r-mono-160">
+            <div className="px-6 py-4">
+              <Typography variant="h5" fw="bold">
+                Connect a Wallet
+              </Typography>
+            </div>
+            <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
+          </div>
 
-        {/** Wallet frame */}
-        <div className="w-[432px] h-[504px] flex flex-col">
-          {/** Top */}
-          <div className="w-full h-[60px] flex justify-end items-center px-4">
+          {/** Wallet frame */}
+          <div className="w-[432px] h-[504px] flex flex-col">
+            {/** Top */}
+            <div className="w-full h-[60px] flex justify-end items-center px-4">
+              <button onClick={onClose}>
+                <Close size="lg" />
+              </button>
+            </div>
+
+            {/** Content */}
+            <div className="flex items-center justify-center grow">
+              <WalletContent
+                failedWallet={failedWallet}
+                connectingWallet={connectingWallet}
+                errorBtnText={errorBtnText}
+                errorMessage={errorMessage}
+                onTryAgainBtnClick={onTryAgainBtnClick}
+              />
+            </div>
+
+            {/** Bottom */}
+            <DownloadWallet
+              downloadWalletURL={downloadWalletURL}
+              getHelpURL={getHelpURL}
+              connectingWallet={connectingWallet}
+              failedWallet={failedWallet}
+            />
+          </div>
+        </div>
+
+        {/* Tablet and Mobile */}
+        <div
+          {...props}
+          className={twMerge(
+            'max-w-full w-[356px] min-h-[448px] mx-9 lg:hidden rounded-lg bg-mono-0 dark:bg-mono-190',
+            'flex flex-col',
+            className
+          )}
+          ref={ref}
+        >
+          <div className="px-6 py-4 flex items-center justify-between">
+            <Typography variant="h5" fw="bold" className="flex-1">
+              Connect a Wallet
+            </Typography>
             <button onClick={onClose}>
               <Close size="lg" />
             </button>
           </div>
 
-          {/** Content */}
-          <div className="flex items-center justify-center grow">
-            <WalletContent
-              failedWallet={failedWallet}
-              connectingWallet={connectingWallet}
-              errorBtnText={errorBtnText}
-              errorMessage={errorMessage}
-              onTryAgainBtnClick={onTryAgainBtnClick}
+          {!failedWallet && !connectingWallet ? (
+            <WalletList
+              wallets={wallets}
+              onWalletSelect={onWalletSelect}
+              className="grow w-full"
             />
-          </div>
-
-          {/** Bottom */}
-          {downloadWalletURL || getHelpURL ? (
-            <div className="flex items-center justify-between w-full px-6 py-4">
-              <Typography
-                variant="body2"
-                fw="bold"
-                className="text-mono-100 dark:text-mono-40"
-              >
-                Don't have a wallet?
-              </Typography>
-              {downloadWalletURL ? (
-                <Button
-                  variant="utility"
-                  size="sm"
-                  target="_blank"
-                  href={downloadWalletURL.toString()}
-                >
-                  Download{' '}
-                  {connectingWallet?.name ?? failedWallet?.name ?? 'Wallet'}
-                </Button>
-              ) : getHelpURL ? (
-                <Button
-                  variant="utility"
-                  size="sm"
-                  target="_blank"
-                  href={getHelpURL.toString()}
-                >
-                  Help
-                </Button>
-              ) : null}
+          ) : (
+            <div className="flex items-center justify-center grow">
+              <WalletContent
+                failedWallet={failedWallet}
+                connectingWallet={connectingWallet}
+                errorBtnText={errorBtnText}
+                errorMessage={errorMessage}
+                onTryAgainBtnClick={onTryAgainBtnClick}
+              />
             </div>
-          ) : null}
+          )}
+
+          <DownloadWallet
+            downloadWalletURL={downloadWalletURL}
+            getHelpURL={getHelpURL}
+            connectingWallet={connectingWallet}
+            failedWallet={failedWallet}
+          />
         </div>
-      </div>
+      </>
     );
   }
 );
@@ -222,16 +252,12 @@ const WalletContent = forwardRef<
 );
 
 const WalletList: FC<
-  Pick<WalletConnectionCardProps, 'wallets' | 'onWalletSelect'>
-> = ({ wallets, onWalletSelect }) => {
+  Pick<WalletConnectionCardProps, 'wallets' | 'onWalletSelect'> & {
+    className?: string;
+  }
+> = ({ wallets, onWalletSelect, className }) => {
   return (
-    <div className="w-[288px] border-r border-r-mono-40 dark:border-r-mono-160">
-      <div className="px-6 py-4">
-        <Typography variant="h5" fw="bold">
-          Connect a Wallet
-        </Typography>
-      </div>
-
+    <div className={className}>
       <div className="pb-4">
         <Typography
           variant="body2"
@@ -261,4 +287,42 @@ const WalletList: FC<
       </div>
     </div>
   );
+};
+
+const DownloadWallet: FC<
+  Pick<WalletConnectionCardProps, 'downloadWalletURL' | 'getHelpURL'> & {
+    connectingWallet?: Wallet;
+    failedWallet?: Wallet;
+  }
+> = ({ downloadWalletURL, getHelpURL, connectingWallet, failedWallet }) => {
+  return downloadWalletURL || getHelpURL ? (
+    <div className="flex items-center justify-between w-full px-6 py-4">
+      <Typography
+        variant="body2"
+        fw="bold"
+        className="text-mono-100 dark:text-mono-40"
+      >
+        Don't have a wallet?
+      </Typography>
+      {downloadWalletURL ? (
+        <Button
+          variant="utility"
+          size="sm"
+          target="_blank"
+          href={downloadWalletURL.toString()}
+        >
+          Download {connectingWallet?.name ?? failedWallet?.name ?? 'Wallet'}
+        </Button>
+      ) : getHelpURL ? (
+        <Button
+          variant="utility"
+          size="sm"
+          target="_blank"
+          href={getHelpURL.toString()}
+        >
+          Help
+        </Button>
+      ) : null}
+    </div>
+  ) : null;
 };

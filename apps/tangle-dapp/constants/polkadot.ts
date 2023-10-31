@@ -1,8 +1,12 @@
 import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
+import { u128 } from '@polkadot/types';
+import { formatBalance } from '@polkadot/util';
 import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { firstValueFrom } from 'rxjs';
 
 const apiPromiseCache = new Map<string, ApiPromise>();
+
+const TOKEN_UNIT = 'TTNT';
 
 export const getPolkadotApiPromise = async (
   endpoint: string = TANGLE_RPC_ENDPOINT
@@ -48,5 +52,106 @@ export const getPolkadotApiRx = async (
     return apiRx;
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const formatTokenBalance = async (
+  balance: u128
+): Promise<string | undefined> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) return balance.toString();
+
+    const chainDecimals = await api.registry.chainDecimals;
+    const balanceFormatType = {
+      decimals: chainDecimals[0],
+      withUnit: TOKEN_UNIT,
+    };
+
+    const formattedBalance = formatBalance(balance, balanceFormatType);
+
+    return formattedBalance;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getMinimumStake = async (): Promise<number | undefined> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) return NaN;
+
+    const minimumStakeDetails = await api.query.staking.minimumActiveStake();
+    const minimumStake = await formatTokenBalance(minimumStakeDetails);
+
+    return Number(minimumStake);
+  } catch (error) {
+    throw new Error('Failed to get minimum stake required');
+  }
+};
+
+export const getTotalNumberOfNominators = async (
+  validatorAddress: string
+): Promise<number | undefined> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) return NaN;
+
+    const nominators = await api.query.staking.nominators.entries();
+    const totalNominators = nominators.filter(([, nominatorData]) => {
+      const nominations = nominatorData.unwrapOrDefault();
+      return (
+        nominations.targets &&
+        nominations.targets.some(
+          (target) => target.toString() === validatorAddress
+        )
+      );
+    });
+    const delegations = totalNominators.length.toString();
+
+    return Number(delegations);
+  } catch (error) {
+    throw new Error(
+      'Failed to get total number of validators for validator address - ' +
+        validatorAddress
+    );
+  }
+};
+
+export const getValidatorIdentity = async (
+  validatorAddress: string
+): Promise<string | undefined> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) return '';
+
+    const identityOption = await api.query.identity.identityOf(
+      validatorAddress
+    );
+
+    let name = '';
+
+    if (identityOption.isSome) {
+      const { info } = identityOption.unwrap();
+      const displayNameInfo = info.display.toString();
+      const displayNameObject = JSON.parse(displayNameInfo);
+
+      if (displayNameObject.raw) {
+        const hexString = displayNameObject.raw;
+        name = Buffer.from(hexString.slice(2), 'hex').toString('utf8');
+      }
+    } else {
+      name = validatorAddress;
+    }
+
+    return name;
+  } catch (error) {
+    throw new Error(
+      'Failed to get identity for validator address - ' + validatorAddress
+    );
   }
 };

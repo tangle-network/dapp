@@ -67,7 +67,7 @@ const ActiveChainDropdown = () => {
           chain={chain}
           status="success"
           placeholder={activeChain === null ? 'Unsupported Chain' : undefined}
-          textClassname="hidden md:block"
+          textClassname="hidden lg:!block"
         />
       </DropdownButton>
       <DropdownBody className="mt-2">

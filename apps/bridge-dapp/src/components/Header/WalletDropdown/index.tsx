@@ -93,7 +93,7 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
         <WalletButton
           wallet={wallet}
           address={account.address}
-          addressClassname="hidden md:block"
+          addressClassname="hidden lg:!block"
         />
       </DropdownTrigger>
 

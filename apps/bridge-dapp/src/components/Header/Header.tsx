@@ -1,9 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { WebbLogoIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
   Button,
   ConnectWalletMobileButton,
+  Logo,
   MenuItem,
   NavigationMenu,
   NavigationMenuContent,
@@ -20,7 +22,14 @@ import {
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { ComponentProps, FC, useCallback, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentProps,
+  type FC,
+} from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
@@ -49,81 +58,99 @@ export const Header: FC<HeaderProps> = () => {
 
   const sidebarProps = useSidebarProps();
 
+  const breadcrumbItems = useMemo(
+    () =>
+      items.map((item, index) => {
+        const preCfgBreadcrumb = BREADCRUMBS_RECORD[item];
+
+        return (
+          <NavLink key={index} to={item}>
+            <BreadcrumbsItem
+              isLast={index === items.length - 1}
+              icon={preCfgBreadcrumb?.Icon}
+              className="capitalize"
+            >
+              {preCfgBreadcrumb?.label ?? item.split('-').join(' ')}
+            </BreadcrumbsItem>
+          </NavLink>
+        );
+      }),
+    [items]
+  );
+
   return (
-    <header className="flex justify-between py-4">
-      <div className="flex items-center gap-2">
-        <SideBarMenu
-          {...sidebarProps}
-          className="lg:hidden"
-          overrideContentProps={{ className: 'top-0' }}
-        />
-        <Breadcrumbs className="hidden md:flex">
-          {items.map((item, index) => {
-            const preCfgBreadcrumb = BREADCRUMBS_RECORD[item];
+    <div>
+      <header className="flex justify-between py-6">
+        <div className="flex items-center gap-2">
+          <SideBarMenu
+            {...sidebarProps}
+            className="lg:hidden"
+            overrideContentProps={{ className: 'top-0' }}
+          />
 
-            return (
-              <NavLink key={index} to={item}>
-                <BreadcrumbsItem
-                  isLast={index === items.length - 1}
-                  icon={preCfgBreadcrumb?.Icon}
-                  className="capitalize"
-                >
-                  {preCfgBreadcrumb?.label ?? item.split('-').join(' ')}
-                </BreadcrumbsItem>
-              </NavLink>
-            );
-          })}
-        </Breadcrumbs>
-      </div>
+          {/* Show Logo with name on table */}
+          <Logo className="hidden md:block lg:hidden" />
 
-      <div className="flex items-center space-x-2">
-        <TxProgressDropdown />
+          {/* Show Logo without name on mobile */}
+          <WebbLogoIcon className="md:hidden" size="lg" />
 
-        <div className="hidden lg:!flex items-center space-x-2">
-          <ActiveChainDropdown />
-          {isConnecting || loading || !activeWallet || !activeAccount ? (
-            isMobile ? (
-              <ConnectWalletMobileButton />
-            ) : (
-              <Button
-                isLoading={loading}
-                loadingText="Connecting..."
-                onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
-                className="hidden lg:!flex justify-center items-center px-6"
-              >
-                Connect wallet
-              </Button>
-            )
-          ) : (
-            <WalletDropdown account={activeAccount} wallet={activeWallet} />
-          )}
+          <Breadcrumbs className="hidden lg:flex">
+            {breadcrumbItems}
+          </Breadcrumbs>
         </div>
 
-        <NavigationMenu>
-          <NavigationMenuTrigger />
-          {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
-          <NavigationMenuContent
-            className="mt-5"
-            version={process.env.BRIDGE_VERSION}
-            onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
-            onTestnetClick={() =>
-              window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
-            }
-            onFaucetClick={() => {
-              window.open(WEBB_FAUCET_URL, '_blank');
-            }}
-            onHelpCenterClick={() =>
-              window.open(SOCIAL_URLS_RECORD.telegram, '_blank')
-            }
-            onRequestFeaturesClick={() =>
-              window.open(GITHUB_REQUEST_FEATURE_URL, '_blank')
-            }
-            onAboutClick={() => window.open(WEBB_MKT_URL, '_blank')}
-            extraMenuItems={[<ClearCacheMenuItem />]}
-          />
-        </NavigationMenu>
-      </div>
-    </header>
+        <div className="flex items-center space-x-2">
+          <TxProgressDropdown />
+
+          <div className="flex items-center space-x-2">
+            <ActiveChainDropdown />
+            {isConnecting || loading || !activeWallet || !activeAccount ? (
+              isMobile ? (
+                <ConnectWalletMobileButton />
+              ) : (
+                <Button
+                  isLoading={loading}
+                  loadingText="Connecting..."
+                  onClick={() =>
+                    toggleModal(true, srcTypedChainId ?? undefined)
+                  }
+                  className="flex items-center justify-center px-6"
+                >
+                  Connect
+                </Button>
+              )
+            ) : (
+              <WalletDropdown account={activeAccount} wallet={activeWallet} />
+            )}
+          </div>
+
+          <NavigationMenu>
+            <NavigationMenuTrigger />
+            {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
+            <NavigationMenuContent
+              version={process.env.BRIDGE_VERSION}
+              onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
+              onTestnetClick={() =>
+                window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
+              }
+              onFaucetClick={() => {
+                window.open(WEBB_FAUCET_URL, '_blank');
+              }}
+              onHelpCenterClick={() =>
+                window.open(SOCIAL_URLS_RECORD.telegram, '_blank')
+              }
+              onRequestFeaturesClick={() =>
+                window.open(GITHUB_REQUEST_FEATURE_URL, '_blank')
+              }
+              onAboutClick={() => window.open(WEBB_MKT_URL, '_blank')}
+              extraMenuItems={[<ClearCacheMenuItem />]}
+            />
+          </NavigationMenu>
+        </div>
+      </header>
+
+      <Breadcrumbs className="lg:!hidden">{breadcrumbItems}</Breadcrumbs>
+    </div>
   );
 };
 

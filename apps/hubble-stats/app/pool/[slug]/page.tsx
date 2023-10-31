@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { VANCHORS_MAP } from '../../../constants';
+import { Breadcrumbs } from '../../../components';
 import {
   PoolInfoCardContainer,
   PoolMetadataTableContainer,
@@ -36,7 +37,9 @@ export default function Pool({ params }: { params: { slug: string } }) {
   };
 
   return (
-    <div className="py-4 space-y-8">
+    <div className="pb-4 space-y-6">
+      <Breadcrumbs className="lg:hidden" />
+
       <div className="grid grid-cols-1 items-end lg:grid-cols-[auto_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
         <PoolInfoCardContainer
           poolAddress={poolAddress}

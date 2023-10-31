@@ -11,12 +11,12 @@ import { usePathname } from 'next/navigation';
 import { useMemo, type FC } from 'react';
 
 import { VANCHORS_MAP } from '../../constants';
-import { BreadcrumbType } from './types';
+import type { BreadcrumbsType, BreadcrumbItemType } from './types';
 
-const Breadcrumbs: FC = () => {
+const Breadcrumbs: FC<BreadcrumbsType> = ({ className }) => {
   const pathname = usePathname();
 
-  const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
+  const breadCrumbs = useMemo<BreadcrumbItemType[]>(() => {
     // check if current path is /pool/<0x...>
     if (/^\/pool\/0x\w+/.test(pathname)) {
       const poolAddress = pathname.split('/')[2];
@@ -49,7 +49,7 @@ const Breadcrumbs: FC = () => {
   }, [pathname]);
 
   return (
-    <BreadcrumbsCmp>
+    <BreadcrumbsCmp className={className}>
       {breadCrumbs.map((breadcrumb, index) => (
         /**
          * Data on the client-side needs to be up-to-date when the user navigates to a page

@@ -34,7 +34,7 @@ export const ConnectWalletMobileButton = forwardRef<
     <BottomDialog ref={ref}>
       <BottomDialogTrigger>
         <Button {...props} className={className}>
-          Connect Wallet
+          Connect
         </Button>
       </BottomDialogTrigger>
       <BottomDialogPortal
