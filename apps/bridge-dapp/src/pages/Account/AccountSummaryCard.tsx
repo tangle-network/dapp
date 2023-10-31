@@ -1,5 +1,6 @@
 import { DropdownMenuTrigger as DropdownButton } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import ArrowLeftRightLineIcon from '@webb-tools/icons/ArrowLeftRightLineIcon';
 import { ArrowRightUp } from '@webb-tools/icons/ArrowRightUp';
 import { ChevronDown } from '@webb-tools/icons/ChevronDown';
@@ -7,7 +8,11 @@ import EyeLineIcon from '@webb-tools/icons/EyeLineIcon';
 import QRScanLineIcon from '@webb-tools/icons/QRScanLineIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { IconBase } from '@webb-tools/icons/types';
-import { MenuItem } from '@webb-tools/webb-ui-components';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import {
+  MenuItem,
+  getRoundedAmountString,
+} from '@webb-tools/webb-ui-components';
 import {
   Dropdown,
   DropdownBody,
@@ -18,9 +23,10 @@ import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import capitalize from 'lodash/capitalize';
 import type { ComponentProps, ElementRef } from 'react';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
+import { formatEther } from 'viem';
 import HiddenValue from '../../components/HiddenValue';
 import NoteAccountAvatarWithKey from '../../components/NoteAccountAvatarWithKey';
 import {
@@ -61,14 +67,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
           />
         </header>
 
-        <TotalShieldedBalance
-          formatedBalance="0"
-          availableTokens={[]}
-          tokenSymbol="ETH"
-          onTokenChange={(token) => {
-            console.log(token);
-          }}
-        />
+        <TotalShieldedBalance />
 
         <Actions />
       </div>
@@ -79,16 +78,85 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
 export default AccountSummaryCard;
 
 /** @internal */
-function TotalShieldedBalance(props: {
-  formatedBalance: string;
-  tokenSymbol: string;
-  availableTokens: string[];
-  onTokenChange: (token: string) => void;
-}) {
-  const { availableTokens, formatedBalance, onTokenChange, tokenSymbol } =
-    props;
+function useShieldedBalances() {
+  const { initialized, balances } = useBalancesFromNotes();
+
+  if (!initialized) {
+    return;
+  }
+
+  return Object.entries(balances).reduce(
+    (acc, [currencyId, balancesRecord]) => {
+      const existedRecord = acc.get(+currencyId);
+      const totalCurrentRecord = Object.values(balancesRecord).reduce(
+        (acc, balance) => acc + balance,
+        ZERO_BIG_INT
+      );
+
+      acc.set(
+        +currencyId,
+        typeof existedRecord === 'bigint'
+          ? existedRecord + totalCurrentRecord
+          : totalCurrentRecord
+      );
+
+      return acc;
+    },
+    new Map<number, bigint>()
+  );
+}
+
+/** @internal */
+function TotalShieldedBalance() {
+  const [currencyId, setCurrencyId] = useState<number | undefined>();
 
   const [, setIsHiddenValue] = useHiddenValue();
+
+  const { apiConfig } = useWebContext();
+  const balances = useShieldedBalances();
+
+  useEffect(() => {
+    if (!balances) {
+      return;
+    }
+
+    const [currencyId] = Array.from(balances.entries())[0];
+    setCurrencyId(currencyId);
+  }, [balances]);
+
+  const formatedBalance = useMemo(() => {
+    if (!balances || typeof currencyId !== 'number') {
+      return '';
+    }
+
+    const balance = balances.get(currencyId);
+    if (typeof balance !== 'bigint') {
+      return '';
+    }
+
+    return getRoundedAmountString(Number(formatEther(balance)));
+  }, [balances, currencyId]);
+
+  const tokenSymbol = useMemo(() => {
+    if (typeof currencyId !== 'number') {
+      return '';
+    }
+
+    const c = apiConfig.currencies[currencyId];
+    console.log('currencyId', currencyId, c);
+
+    return apiConfig.currencies[currencyId]?.symbol ?? '';
+  }, [apiConfig.currencies, currencyId]);
+
+  const availableCurrencyCfgs = useMemo(() => {
+    if (!balances) {
+      return [];
+    }
+
+    return Array.from(balances.keys())
+      .map((currencyId) => apiConfig.currencies[currencyId])
+      .filter(Boolean);
+  }, [apiConfig.currencies, balances]);
 
   return (
     <div>
@@ -110,9 +178,8 @@ function TotalShieldedBalance(props: {
         <Dropdown>
           <DropdownButton
             className="flex items-center gap-1 disabled:cursor-not-allowed"
-            disabled={availableTokens.length === 0}
+            disabled={availableCurrencyCfgs.length === 0}
           >
-            <TokenIcon name={tokenSymbol} />
             <Typography
               component="span"
               variant="body1"
@@ -125,16 +192,17 @@ function TotalShieldedBalance(props: {
             <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180" />
           </DropdownButton>
 
-          <DropdownBody className="mt-2">
+          <DropdownBody className="mt-2" align="center">
             <ScrollArea className="max-h-[var(--dropdown-height)]">
               <ul>
-                {availableTokens.map((token, idx) => (
-                  <li key={`${token}-${idx}`}>
+                {availableCurrencyCfgs.map(({ name, symbol, id }) => (
+                  <li key={`${name}-${id}`}>
                     <MenuItem
-                      startIcon={<TokenIcon name={token} />}
-                      onSelect={() => onTokenChange(token)}
+                      startIcon={<TokenIcon name={symbol} />}
+                      onSelect={() => setCurrencyId(id)}
+                      textTransform="normal-case"
                     >
-                      {token}
+                      {symbol}
                     </MenuItem>
                   </li>
                 ))}
@@ -147,19 +215,24 @@ function TotalShieldedBalance(props: {
   );
 }
 
+/** @internal */
 const paths = [DEPOSIT_PATH, TRANSFER_PATH, WITHDRAW_PATH] as const;
+
+/** @internal */
 const icons = [
   <ArrowRightUp size="lg" />,
   <ArrowLeftRightLineIcon size="lg" />,
   <ArrowRightUp size="lg" className="rotate-90" />,
 ] as const;
 
+/** @internal */
 const actionItems = paths.map((path, idx) => ({
   label: capitalize(path),
   path: `/${BRIDGE_PATH}/${path}`,
   icon: icons[idx],
 }));
 
+/** @internal */
 const ActionItem = (props: {
   icon: React.ReactElement<IconBase>;
   label: string;
@@ -180,6 +253,7 @@ const ActionItem = (props: {
   );
 };
 
+/** @internal */
 function Actions() {
   const navigate = useNavigate();
 
