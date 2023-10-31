@@ -6,7 +6,7 @@ name: 'visual ✨'
 on:
   pull_request:
     # types: [opened, synchronize, reopened, ready_for_review]
-    branches: [develop]
+    branches: [develop, feature/**]
 
   workflow_dispatch:
 
