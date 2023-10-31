@@ -106,6 +106,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * New balance if users decide to proceed with the transaction
    */
   newBalance?: number;
+
+  /**
+   * The component to display fee info of the tx
+   */
+  feesSection: React.ReactNode;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {

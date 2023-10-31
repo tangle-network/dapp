@@ -21,11 +21,13 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   TransferConfirm,
   getRoundedAmountString,
+  RelayerFeeDetails,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useMemo, useState, type ComponentProps } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
+import useTransferFeeCalculation from '../../hooks/useTransferFeeCalculation';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
   captureSentryException,
@@ -126,6 +128,18 @@ const TransferConfirmContainer = forwardRef<
       targetTypedChainId: targetChainId,
     });
 
+    const {
+      gasFeeInfo,
+      isLoading: isFeeLoading,
+      relayerFeeInfo,
+      totalFeeToken,
+      totalFeeWei,
+    } = useTransferFeeCalculation({
+      activeRelayer,
+      recipientErrorMsg: undefined,
+      typedChainId: srcTypedChainId,
+    });
+
     const newBalance = useMemo(() => {
       const currentBalance = balances?.[currency.id]?.[srcTypedChainId];
       if (!currentBalance) return undefined;
@@ -201,6 +215,21 @@ const TransferConfirmContainer = forwardRef<
         refundToken={refundToken}
         refundRecipient={refundRecipient}
         newBalance={newBalance}
+        feesSection={
+          <RelayerFeeDetails
+            totalFeeWei={totalFeeWei}
+            totalFeeToken={totalFeeToken}
+            gasFeeInfo={gasFeeInfo}
+            relayerFeeInfo={relayerFeeInfo}
+            isFeeLoading={isFeeLoading}
+            srcChainCfg={apiConfig.chains[srcTypedChainId]}
+            fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
+              currency.view.symbol,
+              srcTypedChainId
+            )}
+            activeRelayer={activeRelayer}
+          />
+        }
       />
     );
   }

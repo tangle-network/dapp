@@ -54,6 +54,7 @@ export const WithdrawConfirm = forwardRef<
       destTypedChainId,
       poolAddress,
       newBalance,
+      feesSection,
       ...props
     },
     ref
@@ -169,12 +170,7 @@ export const WithdrawConfirm = forwardRef<
           </div>
 
           {/* Fee Details */}
-          {/* <FeeDetails
-            fee={fee}
-            feeInfo={feeInfo}
-            tokenSymbol={token1Symbol}
-            tooltipContent="The fee for the transaction."
-          /> */}
+          {feesSection}
 
           {/* Refund */}
           {refundAmount && (

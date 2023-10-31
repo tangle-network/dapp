@@ -59,6 +59,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       refundToken,
       refundRecipient,
       newBalance,
+      feesSection,
       ...props
     },
     ref
@@ -172,6 +173,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               tooltipContent={`Your updated shielded balance of ${token1Symbol} on destination chain after deposit.`}
             />
           </div>
+
+          {/* Fees */}
+          {feesSection}
 
           {/* Refund */}
           {refundAmount && (

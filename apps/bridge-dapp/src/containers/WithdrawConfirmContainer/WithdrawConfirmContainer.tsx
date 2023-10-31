@@ -6,9 +6,9 @@ import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
   getRoundedAmountString,
+  RelayerFeeDetails,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-
 import {
   NewNotesTxResult,
   Transaction,
@@ -24,6 +24,7 @@ import {
 } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
+import useWithdrawFeeCalculation from '../../hooks/useWithdrawFeeCalculation';
 import {
   captureSentryException,
   getErrorMessage,
@@ -53,10 +54,10 @@ const WithdrawConfirmContainer = forwardRef<
       onResetState,
       receivingInfo,
       recipient,
-      refundAmount,
       refundToken,
       sourceTypedChainId,
       targetTypedChainId,
+      refundAmount,
       unwrapCurrency: { value: unwrapCurrency } = {},
       onClose,
       ...props
@@ -103,6 +104,18 @@ const WithdrawConfirmContainer = forwardRef<
       typeof unwrapCurrency !== 'undefined',
       onResetState
     );
+
+    const {
+      gasFeeInfo,
+      isLoading: isFeeLoading,
+      relayerFeeInfo,
+      totalFeeToken,
+      totalFeeWei,
+    } = useWithdrawFeeCalculation({
+      activeRelayer,
+      recipientErrorMsg: undefined,
+      typedChainId: sourceTypedChainId,
+    });
 
     const avatarTheme = useMemo(() => {
       return chainsPopulated[targetTypedChainId].chainType === ChainType.EVM
@@ -375,6 +388,21 @@ const WithdrawConfirmContainer = forwardRef<
         }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
+        feesSection={
+          <RelayerFeeDetails
+            totalFeeWei={totalFeeWei}
+            totalFeeToken={totalFeeToken}
+            gasFeeInfo={gasFeeInfo}
+            relayerFeeInfo={relayerFeeInfo}
+            isFeeLoading={isFeeLoading}
+            srcChainCfg={apiConfig.chains[sourceTypedChainId]}
+            fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
+              fungibleCurrency.view.symbol,
+              sourceTypedChainId
+            )}
+            activeRelayer={activeRelayer}
+          />
+        }
       />
     );
   }
