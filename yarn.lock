@@ -18630,9 +18630,9 @@ github-from-package@0.0.0:
   integrity sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==
 
 github-markdown-css@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/github-markdown-css/-/github-markdown-css-5.2.0.tgz#9f9e30f16cbc1d3b76110667b7c36ca3d96c9cdc"
-  integrity sha512-hq5RaCInSUZ48bImOZpkppW2/MT44StRgsbsZ8YA4vJFwLKB/Vo3k7R2t+pUGqO+ThG0QDMi96TewV/B3vyItg==
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/github-markdown-css/-/github-markdown-css-5.3.0.tgz#b150b1a52c18692c576072316ca89a0942df034a"
+  integrity sha512-WI+6puEQJnC8JoIveA8R8PiwH/wJwlneE88j7Q+ojMfzWcqRJF01vrVvo8PoWc6Y4aDF+kG4WGZi3RHXymyzJg==
 
 github-slugger@^1.0.0:
   version "1.5.0"
@@ -30212,9 +30212,9 @@ tweetnacl@^1.0.3:
   integrity sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==
 
 twitter-api-v2@^1.15.1:
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/twitter-api-v2/-/twitter-api-v2-1.15.1.tgz#e7959bcaea5ee1633df7124f94ab0e7939357963"
-  integrity sha512-KNxoJL+sldWMI3AooPGcNkbP8awQai93d9xxsTurVPuUo/qnOUR3iO0XZTGC5sezdejHHqNyTwBAgGGw948MDg==
+  version "1.15.2"
+  resolved "https://registry.yarnpkg.com/twitter-api-v2/-/twitter-api-v2-1.15.2.tgz#212944065e86c1a8001f712447f06e275514faea"
+  integrity sha512-iIGItwkUGsAGA6VNnULXL5dllVJ35IZQjLSTWvqSn4M7s19B6X1+pUB/ZDSJD+u6q6+FinNxy0dnDIEoCZ5x8w==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
