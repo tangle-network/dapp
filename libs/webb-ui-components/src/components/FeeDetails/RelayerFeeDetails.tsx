@@ -21,6 +21,7 @@ interface RelayerFeeDetailsProps {
   srcChainCfg: ChainConfig | undefined;
   fungibleCfg: CurrencyConfig | undefined;
   activeRelayer: OptionalActiveRelayer;
+  info?: string;
 }
 
 const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
@@ -32,6 +33,7 @@ const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
   srcChainCfg,
   totalFeeToken,
   totalFeeWei,
+  info,
 }) => {
   const relayerFeePercentage = useMemo(() => {
     if (!activeRelayer || !srcChainCfg) {
@@ -48,6 +50,7 @@ const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
 
   return (
     <FeeDetails
+      info={info}
       isTotalLoading={isFeeLoading}
       totalFee={
         typeof totalFeeWei === 'bigint'

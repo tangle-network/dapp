@@ -228,6 +228,7 @@ const TransferConfirmContainer = forwardRef<
               srcTypedChainId
             )}
             activeRelayer={activeRelayer}
+            info="Amount deducted from the transfer to cover transaction costs within the shielded pool."
           />
         }
       />

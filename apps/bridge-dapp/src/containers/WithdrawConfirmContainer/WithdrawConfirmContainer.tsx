@@ -401,6 +401,7 @@ const WithdrawConfirmContainer = forwardRef<
               sourceTypedChainId
             )}
             activeRelayer={activeRelayer}
+            info="Amount deducted from the withdrawal to cover transaction costs within the shielded pool."
           />
         }
       />

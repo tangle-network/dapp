@@ -1,4 +1,4 @@
-import { Close, FileShieldLine } from '@webb-tools/icons';
+import { Close, FileShieldLine, GasStationFill } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { TxProgressorBody } from '../../components/TxProgressor';
@@ -8,6 +8,7 @@ import SteppedProgress from '../../components/Progress/SteppedProgress';
 import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
+import FeeDetails from '../../components/FeeDetails/FeeDetails';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
 import { formatTokenAmount } from './utils';
 import AmountInfo from './AmountInfo';
@@ -155,6 +156,17 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               tooltipContent={`Your updated shielded balance of ${fungibleTokenSymbol} on destination chain after deposit.`}
             />
           </div>
+
+          {/* Fees */}
+          <FeeDetails
+            info="The fee pays for the transaction to be processed on the network."
+            items={[
+              {
+                name: 'Gas',
+                Icon: <GasStationFill />,
+              },
+            ]}
+          />
 
           {/* Copy Spend Note Checkbox */}
           <CheckBox
