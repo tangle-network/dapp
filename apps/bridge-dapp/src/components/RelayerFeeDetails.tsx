@@ -8,7 +8,7 @@ import { FeeDetails } from '@webb-tools/webb-ui-components/components/FeeDetails
 import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { formatEther } from 'viem';
-import { getRelayerFeePercentage } from './utils';
+import { getRelayerFeePercentage } from '../utils';
 import { type FC, useMemo } from 'react';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 

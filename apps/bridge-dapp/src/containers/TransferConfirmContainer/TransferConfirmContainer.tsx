@@ -21,8 +21,8 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   TransferConfirm,
   getRoundedAmountString,
-  RelayerFeeDetails,
 } from '@webb-tools/webb-ui-components';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { forwardRef, useMemo, useState, type ComponentProps } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';

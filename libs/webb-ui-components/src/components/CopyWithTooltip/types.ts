@@ -31,7 +31,10 @@ export interface CopyWithTooltipProps extends WebbComponentBase {
  * The internal UI component
  */
 export interface CopyWithTooltipUIProps
-  extends Pick<CopyWithTooltipProps, 'isButton' | 'iconSize' | 'iconClassName'> {
+  extends Pick<
+    CopyWithTooltipProps,
+    'isButton' | 'iconSize' | 'iconClassName'
+  > {
   onClick: () => void;
 
   className?: string;

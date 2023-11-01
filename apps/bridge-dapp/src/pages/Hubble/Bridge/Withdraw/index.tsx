@@ -20,8 +20,8 @@ import {
   useCheckMobile,
   useCopyable,
   useWebbUI,
-  RelayerFeeDetails,
 } from '@webb-tools/webb-ui-components';
+import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BooleanParam, useQueryParam } from 'use-query-params';

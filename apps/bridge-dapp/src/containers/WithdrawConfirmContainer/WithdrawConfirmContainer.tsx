@@ -6,7 +6,6 @@ import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
   getRoundedAmountString,
-  RelayerFeeDetails,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
@@ -33,6 +32,7 @@ import {
   handleMutateNoteIndex,
   handleStoreNote,
 } from '../../utils';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { WithdrawConfirmContainerProps } from './types';
 
 const WithdrawConfirmContainer = forwardRef<
