@@ -1,3 +1,5 @@
+'use client';
+
 import type { FC, PropsWithChildren } from 'react';
 import { motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';

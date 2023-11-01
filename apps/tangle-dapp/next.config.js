@@ -27,7 +27,7 @@ const nextConfig = {
 
   // webpack config for wasm support
   // following this approach: https://github.com/vercel/next.js/issues/29362#issuecomment-1149903338
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     // Hide Critical dependency warning from @graphql-mesh/* packages
     // https://github.com/i18next/next-i18next/issues/1545#issuecomment-1005990731
     // NOTE: This is a workaround as
@@ -37,6 +37,31 @@ const nextConfig = {
       ...config.module,
       exprContextCritical: false,
     };
+
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+
+    // Enable WebAssembly
+    config.experiments = {
+      asyncWebAssembly: true,
+    };
+
+    // Add a rule to handle .wasm files
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'webassembly/async',
+      use: {
+        loader: 'file-loader',
+        options: {
+          outputPath: 'static/wasm',
+          publicPath: '/_next/static/wasm',
+        },
+      },
+    });
 
     return config;
   },

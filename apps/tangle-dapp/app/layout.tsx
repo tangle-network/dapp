@@ -1,5 +1,6 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 
+import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
 import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
 import { Metadata } from 'next';
@@ -46,11 +47,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const appEvent = new AppEvent();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex h-screen bg-body">
         <NextThemeProvider>
-          <Layout>{children}</Layout>
+          <WebbProvider appEvent={appEvent} applicationName="Tangle Dapp">
+            <Layout>{children}</Layout>
+          </WebbProvider>
         </NextThemeProvider>
       </body>
     </html>
