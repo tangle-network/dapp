@@ -1,4 +1,4 @@
-import { Close, FileShieldLine, GasStationFill } from '@webb-tools/icons';
+import { Close, FileShieldLine } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { TxProgressorBody } from '../../components/TxProgressor';
@@ -8,7 +8,6 @@ import SteppedProgress from '../../components/Progress/SteppedProgress';
 import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
-import FeeDetails from '../../components/FeeDetails/FeeDetails';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
 import { formatTokenAmount } from './utils';
 import AmountInfo from './AmountInfo';
