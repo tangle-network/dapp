@@ -5,6 +5,7 @@ export interface TxConfirmationRingProps {
   dest: SourceOrDestination;
   poolName: string;
   poolAddress: string;
+  poolExplorerUrl?: string;
   className?: string;
 }
 

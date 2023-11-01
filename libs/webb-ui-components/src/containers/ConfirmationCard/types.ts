@@ -103,6 +103,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   poolAddress: string;
 
   /**
+   * The block explorer of the pool contract
+   */
+  poolExplorerUrl?: string;
+
+  /**
    * New balance if users decide to proceed with the transaction
    */
   newBalance?: number;

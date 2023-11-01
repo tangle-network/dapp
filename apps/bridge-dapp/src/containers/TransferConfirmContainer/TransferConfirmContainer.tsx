@@ -6,6 +6,8 @@ import {
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
@@ -100,6 +102,24 @@ const TransferConfirmContainer = forwardRef<
       [destChain]
     );
 
+    const poolAddress = useMemo(
+      () => apiConfig.anchors[currency.id][targetChainId],
+      [apiConfig, currency.id, targetChainId]
+    );
+
+    const poolExplorerUrl = useMemo(() => {
+      const blockExplorerUrl =
+        chainsConfig[targetChainId]?.blockExplorers?.default.url;
+
+      if (!blockExplorerUrl) return undefined;
+      return getExplorerURI(
+        blockExplorerUrl,
+        poolAddress,
+        'address',
+        'web3'
+      ).toString();
+    }, [targetChainId, poolAddress]);
+
     const {
       relayersState: { activeRelayer },
     } = useRelayers({
@@ -175,7 +195,8 @@ const TransferConfirmContainer = forwardRef<
         destTypedChainId={targetChainId}
         sourceAddress={noteManager?.getKeypair().toString() ?? ''}
         destAddress={recipient}
-        poolAddress={apiConfig.anchors[currency.id][targetChainId]}
+        poolAddress={poolAddress}
+        poolExplorerUrl={poolExplorerUrl}
         recipientTitleProps={{
           info: <RecipientPublicKeyTooltipContent />,
         }}

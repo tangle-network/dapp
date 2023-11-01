@@ -1,7 +1,6 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 import { ChainIcon, ExternalLinkLine } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import cx from 'classnames';
 import { isHex } from 'viem';
 
@@ -12,22 +11,19 @@ import { useDarkMode } from '../../hooks/useDarkMode';
 import { shortenHex } from '../../utils';
 
 const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
-  ({ source, dest, poolName, poolAddress, className, ...props }, ref) => {
+  (
+    {
+      source,
+      dest,
+      poolName,
+      poolAddress,
+      poolExplorerUrl,
+      className,
+      ...props
+    },
+    ref
+  ) => {
     const [isDarkMode] = useDarkMode();
-
-    const poolExplorerUrl = useMemo(() => {
-      const blockExplorerUrl =
-        chainsConfig[dest.typedChainId].blockExplorers?.default.url;
-
-      if (blockExplorerUrl === undefined) return undefined;
-
-      return getExplorerURI(
-        blockExplorerUrl,
-        poolAddress,
-        'address',
-        'web3'
-      ).toString();
-    }, [dest.typedChainId, poolAddress]);
 
     return (
       <div
@@ -74,7 +70,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                   <Typography variant="body4">
                     {shortenHex(poolAddress)}
                   </Typography>
-                  {poolExplorerUrl !== undefined && (
+                  {poolExplorerUrl && (
                     <a
                       href={poolExplorerUrl}
                       target="_blank"

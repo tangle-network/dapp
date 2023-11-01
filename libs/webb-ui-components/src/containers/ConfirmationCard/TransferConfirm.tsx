@@ -16,16 +16,6 @@ import SpendNoteInput from './SpendNoteInput';
 import WrapperSection from './WrapperSection';
 import { TransferConfirmProps } from './types';
 
-const defaultRecipientTitleProps: NonNullable<
-  TransferConfirmProps['recipientTitleProps']
-> = {
-  titleComponent: 'h6',
-  title: 'Recipient',
-  variant: 'utility',
-  titleClassName: 'text-mono-100 dark:text-mono-80',
-  className: 'text-mono-100 dark:text-mono-80',
-};
-
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
     {
@@ -54,6 +44,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       sourceTypedChainId,
       destTypedChainId,
       poolAddress,
+      poolExplorerUrl,
       fungibleTokenSymbol: token1Symbol,
       refundAmount,
       refundToken,
@@ -136,6 +127,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
             }}
             poolAddress={poolAddress}
             poolName={token1Symbol}
+            poolExplorerUrl={poolExplorerUrl}
           />
 
           {/** Change Note info */}

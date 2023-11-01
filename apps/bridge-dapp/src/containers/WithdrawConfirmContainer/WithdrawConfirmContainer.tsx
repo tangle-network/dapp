@@ -1,5 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { ChainType, Note } from '@webb-tools/sdk-core';
@@ -122,6 +124,24 @@ const WithdrawConfirmContainer = forwardRef<
         ? 'ethereum'
         : 'substrate';
     }, [targetTypedChainId]);
+
+    const poolAddress = useMemo(
+      () => apiConfig.anchors[fungibleCurrency.id][targetTypedChainId],
+      [apiConfig, fungibleCurrency.id, targetTypedChainId]
+    );
+
+    const poolExplorerUrl = useMemo(() => {
+      const blockExplorerUrl =
+        chainsConfig[targetTypedChainId]?.blockExplorers?.default.url;
+
+      if (!blockExplorerUrl) return undefined;
+      return getExplorerURI(
+        blockExplorerUrl,
+        poolAddress,
+        'address',
+        'web3'
+      ).toString();
+    }, [targetTypedChainId, poolAddress]);
 
     const newBalance = useMemo(() => {
       const currentBalance =
@@ -372,7 +392,8 @@ const WithdrawConfirmContainer = forwardRef<
             : ''
         }
         destAddress={recipient}
-        poolAddress={apiConfig.anchors[fungibleCurrency.id][targetTypedChainId]}
+        poolAddress={poolAddress}
+        poolExplorerUrl={poolExplorerUrl}
         newBalance={newBalance}
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}

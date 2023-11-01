@@ -40,8 +40,10 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       title = 'Confirm Deposit',
       fungibleTokenSymbol,
       poolAddress,
+      poolExplorerUrl,
       wrappableTokenSymbol,
       newBalance,
+      feesSection,
       ...props
     },
     ref
@@ -121,6 +123,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             }}
             poolAddress={poolAddress}
             poolName={fungibleTokenSymbol}
+            poolExplorerUrl={poolExplorerUrl}
           />
 
           {/** Spend Note info */}
@@ -158,15 +161,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           </div>
 
           {/* Fees */}
-          <FeeDetails
-            info="The fee pays for the transaction to be processed on the network."
-            items={[
-              {
-                name: 'Gas',
-                Icon: <GasStationFill />,
-              },
-            ]}
-          />
+          {feesSection}
 
           {/* Copy Spend Note Checkbox */}
           <CheckBox

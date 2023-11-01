@@ -7,7 +7,6 @@ import Button from '../../components/buttons/Button';
 import { Chip } from '../../components/Chip/Chip';
 import { CheckBox } from '../../components/CheckBox/Checkbox';
 import SteppedProgress from '../../components/Progress/SteppedProgress';
-import RelayerFeeDetails from '../../components/FeeDetails/RelayerFeeDetails';
 import SpendNoteInput from './SpendNoteInput';
 import RefundAmount from './RefundAmount';
 import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
@@ -53,6 +52,7 @@ export const WithdrawConfirm = forwardRef<
       sourceTypedChainId,
       destTypedChainId,
       poolAddress,
+      poolExplorerUrl,
       newBalance,
       feesSection,
       ...props
@@ -131,6 +131,7 @@ export const WithdrawConfirm = forwardRef<
             }}
             poolAddress={poolAddress}
             poolName={token1Symbol}
+            poolExplorerUrl={poolExplorerUrl}
           />
 
           {/** Change Note info */}
