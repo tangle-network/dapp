@@ -6,10 +6,7 @@ import { WalletLineIcon, ShieldKeyholeLineIcon } from '@webb-tools/icons';
 import { AddressChipProps } from './types';
 import { Typography } from '../../typography';
 import { Chip } from '../Chip';
-import {
-  shortenHex,
-  shortenString,
-} from '@webb-tools/webb-ui-components/utils';
+import { shortenHex, shortenString } from '../../utils';
 
 const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
   ({ className: classNameProp, address, isNoteAccount = false }) => {
