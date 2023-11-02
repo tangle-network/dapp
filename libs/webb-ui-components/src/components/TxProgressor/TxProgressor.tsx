@@ -4,24 +4,21 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
   ArrowRight,
   ExternalLinkLine,
-  ShieldKeyholeLineIcon,
   ShieldedAssetIcon,
   StatusIndicator,
   TokenIcon,
-  WalletLineIcon,
 } from '@webb-tools/icons';
-import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { isHex } from 'viem';
 import useTimeAgo from '../../hooks/useTimeAgo';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { shortenHex, shortenString } from '../../utils';
 import { ChainChip } from '../ChainChip/ChainChip';
 import { Chip, ChipProps } from '../Chip';
 import SteppedProgress from '../Progress/SteppedProgress';
 import { Button } from '../buttons';
+import { TitleWithInfo } from '../TitleWithInfo';
+import AddressChip from '../AddressChip';
 import {
   TxInfo,
   TxProgressorBodyProps,
@@ -89,6 +86,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
   typedChainId,
   isSource,
   walletAddress,
+  tooltipContent,
   ...props
 }) => {
   const chain = chainsConfig[typedChainId];
@@ -99,9 +97,17 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
 
   return (
     <div {...props} className={twMerge('space-y-2', className)}>
-      <div
-        className={cx('flex items-center gap-2', { 'justify-end': !isSource })}
-      >
+      <TitleWithInfo
+        title={isSource ? 'Source Chain' : 'Destination Chain'}
+        variant="utility"
+        info={
+          tooltipContent ?? (isSource ? 'Source Chain' : 'Destination Chain')
+        }
+        titleClassName="text-mono-120 dark:text-mono-80"
+        className="text-mono-120 dark:text-mono-80"
+      />
+
+      <div className="flex flex-col md:flex-row md:items-center gap-2">
         <ChainChip
           className="px-2 py-1"
           chainName={chain.name}
@@ -109,35 +115,14 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         />
 
         {walletAddress && (
-          <Chip
-            color="grey"
-            className={twMerge(
-              'flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1'
-            )}
-          >
-            {accountType === 'note' ? (
-              <ShieldKeyholeLineIcon />
-            ) : (
-              <WalletLineIcon />
-            )}
-
-            <Typography
-              variant="body4"
-              fw="bold"
-              component="span"
-              className="inline-block normal-case text-mono-120 dark:text-mono-60"
-            >
-              {isHex(walletAddress)
-                ? shortenHex(walletAddress, 2)
-                : shortenString(walletAddress, 2)}
-            </Typography>
-          </Chip>
+          <AddressChip
+            address={walletAddress}
+            isNoteAccount={accountType === 'note'}
+          />
         )}
       </div>
 
-      <div
-        className={cx('flex items-center gap-1', { 'justify-end': !isSource })}
-      >
+      <div className="flex items-center gap-1">
         <Typography
           variant="h5"
           fw="semibold"
@@ -154,9 +139,9 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         </Typography>
 
         {tokenType === 'shielded' ? (
-          <ShieldedAssetIcon />
+          <ShieldedAssetIcon size="lg" />
         ) : (
-          <TokenIcon name={tokenSymbol} />
+          <TokenIcon name={tokenSymbol} size="lg" />
         )}
       </div>
     </div>

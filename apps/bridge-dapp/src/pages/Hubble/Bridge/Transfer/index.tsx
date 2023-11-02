@@ -25,8 +25,8 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { formatEther, parseEther } from 'viem';
-import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import SlideAnimation from '../../../../components/SlideAnimation';
+import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import {
   BRIDGE_TABS,
   SELECT_DESTINATION_CHAIN_PATH,
@@ -40,7 +40,7 @@ import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
-import useFeeCalculation from './private/useFeeCalculation';
+import useTransferFeeCalculation from '../../../../hooks/useTransferFeeCalculation';
 import useInputs from './private/useInputs';
 import useTransferButtonProps from './private/useTransferButtonProps';
 
@@ -159,7 +159,7 @@ const Transfer = () => {
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-  } = useFeeCalculation({
+  } = useTransferFeeCalculation({
     typedChainId: typedChainId,
     activeRelayer,
     recipientErrorMsg,
@@ -363,8 +363,9 @@ const Transfer = () => {
                   : undefined
               }
               refundToken={destChainCfg?.nativeCurrency.symbol}
-              remaining={remainingBalance}
-              remainingToken={fungibleCfg?.symbol}
+              newBalance={remainingBalance}
+              newBalanceToken={fungibleCfg?.symbol}
+              txType="transfer"
             />
           </div>
 

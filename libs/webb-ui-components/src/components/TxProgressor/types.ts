@@ -45,6 +45,11 @@ export type TxInfo = {
    * The isSource flag to display the source info
    */
   isSource?: boolean;
+
+  /**
+   * The text for the tooltip
+   */
+  tooltipContent?: string;
 };
 
 export interface TxProgressorHeaderProps extends PropsOf<'div'> {

@@ -7,13 +7,22 @@ import type {
   ChipColors,
   TitleWithInfo,
 } from '../../components';
-import type { ChainGroup } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
+   * Source Address
+   */
+  sourceAddress: string;
+
+  /**
+   * Destination Address
+   */
+  destAddress: string;
+
+  /**
    * The transaction amount
    */
-  amount?: number | string;
+  amount: number;
 
   /**
    * The card title
@@ -32,20 +41,14 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   actionBtnProps?: ComponentProps<typeof Button>;
 
   /**
-   * The source chain symbol
+   * The source typed chain id
    */
-  sourceChain?: {
-    type: ChainGroup;
-    name: string;
-  };
+  sourceTypedChainId: number;
 
   /**
-   * The destination chain symbol
+   * The destination typed chain id
    */
-  destChain?: {
-    type: ChainGroup;
-    name: string;
-  };
+  destTypedChainId: number;
 
   /**
    * The transaction progress
@@ -73,12 +76,6 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   note?: string | null;
 
   /**
-   * Callback when user hits download button
-   * @returns void
-   */
-  onDownload?: () => void;
-
-  /**
    * The checkbox props
    */
   checkboxProps?: ComponentProps<typeof CheckBox>;
@@ -93,6 +90,26 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * @default 'blue'
    */
   txStatusColor?: ChipColors;
+
+  /**
+   * The address of the pool contract that the user is depositing to
+   */
+  poolAddress: string;
+
+  /**
+   * The block explorer of the pool contract
+   */
+  poolExplorerUrl?: string;
+
+  /**
+   * New balance if users decide to proceed with the transaction
+   */
+  newBalance?: number;
+
+  /**
+   * The component to display fee info of the tx
+   */
+  feesSection: React.ReactNode;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
@@ -109,14 +126,14 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
   /**
    * Due to wrapping fee, a wrapping amount would be larger than the bridged amount.
    */
-  wrappingAmount?: string;
+  wrappingAmount?: number;
 }
 
 export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The change amount
    */
-  changeAmount?: number | string;
+  changeAmount?: number;
 
   /**
    * The first token symbol
@@ -143,7 +160,7 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The refund amount
    */
-  refundAmount?: number | string;
+  refundAmount?: number;
 
   /**
    * The refund token symbol
@@ -169,23 +186,18 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
    * The relayer external url
    */
   relayerExternalUrl?: string;
-
-  /**
-   * The recipient address
-   */
-  recipientAddress: string;
 }
 
 export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The change amount
    */
-  changeAmount?: number | string;
+  changeAmount?: number;
 
   /**
    * The first token symbol
    */
-  fungibleTokenSymbol?: string;
+  fungibleTokenSymbol: string;
 
   /**
    * The relayer address
@@ -216,10 +228,15 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The refund amount
    */
-  refundAmount?: number | string;
+  refundAmount?: number;
 
   /**
    * The refund token symbol
    */
   refundToken?: string;
+
+  /**
+   * The address that will receive the refund
+   */
+  refundRecipient?: string;
 }
