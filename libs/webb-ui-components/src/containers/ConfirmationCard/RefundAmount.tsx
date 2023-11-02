@@ -43,6 +43,9 @@ const RefundAmount: FC<RefundAmountProps> = ({
                 <Typography variant="body3">
                   Refund amount will be sent to: {refundAddress}
                 </Typography>
+
+                {/* Currently facing problem when hovering on the icon, the whole tooltip disappear */}
+                {/* data-state problem with radix-ui: https://github.com/radix-ui/primitives/discussions/560 */}
                 <CopyWithTooltip
                   textToCopy={refundAddress}
                   className="self-end justify-self-end"

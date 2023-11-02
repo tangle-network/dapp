@@ -27,7 +27,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       feeToken,
       note,
       onClose,
-      onDownload,
       txStatusMessage,
       txStatusColor = 'blue',
       progress = null,

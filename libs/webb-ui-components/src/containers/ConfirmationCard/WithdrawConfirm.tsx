@@ -34,7 +34,6 @@ export const WithdrawConfirm = forwardRef<
       wrappableTokenSymbol: token2Symbol,
       note,
       onClose,
-      onDownload,
       progress,
       totalProgress,
       receivingInfo,

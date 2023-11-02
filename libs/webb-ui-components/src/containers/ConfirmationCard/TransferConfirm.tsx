@@ -28,7 +28,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       feeToken,
       note,
       onClose,
-      onDownload,
       progress,
       totalProgress,
       recipientTitleProps,

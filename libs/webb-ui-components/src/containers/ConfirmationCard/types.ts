@@ -76,12 +76,6 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   note?: string | null;
 
   /**
-   * Callback when user hits download button
-   * @returns void
-   */
-  onDownload?: () => void;
-
-  /**
    * The checkbox props
    */
   checkboxProps?: ComponentProps<typeof CheckBox>;
