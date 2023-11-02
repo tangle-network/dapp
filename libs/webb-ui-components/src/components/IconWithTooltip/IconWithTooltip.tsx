@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography/Typography';
@@ -12,17 +12,9 @@ export const IconWithTooltip: FC<IconWithTooltipProp> = ({
   overrideTooltipTriggerProps,
   overrideTooltipProps,
 }) => {
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-
   return (
-    <Tooltip
-      isOpen={isTooltipOpen}
-      onChange={(nextOpen) => setIsTooltipOpen(nextOpen)}
-      {...overrideTooltipProps}
-    >
+    <Tooltip {...overrideTooltipProps}>
       <TooltipTrigger
-        onMouseEnter={() => setIsTooltipOpen(true)}
-        onMouseLeave={() => setIsTooltipOpen(false)}
         {...overrideTooltipTriggerProps}
         className={twMerge(
           'cursor-auto',

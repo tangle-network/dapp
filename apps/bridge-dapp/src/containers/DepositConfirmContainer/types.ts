@@ -1,4 +1,3 @@
-import { ChainGroup } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { Note } from '@webb-tools/sdk-core/note';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
@@ -16,18 +15,12 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The source chain
    */
-  sourceChain?: {
-    type: ChainGroup;
-    name: string;
-  };
+  sourceTypedChainId?: number;
 
   /**
    * The destination chain
    */
-  destChain?: {
-    type: ChainGroup;
-    name: string;
-  };
+  destTypedChainId?: number;
 
   /**
    * The fungible token id

@@ -8,11 +8,11 @@ import { FeeDetails } from '@webb-tools/webb-ui-components/components/FeeDetails
 import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { formatEther } from 'viem';
-import getRelayerFeePercentage from '../utils/getRelayerFeePercentage';
-import { useMemo } from 'react';
+import { getRelayerFeePercentage } from '../utils';
+import { type FC, useMemo } from 'react';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 
-const RelayerFeeDetails = (props: {
+interface RelayerFeeDetailsProps {
   totalFeeWei: bigint | undefined;
   totalFeeToken: string | undefined;
   gasFeeInfo: bigint | undefined;
@@ -21,18 +21,20 @@ const RelayerFeeDetails = (props: {
   srcChainCfg: ChainConfig | undefined;
   fungibleCfg: CurrencyConfig | undefined;
   activeRelayer: OptionalActiveRelayer;
-}) => {
-  const {
-    activeRelayer,
-    fungibleCfg,
-    gasFeeInfo,
-    isFeeLoading,
-    relayerFeeInfo,
-    srcChainCfg,
-    totalFeeToken,
-    totalFeeWei,
-  } = props;
+  info?: string;
+}
 
+const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
+  activeRelayer,
+  fungibleCfg,
+  gasFeeInfo,
+  isFeeLoading,
+  relayerFeeInfo,
+  srcChainCfg,
+  totalFeeToken,
+  totalFeeWei,
+  info,
+}) => {
   const relayerFeePercentage = useMemo(() => {
     if (!activeRelayer || !srcChainCfg) {
       return;
@@ -48,6 +50,7 @@ const RelayerFeeDetails = (props: {
 
   return (
     <FeeDetails
+      info={info}
       isTotalLoading={isFeeLoading}
       totalFee={
         typeof totalFeeWei === 'bigint'
