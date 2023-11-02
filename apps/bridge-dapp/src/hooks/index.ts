@@ -12,6 +12,8 @@ export { default as useInProgressTxInfo } from './useInProgressTxInfo';
 export * from './useLatestTransactionStage';
 export * from './useMaxFeeInfo';
 export { default as useNavigateWithPersistParams } from './useNavigateWithPersistParams';
+export { default as useReceiveModal } from './useReceiveModal';
+export * from './useReceiveModal';
 export * from './useRelayerManager';
 export { default as useRelayerWithRoute } from './useRelayerWithRoute';
 export * from './useShieldedAssets';

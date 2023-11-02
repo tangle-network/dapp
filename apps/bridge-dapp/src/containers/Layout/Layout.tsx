@@ -25,7 +25,7 @@ export const Layout: FC = () => {
   return (
     <div className={cx('bg-body', heightClsx)}>
       <div className={cx('flex', heightClsx)}>
-        <SideBar {...sidebarProps} className="hidden lg:flex" />
+        <SideBar {...sidebarProps} className="hidden lg:flex !z-0" />
 
         <div className="flex flex-col w-full mx-auto overflow-y-auto">
           <Transition show={showBanner} className="hidden lg:!block">

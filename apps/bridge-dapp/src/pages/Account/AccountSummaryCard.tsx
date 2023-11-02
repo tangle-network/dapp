@@ -37,6 +37,7 @@ import {
   WITHDRAW_PATH,
 } from '../../constants';
 import useHiddenValue from '../../hooks/useHiddenValue';
+import useReceiveModal from '../../hooks/useReceiveModal';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
@@ -259,10 +260,15 @@ const ActionItem = (props: {
 /** @internal */
 function Actions() {
   const navigate = useNavigate();
+  const { toggleModal } = useReceiveModal();
 
   return (
     <div className="flex items-center gap-6">
-      <ActionItem icon={<QRScanLineIcon size="lg" />} label="Receive" />
+      <ActionItem
+        icon={<QRScanLineIcon size="lg" />}
+        label="Receive"
+        onClick={() => toggleModal()}
+      />
       {actionItems.map(({ path, ...restItem }) => (
         <ActionItem key={path} {...restItem} onClick={() => navigate(path)} />
       ))}

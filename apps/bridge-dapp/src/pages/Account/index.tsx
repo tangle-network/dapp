@@ -6,6 +6,7 @@ import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useMemo, useState } from 'react';
 import { FilterButton, ManageButton } from '../../components/tables';
+import ReceiveModal from '../../components/ReceiveModal';
 import { DeleteNotesModal } from '../../containers/DeleteNotesModal';
 import { UploadSpendNoteModal } from '../../containers/UploadSpendNoteModal';
 import {
@@ -129,6 +130,8 @@ const Account = () => {
         isOpen={uploadModalOpen}
         setIsOpen={(isOpen) => setUploadModalOpen(isOpen)}
       />
+
+      <ReceiveModal />
     </>
   );
 };
