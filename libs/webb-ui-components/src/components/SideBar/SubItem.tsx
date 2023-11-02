@@ -1,12 +1,13 @@
 import { ExternalLinkLine } from '@webb-tools/icons';
-import React, { useMemo } from 'react';
-import isSideBarItemActive from '../../utils/isSideBarItemActive';
-import { Typography } from '../../typography/Typography';
-import { Link } from '../Link';
 import cx from 'classnames';
+import React, { useMemo } from 'react';
+import type { EventFor } from '../../types';
+import { Typography } from '../../typography/Typography';
+import isSideBarItemActive from '../../utils/isSideBarItemActive';
+import { Link } from '../Link';
+import WithInfo from './WithInfo';
 import { SideBarExtraSubItemProps, SideBarSubItemProps } from './types';
 import useLinkProps from './useLinkProps';
-import WithInfo from './WithInfo';
 
 export const SubItem: React.FC<
   SideBarSubItemProps & SideBarExtraSubItemProps
@@ -20,11 +21,13 @@ export const SubItem: React.FC<
   setItemIsActive,
   setSubItemIsActive,
   info,
+  onClick,
   pathnameOrHash,
 }) => {
   const linkProps = useLinkProps({ href, isInternal, isNext, isDisabled });
 
-  const setIsActive = () => {
+  const setIsActive = (event: EventFor<'a', 'onClick'>) => {
+    onClick?.(event);
     if (setItemIsActive && setSubItemIsActive && isInternal) {
       setItemIsActive();
       setSubItemIsActive();

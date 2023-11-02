@@ -7,11 +7,14 @@ import type { SideBarExtraItemProps, SideBarItemProps } from './types';
 type Props = SideBarItemProps & SideBarExtraItemProps;
 
 function useLinkProps(
-  args: Pick<Props, 'isInternal' | 'href' | 'isNext' | 'isDisabled'> & {
+  args: Pick<
+    Props,
+    'isInternal' | 'href' | 'isNext' | 'isDisabled' | 'onClick'
+  > & {
     hasSubItem?: boolean;
   }
 ) {
-  const { isInternal, isNext, href, isDisabled, hasSubItem } = args;
+  const { isInternal, isNext, href, isDisabled, hasSubItem, onClick } = args;
 
   return useMemo(() => {
     if (isDisabled || hasSubItem) {
@@ -22,6 +25,7 @@ function useLinkProps(
       return {
         href,
         target: '_blank',
+        onClick,
       } as const satisfies PropsOf<'a'>;
     }
 
@@ -29,6 +33,7 @@ function useLinkProps(
       return {
         href,
         isInternal,
+        onClick,
       } as const satisfies PropsOf<typeof NextLink> & { isInternal: true };
     }
 
@@ -36,11 +41,12 @@ function useLinkProps(
       return {
         to: href,
         isInternal,
+        onClick,
       } as const satisfies PropsOf<typeof ReactLink> & { isInternal: true };
     }
 
     return {};
-  }, [hasSubItem, href, isDisabled, isInternal, isNext]);
+  }, [hasSubItem, href, isDisabled, isInternal, isNext, onClick]);
 }
 
 export default useLinkProps;

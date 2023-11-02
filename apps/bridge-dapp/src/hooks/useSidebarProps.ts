@@ -1,8 +1,12 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import BillFillIcon from '@webb-tools/icons/BillFillIcon';
+import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import type { SideBarItemProps } from '@webb-tools/webb-ui-components/components/SideBar/types';
+import type { EventFor } from '@webb-tools/webb-ui-components/types';
 import { useLocation } from 'react-router';
 import sidebar from '../constants/sidebar';
+import useChainsFromRoute from './useChainsFromRoute';
+import { useConnectWallet } from './useConnectWallet';
 
 const accountItemCfg = {
   name: 'Account',
@@ -17,15 +21,32 @@ const accountItemCfg = {
  * **Must be used inside the `WebbProvider` component**.
  */
 function useSidebarProps() {
-  const { noteManager } = useWebContext();
   const { pathname } = useLocation();
+  const { srcTypedChainId } = useChainsFromRoute();
+
+  const { activeWallet, noteManager } = useWebContext();
+  const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
+  const { toggleModal } = useConnectWallet();
+
+  const handleClick = (event: EventFor<'a', 'onClick'>) => {
+    event.preventDefault();
+
+    if (typeof srcTypedChainId !== 'number') {
+      return;
+    }
+
+    if (!activeWallet) {
+      return toggleModal(true, srcTypedChainId);
+    }
+
+    if (!hasNoteAccount) {
+      setOpenNoteAccountModal(true);
+    }
+  };
 
   const accountItem = {
     ...accountItemCfg,
-    info: noteManager?.getKeypair()
-      ? undefined
-      : 'Connect your wallet and create a note account to access this feature.',
-    isDisabled: !noteManager?.getKeypair(),
+    onClick: noteManager && activeWallet ? undefined : handleClick,
   } satisfies SideBarItemProps;
 
   sidebar.items = [

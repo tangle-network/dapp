@@ -24,6 +24,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   setIsActive,
   isDisabled,
   pathnameOrHash,
+  onClick,
   info,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -75,6 +76,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
     isNext,
     isDisabled,
     hasSubItem: subItems.length > 0,
+    onClick,
   });
 
   if (!isMounted) return null;

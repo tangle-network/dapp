@@ -1,6 +1,7 @@
 import type { IconBase } from '@webb-tools/icons/types';
 import type { LogoProps } from '../Logo/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
+import { MouseEventHandler } from 'react';
 
 export type SideBarFooterType = {
   name: string;
@@ -55,6 +56,9 @@ export type SideBarItemProps = {
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
 
+  /** The callback function when the item is clicked */
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+
   pathnameOrHash?: string;
 
   /** The item sub items */
@@ -80,6 +84,9 @@ export type SideBarSubItemProps = {
   href: string;
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
+
+  /** The callback function when the item is clicked */
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
 
   pathnameOrHash?: string;
 };
