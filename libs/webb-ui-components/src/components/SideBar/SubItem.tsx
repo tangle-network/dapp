@@ -1,10 +1,13 @@
 import { ExternalLinkLine } from '@webb-tools/icons';
-import React, { useMemo } from 'react';
-import isSideBarItemActive from '../../utils/isSideBarItemActive';
-import { Typography } from '../../typography/Typography';
-import { Link } from '../Link';
 import cx from 'classnames';
+import React, { useMemo } from 'react';
+import type { EventFor } from '../../types';
+import { Typography } from '../../typography/Typography';
+import isSideBarItemActive from '../../utils/isSideBarItemActive';
+import { Link } from '../Link';
+import WithInfo from './WithInfo';
 import { SideBarExtraSubItemProps, SideBarSubItemProps } from './types';
+import useLinkProps from './useLinkProps';
 
 export const SubItem: React.FC<
   SideBarSubItemProps & SideBarExtraSubItemProps
@@ -12,11 +15,19 @@ export const SubItem: React.FC<
   name,
   isInternal,
   href,
+  isNext,
   isActive: isActiveProp,
+  isDisabled,
   setItemIsActive,
   setSubItemIsActive,
+  info,
+  onClick,
+  pathnameOrHash,
 }) => {
-  const setIsActive = () => {
+  const linkProps = useLinkProps({ href, isInternal, isNext, isDisabled });
+
+  const setIsActive = (event: EventFor<'a', 'onClick'>) => {
+    onClick?.(event);
     if (setItemIsActive && setSubItemIsActive && isInternal) {
       setItemIsActive();
       setSubItemIsActive();
@@ -24,45 +35,48 @@ export const SubItem: React.FC<
   };
 
   const isActive = useMemo(() => {
-    return isActiveProp || isSideBarItemActive(href);
-  }, [href, isActiveProp]);
+    return isActiveProp || isSideBarItemActive(href, pathnameOrHash);
+  }, [href, isActiveProp, pathnameOrHash]);
 
   return (
-    <Link
-      href={href}
-      target="_blank"
-      onClick={setIsActive}
-      className={cx(
-        'px-6 py-3 rounded-full',
-        'group hover:bg-mono-20 dark:hover:bg-mono-160',
-        { 'pointer-events-none bg-mono-20 dark:bg-mono-160': isActive }
-      )}
-    >
-      <li className="select-none">
-        <div
-          className={cx('flex items-center justify-between cursor-pointer', {
-            'text-mono-200 dark:text-mono-0': isActive && isInternal,
-            'text-mono-100 dark:text-mono-100': !isActive || !isInternal,
-          })}
-        >
-          <div className="flex items-center gap-4 !text-inherit">
-            <DotIcon width={20} height={20} />
+    <WithInfo info={info}>
+      <Link
+        {...linkProps}
+        onClick={setIsActive}
+        className={cx(
+          'px-6 py-3 rounded-full',
+          'group hover:bg-mono-20 dark:hover:bg-mono-160',
+          { 'pointer-events-none bg-mono-20 dark:bg-mono-160': isActive },
+          isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        )}
+      >
+        <li className="select-none">
+          <div
+            className={cx('flex items-center justify-between', {
+              'text-mono-200 dark:text-mono-0': isActive && isInternal,
+              'text-mono-100 dark:text-mono-100': !isActive || !isInternal,
+              'pointer-events-none': isDisabled,
+            })}
+          >
+            <div className="flex items-center gap-4 !text-inherit">
+              <DotIcon width={20} height={20} />
 
-            <Typography
-              variant="body1"
-              fw={isActive ? 'bold' : undefined}
-              className="!text-inherit"
-            >
-              {name}
-            </Typography>
+              <Typography
+                variant="body1"
+                fw={isActive ? 'bold' : undefined}
+                className="!text-inherit"
+              >
+                {name}
+              </Typography>
+            </div>
+
+            {!isInternal && href && (
+              <ExternalLinkLine className="hidden group-hover:block !fill-current" />
+            )}
           </div>
-
-          {!isInternal && href && (
-            <ExternalLinkLine className="hidden group-hover:block !fill-current" />
-          )}
-        </div>
-      </li>
-    </Link>
+        </li>
+      </Link>
+    </WithInfo>
   );
 };
 

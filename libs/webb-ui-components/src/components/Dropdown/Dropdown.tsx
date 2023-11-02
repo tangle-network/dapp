@@ -15,7 +15,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         className={twMerge('relative inline-block text-left', className)}
         ref={ref}
       >
-        <DropdownMenuPrimitive.Root {...radixRootProps} modal={false}>
+        <DropdownMenuPrimitive.Root modal={false} {...radixRootProps}>
           {children}
         </DropdownMenuPrimitive.Root>
       </div>

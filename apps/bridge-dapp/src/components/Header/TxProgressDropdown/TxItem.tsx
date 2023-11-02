@@ -8,10 +8,15 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import TxProgressor from '@webb-tools/webb-ui-components/components/TxProgressor';
 import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
+import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
 import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/types';
 import type { FC } from 'react';
+import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
 
-const TxItem: FC<{ tx: Transaction<unknown> }> = ({ tx }) => {
+const TxItem: FC<{ tx: Transaction<unknown>; isOnAccountPage?: boolean }> = ({
+  tx,
+  isOnAccountPage,
+}) => {
   const { activeApi, apiConfig, txQueue } = useWebContext();
   const { api } = txQueue;
 
@@ -48,12 +53,17 @@ const TxItem: FC<{ tx: Transaction<unknown> }> = ({ tx }) => {
 
   const externalUrl = getExternalUrl(blockExplorer, activeApi?.type, tx.txHash);
 
-  const btnProps = {
-    onClick: () => {
-      api.dismissTransaction(tx.id);
-    },
-    children: 'Dismiss',
-  };
+  const btnProps = isOnAccountPage
+    ? ({
+        onClick: () => {
+          api.dismissTransaction(tx.id);
+        },
+        children: 'Dismiss',
+      } satisfies ButtonProps)
+    : ({
+        href: `/#/${NOTE_ACCOUNT_PATH}`,
+        children: 'View Account',
+      } satisfies ButtonProps);
 
   return (
     <TxProgressor.Root key={tx.id}>

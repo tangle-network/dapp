@@ -21,10 +21,12 @@ export type RelayedChainConfig<BaseOn extends RelayerCMDBase> = {
   contracts: BaseOn extends 'evm' ? Contract[] : never;
   pallets: BaseOn extends 'substrate' ? Pallet[] : never;
   relayerFeeConfig: BaseOn extends 'evm'
-    ? {
-        relayerProfitPercent: number;
-        maxRefundAmount: number;
-      }
+    ?
+        | {
+            relayerProfitPercent: number;
+            maxRefundAmount: number;
+          }
+        | undefined
     : never;
 };
 

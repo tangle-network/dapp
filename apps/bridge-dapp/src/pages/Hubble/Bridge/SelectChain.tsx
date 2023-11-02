@@ -2,7 +2,6 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import { type ApiConfig } from '@webb-tools/dapp-config/api-config';
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import ChainListCard from '@webb-tools/webb-ui-components/components/ListCard/ChainListCard';
 import type {
@@ -21,7 +20,6 @@ import {
   TOKEN_KEY,
 } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
@@ -30,15 +28,13 @@ import getParam from '../../../utils/getParam';
 const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   chainType,
 }) => {
-  const { activeWallet, activeChain, loading, switchChain } = useWebContext();
-  const { toggleModal } = useConnectWallet();
+  const { activeChain, loading } = useWebContext();
 
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigateWithPersistParams();
 
   const chainsCfg = useChains(chainType);
-  const currentTab = useTxTabFromRoute();
 
   const updateParams = useUpdateParams();
 
@@ -81,22 +77,9 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         return;
       }
 
-      // If the source chain is render on the bridge tab,
-      // we just need to set the query param and close the modal
-      if (currentTab) {
-        return handleClose(calculateTypedChainId(chain.chainType, chain.id));
-      }
-
-      // Otherwise perform the switch chain action
-      if (activeWallet && chain.wallets.includes(activeWallet.id)) {
-        await switchChain(chain, activeWallet);
-      } else {
-        toggleModal(true, calculateTypedChainId(chain.chainType, chain.id));
-      }
-
-      handleClose();
+      return handleClose(calculateTypedChainId(chain.chainType, chain.id));
     },
-    [activeWallet, currentTab, handleClose, switchChain, toggleModal]
+    [handleClose]
   );
 
   const { defaultCategory, onlyCategory } = useChainCategoryProps(chainType);
@@ -133,7 +116,7 @@ const useChains = (
   const { fungibleCfg } = useCurrenciesFromRoute();
 
   if (chainType === 'source') {
-    return getSrcChains(apiConfig.anchors, apiConfig.chains);
+    return apiConfig.getSupportedChains({ withEnv: true });
   }
 
   if (!fungibleCfg) {
@@ -302,32 +285,4 @@ const useUpdateParams = () => {
     },
     [apiConfig.anchors, apiConfig.fungibleToWrappableMap]
   );
-};
-
-const getSrcChains = (
-  anchorsCfg: ApiConfig['anchors'],
-  chainsCfg: ApiConfig['chains']
-): Array<ChainConfig> => {
-  const currentEnv =
-    process.env.NODE_ENV && isAppEnvironmentType(process.env.NODE_ENV)
-      ? process.env.NODE_ENV
-      : 'development';
-
-  // Populate the set of typed chain ids that are supported in the anchors config
-  const typedChainIdSet = new Set<number>();
-  Object.values(anchorsCfg).forEach((anchorRecord) => {
-    Object.keys(anchorRecord).forEach((typedChainId) => {
-      typedChainIdSet.add(parseInt(typedChainId));
-    });
-  });
-
-  return Object.values(chainsCfg).filter((chain) => {
-    // If the chain.env is defined, check whether the current env is included
-    // Otherwise, it is supported
-    const isSupported = chain.env ? chain.env.includes(currentEnv) : true;
-
-    const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
-
-    return typedChainIdSet.has(typedChainId) && isSupported;
-  });
 };

@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ContrastTwoLine, WebbLogoIcon } from '@webb-tools/icons';
+import { WebbLogoIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
@@ -23,21 +23,22 @@ import {
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import {
-  type ComponentProps,
-  type FC,
   useCallback,
   useEffect,
-  useState,
   useMemo,
+  useState,
+  type ComponentProps,
+  type FC,
 } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import sidebarProps from '../../constants/sidebar';
+import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../hooks/useConnectWallet';
+import useSidebarProps from '../../hooks/useSidebarProps';
+import ActiveChainDropdown from './ActiveChainDropdown';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
-import ChainButton from './ChainButton';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -55,17 +56,21 @@ export const Header: FC<HeaderProps> = () => {
 
   const items = location.pathname.split('/').filter((item) => item !== '');
 
+  const sidebarProps = useSidebarProps();
+
   const breadcrumbItems = useMemo(
     () =>
       items.map((item, index) => {
+        const preCfgBreadcrumb = BREADCRUMBS_RECORD[item];
+
         return (
-          <NavLink key={index} to={'/'}>
+          <NavLink key={index} to={item}>
             <BreadcrumbsItem
               isLast={index === items.length - 1}
-              icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
+              icon={preCfgBreadcrumb?.Icon}
               className="capitalize"
             >
-              {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
+              {preCfgBreadcrumb?.label ?? item.split('-').join(' ')}
             </BreadcrumbsItem>
           </NavLink>
         );
@@ -98,7 +103,7 @@ export const Header: FC<HeaderProps> = () => {
           <TxProgressDropdown />
 
           <div className="flex items-center space-x-2">
-            <ChainButton />
+            <ActiveChainDropdown />
             {isConnecting || loading || !activeWallet || !activeAccount ? (
               isMobile ? (
                 <ConnectWalletMobileButton />
@@ -109,7 +114,7 @@ export const Header: FC<HeaderProps> = () => {
                   onClick={() =>
                     toggleModal(true, srcTypedChainId ?? undefined)
                   }
-                  className="flex justify-center items-center px-6"
+                  className="flex items-center justify-center px-6"
                 >
                   Connect
                 </Button>
