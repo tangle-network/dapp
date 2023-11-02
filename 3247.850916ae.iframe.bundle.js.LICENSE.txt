@@ -1,7 +1,5 @@
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
 
-/*! scure-base - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-
 /**
 	 * A handy class to calculate color values.
 	 *
