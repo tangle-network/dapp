@@ -78,6 +78,7 @@ export type AuthorityListItem = {
   uptime: number;
   reputation: number;
   authorityId: string;
+  isBest: boolean;
 };
 
 /**
@@ -301,41 +302,49 @@ export function useAuthorities(
 
   const authoritiesUptime = useAuthorityUptimesQuery({
     pollInterval: 1000,
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   });
 
   const authoritiesUptimes = useMemo(() => {
     return authoritiesUptime.data?.authorityUpTimes?.nodes;
   }, [authoritiesUptime]);
 
+  const highestReputationScore = useMemo(() => {
+    if (authorityReputations.highestReputationScore !== -Infinity) {
+      return authorityReputations.highestReputationScore;
+    } else {
+      return 0;
+    }
+  }, [authorityReputations]);
+
   const latestIndexedSessionId = useLatestSessionIdQuery({
     pollInterval: 1000,
     fetchPolicy: 'network-only',
   });
 
+  const latestIndexedSessionIdNumber = useMemo(() => {
+    return Number(latestIndexedSessionId.data?.sessions?.totalCount ?? 0);
+  }, [latestIndexedSessionId]);
+
   useEffect(() => {
-    if (
-      latestIndexedSessionId.data &&
-      latestIndexedSessionId.data.sessions?.totalCount
-    ) {
-      call({
-        variables: {
-          offset: reqQuery.offset,
-          perPage: reqQuery.perPage,
-          sessionId:
-            String(latestIndexedSessionId.data?.sessions?.totalCount - 1) ??
-            '0',
-        },
-      }).catch((e) => {
-        setAuthorities({
-          val: null,
-          isFailed: true,
-          isLoading: false,
-          error: e.message,
-        });
+    call({
+      variables: {
+        offset: reqQuery.offset,
+        perPage: reqQuery.perPage,
+        sessionId:
+          latestIndexedSessionIdNumber === 0
+            ? '0'
+            : String(latestIndexedSessionIdNumber - 4),
+      },
+    }).catch((e) => {
+      setAuthorities({
+        val: null,
+        isFailed: true,
+        isLoading: false,
+        error: e.message,
       });
-    }
-  }, [reqQuery, call, latestIndexedSessionId]);
+    });
+  }, [reqQuery, call, latestIndexedSessionIdNumber]);
 
   useEffect(() => {
     const subscription = query.observable
@@ -356,11 +365,10 @@ export function useAuthorities(
                 location: auth.location ?? undefined,
                 uptime: uptime,
                 reputation: auth
-                  ? (auth.reputation /
-                      authorityReputations.highestReputationScore) *
-                    100
+                  ? (auth.reputation / highestReputationScore) * 100
                   : 0,
                 authorityId: auth.authorityId,
+                isBest: auth.isBest,
               };
             });
           return {
@@ -385,7 +393,7 @@ export function useAuthorities(
       })
       .subscribe(setAuthorities);
     return () => subscription.unsubscribe();
-  }, [query, authoritiesUptimes, authorityReputations]);
+  }, [query, authoritiesUptimes, highestReputationScore]);
 
   return authorities;
 }
@@ -409,11 +417,21 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
     pollInterval: 1000,
     fetchPolicy: 'network-only',
   });
+  const latestIndexedSessionIdNumber = useMemo(() => {
+    return Number(latestIndexedSessionId.data?.sessions?.totalCount ?? 0);
+  }, [latestIndexedSessionId]);
   const { authorityId } = pageQuery.filter;
   const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
   const [callValidatorOfSession, queryValidatorOfSession] =
     useValidatorOfSessionLazyQuery();
   const authorityReputations = useReputations();
+  const highestReputationScore = useMemo(() => {
+    if (authorityReputations.highestReputationScore !== -Infinity) {
+      return authorityReputations.highestReputationScore;
+    } else {
+      return 0;
+    }
+  }, [authorityReputations]);
 
   useEffect(() => {
     callKeyGen({
@@ -433,27 +451,24 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
     });
   }, [authorityId, callKeyGen, setKeyGens, pageQuery]);
   useEffect(() => {
-    if (
-      latestIndexedSessionId.data &&
-      latestIndexedSessionId.data.sessions?.totalCount
-    ) {
-      callValidatorOfSession({
-        variables: {
-          sessionValidatorId: `${
-            latestIndexedSessionId.data?.sessions?.totalCount - 1
-          }-${authorityId}`,
-          validatorId: authorityId,
-        },
-      }).catch((e) => {
-        setStats({
-          val: null,
-          isFailed: true,
-          isLoading: false,
-          error: e.message,
-        });
+    callValidatorOfSession({
+      variables: {
+        sessionValidatorId: `${
+          latestIndexedSessionIdNumber === 0
+            ? 0
+            : latestIndexedSessionIdNumber - 4
+        }-${authorityId}`,
+        validatorId: authorityId,
+      },
+    }).catch((e) => {
+      setStats({
+        val: null,
+        isFailed: true,
+        isLoading: false,
+        error: e.message,
       });
-    }
-  }, [latestIndexedSessionId, callValidatorOfSession, authorityId]);
+    });
+  }, [latestIndexedSessionIdNumber, callValidatorOfSession, authorityId]);
   useEffect(() => {
     const subscription = queryKeyGen.observable
       .map((res): AuthorityDetails['keyGens'] => {
@@ -538,9 +553,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               inTheSet: auth.isBest,
             },
             reputation:
-              (Number(auth.reputation) /
-                authorityReputations.highestReputationScore) *
-              100,
+              (Number(auth.reputation) / highestReputationScore) * 100,
             uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
           };
           return {
@@ -559,7 +572,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
       })
       .subscribe(setStats);
     return () => subscription.unsubscribe();
-  }, [queryValidatorOfSession, authorityReputations]);
+  }, [queryValidatorOfSession, highestReputationScore]);
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }
 
