@@ -1,16 +1,11 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 
-import {
-  AppEvent,
-  NextThemeProvider,
-  WebbProvider,
-} from '@webb-tools/api-provider-environment';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components/provider';
 import { Metadata } from 'next';
 import type React from 'react';
 
 import { Layout } from '../containers';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -46,8 +41,6 @@ export const metadata: Metadata = {
   },
 };
 
-const appEvent = new AppEvent();
-
 export default function RootLayout({
   children,
 }: {
@@ -56,13 +49,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex h-screen bg-body">
-        <NextThemeProvider>
-          <WebbUIProvider hasErrorBoudary>
-            <WebbProvider appEvent={appEvent} applicationName="Tangle Dapp">
-              <Layout>{children}</Layout>
-            </WebbProvider>
-          </WebbUIProvider>
-        </NextThemeProvider>
+        <Providers>
+          <Layout>{children}</Layout>
+        </Providers>
       </body>
     </html>
   );
