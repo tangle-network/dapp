@@ -1,8 +1,12 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 
-import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
-import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
+import {
+  AppEvent,
+  NextThemeProvider,
+  WebbProvider,
+} from '@webb-tools/api-provider-environment';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
+import { WebbUIProvider } from '@webb-tools/webb-ui-components/provider';
 import { Metadata } from 'next';
 import type React from 'react';
 
@@ -42,20 +46,22 @@ export const metadata: Metadata = {
   },
 };
 
+const appEvent = new AppEvent();
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const appEvent = new AppEvent();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex h-screen bg-body">
         <NextThemeProvider>
-          <WebbProvider appEvent={appEvent} applicationName="Tangle Dapp">
-            <Layout>{children}</Layout>
-          </WebbProvider>
+          <WebbUIProvider hasErrorBoudary>
+            <WebbProvider appEvent={appEvent} applicationName="Tangle Dapp">
+              <Layout>{children}</Layout>
+            </WebbProvider>
+          </WebbUIProvider>
         </NextThemeProvider>
       </body>
     </html>

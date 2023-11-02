@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode, useCallback, useMemo, useReducer } from 'react';
 
 export interface SubMenu {

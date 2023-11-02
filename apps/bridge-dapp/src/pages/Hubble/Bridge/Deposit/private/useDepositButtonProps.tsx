@@ -236,7 +236,6 @@ function useDepositButtonProps({
           destTypedIdNum,
           destAnchorId,
           fungible.symbol,
-          fungible.decimals,
           amountBig
         );
 

@@ -11148,6 +11148,20 @@
     ffjavascript "^0.2.57"
     snarkjs "^0.6.10"
 
+"@webb-tools/sdk-core@file:../webb.js/packages/sdk-core/build":
+  version "0.1.4-126"
+  dependencies:
+    "@metamask/eth-sig-util" "^5.0.2"
+    "@polkadot/util" "11.1.3"
+    "@webb-tools/wasm-utils" "0.1.4-126"
+    big-integer "^1.6.51"
+    bignumber.js "^9.0.0"
+    circomlibjs "^0.0.8"
+    elliptic "6.5.4"
+    ethers "5.7.0"
+    ffjavascript "^0.2.57"
+    snarkjs "^0.7.2"
+
 "@webb-tools/tangle-substrate-types@^0.4.4":
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@webb-tools/tangle-substrate-types/-/tangle-substrate-types-0.4.4.tgz#a2ded83f17877e6f5b81243890e200b793807004"
@@ -11225,16 +11239,6 @@
     "@webb-tools/utils" "^0.5.40"
     ethers "5.7.0"
 
-"@webb-tools/utils@0.5.39":
-  version "0.5.39"
-  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.39.tgz#f38b10233839c4d23c8bb45d31502ace3026c3d8"
-  integrity sha512-2/2pshBzgPo8Dhnx/fQZGVw9Im3KVAVZp+aOQL1RXjIeOUsqRDkxduI1Lej+TYO+wEQNoV4DOZnPdPQ9NbhqXw==
-  dependencies:
-    "@webb-tools/sdk-core" "0.1.4-126"
-    babyjubjub "^1.0.4"
-    ethers "5.7.0"
-    snarkjs "^0.6.10"
-
 "@webb-tools/utils@^0.5.39", "@webb-tools/utils@^0.5.40":
   version "0.5.40"
   resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.40.tgz#212f249bbaaa2e9f59584baedee963edf17bb1d0"
@@ -11255,6 +11259,15 @@
     elliptic "6.5.4"
     ethers "5.7.0"
     snarkjs "^0.6.10"
+
+"@webb-tools/utils@file:../protocol-solidity/packages/utils":
+  version "1.0.9"
+  dependencies:
+    "@metamask/eth-sig-util" "^6.0.0"
+    circomlibjs "^0.0.8"
+    elliptic "6.5.4"
+    ethers "5.7.0"
+    snarkjs "^0.7.2"
 
 "@webb-tools/vanchor-client@0.1.26":
   version "0.1.26"
@@ -13739,6 +13752,13 @@ circom_runtime@0.1.22:
   integrity sha512-V/XYZWBhbZY8SotkaGH4FbiDYAZ8a1Md++MBiKPDOuWS/NIJB+Q+XIiTC8zKMgoDaa9cd2OiTvsC9J6te7twNg==
   dependencies:
     ffjavascript "0.2.57"
+
+circom_runtime@0.1.24:
+  version "0.1.24"
+  resolved "https://registry.yarnpkg.com/circom_runtime/-/circom_runtime-0.1.24.tgz#60ca8a31c3675802fbab5a0bcdeb02556e510733"
+  integrity sha512-H7/7I2J/cBmRnZm9docOCGhfxzS61BEm4TMCWcrZGsWNBQhePNfQq88Oj2XpUfzmBTCd8pRvRb3Mvazt3TMrJw==
+  dependencies:
+    ffjavascript "0.2.60"
 
 circomlibjs@0.1.7:
   version "0.1.7"
@@ -17760,10 +17780,19 @@ ffjavascript@0.2.57:
     wasmcurves "0.2.0"
     web-worker "^1.2.0"
 
-ffjavascript@^0.2.38, ffjavascript@^0.2.45, ffjavascript@^0.2.48, ffjavascript@^0.2.57:
+ffjavascript@0.2.60, ffjavascript@^0.2.38, ffjavascript@^0.2.45, ffjavascript@^0.2.48, ffjavascript@^0.2.57:
   version "0.2.60"
   resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.60.tgz#4d8ae613d6bf4e98b3cc29ba10c626f5853854cf"
   integrity sha512-T/9bnEL5xAZRDbQoEMf+pM9nrhK+C3JyZNmqiWub26EQorW7Jt+jR54gpqDhceA4Nj0YctPQwYnl8xa52/A26A==
+  dependencies:
+    wasmbuilder "0.0.16"
+    wasmcurves "0.2.2"
+    web-worker "^1.2.0"
+
+ffjavascript@0.2.62:
+  version "0.2.62"
+  resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.62.tgz#f508dfe662a70181598ec5eb8ce5127eb342f624"
+  integrity sha512-uJ7MTrdzhX/3f+hxn0XhdXbJCqYZJSBB6y2/ui4t21vKYVjyTMlU80pPXu40ir6qpqbrdzUeKdlOdJ0aFG9UNA==
   dependencies:
     wasmbuilder "0.0.16"
     wasmcurves "0.2.2"
@@ -26650,6 +26679,16 @@ r1csfile@0.0.45:
     fastfile "0.0.20"
     ffjavascript "0.2.57"
 
+r1csfile@0.0.47:
+  version "0.0.47"
+  resolved "https://registry.yarnpkg.com/r1csfile/-/r1csfile-0.0.47.tgz#ed95a0dc8e910e9c070253906f7a31bd8c5333c8"
+  integrity sha512-oI4mAwuh1WwuFg95eJDNDDL8hCaZkwnPuNZrQdLBWvDoRU7EG+L/MOHL7SwPW2Y+ZuYcTLpj3rBkgllBQZN/JA==
+  dependencies:
+    "@iden3/bigarray" "0.0.2"
+    "@iden3/binfileutils" "0.0.11"
+    fastfile "0.0.20"
+    ffjavascript "0.2.60"
+
 radix3@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/radix3/-/radix3-1.1.0.tgz#9745df67a49c522e94a33d0a93cf743f104b6e0d"
@@ -28549,7 +28588,7 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-snarkjs@0.6.11, snarkjs@^0.6.10:
+snarkjs@^0.6.10:
   version "0.6.11"
   resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.6.11.tgz#577b0250c0d9bb93c0ee1d4a3d3075956d11775c"
   integrity sha512-pYDcrSKmUMMJtYxSQTMNG/MtuGvUWPSk9gZzADeIiHp8vJmFdCscMFa/YtemPAkne4v6Awm5HAhqbfNPyoqjug==
@@ -28564,6 +28603,22 @@ snarkjs@0.6.11, snarkjs@^0.6.10:
     js-sha3 "^0.8.0"
     logplease "^1.2.15"
     r1csfile "0.0.45"
+
+snarkjs@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.7.2.tgz#ab719b065fcd9867d9ea14bed92f3acdca3c766f"
+  integrity sha512-A8yPFm9pRnZ7XYXfPSjSFnugEV1rsHGjb8W7c0Qk7nzXl5h3WANTkpVC5FYxakmw/GKWekz7wjjHaOFtPp823Q==
+  dependencies:
+    "@iden3/binfileutils" "0.0.11"
+    bfj "^7.0.2"
+    blake2b-wasm "^2.4.0"
+    circom_runtime "0.1.24"
+    ejs "^3.1.6"
+    fastfile "0.0.20"
+    ffjavascript "0.2.62"
+    js-sha3 "^0.8.0"
+    logplease "^1.2.15"
+    r1csfile "0.0.47"
 
 sockjs@^0.3.24:
   version "0.3.24"

@@ -1,13 +1,22 @@
+import { chainsConfig } from '@webb-tools/dapp-config/chains/evm';
 import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
-import { Chain, PublicClient, createPublicClient, fallback, http } from 'viem';
+import {
+  createPublicClient,
+  fallback,
+  http,
+  type Chain,
+  type FallbackTransport,
+  type PublicClient,
+} from 'viem';
 import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,
   defineViemChain,
   getViemChain,
 } from './getViemChain';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/evm';
 
-function getViemClient(typedChainId: number): PublicClient {
+function getViemClient(
+  typedChainId: number
+): PublicClient<FallbackTransport, Chain> {
   const { chainId } = parseTypedChainId(typedChainId);
 
   let chain: Chain | undefined = chainsConfig[typedChainId];

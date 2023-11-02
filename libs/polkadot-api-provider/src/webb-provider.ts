@@ -304,54 +304,10 @@ export class WebbPolkadot
     return instance;
   }
 
-  static async initWithCustomAccountsAdapter(
-    appName: string, // App name Arbitrary name
-    endpoints: string[], // Endpoints of the substrate node
-    errorHandler: ApiInitHandler, // Error handler that will be used to catch errors while initializing the provider
-    relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
-    ApiConfig: ApiConfig, // The whole and current app configuration
-    notification: NotificationHandler, // Notification handler that will be used for the provider
-    accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
-    apiPromise: ApiPromise,
-    injectedExtension: InjectedExtension
-  ): Promise<WebbPolkadot> {
-    const provider = new PolkadotProvider(
-      apiPromise,
-      injectedExtension,
-      new PolkaTXBuilder(apiPromise, notification, injectedExtension)
-    );
-    const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
-    const typedChainId = calculateTypedChainId(
-      ChainType.Substrate,
-      chainId.toNumber()
-    );
-
-    const instance = new WebbPolkadot(
-      apiPromise,
-      typedChainId,
-      injectedExtension,
-      relayerBuilder,
-      ApiConfig,
-      notification,
-      provider,
-      accounts
-    );
-
-    await instance.ensureApiInterface();
-    /// check metadata update
-    await instance.awaitMetaDataCheck();
-    await apiPromise.isReady;
-
-    const unsub = await instance.listenerBlocks();
-    instance.newBlockSub.add(unsub);
-
-    return instance;
-  }
-
   static async getApiPromise(endpoint: string): Promise<ApiPromise> {
     return new Promise((resolve, reject) => {
       resolve(
-        PolkadotProvider.getApiPromise('', [endpoint], (error) => reject(error))
+        PolkadotProvider.getApiPromise([endpoint], (error) => reject(error))
       );
     });
   }

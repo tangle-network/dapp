@@ -1,35 +1,35 @@
 'use client';
 
 import {
-  Account,
   Currency,
-  WebbApiProvider,
+  type Account,
+  type WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
-import { LoggerService } from '@webb-tools/browser-utils';
+import { LoggerService } from '@webb-tools/browser-utils/logger';
 import {
-  NetworkStorage,
   multipleKeypairStorageFactory,
   netStorageFactory,
+  type NetworkStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
-  Chain,
   HUBBLE_BRIDGE_DAPP_NAME,
-  Wallet,
   chainsConfig,
   chainsPopulated,
   parseOnChainData,
   walletsConfig,
+  type Chain,
+  type Wallet,
 } from '@webb-tools/dapp-config';
 import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
-  BareProps,
   CurrencyRole,
-  InteractiveFeedback,
   WalletId,
   WebbError,
   WebbErrorCodes,
+  type BareProps,
+  type InteractiveFeedback,
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
@@ -38,16 +38,16 @@ import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
-  Web3RelayerManager,
   WebbWeb3Provider,
   isViemError,
+  type Web3RelayerManager,
 } from '@webb-tools/web3-api-provider';
-import { notificationApi } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 import { WagmiConfig } from 'wagmi';
-import { TAppEvent } from '../app-event';
-import { unsupportedChain } from '../error';
+import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
+import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
 import onChainDataJson from '../generated/on-chain-config.json';
 import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
 import { StoreProvider } from '../store';
@@ -100,6 +100,8 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
     InteractiveFeedback[]
   >([]);
+
+  const { notificationApi } = useWebbUI();
 
   const {
     loginIfExist,
@@ -592,7 +594,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, catchWebbError, noteManager, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
+    [activeApi, appEvent, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
   );
 
   /// a util will store the network/wallet config before switching

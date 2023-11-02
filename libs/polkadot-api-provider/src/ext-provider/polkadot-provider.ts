@@ -81,12 +81,10 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
   /**
    * Get the api Promise
-   * @param appName - Name of the application
    * @param endPoints - URLs for the substrate node
    * @param onError - Error handler for stage of instantiating a provider
    **/
   static async getApiPromise(
-    appName: string,
     endPoints: string[],
     onError: ApiInitHandler['onError'],
     options?: { ignoreLog?: boolean }
@@ -244,11 +242,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     }
 
     // Initialize an ApiPromise
-    const apiPromise = await PolkadotProvider.getApiPromise(
-      appName,
-      endPoints,
-      onError
-    );
+    const apiPromise = await PolkadotProvider.getApiPromise(endPoints, onError);
 
     return [apiPromise, currentExtension];
   }

@@ -45,12 +45,7 @@ import {
   parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import {
-  ZERO_ADDRESS,
-  ZERO_BYTES32,
-  hexToU8a,
-  u8aToHex,
-} from '@webb-tools/utils';
+import { ZERO_ADDRESS, ZERO_BYTES32, hexToU8a } from '@webb-tools/utils';
 import {
   Address,
   GetContractReturnType,
@@ -694,7 +689,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   private async prepareTransfer(
     tx: Transaction<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
-    unwrapToken: string
+    _unwrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     const {
       changeUtxo,

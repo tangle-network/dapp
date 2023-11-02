@@ -277,7 +277,6 @@ function useTransferButtonProps({
             !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
         );
 
-        const fungibleDecimals = fungibleCfg.decimals;
         const amountBig = BigInt(amount);
 
         // Get the notes that will be spent for this withdraw
@@ -340,7 +339,6 @@ function useTransferButtonProps({
                 srcTypedChainId,
                 anchorId,
                 fungibleCfg.symbol,
-                fungibleDecimals,
                 changeAmount
               )
             : undefined;

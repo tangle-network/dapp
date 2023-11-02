@@ -326,7 +326,7 @@ const tasks = new Listr<Ctx>(
     {
       title: color.cyan('Filtering active chains...'),
       options: { persistentOutput: true },
-      skip: (ctx) => ctx.args?.skipFetching,
+      skip: (ctx) => Boolean(ctx.args?.skipFetching),
       task: async (ctx, task) => {
         // Filter out the active chains
         const evmTypedChainIds = await filterActiveEVMChains(ctx.typedChainIds);
@@ -360,7 +360,7 @@ const tasks = new Listr<Ctx>(
     {
       title: color.cyan('Fetching on chain config...'),
       options: { persistentOutput: true },
-      skip: (ctx) => ctx.args?.skipFetching,
+      skip: (ctx) => Boolean(ctx.args?.skipFetching),
       task: async (ctx, task) =>
         task.newListr<Ctx>(
           [
@@ -418,7 +418,7 @@ const tasks = new Listr<Ctx>(
     {
       title: color.cyan(`Writing config to ${configPath}...`),
       options: { persistentOutput: true },
-      skip: (ctx) => ctx.args?.skipFetching,
+      skip: (ctx) => Boolean(ctx.args?.skipFetching),
       task: async (ctx, task) => {
         try {
           await writeFileTask(
