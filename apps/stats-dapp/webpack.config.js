@@ -285,6 +285,18 @@ function createWebpackBase() {
       new webpack.DefinePlugin({
         ...bridgeEnvVars,
       }),
+
+      /**
+       * Ignore the critical dependency warning for @webb-tools/utils
+       * as the library uses dynamic imports for the fixtures in fixtures.ts
+       */
+      new webpack.ContextReplacementPlugin(
+        /\/@webb-tools\/utils\//,
+        (/** @type {{ dependencies: { critical: any; }[]; }} */ data) => {
+          delete data.dependencies[0].critical;
+          return data;
+        }
+      ),
     ]
       .concat(plugins)
       .filter(Boolean),

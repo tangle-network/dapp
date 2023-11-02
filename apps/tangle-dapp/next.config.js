@@ -1,6 +1,7 @@
 //@ts-check
 
 const { composePlugins, withNx } = require('@nx/next');
+const webpack = require('webpack');
 const nextConfigBase = require('../../next.config.js');
 
 /**
@@ -46,6 +47,21 @@ const nextConfig = {
 
     // WalletConnect external modules: https://github.com/WalletConnect/walletconnect-monorepo/issues/1908#issuecomment-1487801131
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
+
+    config.plugins = [
+      ...config.plugins,
+      /**
+       * Ignore the critical dependency warning for @webb-tools/utils
+       * as the library uses dynamic imports for the fixtures in fixtures.ts
+       */
+      new webpack.ContextReplacementPlugin(
+        /\/@webb-tools\/utils\//,
+        (/** @type {{ dependencies: { critical: any; }[]; }} */ data) => {
+          delete data.dependencies[0].critical;
+          return data;
+        }
+      ),
+    ];
 
     // Hide warnings "Critical dependency: the request of a dependency is an expression"
     config.module = {
