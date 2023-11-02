@@ -11,6 +11,7 @@ import {
 import { QRScanLineIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components';
 import { useReceiveModal } from '../hooks';
+import { NOTE_ACCOUNT_DOCS_URL } from '../constants/links';
 
 const ReceiveModal: FC = () => {
   const { copy, isCopied } = useCopyable();
@@ -60,7 +61,7 @@ const ReceiveModal: FC = () => {
               </Typography>
             </div>
           </div>
-          <div className="rounded-lg p-4 bg-mono-20 dark:bg-mono-160 flex items-center justify-between gap-1">
+          <div className="flex items-center justify-between gap-1 p-4 rounded-lg bg-mono-20 dark:bg-mono-160">
             <Typography variant="body1" className="dark:text-mono-0">
               Account Public Key:
             </Typography>
@@ -81,7 +82,13 @@ const ReceiveModal: FC = () => {
               {isCopied ? 'Copied!' : 'Click to copy'}
             </Button>
           )}
-          <Button variant="secondary" isFullWidth>
+          <Button
+            variant="secondary"
+            isFullWidth
+            href={NOTE_ACCOUNT_DOCS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Learn More
           </Button>
         </ModalFooter>
