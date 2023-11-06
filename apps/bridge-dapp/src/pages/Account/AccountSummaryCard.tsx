@@ -52,26 +52,28 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
       <div
         {...props}
         className={twMerge(
-          'rounded-2xl border-2 p-6 space-y-6',
+          'rounded-2xl border-2 p-6',
           'border-mono-0 bg-mono-0/70 dark:border-mono-160 dark:bg-mono-0/5',
           'dark:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] dark:backdrop-blur-sm',
-          'w-full max-w-[556px]',
+          'w-full lg:!w-fit flex items-center lg:h-[325px]',
           className
         )}
         ref={ref}
       >
-        <header>
-          <NoteAccountAvatarWithKey
-            keyValue={keypair.toString()}
-            fontWeight="normal"
-            label="Note Account:"
-            iconTooltipContent="Note account public key"
-          />
-        </header>
+        <div className="space-y-6">
+          <header>
+            <NoteAccountAvatarWithKey
+              keyValue={keypair.toString()}
+              fontWeight="normal"
+              label="Note Account:"
+              iconTooltipContent="Note account public key"
+            />
+          </header>
 
-        <TotalShieldedBalance />
+          <TotalShieldedBalance />
 
-        <Actions />
+          <Actions />
+        </div>
       </div>
     );
   }

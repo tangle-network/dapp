@@ -98,6 +98,7 @@ export * from './TeamFillIcon';
 export * from './TelegramFill';
 export * from './ThreeDotsVerticalIcon';
 export * from './TimeLineIcon';
+export { default as TimerLine } from './TimerLine';
 export * from './TokenIcon';
 export * from './TwitterFill';
 export * from './UploadCloudIcon';

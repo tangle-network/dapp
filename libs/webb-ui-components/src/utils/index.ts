@@ -6,6 +6,7 @@ export { default as getCookieItem } from './getCookieItem';
 export * from './getHumanFileSize';
 export * from './getPaginationItems';
 export * from './getRoundedAmountString';
+export { default as getTimeDetailByEpoch } from './getTimeDetailByEpoch';
 export { default as isScientificNotation } from './isScientificNotation';
 export { default as isSideBarItemActive } from './isSideBarItemActive';
 export { default as numberToString } from './numberToString';
