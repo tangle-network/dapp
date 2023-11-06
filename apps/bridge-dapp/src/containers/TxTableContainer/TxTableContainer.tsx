@@ -15,6 +15,7 @@ import {
   fuzzyFilter,
   Typography,
   getTimeDetailByEpoch,
+  shortenHex,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -67,17 +68,41 @@ const allColumns = [
   }),
   columnHelper.accessor('recipient', {
     header: 'Recipient',
-    cell: (props) => (
-      <div className="flex gap-1 items-center">
-        <Typography variant="body1">{props.getValue() ?? '-'}</Typography>
-        <ExternalLinkLine />
-      </div>
-    ),
+    cell: (props) => {
+      const { recipient, destinationTypedChainId } = props.row.original;
+      const blockExplorerUrl =
+        chainsConfig[destinationTypedChainId]?.blockExplorers?.default?.url;
+      const recipientExplorerUrl =
+        blockExplorerUrl && recipient
+          ? getExplorerURI(
+              blockExplorerUrl,
+              recipient,
+              'address',
+              'web3'
+            ).toString()
+          : undefined;
+      return (
+        <div className="flex gap-1 items-center">
+          <Typography variant="body1">
+            {recipient ? shortenHex(recipient) : '-'}
+          </Typography>
+          {recipientExplorerUrl && (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href={recipientExplorerUrl}
+            >
+              <ExternalLinkLine />
+            </a>
+          )}
+        </div>
+      );
+    },
   }),
   columnHelper.accessor('timestamp', {
-    header: 'Time',
+    header: () => <p className="text-end !text-inherit">Time</p>,
     cell: (props) => (
-      <Typography variant="body1" className="whitespace-nowrap">
+      <Typography variant="body1" className="whitespace-nowrap" ta="right">
         {getTimeDetailByEpoch(props.getValue())}
       </Typography>
     ),

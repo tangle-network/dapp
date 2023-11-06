@@ -5,8 +5,8 @@ import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/Tab
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography, Button } from '@webb-tools/webb-ui-components';
-import { TimerLine } from '@webb-tools/icons';
 import { type FC, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { FilterButton, ManageButton } from '../../components/tables';
 import ReceiveModal from '../../components/ReceiveModal';
 import { DeleteNotesModal } from '../../containers/DeleteNotesModal';
@@ -22,9 +22,12 @@ import { useShieldedAssets } from '../../hooks/useShieldedAssets';
 import { useSpendNotes } from '../../hooks/useSpendNotes';
 import { downloadNotes } from '../../utils/downloadNotes';
 import AccountSummaryCard from './AccountSummaryCard';
+import NoTx from './NoTx';
+import { ACCOUNT_TRANSACTIONS_PATH, NOTE_ACCOUNT_PATH } from '../../constants';
 
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
+const allTxPath = `/${NOTE_ACCOUNT_PATH}/${ACCOUNT_TRANSACTIONS_PATH}`;
 
 import { randNumber, randEthereumAddress } from '@ngneat/falso';
 const fakeTxData: TxTableItemType[] = [
@@ -84,6 +87,8 @@ const Account: FC = () => {
     return shieldedAssetsTableData.map((asset) => asset.chain);
   }, [shieldedAssetsTableData]);
 
+  const navigate = useNavigate();
+
   // download all notes
   const handleDownloadAllNotes = useCallback(async () => {
     if (!allNotes.size) {
@@ -136,6 +141,7 @@ const Account: FC = () => {
                 variant="utility"
                 size="sm"
                 isDisabled={txData.length === 0}
+                onClick={() => navigate(allTxPath)}
               >
                 View all
               </Button>
@@ -292,21 +298,3 @@ function getFilterData<T extends Array<{ chain: string }>>(
     )
   ) as T;
 }
-
-/** @internal */
-const NoTx: FC = () => {
-  return (
-    <div className="bg-mono-0 dark:bg-mono-180 h-[325px] flex items-center rounded-2xl">
-      <div className="flex flex-col gap-2 items-center">
-        <TimerLine size="lg" />
-        <Typography variant="h5" fw="bold" ta="center">
-          Your transaction history will appear here.
-        </Typography>
-        <Typography variant="body1" ta="center">
-          Either you have not made any transactions yet, or your transaction
-          history has been deleted.
-        </Typography>
-      </div>
-    </div>
-  );
-};

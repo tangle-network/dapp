@@ -29,12 +29,16 @@ export const ManageButton: FC<ManageButtonProps> = ({
       </DropdownBasicButton>
 
       <DropdownBody className="min-w-[200px]" size="sm">
-        <MenuItem onClick={onUpload} icon={<UploadCloudIcon size="lg" />}>
-          Upload
-        </MenuItem>
-        <MenuItem onClick={onDownload} icon={<Download size="lg" />}>
-          Download All
-        </MenuItem>
+        {onUpload && (
+          <MenuItem onClick={onUpload} icon={<UploadCloudIcon size="lg" />}>
+            Upload
+          </MenuItem>
+        )}
+        {onDownload && (
+          <MenuItem onClick={onDownload} icon={<Download size="lg" />}>
+            Download All
+          </MenuItem>
+        )}
       </DropdownBody>
     </Dropdown>
   );

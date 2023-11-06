@@ -4,7 +4,6 @@ import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import ArrowLeftRightLineIcon from '@webb-tools/icons/ArrowLeftRightLineIcon';
 import { ArrowRightUp } from '@webb-tools/icons/ArrowRightUp';
 import { ChevronDown } from '@webb-tools/icons/ChevronDown';
-import EyeLineIcon from '@webb-tools/icons/EyeLineIcon';
 import QRScanLineIcon from '@webb-tools/icons/QRScanLineIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { IconBase } from '@webb-tools/icons/types';
@@ -29,6 +28,7 @@ import { useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 import HiddenValue from '../../components/HiddenValue';
+import HiddenValueEye from '../../components/HiddenValueEye';
 import NoteAccountAvatarWithKey from '../../components/NoteAccountAvatarWithKey';
 import {
   BRIDGE_PATH,
@@ -36,7 +36,6 @@ import {
   TRANSFER_PATH,
   WITHDRAW_PATH,
 } from '../../constants';
-import useHiddenValue from '../../hooks/useHiddenValue';
 import useReceiveModal from '../../hooks/useReceiveModal';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
@@ -114,8 +113,6 @@ function useShieldedBalances() {
 function TotalShieldedBalance() {
   const [currencyId, setCurrencyId] = useState<number | undefined>();
 
-  const [, setIsHiddenValue] = useHiddenValue();
-
   const { apiConfig } = useWebContext();
   const balances = useShieldedBalances();
 
@@ -166,9 +163,7 @@ function TotalShieldedBalance() {
           Total Shielded Balance
         </Typography>
 
-        <IconButton onClick={() => setIsHiddenValue((prev) => !prev)}>
-          <EyeLineIcon />
-        </IconButton>
+        <HiddenValueEye />
       </div>
 
       <div className="flex items-center gap-4">
