@@ -14,7 +14,7 @@ const fakeTxData: TxTableItemType[] = [
   {
     txHash: randEthereumAddress(),
     activity: 'transfer',
-    tokenAmount: 0.01,
+    tokenAmount: '-0.01',
     tokenSymbol: 'ETH',
     sourceTypedChainId: 1099511627781,
     destinationTypedChainId: 1099511670889,
@@ -24,7 +24,7 @@ const fakeTxData: TxTableItemType[] = [
   {
     txHash: randEthereumAddress(),
     activity: 'withdraw',
-    tokenAmount: 0.1,
+    tokenAmount: '-0.10',
     tokenSymbol: 'ETH',
     sourceTypedChainId: 1099511627781,
     destinationTypedChainId: 1099511670889,
@@ -34,7 +34,7 @@ const fakeTxData: TxTableItemType[] = [
   {
     txHash: randEthereumAddress(),
     activity: 'deposit',
-    tokenAmount: 1,
+    tokenAmount: '+1.00',
     tokenSymbol: 'WETH',
     sourceTypedChainId: 1099511627781,
     destinationTypedChainId: 1099511670889,

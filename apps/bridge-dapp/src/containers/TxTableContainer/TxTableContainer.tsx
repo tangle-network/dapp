@@ -44,9 +44,7 @@ const allColumns = [
     header: 'Amount',
     cell: (props) => (
       <Typography variant="body1" className="whitespace-nowrap">
-        <HiddenValue numberOfStars={3}>
-          {props.getValue().toString()}
-        </HiddenValue>{' '}
+        <HiddenValue numberOfStars={3}>{props.getValue()}</HiddenValue>{' '}
         {props.row.original.tokenSymbol}
       </Typography>
     ),

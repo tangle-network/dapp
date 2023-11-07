@@ -1,7 +1,7 @@
 export type TxTableItemType = {
   txHash: string;
   activity: 'deposit' | 'withdraw' | 'transfer';
-  tokenAmount: number;
+  tokenAmount: string;
   tokenSymbol: string;
   sourceTypedChainId: number;
   destinationTypedChainId: number;
