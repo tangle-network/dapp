@@ -200,6 +200,7 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
           });
 
           const chain = getChain(id, ChainType.EVM);
+
           if (unsupported || !chain) {
             setActiveChain(null);
           } else {

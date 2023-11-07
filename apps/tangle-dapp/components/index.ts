@@ -1,4 +1,5 @@
 export * from './Breadcrumbs';
+export * from './ChainSelector';
 export * from './HeaderChip';
 export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';

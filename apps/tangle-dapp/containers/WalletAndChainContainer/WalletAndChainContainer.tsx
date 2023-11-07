@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -8,15 +9,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { WalletDropdown } from '../../components';
-import useChainsFromRoute from '../../hooks/useChainsFromRoute';
+import { ChainSelector, WalletDropdown } from '../../components';
 import { useConnectWallet } from '../../hooks/useConnectWallet';
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
-
-  const { srcTypedChainId } = useChainsFromRoute();
 
   const { isMobile } = useCheckMobile();
 
@@ -24,17 +22,19 @@ const WalletAndChainContainer: FC = () => {
 
   return (
     <div className="flex items-center space-x-2">
-      <div>Chain Selector</div>
+      <ChainSelector />
 
       <div>
         {isConnecting || loading || !activeWallet || !activeAccount ? (
           isMobile ? (
-            <ConnectWalletMobileButton />
+            <ConnectWalletMobileButton appType="tangle-dapp" />
           ) : (
             <Button
               isLoading={loading}
               loadingText="Connecting..."
-              onClick={() => toggleModal(true, srcTypedChainId ?? undefined)}
+              onClick={() =>
+                toggleModal(true, PresetTypedChainId.TangleTestnet ?? undefined)
+              }
               className="flex justify-center items-center px-6"
             >
               Connect
