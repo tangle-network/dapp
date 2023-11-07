@@ -1,4 +1,5 @@
 import { type FC, useState, useCallback } from 'react';
+import { Outlet } from 'react-router-dom';
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import { UploadSpendNoteModal } from '../../../containers/UploadSpendNoteModal';
@@ -77,6 +78,8 @@ const AccountTransactions: FC = () => {
         isOpen={uploadModalOpen}
         setIsOpen={(isOpen) => setUploadModalOpen(isOpen)}
       />
+
+      <Outlet />
     </>
   );
 };

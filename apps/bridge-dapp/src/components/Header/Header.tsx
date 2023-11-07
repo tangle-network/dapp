@@ -70,7 +70,10 @@ export const Header: FC<HeaderProps> = () => {
               icon={preCfgBreadcrumb?.Icon}
               className="capitalize"
             >
-              {preCfgBreadcrumb?.label ?? item.split('-').join(' ')}
+              {preCfgBreadcrumb?.label ??
+                (index === 2 && items[1].toLowerCase() === 'transactions'
+                  ? 'Tx Detail'
+                  : item.split('-').join(' '))}
             </BreadcrumbsItem>
           </NavLink>
         );

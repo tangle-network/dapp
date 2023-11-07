@@ -19,7 +19,6 @@ import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
   captureSentryException,
-  downloadNotes,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,

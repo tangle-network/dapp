@@ -35,6 +35,9 @@ const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
 const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
 const Account = lazy(() => import('../pages/Account'));
 const AccountTransactions = lazy(() => import('../pages/Account/Transactions'));
+const AccountTransactionDetail = lazy(
+  () => import('../pages/Account/Transactions/TransactionDetail')
+);
 const Ecosystem = lazy(() => import('../pages/Ecosystem'));
 
 const AppRoutes = () => {
@@ -156,7 +159,18 @@ const AppRoutes = () => {
                       </RequireNoteAccountRoute>
                     </CSuspense>
                   }
-                />
+                >
+                  <Route
+                    path=":txId"
+                    element={
+                      <CSuspense>
+                        <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                          <AccountTransactionDetail />
+                        </RequireNoteAccountRoute>
+                      </CSuspense>
+                    }
+                  />
+                </Route>
               </Route>
 
               <Route

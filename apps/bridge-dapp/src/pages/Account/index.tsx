@@ -23,13 +23,12 @@ import { useSpendNotes } from '../../hooks/useSpendNotes';
 import { downloadNotes } from '../../utils/downloadNotes';
 import AccountSummaryCard from './AccountSummaryCard';
 import NoTx from './NoTx';
-import { ACCOUNT_TRANSACTIONS_PATH, NOTE_ACCOUNT_PATH } from '../../constants';
+import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
+
+import { randNumber, randEthereumAddress } from '@ngneat/falso';
 
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
-const allTxPath = `/${NOTE_ACCOUNT_PATH}/${ACCOUNT_TRANSACTIONS_PATH}`;
-
-import { randNumber, randEthereumAddress } from '@ngneat/falso';
 const fakeTxData: TxTableItemType[] = [
   {
     txHash: randEthereumAddress(),
@@ -141,7 +140,7 @@ const Account: FC = () => {
                 variant="utility"
                 size="sm"
                 isDisabled={txData.length === 0}
-                onClick={() => navigate(allTxPath)}
+                onClick={() => navigate(ACCOUNT_TRANSACTIONS_FULL_PATH)}
               >
                 View all
               </Button>

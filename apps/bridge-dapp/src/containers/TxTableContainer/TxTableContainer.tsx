@@ -1,4 +1,5 @@
 import {
+  Row,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
@@ -17,11 +18,13 @@ import {
   getTimeDetailByEpoch,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
-import { type FC, useMemo } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useNavigate } from 'react-router';
 
 import HiddenValue from '../../components/HiddenValue';
 import type { TxTableContainerProps, TxTableItemType } from './types';
+import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
 
 const columnHelper = createColumnHelper<TxTableItemType>();
 
@@ -115,6 +118,8 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
   hideRecipientCol = false,
   className,
 }) => {
+  const navigate = useNavigate();
+
   const columns = useMemo(
     () =>
       hideRecipientCol
@@ -123,6 +128,13 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
           })
         : allColumns,
     [hideRecipientCol]
+  );
+
+  const onRowClick = useCallback(
+    (row: Row<TxTableItemType>) => {
+      navigate(`${ACCOUNT_TRANSACTIONS_FULL_PATH}/${row.original.txHash}`);
+    },
+    [navigate]
   );
 
   const table = useReactTable({
@@ -158,6 +170,7 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
         tableProps={table}
         isPaginated
         totalRecords={data.length}
+        onRowClick={onRowClick}
       />
     </div>
   );

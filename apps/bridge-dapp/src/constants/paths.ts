@@ -14,6 +14,7 @@ export const SELECT_SHIELDED_POOL_PATH = 'select-shielded-pool';
 export const SELECT_RELAYER_PATH = 'select-relayer';
 
 export const ACCOUNT_TRANSACTIONS_PATH = 'transactions';
+export const ACCOUNT_TRANSACTIONS_FULL_PATH = `/${NOTE_ACCOUNT_PATH}/${ACCOUNT_TRANSACTIONS_PATH}`;
 
 /** Key for source chain query params */
 export const SOURCE_CHAIN_KEY = 'source';
