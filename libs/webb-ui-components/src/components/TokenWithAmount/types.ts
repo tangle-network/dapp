@@ -15,4 +15,9 @@ export interface TokenWithAmountProps extends PropsOf<'div'> {
    * The token 2 symbol to display (in token-pair case)
    */
   token2Symbol?: string;
+
+  /**
+   * The prefix to display before the amount
+   */
+  prefix?: '+' | '-';
 }

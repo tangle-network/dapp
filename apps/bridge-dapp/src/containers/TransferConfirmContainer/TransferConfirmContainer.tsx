@@ -6,6 +6,9 @@ import {
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
@@ -21,10 +24,12 @@ import {
   TransferConfirm,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { forwardRef, useMemo, useState, type ComponentProps } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
+import useTransferFeeCalculation from '../../hooks/useTransferFeeCalculation';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
   captureSentryException,
@@ -69,7 +74,9 @@ const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const { activeApi, activeChain } = useWebContext();
+    const { apiConfig, activeApi, activeChain, noteManager } = useWebContext();
+
+    const { balances } = useBalancesFromNotes();
 
     const {
       cardTitle,
@@ -85,10 +92,33 @@ const TransferConfirmContainer = forwardRef<
       onResetState
     );
 
+    const srcTypedChainId = useMemo(
+      () => calculateTypedChainId(activeChain!.chainType, activeChain!.id),
+      []
+    );
+
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.id),
       [destChain]
     );
+
+    const poolAddress = useMemo(
+      () => apiConfig.anchors[currency.id][targetChainId],
+      [apiConfig, currency.id, targetChainId]
+    );
+
+    const poolExplorerUrl = useMemo(() => {
+      const blockExplorerUrl =
+        chainsConfig[targetChainId]?.blockExplorers?.default.url;
+
+      if (!blockExplorerUrl) return undefined;
+      return getExplorerURI(
+        blockExplorerUrl,
+        poolAddress,
+        'address',
+        'web3'
+      ).toString();
+    }, [targetChainId, poolAddress]);
 
     const {
       relayersState: { activeRelayer },
@@ -118,6 +148,26 @@ const TransferConfirmContainer = forwardRef<
       targetTypedChainId: targetChainId,
     });
 
+    const {
+      gasFeeInfo,
+      isLoading: isFeeLoading,
+      relayerFeeInfo,
+      totalFeeToken,
+      totalFeeWei,
+    } = useTransferFeeCalculation({
+      activeRelayer,
+      recipientErrorMsg: undefined,
+      typedChainId: srcTypedChainId,
+    });
+
+    const newBalance = useMemo(() => {
+      const currentBalance = balances?.[currency.id]?.[srcTypedChainId];
+      if (!currentBalance) return undefined;
+      const updatedBalance = Number(formatEther(currentBalance)) - amount;
+      if (updatedBalance < 0) return undefined;
+      return updatedBalance;
+    }, [balances, currency.id, srcTypedChainId, amount]);
+
     const formattedFee = useMemo(() => {
       if (!feeInWei) {
         return undefined;
@@ -140,15 +190,13 @@ const TransferConfirmContainer = forwardRef<
         progress={currentStep}
         amount={amount}
         changeAmount={changeAmount}
-        sourceChain={{
-          name: activeChain?.name ?? '',
-          type: activeChain?.group ?? 'webb-dev',
-        }}
-        destChain={{
-          name: destChain.name,
-          type: destChain.group ?? 'webb-dev',
-        }}
         note={changeNote?.serialize()}
+        sourceTypedChainId={srcTypedChainId}
+        destTypedChainId={targetChainId}
+        sourceAddress={noteManager?.getKeypair().toString() ?? ''}
+        destAddress={recipient}
+        poolAddress={poolAddress}
+        poolExplorerUrl={poolExplorerUrl}
         recipientTitleProps={{
           info: <RecipientPublicKeyTooltipContent />,
         }}
@@ -163,7 +211,6 @@ const TransferConfirmContainer = forwardRef<
         feeToken={feeToken}
         onClose={onClose}
         checkboxProps={{
-          children: 'I have copied the change note',
           isChecked,
           onChange: () => setIsChecked((prev) => !prev),
         }}
@@ -183,10 +230,28 @@ const TransferConfirmContainer = forwardRef<
         txStatusMessage={txStatusMessage}
         refundAmount={
           typeof refundAmount === 'bigint'
-            ? formatEther(refundAmount)
+            ? Number(formatEther(refundAmount))
             : undefined
         }
         refundToken={refundToken}
+        refundRecipient={refundRecipient}
+        newBalance={newBalance}
+        feesSection={
+          <RelayerFeeDetails
+            totalFeeWei={totalFeeWei}
+            totalFeeToken={totalFeeToken}
+            gasFeeInfo={gasFeeInfo}
+            relayerFeeInfo={relayerFeeInfo}
+            isFeeLoading={isFeeLoading}
+            srcChainCfg={apiConfig.chains[srcTypedChainId]}
+            fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
+              currency.view.symbol,
+              srcTypedChainId
+            )}
+            activeRelayer={activeRelayer}
+            info="Amount deducted from the transfer to cover transaction costs within the shielded pool."
+          />
+        }
       />
     );
   }

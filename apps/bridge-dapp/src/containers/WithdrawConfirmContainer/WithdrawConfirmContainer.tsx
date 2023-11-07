@@ -1,13 +1,15 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-
 import {
   NewNotesTxResult,
   Transaction,
@@ -23,6 +25,7 @@ import {
 } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
+import useWithdrawFeeCalculation from '../../hooks/useWithdrawFeeCalculation';
 import {
   captureSentryException,
   getErrorMessage,
@@ -31,6 +34,7 @@ import {
   handleMutateNoteIndex,
   handleStoreNote,
 } from '../../utils';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { WithdrawConfirmContainerProps } from './types';
 
 const WithdrawConfirmContainer = forwardRef<
@@ -52,10 +56,10 @@ const WithdrawConfirmContainer = forwardRef<
       onResetState,
       receivingInfo,
       recipient,
-      refundAmount,
       refundToken,
       sourceTypedChainId,
       targetTypedChainId,
+      refundAmount,
       unwrapCurrency: { value: unwrapCurrency } = {},
       onClose,
       ...props
@@ -73,6 +77,8 @@ const WithdrawConfirmContainer = forwardRef<
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
     const { activeApi, apiConfig, txQueue } = useWebContext();
+
+    const { balances } = useBalancesFromNotes();
 
     const { api: txQueueApi } = txQueue;
 
@@ -101,11 +107,50 @@ const WithdrawConfirmContainer = forwardRef<
       onResetState
     );
 
+    const {
+      gasFeeInfo,
+      isLoading: isFeeLoading,
+      relayerFeeInfo,
+      totalFeeToken,
+      totalFeeWei,
+    } = useWithdrawFeeCalculation({
+      activeRelayer,
+      recipientErrorMsg: undefined,
+      typedChainId: sourceTypedChainId,
+    });
+
     const avatarTheme = useMemo(() => {
       return chainsPopulated[targetTypedChainId].chainType === ChainType.EVM
         ? 'ethereum'
         : 'substrate';
     }, [targetTypedChainId]);
+
+    const poolAddress = useMemo(
+      () => apiConfig.anchors[fungibleCurrency.id][targetTypedChainId],
+      [apiConfig, fungibleCurrency.id, targetTypedChainId]
+    );
+
+    const poolExplorerUrl = useMemo(() => {
+      const blockExplorerUrl =
+        chainsConfig[targetTypedChainId]?.blockExplorers?.default.url;
+
+      if (!blockExplorerUrl) return undefined;
+      return getExplorerURI(
+        blockExplorerUrl,
+        poolAddress,
+        'address',
+        'web3'
+      ).toString();
+    }, [targetTypedChainId, poolAddress]);
+
+    const newBalance = useMemo(() => {
+      const currentBalance =
+        balances?.[fungibleCurrency.id]?.[sourceTypedChainId];
+      if (!currentBalance) return undefined;
+      const updatedBalance = Number(formatEther(currentBalance)) - amount;
+      if (updatedBalance < 0) return undefined;
+      return updatedBalance;
+    }, [balances, fungibleCurrency.id, sourceTypedChainId, amount]);
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
@@ -296,18 +341,6 @@ const WithdrawConfirmContainer = forwardRef<
       return `${feeInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
     }, [activeRelayer, fee, fungibleCurrency.view.symbol, refundToken]);
 
-    const formattedRefund = useMemo(() => {
-      if (!refundAmount) {
-        return undefined;
-      }
-
-      const refundInEthers = Number(formatEther(refundAmount));
-
-      return getRoundedAmountString(refundInEthers, 3, {
-        roundingFunction: Math.round,
-      });
-    }, [refundAmount]);
-
     const remainingAmount = useMemo(() => {
       const amountInEthers = Number(formatEther(amountAfterFee));
 
@@ -324,14 +357,6 @@ const WithdrawConfirmContainer = forwardRef<
         title={cardTitle}
         totalProgress={totalStep}
         progress={currentStep}
-        sourceChain={{
-          name: chainsPopulated[sourceTypedChainId].name,
-          type: chainsPopulated[sourceTypedChainId].group ?? 'webb-dev',
-        }}
-        destChain={{
-          name: chainsPopulated[targetTypedChainId].name,
-          type: chainsPopulated[targetTypedChainId].group ?? 'webb-dev',
-        }}
         actionBtnProps={{
           isDisabled: inProgressTxId ? false : changeAmount ? !checked : false,
           children: inProgressTxId
@@ -344,10 +369,13 @@ const WithdrawConfirmContainer = forwardRef<
         checkboxProps={{
           isChecked: checked,
           isDisabled: Boolean(inProgressTxId),
-          children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
-        refundAmount={isRefund ? formattedRefund : undefined}
+        refundAmount={
+          isRefund && refundAmount
+            ? Number(formatEther(refundAmount))
+            : undefined
+        }
         refundToken={isRefund ? refundToken : undefined}
         receivingInfo={receivingInfo}
         amount={amount}
@@ -356,7 +384,17 @@ const WithdrawConfirmContainer = forwardRef<
         fee={formattedFee}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
-        recipientAddress={recipient}
+        sourceTypedChainId={sourceTypedChainId}
+        destTypedChainId={targetTypedChainId}
+        sourceAddress={
+          availableNotes.length > 0
+            ? availableNotes[0].note.sourceIdentifyingData
+            : ''
+        }
+        destAddress={recipient}
+        poolAddress={poolAddress}
+        poolExplorerUrl={poolExplorerUrl}
+        newBalance={newBalance}
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}
         relayerAvatarTheme={avatarTheme}
@@ -371,6 +409,22 @@ const WithdrawConfirmContainer = forwardRef<
         }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
+        feesSection={
+          <RelayerFeeDetails
+            totalFeeWei={totalFeeWei}
+            totalFeeToken={totalFeeToken}
+            gasFeeInfo={gasFeeInfo}
+            relayerFeeInfo={relayerFeeInfo}
+            isFeeLoading={isFeeLoading}
+            srcChainCfg={apiConfig.chains[sourceTypedChainId]}
+            fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
+              fungibleCurrency.view.symbol,
+              sourceTypedChainId
+            )}
+            activeRelayer={activeRelayer}
+            info="Amount deducted from the withdrawal to cover transaction costs within the shielded pool."
+          />
+        }
       />
     );
   }

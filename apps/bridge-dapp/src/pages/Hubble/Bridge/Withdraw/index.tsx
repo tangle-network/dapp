@@ -21,11 +21,11 @@ import {
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BooleanParam, useQueryParam } from 'use-query-params';
 import { formatEther, parseEther } from 'viem';
-import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
@@ -45,7 +45,7 @@ import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
-import useFeeCalculation from './private/useFeeCalculation';
+import useWithdrawFeeCalculation from '../../../../hooks/useWithdrawFeeCalculation';
 import useInputs from './private/useInputs';
 import useWithdrawButtonProps from './private/useWithdrawButtonProps';
 
@@ -150,7 +150,7 @@ const Withdraw = () => {
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-  } = useFeeCalculation({
+  } = useWithdrawFeeCalculation({
     activeRelayer,
     recipientErrorMsg,
     typedChainId: srcTypedChainId,
@@ -383,8 +383,9 @@ const Withdraw = () => {
                   : undefined
               }
               refundToken={activeChain?.nativeCurrency.symbol}
-              remaining={remainingBalance}
-              remainingToken={fungibleCfg?.symbol}
+              newBalance={remainingBalance}
+              newBalanceToken={fungibleCfg?.symbol}
+              txType="withdraw"
             />
           </div>
 

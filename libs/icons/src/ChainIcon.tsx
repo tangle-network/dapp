@@ -47,6 +47,7 @@ export const ChainIcon: React.FC<
       className,
       width: sizeInNumber,
       height: sizeInNumber,
+      viewBox: '0 0 24 24',
       ...restProps,
     };
 

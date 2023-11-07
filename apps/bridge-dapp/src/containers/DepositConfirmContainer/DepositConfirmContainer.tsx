@@ -4,12 +4,17 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
+import { GasStationFill } from '@webb-tools/icons';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { handleStoreNote } from '../../utils';
 import { useVAnchor } from '@webb-tools/react-hooks';
 import { isViemError } from '@webb-tools/web3-api-provider';
-import { DepositConfirm } from '@webb-tools/webb-ui-components';
+import { FeeDetails, DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { ContractFunctionRevertedError, formatUnits } from 'viem';
+import { ContractFunctionRevertedError, formatUnits, formatEther } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
@@ -29,12 +34,12 @@ const DepositConfirmContainer = forwardRef<
   (
     {
       amount,
-      destChain,
       fungibleTokenId,
       note,
       onResetState,
       onClose,
-      sourceChain,
+      sourceTypedChainId: sourceTypedChainIdProp,
+      destTypedChainId: destTypedChainIdProp,
       wrappableTokenId,
     },
     ref
@@ -53,6 +58,8 @@ const DepositConfirmContainer = forwardRef<
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
     const { api: txQueueApi } = txQueue;
+
+    const { balances } = useBalancesFromNotes();
 
     const fungibleToken = useMemo(() => {
       return new Currency(apiConfig.currencies[fungibleTokenId]);
@@ -81,6 +88,41 @@ const DepositConfirmContainer = forwardRef<
       txStatus,
       txStatusMessage,
     } = useInProgressTxInfo(wrappingFlow, onResetState);
+
+    const sourceTypedChainId = useMemo(
+      () => sourceTypedChainIdProp ?? +note.note.sourceChainId,
+      [sourceTypedChainIdProp, note.note.sourceChainId]
+    );
+
+    const destTypedChainId = useMemo(
+      () => destTypedChainIdProp ?? +note.note.targetChainId,
+      [destTypedChainIdProp, note.note.targetChainId]
+    );
+
+    const newBalance = useMemo(() => {
+      const balance = balances?.[fungibleTokenId]?.[destTypedChainId];
+      if (!balance) return amount;
+      return Number(formatEther(balance)) + amount;
+    }, [balances, fungibleTokenId, destTypedChainId, note, amount]);
+
+    const poolAddress = useMemo(
+      () => apiConfig.anchors[fungibleTokenId][destTypedChainId],
+      [apiConfig, fungibleTokenId, destTypedChainId]
+    );
+
+    const poolExplorerUrl = useMemo(() => {
+      const blockExplorerUrl =
+        chainsConfig[destTypedChainId]?.blockExplorers?.default.url;
+
+      if (!blockExplorerUrl) return undefined;
+
+      return getExplorerURI(
+        blockExplorerUrl,
+        poolAddress,
+        'address',
+        'web3'
+      ).toString();
+    }, [destTypedChainId, poolAddress]);
 
     const handleExecuteDeposit = useCallback(
       async () => {
@@ -175,8 +217,7 @@ const DepositConfirmContainer = forwardRef<
 
           const transactionHash = await api.transact(...args);
 
-          downloadNotes([note]);
-          await addNoteToNoteManager(note);
+          await handleStoreNote(note, addNoteToNoteManager);
 
           enqueueSubmittedTx(
             transactionHash,
@@ -251,12 +292,16 @@ const DepositConfirmContainer = forwardRef<
         }}
         totalProgress={totalStep}
         progress={currentStep}
-        onDownload={() => downloadNotes([note])}
         amount={amount}
-        wrappingAmount={String(amount)}
+        wrappingAmount={amount}
         fungibleTokenSymbol={fungibleToken.view.symbol}
-        sourceChain={sourceChain}
-        destChain={destChain}
+        sourceTypedChainId={sourceTypedChainId}
+        destTypedChainId={destTypedChainId}
+        sourceAddress={activeAccount?.address ?? ''}
+        destAddress={note.note.targetIdentifyingData}
+        poolAddress={poolAddress}
+        poolExplorerUrl={poolExplorerUrl}
+        newBalance={newBalance}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusColor={
           txStatus === 'completed'
@@ -267,6 +312,17 @@ const DepositConfirmContainer = forwardRef<
         }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
+        feesSection={
+          <FeeDetails
+            info="The fee pays for the transaction to be processed on the network."
+            items={[
+              {
+                name: 'Gas',
+                Icon: <GasStationFill />,
+              },
+            ]}
+          />
+        }
       />
     );
   }
