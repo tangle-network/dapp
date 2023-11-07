@@ -64,16 +64,16 @@ const Deposit = () => {
   );
 
   const totalFungibleAmount = useMemo(() => {
-    if (typeof srcTypedChainId !== 'number') {
+    if (typeof destTypedChainId !== 'number') {
       return;
     }
 
-    if (fungibleCfg && shieldedBalances[fungibleCfg.id]?.[srcTypedChainId]) {
+    if (fungibleCfg && shieldedBalances[fungibleCfg.id]?.[destTypedChainId]) {
       return Number(
-        formatEther(shieldedBalances[fungibleCfg.id][srcTypedChainId])
+        formatEther(shieldedBalances[fungibleCfg.id][destTypedChainId])
       );
     }
-  }, [shieldedBalances, fungibleCfg, srcTypedChainId]);
+  }, [shieldedBalances, fungibleCfg, destTypedChainId]);
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {

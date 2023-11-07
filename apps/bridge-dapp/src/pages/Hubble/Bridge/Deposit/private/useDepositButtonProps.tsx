@@ -250,14 +250,8 @@ function useDepositButtonProps({
                 : undefined
             }
             amount={parseFloat(formatEther(amountBig))}
-            sourceChain={{
-              name: srcChain.name,
-              type: srcChain.group,
-            }}
-            destChain={{
-              name: destChain.name,
-              type: destChain.group,
-            }}
+            sourceTypedChainId={srcTypedId ?? undefined}
+            destTypedChainId={destTypedId ?? undefined}
             note={transactNote}
             onResetState={() => {
               setDepositConfirmComponent(null);

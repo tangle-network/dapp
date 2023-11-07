@@ -116,7 +116,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
 }) => {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 20,
   });
 
   const pagination = useMemo(
@@ -166,18 +166,22 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
       globalFilter,
     ]
   );
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const authorities = useAuthorities(query);
-  const totalItems = useMemo(
-    () => authorities.val?.pageInfo.count ?? 0,
-    [authorities]
-  );
+
+  const data = useMemo(() => {
+    return authorities.val?.items?.filter((item) => item.isBest === true) || [];
+  }, [authorities]);
+
+  const totalItems = useMemo(() => data.length, [data]);
+
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
     [pageSize, totalItems]
   );
-  const data = useMemo(() => authorities.val?.items ?? [], [authorities]);
+
   const table = useReactTable<AuthorityListItem>({
     data: data ?? ([] as AuthorityListItem[]),
     columns,

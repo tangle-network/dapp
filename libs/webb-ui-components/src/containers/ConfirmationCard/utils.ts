@@ -1,21 +1,7 @@
-import { TokenRingValue } from '../../components/TokensRing/types';
+import { getRoundedAmountString } from '../../utils';
 
-export const getTokenRingValue = (
-  symbol: string
-): TokenRingValue | undefined => {
-  const tkRingValues = [
-    'eth',
-    'dot',
-    'avax',
-    'ksm',
-    'one',
-    'arbitrum',
-    'op',
-    'matic',
-  ];
-  const isTokenRingValue = tkRingValues.includes(symbol.toLowerCase());
-
-  return isTokenRingValue
-    ? (symbol.toLowerCase() as TokenRingValue)
-    : undefined;
+export const formatTokenAmount = (amount: number | undefined) => {
+  return getRoundedAmountString(amount, 5, {
+    roundingFunction: Math.round,
+  });
 };

@@ -6,14 +6,16 @@ const TxInfoContainer = ({
   hasRefund,
   refundAmount,
   refundToken,
-  remaining,
-  remainingToken,
+  newBalance,
+  newBalanceToken,
+  txType,
 }: {
   hasRefund?: boolean;
   refundAmount?: string;
   refundToken?: string;
-  remaining?: number;
-  remainingToken?: string;
+  newBalance?: number;
+  newBalanceToken?: string;
+  txType: 'deposit' | 'withdraw' | 'transfer';
 }) => {
   return (
     <div className="space-y-2">
@@ -28,13 +30,13 @@ const TxInfoContainer = ({
       )}
       <TxInfoItem
         leftContent={{
-          title: 'Remaining Balance',
+          title: txType !== 'deposit' ? 'Remaining Balance' : 'New Balance',
         }}
         rightIcon={<ShieldKeyholeFillIcon />}
         rightText={
-          typeof remaining === 'number'
-            ? `${remaining.toString().slice(0, 10)} ${
-                remainingToken ?? ''
+          typeof newBalance === 'number'
+            ? `${newBalance.toString().slice(0, 10)} ${
+                newBalanceToken ?? ''
               }`.trim()
             : '--'
         }
