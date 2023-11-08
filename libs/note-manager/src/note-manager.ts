@@ -453,6 +453,13 @@ export class NoteManager {
 
   /**
    * Generate a note
+   * @param backend The backend - either 'Arkworks' or 'Circom'
+   * @param sourceTypedChainId The source typed chain id
+   * @param sourceAnchorAddress The source anchor address
+   * @param destTypedChainId The destination typed chain id
+   * @param destAnchorAddress The destination anchor address
+   * @param tokenSymbol The token symbol of the note
+   * @param amount The amount of the note
    * @returns The generated note
    */
   async generateNote(
