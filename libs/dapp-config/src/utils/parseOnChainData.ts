@@ -53,14 +53,14 @@ function parseOnChainData(data: any) {
       );
 
       // Iterate through the anchor metadata and add them to the config
-      anchorMetadata.forEach((metaddata) => {
+      anchorMetadata.forEach((metadata) => {
         const {
           address: anchorAddress,
           fungibleCurrency,
           isNativeAllowed,
           linkableAnchor,
           wrappableCurrencies,
-        } = metaddata;
+        } = metadata;
 
         // Add fungible currency to config
         const fungibleCurrencyConfig = addCurrencyToConfig(

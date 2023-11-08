@@ -21,6 +21,8 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
   className,
   textToCopy,
   isButton = true,
+  iconSize = 'md',
+  iconClassName,
 }) => {
   const { copy, isCopied } = useCopyable();
 
@@ -32,6 +34,8 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
       }}
       isCopied={isCopied}
       isButton={isButton}
+      iconSize={iconSize}
+      iconClassName={iconClassName}
     />
   );
 };
@@ -47,7 +51,9 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
   isCopied,
   onClick,
   className,
+  iconClassName,
   isButton,
+  iconSize,
 }) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -62,11 +68,17 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
       >
         {isButton ? (
           <Button className="p-2" variant="utility" size="sm">
-            <FileCopyLine className="!fill-current" />
+            <FileCopyLine
+              size={iconSize}
+              className={twMerge('!fill-current', iconClassName)}
+            />
           </Button>
         ) : (
           <span>
-            <FileCopyLine className="!fill-current" />
+            <FileCopyLine
+              size={iconSize}
+              className={twMerge('!fill-current', iconClassName)}
+            />
           </span>
         )}
       </TooltipTrigger>
