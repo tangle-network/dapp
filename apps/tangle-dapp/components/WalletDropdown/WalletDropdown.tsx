@@ -70,7 +70,6 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
   }, [activeApi, notificationApi]);
 
   // Disconnect function
-  // TODO: The disconnect function does not work properly
   const handleDisconnect = useCallback(async () => {
     try {
       if (currentManagedWallet && currentManagedWallet.canEndSession) {
