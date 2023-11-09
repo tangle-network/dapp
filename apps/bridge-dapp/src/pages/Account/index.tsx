@@ -1,5 +1,6 @@
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
+import { Download, UploadCloudIcon } from '@webb-tools/icons';
 import type { Note } from '@webb-tools/sdk-core';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs';
@@ -7,7 +8,8 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography, Button } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { FilterButton, ManageButton } from '../../components/tables';
+import { ActionsDropdown } from '../../components';
+import { FilterButton } from '../../components/tables';
 import ReceiveModal from '../../components/ReceiveModal';
 import { DeleteNotesModal } from '../../containers/DeleteNotesModal';
 import { UploadSpendNoteModal } from '../../containers/UploadSpendNoteModal';
@@ -273,7 +275,21 @@ function RightButtonsContainer(
 
   return (
     <div className="items-center hidden space-x-2 md:flex">
-      <ManageButton onUpload={onUpload} onDownload={onDownloadAllNotes} />
+      <ActionsDropdown
+        buttonText="Manage"
+        actionItems={[
+          {
+            label: 'Upload',
+            icon: <UploadCloudIcon size="lg" />,
+            onClick: onUpload,
+          },
+          {
+            label: 'Download All',
+            icon: <Download size="lg" />,
+            onClick: onDownloadAllNotes,
+          },
+        ]}
+      />
       <FilterButton
         destinationChains={destChains}
         searchPlaceholder={

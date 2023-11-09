@@ -1,12 +1,11 @@
-import { type FC, useState, useCallback } from 'react';
+import { type FC } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Typography } from '@webb-tools/webb-ui-components';
 
-import { UploadSpendNoteModal } from '../../../containers/UploadSpendNoteModal';
 import TxTableContainer from '../../../containers/TxTableContainer';
 import { TxTableItemType } from '../../../containers/TxTableContainer/types';
+import ActionsDropdown from '../../../components/ActionsDropdown';
 import HiddenValueEye from '../../../components/HiddenValueEye';
-import { ManageButton } from '../../../components/tables';
 import NoTx from '../NoTx';
 
 import { randNumber, randEthereumAddress } from '@ngneat/falso';
@@ -44,9 +43,6 @@ const fakeTxData: TxTableItemType[] = [
 ];
 
 const AccountTransactions: FC = () => {
-  const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const openUploadModal = useCallback(() => setUploadModalOpen(true), []);
-
   const txData: TxTableItemType[] = [
     ...fakeTxData,
     ...fakeTxData,
@@ -64,7 +60,7 @@ const AccountTransactions: FC = () => {
             </Typography>
             <HiddenValueEye />
           </div>
-          <ManageButton onUpload={openUploadModal} />
+          <ActionsDropdown buttonText="Manage" actionItems={[]} />
         </div>
 
         {txData.length > 0 ? (
@@ -73,11 +69,6 @@ const AccountTransactions: FC = () => {
           <NoTx />
         )}
       </div>
-
-      <UploadSpendNoteModal
-        isOpen={uploadModalOpen}
-        setIsOpen={(isOpen) => setUploadModalOpen(isOpen)}
-      />
 
       <Outlet />
     </>

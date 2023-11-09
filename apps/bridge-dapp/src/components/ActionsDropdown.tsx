@@ -1,4 +1,4 @@
-import { ChevronDown, Download, UploadCloudIcon } from '@webb-tools/icons';
+import { ChevronDown } from '@webb-tools/icons';
 import {
   Button,
   Dropdown,
@@ -6,12 +6,22 @@ import {
   DropdownBody,
   MenuItem,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
-import { ManageButtonProps } from './types';
+import { type FC, type ComponentProps } from 'react';
 
-export const ManageButton: FC<ManageButtonProps> = ({
-  onDownload,
-  onUpload,
+type ActionItemType = {
+  label: string;
+  icon: React.ReactElement;
+  onClick: ComponentProps<typeof MenuItem>['onClick'];
+};
+
+interface ManageButtonProps {
+  buttonText: string;
+  actionItems: ActionItemType[];
+}
+
+const ActionsDropdown: FC<ManageButtonProps> = ({
+  buttonText,
+  actionItems,
 }) => {
   return (
     <Dropdown>
@@ -24,22 +34,19 @@ export const ManageButton: FC<ManageButtonProps> = ({
             <ChevronDown className="!fill-current transition-transform duration-300 ease-in-out group-radix-state-open:rotate-180" />
           }
         >
-          Manage
+          {buttonText}
         </Button>
       </DropdownBasicButton>
 
       <DropdownBody className="min-w-[200px]" size="sm">
-        {onUpload && (
-          <MenuItem onClick={onUpload} icon={<UploadCloudIcon size="lg" />}>
-            Upload
+        {actionItems.map(({ label, icon, onClick }) => (
+          <MenuItem onClick={onClick} icon={icon}>
+            {label}
           </MenuItem>
-        )}
-        {onDownload && (
-          <MenuItem onClick={onDownload} icon={<Download size="lg" />}>
-            Download All
-          </MenuItem>
-        )}
+        ))}
       </DropdownBody>
     </Dropdown>
   );
 };
+
+export default ActionsDropdown;
