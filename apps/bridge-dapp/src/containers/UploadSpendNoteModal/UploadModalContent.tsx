@@ -147,7 +147,7 @@ export const UploadModalContent = forwardRef<
 
   return (
     <>
-      {!noteSize && <FileUploadArea onDrop={handleUpload} />}
+      {!noteSize && <FileUploadArea onDrop={handleUpload} acceptType="json" />}
 
       {!!file && (
         <FileUploadList>

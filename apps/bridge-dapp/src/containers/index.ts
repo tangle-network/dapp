@@ -7,4 +7,5 @@ export { default as TransferConfirmContainer } from './TransferConfirmContainer'
 export { default as TxInfoContainer } from './TxInfoContainer';
 export { default as TxTableContainer } from './TxTableContainer';
 export * from './UploadSpendNoteModal';
+export {default as UploadTxHistoryModal } from './UploadTxHistoryModal';
 export { default as WithdrawConfirmContainer } from './WithdrawConfirmContainer';

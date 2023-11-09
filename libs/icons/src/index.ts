@@ -104,6 +104,7 @@ export { default as TimerLine } from './TimerLine';
 export * from './TokenIcon';
 export * from './TwitterFill';
 export * from './UploadCloudIcon';
+export { default as UploadLine } from './UploadLine';
 export * from './UsageGuideIcon';
 export { default as UserFillIcon } from './UserFillIcon';
 export * from './UserStarFillIcon';
@@ -115,7 +116,7 @@ export * from './YouTubeFill';
 // Wallet icons
 export * from './wallets';
 
-// imagre URIs
+// image URIs
 export * from './Alert';
 export * from './AlertFill';
 export * from './PartyFill';

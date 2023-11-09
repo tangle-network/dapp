@@ -1,10 +1,11 @@
 import { type FC, useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { DeleteBinIcon } from '@webb-tools/icons';
+import { DeleteBinIcon, UploadLine } from '@webb-tools/icons';
 
 import ActionsDropdown from '../../../components/ActionsDropdown';
 import ClearTxHistoryModal from '../../../containers/ClearTxHistoryModal';
+import UploadTxHistoryModal from '../../../containers/UploadTxHistoryModal';
 import HiddenValueEye from '../../../components/HiddenValueEye';
 import NoTx from '../NoTx';
 import TxTableContainer from '../../../containers/TxTableContainer';
@@ -52,8 +53,10 @@ const AccountTransactions: FC = () => {
     ...fakeTxData,
   ];
 
+  const { uploadTxModalOpen, setUploadTxModalOpen, openUploadTxModal } =
+    useUploadTxModal();
   const { clearTxModalOpen, setClearTxModalOpen, openClearTxModal } =
-    useNoteUploadModalProps();
+    useClearTxModal();
 
   return (
     <>
@@ -68,6 +71,11 @@ const AccountTransactions: FC = () => {
           <ActionsDropdown
             buttonText="Manage"
             actionItems={[
+              {
+                label: 'Upload',
+                icon: <UploadLine size="lg" />,
+                onClick: openUploadTxModal,
+              },
               {
                 label: 'Delete',
                 icon: <DeleteBinIcon size="lg" />,
@@ -84,6 +92,11 @@ const AccountTransactions: FC = () => {
         )}
       </div>
 
+      <UploadTxHistoryModal
+        isOpen={uploadTxModalOpen}
+        setIsOpen={setUploadTxModalOpen}
+      />
+
       <ClearTxHistoryModal
         isOpen={clearTxModalOpen}
         setIsOpen={setClearTxModalOpen}
@@ -97,8 +110,23 @@ const AccountTransactions: FC = () => {
 export default AccountTransactions;
 
 /** @internal */
-function useNoteUploadModalProps() {
+function useUploadTxModal() {
   // Upload modal state
+  const [uploadTxModalOpen, setUploadTxModalOpen] = useState(false);
+
+  const openUploadTxModal = useCallback(() => {
+    setUploadTxModalOpen(true);
+  }, []);
+
+  return {
+    uploadTxModalOpen,
+    setUploadTxModalOpen,
+    openUploadTxModal,
+  };
+}
+
+/** @internal */
+function useClearTxModal() {
   const [clearTxModalOpen, setClearTxModalOpen] = useState(false);
 
   const openClearTxModal = useCallback(() => {
