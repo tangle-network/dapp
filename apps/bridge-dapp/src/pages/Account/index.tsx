@@ -147,7 +147,12 @@ const Account: FC = () => {
             </div>
 
             {txData.length > 0 ? (
-              <TxTableContainer data={txData} pageSize={3} hideRecipientCol />
+              <TxTableContainer
+                data={txData}
+                pageSize={3}
+                hideRecipientCol
+                allowSorting={false}
+              />
             ) : (
               <NoTx />
             )}

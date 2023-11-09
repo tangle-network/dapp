@@ -1,13 +1,14 @@
 import {
   Row,
-  createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  type SortingState,
+  type ColumnDef,
 } from '@tanstack/react-table';
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowLeft, ExternalLinkLine } from '@webb-tools/icons';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import {
@@ -18,7 +19,7 @@ import {
   getTimeDetailByEpoch,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
-import { type FC, useCallback, useMemo } from 'react';
+import { type FC, useState, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useNavigate } from 'react-router';
 
@@ -26,48 +27,57 @@ import HiddenValue from '../../components/HiddenValue';
 import type { TxTableContainerProps, TxTableItemType } from './types';
 import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
 
-const columnHelper = createColumnHelper<TxTableItemType>();
-
-const allColumns = [
-  columnHelper.accessor('activity', {
+const staticColumns: ColumnDef<TxTableItemType>[] = [
+  {
     header: 'Activity',
+    accessorKey: 'activity',
     cell: (props) => (
       <Typography
         variant="body1"
         className="capitalize text-blue-70 dark:text-blue-50"
       >
-        {props.getValue()}
+        {props.row.original.activity}
       </Typography>
     ),
-  }),
-  columnHelper.accessor('tokenAmount', {
+  },
+  {
     header: 'Amount',
+    accessorKey: 'tokenAmount',
     cell: (props) => (
       <Typography variant="body1" className="whitespace-nowrap">
-        <HiddenValue numberOfStars={3}>{props.getValue()}</HiddenValue>{' '}
+        <HiddenValue numberOfStars={4}>
+          {props.row.original.tokenAmount}
+        </HiddenValue>{' '}
         {props.row.original.tokenSymbol}
       </Typography>
     ),
-  }),
-  columnHelper.accessor('sourceTypedChainId', {
+  },
+  {
     header: 'Source',
+    accessorKey: 'sourceTypedChainId',
     cell: (props) => (
       <ChainChip
-        chainName={chainsConfig[props.getValue()].name}
-        chainType={chainsConfig[props.getValue()].group}
+        chainName={chainsConfig[props.row.original.sourceTypedChainId].name}
+        chainType={chainsConfig[props.row.original.sourceTypedChainId].group}
       />
     ),
-  }),
-  columnHelper.accessor('destinationTypedChainId', {
+  },
+  {
     header: 'Destination',
+    accessorKey: 'destinationTypedChainId',
     cell: (props) => (
       <ChainChip
-        chainName={chainsConfig[props.getValue()].name}
-        chainType={chainsConfig[props.getValue()].group}
+        chainName={
+          chainsConfig[props.row.original.destinationTypedChainId].name
+        }
+        chainType={
+          chainsConfig[props.row.original.destinationTypedChainId].group
+        }
       />
     ),
-  }),
-  columnHelper.accessor('recipient', {
+  },
+  {
+    accessorKey: 'recipient',
     header: 'Recipient',
     cell: (props) => {
       const { recipient, destinationTypedChainId } = props.row.original;
@@ -99,15 +109,7 @@ const allColumns = [
         </div>
       );
     },
-  }),
-  columnHelper.accessor('timestamp', {
-    header: () => <p className="text-end !text-inherit">Time</p>,
-    cell: (props) => (
-      <Typography variant="body1" className="whitespace-nowrap" ta="right">
-        {getTimeDetailByEpoch(props.getValue())}
-      </Typography>
-    ),
-  }),
+  },
 ];
 
 const TxTableContainer: FC<TxTableContainerProps> = ({
@@ -115,18 +117,59 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
   pageSize,
   hideRecipientCol = false,
   className,
+  allowSorting = true,
 }) => {
   const navigate = useNavigate();
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: 'timestamp',
+      desc: true,
+    },
+  ]);
 
-  const columns = useMemo(
-    () =>
-      hideRecipientCol
-        ? allColumns.filter((col) => {
-            return col.header !== 'Recipient';
-          })
-        : allColumns,
-    [hideRecipientCol]
-  );
+  const columns = useMemo<ColumnDef<TxTableItemType>[]>(() => {
+    const displayStaticColumns = hideRecipientCol
+      ? staticColumns.filter((col) => col.header !== 'Recipient')
+      : staticColumns;
+    return [
+      ...displayStaticColumns,
+      {
+        accessorKey: 'timestamp',
+        header: (header) => {
+          const sortingState = header.column.getIsSorted();
+          return (
+            <div
+              className="!text-inherit flex items-center justify-end gap-1 cursor-pointer"
+              onClick={() => {
+                if (!allowSorting) return;
+                setSorting([
+                  {
+                    id: header.column.id,
+                    desc: sortingState === 'asc' ? true : false,
+                  },
+                ]);
+              }}
+            >
+              <p className="!text-inherit">Time</p>
+              {allowSorting && sortingState && (
+                <ArrowLeft
+                  className={twMerge(
+                    '!fill-mono-140 dark:!fill-mono-60',
+                    sortingState === 'asc' ? 'rotate-90' : '-rotate-90'
+                  )}
+                />
+              )}
+            </div>
+          );
+        },
+        cell: (props) => (
+          <Typography variant="body1" className="whitespace-nowrap" ta="right">
+            {getTimeDetailByEpoch(props.row.original.timestamp)}
+          </Typography>
+        ),
+      },
+    ];
+  }, [hideRecipientCol, allowSorting, setSorting]);
 
   const onRowClick = useCallback(
     (row: Row<TxTableItemType>) => {
@@ -143,14 +186,19 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
         pageSize,
       },
     },
+    state: {
+      sorting,
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
     globalFilterFn: fuzzyFilter,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    enableSortingRemoval: false,
   });
 
   return (

@@ -14,4 +14,5 @@ export interface TxTableContainerProps {
   pageSize: number;
   hideRecipientCol?: boolean;
   className?: string;
+  allowSorting?: boolean;
 }
