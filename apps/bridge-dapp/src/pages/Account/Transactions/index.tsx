@@ -1,12 +1,14 @@
-import { type FC } from 'react';
+import { type FC, useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { DeleteBinIcon } from '@webb-tools/icons';
 
-import TxTableContainer from '../../../containers/TxTableContainer';
-import { TxTableItemType } from '../../../containers/TxTableContainer/types';
 import ActionsDropdown from '../../../components/ActionsDropdown';
+import ClearTxHistoryModal from '../../../containers/ClearTxHistoryModal';
 import HiddenValueEye from '../../../components/HiddenValueEye';
 import NoTx from '../NoTx';
+import TxTableContainer from '../../../containers/TxTableContainer';
+import { TxTableItemType } from '../../../containers/TxTableContainer/types';
 
 import { randNumber, randEthereumAddress } from '@ngneat/falso';
 const fakeTxData: TxTableItemType[] = [
@@ -50,6 +52,9 @@ const AccountTransactions: FC = () => {
     ...fakeTxData,
   ];
 
+  const { clearTxModalOpen, setClearTxModalOpen, openClearTxModal } =
+    useNoteUploadModalProps();
+
   return (
     <>
       <div className="space-y-4">
@@ -60,7 +65,16 @@ const AccountTransactions: FC = () => {
             </Typography>
             <HiddenValueEye />
           </div>
-          <ActionsDropdown buttonText="Manage" actionItems={[]} />
+          <ActionsDropdown
+            buttonText="Manage"
+            actionItems={[
+              {
+                label: 'Delete',
+                icon: <DeleteBinIcon size="lg" />,
+                onClick: openClearTxModal,
+              },
+            ]}
+          />
         </div>
 
         {txData.length > 0 ? (
@@ -70,9 +84,30 @@ const AccountTransactions: FC = () => {
         )}
       </div>
 
+      <ClearTxHistoryModal
+        isOpen={clearTxModalOpen}
+        setIsOpen={setClearTxModalOpen}
+      />
+
       <Outlet />
     </>
   );
 };
 
 export default AccountTransactions;
+
+/** @internal */
+function useNoteUploadModalProps() {
+  // Upload modal state
+  const [clearTxModalOpen, setClearTxModalOpen] = useState(false);
+
+  const openClearTxModal = useCallback(() => {
+    setClearTxModalOpen(true);
+  }, []);
+
+  return {
+    clearTxModalOpen,
+    setClearTxModalOpen,
+    openClearTxModal,
+  };
+}

@@ -1,3 +1,4 @@
+export { default as ClearTxHistoryModal } from './ClearTxHistoryModal';
 export * from './CreateAccountModal';
 export * from './DeleteNotesModal';
 export { default as DepositConfirmContainer } from './DepositConfirmContainer';

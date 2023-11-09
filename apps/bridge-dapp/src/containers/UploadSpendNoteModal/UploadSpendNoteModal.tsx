@@ -32,7 +32,7 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
 
   const { addNoteToNoteManager } = useVAnchor();
 
-  // Handle save uploaded notes funciton
+  // Handle save uploaded notes function
   const handleSave = useCallback(async () => {
     try {
       setSaving(true);
