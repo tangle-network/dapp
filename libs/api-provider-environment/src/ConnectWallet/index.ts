@@ -1,9 +1,6 @@
-import {
-  useActiveChain,
-  useActiveWallet,
-} from '@webb-tools/api-provider-environment/WebbProvider/subjects';
-import getDefaultAccount from '@webb-tools/api-provider-environment/utils/getDefaultAccount';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { useActiveChain, useActiveWallet } from '../WebbProvider/subjects';
+import getDefaultAccount from '../utils/getDefaultAccount';
+import { useWebContext } from '../webb-context/webb-context';
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
