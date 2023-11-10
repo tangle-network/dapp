@@ -40,6 +40,8 @@ import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
 import ChainButton from './ChainButton';
+import { ACTION_BUTTON_PROPS } from '../../constants';
+import { ConnectWalletMobileContent } from '../ConnectWalletMobileContent';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -103,7 +105,12 @@ export const Header: FC<HeaderProps> = () => {
             <ChainButton />
             {isConnecting || loading || !activeWallet || !activeAccount ? (
               isMobile ? (
-                <ConnectWalletMobileButton />
+                <ConnectWalletMobileButton
+                  title="Try Hubble on Desktop"
+                  extraActionButtons={ACTION_BUTTON_PROPS}
+                >
+                  <ConnectWalletMobileContent />
+                </ConnectWalletMobileButton>
               ) : (
                 <Button
                   isLoading={loading}

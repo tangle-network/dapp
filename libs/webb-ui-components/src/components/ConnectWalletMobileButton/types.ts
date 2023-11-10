@@ -2,7 +2,8 @@ import { ButtonProps } from '../buttons/types';
 import { IWebbComponentBase } from '../../types';
 
 export type MobileButtonProps = {
-  appType?: 'bridge-dapp' | 'tangle-dapp';
+  title?: string;
+  extraActionButtons?: Array<ButtonProps>;
 };
 
 export interface ConnectWalletMobileButtonProps

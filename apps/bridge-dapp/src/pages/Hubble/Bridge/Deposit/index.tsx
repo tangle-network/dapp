@@ -18,11 +18,13 @@ import {
   SELECT_SHIELDED_POOL_PATH,
   SELECT_SOURCE_CHAIN_PATH,
   SELECT_TOKEN_PATH,
+  ACTION_BUTTON_PROPS,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDepositButtonProps from './private/useDepositButtonProps';
 import useWatchSearchParams from './private/useWatchSearchParams';
+import { ConnectWalletMobileContent } from '../../../../components';
 
 const Deposit = () => {
   const navigate = useNavigateWithPersistParams();
@@ -159,7 +161,13 @@ const Deposit = () => {
           {!isMobile ? (
             <Button isFullWidth {...depositBtnProps} />
           ) : (
-            <ConnectWalletMobileButton isFullWidth />
+            <ConnectWalletMobileButton
+              title="Try Hubble on Desktop"
+              extraActionButtons={ACTION_BUTTON_PROPS}
+              isFullWidth
+            >
+              <ConnectWalletMobileContent />
+            </ConnectWalletMobileButton>
           )}
         </div>
       </div>
