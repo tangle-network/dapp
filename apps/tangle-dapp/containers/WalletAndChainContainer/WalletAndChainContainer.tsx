@@ -1,6 +1,9 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useConnectWallet,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
   Button,
@@ -10,7 +13,6 @@ import {
 import { FC } from 'react';
 
 import { ChainSelector, WalletDropdown } from '../../components';
-import { useConnectWallet } from '../../hooks/useConnectWallet';
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =

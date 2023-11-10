@@ -1,11 +1,13 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useCurrentTypedChainId from '@webb-tools/react-hooks/useCurrentTypedChainId';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import { useCallback, useMemo } from 'react';
 import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../constants';
-import { useConnectWallet } from './useConnectWallet';
 import useNavigateWithPersistParams from './useNavigateWithPersistParams';
 
 function useConnectButtonProps(typedChainId?: number | null) {

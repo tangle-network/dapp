@@ -1,6 +1,9 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useConnectWallet,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import {
@@ -10,8 +13,6 @@ import {
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-
-import { useConnectWallet } from '../../hooks';
 
 export const WalletModal: FC = () => {
   const {
