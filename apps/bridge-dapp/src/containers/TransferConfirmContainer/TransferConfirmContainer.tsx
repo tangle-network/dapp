@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   NewNotesTxResult,
   OptionalActiveRelayer,
@@ -94,7 +95,7 @@ const TransferConfirmContainer = forwardRef<
 
     const srcTypedChainId = useMemo(
       () => calculateTypedChainId(activeChain!.chainType, activeChain!.id),
-      []
+      [activeChain]
     );
 
     const targetChainId = useMemo(
