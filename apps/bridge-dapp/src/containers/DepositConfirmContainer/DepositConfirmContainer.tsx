@@ -4,17 +4,16 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import { GasStationFill } from '@webb-tools/icons';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
-import { handleStoreNote } from '../../utils';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { GasStationFill } from '@webb-tools/icons';
 import { useVAnchor } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { isViemError } from '@webb-tools/web3-api-provider';
-import { FeeDetails, DepositConfirm } from '@webb-tools/webb-ui-components';
+import { DepositConfirm, FeeDetails } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { ContractFunctionRevertedError, formatUnits, formatEther } from 'viem';
+import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
@@ -23,6 +22,7 @@ import {
   getTokenURI,
   getTransactionHash,
   handleMutateNoteIndex,
+  handleStoreNote,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
 
