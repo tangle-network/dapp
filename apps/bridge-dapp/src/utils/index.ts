@@ -1,5 +1,6 @@
 export * from './captureSentryException';
 export * from './downloadNotes';
+export * from './downloadTxHistory';
 export * from './errors';
 export { default as formatDateTimeByTimestamp } from './formatDateTimeByTimestamp';
 export * from './getCardTitle';

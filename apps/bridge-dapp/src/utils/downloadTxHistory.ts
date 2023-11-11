@@ -4,8 +4,9 @@ export type DownloadTxType = {
   hash: string;
   activity: 'deposit' | 'transfer' | 'withdraw';
   amount: string | number;
-  noteAccountAddress: string;
-  walletAddress: string | null;
+  from: string;
+  to: string;
+  blockExplorerUrl: string | null;
   fungibleTokenSymbol: string;
   wrappableTokenSymbol: string | null;
   timestamp: number;
@@ -13,8 +14,6 @@ export type DownloadTxType = {
   relayerFees: string | number | null;
   inputNoteSerializations: string[] | null;
   outputNoteSerializations: string[] | null;
-  sourceTypedChainId: number | null;
-  destinationTypedChainId: number | null;
 };
 
 /**
@@ -22,11 +21,11 @@ export type DownloadTxType = {
  * @param notes the notes to download
  * @returns boolean - true if the download was successful
  */
-export const downloadTxHistory = (transactions: DownloadTxType[]): boolean => {
+const downloadTxHistory = (transactions: DownloadTxType[]): boolean => {
   try {
     downloadString(
       JSON.stringify(transactions),
-      `notes-${Date.now()}.json`,
+      `txHistory-${Date.now()}.json`,
       '.json'
     );
     return true;
@@ -35,3 +34,5 @@ export const downloadTxHistory = (transactions: DownloadTxType[]): boolean => {
     return false;
   }
 };
+
+export default downloadTxHistory;
