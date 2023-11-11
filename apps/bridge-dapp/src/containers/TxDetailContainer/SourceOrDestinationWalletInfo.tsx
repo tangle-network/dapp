@@ -14,7 +14,8 @@ const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
   typedChainId,
   walletAddress,
   amount,
-  tokenSymbol,
+  fungibleTokenSymbol,
+  wrappableTokenSymbol,
 }) => {
   return (
     <SectionWrapper>
@@ -27,13 +28,13 @@ const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
             chainName={chainsConfig[typedChainId].name}
             chainType={chainsConfig[typedChainId].group}
           />
-          <AddressChip address={walletAddress} />
+          <AddressChip address={walletAddress ?? ''} />
         </div>
       </div>
       <NoteOrAmountWrapper className="flex justify-between items-center">
         <Typography variant="body2">Amount</Typography>
         <Typography variant="body2" fw="bold">
-          {`${amount} ${tokenSymbol}`}
+          {`${amount} ${wrappableTokenSymbol ?? fungibleTokenSymbol}`}
         </Typography>
       </NoteOrAmountWrapper>
     </SectionWrapper>

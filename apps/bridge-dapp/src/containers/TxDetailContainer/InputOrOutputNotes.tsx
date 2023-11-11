@@ -15,10 +15,10 @@ import { InputOrOutputNotesProps } from './types';
 const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
   activity,
   type,
-  typedChainId,
-  accAddress,
   notes,
-  tokenSymbol,
+  noteAccountAddress,
+  fungibleTokenSymbol,
+  typedChainId,
 }) => {
   return (
     <SectionWrapper>
@@ -27,15 +27,18 @@ const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
           {type === 'input' ? 'Source' : 'Destination'}
         </Typography>
         <div className="flex items-center gap-2">
-          <ChainChip
-            chainName={chainsConfig[typedChainId].name}
-            chainType={chainsConfig[typedChainId].group}
-          />
-          <AddressChip address={accAddress} isNoteAccount />
+          {typedChainId && (
+            <ChainChip
+              chainName={chainsConfig[typedChainId].name}
+              chainType={chainsConfig[typedChainId].group}
+            />
+          )}
+          <AddressChip address={noteAccountAddress} isNoteAccount />
         </div>
       </div>
       {notes.map((note) => {
-        const { amount, serialization } = note;
+        const amount = note.note.amount;
+        const serialization = note.serialize();
         const shortenNoteSerialization = `${serialization
           .split('')
           .slice(0, 14)
@@ -54,7 +57,7 @@ const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
 
             <div className="flex justify-end items-center gap-1">
               <Typography variant="body2" fw="semibold">
-                {amount} {tokenSymbol}
+                {amount} {fungibleTokenSymbol}
               </Typography>
               <ArrowBadge activity={activity} type={type} />
             </div>

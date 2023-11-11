@@ -1,7 +1,7 @@
 import { type FC, useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { DeleteBinIcon, UploadLine } from '@webb-tools/icons';
+import { DeleteBinIcon, UploadLine, Download } from '@webb-tools/icons';
 
 import ActionsDropdown from '../../../components/ActionsDropdown';
 import ClearTxHistoryModal from '../../../containers/ClearTxHistoryModal';
@@ -58,6 +58,8 @@ const AccountTransactions: FC = () => {
   const { clearTxModalOpen, setClearTxModalOpen, openClearTxModal } =
     useClearTxModal();
 
+  const handleDownloadHistory = useCallback(() => {}, []);
+
   return (
     <>
       <div className="space-y-4">
@@ -90,6 +92,19 @@ const AccountTransactions: FC = () => {
         ) : (
           <NoTx />
         )}
+
+        <div
+          className="flex justify-end items-center gap-0.5 cursor-pointer"
+          onClick={handleDownloadHistory}
+        >
+          <Typography
+            variant="body1"
+            className="text-mono-100 dark:text-mono-60 hover:underline"
+          >
+            [Download JSON Export]
+          </Typography>
+          <Download className="fill-mono-100 dark:fill-mono-60" />
+        </div>
       </div>
 
       <UploadTxHistoryModal

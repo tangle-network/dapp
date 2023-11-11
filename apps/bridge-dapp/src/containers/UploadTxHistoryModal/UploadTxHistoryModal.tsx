@@ -29,6 +29,7 @@ const UploadTxHistoryModal: FC<{
 
   const closeModal = useCallback(() => {
     setIsOpen(false);
+    setFile(undefined);
   }, [setIsOpen]);
 
   return (

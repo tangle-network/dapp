@@ -10,40 +10,47 @@ import type { TxBasicInfoProps } from './types';
 import { formatDateTimeByTimestamp } from '../../utils';
 
 const TxBasicInfo: FC<TxBasicInfoProps> = ({
+  hash,
   amount,
-  tokenSymbol,
-  txHash,
+  fungibleTokenSymbol,
+  wrappableTokenSymbol,
   timestamp,
-  relayerInfo,
+  relayerName,
+  relayerFeeAmount,
 }) => {
   return (
     <SectionWrapper>
-      <TxBasicInfoItem label="Amount" value={`${amount} ${tokenSymbol}`} />
+      <TxBasicInfoItem
+        label="Amount"
+        value={`${amount} ${wrappableTokenSymbol ?? fungibleTokenSymbol}`}
+      />
 
-      {/* Relayer */}
-      {relayerInfo && (
-        <>
-          <TxBasicInfoItem
-            label="Relayer fee"
-            value={`${relayerInfo.amount} ${relayerInfo.tokenSymbol}`}
-          />
-          <TxBasicInfoItem
-            label="Relayer"
-            value={
-              <div className="flex items-center gap-1 !text-inherit">
-                {relayerInfo.name}
-                <CopyWithTooltip
-                  textToCopy={relayerInfo.name}
-                  isButton={false}
-                  className="text-mono-160 dark:text-mono-80"
-                />
-              </div>
-            }
-          />
-        </>
+      {/* Relayer Fees */}
+      {relayerFeeAmount && (
+        <TxBasicInfoItem
+          label="Relayer fee"
+          value={`${relayerFeeAmount} ${fungibleTokenSymbol}`}
+        />
       )}
 
-      <TxBasicInfoItem label="Tx hash" value={shortenHex(txHash, 5)} />
+      {/* Relayer Name */}
+      {relayerName && (
+        <TxBasicInfoItem
+          label="Relayer"
+          value={
+            <div className="flex items-center gap-1 !text-inherit">
+              {relayerName}
+              <CopyWithTooltip
+                textToCopy={relayerName}
+                isButton={false}
+                className="text-mono-160 dark:text-mono-80"
+              />
+            </div>
+          }
+        />
+      )}
+
+      <TxBasicInfoItem label="Tx hash" value={shortenHex(hash, 5)} />
       <TxBasicInfoItem
         label="Time (UTC)"
         value={formatDateTimeByTimestamp(timestamp)}
