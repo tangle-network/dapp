@@ -1,4 +1,4 @@
-import { Button, MenuItem } from '@webb-tools/webb-ui-components';
+import { Button } from '@webb-tools/webb-ui-components';
 import { ComponentProps } from 'react';
 export interface EmptyTableProps {
   /**

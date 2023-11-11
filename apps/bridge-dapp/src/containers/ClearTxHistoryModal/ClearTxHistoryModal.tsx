@@ -67,7 +67,12 @@ const ClearTxHistoryModal: FC<{
 
         <ModalFooter>
           {/* TODO: update onClick */}
-          <Button isFullWidth onClick={() => {}}>
+          <Button
+            isFullWidth
+            onClick={() => {
+              return;
+            }}
+          >
             Download
           </Button>
           <Button
@@ -75,7 +80,9 @@ const ClearTxHistoryModal: FC<{
             variant="secondary"
             isFullWidth
             // TODO: update onClick
-            onClick={() => {}}
+            onClick={() => {
+              return;
+            }}
           >
             Delete Notes
           </Button>

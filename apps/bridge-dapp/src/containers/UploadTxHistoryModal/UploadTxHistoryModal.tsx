@@ -87,7 +87,13 @@ const UploadTxHistoryModal: FC<{
 
         <ModalFooter>
           {/* TODO: update onClick */}
-          <Button isDisabled={!file} isFullWidth onClick={() => {}}>
+          <Button
+            isDisabled={!file}
+            isFullWidth
+            onClick={() => {
+              return;
+            }}
+          >
             Upload
           </Button>
         </ModalFooter>
