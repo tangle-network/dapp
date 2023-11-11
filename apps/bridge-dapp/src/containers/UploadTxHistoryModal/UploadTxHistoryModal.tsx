@@ -45,7 +45,7 @@ const UploadTxHistoryModal: FC<{
         </ModalHeader>
 
         <div className="px-8 py-4 space-y-8">
-          <FileUploadArea onDrop={handleUpload} acceptType="csv" />
+          <FileUploadArea onDrop={handleUpload} acceptType="json" />
           {!!file && (
             <div className="space-y-2">
               <FileUploadList>
