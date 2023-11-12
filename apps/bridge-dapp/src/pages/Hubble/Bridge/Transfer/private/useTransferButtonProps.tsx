@@ -359,6 +359,10 @@ function useTransferButtonProps({
               index: actualApi.state.defaultUtxoIndex.toString(),
             });
 
+        if (!activeChain) {
+          throw new Error('Active chain not found');
+        }
+
         setTransferConfirmComponent(
           <TransferConfirmContainer
             inputNotes={inputNotes}
@@ -390,6 +394,7 @@ function useTransferButtonProps({
             refundAmount={refundAmount}
             refundToken={refundToken}
             refundRecipient={refundRecipient ?? ''} // Already checked in `allInputsFilled`
+            activeChain={activeChain}
           />
         );
       } catch (error) {
@@ -397,7 +402,7 @@ function useTransferButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei]
+    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, activeChain]
   );
 
   return {

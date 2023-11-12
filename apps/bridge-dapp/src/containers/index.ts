@@ -6,3 +6,4 @@ export { default as TransferConfirmContainer } from './TransferConfirmContainer'
 export { default as TxInfoContainer } from './TxInfoContainer';
 export * from './UploadSpendNoteModal';
 export { default as WithdrawConfirmContainer } from './WithdrawConfirmContainer';
+export * from './WalletModalContainer';

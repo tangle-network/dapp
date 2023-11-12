@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   NewNotesTxResult,
   OptionalActiveRelayer,
@@ -57,6 +56,7 @@ const TransferConfirmContainer = forwardRef<
       destChain,
       recipient,
       relayer,
+      activeChain,
       note: changeNote,
       changeUtxo,
       transferUtxo,
@@ -75,7 +75,7 @@ const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const { apiConfig, activeApi, activeChain, noteManager } = useWebContext();
+    const { apiConfig, activeApi, noteManager } = useWebContext();
 
     const { balances } = useBalancesFromNotes();
 
@@ -94,7 +94,7 @@ const TransferConfirmContainer = forwardRef<
     );
 
     const srcTypedChainId = useMemo(
-      () => calculateTypedChainId(activeChain!.chainType, activeChain!.id),
+      () => calculateTypedChainId(activeChain.chainType, activeChain.id),
       [activeChain]
     );
 

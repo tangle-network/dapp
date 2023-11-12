@@ -7,4 +7,3 @@ export * from './sideBar';
 export * from './skeleton';
 export * from './ValidatorTable';
 export * from './WalletDropdown';
-export * from './WalletModal';

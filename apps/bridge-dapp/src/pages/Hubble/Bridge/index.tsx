@@ -15,7 +15,7 @@ import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { InteractiveFeedbackView, WalletModal } from '../../../components';
+import { InteractiveFeedbackView } from '../../../components';
 import { FilterButton, ManageButton } from '../../../components/tables';
 import {
   CreateAccountModal,
@@ -34,6 +34,7 @@ import {
 } from '../../../hooks';
 import { BridgeTabType } from '../../../types';
 import { downloadNotes } from '../../../utils';
+import { WalletModalContainer } from '../../../containers';
 
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
@@ -267,7 +268,7 @@ const Bridge: FC = () => {
         setNotes={(notes) => setDeleteNotes(notes)}
       />
 
-      <WalletModal />
+      <WalletModalContainer />
 
       <CreateAccountModal
         isOpen={isOpenNoteAccountModal}

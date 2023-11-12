@@ -2,13 +2,9 @@ import { Footer } from '@webb-tools/webb-ui-components';
 import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 import React, { type FC, type PropsWithChildren } from 'react';
 
-import {
-  Breadcrumbs,
-  SideBar,
-  SideBarMenu,
-  WalletModal,
-} from '../../components';
+import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 import WalletAndChainCointainer from '../WalletAndChainContainer/WalletAndChainContainer';
+import { WalletModalContainer } from '../WalletModalContainer';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
@@ -31,7 +27,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
           {children}
 
-          <WalletModal />
+          <WalletModalContainer />
         </div>
 
         <Footer isMinimal className="py-8" />
