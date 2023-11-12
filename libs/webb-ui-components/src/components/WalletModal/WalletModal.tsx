@@ -125,25 +125,27 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
     );
 
     return (
-      <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
-        <ModalContent
-          onCloseAutoFocus={handleCloseAutoFocus}
-          isOpen={isModalOpen}
-          isCenter
-        >
-          <WalletConnectionCard
-            wallets={supportedWallets}
-            onWalletSelect={(nextWallet) => connectWallet(nextWallet)}
-            onClose={() => toggleModal(false)}
-            connectingWalletId={connectingWalletId}
-            errorBtnText={errorBtnText}
-            errorMessage={errorMessage}
-            failedWalletId={failedWalletId}
-            onTryAgainBtnClick={handleTryAgainBtnClick}
-            downloadWalletURL={downloadURL}
-          />
-        </ModalContent>
-      </Modal>
+      <div ref={ref} {...props}>
+        <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+          <ModalContent
+            onCloseAutoFocus={handleCloseAutoFocus}
+            isOpen={isModalOpen}
+            isCenter
+          >
+            <WalletConnectionCard
+              wallets={supportedWallets}
+              onWalletSelect={(nextWallet) => connectWallet(nextWallet)}
+              onClose={() => toggleModal(false)}
+              connectingWalletId={connectingWalletId}
+              errorBtnText={errorBtnText}
+              errorMessage={errorMessage}
+              failedWalletId={failedWalletId}
+              onTryAgainBtnClick={handleTryAgainBtnClick}
+              downloadWalletURL={downloadURL}
+            />
+          </ModalContent>
+        </Modal>
+      </div>
     );
   }
 );
