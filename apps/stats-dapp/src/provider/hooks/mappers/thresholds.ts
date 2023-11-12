@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   ThresholdValueElementFragment,
   ThresholdValueFragment,
@@ -13,7 +12,7 @@ export function thresholdMap(
   thresholds.nodes
     .filter((i) => Boolean(i))
     .forEach((element) => {
-      const threshold = element!;
+      const threshold = element as any;
       map[threshold.variant] = {
         pending: threshold.pending,
         next: threshold.pending,

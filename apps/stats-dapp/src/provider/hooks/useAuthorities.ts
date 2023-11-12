@@ -532,7 +532,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const sessionValidators = res.data.sessionValidators;
           const counter = sessionValidators?.aggregates?.distinctCount
             ?.id as number;
-          const session = sessionValidator.session!;
+          const session = sessionValidator.session as any;
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
 
@@ -611,8 +611,8 @@ export function useSessionHistory(
       .map((res): Loadable<Page<SessionThresholdEntry>> => {
         if (res.data.sessions) {
           const items: SessionThresholdEntry[] = res.data.sessions.nodes.map(
-            (node) => {
-              const thresholds = thresholdMap(node!.thresholds);
+            (node: any) => {
+              const thresholds = thresholdMap(node.thresholds);
               const keyGen = thresholds.KEY_GEN;
               const signature = thresholds.SIGNATURE;
 
