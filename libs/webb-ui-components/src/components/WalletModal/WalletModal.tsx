@@ -2,12 +2,9 @@
 
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import {
-  Modal,
-  ModalContent,
-  WalletConnectionCard,
-} from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo } from 'react';
+import { Modal, ModalContent } from '../Modal';
+import { WalletConnectionCard } from '../WalletConnectionCard';
 import { WalletModalProps } from './types';
 
 export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
