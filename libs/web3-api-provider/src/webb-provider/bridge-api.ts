@@ -14,7 +14,6 @@ import {
   CurrencyType,
   checkNativeAddress,
 } from '@webb-tools/dapp-types';
-import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import { getContract } from 'viem';
 import { WebbWeb3Provider } from '../webb-provider';
 

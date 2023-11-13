@@ -8,6 +8,7 @@ import {
   resetMultiAccountNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import Storage from '@webb-tools/dapp-types/Storage';
 import {
   CircomUtxo,
@@ -60,7 +61,7 @@ export class NoteManager {
   static #abortController = new AbortController();
 
   // The default note generation input
-  static readonly defaultNoteGenInput: DefaultNoteGenInput = {
+  static readonly defaultNoteGenInput = {
     curve: 'Bn254',
     denomination: '18',
     exponentiation: '5',
@@ -69,7 +70,7 @@ export class NoteManager {
     version: 'v1',
     width: '5',
     index: 0,
-  };
+  } as const satisfies DefaultNoteGenInput;
 
   private constructor(
     private multiAccountNoteStorage: Storage<MultiAccountNoteStorage>,
@@ -219,7 +220,7 @@ export class NoteManager {
                 return null;
               }
             })
-            .filter((note) => Boolean(note));
+            .filter((note): note is string => Boolean(note));
 
           const notes: Note[] = [];
 
@@ -296,7 +297,7 @@ export class NoteManager {
     this.isSyncingNoteSubject.next(value);
   }
 
-  get defaultNoteGenInput(): DefaultNoteGenInput {
+  get defaultNoteGenInput() {
     return NoteManager.defaultNoteGenInput;
   }
 
@@ -379,7 +380,9 @@ export class NoteManager {
       this.notesMap.set(resourceIdStr, [note]);
     } else {
       const newTargetNotes = addNoteWithoutDuplicates(targetNotes, note);
-      this.notesMap.set(resourceIdStr, newTargetNotes);
+      if (newTargetNotes) {
+        this.notesMap.set(resourceIdStr, newTargetNotes);
+      }
     }
 
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
@@ -450,10 +453,12 @@ export class NoteManager {
 
   /**
    * Generate a note
+   * @param backend The backend - either 'Arkworks' or 'Circom'
    * @param sourceTypedChainId The source typed chain id
+   * @param sourceAnchorAddress The source anchor address
    * @param destTypedChainId The destination typed chain id
+   * @param destAnchorAddress The destination anchor address
    * @param tokenSymbol The token symbol of the note
-   * @param tokenDecimals The token decimals of the note
    * @param amount The amount of the note
    * @returns The generated note
    */
@@ -464,9 +469,12 @@ export class NoteManager {
     destTypedChainId: number,
     destAnchorAddress: string,
     tokenSymbol: string,
-    tokenDecimals: number,
     amount: bigint
   ): Promise<Note> {
+    if (!this.keypair.privkey) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+
     const amountStr = amount.toString();
 
     const input: UtxoGenInput = {

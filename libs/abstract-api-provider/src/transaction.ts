@@ -173,7 +173,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
       [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
     >([TransactionState.Ideal, undefined]);
 
-    const exec: PromiseExec<T> = (resolve, reject) => {
+    const exec: PromiseExec<T> = (resolve) => {
       status
         .forEach(([state, data]) => {
           if (state === TransactionState.Done) {

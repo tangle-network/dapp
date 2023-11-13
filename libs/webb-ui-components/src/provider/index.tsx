@@ -1,3 +1,5 @@
+'use client';
+
 import { noop } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { createContext, useCallback, useMemo, useState } from 'react';

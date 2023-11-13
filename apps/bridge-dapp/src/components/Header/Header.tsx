@@ -1,4 +1,7 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import { ContrastTwoLine, WebbLogoIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
@@ -33,11 +36,12 @@ import {
 import { NavLink, useLocation } from 'react-router-dom';
 import sidebarProps from '../../constants/sidebar';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../hooks/useConnectWallet';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
 import ChainButton from './ChainButton';
+import { ACTION_BUTTON_PROPS } from '../../constants';
+import { ConnectWalletMobileContent } from '../ConnectWalletMobileContent';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -101,7 +105,12 @@ export const Header: FC<HeaderProps> = () => {
             <ChainButton />
             {isConnecting || loading || !activeWallet || !activeAccount ? (
               isMobile ? (
-                <ConnectWalletMobileButton />
+                <ConnectWalletMobileButton
+                  title="Try Hubble on Desktop"
+                  extraActionButtons={ACTION_BUTTON_PROPS}
+                >
+                  <ConnectWalletMobileContent />
+                </ConnectWalletMobileButton>
               ) : (
                 <Button
                   isLoading={loading}

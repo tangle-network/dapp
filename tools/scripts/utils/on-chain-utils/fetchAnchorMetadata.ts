@@ -177,7 +177,12 @@ async function fetchEVMAnchorMetadata(
             contract.read.decimals(),
           ]);
         })
-      ).then((res) => res.reduce((acc, val) => acc.concat(...val), [])));
+      ).then((res) =>
+        res.reduce(
+          (acc, val) => acc.concat(...val.map((v) => v.toString())),
+          [] as string[]
+        )
+      ));
 
   assert.strictEqual(res.length % 3, 0, 'Result length is not a multiple of 3');
   assert.strictEqual(
@@ -186,7 +191,7 @@ async function fetchEVMAnchorMetadata(
     'Invalid wrappable token metadata'
   );
 
-  const wrappableCurrencies = [];
+  const wrappableCurrencies: Array<ICurrency> = [];
   for (let i = 0; i < res.length; i += 3) {
     const name = res[i].toString();
     const symbol = res[i + 1].toString();

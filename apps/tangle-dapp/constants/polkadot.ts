@@ -63,6 +63,8 @@ export const formatTokenBalance = async (
 
     if (!api) return balance.toString();
 
+    if (balance.toString() === '0') return `0 ${TOKEN_UNIT}`;
+
     const chainDecimals = await api.registry.chainDecimals;
     const balanceFormatType = {
       decimals: chainDecimals[0],

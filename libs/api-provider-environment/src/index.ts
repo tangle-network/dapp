@@ -7,3 +7,4 @@ export * from './modal-queue-manager';
 export * from './store';
 export * from './transaction';
 export * from './webb-context';
+export * from './ConnectWallet';

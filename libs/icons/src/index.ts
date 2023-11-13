@@ -29,6 +29,7 @@ export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
+export * from './ComputerIcon';
 export * from './ContrastLine';
 export * from './ContrastTwoLine';
 export * from './CopyLinkFill';

@@ -1,11 +1,11 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 
-import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
 import { Metadata } from 'next';
 import type React from 'react';
 
 import { Layout } from '../containers';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -49,9 +49,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex h-screen bg-body">
-        <NextThemeProvider>
+        <Providers>
           <Layout>{children}</Layout>
-        </NextThemeProvider>
+        </Providers>
       </body>
     </html>
   );

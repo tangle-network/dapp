@@ -1,5 +1,8 @@
-import type { FC, PropsWithChildren } from 'react';
+'use client';
+
 import { motion } from 'framer-motion';
+import noop from 'lodash/noop';
+import type { FC, PropsWithChildren } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import ModalQueueManagerContext, {
   ModalQueueItem,
@@ -79,17 +82,13 @@ export default ModalQueueManagerProvider;
  * it must be used in the context of a modal queue manager
  * @param modal The modal to enqueue
  */
-let enqueueModal = (modal: ModalQueueItem) => {
-  return;
-};
+let enqueueModal: (modal: ModalQueueItem) => void = noop;
 
 /**
  * Utility function to dequeue a modal
  * it must be used in the context of a modal queue manager
  * @returns The first modal in the queue
  */
-let dequeueModal = () => {
-  return;
-};
+let dequeueModal = noop;
 
 export { dequeueModal, enqueueModal };

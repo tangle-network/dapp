@@ -102,7 +102,7 @@ const DepositConfirmContainer = forwardRef<
       const balance = balances?.[fungibleTokenId]?.[destTypedChainId];
       if (!balance) return amount;
       return Number(formatEther(balance)) + amount;
-    }, [balances, fungibleTokenId, destTypedChainId, note, amount]);
+    }, [balances, fungibleTokenId, destTypedChainId, amount]);
 
     const poolAddress = useMemo(
       () => apiConfig.anchors[fungibleTokenId][destTypedChainId],

@@ -351,7 +351,6 @@ function useWithdrawButtonProps({
                 srcTypedChainId,
                 anchorId,
                 fungibleCfg.symbol,
-                fungibleDecimals,
                 changeAmount
               )
             : undefined;

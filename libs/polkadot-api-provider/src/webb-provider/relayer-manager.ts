@@ -110,8 +110,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
     return relayers;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getRelayersByNote(evmNote: Note) {
+  async getRelayersByNote(_evmNote: Note) {
     return Promise.resolve(
       this.getRelayers({
         baseOn: 'substrate',

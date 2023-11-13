@@ -21,7 +21,6 @@ const substrateProviderFactory = async (
   return executorWithTimeout(
     new Promise<ApiPromise>((res, rej) => {
       PolkadotProvider.getApiPromise(
-        '',
         Array.from(chain.rpcUrls.default.webSocket ?? []),
         (error) => {
           error.cancel();

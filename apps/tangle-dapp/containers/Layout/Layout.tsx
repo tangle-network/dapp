@@ -3,6 +3,8 @@ import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-u
 import React, { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+import WalletAndChainCointainer from '../WalletAndChainContainer/WalletAndChainContainer';
+import { WalletModalContainer } from '../WalletModalContainer';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
@@ -20,11 +22,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
               <Breadcrumbs />
             </div>
 
-            {/* Wallet Connection */}
-            <div></div>
+            <WalletAndChainCointainer />
           </div>
 
           {children}
+
+          <WalletModalContainer />
         </div>
 
         <Footer isMinimal className="py-8" />

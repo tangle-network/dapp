@@ -1,4 +1,7 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import { type ApiConfig } from '@webb-tools/dapp-config/api-config';
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
@@ -21,7 +24,6 @@ import {
   TOKEN_KEY,
 } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
