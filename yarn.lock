@@ -8546,12 +8546,12 @@
     prop-types "^15.7.2"
     ts-dedent "^2.0.0"
 
-"@storybook/addon-mdx-gfm@7.4.5":
-  version "7.4.5"
-  resolved "https://registry.yarnpkg.com/@storybook/addon-mdx-gfm/-/addon-mdx-gfm-7.4.5.tgz#9b1e677d81a8a7dcbb809d45a8cb17910fed1045"
-  integrity sha512-Yk4PSKRruGkvHvAZo7t+NlREsMr2PP7HV1I6qPI57aMJj7eo+UqyyC8UJAfnyOi6FRQD0l7nzwYzwSugPchDIg==
+"@storybook/addon-mdx-gfm@7.5.3":
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-mdx-gfm/-/addon-mdx-gfm-7.5.3.tgz#9e7a0e121575858539840a2c75f05269f370fc4f"
+  integrity sha512-ZZTqmw2DHBT2TDUmTYR9g+s+st1e375BhvALUvTODVwC49xBJRQU07tts9Tz+++v/wbc5t3y3tGxuMq9E39WJQ==
   dependencies:
-    "@storybook/node-logger" "7.4.5"
+    "@storybook/node-logger" "7.5.3"
     remark-gfm "^3.0.1"
     ts-dedent "^2.0.0"
 
