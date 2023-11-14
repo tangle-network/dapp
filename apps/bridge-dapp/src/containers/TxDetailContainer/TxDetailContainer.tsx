@@ -53,30 +53,36 @@ const TxDetailContainer: FC<TxDetailContainerProps> = ({
   }, [outputNoteSerializations]);
 
   const sourceTypedChainId = useMemo(() => {
-    // deposit
+    // if DEPOSIT, this will produce a new note
+    // the source chain will be the sourceChain that note
     if (activity === 'deposit') {
       return outputNotes.length > 0
         ? +outputNotes[0].note.sourceChainId
         : undefined;
     }
 
-    // withdraw & transfer
+    // if WITHDRAW or TRANSFER, there must be at least one input notes
+    // all input notes here have the same sourceChainId
+    // the source chain will be the targetChain from those input notes
     if (inputNotes.length === 0) return undefined;
-    return +inputNotes[0].note.targetChainId;
+    return +inputNotes[0].note.sourceChainId;
   }, [activity, inputNotes, outputNotes]);
 
   const destinationTypedChainId = useMemo(() => {
-    // deposit
+    // if DEPOSIT, this will produce a new note
+    // the source chain will be the targetChain that note
     if (activity === 'deposit') {
       return outputNotes.length > 0
         ? +outputNotes[0].note.targetChainId
         : undefined;
     }
 
-    // withdraw & transfer
-    if (outputNotes.length === 0) return undefined;
-    return +outputNotes[0].note.targetChainId;
-  }, [activity, outputNotes]);
+    // if WITHDRAW or TRANSFER, there must be at least one input notes
+    // all input notes here have the same targetChainId
+    // the source chain will be the targetChain from those input notes
+    if (inputNotes.length === 0) return undefined;
+    return +inputNotes[0].note.targetChainId;
+  }, [activity, inputNotes, outputNotes]);
 
   return (
     <div className="flex-1 p-9 space-y-9 overflow-y-auto">
