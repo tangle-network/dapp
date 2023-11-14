@@ -1,18 +1,26 @@
 import { FileUploadLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, type Accept } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { Button } from '../buttons';
-import { FileUploadAreaProps } from './types';
+import type { FileUploadAreaProps, AcceptFileType } from './types';
+
+const fileTypeMap: {
+  [key in AcceptFileType]: Accept;
+} = {
+  // Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+  json: { 'application/json': ['.json'] },
+  csv: { 'text/csv': ['.csv'] },
+};
 
 export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
   (
     {
       className,
       onDrop,
-      accept = { 'application/json': ['.json'] },
+      acceptType,
       maxSize = 1024 * 1024 * 50, // 50MB
       maxFiles = 1,
       ...props
@@ -21,7 +29,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
   ) => {
     const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
       noClick: true,
-      accept,
+      accept: acceptType ? fileTypeMap[acceptType] : undefined,
       maxSize,
       maxFiles,
       onDrop,
@@ -33,7 +41,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
         {...getRootProps({
           className: twMerge(
             cx(
-              'w-full rounded-lg max-w-[356px] h-[168px]',
+              'w-full rounded-lg aspect-[2/1]',
               isDragActive
                 ? 'bg-mono-20 dark:bg-mono-120'
                 : 'bg-mono-0 dark:bg-mono-160',
@@ -77,13 +85,17 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
             or drag and drop
           </Typography>
 
-          <Typography
-            ta="center"
-            className="text-mono-120 dark:text-mono-60"
-            variant="body3"
-          >
-            JSON only (maximum file size 50 MB)
-          </Typography>
+          {acceptType && (
+            <Typography
+              ta="center"
+              className="text-mono-120 dark:text-mono-60"
+              variant="body3"
+            >
+              {`${acceptType.toUpperCase()} only (maximum file size ${convertToFileSize(
+                maxSize
+              )})`}
+            </Typography>
+          )}
         </div>
 
         <input hidden {...getInputProps({ className: 'hidden' })} />
@@ -91,3 +103,26 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
     );
   }
 );
+
+/** @internal */
+/**
+ * Converts a number into a string representation of a file size.
+ *
+ * @param number - The number to convert.
+ * @returns The string representation of the file size.
+ */
+function convertToFileSize(number: number): string {
+  const suffixes: string[] = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let index: number = 0;
+
+  while (number >= 1024 && index < suffixes.length - 1) {
+    number /= 1024;
+    index++;
+  }
+
+  const formattedNumber: string =
+    number % 1 === 0 ? number.toFixed(0) : number.toFixed(2);
+  const formattedSuffix: string = index === 0 ? '' : suffixes[index];
+
+  return `${formattedNumber} ${formattedSuffix}`;
+}

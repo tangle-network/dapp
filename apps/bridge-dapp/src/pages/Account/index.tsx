@@ -1,11 +1,15 @@
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
+import { Download, UploadCloudIcon } from '@webb-tools/icons';
 import type { Note } from '@webb-tools/sdk-core';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
-import { useCallback, useMemo, useState } from 'react';
-import { FilterButton, ManageButton } from '../../components/tables';
+import { Typography, Button } from '@webb-tools/webb-ui-components';
+import { type FC, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { ActionsDropdown } from '../../components';
+import { FilterButton } from '../../components/tables';
 import ReceiveModal from '../../components/ReceiveModal';
 import { DeleteNotesModal } from '../../containers/DeleteNotesModal';
 import { UploadSpendNoteModal } from '../../containers/UploadSpendNoteModal';
@@ -14,15 +18,53 @@ import {
   SpendNotesTableContainer,
 } from '../../containers/note-account-tables';
 import type { NoteAccountTableContainerProps } from '../../containers/note-account-tables/types';
+import { TxTableContainer } from '../../containers';
+import { TxTableItemType } from '../../containers/TxTableContainer/types';
 import { useShieldedAssets } from '../../hooks/useShieldedAssets';
 import { useSpendNotes } from '../../hooks/useSpendNotes';
 import { downloadNotes } from '../../utils/downloadNotes';
 import AccountSummaryCard from './AccountSummaryCard';
+import NoTx from './NoTx';
+import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
+
+import { randNumber, randEthereumAddress } from '@ngneat/falso';
 
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
+const fakeTxData: TxTableItemType[] = [
+  {
+    txHash: randEthereumAddress(),
+    activity: 'transfer',
+    tokenAmount: '-0.01',
+    tokenSymbol: 'ETH',
+    sourceTypedChainId: 1099511627781,
+    destinationTypedChainId: 1099511670889,
+    recipient: randEthereumAddress(),
+    timestamp: randNumber({ min: 1699244791 - 4 * 86400, max: 1699244791 }),
+  },
+  {
+    txHash: randEthereumAddress(),
+    activity: 'withdraw',
+    tokenAmount: '-0.10',
+    tokenSymbol: 'ETH',
+    sourceTypedChainId: 1099511627781,
+    destinationTypedChainId: 1099511670889,
+    recipient: randEthereumAddress(),
+    timestamp: randNumber({ min: 1699244791 - 4 * 86400, max: 1699244791 }),
+  },
+  {
+    txHash: randEthereumAddress(),
+    activity: 'deposit',
+    tokenAmount: '+1.00',
+    tokenSymbol: 'WETH',
+    sourceTypedChainId: 1099511627781,
+    destinationTypedChainId: 1099511670889,
+    recipient: randEthereumAddress(),
+    timestamp: randNumber({ min: 1699244791 - 4 * 86400, max: 1699244791 }),
+  },
+];
 
-const Account = () => {
+const Account: FC = () => {
   const [activeTable, setActiveTable] = useState<
     typeof shieldedAssetsTab | typeof spendNotesTab
   >(shieldedAssetsTab);
@@ -45,6 +87,8 @@ const Account = () => {
   const destinationChains = useMemo(() => {
     return shieldedAssetsTableData.map((asset) => asset.chain);
   }, [shieldedAssetsTableData]);
+
+  const navigate = useNavigate();
 
   // download all notes
   const handleDownloadAllNotes = useCallback(async () => {
@@ -76,6 +120,9 @@ const Account = () => {
       [globalSearchText, openUploadModal]
     );
 
+  const txData = fakeTxData;
+  // const txData: TxTableItemType[] = [];
+
   if (!hasNoteAccount || !allNotesInitialized) {
     return null;
   }
@@ -83,8 +130,35 @@ const Account = () => {
   return (
     <>
       <div className="mx-auto space-y-4">
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col lg:!flex-row lg:items-end justify-between gap-6">
           <AccountSummaryCard />
+
+          <div className="flex-[1] flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <Typography variant="h5" fw="bold">
+                Recent Transactions
+              </Typography>
+              <Button
+                variant="utility"
+                size="sm"
+                isDisabled={txData.length === 0}
+                onClick={() => navigate(ACCOUNT_TRANSACTIONS_FULL_PATH)}
+              >
+                View all
+              </Button>
+            </div>
+
+            {txData.length > 0 ? (
+              <TxTableContainer
+                data={txData}
+                pageSize={3}
+                hideRecipientCol
+                allowSorting={false}
+              />
+            ) : (
+              <NoTx />
+            )}
+          </div>
         </div>
 
         <TableAndChartTabs
@@ -201,7 +275,21 @@ function RightButtonsContainer(
 
   return (
     <div className="items-center hidden space-x-2 md:flex">
-      <ManageButton onUpload={onUpload} onDownload={onDownloadAllNotes} />
+      <ActionsDropdown
+        buttonText="Manage"
+        actionItems={[
+          {
+            label: 'Upload',
+            icon: <UploadCloudIcon size="lg" />,
+            onClick: onUpload,
+          },
+          {
+            label: 'Download All',
+            icon: <Download size="lg" />,
+            onClick: onDownloadAllNotes,
+          },
+        ]}
+      />
       <FilterButton
         destinationChains={destChains}
         searchPlaceholder={

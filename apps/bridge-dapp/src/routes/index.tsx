@@ -8,6 +8,7 @@ import { HashRouter } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import {
+  ACCOUNT_TRANSACTIONS_PATH,
   BRIDGE_PATH,
   DEPOSIT_PATH,
   ECOSYSTEM_PATH,
@@ -33,6 +34,10 @@ import Withdraw from '../pages/Hubble/Bridge/Withdraw';
 const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
 const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
 const Account = lazy(() => import('../pages/Account'));
+const AccountTransactions = lazy(() => import('../pages/Account/Transactions'));
+const AccountTransactionDetail = lazy(
+  () => import('../pages/Account/Transactions/TransactionDetail')
+);
 const Ecosystem = lazy(() => import('../pages/Ecosystem'));
 
 const AppRoutes = () => {
@@ -134,16 +139,39 @@ const AppRoutes = () => {
                 }
               />
 
-              <Route
-                path={NOTE_ACCOUNT_PATH}
-                element={
-                  <CSuspense>
-                    <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
-                      <Account />
-                    </RequireNoteAccountRoute>
-                  </CSuspense>
-                }
-              />
+              <Route path={NOTE_ACCOUNT_PATH}>
+                <Route
+                  index={true}
+                  element={
+                    <CSuspense>
+                      <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                        <Account />
+                      </RequireNoteAccountRoute>
+                    </CSuspense>
+                  }
+                />
+                <Route
+                  path={ACCOUNT_TRANSACTIONS_PATH}
+                  element={
+                    <CSuspense>
+                      <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                        <AccountTransactions />
+                      </RequireNoteAccountRoute>
+                    </CSuspense>
+                  }
+                >
+                  <Route
+                    path=":txId"
+                    element={
+                      <CSuspense>
+                        <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                          <AccountTransactionDetail />
+                        </RequireNoteAccountRoute>
+                      </CSuspense>
+                    }
+                  />
+                </Route>
+              </Route>
 
               <Route
                 path={ECOSYSTEM_PATH}
