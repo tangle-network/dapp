@@ -2,8 +2,8 @@ import { Note } from '@webb-tools/sdk-core';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { CancellationToken } from './cancelation-token';
-import { WebbProviderType } from './types';
+import { CancellationToken } from '../cancelation-token';
+import { WebbProviderType } from '../types';
 
 export interface TXresultBase {
   // method: MethodPath;

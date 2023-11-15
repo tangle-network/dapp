@@ -17,7 +17,7 @@ import {
   NewNotesTxResult,
   TransactionExecutor,
   TransactionState,
-} from '../transaction';
+} from '../transaction/transactionExecutor';
 import type { WebbApiProvider } from '../webb-provider.interface';
 import { WebbProviderType } from '../types';
 import { NeighborEdge } from './types';

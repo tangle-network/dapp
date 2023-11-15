@@ -6,6 +6,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { GasStationFill } from '@webb-tools/icons';
 import { useVAnchor } from '@webb-tools/react-hooks';
@@ -23,8 +24,11 @@ import {
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
+  getNoteSerializations,
+  getCurrentTimestamp,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
+import { add } from 'lodash';
 
 const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -55,6 +59,8 @@ const DepositConfirmContainer = forwardRef<
       useWebContext();
 
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
+
+    const { addNewTransaction } = useTxClientStorage();
 
     const { api: txQueueApi } = txQueue;
 
@@ -241,6 +247,19 @@ const DepositConfirmContainer = forwardRef<
           tx.next(TransactionState.Done, {
             txHash: transactionHash,
             outputNotes: [indexedNote],
+          });
+
+          // add new DEPOSIT transaction to client storage
+          addNewTransaction({
+            hash: transactionHash,
+            activity: 'deposit',
+            amount: +formattedAmount,
+            noteAccountAddress: targetIdentifyingData,
+            walletAddress: activeAccount?.address,
+            fungibleTokenSymbol: fungibleToken.view.symbol,
+            wrappableTokenSymbol: wrappableToken?.view.symbol,
+            timestamp: getCurrentTimestamp(),
+            outputNoteSerializations: getNoteSerializations([indexedNote]),
           });
         } catch (error) {
           console.error(error);

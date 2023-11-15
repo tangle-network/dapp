@@ -7,6 +7,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { LoggerService } from '@webb-tools/app-util';
@@ -38,6 +39,8 @@ import {
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
+  getNoteSerializations,
+  getCurrentTimestamp,
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
@@ -313,6 +316,8 @@ const useTransferExecuteHandler = (args: Args) => {
 
   const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
+  const { addNewTransaction } = useTxClientStorage();
+
   const { syncNotes } = useNoteAccount();
 
   return async () => {
@@ -409,8 +414,6 @@ const useTransferExecuteHandler = (args: Args) => {
 
       const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
 
-      console.log('args', args);
-
       const outputNotes = changeNote ? [changeNote] : [];
 
       let indexBeforeInsert: number | undefined;
@@ -487,6 +490,21 @@ const useTransferExecuteHandler = (args: Args) => {
       if (isSendToSelf) {
         await syncNotes(undefined, undefined, blockNumberBeforeInsert);
       }
+
+      // add new TRANSFER transaction to client storage
+      addNewTransaction({
+        hash: transactionHash,
+        activity: 'transfer',
+        amount: amount,
+        // update recipient + refund account
+        noteAccountAddress: recipient,
+        fungibleTokenSymbol: currency.view.symbol,
+        timestamp: getCurrentTimestamp(),
+        relayerName: activeRelayer?.account,
+        // relayerFeeAmount
+        inputNoteSerializations: getNoteSerializations(inputNotes),
+        outputNoteSerializations: getNoteSerializations(outputNotes),
+      });
     } catch (error) {
       console.error('Error occured while transferring', error);
       changeNote && (await removeNoteFromNoteManager(changeNote));

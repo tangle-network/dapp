@@ -1,6 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
@@ -33,6 +34,8 @@ import {
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
+  getNoteSerializations,
+  getCurrentTimestamp,
 } from '../../utils';
 import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { WithdrawConfirmContainerProps } from './types';
@@ -81,6 +84,8 @@ const WithdrawConfirmContainer = forwardRef<
     const { balances } = useBalancesFromNotes();
 
     const { api: txQueueApi } = txQueue;
+
+    const { addNewTransaction } = useTxClientStorage();
 
     const {
       relayersState: { activeRelayer },
@@ -299,6 +304,23 @@ const WithdrawConfirmContainer = forwardRef<
           await Promise.all(
             availableNotes.map((note) => removeNoteFromNoteManager(note))
           );
+
+          // add new TRANSFER transaction to client storage
+          addNewTransaction({
+            hash: transactionHash,
+            activity: 'withdraw',
+            amount: amount,
+            // refund account
+            noteAccountAddress: recipient,
+            walletAddress: sourceIdentifyingData,
+            fungibleTokenSymbol: tokenSymbol,
+            wrappableTokenSymbol: unwrapTokenSymbol,
+            timestamp: getCurrentTimestamp(),
+            relayerName: activeRelayer?.account,
+            // relayer fee
+            inputNoteSerializations: getNoteSerializations(availableNotes),
+            outputNoteSerializations: getNoteSerializations(outputNotes),
+          });
         } catch (error) {
           console.log('Error while executing withdraw', error);
           changeNote && (await removeNoteFromNoteManager(changeNote));

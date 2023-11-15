@@ -108,6 +108,8 @@
     "country-flag-icons": "^1.5.5",
     "decimal.js": "^10.4.3",
     "detect-browser": "^5.2.0",
+    "dexie": "^3.2.4",
+    "dexie-react-hooks": "^1.1.7",
     "github-markdown-css": "^5.2.0",
     "graphql": "^16.6.0",
     "gridjs": "^6.0.6",

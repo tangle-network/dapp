@@ -12,7 +12,7 @@ import {
   NewNotesTxResult,
   TransactionExecutor,
   TransactionState,
-} from '../transaction';
+} from '../transaction/transactionExecutor';
 import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
 import { WebbProviderType } from '../types';
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';

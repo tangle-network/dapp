@@ -4,6 +4,8 @@ export * from './downloadTxHistory';
 export * from './errors';
 export { default as formatDateTimeByTimestamp } from './formatDateTimeByTimestamp';
 export * from './getCardTitle';
+export { default as getCurrentTimestamp } from './getCurrentTimestamp';
+export { default as getNoteSerializations } from './getNoteSerializations';
 export { default as getParam } from './getParam';
 export { default as getRelayerFeePercentage } from './getRelayerFeePercentage';
 export * from './getTokenURI';

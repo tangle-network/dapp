@@ -24,7 +24,7 @@ import {
   ActionEvent,
   NewNotesTxResult,
   TransactionExecutor,
-} from './transaction';
+} from './transaction/transactionExecutor';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
