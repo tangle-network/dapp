@@ -1,7 +1,7 @@
 import {
   Currency,
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
@@ -181,7 +181,7 @@ const DepositConfirmContainer = forwardRef<
 
         const tokenURI = getTokenURI(currency, destTypedChainId);
 
-        const tx = Transaction.new<NewNotesTxResult>('Deposit', {
+        const tx = TransactionExecutor.new<NewNotesTxResult>('Deposit', {
           amount: +formattedAmount,
           tokens: [srcTokenSymbol, destToken],
           wallets: {

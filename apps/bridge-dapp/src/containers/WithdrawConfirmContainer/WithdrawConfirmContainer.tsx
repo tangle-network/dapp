@@ -12,7 +12,7 @@ import {
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
@@ -200,7 +200,7 @@ const WithdrawConfirmContainer = forwardRef<
 
         const amount = Number(formatUnits(amountAfterFee, +denomination));
 
-        const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
+        const tx = TransactionExecutor.new<NewNotesTxResult>('Withdraw', {
           amount,
           tokens: [tokenSymbol, unwrapTokenSymbol],
           wallets: {

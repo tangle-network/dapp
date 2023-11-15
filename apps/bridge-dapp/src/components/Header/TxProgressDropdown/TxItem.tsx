@@ -1,4 +1,4 @@
-import type { Transaction } from '@webb-tools/abstract-api-provider/transaction';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 import {
   getTxMessageFromStatus,
@@ -13,7 +13,7 @@ import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/conta
 import type { FC } from 'react';
 import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
 
-const TxItem: FC<{ tx: Transaction<unknown>; isOnAccountPage?: boolean }> = ({
+const TxItem: FC<{ tx: TransactionExecutor<unknown>; isOnAccountPage?: boolean }> = ({
   tx,
   isOnAccountPage,
 }) => {

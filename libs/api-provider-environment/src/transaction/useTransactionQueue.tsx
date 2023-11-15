@@ -1,6 +1,6 @@
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   TransactionStatusMap,
   TransactionStatusValue,
@@ -35,7 +35,7 @@ export function transactionItemStatusFromTxStatus(
 }
 
 function mapTxToPayload(
-  tx: Transaction<any>,
+  tx: TransactionExecutor<any>,
   chainConfig: Record<number, ChainConfig>,
   dismissTransaction: (id: string) => void
 ): TransactionPayload {
@@ -140,12 +140,12 @@ export function getTxMessageFromStatus<Key extends TransactionState>(
 
 export type TransactionQueueApi = {
   txPayloads: TransactionPayload[];
-  txQueue: Transaction<any>[];
+  txQueue: TransactionExecutor<any>[];
   currentTxId: string | null;
   api: {
     cancelTransaction(id: string): void;
     dismissTransaction(id: string): void;
-    registerTransaction(tx: Transaction<any>): void;
+    registerTransaction(tx: TransactionExecutor<any>): void;
     startNewTransaction(): void;
 
     /**
@@ -155,12 +155,14 @@ export type TransactionQueueApi = {
      */
     getLatestTransaction(
       name: 'Deposit' | 'Withdraw' | 'Transfer'
-    ): Transaction<NewNotesTxResult> | null;
+    ): TransactionExecutor<NewNotesTxResult> | null;
   };
 };
 
 // The global transaction queue for the bridge dApp
-const txQueue$ = new BehaviorSubject<Transaction<NewNotesTxResult>[]>([]);
+const txQueue$ = new BehaviorSubject<TransactionExecutor<NewNotesTxResult>[]>(
+  []
+);
 
 const txPayloads$ = new BehaviorSubject<TransactionPayload[]>([]);
 
@@ -202,7 +204,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   );
 
   const registerTransaction = useCallback(
-    (tx: Transaction<NewNotesTxResult>) => {
+    (tx: TransactionExecutor<NewNotesTxResult>) => {
       setMainTxId(tx.id);
       const currentTxQueue = txQueue$.getValue();
       txQueue$.next([...currentTxQueue, tx]);
@@ -339,7 +341,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const getLatestTransaction = useCallback(
     (
       name: 'Deposit' | 'Withdraw' | 'Transfer'
-    ): Transaction<NewNotesTxResult> | null => {
+    ): TransactionExecutor<NewNotesTxResult> | null => {
       const txes = txQueue$.getValue().filter((tx) => tx.name === name);
       if (txes.length === 0) {
         return null;

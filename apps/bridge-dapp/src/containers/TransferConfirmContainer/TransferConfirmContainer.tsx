@@ -1,7 +1,7 @@
 import {
   NewNotesTxResult,
   OptionalActiveRelayer,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
@@ -365,7 +365,7 @@ const useTransferExecuteHandler = (args: Args) => {
     }
     const tokenURI = getTokenURI(destCurrency, targetTypedChainId.toString());
 
-    const tx = Transaction.new<NewNotesTxResult>('Transfer', {
+    const tx = TransactionExecutor.new<NewNotesTxResult>('Transfer', {
       amount,
       tokens: [tokenSymbol, tokenSymbol],
       wallets: {

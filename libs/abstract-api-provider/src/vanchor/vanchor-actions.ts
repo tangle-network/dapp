@@ -15,7 +15,7 @@ import { ActiveWebbRelayer } from '../relayer';
 import {
   ActionEvent,
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '../transaction';
 import type { WebbApiProvider } from '../webb-provider.interface';
@@ -202,7 +202,7 @@ export abstract class VAnchorActions<
 
   // A function to prepare the parameters for a transaction
   abstract prepareTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
   ): Promise<ParametersOfTransactMethod<ProviderType>> | never;
@@ -224,7 +224,7 @@ export abstract class VAnchorActions<
    * @return {string} The transaction hash
    */
   abstract transact(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     contractAddress: ProviderType extends 'web3' ? Address : string,
     inputs: Utxo[],
     outputs: Utxo[],

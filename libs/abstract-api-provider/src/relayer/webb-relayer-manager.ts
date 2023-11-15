@@ -10,7 +10,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '../transaction';
 import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
@@ -98,7 +98,7 @@ export abstract class WebbRelayerManager<
       importMetaUrl: string; // the url of the import.meta.url
       treeId: Provider extends 'polkadot' ? number : never;
       palletId: Provider extends 'polkadot' ? number : never;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];
@@ -114,7 +114,7 @@ export abstract class WebbRelayerManager<
     leaves: string[],
     targetRoot: string,
     commitment: bigint,
-    tx?: Transaction<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;

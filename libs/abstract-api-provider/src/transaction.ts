@@ -103,7 +103,7 @@ export type TransactionStatusValue<
 > = TransactionStatusMap<DonePayload>[Key];
 
 type ExecutorClosure<DonePayload> = (
-  next: Transaction<DonePayload>['next']
+  next: TransactionExecutor<DonePayload>['next']
 ) => void | Promise<DonePayload>;
 
 /**
@@ -133,7 +133,7 @@ type PromiseExec<T> = (
   reject: (reason?: any) => void
 ) => void;
 
-export class Transaction<DonePayload> extends Promise<DonePayload> {
+export class TransactionExecutor<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
 
   readonly id = String(Date.now() + Math.random());
@@ -168,7 +168,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   static new<T>(
     name: TransactionName,
     metadata: TransactionMetaData
-  ): Transaction<T> {
+  ): TransactionExecutor<T> {
     const status = new BehaviorSubject<
       [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
     >([TransactionState.Ideal, undefined]);
@@ -196,7 +196,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
         });
     };
 
-    return new Transaction(exec, name, metadata, status);
+    return new TransactionExecutor(exec, name, metadata, status);
   }
 
   next<Status extends keyof TransactionStatusMap<DonePayload>>(

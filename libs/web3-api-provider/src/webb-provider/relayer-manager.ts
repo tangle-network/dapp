@@ -20,7 +20,7 @@ import {
 
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor__factory } from '@webb-tools/contracts';
@@ -149,7 +149,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];

@@ -1,5 +1,5 @@
 import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import type { Transaction } from '@webb-tools/abstract-api-provider/transaction';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
 import { transactionItemStatusFromTxStatus } from '@webb-tools/api-provider-environment/transaction';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import {
@@ -75,7 +75,7 @@ const TxProgressDropdown = () => {
 
 export default TxProgressDropdown;
 
-const useSortedTxQueue = (txQueue: Array<Transaction<unknown>>) => {
+const useSortedTxQueue = (txQueue: Array<TransactionExecutor<unknown>>) => {
   return useMemo(
     () =>
       txQueue
