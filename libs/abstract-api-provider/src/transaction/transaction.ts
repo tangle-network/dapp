@@ -4,15 +4,21 @@ export type TransactionType = {
   hash: string;
   activity: TransactionActivity;
   amount: number;
-  noteAccountAddress: string;
-  walletAddress?: string;
+  fromAddress: string;
+  recipientAddress: string;
   fungibleTokenSymbol: string;
-  wrappableTokenSymbol?: string;
+  wrapTokenSymbol?: string;
+  unwrapTokenSymbol?: string;
   timestamp: number;
   relayerName?: string;
-  relayerFeeAmount?: number;
+  relayerFeesAmount?: number;
+  relayerUri?: string;
+  refundAmount?: number;
+  refundRecipientAddress?: string;
+  refundTokenSymbol?: string;
   inputNoteSerializations?: string[];
   outputNoteSerializations?: string[];
+  explorerUri?: string;
 };
 
 export class Transaction {

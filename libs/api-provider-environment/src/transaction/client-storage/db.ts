@@ -1,20 +1,20 @@
 import Dexie, { Table } from 'dexie';
 import type { TxItem } from './types';
 
-let instance: any;
+let hasInstance = false;
 
 export class TransactionDB extends Dexie {
   txItems!: Table<TxItem, number>;
   constructor() {
     // Check to make sure the class hasn't already been instantiated.
-    if (instance) {
+    if (hasInstance) {
       throw new Error('Can only create one instance on TransactionDB!');
     }
     super('TransactionDB');
     this.version(1).stores({
       txItems: '++id',
     });
-    instance = this;
+    hasInstance = true;
   }
 }
 

@@ -135,10 +135,12 @@ const WithdrawConfirmContainer = forwardRef<
       [apiConfig, fungibleCurrency.id, targetTypedChainId]
     );
 
-    const poolExplorerUrl = useMemo(() => {
-      const blockExplorerUrl =
-        chainsConfig[targetTypedChainId]?.blockExplorers?.default.url;
+    const blockExplorerUrl = useMemo(
+      () => chainsConfig[targetTypedChainId]?.blockExplorers?.default.url,
+      [targetTypedChainId]
+    );
 
+    const poolExplorerUrl = useMemo(() => {
       if (!blockExplorerUrl) return undefined;
       return getExplorerURI(
         blockExplorerUrl,
@@ -146,7 +148,7 @@ const WithdrawConfirmContainer = forwardRef<
         'address',
         'web3'
       ).toString();
-    }, [targetTypedChainId, poolAddress]);
+    }, [blockExplorerUrl, poolAddress]);
 
     const newBalance = useMemo(() => {
       const currentBalance =
@@ -156,6 +158,22 @@ const WithdrawConfirmContainer = forwardRef<
       if (updatedBalance < 0) return undefined;
       return updatedBalance;
     }, [balances, fungibleCurrency.id, sourceTypedChainId, amount]);
+
+    const gasFees = useMemo(
+      () =>
+        gasFeeInfo
+          ? parseFloat(formatEther(gasFeeInfo).slice(0, 10))
+          : undefined,
+      [gasFeeInfo]
+    );
+
+    const relayerFees = useMemo(
+      () =>
+        relayerFeeInfo
+          ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
+          : undefined,
+      [relayerFeeInfo]
+    );
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
@@ -310,16 +328,32 @@ const WithdrawConfirmContainer = forwardRef<
             hash: transactionHash,
             activity: 'withdraw',
             amount: amount,
-            // refund account
-            noteAccountAddress: recipient,
-            walletAddress: sourceIdentifyingData,
+            fromAddress: sourceIdentifyingData,
+            recipientAddress: recipient,
             fungibleTokenSymbol: tokenSymbol,
-            wrappableTokenSymbol: unwrapTokenSymbol,
+            unwrapTokenSymbol,
             timestamp: getCurrentTimestamp(),
             relayerName: activeRelayer?.account,
-            // relayer fee
+            relayerUri: activeRelayer
+              ? new URL(activeRelayer.endpoint).host
+              : undefined,
+            relayerFeesAmount: relayerFees ?? gasFees,
+            refundAmount:
+              typeof refundAmount !== 'undefined'
+                ? parseFloat(formatEther(refundAmount).slice(0, 10))
+                : undefined,
+            refundTokenSymbol: refundToken,
+            refundRecipientAddress: recipient,
             inputNoteSerializations: getNoteSerializations(availableNotes),
             outputNoteSerializations: getNoteSerializations(outputNotes),
+            explorerUri: blockExplorerUrl
+              ? getExplorerURI(
+                  blockExplorerUrl,
+                  transactionHash,
+                  'tx',
+                  'web3'
+                ).toString()
+              : undefined,
           });
         } catch (error) {
           console.log('Error while executing withdraw', error);
@@ -345,7 +379,7 @@ const WithdrawConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi, addNewTransaction, blockExplorerUrl, refundToken, relayerFees, gasFees]
     );
 
     const formattedFee = useMemo(() => {
@@ -435,8 +469,8 @@ const WithdrawConfirmContainer = forwardRef<
           <RelayerFeeDetails
             totalFeeWei={totalFeeWei}
             totalFeeToken={totalFeeToken}
-            gasFeeInfo={gasFeeInfo}
-            relayerFeeInfo={relayerFeeInfo}
+            gasFees={gasFees}
+            relayerFees={relayerFees}
             isFeeLoading={isFeeLoading}
             srcChainCfg={apiConfig.chains[sourceTypedChainId]}
             fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(

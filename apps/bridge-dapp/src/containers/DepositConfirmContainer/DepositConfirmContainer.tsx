@@ -28,7 +28,6 @@ import {
   getCurrentTimestamp,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
-import { add } from 'lodash';
 
 const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -115,10 +114,12 @@ const DepositConfirmContainer = forwardRef<
       [apiConfig, fungibleTokenId, destTypedChainId]
     );
 
-    const poolExplorerUrl = useMemo(() => {
-      const blockExplorerUrl =
-        chainsConfig[destTypedChainId]?.blockExplorers?.default.url;
+    const blockExplorerUrl = useMemo(
+      () => chainsConfig[destTypedChainId]?.blockExplorers?.default.url,
+      [destTypedChainId]
+    );
 
+    const poolExplorerUrl = useMemo(() => {
       if (!blockExplorerUrl) return undefined;
 
       return getExplorerURI(
@@ -127,7 +128,7 @@ const DepositConfirmContainer = forwardRef<
         'address',
         'web3'
       ).toString();
-    }, [destTypedChainId, poolAddress]);
+    }, [blockExplorerUrl, poolAddress]);
 
     const handleExecuteDeposit = useCallback(
       async () => {
@@ -254,12 +255,20 @@ const DepositConfirmContainer = forwardRef<
             hash: transactionHash,
             activity: 'deposit',
             amount: +formattedAmount,
-            noteAccountAddress: targetIdentifyingData,
-            walletAddress: activeAccount?.address,
+            fromAddress: activeAccount?.address ?? '',
+            recipientAddress: targetIdentifyingData,
             fungibleTokenSymbol: fungibleToken.view.symbol,
-            wrappableTokenSymbol: wrappableToken?.view.symbol,
+            wrapTokenSymbol: wrappableToken?.view.symbol,
             timestamp: getCurrentTimestamp(),
             outputNoteSerializations: getNoteSerializations([indexedNote]),
+            explorerUri: blockExplorerUrl
+              ? getExplorerURI(
+                  blockExplorerUrl,
+                  transactionHash,
+                  'tx',
+                  'web3'
+                ).toString()
+              : undefined,
           });
         } catch (error) {
           console.error(error);
@@ -285,7 +294,7 @@ const DepositConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken]
+      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken, blockExplorerUrl, fungibleToken.view.symbol, addNewTransaction]
     );
 
     return (
