@@ -354,6 +354,8 @@ const WithdrawConfirmContainer = forwardRef<
                   'web3'
                 ).toString()
               : undefined,
+            sourceTypedChainId: +sourceTypedChainId,
+            destinationTypedChainId: +destTypedChainId,
           });
         } catch (error) {
           console.log('Error while executing withdraw', error);

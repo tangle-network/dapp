@@ -269,6 +269,8 @@ const DepositConfirmContainer = forwardRef<
                   'web3'
                 ).toString()
               : undefined,
+            sourceTypedChainId: +sourceTypedChainId,
+            destinationTypedChainId: +destTypedChainId,
           });
         } catch (error) {
           console.error(error);

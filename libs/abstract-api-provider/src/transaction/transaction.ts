@@ -19,8 +19,6 @@ export type TransactionType = {
   inputNoteSerializations?: string[];
   outputNoteSerializations?: string[];
   explorerUri?: string;
+  sourceTypedChainId: number;
+  destinationTypedChainId: number;
 };
-
-export class Transaction {
-  constructor(public data: TransactionType) {}
-}

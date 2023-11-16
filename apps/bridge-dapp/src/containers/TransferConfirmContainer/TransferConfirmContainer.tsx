@@ -548,6 +548,8 @@ const useTransferExecuteHandler = (args: Args) => {
               'web3'
             ).toString()
           : undefined,
+        sourceTypedChainId: srcTypedChainId,
+        destinationTypedChainId: targetTypedChainId,
       });
     } catch (error) {
       console.error('Error occured while transferring', error);
