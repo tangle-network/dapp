@@ -5,7 +5,7 @@ import transactionDB from './client-storage/db';
 export type UseTxClientStorageReturnType = {
   transactions: TransactionType[];
   addNewTransaction: (tx: TransactionType) => void;
-  clearTransactions: () => void;
+  clearTxHistory: () => void;
 };
 
 const useTxClientStorage = () => {
@@ -15,7 +15,7 @@ const useTxClientStorage = () => {
     transactionDB.txItems.add({ ...tx });
   };
 
-  const clearTransactions = () => {
+  const clearTxHistory = () => {
     transactionDB.transaction('rw', transactionDB.txItems, async () => {
       await Promise.all(transactionDB.tables.map((table) => table.clear()));
     });
@@ -28,7 +28,7 @@ const useTxClientStorage = () => {
   return {
     transactions: transactions ?? [],
     addNewTransaction,
-    clearTransactions,
+    clearTxHistory,
     getTxDetailByHash,
   };
 };
