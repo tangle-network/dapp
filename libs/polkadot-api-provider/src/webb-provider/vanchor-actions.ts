@@ -389,7 +389,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     return createSubstrateResourceId(chainId, +treeId, palletId.toString());
   }
 
-  async commitmentsSetup(notes: Note[], tx?: TransactionExecutor<NewNotesTxResult>) {
+  async commitmentsSetup(
+    notes: Note[],
+    tx?: TransactionExecutor<NewNotesTxResult>
+  ) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
     }

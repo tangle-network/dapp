@@ -13,10 +13,10 @@ import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/conta
 import type { FC } from 'react';
 import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
 
-const TxItem: FC<{ tx: TransactionExecutor<unknown>; isOnAccountPage?: boolean }> = ({
-  tx,
-  isOnAccountPage,
-}) => {
+const TxItem: FC<{
+  tx: TransactionExecutor<unknown>;
+  isOnAccountPage?: boolean;
+}> = ({ tx, isOnAccountPage }) => {
   const { activeApi, apiConfig, txQueue } = useWebContext();
   const { api } = txQueue;
 
