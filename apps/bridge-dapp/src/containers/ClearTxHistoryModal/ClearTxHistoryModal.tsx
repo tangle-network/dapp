@@ -10,20 +10,21 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { DeleteBinIcon } from '@webb-tools/icons';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { useTxClientStorage } from '@webb-tools/api-provider-environment';
 import { getErrorMessage } from '../../utils';
 
 const ClearTxHistoryModal: FC<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-}> = ({ isOpen, setIsOpen }) => {
+  clearTxHistory: () => void;
+  downloadTxHistory: () => void;
+}> = ({ isOpen, setIsOpen, clearTxHistory, downloadTxHistory }) => {
   const { notificationApi } = useWebbUI();
-  const { clearTxHistory } = useTxClientStorage();
 
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   const closeModal = useCallback(() => {
     setIsOpen(false);
+    setIsCheckboxChecked(false);
   }, [setIsOpen]);
 
   const handleClearTxHistory = useCallback(() => {
@@ -89,13 +90,7 @@ const ClearTxHistoryModal: FC<{
         </div>
 
         <ModalFooter>
-          {/* TODO: update onClick */}
-          <Button
-            isFullWidth
-            onClick={() => {
-              return;
-            }}
-          >
+          <Button isFullWidth onClick={downloadTxHistory}>
             Download
           </Button>
           <Button
@@ -104,7 +99,7 @@ const ClearTxHistoryModal: FC<{
             isFullWidth
             onClick={handleClearTxHistory}
           >
-            Delete Notes
+            Clear Transaction Data
           </Button>
         </ModalFooter>
       </ModalContent>
