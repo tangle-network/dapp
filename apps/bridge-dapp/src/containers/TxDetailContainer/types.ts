@@ -17,6 +17,7 @@ export interface TxBasicInfoProps
     | 'refundRecipientAddress'
     | 'refundTokenSymbol'
     | 'timestamp'
+    | 'destinationTypedChainId'
   > {}
 
 export interface SourceOrDestinationWalletInfoProps

@@ -1,9 +1,13 @@
-import { type FC } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import {
   CopyWithTooltip,
   Typography,
   shortenHex,
+  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { chainsConfig } from '@webb-tools/dapp-config';
+import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
 import { SectionWrapper } from './Wrapper';
 import type { TxBasicInfoProps } from './types';
@@ -21,11 +25,42 @@ const TxBasicInfo: FC<TxBasicInfoProps> = ({
   relayerName,
   relayerFeesAmount,
   refundAmount,
-  refundRecipientAddress,
   refundTokenSymbol,
+  refundRecipientAddress,
+  destinationTypedChainId,
 }) => {
+  const blockExplorerUrl = useMemo(
+    () => chainsConfig[destinationTypedChainId]?.blockExplorers?.default.url,
+    [destinationTypedChainId]
+  );
+
+  const getAddressTypeValueComponent = useCallback(
+    (hash: string, isTx?: boolean) => {
+      return blockExplorerUrl ? (
+        <ValueWithExternalLink
+          value={shortenHex(hash, 5)}
+          href={getExplorerURI(
+            blockExplorerUrl,
+            hash,
+            isTx ? 'tx' : 'address',
+            'web3'
+          ).toString()}
+        />
+      ) : (
+        <ValueWithCopyTooltip value={shortenHex(hash, 5)} copyText={hash} />
+      );
+    },
+    [blockExplorerUrl]
+  );
+
   return (
     <SectionWrapper>
+      {/* Tx Hash */}
+      <TxBasicInfoItem
+        label="Tx hash"
+        value={getAddressTypeValueComponent(hash, true)}
+      />
+
       {/* Tx Amount */}
       <TxBasicInfoItem
         label="Amount"
@@ -37,40 +72,51 @@ const TxBasicInfo: FC<TxBasicInfoProps> = ({
       {/* Recipient */}
       <TxBasicInfoItem
         label="Recipient"
-        value={
-          <ValueWithCopyTooltip
-            value={shortenHex(recipientAddress, 5)}
-            copyText={recipientAddress}
-          />
-        }
+        value={getAddressTypeValueComponent(recipientAddress)}
       />
+
+      {/* Relayer Name */}
+      {(relayerName || relayerUri) && (
+        <TxBasicInfoItem
+          label="Relayer"
+          value={
+            relayerUri ? (
+              <ValueWithExternalLink
+                value={relayerName ?? new URL(relayerUri).host}
+                href={relayerUri}
+              />
+            ) : (
+              <ValueWithCopyTooltip value={relayerName ?? ''} />
+            )
+          }
+        />
+      )}
 
       {/* Relayer Fees */}
       {relayerFeesAmount && (
         <TxBasicInfoItem
-          label="Relayer fee"
+          label="Relayer fees"
           value={`${relayerFeesAmount} ${fungibleTokenSymbol}`}
         />
       )}
 
-      {/* Relayer Name */}
-      {relayerName && (
+      {/* Refund Recipient */}
+      {refundRecipientAddress && (
         <TxBasicInfoItem
-          label="Relayer"
-          value={<ValueWithCopyTooltip value={relayerName} />}
+          label="Recipient"
+          value={getAddressTypeValueComponent(refundRecipientAddress)}
         />
       )}
 
-      {/* Refund Recipient */}
-
       {/* Refund Amount */}
+      {refundAmount && refundTokenSymbol && (
+        <TxBasicInfoItem
+          label="Refund amount"
+          value={`${refundAmount} ${refundTokenSymbol}`}
+        />
+      )}
 
-      <TxBasicInfoItem
-        label="Tx hash"
-        value={
-          <ValueWithCopyTooltip value={shortenHex(hash, 5)} copyText={hash} />
-        }
-      />
+      {/* Time */}
       <TxBasicInfoItem
         label="Time (UTC)"
         value={formatDateTimeByTimestamp(timestamp)}
@@ -111,6 +157,21 @@ const ValueWithCopyTooltip: FC<{ value: string; copyText?: string }> = ({
         isButton={false}
         className="text-mono-160 dark:text-mono-80"
       />
+    </div>
+  );
+};
+
+/** @internal */
+const ValueWithExternalLink: FC<{ value: string; href: string }> = ({
+  value,
+  href,
+}) => {
+  return (
+    <div className="flex items-center gap-1 !text-inherit">
+      {value}
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        <ExternalLinkIcon />
+      </a>
     </div>
   );
 };
