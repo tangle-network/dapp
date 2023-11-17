@@ -1,47 +1,38 @@
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
 import { Note } from '@webb-tools/sdk-core';
-
-export interface TxDetailContainerProps {
-  hash: string;
-  activity: 'deposit' | 'transfer' | 'withdraw';
-  amount: number;
-  noteAccountAddress: string;
-  walletAddress?: string;
-  fungibleTokenSymbol: string;
-  wrappableTokenSymbol?: string;
-  timestamp: number;
-  relayerName?: string;
-  relayerFeeAmount?: string | number;
-  inputNoteSerializations?: string[];
-  outputNoteSerializations?: string[];
-}
 
 export interface TxBasicInfoProps
   extends Pick<
-    TxDetailContainerProps,
+    TransactionType,
     | 'hash'
     | 'amount'
+    | 'recipientAddress'
     | 'fungibleTokenSymbol'
-    | 'wrappableTokenSymbol'
+    | 'wrapTokenSymbol'
+    | 'unwrapTokenSymbol'
+    | 'relayerUri'
     | 'relayerName'
-    | 'relayerFeeAmount'
+    | 'relayerFeesAmount'
+    | 'refundAmount'
+    | 'refundRecipientAddress'
+    | 'refundTokenSymbol'
     | 'timestamp'
   > {}
 
 export interface SourceOrDestinationWalletInfoProps
   extends Pick<
-    TxDetailContainerProps,
-    'walletAddress' | 'amount' | 'fungibleTokenSymbol' | 'wrappableTokenSymbol'
+    TransactionType,
+    'amount' | 'fungibleTokenSymbol' | 'wrapTokenSymbol' | 'unwrapTokenSymbol'
   > {
   type: 'source' | 'destination';
   typedChainId: number;
+  walletAddress: string;
 }
 
 export interface InputOrOutputNotesProps
-  extends Pick<
-    TxDetailContainerProps,
-    'activity' | 'noteAccountAddress' | 'fungibleTokenSymbol'
-  > {
+  extends Pick<TransactionType, 'activity' | 'fungibleTokenSymbol'> {
   type: 'input' | 'output';
   notes: Note[];
   typedChainId: number;
+  noteAccountAddress: string;
 }

@@ -12,24 +12,44 @@ import { formatDateTimeByTimestamp } from '../../utils';
 const TxBasicInfo: FC<TxBasicInfoProps> = ({
   hash,
   amount,
+  recipientAddress,
   fungibleTokenSymbol,
-  wrappableTokenSymbol,
+  wrapTokenSymbol,
+  unwrapTokenSymbol,
   timestamp,
+  relayerUri,
   relayerName,
-  relayerFeeAmount,
+  relayerFeesAmount,
+  refundAmount,
+  refundRecipientAddress,
+  refundTokenSymbol,
 }) => {
   return (
     <SectionWrapper>
+      {/* Tx Amount */}
       <TxBasicInfoItem
         label="Amount"
-        value={`${amount} ${wrappableTokenSymbol ?? fungibleTokenSymbol}`}
+        value={`${amount} ${
+          wrapTokenSymbol ?? unwrapTokenSymbol ?? fungibleTokenSymbol
+        }`}
+      />
+
+      {/* Recipient */}
+      <TxBasicInfoItem
+        label="Recipient"
+        value={
+          <ValueWithCopyTooltip
+            value={shortenHex(recipientAddress, 5)}
+            copyText={recipientAddress}
+          />
+        }
       />
 
       {/* Relayer Fees */}
-      {relayerFeeAmount && (
+      {relayerFeesAmount && (
         <TxBasicInfoItem
           label="Relayer fee"
-          value={`${relayerFeeAmount} ${fungibleTokenSymbol}`}
+          value={`${relayerFeesAmount} ${fungibleTokenSymbol}`}
         />
       )}
 
@@ -37,20 +57,20 @@ const TxBasicInfo: FC<TxBasicInfoProps> = ({
       {relayerName && (
         <TxBasicInfoItem
           label="Relayer"
-          value={
-            <div className="flex items-center gap-1 !text-inherit">
-              {relayerName}
-              <CopyWithTooltip
-                textToCopy={relayerName}
-                isButton={false}
-                className="text-mono-160 dark:text-mono-80"
-              />
-            </div>
-          }
+          value={<ValueWithCopyTooltip value={relayerName} />}
         />
       )}
 
-      <TxBasicInfoItem label="Tx hash" value={shortenHex(hash, 5)} />
+      {/* Refund Recipient */}
+
+      {/* Refund Amount */}
+
+      <TxBasicInfoItem
+        label="Tx hash"
+        value={
+          <ValueWithCopyTooltip value={shortenHex(hash, 5)} copyText={hash} />
+        }
+      />
       <TxBasicInfoItem
         label="Time (UTC)"
         value={formatDateTimeByTimestamp(timestamp)}
@@ -74,6 +94,23 @@ const TxBasicInfoItem: FC<{ label: string; value: React.ReactNode }> = ({
       <Typography variant="body1" fw="semibold">
         {value}
       </Typography>
+    </div>
+  );
+};
+
+/** @internal */
+const ValueWithCopyTooltip: FC<{ value: string; copyText?: string }> = ({
+  value,
+  copyText,
+}) => {
+  return (
+    <div className="flex items-center gap-1 !text-inherit">
+      {value}
+      <CopyWithTooltip
+        textToCopy={copyText ?? value}
+        isButton={false}
+        className="text-mono-160 dark:text-mono-80"
+      />
     </div>
   );
 };

@@ -1,10 +1,10 @@
 import Dexie, { Table } from 'dexie';
-import type { TxItem } from './types';
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
 
 let hasInstance = false;
 
 export class TransactionDB extends Dexie {
-  txItems!: Table<TxItem, number>;
+  txItems!: Table<TransactionType, number>;
   constructor() {
     // Check to make sure the class hasn't already been instantiated.
     if (hasInstance) {
@@ -12,7 +12,7 @@ export class TransactionDB extends Dexie {
     }
     super('TransactionDB');
     this.version(1).stores({
-      txItems: '++id',
+      txItems: 'hash',
     });
     hasInstance = true;
   }

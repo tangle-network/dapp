@@ -16,9 +16,9 @@ const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
   activity,
   type,
   notes,
-  noteAccountAddress,
   fungibleTokenSymbol,
   typedChainId,
+  noteAccountAddress,
 }) => {
   return (
     <SectionWrapper>

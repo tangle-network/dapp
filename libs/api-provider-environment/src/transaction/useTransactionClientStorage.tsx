@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { TransactionType } from '@webb-tools/abstract-api-provider';
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
 import transactionDB from './client-storage/db';
 
 export type UseTxClientStorageReturnType = {
@@ -21,10 +21,15 @@ const useTxClientStorage = () => {
     });
   };
 
+  const getTxDetailByHash = async (hash: string) => {
+    return await transactionDB.txItems.get({ hash });
+  };
+
   return {
     transactions: transactions ?? [],
     addNewTransaction,
     clearTransactions,
+    getTxDetailByHash,
   };
 };
 

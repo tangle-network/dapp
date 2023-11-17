@@ -1,28 +1,46 @@
-import { type FC, useMemo, useState, useEffect } from 'react';
+import { type FC, useState, useEffect, useMemo } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { Note } from '@webb-tools/sdk-core';
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
 
 import InputOrOutputNotes from './InputOrOutputNotes';
 import SourceOrDestinationWalletInfo from './SourceOrDestinationWalletInfo';
 import TxBasicInfo from './TxBasicInfo';
-import { TxDetailContainerProps } from './types';
 
-const TxDetailContainer: FC<TxDetailContainerProps> = ({
+const TxDetailContainer: FC<TransactionType> = ({
   hash,
   activity,
   amount,
-  noteAccountAddress,
-  walletAddress,
+  fromAddress,
+  recipientAddress,
   fungibleTokenSymbol,
-  wrappableTokenSymbol,
+  wrapTokenSymbol,
+  unwrapTokenSymbol,
   timestamp,
   relayerName,
-  relayerFeeAmount,
+  relayerFeesAmount,
+  relayerUri,
+  refundAmount,
+  refundRecipientAddress,
+  refundTokenSymbol,
   inputNoteSerializations,
   outputNoteSerializations,
+  sourceTypedChainId,
+  destinationTypedChainId,
 }) => {
   const [inputNotes, setInputNotes] = useState<Note[]>([]);
   const [outputNotes, setOutputNotes] = useState<Note[]>([]);
+
+  const walletAddress = useMemo(() => {
+    if (activity === 'deposit') return fromAddress;
+    if (activity === 'withdraw') return recipientAddress;
+    return undefined;
+  }, [activity, fromAddress, recipientAddress]);
+
+  const noteAccountAddress = useMemo(() => {
+    if (activity === 'deposit') return recipientAddress;
+    return fromAddress;
+  }, [activity, fromAddress, recipientAddress]);
 
   useEffect(() => {
     async function getInputNotes() {
@@ -52,47 +70,21 @@ const TxDetailContainer: FC<TxDetailContainerProps> = ({
     getOutputNotes();
   }, [outputNoteSerializations]);
 
-  const sourceTypedChainId = useMemo(() => {
-    // if DEPOSIT, this will produce a new note
-    // the source chain will be the sourceChain that note
-    if (activity === 'deposit') {
-      return outputNotes.length > 0
-        ? +outputNotes[0].note.sourceChainId
-        : undefined;
-    }
-
-    // if WITHDRAW or TRANSFER, there must be at least one input notes
-    // all input notes here have the same sourceChainId
-    // the source chain will be the targetChain from those input notes
-    if (inputNotes.length === 0) return undefined;
-    return +inputNotes[0].note.sourceChainId;
-  }, [activity, inputNotes, outputNotes]);
-
-  const destinationTypedChainId = useMemo(() => {
-    // if DEPOSIT, this will produce a new note
-    // the source chain will be the targetChain that note
-    if (activity === 'deposit') {
-      return outputNotes.length > 0
-        ? +outputNotes[0].note.targetChainId
-        : undefined;
-    }
-
-    // if WITHDRAW or TRANSFER, there must be at least one input notes
-    // all input notes here have the same targetChainId
-    // the source chain will be the targetChain from those input notes
-    if (inputNotes.length === 0) return undefined;
-    return +inputNotes[0].note.targetChainId;
-  }, [activity, inputNotes, outputNotes]);
-
   return (
     <div className="flex-1 p-9 space-y-9 overflow-y-auto">
       {/* Basic Info */}
       <TxBasicInfo
         amount={amount}
+        recipientAddress={recipientAddress}
         fungibleTokenSymbol={fungibleTokenSymbol}
-        wrappableTokenSymbol={wrappableTokenSymbol}
+        wrapTokenSymbol={wrapTokenSymbol}
+        unwrapTokenSymbol={unwrapTokenSymbol}
+        relayerUri={relayerUri}
         relayerName={relayerName}
-        relayerFeeAmount={relayerFeeAmount}
+        relayerFeesAmount={relayerFeesAmount}
+        refundAmount={refundAmount}
+        refundRecipientAddress={refundRecipientAddress}
+        refundTokenSymbol={refundTokenSymbol}
         hash={hash}
         timestamp={timestamp}
       />
@@ -108,7 +100,8 @@ const TxDetailContainer: FC<TxDetailContainerProps> = ({
             typedChainId={sourceTypedChainId}
             walletAddress={walletAddress}
             amount={amount}
-            wrappableTokenSymbol={wrappableTokenSymbol}
+            wrapTokenSymbol={wrapTokenSymbol}
+            unwrapTokenSymbol={unwrapTokenSymbol}
             fungibleTokenSymbol={fungibleTokenSymbol}
           />
         </div>
@@ -161,7 +154,8 @@ const TxDetailContainer: FC<TxDetailContainerProps> = ({
             typedChainId={destinationTypedChainId}
             walletAddress={walletAddress}
             amount={amount}
-            wrappableTokenSymbol={wrappableTokenSymbol}
+            wrapTokenSymbol={wrapTokenSymbol}
+            unwrapTokenSymbol={unwrapTokenSymbol}
             fungibleTokenSymbol={fungibleTokenSymbol}
           />
         </div>
