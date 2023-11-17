@@ -181,6 +181,7 @@ const TransferConfirmContainer = forwardRef<
       targetTypedChainId: targetChainId,
       blockExplorerUrl,
       relayerFees,
+      gasFees,
       refundToken,
     });
 

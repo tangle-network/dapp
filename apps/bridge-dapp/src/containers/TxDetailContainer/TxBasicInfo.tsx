@@ -3,7 +3,6 @@ import {
   CopyWithTooltip,
   Typography,
   shortenHex,
-  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config';
@@ -103,7 +102,7 @@ const TxBasicInfo: FC<TxBasicInfoProps> = ({
       {/* Refund Recipient */}
       {refundRecipientAddress && (
         <TxBasicInfoItem
-          label="Recipient"
+          label="Refund Recipient"
           value={getAddressTypeValueComponent(refundRecipientAddress)}
         />
       )}

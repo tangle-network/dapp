@@ -87,6 +87,7 @@ const TxDetailContainer: FC<TransactionType> = ({
         refundTokenSymbol={refundTokenSymbol}
         hash={hash}
         timestamp={timestamp}
+        destinationTypedChainId={destinationTypedChainId}
       />
 
       {/* Source Wallet */}

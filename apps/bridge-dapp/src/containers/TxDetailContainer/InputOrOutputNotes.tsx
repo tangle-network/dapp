@@ -1,4 +1,5 @@
 import { type FC, useMemo } from 'react';
+import { formatEther } from 'viem';
 import cx from 'classnames';
 import {
   AddressChip,
@@ -57,7 +58,7 @@ const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
 
             <div className="flex justify-end items-center gap-1">
               <Typography variant="body2" fw="semibold">
-                {amount} {fungibleTokenSymbol}
+                {formatEther(BigInt(amount))} {fungibleTokenSymbol}
               </Typography>
               <ArrowBadge activity={activity} type={type} />
             </div>

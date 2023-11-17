@@ -334,9 +334,7 @@ const WithdrawConfirmContainer = forwardRef<
             unwrapTokenSymbol,
             timestamp: getCurrentTimestamp(),
             relayerName: activeRelayer?.account,
-            relayerUri: activeRelayer
-              ? new URL(activeRelayer.endpoint).host
-              : undefined,
+            relayerUri: activeRelayer ? activeRelayer.infoUri : undefined,
             relayerFeesAmount: relayerFees ?? gasFees,
             refundAmount:
               typeof refundAmount !== 'undefined'
