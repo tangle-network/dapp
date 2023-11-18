@@ -5,6 +5,7 @@ import type { Note } from '@webb-tools/sdk-core';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment';
 import { Typography, Button } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -19,7 +20,6 @@ import {
 } from '../../containers/note-account-tables';
 import type { NoteAccountTableContainerProps } from '../../containers/note-account-tables/types';
 import { TxTableContainer } from '../../containers';
-import { TxTableItemType } from '../../containers/TxTableContainer/types';
 import { useShieldedAssets } from '../../hooks/useShieldedAssets';
 import { useSpendNotes } from '../../hooks/useSpendNotes';
 import { downloadNotes } from '../../utils/downloadNotes';
@@ -27,42 +27,8 @@ import AccountSummaryCard from './AccountSummaryCard';
 import NoTx from './NoTx';
 import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
 
-import { randNumber, randEthereumAddress } from '@ngneat/falso';
-
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
-const fakeTxData: TxTableItemType[] = [
-  {
-    txHash: randEthereumAddress(),
-    activity: 'transfer',
-    tokenAmount: '-0.01',
-    tokenSymbol: 'ETH',
-    sourceTypedChainId: 1099511627781,
-    destinationTypedChainId: 1099511670889,
-    recipient: randEthereumAddress(),
-    timestamp: randNumber({ min: 1699244791 - 4 * 86400, max: 1699244791 }),
-  },
-  {
-    txHash: randEthereumAddress(),
-    activity: 'withdraw',
-    tokenAmount: '-0.10',
-    tokenSymbol: 'ETH',
-    sourceTypedChainId: 1099511627781,
-    destinationTypedChainId: 1099511670889,
-    recipient: randEthereumAddress(),
-    timestamp: randNumber({ min: 1699244791 - 4 * 86400, max: 1699244791 }),
-  },
-  {
-    txHash: randEthereumAddress(),
-    activity: 'deposit',
-    tokenAmount: '+1.00',
-    tokenSymbol: 'WETH',
-    sourceTypedChainId: 1099511627781,
-    destinationTypedChainId: 1099511670889,
-    recipient: randEthereumAddress(),
-    timestamp: randNumber({ min: 1699244791 - 4 * 86400, max: 1699244791 }),
-  },
-];
 
 const Account: FC = () => {
   const [activeTable, setActiveTable] = useState<
@@ -83,6 +49,9 @@ const Account: FC = () => {
 
   // Spend notes table data
   const spendNotesTableData = useSpendNotes();
+
+  // Transaction from client storage
+  const { transactions } = useTxClientStorage();
 
   const destinationChains = useMemo(() => {
     return shieldedAssetsTableData.map((asset) => asset.chain);
@@ -120,9 +89,6 @@ const Account: FC = () => {
       [globalSearchText, openUploadModal]
     );
 
-  const txData = fakeTxData;
-  // const txData: TxTableItemType[] = [];
-
   if (!hasNoteAccount || !allNotesInitialized) {
     return null;
   }
@@ -141,16 +107,16 @@ const Account: FC = () => {
               <Button
                 variant="utility"
                 size="sm"
-                isDisabled={txData.length === 0}
+                isDisabled={transactions.length === 0}
                 onClick={() => navigate(ACCOUNT_TRANSACTIONS_FULL_PATH)}
               >
                 View all
               </Button>
             </div>
 
-            {txData.length > 0 ? (
+            {transactions.length > 0 ? (
               <TxTableContainer
-                data={txData}
+                data={transactions}
                 pageSize={3}
                 hideRecipientCol
                 allowSorting={false}

@@ -4,7 +4,7 @@ import {
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
-  Transaction,
+  TransactionExecutor,
   TransactionPayloadType,
   TransactionState,
   VAnchorActions,
@@ -93,7 +93,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   async prepareTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
@@ -233,7 +233,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   async transact(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     contractAddress: Address,
     inputs: Utxo[],
     outputs: Utxo[],
@@ -468,7 +468,10 @@ export class Web3VAnchorActions extends VAnchorActions<
     );
   }
 
-  async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
+  async commitmentsSetup(
+    notes: Note[],
+    tx?: TransactionExecutor<NewNotesTxResult>
+  ) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
     }
@@ -622,7 +625,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   // ================== PRIVATE METHODS ===================
 
   private async prepareDeposit(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
     wrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
@@ -663,7 +666,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async prepareWithdraw(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
     unwrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
@@ -692,7 +695,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async prepareTransfer(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
     unwrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
@@ -744,7 +747,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       PublicClient
     >,
     treeHeight: number,
-    tx?: Transaction<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: bigint }> | never {
     if (tx) {
       // Fetching leaves from relayer initially
@@ -954,7 +957,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async checkApproval(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapToken: string,
     tokenWrapper: GetContractReturnType<

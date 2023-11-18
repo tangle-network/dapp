@@ -1,6 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
@@ -12,7 +13,7 @@ import {
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
@@ -33,6 +34,8 @@ import {
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
+  getNoteSerializations,
+  getCurrentTimestamp,
 } from '../../utils';
 import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { WithdrawConfirmContainerProps } from './types';
@@ -82,6 +85,8 @@ const WithdrawConfirmContainer = forwardRef<
 
     const { api: txQueueApi } = txQueue;
 
+    const { addNewTransaction } = useTxClientStorage();
+
     const {
       relayersState: { activeRelayer },
     } = useRelayers({
@@ -130,10 +135,12 @@ const WithdrawConfirmContainer = forwardRef<
       [apiConfig, fungibleCurrency.id, targetTypedChainId]
     );
 
-    const poolExplorerUrl = useMemo(() => {
-      const blockExplorerUrl =
-        chainsConfig[targetTypedChainId]?.blockExplorers?.default.url;
+    const blockExplorerUrl = useMemo(
+      () => chainsConfig[targetTypedChainId]?.blockExplorers?.default.url,
+      [targetTypedChainId]
+    );
 
+    const poolExplorerUrl = useMemo(() => {
       if (!blockExplorerUrl) return undefined;
       return getExplorerURI(
         blockExplorerUrl,
@@ -141,7 +148,7 @@ const WithdrawConfirmContainer = forwardRef<
         'address',
         'web3'
       ).toString();
-    }, [targetTypedChainId, poolAddress]);
+    }, [blockExplorerUrl, poolAddress]);
 
     const newBalance = useMemo(() => {
       const currentBalance =
@@ -151,6 +158,22 @@ const WithdrawConfirmContainer = forwardRef<
       if (updatedBalance < 0) return undefined;
       return updatedBalance;
     }, [balances, fungibleCurrency.id, sourceTypedChainId, amount]);
+
+    const gasFees = useMemo(
+      () =>
+        gasFeeInfo
+          ? parseFloat(formatEther(gasFeeInfo).slice(0, 10))
+          : undefined,
+      [gasFeeInfo]
+    );
+
+    const relayerFees = useMemo(
+      () =>
+        relayerFeeInfo
+          ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
+          : undefined,
+      [relayerFeeInfo]
+    );
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
@@ -200,7 +223,7 @@ const WithdrawConfirmContainer = forwardRef<
 
         const amount = Number(formatUnits(amountAfterFee, +denomination));
 
-        const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
+        const tx = TransactionExecutor.new<NewNotesTxResult>('Withdraw', {
           amount,
           tokens: [tokenSymbol, unwrapTokenSymbol],
           wallets: {
@@ -299,6 +322,39 @@ const WithdrawConfirmContainer = forwardRef<
           await Promise.all(
             availableNotes.map((note) => removeNoteFromNoteManager(note))
           );
+
+          // add new TRANSFER transaction to client storage
+          addNewTransaction({
+            hash: transactionHash,
+            activity: 'withdraw',
+            amount: amount,
+            fromAddress: sourceIdentifyingData,
+            recipientAddress: recipient,
+            fungibleTokenSymbol: tokenSymbol,
+            unwrapTokenSymbol,
+            timestamp: getCurrentTimestamp(),
+            relayerName: activeRelayer?.account,
+            relayerUri: activeRelayer ? activeRelayer.infoUri : undefined,
+            relayerFeesAmount: relayerFees ?? gasFees,
+            refundAmount:
+              typeof refundAmount !== 'undefined'
+                ? parseFloat(formatEther(refundAmount).slice(0, 10))
+                : undefined,
+            refundTokenSymbol: refundToken,
+            refundRecipientAddress: recipient,
+            inputNoteSerializations: getNoteSerializations(availableNotes),
+            outputNoteSerializations: getNoteSerializations(outputNotes),
+            explorerUri: blockExplorerUrl
+              ? getExplorerURI(
+                  blockExplorerUrl,
+                  transactionHash,
+                  'tx',
+                  'web3'
+                ).toString()
+              : undefined,
+            sourceTypedChainId: +sourceTypedChainId,
+            destinationTypedChainId: +destTypedChainId,
+          });
         } catch (error) {
           console.log('Error while executing withdraw', error);
           changeNote && (await removeNoteFromNoteManager(changeNote));
@@ -323,7 +379,7 @@ const WithdrawConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi, addNewTransaction, blockExplorerUrl, refundToken, relayerFees, gasFees]
     );
 
     const formattedFee = useMemo(() => {
@@ -413,8 +469,8 @@ const WithdrawConfirmContainer = forwardRef<
           <RelayerFeeDetails
             totalFeeWei={totalFeeWei}
             totalFeeToken={totalFeeToken}
-            gasFeeInfo={gasFeeInfo}
-            relayerFeeInfo={relayerFeeInfo}
+            gasFees={gasFees}
+            relayerFees={relayerFees}
             isFeeLoading={isFeeLoading}
             srcChainCfg={apiConfig.chains[sourceTypedChainId]}
             fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(

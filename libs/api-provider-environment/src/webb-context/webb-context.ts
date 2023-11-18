@@ -1,7 +1,7 @@
 import type {
   Account,
   Bridge,
-  Transaction,
+  TransactionExecutor,
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
@@ -149,7 +149,7 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
       dismissTransaction(_id: string) {
         return;
       },
-      registerTransaction(_tx: Transaction<any>) {
+      registerTransaction(_tx: TransactionExecutor<any>) {
         return;
       },
       getLatestTransaction(_name: 'Deposit' | 'Withdraw' | 'Transfer') {

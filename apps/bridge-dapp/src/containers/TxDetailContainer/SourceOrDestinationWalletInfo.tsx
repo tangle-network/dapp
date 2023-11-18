@@ -15,7 +15,8 @@ const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
   walletAddress,
   amount,
   fungibleTokenSymbol,
-  wrappableTokenSymbol,
+  wrapTokenSymbol,
+  unwrapTokenSymbol,
 }) => {
   return (
     <SectionWrapper>
@@ -34,7 +35,9 @@ const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
       <NoteOrAmountWrapper className="flex justify-between items-center">
         <Typography variant="body2">Amount</Typography>
         <Typography variant="body2" fw="bold">
-          {`${amount} ${wrappableTokenSymbol ?? fungibleTokenSymbol}`}
+          {`${amount} ${
+            wrapTokenSymbol ?? unwrapTokenSymbol ?? fungibleTokenSymbol
+          }`}
         </Typography>
       </NoteOrAmountWrapper>
     </SectionWrapper>

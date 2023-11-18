@@ -9,7 +9,7 @@ import {
   type ColumnDef,
 } from '@tanstack/react-table';
 import { ArrowLeft, ExternalLinkLine } from '@webb-tools/icons';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import {
   ChainChip,
@@ -18,16 +18,17 @@ import {
   Typography,
   getTimeDetailByEpoch,
   shortenHex,
+  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useState, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useNavigate } from 'react-router';
 
 import HiddenValue from '../../components/HiddenValue';
-import type { TxTableContainerProps, TxTableItemType } from './types';
+import type { TxTableContainerProps } from './types';
 import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
 
-const staticColumns: ColumnDef<TxTableItemType>[] = [
+const staticColumns: ColumnDef<TransactionType>[] = [
   {
     header: 'Activity',
     accessorKey: 'activity',
@@ -42,13 +43,17 @@ const staticColumns: ColumnDef<TxTableItemType>[] = [
   },
   {
     header: 'Amount',
-    accessorKey: 'tokenAmount',
+    accessorKey: 'amount',
     cell: (props) => (
       <Typography variant="body1" className="whitespace-nowrap">
         <HiddenValue numberOfStars={4}>
-          {props.row.original.tokenAmount}
+          {`${
+            props.row.original.activity === 'deposit' ? '+' : '-'
+          }${formatTokenAmount(props.row.original.amount.toString())}`}
         </HiddenValue>{' '}
-        {props.row.original.tokenSymbol}
+        {props.row.original.wrapTokenSymbol ??
+          props.row.original.unwrapTokenSymbol ??
+          props.row.original.fungibleTokenSymbol}
       </Typography>
     ),
   },
@@ -80,29 +85,14 @@ const staticColumns: ColumnDef<TxTableItemType>[] = [
     accessorKey: 'recipient',
     header: 'Recipient',
     cell: (props) => {
-      const { recipient, destinationTypedChainId } = props.row.original;
-      const blockExplorerUrl =
-        chainsConfig[destinationTypedChainId]?.blockExplorers?.default?.url;
-      const recipientExplorerUrl =
-        blockExplorerUrl && recipient
-          ? getExplorerURI(
-              blockExplorerUrl,
-              recipient,
-              'address',
-              'web3'
-            ).toString()
-          : undefined;
+      const { recipientAddress, explorerUri } = props.row.original;
       return (
         <div className="flex gap-1 items-center">
           <Typography variant="body1">
-            {recipient ? shortenHex(recipient) : '-'}
+            {recipientAddress ? shortenHex(recipientAddress) : '-'}
           </Typography>
-          {recipientExplorerUrl && (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href={recipientExplorerUrl}
-            >
+          {explorerUri && (
+            <a target="_blank" rel="noopener noreferrer" href={explorerUri}>
               <ExternalLinkLine />
             </a>
           )}
@@ -127,7 +117,7 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
     },
   ]);
 
-  const columns = useMemo<ColumnDef<TxTableItemType>[]>(() => {
+  const columns = useMemo<ColumnDef<TransactionType>[]>(() => {
     const displayStaticColumns = hideRecipientCol
       ? staticColumns.filter((col) => col.header !== 'Recipient')
       : staticColumns;
@@ -172,8 +162,8 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
   }, [hideRecipientCol, allowSorting, setSorting]);
 
   const onRowClick = useCallback(
-    (row: Row<TxTableItemType>) => {
-      navigate(`${ACCOUNT_TRANSACTIONS_FULL_PATH}/${row.original.txHash}`);
+    (row: Row<TransactionType>) => {
+      navigate(`${ACCOUNT_TRANSACTIONS_FULL_PATH}/${row.original.hash}`);
     },
     [navigate]
   );

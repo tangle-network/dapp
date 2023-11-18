@@ -1,11 +1,12 @@
 import {
   Currency,
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { GasStationFill } from '@webb-tools/icons';
 import { useVAnchor } from '@webb-tools/react-hooks';
@@ -23,6 +24,8 @@ import {
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
+  getNoteSerializations,
+  getCurrentTimestamp,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
 
@@ -55,6 +58,8 @@ const DepositConfirmContainer = forwardRef<
       useWebContext();
 
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
+
+    const { addNewTransaction } = useTxClientStorage();
 
     const { api: txQueueApi } = txQueue;
 
@@ -109,10 +114,12 @@ const DepositConfirmContainer = forwardRef<
       [apiConfig, fungibleTokenId, destTypedChainId]
     );
 
-    const poolExplorerUrl = useMemo(() => {
-      const blockExplorerUrl =
-        chainsConfig[destTypedChainId]?.blockExplorers?.default.url;
+    const blockExplorerUrl = useMemo(
+      () => chainsConfig[destTypedChainId]?.blockExplorers?.default.url,
+      [destTypedChainId]
+    );
 
+    const poolExplorerUrl = useMemo(() => {
       if (!blockExplorerUrl) return undefined;
 
       return getExplorerURI(
@@ -121,7 +128,7 @@ const DepositConfirmContainer = forwardRef<
         'address',
         'web3'
       ).toString();
-    }, [destTypedChainId, poolAddress]);
+    }, [blockExplorerUrl, poolAddress]);
 
     const handleExecuteDeposit = useCallback(
       async () => {
@@ -181,7 +188,7 @@ const DepositConfirmContainer = forwardRef<
 
         const tokenURI = getTokenURI(currency, destTypedChainId);
 
-        const tx = Transaction.new<NewNotesTxResult>('Deposit', {
+        const tx = TransactionExecutor.new<NewNotesTxResult>('Deposit', {
           amount: +formattedAmount,
           tokens: [srcTokenSymbol, destToken],
           wallets: {
@@ -242,6 +249,29 @@ const DepositConfirmContainer = forwardRef<
             txHash: transactionHash,
             outputNotes: [indexedNote],
           });
+
+          // add new DEPOSIT transaction to client storage
+          addNewTransaction({
+            hash: transactionHash,
+            activity: 'deposit',
+            amount: +formattedAmount,
+            fromAddress: activeAccount?.address ?? '',
+            recipientAddress: targetIdentifyingData,
+            fungibleTokenSymbol: fungibleToken.view.symbol,
+            wrapTokenSymbol: wrappableToken?.view.symbol,
+            timestamp: getCurrentTimestamp(),
+            outputNoteSerializations: getNoteSerializations([indexedNote]),
+            explorerUri: blockExplorerUrl
+              ? getExplorerURI(
+                  blockExplorerUrl,
+                  transactionHash,
+                  'tx',
+                  'web3'
+                ).toString()
+              : undefined,
+            sourceTypedChainId: +sourceTypedChainId,
+            destinationTypedChainId: +destTypedChainId,
+          });
         } catch (error) {
           console.error(error);
           removeNoteFromNoteManager(note);
@@ -266,7 +296,7 @@ const DepositConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken]
+      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken, blockExplorerUrl, fungibleToken.view.symbol, addNewTransaction]
     );
 
     return (

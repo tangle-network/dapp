@@ -10,7 +10,7 @@ import {
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   FixturesStatus,
   WebbApiProvider,
@@ -329,7 +329,7 @@ export class WebbWeb3Provider
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];
@@ -722,7 +722,7 @@ export class WebbWeb3Provider
   async getVAnchorInstance(
     address: string,
     provider: PublicClient,
-    tx?: Transaction<NewNotesTxResult>,
+    tx?: TransactionExecutor<NewNotesTxResult>,
     useDummyFixtures?: boolean
   ): Promise<VAnchor> {
     if (useDummyFixtures) {

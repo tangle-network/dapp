@@ -1,27 +1,11 @@
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
 import { downloadString } from '@webb-tools/browser-utils';
-
-export type DownloadTxType = {
-  hash: string;
-  activity: 'deposit' | 'transfer' | 'withdraw';
-  amount: string | number;
-  from: string;
-  to: string;
-  blockExplorerUrl: string | null;
-  fungibleTokenSymbol: string;
-  wrappableTokenSymbol: string | null;
-  timestamp: number;
-  relayerName: string | null;
-  relayerFees: string | number | null;
-  inputNoteSerializations: string[] | null;
-  outputNoteSerializations: string[] | null;
-};
 
 /**
  * Convert tx history to json and download it
- * @param notes the notes to download
- * @returns boolean - true if the download was successful
+ * @param transactions transactions to be downloaded
  */
-const downloadTxHistory = (transactions: DownloadTxType[]): boolean => {
+const downloadTxHistory = (transactions: TransactionType[]): boolean => {
   try {
     downloadString(
       JSON.stringify(transactions),

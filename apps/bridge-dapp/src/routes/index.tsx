@@ -161,7 +161,7 @@ const AppRoutes = () => {
                   }
                 >
                   <Route
-                    path=":txId"
+                    path=":txHash"
                     element={
                       <CSuspense>
                         <RequireNoteAccountRoute redirect={BRIDGE_PATH}>

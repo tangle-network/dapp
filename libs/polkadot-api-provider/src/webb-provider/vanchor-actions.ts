@@ -8,7 +8,7 @@ import {
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
-  Transaction,
+  TransactionExecutor,
   TransactionPayloadType,
   TransactionState,
   TransferTransactionPayloadType,
@@ -95,7 +95,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   prepareTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
@@ -236,7 +236,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   async transact(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     treeId: string,
     inputs: Utxo[],
     outputs: Utxo[],
@@ -389,7 +389,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     return createSubstrateResourceId(chainId, +treeId, palletId.toString());
   }
 
-  async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
+  async commitmentsSetup(
+    notes: Note[],
+    tx?: TransactionExecutor<NewNotesTxResult>
+  ) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
     }
@@ -444,7 +447,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   // ------------------ Private ------------------
 
   private async prepareDepositTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
@@ -482,7 +485,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   private async prepareWithdrawTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
@@ -514,7 +517,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   private async prepareTransferTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
@@ -581,7 +584,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
    * @param treeId the treeId of the tree being used
    */
   private async setupTransaction(
-    tx: Transaction<NewNotesTxResult>,
+    tx: TransactionExecutor<NewNotesTxResult>,
     inputs: Utxo[],
     outputs: Utxo[],
     fee: bigint,
@@ -903,7 +906,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
     destApi: ApiPromise,
-    tx?: Transaction<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
     if (tx) {
       tx.next(TransactionState.FetchingLeaves, {

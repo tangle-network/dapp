@@ -9,16 +9,42 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { DeleteBinIcon } from '@webb-tools/icons';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
+import { getErrorMessage } from '../../utils';
 
 const ClearTxHistoryModal: FC<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-}> = ({ isOpen, setIsOpen }) => {
+  clearTxHistory: () => void;
+  downloadTxHistory: () => void;
+}> = ({ isOpen, setIsOpen, clearTxHistory, downloadTxHistory }) => {
+  const { notificationApi } = useWebbUI();
+
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   const closeModal = useCallback(() => {
     setIsOpen(false);
+    setIsCheckboxChecked(false);
   }, [setIsOpen]);
+
+  const handleClearTxHistory = useCallback(() => {
+    try {
+      clearTxHistory();
+      notificationApi.addToQueue({
+        variant: 'success',
+        message: 'Transaction history deleted',
+      });
+    } catch (error) {
+      const message = getErrorMessage(error);
+      notificationApi.addToQueue({
+        variant: 'error',
+        message: 'Failed to delete transaction history',
+        secondaryMessage: message,
+      });
+    } finally {
+      closeModal();
+    }
+  }, [clearTxHistory, closeModal, notificationApi]);
 
   return (
     <Modal open={isOpen} onOpenChange={(isOpen) => setIsOpen(isOpen)}>
@@ -28,9 +54,7 @@ const ClearTxHistoryModal: FC<{
         className="bg-mono-0 dark:bg-mono-180 w-full md:!w-[448px] rounded-2xl"
         isCenter
       >
-        <ModalHeader onClose={closeModal} className="">
-          Clear Data
-        </ModalHeader>
+        <ModalHeader onClose={closeModal}>Clear Data</ModalHeader>
 
         <div className="p-9 space-y-9">
           <div className="flex gap-3">
@@ -66,25 +90,16 @@ const ClearTxHistoryModal: FC<{
         </div>
 
         <ModalFooter>
-          {/* TODO: update onClick */}
-          <Button
-            isFullWidth
-            onClick={() => {
-              return;
-            }}
-          >
+          <Button isFullWidth onClick={downloadTxHistory}>
             Download
           </Button>
           <Button
             isDisabled={!isCheckboxChecked}
             variant="secondary"
             isFullWidth
-            // TODO: update onClick
-            onClick={() => {
-              return;
-            }}
+            onClick={handleClearTxHistory}
           >
-            Delete Notes
+            Clear Transaction Data
           </Button>
         </ModalFooter>
       </ModalContent>
