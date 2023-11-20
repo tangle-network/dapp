@@ -324,7 +324,7 @@ const WithdrawConfirmContainer = forwardRef<
           );
 
           // add new TRANSFER transaction to client storage
-          addNewTransaction({
+          await addNewTransaction({
             hash: transactionHash,
             activity: 'withdraw',
             amount: amount,

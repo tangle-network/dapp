@@ -522,7 +522,7 @@ const useTransferExecuteHandler = (args: Args) => {
       }
 
       // add new TRANSFER transaction to client storage
-      addNewTransaction({
+      await addNewTransaction({
         hash: transactionHash,
         activity: 'transfer',
         amount: amount,
