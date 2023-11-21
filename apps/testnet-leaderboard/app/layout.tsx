@@ -1,4 +1,4 @@
-import './global.css';
+import '@webb-tools/webb-ui-components/tailwind.css';
 
 export const metadata = {
   title: 'Welcome to testnet-leaderboard',
