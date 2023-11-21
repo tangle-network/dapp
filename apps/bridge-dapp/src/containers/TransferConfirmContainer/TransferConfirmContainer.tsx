@@ -56,6 +56,7 @@ const TransferConfirmContainer = forwardRef<
       amount,
       changeAmount,
       currency,
+      srcChain,
       destChain,
       recipient,
       relayer,
@@ -96,8 +97,8 @@ const TransferConfirmContainer = forwardRef<
     );
 
     const srcTypedChainId = useMemo(
-      () => calculateTypedChainId(activeChain!.chainType, activeChain!.id),
-      [activeChain]
+      () => calculateTypedChainId(srcChain.chainType, srcChain.id),
+      [srcChain]
     );
 
     const targetChainId = useMemo(

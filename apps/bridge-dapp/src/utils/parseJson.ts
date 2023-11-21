@@ -4,7 +4,7 @@
  * @returns [error, parsed]
  */
 
-const parseJson = (str: string) => {
+const safeParseJson = (str: string) => {
   try {
     return [null, JSON.parse(str)];
   } catch (err) {
@@ -12,4 +12,4 @@ const parseJson = (str: string) => {
   }
 };
 
-export default parseJson;
+export default safeParseJson;

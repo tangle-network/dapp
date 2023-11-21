@@ -20,7 +20,7 @@ import {
   KeyIcon,
   InformationLine,
 } from '@webb-tools/icons';
-import { parseJson } from '../../utils';
+import { safeParseJson, getErrorMessage } from '../../utils';
 import { twMerge } from 'tailwind-merge';
 import { txArraySchema } from './types';
 
@@ -68,7 +68,7 @@ const UploadTxHistoryModal: FC<{
       });
       setIsError(true);
     }
-  }, [transactions, closeModal, addTransactions, notificationApi]);
+  }, [transactions, closeModal, addTransactions]);
 
   useEffect(() => {
     const processFile = async () => {
@@ -79,24 +79,33 @@ const UploadTxHistoryModal: FC<{
       reader.onload = async () => {
         try {
           const text = reader.result as string;
-          const [err, parsedData] = parseJson(text);
+          // Validate file type
+          const [err, parsedData] = safeParseJson(text);
           if (err) {
-            throw new Error();
+            throw new Error(
+              'Invalid file type: Only JSON files are supported.'
+            );
           }
           const data = parsedData as TransactionType[];
-          // Validate data to check if it is valid or not
-          txArraySchema.parse(data);
-          setTransactions(data);
-          notificationApi({
-            variant: 'success',
-            message: 'File uploaded successfully',
-          });
-        } catch {
+
+          // Validate data to check if it has valid format or not
+          try {
+            txArraySchema.parse(data);
+            setTransactions(data);
+            notificationApi({
+              variant: 'success',
+              message: 'File uploaded successfully',
+            });
+          } catch {
+            throw new Error(
+              'Invalid format of data: Please ensure the data is in the correct format.'
+            );
+          }
+        } catch (error) {
           notificationApi({
             variant: 'error',
-            message: 'Invalid File',
-            secondaryMessage:
-              'Wrong file type or data is not in the correct format',
+            message: 'Invalid',
+            secondaryMessage: getErrorMessage(error),
           });
           setIsError(true);
         }
@@ -104,7 +113,7 @@ const UploadTxHistoryModal: FC<{
     };
 
     processFile();
-  }, [file, notificationApi]);
+  }, [file]);
 
   return (
     <Modal open={isOpen} onOpenChange={(isOpen) => setIsOpen(isOpen)}>

@@ -371,6 +371,11 @@ function useTransferButtonProps({
             feeToken={feeToken}
             changeAmount={Number(formatEther(changeAmount))}
             currency={new Currency(fungibleCfg)}
+            srcChain={
+              chainsPopulated[
+                calculateTypedChainId(srcChain.chainType, srcChain.id)
+              ]
+            }
             destChain={
               chainsPopulated[
                 calculateTypedChainId(destChain.chainType, destChain.id)

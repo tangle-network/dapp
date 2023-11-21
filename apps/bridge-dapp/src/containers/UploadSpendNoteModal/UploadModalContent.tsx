@@ -26,7 +26,7 @@ import {
 } from 'react';
 import { RefHandle, UploadModalContentProps } from './types';
 import { formatUnits } from 'viem';
-import { parseJson } from '../../utils';
+import { safeParseJson } from '../../utils';
 
 export const UploadModalContent = forwardRef<
   RefHandle,
@@ -82,7 +82,7 @@ export const UploadModalContent = forwardRef<
       reader.onload = async () => {
         const text = reader.result as string;
 
-        const [err, parsedNote] = parseJson(text);
+        const [err, parsedNote] = safeParseJson(text);
 
         if (err) {
           notificationApi({

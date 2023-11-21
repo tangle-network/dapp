@@ -40,6 +40,11 @@ export interface TransferConfirmContainerProps
   currency: Currency;
 
   /**
+   * The source chain
+   */
+  srcChain: Chain;
+
+  /**
    * The destination chain
    */
   destChain: Chain;

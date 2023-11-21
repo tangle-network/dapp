@@ -13,12 +13,10 @@ const useTxClientStorage = () => {
   const transactions = useLiveQuery(() => transactionDB.txItems.toArray());
 
   const addNewTransaction = async (tx: TransactionType) => {
-    // if the tx already exists, an error will be thrown
-    transactionDB.txItems.add({ ...tx });
+    await transactionDB.txItems.add({ ...tx });
   };
 
   const addTransactions = async (txs: TransactionType[]) => {
-    // if any tx already exist, an error will be thrown
     await transactionDB.txItems.bulkAdd(txs);
   };
 
