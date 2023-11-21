@@ -3,7 +3,7 @@ import {
   useValidatorsCountSubscription,
   useWaitingCountSubscription,
 } from '../../data';
-import type { MetricReturnType } from '../../types';
+import { MetricReturnType } from '../../types';
 
 const dataHooks: {
   [key: string]: (defaultValue?: MetricReturnType) => MetricReturnType;

@@ -2,7 +2,7 @@
 
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 
-import type { MetricReturnType } from '../../types';
+import { MetricReturnType } from '../../types';
 import getRoundedDownNumberWith2Decimals from '../../utils/getRoundedDownNumberWith2Decimals';
 import dataHooks, { defaultHook } from './dataHooks';
 import type { MetricItemProps } from './types';

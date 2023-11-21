@@ -3,6 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import {
   HeaderChipsContainer,
   KeyMetricsTableContainer,
+  NominatorStatsContainer,
   ValidatorTablesContainer,
 } from '../containers';
 
@@ -19,6 +20,10 @@ export default async function Index() {
 
       <div className="mt-12">
         <KeyMetricsTableContainer />
+      </div>
+
+      <div className="mt-12">
+        <NominatorStatsContainer />
       </div>
 
       <div className="mt-12">

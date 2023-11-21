@@ -5,5 +5,6 @@ export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';
 export * from './sideBar';
 export * from './skeleton';
+export * from './StatsMetricItem';
 export * from './ValidatorTable';
 export * from './WalletDropdown';
