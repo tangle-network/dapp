@@ -6,6 +6,10 @@ import { StatsMetricReturnType } from '../../types';
 export const getTokenWalletBalance = async (
   address: string
 ): Promise<StatsMetricReturnType> => {
+  if (!address || address === '0x0') {
+    return NaN;
+  }
+
   try {
     const balance = await evmClient.getBalance({
       address: address as `0x${string}`,
