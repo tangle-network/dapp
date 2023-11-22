@@ -64,7 +64,7 @@ const columns = [
   columnHelper.accessor('minimumStake', {
     header: () => <HeaderCell title="Minimum stake" className="justify-end" />,
     cell: (props) => (
-      <StringCell value={`${props.getValue()} TTNT`} className="text-right" />
+      <StringCell value={`${props.getValue()} tTNT`} className="text-right" />
     ),
   }),
 ];

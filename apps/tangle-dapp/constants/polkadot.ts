@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 
 const apiPromiseCache = new Map<string, ApiPromise>();
 
-const TOKEN_UNIT = 'TTNT';
+const TOKEN_UNIT = 'tTNT';
 
 export const getPolkadotApiPromise = async (
   endpoint: string = TANGLE_RPC_ENDPOINT

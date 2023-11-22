@@ -62,7 +62,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
           : isExpandedAtDefault;
 
       setIsSidebarOpen(isSideBarOpen);
-    }, [setIsSidebarOpen]);
+    }, [isExpandedAtDefault, setIsSidebarOpen]);
 
     return (
       <div
