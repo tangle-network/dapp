@@ -4,11 +4,11 @@ import { evmClient } from '../../constants';
 import { StatsMetricReturnType } from '../../types';
 
 export const getTokenWalletBalance = async (
-  address: `0x${string}`
+  address: string
 ): Promise<StatsMetricReturnType> => {
   try {
     const balance = await evmClient.getBalance({
-      address: address,
+      address: address as `0x${string}`,
     });
 
     const walletBalance = formatEther(balance);

@@ -1,5 +1,6 @@
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
-import { FC, Suspense } from 'react';
+import type { FC } from 'react';
+import { Suspense } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -31,6 +32,7 @@ export const StatsMetricItem: FC<StatsMetricItemProps> = ({
   );
 };
 
+/** @internal */
 const StatsMetricItemValue = async (
   props: Omit<StatsMetricItemProps, 'tooltip' | 'title'>
 ) => {

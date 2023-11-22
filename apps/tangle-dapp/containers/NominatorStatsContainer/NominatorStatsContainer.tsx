@@ -8,14 +8,11 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { cache, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { StatsMetricItem } from '../../components';
 import { getTokenWalletBalance, getTotalStakedAmount } from '../../data';
 import { convertEthereumToSubstrateAddress } from '../../utils';
-
-const getTokenWalletBalanceData = cache(getTokenWalletBalance);
-const getTotalStakedAmountData = cache(getTotalStakedAmount);
 
 export const NominatorStatsContainer = () => {
   const { activeAccount } = useWebContext();
@@ -23,7 +20,7 @@ export const NominatorStatsContainer = () => {
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
 
-    return activeAccount.address as `0x${string}`;
+    return activeAccount.address;
   }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
@@ -43,7 +40,7 @@ export const NominatorStatsContainer = () => {
       >
         <StatsMetricItem
           title="Available tTNT in Wallet"
-          dataFetcher={() => getTokenWalletBalanceData(walletAddress)}
+          dataFetcher={() => getTokenWalletBalance(walletAddress)}
           address={walletAddress}
           className=""
         />
@@ -65,7 +62,7 @@ export const NominatorStatsContainer = () => {
         <StatsMetricItem
           title="Total Staked tTNT"
           tooltip="Total Staked tTNT."
-          dataFetcher={() => getTotalStakedAmountData(substrateAddress)}
+          dataFetcher={() => getTotalStakedAmount(substrateAddress)}
           address={substrateAddress ?? ''}
           className=""
         />

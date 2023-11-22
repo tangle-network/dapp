@@ -2,6 +2,7 @@ const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
 const { join } = require('path');
 
 const preset = require('@webb-tools/tailwind-preset');
+const scrollbarHide = require('tailwind-scrollbar-hide');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -28,5 +29,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [scrollbarHide],
 };

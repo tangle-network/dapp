@@ -12,6 +12,10 @@ type SplitNumericAndAlphabetsReturnType = {
 export const splitTokenValueAndSymbol = (
   string: string
 ): SplitNumericAndAlphabetsReturnType => {
+  // Regex explanation:
+  // ^(\d+\.?\d*) - This part of the regex matches the beginning of the string and captures one or more digits (\d+), optionally followed by a decimal point (\.?) and zero or more digits (\d*). This is intended to match the numeric part of the string.
+  // \s* - This matches and ignores any whitespace characters between the numeric and alphabet parts.
+  // (\D+)$ - This matches and captures one or more non-digit characters (\D+) at the end of the string. This is intended to match the alphabetic part of the string (e.g., the token symbol).
   const regex = /^(\d+\.?\d*)\s*(\D+)$/;
   const matches = string.match(regex);
 
