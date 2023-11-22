@@ -27,7 +27,7 @@ const columnHelper = createColumnHelper<Validator>();
 
 const columns = [
   columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Indentity" className="justify-start" />,
+    header: () => <HeaderCell title="Identity" className="justify-start" />,
     cell: (props) => {
       const address = props.getValue();
       const identity = props.row.original.identity;
