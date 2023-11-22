@@ -56,6 +56,7 @@ const TransferConfirmContainer = forwardRef<
       amount,
       changeAmount,
       currency,
+      srcChain,
       destChain,
       recipient,
       relayer,
@@ -96,8 +97,8 @@ const TransferConfirmContainer = forwardRef<
     );
 
     const srcTypedChainId = useMemo(
-      () => calculateTypedChainId(activeChain!.chainType, activeChain!.id),
-      [activeChain]
+      () => calculateTypedChainId(srcChain.chainType, srcChain.id),
+      [srcChain]
     );
 
     const targetChainId = useMemo(
@@ -522,7 +523,7 @@ const useTransferExecuteHandler = (args: Args) => {
       }
 
       // add new TRANSFER transaction to client storage
-      addNewTransaction({
+      await addNewTransaction({
         hash: transactionHash,
         activity: 'transfer',
         amount: amount,

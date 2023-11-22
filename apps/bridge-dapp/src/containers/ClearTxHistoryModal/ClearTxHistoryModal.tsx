@@ -15,7 +15,7 @@ import { getErrorMessage } from '../../utils';
 const ClearTxHistoryModal: FC<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  clearTxHistory: () => void;
+  clearTxHistory: () => Promise<void>;
   downloadTxHistory: () => void;
 }> = ({ isOpen, setIsOpen, clearTxHistory, downloadTxHistory }) => {
   const { notificationApi } = useWebbUI();
@@ -27,9 +27,9 @@ const ClearTxHistoryModal: FC<{
     setIsCheckboxChecked(false);
   }, [setIsOpen]);
 
-  const handleClearTxHistory = useCallback(() => {
+  const handleClearTxHistory = useCallback(async () => {
     try {
-      clearTxHistory();
+      await clearTxHistory();
       notificationApi.addToQueue({
         variant: 'success',
         message: 'Transaction history deleted',

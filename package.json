@@ -147,7 +147,8 @@
     "use-local-storage-state": "^19.1.0",
     "use-query-params": "^2.2.1",
     "viem": "^1.12.2",
-    "wagmi": "^1.4.2"
+    "wagmi": "^1.4.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/cli": "7.21.5",

@@ -251,7 +251,7 @@ const DepositConfirmContainer = forwardRef<
           });
 
           // add new DEPOSIT transaction to client storage
-          addNewTransaction({
+          await addNewTransaction({
             hash: transactionHash,
             activity: 'deposit',
             amount: +formattedAmount,
