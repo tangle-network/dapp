@@ -11,5 +11,4 @@ export type Validator = {
   selfStaked: string;
   effectiveAmountStaked: string;
   delegations: string;
-  minimumStake: string;
 };

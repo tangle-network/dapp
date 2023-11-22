@@ -58,13 +58,9 @@ const columns = [
     cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Delegations" className="justify-start" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
-  columnHelper.accessor('minimumStake', {
-    header: () => <HeaderCell title="Minimum stake" className="justify-end" />,
+    header: () => <HeaderCell title="Delegations" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={`${props.getValue()} tTNT`} className="text-right" />
+      <StringCell value={props.getValue()} className="text-center" />
     ),
   }),
 ];
