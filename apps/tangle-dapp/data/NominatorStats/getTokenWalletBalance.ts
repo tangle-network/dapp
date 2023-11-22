@@ -1,3 +1,4 @@
+import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 import { formatEther } from 'viem';
 
 import { evmClient } from '../../constants';
@@ -12,7 +13,7 @@ export const getTokenWalletBalance = async (
 
   try {
     const balance = await evmClient.getBalance({
-      address: address as `0x${string}`,
+      address: ensureHex(address),
     });
 
     const walletBalance = formatEther(balance);
