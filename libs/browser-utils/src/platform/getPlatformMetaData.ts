@@ -1,3 +1,4 @@
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { detect } from 'detect-browser';
 
 export enum SupportedBrowsers {
@@ -30,11 +31,7 @@ const getPlatformMetaData = (): PlatformMetaData => {
         storeName: 'Chrome web store',
       };
     default:
-      return {
-        id: SupportedBrowsers.Chrome,
-        name: 'chrome',
-        storeName: 'Chrome web store',
-      };
+      throw WebbError.from(WebbErrorCodes.UnsupportedBrowser);
   }
 };
 

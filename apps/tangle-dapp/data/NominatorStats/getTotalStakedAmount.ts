@@ -14,7 +14,7 @@ export const getTotalStakedAmount = async (
     const data = await api.query.staking.ledger(address);
     const ledger = data.unwrapOrDefault();
 
-    const totalStaked = ledger.total.toBn() as u128;
+    const totalStaked = new u128(api.registry, ledger.total.toString());
 
     const availableTokenBalance = await formatTokenBalance(totalStaked);
 
