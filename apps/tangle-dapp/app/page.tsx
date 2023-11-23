@@ -26,9 +26,9 @@ export default async function Index() {
         <NominatorStatsContainer />
       </div>
 
-      {/* <div className="mt-12">
+      <div className="mt-12">
         <ValidatorTablesContainer />
-      </div> */}
+      </div>
     </div>
   );
 }
