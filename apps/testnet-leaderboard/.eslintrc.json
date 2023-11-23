@@ -5,6 +5,8 @@
     "next/core-web-vitals",
     "../../.eslintrc.json"
   ],
+  "plugins": ["unused-imports", "simple-import-sort"],
+  "parser": "@typescript-eslint/parser",
   "ignorePatterns": ["!**/*", ".next/**/*"],
   "overrides": [
     {
@@ -36,5 +38,10 @@
         "jest": true
       }
     }
-  ]
+  ],
+  "rules": {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "no-unused-vars": "off"
+  }
 }
