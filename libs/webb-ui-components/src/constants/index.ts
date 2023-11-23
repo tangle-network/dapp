@@ -50,8 +50,10 @@ export type webbNetworksType = {
 export const BRIDGE_URL = 'https://app.webb.tools';
 export const DKG_STATS_URL = 'https://stats.tangle.tools';
 export const HUBBLE_STATS_URL = 'https://hubble-stats.webb.tools/';
+
 export const TANGLE_DAPP_URL = 'https://app.tangle.tools/';
 export const WEBB_MKT_URL = 'https://webb.tools';
+export const TESTNET_LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';

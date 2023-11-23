@@ -1,8 +1,13 @@
 import { IconBase } from '@webb-tools/icons/types';
 import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
-import { ComponentProps, useState } from 'react';
-
+import {
+  type ComponentProps,
+  type ElementRef,
+  forwardRef,
+  useState,
+} from 'react';
+import { twMerge } from 'tailwind-merge';
 import {
   BRIDGE_URL,
   DKG_STATS_URL,
@@ -151,69 +156,79 @@ const socials = WEBB_AVAIABLE_SOCIALS.map(
     } as const satisfies SocialType)
 );
 
-type WebsiteFooterPropsType = {
+type Props = {
   type: 'webbsite' | 'tangle';
+  hideNewsletter?: boolean;
 };
 
-export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
+export const WebsiteFooter = forwardRef<
+  ElementRef<'footer'>,
+  ComponentProps<'footer'> & Props
+>(({ type, hideNewsletter, className, ...props }, ref) => {
   // State for subscription success
   const [success, setSuccess] = useState(false);
 
   return (
-    <footer className="pb-4 space-y-6 dark bg-mono-200">
+    <footer
+      {...props}
+      className={twMerge('pb-4 space-y-6 dark bg-mono-200', className)}
+      ref={ref}
+    >
       {/** Newsletter */}
-      <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
-        {/** Title and subtitle */}
-        <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
-          <Typography
-            variant="mkt-h3"
-            className="text-[34px] leading-[46px] dark:text-mono-0 font-black"
-          >
-            Scaling Privacy for <br />
-            Everyone, Everything, Everywhere.
-          </Typography>
+      {!hideNewsletter && (
+        <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
+          {/** Title and subtitle */}
+          <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
+            <Typography
+              variant="mkt-h3"
+              className="text-[34px] leading-[46px] dark:text-mono-0 font-black"
+            >
+              Scaling Privacy for <br />
+              Everyone, Everything, Everywhere.
+            </Typography>
 
-          {!success && (
-            <div className="space-y-6">
-              <Typography
-                variant="mkt-subheading"
-                className="text-lg font-black leading-6 dark:text-mono-80"
-              >
-                Follow for Updates
-              </Typography>
-
-              <WebsiteNewsletterForm onSuccess={() => setSuccess(true)} />
-
-              <Typography
-                variant="mkt-body2"
-                className="font-medium dark:text-mono-100"
-              >
-                By signing up you agree to{' '}
-                <InternalOrExternalLink
-                  url="/terms-and-conditions"
-                  isInternal={false}
-                  className="inline-block dark:text-mono-0 hover:underline"
+            {!success && (
+              <div className="space-y-6">
+                <Typography
+                  variant="mkt-subheading"
+                  className="text-lg font-black leading-6 dark:text-mono-80"
                 >
-                  terms & conditions
-                </InternalOrExternalLink>
-              </Typography>
-            </div>
-          )}
+                  Follow for Updates
+                </Typography>
 
-          {success && (
-            <div className="space-y-6">
-              <Typography variant="mkt-h3">
-                {"Now you're in the loop"}
-              </Typography>
+                <WebsiteNewsletterForm onSuccess={() => setSuccess(true)} />
 
-              <Typography variant="mkt-caption">
-                Thanks for signing up! Keep an eye on your inbox for updates
-                from the Webb community.
-              </Typography>
-            </div>
-          )}
+                <Typography
+                  variant="mkt-body2"
+                  className="font-medium dark:text-mono-100"
+                >
+                  By signing up you agree to{' '}
+                  <InternalOrExternalLink
+                    url="/terms-and-conditions"
+                    isInternal={false}
+                    className="inline-block dark:text-mono-0 hover:underline"
+                  >
+                    terms & conditions
+                  </InternalOrExternalLink>
+                </Typography>
+              </div>
+            )}
+
+            {success && (
+              <div className="space-y-6">
+                <Typography variant="mkt-h3">
+                  {"Now you're in the loop"}
+                </Typography>
+
+                <Typography variant="mkt-caption">
+                  Thanks for signing up! Keep an eye on your inbox for updates
+                  from the Webb community.
+                </Typography>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/** Navigation Links */}
       <div className="w-full max-w-[900px] flex flex-col gap-9 px-4 py-12 mx-auto">
@@ -267,4 +282,4 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
       </div>
     </footer>
   );
-};
+});
