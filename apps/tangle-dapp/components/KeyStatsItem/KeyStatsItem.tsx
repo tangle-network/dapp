@@ -1,5 +1,5 @@
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
-import { FC, Suspense } from 'react';
+import { Typography } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InfoIconWithTooltip } from '..';

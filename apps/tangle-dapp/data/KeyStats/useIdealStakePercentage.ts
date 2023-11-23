@@ -9,7 +9,10 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
 
 export default function useIdealStakedPercentage(
-  defaultValue: { value1: number | null } = { value1: null }
+  defaultValue: { value1: number | null; value2: number | null } = {
+    value1: null,
+    value2: null,
+  }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,10 +32,9 @@ export default function useIdealStakedPercentage(
         setValue1(idealStakePercentage);
         setIsLoading(false);
       } catch (e) {
-        console.error(
+        setError(
           e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
         );
-        setError(e);
         setIsLoading(false);
       }
     };
@@ -40,5 +42,9 @@ export default function useIdealStakedPercentage(
     fetchData();
   }, []);
 
-  return useFormatReturnType({ isLoading, error, data: { value1 } });
+  return useFormatReturnType({
+    isLoading,
+    error,
+    data: { value1, value2: null },
+  });
 }

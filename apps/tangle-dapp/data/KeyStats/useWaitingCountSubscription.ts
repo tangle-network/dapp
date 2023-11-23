@@ -8,7 +8,10 @@ import { getPolkadotApiRx } from '../../constants/polkadot';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useWaitingCountSubscription(
-  defaultValue: { value1: number | null } = { value1: null }
+  defaultValue: { value1: number | null; value2: number | null } = {
+    value1: null,
+    value2: null,
+  }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,5 +54,9 @@ export default function useWaitingCountSubscription(
     };
   }, []);
 
-  return useFormatReturnType({ isLoading, error, data: { value1 } });
+  return useFormatReturnType({
+    isLoading,
+    error,
+    data: { value1, value2: null },
+  });
 }

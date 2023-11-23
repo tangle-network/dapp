@@ -1,4 +1,9 @@
-export type TitleType = 'Validators' | 'Waiting' | `Active/Delegation`;
+export type TitleType =
+  | 'Validators'
+  | 'Waiting'
+  | `Active/Delegation`
+  | 'Ideal Staked'
+  | 'Inflation';
 
 export interface KeyStatsItemProps {
   title: TitleType;

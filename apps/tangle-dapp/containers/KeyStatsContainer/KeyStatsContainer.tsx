@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { cache } from 'react';
 
 import { KeyStatsItem } from '../../components/KeyStatsItem';
 
