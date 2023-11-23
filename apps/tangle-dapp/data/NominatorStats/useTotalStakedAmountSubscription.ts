@@ -10,7 +10,7 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useTotalStakedAmountSubscription(
   address: string,
-  defaultValue: { value1: number | null } = { value1: null }
+  defaultValue: { value1: number | string | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +45,7 @@ export default function useTotalStakedAmountSubscription(
               const availableTokenBalance = await formatTokenBalance(
                 totalStaked
               );
-              setValue1(availableTokenBalance);
+              setValue1(availableTokenBalance ?? null);
               setIsLoading(false);
             }
           });

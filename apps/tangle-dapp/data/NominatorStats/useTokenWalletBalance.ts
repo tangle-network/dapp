@@ -34,10 +34,9 @@ export default function useTokenWalletBalance(
         setValue1(Number(walletBalance));
         setIsLoading(false);
       } catch (e) {
-        console.error(
+        setError(
           e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
         );
-        setError(e);
         setIsLoading(false);
       }
     };

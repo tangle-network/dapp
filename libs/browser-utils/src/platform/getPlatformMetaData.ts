@@ -1,4 +1,3 @@
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { detect } from 'detect-browser';
 
 export enum SupportedBrowsers {
