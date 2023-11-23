@@ -1,8 +1,10 @@
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { getAbiItem } from 'viem';
+import cx from 'classnames';
 
+import FunctionInputs from './FunctionInputs';
 import SelectChainRing from './SelectChainRing';
-import { GovernanceFormProps } from './types';
+import { GovernanceFormProps, FunctionInfoType } from './types';
 
 const GovernanceForm: FC<GovernanceFormProps> = ({
   abi,
@@ -13,14 +15,21 @@ const GovernanceForm: FC<GovernanceFormProps> = ({
     number | undefined
   >();
 
-  const abiItems = useMemo(
+  const fncInfos = useMemo<FunctionInfoType[]>(
     () =>
-      governanceFncNames.map((fncName) =>
-        getAbiItem({
+      governanceFncNames.map((fncName) => {
+        const item = getAbiItem({
           abi,
           name: fncName,
-        })
-      ),
+        });
+        return {
+          fncName: item.name,
+          fncParams: item.inputs.map((input) => ({
+            name: input.name,
+            type: input.type,
+          })),
+        };
+      }),
     [abi, governanceFncNames]
   );
 
@@ -29,7 +38,13 @@ const GovernanceForm: FC<GovernanceFormProps> = ({
   }, []);
 
   return (
-    <div className="bg-mono-0 dark:bg-mono-190 space-y-4">
+    <div
+      className={cx(
+        'max-w-[600px] bg-mono-0 dark:bg-mono-190 rounded-xl p-9',
+        'flex flex-col items-center gap-6',
+        'border border-mono-40 dark:border-mono-160'
+      )}
+    >
       {/* Chains Ring */}
       <SelectChainRing
         typedChainIds={typedChainIdSelections}
@@ -38,7 +53,11 @@ const GovernanceForm: FC<GovernanceFormProps> = ({
       />
 
       {/* Form */}
-      <div></div>
+      <div className="space-y-3 w-full">
+        {fncInfos.map((fncInfo) => (
+          <FunctionInputs fncInfo={fncInfo} />
+        ))}
+      </div>
     </div>
   );
 };

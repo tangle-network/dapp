@@ -5,7 +5,7 @@ export function getChainIconClassNameByIdx(idx: number) {
   let positionClassName = '';
   switch (idx % MAX_NUM_OF_CHAINS) {
     case 0:
-      positionClassName = 'top-1/2 translate-y-[-50%] left-[105.25px]';
+      positionClassName = 'top-1/2 translate-y-[-50%] left-[105.5px]';
       break;
     case 1:
       positionClassName =
@@ -23,7 +23,7 @@ export function getChainIconClassNameByIdx(idx: number) {
       break;
     case 5:
       positionClassName =
-        '-rotate-45 bottom-[16.8px] translate-y-[-50%] right-[132.375px]';
+        '-rotate-45 bottom-[16.75px] translate-y-[-50%] right-[132.2575px]';
       break;
     case 6:
       positionClassName = 'bottom-[2px] translate-x-[50%] right-1/2';

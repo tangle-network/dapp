@@ -16,9 +16,9 @@ type Story = StoryObj<typeof GovernanceForm>;
 export const Default: Story = {
   render: () => (
     <GovernanceForm
-      governanceFncNames={['setHandler']}
+      governanceFncNames={['setHandler', 'setVerifier']}
       typedChainIdSelections={Object.keys(chainsConfig)
-        .slice(0, 6)
+        .slice(0, 8)
         .map((chainId) => +chainId)}
       abi={[
         {

@@ -5,3 +5,11 @@ export interface GovernanceFormProps {
   typedChainIdSelections: number[];
   governanceFncNames: string[];
 }
+
+export type FunctionInfoType = {
+  fncName: string;
+  fncParams: {
+    name?: string;
+    type: string;
+  }[];
+};
