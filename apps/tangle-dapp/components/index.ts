@@ -2,7 +2,7 @@ export * from './Breadcrumbs';
 export * from './ChainSelector';
 export * from './HeaderChip';
 export * from './InfoIconWithTooltip';
-export * from './KeyMetricItem';
+export * from './KeyStatsItem';
 export * from './sideBar';
 export * from './skeleton';
 export * from './StatsMetricItem';

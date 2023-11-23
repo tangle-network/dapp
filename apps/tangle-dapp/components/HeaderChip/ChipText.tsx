@@ -18,7 +18,7 @@ const ChipText = ({ label }: Props) => {
         <SkeletonLoader className="w-[100px]" />
       ) : error ? (
         'Error'
-      ) : data == null ? null : (
+      ) : data === null ? null : (
         getRoundedDownNumberWith2Decimals(data)
       )}
     </>

@@ -1,5 +1,5 @@
 export * from './HeaderChipsContainer';
-export * from './KeyMetricsTableContainer';
+export * from './KeyStatsContainer';
 export { Layout } from './Layout';
 export * from './NominatorStatsContainer';
 export * from './ValidatorTablesContainer';
