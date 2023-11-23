@@ -32,6 +32,7 @@ export * from './FeeDetails';
 export * from './FileUploads';
 export * from './Filter';
 export * from './Footer';
+export { default as GovernanceForm } from './GovernanceForm';
 export * from './IconWithTooltip';
 export * from './IconsGroup';
 export * from './Input';
