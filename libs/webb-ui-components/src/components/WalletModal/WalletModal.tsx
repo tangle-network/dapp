@@ -21,6 +21,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       toggleModal,
       connectError,
       supportedWallets,
+      platformId,
       ...props
     },
     ref
@@ -79,15 +80,6 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
     const handleCloseAutoFocus = useCallback(() => {
       resetState();
     }, [resetState]);
-
-    const platformId = useMemo(() => {
-      try {
-        const { id } = getPlatformMetaData();
-        return id;
-      } catch (error) {
-        console.error(error);
-      }
-    }, []);
 
     const downloadURL = useMemo(() => {
       if (!platformId) return;

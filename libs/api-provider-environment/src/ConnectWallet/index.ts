@@ -29,7 +29,7 @@ export type UseConnectWalletReturnType = {
   /**
    * The current browser platform id
    */
-  platformId?: SupportedBrowsers;
+  platformId: SupportedBrowsers | null;
 
   /**
    * Toggle or set state of the wallet modal
@@ -104,6 +104,15 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
   const [, setActiveWallet] = useActiveWallet();
   const [, setActiveChain] = useActiveChain();
 
+  const platformId = useMemo(() => {
+    const platform = getPlatformMetaData();
+    if (platform == null) {
+      return null;
+    }
+
+    return platform.id;
+  }, []);
+
   // Subscribe to app events
   useEffect(() => {
     let isSubscribed = true;
@@ -170,9 +179,6 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
   const connectWallet = useCallback(
     async (nextWallet: WalletConfig) => {
       try {
-        // Call the getPlatformMetaData function to get check if the browser is supported
-        getPlatformMetaData();
-
         subjects.setSelectedWallet(nextWallet);
         subjects.setWalletState(WalletState.CONNECTING);
 
@@ -249,6 +255,7 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
 
   return {
     ...memoValues,
+    platformId,
     connectError,
     isModalOpen,
     resetState,

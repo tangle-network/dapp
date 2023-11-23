@@ -12,7 +12,7 @@ type PlatformMetaData = {
   storeName: string;
 };
 
-const getPlatformMetaData = (): PlatformMetaData => {
+const getPlatformMetaData = (): PlatformMetaData | null => {
   const browser = detect();
 
   const name = browser?.name;
@@ -31,7 +31,7 @@ const getPlatformMetaData = (): PlatformMetaData => {
         storeName: 'Chrome web store',
       };
     default:
-      throw WebbError.from(WebbErrorCodes.UnsupportedBrowser);
+      return null;
   }
 };
 
