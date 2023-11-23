@@ -1,6 +1,5 @@
 import {
   formatTokenBalance,
-  getMinimumStake,
   getPolkadotApiPromise,
   getTotalNumberOfNominators,
   getValidatorIdentity,
@@ -13,10 +12,6 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
   if (!api) return [] as Validator[];
 
   try {
-    // Minimum Stake Amount Required
-    const minimumStakeAmount = await getMinimumStake();
-    const minimumStake = minimumStakeAmount?.toString();
-
     const [validators, currentEra] = await Promise.all([
       api.query.session.validators(),
       api.query.staking.currentEra(),
@@ -54,7 +49,6 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
           selfStaked: selfStaked ?? '',
           effectiveAmountStaked: effectiveAmountStaked ?? '',
           delegations: delegations ?? '',
-          minimumStake: minimumStake ?? '',
         };
       })
     );

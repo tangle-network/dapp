@@ -79,21 +79,6 @@ export const formatTokenBalance = async (
   }
 };
 
-export const getMinimumStake = async (): Promise<number | undefined> => {
-  try {
-    const api = await getPolkadotApiPromise();
-
-    if (!api) return NaN;
-
-    const minimumStakeDetails = await api.query.staking.minimumActiveStake();
-    const minimumStake = await formatTokenBalance(minimumStakeDetails);
-
-    return Number(minimumStake);
-  } catch (error) {
-    throw new Error('Failed to get minimum stake required');
-  }
-};
-
 export const getTotalNumberOfNominators = async (
   validatorAddress: string
 ): Promise<number | undefined> => {
