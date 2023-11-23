@@ -22,9 +22,9 @@ export default async function Index() {
         <KeyStatsContainer />
       </div>
 
-      {/* <div className="mt-12">
+      <div className="mt-12">
         <NominatorStatsContainer />
-      </div> */}
+      </div>
 
       {/* <div className="mt-12">
         <ValidatorTablesContainer />

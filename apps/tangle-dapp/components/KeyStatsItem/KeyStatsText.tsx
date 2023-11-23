@@ -12,6 +12,8 @@ type Props = Pick<KeyStatsItemProps, 'title' | 'prefix' | 'suffix'>;
 const KeyStatsItemText = ({ title, prefix, suffix }: Props) => {
   const { isLoading, error, data } = dataHooks[title]();
 
+  // const { value: value_, symbol } = splitTokenValueAndSymbol(String(value));
+
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
       <div className="flex items-center gap-0.5">

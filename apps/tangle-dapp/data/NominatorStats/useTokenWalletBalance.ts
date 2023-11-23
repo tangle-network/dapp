@@ -1,14 +1,15 @@
 'use client';
 
-import { BN_ZERO } from '@polkadot/util';
+import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
+import { formatEther } from 'viem';
 
-import { getPolkadotApiPromise } from '../../constants';
+import { evmClient } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { calculateInflation } from '../../utils';
 
-export default function useIdealStakedPercentage(
+export default function useTokenWalletBalance(
+  address: string,
   defaultValue: { value1: number | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
@@ -17,16 +18,20 @@ export default function useIdealStakedPercentage(
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!address || address === '0x0') {
+        setValue1(null);
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const api = await getPolkadotApiPromise();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
+        const balance = await evmClient.getBalance({
+          address: ensureHex(address),
+        });
 
-        const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
-        const idealStakePercentage = inflation.idealStake * 100;
+        const walletBalance = formatEther(balance);
 
-        setValue1(idealStakePercentage);
+        setValue1(Number(walletBalance));
         setIsLoading(false);
       } catch (e) {
         console.error(
@@ -38,7 +43,7 @@ export default function useIdealStakedPercentage(
     };
 
     fetchData();
-  }, []);
+  }, [address]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }
