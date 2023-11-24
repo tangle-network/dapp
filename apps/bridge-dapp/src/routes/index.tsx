@@ -20,7 +20,9 @@ import {
   SELECT_TOKEN_PATH,
   TRANSFER_PATH,
   WITHDRAW_PATH,
-  WRAP_UNWRAP_PATH,
+  WRAPPER_PATH,
+  WRAP_PATH,
+  UNWRAP_PATH,
 } from '../constants';
 import { Layout } from '../containers';
 import Deposit from '../pages/Hubble/Bridge/Deposit';
@@ -31,8 +33,9 @@ import SelectToken from '../pages/Hubble/Bridge/SelectToken';
 import Transfer from '../pages/Hubble/Bridge/Transfer';
 import Withdraw from '../pages/Hubble/Bridge/Withdraw';
 
-const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
-const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
+const HubbleWrapper = lazy(() => import('../containers/HubbleContainer'));
+const Wrap = lazy(() => import('../pages/Hubble/Wrapper/Wrap'));
+const Unwrap = lazy(() => import('../pages/Hubble/Wrapper/Unwrap'));
 const Account = lazy(() => import('../pages/Account'));
 const AccountTransactions = lazy(() => import('../pages/Account/Transactions'));
 const AccountTransactionDetail = lazy(
@@ -69,7 +72,7 @@ const AppRoutes = () => {
                 path={BRIDGE_PATH}
                 element={
                   <CSuspense>
-                    <Bridge />
+                    <HubbleWrapper />
                   </CSuspense>
                 }
               >
@@ -131,13 +134,31 @@ const AppRoutes = () => {
               </Route>
 
               <Route
-                path={WRAP_UNWRAP_PATH}
+                path={WRAPPER_PATH}
                 element={
                   <CSuspense>
-                    <WrapAndUnwrap />
+                    <HubbleWrapper />
                   </CSuspense>
                 }
-              />
+              >
+                <Route
+                  path={WRAP_PATH}
+                  element={
+                    <CSuspense>
+                      <Wrap />
+                    </CSuspense>
+                  }
+                />
+                <Route
+                  path={UNWRAP_PATH}
+                  element={
+                    <CSuspense>
+                      <Unwrap />
+                    </CSuspense>
+                  }
+                />
+                <Route path="*" element={<Navigate to={WRAP_PATH} />} />
+              </Route>
 
               <Route path={NOTE_ACCOUNT_PATH}>
                 <Route

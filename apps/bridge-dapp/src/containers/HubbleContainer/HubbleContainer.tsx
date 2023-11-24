@@ -5,13 +5,13 @@ import { useNoteAccount } from '@webb-tools/react-hooks';
 import { ErrorFallback, Typography } from '@webb-tools/webb-ui-components';
 import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
-import { FC } from 'react';
+import { type FC, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router-dom';
-import { InteractiveFeedbackView, WalletModal } from '../../../components';
-import { CreateAccountModal } from '../../../containers';
-import { useTryAnotherWalletWithView } from '../../../hooks';
+import { InteractiveFeedbackView, WalletModal } from '../../components';
+import { CreateAccountModal } from '../../containers';
+import { useTryAnotherWalletWithView } from '../../hooks';
 
-const Bridge: FC = () => {
+const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
   const { activeFeedback } = useWebContext();
 
   const {
@@ -21,15 +21,13 @@ const Bridge: FC = () => {
     setSuccessfullyCreatedNoteAccount,
   } = useNoteAccount();
 
-  // Try again for try another wallet link
-  // in the token list
+  // Try again for try another wallet link in the token list
   const { TryAnotherWalletModal } = useTryAnotherWalletWithView();
 
   return (
     <>
       <ErrorBoundary fallback={<ErrorFallback className="mx-auto" />}>
         <div className="min-h-[var(--card-height)] flex flex-col mob:!flex-row justify-center">
-          {/** Bridge tabs */}
           <Outlet />
 
           <a
@@ -68,4 +66,4 @@ const Bridge: FC = () => {
   );
 };
 
-export default Bridge;
+export default HubbleContainer;

@@ -1,11 +1,14 @@
 export const BRIDGE_PATH = 'bridge';
-export const WRAP_UNWRAP_PATH = 'wrap-unwrap';
+export const WRAPPER_PATH = 'wrapper';
 export const NOTE_ACCOUNT_PATH = 'account';
 export const ECOSYSTEM_PATH = 'ecosystem';
 
 export const DEPOSIT_PATH = 'deposit';
 export const TRANSFER_PATH = 'transfer';
 export const WITHDRAW_PATH = 'withdraw';
+
+export const WRAP_PATH = 'wrap';
+export const UNWRAP_PATH = 'unwrap';
 
 export const SELECT_SOURCE_CHAIN_PATH = 'select-source-chain';
 export const SELECT_DESTINATION_CHAIN_PATH = 'select-destination-chain';
