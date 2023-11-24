@@ -68,6 +68,7 @@ const SelectChainRing: FC<{
           </Typography>
         </div>
       </div>
+
       <svg
         width="415"
         height="208"
