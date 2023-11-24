@@ -58,6 +58,7 @@ const FunctionInputs: FC<{ fncInfo: FunctionInfoType }> = ({ fncInfo }) => {
                 </div>
               );
             })}
+
             <Button className="!rounded-lg">Submit</Button>
           </div>
         </AccordionContent>
