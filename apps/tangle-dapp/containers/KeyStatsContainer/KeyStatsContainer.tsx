@@ -1,22 +1,8 @@
 import cx from 'classnames';
-import { cache } from 'react';
 
-import { KeyMetricItem } from '../../components/KeyMetricItem';
-import {
-  getActiveAndDelegationCount,
-  getIdealStakedPercentage,
-  getInflationPercentage,
-  getValidatorsCount,
-  getWaitingCount,
-} from '../../data';
+import { KeyStatsItem } from '../../components/KeyStatsItem';
 
-const getValidatorsCountData = cache(getValidatorsCount);
-const getWaitingCountData = cache(getWaitingCount);
-const getActiveAndDelegationCountData = cache(getActiveAndDelegationCount);
-const getIdealStakedPercentageData = cache(getIdealStakedPercentage);
-const getInflationPercentageData = cache(getInflationPercentage);
-
-export const KeyMetricsTableContainer = () => {
+export const KeyStatsContainer = () => {
   return (
     <div
       className={cx(
@@ -37,37 +23,32 @@ export const KeyMetricsTableContainer = () => {
         )}
       >
         {/* Validators */}
-        <KeyMetricItem
+        <KeyStatsItem
           title="Validators"
           tooltip="Current # of active validators out of the total allowed."
-          dataFetcher={() => getValidatorsCountData()}
           className="col-span-2 lg:col-span-1"
         />
         {/* Waiting */}
-        <KeyMetricItem
+        <KeyStatsItem
           title="Waiting"
           tooltip="Nodes waiting in line to become active validators."
-          dataFetcher={() => getWaitingCountData()}
         />
         {/* Active/Delegation */}
-        <KeyMetricItem
+        <KeyStatsItem
           title="Active/Delegation"
           tooltip="Current active delegations out of the total possible."
-          dataFetcher={() => getActiveAndDelegationCountData()}
         />
         {/* Ideal Staked */}
-        <KeyMetricItem
+        <KeyStatsItem
           title="Ideal Staked"
           tooltip="The ideal % of all network tokens that should be staked."
           suffix="%"
-          dataFetcher={() => getIdealStakedPercentageData()}
         />
         {/* Inflation */}
-        <KeyMetricItem
+        <KeyStatsItem
           title="Inflation"
           tooltip="The yearly % increase in the network’s total token supply."
           suffix="%"
-          dataFetcher={() => getInflationPercentageData()}
         />
       </div>
     </div>

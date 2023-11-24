@@ -10,8 +10,7 @@ import cx from 'classnames';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
-import { StatsMetricItem } from '../../components';
-import { getTokenWalletBalance, getTotalStakedAmount } from '../../data';
+import { NominatorStatsItem } from '../../components';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 
 export const NominatorStatsContainer = () => {
@@ -24,7 +23,7 @@ export const NominatorStatsContainer = () => {
   }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return undefined;
+    if (!activeAccount?.address) return '';
 
     return convertEthereumToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
@@ -38,11 +37,10 @@ export const NominatorStatsContainer = () => {
           'border-2 border-mono-0 dark:border-mono-160'
         )}
       >
-        <StatsMetricItem
+        <NominatorStatsItem
           title="Available tTNT in Wallet"
-          dataFetcher={() => getTokenWalletBalance(walletAddress)}
           address={walletAddress}
-          className=""
+          type="Wallet Balance"
         />
 
         <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -59,12 +57,11 @@ export const NominatorStatsContainer = () => {
           'border-2 border-mono-0 dark:border-mono-160'
         )}
       >
-        <StatsMetricItem
+        <NominatorStatsItem
           title="Total Staked tTNT"
           tooltip="Total Staked tTNT."
-          dataFetcher={() => getTotalStakedAmount(substrateAddress)}
-          address={substrateAddress ?? ''}
-          className=""
+          address={substrateAddress}
+          type="Total Staked"
         />
 
         <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />

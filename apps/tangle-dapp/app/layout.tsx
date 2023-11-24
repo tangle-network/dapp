@@ -13,7 +13,11 @@ export const metadata: Metadata = {
     template: 'Tangle Dapp | %s',
   },
   description: 'Welcome to Tangle Dapp!',
-  metadataBase: process.env.URL ? new URL(process.env.URL) : null,
+  metadataBase: process.env.URL
+    ? new URL(process.env.URL)
+    : process.env.PORT != null
+    ? new URL(`http://localhost:${process.env.PORT}`)
+    : null,
   openGraph: {
     title: 'Tangle Dapp',
     description: 'Welcome to Tangle Dapp!',
