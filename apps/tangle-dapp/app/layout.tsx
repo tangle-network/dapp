@@ -15,7 +15,9 @@ export const metadata: Metadata = {
   description: 'Welcome to Tangle Dapp!',
   metadataBase: process.env.URL
     ? new URL(process.env.URL)
-    : new URL(`http://localhost:${process.env.PORT}`),
+    : process.env.PORT != null
+    ? new URL(`http://localhost:${process.env.PORT}`)
+    : null,
   openGraph: {
     title: 'Tangle Dapp',
     description: 'Welcome to Tangle Dapp!',
