@@ -146,6 +146,7 @@ const Deposit = () => {
         </div>
 
         <div className="flex flex-col justify-between grow">
+          {/* TODO: Calculate gas */}
           <FeeDetails
             info="The fee pays for the transaction to be processed on the network."
             items={[

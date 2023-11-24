@@ -112,6 +112,15 @@ const SelectPool: FC = () => {
     [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, initialized, srcTypedChainId]
   );
 
+  const alertTitle = useMemo(() => {
+    switch (currentTxType) {
+      case 'deposit':
+        return 'The availability of shielded pools is determined by your selected source chain and token.';
+      default:
+        return 'The availability of shielded pools is subject to the balance in your account.';
+    }
+  }, [currentTxType]);
+
   const handleClose = useCallback(
     (selectedCfg?: CurrencyConfig, chainName?: string) => {
       const params = new URLSearchParams(searhParams);
@@ -161,7 +170,7 @@ const SelectPool: FC = () => {
         unavailableTokens={[]}
         onChange={handleTokenChange}
         onClose={() => handleClose()}
-        txnType={currentTxType}
+        alertTitle={alertTitle}
       />
     </SlideAnimation>
   );

@@ -24,3 +24,4 @@ export { default as useStateWithRoute } from './useStateWithRoute';
 export * from './useTryAnotherWalletWithView';
 export { default as useTxTabFromRoute } from './useTxTabFromRoute';
 export { default as useWithdrawFeeCalculation } from './useWithdrawFeeCalculation';
+export { default as useWrapperTabFromRoute } from './useWrapperTabFromRoute';

@@ -16,6 +16,9 @@ export const SELECT_TOKEN_PATH = 'select-token';
 export const SELECT_SHIELDED_POOL_PATH = 'select-shielded-pool';
 export const SELECT_RELAYER_PATH = 'select-relayer';
 
+export const SELECT_SOURCE_TOKEN_PATH = 'select-source-token';
+export const SELECT_DESTINATION_TOKEN_PATH = 'select-destination-token';
+
 export const ACCOUNT_TRANSACTIONS_PATH = 'transactions';
 export const ACCOUNT_TRANSACTIONS_FULL_PATH = `/${NOTE_ACCOUNT_PATH}/${ACCOUNT_TRANSACTIONS_PATH}`;
 
@@ -25,10 +28,10 @@ export const SOURCE_CHAIN_KEY = 'source';
 /** Key for destination chain query params */
 export const DEST_CHAIN_KEY = 'dest';
 
-/** Key for fungible currency query param */
+/** Key for wrappable currency query param */
 export const TOKEN_KEY = 'token';
 
-/** Key for wrappable currency query param */
+/** Key for fungible currency query param */
 export const POOL_KEY = 'pool';
 
 /** Key for fixed amount or custom amount */
