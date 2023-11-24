@@ -39,7 +39,7 @@ import {
   CUSTOM_AMOUNT_TOOLTIP_CONTENT,
   FIXED_AMOUNT_TOOLTIP_CONTENT,
 } from '../../../../constants/tooltipContent';
-import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
 import TxInfoContainer from '../../../../containers/TxInfoContainer';
 import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
@@ -196,6 +196,20 @@ const Withdraw = () => {
     return Number(formatEther(remain));
   }, [amount, balances, fungibleCfg?.id, srcTypedChainId]);
 
+  const gasFees = useMemo(
+    () =>
+      gasFeeInfo ? parseFloat(formatEther(gasFeeInfo).slice(0, 10)) : undefined,
+    [gasFeeInfo]
+  );
+
+  const relayerFees = useMemo(
+    () =>
+      relayerFeeInfo
+        ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
+        : undefined,
+    [relayerFeeInfo]
+  );
+
   const { withdrawConfirmComponent, ...buttonProps } = useWithdrawButtonProps({
     balances,
     receivingAmount,
@@ -219,7 +233,7 @@ const Withdraw = () => {
   }
 
   return (
-    <BridgeTabsContainer>
+    <PageTabsContainer pageType="bridge">
       <div className="flex flex-col space-y-4 grow">
         <div className="space-y-2">
           <TransactionInputCard.Root
@@ -367,8 +381,8 @@ const Withdraw = () => {
             <RelayerFeeDetails
               totalFeeWei={totalFeeWei}
               totalFeeToken={totalFeeToken}
-              gasFeeInfo={gasFeeInfo}
-              relayerFeeInfo={relayerFeeInfo}
+              gasFees={gasFees}
+              relayerFees={relayerFees}
               isFeeLoading={isFeeLoading}
               srcChainCfg={srcChainCfg}
               fungibleCfg={fungibleCfg}
@@ -396,7 +410,7 @@ const Withdraw = () => {
           )}
         </div>
       </div>
-    </BridgeTabsContainer>
+    </PageTabsContainer>
   );
 };
 

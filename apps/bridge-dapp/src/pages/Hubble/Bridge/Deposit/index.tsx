@@ -19,7 +19,7 @@ import {
   SELECT_SOURCE_CHAIN_PATH,
   SELECT_TOKEN_PATH,
 } from '../../../../constants';
-import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDepositButtonProps from './private/useDepositButtonProps';
 import useWatchSearchParams from './private/useWatchSearchParams';
@@ -89,7 +89,7 @@ const Deposit = () => {
   }
 
   return (
-    <BridgeTabsContainer>
+    <PageTabsContainer pageType="bridge">
       <div className="flex flex-col space-y-6 grow">
         <div className="space-y-2">
           <TransactionInputCard.Root
@@ -163,7 +163,7 @@ const Deposit = () => {
           )}
         </div>
       </div>
-    </BridgeTabsContainer>
+    </PageTabsContainer>
   );
 };
 

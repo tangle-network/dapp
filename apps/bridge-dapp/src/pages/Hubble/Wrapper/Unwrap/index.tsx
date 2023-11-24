@@ -1,8 +1,12 @@
-const Unwrap = () => {
+import { type FC } from 'react';
+
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
+
+const Unwrap: FC = () => {
   return (
-    <div>
+    <PageTabsContainer pageType="wrapper">
       <h2>Unwrap Page</h2>
-    </div>
+    </PageTabsContainer>
   );
 };
 

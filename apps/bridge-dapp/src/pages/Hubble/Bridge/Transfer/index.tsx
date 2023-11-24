@@ -34,7 +34,7 @@ import {
   SELECT_SHIELDED_POOL_PATH,
   SELECT_SOURCE_CHAIN_PATH,
 } from '../../../../constants';
-import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
 import TxInfoContainer from '../../../../containers/TxInfoContainer';
 import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
@@ -184,6 +184,20 @@ const Transfer = () => {
     return parseFloat(formatEther(remain));
   }, [activeRelayer, amount, totalFeeWei]);
 
+  const gasFees = useMemo(
+    () =>
+      gasFeeInfo ? parseFloat(formatEther(gasFeeInfo).slice(0, 10)) : undefined,
+    [gasFeeInfo]
+  );
+
+  const relayerFees = useMemo(
+    () =>
+      relayerFeeInfo
+        ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
+        : undefined,
+    [relayerFeeInfo]
+  );
+
   const remainingBalance = useMemo(() => {
     if (!fungibleCfg?.id || !srcTypedChainId) {
       return;
@@ -233,7 +247,7 @@ const Transfer = () => {
   }
 
   return (
-    <BridgeTabsContainer>
+    <PageTabsContainer pageType="bridge">
       <div className="flex flex-col space-y-4 grow">
         <div className="space-y-2">
           <TransactionInputCard.Root
@@ -347,8 +361,8 @@ const Transfer = () => {
             <RelayerFeeDetails
               totalFeeWei={totalFeeWei}
               totalFeeToken={totalFeeToken}
-              gasFeeInfo={gasFeeInfo}
-              relayerFeeInfo={relayerFeeInfo}
+              gasFees={gasFees}
+              relayerFees={relayerFees}
               isFeeLoading={isFeeLoading}
               srcChainCfg={srcChainCfg}
               fungibleCfg={fungibleCfg}
@@ -376,7 +390,7 @@ const Transfer = () => {
           )}
         </div>
       </div>
-    </BridgeTabsContainer>
+    </PageTabsContainer>
   );
 };
 
@@ -429,7 +443,7 @@ const RecipientInput: FC<RecipientInputProps> = ({
             />
             <IconWithTooltip
               icon={<ClipboardLineIcon size="lg" className="!fill-current" />}
-              content="Patse from clipboard"
+              content="Paste from clipboard"
               overrideTooltipTriggerProps={{
                 onClick: onPasteButtonClick,
               }}

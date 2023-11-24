@@ -1,8 +1,12 @@
-const Wrap = () => {
+import { type FC } from 'react';
+
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
+
+const Wrap: FC = () => {
   return (
-    <div>
+    <PageTabsContainer pageType="wrapper">
       <h2>Wrap Page</h2>
-    </div>
+    </PageTabsContainer>
   );
 };
 
