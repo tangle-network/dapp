@@ -54,7 +54,6 @@ const nextConfig = {
     config.module = {
       ...config.module,
       exprContextCritical: false,
-      unknownContextCritical: false,
     };
 
     return config;
