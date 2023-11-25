@@ -1,10 +1,13 @@
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { getAbiItem } from 'viem';
 import cx from 'classnames';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
+import ChainsRing from '../ChainsRing';
 import FunctionInputs from './FunctionInputs';
-import SelectChainRing from './SelectChainRing';
-import { GovernanceFormProps, FunctionInfoType } from './types';
+import { Typography } from '../../typography';
+import type { GovernanceFormProps, FunctionInfoType } from './types';
+import type { ChainItem } from '../ChainsRing/types';
 
 const GovernanceForm: FC<GovernanceFormProps> = ({
   abi,
@@ -33,6 +36,18 @@ const GovernanceForm: FC<GovernanceFormProps> = ({
     [abi, governanceFncNames]
   );
 
+  const chainRingItems = useMemo<ChainItem[]>(
+    () =>
+      typedChainIdSelections.map((typedChainId) => {
+        return {
+          typedChainId,
+          isActive: selectedTypedChainId === typedChainId,
+          onClick: () => handleSelectedChain(typedChainId),
+        };
+      }),
+    [typedChainIdSelections, selectedTypedChainId]
+  );
+
   const handleSelectedChain = useCallback((typedChainId: number) => {
     setSelectedTypedChainId(typedChainId);
   }, []);
@@ -46,10 +61,22 @@ const GovernanceForm: FC<GovernanceFormProps> = ({
       )}
     >
       {/* Chains Ring */}
-      <SelectChainRing
-        typedChainIds={typedChainIdSelections}
-        currentSelectedTypedChainId={selectedTypedChainId}
-        handleSelectedChain={handleSelectedChain}
+      <ChainsRing
+        chainItems={chainRingItems}
+        circleContent={
+          <div>
+            <Typography
+              variant="body1"
+              fw="bold"
+              ta="center"
+              className="text-mono-140 dark:text-mono-80 capitalize"
+            >
+              {selectedTypedChainId !== undefined
+                ? chainsConfig[selectedTypedChainId].name
+                : 'Select Chain'}
+            </Typography>
+          </div>
+        }
       />
 
       {/* Form */}
