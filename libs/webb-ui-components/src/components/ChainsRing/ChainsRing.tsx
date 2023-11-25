@@ -8,7 +8,7 @@ import { useDarkMode } from '../../hooks/useDarkMode';
 import type { ChainsRingProps, ChainItem } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
-  ({ children, circleContent, additionalSvgContent, chainItems }, ref) => {
+  ({ circleContent, additionalSvgContent, chainItems }, ref) => {
     const [isDarkMode] = useDarkMode();
 
     const getStrokeColor = useCallback(
