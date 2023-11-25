@@ -1,297 +1,312 @@
-import { arrayShuffle } from '@polkadot/util';
-import { ChainIcon } from '@webb-tools/icons';
+import { forwardRef, useCallback } from 'react';
 import cx from 'classnames';
-import { ComponentProps, FC, forwardRef, useEffect, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { ChainIcon } from '@webb-tools/icons';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
-import { useWebbUI } from '../../hooks/useWebbUI';
-import { Typography } from '../../typography/Typography';
-import { formatTokenAmount } from '../../utils';
-import { Chip } from '../Chip';
-import { IconWithTooltip } from '../IconWithTooltip';
-import { ChainsRingProps } from './types';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import { useDarkMode } from '../../hooks/useDarkMode';
+import type { ChainsRingProps, ChainItem } from './types';
 
-export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
-  (
-    {
-      amount = 0,
-      activeChains,
-      className,
-      destChain,
-      destLabel,
-      sourceChain,
-      sourceLabel,
-      tokenPairString,
-      ...props
-    },
-    ref
-  ) => {
-    const { logger } = useWebbUI();
-    // Effect for validate the props
-    useEffect(() => {
-      if (activeChains.length > 8) {
-        logger.error('The active chain length should be less than 8');
-      }
+const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
+  ({ circleContent, additionalSvgContent, chainItems }, ref) => {
+    const [isDarkMode] = useDarkMode();
 
-      if (sourceChain && !activeChains.includes(sourceChain)) {
-        logger.error('The source chain should be included in active chains');
-      }
-
-      if (destChain && !activeChains.includes(destChain)) {
-        logger.error(
-          'The destination chain should be included in active chains'
-        );
-      }
-    }, [activeChains, sourceChain, destChain, logger]);
-
-    const displayedChains = useMemo(() => {
-      let chains: string[] = [];
-
-      // Filter out the source and destination chain
-      let filteredChains = activeChains.filter(
-        (chain) => chain !== sourceChain && chain !== destChain
-      );
-
-      // Adding empty string to filter chains to make sure the length is 6
-      filteredChains = [
-        ...filteredChains,
-        ...Array.from({ length: 6 - filteredChains.length }, () => ''),
-      ];
-
-      // Shuffle the filtered chains
-      filteredChains = arrayShuffle(filteredChains);
-      let sliceIndex = 0;
-
-      if (sourceChain) {
-        chains.unshift(sourceChain);
-        sliceIndex = 3;
-      } else {
-        sliceIndex = 4;
-      }
-
-      chains = [...chains, ...filteredChains.slice(0, sliceIndex)];
-
-      if (destChain && destChain !== sourceChain) {
-        chains.push(destChain);
-      }
-
-      chains = [...chains, ...filteredChains.slice(sliceIndex)];
-
-      // Adding empty string to make sure the length is 8
-      chains = [
-        ...chains,
-        ...Array.from({ length: 8 - chains.length }, () => ''),
-      ];
-
-      return chains;
-    }, [activeChains, destChain, sourceChain]);
-
-    const isDisplaySourceLabel = useMemo(() => {
-      return sourceChain && sourceLabel;
-    }, [sourceChain, sourceLabel]);
-
-    const isDisplayDestLabel = useMemo(() => {
-      return destChain && destLabel;
-    }, [destChain, destLabel]);
+    const getStrokeColor = useCallback(
+      (item?: ChainItem) => {
+        if (item === undefined) return '#9CA0B0';
+        return item.isActive ? (isDarkMode ? '#4B3AA4' : '#B5A9F2') : '#9CA0B0';
+      },
+      [isDarkMode]
+    );
 
     return (
-      <div
-        {...props}
-        className={cx(
-          'flex items-center justify-center w-[500px] pb-4 box-border mx-auto',
-          className
-        )}
-        ref={ref}
-      >
-        <div className="relative">
-          <svg
-            width={184}
-            height={184}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svtg"
-          >
-            <path
-              d="M92.869.33v182.012M183.875 91.336H1.863M29.002 154.51l63.754-63.754-63.754-63.754M156.761 27.002L93.006 90.756l63.754 63.754"
-              className="stroke-mono-40"
-            />
-            <path
-              d="M28.057 27.182L92.375.542l64.318 26.64L183.334 91.5l-26.641 64.318-64.318 26.641-64.318-26.641L1.417 91.5l26.64-64.318z"
-              className="stroke-mono-80 dark:stroke-mono-120"
-            />
-          </svg>
+      <div className="relative w-fit" ref={ref}>
+        {chainItems.map((chainItem, idx) => {
+          if (chainItem === undefined) return null;
+          const { typedChainId, onClick } = chainItem;
+          const chaiName = chainsConfig[typedChainId].name;
+          return (
+            <Tooltip>
+              <TooltipTrigger className="cursor-pointer" asChild>
+                <div
+                  className={getChainIconClassNameByIdx(idx)}
+                  onClick={onClick}
+                >
+                  <ChainIcon name={chaiName} size="lg" />
+                </div>
+              </TooltipTrigger>
+              <TooltipBody className="z-20">{chaiName}</TooltipBody>
+            </Tooltip>
+          );
+        })}
 
-          <ChainIconWrapper
-            className={cx(
-              'absolute -translate-y-1/2 -translate-x-1/2 top-[15%] left-[15%] z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[0]}
-          />
-          {isDisplaySourceLabel && (
-            <span
-              className={cx(
-                'absolute top-0 translate-x-1 translate-y-3.5 right-full'
-              )}
-            >
-              <span className="relative">
-                <Chip color="purple" className="min-w-max">
-                  {isDisplaySourceLabel}
-                </Chip>
-                <span
-                  className={cx(
-                    'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
-                    'right-0 top-1/2 -translate-y-1/2 translate-x-1/3'
-                  )}
-                />
-                <span
-                  className={cx(
-                    'absolute border',
-                    'border-purple-40 dark:border-purple-90 w-3',
-                    'right-0 bottom-1/2 translate-x-full translate-y-0.5'
-                  )}
-                />
-              </span>
-            </span>
+        <div
+          className={cx(
+            'absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]',
+            'bg-mono-0 dark:bg-[rgba(247,248,247,0.10)]',
+            'aspect-square w-[128px] px-4 rounded-full',
+            'flex justify-center items-center'
           )}
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute top-0 -translate-x-1/2 -translate-y-1/2 left-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[1]}
-          />
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute top-[15%] right-[15%] translate-x-1/2 -translate-y-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[2]}
-          />
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute right-0 translate-x-1/2 -translate-y-1/2 top-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[3]}
-          />
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute bottom-[15%] right-[15%] translate-x-1/2 translate-y-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[4]}
-          />
-          {isDisplayDestLabel && (
-            <span
-              className={cx(
-                'absolute -translate-x-0.5 -translate-y-3.5 bottom-0 left-full'
-              )}
-            >
-              <span className="relative">
-                <Chip color="purple" className="min-w-max">
-                  {destLabel}
-                </Chip>
-                <span
-                  className={cx(
-                    'absolute w-2 h-2',
-                    'border-2 border-purple-40 dark:border-purple-90 rounded-full',
-                    'left-0 top-1/2 -translate-y-1/2 -translate-x-1/3'
-                  )}
-                />
-                <span
-                  className={cx(
-                    'absolute border',
-                    'border-purple-40 dark:border-purple-90 w-3',
-                    'left-0 bottom-0 -translate-x-3.5 -translate-y-2'
-                  )}
-                />
-              </span>
-            </span>
-          )}
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute bottom-0 -translate-x-1/2 translate-y-1/2 left-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[5]}
-          />
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute bottom-[15px] left-0 translate-x-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[6]}
-          />
-
-          <ChainIconWrapper
-            className={cx(
-              'absolute left-0 -translate-x-1/2 -translate-y-1/2 top-1/2 z-[1]'
-            )}
-            size="lg"
-            name={displayedChains[7]}
-          />
-
-          <div
-            className={cx(
-              'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-              'rounded-full bg-mono-0 dark:bg-mono-160 border-2 border-purple-40 dark:border-purple-90',
-              'w-[133px] h-[133px] flex flex-col justify-center items-center'
-            )}
-          >
-            <Typography
-              variant="h5"
-              fw="bold"
-              className="text-mono-160 dark:text-mono-0"
-            >
-              {formatTokenAmount(amount.toString())}
-            </Typography>
-            {tokenPairString && (
-              <Typography
-                variant="body1"
-                fw="bold"
-                className="text-mono-140 dark:text-mono-80"
-              >
-                {tokenPairString}
-              </Typography>
-            )}
-          </div>
+          style={{ backdropFilter: 'blur(12px)' }}
+        >
+          {circleContent}
         </div>
+
+        <svg
+          width="415"
+          height="208"
+          viewBox="0 0 415 208"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {additionalSvgContent}
+          <rect
+            x="104.5"
+            y="91.082"
+            width="26"
+            height="26"
+            rx="5"
+            stroke={getStrokeColor(chainItems[0])}
+            strokeWidth="2"
+          />
+          <rect
+            x="143.471"
+            y="21.5858"
+            width="26"
+            height="26"
+            rx="5"
+            transform="rotate(45 143.471 21.5858)"
+            stroke={getStrokeColor(chainItems[1])}
+            strokeWidth="2"
+          />
+          <rect
+            x="220.5"
+            y="1"
+            width="26"
+            height="26"
+            rx="5"
+            transform="rotate(90 220.5 1)"
+            stroke={getStrokeColor(chainItems[2])}
+            strokeWidth="2"
+          />
+          <rect
+            x="288.885"
+            y="39.9688"
+            width="26"
+            height="26"
+            rx="5"
+            transform="rotate(135 288.885 39.9688)"
+            stroke={getStrokeColor(chainItems[3])}
+            strokeWidth="2"
+          />
+          <rect
+            x="284.5"
+            y="91.082"
+            width="26"
+            height="26"
+            rx="5"
+            stroke={getStrokeColor(chainItems[4])}
+            strokeWidth="2"
+          />
+          <rect
+            x="270.75"
+            y="148.863"
+            width="26"
+            height="26"
+            rx="5"
+            transform="rotate(45 270.75 148.863)"
+            stroke={getStrokeColor(chainItems[5])}
+            strokeWidth="2"
+          />
+          <rect
+            x="220.5"
+            y="181"
+            width="26"
+            height="26"
+            rx="5"
+            transform="rotate(90 220.5 181)"
+            stroke={getStrokeColor(chainItems[6])}
+            strokeWidth="2"
+          />
+          <rect
+            x="161.606"
+            y="167.25"
+            width="26"
+            height="26"
+            rx="5"
+            transform="rotate(135 161.606 167.25)"
+            stroke={getStrokeColor(chainItems[7])}
+            strokeWidth="2"
+          />
+          <rect
+            x="143.471"
+            y="23"
+            width="24"
+            height="24"
+            transform="rotate(45 143.471 23)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="270.75"
+            y="150.277"
+            width="24"
+            height="24"
+            transform="rotate(45 270.75 150.277)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="287.471"
+            y="39.9688"
+            width="24"
+            height="24"
+            transform="rotate(135 287.471 39.9688)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="160.191"
+            y="167.25"
+            width="24"
+            height="24"
+            transform="rotate(135 160.191 167.25)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="219.5"
+            y="2"
+            width="24"
+            height="24"
+            transform="rotate(90 219.5 2)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="219.5"
+            y="182"
+            width="24"
+            height="24"
+            transform="rotate(90 219.5 182)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <path
+            d="M144.243 40.7431L207.5 14.5412L270.757 40.7431L296.959 104L270.757 167.257L207.5 193.459L144.243 167.257L118.041 104L144.243 40.7431Z"
+            stroke="#C2C8D4"
+          />
+          <path d="M207.5 14V194" stroke="#E2E5EB" />
+          <path d="M143.471 39.9688L270.75 167.248" stroke="#9CA0B0" />
+          <path d="M270.5 39.9688L143.221 167.248" stroke="#9CA0B0" />
+          <path d="M117.5 104.082L297.5 104.082" stroke="#9CA0B0" />
+          <path d="M207.5 14V194" stroke="#9CA0B0" />
+          <g filter="url(#filter0_b_1438_225203)">
+            <rect
+              x="141.5"
+              y="38"
+              width="132"
+              height="132"
+              rx="66"
+              fill="white"
+              fillOpacity="0.1"
+            />
+            <rect
+              x="142.5"
+              y="39"
+              width="130"
+              height="130"
+              rx="65"
+              stroke="#9CA0B0"
+              strokeWidth="2"
+            />
+          </g>
+          <defs>
+            <filter
+              id="filter0_b_1438_225203"
+              x="117.5"
+              y="14"
+              width="180"
+              height="180"
+              filterUnits="userSpaceOnUse"
+              colorInterpolationFilters="sRGB"
+            >
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
+              <feGaussianBlur in="BackgroundImageFix" stdDeviation="12" />
+              <feComposite
+                in2="SourceAlpha"
+                operator="in"
+                result="effect1_backgroundBlur_1438_225203"
+              />
+              <feBlend
+                mode="normal"
+                in="SourceGraphic"
+                in2="effect1_backgroundBlur_1438_225203"
+                result="shape"
+              />
+            </filter>
+            <clipPath id="clip0_1438_225203">
+              <rect
+                width="16"
+                height="16"
+                fill="white"
+                transform="translate(289.5 96.082)"
+              />
+            </clipPath>
+            <clipPath id="clip1_1438_225203">
+              <rect
+                width="16"
+                height="16"
+                fill="white"
+                transform="translate(335.5 96.082)"
+              />
+            </clipPath>
+          </defs>
+        </svg>
       </div>
     );
   }
 );
 
-export const ChainIconWrapper: FC<ComponentProps<typeof ChainIcon>> = ({
-  name,
-  className,
-  ...props
-}) => {
-  if (!name) {
-    return (
-      <span
-        className={twMerge(
-          'w-6 h-6 border-2 rounded-full',
-          'bg-mono-120 bg-opacity-10 dark:bg-opacity-70',
-          'border-purple-40 dark:border-purple-90',
-          className
-        )}
-      />
-    );
+export default ChainsRing;
+
+/** @internal */
+function getChainIconClassNameByIdx(idx: number) {
+  const baseClassName = 'absolute';
+  let positionClassName = '';
+  // update className based on idx (0-7)
+  switch (idx % 8) {
+    case 0:
+      positionClassName = 'top-1/2 translate-y-[-50%] left-[105.5px]';
+      break;
+    case 1:
+      positionClassName =
+        'rotate-45 top-[40px] translate-y-[-50%] left-[131.5px]';
+      break;
+    case 2:
+      positionClassName = 'top-[2px] translate-x-[50%] right-1/2';
+      break;
+    case 3:
+      positionClassName =
+        '-rotate-45 top-[40px] translate-y-[-50%] right-[132.5px]';
+      break;
+    case 4:
+      positionClassName = 'top-1/2 translate-y-[-50%] right-[105.5px]';
+      break;
+    case 5:
+      positionClassName =
+        '-rotate-45 bottom-[16.75px] translate-y-[-50%] right-[132.2575px]';
+      break;
+    case 6:
+      positionClassName = 'bottom-[2px] translate-x-[50%] right-1/2';
+      break;
+    case 7:
+      positionClassName =
+        'rotate-45 bottom-[17px] translate-y-[-50%] left-[131.5px]';
+      break;
+    default:
+      break;
   }
 
-  return (
-    <span className={className}>
-      <IconWithTooltip
-        icon={<ChainIcon {...props} name={name} />}
-        content={name}
-      />
-    </span>
-  );
-};
+  return `${baseClassName} ${positionClassName}`;
+}
