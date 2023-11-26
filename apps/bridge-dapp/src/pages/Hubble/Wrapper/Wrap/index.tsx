@@ -17,6 +17,7 @@ import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDefaultChainAndPool from '../../../../hooks/useDefaultChainAndPool';
+import useWrapButtonProps from './private/useWrapButtonProps';
 
 import {
   SELECT_SOURCE_CHAIN_PATH,
@@ -42,6 +43,11 @@ const Wrap: FC = () => {
     allCurrencies,
     srcTypedChainId ?? undefined
   );
+
+  const { ...wrapBtnProps } = useWrapButtonProps({
+    balance: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
+    fungible: fungibleCfg,
+  });
 
   const amountProps = useMemo(
     () => ({
@@ -114,7 +120,7 @@ const Wrap: FC = () => {
           />
 
           {!isMobile ? (
-            <Button isFullWidth>Wrap</Button>
+            <Button isFullWidth {...wrapBtnProps} />
           ) : (
             <ConnectWalletMobileButton isFullWidth />
           )}
