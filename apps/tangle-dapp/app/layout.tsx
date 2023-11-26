@@ -1,11 +1,11 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 
-import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
 import { Metadata } from 'next';
 import type React from 'react';
 
 import { Layout } from '../containers';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -13,7 +13,11 @@ export const metadata: Metadata = {
     template: 'Tangle Dapp | %s',
   },
   description: 'Welcome to Tangle Dapp!',
-  metadataBase: process.env.URL ? new URL(process.env.URL) : null,
+  metadataBase: process.env.URL
+    ? new URL(process.env.URL)
+    : process.env.PORT != null
+    ? new URL(`http://localhost:${process.env.PORT}`)
+    : null,
   openGraph: {
     title: 'Tangle Dapp',
     description: 'Welcome to Tangle Dapp!',
@@ -48,10 +52,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="flex h-screen bg-body">
-        <NextThemeProvider>
+      <body>
+        <Providers>
           <Layout>{children}</Layout>
-        </NextThemeProvider>
+        </Providers>
       </body>
     </html>
   );

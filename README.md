@@ -29,7 +29,7 @@
     <li><a href="#contribute">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#help">Need help?</a></li>
-  </ul>  
+  </ul>
 </details>
 
 <h2 id="start"> Getting Started </h2>

@@ -28,6 +28,7 @@ import { BooleanParam, useQueryParam } from 'use-query-params';
 import { formatEther, parseEther } from 'viem';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import {
+  ACTION_BUTTON_PROPS,
   BRIDGE_TABS,
   NO_RELAYER_KEY,
   SELECT_RELAYER_PATH,
@@ -48,6 +49,7 @@ import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
 import useWithdrawFeeCalculation from '../../../../hooks/useWithdrawFeeCalculation';
 import useInputs from './private/useInputs';
 import useWithdrawButtonProps from './private/useWithdrawButtonProps';
+import { ConnectWalletMobileContent } from '../../../../components';
 
 const Withdraw = () => {
   const { pathname } = useLocation();
@@ -406,7 +408,13 @@ const Withdraw = () => {
           {!isMobile ? (
             <Button loadingText="Connecting..." {...buttonProps} isFullWidth />
           ) : (
-            <ConnectWalletMobileButton isFullWidth />
+            <ConnectWalletMobileButton
+              title="Try Hubble on Desktop"
+              extraActionButtons={ACTION_BUTTON_PROPS}
+              isFullWidth
+            >
+              <ConnectWalletMobileContent />
+            </ConnectWalletMobileButton>
           )}
         </div>
       </div>

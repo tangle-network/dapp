@@ -126,4 +126,9 @@ export interface TransferConfirmContainerProps
    * The refund token
    */
   refundToken?: string;
+
+  /**
+   * The active chain
+   */
+  activeChain: Chain;
 }

@@ -1,8 +1,11 @@
+'use client';
+
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { parseTypedChainId, ResourceId } from '@webb-tools/sdk-core';
+import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId';
+import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { useObservableState } from 'observable-hooks';
 import { useEffect } from 'react';
-import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 const resourceIdSubject = new BehaviorSubject<ResourceId | null>(null);
 

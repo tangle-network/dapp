@@ -1,3 +1,5 @@
+'use client';
+
 import type { DialogProps } from '@radix-ui/react-dialog';
 import noop from 'lodash/noop';
 import { createContext } from 'react';

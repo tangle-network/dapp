@@ -45,7 +45,7 @@ import {
 import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { firstValueFrom } from 'rxjs';
-import * as snarkjs from 'snarkjs';
+import { groth16, zKey } from 'snarkjs';
 
 import { ApiPromise } from '@polkadot/api';
 import type { HexString } from '@polkadot/util/types';
@@ -303,31 +303,31 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     return ensureHex(txHash);
   }
 
-  async waitForFinalization(hash: `0x${string}`): Promise<void> {
+  async waitForFinalization(_hash: `0x${string}`): Promise<void> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async isPairRegistered(
-    treeId: string,
-    account: string,
-    pubkey: string
+    _treeId: string,
+    _account: string,
+    _pubkey: string
   ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async register(
-    treeId: string,
-    account: string,
-    pubkey: string
+    _treeId: string,
+    _account: string,
+    _pubkey: string
   ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async syncNotesForKeypair(
-    anchorAddress: string,
-    owner: Keypair,
-    startingBlock?: bigint,
-    abortSignal?: AbortSignal
+    _anchorAddress: string,
+    _owner: Keypair,
+    _startingBlock?: bigint,
+    _abortSignal?: AbortSignal
   ): Promise<Note[]> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -339,7 +339,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
    * @param addressOrTreeId the address or tree id of the tree
    */
   async getLeafIndex(
-    txHash: string,
+    _txHash: string,
     note: Note,
     indexBeforeInsertion: number,
     addressOrTreeId: string
@@ -430,16 +430,16 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   async getLatestNeighborEdges(
-    fungibleId: number,
-    typedChainId?: number | undefined
+    _fungibleId: number,
+    _typedChainId?: number | undefined
   ): Promise<readonly NeighborEdge[]> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async validateInputNotes(
-    notes: readonly Note[],
-    typedChainId: number,
-    fungibleId: number
+    _notes: readonly Note[],
+    _typedChainId: number,
+    _fungibleId: number
   ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -885,17 +885,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     zkey: Uint8Array,
     witness: Uint8Array
   ): Promise<Groth16Proof> {
-    const proofOutput: Groth16Proof = await snarkjs.groth16.prove(
-      zkey,
-      witness
-    );
+    const proofOutput: Groth16Proof = await groth16.prove(zkey, witness);
 
     const proof = proofOutput.proof;
     const publicSignals = proofOutput.publicSignals;
 
-    const vKey = await snarkjs.zKey.exportVerificationKey(zkey);
+    const vKey = await zKey.exportVerificationKey(zkey);
 
-    const isValid = await snarkjs.groth16.verify(vKey, publicSignals, proof);
+    const isValid = await groth16.verify(vKey, publicSignals, proof);
 
     assert.strictEqual(isValid, true, 'Invalid proof');
 

@@ -1,4 +1,7 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import BillFillIcon from '@webb-tools/icons/BillFillIcon';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import type { SideBarItemProps } from '@webb-tools/webb-ui-components/components/SideBar/types';
@@ -6,7 +9,6 @@ import type { EventFor } from '@webb-tools/webb-ui-components/types';
 import { useLocation } from 'react-router';
 import sidebar from '../constants/sidebar';
 import useChainsFromRoute from './useChainsFromRoute';
-import { useConnectWallet } from './useConnectWallet';
 
 const accountItemCfg = {
   name: 'Account',

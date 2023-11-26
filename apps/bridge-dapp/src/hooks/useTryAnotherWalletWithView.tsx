@@ -1,11 +1,13 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import {
   Modal,
   ModalContent,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
-import { useConnectWallet } from './useConnectWallet';
 
 export const useTryAnotherWalletWithView = () => {
   const { connectingWalletId, failedWalletId, selectedWallet } =

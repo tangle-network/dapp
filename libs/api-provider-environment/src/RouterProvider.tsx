@@ -1,3 +1,5 @@
+'use client';
+
 import { AnimatePresence } from 'framer-motion';
 import { cloneElement, createElement, FC, ReactElement, useMemo } from 'react';
 import {

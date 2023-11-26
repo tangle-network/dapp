@@ -6,4 +6,7 @@ export interface ConnectWalletMobileButtonProps
     Pick<
       ButtonProps,
       'variant' | 'isFullWidth' | 'leftIcon' | 'rightIcon' | 'size' | 'variant'
-    > {}
+    > {
+  title?: string;
+  extraActionButtons?: Array<ButtonProps>;
+}

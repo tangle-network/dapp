@@ -1,10 +1,10 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
+import type { Note } from '@webb-tools/sdk-core/note';
 import {
   calculateTypedChainId,
-  Note,
   parseTypedChainId,
-} from '@webb-tools/sdk-core';
+} from '@webb-tools/sdk-core/typed-chain-id';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';

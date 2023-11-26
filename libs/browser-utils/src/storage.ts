@@ -1,7 +1,10 @@
+'use client';
+
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import Storage from '@webb-tools/dapp-types/Storage';
+import isBrowser from './isBrowser';
 
 /**
  * The `BridgeStorage` is used to store the leaves of the merkle tree
@@ -15,9 +18,22 @@ export type BridgeStorage = {
 export const bridgeStorageFactory = (resourceId: string) => {
   return Storage.newFromCache<BridgeStorage>(resourceId, {
     async commit(key: string, data: BridgeStorage): Promise<void> {
+      if (!isBrowser()) {
+        return;
+      }
+
       localStorage.setItem(key, JSON.stringify(data));
     },
     async fetch(key: string): Promise<BridgeStorage> {
+      const defaultResult = {
+        lastQueriedBlock: 0,
+        leaves: [],
+      } satisfies BridgeStorage as BridgeStorage;
+
+      if (!isBrowser()) {
+        return defaultResult;
+      }
+
       const storageCached = localStorage.getItem(key);
 
       if (storageCached) {
@@ -26,10 +42,7 @@ export const bridgeStorageFactory = (resourceId: string) => {
         };
       }
 
-      return {
-        lastQueriedBlock: 0,
-        leaves: [],
-      };
+      return defaultResult;
     },
   });
 };
@@ -50,9 +63,19 @@ export type MultipleKeyPairStorage = {
 export const multipleKeypairStorageFactory = () =>
   Storage.newFromCache<MultipleKeyPairStorage>('keypairs', {
     async commit(key: string, data: MultipleKeyPairStorage): Promise<void> {
+      if (!isBrowser()) {
+        return;
+      }
+
       localStorage.setItem(key, JSON.stringify(data));
     },
     async fetch(key: string): Promise<MultipleKeyPairStorage> {
+      const defaultResult =
+        {} satisfies MultipleKeyPairStorage as MultipleKeyPairStorage;
+      if (!isBrowser()) {
+        return defaultResult;
+      }
+
       const storageCached = localStorage.getItem(key);
 
       if (storageCached) {
@@ -61,7 +84,7 @@ export const multipleKeypairStorageFactory = () =>
         };
       }
 
-      return {};
+      return defaultResult;
     },
   });
 
@@ -88,9 +111,18 @@ const resetNoteStorage = () => {
 const noteStorageFactory = () => {
   return Storage.newFromCache<NoteStorage>(NOTE_STORAGE_KEY, {
     async commit(key: string, data: NoteStorage): Promise<void> {
+      if (!isBrowser()) {
+        return;
+      }
+
       localStorage.setItem(key, JSON.stringify(data));
     },
     async fetch(key: string): Promise<NoteStorage> {
+      const defaultResult = {} satisfies NoteStorage as NoteStorage;
+      if (!isBrowser()) {
+        return defaultResult;
+      }
+
       const storageCached = localStorage.getItem(key);
 
       if (storageCached) {
@@ -99,7 +131,7 @@ const noteStorageFactory = () => {
         };
       }
 
-      return {};
+      return defaultResult;
     },
   });
 };
@@ -142,9 +174,20 @@ export type RegistrationStorage = Record<string, string[]>;
 export const registrationStorageFactory = (account: string) => {
   return Storage.newFromCache<RegistrationStorage>(account, {
     async commit(key: string, data: RegistrationStorage): Promise<void> {
+      if (!isBrowser()) {
+        return;
+      }
+
       localStorage.setItem(key, JSON.stringify(data));
     },
     async fetch(key: string): Promise<RegistrationStorage> {
+      const defaultResult =
+        {} satisfies RegistrationStorage as RegistrationStorage;
+
+      if (!isBrowser()) {
+        return defaultResult;
+      }
+
       const storageCached = localStorage.getItem(key);
 
       if (storageCached) {
@@ -153,7 +196,7 @@ export const registrationStorageFactory = (account: string) => {
         };
       }
 
-      return {};
+      return defaultResult;
     },
   });
 };
@@ -175,6 +218,10 @@ export type NetworkStorage = Storage<NetworkStore>;
 export const netStorageFactory = () => {
   return Storage.newFromCache<NetworkStore>('app', {
     async commit(key: string, data: NetworkStore): Promise<void> {
+      if (!isBrowser()) {
+        return;
+      }
+
       localStorage.setItem(key, JSON.stringify(data));
     },
     async fetch(key: string): Promise<NetworkStore> {
@@ -183,6 +230,11 @@ export const netStorageFactory = () => {
         defaultNetwork: undefined,
         defaultWallet: undefined,
       };
+
+      if (!isBrowser()) {
+        return store;
+      }
+
       const storageCached = localStorage.getItem(key);
       if (storageCached) {
         return {
@@ -216,7 +268,11 @@ export type MultiAccountNoteStorage = {
 
 const MULTI_ACCOUNT_NOTE_STORAGE_KEY = 'multiAccountEncryptedNotes';
 
-export const resetMultiAccountNoteStorage = (pubKey: string) => {
+export const resetMultiAccountNoteStorage = (pubKey: string): void => {
+  if (!isBrowser()) {
+    return;
+  }
+
   const storage = localStorage.getItem(MULTI_ACCOUNT_NOTE_STORAGE_KEY);
   if (!storage) {
     return;
@@ -238,9 +294,20 @@ export const multiAccountNoteStorageFactory = () => {
     MULTI_ACCOUNT_NOTE_STORAGE_KEY,
     {
       async commit(key: string, data: MultiAccountNoteStorage): Promise<void> {
+        if (!isBrowser()) {
+          return;
+        }
+
         localStorage.setItem(key, JSON.stringify(data));
       },
       async fetch(key: string): Promise<MultiAccountNoteStorage> {
+        const defaultResult =
+          {} satisfies MultiAccountNoteStorage as MultiAccountNoteStorage;
+
+        if (!isBrowser()) {
+          return defaultResult;
+        }
+
         const storageCached = localStorage.getItem(key);
 
         if (storageCached) {
@@ -249,7 +316,7 @@ export const multiAccountNoteStorageFactory = () => {
           };
         }
 
-        return {};
+        return defaultResult;
       },
     }
   );

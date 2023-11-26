@@ -7,8 +7,8 @@ import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { type FC, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router-dom';
-import { InteractiveFeedbackView, WalletModal } from '../../components';
-import { CreateAccountModal } from '../../containers';
+import { InteractiveFeedbackView } from '../../components';
+import { CreateAccountModal, WalletModalContainer } from '../../containers';
 import { useTryAnotherWalletWithView } from '../../hooks';
 
 const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
@@ -50,7 +50,7 @@ const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
 
       <TryAnotherWalletModal />
 
-      <WalletModal />
+      <WalletModalContainer />
 
       <CreateAccountModal
         isOpen={isOpenNoteAccountModal}

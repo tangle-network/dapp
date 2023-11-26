@@ -8,5 +8,4 @@ export interface HeaderChipItemProps {
   label: ChipType;
   hasTooltip?: boolean;
   tooltipContent?: string;
-  dataFetcher: () => Promise<number | undefined>;
 }

@@ -58,6 +58,8 @@ export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_URL =
   'https://docs.webb.tools/docs/tangle-network/overview/';
+export const WEBB_TANGLE_DOCS_STAKING_URL =
+  'https://docs.webb.tools/docs/tangle-network/learn/incentives/#staking';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';

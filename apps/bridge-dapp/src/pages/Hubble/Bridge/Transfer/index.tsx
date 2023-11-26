@@ -28,6 +28,7 @@ import { formatEther, parseEther } from 'viem';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import RelayerFeeDetails from '../../../../components/RelayerFeeDetails';
 import {
+  ACTION_BUTTON_PROPS,
   BRIDGE_TABS,
   SELECT_DESTINATION_CHAIN_PATH,
   SELECT_RELAYER_PATH,
@@ -43,6 +44,7 @@ import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
 import useTransferFeeCalculation from '../../../../hooks/useTransferFeeCalculation';
 import useInputs from './private/useInputs';
 import useTransferButtonProps from './private/useTransferButtonProps';
+import { ConnectWalletMobileContent } from '../../../../components';
 
 const Transfer = () => {
   const { pathname } = useLocation();
@@ -386,7 +388,13 @@ const Transfer = () => {
           {!isMobile ? (
             <Button loadingText="Connecting..." {...buttonProps} isFullWidth />
           ) : (
-            <ConnectWalletMobileButton isFullWidth />
+            <ConnectWalletMobileButton
+              title="Try Hubble on Desktop"
+              extraActionButtons={ACTION_BUTTON_PROPS}
+              isFullWidth
+            >
+              <ConnectWalletMobileContent />
+            </ConnectWalletMobileButton>
           )}
         </div>
       </div>

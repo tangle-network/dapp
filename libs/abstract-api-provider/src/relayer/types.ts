@@ -130,7 +130,7 @@ export type RelayerQuery = {
 export type ChainNameIntoChainId = (
   name: string,
   basedOn: RelayerCMDBase
-) => number | null;
+) => number;
 
 export interface RelayerFeatures {
   dataQuery?: boolean;
