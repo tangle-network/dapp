@@ -52,7 +52,7 @@ const columns = [
   }),
 ];
 
-export const RankingTableSection = () => {
+const RankingTableSection = () => {
   const [rankingData, setRankingData] = useState<RankingItemType[]>([]);
 
   const {
@@ -157,3 +157,5 @@ export const RankingTableSection = () => {
     </div>
   );
 };
+
+export default RankingTableSection;

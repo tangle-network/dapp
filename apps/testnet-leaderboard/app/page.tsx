@@ -1,10 +1,10 @@
 import cx from 'classnames';
 
-import { CountdownSection } from '../components/CountdownSection';
-import { FAQSection } from '../components/FAQSection';
-import { RankingTableSection } from '../components/RankingTableSection';
+import CountdownSection from '../components/CountdownSection';
+import FAQSection from '../components/FAQSection';
+import RankingTableSection from '../components/RankingTableSection';
 
-export default async function Index() {
+export default function Index() {
   return (
     <div
       className={cx(

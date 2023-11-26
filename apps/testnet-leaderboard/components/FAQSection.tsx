@@ -37,7 +37,7 @@ const faqItems = [
   },
 ];
 
-export const FAQSection = () => {
+const FAQSection = () => {
   return (
     <div className="space-y-[16px]">
       <Typography
@@ -51,3 +51,5 @@ export const FAQSection = () => {
     </div>
   );
 };
+
+export default FAQSection;
