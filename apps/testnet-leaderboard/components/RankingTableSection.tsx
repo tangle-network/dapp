@@ -12,7 +12,14 @@ import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useState } from 'react';
 
-import { AddressCell, BadgesCell, HeaderCell, RankingItemType } from './tables';
+import { BadgeEnum } from '../types';
+import { AddressCell, BadgesCell, HeaderCell } from './tables';
+
+export type RankingItemType = {
+  address: string;
+  badges: BadgeEnum[];
+  points: number;
+};
 
 const pageSize = 20;
 

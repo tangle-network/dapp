@@ -2,19 +2,10 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import cx from 'classnames';
 import type { FC } from 'react';
 
-import { BadgeType } from './types';
+import { BADGE_ICON_RECORD } from '../../constants';
+import { BadgeEnum } from '../../types';
 
-const badgeIcons: { [key in BadgeType]: string } = {
-  creator: '🎨',
-  developer: '🛠️',
-  governance: '🏛️',
-  innovator: '💡',
-  relayer: '📡',
-  validator: '🔐',
-  specialist: '🔁',
-};
-
-const BadgesCell: FC<{ badges: BadgeType[] }> = ({ badges }) => {
+const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
   return (
     <div className="flex flex-wrap gap-[2px]">
       {badges.map((badge, idx) => (
@@ -26,7 +17,9 @@ const BadgesCell: FC<{ badges: BadgeType[] }> = ({ badges }) => {
             'bg-[rgba(31,29,43,0.1)]'
           )}
         >
-          <Typography variant="mkt-body2">{badgeIcons[badge]}</Typography>
+          <Typography variant="mkt-body2">
+            {BADGE_ICON_RECORD[badge]}
+          </Typography>
         </div>
       ))}
     </div>
