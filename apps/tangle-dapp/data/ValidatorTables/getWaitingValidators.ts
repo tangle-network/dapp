@@ -1,6 +1,5 @@
 import {
   formatTokenBalance,
-  getMinimumStake,
   getPolkadotApiPromise,
   getTotalNumberOfNominators,
   getValidatorIdentity,
@@ -13,10 +12,6 @@ export const getWaitingValidators = async (): Promise<Validator[]> => {
   if (!api) return [] as Validator[];
 
   try {
-    // Minimum Stake Amount Required
-    const minimumStakeAmount = await getMinimumStake();
-    const minimumStake = minimumStakeAmount?.toString();
-
     const waitingValidatorsDetails = await api.derive.staking.waitingInfo();
 
     const waitingValidators = await Promise.all(
@@ -57,7 +52,6 @@ export const getWaitingValidators = async (): Promise<Validator[]> => {
           selfStaked: selfStaked ?? '',
           effectiveAmountStaked: effectiveAmountStaked ?? '',
           delegations: delegations ?? '',
-          minimumStake: minimumStake ?? '',
         };
       })
     );

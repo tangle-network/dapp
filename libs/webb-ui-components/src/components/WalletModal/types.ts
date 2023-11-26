@@ -2,6 +2,7 @@ import { ApiConfig, WalletConfig } from '@webb-tools/dapp-config';
 import { notificationApi } from '../Notification';
 import { PropsOf } from '../../types';
 import { WalletId, WebbError } from '@webb-tools/dapp-types';
+import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 
 export interface WalletModalProps extends PropsOf<'div'> {
   /**
@@ -61,4 +62,9 @@ export interface WalletModalProps extends PropsOf<'div'> {
    * The wallets to display in the modal
    */
   supportedWallets: WalletConfig[];
+
+  /**
+   * The current browser platform id
+   */
+  platformId: SupportedBrowsers | null;
 }

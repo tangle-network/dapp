@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 
 const apiPromiseCache = new Map<string, ApiPromise>();
 
-const TOKEN_UNIT = 'TTNT';
+const TOKEN_UNIT = 'tTNT';
 
 export const getPolkadotApiPromise = async (
   endpoint: string = TANGLE_RPC_ENDPOINT
@@ -76,21 +76,6 @@ export const formatTokenBalance = async (
     return formattedBalance;
   } catch (error) {
     console.error(error);
-  }
-};
-
-export const getMinimumStake = async (): Promise<number | undefined> => {
-  try {
-    const api = await getPolkadotApiPromise();
-
-    if (!api) return NaN;
-
-    const minimumStakeDetails = await api.query.staking.minimumActiveStake();
-    const minimumStake = await formatTokenBalance(minimumStakeDetails);
-
-    return Number(minimumStake);
-  } catch (error) {
-    throw new Error('Failed to get minimum stake required');
   }
 };
 

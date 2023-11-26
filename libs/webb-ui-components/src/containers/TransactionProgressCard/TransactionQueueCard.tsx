@@ -217,7 +217,7 @@ export const TransactionQueueCard = forwardRef<
     const transactionSummeryText = useMemo(() => {
       const { completedCount, failedCount, processingCount } =
         transactionsCountSummery;
-      const messages = [];
+      const messages: string[] = [];
 
       if (processingCount) {
         messages.push(

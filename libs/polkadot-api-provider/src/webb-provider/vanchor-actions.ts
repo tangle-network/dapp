@@ -45,7 +45,7 @@ import {
 import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { firstValueFrom } from 'rxjs';
-import * as snarkjs from 'snarkjs';
+import { groth16, zKey } from 'snarkjs';
 
 import { ApiPromise } from '@polkadot/api';
 import type { HexString } from '@polkadot/util/types';
@@ -882,17 +882,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     zkey: Uint8Array,
     witness: Uint8Array
   ): Promise<Groth16Proof> {
-    const proofOutput: Groth16Proof = await snarkjs.groth16.prove(
-      zkey,
-      witness
-    );
+    const proofOutput: Groth16Proof = await groth16.prove(zkey, witness);
 
     const proof = proofOutput.proof;
     const publicSignals = proofOutput.publicSignals;
 
-    const vKey = await snarkjs.zKey.exportVerificationKey(zkey);
+    const vKey = await zKey.exportVerificationKey(zkey);
 
-    const isValid = await snarkjs.groth16.verify(vKey, publicSignals, proof);
+    const isValid = await groth16.verify(vKey, publicSignals, proof);
 
     assert.strictEqual(isValid, true, 'Invalid proof');
 

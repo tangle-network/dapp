@@ -4,7 +4,7 @@
 import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { ensureHex } from '@webb-tools/dapp-config';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
-import { parseTypedChainId } from '@webb-tools/sdk-core';
+import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { Observable, catchError, of, switchMap } from 'rxjs';
 import { Address, formatEther } from 'viem';
 import { fetchBalance } from 'wagmi/actions';

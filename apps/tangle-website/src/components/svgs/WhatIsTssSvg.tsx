@@ -11,8 +11,8 @@ const WhatIsTssSvgComponent = (
       height={49}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      ref={ref}
       {...props}
+      ref={ref}
     >
       <path
         d="M26.818 4.159a4.5 4.5 0 016.364 0l11.636 11.636a4.5 4.5 0 010 6.364L33.182 33.795a4.5 4.5 0 01-6.364 0L15.182 22.16a4.5 4.5 0 010-6.364L26.818 4.16z"

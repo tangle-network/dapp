@@ -1,32 +1,49 @@
 'use client';
 
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
 import { getPolkadotApiRx } from '../../constants/polkadot';
+import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 function useSessionCountSubscription(defaultValue = NaN) {
   const [session, setSession] = useState(defaultValue);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     let isMounted = true;
     let sub: Subscription | null = null;
 
-    const apiRx = getPolkadotApiRx();
-
-    apiRx.then((api) => {
-      if (!api) {
-        return;
-      }
-
-      sub = api.query.dkg.dkgPublicKey().subscribe((currentDKGPublicKey) => {
-        const currentSessionNumber = currentDKGPublicKey[0];
-
-        if (isMounted) {
-          setSession(currentSessionNumber.toNumber());
+    const subscritbeData = async () => {
+      try {
+        const api = await getPolkadotApiRx();
+        if (!api) {
+          throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
-      });
-    });
+
+        sub = api.query.session.currentIndex().subscribe((nextSession) => {
+          const idx = nextSession.toNumber();
+
+          if (isMounted) {
+            setSession(idx);
+            setIsLoading(false);
+          }
+        });
+      } catch (error) {
+        if (isMounted) {
+          setError(
+            error instanceof Error
+              ? error
+              : WebbError.from(WebbErrorCodes.UnknownError)
+          );
+          setIsLoading(false);
+        }
+      }
+    };
+
+    subscritbeData();
 
     return () => {
       isMounted = false;
@@ -34,7 +51,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
     };
   }, []);
 
-  return session;
+  return useFormatReturnType({ isLoading, error, data: session });
 }
 
 export default useSessionCountSubscription;

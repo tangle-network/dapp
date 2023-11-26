@@ -61,6 +61,7 @@
     "@polkadot/util": "^12.3.2",
     "@polkadot/util-crypto": "^12.3.2",
     "@polkadot/wasm-crypto": "^7.1.2",
+    "node-gyp-build": "4.7.1",
     "typescript": "^5.1.6",
     "webpack": "5.88.2"
   },

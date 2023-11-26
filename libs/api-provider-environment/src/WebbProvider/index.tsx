@@ -36,7 +36,10 @@ import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
-import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import {
   WebbWeb3Provider,
   isViemError,
