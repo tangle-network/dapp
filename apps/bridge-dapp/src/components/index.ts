@@ -1,5 +1,7 @@
+export { default as ActionsDropdown } from './ActionsDropdown';
 export * from './EducationCard';
 export * from './Header';
+export { default as HiddenValue } from './HiddenValue';
 export * from './InteractiveFeedbackView';
 export * from './ConnectWalletMobileContent';
 export { default as SlideAnimation } from './SlideAnimation';

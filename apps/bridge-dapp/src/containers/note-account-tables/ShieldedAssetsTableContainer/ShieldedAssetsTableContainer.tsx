@@ -4,8 +4,6 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain } from '@webb-tools/dapp-config';
 import {
   ChainIcon,
   ExternalLinkLine,
@@ -13,7 +11,6 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   IconWithTooltip,
   IconsGroup,
@@ -21,17 +18,21 @@ import {
   Typography,
   formatTokenAmount,
   fuzzyFilter,
+  numberToString,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
+import HiddenValue from '../../../components/HiddenValue';
 import { EmptyTable, LoadingTable } from '../../../components/tables';
 import { downloadNotes } from '../../../utils';
 import { ActionWithTooltip } from '../ActionWithTooltip';
 import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
+import useNoteAction from '../useNoteAction';
 import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
 } from './types';
+import { parseEther } from 'viem';
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
@@ -93,7 +94,9 @@ const staticColumns = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {formatTokenAmount(props.getValue().toString())}
+        <HiddenValue>
+          {formatTokenAmount(props.getValue().toString())}
+        </HiddenValue>
       </Typography>
     ),
   }),
@@ -116,75 +119,13 @@ export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
 > = ({
   data = [],
-  onActiveTabChange,
-  onDefaultDestinationChainChange,
-  onDefaultFungibleCurrencyChange,
   onDeleteNotesChange,
   onUploadSpendNote,
   globalSearchText,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
-  const { switchChain, activeWallet } = useWebContext();
-
-  const promptChainSwitch = useCallback(
-    async (chain: Chain) => {
-      const isSupported =
-        activeWallet &&
-        activeWallet.supportedChainIds.includes(
-          calculateTypedChainId(chain.chainType, chain.id)
-        );
-
-      if (isSupported) {
-        await switchChain(chain, activeWallet);
-      }
-    },
-    [activeWallet, switchChain]
-  );
-
-  const onTransfer = useCallback(
-    async (shieldedAsset: ShieldedAssetDataType) => {
-      onActiveTabChange?.('Transfer');
-
-      const { rawChain, rawFungibleCurrency } = shieldedAsset;
-
-      await promptChainSwitch(rawChain);
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      onDefaultFungibleCurrencyChange,
-      promptChainSwitch,
-    ]
-  );
-
-  const onWithdraw = useCallback(
-    async (shieldedAsset: ShieldedAssetDataType) => {
-      onActiveTabChange?.('Withdraw');
-
-      const { rawChain, rawFungibleCurrency } = shieldedAsset;
-
-      await promptChainSwitch(rawChain);
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      onDefaultFungibleCurrencyChange,
-      promptChainSwitch,
-    ]
-  );
+  const noteActionHandler = useNoteAction();
 
   const columns = useMemo(
     () => [
@@ -199,14 +140,28 @@ export const ShieldedAssetsTableContainer: FC<
             <div className="flex items-center space-x-1">
               <ActionWithTooltip
                 tooltipContent="Transfer"
-                onClick={() => onTransfer(shieldedAsset)}
+                onClick={() =>
+                  noteActionHandler(
+                    'transfer',
+                    shieldedAsset.rawChain,
+                    shieldedAsset.rawFungibleCurrency,
+                    parseEther(numberToString(shieldedAsset.availableBalance))
+                  )
+                }
               >
                 <SendPlanLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
               <ActionWithTooltip
                 tooltipContent="Withdraw"
-                onClick={() => onWithdraw(shieldedAsset)}
+                onClick={() =>
+                  noteActionHandler(
+                    'withdraw',
+                    shieldedAsset.rawChain,
+                    shieldedAsset.rawFungibleCurrency,
+                    parseEther(numberToString(shieldedAsset.availableBalance))
+                  )
+                }
               >
                 <WalletLineIcon className="!fill-current" />
               </ActionWithTooltip>
@@ -222,7 +177,7 @@ export const ShieldedAssetsTableContainer: FC<
         },
       }),
     ],
-    [onDeleteNotesChange, onTransfer, onWithdraw]
+    [onDeleteNotesChange, noteActionHandler]
   );
 
   const table = useReactTable({

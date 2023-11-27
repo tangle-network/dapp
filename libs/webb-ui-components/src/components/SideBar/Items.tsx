@@ -1,4 +1,4 @@
-import { type FC, useState } from 'react';
+import { useState, type FC, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import isSideBarItemActive from '../../utils/isSideBarItemActive';
 
@@ -7,10 +7,41 @@ import { SideBarItemsProps } from './types';
 
 export const SideBarItems: FC<SideBarItemsProps> = ({
   items,
+  pathnameOrHash,
   isExpanded,
   className,
 }) => {
-  const [activeItem, setActiveItem] = useState<number | null>(null);
+  const [activeItem, setActiveItem] = useState<number>(() => {
+    const activeItemIndex = items.findIndex((item) => {
+      const isActive =
+        item.subItems.length === 0
+          ? isSideBarItemActive(item.href, pathnameOrHash)
+          : isSideBarItemActive(
+              item.subItems.map((i) => i.href),
+              pathnameOrHash
+            );
+
+      return isActive;
+    });
+
+    return activeItemIndex;
+  });
+
+  useEffect(() => {
+    const idx = items.findIndex((item) => {
+      const isActive =
+        item.subItems.length === 0
+          ? isSideBarItemActive(item.href, pathnameOrHash)
+          : isSideBarItemActive(
+              item.subItems.map((i) => i.href),
+              pathnameOrHash
+            );
+
+      return isActive;
+    });
+
+    setActiveItem(idx);
+  }, [items, pathnameOrHash]);
 
   return (
     <div
@@ -21,17 +52,13 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
       )}
     >
       {items.map((itemProps, idx) => {
-        const itemHrefActive =
-          itemProps.subItems.length === 0
-            ? isSideBarItemActive(itemProps.href)
-            : isSideBarItemActive(itemProps.subItems.map((i) => i.href));
-
         return (
           <SideBarItem
             key={idx}
+            pathnameOrHash={pathnameOrHash}
             {...itemProps}
             isExpanded={isExpanded}
-            isActive={itemHrefActive || activeItem === idx}
+            isActive={activeItem === idx}
             setIsActive={() => setActiveItem(idx)}
           />
         );

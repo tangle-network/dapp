@@ -1,19 +1,13 @@
-import { DropzoneOptions } from 'react-dropzone';
+import type { Accept, DropzoneOptions } from 'react-dropzone';
 import { PropsOf } from '../../types';
+
+type AcceptFileType = 'json' | 'csv';
 
 export interface FileUploadAreaProps extends PropsOf<'div'> {
   /**
    * Callback for when the drop event occurs.
    */
   onDrop?: DropzoneOptions['onDrop'];
-
-  /**
-   * The accepted file types
-   * @default 'application/json': ['json']
-   * @see
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-   */
-  accept?: DropzoneOptions['accept'];
 
   /**
    * The maximum file size (in bytes)
@@ -26,6 +20,11 @@ export interface FileUploadAreaProps extends PropsOf<'div'> {
    * @default 1
    */
   maxFiles?: number;
+
+  /**
+   * Accept type format (json or none)
+   */
+  acceptType?: AcceptFileType;
 }
 
 export interface FileUploadListProps extends PropsOf<'ul'> {

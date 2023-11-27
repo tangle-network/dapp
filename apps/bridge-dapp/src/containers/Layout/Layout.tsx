@@ -5,25 +5,27 @@ import {
   SideBar,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
-import { type FC, useState } from 'react';
+import { useState, type FC } from 'react';
 import { Outlet } from 'react-router';
 import { Header } from '../../components/Header';
 import { WEBB_FAUCET_URL } from '../../constants';
-import sidebarProps from '../../constants/sidebar';
+import useSidebarProps from '../../hooks/useSidebarProps';
 
 const heightClsx = cx('h-screen');
 
-export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
+export const Layout: FC = () => {
   const [showBanner, setShowBanner] = useState(true);
 
   const onCloseHandler = () => {
     setShowBanner(false);
   };
 
+  const sidebarProps = useSidebarProps();
+
   return (
     <div className={cx('bg-body', heightClsx)}>
       <div className={cx('flex', heightClsx)}>
-        <SideBar {...sidebarProps} className="hidden lg:flex" />
+        <SideBar {...sidebarProps} className="hidden lg:flex !z-0" />
 
         <div className="flex flex-col w-full mx-auto overflow-y-auto">
           <Transition show={showBanner} className="hidden lg:!block">

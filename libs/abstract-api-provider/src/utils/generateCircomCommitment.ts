@@ -1,6 +1,8 @@
-import { buildPoseidon } from 'circomlibjs';
 import { Keypair } from '@webb-tools/sdk-core';
 import { JsNote } from '@webb-tools/wasm-utils';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { buildPoseidon } = require('circomlibjs');
 
 /**
  * Generate the commitment of the note

@@ -27,11 +27,11 @@ export const DropdownButton = forwardRef<
             'bg-mono-0 dark:bg-mono-180',
             'border-mono-80 dark:border-mono-120',
             'text-mono-140 dark:text-mono-40',
-            'hover:border-blue-40 dark:hover:border-blue-70',
-            'radix-state-open:border-blue-40 dark:radix-state-open:border-blue-70',
-            'radix-state-open:bg-blue-0 dark:radix-state-open:bg-blue-120',
-            size !== 'sm' && 'radix-state-open:rounded-t-lg',
-            size !== 'sm' && 'radix-state-open:rounded-b-none'
+            'hover:enabled:border-blue-40 dark:hover:enabled:border-blue-70',
+            'enabled:radix-state-open:border-blue-40 dark:enabled:radix-state-open:border-blue-70',
+            'enabled:radix-state-open:bg-blue-0 dark:enabled:radix-state-open:bg-blue-120',
+            size !== 'sm' && 'enabled:radix-state-open:rounded-t-lg',
+            size !== 'sm' && 'enabled:radix-state-open:rounded-b-none'
           ),
           className
         )}
@@ -45,7 +45,7 @@ export const DropdownButton = forwardRef<
             {label}
           </span>
         </div>
-        <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out group-radix-state-open:rotate-180" />
+        <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180" />
       </button>
     </DropdownMenuPrimitive.Trigger>
   );

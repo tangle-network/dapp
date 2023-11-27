@@ -43,10 +43,16 @@ export interface TooltipBodyProps
    * The `title` of the tooltip content
    */
   title?: string;
+
   /**
    * The `button` below the tooltip content
    */
   button?: React.ReactElement;
+
+  /**
+   * Not render the tooltip inside a portal
+   */
+  isDisablePortal?: boolean;
 }
 
 /**

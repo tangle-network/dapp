@@ -61,6 +61,7 @@
     "@polkadot/util": "^12.3.2",
     "@polkadot/util-crypto": "^12.3.2",
     "@polkadot/wasm-crypto": "^7.1.2",
+    "node-gyp-build": "4.7.1",
     "typescript": "^5.1.6",
     "webpack": "5.88.2"
   },
@@ -111,6 +112,8 @@
     "country-flag-icons": "^1.5.5",
     "decimal.js": "^10.4.3",
     "detect-browser": "^5.2.0",
+    "dexie": "^3.2.4",
+    "dexie-react-hooks": "^1.1.7",
     "github-markdown-css": "^5.2.0",
     "graphql": "^16.6.0",
     "gridjs": "^6.0.6",
@@ -149,7 +152,8 @@
     "use-local-storage-state": "^19.1.0",
     "use-query-params": "^2.2.1",
     "viem": "^1.18.3",
-    "wagmi": "^1.4.5"
+    "wagmi": "^1.4.5",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/cli": "7.21.5",

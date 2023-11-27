@@ -1,5 +1,5 @@
 import { type FC, useState } from 'react';
-import { EyeLine, EyeClosedLine } from '@webb-tools/icons';
+import { EyeLineIcon, EyeClosedLine } from '@webb-tools/icons';
 
 import { Typography } from '../../typography';
 import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
@@ -16,7 +16,7 @@ const SpendNoteInput: FC<{ note: string }> = ({ note }) => {
       >
         {hidden ? '*'.repeat(40) : note}
       </Typography>
-      <div className="flex gap-1 items-center">
+      <div className="flex items-center gap-1">
         {hidden ? (
           <EyeClosedLine
             size="lg"
@@ -26,7 +26,7 @@ const SpendNoteInput: FC<{ note: string }> = ({ note }) => {
             className="!fill-mono-100"
           />
         ) : (
-          <EyeLine
+          <EyeLineIcon
             size="lg"
             onClick={() => {
               setHidden(true);

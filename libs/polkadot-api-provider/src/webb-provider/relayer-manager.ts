@@ -4,7 +4,7 @@
 import { ApiPromise } from '@polkadot/api';
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import {
@@ -135,7 +135,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
       commitment: bigint;
       treeId: number;
       palletId: number;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];

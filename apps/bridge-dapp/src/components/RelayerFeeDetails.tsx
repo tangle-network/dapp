@@ -1,5 +1,4 @@
 import type { OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/relayer/types';
-import type { RelayerFeeInfo } from '@webb-tools/abstract-api-provider/relayer/webb-relayer';
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import type { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
@@ -15,8 +14,8 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 interface RelayerFeeDetailsProps {
   totalFeeWei: bigint | undefined;
   totalFeeToken: string | undefined;
-  gasFeeInfo: bigint | undefined;
-  relayerFeeInfo: RelayerFeeInfo | undefined;
+  gasFees: number | undefined;
+  relayerFees: number | undefined;
   isFeeLoading: boolean | undefined;
   srcChainCfg: ChainConfig | undefined;
   fungibleCfg: CurrencyConfig | undefined;
@@ -27,9 +26,9 @@ interface RelayerFeeDetailsProps {
 const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
   activeRelayer,
   fungibleCfg,
-  gasFeeInfo,
+  gasFees,
   isFeeLoading,
-  relayerFeeInfo,
+  relayerFees,
   srcChainCfg,
   totalFeeToken,
   totalFeeWei,
@@ -62,16 +61,16 @@ const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
       }
       items={
         [
-          typeof gasFeeInfo === 'bigint'
+          typeof gasFees !== 'undefined'
             ? ({
                 name: 'Gas',
                 isLoading: isFeeLoading,
                 Icon: <GasStationFill />,
-                value: parseFloat(formatEther(gasFeeInfo).slice(0, 10)),
+                value: gasFees,
                 tokenSymbol: srcChainCfg?.nativeCurrency.symbol,
               } satisfies FeeItem)
             : undefined,
-          typeof relayerFeeInfo !== 'undefined'
+          typeof relayerFees !== 'undefined'
             ? ({
                 name: `Relayer Fee ${
                   typeof relayerFeePercentage === 'number'
@@ -79,9 +78,7 @@ const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
                     : ''
                 }`.trim(),
                 isLoading: isFeeLoading,
-                value: parseFloat(
-                  formatEther(relayerFeeInfo.estimatedFee).slice(0, 10)
-                ),
+                value: relayerFees,
                 tokenSymbol: fungibleCfg?.symbol,
               } satisfies FeeItem)
             : undefined,

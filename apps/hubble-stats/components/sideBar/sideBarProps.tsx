@@ -18,6 +18,7 @@ const sideBarItems: SideBarItemProps[] = [
   {
     name: 'Hubble',
     isInternal: true,
+    isNext: true,
     href: '',
     Icon: ContrastTwoLine,
     subItems: [
@@ -29,6 +30,7 @@ const sideBarItems: SideBarItemProps[] = [
       {
         name: 'Explorer',
         isInternal: true,
+        isNext: true,
         href: '/',
       },
       {

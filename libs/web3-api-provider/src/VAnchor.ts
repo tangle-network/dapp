@@ -31,7 +31,7 @@ import {
 } from '@webb-tools/utils';
 import assert from 'assert';
 import merge from 'lodash/merge';
-import * as snarkjs from 'snarkjs';
+import { groth16, zKey } from 'snarkjs';
 import {
   Account,
   Address,
@@ -191,9 +191,9 @@ class VAnchor {
         ? this.smallCircuitZkComponents.zkey
         : this.largeCircuitZkComponents.zkey;
 
-    const vKey = await snarkjs.zKey.exportVerificationKey(zkey);
+    const vKey = await zKey.exportVerificationKey(zkey);
 
-    const isValid: boolean = await snarkjs.groth16.verify(
+    const isValid: boolean = await groth16.verify(
       vKey,
       fullProof.publicSignals,
       fullProof.proof
@@ -308,13 +308,13 @@ class VAnchor {
     );
     const witness = await witnessCalculator.calculateWTNSBin(vanchorInputs, 0);
 
-    const proof = await snarkjs.groth16.prove(zkey, witness);
+    const proof = await groth16.prove(zkey, witness);
 
     return proof;
   }
 
   public async generateProofCalldata(fullProof: FullProof) {
-    const calldata = await snarkjs.groth16.exportSolidityCallData(
+    const calldata = await groth16.exportSolidityCallData(
       fullProof.proof,
       fullProof.publicSignals
     );

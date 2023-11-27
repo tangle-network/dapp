@@ -1,8 +1,8 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
+import { getTimeDetailByEpoch } from '@webb-tools/webb-ui-components/utils';
 
 import { VANCHORS_MAP, ACTIVE_SUBGRAPH_MAP } from '../../constants';
-import { getTimePassedByEpoch } from '../../utils';
 import { PoolTransactionType } from '../../components/PoolTransactionsTable/types';
 
 const TRANSACTIONS_LIMIT = 100;
@@ -48,7 +48,7 @@ export default async function getPoolTransactionsTableData(
         tokenSymbol,
         sourceTypedChainId,
         destinationTypedChainId: undefined,
-        time: getTimePassedByEpoch(tx.timestamp),
+        time: getTimeDetailByEpoch(tx.timestamp),
       };
     });
   } catch {

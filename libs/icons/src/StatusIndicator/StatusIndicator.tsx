@@ -38,8 +38,8 @@ const StatusIndicator = forwardRef<SVGSVGElement, StatusIndicatorProps>(
         height={haftSize * 2}
         viewBox={`0 0 ${haftSize * 2} ${haftSize * 2}`}
         fill="none"
-        ref={ref}
         {...props}
+        ref={ref}
         className={twMerge('rounded-full', props.className)}
       >
         <rect

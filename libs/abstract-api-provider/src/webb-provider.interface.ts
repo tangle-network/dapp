@@ -20,7 +20,11 @@ import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbState } from './state';
-import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
+import {
+  ActionEvent,
+  NewNotesTxResult,
+  TransactionExecutor,
+} from './transaction/transactionExecutor';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
@@ -275,7 +279,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
       importMetaUrl: string;
       treeId?: number;
       palletId?: number;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];

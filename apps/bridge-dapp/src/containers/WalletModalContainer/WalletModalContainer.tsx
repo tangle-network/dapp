@@ -2,7 +2,8 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { useWebbUI, WalletModal } from '@webb-tools/webb-ui-components';
+import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
+import { WalletModal, useWebbUI } from '@webb-tools/webb-ui-components';
 
 export const WalletModalContainer = () => {
   const {
@@ -24,6 +25,7 @@ export const WalletModalContainer = () => {
   return (
     <WalletModal
       connectingWalletId={connectingWalletId}
+      platformId={getPlatformMetaData()?.id ?? null}
       failedWalletId={failedWalletId}
       isModalOpen={isModalOpen}
       resetState={resetState}

@@ -40,6 +40,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       className,
       isExpandedAtDefault = true,
       onSideBarToggle,
+      pathnameOrHash,
       ...props
     },
     ref
@@ -62,7 +63,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
           : isExpandedAtDefault;
 
       setIsSidebarOpen(isSideBarOpen);
-    }, [setIsSidebarOpen]);
+    }, [isExpandedAtDefault, setIsSidebarOpen]);
 
     return (
       <div
@@ -86,7 +87,11 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
               />
             </div>
 
-            <SideBarItems items={items} isExpanded={isSidebarOpen} />
+            <SideBarItems
+              pathnameOrHash={pathnameOrHash}
+              items={items}
+              isExpanded={isSidebarOpen}
+            />
           </div>
 
           <div

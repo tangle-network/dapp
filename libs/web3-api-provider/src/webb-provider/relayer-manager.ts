@@ -11,16 +11,16 @@ import {
 } from '@webb-tools/abstract-api-provider/relayer';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import Storage from '@webb-tools/dapp-types/Storage';
+import type { Note } from '@webb-tools/sdk-core/note';
 import {
   calculateTypedChainId,
   ChainType,
-  Note,
   parseTypedChainId,
-} from '@webb-tools/sdk-core';
+} from '@webb-tools/sdk-core/typed-chain-id';
 
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor__factory } from '@webb-tools/contracts';
@@ -149,7 +149,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];

@@ -1,5 +1,5 @@
-import downloadString from '@webb-tools/browser-utils/download/downloadString';
 import { Note } from '@webb-tools/sdk-core/note';
+import { downloadNotes } from './downloadNotes';
 
 async function handleStoreNote(
   note?: Note,
@@ -9,11 +9,7 @@ async function handleStoreNote(
     return;
   }
 
-  const changeNoteStr = note.serialize();
-  downloadString(
-    JSON.stringify(changeNoteStr),
-    changeNoteStr.slice(0, changeNoteStr.length - 10) + '.json'
-  );
+  downloadNotes([note]);
 
   await addNoteToNoteManager?.(note);
 }

@@ -6,13 +6,13 @@ import { getConfig } from '@wagmi/core';
 import {
   Bridge,
   Currency,
+  FixturesStatus,
   NewNotesTxResult,
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
-  FixturesStatus,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -45,17 +45,18 @@ import {
 import Storage from '@webb-tools/dapp-types/Storage';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  ChainType,
   CircomUtxo,
-  Keypair,
-  Note,
-  Utxo,
-  UtxoGenInput,
   buildVariableWitnessCalculator,
-  calculateTypedChainId,
-  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
+import { Keypair } from '@webb-tools/sdk-core/keypair';
+import { Note } from '@webb-tools/sdk-core/note';
+import {
+  ChainType,
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
+import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core/utxo';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import flatten from 'lodash/flatten';
@@ -329,7 +330,7 @@ export class WebbWeb3Provider
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];
@@ -722,7 +723,7 @@ export class WebbWeb3Provider
   async getVAnchorInstance(
     address: string,
     provider: PublicClient,
-    tx?: Transaction<NewNotesTxResult>,
+    tx?: TransactionExecutor<NewNotesTxResult>,
     useDummyFixtures?: boolean
   ): Promise<VAnchor> {
     if (useDummyFixtures) {

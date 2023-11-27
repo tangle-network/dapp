@@ -1,6 +1,7 @@
 import { VAnchorActions } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Note, parseTypedChainId } from '@webb-tools/sdk-core';
+import type { Note } from '@webb-tools/sdk-core/note';
+import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useMemo } from 'react';
 
