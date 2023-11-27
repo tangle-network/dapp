@@ -117,6 +117,14 @@ const SelectToken: FC<{ type: 'src' | 'dest' }> = ({ type }) => {
     [isFungibleTokenList]
   );
 
+  const alertTitle = useMemo(() => {
+    if (currentWrapperType === undefined) return;
+    if (type === 'src') {
+      return `Tokens available for ${currentWrapperType}ping based on the composition of shielded pools.`;
+    }
+    return `Available webb tokens for ${currentWrapperType}ping based on source token selection.`;
+  }, [currentWrapperType, type]);
+
   const handleClose = useCallback(
     (selectedCfg?: CurrencyConfig) => {
       const params = new URLSearchParams(searchParams);
@@ -154,6 +162,7 @@ const SelectToken: FC<{ type: 'src' | 'dest' }> = ({ type }) => {
         unavailableTokens={[]} // TODO: Add unavailable tokens
         onChange={handleTokenChange}
         onClose={() => handleClose()}
+        alertTitle={alertTitle}
       />
     </SlideAnimation>
   );
