@@ -1,0 +1,6 @@
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
+[build]
+command = "yarn nx build testnet-leaderboard --verbose --skip-nx-cache"
+publish = "./dist/apps/testnet-leaderboard/.next"
