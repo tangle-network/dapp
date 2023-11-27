@@ -23,6 +23,8 @@ const nextConfig = {
       process.env['TESTNET_LEADERBOARD_GUIDELINES_URL'] ?? '',
     TESTNET_LEADERBOARD_REQUEST_POINTS_URL:
       process.env['TESTNET_LEADERBOARD_REQUEST_POINTS_URL'] ?? '',
+    TESTNET_LEADERBOARD_BACKEND_URL:
+      process.env['TESTNET_LEADERBOARD_BACKEND_URL'] ?? '',
   },
 };
 
