@@ -5195,7 +5195,7 @@
   dependencies:
     "@nx/web" "17.1.3"
 
-"@nrwl/webpack@*", "@nrwl/webpack@17.1.3":
+"@nrwl/webpack@17.1.3":
   version "17.1.3"
   resolved "https://registry.yarnpkg.com/@nrwl/webpack/-/webpack-17.1.3.tgz#758cc3d12ff672ece8c56200925df481df1d607b"
   integrity sha512-8iDLTIEbqJ8hxNPRadqBmH4+GatFC1dwd8QscKMQqmeNKn2toYzX4I0EGJ289gY4fdhF45wkVhWEyTfvAwI80Q==
@@ -5722,48 +5722,6 @@
     detect-port "^1.5.1"
     http-server "^14.1.0"
     tslib "^2.3.0"
-
-"@nx/webpack@16.9.0":
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/@nx/webpack/-/webpack-16.9.0.tgz#7f946f30bdade953fb10f8e14c3cf264593ef5d2"
-  integrity sha512-uwoz89EguPW++f/hGBrzxcIppK2QsBBxnMPlP7axHE/CWt5zjRZjDzSV6Cyb7HZZllMNQlVTdcJyelFZNFdO9A==
-  dependencies:
-    "@babel/core" "^7.22.9"
-    "@nrwl/webpack" "*"
-    "@nx/devkit" "16.9.0"
-    "@nx/js" "16.9.0"
-    autoprefixer "^10.4.9"
-    babel-loader "^9.1.2"
-    browserslist "^4.21.4"
-    chalk "^4.1.0"
-    copy-webpack-plugin "^10.2.4"
-    css-loader "^6.4.0"
-    css-minimizer-webpack-plugin "^5.0.0"
-    fork-ts-checker-webpack-plugin "7.2.13"
-    less "4.1.3"
-    less-loader "11.1.0"
-    license-webpack-plugin "^4.0.2"
-    loader-utils "^2.0.3"
-    mini-css-extract-plugin "~2.4.7"
-    parse5 "4.0.0"
-    postcss "^8.4.14"
-    postcss-import "~14.1.0"
-    postcss-loader "^6.1.1"
-    rxjs "^7.8.0"
-    sass "^1.42.1"
-    sass-loader "^12.2.0"
-    source-map-loader "^3.0.0"
-    style-loader "^3.3.0"
-    stylus "^0.59.0"
-    stylus-loader "^7.1.0"
-    terser-webpack-plugin "^5.3.3"
-    ts-loader "^9.3.1"
-    tsconfig-paths-webpack-plugin "4.0.0"
-    tslib "^2.3.0"
-    webpack "^5.80.0"
-    webpack-dev-server "^4.9.3"
-    webpack-node-externals "^3.0.0"
-    webpack-subresource-integrity "^5.1.0"
 
 "@nx/webpack@17.1.3":
   version "17.1.3"
@@ -32731,11 +32689,6 @@ zod@3.21.4:
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
 
 zod@^3.21.4, zod@^3.22.4:
-  version "3.22.4"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
-  integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
-
-zod@^3.22.4:
   version "3.22.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
   integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
