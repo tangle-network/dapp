@@ -1,20 +1,23 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
-import Image from 'next/image';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
+import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
+import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { FC } from 'react';
 
 const AddressCell: FC<{ address: string }> = ({ address }) => {
   return (
     <div className="flex items-center gap-2">
-      <Image
-        src="/assets/svgs/webbAddress.svg"
-        width={16}
-        height={16}
-        alt={address}
+      <Avatar
+        value={address}
+        theme={isEthereumAddress(address) ? 'ethereum' : 'substrate'}
+        className="[&_*]:!cursor-copy"
       />
-      <Typography variant="mkt-body2" fw="bold">
-        {shortenHex(address, 3)}
-      </Typography>
+
+      <KeyValueWithButton
+        keyValue={address}
+        size="sm"
+        shortenFn={shortenString}
+      />
     </div>
   );
 };
