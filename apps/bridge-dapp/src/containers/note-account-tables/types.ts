@@ -24,24 +24,6 @@ export interface NoteAccountTableContainerProps {
   onUploadSpendNote?: () => void;
 
   /**
-   * The callback to update the active tab when action button is clicked
-   * @param {'Deposit' | 'Withdraw' | 'Transfer'} tabName - The tab name
-   */
-  onActiveTabChange?: (tabName: 'Deposit' | 'Withdraw' | 'Transfer') => void;
-
-  /**
-   * The callback to update the default destination chain
-   * @param {Chain} chain - The chain object
-   */
-  onDefaultDestinationChainChange?: (chain: Chain) => void;
-
-  /**
-   * The callback to update the default fungible currency
-   * @param {Currency} currency - The currency object
-   */
-  onDefaultFungibleCurrencyChange?: (currency: Currency) => void;
-
-  /**
    * The callback to delete notes
    * @param {Note[]} notes - The notes to delete
    * @returns void

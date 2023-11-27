@@ -14,19 +14,15 @@ import {
 } from '../../../../../constants';
 import useAmountWithRoute from '../../../../../hooks/useAmountWithRoute';
 import useDefaultChainAndPool from '../../../../../hooks/useDefaultChainAndPool';
-import objectToSearchString from '../../../../../utils/objectToSearchString';
 
 const useInputs = () => {
   const [amount, setAmount] = useAmountWithRoute();
 
-  const [query, setQuery] = useQueryParams(
-    {
-      [RECIPIENT_KEY]: StringParam,
-      [HAS_REFUND_KEY]: BooleanParam,
-      [REFUND_RECIPIENT_KEY]: StringParam,
-    },
-    { objectToSearchString }
-  );
+  const [query, setQuery] = useQueryParams({
+    [RECIPIENT_KEY]: StringParam,
+    [HAS_REFUND_KEY]: BooleanParam,
+    [REFUND_RECIPIENT_KEY]: StringParam,
+  });
 
   const {
     [RECIPIENT_KEY]: recipient,

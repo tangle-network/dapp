@@ -1,6 +1,6 @@
 import {
   NewNotesTxResult,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import {
@@ -9,7 +9,7 @@ import {
 } from '@webb-tools/anchors';
 
 function handlehandleVAnchorTxState<State extends VAnchorTxState>(
-  tx: Transaction<NewNotesTxResult>,
+  tx: TransactionExecutor<NewNotesTxResult>,
   txState: State,
   payload: TransactionStateUpdatePayload[State]
 ) {

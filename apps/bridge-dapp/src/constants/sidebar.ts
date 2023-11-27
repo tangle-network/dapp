@@ -9,11 +9,11 @@ import {
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
 import {
   DKG_STATS_URL,
+  HUBBLE_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
-  HUBBLE_STATS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [

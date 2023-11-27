@@ -1,5 +1,5 @@
 import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import type { Transaction } from '@webb-tools/abstract-api-provider/transaction';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
 import { transactionItemStatusFromTxStatus } from '@webb-tools/api-provider-environment/transaction';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import {
@@ -10,11 +10,14 @@ import LoadingPill from '@webb-tools/webb-ui-components/components/buttons/Loadi
 import type { LoadingPillStatus } from '@webb-tools/webb-ui-components/components/buttons/types';
 import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
 import { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router';
+import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
 import useCurrentTx from '../../../hooks/useCurrentTx';
 import TxItem from './TxItem';
 
 const TxProgressDropdown = () => {
   const { txQueue: txQueue_ } = useWebContext();
+  const { pathname } = useLocation();
 
   const { txQueue, currentTxId } = txQueue_;
 
@@ -24,6 +27,11 @@ const TxProgressDropdown = () => {
   const sortedTxQueue = useSortedTxQueue(txQueue);
 
   const currentTx = useCurrentTx(sortedTxQueue, currentTxId, { latest: true });
+
+  const isOnAccountPage = useMemo(
+    () => pathname.includes(`/${NOTE_ACCOUNT_PATH}`),
+    [pathname]
+  );
 
   useEffect(() => {
     if (!currentTx) {
@@ -56,7 +64,9 @@ const TxProgressDropdown = () => {
         className="mt-4 -ml-14 max-h-80 w-[30rem] overflow-scroll overflow-x-hidden"
       >
         {sortedTxQueue.map((tx) => {
-          return <TxItem key={tx.id} tx={tx} />;
+          return (
+            <TxItem key={tx.id} tx={tx} isOnAccountPage={isOnAccountPage} />
+          );
         })}
       </DropdownBody>
     </Dropdown>
@@ -65,7 +75,7 @@ const TxProgressDropdown = () => {
 
 export default TxProgressDropdown;
 
-const useSortedTxQueue = (txQueue: Array<Transaction<unknown>>) => {
+const useSortedTxQueue = (txQueue: Array<TransactionExecutor<unknown>>) => {
   return useMemo(
     () =>
       txQueue

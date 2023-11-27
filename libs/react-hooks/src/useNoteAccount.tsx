@@ -109,7 +109,10 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isSuccessfullyCreatedNoteAccountSubject
   );
 
-  const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
+  const hasNoteAccount = useMemo(
+    () => Boolean(noteManager?.getKeypair()),
+    [noteManager]
+  );
 
   const handleSyncNotes = useCallback<UseNoteAccountReturnType['syncNotes']>(
     async (onNewNotes, onTryAgain, startingBlock) => {

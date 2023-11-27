@@ -7,8 +7,6 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useCurrentTypedChainId from '@webb-tools/react-hooks/useCurrentTypedChainId';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import { useCallback, useMemo } from 'react';
-import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../constants';
-import useNavigateWithPersistParams from './useNavigateWithPersistParams';
 
 function useConnectButtonProps(typedChainId?: number | null) {
   const { activeApi = null, activeWallet, switchChain } = useWebContext();
@@ -18,8 +16,6 @@ function useConnectButtonProps(typedChainId?: number | null) {
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const activeTypedChainId = useCurrentTypedChainId();
-
-  const navigate = useNavigateWithPersistParams();
 
   const content = useMemo(() => {
     if (!activeWallet) {
@@ -66,7 +62,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
         if (nextChainSupported) {
           return switchChain(nextChain, activeWallet);
         } else {
-          navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
+          toggleModal(true, typedChainId);
           return null;
         }
       }
@@ -89,7 +85,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
       }
     },
     // prettier-ignore
-    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, navigate, setOpenNoteAccountModal, switchChain, toggleModal]
+    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, setOpenNoteAccountModal, switchChain, toggleModal]
   );
 
   return {

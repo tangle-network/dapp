@@ -1,4 +1,4 @@
-import type { Transaction } from '@webb-tools/abstract-api-provider/transaction';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
 import { useMemo } from 'react';
 
 /**
@@ -8,7 +8,7 @@ import { useMemo } from 'react';
  * @returns the transaction if found, otherwise the latest transaction
  */
 const useCurrentTx = (
-  txQueue: Array<Transaction<unknown>>,
+  txQueue: Array<TransactionExecutor<unknown>>,
   txId?: string | null,
   opts?: {
     /**

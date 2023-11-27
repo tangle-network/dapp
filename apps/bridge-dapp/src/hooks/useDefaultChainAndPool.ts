@@ -3,7 +3,6 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { useEffect, useMemo } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
 import { POOL_KEY, SOURCE_CHAIN_KEY } from '../constants';
-import objectToSearchString from '../utils/objectToSearchString';
 
 /**
  * Hook containing side effects to set default source chain and pool id
@@ -12,13 +11,10 @@ const useDefaultChainAndPool = () => {
   const { loading, isConnecting, apiConfig, activeChain, activeApi } =
     useWebContext();
 
-  const [query, setQuery] = useQueryParams(
-    {
-      [SOURCE_CHAIN_KEY]: NumberParam,
-      [POOL_KEY]: NumberParam,
-    },
-    { objectToSearchString }
-  );
+  const [query, setQuery] = useQueryParams({
+    [SOURCE_CHAIN_KEY]: NumberParam,
+    [POOL_KEY]: NumberParam,
+  });
 
   const { [SOURCE_CHAIN_KEY]: srcTypedChainId } = query;
 

@@ -26,6 +26,7 @@ import {
 } from 'react';
 import { RefHandle, UploadModalContentProps } from './types';
 import { formatUnits } from 'viem';
+import { safeParseJson } from '../../utils';
 
 export const UploadModalContent = forwardRef<
   RefHandle,
@@ -69,19 +70,6 @@ export const UploadModalContent = forwardRef<
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
-  /**
-   * Parse JSON string and return error if any
-   * @param str - The JSON string to parse
-   * @returns [error, parsed]
-   */
-  const parseJSON = useCallback((str: string) => {
-    try {
-      return [null, JSON.parse(str)];
-    } catch (err) {
-      return [err];
-    }
-  }, []);
-
   // Effect run when file changes
   useEffect(() => {
     async function processFile() {
@@ -94,7 +82,7 @@ export const UploadModalContent = forwardRef<
       reader.onload = async () => {
         const text = reader.result as string;
 
-        const [err, parsedNote] = parseJSON(text);
+        const [err, parsedNote] = safeParseJson(text);
 
         if (err) {
           notificationApi({
@@ -143,11 +131,11 @@ export const UploadModalContent = forwardRef<
     }
 
     processFile();
-  }, [file, onNotesChange, handleRemoveAllNotes, parseJSON]);
+  }, [file, onNotesChange, handleRemoveAllNotes]);
 
   return (
     <>
-      {!noteSize && <FileUploadArea onDrop={handleUpload} />}
+      {!noteSize && <FileUploadArea onDrop={handleUpload} acceptType="json" />}
 
       {!!file && (
         <FileUploadList>
