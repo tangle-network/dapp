@@ -29,6 +29,7 @@ const sideBarItems: SideBarItemProps[] = [
     name: 'EVM Staking',
     href: '/',
     isInternal: true,
+    isNext: true,
     Icon: FundsLine,
     subItems: [],
   },

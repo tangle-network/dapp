@@ -1,12 +1,13 @@
 import {
   NewNotesTxResult,
   OptionalActiveRelayer,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { LoggerService } from '@webb-tools/app-util';
@@ -38,6 +39,8 @@ import {
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
+  getNoteSerializations,
+  getCurrentTimestamp,
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
@@ -53,6 +56,7 @@ const TransferConfirmContainer = forwardRef<
       amount,
       changeAmount,
       currency,
+      srcChain,
       destChain,
       recipient,
       relayer,
@@ -108,10 +112,12 @@ const TransferConfirmContainer = forwardRef<
       [apiConfig, currency.id, targetChainId]
     );
 
-    const poolExplorerUrl = useMemo(() => {
-      const blockExplorerUrl =
-        chainsConfig[targetChainId]?.blockExplorers?.default.url;
+    const blockExplorerUrl = useMemo(
+      () => chainsConfig[targetChainId]?.blockExplorers?.default.url,
+      [targetChainId]
+    );
 
+    const poolExplorerUrl = useMemo(() => {
       if (!blockExplorerUrl) return undefined;
       return getExplorerURI(
         blockExplorerUrl,
@@ -119,7 +125,7 @@ const TransferConfirmContainer = forwardRef<
         'address',
         'web3'
       ).toString();
-    }, [targetChainId, poolAddress]);
+    }, [blockExplorerUrl, poolAddress]);
 
     const {
       relayersState: { activeRelayer },
@@ -129,6 +135,34 @@ const TransferConfirmContainer = forwardRef<
         ? activeApi.state.activeBridge.targets[targetChainId]
         : undefined,
     });
+
+    const {
+      gasFeeInfo,
+      isLoading: isFeeLoading,
+      relayerFeeInfo,
+      totalFeeToken,
+      totalFeeWei,
+    } = useTransferFeeCalculation({
+      activeRelayer,
+      recipientErrorMsg: undefined,
+      typedChainId: srcTypedChainId,
+    });
+
+    const gasFees = useMemo(
+      () =>
+        gasFeeInfo
+          ? parseFloat(formatEther(gasFeeInfo).slice(0, 10))
+          : undefined,
+      [gasFeeInfo]
+    );
+
+    const relayerFees = useMemo(
+      () =>
+        relayerFeeInfo
+          ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
+          : undefined,
+      [relayerFeeInfo]
+    );
 
     const handleTransferExecute = useTransferExecuteHandler({
       activeRelayer,
@@ -147,18 +181,10 @@ const TransferConfirmContainer = forwardRef<
       setInProgressTxId,
       setTotalStep,
       targetTypedChainId: targetChainId,
-    });
-
-    const {
-      gasFeeInfo,
-      isLoading: isFeeLoading,
-      relayerFeeInfo,
-      totalFeeToken,
-      totalFeeWei,
-    } = useTransferFeeCalculation({
-      activeRelayer,
-      recipientErrorMsg: undefined,
-      typedChainId: srcTypedChainId,
+      blockExplorerUrl,
+      relayerFees,
+      gasFees,
+      refundToken,
     });
 
     const newBalance = useMemo(() => {
@@ -241,8 +267,8 @@ const TransferConfirmContainer = forwardRef<
           <RelayerFeeDetails
             totalFeeWei={totalFeeWei}
             totalFeeToken={totalFeeToken}
-            gasFeeInfo={gasFeeInfo}
-            relayerFeeInfo={relayerFeeInfo}
+            gasFees={gasFees}
+            relayerFees={relayerFees}
             isFeeLoading={isFeeLoading}
             srcChainCfg={apiConfig.chains[srcTypedChainId]}
             fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
@@ -273,6 +299,7 @@ type Args = Pick<
   | 'refundRecipient'
   | 'note'
   | 'currency'
+  | 'refundToken'
 > &
   Pick<
     ReturnType<typeof useInProgressTxInfo>,
@@ -280,6 +307,9 @@ type Args = Pick<
   > & {
     activeRelayer: OptionalActiveRelayer;
     targetTypedChainId: number;
+    blockExplorerUrl?: string;
+    relayerFees?: number;
+    gasFees?: number;
   };
 
 const useTransferExecuteHandler = (args: Args) => {
@@ -300,6 +330,10 @@ const useTransferExecuteHandler = (args: Args) => {
     activeRelayer,
     currency,
     targetTypedChainId,
+    blockExplorerUrl,
+    relayerFees,
+    gasFees,
+    refundToken,
   } = args;
 
   const {
@@ -313,6 +347,8 @@ const useTransferExecuteHandler = (args: Args) => {
   const { addNoteToNoteManager, removeNoteFromNoteManager } = useVAnchor();
 
   const enqueueSubmittedTx = useEnqueueSubmittedTx();
+
+  const { addNewTransaction } = useTxClientStorage();
 
   const { syncNotes } = useNoteAccount();
 
@@ -366,7 +402,7 @@ const useTransferExecuteHandler = (args: Args) => {
     }
     const tokenURI = getTokenURI(destCurrency, targetTypedChainId.toString());
 
-    const tx = Transaction.new<NewNotesTxResult>('Transfer', {
+    const tx = TransactionExecutor.new<NewNotesTxResult>('Transfer', {
       amount,
       tokens: [tokenSymbol, tokenSymbol],
       wallets: {
@@ -409,8 +445,6 @@ const useTransferExecuteHandler = (args: Args) => {
       };
 
       const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
-
-      console.log('args', args);
 
       const outputNotes = changeNote ? [changeNote] : [];
 
@@ -488,6 +522,38 @@ const useTransferExecuteHandler = (args: Args) => {
       if (isSendToSelf) {
         await syncNotes(undefined, undefined, blockNumberBeforeInsert);
       }
+
+      // add new TRANSFER transaction to client storage
+      await addNewTransaction({
+        hash: transactionHash,
+        activity: 'transfer',
+        amount: amount,
+        fromAddress: noteManager?.getKeypair().toString() ?? '',
+        recipientAddress: recipient,
+        fungibleTokenSymbol: currency.view.symbol,
+        timestamp: getCurrentTimestamp(),
+        relayerName: activeRelayer?.account,
+        relayerUri: activeRelayer ? activeRelayer.infoUri : undefined,
+        relayerFeesAmount: relayerFees ?? gasFees,
+        refundAmount:
+          typeof refundAmount !== 'undefined'
+            ? parseFloat(formatEther(refundAmount).slice(0, 10))
+            : undefined,
+        refundRecipientAddress: refundRecipient,
+        refundTokenSymbol: refundToken,
+        inputNoteSerializations: getNoteSerializations(inputNotes),
+        outputNoteSerializations: getNoteSerializations(outputNotes),
+        explorerUri: blockExplorerUrl
+          ? getExplorerURI(
+              blockExplorerUrl,
+              transactionHash,
+              'tx',
+              'web3'
+            ).toString()
+          : undefined,
+        sourceTypedChainId: srcTypedChainId,
+        destinationTypedChainId: targetTypedChainId,
+      });
     } catch (error) {
       console.error('Error occured while transferring', error);
       changeNote && (await removeNoteFromNoteManager(changeNote));

@@ -10,7 +10,7 @@ import {
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
-  Transaction,
+  TransactionExecutor,
   TransactionState,
   WebbApiProvider,
   WebbMethods,
@@ -345,7 +345,7 @@ export class WebbPolkadot
       commitment: bigint;
       treeId?: number;
       palletId?: number;
-      tx?: Transaction<NewNotesTxResult>;
+      tx?: TransactionExecutor<NewNotesTxResult>;
     }
   ): Promise<{
     provingLeaves: string[];

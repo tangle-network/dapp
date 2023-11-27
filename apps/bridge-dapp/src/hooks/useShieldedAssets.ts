@@ -1,4 +1,3 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -9,8 +8,6 @@ import { ShieldedAssetDataType } from '../containers/note-account-tables/Shielde
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
-
-  const { activeChain } = useWebContext();
 
   const { allFungibleCurrencies: fungibleCurrencies, getWrappableCurrencies } =
     useCurrencies();
@@ -34,9 +31,6 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         // config, but the user still has notes from that chain.
         if (!chain) {
           console.warn(`Typed Chain (${targetChainId}) not supported anymore!`);
-          return;
-        }
-        if (chain.tag !== activeChain?.tag) {
           return;
         }
 
@@ -106,7 +100,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
       return acc;
     }, [] as ShieldedAssetDataType[]);
-  }, [activeChain?.tag, allNotes, fungibleCurrencies, getWrappableCurrencies]);
+  }, [allNotes, fungibleCurrencies, getWrappableCurrencies]);
 
   return groupedNotes;
 };

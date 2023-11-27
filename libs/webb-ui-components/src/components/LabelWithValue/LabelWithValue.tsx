@@ -1,8 +1,9 @@
-import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { Typography } from '../../typography';
+import { getFontWeightClassName } from '../../typography/utils';
 import { Label } from '../Label';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { LabelWithValueProps } from './types';
@@ -26,6 +27,7 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
       value,
       valueTooltip,
       valueVariant = 'body1',
+      valueFontWeight = 'semibold',
       ...props
     },
     ref
@@ -40,7 +42,8 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
           <Label
             hidden={isHiddenLabel}
             className={cx(
-              'text-mono-140 dark:text-mono-80 font-semibold',
+              'text-mono-140 dark:text-mono-80',
+              getFontWeightClassName(valueVariant, valueFontWeight),
               labelVariant,
               isHiddenLabel && 'hidden'
             )}
@@ -54,7 +57,7 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
             <Typography
               component="span"
               variant={valueVariant}
-              className="font-semibold"
+              className={getFontWeightClassName(valueVariant, valueFontWeight)}
             >
               {value.toString()}
             </Typography>
