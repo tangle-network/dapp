@@ -9,7 +9,7 @@ import { Chip } from '../Chip';
 import { shortenHex, shortenString } from '../../utils';
 
 const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
-  ({ className: classNameProp, address, isNoteAccount = false }) => {
+  ({ className: classNameProp, address, isNoteAccount = false }, ref) => {
     return (
       <Chip
         color="grey"
@@ -17,6 +17,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
           'w-fit flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1',
           classNameProp
         )}
+        ref={ref}
       >
         {isNoteAccount ? (
           <ShieldKeyholeLineIcon className="fill-mono-120 dark:fill-mono-60" />

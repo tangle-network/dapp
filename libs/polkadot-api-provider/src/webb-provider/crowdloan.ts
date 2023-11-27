@@ -11,13 +11,9 @@ import {
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import '@webb-tools/tangle-substrate-types';
 
-import { LoggerService } from '@webb-tools/app-util';
-
 import { FundInfo } from '@polkadot/types/interfaces';
 
 import { WebbPolkadot } from '../webb-provider';
-
-const logger = LoggerService.get('PolkadotTx');
 
 export class PolkadotCrowdloan extends Crowdloan<
   WebbPolkadot,

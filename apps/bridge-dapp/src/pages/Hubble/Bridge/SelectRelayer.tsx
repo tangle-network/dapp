@@ -1,4 +1,7 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { Search } from '@webb-tools/icons/Search';
 import { Spinner } from '@webb-tools/icons/Spinner';
@@ -25,7 +28,6 @@ import {
   SELECT_SOURCE_CHAIN_PATH,
   SOURCE_CHAIN_KEY,
 } from '../../../constants';
-import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { useRelayerManager } from '../../../hooks/useRelayerManager';
 

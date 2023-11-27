@@ -7,9 +7,10 @@ import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
-import { InteractiveFeedbackView, WalletModal } from '../../../components';
+import { InteractiveFeedbackView } from '../../../components';
 import { CreateAccountModal } from '../../../containers';
 import { useTryAnotherWalletWithView } from '../../../hooks';
+import { WalletModalContainer } from '../../../containers';
 
 const Bridge: FC = () => {
   const { activeFeedback } = useWebContext();
@@ -52,7 +53,7 @@ const Bridge: FC = () => {
 
       <TryAnotherWalletModal />
 
-      <WalletModal />
+      <WalletModalContainer />
 
       <CreateAccountModal
         isOpen={isOpenNoteAccountModal}

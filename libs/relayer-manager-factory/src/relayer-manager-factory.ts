@@ -26,7 +26,7 @@ import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 
 export async function getRelayerManagerFactory() {
-  const env = process.env.NODE_ENV;
+  const env = process.env.NODE_ENV ?? '';
 
   const appEnv = isAppEnvironmentType(env) ? env : 'development'; // Fallback to `development`
 
@@ -84,7 +84,10 @@ export class WebbRelayerManagerFactory {
                   info.evm[key]?.beneficiary && nameAdapter(key, 'evm') != null
               )
               .reduce((m, key) => {
-                m.set(nameAdapter(key, 'evm'), info.evm[key]);
+                const cap = info.evm[key];
+                if (!cap) return m;
+
+                m.set(nameAdapter(key, 'evm'), cap);
 
                 return m;
               }, evmMap)
@@ -101,7 +104,12 @@ export class WebbRelayerManagerFactory {
                   ChainType.Substrate,
                   +key
                 );
-                m.set(typedChainId, info.substrate[key]);
+                const cap = info.substrate[key];
+                if (!cap) {
+                  return m;
+                }
+
+                m.set(typedChainId, cap);
 
                 return m;
               }, substrateMap)
@@ -112,9 +120,14 @@ export class WebbRelayerManagerFactory {
 
   /// fetch relayers
   private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
-    this.capabilities[config.endpoint] = await this.fetchCapabilities(
-      config.endpoint
-    );
+    const cap = await this.fetchCapabilities(config.endpoint);
+
+    if (!cap) {
+      return this.capabilities;
+    }
+
+    this.capabilities[config.endpoint] = cap;
+
     return this.capabilities;
   }
 

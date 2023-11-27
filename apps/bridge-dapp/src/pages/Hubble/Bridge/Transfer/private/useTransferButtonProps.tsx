@@ -277,7 +277,6 @@ function useTransferButtonProps({
             !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
         );
 
-        const fungibleDecimals = fungibleCfg.decimals;
         const amountBig = BigInt(amount);
 
         // Get the notes that will be spent for this withdraw
@@ -340,7 +339,6 @@ function useTransferButtonProps({
                 srcTypedChainId,
                 anchorId,
                 fungibleCfg.symbol,
-                fungibleDecimals,
                 changeAmount
               )
             : undefined;
@@ -360,6 +358,10 @@ function useTransferButtonProps({
               originChainId: `${srcTypedChainId}`,
               index: actualApi.state.defaultUtxoIndex.toString(),
             });
+
+        if (!activeChain) {
+          throw new Error('Active chain not found');
+        }
 
         setTransferConfirmComponent(
           <TransferConfirmContainer
@@ -397,6 +399,7 @@ function useTransferButtonProps({
             refundAmount={refundAmount}
             refundToken={refundToken}
             refundRecipient={refundRecipient ?? ''} // Already checked in `allInputsFilled`
+            activeChain={activeChain}
           />
         );
       } catch (error) {
@@ -404,7 +407,7 @@ function useTransferButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei]
+    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, activeChain]
   );
 
   return {

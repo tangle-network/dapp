@@ -12,6 +12,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
       chain,
       status,
       textClassname,
+      disabled,
       placeholder = 'Select Chain',
       ...props
     },
@@ -35,7 +36,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
         )}
         ref={ref}
       >
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 mr-1">
           {chain && (
             <ChainIcon
               status={status}
@@ -45,10 +46,12 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
             />
           )}
           <p className={textClsx}>{chain?.name ?? placeholder}</p>
-          <ChevronDown
-            size="lg"
-            className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-          />
+          {!disabled && (
+            <ChevronDown
+              size="lg"
+              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+            />
+          )}
         </div>
       </button>
     );

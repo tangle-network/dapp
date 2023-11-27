@@ -1,3 +1,5 @@
+'use client';
+
 import type {
   Account,
   Bridge,
@@ -11,6 +13,7 @@ import type { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
 import { AppEvent, type TAppEvent } from '../app-event';
 import type { TransactionQueueApi } from '../transaction';
+import noop from 'lodash/noop';
 
 export interface WebbContextState<T = unknown> {
   /** Boolean indicating if the app is loading */
@@ -109,31 +112,29 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
   loading: true,
   activeAccount: null,
   noteManager: null,
-  loginNoteAccount(key: string, walletAddress: string) {
+  loginNoteAccount() {
     return Promise.resolve(null);
   },
-  logoutNoteAccount(walletAddress: string) {
+  logoutNoteAccount() {
     return Promise.resolve();
   },
-  purgeNoteAccount(walletAddress: string) {
+  purgeNoteAccount() {
     return Promise.resolve();
   },
   isConnecting: false,
-  setActiveAccount<T extends Account>(account: T): Promise<void> {
+  setActiveAccount() {
     return Promise.resolve();
   },
-  switchChain(chain, wallet) {
+  switchChain() {
     return Promise.resolve(null);
   },
-  inactivateApi(): Promise<void> {
+  inactivateApi() {
     return Promise.resolve();
   },
   wallets: {},
   activeFeedback: null,
   apiConfig: ApiConfig.init({}),
-  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
-    return;
-  },
+  registerInteractiveFeedback: noop,
   appEvent: new AppEvent(),
   txQueue: {
     txQueue: [],

@@ -27,7 +27,7 @@ const columnHelper = createColumnHelper<Validator>();
 
 const columns = [
   columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Indentity" className="justify-start" />,
+    header: () => <HeaderCell title="Identity" className="justify-start" />,
     cell: (props) => {
       const address = props.getValue();
       const identity = props.row.original.identity;
@@ -58,13 +58,9 @@ const columns = [
     cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Delegations" className="justify-start" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
-  columnHelper.accessor('minimumStake', {
-    header: () => <HeaderCell title="Minimum stake" className="justify-end" />,
+    header: () => <HeaderCell title="Delegations" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={`${props.getValue()} TTNT`} className="text-right" />
+      <StringCell value={props.getValue()} className="text-center" />
     ),
   }),
 ];

@@ -1,3 +1,6 @@
+'use client';
+
+import isBrowser from '@webb-tools/browser-utils/isBrowser';
 import { ReactNode, useCallback, useMemo, useReducer } from 'react';
 
 export interface SubMenu {
@@ -28,7 +31,7 @@ const initState: UIData = {
   breadcrumb: [],
   pageTitle: '__empty',
   subMenu: null,
-  theme: localStorage.getItem('_theme') || 'dark',
+  theme: isBrowser() ? window.localStorage.getItem('_theme') ?? 'dark' : 'dark',
 };
 
 const reducer = (state: UIData, action: UIAction): UIData => {
@@ -42,11 +45,15 @@ const reducer = (state: UIData, action: UIAction): UIData => {
     }
 
     case 'set_theme': {
-      localStorage.setItem('_theme', action.value);
-      return {
-        ...state,
-        theme: action.value,
-      };
+      if (isBrowser()) {
+        localStorage.setItem('_theme', action.value);
+        return {
+          ...state,
+          theme: action.value,
+        };
+      }
+
+      return state;
     }
 
     case 'set_sub_menu': {

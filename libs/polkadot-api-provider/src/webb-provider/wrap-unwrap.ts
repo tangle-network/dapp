@@ -10,7 +10,7 @@ import {
   WrapUnwrap,
 } from '@webb-tools/abstract-api-provider/wrap-unwrap';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { BehaviorSubject, lastValueFrom, Observable, Subject } from 'rxjs';
+import { lastValueFrom, Observable, Subject } from 'rxjs';
 import { parseUnits } from 'viem';
 import { WebbPolkadot } from '../webb-provider';
 
@@ -18,7 +18,6 @@ export type PolkadotWrapPayload = Amount;
 export type PolkadotUnwrapPayload = Amount;
 
 export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
-  private _currentChainId = new BehaviorSubject<number | null>(null);
   private _event = new Subject<Partial<WrappingEvent>>();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,7 +72,6 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     return validBalanceAfterDeposit;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
     const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;

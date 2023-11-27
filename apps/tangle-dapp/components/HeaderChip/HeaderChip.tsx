@@ -1,14 +1,13 @@
 import {
   Chip,
-  SkeletonLoader,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { type FC, Suspense, useMemo } from 'react';
+import { type FC, useMemo } from 'react';
 
-import ChipValueClient from './ChipValueClient';
+import ChipText from './ChipText';
 import { HeaderChipItemProps } from './types';
 
 export const HeaderChip: FC<HeaderChipItemProps> = ({
@@ -16,19 +15,15 @@ export const HeaderChip: FC<HeaderChipItemProps> = ({
   label,
   hasTooltip = false,
   tooltipContent,
-  dataFetcher,
 }: HeaderChipItemProps) => {
   const mainContent = useMemo(
     () => (
       <Chip color="blue">
         <Icon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        {label}:{' '}
-        <Suspense fallback={<SkeletonLoader className="w-[100px]" />}>
-          <HeaderChipValue label={label} dataFetcher={dataFetcher} />
-        </Suspense>
+        <ChipText label={label} />
       </Chip>
     ),
-    [Icon, label, dataFetcher]
+    [Icon, label]
   );
 
   if (hasTooltip && tooltipContent) {
@@ -43,13 +38,4 @@ export const HeaderChip: FC<HeaderChipItemProps> = ({
   }
 
   return mainContent;
-};
-
-const HeaderChipValue = async ({
-  dataFetcher,
-  label,
-}: Pick<HeaderChipItemProps, 'dataFetcher' | 'label'>) => {
-  const value = await dataFetcher();
-
-  return <ChipValueClient type={label} value={value} />;
 };

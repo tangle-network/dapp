@@ -28,7 +28,8 @@
     "**/*.jsx",
     "../../apps/tangle-dapp/.next/types/**/*.ts",
     "../../dist/apps/tangle-dapp/.next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    "../../types/global.d.ts"
   ],
   "exclude": [
     "node_modules",

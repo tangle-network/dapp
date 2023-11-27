@@ -1,5 +1,8 @@
 import { DropdownMenuTrigger as DropdownButton } from '@radix-ui/react-dropdown-menu';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/webb-context';
+import {
+  useWebContext,
+  useConnectWallet,
+} from '@webb-tools/api-provider-environment';
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
@@ -15,7 +18,6 @@ import ChainButtonCmp from '@webb-tools/webb-ui-components/components/buttons/Ch
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useMemo } from 'react';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
-import { useConnectWallet } from '../../hooks/useConnectWallet';
 
 const ActiveChainDropdown = () => {
   const { activeChain, activeWallet, apiConfig, switchChain, loading } =
