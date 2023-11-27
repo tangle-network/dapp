@@ -21,7 +21,6 @@ const OFACModal: FC = () => {
         <Typography variant="body2" fw="semibold" ta="center">
           You are accessing the website from a country in Office of Foreign
           Assets Control (OFAC) list. Access to this website is restricted. To
-          access the site, you can try turning on a VPN and refreshing the page.
         </Typography>
 
         <div className="inline-block text-center">
