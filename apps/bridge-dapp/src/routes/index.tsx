@@ -1,13 +1,14 @@
-import { BareProps } from '@webb-tools/dapp-types';
-import { Spinner } from '@webb-tools/icons';
+import RequireNoteAccountRoute from '@webb-tools/api-provider-environment/RequireNoteAccountRoute';
+import CSuspense from '@webb-tools/webb-ui-components/components/Suspense';
 import { AnimatePresence } from 'framer-motion';
 import qs from 'query-string';
-import { FC, lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { HashRouter } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import {
+  ACCOUNT_TRANSACTIONS_PATH,
   BRIDGE_PATH,
   DEPOSIT_PATH,
   ECOSYSTEM_PATH,
@@ -33,23 +34,13 @@ import Withdraw from '../pages/Hubble/Bridge/Withdraw';
 const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
 const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
 const Account = lazy(() => import('../pages/Account'));
+const AccountTransactions = lazy(() => import('../pages/Account/Transactions'));
+const AccountTransactionDetail = lazy(
+  () => import('../pages/Account/Transactions/TransactionDetail')
+);
 const Ecosystem = lazy(() => import('../pages/Ecosystem'));
 
-const CSuspense: FC<BareProps> = ({ children }) => {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center min-w-full min-h-screen">
-          <Spinner size="xl" />
-        </div>
-      }
-    >
-      {children}
-    </Suspense>
-  );
-};
-
-const BridgeRoutes = () => {
+const AppRoutes = () => {
   return (
     <AnimatePresence>
       <HashRouter>
@@ -57,7 +48,12 @@ const BridgeRoutes = () => {
           adapter={ReactRouter6Adapter}
           options={{
             searchStringToObject: qs.parse,
-            objectToSearchString: qs.stringify,
+            objectToSearchString: (encodedParams) =>
+              qs.stringify(encodedParams, {
+                skipEmptyString: true,
+                skipNull: true,
+              }),
+            updateType: 'replaceIn',
           }}
         >
           <Routes>
@@ -131,12 +127,6 @@ const BridgeRoutes = () => {
                   />
                 </Route>
 
-                {/** Select connected chain */}
-                <Route
-                  path={SELECT_SOURCE_CHAIN_PATH}
-                  element={<SelectChain chainType="source" />}
-                />
-
                 <Route path="*" element={<Navigate to={DEPOSIT_PATH} />} />
               </Route>
 
@@ -149,14 +139,39 @@ const BridgeRoutes = () => {
                 }
               />
 
-              <Route
-                path={NOTE_ACCOUNT_PATH}
-                element={
-                  <CSuspense>
-                    <Account />
-                  </CSuspense>
-                }
-              />
+              <Route path={NOTE_ACCOUNT_PATH}>
+                <Route
+                  index={true}
+                  element={
+                    <CSuspense>
+                      <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                        <Account />
+                      </RequireNoteAccountRoute>
+                    </CSuspense>
+                  }
+                />
+                <Route
+                  path={ACCOUNT_TRANSACTIONS_PATH}
+                  element={
+                    <CSuspense>
+                      <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                        <AccountTransactions />
+                      </RequireNoteAccountRoute>
+                    </CSuspense>
+                  }
+                >
+                  <Route
+                    path=":txHash"
+                    element={
+                      <CSuspense>
+                        <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                          <AccountTransactionDetail />
+                        </RequireNoteAccountRoute>
+                      </CSuspense>
+                    }
+                  />
+                </Route>
+              </Route>
 
               <Route
                 path={ECOSYSTEM_PATH}
@@ -176,4 +191,4 @@ const BridgeRoutes = () => {
   );
 };
 
-export default BridgeRoutes;
+export default AppRoutes;

@@ -1,5 +1,4 @@
 import { useQueryParam, type QueryParamConfig } from 'use-query-params';
-import objectToSearchString from '../utils/objectToSearchString';
 
 const QueryParamConfig = {
   encode: (value) => value,
@@ -13,7 +12,7 @@ const QueryParamConfig = {
 } satisfies QueryParamConfig<string>;
 
 const useStateWithRoute = (key: string) => {
-  return useQueryParam(key, QueryParamConfig, { objectToSearchString });
+  return useQueryParam(key, QueryParamConfig);
 };
 
 export default useStateWithRoute;

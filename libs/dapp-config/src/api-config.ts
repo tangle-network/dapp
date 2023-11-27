@@ -27,6 +27,7 @@ import {
 import { WalletConfig } from './wallets/wallet-config.interface';
 import values from 'lodash/values';
 import keys from 'lodash/keys';
+import { isAppEnvironmentType } from './types';
 
 export type Chain = ChainConfig & {
   wallets: Array<Wallet['id']>;
@@ -278,6 +279,42 @@ export class ApiConfig {
       return walletCfg.supportedChainIds.some((typedChainId) =>
         this.supportedTypedChainIds.has(typedChainId)
       );
+    });
+  }
+
+  /**
+   * Get all supported chains which are populated from the anchor config
+   * @param withEnv: if true, only return the chains that support the current env
+   * @returns all supported chains which are populated from the anchor config
+   */
+  getSupportedChains(
+    options: {
+      /** If `true`, only return the chaisn that support the current env */
+      withEnv?: boolean;
+    } = {}
+  ): ChainConfig[] {
+    const { withEnv } = options;
+
+    const chainCfgs = Array.from(this.supportedTypedChainIds)
+      .map((typedChainId) => this.chains[typedChainId])
+      .filter((chain): chain is ChainConfig => Boolean(chain));
+
+    if (!withEnv) {
+      return chainCfgs;
+    }
+
+    const currentEnv =
+      process.env.NODE_ENV && isAppEnvironmentType(process.env.NODE_ENV)
+        ? process.env.NODE_ENV
+        : 'development';
+
+    return chainCfgs.filter((chain) => {
+      // If the chain has no env, it means it is supported in all envs
+      if (!chain.env) {
+        return true;
+      }
+
+      return chain.env.includes(currentEnv);
     });
   }
 }

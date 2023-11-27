@@ -30,14 +30,26 @@ export const KeyValueWithButton = forwardRef<
       keyValue,
       labelVariant,
       size = 'md',
+      valueFontWeight,
       valueVariant,
       label = '',
       shortenFn,
+      isDisabledTooltip,
+      onCopyButtonClick,
+      copyProps,
       ...props
     },
     ref
   ) => {
-    const { copy, isCopied } = useCopyable();
+    const copyableResult = useCopyable();
+
+    const { copy, isCopied } = useMemo(() => {
+      if (copyProps) {
+        return copyProps;
+      }
+
+      return copyableResult;
+    }, [copyProps, copyableResult]);
 
     const onCopy = useCallback(() => {
       if (isCopied) {
@@ -75,14 +87,25 @@ export const KeyValueWithButton = forwardRef<
         >
           <div className={size === 'md' ? 'py-1 pl-3' : ''}>
             <Tooltip>
-              <TooltipTrigger onClick={() => copy(keyValue)} asChild>
+              <TooltipTrigger
+                onClick={() => copy(keyValue)}
+                disabled={isDisabledTooltip}
+                asChild
+              >
                 <LabelWithValue
+                  tabIndex={0}
                   labelVariant={labelVariant}
+                  valueFontWeight={valueFontWeight}
                   valueVariant={valueVariant}
                   isHiddenLabel={isHiddenLabel}
                   label={label}
                   value={value}
-                  className="cursor-default pointer-events-auto"
+                  className={cx(
+                    'cursor-default',
+                    isDisabledTooltip
+                      ? 'pointer-events-none'
+                      : 'pointer-events-auto'
+                  )}
                 />
               </TooltipTrigger>
               <TooltipBody>{keyValue}</TooltipBody>
@@ -96,7 +119,11 @@ export const KeyValueWithButton = forwardRef<
                   : '',
                 isCopied ? 'cursor-not-allowed' : ''
               )}
-              onClick={onCopy}
+              onClick={
+                typeof onCopyButtonClick === 'function'
+                  ? onCopyButtonClick
+                  : onCopy
+              }
             >
               <FileCopyLine className={size === 'md' ? '!fill-current' : ''} />
             </TooltipTrigger>

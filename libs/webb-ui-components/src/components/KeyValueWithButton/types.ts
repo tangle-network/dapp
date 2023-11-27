@@ -1,14 +1,16 @@
-import { WebbComponentBase } from '../../types';
+import type { ComponentProps } from 'react';
 
-import { LabelWithValueProps } from '../LabelWithValue/types';
-import { UseCopyableReturnType } from '../../hooks';
+import type { UseCopyableReturnType } from '../../hooks/useCopyable';
+import type { WebbComponentBase } from '../../types';
+import type { LabelWithValueProps } from '../LabelWithValue/types';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
 
 type KeyValueWithButtonBasePickedKeys =
   | 'isHiddenLabel'
-  | 'valueVariant'
-  | 'labelVariant';
+  | 'labelVariant'
+  | 'valueFontWeight'
+  | 'valueVariant';
 
 export type KeyValueWithButtonBaseProps = Pick<
   LabelWithValueProps,
@@ -51,6 +53,13 @@ export interface KeyValueWithButtonProps
    * @returns the shortened string
    */
   shortenFn?: (value: string, chars?: number) => string;
+
+  /**
+   * If `true`, the tooltip value will be disabled.
+   */
+  isDisabledTooltip?: boolean;
+
+  onCopyButtonClick?: ComponentProps<'button'>['onClick'];
+
   copyProps?: UseCopyableReturnType;
-  isHiddenValue?: boolean;
 }

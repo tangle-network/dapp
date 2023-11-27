@@ -1,12 +1,10 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { useMemo } from 'react';
-import cx from 'classnames';
-import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { InformationLine } from '@webb-tools/icons/InformationLine';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import cx from 'classnames';
+import { useMemo } from 'react';
 import { NOTE_ACCOUNT_DOCS_URL } from '../../../constants/links';
+import NoteAccountAvatarWithKey from '../../NoteAccountAvatarWithKey';
 
 const NoteAccountKey = () => {
   const { noteManager } = useWebContext();
@@ -28,21 +26,11 @@ const NoteAccountKey = () => {
       )}
     >
       {keyPairStr ? (
-        <>
-          <IconWithTooltip
-            icon={<Avatar value={keyPairStr} theme="ethereum" />}
-            content="Note account"
-          />
-
-          <KeyValueWithButton
-            className="mt-0.5"
-            label="Public Key:"
-            keyValue={keyPairStr}
-            size="sm"
-            labelVariant="body1"
-            valueVariant="body1"
-          />
-        </>
+        <NoteAccountAvatarWithKey
+          keyValue={keyPairStr}
+          label="Public Key:"
+          iconTooltipContent="Note account public key"
+        />
       ) : (
         <>
           <div className="p-1 !text-inherit">
