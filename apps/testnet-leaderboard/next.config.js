@@ -18,7 +18,11 @@ const nextConfig = {
   // make environment variable accessible by both the server and client
   env: {
     TESTNET_LEADERBOARD_END_DATE:
-      process.env.TESTNET_LEADERBOARD_END_DATE ?? '',
+      process.env['TESTNET_LEADERBOARD_END_DATE'] ?? '',
+    TESTNET_LEADERBOARD_GUIDELINES_URL:
+      process.env['TESTNET_LEADERBOARD_GUIDELINES_URL'] ?? '',
+    TESTNET_LEADERBOARD_REQUEST_POINTS_URL:
+      process.env['TESTNET_LEADERBOARD_REQUEST_POINTS_URL'] ?? '',
   },
 };
 
