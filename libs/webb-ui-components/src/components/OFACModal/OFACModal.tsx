@@ -20,7 +20,7 @@ const OFACModal: FC = () => {
       <div className="w-4/5 mx-auto flex flex-col items-center gap-4">
         <Typography variant="body2" fw="semibold" ta="center">
           You are accessing the website from a country in Office of Foreign
-          Assets Control (OFAC) list. Access to this website is restricted. To
+          Assets Control (OFAC) list. Access to this website is restricted.
         </Typography>
 
         <div className="inline-block text-center">
