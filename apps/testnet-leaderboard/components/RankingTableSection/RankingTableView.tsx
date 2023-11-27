@@ -145,7 +145,8 @@ const RankingTableView: FC<Props> = ({
         <Typography variant="mkt-body2" fw="black">
           Latest ranking:
         </Typography>
-        <div className="flex items-center gap-2 w-max md:w-1/2">
+        {/** TODO: Implement search by address with the server side data */}
+        {/*         <div className="flex items-center gap-2 w-max md:w-1/2">
           <Typography variant="mkt-body2" fw="black">
             Search:
           </Typography>
@@ -155,7 +156,7 @@ const RankingTableView: FC<Props> = ({
             className="flex-[1]"
             rightIcon={<Search className="fill-mono-140" />}
           />
-        </div>
+        </div> */}
       </div>
       <div className="relative overflow-hidden border rounded-lg border-mono-60">
         <table className="w-full">
