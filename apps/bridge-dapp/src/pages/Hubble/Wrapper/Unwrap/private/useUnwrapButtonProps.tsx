@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
+import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import { useCallback, useMemo } from 'react';
 import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 import { parseEther } from 'viem';
@@ -12,12 +12,15 @@ import {
   TOKEN_KEY,
 } from '../../../../../constants';
 import useConnectButtonProps from '../../../../../hooks/useConnectButtonProps';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks';
 import handleTxError from '../../../../../utils/handleTxError';
 
-export default function useWrapButtonProps({
+export default function useUnwrapButtonProps({
   balances,
+  fungibleCfg,
 }: {
-  balances?: number;
+  balances: ReturnType<typeof useBalancesFromNotes>['balances'];
+  fungibleCfg?: CurrencyConfig;
 }) {
   const { activeApi, loading, isConnecting, noteManager } = useWebContext();
 
@@ -39,43 +42,43 @@ export default function useWrapButtonProps({
     useConnectButtonProps(srcTypedId);
 
   const isValidAmount = useMemo(() => {
-    if (typeof amount !== 'string' || amount.length === 0) {
+    if (!fungibleCfg) {
       return false;
     }
 
-    const amountBI = BigInt(amount); // amount from search params is parsed already
-
-    // If balances is not a number, but amount is entered and > 0,
-    // it means user not connected to wallet but entered amount
-    // so we allow it
-    if (typeof balances !== 'number' && amountBI > 0) {
-      return true;
-    }
-
-    if (!balances || amountBI <= 0) {
+    if (typeof srcTypedId !== 'number') {
       return false;
     }
 
-    const parsedBalance = parseEther(numberToString(balances));
+    if (!amount) {
+      return false;
+    }
 
-    return amountBI !== ZERO_BIG_INT && amountBI <= parsedBalance;
-  }, [amount, balances]);
+    const amountFloat = parseFloat(amount);
+    const balance = balances[fungibleCfg.id]?.[srcTypedId];
+
+    if (!balance || amountFloat <= 0) {
+      return false;
+    }
+
+    return parseEther(amount) <= balance;
+  }, [amount, balances, srcTypedId, fungibleCfg]);
 
   const inputCnt = useMemo(() => {
-    if (typeof wrappableTokenId !== 'number') {
-      return 'Select token to be wrapped';
+    if (typeof fungibleTokenId !== 'number') {
+      return 'Select token to be unwrapped';
     }
 
     if (typeof amount !== 'string' || amount.length === 0) {
       return 'Enter amount';
     }
 
-    if (typeof fungibleTokenId !== 'number') {
-      return 'Select wrapped token';
+    if (typeof wrappableTokenId !== 'number') {
+      return 'Select unwrapped token';
     }
 
     if (typeof srcTypedId !== 'number') {
-      return 'Select source chain';
+      return 'Select chain';
     }
 
     return undefined;
@@ -87,7 +90,7 @@ export default function useWrapButtonProps({
     }
 
     if (!isValidAmount) {
-      return 'Insufficient balances';
+      return 'Insufficient balance';
     }
   }, [amount, isValidAmount]);
 
@@ -148,17 +151,18 @@ export default function useWrapButtonProps({
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
-        const fungibleTokenIdNum = Number(fungibleTokenId);
-        if (Number.isNaN(fungibleTokenIdNum)) {
+        if (!fungibleCfg) {
           throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
         }
 
         const srcTypedIdNum = Number(srcTypedId);
+
         if (Number.isNaN(srcTypedIdNum)) {
           throw WebbError.from(WebbErrorCodes.UnsupportedChain);
         }
 
         const srcChain = chainsPopulated[srcTypedIdNum];
+
         if (!srcChain) {
           throw WebbError.from(WebbErrorCodes.UnsupportedChain);
         }
@@ -173,7 +177,7 @@ export default function useWrapButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, noteManager]
+    [activeApi, amount, fungibleTokenId, fungibleCfg, connectBtnCnt, srcTypedId, handleConnect, noteManager]
   );
 
   return {

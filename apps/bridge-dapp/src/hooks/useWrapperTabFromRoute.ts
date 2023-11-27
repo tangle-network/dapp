@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router';
-import { WRAPPER_TABS } from '../constants';
 
 /**
  * Returns the current wrapper tab on the bridge
@@ -12,7 +11,9 @@ const useWrapperTabFromRoute = () => {
   const { pathname } = useLocation();
 
   return useMemo(() => {
-    return WRAPPER_TABS.find((tab) => pathname.includes(tab));
+    if (pathname.includes('unwrap')) return 'unwrap';
+    if (pathname.includes('wrap')) return 'wrap';
+    return undefined;
   }, [pathname]);
 };
 

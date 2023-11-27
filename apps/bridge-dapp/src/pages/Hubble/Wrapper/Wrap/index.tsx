@@ -45,8 +45,7 @@ const Wrap: FC = () => {
   );
 
   const { ...wrapBtnProps } = useWrapButtonProps({
-    balance: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
-    fungible: fungibleCfg,
+    balances: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
   });
 
   const amountProps = useMemo(

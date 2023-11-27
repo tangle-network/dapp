@@ -23,6 +23,7 @@ export type WrappingBalance = {
   token?: Currency;
   balance: string;
 };
+export type WrapperEventType = 'Wrap' | 'Unwrap';
 
 /**
  * Webb wrap unwrap functionality.

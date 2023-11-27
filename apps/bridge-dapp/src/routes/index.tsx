@@ -179,7 +179,20 @@ const AppRoutes = () => {
                       <Unwrap />
                     </CSuspense>
                   }
-                />
+                >
+                  <Route
+                    path={SELECT_SOURCE_CHAIN_PATH}
+                    element={<SelectChain chainType="source" />}
+                  />
+                  <Route
+                    path={SELECT_SOURCE_TOKEN_PATH}
+                    element={<WrapperSelectToken type="src" />}
+                  />
+                  <Route
+                    path={SELECT_DESTINATION_TOKEN_PATH}
+                    element={<WrapperSelectToken type="dest" />}
+                  />
+                </Route>
                 <Route path="*" element={<Navigate to={WRAP_PATH} />} />
               </Route>
 
