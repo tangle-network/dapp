@@ -12,8 +12,10 @@ import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useState } from 'react';
 
-import { BadgeEnum } from '../types';
-import { AddressCell, BadgesCell, HeaderCell } from './tables';
+import { BadgeEnum } from '../../types';
+import AddressCell from './AddressCell';
+import BadgesCell from './BadgesCell';
+import HeaderCell from './HeaderCell';
 
 export type RankingItemType = {
   address: string;
