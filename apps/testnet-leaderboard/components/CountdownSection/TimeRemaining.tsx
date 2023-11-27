@@ -4,7 +4,12 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import cx from 'classnames';
 import type { FC } from 'react';
 
+import { END_DATE } from '../../constants';
+import useTimeRemaining from '../../hooks/useTimeRemaining';
+
 const TimeRemaining = () => {
+  const { days, hours, minutes, seconds } = useTimeRemaining(END_DATE);
+
   return (
     <div className="space-y-[32px]">
       <Typography
@@ -15,9 +20,22 @@ const TimeRemaining = () => {
         Time Remaining
       </Typography>
       <div className="flex justify-between gap-6 px-4 md:justify-center md:gap-12">
-        <CountdownItem timeUnit="Days" />
-        <CountdownItem timeUnit="Hours" />
-        <CountdownItem timeUnit="Minutes" />
+        <CountdownItem
+          timeUnit="Days"
+          value={typeof days === 'number' ? days.toString() : null}
+        />
+        <CountdownItem
+          timeUnit="Hours"
+          value={typeof hours === 'number' ? hours.toString() : null}
+        />
+        <CountdownItem
+          timeUnit="Minutes"
+          value={typeof minutes === 'number' ? minutes.toString() : null}
+        />
+        <CountdownItem
+          timeUnit="Seconds"
+          value={typeof seconds === 'number' ? seconds.toString() : null}
+        />
       </div>
     </div>
   );
@@ -26,7 +44,7 @@ const TimeRemaining = () => {
 export default TimeRemaining;
 
 /** @internal */
-const CountdownItem: FC<{ timeUnit: string; value?: string }> = ({
+const CountdownItem: FC<{ timeUnit: string; value: string | null }> = ({
   timeUnit,
   value,
 }) => {

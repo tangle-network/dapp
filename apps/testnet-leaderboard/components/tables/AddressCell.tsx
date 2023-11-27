@@ -7,7 +7,7 @@ const AddressCell: FC<{ address: string }> = ({ address }) => {
   return (
     <div className="flex items-center gap-2">
       <Image
-        src="/static/svgs/webbAddress.svg"
+        src="/assets/svgs/webbAddress.svg"
         width={16}
         height={16}
         alt={address}

@@ -1,7 +1,4 @@
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
-import { FC } from 'react';
 
 import Badges from './Badges';
 import CTAButtons from './CTAButtons';

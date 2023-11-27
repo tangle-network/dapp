@@ -11,6 +11,15 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  reactStrictMode: true,
+
+  // at default environment variable is only accessible by the server, resulting in hydration mismatch
+  // make environment variable accessible by both the server and client
+  env: {
+    TESTNET_LEADERBOARD_END_DATE:
+      process.env.TESTNET_LEADERBOARD_END_DATE ?? '',
+  },
 };
 
 const plugins = [
