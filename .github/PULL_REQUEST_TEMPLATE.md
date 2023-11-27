@@ -12,6 +12,7 @@ _Put an `x` in the boxes that apply._
 - [ ] `apps/hubble-stats`
 - [ ] `apps/stats-dapp`
 - [ ] `apps/tangle-dapp`
+- [ ] `apps/testnet-leaderboard`
 - [ ] `apps/faucet`
 - [ ] `libs/webb-ui-components`
 
