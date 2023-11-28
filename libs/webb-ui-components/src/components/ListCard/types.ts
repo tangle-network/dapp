@@ -151,6 +151,11 @@ export interface ListCardWrapperProps
    * The callback involke when pressing the close button
    */
   onClose?: () => void;
+
+  /**
+   * Hide Close buttonƒ
+   */
+  hideCloseButton?: boolean;
 }
 
 export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
@@ -205,6 +210,17 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * If `true`, wallet is connecting to chain
    */
   isConnectingToChain?: boolean;
+}
+
+export interface ContractListCardProps
+  extends Omit<PropsOf<'div'>, 'onChange'> {
+  selectContractItems: {
+    name: string;
+    address: string;
+    blockExplorerUrl?: string;
+    onClick?: () => void;
+  }[];
+  isLoading?: boolean;
 }
 
 export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
