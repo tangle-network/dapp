@@ -36,9 +36,9 @@ import {
 import { NavLink, useLocation } from 'react-router-dom';
 import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
-import ActiveChainDropdown from './ActiveChainDropdown';
 
 import useSidebarProps from '../../hooks/useSidebarProps';
+import ActiveChainDropdown from './ActiveChainDropdown';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';

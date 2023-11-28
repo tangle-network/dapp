@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useMemo } from 'react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import cx from 'classnames';

@@ -50,8 +50,10 @@ export type webbNetworksType = {
 export const BRIDGE_URL = 'https://app.webb.tools';
 export const DKG_STATS_URL = 'https://stats.tangle.tools';
 export const HUBBLE_STATS_URL = 'https://hubble-stats.webb.tools/';
+
 export const TANGLE_DAPP_URL = 'https://app.tangle.tools/';
 export const WEBB_MKT_URL = 'https://webb.tools';
+export const TESTNET_LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
@@ -115,6 +117,7 @@ export const WEBB_DOC_ROUTES_RECORD = {
   },
   'tangle-network': {
     overview: '/docs/tangle-network/overview',
+    participate: '/docs/tangle-network/overview/#participate',
     community: '/docs/tangle-network/community',
   },
   protocols: {
@@ -169,9 +172,7 @@ export const WEBB_AVAIABLE_SOCIALS = [
   'youTube',
 ] as const;
 
-export const SOCIAL_URLS_RECORD: {
-  [key in (typeof WEBB_AVAIABLE_SOCIALS)[number]]: string;
-} = {
+export const SOCIAL_URLS_RECORD = {
   telegram: 'https://t.me/webbprotocol',
   discord: 'https://discord.com/invite/cv8EfJu3Tn',
   commonwealth: 'https://commonwealth.im/webb',
@@ -179,13 +180,11 @@ export const SOCIAL_URLS_RECORD: {
   twitter: 'https://twitter.com/webbprotocol',
   github: 'https://github.com/webb-tools',
   youTube: 'https://www.youtube.com/channel/UCDro1mNK9yHGQNDvFuucwVw',
-} as const;
+} as const satisfies {
+  [key in (typeof WEBB_AVAIABLE_SOCIALS)[number]]: string;
+};
 
-export const SOCIAL_ICONS_RECORD: {
-  [key in (typeof WEBB_AVAIABLE_SOCIALS)[number]]: (
-    props: IconBase
-  ) => JSX.Element;
-} = {
+export const SOCIAL_ICONS_RECORD = {
   telegram: TelegramFill,
   discord: DiscordFill,
   commonwealth: Common2Icon,
@@ -193,6 +192,10 @@ export const SOCIAL_ICONS_RECORD: {
   twitter: TwitterFill,
   github: GithubFill,
   youTube: YouTubeFill,
+} as const satisfies {
+  [key in (typeof WEBB_AVAIABLE_SOCIALS)[number]]: (
+    props: IconBase
+  ) => JSX.Element;
 };
 
 export const tangleLogoConfig: Link = {

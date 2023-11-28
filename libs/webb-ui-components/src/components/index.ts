@@ -49,6 +49,7 @@ export * from './Navbar';
 export * from './NavigationMenu';
 export * from './NetworkThresholdsCard';
 export * from './Notification';
+export { default as OFACModal } from './OFACModal';
 export * from './Pagination';
 export * from './Popover';
 export * from './Progress';
