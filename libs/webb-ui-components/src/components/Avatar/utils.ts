@@ -7,6 +7,10 @@ import { AvatarProps } from './types';
  */
 export function getAvatarSizeInPx(size: AvatarProps['size'] = 'md') {
   switch (size) {
+    case 'sm': {
+      return 16;
+    }
+
     case 'md': {
       return 24;
     }

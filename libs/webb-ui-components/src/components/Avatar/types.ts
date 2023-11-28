@@ -11,7 +11,7 @@ type IdenticonBaseProps = Pick<IdentityProps, IdenticonPickedKeys>;
  */
 export interface AvatarProps extends IWebbComponentBase, IdenticonBaseProps {
   /**
-   * Size of avatar, `md`: 24px, `lg`: 48px (default: "md")
+   * Size of avatar, `sm`: 16px, `md`: 24px, `lg`: 48px (default: "md")
    */
   size?: 'sm' | 'md' | 'lg';
   /**

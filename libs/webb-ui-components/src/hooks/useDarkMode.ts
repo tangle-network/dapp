@@ -46,6 +46,8 @@ export function useDarkMode(
     }
   }, [theme]);
 
+  useEffect(() => setTheme(defaultTheme), [defaultTheme, setTheme]);
+
   const toggleThemeMode = useCallback<ToggleThemeModeFunc>(
     (nextThemeMode?: SupportTheme | undefined) => {
       if (!isBrowser()) return;

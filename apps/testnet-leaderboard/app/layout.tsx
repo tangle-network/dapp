@@ -15,7 +15,9 @@ export const metadata: Metadata = {
   description: 'Welcome to Testnet Leaderboard!',
   metadataBase: process.env.URL
     ? new URL(process.env.URL)
-    : new URL(`http://localhost:${process.env.PORT}`),
+    : process.env.PORT
+    ? new URL(`http://localhost:${process.env.PORT}`)
+    : null,
   openGraph: {
     title: 'Testnet Leaderboard',
     description: 'Welcome to Testnet Leaderboard!',
