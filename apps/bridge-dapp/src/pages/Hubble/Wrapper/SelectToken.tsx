@@ -1,7 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
-import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
 import { Currency } from '@webb-tools/abstract-api-provider/currency';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
@@ -14,7 +13,9 @@ import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import useWrapperTabFromRoute from '../../../hooks/useWrapperTabFromRoute';
 
-const SelectToken: FC<{ type: 'src' | 'dest' }> = ({ type }) => {
+type SelectTokenType = 'src' | 'dest';
+
+const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -83,17 +84,17 @@ const SelectToken: FC<{ type: 'src' | 'dest' }> = ({ type }) => {
   const selectTokens = useMemo<Array<AssetType>>(
     () =>
       currencyCfgs.map((currencyCfg) => {
-        const balanceProps =
-          type === 'src'
-            ? getBalanceProps(currencyCfg, balances, isBalancesLoading)
-            : undefined;
-
         const badgeProps = getBadgeProps(
           currencyCfg,
           balances,
-          isBalancesLoading,
-          currentWrapperType
+          type,
+          isBalancesLoading
         );
+
+        const balanceProps =
+          badgeProps === undefined
+            ? getBalanceProps(currencyCfg, balances, isBalancesLoading)
+            : undefined;
 
         const address = getAddress(currencyCfg, srcTypedChainId ?? undefined);
         const explorerUrl = getExplorerUrl(address, blockExplorer);
@@ -109,7 +110,7 @@ const SelectToken: FC<{ type: 'src' | 'dest' }> = ({ type }) => {
         } satisfies AssetType;
       }),
     // prettier-ignore
-    [type, currencyCfgs, balances, blockExplorer, currentWrapperType, isBalancesLoading, srcTypedChainId]
+    [type, currencyCfgs, balances, blockExplorer, isBalancesLoading, srcTypedChainId]
   );
 
   const targetParam = useMemo(
@@ -182,37 +183,22 @@ const getBalanceProps = (
   balances: Record<number, number>,
   isLoading?: boolean
 ) => {
-  if (isLoading) {
-    return;
-  }
-
+  if (isLoading) return;
   const currencyBalance = balances[currencyCfg.id];
-
-  // For fungible/governable tokens, users can withdraw unlimited amount
-  if (currencyCfg.role === CurrencyRole.Governable) {
-    return { balance: Infinity };
-  }
-
-  // For wrapping tokens and unwrapping non-fungible/non-governable tokens, use the balance from balances record
-  if (currencyBalance) {
-    return { balance: currencyBalance };
-  }
+  return { balance: currencyBalance ?? 0 };
 };
 
 /** @internal */
 const getBadgeProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
-  isLoading?: boolean,
-  wrapperType?: ReturnType<typeof useWrapperTabFromRoute>
+  type: SelectTokenType,
+  isLoading?: boolean
 ) =>
-  !isLoading &&
-  !balances[currencyCfg.id] &&
-  (wrapperType !== 'unwrap' || currencyCfg.role !== CurrencyRole.Governable)
+  !isLoading && !balances[currencyCfg.id] && type === 'src'
     ? {
         variant: 'warning' as const,
-        children:
-          wrapperType === 'unwrap' ? 'Insufficient liquidity' : 'No balance',
+        children: 'No balance' as const,
       }
     : undefined;
 
