@@ -286,7 +286,7 @@ export interface TokenListCardProps
   onChange?: (nextToken: AssetType) => void;
 
   /**
-   * The type of transaction this token list card is used for
+   * The text for the alert component at the bottom
    */
-  txnType?: 'deposit' | 'transfer' | 'withdraw';
+  alertTitle?: string;
 }

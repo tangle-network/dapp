@@ -20,7 +20,7 @@ import {
   SELECT_TOKEN_PATH,
   ACTION_BUTTON_PROPS,
 } from '../../../../constants';
-import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDepositButtonProps from './private/useDepositButtonProps';
 import useWatchSearchParams from './private/useWatchSearchParams';
@@ -91,7 +91,7 @@ const Deposit = () => {
   }
 
   return (
-    <BridgeTabsContainer>
+    <PageTabsContainer pageType="bridge">
       <div className="flex flex-col space-y-6 grow">
         <div className="space-y-2">
           <TransactionInputCard.Root
@@ -148,6 +148,7 @@ const Deposit = () => {
         </div>
 
         <div className="flex flex-col justify-between grow">
+          {/* TODO: Calculate gas */}
           <FeeDetails
             info="The fee pays for the transaction to be processed on the network."
             items={[
@@ -171,7 +172,7 @@ const Deposit = () => {
           )}
         </div>
       </div>
-    </BridgeTabsContainer>
+    </PageTabsContainer>
   );
 };
 

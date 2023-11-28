@@ -28,7 +28,7 @@ const TransactionDetail: FC = () => {
     };
 
     getTxDetail();
-  }, [txHash]);
+  }, [txHash, getTxDetailByHash]);
 
   if (!txDetail) {
     return null;
