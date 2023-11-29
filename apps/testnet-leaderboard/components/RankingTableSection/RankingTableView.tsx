@@ -8,24 +8,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/browser-utils/logger';
-import {
-  Link as LinkIcon,
-  Mail,
-  Spinner,
-  TwitterFill,
-} from '@webb-tools/icons';
+import { Spinner } from '@webb-tools/icons';
 import { Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
-import { BADGE_ICON_RECORD } from '../../constants';
 import { BadgeEnum } from '../../types';
 import AddressCell from './AddressCell';
 import BadgesCell from './BadgesCell';
-import BadgeWithTooltip from './BadgeWithTooltip';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
+import IdentityCell from './IdentityCell';
 import ParseReponseErrorView from './ParseReponseErrorView';
 import SessionsCell from './SessionsCell';
 import type {
@@ -34,7 +28,6 @@ import type {
   ParticipantType,
   SessionsType,
 } from './types';
-import { isBadgeEnum } from './utils';
 
 export type RankingItemType = {
   address: string;
@@ -82,15 +75,7 @@ const columns = [
 
   columnHelper.accessor('identity', {
     header: () => <HeaderCell title="Identity" />,
-    cell: (identity) => {
-      return (
-        <div className="flex items-center gap-2">
-          <TwitterFill />
-          <LinkIcon className="!fill-current" />
-          <Mail className="!fill-current" />
-        </div>
-      );
-    },
+    cell: (cellCtx) => <IdentityCell identity={cellCtx.getValue()} />,
   }),
 ];
 
