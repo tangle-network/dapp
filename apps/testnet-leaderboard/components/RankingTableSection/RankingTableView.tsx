@@ -8,8 +8,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/browser-utils/logger';
-import { Spinner } from '@webb-tools/icons';
-import { Pagination, Typography } from '@webb-tools/webb-ui-components';
+import { Search, Spinner } from '@webb-tools/icons';
+import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -98,13 +98,15 @@ const RankingTableView: FC<Props> = ({
   skip: defaultSkip,
   total: defaultTotal,
 }) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: defaultSkip,
     pageSize: defaultLimit,
   });
 
   const { data, isLoading } = useSWR(
-    [fetchLeaderboardData.name, pageIndex * pageSize, pageSize],
+    [fetchLeaderboardData.name, pageIndex * pageSize, pageSize, searchTerm],
     ([, ...args]) => fetchLeaderboardData(...args),
     { keepPreviousData: true }
   );
@@ -178,8 +180,7 @@ const RankingTableView: FC<Props> = ({
         <Typography variant="mkt-body2" fw="black">
           Latest ranking:
         </Typography>
-        {/** TODO: Implement search by address with the server side data */}
-        {/*         <div className="flex items-center gap-2 w-max md:w-1/2">
+        <div className="flex items-center gap-2 w-max md:w-1/2">
           <Typography variant="mkt-body2" fw="black">
             Search:
           </Typography>
@@ -188,8 +189,11 @@ const RankingTableView: FC<Props> = ({
             placeholder="Enter to search address"
             className="flex-[1]"
             rightIcon={<Search className="fill-mono-140" />}
+            value={searchTerm}
+            onChange={setSearchTerm}
+            debounceTime={500}
           />
-        </div> */}
+        </div>
       </div>
       <div className="relative overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
