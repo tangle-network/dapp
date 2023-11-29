@@ -12,7 +12,7 @@
     "test": "nx run-many --all --target=test",
     "lint": "nx run-many --all --target=lint",
     "gql:codegen": "graphql-codegen --config apps/stats-dapp/codegen.yml",
-    "fetch:onChainConfig": "TS_NODE_PROJECT=\"tools/tsconfig.json\" ts-node-esm tools/scripts/fetchingOnChainConfig.ts",
+    "fetch:onChainConfig": "TS_NODE_PROJECT=\"tools/tsconfig.json\" yarn ts-node-esm tools/scripts/fetchingOnChainConfig.ts",
     "build:bridge": "nx build bridge-dapp",
     "build:stats": "nx build stats-dapp",
     "build:webbsite": "nx build webbsite",
