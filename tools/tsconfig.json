@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "ts-node": {
+    "esm": true,
     "require": ["tsconfig-paths/register"],
     "compilerOptions": {
       "target": "es6",
