@@ -13,7 +13,6 @@ export type AddressType = z.infer<typeof LeaderboardAddressResponseSchema>;
 const LeaderboardParticipantResponseSchema = z.object({
   id: z.number(),
   points: z.number(),
-  dateOfLastAction: z.string(),
   twitter: z.string().nullable(),
   email: z.string().nullable(),
   badges: z.array(z.nativeEnum(BadgeEnum)),
