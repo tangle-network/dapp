@@ -14,18 +14,28 @@ import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
+import { BADGE_ICON_RECORD } from '../../constants';
 import { BadgeEnum } from '../../types';
 import AddressCell from './AddressCell';
 import BadgesCell from './BadgesCell';
+import BadgeWithTooltip from './BadgeWithTooltip';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import ParseReponseErrorView from './ParseReponseErrorView';
-import type { LeaderboardSuccessResponseType, ParticipantType } from './types';
+import type {
+  IdentityType,
+  LeaderboardSuccessResponseType,
+  ParticipantType,
+  SessionsType,
+} from './types';
+import { isBadgeEnum } from './utils';
 
 export type RankingItemType = {
   address: string;
   badges: BadgeEnum[];
   points: number;
+  sessions: SessionsType;
+  identity: IdentityType;
 };
 
 const columnHelper = createColumnHelper<RankingItemType>();
@@ -39,14 +49,55 @@ const columns = [
       </Typography>
     ),
   }),
+
   columnHelper.accessor('address', {
     header: () => <HeaderCell title="Address" />,
     cell: (address) => <AddressCell address={address.getValue()} />,
   }),
+
   columnHelper.accessor('badges', {
     header: () => <HeaderCell title="Badges" />,
     cell: (badges) => <BadgesCell badges={badges.getValue()} />,
   }),
+
+  columnHelper.accessor('sessions', {
+    header: () => <HeaderCell title="Number of sessions" />,
+    cell: (cellCtx) => {
+      const value = cellCtx.getValue();
+
+      if (value == null) {
+        return (
+          <Typography variant="mkt-small-caps" fw="bold" ta="center">
+            -
+          </Typography>
+        );
+      }
+
+      return (
+        <div className="flex items-center gap-2">
+          {Object.entries(value).map(([badge, sessions], idx) => {
+            if (sessions.length === 0) {
+              return null;
+            }
+
+            return (
+              <div className="flex items-center gap-1" key={`${badge}-${idx}`}>
+                <BadgeWithTooltip
+                  badge={badge}
+                  emoji={isBadgeEnum(badge) ? BADGE_ICON_RECORD[badge] : '❔'}
+                />
+
+                <Typography variant="mkt-small-caps" fw="bold" ta="center">
+                  {sessions.length}
+                </Typography>
+              </div>
+            );
+          })}
+        </div>
+      );
+    },
+  }),
+
   columnHelper.accessor('points', {
     header: () => <HeaderCell title="Points" />,
     cell: (points) => (
@@ -64,6 +115,8 @@ const participantToRankingItem = (participant: ParticipantType) =>
     address: participant.addresses[0].address,
     badges: participant.badges,
     points: participant.points,
+    sessions: participant.sessions,
+    identity: participant.identity,
   } satisfies RankingItemType);
 
 const logger = LoggerService.get('RankingTableView');
@@ -173,13 +226,7 @@ const RankingTableView: FC<Props> = ({
             {getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, idx) => (
-                  <th
-                    key={idx}
-                    className={cx('px-2 py-2 md:px-6 md:py-3', {
-                      'w-[10%]': header.id === 'points',
-                      'w-[40%]': !(header.id === 'points'),
-                    })}
-                  >
+                  <th key={idx} className={cx('px-2 py-2 md:px-6 md:py-3')}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(

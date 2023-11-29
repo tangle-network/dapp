@@ -10,6 +10,32 @@ const LeaderboardAddressResponseSchema = z.object({
 
 export type AddressType = z.infer<typeof LeaderboardAddressResponseSchema>;
 
+const LeaderboardSessionsResponseSchema = z
+  .object({
+    [BadgeEnum.ACTIVE_VALIDATOR]: z.coerce.number().array(),
+    [BadgeEnum.AUTHORITY]: z.coerce.number().array(),
+    [BadgeEnum.VALIDATOR]: z.coerce.number().array(),
+  })
+  .nullable();
+
+export type SessionsType = z.infer<typeof LeaderboardSessionsResponseSchema>;
+
+const LeaderboardIdenityResponseSchema = z
+  .object({
+    info: z.object({
+      display: z.string(),
+      email: z.string(),
+      legal: z.string(),
+      pgpFingerprint: z.string(),
+      riot: z.string(),
+      twitter: z.string(),
+      web: z.string(),
+    }),
+  })
+  .nullable();
+
+export type IdentityType = z.infer<typeof LeaderboardIdenityResponseSchema>;
+
 const LeaderboardParticipantResponseSchema = z.object({
   id: z.number(),
   points: z.number(),
@@ -17,6 +43,8 @@ const LeaderboardParticipantResponseSchema = z.object({
   email: z.string().nullable(),
   badges: z.array(z.nativeEnum(BadgeEnum)),
   addresses: z.array(LeaderboardAddressResponseSchema),
+  sessions: LeaderboardSessionsResponseSchema,
+  identity: LeaderboardIdenityResponseSchema,
 });
 
 export type ParticipantType = z.infer<
