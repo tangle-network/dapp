@@ -30,7 +30,9 @@ const BadgesCell: FC<{ badges: BadgeEnum[] }> = ({ badges }) => {
             </div>
           </TooltipTrigger>
 
-          <TooltipBody>{capitalize(badge.toString())}</TooltipBody>
+          <TooltipBody>
+            {badge.split('_').map(capitalize).join(' ')}
+          </TooltipBody>
         </Tooltip>
       ))}
     </div>
