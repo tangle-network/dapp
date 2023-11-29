@@ -13,6 +13,7 @@ const fetchLeaderboardData = async (
 
   if (query) {
     searchParams.append('q', query);
+    searchParams.set('skip', DEFAULT_SKIP.toString()); // reset skip when searching
   }
 
   const response = await fetch(
