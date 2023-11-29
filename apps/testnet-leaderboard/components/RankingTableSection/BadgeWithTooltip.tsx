@@ -19,12 +19,12 @@ const BadgeWithTooltip: FC<Props> = ({ badge, emoji }) => {
       <TooltipTrigger asChild>
         <div
           className={cx(
-            'w-6 md:w-[30px] aspect-square rounded-full',
+            'w-2 md:w-6 aspect-square rounded-full',
             'flex items-center justify-center',
             'bg-[rgba(31,29,43,0.1)] cursor-pointer'
           )}
         >
-          <Typography variant="mkt-body2">{emoji}</Typography>
+          <Typography variant="mkt-caption">{emoji}</Typography>
         </div>
       </TooltipTrigger>
 

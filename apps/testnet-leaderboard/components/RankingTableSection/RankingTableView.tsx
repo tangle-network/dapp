@@ -8,7 +8,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/browser-utils/logger';
-import { Spinner } from '@webb-tools/icons';
+import {
+  Link as LinkIcon,
+  Mail,
+  Spinner,
+  TwitterFill,
+} from '@webb-tools/icons';
 import { Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
@@ -22,6 +27,7 @@ import BadgeWithTooltip from './BadgeWithTooltip';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import ParseReponseErrorView from './ParseReponseErrorView';
+import SessionsCell from './SessionsCell';
 import type {
   IdentityType,
   LeaderboardSuccessResponseType,
@@ -62,40 +68,7 @@ const columns = [
 
   columnHelper.accessor('sessions', {
     header: () => <HeaderCell title="Number of sessions" />,
-    cell: (cellCtx) => {
-      const value = cellCtx.getValue();
-
-      if (value == null) {
-        return (
-          <Typography variant="mkt-small-caps" fw="bold" ta="center">
-            -
-          </Typography>
-        );
-      }
-
-      return (
-        <div className="flex items-center gap-2">
-          {Object.entries(value).map(([badge, sessions], idx) => {
-            if (sessions.length === 0) {
-              return null;
-            }
-
-            return (
-              <div className="flex items-center gap-1" key={`${badge}-${idx}`}>
-                <BadgeWithTooltip
-                  badge={badge}
-                  emoji={isBadgeEnum(badge) ? BADGE_ICON_RECORD[badge] : '❔'}
-                />
-
-                <Typography variant="mkt-small-caps" fw="bold" ta="center">
-                  {sessions.length}
-                </Typography>
-              </div>
-            );
-          })}
-        </div>
-      );
-    },
+    cell: (cellCtx) => <SessionsCell sessions={cellCtx.getValue()} />,
   }),
 
   columnHelper.accessor('points', {
@@ -105,6 +78,19 @@ const columns = [
         {points.renderValue()}
       </Typography>
     ),
+  }),
+
+  columnHelper.accessor('identity', {
+    header: () => <HeaderCell title="Identity" />,
+    cell: (identity) => {
+      return (
+        <div className="flex items-center gap-2">
+          <TwitterFill />
+          <LinkIcon className="!fill-current" />
+          <Mail className="!fill-current" />
+        </div>
+      );
+    },
   }),
 ];
 
@@ -220,13 +206,13 @@ const RankingTableView: FC<Props> = ({
           />
         </div> */}
       </div>
-      <div className="relative overflow-hidden border rounded-lg border-mono-60">
+      <div className="relative overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
           <thead className="border-b border-mono-60">
             {getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, idx) => (
-                  <th key={idx} className={cx('px-2 py-2 md:px-6 md:py-3')}>
+                  <th key={idx} className={cx('px-2 py-2 md:px-4 md:py-2')}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -243,7 +229,7 @@ const RankingTableView: FC<Props> = ({
               getRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell, idx) => (
-                    <td key={idx} className="px-2 py-2 md:px-6 md:py-3">
+                    <td key={idx} className="px-2 py-2 md:px-4 md:py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

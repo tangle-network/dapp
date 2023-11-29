@@ -11,10 +11,12 @@ const AddressCell: FC<{ address: string }> = ({ address }) => {
         value={address}
         theme={isEthereumAddress(address) ? 'ethereum' : 'substrate'}
         className="[&_*]:!cursor-copy"
+        size="sm"
       />
 
       <KeyValueWithButton
         keyValue={address}
+        valueVariant="mkt-small-caps"
         size="sm"
         shortenFn={shortenString}
       />
