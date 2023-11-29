@@ -38,7 +38,7 @@ const TableStatus = ({
         </Typography>
       </div>
 
-      <Button {...buttonProps}>{buttonText}</Button>
+      {buttonText && <Button {...buttonProps}>{buttonText}</Button>}
     </div>
   );
 };

@@ -4,7 +4,7 @@ export type TableStatusProps = {
   icon?: string;
   title: string;
   description: string;
-  buttonText: string;
+  buttonText?: string;
   buttonProps?: ButtonProps;
   className?: string;
 };
