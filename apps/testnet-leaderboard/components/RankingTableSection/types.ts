@@ -16,7 +16,8 @@ const LeaderboardSessionsResponseSchema = z
     [BadgeEnum.AUTHORITY]: z.coerce.number().array(),
     [BadgeEnum.VALIDATOR]: z.coerce.number().array(),
   })
-  .nullable();
+  .nullable()
+  .default(null);
 
 export type SessionsType = z.infer<typeof LeaderboardSessionsResponseSchema>;
 
@@ -32,7 +33,8 @@ const LeaderboardIdenityResponseSchema = z
       web: z.string(),
     }),
   })
-  .nullable();
+  .nullable()
+  .default(null);
 
 export type IdentityType = z.infer<typeof LeaderboardIdenityResponseSchema>;
 
