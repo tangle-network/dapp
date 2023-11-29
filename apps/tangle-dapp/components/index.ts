@@ -6,5 +6,6 @@ export * from './KeyStatsItem';
 export * from './NominatorStatsItem';
 export * from './sideBar';
 export * from './skeleton';
+export * from './TableStatus';
 export * from './ValidatorTable';
 export * from './WalletDropdown';
