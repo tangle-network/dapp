@@ -139,6 +139,26 @@ export type AssetType = {
   explorerUrl?: string;
 };
 
+export type ContractType = {
+  /**
+   * The contract name
+   */
+  name: string;
+  /**
+   * The contract address
+   */
+  address: string;
+  /**
+   * The contract block explorer url (optional)
+   */
+  blockExplorerUrl?: string;
+
+  /**
+   * Callback when user hit a contract item
+   */
+  onSelectContract?: () => void;
+};
+
 export interface ListCardWrapperProps
   extends IWebbComponentBase,
     PropsOf<'div'> {
@@ -214,12 +234,7 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
 
 export interface ContractListCardProps
   extends Omit<PropsOf<'div'>, 'onChange'> {
-  selectContractItems: {
-    name: string;
-    address: string;
-    blockExplorerUrl?: string;
-    onClick?: () => void;
-  }[];
+  selectContractItems: ContractType[];
   isLoading?: boolean;
 }
 

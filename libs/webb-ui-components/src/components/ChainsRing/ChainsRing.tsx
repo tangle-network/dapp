@@ -5,14 +5,14 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { useDarkMode } from '../../hooks/useDarkMode';
-import type { ChainsRingProps, ChainItem } from './types';
+import type { ChainsRingProps, ChainRingItemType } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems }, ref) => {
     const [isDarkMode] = useDarkMode();
 
     const getStrokeColor = useCallback(
-      (item?: ChainItem) => {
+      (item?: ChainRingItemType) => {
         if (item === undefined) return '#9CA0B0';
         return item.isActive ? (isDarkMode ? '#4B3AA4' : '#B5A9F2') : '#9CA0B0';
       },

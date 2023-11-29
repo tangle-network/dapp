@@ -3,7 +3,7 @@ import ContractListCard from '../../components/ListCard/ContractListCard';
 import { randEthereumAddress } from '@ngneat/falso';
 
 const meta: Meta<typeof ContractListCard> = {
-  title: 'Design System/ƒMolecules/ContractListCard',
+  title: 'Design System/Molecules/ContractListCard',
   component: ContractListCard,
 };
 

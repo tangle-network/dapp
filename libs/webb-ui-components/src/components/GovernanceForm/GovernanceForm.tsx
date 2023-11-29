@@ -7,7 +7,7 @@ import ChainsRing from '../ChainsRing';
 import FunctionInputs from './FunctionInputs';
 import { Typography } from '../../typography';
 import type { GovernanceFormProps, FunctionInfoType } from './types';
-import type { ChainItem } from '../ChainsRing/types';
+import type { ChainRingItemType } from '../ChainsRing/types';
 
 const GovernanceForm: FC<GovernanceFormProps> = ({
   abi,
@@ -36,7 +36,7 @@ const GovernanceForm: FC<GovernanceFormProps> = ({
     [abi, governanceFncNames]
   );
 
-  const chainRingItems = useMemo<ChainItem[]>(
+  const chainRingItems = useMemo<ChainRingItemType[]>(
     () =>
       typedChainIdSelections.map((typedChainId) => {
         return {

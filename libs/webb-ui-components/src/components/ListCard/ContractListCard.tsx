@@ -44,7 +44,7 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
             placeholder="Search chains"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
-            isDisabled={isLoading}
+            isDisabled={isLoading || selectContractItems.length === 0}
           />
         </div>
 
@@ -58,9 +58,16 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
           {!isLoading && (
             <ul className="py-2">
               {filterList.map((item, idx) => {
-                const { name, address, blockExplorerUrl } = item;
+                const { name, address, blockExplorerUrl, onSelectContract } =
+                  item;
                 return (
-                  <ListItem key={idx} className="flex justify-between">
+                  <ListItem
+                    key={idx}
+                    className="flex justify-between"
+                    onClick={() => {
+                      onSelectContract && onSelectContract();
+                    }}
+                  >
                     <div>
                       <Typography
                         component="span"
