@@ -7,8 +7,9 @@ import {
   PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
-import { Search, Spinner } from '@webb-tools/icons';
-import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
+import { LoggerService } from '@webb-tools/browser-utils/logger';
+import { Spinner } from '@webb-tools/icons';
+import { Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -64,6 +65,8 @@ const participantToRankingItem = (participant: ParticipantType) =>
     badges: participant.badges,
     points: participant.points,
   } satisfies RankingItemType);
+
+const logger = LoggerService.get('RankingTableView');
 
 const RankingTableView: FC<Props> = ({
   participants,
@@ -132,6 +135,10 @@ const RankingTableView: FC<Props> = ({
   });
 
   if (!isLoading && data && !data.success) {
+    logger.error(
+      'Error when parsing the response',
+      data.error.issues.map((issue) => issue.message).join('\n')
+    );
     return <ParseReponseErrorView />;
   }
 

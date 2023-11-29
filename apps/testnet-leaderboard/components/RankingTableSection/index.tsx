@@ -1,3 +1,4 @@
+import { LoggerService } from '@webb-tools/browser-utils/logger';
 import { unstable_serialize } from 'swr';
 
 import { DEFAULT_LIMIT, DEFAULT_SKIP } from '../../constants';
@@ -6,10 +7,13 @@ import ParseReponseErrorView from './ParseReponseErrorView';
 import RankingTableView from './RankingTableView';
 import SWRProvider from './SWRProvider';
 
+const logger = LoggerService.get('RankingTableSection');
+
 const RankingTableSection = async () => {
   const result = await fetchLeaderboardData();
 
   if (!result.success) {
+    logger.error('Failed to fetch leaderboard data', result.error.issues);
     return <ParseReponseErrorView />;
   }
 
