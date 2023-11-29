@@ -99,7 +99,9 @@ const RankingTableView: FC<Props> = ({
     }
 
     if (data && data.success && data.data.success) {
-      return data.data.data.participants.map(participantToRankingItem);
+      return data.data.data.participants
+        .filter((p) => p.addresses.length > 0)
+        .map(participantToRankingItem);
     }
 
     return [];
