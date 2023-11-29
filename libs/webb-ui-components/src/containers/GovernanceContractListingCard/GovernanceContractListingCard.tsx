@@ -30,8 +30,8 @@ const GovernanceContractListingCard: FC<GovernanceListingCardProps> = ({
   return (
     <div
       className={cx(
-        'max-w-[600px] bg-mono-0 dark:bg-mono-190 rounded-xl p-9',
-        'flex flex-col items-center gap-6',
+        'min-h-[700px] max-w-[600px] bg-mono-0 dark:bg-mono-190 rounded-xl p-9',
+        'flex flex-col items-center gap-4',
         'border border-mono-40 dark:border-mono-160'
       )}
     >
