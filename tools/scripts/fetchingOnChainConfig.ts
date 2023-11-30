@@ -1,3 +1,5 @@
+#!/usr/bin/env -S ts-node --files
+
 import { config } from 'dotenv';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';

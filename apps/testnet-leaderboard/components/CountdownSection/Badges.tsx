@@ -26,7 +26,7 @@ const Badges = () => {
     <div className="flex flex-wrap justify-center gap-1">
       {Object.entries(BADGE_ICON_RECORD).map(([badge, icon], idx) => {
         const name = getBadgeName(badge) ?? badge;
-        const fmtName = name.split(' ').map(capitalize).join(' ');
+        const fmtName = name.split('_').map(capitalize).join(' ');
 
         return (
           <Badge

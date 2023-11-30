@@ -7,6 +7,7 @@ import {
   PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
+import { LoggerService } from '@webb-tools/browser-utils/logger';
 import { Search, Spinner } from '@webb-tools/icons';
 import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
@@ -14,38 +15,63 @@ import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 import { BadgeEnum } from '../../types';
-import AddressCell from './AddressCell';
 import BadgesCell from './BadgesCell';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
+import IdentityCell from './IdentityCell';
 import ParseReponseErrorView from './ParseReponseErrorView';
-import type { LeaderboardSuccessResponseType, ParticipantType } from './types';
+import SessionsCell from './SessionsCell';
+import SocialLinksCell from './SocialLinksCell';
+import type {
+  IdentityType,
+  LeaderboardSuccessResponseType,
+  ParticipantType,
+  SessionsType,
+} from './types';
 
 export type RankingItemType = {
   address: string;
   badges: BadgeEnum[];
   points: number;
+  sessions: SessionsType;
+  identity: IdentityType;
 };
 
 const columnHelper = createColumnHelper<RankingItemType>();
 
-const columns = [
+const getColumns = (pageIndex: number, pageSize: number) => [
   columnHelper.accessor('points', {
     header: () => <HeaderCell title="Rank" />,
-    cell: (points) => (
-      <Typography variant="mkt-small-caps" fw="bold">
-        #{points.row.index + 1}
-      </Typography>
+    cell: (points) => {
+      const globalRowIndex = points.row.index + pageIndex * pageSize;
+      return (
+        <Typography variant="mkt-small-caps" fw="bold">
+          #{globalRowIndex + 1}
+        </Typography>
+      );
+    },
+  }),
+
+  columnHelper.accessor('address', {
+    header: () => <HeaderCell title="Identity" />,
+    cell: (cellCtx) => (
+      <IdentityCell
+        address={cellCtx.getValue()}
+        identity={cellCtx.row.original.identity}
+      />
     ),
   }),
-  columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Address" />,
-    cell: (address) => <AddressCell address={address.getValue()} />,
-  }),
+
   columnHelper.accessor('badges', {
     header: () => <HeaderCell title="Badges" />,
     cell: (badges) => <BadgesCell badges={badges.getValue()} />,
   }),
+
+  columnHelper.accessor('sessions', {
+    header: () => <HeaderCell title="Number of sessions" />,
+    cell: (cellCtx) => <SessionsCell sessions={cellCtx.getValue()} />,
+  }),
+
   columnHelper.accessor('points', {
     header: () => <HeaderCell title="Points" />,
     cell: (points) => (
@@ -53,6 +79,11 @@ const columns = [
         {points.renderValue()}
       </Typography>
     ),
+  }),
+
+  columnHelper.accessor('identity', {
+    header: () => <HeaderCell title="Social" />,
+    cell: (cellCtx) => <SocialLinksCell identity={cellCtx.getValue()} />,
   }),
 ];
 
@@ -63,7 +94,11 @@ const participantToRankingItem = (participant: ParticipantType) =>
     address: participant.addresses[0].address,
     badges: participant.badges,
     points: participant.points,
+    sessions: participant.sessions,
+    identity: participant.identity,
   } satisfies RankingItemType);
+
+const logger = LoggerService.get('RankingTableView');
 
 const RankingTableView: FC<Props> = ({
   participants,
@@ -71,13 +106,15 @@ const RankingTableView: FC<Props> = ({
   skip: defaultSkip,
   total: defaultTotal,
 }) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: defaultSkip,
     pageSize: defaultLimit,
   });
 
   const { data, isLoading } = useSWR(
-    [fetchLeaderboardData.name, pageIndex * pageSize, pageSize],
+    [fetchLeaderboardData.name, pageIndex * pageSize, pageSize, searchTerm],
     ([, ...args]) => fetchLeaderboardData(...args),
     { keepPreviousData: true }
   );
@@ -96,11 +133,18 @@ const RankingTableView: FC<Props> = ({
     }
 
     if (data && data.success && data.data.success) {
-      return data.data.data.participants.map(participantToRankingItem);
+      return data.data.data.participants
+        .filter((p) => p.addresses.length > 0)
+        .map(participantToRankingItem);
     }
 
     return [];
   }, [data, participants]);
+
+  const columns = useMemo(
+    () => getColumns(pageIndex, pageSize),
+    [pageIndex, pageSize]
+  );
 
   const {
     getHeaderGroups,
@@ -132,6 +176,10 @@ const RankingTableView: FC<Props> = ({
   });
 
   if (!isLoading && data && !data.success) {
+    logger.error(
+      'Error when parsing the response',
+      data.error.issues.map((issue) => issue.message).join('\n')
+    );
     return <ParseReponseErrorView />;
   }
 
@@ -145,8 +193,7 @@ const RankingTableView: FC<Props> = ({
         <Typography variant="mkt-body2" fw="black">
           Latest ranking:
         </Typography>
-        {/** TODO: Implement search by address with the server side data */}
-        {/*         <div className="flex items-center gap-2 w-max md:w-1/2">
+        <div className="flex items-center gap-2 w-max md:w-1/2">
           <Typography variant="mkt-body2" fw="black">
             Search:
           </Typography>
@@ -155,22 +202,19 @@ const RankingTableView: FC<Props> = ({
             placeholder="Enter to search address"
             className="flex-[1]"
             rightIcon={<Search className="fill-mono-140" />}
+            value={searchTerm}
+            onChange={setSearchTerm}
+            debounceTime={500}
           />
-        </div> */}
+        </div>
       </div>
-      <div className="relative overflow-hidden border rounded-lg border-mono-60">
+      <div className="relative overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
           <thead className="border-b border-mono-60">
             {getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, idx) => (
-                  <th
-                    key={idx}
-                    className={cx('px-2 py-2 md:px-6 md:py-3', {
-                      'w-[10%]': header.id === 'points',
-                      'w-[40%]': !(header.id === 'points'),
-                    })}
-                  >
+                  <th key={idx} className={cx('px-2 py-2 md:px-4 md:py-2')}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -187,7 +231,7 @@ const RankingTableView: FC<Props> = ({
               getRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell, idx) => (
-                    <td key={idx} className="px-2 py-2 md:px-6 md:py-3">
+                    <td key={idx} className="px-2 py-2 md:px-4 md:py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
