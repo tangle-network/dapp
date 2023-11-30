@@ -54,15 +54,7 @@ const getColumns = (pageIndex: number, pageSize: number) => [
 
   columnHelper.accessor('address', {
     header: () => <HeaderCell title="Address" />,
-    cell: (address) => {
-      const identityDisplay = address.row.original.identity?.info.display;
-      return (
-        <AddressCell
-          address={address.getValue()}
-          identityDisplay={identityDisplay ?? ''}
-        />
-      );
-    },
+    cell: (address) => <AddressCell address={address.getValue()} />,
   }),
 
   columnHelper.accessor('badges', {
