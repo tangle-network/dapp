@@ -15,13 +15,13 @@ import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 import { BadgeEnum } from '../../types';
-import AddressCell from './AddressCell';
 import BadgesCell from './BadgesCell';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import IdentityCell from './IdentityCell';
 import ParseReponseErrorView from './ParseReponseErrorView';
 import SessionsCell from './SessionsCell';
+import SocialLinksCell from './SocialLinksCell';
 import type {
   IdentityType,
   LeaderboardSuccessResponseType,
@@ -53,8 +53,13 @@ const getColumns = (pageIndex: number, pageSize: number) => [
   }),
 
   columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Address" />,
-    cell: (address) => <AddressCell address={address.getValue()} />,
+    header: () => <HeaderCell title="Identity" />,
+    cell: (cellCtx) => (
+      <IdentityCell
+        address={cellCtx.getValue()}
+        identity={cellCtx.row.original.identity}
+      />
+    ),
   }),
 
   columnHelper.accessor('badges', {
@@ -77,8 +82,8 @@ const getColumns = (pageIndex: number, pageSize: number) => [
   }),
 
   columnHelper.accessor('identity', {
-    header: () => <HeaderCell title="Identity" />,
-    cell: (cellCtx) => <IdentityCell identity={cellCtx.getValue()} />,
+    header: () => <HeaderCell title="Social" />,
+    cell: (cellCtx) => <SocialLinksCell identity={cellCtx.getValue()} />,
   }),
 ];
 
