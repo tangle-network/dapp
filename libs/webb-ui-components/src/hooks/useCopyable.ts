@@ -1,7 +1,7 @@
+'use client';
+
 import copyToClipboard from 'copy-to-clipboard';
 import { useEffect, useRef, useState } from 'react';
-
-type SetTimeoutReturnType = ReturnType<typeof setTimeout>;
 
 /**
  * Object contains `isCopied`, `copiedText` and `copy` function
@@ -33,7 +33,9 @@ export const useCopyable = (display = 3000): UseCopyableReturnType => {
 
   // Internal state to manage and reset the copy state
   const [isCopied, setIsCopied] = useState(false);
-  const [_timeout, _setTimeout] = useState<SetTimeoutReturnType | undefined>();
+
+  // Timeout ref
+  const _timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const copy = (value: string) => {
     if (isCopied) {
@@ -45,16 +47,18 @@ export const useCopyable = (display = 3000): UseCopyableReturnType => {
     setIsCopied(true);
 
     const timeoutObj = setTimeout(() => setIsCopied(false), display);
-    _setTimeout(timeoutObj);
+
+    if (_timeoutRef.current) {
+      clearTimeout(_timeoutRef.current);
+    }
+
+    _timeoutRef.current = timeoutObj;
   };
 
   // Clear the timeout if the component unmount
   useEffect(() => {
-    if (_timeout) {
-      return () => clearTimeout(_timeout);
-    }
-    return;
-  }, [_timeout]);
+    return () => clearTimeout(_timeoutRef.current);
+  }, []);
 
   return {
     isCopied,
