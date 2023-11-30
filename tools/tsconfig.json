@@ -2,13 +2,10 @@
   "extends": "../tsconfig.base.json",
   "ts-node": {
     "transpileOnly": true,
-    "esm": true,
     "require": ["tsconfig-paths/register"],
     "compilerOptions": {
       "target": "es6",
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "allowImportingTsExtensions": true
+      "module": "commonjs"
     }
   },
   "compilerOptions": {
