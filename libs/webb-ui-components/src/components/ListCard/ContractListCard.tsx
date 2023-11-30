@@ -48,7 +48,7 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
           />
         </div>
 
-        <ScrollArea className="lg:min-w-[350px]">
+        <ScrollArea className="lg:min-w-[350px] h-[376px]">
           {isLoading && (
             <div className="space-y-2">
               <SkeletonLoader size="xl" />
