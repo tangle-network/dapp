@@ -39,19 +39,30 @@ export type RankingItemType = {
 
 const columnHelper = createColumnHelper<RankingItemType>();
 
-const columns = [
+const getColumns = (pageIndex: number, pageSize: number) => [
   columnHelper.accessor('points', {
     header: () => <HeaderCell title="Rank" />,
-    cell: (points) => (
-      <Typography variant="mkt-small-caps" fw="bold">
-        #{points.row.index + 1}
-      </Typography>
-    ),
+    cell: (points) => {
+      const globalRowIndex = points.row.index + pageIndex * pageSize;
+      return (
+        <Typography variant="mkt-small-caps" fw="bold">
+          #{globalRowIndex + 1}
+        </Typography>
+      );
+    },
   }),
 
   columnHelper.accessor('address', {
     header: () => <HeaderCell title="Address" />,
-    cell: (address) => <AddressCell address={address.getValue()} />,
+    cell: (address) => {
+      const identityDisplay = address.row.original.identity?.info.display;
+      return (
+        <AddressCell
+          address={address.getValue()}
+          identityDisplay={identityDisplay ?? ''}
+        />
+      );
+    },
   }),
 
   columnHelper.accessor('badges', {
@@ -132,6 +143,11 @@ const RankingTableView: FC<Props> = ({
 
     return [];
   }, [data, participants]);
+
+  const columns = useMemo(
+    () => getColumns(pageIndex, pageSize),
+    [pageIndex, pageSize]
+  );
 
   const {
     getHeaderGroups,

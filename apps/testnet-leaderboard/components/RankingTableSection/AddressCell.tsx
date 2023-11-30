@@ -4,7 +4,10 @@ import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/Ke
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { FC } from 'react';
 
-const AddressCell: FC<{ address: string }> = ({ address }) => {
+const AddressCell: FC<{ address: string; identityDisplay?: string }> = ({
+  address,
+  identityDisplay,
+}) => {
   return (
     <div className="flex items-center gap-2">
       <Avatar
@@ -15,7 +18,7 @@ const AddressCell: FC<{ address: string }> = ({ address }) => {
       />
 
       <KeyValueWithButton
-        keyValue={address}
+        keyValue={identityDisplay ? identityDisplay : address}
         valueVariant="mkt-small-caps"
         size="sm"
         shortenFn={shortenString}
