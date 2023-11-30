@@ -14,7 +14,7 @@ const pageSize = 10;
 const activeValidatorsTableTab = 'Active Validators';
 const waitingValidatorsTableTab = 'Waiting';
 
-const ShieldedTablesContainer = () => {
+const ValidatorTablesContainer = () => {
   const { data: activeValidatorsData, isLoading: activeValidatorsDataLoading } =
     useSWR([getActiveValidators.name], ([, ...args]) =>
       getActiveValidators(...args)
@@ -59,4 +59,4 @@ const ShieldedTablesContainer = () => {
   );
 };
 
-export default ShieldedTablesContainer;
+export default ValidatorTablesContainer;

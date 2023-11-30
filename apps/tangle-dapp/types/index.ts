@@ -5,3 +5,10 @@ export type Validator = {
   effectiveAmountStaked: string;
   delegations: string;
 };
+
+export type Delegator = {
+  address: string;
+  identity: string;
+  totalStaked: string;
+  isActive: boolean;
+};

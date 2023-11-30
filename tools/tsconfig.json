@@ -1,11 +1,11 @@
 {
   "extends": "../tsconfig.base.json",
   "ts-node": {
+    "transpileOnly": true,
     "require": ["tsconfig-paths/register"],
     "compilerOptions": {
       "target": "es6",
-      "module": "commonjs",
-      "esModuleInterop": true
+      "module": "commonjs"
     }
   },
   "compilerOptions": {
