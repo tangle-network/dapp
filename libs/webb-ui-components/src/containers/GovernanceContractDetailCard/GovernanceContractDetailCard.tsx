@@ -1,17 +1,45 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState } from 'react';
 import { getAbiItem } from 'viem';
 import cx from 'classnames';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
+import ChainsRing from '../../components/ChainsRing';
 import { Typography } from '../../typography';
-import FunctionInputs from './FunctionInputs';
-import type { ContractDetailCardProps, FunctionInfoType } from './types';
+import FunctionInputs from './GovernanceFncCaller';
+import type {
+  ContractDetailCardProps,
+  GovernanceFncCallerProps,
+} from './types';
+import type { ChainRingItemType } from '../../components/ChainsRing/types';
 
 const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
   metadata,
   abi,
   governanceFncNames,
+  typedChainIdSelections,
 }) => {
-  const fncInfos = useMemo<FunctionInfoType[]>(
+  const [selectedTypedChainId, setSelectedTypedChainId] = useState<
+    number | undefined
+  >();
+
+  const chainRingItems = useMemo<ChainRingItemType[]>(() => {
+    return typedChainIdSelections.map((typedChainId) => {
+      return {
+        typedChainId,
+        isActive: selectedTypedChainId === typedChainId,
+        onClick: () => {
+          setSelectedTypedChainId(typedChainId);
+        },
+      };
+    });
+  }, [typedChainIdSelections, selectedTypedChainId]);
+
+  const isReadyToCallFnc = useMemo(
+    () => selectedTypedChainId !== undefined,
+    [selectedTypedChainId]
+  );
+
+  const fncCallerProps = useMemo<GovernanceFncCallerProps[]>(
     () =>
       governanceFncNames.map((fncName) => {
         const item = getAbiItem({
@@ -36,6 +64,27 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
         'border border-mono-40 dark:border-mono-160'
       )}
     >
+      {/* Chains Ring */}
+      <div className="flex justify-center items-center">
+        <ChainsRing
+          chainItems={chainRingItems}
+          circleContent={
+            <div>
+              <Typography
+                variant="body1"
+                fw="bold"
+                ta="center"
+                className="text-mono-140 dark:text-mono-80 capitalize"
+              >
+                {selectedTypedChainId !== undefined
+                  ? chainsConfig[selectedTypedChainId].name
+                  : 'Select Chain'}
+              </Typography>
+            </div>
+          }
+        />
+      </div>
+
       <div className="h-max space-y-2">
         <Typography variant="h5" fw="bold">
           Metadata
@@ -60,8 +109,14 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
           Governance Functions
         </Typography>
         <div className="space-y-3 w-full">
-          {fncInfos.map((fncInfo) => (
-            <FunctionInputs fncInfo={fncInfo} />
+          {fncCallerProps.map((fncInfo) => (
+            <FunctionInputs
+              {...fncInfo}
+              isDisabled={!isReadyToCallFnc}
+              warningText={
+                !isReadyToCallFnc ? 'Please select a chain' : undefined
+              }
+            />
           ))}
         </div>
       </div>

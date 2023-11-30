@@ -3,6 +3,7 @@ import GovernanceContractDetailCard from '../../containers/GovernanceContractDet
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { randEthereumAddress } from '@ngneat/falso';
 import { shortenHex } from '../../utils';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
 const meta: Meta<typeof GovernanceContractDetailCard> = {
   title: 'Design System/Templates/GovernanceContractDetailCard',
@@ -30,6 +31,9 @@ export const Default: Story = {
       ]}
       abi={VAnchor__factory.abi}
       governanceFncNames={['setHandler', 'setVerifier']}
+      typedChainIdSelections={Object.keys(chainsConfig)
+        .slice(0, 8)
+        .map((typedChainId) => +typedChainId)}
     />
   ),
 };

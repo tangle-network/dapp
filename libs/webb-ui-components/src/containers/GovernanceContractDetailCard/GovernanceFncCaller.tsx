@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import cx from 'classnames';
-import { ArrowDropDownFill } from '@webb-tools/icons';
+import { ArrowDropDownFill, InformationLine } from '@webb-tools/icons';
 
 import {
   Accordion,
@@ -11,10 +11,14 @@ import {
 import { Button } from '../../components/buttons';
 import { Input } from '../../components/Input';
 import { Typography } from '../../typography/Typography';
-import { FunctionInfoType } from './types';
+import type { GovernanceFncCallerProps } from './types';
 
-const FunctionInputs: FC<{ fncInfo: FunctionInfoType }> = ({ fncInfo }) => {
-  const { fncName, fncParams } = fncInfo;
+const GovernanceFncCaller: FC<GovernanceFncCallerProps> = ({
+  fncName,
+  fncParams,
+  isDisabled,
+  warningText,
+}) => {
   return (
     <Accordion
       type="single"
@@ -54,12 +58,24 @@ const FunctionInputs: FC<{ fncInfo: FunctionInfoType }> = ({ fncInfo }) => {
                     id={`${fncName}-${name}`}
                     className="w-[75%]"
                     placeholder={type}
+                    isDisabled={isDisabled}
                   />
                 </div>
               );
             })}
 
-            <Button className="!rounded-lg">Submit</Button>
+            <Button className="!rounded-lg" isDisabled={isDisabled}>
+              Submit
+            </Button>
+
+            {warningText && (
+              <div className="flex justify-end items-center gap-1">
+                <InformationLine className="!fill-red-50" />
+                <Typography variant="body3" className="!text-red-50">
+                  {warningText}
+                </Typography>
+              </div>
+            )}
           </div>
         </AccordionContent>
       </AccordionItem>
@@ -67,4 +83,4 @@ const FunctionInputs: FC<{ fncInfo: FunctionInfoType }> = ({ fncInfo }) => {
   );
 };
 
-export default FunctionInputs;
+export default GovernanceFncCaller;

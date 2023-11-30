@@ -39,9 +39,9 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
         {/** The search input */}
         <div className="py-4">
           <Input
-            id="chain"
+            id="contract"
             rightIcon={<Search />}
-            placeholder="Search chains"
+            placeholder="Search contracts"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
             isDisabled={isLoading || selectContractItems.length === 0}

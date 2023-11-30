@@ -18,9 +18,14 @@ export interface ContractDetailCardProps {
    * List of all the governance function of the smart contract
    */
   governanceFncNames: string[];
+
+  /**
+   * All the chain options to be be chosen
+   */
+  typedChainIdSelections: number[];
 }
 
-export type FunctionInfoType = {
+export interface GovernanceFncCallerProps {
   /**
    * The name of the function
    */
@@ -33,4 +38,14 @@ export type FunctionInfoType = {
     name?: string;
     type: string;
   }[];
-};
+
+  /**
+   * Is the function allowed to be called
+   */
+  isDisabled?: boolean;
+
+  /**
+   * Warning text at the bottom of the component
+   */
+  warningText?: string;
+}
