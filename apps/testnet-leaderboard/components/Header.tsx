@@ -1,4 +1,5 @@
 import { TangleLogo } from '@webb-tools/webb-ui-components';
+import { TANGLE_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { ComponentProps, ElementRef, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -18,7 +19,7 @@ const Header = forwardRef<ElementRef<'header'>, ComponentProps<'header'>>(
       >
         <div className="w-full max-w-[1440px] mx-auto px-[20px] lg:px-0 py-4 lg:order-1">
           <div className="lg:px-[11.25%] flex items-center justify-between">
-            <Link href="/">
+            <Link href={TANGLE_MKT_URL}>
               <TangleLogo />
             </Link>
             <Navbar />

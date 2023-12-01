@@ -35,7 +35,7 @@ const isNavItem = (
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   {
     children: 'community',
-    href: populateDocsUrl(WEBB_DOC_ROUTES_RECORD['tangle-network'].community),
+    href: populateDocsUrl(WEBB_DOC_ROUTES_RECORD.community.route),
     target: '_blank',
   } satisfies NavItem,
   {
