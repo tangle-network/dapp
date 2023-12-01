@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: 'Testnet Leaderboard',
     images: [
       {
-        url: 'https://webb-cms.s3.amazonaws.com/tangle_seo.png',
+        url: '/assets/seo.png',
         width: 2000,
         height: 1050,
         alt: 'Og Image Alt',
