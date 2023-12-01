@@ -52,33 +52,9 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
     [currencyCfgs]
   );
 
-  const fungibleAddress = useMemo(() => {
-    const poolId = searchParams.get(POOL_KEY);
-    if (!poolId) {
-      return;
-    }
-
-    const fungible = apiConfig.currencies[Number(poolId)];
-    if (!fungible) {
-      return;
-    }
-
-    if (typeof srcTypedChainId === 'number') {
-      return fungible.addresses.get(srcTypedChainId);
-    }
-
-    return undefined;
-  }, [apiConfig.currencies, searchParams, srcTypedChainId]);
-
-  const sourceAddress = useMemo(
-    () => (isFungibleTokenList ? fungibleAddress : undefined),
-    [isFungibleTokenList, fungibleAddress]
-  );
-
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
     currencies,
-    srcTypedChainId ?? undefined,
-    sourceAddress
+    srcTypedChainId ?? undefined
   );
 
   const selectTokens = useMemo<Array<AssetType>>(
@@ -185,7 +161,7 @@ const getBalanceProps = (
 ) => {
   if (isLoading) return;
   const currencyBalance = balances[currencyCfg.id];
-  return { balance: currencyBalance ?? 0 };
+  return { balance: currencyBalance };
 };
 
 /** @internal */
