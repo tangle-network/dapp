@@ -177,7 +177,7 @@ export default function useUnwrapButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, fungibleCfg, connectBtnCnt, srcTypedId, handleConnect, noteManager]
+    [activeApi, amount, fungibleCfg, connectBtnCnt, srcTypedId, handleConnect, noteManager]
   );
 
   return {

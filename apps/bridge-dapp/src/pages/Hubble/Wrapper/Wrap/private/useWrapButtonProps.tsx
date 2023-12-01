@@ -4,11 +4,12 @@ import { parseEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
-import handleTxError from '../../../../../utils/handleTxError';
+import { handleTxError } from '../../../../../utils';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
 import {
   useEnqueueSubmittedTx,
@@ -211,14 +212,9 @@ export default function useWrapButtonProps({
         }
 
         const client = getViemClient(srcTypedIdNum);
-        const wrapTokenAddrHex = `0x${wrappableTokenAddr.replace(
-          /^0x/,
-          ''
-        )}` as const;
-        const fungibleContractHex = `0x${fungibleContractAddr.replace(
-          /^0x/,
-          ''
-        )}` as const;
+        const wrapTokenAddrHex = getViemValidAddressFormat(wrappableTokenAddr);
+        const fungibleContractHex =
+          getViemValidAddressFormat(fungibleContractAddr);
 
         const walletClient = actualApi.walletClient;
         const { request } = await client.simulateContract({

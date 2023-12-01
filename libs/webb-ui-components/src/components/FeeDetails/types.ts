@@ -62,6 +62,11 @@ export type FeeDetailsProps = Omit<AccordionSingleProps, 'type'> & {
   totalFeeToken?: string;
 
   /**
+   * The component to display info of total fees
+   */
+  totalFeeCmp?: React.ReactNode;
+
+  /**
    * Indicates if the total fee is loading.
    */
   isTotalLoading?: boolean;

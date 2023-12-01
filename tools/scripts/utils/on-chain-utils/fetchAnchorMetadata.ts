@@ -21,7 +21,8 @@ import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/tangle-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
-import getViemClient from '@webb-tools/web3-api-provider/src/utils/getViemClient';
+import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
+import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
 import { anchorDeploymentBlock } from '@webb-tools/dapp-config/anchors';
 import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
 
@@ -43,7 +44,7 @@ async function fetchEVMAnchorMetadata(
 
   const client = getViemClient(typedChainId);
 
-  const anchorAddrHex = `0x${anchorAddress.replace(/^0x/, '')}` as const;
+  const anchorAddrHex = getViemValidAddressFormat(anchorAddress);
 
   const sharedAnchorProps = {
     address: anchorAddrHex,

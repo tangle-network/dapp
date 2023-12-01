@@ -4,7 +4,7 @@ import {
   TokenIcon,
 } from '@webb-tools/icons';
 import cx from 'classnames';
-import { cloneElement, forwardRef } from 'react';
+import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import numberToString from '../../utils/numberToString';
@@ -26,6 +26,7 @@ import { FeeDetailsProps } from './types';
  * - `info`: The info to show in the tooltip
  * - `totalFee`: The total fee
  * - `totalFeeToken`: The token of the total fee
+ * - `totalFeeCmp`: The total fee component
  * - `items`: The list of fee items
  *
  * @example
@@ -55,6 +56,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       info,
       totalFee,
       totalFeeToken = '',
+      totalFeeCmp,
       items,
       isTotalLoading,
       ...props
@@ -72,6 +74,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         ref={ref}
         collapsible
         type="single"
+        defaultValue="fee-details"
       >
         <AccordionItem
           value="fee-details"
@@ -80,7 +83,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         >
           <AccordionButtonBase
             className={cx(
-              'grop flex items-center justify-between w-full',
+              'group flex items-center justify-between w-full',
               'p-3'
             )}
           >
@@ -96,6 +99,8 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                 <div className="animate-pulse">
                   <div className="h-5 rounded-md w-14 bg-slate-200 dark:bg-mono-160" />
                 </div>
+              ) : totalFeeCmp ? (
+                totalFeeCmp
               ) : (
                 <>
                   <Typography variant="body1" fw="bold">

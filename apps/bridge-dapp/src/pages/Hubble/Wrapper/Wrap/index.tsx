@@ -1,7 +1,7 @@
 import { type FC, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router';
 
-import { ArrowRight, GasStationFill } from '@webb-tools/icons';
+import { ArrowRight } from '@webb-tools/icons';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -18,6 +18,7 @@ import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDefaultChainAndPool from '../../../../hooks/useDefaultChainAndPool';
 import useWrapButtonProps from './private/useWrapButtonProps';
+import useWrapFeeDetailsProps from './private/useWrapFeeDetailsProps';
 
 import {
   SELECT_SOURCE_CHAIN_PATH,
@@ -45,6 +46,12 @@ const Wrap: FC = () => {
   );
 
   const { ...wrapBtnProps } = useWrapButtonProps({
+    balances: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
+    fungibleCfg,
+    wrappableCfg,
+  });
+
+  const feeDetailsProps = useWrapFeeDetailsProps({
     balances: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
     fungibleCfg,
     wrappableCfg,
@@ -109,16 +116,7 @@ const Wrap: FC = () => {
         </div>
 
         <div className="flex flex-col justify-between grow">
-          {/* TODO: calculate gas */}
-          <FeeDetails
-            info="The fee pays for the transaction to be processed on the network."
-            items={[
-              {
-                name: 'Gas',
-                Icon: <GasStationFill />,
-              },
-            ]}
-          />
+          <FeeDetails {...feeDetailsProps} />
 
           {!isMobile ? (
             <Button isFullWidth {...wrapBtnProps} />
