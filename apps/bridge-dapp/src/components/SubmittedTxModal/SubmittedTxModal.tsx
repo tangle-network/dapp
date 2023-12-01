@@ -10,14 +10,16 @@ import {
 } from '@webb-tools/webb-ui-components/components/Modal';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { SubmittedTxModalProps } from './types';
 
-const SubmittedTxModal: FC<SubmittedTxModalProps> = ({
-  txType = 'transaction',
-  ...props
-}) => {
+const SubmittedTxModal: FC<SubmittedTxModalProps> = ({ txType, ...props }) => {
   const { dequeue } = useModalQueueManager();
+
+  const isWrapperType = useMemo(
+    () => txType && txType.includes('wrap'),
+    [txType]
+  );
 
   return (
     <Modal open>
@@ -28,8 +30,9 @@ const SubmittedTxModal: FC<SubmittedTxModalProps> = ({
       >
         <ModalHeader titleVariant="h4">
           {`${
-            txType[0].toUpperCase() +
-            (txType.length > 1 ? txType.substring(1) : '')
+            isWrapperType || txType === undefined
+              ? 'Transaction'
+              : txType.toUpperCase()
           } Submitted!`}
         </ModalHeader>
 
@@ -41,8 +44,9 @@ const SubmittedTxModal: FC<SubmittedTxModalProps> = ({
           />
 
           <Typography variant="body1" ta="center">
-            Please allow 5-20 minutes for the funds to arrive at destination
-            address.
+            {isWrapperType
+              ? `Your ${txType}ping request has successfully been queued.`
+              : 'Please allow 5-20 minutes for the funds to arrive at destination address.'}
           </Typography>
 
           {'txExplorerUrl' in props && props.txExplorerUrl != null ? (
