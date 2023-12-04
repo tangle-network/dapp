@@ -73,7 +73,7 @@
     "@notionhq/client": "^2.2.3",
     "@octokit/request": "^8.1.1",
     "@polkadot/api": "^10.9.1",
-    "@polkadot/apps-config": "^0.132.1",
+    "@polkadot/apps-config": "^0.133.1",
     "@polkadot/extension-dapp": "0.46.5",
     "@polkadot/extension-inject": "0.46.5",
     "@polkadot/keyring": "^12.3.2",
