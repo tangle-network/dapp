@@ -1,3 +1,4 @@
+export * from './DelegationsPayoutsContainer';
 export * from './HeaderChipsContainer';
 export * from './KeyStatsContainer';
 export { Layout } from './Layout';

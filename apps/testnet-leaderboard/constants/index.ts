@@ -16,7 +16,10 @@ export const BADGE_ICON_RECORD = {
   [BadgeEnum.VALIDATOR]: '🔐',
   [BadgeEnum.SPECIALIST]: '🔁',
   [BadgeEnum.USER]: '👤',
-} as const satisfies Partial<{ [key in BadgeEnum]: string }>;
+  [BadgeEnum.ACTIVE_VALIDATOR]: '🟢',
+  [BadgeEnum.BUG_REPORTER]: '🔎',
+  [BadgeEnum.WRITER]: '📝',
+} as const satisfies { [key in BadgeEnum]: string };
 
 /** The second constant calculated in milliseconds. */
 export const SECOND = 1000;

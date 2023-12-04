@@ -12,4 +12,7 @@ export enum BadgeEnum {
   SPECIALIST = 'specialist',
   USER = 'user',
   VALIDATOR = 'validator',
+  ACTIVE_VALIDATOR = 'active_validator',
+  BUG_REPORTER = 'bug_reporter',
+  WRITER = 'writer',
 }
