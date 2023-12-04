@@ -1,6 +1,5 @@
 import { type FC, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router';
-
 import { ArrowRight } from '@webb-tools/icons';
 import {
   Button,
@@ -9,8 +8,8 @@ import {
   useCheckMobile,
   FeeDetails,
 } from '@webb-tools/webb-ui-components';
-import PageTabsContainer from '../../../../containers/PageTabsContainer';
 
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
 import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';

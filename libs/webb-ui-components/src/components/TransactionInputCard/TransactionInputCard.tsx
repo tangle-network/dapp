@@ -191,9 +191,10 @@ const TransactionMaxAmountButton = forwardRef<
     const onAmountChange = onAmountChangeProp ?? context.onAmountChange;
 
     const buttonCnt = useMemo(() => {
-      const amount = typeof maxAmount === 'number' ? toFixed(maxAmount) : '--';
+      const amount =
+        typeof maxAmount === 'number' ? toFixed(maxAmount, 5) : '--';
       const fmtAmount =
-        typeof amount === 'number' ? getRoundedAmountString(amount, 2) : amount;
+        typeof amount === 'number' ? getRoundedAmountString(amount, 5) : amount;
       const tokenSym = tokenSymbol ?? '';
 
       return `${fmtAmount} ${tokenSym}`.trim();

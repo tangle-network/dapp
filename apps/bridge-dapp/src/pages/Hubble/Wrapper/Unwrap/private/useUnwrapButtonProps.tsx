@@ -1,26 +1,28 @@
+import { useCallback, useMemo, useState } from 'react';
+import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
+import { parseEther } from 'viem';
+import { useNavigate } from 'react-router';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { useCallback, useMemo, useState } from 'react';
-import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
-import { parseEther } from 'viem';
+import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
+import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
+import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import {
   AMOUNT_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
+  UNWRAP_FULL_PATH,
 } from '../../../../../constants';
 import {
   useConnectButtonProps,
   useEnqueueSubmittedTx,
 } from '../../../../../hooks';
 import handleTxError from '../../../../../utils/handleTxError';
-import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
-import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
-import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
-import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 
 export default function useUnwrapButtonProps({
   balances,
@@ -33,6 +35,7 @@ export default function useUnwrapButtonProps({
 }) {
   const { activeApi, loading, isConnecting, apiConfig } = useWebContext();
   const enqueueSubmittedTx = useEnqueueSubmittedTx();
+  const navigate = useNavigate();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -215,7 +218,11 @@ export default function useUnwrapButtonProps({
           account: walletClient.account,
         });
         const txHash = await walletClient.writeContract(request);
+
         enqueueSubmittedTx(txHash, apiConfig.chains[+srcTypedIdNum], 'unwrap');
+
+        // navigate back to unwrap page to clear query params
+        navigate(UNWRAP_FULL_PATH);
       } catch (error) {
         console.error(error);
 
@@ -225,7 +232,7 @@ export default function useUnwrapButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleCfg, wrappableCfg, connectBtnCnt, srcTypedId, handleConnect, enqueueSubmittedTx, apiConfig]
+    [activeApi, amount, fungibleCfg, wrappableCfg, connectBtnCnt, srcTypedId, handleConnect, enqueueSubmittedTx, apiConfig, navigate]
   );
 
   return {

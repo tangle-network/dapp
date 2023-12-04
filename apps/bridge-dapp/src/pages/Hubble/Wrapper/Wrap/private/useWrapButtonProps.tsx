@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
+import { useNavigate } from 'react-router';
 import { parseEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
@@ -9,18 +10,20 @@ import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-conf
 import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
-import { handleTxError } from '../../../../../utils';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+
 import {
   useEnqueueSubmittedTx,
   useConnectButtonProps,
 } from '../../../../../hooks';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { handleTxError } from '../../../../../utils';
 import {
   AMOUNT_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
+  WRAP_FULL_PATH,
 } from '../../../../../constants';
 
 export default function useWrapButtonProps({
@@ -34,6 +37,7 @@ export default function useWrapButtonProps({
 }) {
   const { activeApi, loading, isConnecting, apiConfig } = useWebContext();
   const enqueueSubmittedTx = useEnqueueSubmittedTx();
+  const navigate = useNavigate();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -232,6 +236,9 @@ export default function useWrapButtonProps({
         const txHash = await walletClient.writeContract(request);
 
         enqueueSubmittedTx(txHash, apiConfig.chains[+srcTypedIdNum], 'wrap');
+
+        // navigate back to wrap page to clear query params
+        navigate(WRAP_FULL_PATH);
       } catch (error) {
         console.error(error);
 
@@ -241,7 +248,7 @@ export default function useWrapButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig]
+    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig, navigate]
   );
 
   return {

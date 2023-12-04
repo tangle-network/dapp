@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
+import { parseEther, formatEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { notificationApi } from '@webb-tools/webb-ui-components';
-import { parseEther, formatEther } from 'viem';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
