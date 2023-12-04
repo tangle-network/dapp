@@ -104,7 +104,7 @@
     "@sentry/tracing": "^7.52.1",
     "@webb-tools/proposals": "^1.0.8",
     "bn.js": "^5.2.1",
-    "chai": "4.3.7",
+    "chai": "4.3.10",
     "chart.js": "^4.3.0",
     "chromatic": "^6.14.0",
     "circomlibjs": "0.1.7",
