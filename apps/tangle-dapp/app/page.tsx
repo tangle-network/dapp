@@ -1,6 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import {
+  DelegationsPayoutsContainer,
   HeaderChipsContainer,
   KeyStatsContainer,
   NominatorStatsContainer,
@@ -24,6 +25,10 @@ export default async function Index() {
 
       <div className="mt-12">
         <NominatorStatsContainer />
+      </div>
+
+      <div className="mt-12">
+        <DelegationsPayoutsContainer />
       </div>
 
       <div className="mt-12">

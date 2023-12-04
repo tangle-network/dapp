@@ -6,7 +6,10 @@ import { Typography } from '../../typography';
 import { ListCardWrapperProps } from './types';
 
 export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
-  ({ children, className, onClose, title, ...props }, ref) => {
+  (
+    { children, className, onClose, title, hideCloseButton = false, ...props },
+    ref
+  ) => {
     return (
       <div
         {...props}
@@ -23,7 +26,9 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
             {title}
           </Typography>
 
-          <Close onClick={onClose} size="lg" className="cursor-pointer" />
+          {!hideCloseButton && (
+            <Close onClick={onClose} size="lg" className="cursor-pointer" />
+          )}
         </div>
 
         {children}

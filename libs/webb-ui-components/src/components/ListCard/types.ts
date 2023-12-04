@@ -139,6 +139,26 @@ export type AssetType = {
   explorerUrl?: string;
 };
 
+export type ContractType = {
+  /**
+   * The contract name
+   */
+  name: string;
+  /**
+   * The contract address
+   */
+  address: string;
+  /**
+   * The contract block explorer url (optional)
+   */
+  blockExplorerUrl?: string;
+
+  /**
+   * Callback when user hit a contract item
+   */
+  onSelectContract?: () => void;
+};
+
 export interface ListCardWrapperProps
   extends IWebbComponentBase,
     PropsOf<'div'> {
@@ -151,6 +171,11 @@ export interface ListCardWrapperProps
    * The callback involke when pressing the close button
    */
   onClose?: () => void;
+
+  /**
+   * Hide Close buttonƒ
+   */
+  hideCloseButton?: boolean;
 }
 
 export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
@@ -205,6 +230,12 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * If `true`, wallet is connecting to chain
    */
   isConnectingToChain?: boolean;
+}
+
+export interface ContractListCardProps
+  extends Omit<PropsOf<'div'>, 'onChange'> {
+  selectContractItems: ContractType[];
+  isLoading?: boolean;
 }
 
 export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
