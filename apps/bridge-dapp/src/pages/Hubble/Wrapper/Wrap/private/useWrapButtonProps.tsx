@@ -32,8 +32,7 @@ export default function useWrapButtonProps({
   fungibleCfg?: CurrencyConfig;
   wrappableCfg?: CurrencyConfig;
 }) {
-  const { activeApi, loading, isConnecting, noteManager, apiConfig } =
-    useWebContext();
+  const { activeApi, loading, isConnecting, apiConfig } = useWebContext();
   const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
   const [query] = useQueryParams({
@@ -50,8 +49,10 @@ export default function useWrapButtonProps({
     [SOURCE_CHAIN_KEY]: srcTypedId,
   } = query;
 
-  const { content: connectBtnCnt, handleConnect } =
-    useConnectButtonProps(srcTypedId);
+  const { content: connectBtnCnt, handleConnect } = useConnectButtonProps(
+    srcTypedId,
+    true
+  );
 
   const [isWrapping, setIsWrapping] = useState(false);
 
@@ -137,11 +138,7 @@ export default function useWrapButtonProps({
       const allInputsFilled =
         !!amount && !!wrappableTokenId && !!fungibleTokenId && !!srcTypedId;
 
-      if (!allInputsFilled || !isValidAmount) {
-        return true;
-      }
-
-      if (isWrapping) {
+      if (!allInputsFilled || !isValidAmount || isWrapping) {
         return true;
       }
 
@@ -160,21 +157,16 @@ export default function useWrapButtonProps({
       let actualApi = activeApi;
 
       try {
-        setIsWrapping(true);
         if (connectBtnCnt && typeof srcTypedId === 'number') {
           const nextApi = await handleConnect(srcTypedId);
-          if (!nextApi?.noteManager) {
-            throw WebbError.from(WebbErrorCodes.ApiNotReady);
+          if (!nextApi) {
+            return;
           }
 
           actualApi = nextApi;
         }
 
-        if (
-          !noteManager ||
-          !actualApi ||
-          !(actualApi instanceof WebbWeb3Provider)
-        ) {
+        if (!actualApi || !(actualApi instanceof WebbWeb3Provider)) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
@@ -211,6 +203,7 @@ export default function useWrapButtonProps({
           throw WebbError.from(WebbErrorCodes.InvalidAmount);
         }
 
+        setIsWrapping(true);
         const client = getViemClient(srcTypedIdNum);
         const wrapTokenAddrHex = getViemValidAddressFormat(wrappableTokenAddr);
         const fungibleContractHex =
@@ -248,7 +241,7 @@ export default function useWrapButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, noteManager, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig]
+    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig]
   );
 
   return {

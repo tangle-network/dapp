@@ -4,7 +4,7 @@ import {
   TokenIcon,
 } from '@webb-tools/icons';
 import cx from 'classnames';
-import { cloneElement, forwardRef, useMemo } from 'react';
+import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import numberToString from '../../utils/numberToString';
@@ -74,7 +74,6 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         ref={ref}
         collapsible
         type="single"
-        defaultValue="fee-details"
       >
         <AccordionItem
           value="fee-details"

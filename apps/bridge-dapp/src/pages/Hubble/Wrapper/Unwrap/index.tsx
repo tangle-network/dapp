@@ -1,6 +1,5 @@
 import { type FC, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { formatEther } from 'viem';
 
 import { ArrowRight, GasStationFill } from '@webb-tools/icons';
 import {
@@ -12,13 +11,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 import PageTabsContainer from '../../../../containers/PageTabsContainer';
 
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDefaultChainAndPool from '../../../../hooks/useDefaultChainAndPool';
 import useUnwrapButtonProps from './private/useUnwrapButtonProps';
+import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 
 import {
   SELECT_SOURCE_CHAIN_PATH,
@@ -32,29 +31,23 @@ const Unwrap: FC = () => {
 
   const { isMobile } = useCheckMobile();
 
-  const { balances } = useBalancesFromNotes();
-
   const navigate = useNavigateWithPersistParams();
 
   useDefaultChainAndPool();
 
   const [amount, setAmount] = useAmountWithRoute();
   const { srcTypedChainId } = useChainsFromRoute();
-  const { fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
+  const { allCurrencies, fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
 
-  const fungibleMaxAmount = useMemo(() => {
-    if (typeof srcTypedChainId !== 'number') {
-      return;
-    }
-
-    if (fungibleCfg && balances[fungibleCfg.id]?.[srcTypedChainId]) {
-      return Number(formatEther(balances[fungibleCfg.id][srcTypedChainId]));
-    }
-  }, [balances, fungibleCfg, srcTypedChainId]);
+  const { balances: walletBalances } = useCurrenciesBalances(
+    allCurrencies,
+    srcTypedChainId ?? undefined
+  );
 
   const { ...unwrapBtnProps } = useUnwrapButtonProps({
-    balances,
-    fungible: fungibleCfg,
+    balances: fungibleCfg ? walletBalances[fungibleCfg.id] : undefined,
+    fungibleCfg,
+    wrappableCfg,
   });
 
   const amountProps = useMemo(
@@ -77,7 +70,7 @@ const Unwrap: FC = () => {
           <TransactionInputCard.Root
             typedChainId={srcTypedChainId ?? undefined}
             tokenSymbol={fungibleCfg?.symbol}
-            maxAmount={fungibleMaxAmount}
+            maxAmount={fungibleCfg ? walletBalances[fungibleCfg.id] : undefined}
             {...amountProps}
           >
             <TransactionInputCard.Header>
