@@ -1,28 +1,41 @@
+import { useCallback, useMemo, useState } from 'react';
+import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
+import { parseEther } from 'viem';
+import { useNavigate } from 'react-router';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { useCallback, useMemo } from 'react';
-import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
-import { parseEther } from 'viem';
+import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
+import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
+import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import {
   AMOUNT_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
+  UNWRAP_FULL_PATH,
 } from '../../../../../constants';
-import useConnectButtonProps from '../../../../../hooks/useConnectButtonProps';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks';
+import {
+  useConnectButtonProps,
+  useEnqueueSubmittedTx,
+} from '../../../../../hooks';
 import handleTxError from '../../../../../utils/handleTxError';
 
 export default function useUnwrapButtonProps({
   balances,
   fungibleCfg,
+  wrappableCfg,
 }: {
-  balances: ReturnType<typeof useBalancesFromNotes>['balances'];
+  balances?: number;
   fungibleCfg?: CurrencyConfig;
+  wrappableCfg?: CurrencyConfig;
 }) {
-  const { activeApi, loading, isConnecting, noteManager } = useWebContext();
+  const { activeApi, loading, isConnecting, apiConfig } = useWebContext();
+  const enqueueSubmittedTx = useEnqueueSubmittedTx();
+  const navigate = useNavigate();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -38,31 +51,35 @@ export default function useUnwrapButtonProps({
     [SOURCE_CHAIN_KEY]: srcTypedId,
   } = query;
 
-  const { content: connectBtnCnt, handleConnect } =
-    useConnectButtonProps(srcTypedId);
+  const { content: connectBtnCnt, handleConnect } = useConnectButtonProps(
+    srcTypedId,
+    true
+  );
+
+  const [isUnwrapping, setIsUnwrapping] = useState(false);
 
   const isValidAmount = useMemo(() => {
-    if (!fungibleCfg) {
+    if (typeof amount !== 'string' || amount.length === 0) {
       return false;
     }
 
-    if (typeof srcTypedId !== 'number') {
+    const amountBI = BigInt(amount); // amount from search params is parsed already
+
+    // If balances is not a number, but amount is entered and > 0,
+    // it means user not connected to wallet but entered amount
+    // so we allow it
+    if (typeof balances !== 'number' && amountBI > 0) {
+      return true;
+    }
+
+    if (!balances || amountBI <= 0) {
       return false;
     }
 
-    if (!amount) {
-      return false;
-    }
+    const parsedBalance = parseEther(numberToString(balances));
 
-    const amountFloat = parseFloat(amount);
-    const balance = balances[fungibleCfg.id]?.[srcTypedId];
-
-    if (!balance || amountFloat <= 0) {
-      return false;
-    }
-
-    return parseEther(amount) <= balance;
-  }, [amount, balances, srcTypedId, fungibleCfg]);
+    return amountBI !== ZERO_BIG_INT && amountBI <= parsedBalance;
+  }, [amount, balances]);
 
   const inputCnt = useMemo(() => {
     if (typeof fungibleTokenId !== 'number') {
@@ -107,8 +124,12 @@ export default function useUnwrapButtonProps({
       return amountCnt;
     }
 
-    return 'Wrap';
-  }, [amountCnt, connectBtnCnt, inputCnt]);
+    if (isUnwrapping) {
+      return 'Unwrapping';
+    }
+
+    return 'Unwrap';
+  }, [amountCnt, connectBtnCnt, inputCnt, isUnwrapping]);
 
   const isDisabled = useMemo(
     () => {
@@ -119,14 +140,14 @@ export default function useUnwrapButtonProps({
       const allInputsFilled =
         !!amount && !!wrappableTokenId && !!fungibleTokenId && !!srcTypedId;
 
-      if (!allInputsFilled || !isValidAmount) {
+      if (!allInputsFilled || !isValidAmount || isUnwrapping) {
         return true;
       }
 
       return false;
     },
     // prettier-ignore
-    [amount, connectBtnCnt, fungibleTokenId, srcTypedId, wrappableTokenId, isValidAmount]
+    [amount, connectBtnCnt, fungibleTokenId, srcTypedId, wrappableTokenId, isValidAmount, isUnwrapping]
   );
 
   const isLoading = useMemo(() => {
@@ -140,14 +161,14 @@ export default function useUnwrapButtonProps({
       try {
         if (connectBtnCnt && typeof srcTypedId === 'number') {
           const nextApi = await handleConnect(srcTypedId);
-          if (!nextApi?.noteManager) {
+          if (!nextApi) {
             return;
           }
 
           actualApi = nextApi;
         }
 
-        if (!noteManager || !actualApi) {
+        if (!actualApi || !(actualApi instanceof WebbWeb3Provider)) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
@@ -161,6 +182,16 @@ export default function useUnwrapButtonProps({
           throw WebbError.from(WebbErrorCodes.UnsupportedChain);
         }
 
+        const fungibleContractAddr = fungibleCfg?.addresses.get(srcTypedIdNum);
+        if (fungibleContractAddr === undefined) {
+          throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+        }
+
+        const wrappableTokenAddr = wrappableCfg?.addresses.get(srcTypedIdNum);
+        if (wrappableCfg === undefined || wrappableTokenAddr === undefined) {
+          throw WebbError.from(WebbErrorCodes.NoWrappableTokenAvailable);
+        }
+
         const srcChain = chainsPopulated[srcTypedIdNum];
 
         if (!srcChain) {
@@ -171,13 +202,37 @@ export default function useUnwrapButtonProps({
           throw WebbError.from(WebbErrorCodes.InvalidAmount);
         }
 
-        // TODO: handle wrapping logic
+        setIsUnwrapping(true);
+        const client = getViemClient(srcTypedIdNum);
+        const unwrapTokenAddrHex =
+          getViemValidAddressFormat(wrappableTokenAddr);
+        const fungibleContractHex =
+          getViemValidAddressFormat(fungibleContractAddr);
+
+        const walletClient = actualApi.walletClient;
+        const { request } = await client.simulateContract({
+          address: fungibleContractHex,
+          abi: FungibleTokenWrapper__factory.abi,
+          functionName: 'unwrap',
+          args: [unwrapTokenAddrHex, BigInt(amount)],
+          account: walletClient.account,
+        });
+        const txHash = await walletClient.writeContract(request);
+
+        enqueueSubmittedTx(txHash, apiConfig.chains[+srcTypedIdNum], 'unwrap');
+
+        // navigate back to unwrap page to clear query params
+        navigate(UNWRAP_FULL_PATH);
       } catch (error) {
-        handleTxError(error, 'Wrap');
+        console.error(error);
+
+        handleTxError(error, 'Unwrap');
+      } finally {
+        setIsUnwrapping(false);
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, fungibleCfg, connectBtnCnt, srcTypedId, handleConnect, noteManager]
+    [activeApi, amount, fungibleCfg, wrappableCfg, connectBtnCnt, srcTypedId, handleConnect, enqueueSubmittedTx, apiConfig, navigate]
   );
 
   return {

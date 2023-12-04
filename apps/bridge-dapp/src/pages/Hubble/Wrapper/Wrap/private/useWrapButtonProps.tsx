@@ -1,25 +1,43 @@
+import { useCallback, useMemo, useState } from 'react';
+import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
+import { useNavigate } from 'react-router';
+import { parseEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
+import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
+import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
-import { useCallback, useMemo } from 'react';
-import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
-import { parseEther } from 'viem';
+import { ZERO_ADDRESS } from '@webb-tools/utils';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+
+import {
+  useEnqueueSubmittedTx,
+  useConnectButtonProps,
+} from '../../../../../hooks';
+import { handleTxError } from '../../../../../utils';
 import {
   AMOUNT_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
+  WRAP_FULL_PATH,
 } from '../../../../../constants';
-import useConnectButtonProps from '../../../../../hooks/useConnectButtonProps';
-import handleTxError from '../../../../../utils/handleTxError';
 
 export default function useWrapButtonProps({
   balances,
+  fungibleCfg,
+  wrappableCfg,
 }: {
   balances?: number;
+  fungibleCfg?: CurrencyConfig;
+  wrappableCfg?: CurrencyConfig;
 }) {
-  const { activeApi, loading, isConnecting, noteManager } = useWebContext();
+  const { activeApi, loading, isConnecting, apiConfig } = useWebContext();
+  const enqueueSubmittedTx = useEnqueueSubmittedTx();
+  const navigate = useNavigate();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -35,8 +53,12 @@ export default function useWrapButtonProps({
     [SOURCE_CHAIN_KEY]: srcTypedId,
   } = query;
 
-  const { content: connectBtnCnt, handleConnect } =
-    useConnectButtonProps(srcTypedId);
+  const { content: connectBtnCnt, handleConnect } = useConnectButtonProps(
+    srcTypedId,
+    true
+  );
+
+  const [isWrapping, setIsWrapping] = useState(false);
 
   const isValidAmount = useMemo(() => {
     if (typeof amount !== 'string' || amount.length === 0) {
@@ -104,8 +126,12 @@ export default function useWrapButtonProps({
       return amountCnt;
     }
 
+    if (isWrapping) {
+      return 'Wrapping';
+    }
+
     return 'Wrap';
-  }, [amountCnt, connectBtnCnt, inputCnt]);
+  }, [amountCnt, connectBtnCnt, inputCnt, isWrapping]);
 
   const isDisabled = useMemo(
     () => {
@@ -116,14 +142,14 @@ export default function useWrapButtonProps({
       const allInputsFilled =
         !!amount && !!wrappableTokenId && !!fungibleTokenId && !!srcTypedId;
 
-      if (!allInputsFilled || !isValidAmount) {
+      if (!allInputsFilled || !isValidAmount || isWrapping) {
         return true;
       }
 
       return false;
     },
     // prettier-ignore
-    [amount, connectBtnCnt, fungibleTokenId, srcTypedId, wrappableTokenId, isValidAmount]
+    [amount, connectBtnCnt, fungibleTokenId, srcTypedId, wrappableTokenId, isValidAmount, isWrapping]
   );
 
   const isLoading = useMemo(() => {
@@ -137,15 +163,19 @@ export default function useWrapButtonProps({
       try {
         if (connectBtnCnt && typeof srcTypedId === 'number') {
           const nextApi = await handleConnect(srcTypedId);
-          if (!nextApi?.noteManager) {
+          if (!nextApi) {
             return;
           }
 
           actualApi = nextApi;
         }
 
-        if (!noteManager || !actualApi) {
+        if (!actualApi || !(actualApi instanceof WebbWeb3Provider)) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
+        }
+
+        if (fungibleCfg === undefined) {
+          throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
         }
 
         const fungibleTokenIdNum = Number(fungibleTokenId);
@@ -158,6 +188,16 @@ export default function useWrapButtonProps({
           throw WebbError.from(WebbErrorCodes.UnsupportedChain);
         }
 
+        const fungibleContractAddr = fungibleCfg?.addresses.get(srcTypedIdNum);
+        if (fungibleContractAddr === undefined) {
+          throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+        }
+
+        const wrappableTokenAddr = wrappableCfg?.addresses.get(srcTypedIdNum);
+        if (wrappableCfg === undefined || wrappableTokenAddr === undefined) {
+          throw WebbError.from(WebbErrorCodes.NoWrappableTokenAvailable);
+        }
+
         const srcChain = chainsPopulated[srcTypedIdNum];
         if (!srcChain) {
           throw WebbError.from(WebbErrorCodes.UnsupportedChain);
@@ -167,13 +207,48 @@ export default function useWrapButtonProps({
           throw WebbError.from(WebbErrorCodes.InvalidAmount);
         }
 
-        // TODO: handle wrapping logic
+        setIsWrapping(true);
+        const client = getViemClient(srcTypedIdNum);
+        const wrapTokenAddrHex = getViemValidAddressFormat(wrappableTokenAddr);
+        const fungibleContractHex =
+          getViemValidAddressFormat(fungibleContractAddr);
+
+        const walletClient = actualApi.walletClient;
+        const { request } = await client.simulateContract({
+          address: fungibleContractHex,
+          abi: FungibleTokenWrapper__factory.abi,
+          functionName: 'wrap',
+          args: [
+            wrapTokenAddrHex,
+            // if native token, amount is 0
+            wrapTokenAddrHex === ZERO_ADDRESS
+              ? parseEther('0')
+              : BigInt(amount),
+          ],
+          account: walletClient.account,
+          // if native token, tx value is equal amount
+          value:
+            wrapTokenAddrHex === ZERO_ADDRESS
+              ? BigInt(amount)
+              : parseEther('0'),
+        });
+
+        const txHash = await walletClient.writeContract(request);
+
+        enqueueSubmittedTx(txHash, apiConfig.chains[+srcTypedIdNum], 'wrap');
+
+        // navigate back to wrap page to clear query params
+        navigate(WRAP_FULL_PATH);
       } catch (error) {
+        console.error(error);
+
         handleTxError(error, 'Wrap');
+      } finally {
+        setIsWrapping(false);
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, noteManager]
+    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig, navigate]
   );
 
   return {

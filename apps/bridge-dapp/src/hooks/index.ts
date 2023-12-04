@@ -2,6 +2,7 @@ export * from './useAddCurrency';
 export { default as useAmountWithRoute } from './useAmountWithRoute';
 export { default as useChainsFromNote } from './useChainsFromNote';
 export { default as useChainsFromRoute } from './useChainsFromRoute';
+export { default as useConnectButtonProps } from './useConnectButtonProps';
 export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
 export { default as useCurrentTx } from './useCurrentTx';
 export { default as useDefaultChainAndPool } from './useDefaultChainAndPool';

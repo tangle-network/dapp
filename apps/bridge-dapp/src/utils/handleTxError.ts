@@ -22,7 +22,9 @@ function handleTxError(
   notificationApi({
     variant: 'error',
     message: `${txType ?? 'Transaction'} failed`,
-    secondaryMessage: displayErrorMessage,
+    secondaryMessage: txType?.toLowerCase().includes('wrap')
+      ? 'Transaction rejected. Please authorize in your wallet to proceed.'
+      : displayErrorMessage,
   });
 }
 

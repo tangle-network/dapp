@@ -1,8 +1,6 @@
 import { type FC, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { formatEther } from 'viem';
-
-import { ArrowRight, GasStationFill } from '@webb-tools/icons';
+import { ArrowRight } from '@webb-tools/icons';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -10,15 +8,16 @@ import {
   useCheckMobile,
   FeeDetails,
 } from '@webb-tools/webb-ui-components';
-import PageTabsContainer from '../../../../containers/PageTabsContainer';
 
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import PageTabsContainer from '../../../../containers/PageTabsContainer';
 import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDefaultChainAndPool from '../../../../hooks/useDefaultChainAndPool';
 import useUnwrapButtonProps from './private/useUnwrapButtonProps';
+import { useCurrenciesBalances } from '@webb-tools/react-hooks';
+import useUnwrapFeeDetailsProps from './private/useUnwrapFeeDetailsProps';
 
 import {
   SELECT_SOURCE_CHAIN_PATH,
@@ -32,29 +31,29 @@ const Unwrap: FC = () => {
 
   const { isMobile } = useCheckMobile();
 
-  const { balances } = useBalancesFromNotes();
-
   const navigate = useNavigateWithPersistParams();
 
   useDefaultChainAndPool();
 
   const [amount, setAmount] = useAmountWithRoute();
   const { srcTypedChainId } = useChainsFromRoute();
-  const { fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
+  const { allCurrencies, fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
 
-  const fungibleMaxAmount = useMemo(() => {
-    if (typeof srcTypedChainId !== 'number') {
-      return;
-    }
-
-    if (fungibleCfg && balances[fungibleCfg.id]?.[srcTypedChainId]) {
-      return Number(formatEther(balances[fungibleCfg.id][srcTypedChainId]));
-    }
-  }, [balances, fungibleCfg, srcTypedChainId]);
+  const { balances: walletBalances } = useCurrenciesBalances(
+    allCurrencies,
+    srcTypedChainId ?? undefined
+  );
 
   const { ...unwrapBtnProps } = useUnwrapButtonProps({
-    balances,
-    fungible: fungibleCfg,
+    balances: fungibleCfg ? walletBalances[fungibleCfg.id] : undefined,
+    fungibleCfg,
+    wrappableCfg,
+  });
+
+  const feeDetailsProps = useUnwrapFeeDetailsProps({
+    balances: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
+    fungibleCfg,
+    wrappableCfg,
   });
 
   const amountProps = useMemo(
@@ -77,7 +76,7 @@ const Unwrap: FC = () => {
           <TransactionInputCard.Root
             typedChainId={srcTypedChainId ?? undefined}
             tokenSymbol={fungibleCfg?.symbol}
-            maxAmount={fungibleMaxAmount}
+            maxAmount={fungibleCfg ? walletBalances[fungibleCfg.id] : undefined}
             {...amountProps}
           >
             <TransactionInputCard.Header>
@@ -115,15 +114,7 @@ const Unwrap: FC = () => {
 
         <div className="flex flex-col justify-between grow">
           {/* TODO: calculate gas */}
-          <FeeDetails
-            info="The fee pays for the transaction to be processed on the network."
-            items={[
-              {
-                name: 'Gas',
-                Icon: <GasStationFill />,
-              },
-            ]}
-          />
+          <FeeDetails {...feeDetailsProps} />
 
           {!isMobile ? (
             <Button isFullWidth {...unwrapBtnProps} />

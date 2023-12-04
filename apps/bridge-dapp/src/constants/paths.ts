@@ -9,6 +9,8 @@ export const WITHDRAW_PATH = 'withdraw';
 
 export const WRAP_PATH = 'wrap';
 export const UNWRAP_PATH = 'unwrap';
+export const WRAP_FULL_PATH = `/${WRAPPER_PATH}/${WRAP_PATH}`;
+export const UNWRAP_FULL_PATH = `/${WRAPPER_PATH}/${UNWRAP_PATH}`;
 
 export const SELECT_SOURCE_CHAIN_PATH = 'select-source-chain';
 export const SELECT_DESTINATION_CHAIN_PATH = 'select-destination-chain';
