@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
 import { Search } from '@webb-tools/icons';
@@ -32,8 +31,10 @@ import type {
   SessionsType,
 } from './types';
 
-export type RankingItemType = {
+type RankingItemType = {
+  rank: number;
   address: string;
+  addresses: string[];
   badges: BadgeEnum[];
   points: number;
   sessions: SessionsType;
@@ -43,13 +44,13 @@ export type RankingItemType = {
 const columnHelper = createColumnHelper<RankingItemType>();
 
 const columns = [
-  columnHelper.accessor('points', {
+  columnHelper.accessor('rank', {
+    id: 'rank',
     header: () => <HeaderCell title="Rank" />,
     cell: (cellCtx) => {
-      // const globalRowIndex = points.row.index + pageIndex * pageSize;
       return (
         <Typography variant="mkt-small-caps" fw="bold">
-          #{cellCtx.row.index + 1}
+          #{cellCtx.getValue()}
         </Typography>
       );
     },
@@ -88,15 +89,37 @@ const columns = [
     header: () => <HeaderCell title="Social" />,
     cell: (cellCtx) => <SocialLinksCell identity={cellCtx.getValue()} />,
   }),
+
+  // For global search
+  columnHelper.accessor((row) => row.addresses.join(', '), {
+    id: 'addresses',
+  }),
+
+  columnHelper.accessor((row) => row.badges.join(' ,'), {
+    id: 'badges string',
+  }),
+
+  columnHelper.accessor(
+    (row) => (row.identity ? Object.values(row.identity.info).join(', ') : ''),
+    {
+      id: 'identity string',
+    }
+  ),
 ];
 
 type Props = {
   participants: LeaderboardSuccessResponseType['data']['participants'];
 };
 
-const participantToRankingItem = (participant: ParticipantType) =>
+const participantToRankingItem = (participant: ParticipantType, idx: number) =>
   ({
-    address: participant.addresses[0].address,
+    rank: idx + 1,
+    // Pior the `stash` type address, if not available, use the first address
+    // in the `addresses` array
+    address:
+      participant.addresses.find((a) => a.type === 'stash')?.address ||
+      participant.addresses[0].address,
+    addresses: participant.addresses.map((a) => a.address),
     badges: participant.badges,
     points: participant.points,
     sessions: participant.sessions,
@@ -125,12 +148,21 @@ const RankingTableView: FC<Props> = ({ participants }) => {
       pagination: {
         pageSize: PAGE_SIZE,
       },
+      columnVisibility: {
+        addresses: false,
+        'badges string': false,
+        'identity string': false,
+      },
+    },
+    state: {
+      globalFilter: searchTerm,
     },
     globalFilterFn: fuzzyFilter,
+    enableGlobalFilter: true,
+    onGlobalFilterChange: setSearchTerm,
     filterFns: {
       fuzzy: fuzzyFilter,
     },
-    debugTable: true,
   });
 
   return (
