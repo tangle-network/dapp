@@ -14,6 +14,9 @@ import {
   SOCIAL_ICONS_RECORD,
   SOCIAL_URLS_RECORD,
   TANGLE_MKT_URL,
+  TANGLE_PRIVACY_POLICY_URL,
+  TANGLE_TERMS_OF_SERVICE_URL,
+  TANGLE_WHITEPAPER_URL,
   WEBB_AVAIABLE_SOCIALS,
   WEBB_CAREERS_URL,
   WEBB_DOCS_URL,
@@ -39,113 +42,124 @@ type SocialType = {
   href: string;
 };
 
-const navLinks: Array<NavLinkType> = [
-  {
-    group: 'Community',
-    links: [
-      {
-        label: 'Github',
-        url: SOCIAL_URLS_RECORD.github,
-        isInternal: false,
-      },
-      {
-        label: 'Telegram',
-        url: SOCIAL_URLS_RECORD.telegram,
-        isInternal: false,
-      },
-      {
-        label: 'Discord',
-        url: SOCIAL_URLS_RECORD.discord,
-        isInternal: false,
-      },
-      {
-        label: 'Twitter',
-        url: SOCIAL_URLS_RECORD.twitter,
-        isInternal: false,
-      },
-      {
-        label: 'Commonwealth',
-        url: SOCIAL_URLS_RECORD.commonwealth,
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Ecosystem',
-    links: [
-      {
-        label: 'Tangle',
-        url: TANGLE_MKT_URL,
-        isInternal: false,
-      },
-      {
-        label: 'DKG Explorer',
-        url: DKG_STATS_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Hubble Bridge',
-        url: BRIDGE_URL,
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Developer',
-    links: [
-      {
-        label: 'Documentation',
-        url: WEBB_DOCS_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Source Code',
-        url: SOCIAL_URLS_RECORD.github,
-        isInternal: false,
-      },
-      {
-        label: 'Whitepaper',
-        url: WEBB_WHITEPAPER_URL,
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Company',
-    links: [
-      {
-        label: 'About Us',
-        url: WEBB_MKT_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Careers',
-        url: WEBB_CAREERS_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Brand Kit',
-        url: '/brand-kit',
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Legal',
-    links: [
-      {
-        label: 'Privacy Policy',
-        url: '/privacy-policy',
-        isInternal: false,
-      },
-      {
-        label: 'Terms of Service',
-        url: '/terms-and-conditions',
-        isInternal: false,
-      },
-    ],
-  },
-];
+type Props = {
+  type: 'webbsite' | 'tangle';
+  hideNewsletter?: boolean;
+};
+
+const getNavLinks = (type: Props['type'] = 'webbsite') =>
+  [
+    {
+      group: 'Community',
+      links: [
+        {
+          label: 'Github',
+          url: SOCIAL_URLS_RECORD.github,
+          isInternal: false,
+        },
+        {
+          label: 'Telegram',
+          url: SOCIAL_URLS_RECORD.telegram,
+          isInternal: false,
+        },
+        {
+          label: 'Discord',
+          url: SOCIAL_URLS_RECORD.discord,
+          isInternal: false,
+        },
+        {
+          label: 'Twitter',
+          url: SOCIAL_URLS_RECORD.twitter,
+          isInternal: false,
+        },
+        {
+          label: 'Commonwealth',
+          url: SOCIAL_URLS_RECORD.commonwealth,
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      group: 'Ecosystem',
+      links: [
+        {
+          label: 'Tangle',
+          url: TANGLE_MKT_URL,
+          isInternal: false,
+        },
+        {
+          label: 'DKG Explorer',
+          url: DKG_STATS_URL,
+          isInternal: false,
+        },
+        {
+          label: 'Hubble Bridge',
+          url: BRIDGE_URL,
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      group: 'Developer',
+      links: [
+        {
+          label: 'Documentation',
+          url: WEBB_DOCS_URL,
+          isInternal: false,
+        },
+        {
+          label: 'Source Code',
+          url: SOCIAL_URLS_RECORD.github,
+          isInternal: false,
+        },
+        {
+          label: 'Whitepaper',
+          url:
+            type === 'webbsite' ? WEBB_WHITEPAPER_URL : TANGLE_WHITEPAPER_URL,
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      group: 'Company',
+      links: [
+        {
+          label: 'About Us',
+          url: WEBB_MKT_URL,
+          isInternal: false,
+        },
+        {
+          label: 'Careers',
+          url: WEBB_CAREERS_URL,
+          isInternal: false,
+        },
+        {
+          label: 'Brand Kit',
+          url: '/brand-kit',
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      group: 'Legal',
+      links: [
+        {
+          label: 'Privacy Policy',
+          url:
+            type === 'webbsite' ? '/privacy-policy' : TANGLE_PRIVACY_POLICY_URL,
+          isInternal: type === 'webbsite',
+        },
+        {
+          label: 'Terms of Service',
+          url:
+            type === 'webbsite'
+              ? '/terms-and-conditions'
+              : TANGLE_TERMS_OF_SERVICE_URL,
+          isInternal: type === 'webbsite',
+        },
+      ],
+    },
+  ] as const satisfies Array<NavLinkType>;
 
 const socials = WEBB_AVAIABLE_SOCIALS.map(
   (name) =>
@@ -155,11 +169,6 @@ const socials = WEBB_AVAIABLE_SOCIALS.map(
       href: SOCIAL_URLS_RECORD[name],
     } as const satisfies SocialType)
 );
-
-type Props = {
-  type: 'webbsite' | 'tangle';
-  hideNewsletter?: boolean;
-};
 
 export const WebsiteFooter = forwardRef<
   ElementRef<'footer'>,
@@ -235,7 +244,7 @@ export const WebsiteFooter = forwardRef<
         {/** Logo and links */}
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
-          {navLinks.map(({ group, links }) => (
+          {getNavLinks(type).map(({ group, links }) => (
             <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
               <Typography
                 variant="mkt-body2"
