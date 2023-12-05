@@ -142,3 +142,21 @@ export const getValidatorIdentity = async (
     );
   }
 };
+
+export const isNominatorAlreadyBonded = async (
+  nominatorAddress: string
+): Promise<boolean> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) throw new Error('Failed to get Polkadot API');
+
+    const isBondedInfo = await api.query.staking.bonded(nominatorAddress);
+
+    return isBondedInfo.isSome;
+  } catch (error) {
+    throw new Error(
+      'Failed to check if nominator is already bonded - ' + nominatorAddress
+    );
+  }
+};

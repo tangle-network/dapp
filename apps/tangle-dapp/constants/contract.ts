@@ -1,3 +1,6 @@
+export const StakinInterfaceAddress =
+  '0x0000000000000000000000000000000000000800';
+
 export const StakinInterfaceABI = [
   {
     inputs: [

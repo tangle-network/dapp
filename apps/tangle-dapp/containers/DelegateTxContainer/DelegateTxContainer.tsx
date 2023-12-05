@@ -1,29 +1,31 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import { STAKING_PRECOMPILE_LINK } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { bondAndNominate } from '../../constants/evm';
+import {
+  bondExtraTokens,
+  bondTokens,
+  isNominatorAlreadyBonded,
+  nominateValidators,
+  PAYMENT_DESTINATION_OPTIONS,
+} from '../../constants';
 import useValidators from '../../data/DelegateFlow/useValidators';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import { PaymentDestination } from '../../types';
+import { convertEthereumToSubstrateAddress } from '../../utils';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
 import SelectDelegates from './SelectDelegates';
 import { DelegateTxContainerProps, DelegateTxSteps } from './types';
-
-const PAYMENT_DESTINATION_OPTIONS = [
-  'Current account (increase the amount at stake)',
-  'Current account (do not increase the amount at stake)',
-];
-
-const CONTRACT_LINK =
-  'https://github.com/webb-tools/tangle/blob/main/precompiles/staking/StakingInterface.sol';
 
 const CONTRACT_FUNC = 'StakingInterface.sol';
 
@@ -31,13 +33,20 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
+  const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-
   const { data: validators } = useValidators();
 
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
     DelegateTxSteps.BOND_TOKENS
   );
+  const [amountToBond, setAmountToBond] = useState<number>(0);
+  const [paymentDestination, setPaymentDestination] = useState<string>(
+    PaymentDestination.AUTO_COMPOUND
+  );
+  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
+  const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
+    useState<boolean>(false);
 
   const currentStep = useMemo(() => {
     if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
@@ -56,14 +65,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   const { data: walletBalance } = useTokenWalletBalance(walletAddress);
-
-  const [amountToBond, setAmountToBond] = useState<number>(0);
-
-  const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.AUTO_COMPOUND
-  );
-
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
 
   const amountToBondError = useMemo(() => {
     if (!walletBalance) return '';
@@ -93,6 +94,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [continueToSelectDelegatesStep, continueToAuthorizeTxStep]);
 
   const closeModal = useCallback(() => {
+    setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(0);
     setPaymentDestination(PaymentDestination.AUTO_COMPOUND);
@@ -101,13 +103,66 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    await bondAndNominate(
-      walletAddress,
-      selectedValidators,
-      amountToBond,
-      paymentDestination
-    );
-  }, [walletAddress, amountToBond, selectedValidators, paymentDestination]);
+    setIsSubmitAndSignTxLoading(true);
+
+    const substrateAddress = convertEthereumToSubstrateAddress(walletAddress);
+    const isBonded = await isNominatorAlreadyBonded(substrateAddress);
+
+    try {
+      let bondtxHash = '';
+
+      if (isBonded) {
+        const bondExtraTokensTxHash = await bondExtraTokens(
+          walletAddress,
+          amountToBond
+        );
+        bondtxHash = bondExtraTokensTxHash;
+      } else {
+        const bondTokensTxHash = await bondTokens(
+          walletAddress,
+          amountToBond,
+          paymentDestination
+        );
+        bondtxHash = bondTokensTxHash;
+      }
+
+      if (bondtxHash) {
+        notificationApi({
+          variant: 'success',
+          message: `Successfully bonded ${amountToBond} tTNT.`,
+        });
+        const nominateTxHash = await nominateValidators(
+          walletAddress,
+          selectedValidators
+        );
+
+        if (nominateTxHash) {
+          notificationApi({
+            variant: 'success',
+            message: `Successfully nominated ${selectedValidators.length} validators.`,
+          });
+        }
+
+        closeModal();
+      }
+    } catch (e) {
+      let message = 'Failed to bond tokens and nominate!';
+
+      if (isViemError(e)) {
+        message = e.shortMessage;
+      }
+
+      notificationApi({ variant: 'error', message });
+      closeModal();
+    }
+  }, [
+    amountToBond,
+    closeModal,
+    notificationApi,
+    paymentDestination,
+    selectedValidators,
+    walletAddress,
+  ]);
 
   return (
     <Modal open>
@@ -144,7 +199,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             <AuthorizeTx
               nominatorAddress={walletAddress}
               contractFunc={CONTRACT_FUNC}
-              contractLink={CONTRACT_LINK}
+              contractLink={STAKING_PRECOMPILE_LINK}
               amountToBond={amountToBond}
             />
           ) : null}
@@ -181,6 +236,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 delegateTxStep === DelegateTxSteps.AUTHORIZE_TX &&
                 !continueToSignAndSubmitTx
               }
+              isLoading={isSubmitAndSignTxLoading}
               onClick={submitAndSignTx}
             >
               Sign & Submit
