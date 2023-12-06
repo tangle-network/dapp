@@ -20,7 +20,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       type = 'token',
       unavailableTokens,
       value: selectedAsset,
-      txnType,
+      alertTitle,
       ...props
     },
     ref
@@ -137,11 +137,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         </div>
 
         {/* Alert Component */}
-        {txnType === 'deposit' ? (
-          <Alert title="The availability of shielded pools is determined by your selected source chain and token." />
-        ) : (
-          <Alert title="The availability of shielded pools is subject to the balance in your account." />
-        )}
+        {alertTitle && <Alert title={alertTitle} />}
       </ListCardWrapper>
     );
   }

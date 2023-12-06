@@ -15,6 +15,7 @@ import {
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
+import { BRIDGE_PATH, WRAPPER_PATH } from './paths';
 
 const items: SideBarItemProps[] = [
   {
@@ -26,7 +27,12 @@ const items: SideBarItemProps[] = [
       {
         name: 'Bridge',
         isInternal: true,
-        href: '/bridge',
+        href: `/${BRIDGE_PATH}`,
+      },
+      {
+        name: 'Wrapper',
+        isInternal: true,
+        href: `/${WRAPPER_PATH}`,
       },
       {
         name: 'Explorer',

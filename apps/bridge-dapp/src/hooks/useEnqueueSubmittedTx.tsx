@@ -4,7 +4,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import { type ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { useCallback } from 'react';
 import SubmittedTxModal from '../components/SubmittedTxModal';
-import { BRIDGE_TABS } from '../constants';
+import { BRIDGE_TABS, WRAPPER_TABS } from '../constants';
 
 function useEnqueueSubmittedTx() {
   const { activeApi } = useWebContext();
@@ -14,7 +14,7 @@ function useEnqueueSubmittedTx() {
     (
       transactionHash: string,
       chain?: ChainConfig,
-      txType?: (typeof BRIDGE_TABS)[number]
+      txType?: (typeof BRIDGE_TABS)[number] | (typeof WRAPPER_TABS)[number]
     ) => {
       const explorer = chain?.blockExplorers?.default?.url;
 

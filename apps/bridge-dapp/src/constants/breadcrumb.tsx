@@ -6,7 +6,7 @@ import {
   BRIDGE_PATH,
   ECOSYSTEM_PATH,
   NOTE_ACCOUNT_PATH,
-  WRAP_UNWRAP_PATH,
+  WRAPPER_PATH,
 } from './paths';
 
 export const BREADCRUMBS_RECORD: Record<
@@ -20,8 +20,9 @@ export const BREADCRUMBS_RECORD: Record<
     label: 'Hubble Bridge',
     Icon: <ContrastTwoLine />,
   },
-  [WRAP_UNWRAP_PATH]: {
-    label: 'Wrap & Unwrap',
+  [WRAPPER_PATH]: {
+    label: 'Hubble Wrapper',
+    Icon: <ContrastTwoLine />,
   },
   [NOTE_ACCOUNT_PATH]: {
     label: 'Account Dashboard',

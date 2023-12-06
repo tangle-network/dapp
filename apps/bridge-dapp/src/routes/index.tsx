@@ -20,19 +20,26 @@ import {
   SELECT_TOKEN_PATH,
   TRANSFER_PATH,
   WITHDRAW_PATH,
-  WRAP_UNWRAP_PATH,
+  WRAPPER_PATH,
+  WRAP_PATH,
+  UNWRAP_PATH,
+  SELECT_SOURCE_TOKEN_PATH,
+  SELECT_DESTINATION_TOKEN_PATH,
 } from '../constants';
 import { Layout } from '../containers';
 import Deposit from '../pages/Hubble/Bridge/Deposit';
 import SelectChain from '../pages/Hubble/Bridge/SelectChain';
 import SelectPool from '../pages/Hubble/Bridge/SelectPool';
 import SelectRelayer from '../pages/Hubble/Bridge/SelectRelayer';
-import SelectToken from '../pages/Hubble/Bridge/SelectToken';
+import BridgeSelectToken from '../pages/Hubble/Bridge/SelectToken';
 import Transfer from '../pages/Hubble/Bridge/Transfer';
 import Withdraw from '../pages/Hubble/Bridge/Withdraw';
 
-const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
-const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
+import WrapperSelectToken from '../pages/Hubble/Wrapper/SelectToken';
+
+const HubbleWrapper = lazy(() => import('../containers/HubbleContainer'));
+const Wrap = lazy(() => import('../pages/Hubble/Wrapper/Wrap'));
+const Unwrap = lazy(() => import('../pages/Hubble/Wrapper/Unwrap'));
 const Account = lazy(() => import('../pages/Account'));
 const AccountTransactions = lazy(() => import('../pages/Account/Transactions'));
 const AccountTransactionDetail = lazy(
@@ -69,7 +76,7 @@ const AppRoutes = () => {
                 path={BRIDGE_PATH}
                 element={
                   <CSuspense>
-                    <Bridge />
+                    <HubbleWrapper />
                   </CSuspense>
                 }
               >
@@ -83,7 +90,10 @@ const AppRoutes = () => {
                     path={SELECT_DESTINATION_CHAIN_PATH}
                     element={<SelectChain chainType="dest" />}
                   />
-                  <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
+                  <Route
+                    path={SELECT_TOKEN_PATH}
+                    element={<BridgeSelectToken />}
+                  />
                   <Route
                     path={SELECT_SHIELDED_POOL_PATH}
                     element={<SelectPool />}
@@ -120,7 +130,10 @@ const AppRoutes = () => {
                     path={SELECT_SHIELDED_POOL_PATH}
                     element={<SelectPool />}
                   />
-                  <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
+                  <Route
+                    path={SELECT_TOKEN_PATH}
+                    element={<BridgeSelectToken />}
+                  />
                   <Route
                     path={SELECT_RELAYER_PATH}
                     element={<SelectRelayer />}
@@ -131,13 +144,57 @@ const AppRoutes = () => {
               </Route>
 
               <Route
-                path={WRAP_UNWRAP_PATH}
+                path={WRAPPER_PATH}
                 element={
                   <CSuspense>
-                    <WrapAndUnwrap />
+                    <HubbleWrapper />
                   </CSuspense>
                 }
-              />
+              >
+                <Route
+                  path={WRAP_PATH}
+                  element={
+                    <CSuspense>
+                      <Wrap />
+                    </CSuspense>
+                  }
+                >
+                  <Route
+                    path={SELECT_SOURCE_CHAIN_PATH}
+                    element={<SelectChain chainType="source" />}
+                  />
+                  <Route
+                    path={SELECT_SOURCE_TOKEN_PATH}
+                    element={<WrapperSelectToken type="src" />}
+                  />
+                  <Route
+                    path={SELECT_DESTINATION_TOKEN_PATH}
+                    element={<WrapperSelectToken type="dest" />}
+                  />
+                </Route>
+                <Route
+                  path={UNWRAP_PATH}
+                  element={
+                    <CSuspense>
+                      <Unwrap />
+                    </CSuspense>
+                  }
+                >
+                  <Route
+                    path={SELECT_SOURCE_CHAIN_PATH}
+                    element={<SelectChain chainType="source" />}
+                  />
+                  <Route
+                    path={SELECT_SOURCE_TOKEN_PATH}
+                    element={<WrapperSelectToken type="src" />}
+                  />
+                  <Route
+                    path={SELECT_DESTINATION_TOKEN_PATH}
+                    element={<WrapperSelectToken type="dest" />}
+                  />
+                </Route>
+                <Route path="*" element={<Navigate to={WRAP_PATH} />} />
+              </Route>
 
               <Route path={NOTE_ACCOUNT_PATH}>
                 <Route

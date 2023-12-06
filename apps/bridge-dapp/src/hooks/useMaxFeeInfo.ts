@@ -1,4 +1,3 @@
-import { fetchFeeData, getPublicClient } from 'wagmi/actions';
 import {
   ActiveWebbRelayer,
   RelayerFeeInfo,
@@ -7,14 +6,11 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import gasLimit from '@webb-tools/dapp-config/gasLimitConfig';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
-import {
-  calculateTypedChainId,
-  parseTypedChainId,
-} from '@webb-tools/sdk-core/typed-chain-id';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getErrorMessage } from '../utils';
+import { getErrorMessage, getEstimatedGasFeesByChain } from '../utils';
 
 /**
  * Get the max fee info for the current active chain
@@ -173,26 +169,8 @@ export const useMaxFeeInfo = (
         setFeeInfo(gasAmount);
         setIsLoading(false);
       } else if (activeApi instanceof WebbWeb3Provider) {
-        const chainId = parseTypedChainId(typedChainId).chainId;
-        const publicClient = getPublicClient({ chainId });
-
-        const { maxFeePerGas, gasPrice, maxPriorityFeePerGas } =
-          await fetchFeeData({ chainId });
-
-        let actualGasPrice = await publicClient.getGasPrice();
-        if (gasPrice && gasPrice > actualGasPrice) {
-          actualGasPrice = gasPrice;
-        }
-
-        if (maxFeePerGas && maxFeePerGas > actualGasPrice) {
-          actualGasPrice = maxFeePerGas;
-        }
-
-        if (maxPriorityFeePerGas && maxPriorityFeePerGas > actualGasPrice) {
-          actualGasPrice = maxPriorityFeePerGas;
-        }
-
-        setFeeInfo(gasAmount * actualGasPrice);
+        const feeInfo = await getEstimatedGasFeesByChain(typedChainId);
+        setFeeInfo(feeInfo);
       } else {
         throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
       }

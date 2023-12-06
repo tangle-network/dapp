@@ -8,7 +8,10 @@ import useCurrentTypedChainId from '@webb-tools/react-hooks/useCurrentTypedChain
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import { useCallback, useMemo } from 'react';
 
-function useConnectButtonProps(typedChainId?: number | null) {
+function useConnectButtonProps(
+  typedChainId?: number | null,
+  notCheckNoteAcc?: boolean
+) {
   const { activeApi = null, activeWallet, switchChain } = useWebContext();
 
   const { toggleModal } = useConnectWallet();
@@ -17,31 +20,35 @@ function useConnectButtonProps(typedChainId?: number | null) {
 
   const activeTypedChainId = useCurrentTypedChainId();
 
-  const content = useMemo(() => {
-    if (!activeWallet) {
-      return 'Connect Wallet' as const;
-    }
+  const content = useMemo(
+    () => {
+      if (!activeWallet) {
+        return 'Connect Wallet' as const;
+      }
 
-    const chainName =
-      typeof typedChainId === 'number'
-        ? chainsPopulated[typedChainId]?.name
-        : undefined;
+      const chainName =
+        typeof typedChainId === 'number'
+          ? chainsPopulated[typedChainId]?.name
+          : undefined;
 
-    // There is a case where the user has a wallet connected but the chain is not supported
-    if (activeTypedChainId === null) {
-      return chainName
-        ? `Switch to ${chainName}`
-        : 'Switch to a supported chain';
-    }
+      // There is a case where the user has a wallet connected but the chain is not supported
+      if (activeTypedChainId === null) {
+        return chainName
+          ? `Switch to ${chainName}`
+          : 'Switch to a supported chain';
+      }
 
-    if (!hasNoteAccount) {
-      return 'Create Note Account' as const;
-    }
+      if (!hasNoteAccount && !notCheckNoteAcc) {
+        return 'Create Note Account' as const;
+      }
 
-    if (activeTypedChainId !== typedChainId) {
-      return `Switch ${chainName ? `to ${chainName}` : 'Chain'}` as const;
-    }
-  }, [activeTypedChainId, activeWallet, hasNoteAccount, typedChainId]);
+      if (activeTypedChainId !== typedChainId) {
+        return `Switch ${chainName ? `to ${chainName}` : 'Chain'}` as const;
+      }
+    },
+    // prettier-ignore
+    [activeTypedChainId, activeWallet, hasNoteAccount, typedChainId, notCheckNoteAcc]
+  );
 
   const handleConnect = useCallback(
     async (typedChainId: number) => {
@@ -67,7 +74,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
         }
       }
 
-      if (!hasNoteAccount) {
+      if (!hasNoteAccount && !notCheckNoteAcc) {
         setOpenNoteAccountModal(true);
         return null;
       }
@@ -85,7 +92,7 @@ function useConnectButtonProps(typedChainId?: number | null) {
       }
     },
     // prettier-ignore
-    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, setOpenNoteAccountModal, switchChain, toggleModal]
+    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, notCheckNoteAcc, setOpenNoteAccountModal, switchChain, toggleModal]
   );
 
   return {
