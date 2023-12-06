@@ -52,8 +52,6 @@ const Unwrap: FC = () => {
 
   const feeDetailsProps = useUnwrapFeeDetailsProps({
     balance: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
-    fungibleCfg,
-    wrappableCfg,
   });
 
   const amountProps = useMemo(

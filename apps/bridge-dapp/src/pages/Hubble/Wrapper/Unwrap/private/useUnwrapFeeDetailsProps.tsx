@@ -3,12 +3,6 @@ import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 import { parseEther, formatEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { notificationApi } from '@webb-tools/webb-ui-components';
-import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
-import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
-import { ensureHex } from '@webb-tools/dapp-config';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
-import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
-import { ZERO_ADDRESS } from '@webb-tools/utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import { GasStationFill } from '@webb-tools/icons';
@@ -17,21 +11,18 @@ import type {
   FeeItem,
 } from '@webb-tools/webb-ui-components/src/components/FeeDetails/types';
 
+import { getEstimatedGasFeesByChain } from '../../../../../utils';
 import { AMOUNT_KEY, SOURCE_CHAIN_KEY } from '../../../../../constants';
 
 export default function useUnwrapFeeDetailsProps({
   balance,
-  fungibleCfg,
-  wrappableCfg,
 }: {
   balance?: number;
-  fungibleCfg?: CurrencyConfig;
-  wrappableCfg?: CurrencyConfig;
 }) {
   const [gasFees, setGasFees] = useState<number | undefined>();
   const [isLoadingGasFees, setIsLoadingGasFees] = useState(false);
 
-  const { activeApi, apiConfig } = useWebContext();
+  const { apiConfig } = useWebContext();
 
   const [query] = useQueryParams({
     [AMOUNT_KEY]: StringParam,
@@ -71,11 +62,6 @@ export default function useUnwrapFeeDetailsProps({
     return amountBI !== ZERO_BIG_INT && amountBI <= parsedBalance;
   }, [amount, balance]);
 
-  const client = useMemo(
-    () => (srcTypedId ? getViemClient(srcTypedId) : undefined),
-    [srcTypedId]
-  );
-
   const gasFeeDetailProps = useMemo<FeeItem>(() => {
     return {
       name: 'Gas',
@@ -87,74 +73,25 @@ export default function useUnwrapFeeDetailsProps({
     };
   }, [gasFees, isLoadingGasFees, srcChainCfg]);
 
-  useEffect(
-    () => {
-      const updateGasFees = async () => {
-        if (
-          !client ||
-          !srcTypedId ||
-          !fungibleCfg ||
-          !wrappableCfg ||
-          !activeApi ||
-          !(activeApi instanceof WebbWeb3Provider) ||
-          typeof amount !== 'string' ||
-          amount.length === 0 ||
-          !isValidAmount
-        ) {
-          return;
-        }
+  useEffect(() => {
+    const updateGasFees = async () => {
+      if (!srcTypedId || BigInt(amount ?? 0) === ZERO_BIG_INT) return;
+      try {
+        setIsLoadingGasFees(true);
+        const estimatedGasFees = await getEstimatedGasFeesByChain(srcTypedId);
+        setGasFees(parseFloat(formatEther(estimatedGasFees)));
+      } catch (error) {
+        notificationApi.addToQueue({
+          variant: 'error',
+          message: 'Failed to estimate gas fees',
+        });
+      } finally {
+        setIsLoadingGasFees(false);
+      }
+    };
 
-        const fungibleContractAddr = fungibleCfg.addresses.get(srcTypedId);
-        const wrappableTokenAddr = wrappableCfg.addresses.get(srcTypedId);
-
-        if (!fungibleContractAddr || !wrappableTokenAddr) return;
-
-        const walletClient = activeApi.walletClient;
-
-        if (!walletClient || !walletClient.account) return;
-
-        const wrapTokenAddrHex = ensureHex(wrappableTokenAddr);
-        const fungibleContractHex = ensureHex(fungibleContractAddr);
-
-        try {
-          setIsLoadingGasFees(true);
-
-          const estimatedGas = await client.estimateContractGas({
-            address: fungibleContractHex,
-            abi: FungibleTokenWrapper__factory.abi,
-            functionName: 'wrap',
-            args: [
-              wrapTokenAddrHex,
-              // if native token, amount is 0
-              wrapTokenAddrHex === ZERO_ADDRESS
-                ? parseEther('0')
-                : BigInt(amount),
-            ],
-            account: walletClient.account,
-            // if native token, tx value is equal amount
-            value:
-              wrapTokenAddrHex === ZERO_ADDRESS
-                ? BigInt(amount)
-                : parseEther('0'),
-          });
-
-          const gasPrice = await client.getGasPrice();
-          setGasFees(parseFloat(formatEther(gasPrice)) * Number(estimatedGas));
-        } catch (error) {
-          notificationApi.addToQueue({
-            variant: 'error',
-            message: 'Failed to estimate gas fees',
-          });
-        } finally {
-          setIsLoadingGasFees(false);
-        }
-      };
-
-      updateGasFees();
-    },
-    // prettier-ignore
-    [client, srcTypedId, isValidAmount, fungibleCfg, wrappableCfg, activeApi, amount]
-  );
+    updateGasFees();
+  }, [srcTypedId, amount]);
 
   useEffect(() => {
     if (!isValidAmount) {
