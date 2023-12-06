@@ -52,9 +52,30 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
     [currencyCfgs]
   );
 
+  const fungibleAddress = useMemo(() => {
+    const poolId = searchParams.get(POOL_KEY);
+    if (!poolId) {
+      return;
+    }
+
+    const fungible = apiConfig.currencies[Number(poolId)];
+    if (!fungible) {
+      return;
+    }
+
+    if (typeof srcTypedChainId === 'number') {
+      return fungible.addresses.get(srcTypedChainId);
+    }
+
+    return undefined;
+  }, [apiConfig.currencies, searchParams, srcTypedChainId]);
+
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
     currencies,
-    srcTypedChainId ?? undefined
+    srcTypedChainId ?? undefined,
+    currentWrapperType === 'unwrap' && type === 'dest'
+      ? fungibleAddress
+      : undefined
   );
 
   const selectTokens = useMemo<Array<AssetType>>(
@@ -64,6 +85,7 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
           currencyCfg,
           balances,
           type,
+          currentWrapperType,
           isBalancesLoading
         );
 
@@ -168,15 +190,20 @@ const getBalanceProps = (
 const getBadgeProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
-  type: SelectTokenType,
+  selectTokenType: SelectTokenType,
+  wrapperType: ReturnType<typeof useWrapperTabFromRoute>,
   isLoading?: boolean
-) =>
-  !isLoading && !balances[currencyCfg.id] && type === 'src'
-    ? {
-        variant: 'warning' as const,
-        children: 'No balance' as const,
-      }
-    : undefined;
+) => {
+  if (wrapperType === 'wrap' && selectTokenType === 'dest') return;
+
+  if (!isLoading && !balances[currencyCfg.id]) {
+    return {
+      variant: 'warning' as const,
+      children:
+        selectTokenType === 'dest' ? 'Insufficient liquidity' : 'No balance',
+    };
+  }
+};
 
 /** @internal */
 const getExplorerUrl = (addr?: string, blockExplorer?: string) =>
