@@ -73,6 +73,8 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
     currencies,
     srcTypedChainId ?? undefined,
+    // track available liquidity of tokens in the contract when the user is unwrapping
+    // otherwise, check user's wallet balance
     currentWrapperType === 'unwrap' && type === 'dest'
       ? fungibleAddress
       : undefined
