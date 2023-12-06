@@ -65,11 +65,12 @@ export const Header: FC<HeaderProps> = () => {
 
   const breadcrumbItems = useMemo(
     () =>
-      items.map((item, index) => {
+      items.map((item, index, arr) => {
         const preCfgBreadcrumb = BREADCRUMBS_RECORD[item];
+        const href = '/' + arr.slice(0, index + 1).join('/');
 
         return (
-          <NavLink key={index} to={item}>
+          <NavLink key={index} to={href}>
             <BreadcrumbsItem
               isLast={index === items.length - 1}
               icon={preCfgBreadcrumb?.Icon}
