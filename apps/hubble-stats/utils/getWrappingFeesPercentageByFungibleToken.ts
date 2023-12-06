@@ -1,7 +1,7 @@
 import { getContract } from 'viem';
 import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
-import { ensureHex } from '@webb-tools/dapp-config';
+import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 
 const getWrappingFeesPercentageByFungibleToken = async (
   address: string,
