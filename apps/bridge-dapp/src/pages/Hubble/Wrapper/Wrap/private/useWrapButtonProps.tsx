@@ -3,10 +3,10 @@ import { useQueryParams, NumberParam, StringParam } from 'use-query-params';
 import { useNavigate } from 'react-router';
 import { parseEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
+import { ensureHex } from '@webb-tools/dapp-config';
 import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
@@ -27,11 +27,11 @@ import {
 } from '../../../../../constants';
 
 export default function useWrapButtonProps({
-  balances,
+  balance,
   fungibleCfg,
   wrappableCfg,
 }: {
-  balances?: number;
+  balance?: number;
   fungibleCfg?: CurrencyConfig;
   wrappableCfg?: CurrencyConfig;
 }) {
@@ -67,21 +67,21 @@ export default function useWrapButtonProps({
 
     const amountBI = BigInt(amount); // amount from search params is parsed already
 
-    // If balances is not a number, but amount is entered and > 0,
+    // If balance is not a number, but amount is entered and > 0,
     // it means user not connected to wallet but entered amount
     // so we allow it
-    if (typeof balances !== 'number' && amountBI > 0) {
+    if (typeof balance !== 'number' && amountBI > 0) {
       return true;
     }
 
-    if (!balances || amountBI <= 0) {
+    if (!balance || amountBI <= 0) {
       return false;
     }
 
-    const parsedBalance = parseEther(numberToString(balances));
+    const parsedBalance = parseEther(numberToString(balance));
 
     return amountBI !== ZERO_BIG_INT && amountBI <= parsedBalance;
-  }, [amount, balances]);
+  }, [amount, balance]);
 
   const inputCnt = useMemo(() => {
     if (typeof wrappableTokenId !== 'number') {
@@ -109,7 +109,7 @@ export default function useWrapButtonProps({
     }
 
     if (!isValidAmount) {
-      return 'Insufficient balances';
+      return 'Insufficient balance';
     }
   }, [amount, isValidAmount]);
 
@@ -198,7 +198,7 @@ export default function useWrapButtonProps({
           throw WebbError.from(WebbErrorCodes.NoWrappableTokenAvailable);
         }
 
-        const srcChain = chainsPopulated[srcTypedIdNum];
+        const srcChain = apiConfig.chains[srcTypedIdNum];
         if (!srcChain) {
           throw WebbError.from(WebbErrorCodes.UnsupportedChain);
         }
@@ -209,9 +209,8 @@ export default function useWrapButtonProps({
 
         setIsWrapping(true);
         const client = getViemClient(srcTypedIdNum);
-        const wrapTokenAddrHex = getViemValidAddressFormat(wrappableTokenAddr);
-        const fungibleContractHex =
-          getViemValidAddressFormat(fungibleContractAddr);
+        const wrapTokenAddrHex = ensureHex(wrappableTokenAddr);
+        const fungibleContractHex = ensureHex(fungibleContractAddr);
 
         const walletClient = actualApi.walletClient;
         const { request } = await client.simulateContract({
@@ -235,7 +234,7 @@ export default function useWrapButtonProps({
 
         const txHash = await walletClient.writeContract(request);
 
-        enqueueSubmittedTx(txHash, apiConfig.chains[+srcTypedIdNum], 'wrap');
+        enqueueSubmittedTx(txHash, srcChain, 'wrap');
 
         // navigate back to wrap page to clear query params
         navigate(WRAP_FULL_PATH);

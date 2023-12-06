@@ -45,13 +45,13 @@ const Unwrap: FC = () => {
   );
 
   const { ...unwrapBtnProps } = useUnwrapButtonProps({
-    balances: fungibleCfg ? walletBalances[fungibleCfg.id] : undefined,
+    balance: fungibleCfg ? walletBalances[fungibleCfg.id] : undefined,
     fungibleCfg,
     wrappableCfg,
   });
 
   const feeDetailsProps = useUnwrapFeeDetailsProps({
-    balances: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
+    balance: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
     fungibleCfg,
     wrappableCfg,
   });

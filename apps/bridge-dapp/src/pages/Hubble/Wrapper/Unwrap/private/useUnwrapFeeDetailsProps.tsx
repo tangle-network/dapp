@@ -4,8 +4,8 @@ import { parseEther, formatEther } from 'viem';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
-import getViemValidAddressFormat from '@webb-tools/web3-api-provider/utils/getViemValidAddressFormat';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
+import { ensureHex } from '@webb-tools/dapp-config';
 import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
@@ -20,11 +20,11 @@ import type {
 import { AMOUNT_KEY, SOURCE_CHAIN_KEY } from '../../../../../constants';
 
 export default function useUnwrapFeeDetailsProps({
-  balances,
+  balance,
   fungibleCfg,
   wrappableCfg,
 }: {
-  balances?: number;
+  balance?: number;
   fungibleCfg?: CurrencyConfig;
   wrappableCfg?: CurrencyConfig;
 }) {
@@ -55,21 +55,21 @@ export default function useUnwrapFeeDetailsProps({
 
     const amountBI = BigInt(amount);
 
-    // If balances is not a number, but amount is entered and > 0,
+    // If balance is not a number, but amount is entered and > 0,
     // it means user not connected to wallet but entered amount
     // so we allow it
-    if (typeof balances !== 'number' && amountBI > 0) {
+    if (typeof balance !== 'number' && amountBI > 0) {
       return true;
     }
 
-    if (!balances || amountBI <= 0) {
+    if (!balance || amountBI <= 0) {
       return false;
     }
 
-    const parsedBalance = parseEther(numberToString(balances));
+    const parsedBalance = parseEther(numberToString(balance));
 
     return amountBI !== ZERO_BIG_INT && amountBI <= parsedBalance;
-  }, [amount, balances]);
+  }, [amount, balance]);
 
   const client = useMemo(
     () => (srcTypedId ? getViemClient(srcTypedId) : undefined),
@@ -104,8 +104,6 @@ export default function useUnwrapFeeDetailsProps({
           return;
         }
 
-        setIsLoadingGasFees(true);
-
         const fungibleContractAddr = fungibleCfg.addresses.get(srcTypedId);
         const wrappableTokenAddr = wrappableCfg.addresses.get(srcTypedId);
 
@@ -115,11 +113,12 @@ export default function useUnwrapFeeDetailsProps({
 
         if (!walletClient || !walletClient.account) return;
 
-        const wrapTokenAddrHex = getViemValidAddressFormat(wrappableTokenAddr);
-        const fungibleContractHex =
-          getViemValidAddressFormat(fungibleContractAddr);
+        const wrapTokenAddrHex = ensureHex(wrappableTokenAddr);
+        const fungibleContractHex = ensureHex(fungibleContractAddr);
 
         try {
+          setIsLoadingGasFees(true);
+
           const estimatedGas = await client.estimateContractGas({
             address: fungibleContractHex,
             abi: FungibleTokenWrapper__factory.abi,
