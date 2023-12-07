@@ -144,7 +144,7 @@ const AppRoutes = () => {
                   index={true}
                   element={
                     <CSuspense>
-                      <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                      <RequireNoteAccountRoute redirect={`/${BRIDGE_PATH}`}>
                         <Account />
                       </RequireNoteAccountRoute>
                     </CSuspense>
@@ -154,7 +154,7 @@ const AppRoutes = () => {
                   path={ACCOUNT_TRANSACTIONS_PATH}
                   element={
                     <CSuspense>
-                      <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                      <RequireNoteAccountRoute redirect={`/${BRIDGE_PATH}`}>
                         <AccountTransactions />
                       </RequireNoteAccountRoute>
                     </CSuspense>
@@ -164,7 +164,7 @@ const AppRoutes = () => {
                     path=":txHash"
                     element={
                       <CSuspense>
-                        <RequireNoteAccountRoute redirect={BRIDGE_PATH}>
+                        <RequireNoteAccountRoute redirect={`/${BRIDGE_PATH}`}>
                           <AccountTransactionDetail />
                         </RequireNoteAccountRoute>
                       </CSuspense>

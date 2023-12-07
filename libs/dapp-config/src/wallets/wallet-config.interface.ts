@@ -5,8 +5,12 @@ import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 import type { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import type { Wallet as RainbowKitWallet } from '@rainbow-me/rainbowkit';
 
-export type SupportedConnector = MetaMaskConnector | WalletConnectConnector;
+export type SupportedConnector =
+  | MetaMaskConnector
+  | WalletConnectConnector
+  | ReturnType<RainbowKitWallet['createConnector']>['connector'];
 
 export interface WalletConfig {
   id: number;

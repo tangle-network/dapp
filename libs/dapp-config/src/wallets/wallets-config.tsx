@@ -7,9 +7,11 @@ import {
   SubWalletIcon,
   TalismanIcon,
   WalletConnectIcon,
+  RainbowIcon,
 } from '@webb-tools/icons';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { rainbowWallet } from '@rainbow-me/rainbowkit/wallets';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
@@ -60,6 +62,10 @@ export const connectors = {
       projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
     },
   }),
+  [WalletId.Rainbow]: rainbowWallet({
+    projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
+    chains: Object.values(evmChainsConfig),
+  }).createConnector().connector,
 };
 
 export const walletsConfig: Record<number, WalletConfig> = {
@@ -123,6 +129,20 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
     connector: connectors[WalletId.WalletConnectV2],
+  },
+  [WalletId.Rainbow]: {
+    id: WalletId.Rainbow,
+    Logo: <RainbowIcon />,
+    name: 'rainbow',
+    title: `Rainbow`,
+    platform: 'EVM',
+    enabled: true,
+    async detect() {
+      return connectors[WalletId.Rainbow];
+    },
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://rainbow.me/',
+    connector: connectors[WalletId.Rainbow],
   },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,

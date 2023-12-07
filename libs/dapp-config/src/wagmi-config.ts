@@ -8,6 +8,8 @@ import { walletsConfig } from './wallets/wallets-config';
 //   throw new Error('Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID');
 // }
 
+// const chains = Object.values(chainsConfig);
+
 const { publicClient, webSocketPublicClient } = configureChains(
   Object.values(chainsConfig),
   [publicProvider()],
