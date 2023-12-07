@@ -1,11 +1,9 @@
 import { LoggerService } from '@webb-tools/browser-utils/logger';
-import { unstable_serialize } from 'swr';
 
-import { DEFAULT_LIMIT, DEFAULT_SKIP } from '../../constants';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import ParseReponseErrorView from './ParseReponseErrorView';
 import RankingTableView from './RankingTableView';
-import SWRProvider from './SWRProvider';
+import { filterData } from './utils';
 
 const logger = LoggerService.get('RankingTableSection');
 
@@ -24,16 +22,7 @@ const RankingTableSection = async () => {
   }
 
   return (
-    <SWRProvider
-      cacheKey={unstable_serialize([
-        fetchLeaderboardData.name,
-        DEFAULT_SKIP,
-        DEFAULT_LIMIT,
-      ])}
-      result={result}
-    >
-      <RankingTableView {...parsedData.data} />
-    </SWRProvider>
+    <RankingTableView participants={filterData(parsedData).participants} />
   );
 };
 

@@ -26,6 +26,15 @@ const nextConfig = {
     TESTNET_LEADERBOARD_BACKEND_URL:
       process.env['TESTNET_LEADERBOARD_BACKEND_URL'] ?? '',
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets-global.website-files.com',
+      },
+    ],
+  },
 };
 
 const plugins = [

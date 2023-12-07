@@ -64,6 +64,9 @@ export const WEBB_TANGLE_DOCS_STAKING_URL =
   'https://docs.webb.tools/docs/tangle-network/learn/incentives/#staking';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
+export const TANGLE_WHITEPAPER_URL =
+  'https://assets-global.website-files.com/6494562b44a28080aafcbad4/650b1ccdfa5173ba4977825a_Tangle_Network_Whitepaper.pdf';
+
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
 export const TANGLE_TESTNET_EXPLORER_URL = 'https://explorer.tangle.tools';
@@ -98,6 +101,16 @@ export const SUBQUERY_ENDPOINT =
 export const TANGLE_STAKING_URL =
   'https://polkadot.js.org/apps/?rpc=wss://rpc-archive.tangle.tools#/staking';
 
+export const TANGLE_PRIVACY_POLICY_URL = new URL(
+  '/privacy-policy',
+  TANGLE_MKT_URL
+).toString();
+
+export const TANGLE_TERMS_OF_SERVICE_URL = new URL(
+  '/terms-of-service',
+  TANGLE_MKT_URL
+).toString();
+
 export const WEBB_DOC_ROUTES_RECORD = {
   concepts: {
     'anchor-system': {
@@ -118,7 +131,6 @@ export const WEBB_DOC_ROUTES_RECORD = {
   'tangle-network': {
     overview: '/docs/tangle-network/overview',
     participate: '/docs/tangle-network/overview/#participate',
-    community: '/docs/tangle-network/community',
   },
   protocols: {
     'single-asset-shielded-pool': {
@@ -159,6 +171,9 @@ export const WEBB_DOC_ROUTES_RECORD = {
   },
   overview: {
     'privacy-manifesto': '/docs/overview/privacy-manifesto',
+  },
+  community: {
+    route: '/docs/community',
   },
 } as const;
 
@@ -296,7 +311,7 @@ export const footerNavs: FooterNavsType = {
     {
       name: 'community',
       href: new URL(
-        WEBB_DOC_ROUTES_RECORD['tangle-network'].community,
+        WEBB_DOC_ROUTES_RECORD.community.route,
         WEBB_DOCS_URL
       ).toString(),
       ...commonExternalProps,

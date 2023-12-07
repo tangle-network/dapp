@@ -2,6 +2,7 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 
 import { TESTNET_LEADERBOARD_URL } from '@webb-tools/webb-ui-components/constants';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 
 import Footer from '../components/Footer';
 import Header from '../components/Header';
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     siteName: 'Testnet Leaderboard',
     images: [
       {
-        url: 'https://webb-cms.s3.amazonaws.com/tangle_seo.png',
+        url: '/assets/seo.png',
         width: 2000,
         height: 1050,
         alt: 'Og Image Alt',
@@ -62,6 +63,12 @@ export default function RootLayout({
 
           <Footer className="grow-0 shrink-0" />
         </div>
+
+        <Script
+          defer
+          data-domain="leaderboard.tangle.tools"
+          src="https://plausible.io/js/script.js"
+        />
       </body>
     </html>
   );

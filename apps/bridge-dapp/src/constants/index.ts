@@ -1,4 +1,10 @@
-import { DEPOSIT_PATH, TRANSFER_PATH, WITHDRAW_PATH } from './paths';
+import {
+  DEPOSIT_PATH,
+  TRANSFER_PATH,
+  UNWRAP_PATH,
+  WITHDRAW_PATH,
+  WRAP_PATH,
+} from './paths';
 import { ButtonProps, populateDocsUrl } from '@webb-tools/webb-ui-components';
 import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
 
@@ -12,6 +18,8 @@ export const BRIDGE_TABS = [
   WITHDRAW_PATH,
   TRANSFER_PATH,
 ] as const;
+
+export const WRAPPER_TABS = [WRAP_PATH, UNWRAP_PATH] as const;
 
 export const ACTION_BUTTON_PROPS: ButtonProps[] = [
   {
