@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { createContext, forwardRef, useCallback, useContext } from 'react';
+import { createContext, forwardRef, useContext } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography';
@@ -109,12 +109,12 @@ const InputFieldInput = forwardRef<
       </Typography>
 
       <div className="flex gap-1 items-center">
-        {isAddressType && <Avatar value={value} theme="ethereum" />}
+        {isAddressType && <Avatar value={String(value)} theme="ethereum" />}
 
         <input
           spellCheck="false"
           type={type ?? 'text'}
-          value={isAddressType ? shortenHex(value, 7) : value}
+          value={isAddressType ? shortenHex(String(value), 7) : value}
           {...inputProps}
           disabled={context?.isDisabled ?? isDisabled}
           ref={forwardedRef}
