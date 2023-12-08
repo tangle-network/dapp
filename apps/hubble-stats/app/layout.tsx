@@ -2,9 +2,16 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 
 import Providers from './providers';
 import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
-import { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 import { Layout } from '../containers';
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fff' },
+    { media: '(prefers-color-scheme: dark)', color: '#252836' },
+  ],
+};
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +36,6 @@ export const metadata: Metadata = {
     locale: 'en_US',
     type: 'website',
   },
-  themeColor: '#ffffff',
   icons: {
     icon: '/favicon.png',
   },
