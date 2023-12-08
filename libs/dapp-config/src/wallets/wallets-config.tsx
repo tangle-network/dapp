@@ -10,7 +10,6 @@ import {
   WalletConnectIcon,
 } from '@webb-tools/icons';
 import { InjectedConnector } from 'wagmi/connectors/injected';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
@@ -55,8 +54,11 @@ const ANY_SUBSTRATE = [
 ];
 
 export const connectors = {
-  [WalletId.MetaMask]: new MetaMaskConnector({
+  [WalletId.MetaMask]: new InjectedConnector({
     chains: Object.values(evmChainsConfig),
+    options: {
+      getProvider: () => getExplicitInjectedProvider('isMetaMask'),
+    },
   }),
   [WalletId.WalletConnectV2]: new WalletConnectConnector({
     options: {

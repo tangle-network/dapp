@@ -10,7 +10,14 @@ export function getExplicitInjectedProvider(
     return;
   const providers = window.ethereum.providers;
   return providers
-    ? providers.find((provider) => provider[flag])
+    ? providers
+        .filter((provider) => provider[flag])
+        // if not rainbow wallet, prevent rainbow wallet from being used as default
+        .find(
+          (provider: any) =>
+            provider?.['rainbowIsDefaultProvider'] ===
+            (flag === 'isRainbow' ? true : undefined)
+        )
     : window.ethereum[flag]
     ? window.ethereum
     : undefined;
