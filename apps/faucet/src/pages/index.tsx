@@ -33,7 +33,7 @@ export const metadata: NextSeoProps = {
 
 export default function Page({ sideBarInitialState }: PageProps) {
   return (
-    <div className="h-screen flex">
+    <div className="flex h-screen">
       <SideBar
         {...sideBarProps}
         isExpandedAtDefault={sideBarInitialState}
@@ -41,7 +41,7 @@ export default function Page({ sideBarInitialState }: PageProps) {
         className="!z-0 hidden lg:block"
       />
       <main className="flex-[1] h-full overflow-y-auto">
-        <div className="flex flex-col justify-between h-full px-3 md:px-5 lg:px-10 space-y-4">
+        <div className="flex flex-col justify-between h-full px-3 space-y-4 md:px-5 lg:px-10">
           <div className="flex-1">
             <Header />
 
@@ -105,7 +105,7 @@ export default function Page({ sideBarInitialState }: PageProps) {
             </main>
           </div>
 
-          <Footer isMinimal isNext className="py-12 w-full" />
+          <Footer isMinimal isNext className="w-full py-12" />
         </div>
       </main>
     </div>
