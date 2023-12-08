@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
-import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
+import { Currency } from '@webb-tools/abstract-api-provider/currency';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
@@ -11,14 +11,16 @@ import SlideAnimation from '../../../components/SlideAnimation';
 import { POOL_KEY, TOKEN_KEY } from '../../../constants';
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
-import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
+import useWrapperTabFromRoute from '../../../hooks/useWrapperTabFromRoute';
 
-const SelectToken: FC = () => {
-  const [searhParams] = useSearchParams();
+type SelectTokenType = 'src' | 'dest';
+
+const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
+  const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const currentTxType = useTxTabFromRoute();
+  const currentWrapperType = useWrapperTabFromRoute();
 
   const { apiConfig } = useWebContext();
 
@@ -28,12 +30,30 @@ const SelectToken: FC = () => {
     return srcChainCfg?.blockExplorers?.default.url;
   }, [srcChainCfg]);
 
-  const { allCurrencies, allCurrencyCfgs } = useCurrenciesFromRoute(
-    srcTypedChainId ?? undefined
+  const {
+    wrappableCurrencies: wrappableCurrencyCfgs,
+    fungibleCurrencies: fungibleCurrencyCfgs,
+  } = useCurrenciesFromRoute(srcTypedChainId ?? undefined);
+
+  const isFungibleTokenList = useMemo(
+    () =>
+      (currentWrapperType === 'wrap' && type === 'dest') ||
+      (currentWrapperType === 'unwrap' && type === 'src'),
+    [currentWrapperType, type]
+  );
+
+  const currencyCfgs = useMemo(
+    () => (isFungibleTokenList ? fungibleCurrencyCfgs : wrappableCurrencyCfgs),
+    [isFungibleTokenList, fungibleCurrencyCfgs, wrappableCurrencyCfgs]
+  );
+
+  const currencies = useMemo(
+    () => currencyCfgs.map((currencyCfg) => new Currency(currencyCfg)),
+    [currencyCfgs]
   );
 
   const fungibleAddress = useMemo(() => {
-    const poolId = searhParams.get(POOL_KEY);
+    const poolId = searchParams.get(POOL_KEY);
     if (!poolId) {
       return;
     }
@@ -48,39 +68,33 @@ const SelectToken: FC = () => {
     }
 
     return undefined;
-  }, [apiConfig.currencies, searhParams, srcTypedChainId]);
-
-  const alertTitle = useMemo(() => {
-    switch (currentTxType) {
-      case 'deposit':
-        return 'The availability of shielded pools is determined by your selected source chain and token.';
-      default:
-        return 'The availability of shielded pools is subject to the balance in your account.';
-    }
-  }, [currentTxType]);
+  }, [apiConfig.currencies, searchParams, srcTypedChainId]);
 
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
-    allCurrencies,
+    currencies,
     srcTypedChainId ?? undefined,
-    currentTxType === 'withdraw' ? fungibleAddress : undefined
+    // track available liquidity of tokens in the contract when the user is unwrapping
+    // otherwise, check user's wallet balance
+    currentWrapperType === 'unwrap' && type === 'dest'
+      ? fungibleAddress
+      : undefined
   );
 
   const selectTokens = useMemo<Array<AssetType>>(
     () =>
-      allCurrencyCfgs.map((currencyCfg) => {
-        const balanceProps = getBalanceProps(
-          currencyCfg,
-          balances,
-          isBalancesLoading,
-          currentTxType
-        );
-
+      currencyCfgs.map((currencyCfg) => {
         const badgeProps = getBadgeProps(
           currencyCfg,
           balances,
-          isBalancesLoading,
-          currentTxType
+          type,
+          currentWrapperType,
+          isBalancesLoading
         );
+
+        const balanceProps =
+          badgeProps === undefined
+            ? getBalanceProps(currencyCfg, balances, isBalancesLoading)
+            : undefined;
 
         const address = getAddress(currencyCfg, srcTypedChainId ?? undefined);
         const explorerUrl = getExplorerUrl(address, blockExplorer);
@@ -96,14 +110,27 @@ const SelectToken: FC = () => {
         } satisfies AssetType;
       }),
     // prettier-ignore
-    [allCurrencyCfgs, balances, blockExplorer, currentTxType, isBalancesLoading, srcTypedChainId]
+    [type, currencyCfgs, balances, blockExplorer, isBalancesLoading, srcTypedChainId]
   );
+
+  const targetParam = useMemo(
+    () => (isFungibleTokenList ? POOL_KEY : TOKEN_KEY),
+    [isFungibleTokenList]
+  );
+
+  const alertTitle = useMemo(() => {
+    if (currentWrapperType === undefined) return;
+    if (type === 'src') {
+      return `Tokens available for ${currentWrapperType}ping based on the composition of shielded pools.`;
+    }
+    return `Available webb tokens for ${currentWrapperType}ping based on source token selection.`;
+  }, [currentWrapperType, type]);
 
   const handleClose = useCallback(
     (selectedCfg?: CurrencyConfig) => {
-      const params = new URLSearchParams(searhParams);
+      const params = new URLSearchParams(searchParams);
       if (selectedCfg) {
-        params.set(TOKEN_KEY, `${selectedCfg.id}`);
+        params.set(targetParam, `${selectedCfg.id}`);
       }
 
       const path = pathname.split('/').slice(0, -1).join('/');
@@ -112,7 +139,7 @@ const SelectToken: FC = () => {
         search: params.toString(),
       });
     },
-    [navigate, pathname, searhParams]
+    [navigate, pathname, searchParams, targetParam]
   );
 
   const handleTokenChange = useCallback(
@@ -130,7 +157,7 @@ const SelectToken: FC = () => {
     <SlideAnimation>
       <TokenListCard
         className="h-[var(--card-height)]"
-        title={`Select ${currentTxType ?? 'a'} token`}
+        title={`Select ${type === 'src' ? 'source' : 'destination'} token`}
         popularTokens={[]}
         selectTokens={selectTokens}
         unavailableTokens={[]} // TODO: Add unavailable tokens
@@ -144,60 +171,43 @@ const SelectToken: FC = () => {
 
 export default SelectToken;
 
+/** @internal */
 const getAddress = (currencyCfg: CurrencyConfig, srcTypedChainId?: number) =>
   typeof srcTypedChainId === 'number'
     ? currencyCfg.addresses.get(srcTypedChainId)
     : undefined;
 
+/** @internal */
 const getBalanceProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
-  isLoading?: boolean,
-  txType?: string
+  isLoading?: boolean
 ) => {
-  if (isLoading) {
-    return;
-  }
-
+  if (isLoading) return;
   const currencyBalance = balances[currencyCfg.id];
-
-  // Deposit means wrap tokens, uses the users balance from balances record
-  if (txType === 'deposit' && currencyBalance) {
-    return {
-      balance: currencyBalance,
-    };
-  }
-
-  // Withdraw means unwrap tokens
-  if (txType === 'withdraw') {
-    // For fungible/governable tokens, users can withdraw unlimited amount
-    if (currencyCfg.role === CurrencyRole.Governable) {
-      return { balance: Infinity };
-    }
-
-    // For non-fungible/non-governable tokens, use the balance from balances record
-    if (currencyBalance) {
-      return { balance: currencyBalance };
-    }
-  }
+  return { balance: currencyBalance };
 };
 
+/** @internal */
 const getBadgeProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
-  isLoading?: boolean,
-  txType?: string
-) =>
-  !isLoading &&
-  !balances[currencyCfg.id] &&
-  (txType !== 'withdraw' || currencyCfg.role !== CurrencyRole.Governable)
-    ? {
-        variant: 'warning' as const,
-        children:
-          txType === 'withdraw' ? 'Insufficient liquidity' : 'No balance',
-      }
-    : undefined;
+  selectTokenType: SelectTokenType,
+  wrapperType: ReturnType<typeof useWrapperTabFromRoute>,
+  isLoading?: boolean
+) => {
+  if (wrapperType === 'wrap' && selectTokenType === 'dest') return;
 
+  if (!isLoading && !balances[currencyCfg.id]) {
+    return {
+      variant: 'warning' as const,
+      children:
+        selectTokenType === 'dest' ? 'Insufficient liquidity' : 'No balance',
+    };
+  }
+};
+
+/** @internal */
 const getExplorerUrl = (addr?: string, blockExplorer?: string) =>
   blockExplorer && addr && BigInt(addr) !== ZERO_BIG_INT
     ? new URL(`/address/${addr}`, blockExplorer).toString()

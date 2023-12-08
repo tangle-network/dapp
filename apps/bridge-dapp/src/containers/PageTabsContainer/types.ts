@@ -1,6 +1,11 @@
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
-export interface BridgeTabsContainerProps extends PropsOf<'div'> {
+export interface PageTabsContainerProps extends PropsOf<'div'> {
+  /**
+   * The type of the page
+   */
+  pageType: 'bridge' | 'wrapper';
+
   /**
    * The props of the setting button.
    */

@@ -1,22 +1,40 @@
 import cx from 'classnames';
-import { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
-import { BRIDGE_TABS } from '../../constants';
-import { BridgeTabsContainerProps } from './types';
+import {
+  BRIDGE_TABS,
+  WRAPPER_TABS,
+  BRIDGE_PATH,
+  WRAPPER_PATH,
+} from '../../constants';
+import type { PageTabsContainerProps } from './types';
 
-const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
+const PageTabsContainer: FC<PageTabsContainerProps> = ({
   children,
+  pageType,
   settingBtnProps,
   className,
   ...props
 }) => {
   const { pathname } = useLocation();
 
+  const rootPath = useMemo(
+    () => (pageType === 'bridge' ? BRIDGE_PATH : WRAPPER_PATH),
+    [pageType]
+  );
+
+  const tabs = useMemo(
+    () => (pageType === 'bridge' ? BRIDGE_TABS : WRAPPER_TABS),
+    [pageType]
+  );
+
   // Find active tab from pathname
-  const activeTab = pathname
-    .split('/')
-    .find((path) => !!BRIDGE_TABS.find((tab) => tab === path));
+  const activeTab = useMemo(
+    () =>
+      pathname.split('/').find((path) => !!tabs.find((tab) => tab === path)),
+    [pathname, tabs]
+  );
 
   return (
     <div
@@ -32,10 +50,10 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
       )}
     >
       <ul className="flex items-center gap-4 overflow-x-scroll pb-2">
-        {BRIDGE_TABS.map((tab, idx) => (
+        {tabs.map((tab, idx) => (
           <li key={`${tab}-${idx}`}>
             <Link
-              to={`/bridge/${tab}`}
+              to={`/${rootPath}/${tab}`}
               className={cx(
                 'h4 font-bold',
                 activeTab === tab
@@ -54,4 +72,4 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
   );
 };
 
-export default BridgeTabsContainer;
+export default PageTabsContainer;

@@ -9,6 +9,8 @@ export enum WebbErrorCodes {
   NoCurrencyAvailable,
   /* No fungible token is available */
   NoFungibleTokenAvailable,
+  /* No fungible token is available */
+  NoWrappableTokenAvailable,
   /* Unsupported provider */
   UnsupportedProvider,
   /* Unsupported chain is switch via the extension */
@@ -127,6 +129,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'No fungible token is available',
+        };
+
+      case WebbErrorCodes.NoWrappableTokenAvailable:
+        return {
+          code,
+          message: 'No wrappable token is available',
         };
 
       case WebbErrorCodes.UnsupportedProvider:

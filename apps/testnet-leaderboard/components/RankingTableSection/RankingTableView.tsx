@@ -4,22 +4,24 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  PaginationState,
+  getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { LoggerService } from '@webb-tools/browser-utils/logger';
-import { Search, Spinner } from '@webb-tools/icons';
-import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
+import { Search } from '@webb-tools/icons';
+import {
+  fuzzyFilter,
+  Input,
+  Pagination,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
-import useSWR from 'swr';
 
 import { BadgeEnum } from '../../types';
 import BadgesCell from './BadgesCell';
-import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import IdentityCell from './IdentityCell';
-import ParseReponseErrorView from './ParseReponseErrorView';
 import SessionsCell from './SessionsCell';
 import SocialLinksCell from './SocialLinksCell';
 import type {
@@ -29,8 +31,10 @@ import type {
   SessionsType,
 } from './types';
 
-export type RankingItemType = {
+type RankingItemType = {
+  rank: number;
   address: string;
+  addresses: string[];
   badges: BadgeEnum[];
   points: number;
   sessions: SessionsType;
@@ -39,14 +43,14 @@ export type RankingItemType = {
 
 const columnHelper = createColumnHelper<RankingItemType>();
 
-const getColumns = (pageIndex: number, pageSize: number) => [
-  columnHelper.accessor('points', {
+const columns = [
+  columnHelper.accessor('rank', {
+    id: 'rank',
     header: () => <HeaderCell title="Rank" />,
-    cell: (points) => {
-      const globalRowIndex = points.row.index + pageIndex * pageSize;
+    cell: (cellCtx) => {
       return (
         <Typography variant="mkt-small-caps" fw="bold">
-          #{globalRowIndex + 1}
+          #{cellCtx.getValue()}
         </Typography>
       );
     },
@@ -85,107 +89,81 @@ const getColumns = (pageIndex: number, pageSize: number) => [
     header: () => <HeaderCell title="Social" />,
     cell: (cellCtx) => <SocialLinksCell identity={cellCtx.getValue()} />,
   }),
+
+  // For global search
+  columnHelper.accessor((row) => row.addresses.join(', '), {
+    id: 'addresses',
+  }),
+
+  columnHelper.accessor((row) => row.badges.join(' ,'), {
+    id: 'badges string',
+  }),
+
+  columnHelper.accessor(
+    (row) => (row.identity ? Object.values(row.identity.info).join(', ') : ''),
+    {
+      id: 'identity string',
+    }
+  ),
 ];
 
-type Props = LeaderboardSuccessResponseType['data'];
+type Props = {
+  participants: LeaderboardSuccessResponseType['data']['participants'];
+};
 
-const participantToRankingItem = (participant: ParticipantType) =>
+const participantToRankingItem = (participant: ParticipantType, idx: number) =>
   ({
-    address: participant.addresses[0].address,
+    rank: idx + 1,
+    // Pior the `stash` type address, if not available, use the first address
+    // in the `addresses` array
+    address:
+      participant.addresses.find((a) => a.type === 'stash')?.address ||
+      participant.addresses[0].address,
+    addresses: participant.addresses.map((a) => a.address),
     badges: participant.badges,
     points: participant.points,
     sessions: participant.sessions,
     identity: participant.identity,
   } satisfies RankingItemType);
 
-const logger = LoggerService.get('RankingTableView');
+const PAGE_SIZE = 20;
 
-const RankingTableView: FC<Props> = ({
-  participants,
-  limit: defaultLimit,
-  skip: defaultSkip,
-  total: defaultTotal,
-}) => {
+const RankingTableView: FC<Props> = ({ participants }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: defaultSkip,
-    pageSize: defaultLimit,
-  });
-
-  const { data, isLoading } = useSWR(
-    [fetchLeaderboardData.name, pageIndex * pageSize, pageSize, searchTerm],
-    ([, ...args]) => fetchLeaderboardData(...args),
-    { keepPreviousData: true }
+  const rankingData = useMemo(
+    () => participants.map(participantToRankingItem),
+    [participants]
   );
 
-  const total = useMemo(() => {
-    if (data && data.success && data.data.success) {
-      return data.data.data.total;
-    }
+  const total = useMemo(() => rankingData.length, [rankingData]);
 
-    return defaultTotal;
-  }, [data, defaultTotal]);
-
-  const rankingData = useMemo(() => {
-    if (!data) {
-      return participants.map(participantToRankingItem);
-    }
-
-    if (data && data.success && data.data.success) {
-      return data.data.data.participants
-        .filter((p) => p.addresses.length > 0)
-        .map(participantToRankingItem);
-    }
-
-    return [];
-  }, [data, participants]);
-
-  const columns = useMemo(
-    () => getColumns(pageIndex, pageSize),
-    [pageIndex, pageSize]
-  );
-
-  const {
-    getHeaderGroups,
-    getRowModel,
-    getPageCount,
-    setPageIndex,
-    previousPage,
-    nextPage,
-    getCanPreviousPage,
-    getCanNextPage,
-  } = useReactTable({
+  const table = useReactTable({
     data: rankingData,
     columns,
-    manualPagination: true,
-    pageCount: Math.ceil(total / defaultLimit),
-    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize,
-        pageIndex,
+        pageSize: PAGE_SIZE,
+      },
+      columnVisibility: {
+        addresses: false,
+        'badges string': false,
+        'identity string': false,
       },
     },
-    getCoreRowModel: getCoreRowModel(),
+    state: {
+      globalFilter: searchTerm,
+    },
+    globalFilterFn: fuzzyFilter,
+    enableGlobalFilter: true,
+    onGlobalFilterChange: setSearchTerm,
     filterFns: {
-      fuzzy: () => {
-        return true;
-      },
+      fuzzy: fuzzyFilter,
     },
   });
-
-  if (!isLoading && data && !data.success) {
-    logger.error(
-      'Error when parsing the response',
-      data.error.issues.map((issue) => issue.message).join('\n')
-    );
-    return <ParseReponseErrorView />;
-  }
-
-  if (!isLoading && data && data.success && !data.data.success) {
-    return <ParseReponseErrorView errorMessage={data.data.error} />;
-  }
 
   return (
     <div className="space-y-4">
@@ -208,10 +186,10 @@ const RankingTableView: FC<Props> = ({
           />
         </div>
       </div>
-      <div className="relative overflow-scroll border rounded-lg border-mono-60">
+      <div className="overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
           <thead className="border-b border-mono-60">
-            {getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, idx) => (
                   <th key={idx} className={cx('px-2 py-2 md:px-4 md:py-2')}>
@@ -227,8 +205,8 @@ const RankingTableView: FC<Props> = ({
             ))}
           </thead>
           <tbody>
-            {getRowModel().rows.length > 0 ? (
-              getRowModel().rows.map((row) => (
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell, idx) => (
                     <td key={idx} className="px-2 py-2 md:px-4 md:py-2">
@@ -252,24 +230,18 @@ const RankingTableView: FC<Props> = ({
             )}
           </tbody>
         </table>
-
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/5">
-            <Spinner size="xl" />
-          </div>
-        )}
       </div>
 
       <Pagination
-        canNextPage={getCanNextPage()}
-        canPreviousPage={getCanPreviousPage()}
-        itemsPerPage={pageSize}
+        canNextPage={table.getCanNextPage()}
+        canPreviousPage={table.getCanPreviousPage()}
+        itemsPerPage={table.getState().pagination.pageSize}
         totalItems={total}
-        totalPages={getPageCount()}
-        previousPage={previousPage}
-        nextPage={nextPage}
-        page={pageIndex + 1}
-        setPageIndex={setPageIndex}
+        totalPages={table.getPageCount()}
+        previousPage={table.previousPage}
+        nextPage={table.nextPage}
+        page={table.getState().pagination.pageIndex + 1}
+        setPageIndex={table.setPageIndex}
         title="participants"
         className="gap-3 p-0 border-0"
         iconSize="md"
