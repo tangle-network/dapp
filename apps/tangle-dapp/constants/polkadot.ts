@@ -160,3 +160,25 @@ export const isNominatorAlreadyBonded = async (
     );
   }
 };
+
+export const isNominatorFirstTimeNominator = async (
+  nominatorAddress: string
+): Promise<boolean> => {
+  try {
+    const api = await getPolkadotApiPromise();
+
+    if (!api) throw new Error('Failed to get Polkadot API');
+
+    const isAlreadyBonded = await isNominatorAlreadyBonded(nominatorAddress);
+    const nominatedValidators = await api.query.staking.nominators(
+      nominatorAddress
+    );
+
+    return !isAlreadyBonded && !nominatedValidators.isSome;
+  } catch (error) {
+    throw new Error(
+      'Failed to check if nominator is a first time nominator - ' +
+        nominatorAddress
+    );
+  }
+};

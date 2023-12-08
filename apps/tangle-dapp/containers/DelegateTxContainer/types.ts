@@ -6,6 +6,7 @@ export type DelegateTxContainerProps = {
 };
 
 export type BondTokensProps = {
+  isFirstTimeNominator: boolean;
   nominatorAddress: string;
   amountToBond: number;
   setAmountToBond: (amount: number) => void;
@@ -26,7 +27,6 @@ export type AuthorizeTxProps = {
   contractFunc: string;
   contractLink: string;
   nominatorAddress: string;
-  amountToBond: number;
 };
 
 export enum DelegateTxSteps {

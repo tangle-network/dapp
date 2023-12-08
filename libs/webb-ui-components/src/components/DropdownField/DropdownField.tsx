@@ -28,7 +28,7 @@ const DropdownField = ({
   return (
     <div
       className={twMerge(
-        'px-4 py-2 max-w-md h-[74px] rounded-lg',
+        'px-4 py-2 w-full h-[74px] rounded-lg',
         'bg-mono-20 dark:bg-mono-160',
         'outline outline-1 outline-offset-1 outline-transparent',
         className
@@ -60,7 +60,7 @@ const DropdownField = ({
           </div>
         </DropdownBasicButton>
 
-        <DropdownBody className="w-[369px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4">
+        <DropdownBody className="w-[612px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4">
           <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
             {items.map((item, i) => (
               <RadioItem key={`${item}-${i}`} value={item} asChild>

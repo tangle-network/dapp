@@ -10,6 +10,7 @@ import { type FC } from 'react';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
+  isFirstTimeNominator,
   nominatorAddress,
   amountToBond,
   setAmountToBond,
@@ -20,8 +21,8 @@ const BondTokens: FC<BondTokensProps> = ({
   setPaymentDestination,
 }) => {
   return (
-    <div className="grid grid-cols-2 gap-9">
-      <div className="flex flex-col gap-9">
+    <div className="grid grid-cols-3 gap-9">
+      <div className="flex flex-col gap-9 col-span-2">
         {/* Account */}
         <InputField.Root>
           <InputField.Input
@@ -45,10 +46,16 @@ const BondTokens: FC<BondTokensProps> = ({
         {/* Amount */}
         <InputField.Root error={amountToBondError}>
           <InputField.Input
-            title="Amount"
+            title={isFirstTimeNominator ? 'Amount' : 'Amount (optional)'}
             isAddressType={false}
             value={amountToBond.toString()}
-            isDisabled={amountWalletBalance > 0 ? false : true}
+            isDisabled={
+              isFirstTimeNominator
+                ? amountWalletBalance > 0
+                  ? false
+                  : true
+                : false
+            }
             placeholder="10 tTNT"
             type="number"
             onChange={(e) => setAmountToBond(Number(e.target.value))}
@@ -67,15 +74,17 @@ const BondTokens: FC<BondTokensProps> = ({
         </InputField.Root>
 
         {/* Payment Destination */}
-        <DropdownField
-          title="Payment Destination"
-          items={paymentDestinationOptions}
-          selectedItem={paymentDestination}
-          setSelectedItem={setPaymentDestination}
-        />
+        {amountToBond > 0 && (
+          <DropdownField
+            title="Payment Destination"
+            items={paymentDestinationOptions}
+            selectedItem={paymentDestination}
+            setSelectedItem={setPaymentDestination}
+          />
+        )}
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-9 col-span-1">
         <Typography variant="body1" fw="normal">
           The amount placed at-stake should not be your full available amount to
           allow for transaction fees.
@@ -86,10 +95,12 @@ const BondTokens: FC<BondTokensProps> = ({
           for at least the bonding duration.
         </Typography>
 
-        <Typography variant="body1" fw="normal">
-          Rewards (once paid) can be deposited to your account, unless otherwise
-          configured.
-        </Typography>
+        {amountToBond > 0 && (
+          <Typography variant="body1" fw="normal">
+            Rewards (once paid) can be deposited to your account, unless
+            otherwise configured.
+          </Typography>
+        )}
       </div>
     </div>
   );

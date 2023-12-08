@@ -38,14 +38,14 @@ const SelectDelegates: FC<SelectDelegatesProps> = ({
 
         <div className="flex flex-col gap-5">
           <Typography variant="body1" fw="normal">
-            Delegators can be selected manually from the list of all currently
-            available validators.
+            Validators can be selected manually to nominate from the list of all
+            currently available validators.
           </Typography>
 
           <Typography variant="body1" fw="normal">
             Once transmitted the new selection will only take effect in 2 eras
             taking the new validator election cycle into account. Until then,
-            the delegations will show as inactive.
+            the nominations will show as inactive.
           </Typography>
         </div>
       </div>
@@ -53,6 +53,12 @@ const SelectDelegates: FC<SelectDelegatesProps> = ({
       <Alert
         type="info"
         description="You should trust your delegator to act competently and honest; basing your decision purely on their current profitability could lead to reduced profits or even loss of funds."
+        className="mt-4"
+      />
+
+      <Alert
+        type="info"
+        description="When you select validators to nominate, you will overwrite your previous nominations if you have any."
         className="mt-4"
       />
     </div>

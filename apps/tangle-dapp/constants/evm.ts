@@ -13,16 +13,21 @@ import {
 } from 'viem';
 
 import { PaymentDestination } from '../types';
-import { StakinInterfaceABI, StakinInterfaceAddress } from './contract';
+import {
+  StakingInterfacePrecompileABI,
+  StakingInterfacePrecompileAddress,
+} from './contract';
 
 const PAYEE_STAKED =
-  '0x0000000000000000000000000000000000000000000000000000000000000001';
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
 const PAYEE_STASH =
+  '0x0000000000000000000000000000000000000000000000000000000000000001';
+const PAYEE_CONTROLLER =
   '0x0000000000000000000000000000000000000000000000000000000000000002';
 
 export const PAYMENT_DESTINATION_OPTIONS = [
-  'Current account (increase the amount at stake)',
-  'Current account (do not increase the amount at stake)',
+  'Staked (increase the amount at stake)',
+  'Stash (do not increase the amount at stake)',
 ];
 
 const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnet];
@@ -49,14 +54,16 @@ export const bondTokens = async (
 ): Promise<`0x${string}`> => {
   const value = parseEther(numberOfTokens.toString());
   const payee =
-    paymentDestination === PaymentDestination.AUTO_COMPOUND
+    paymentDestination === PaymentDestination.Staked
       ? PAYEE_STAKED
-      : PAYEE_STASH;
+      : paymentDestination === PaymentDestination.Stash
+      ? PAYEE_STASH
+      : PAYEE_CONTROLLER;
 
   try {
     const { request } = await evmPublicClient.simulateContract({
-      address: StakinInterfaceAddress,
-      abi: StakinInterfaceABI,
+      address: StakingInterfacePrecompileAddress,
+      abi: StakingInterfacePrecompileABI,
       functionName: 'bond',
       args: [value, payee],
       account: ensureHex(nominatorAddress),
@@ -68,6 +75,7 @@ export const bondTokens = async (
 
     return txHash;
   } catch (e: any) {
+    console.log(e);
     throw new Error(e);
   }
 };
@@ -80,8 +88,8 @@ export const bondExtraTokens = async (
 
   try {
     const { request } = await evmPublicClient.simulateContract({
-      address: StakinInterfaceAddress,
-      abi: StakinInterfaceABI,
+      address: StakingInterfacePrecompileAddress,
+      abi: StakingInterfacePrecompileABI,
       functionName: 'bondExtra',
       args: [value],
       account: ensureHex(nominatorAddress),
@@ -93,6 +101,7 @@ export const bondExtraTokens = async (
 
     return txHash;
   } catch (e: any) {
+    console.log(e);
     throw new Error(e);
   }
 };
@@ -107,10 +116,41 @@ export const nominateValidators = async (
 
   try {
     const { request } = await evmPublicClient.simulateContract({
-      address: StakinInterfaceAddress,
-      abi: StakinInterfaceABI,
+      address: StakingInterfacePrecompileAddress,
+      abi: StakingInterfacePrecompileABI,
       functionName: 'nominate',
       args: [targets],
+      account: ensureHex(nominatorAddress),
+    });
+
+    const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+    const txHash = await evmWalletClient.writeContract(request);
+
+    return txHash;
+  } catch (e: any) {
+    console.log(e);
+    throw new Error(e);
+  }
+};
+
+export const updatePaymentDestination = async (
+  nominatorAddress: string,
+  paymentDestination: string
+): Promise<`0x${string}`> => {
+  const payee =
+    paymentDestination === PaymentDestination.Staked
+      ? PAYEE_STAKED
+      : paymentDestination === PaymentDestination.Stash
+      ? PAYEE_STASH
+      : PAYEE_CONTROLLER;
+
+  try {
+    const { request } = await evmPublicClient.simulateContract({
+      address: StakingInterfacePrecompileAddress,
+      abi: StakingInterfacePrecompileABI,
+      functionName: 'setPayee',
+      args: [payee],
       account: ensureHex(nominatorAddress),
     });
 

@@ -1,3 +1,5 @@
+'use client';
+
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import {
@@ -8,17 +10,24 @@ import {
   ModalHeader,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { STAKING_PRECOMPILE_LINK } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import {
+  STAKING_PRECOMPILE_LINK,
+  WEBB_TANGLE_DOCS_STAKING_URL,
+} from '@webb-tools/webb-ui-components/constants';
+import Link from 'next/link';
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   bondExtraTokens,
   bondTokens,
-  isNominatorAlreadyBonded,
+  evmPublicClient,
+  isNominatorFirstTimeNominator,
   nominateValidators,
   PAYMENT_DESTINATION_OPTIONS,
+  updatePaymentDestination,
 } from '../../constants';
 import useValidators from '../../data/DelegateFlow/useValidators';
+import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import { PaymentDestination } from '../../types';
 import { convertEthereumToSubstrateAddress } from '../../utils';
@@ -37,12 +46,13 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const { data: validators } = useValidators();
 
+  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
     DelegateTxSteps.BOND_TOKENS
   );
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.AUTO_COMPOUND
+    PaymentDestination.Staked
   );
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
@@ -64,7 +74,29 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
+  const substrateAddress = useMemo(() => {
+    if (!activeAccount?.address) return '';
+
+    return convertEthereumToSubstrateAddress(activeAccount.address);
+  }, [activeAccount?.address]);
+
+  useEffect(() => {
+    const checkIfFirstTimeNominator = async () => {
+      const isFirstTimeNominator = await isNominatorFirstTimeNominator(
+        substrateAddress
+      );
+
+      setIsFirstTimeNominator(isFirstTimeNominator);
+    };
+
+    if (substrateAddress) {
+      checkIfFirstTimeNominator();
+    }
+  }, [substrateAddress]);
+
   const { data: walletBalance } = useTokenWalletBalance(walletAddress);
+  const { data: currentPaymentDestination } =
+    usePaymentDestinationSubscription(substrateAddress);
 
   const amountToBondError = useMemo(() => {
     if (!walletBalance) return '';
@@ -77,13 +109,21 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [walletBalance, amountToBond]);
 
   const continueToSelectDelegatesStep = useMemo(() => {
-    return amountToBond > 0 &&
-      !amountToBondError &&
-      paymentDestination &&
-      walletAddress !== '0x0'
+    return isFirstTimeNominator
+      ? amountToBond > 0
+      : true &&
+        !amountToBondError &&
+        paymentDestination &&
+        walletAddress !== '0x0'
       ? true
       : false;
-  }, [amountToBond, amountToBondError, paymentDestination, walletAddress]);
+  }, [
+    amountToBond,
+    amountToBondError,
+    isFirstTimeNominator,
+    paymentDestination,
+    walletAddress,
+  ]);
 
   const continueToAuthorizeTxStep = useMemo(() => {
     return selectedValidators.length > 0 ? true : false;
@@ -97,7 +137,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(0);
-    setPaymentDestination(PaymentDestination.AUTO_COMPOUND);
+    setPaymentDestination(PaymentDestination.Staked);
     setSelectedValidators([]);
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
@@ -105,59 +145,240 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
 
-    const substrateAddress = convertEthereumToSubstrateAddress(walletAddress);
-    const isBonded = await isNominatorAlreadyBonded(substrateAddress);
-
     try {
-      let bondtxHash = '';
-
-      if (isBonded) {
-        const bondExtraTokensTxHash = await bondExtraTokens(
-          walletAddress,
-          amountToBond
-        );
-        bondtxHash = bondExtraTokensTxHash;
-      } else {
-        const bondTokensTxHash = await bondTokens(
+      if (isFirstTimeNominator) {
+        const bondTxHash = await bondTokens(
           walletAddress,
           amountToBond,
-          paymentDestination
-        );
-        bondtxHash = bondTokensTxHash;
-      }
-
-      if (bondtxHash) {
-        notificationApi({
-          variant: 'success',
-          message: `Successfully bonded ${amountToBond} tTNT.`,
-        });
-        const nominateTxHash = await nominateValidators(
-          walletAddress,
-          selectedValidators
+          PaymentDestination.Stash
         );
 
-        if (nominateTxHash) {
-          notificationApi({
-            variant: 'success',
-            message: `Successfully nominated ${selectedValidators.length} validators.`,
+        if (bondTxHash) {
+          const bondTx = await evmPublicClient.waitForTransactionReceipt({
+            hash: bondTxHash,
           });
-        }
 
-        closeModal();
+          if (bondTx.status === 'success') {
+            notificationApi({
+              variant: 'success',
+              message: `Successfully bonded ${amountToBond} tTNT.`,
+            });
+
+            const updatePaymentDestinationTxHash =
+              await updatePaymentDestination(walletAddress, paymentDestination);
+
+            if (updatePaymentDestinationTxHash) {
+              const updatePaymentDestinationTx =
+                await evmPublicClient.waitForTransactionReceipt({
+                  hash: updatePaymentDestinationTxHash,
+                });
+
+              if (updatePaymentDestinationTx.status === 'success') {
+                notificationApi({
+                  variant: 'success',
+                  message: `Successfully updated payment destination to ${paymentDestination}.`,
+                });
+
+                const nominateTxHash = await nominateValidators(
+                  walletAddress,
+                  selectedValidators
+                );
+
+                if (nominateTxHash) {
+                  const nominateTx =
+                    await evmPublicClient.waitForTransactionReceipt({
+                      hash: nominateTxHash,
+                    });
+
+                  if (nominateTx.status === 'success') {
+                    notificationApi({
+                      variant: 'success',
+                      message: `Successfully nominated ${selectedValidators.length} validators.`,
+                    });
+
+                    closeModal();
+                  }
+                }
+              } else {
+                notificationApi({
+                  variant: 'error',
+                  message: 'Failed to update payment destination!',
+                });
+
+                closeModal();
+              }
+            }
+          } else {
+            notificationApi({
+              variant: 'error',
+              message: 'Failed to bond tokens!',
+            });
+
+            closeModal();
+          }
+        }
+      } else {
+        if (amountToBond > 0) {
+          const bondTxHash = await bondExtraTokens(walletAddress, amountToBond);
+
+          if (bondTxHash) {
+            const bondTx = await evmPublicClient.waitForTransactionReceipt({
+              hash: bondTxHash,
+            });
+
+            if (bondTx.status === 'success') {
+              notificationApi({
+                variant: 'success',
+                message: `Successfully bonded ${amountToBond} tTNT.`,
+              });
+
+              const currPaymentDestination =
+                currentPaymentDestination?.value1 === 'Staked'
+                  ? PaymentDestination.Staked
+                  : PaymentDestination.Stash;
+
+              if (currPaymentDestination !== paymentDestination) {
+                const updatePaymentDestinationTxHash =
+                  await updatePaymentDestination(
+                    walletAddress,
+                    paymentDestination
+                  );
+
+                if (updatePaymentDestinationTxHash) {
+                  const updatePaymentDestinationTx =
+                    await evmPublicClient.waitForTransactionReceipt({
+                      hash: updatePaymentDestinationTxHash,
+                    });
+
+                  if (updatePaymentDestinationTx.status === 'success') {
+                    notificationApi({
+                      variant: 'success',
+                      message: `Successfully updated payment destination to ${paymentDestination}.`,
+                    });
+
+                    const nominateTxHash = await nominateValidators(
+                      walletAddress,
+                      selectedValidators
+                    );
+
+                    if (nominateTxHash) {
+                      const nominateTx =
+                        await evmPublicClient.waitForTransactionReceipt({
+                          hash: nominateTxHash,
+                        });
+
+                      if (nominateTx.status === 'success') {
+                        notificationApi({
+                          variant: 'success',
+                          message: `Successfully nominated ${selectedValidators.length} validators.`,
+                        });
+
+                        closeModal();
+                      } else {
+                        notificationApi({
+                          variant: 'error',
+                          message: 'Failed to nominate validators!',
+                        });
+
+                        closeModal();
+                      }
+                    }
+                  } else {
+                    notificationApi({
+                      variant: 'error',
+                      message: 'Failed to update payment destination!',
+                    });
+
+                    closeModal();
+                  }
+                }
+              } else {
+                const nominateTxHash = await nominateValidators(
+                  walletAddress,
+                  selectedValidators
+                );
+
+                if (nominateTxHash) {
+                  const nominateTx =
+                    await evmPublicClient.waitForTransactionReceipt({
+                      hash: nominateTxHash,
+                    });
+
+                  if (nominateTx.status === 'success') {
+                    notificationApi({
+                      variant: 'success',
+                      message: `Successfully nominated ${selectedValidators.length} validators.`,
+                    });
+
+                    closeModal();
+                  } else {
+                    notificationApi({
+                      variant: 'error',
+                      message: 'Failed to nominate validators!',
+                    });
+
+                    closeModal();
+                  }
+                }
+              }
+            } else {
+              notificationApi({
+                variant: 'error',
+                message: 'Failed to bond tokens!',
+              });
+
+              closeModal();
+            }
+          }
+        } else {
+          const nominateTxHash = await nominateValidators(
+            walletAddress,
+            selectedValidators
+          );
+
+          if (nominateTxHash) {
+            const nominateTx = await evmPublicClient.waitForTransactionReceipt({
+              hash: nominateTxHash,
+            });
+
+            if (nominateTx.status === 'success') {
+              notificationApi({
+                variant: 'success',
+                message: `Successfully nominated ${selectedValidators.length} validators.`,
+              });
+
+              closeModal();
+            } else {
+              notificationApi({
+                variant: 'error',
+                message: 'Failed to nominate validators!',
+              });
+
+              closeModal();
+            }
+          }
+        }
       }
     } catch (e) {
-      let message = 'Failed to bond tokens and nominate!';
-
       if (isViemError(e)) {
-        message = e.shortMessage;
+        notificationApi({
+          variant: 'error',
+          message: e.shortMessage,
+        });
+      } else {
+        notificationApi({
+          variant: 'error',
+          message: 'Something went wrong.',
+        });
       }
 
-      notificationApi({ variant: 'error', message });
       closeModal();
     }
   }, [
     amountToBond,
     closeModal,
+    currentPaymentDestination,
+    isFirstTimeNominator,
     notificationApi,
     paymentDestination,
     selectedValidators,
@@ -169,15 +390,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Setup Delegator {currentStep}
+          Setup Nominator {currentStep}
         </ModalHeader>
 
         <div className="px-8 py-6">
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
             <BondTokens
+              isFirstTimeNominator={isFirstTimeNominator}
               nominatorAddress={walletAddress}
               amountToBond={amountToBond}
               setAmountToBond={setAmountToBond}
@@ -200,12 +422,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               nominatorAddress={walletAddress}
               contractFunc={CONTRACT_FUNC}
               contractLink={STAKING_PRECOMPILE_LINK}
-              amountToBond={amountToBond}
             />
           ) : null}
         </div>
 
-        <ModalFooter className="px-8 py-6">
+        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
           {delegateTxStep !== DelegateTxSteps.AUTHORIZE_TX ? (
             <Button
               isFullWidth
@@ -244,9 +465,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           )}
 
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
-            <Button isFullWidth variant="secondary">
-              Learn More
-            </Button>
+            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
           ) : (
             <Button
               isFullWidth

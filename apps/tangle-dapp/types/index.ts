@@ -14,8 +14,9 @@ export type Delegator = {
 };
 
 export enum PaymentDestination {
-  AUTO_COMPOUND = 'Current account (increase the amount at stake)',
-  NO_AUTO_COMPOUND = 'Current account (do not increase the amount at stake)',
+  Staked = 'Staked (increase the amount at stake)',
+  Stash = 'Stash (do not increase the amount at stake)',
+  Controller = 'Controller Account',
 }
 
 export type ValidatorType = {

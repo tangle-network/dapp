@@ -8,6 +8,7 @@ import {
   getRoundedDownNumberWith2Decimals,
   splitTokenValueAndSymbol,
 } from '../../utils';
+import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 import dataHooks from './dataHooks';
 import type { NominatorStatsItemProps } from './types';
 
@@ -43,16 +44,30 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
               fw="bold"
               className="text-mono-200 dark:text-mono-0"
             >
-              {getRoundedDownNumberWith2Decimals(splitData?.value ?? 0)}
+              {type !== 'Payment Destination'
+                ? getRoundedDownNumberWith2Decimals(splitData?.value ?? 0)
+                : data.value1 ?? '-'}
             </Typography>
 
-            <Typography
-              variant="label"
-              fw="medium"
-              className="text-mono-140 dark:text-mono-40"
-            >
-              {splitData?.symbol ? splitData.symbol : 'tTNT'}
-            </Typography>
+            {type !== 'Payment Destination' ? (
+              <Typography
+                variant="label"
+                fw="normal"
+                className="text-mono-140 dark:text-mono-40"
+              >
+                {splitData?.symbol ? splitData.symbol : 'tTNT'}
+              </Typography>
+            ) : (
+              data.value1 && (
+                <InfoIconWithTooltip
+                  content={
+                    data.value1 === 'Staked'
+                      ? 'Current account (increase the amount at stake)'
+                      : 'Current account (do not increase the amount at stake)'
+                  }
+                />
+              )
+            )}
           </div>
         )}
       </div>

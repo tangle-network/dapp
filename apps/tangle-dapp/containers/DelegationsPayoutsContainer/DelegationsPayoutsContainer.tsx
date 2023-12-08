@@ -11,7 +11,7 @@ import {
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
@@ -20,10 +20,10 @@ import { DelegateTxContainer } from '../DelegateTxContainer';
 import DelegatorTableContainer from './DelegatorTableContainer';
 
 const pageSize = 5;
-const delegationsTableTab = 'Delegations';
+const delegationsTableTab = 'Nominations';
 const payoutsTableTab = 'Payouts';
 
-const DelegationsPayoutsContainer = () => {
+const DelegationsPayoutsContainer: FC = () => {
   const { activeAccount, loading } = useWebContext();
 
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -70,9 +70,9 @@ const DelegationsPayoutsContainer = () => {
             <ContainerSkeleton />
           ) : delegatorsData && delegatorsData.delegators.length === 0 ? (
             <TableStatus
-              title="Ready to Explore Delegations?"
-              description="It looks like you haven't delegated any tokens yet. Start by choosing a validator to support and earn rewards!"
-              buttonText="Delegate"
+              title="Ready to Explore Nominations?"
+              description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
+              buttonText="Nominate"
               buttonProps={{
                 onClick: () => setIsDelegateModalOpen(true),
               }}

@@ -1,7 +1,7 @@
-export const StakinInterfaceAddress =
+export const StakingInterfacePrecompileAddress =
   '0x0000000000000000000000000000000000000800';
 
-export const StakinInterfaceABI = [
+export const StakingInterfacePrecompileABI = [
   {
     inputs: [
       {

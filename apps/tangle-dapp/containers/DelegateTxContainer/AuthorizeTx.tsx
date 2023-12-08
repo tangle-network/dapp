@@ -12,7 +12,6 @@ const AuthorizeTx: FC<AuthorizeTxProps> = ({
   contractFunc,
   contractLink,
   nominatorAddress,
-  amountToBond,
 }) => {
   return (
     <div className="grid grid-cols-2 gap-9">
@@ -53,38 +52,17 @@ const AuthorizeTx: FC<AuthorizeTxProps> = ({
             />
           </InputField.Slot>
         </InputField.Root>
-
-        {/* Amount */}
-        <InputField.Root>
-          <InputField.Input
-            title="Amount"
-            isAddressType={false}
-            value={amountToBond.toString() + ' tTNT'}
-            type="text"
-            readOnly
-          />
-        </InputField.Root>
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-9">
         <Typography variant="body1" fw="normal">
-          The details of the transaction including the type, the description as
-          well as any parameters and fee estimations for the specific type of
-          call.
+          StakingInterface.sol is a precompile contract used for bonding tokens
+          and nominating validators.
         </Typography>
 
         <Typography variant="body1" fw="normal">
-          The sending account that will be used to send this transaction. ANy
+          The sending account that will be used to send this transaction. Any
           applicable fees will be paid by this account.
-        </Typography>
-
-        <Typography variant="body1" fw="normal">
-          The call hash as calculated for this transaction.
-        </Typography>
-
-        <Typography variant="body1" fw="normal">
-          Adding tip to the transaction could allow for higher priority,
-          especially when the chain is busy.
         </Typography>
       </div>
     </div>

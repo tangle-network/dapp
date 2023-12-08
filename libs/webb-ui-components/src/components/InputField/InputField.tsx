@@ -26,7 +26,7 @@ const InputFieldRoot = forwardRef<React.ElementRef<'div'>, InputFieldRootProps>(
           {...restProps}
           ref={forwardedRef}
           className={twMerge(
-            'group flex items-center justify-between gap-1 px-4 py-2 max-w-md h-[74px] rounded-lg',
+            'group flex items-center justify-between gap-1 px-4 py-2 w-full h-[74px] rounded-lg',
             'bg-mono-20 dark:bg-mono-160',
             'outline outline-1 outline-offset-1 outline-transparent',
             cx({

@@ -1,4 +1,4 @@
-export type StatsType = 'Wallet Balance' | 'Total Staked';
+export type StatsType = 'Wallet Balance' | 'Total Staked' | 'Payment Destination';
 
 export interface NominatorStatsItemProps {
   title: string;
