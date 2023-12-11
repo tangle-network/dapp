@@ -9,6 +9,9 @@ class WalletNotInstalledError extends WebbError {
       case WalletId.MetaMask:
         super(WebbErrorCodes.MetaMaskExtensionNotInstalled);
         break;
+      case WalletId.Rainbow:
+        super(WebbErrorCodes.RainbowExtensionNotInstalled);
+        break;
       case WalletId.Polkadot:
         super(WebbErrorCodes.PolkaDotExtensionNotInstalled);
         break;

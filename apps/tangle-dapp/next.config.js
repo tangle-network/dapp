@@ -24,10 +24,6 @@ const nextConfig = {
     svgr: false,
   },
 
-  experimental: {
-    serverActions: true,
-  },
-
   // Follow wasm example from next.js repo: https://github.com/vercel/next.js/blob/canary/examples/with-webassembly/next.config.js
   webpack(config, { isServer, dev }) {
     // Use the client static directory in the server bundle and prod mode

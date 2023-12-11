@@ -1,11 +1,19 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 
+import Suspense from '@webb-tools/webb-ui-components/components/Suspense';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
-import { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type React from 'react';
 
 import { Layout } from '../containers';
 import Providers from './providers';
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fff' },
+    { media: '(prefers-color-scheme: dark)', color: '#252836' },
+  ],
+};
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +42,6 @@ export const metadata: Metadata = {
     locale: 'en_US',
     type: 'website',
   },
-  themeColor: '#ffffff',
   icons: {
     icon: '/favicon.png',
   },
@@ -53,9 +60,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>
-          <Layout>{children}</Layout>
-        </Providers>
+        <Suspense>
+          <Providers>
+            <Layout>{children}</Layout>
+          </Providers>
+        </Suspense>
       </body>
     </html>
   );

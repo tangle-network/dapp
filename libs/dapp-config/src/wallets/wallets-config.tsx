@@ -4,16 +4,17 @@ import { WalletId } from '@webb-tools/dapp-types/WalletId';
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
+  RainbowIcon,
   SubWalletIcon,
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { MetaMaskConnector, RainbowConnector } from './injected';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
-import { WalletConfig } from './wallet-config.interface';
+import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
@@ -60,6 +61,9 @@ export const connectors = {
       projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
     },
   }),
+  [WalletId.Rainbow]: new RainbowConnector({
+    chains: Object.values(evmChainsConfig),
+  }),
 };
 
 export const walletsConfig: Record<number, WalletConfig> = {
@@ -93,8 +97,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     enabled: true,
     async detect() {
       const metaMaskConnector = connectors[WalletId.MetaMask];
-      const provier = await metaMaskConnector.getProvider();
-      if (!provier) {
+      const provider = await metaMaskConnector.getProvider();
+      if (!provider) {
         return;
       }
 
@@ -123,6 +127,32 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
     connector: connectors[WalletId.WalletConnectV2],
+  },
+  [WalletId.Rainbow]: {
+    id: WalletId.Rainbow,
+    Logo: <RainbowIcon />,
+    name: 'rainbow',
+    title: 'Rainbow',
+    platform: 'EVM',
+    enabled: true,
+    async detect() {
+      const conn = connectors[WalletId.Rainbow];
+      const provider = await conn.getProvider();
+      if (!provider) {
+        return;
+      }
+
+      return conn;
+    },
+    supportedChainIds: [...ANY_EVM],
+    homeLink: 'https://rainbow.me/',
+    connector: connectors[WalletId.Rainbow],
+    installLinks: {
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/en-US/firefox/addon/rainbow-extension/',
+      [SupportedBrowsers.Chrome]:
+        'https://chrome.google.com/webstore/detail/rainbow/opfgelmcmbiajamepnmloijbpoleiama',
+    },
   },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,

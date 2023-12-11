@@ -21,10 +21,6 @@ const nextConfig = {
     svgr: false,
   },
 
-  experimental: {
-    serverActions: true,
-  },
-
   // webpack config for wasm support
   // following this approach: https://github.com/vercel/next.js/issues/29362#issuecomment-1149903338
   webpack: (config) => {
