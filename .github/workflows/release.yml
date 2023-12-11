@@ -41,10 +41,11 @@ jobs:
         with:
           paths: apps/bridge-dapp
 
-      - uses: marceloprado/has-changed-path@v1
-        id: changed-stats
-        with:
-          paths: apps/stats-dapp
+      # Temporary disable as the backend has been changed and it breaks the build
+      # - uses: marceloprado/has-changed-path@v1
+      #   id: changed-stats
+      #   with:
+      #     paths: apps/stats-dapp
 
       - uses: marceloprado/has-changed-path@v1
         id: changed-faucet
