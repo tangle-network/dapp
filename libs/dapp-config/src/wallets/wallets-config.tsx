@@ -9,12 +9,11 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
-import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { MetaMaskConnector, RainbowConnector } from './injected';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
-import { getExplicitInjectedProvider } from './utils';
 import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
@@ -54,22 +53,16 @@ const ANY_SUBSTRATE = [
 ];
 
 export const connectors = {
-  [WalletId.MetaMask]: new InjectedConnector({
+  [WalletId.MetaMask]: new MetaMaskConnector({
     chains: Object.values(evmChainsConfig),
-    options: {
-      getProvider: () => getExplicitInjectedProvider('isMetaMask'),
-    },
   }),
   [WalletId.WalletConnectV2]: new WalletConnectConnector({
     options: {
       projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
     },
   }),
-  [WalletId.Rainbow]: new InjectedConnector({
+  [WalletId.Rainbow]: new RainbowConnector({
     chains: Object.values(evmChainsConfig),
-    options: {
-      getProvider: () => getExplicitInjectedProvider('isRainbow'),
-    },
   }),
 };
 
