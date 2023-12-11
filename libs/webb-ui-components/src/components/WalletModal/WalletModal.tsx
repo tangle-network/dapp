@@ -81,7 +81,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
     }, [resetState]);
 
     const downloadURL = useMemo(() => {
-      if (!platformId) return;
+      if (platformId == null) return;
 
       const wallet = getCurrentWallet();
 
