@@ -5,7 +5,7 @@ import { type ComponentProps, type ElementRef, forwardRef } from 'react';
 
 const Footer = forwardRef<ElementRef<'footer'>, ComponentProps<'footer'>>(
   (props, ref) => {
-    return <WebsiteFooter {...props} ref={ref} type="tangle" hideNewsletter />;
+    return <WebsiteFooter {...props} ref={ref} hideNewsletter />;
   }
 );
 

@@ -87,7 +87,6 @@ export { default as TxProgressor } from './TxProgressor';
 export { default as TxConfirmationRing } from './TxConfirmationRing';
 export * from './WalletConnectionCard';
 export * from './WalletModal';
-export * from './WebsiteCommunity';
 export * from './WebsiteFooter';
 export * from './WebsiteNewsLetterForm';
 export * from './buttons';
