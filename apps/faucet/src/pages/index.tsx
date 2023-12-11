@@ -36,9 +36,9 @@ export default function Page({ sideBarInitialState }: PageProps) {
     <div className="flex h-screen">
       <SideBar
         {...sideBarProps}
+        className="!z-0 hidden lg:block"
         isExpandedAtDefault={sideBarInitialState}
         onSideBarToggle={setSideBarCookieOnToggle}
-        className="!z-0 hidden lg:block"
       />
       <main className="flex-[1] h-full overflow-y-auto">
         <div className="flex flex-col justify-between h-full px-3 space-y-4 md:px-5 lg:px-10">
