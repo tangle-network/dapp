@@ -1,6 +1,6 @@
 /* Font Family Satoshi Variable */
 
-/** TODO: Consider moving this to tailwind-preset if these classes share with the tangle-website */
+/** TODO: Consider moving this to tailwind-preset if these classes is shared with other apps */
 
 .input-height {
   @apply h-[74px];
