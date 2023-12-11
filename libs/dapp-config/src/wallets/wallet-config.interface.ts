@@ -3,14 +3,13 @@
 
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
-import type { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import type { InjectedConnector } from 'wagmi/connectors/injected';
+import { MetaMaskConnector, RainbowConnector } from './injected';
 
 export type SupportedConnector =
   | MetaMaskConnector
   | WalletConnectConnector
-  | InjectedConnector;
+  | RainbowConnector;
 
 export interface WalletConfig {
   id: number;
