@@ -2,10 +2,10 @@ import { IconBase } from '@webb-tools/icons/types';
 import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
 import {
-  type ComponentProps,
-  type ElementRef,
   forwardRef,
   useState,
+  type ComponentProps,
+  type ElementRef,
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import {
@@ -21,10 +21,8 @@ import {
   WEBB_CAREERS_URL,
   WEBB_DOCS_URL,
   WEBB_MKT_URL,
-  WEBB_WHITEPAPER_URL,
 } from '../../constants';
 import { Typography } from '../../typography';
-import { Logo } from '../Logo';
 import { InternalOrExternalLink } from '../Navbar/InternalOrExternalLink';
 import { TangleLogo } from '../TangleLogo';
 import { WebsiteNewsletterForm } from '../WebsiteNewsLetterForm';
@@ -43,123 +41,114 @@ type SocialType = {
 };
 
 type Props = {
-  type: 'webbsite' | 'tangle';
   hideNewsletter?: boolean;
 };
 
-const getNavLinks = (type: Props['type'] = 'webbsite') =>
-  [
-    {
-      group: 'Community',
-      links: [
-        {
-          label: 'Github',
-          url: SOCIAL_URLS_RECORD.github,
-          isInternal: false,
-        },
-        {
-          label: 'Telegram',
-          url: SOCIAL_URLS_RECORD.telegram,
-          isInternal: false,
-        },
-        {
-          label: 'Discord',
-          url: SOCIAL_URLS_RECORD.discord,
-          isInternal: false,
-        },
-        {
-          label: 'Twitter',
-          url: SOCIAL_URLS_RECORD.twitter,
-          isInternal: false,
-        },
-        {
-          label: 'Commonwealth',
-          url: SOCIAL_URLS_RECORD.commonwealth,
-          isInternal: false,
-        },
-      ],
-    },
-    {
-      group: 'Ecosystem',
-      links: [
-        {
-          label: 'Tangle',
-          url: TANGLE_MKT_URL,
-          isInternal: false,
-        },
-        {
-          label: 'DKG Explorer',
-          url: DKG_STATS_URL,
-          isInternal: false,
-        },
-        {
-          label: 'Hubble Bridge',
-          url: BRIDGE_URL,
-          isInternal: false,
-        },
-      ],
-    },
-    {
-      group: 'Developer',
-      links: [
-        {
-          label: 'Documentation',
-          url: WEBB_DOCS_URL,
-          isInternal: false,
-        },
-        {
-          label: 'Source Code',
-          url: SOCIAL_URLS_RECORD.github,
-          isInternal: false,
-        },
-        {
-          label: 'Whitepaper',
-          url:
-            type === 'webbsite' ? WEBB_WHITEPAPER_URL : TANGLE_WHITEPAPER_URL,
-          isInternal: false,
-        },
-      ],
-    },
-    {
-      group: 'Company',
-      links: [
-        {
-          label: 'About Us',
-          url: WEBB_MKT_URL,
-          isInternal: false,
-        },
-        {
-          label: 'Careers',
-          url: WEBB_CAREERS_URL,
-          isInternal: false,
-        },
-        {
-          label: 'Brand Kit',
-          url: '/brand-kit',
-          isInternal: false,
-        },
-      ],
-    },
-    {
-      group: 'Legal',
-      links: [
-        {
-          label: 'Privacy Policy',
-          url:
-            type === 'webbsite' ? '/privacy-policy' : TANGLE_PRIVACY_POLICY_URL,
-          isInternal: type === 'webbsite',
-        },
-        {
-          label: 'Terms of Service',
-          url:
-            type === 'webbsite'
-              ? '/terms-and-conditions'
-              : TANGLE_TERMS_OF_SERVICE_URL,
-          isInternal: type === 'webbsite',
-        },
-      ],
-    },
-  ] as const satisfies Array<NavLinkType>;
+const NAV_LINKS = [
+  {
+    group: 'Community',
+    links: [
+      {
+        label: 'Github',
+        url: SOCIAL_URLS_RECORD.github,
+        isInternal: false,
+      },
+      {
+        label: 'Telegram',
+        url: SOCIAL_URLS_RECORD.telegram,
+        isInternal: false,
+      },
+      {
+        label: 'Discord',
+        url: SOCIAL_URLS_RECORD.discord,
+        isInternal: false,
+      },
+      {
+        label: 'Twitter',
+        url: SOCIAL_URLS_RECORD.twitter,
+        isInternal: false,
+      },
+      {
+        label: 'Commonwealth',
+        url: SOCIAL_URLS_RECORD.commonwealth,
+        isInternal: false,
+      },
+    ],
+  },
+  {
+    group: 'Ecosystem',
+    links: [
+      {
+        label: 'Tangle',
+        url: TANGLE_MKT_URL,
+        isInternal: false,
+      },
+      {
+        label: 'DKG Explorer',
+        url: DKG_STATS_URL,
+        isInternal: false,
+      },
+      {
+        label: 'Hubble Bridge',
+        url: BRIDGE_URL,
+        isInternal: false,
+      },
+    ],
+  },
+  {
+    group: 'Developer',
+    links: [
+      {
+        label: 'Documentation',
+        url: WEBB_DOCS_URL,
+        isInternal: false,
+      },
+      {
+        label: 'Source Code',
+        url: SOCIAL_URLS_RECORD.github,
+        isInternal: false,
+      },
+      {
+        label: 'Whitepaper',
+        url: TANGLE_WHITEPAPER_URL,
+        isInternal: false,
+      },
+    ],
+  },
+  {
+    group: 'Company',
+    links: [
+      {
+        label: 'About Us',
+        url: WEBB_MKT_URL,
+        isInternal: false,
+      },
+      {
+        label: 'Careers',
+        url: WEBB_CAREERS_URL,
+        isInternal: false,
+      },
+      {
+        label: 'Brand Kit',
+        url: '/brand-kit',
+        isInternal: false,
+      },
+    ],
+  },
+  {
+    group: 'Legal',
+    links: [
+      {
+        label: 'Privacy Policy',
+        url: TANGLE_PRIVACY_POLICY_URL,
+      },
+      {
+        label: 'Terms of Service',
+        url: TANGLE_TERMS_OF_SERVICE_URL,
+      },
+    ],
+  },
+] as const satisfies Array<NavLinkType>;
 
 const socials = WEBB_AVAIABLE_SOCIALS.map(
   (name) =>
@@ -173,7 +162,7 @@ const socials = WEBB_AVAIABLE_SOCIALS.map(
 export const WebsiteFooter = forwardRef<
   ElementRef<'footer'>,
   ComponentProps<'footer'> & Props
->(({ type, hideNewsletter, className, ...props }, ref) => {
+>(({ hideNewsletter, className, ...props }, ref) => {
   // State for subscription success
   const [success, setSuccess] = useState(false);
 
@@ -243,8 +232,8 @@ export const WebsiteFooter = forwardRef<
       <div className="w-full max-w-[900px] flex flex-col gap-9 px-4 py-12 mx-auto">
         {/** Logo and links */}
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
-          <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
-          {getNavLinks(type).map(({ group, links }) => (
+          <Link href="/">{<TangleLogo />}</Link>
+          {NAV_LINKS.map(({ group, links }) => (
             <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
               <Typography
                 variant="mkt-body2"
