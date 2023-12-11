@@ -275,6 +275,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         case WebbErrorCodes.UnselectedChain:
           break;
         case WebbErrorCodes.MetaMaskExtensionNotInstalled:
+        case WebbErrorCodes.RainbowExtensionNotInstalled:
         case WebbErrorCodes.PolkaDotExtensionNotInstalled:
         case WebbErrorCodes.TalismanExtensionNotInstalled:
         case WebbErrorCodes.SubWalletExtensionNotInstalled:
@@ -394,6 +395,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
           case WalletId.MetaMask:
           case WalletId.WalletConnectV2:
+          case WalletId.Rainbow:
             {
               const connector = walletsConfig[wallet.id].connector;
               if (!connector) {
