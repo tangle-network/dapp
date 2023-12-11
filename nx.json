@@ -24,7 +24,8 @@
         "{workspaceRoot}/dist/apps/stats-dapp",
         "{workspaceRoot}/dist/apps/faucet/.next",
         "{workspaceRoot}/dist/apps/hubble-stats/.next",
-        "{workspaceRoot}/dist/apps/tangle-website/.next"
+        "{workspaceRoot}/dist/apps/tangle-dapp/.next",
+        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
       ]
     },
     "lint": {

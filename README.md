@@ -54,7 +54,6 @@ Great! Now your **Node** environment is ready!
 - [faucet](./apps/faucet/README.md): an interface for requesting cryptocurrencies (assets) on the Webb Protocol System.
 - [hubble-stats](./apps/hubble-stats/README.md): an interface for displaying statistical data of the Cross-chain Bridging System.
 - [stats-dapp](./apps/stats-dapp/README.md): an interface for displaying statistical data of Webb's Tangle Network (DKG system).
-- [tangle-website](./apps/tangle-website/README.md): an interface for the Tangle ecosystem and development.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
