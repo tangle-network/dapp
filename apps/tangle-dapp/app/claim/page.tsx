@@ -1,7 +1,10 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Divider } from '@webb-tools/webb-ui-components/components/Divider';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
+import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+
+import faqItems from '../../constants/faq';
 
 export default async function ClaimPage() {
   return (
@@ -35,7 +38,7 @@ export default async function ClaimPage() {
       <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
 
       <AppTemplate.Content>
-        <h1>FAQ</h1>
+        <FAQSection items={faqItems} />
       </AppTemplate.Content>
     </AppTemplate.Root>
   );

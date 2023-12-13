@@ -1,8 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
+import FAQContainer from '@webb-tools/webb-ui-components/containers/FAQSection';
 import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
-
-import FAQAccordion from './FAQAccordion';
 
 const faqItems = [
   {
@@ -38,18 +37,7 @@ const faqItems = [
 ];
 
 const FAQSection = () => {
-  return (
-    <div className="space-y-[16px]">
-      <Typography
-        variant="mkt-h3"
-        fw="black"
-        className="text-center text-mono-200"
-      >
-        FAQ
-      </Typography>
-      <FAQAccordion items={faqItems} itemClassName="border-b border-mono-100" />
-    </div>
-  );
+  return <FAQContainer items={faqItems} />;
 };
 
 export default FAQSection;
