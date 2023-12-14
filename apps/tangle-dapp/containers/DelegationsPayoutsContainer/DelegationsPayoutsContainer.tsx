@@ -6,6 +6,7 @@ import {
 } from '@webb-tools/api-provider-environment';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
+  notificationApi,
   TabContent,
   TableAndChartTabs,
   useCheckMobile,
@@ -34,12 +35,22 @@ const DelegationsPayoutsContainer: FC = () => {
     return convertEthereumToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  const { data: delegatorsData, isLoading: delegatorsIsLoading } =
-    useDelegations(nominatorSubstrateAddress);
+  const {
+    data: delegatorsData,
+    isLoading: delegatorsIsLoading,
+    error: delegatorsError,
+  } = useDelegations(nominatorSubstrateAddress);
 
   const { isMobile } = useCheckMobile();
 
   const { toggleModal } = useConnectWallet();
+
+  if (delegatorsError) {
+    notificationApi({
+      variant: 'error',
+      message: delegatorsError.message,
+    });
+  }
 
   return (
     <>

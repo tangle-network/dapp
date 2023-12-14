@@ -52,8 +52,10 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     return convertEthereumToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  const { data: currentPaymentDestination } =
-    usePaymentDestinationSubscription(substrateAddress);
+  const {
+    data: currentPaymentDestination,
+    error: currentPaymentDestinationError,
+  } = usePaymentDestinationSubscription(substrateAddress);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return paymentDestination;
@@ -74,32 +76,41 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
         paymentDestination
       );
 
-      if (updatePaymentDestinationTxHash) {
-        const updatePaymentDestinationTx =
-          await evmPublicClient.waitForTransactionReceipt({
-            hash: updatePaymentDestinationTxHash,
-          });
-
-        if (updatePaymentDestinationTx.status === 'success') {
-          notificationApi({
-            variant: 'success',
-            message: `Successfully updated payment destination to ${paymentDestination}.`,
-          });
-
-          closeModal();
-        }
-      }
-    } catch (e) {
-      let message = 'Failed to update payment destination!';
-
-      if (isViemError(e)) {
-        message = e.shortMessage;
+      if (!updatePaymentDestinationTxHash) {
+        throw new Error('Failed to update payment destination!');
       }
 
-      notificationApi({ variant: 'error', message });
+      const updatePaymentDestinationTx =
+        await evmPublicClient.waitForTransactionReceipt({
+          hash: updatePaymentDestinationTxHash,
+        });
+
+      if (updatePaymentDestinationTx.status !== 'success') {
+        throw new Error('Failed to update payment destination!');
+      }
+
+      notificationApi({
+        variant: 'success',
+        message: `Successfully updated payment destination to ${paymentDestination}.`,
+      });
+    } catch (error: any) {
+      notificationApi({
+        variant: 'error',
+        message: isViemError(error)
+          ? error.shortMessage
+          : error.message || 'Something went wrong!',
+      });
+    } finally {
       closeModal();
     }
   }, [closeModal, notificationApi, paymentDestination, walletAddress]);
+
+  if (currentPaymentDestinationError) {
+    notificationApi({
+      variant: 'error',
+      message: currentPaymentDestinationError.message,
+    });
+  }
 
   return (
     <Modal open>

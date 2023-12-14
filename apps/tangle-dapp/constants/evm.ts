@@ -60,24 +60,19 @@ export const bondTokens = async (
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
-  try {
-    const { request } = await evmPublicClient.simulateContract({
-      address: StakingInterfacePrecompileAddress,
-      abi: StakingInterfacePrecompileABI,
-      functionName: 'bond',
-      args: [value, payee],
-      account: ensureHex(nominatorAddress),
-    });
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'bond',
+    args: [value, payee],
+    account: ensureHex(nominatorAddress),
+  });
 
-    const evmWalletClient = createEvmWalletClient(nominatorAddress);
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
 
-    const txHash = await evmWalletClient.writeContract(request);
+  const txHash = await evmWalletClient.writeContract(request);
 
-    return txHash;
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
-  }
+  return txHash;
 };
 
 export const bondExtraTokens = async (
@@ -86,24 +81,19 @@ export const bondExtraTokens = async (
 ): Promise<`0x${string}`> => {
   const value = parseEther(numberOfTokens.toString());
 
-  try {
-    const { request } = await evmPublicClient.simulateContract({
-      address: StakingInterfacePrecompileAddress,
-      abi: StakingInterfacePrecompileABI,
-      functionName: 'bondExtra',
-      args: [value],
-      account: ensureHex(nominatorAddress),
-    });
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'bondExtra',
+    args: [value],
+    account: ensureHex(nominatorAddress),
+  });
 
-    const evmWalletClient = createEvmWalletClient(nominatorAddress);
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
 
-    const txHash = await evmWalletClient.writeContract(request);
+  const txHash = await evmWalletClient.writeContract(request);
 
-    return txHash;
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
-  }
+  return txHash;
 };
 
 export const nominateValidators = async (
@@ -114,24 +104,19 @@ export const nominateValidators = async (
     return u8aToHex(decodeAddress(address));
   });
 
-  try {
-    const { request } = await evmPublicClient.simulateContract({
-      address: StakingInterfacePrecompileAddress,
-      abi: StakingInterfacePrecompileABI,
-      functionName: 'nominate',
-      args: [targets],
-      account: ensureHex(nominatorAddress),
-    });
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'nominate',
+    args: [targets],
+    account: ensureHex(nominatorAddress),
+  });
 
-    const evmWalletClient = createEvmWalletClient(nominatorAddress);
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
 
-    const txHash = await evmWalletClient.writeContract(request);
+  const txHash = await evmWalletClient.writeContract(request);
 
-    return txHash;
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
-  }
+  return txHash;
 };
 
 export const updatePaymentDestination = async (
@@ -145,21 +130,17 @@ export const updatePaymentDestination = async (
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
-  try {
-    const { request } = await evmPublicClient.simulateContract({
-      address: StakingInterfacePrecompileAddress,
-      abi: StakingInterfacePrecompileABI,
-      functionName: 'setPayee',
-      args: [payee],
-      account: ensureHex(nominatorAddress),
-    });
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'setPayee',
+    args: [payee],
+    account: ensureHex(nominatorAddress),
+  });
 
-    const evmWalletClient = createEvmWalletClient(nominatorAddress);
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
 
-    const txHash = await evmWalletClient.writeContract(request);
+  const txHash = await evmWalletClient.writeContract(request);
 
-    return txHash;
-  } catch (e: any) {
-    throw new Error(e);
-  }
+  return txHash;
 };

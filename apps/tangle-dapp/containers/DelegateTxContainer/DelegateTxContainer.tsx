@@ -44,7 +44,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { data: validators } = useValidators();
+  const { data: validators, error: validatorsError } = useValidators();
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
@@ -81,24 +81,43 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   useEffect(() => {
-    const checkIfFirstTimeNominator = async () => {
-      const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-        substrateAddress
-      );
+    try {
+      const checkIfFirstTimeNominator = async () => {
+        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
+          substrateAddress
+        );
 
-      setIsFirstTimeNominator(isFirstTimeNominator);
-    };
+        setIsFirstTimeNominator(isFirstTimeNominator);
+      };
 
-    if (substrateAddress) {
-      checkIfFirstTimeNominator();
+      if (substrateAddress) {
+        checkIfFirstTimeNominator();
+      }
+    } catch (error: any) {
+      notificationApi({
+        variant: 'error',
+        message:
+          error.message ||
+          'Failed to check if the user is a first time nominator.',
+      });
     }
-  }, [substrateAddress]);
+  }, [notificationApi, substrateAddress]);
 
-  const { data: walletBalance } = useTokenWalletBalance(walletAddress);
-  const { data: currentPaymentDestination } =
-    usePaymentDestinationSubscription(substrateAddress);
+  const { data: walletBalance, error: walletBalanceError } =
+    useTokenWalletBalance(walletAddress);
+  const {
+    data: currentPaymentDestination,
+    error: currentPaymentDestinationError,
+  } = usePaymentDestinationSubscription(substrateAddress);
 
   const amountToBondError = useMemo(() => {
+    if (walletBalanceError) {
+      notificationApi({
+        variant: 'error',
+        message: walletBalanceError.message,
+      });
+    }
+
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
@@ -106,7 +125,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     } else if (Number(walletBalance.value1) < amountToBond) {
       return `You don't have enough tTNT in your wallet!`;
     }
-  }, [walletBalance, amountToBond]);
+  }, [walletBalanceError, walletBalance, amountToBond, notificationApi]);
 
   const continueToSelectDelegatesStep = useMemo(() => {
     return isFirstTimeNominator
@@ -145,245 +164,113 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
 
+    const executeTransaction = async (
+      action: any,
+      successMessage: string,
+      errorMessage: string
+    ) => {
+      try {
+        const txHash = await action();
+        if (!txHash) throw new Error(errorMessage);
+
+        const tx = await evmPublicClient.waitForTransactionReceipt({
+          hash: txHash,
+        });
+        if (tx.status !== 'success') throw new Error(errorMessage);
+
+        notificationApi({ variant: 'success', message: successMessage });
+      } catch (error) {
+        notificationApi({
+          variant: 'error',
+          message: errorMessage || 'Something went wrong.',
+        });
+
+        throw error; // Rethrowing the error to be caught by the outer try-catch
+      }
+    };
+
     try {
       if (isFirstTimeNominator) {
-        const bondTxHash = await bondTokens(
-          walletAddress,
-          amountToBond,
-          PaymentDestination.Stash
+        await executeTransaction(
+          () =>
+            bondTokens(walletAddress, amountToBond, PaymentDestination.Stash),
+          `Successfully bonded ${amountToBond} tTNT.`,
+          'Failed to bond tokens!'
         );
 
-        if (bondTxHash) {
-          const bondTx = await evmPublicClient.waitForTransactionReceipt({
-            hash: bondTxHash,
-          });
+        await executeTransaction(
+          () => updatePaymentDestination(walletAddress, paymentDestination),
+          `Successfully updated payment destination to ${paymentDestination}.`,
+          'Failed to update payment destination!'
+        );
 
-          if (bondTx.status === 'success') {
-            notificationApi({
-              variant: 'success',
-              message: `Successfully bonded ${amountToBond} tTNT.`,
-            });
-
-            const updatePaymentDestinationTxHash =
-              await updatePaymentDestination(walletAddress, paymentDestination);
-
-            if (updatePaymentDestinationTxHash) {
-              const updatePaymentDestinationTx =
-                await evmPublicClient.waitForTransactionReceipt({
-                  hash: updatePaymentDestinationTxHash,
-                });
-
-              if (updatePaymentDestinationTx.status === 'success') {
-                notificationApi({
-                  variant: 'success',
-                  message: `Successfully updated payment destination to ${paymentDestination}.`,
-                });
-
-                const nominateTxHash = await nominateValidators(
-                  walletAddress,
-                  selectedValidators
-                );
-
-                if (nominateTxHash) {
-                  const nominateTx =
-                    await evmPublicClient.waitForTransactionReceipt({
-                      hash: nominateTxHash,
-                    });
-
-                  if (nominateTx.status === 'success') {
-                    notificationApi({
-                      variant: 'success',
-                      message: `Successfully nominated ${selectedValidators.length} validators.`,
-                    });
-
-                    closeModal();
-                  }
-                }
-              } else {
-                notificationApi({
-                  variant: 'error',
-                  message: 'Failed to update payment destination!',
-                });
-
-                closeModal();
-              }
-            }
-          } else {
-            notificationApi({
-              variant: 'error',
-              message: 'Failed to bond tokens!',
-            });
-
-            closeModal();
-          }
-        }
+        await executeTransaction(
+          () => nominateValidators(walletAddress, selectedValidators),
+          `Successfully nominated ${selectedValidators.length} validators.`,
+          'Failed to nominate validators!'
+        );
       } else {
         if (amountToBond > 0) {
-          const bondTxHash = await bondExtraTokens(walletAddress, amountToBond);
-
-          if (bondTxHash) {
-            const bondTx = await evmPublicClient.waitForTransactionReceipt({
-              hash: bondTxHash,
-            });
-
-            if (bondTx.status === 'success') {
-              notificationApi({
-                variant: 'success',
-                message: `Successfully bonded ${amountToBond} tTNT.`,
-              });
-
-              const currPaymentDestination =
-                currentPaymentDestination?.value1 === 'Staked'
-                  ? PaymentDestination.Staked
-                  : PaymentDestination.Stash;
-
-              if (currPaymentDestination !== paymentDestination) {
-                const updatePaymentDestinationTxHash =
-                  await updatePaymentDestination(
-                    walletAddress,
-                    paymentDestination
-                  );
-
-                if (updatePaymentDestinationTxHash) {
-                  const updatePaymentDestinationTx =
-                    await evmPublicClient.waitForTransactionReceipt({
-                      hash: updatePaymentDestinationTxHash,
-                    });
-
-                  if (updatePaymentDestinationTx.status === 'success') {
-                    notificationApi({
-                      variant: 'success',
-                      message: `Successfully updated payment destination to ${paymentDestination}.`,
-                    });
-
-                    const nominateTxHash = await nominateValidators(
-                      walletAddress,
-                      selectedValidators
-                    );
-
-                    if (nominateTxHash) {
-                      const nominateTx =
-                        await evmPublicClient.waitForTransactionReceipt({
-                          hash: nominateTxHash,
-                        });
-
-                      if (nominateTx.status === 'success') {
-                        notificationApi({
-                          variant: 'success',
-                          message: `Successfully nominated ${selectedValidators.length} validators.`,
-                        });
-
-                        closeModal();
-                      } else {
-                        notificationApi({
-                          variant: 'error',
-                          message: 'Failed to nominate validators!',
-                        });
-
-                        closeModal();
-                      }
-                    }
-                  } else {
-                    notificationApi({
-                      variant: 'error',
-                      message: 'Failed to update payment destination!',
-                    });
-
-                    closeModal();
-                  }
-                }
-              } else {
-                const nominateTxHash = await nominateValidators(
-                  walletAddress,
-                  selectedValidators
-                );
-
-                if (nominateTxHash) {
-                  const nominateTx =
-                    await evmPublicClient.waitForTransactionReceipt({
-                      hash: nominateTxHash,
-                    });
-
-                  if (nominateTx.status === 'success') {
-                    notificationApi({
-                      variant: 'success',
-                      message: `Successfully nominated ${selectedValidators.length} validators.`,
-                    });
-
-                    closeModal();
-                  } else {
-                    notificationApi({
-                      variant: 'error',
-                      message: 'Failed to nominate validators!',
-                    });
-
-                    closeModal();
-                  }
-                }
-              }
-            } else {
-              notificationApi({
-                variant: 'error',
-                message: 'Failed to bond tokens!',
-              });
-
-              closeModal();
-            }
-          }
-        } else {
-          const nominateTxHash = await nominateValidators(
-            walletAddress,
-            selectedValidators
+          await executeTransaction(
+            () => bondExtraTokens(walletAddress, amountToBond),
+            `Successfully bonded ${amountToBond} tTNT.`,
+            'Failed to bond tokens!'
           );
-
-          if (nominateTxHash) {
-            const nominateTx = await evmPublicClient.waitForTransactionReceipt({
-              hash: nominateTxHash,
-            });
-
-            if (nominateTx.status === 'success') {
-              notificationApi({
-                variant: 'success',
-                message: `Successfully nominated ${selectedValidators.length} validators.`,
-              });
-
-              closeModal();
-            } else {
-              notificationApi({
-                variant: 'error',
-                message: 'Failed to nominate validators!',
-              });
-
-              closeModal();
-            }
-          }
         }
-      }
-    } catch (e) {
-      if (isViemError(e)) {
-        notificationApi({
-          variant: 'error',
-          message: e.shortMessage,
-        });
-      } else {
-        notificationApi({
-          variant: 'error',
-          message: 'Something went wrong.',
-        });
-      }
 
+        if (currentPaymentDestinationError)
+          notificationApi({
+            variant: 'error',
+            message: currentPaymentDestinationError.message,
+          });
+
+        const currPaymentDestination =
+          currentPaymentDestination?.value1 === 'Staked'
+            ? PaymentDestination.Staked
+            : PaymentDestination.Stash;
+
+        if (currPaymentDestination !== paymentDestination) {
+          await executeTransaction(
+            () => updatePaymentDestination(walletAddress, paymentDestination),
+            `Successfully updated payment destination to ${paymentDestination}.`,
+            'Failed to update payment destination!'
+          );
+        }
+
+        await executeTransaction(
+          () => nominateValidators(walletAddress, selectedValidators),
+          `Successfully nominated ${selectedValidators.length} validators.`,
+          'Failed to nominate validators!'
+        );
+      }
+    } catch (error: any) {
+      notificationApi({
+        variant: 'error',
+        message: isViemError(error)
+          ? error.shortMessage
+          : error.message || 'Something went wrong!',
+      });
+    } finally {
       closeModal();
     }
   }, [
     amountToBond,
     closeModal,
-    currentPaymentDestination,
+    currentPaymentDestination?.value1,
+    currentPaymentDestinationError,
     isFirstTimeNominator,
     notificationApi,
     paymentDestination,
     selectedValidators,
     walletAddress,
   ]);
+
+  if (validatorsError) {
+    notificationApi({
+      variant: 'error',
+      message: validatorsError.message,
+    });
+  }
 
   return (
     <Modal open>

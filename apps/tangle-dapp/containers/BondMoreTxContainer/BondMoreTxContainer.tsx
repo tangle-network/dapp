@@ -36,9 +36,17 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const { data: walletBalance } = useTokenWalletBalance(walletAddress);
+  const { data: walletBalance, error: walletBalanceError } =
+    useTokenWalletBalance(walletAddress);
 
   const amountToBondError = useMemo(() => {
+    if (walletBalanceError) {
+      notificationApi({
+        variant: 'error',
+        message: walletBalanceError.message,
+      });
+    }
+
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
@@ -46,7 +54,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     } else if (Number(walletBalance.value1) < amountToBond) {
       return `You don't have enough tTNT in your wallet!`;
     }
-  }, [walletBalance, amountToBond]);
+  }, [walletBalanceError, walletBalance, amountToBond, notificationApi]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToBond > 0 && !amountToBondError && walletAddress !== '0x0'
@@ -69,41 +77,32 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         amountToBond
       );
 
-      if (bondExtraTokensTxHash) {
-        const bondExtraTokensTx =
-          await evmPublicClient.waitForTransactionReceipt({
-            hash: bondExtraTokensTxHash,
-          });
+      if (!bondExtraTokensTxHash) {
+        throw new Error('Failed to bond tokens!');
+      }
 
-        if (bondExtraTokensTx.status === 'success') {
-          notificationApi({
-            variant: 'success',
-            message: `Successfully bonded ${amountToBond} tTNT.`,
-          });
-
-          closeModal();
-        } else {
-          notificationApi({
-            variant: 'error',
-            message: 'Failed to bond tokens!',
-          });
-
-          closeModal();
+      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
+        {
+          hash: bondExtraTokensTxHash,
         }
-      }
-    } catch (e) {
-      if (isViemError(e)) {
-        notificationApi({
-          variant: 'error',
-          message: e.shortMessage,
-        });
-      } else {
-        notificationApi({
-          variant: 'error',
-          message: 'Something went wrong.',
-        });
+      );
+
+      if (bondExtraTokensTx.status !== 'success') {
+        throw new Error('Failed to bond tokens!');
       }
 
+      notificationApi({
+        variant: 'success',
+        message: `Successfully bonded ${amountToBond} tTNT.`,
+      });
+    } catch (error: any) {
+      notificationApi({
+        variant: 'error',
+        message: isViemError(error)
+          ? error.shortMessage
+          : error.message || 'Something went wrong!',
+      });
+    } finally {
       closeModal();
     }
   }, [amountToBond, closeModal, notificationApi, walletAddress]);

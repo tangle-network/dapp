@@ -1,7 +1,11 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Button, Divider } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Divider,
+  notificationApi,
+} from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
   WEBB_TANGLE_DOCS_STAKING_URL,
@@ -38,16 +42,25 @@ export const NominatorStatsContainer: FC = () => {
   }, [activeAccount?.address]);
 
   useEffect(() => {
-    const checkIfFirstTimeNominator = async () => {
-      const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-        substrateAddress
-      );
+    try {
+      const checkIfFirstTimeNominator = async () => {
+        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
+          substrateAddress
+        );
 
-      setIsFirstTimeNominator(isFirstTimeNominator);
-    };
+        setIsFirstTimeNominator(isFirstTimeNominator);
+      };
 
-    if (substrateAddress) {
-      checkIfFirstTimeNominator();
+      if (substrateAddress) {
+        checkIfFirstTimeNominator();
+      }
+    } catch (error: any) {
+      notificationApi({
+        variant: 'error',
+        message:
+          error.message ||
+          'Failed to check if the user is a first time nominator.',
+      });
     }
   }, [substrateAddress]);
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useMemo } from 'react';
@@ -29,6 +30,13 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
       symbol,
     };
   }, [data]);
+
+  if (error) {
+    notificationApi({
+      variant: 'error',
+      message: error.message,
+    });
+  }
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
