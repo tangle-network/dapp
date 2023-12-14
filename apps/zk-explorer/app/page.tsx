@@ -1,7 +1,7 @@
 'use client';
 
-import { Breadcrumbs, BreadcrumbsItem, Button, Input, Card, TitleWithInfo, Footer, WalletButton, Typography, IconButton, Dropdown, DropdownBasicButton, DropdownMenu, DropdownBody, DropdownButton, MenuItem } from '@webb-tools/webb-ui-components';
-import { ArrowRightUp, MetaMaskIcon, Search, ThreeDotsVerticalIcon, CheckboxBlankCircleLine, ExternalLinkLine } from '@webb-tools/icons';
+import { Button, Input, Card, Typography, IconButton } from '@webb-tools/webb-ui-components';
+import { ArrowRightUp } from '@webb-tools/icons';
 import { WalletConfig } from '@webb-tools/dapp-config';
 import { useState } from 'react';
 
@@ -43,7 +43,7 @@ export default function Index() {
         </Typography>
 
         <div className="flex gap-6 mb-auto">
-          <Card className="">
+          <Card>
             <Typography variant="h5" className="text-mono-0">
               1. GitHub Repository URL:
             </Typography>
@@ -77,14 +77,11 @@ export default function Index() {
           </Card>
 
           <div>
-            <Card className="p-6">
-              <div>
-                <TitleWithInfo title="Feedback" variant="h5" />
-                <Typography variant="h5" className="text-mono-100">
-                  Have feedback? Reach out to share your thoughts & suggestions!
-                </Typography>
-              </div>
-
+            <Card className="p-6 shadow-md space-y-0 items-start">
+              <Typography variant="h5">Feedback</Typography>
+              <Typography variant="h5" className="dark:text-mono-100" fw="normal">
+                Have feedback? Reach out to share your thoughts & suggestions!
+              </Typography>
               <IconButton>
                 <ArrowRightUp />
               </IconButton>

@@ -1,29 +1,14 @@
-import {
-  useWebContext,
-  useConnectWallet,
-} from '@webb-tools/api-provider-environment';
-import { Input, WalletButton, Dropdown, DropdownBasicButton, DropdownBody, MenuItem, Typography, Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
-import { ThreeDotsVerticalIcon, Search, BookOpenLineIcon, CheckboxBlankCircleLine, ExternalLinkLine, MetaMaskIcon } from '@webb-tools/icons';
-import { WalletConfig } from '@webb-tools/dapp-config';
+import { Input, Dropdown, DropdownBasicButton, DropdownBody, MenuItem, Typography, Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
+import { ThreeDotsVerticalIcon, Search, CheckboxBlankCircleLine } from '@webb-tools/icons';
 import { FC } from 'react';
+import { GitHubOAuthButton } from './GitHubOAuthButton';
 
 export const Header: FC<unknown> = () => {
-  // const { activeAccount, activeWallet, loading, isConnecting } =
-  //   useWebContext();
+  const githubOAuthClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
 
-  // TODO: In the future, make use the `useWebContext` hook to get the active wallet instead of mocking it
-  const debugWallet: WalletConfig = {
-    id: 0,
-    name: 'Webb',
-    title: 'Webb',
-    Logo: <MetaMaskIcon />,
-    platform: 'EVM',
-    enabled: true,
-    homeLink: 'https://webb.tools',
-    // TODO: Can't create a wallet without detect function, but Next.js is complaining if a mock function is used
-    // detect: async () => Promise.resolve(undefined),
-    supportedChainIds: []
-  };
+  if (githubOAuthClientId === undefined) {
+    throw new Error('GitHub OAuth client ID is not defined. Did you forget to set the corresponding environment variable?');
+  }
 
   return (
     <header className="py-4 flex">
@@ -45,10 +30,10 @@ export const Header: FC<unknown> = () => {
           rightIcon={<Search />}
         />
 
-        <WalletButton
-          wallet={debugWallet}
-          address="0x1234567890123456789012345678901234567890"
-          addressClassname="hidden lg:!block"
+        {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
+        <GitHubOAuthButton
+          clientId={githubOAuthClientId}
+          scope="user"
         />
 
         <Dropdown className="flex items-center justify-center">
@@ -59,11 +44,7 @@ export const Header: FC<unknown> = () => {
           <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
             <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
               <Typography variant="label" fw="bold">
-                Advanced
-              </Typography>
-
-              <Typography variant="body1" className="pt-4">
-                Data Source
+                Item 1
               </Typography>
             </div>
           </DropdownBody>
