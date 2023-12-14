@@ -1,4 +1,8 @@
 import type { Metadata, Viewport } from 'next';
+import Providers from './providers';
+import { Footer } from '@webb-tools/webb-ui-components';
+import { Header } from '../components/Header';
+import '@webb-tools/webb-ui-components/tailwind.css';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -28,7 +32,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>
+          <div className="max-w-[1240px] mx-auto flex flex-col h-screen">
+            <Header />
+
+            {children}
+
+            <Footer isMinimal className="w-full py-12 mt-auto" />
+          </div>
+        </Providers>
+      </body>
     </html>
   );
 }
