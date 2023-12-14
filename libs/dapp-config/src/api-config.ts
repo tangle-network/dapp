@@ -265,15 +265,25 @@ export class ApiConfig {
    * in the given supported typed chain ids if the typed chain id is not provided,
    * otherwise, first filter the wallets by the given typed chain id
    * @param typedChainId the typed chain id to filter the wallets
+   * @param opts.filterByAnchor if true, only return the wallets that have the anchor @default true
    * @returns all supported wallets that have at least one supported chain id
    */
-  getSupportedWallets(typedChainId?: number): WalletConfig[] {
+  getSupportedWallets(
+    typedChainId?: number,
+    opts = { filterByActiveAnchor: true }
+  ): WalletConfig[] {
+    const filterByActiveAnchor = opts.filterByActiveAnchor ?? true;
+
     const wallets =
       typeof typedChainId === 'number'
         ? values(this.wallets).filter((walletCfg) =>
             walletCfg.supportedChainIds.includes(typedChainId)
           )
         : values(this.wallets);
+
+    if (!filterByActiveAnchor) {
+      return wallets;
+    }
 
     return wallets.filter((walletCfg) => {
       return walletCfg.supportedChainIds.some((typedChainId) =>

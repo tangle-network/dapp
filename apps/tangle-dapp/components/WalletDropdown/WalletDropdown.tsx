@@ -1,7 +1,6 @@
 'use client';
 
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
@@ -23,10 +22,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
-export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
-  account,
-  wallet,
-}) => {
+export const WalletDropdown: FC<{
+  accountName?: string;
+  accountAddress: string;
+  wallet: WalletConfig;
+}> = ({ accountAddress, accountName, wallet }) => {
   const { activeApi, activeChain, inactivateApi } = useWebContext();
 
   const { notificationApi } = useWebbUI();
@@ -44,8 +44,8 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
 
     const url = activeChain.blockExplorers.default.url;
 
-    return new URL(`/address/${account.address}`, url).toString();
-  }, [activeChain, account]);
+    return new URL(`/address/${accountAddress}`, url).toString();
+  }, [activeChain?.blockExplorers, accountAddress]);
 
   // Funciton to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
@@ -91,7 +91,7 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
       <DropdownTrigger asChild>
         <WalletButton
           wallet={wallet}
-          address={account.address}
+          address={accountAddress}
           addressClassname="hidden lg:block"
         />
       </DropdownTrigger>
@@ -103,14 +103,14 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
 
             <div>
               <Typography variant="h5" fw="bold" className="capitalize">
-                {account.name || wallet.name}
+                {accountName || wallet.name}
               </Typography>
 
               <div className="flex items-center space-x-1">
                 <KeyValueWithButton
                   className="mt-0.5"
                   isHiddenLabel
-                  keyValue={account.address}
+                  keyValue={accountAddress}
                   size="sm"
                   labelVariant="body1"
                   valueVariant="body1"

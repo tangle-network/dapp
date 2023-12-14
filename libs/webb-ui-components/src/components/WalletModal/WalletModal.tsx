@@ -1,7 +1,7 @@
 'use client';
 
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import { forwardRef, useCallback, useMemo } from 'react';
+import { forwardRef, useCallback, useMemo, useRef } from 'react';
 import { Modal, ModalContent } from '../Modal';
 import { WalletConnectionCard } from '../WalletConnectionCard';
 import { WalletModalProps } from './types';
@@ -76,10 +76,6 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       [toggleModal]
     );
 
-    const handleCloseAutoFocus = useCallback(() => {
-      resetState();
-    }, [resetState]);
-
     const downloadURL = useMemo(() => {
       if (platformId == null) return;
 
@@ -116,9 +112,9 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       <div ref={ref} {...props}>
         <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
           <ModalContent
-            onCloseAutoFocus={handleCloseAutoFocus}
             isOpen={isModalOpen}
             isCenter
+            onCloseAutoFocus={() => resetState()}
           >
             <WalletConnectionCard
               wallets={supportedWallets}

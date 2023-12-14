@@ -7,11 +7,21 @@ import { ModalContentProps } from './types';
 
 export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (
-    { children, isOpen = false, isCenter, usePortal, className, ...props },
+    {
+      children,
+      isOpen = false,
+      isCenter,
+      usePortal,
+      className,
+      overrideTransitionContentProps,
+      overrideTransitionOverlayProps,
+      overrideTransitionRootProps,
+      ...props
+    },
     ref
   ) => {
     const inner = (
-      <Transition.Root show={isOpen}>
+      <Transition.Root show={isOpen} {...overrideTransitionRootProps}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -20,6 +30,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
+          {...overrideTransitionOverlayProps}
         >
           <DialogPrimitive.Overlay
             forceMount
@@ -34,6 +45,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           leave="ease-in duration-200"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
+          {...overrideTransitionContentProps}
         >
           <DialogPrimitive.Content
             forceMount

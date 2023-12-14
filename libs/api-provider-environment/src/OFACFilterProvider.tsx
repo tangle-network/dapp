@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, type FC, type PropsWithChildren } from 'react';
 import { OFACModal } from '@webb-tools/webb-ui-components';
 
@@ -37,7 +39,7 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
       .finally(() => {
         setIsFetching(false);
       });
-  }, []);
+  }, [blockedCountryCodes, blockedRegions, isActivated]);
 
   if (isFetching) {
     return null;
