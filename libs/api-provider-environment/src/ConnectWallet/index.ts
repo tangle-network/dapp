@@ -214,7 +214,7 @@ const useConnectWallet = (options?: {
         } else {
           if (
             typeof typedChainId === 'number' &&
-            !chainsPopulated[typedChainId]
+            chainsPopulated[typedChainId]
           ) {
             await switchChain(chainsPopulated[typedChainId], nextWallet);
           } else {
