@@ -5,8 +5,9 @@ import {
 import { Input, WalletButton, Dropdown, DropdownBasicButton, DropdownBody, MenuItem, Typography, Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
 import { ThreeDotsVerticalIcon, Search, BookOpenLineIcon, CheckboxBlankCircleLine, ExternalLinkLine, MetaMaskIcon } from '@webb-tools/icons';
 import { WalletConfig } from '@webb-tools/dapp-config';
+import { FC } from 'react';
 
-export const Header: FC<> = () => {
+export const Header: FC<unknown> = () => {
   // const { activeAccount, activeWallet, loading, isConnecting } =
   //   useWebContext();
 
@@ -22,7 +23,7 @@ export const Header: FC<> = () => {
     // TODO: Can't create a wallet without detect function, but Next.js is complaining if a mock function is used
     // detect: async () => Promise.resolve(undefined),
     supportedChainIds: []
-  }
+  };
 
   return (
     <header className="py-4 flex">
@@ -69,5 +70,5 @@ export const Header: FC<> = () => {
         </Dropdown>
       </div>
     </header>
-  )
-}
+  );
+};
