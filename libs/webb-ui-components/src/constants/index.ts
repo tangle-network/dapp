@@ -101,6 +101,9 @@ export const SUBQUERY_ENDPOINT =
 export const TANGLE_STAKING_URL =
   'https://polkadot.js.org/apps/?rpc=wss://rpc-archive.tangle.tools#/staking';
 
+export const STAKING_PRECOMPILE_LINK =
+  'https://github.com/webb-tools/tangle/blob/main/precompiles/staking/StakingInterface.sol';
+
 export const TANGLE_PRIVACY_POLICY_URL = new URL(
   '/privacy-policy',
   TANGLE_MKT_URL

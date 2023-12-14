@@ -5,7 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 
-import { evmClient } from '../../constants';
+import { evmPublicClient } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useTokenWalletBalance(
@@ -25,7 +25,7 @@ export default function useTokenWalletBalance(
       }
 
       try {
-        const balance = await evmClient.getBalance({
+        const balance = await evmPublicClient.getBalance({
           address: ensureHex(address),
         });
 

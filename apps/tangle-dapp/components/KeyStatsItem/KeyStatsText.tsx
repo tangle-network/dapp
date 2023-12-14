@@ -1,5 +1,6 @@
 'use client';
 
+import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 
@@ -11,6 +12,13 @@ type Props = Pick<KeyStatsItemProps, 'title' | 'prefix' | 'suffix'>;
 
 const KeyStatsItemText = ({ title, prefix, suffix }: Props) => {
   const { isLoading, error, data } = dataHooks[title]();
+
+  if (error) {
+    notificationApi({
+      variant: 'error',
+      message: error.message,
+    });
+  }
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
