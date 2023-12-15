@@ -1,9 +1,9 @@
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { MouseEventHandler } from 'react';
 
-export type GitHubOAuthRedirectParams = {
+export type GitHubOAuthSuccessParams = {
   code: string;
-  state: string;
+  state: string | null;
 };
 
 export type GitHubOAuthErrorParams = {
@@ -35,7 +35,7 @@ export type GitHubOAuthButtonProps = PropsOf<'button'> & {
    * and the user will be considered to be signed out.
    */
   username?: string;
-  onOAuthSuccess?: (params: GitHubOAuthRedirectParams) => void;
+  onOAuthSuccess?: (params: GitHubOAuthSuccessParams) => void;
   onOAuthError?: (params: GitHubOAuthErrorParams) => void;
   /**
    * Callback that is called when the button is clicked, and the user is

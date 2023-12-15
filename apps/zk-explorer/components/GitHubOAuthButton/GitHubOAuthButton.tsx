@@ -49,7 +49,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
     const error = url.searchParams.get('error');
     const errorDescription = url.searchParams.get('error_description');
 
-    if (code !== null && state !== null) {
+    if (code !== null) {
       if (onOAuthSuccess !== undefined) {
         onOAuthSuccess({ code, state });
       }

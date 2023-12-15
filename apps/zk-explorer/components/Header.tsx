@@ -16,6 +16,7 @@ import {
 } from '@webb-tools/icons';
 import { FC } from 'react';
 import { GitHubOAuthButton } from './GitHubOAuthButton/GitHubOAuthButton';
+import { handleOAuthError, handleOAuthSuccess } from '../utils';
 
 export const Header: FC<unknown> = () => {
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID;
@@ -55,12 +56,8 @@ export const Header: FC<unknown> = () => {
           <GitHubOAuthButton
             clientId={githubOAuthClientId}
             scope="user"
-            onOAuthError={(params) =>
-              alert(`Authorization failed: ${params.errorDescription}`)
-            }
-            onOAuthSuccess={(params) =>
-              alert(`Authorization successful, code: ${params.code}`)
-            }
+            onOAuthError={handleOAuthError}
+            onOAuthSuccess={handleOAuthSuccess}
           />
 
           <Dropdown className="flex items-center justify-center">
