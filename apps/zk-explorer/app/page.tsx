@@ -1,40 +1,21 @@
 'use client';
 
-import { Button, Input, Card, Typography, IconButton } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Input,
+  Card,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { useState } from 'react';
-import { IconSize } from "../../../dist/libs/icons/types";
 import { Link } from '@webb-tools/webb-ui-components/components/Link';
+import { validateGithubUrl } from '../utils';
 
 export default function Index() {
   const [githubUrl, setGithubUrl] = useState('');
   const [isValidGithubUrl, setIsValidGithubUrl] = useState(false);
-  const [isGithubUrlDisplayingError, setIsGithubUrlDisplayingError] = useState(false);
-
-  const validateGithubUrl = (url: string): boolean => {
-    const trimmedUrl = url.trim();
-    const GITHUB_URL_PREFIX = 'https://github.com/'; // TODO: Consider whether HTTP URLs should be allowed.
-
-    if (!trimmedUrl.startsWith(GITHUB_URL_PREFIX)) {
-      return false;
-    }
-
-    const significantPathSegment = trimmedUrl.slice(GITHUB_URL_PREFIX.length);
-    const parts = significantPathSegment.split('/');
-
-    // The significant path segment should be in the form of
-    // <username>/<repository-name>, so there should be exactly
-    // two parts.
-    if (parts.length !== 2) {
-      return false;
-    }
-
-    const segmentRegex = /^([a-zA-Z0-9_-]+)$/i;
-    const owner = parts[0];
-    const repo = parts[1];
-
-    return segmentRegex.test(owner) && segmentRegex.test(repo);
-  };
+  const [isGithubUrlDisplayingError, setIsGithubUrlDisplayingError] =
+    useState(false);
 
   return (
     <main className="flex flex-col gap-6 pt-6">
@@ -50,7 +31,9 @@ export default function Index() {
             id="repository url"
             autoFocus
             placeholder="https://github.com/username/repository-name"
-            errorMessage={isGithubUrlDisplayingError ? '*Invalid GitHub URL.' : undefined}
+            errorMessage={
+              isGithubUrlDisplayingError ? '*Invalid GitHub URL.' : undefined
+            }
             isInvalid={isGithubUrlDisplayingError}
             value={githubUrl}
             onChange={(value) => {
@@ -64,13 +47,17 @@ export default function Index() {
           />
 
           <div className="flex gap-4 flex-col sm:flex-row">
-            <Button variant="secondary" isFullWidth>Learn More</Button>
+            <Button variant="secondary" isFullWidth>
+              Learn More
+            </Button>
             {/* TODO: Perform mock submission once the submit button is clicked. */}
             <Button
               isDisabled={!isValidGithubUrl}
-              onClick={() => alert("Submit!")}
+              onClick={() => alert('Submit!')}
               isFullWidth
-            >Submit Project</Button>
+            >
+              Submit Project
+            </Button>
           </div>
         </Card>
 

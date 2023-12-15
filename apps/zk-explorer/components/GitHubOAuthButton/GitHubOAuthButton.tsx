@@ -1,53 +1,10 @@
 'use client';
 
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { GithubFill } from '@webb-tools/icons';
 import { twMerge } from 'tailwind-merge';
 import { FC, MouseEventHandler, useEffect } from 'react';
-
-export type GitHubOAuthRedirectParams = {
-  code: string
-  state: string
-}
-
-export type GitHubOAuthErrorParams = {
-  error: string
-  errorDescription: string
-  state: string | null
-}
-
-export type GitHubOAuthButtonProps = PropsOf<'button'> & {
-  clientId: string
-  redirectUri?: string
-  scope: string
-  /**
-   * An unguessable random string. It is used to protect against cross-site
-   * request forgery attacks (CSRF).
-   */
-  state?: string
-  /**
-   * Override default behavior of handling GitHub OAuth redirect and error
-   * query parameters. If this is `false`, the button will not handle
-   * GitHub OAuth redirect or error query parameters, and the provided
-   * `onOauthRedirect` and `onOauthError` callbacks will not be called.
-   */
-  doInterceptOauthRedirect?: boolean
-  /**
-   * The username of the user that is signed in.
-   *
-   * If this is `undefined`, the button will display "Sign in with GitHub",
-   * and the user will be considered to be signed out.
-   */
-  username?: string;
-  onOAuthSuccess?: (params: GitHubOAuthRedirectParams) => void
-  onOAuthError?: (params: GitHubOAuthErrorParams) => void
-  /**
-   * Callback that is called when the button is clicked, and the user is
-   * considered to be signed in.
-   */
-  onSignedInClick?: MouseEventHandler<HTMLButtonElement>
-}
+import { GitHubOAuthButtonProps } from './types';
 
 export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -61,8 +18,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
       if (props.onSignedInClick !== undefined) {
         props.onSignedInClick(e);
       }
-    }
-    else {
+    } else {
       const authUrl = new URL('https://github.com/login/oauth/authorize');
       const finalRedirectUri = props.redirectUri ?? window.location.href;
 
@@ -76,9 +32,9 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
 
       window.location.href = authUrl.toString();
     }
-  }
+  };
 
-  const {doInterceptOauthRedirect, onOAuthSuccess, onOAuthError} = props;
+  const { doInterceptOauthRedirect, onOAuthSuccess, onOAuthError } = props;
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.
   // Handle possible GitHub OAuth redirect and error query parameters.
@@ -95,15 +51,14 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
 
     if (code !== null && state !== null) {
       if (onOAuthSuccess !== undefined) {
-        onOAuthSuccess({code, state});
+        onOAuthSuccess({ code, state });
       }
-    }
-    else if (error !== null && errorDescription !== null) {
+    } else if (error !== null && errorDescription !== null) {
       if (onOAuthError !== undefined) {
-        onOAuthError({error, errorDescription, state});
+        onOAuthError({ error, errorDescription, state });
       }
     }
-  }, [doInterceptOauthRedirect, onOAuthSuccess, onOAuthError])
+  }, [doInterceptOauthRedirect, onOAuthSuccess, onOAuthError]);
 
   return (
     <button
@@ -122,14 +77,10 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
       <div className="flex items-center gap-2">
         <GithubFill size="lg" />
 
-        <Typography
-          variant="body1"
-          fw="bold"
-          component="p"
-        >
+        <Typography variant="body1" fw="bold" component="p">
           {props.username ? `@${props.username}` : 'Sign in with GitHub'}
         </Typography>
       </div>
     </button>
-  )
-}
+  );
+};

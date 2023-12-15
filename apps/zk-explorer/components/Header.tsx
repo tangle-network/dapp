@@ -1,15 +1,29 @@
 'use client';
 
-import { Input, Dropdown, DropdownBasicButton, DropdownBody, MenuItem, Typography, Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
-import { ThreeDotsVerticalIcon, Search, CheckboxBlankCircleLine } from '@webb-tools/icons';
+import {
+  Input,
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+  Typography,
+  Breadcrumbs,
+  BreadcrumbsItem,
+} from '@webb-tools/webb-ui-components';
+import {
+  ThreeDotsVerticalIcon,
+  Search,
+  CheckboxBlankCircleLine,
+} from '@webb-tools/icons';
 import { FC } from 'react';
-import { GitHubOAuthButton } from './GitHubOAuthButton';
+import { GitHubOAuthButton } from './GitHubOAuthButton/GitHubOAuthButton';
 
 export const Header: FC<unknown> = () => {
-  const githubOAuthClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+  const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID;
 
-  if (githubOAuthClientId === undefined) {
-    throw new Error('GitHub OAuth client ID is not defined. Did you forget to set the corresponding environment variable?');
+  if (githubOAuthClientId === undefined || githubOAuthClientId === '') {
+    throw new Error(
+      'GitHub OAuth client ID is not defined. Did you forget to set the corresponding environment variable?'
+    );
   }
 
   return (
@@ -17,11 +31,15 @@ export const Header: FC<unknown> = () => {
       {/* TODO: Base breadcrumbs on the pathname */}
       <Breadcrumbs>
         <BreadcrumbsItem icon={<CheckboxBlankCircleLine />}>
-          <Typography className="text-mono-60" variant="body1" fw="bold">ZK Explorer</Typography>
+          <Typography className="text-mono-60" variant="body1" fw="bold">
+            ZK Explorer
+          </Typography>
         </BreadcrumbsItem>
 
         <BreadcrumbsItem icon={<CheckboxBlankCircleLine />}>
-          <Typography className="text-mono-0" variant="body1" fw="bold">Upload Project</Typography>
+          <Typography className="text-mono-0" variant="body1" fw="bold">
+            Upload Project
+          </Typography>
         </BreadcrumbsItem>
       </Breadcrumbs>
 
@@ -36,10 +54,13 @@ export const Header: FC<unknown> = () => {
           {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
           <GitHubOAuthButton
             clientId={githubOAuthClientId}
-            onOAuthError={(params) => alert(`Authorization failed: ${params.errorDescription}`)}
-            onOAuthSuccess={(params) => alert(`Authorization successful, code: ${params.code}`)}
-            doInterceptOauthRedirect
             scope="user"
+            onOAuthError={(params) =>
+              alert(`Authorization failed: ${params.errorDescription}`)
+            }
+            onOAuthSuccess={(params) =>
+              alert(`Authorization successful, code: ${params.code}`)
+            }
           />
 
           <Dropdown className="flex items-center justify-center">

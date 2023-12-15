@@ -10,6 +10,14 @@ const nextConfigBase = require('../../next.config.js');
 const nextConfig = {
   ...nextConfigBase,
 
+  // By default, this environment variable is only accessible by the server-side,
+  // resulting in hydration mismatch. This makes the environment variable
+  // accessible to both the server and client.
+  env: {
+    ZK_EXPLORER_GITHUB_CLIENT_ID:
+      process.env.ZK_EXPLORER_GITHUB_CLIENT_ID ?? '',
+  },
+
   nx: {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
