@@ -143,8 +143,28 @@ export const ValidatorList = ({
         </div>
       </div>
 
-      <div className="max-h-[348px] overflow-scroll flex flex-col gap-2 p-3 border dark:border-mono-160">
-        {validatorElements}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="max-h-[348px] overflow-scroll flex flex-col gap-2 p-3 border dark:border-mono-160 col-span-2">
+          {validatorElements}
+        </div>
+
+        <div className="flex flex-col gap-5 col-span-1">
+          <Typography variant="body1" fw="normal">
+            Validators can be nominated from the list of all currently available
+            validators. You should nominate validators you trust. Nominators are
+            slashed when their nominated validators misbehave.
+          </Typography>
+
+          <Typography variant="body1" fw="normal">
+            Once submitted, the new selection will only take effect in 2 eras
+            from the next validator election cycle. Until then, the nominations
+            will appear inactive.
+          </Typography>
+
+          <Typography variant="body1" fw="normal">
+            Submitting a new nomination will overwrite any existing nomination.
+          </Typography>
+        </div>
       </div>
     </div>
   );

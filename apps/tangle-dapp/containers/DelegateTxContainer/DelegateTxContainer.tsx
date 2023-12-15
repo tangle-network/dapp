@@ -332,7 +332,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             >
               {delegateTxStep === DelegateTxSteps.BOND_TOKENS
                 ? 'Next'
-                : 'Stake & Delegate'}
+                : amountToBond > 0
+                ? 'Stake & Nominate'
+                : 'Nominate'}
             </Button>
           ) : (
             <Button
