@@ -1,3 +1,5 @@
+'use client';
+
 import { Input, Dropdown, DropdownBasicButton, DropdownBody, MenuItem, Typography, Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
 import { ThreeDotsVerticalIcon, Search, CheckboxBlankCircleLine } from '@webb-tools/icons';
 import { FC } from 'react';
@@ -11,7 +13,7 @@ export const Header: FC<unknown> = () => {
   }
 
   return (
-    <header className="py-4 flex">
+    <header className="py-4 flex flex-col sm:flex-row gap-4">
       {/* TODO: Base breadcrumbs on the pathname */}
       <Breadcrumbs>
         <BreadcrumbsItem icon={<CheckboxBlankCircleLine />}>
@@ -23,32 +25,37 @@ export const Header: FC<unknown> = () => {
         </BreadcrumbsItem>
       </Breadcrumbs>
 
-      <div className="flex gap-2 ml-auto items-center">
+      <div className="flex flex-col sm:flex-row gap-4 md:gap-2 md:ml-auto items-start">
         <Input
           id="search item"
           placeholder="Search item"
           rightIcon={<Search />}
         />
 
-        {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
-        <GitHubOAuthButton
-          clientId={githubOAuthClientId}
-          scope="user"
-        />
+        <div className="flex">
+          {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
+          <GitHubOAuthButton
+            clientId={githubOAuthClientId}
+            onOAuthError={(params) => alert(`Authorization failed: ${params.errorDescription}`)}
+            onOAuthSuccess={(params) => alert(`Authorization successful, code: ${params.code}`)}
+            doInterceptOauthRedirect
+            scope="user"
+          />
 
-        <Dropdown className="flex items-center justify-center">
-          <DropdownBasicButton>
-            <ThreeDotsVerticalIcon size="lg" />
-          </DropdownBasicButton>
+          <Dropdown className="flex items-center justify-center">
+            <DropdownBasicButton>
+              <ThreeDotsVerticalIcon size="lg" />
+            </DropdownBasicButton>
 
-          <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
-            <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
-              <Typography variant="label" fw="bold">
-                Item 1
-              </Typography>
-            </div>
-          </DropdownBody>
-        </Dropdown>
+            <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
+              <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
+                <Typography variant="label" fw="bold">
+                  Item 1
+                </Typography>
+              </div>
+            </DropdownBody>
+          </Dropdown>
+        </div>
       </div>
     </header>
   );

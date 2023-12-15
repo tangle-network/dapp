@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-body">
         <Providers>
-          <div className="max-w-[1240px] mx-auto flex flex-col h-screen">
+          <div className="max-w-[1240px] mx-auto flex flex-col h-screen px-4">
             <Header />
 
             {children}

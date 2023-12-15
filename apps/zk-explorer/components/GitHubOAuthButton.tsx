@@ -14,7 +14,7 @@ export type GitHubOAuthRedirectParams = {
 export type GitHubOAuthErrorParams = {
   error: string
   errorDescription: string
-  state: string
+  state: string | null
 }
 
 export type GitHubOAuthButtonProps = PropsOf<'button'> & {
@@ -40,8 +40,8 @@ export type GitHubOAuthButtonProps = PropsOf<'button'> & {
    * and the user will be considered to be signed out.
    */
   username?: string;
-  onOauthRedirect?: (params: GitHubOAuthRedirectParams) => void
-  onOauthError?: (params: GitHubOAuthErrorParams) => void
+  onOAuthSuccess?: (params: GitHubOAuthRedirectParams) => void
+  onOAuthError?: (params: GitHubOAuthErrorParams) => void
   /**
    * Callback that is called when the button is clicked, and the user is
    * considered to be signed in.
@@ -78,7 +78,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
     }
   }
 
-  const {doInterceptOauthRedirect, onOauthRedirect, onOauthError} = props;
+  const {doInterceptOauthRedirect, onOAuthSuccess, onOAuthError} = props;
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.
   // Handle possible GitHub OAuth redirect and error query parameters.
@@ -94,16 +94,16 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
     const errorDescription = url.searchParams.get('error_description');
 
     if (code !== null && state !== null) {
-      if (onOauthRedirect !== undefined) {
-        onOauthRedirect({code, state});
+      if (onOAuthSuccess !== undefined) {
+        onOAuthSuccess({code, state});
       }
     }
-    else if (error !== null && errorDescription !== null && state !== null) {
-      if (onOauthError !== undefined) {
-        onOauthError({error, errorDescription, state});
+    else if (error !== null && errorDescription !== null) {
+      if (onOAuthError !== undefined) {
+        onOAuthError({error, errorDescription, state});
       }
     }
-  }, [doInterceptOauthRedirect, onOauthRedirect, onOauthError])
+  }, [doInterceptOauthRedirect, onOAuthSuccess, onOAuthError])
 
   return (
     <button
