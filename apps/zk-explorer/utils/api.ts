@@ -15,13 +15,13 @@ export type ApiResponse<T = unknown> = {
 
 export type ApiEmptyResponse = ApiResponse<Record<string, never>>;
 
-export function getApiRoute(route: ApiRoute): string {
+export function makeApiRoute(route: ApiRoute): string {
   const API_PREFIX = '/api';
 
   return `${API_PREFIX}/${route}`;
 }
 
-export async function makeApiRequest<T extends ApiResponse = ApiEmptyResponse>(
+export async function sendApiRequest<T extends ApiResponse = ApiEmptyResponse>(
   route: ApiRoute,
   options?: RequestInit
 ): Promise<ApiResponseWrapper<T>> {
@@ -33,7 +33,7 @@ export async function makeApiRequest<T extends ApiResponse = ApiEmptyResponse>(
     },
   };
 
-  const response = await fetch(getApiRoute(route), finalOptions);
+  const response = await fetch(makeApiRoute(route), finalOptions);
 
   return {
     data: await response.json(),
@@ -44,7 +44,7 @@ export async function makeApiRequest<T extends ApiResponse = ApiEmptyResponse>(
 export async function exchangeAuthCodeForOAuthToken(
   code: string
 ): Promise<boolean> {
-  const response = await makeApiRequest(ApiRoute.OAuthGithub, {
+  const response = await sendApiRequest(ApiRoute.OAuthGithub, {
     method: 'POST',
     body: JSON.stringify({ code }),
   });

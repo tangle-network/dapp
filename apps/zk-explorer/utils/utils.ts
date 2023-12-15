@@ -2,7 +2,7 @@ import { exchangeAuthCodeForOAuthToken } from './api';
 import {
   GitHubOAuthErrorParams,
   GitHubOAuthSuccessParams,
-} from './components/GitHubOAuthButton/types';
+} from '../components/GitHubOAuthButton/types';
 
 export function validateGithubUrl(url: string): boolean {
   const trimmedUrl = url.trim();

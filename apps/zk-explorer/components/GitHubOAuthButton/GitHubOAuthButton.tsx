@@ -7,12 +7,12 @@ import { FC, MouseEventHandler, useEffect } from 'react';
 import { GitHubOAuthButtonProps } from './types';
 
 export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
+  const isSignedIn = props.username !== undefined;
+
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     if (props.onClick !== undefined) {
       props.onClick(e);
     }
-
-    const isSignedIn = props.username !== undefined;
 
     if (isSignedIn) {
       if (props.onSignedInClick !== undefined) {
@@ -60,16 +60,24 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
     }
   }, [doInterceptOauthRedirect, onOAuthSuccess, onOAuthError]);
 
+  const colors = isSignedIn
+    ? twMerge(
+        'bg-mono-0/10 border-mono-60',
+        'hover:bg-mono-0/30',
+        'dark:bg-mono-0/5 dark:border-mono-140',
+        'dark:hover:bg-mono-0/10',
+        props.className
+      )
+    : // TODO: Fix text color. For some reason, the color seems washed out instead of strong black.
+      twMerge('dark:bg-mono-20 dark:text-mono-180');
+
   return (
     <button
       {...props}
       type="button"
       className={twMerge(
+        colors,
         'rounded-full border-2 py-2 px-4',
-        'bg-mono-0/10 border-mono-60',
-        'hover:bg-mono-0/30',
-        'dark:bg-mono-0/5 dark:border-mono-140',
-        'dark:hover:bg-mono-0/10',
         props.className
       )}
       onClick={handleClick}

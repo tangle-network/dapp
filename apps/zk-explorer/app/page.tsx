@@ -1,81 +1,59 @@
-'use client';
-
-import {
-  Button,
-  Input,
-  Card,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import { ArrowRightUp } from '@webb-tools/icons';
-import { useState } from 'react';
-import { Link } from '@webb-tools/webb-ui-components/components/Link';
-import { validateGithubUrl } from '../utils';
+import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
+import { HeaderActions } from '../components/HeaderActions';
+import { Search } from '@webb-tools/icons';
+import { FilteringSidebar } from '../components/FilteringSidebar';
 
 export default function Index() {
-  const [githubUrl, setGithubUrl] = useState('');
-  const [isValidGithubUrl, setIsValidGithubUrl] = useState(false);
-  const [isGithubUrlDisplayingError, setIsGithubUrlDisplayingError] =
-    useState(false);
-
   return (
-    <main className="flex flex-col gap-6 pt-6">
-      <Typography variant="h4" fw="bold">
-        Upload Project
-      </Typography>
+    <main className="flex flex-col gap-6">
+      {/* Custom, landing-page-only header */}
+      {/* TODO: Need to figure out a way to significantly reduce the size of the background image (it's 1mb right now). Should be <=100kb for optimal SEO. One way would be to trim it to what is actually used in terms of max proportions visible to the user, or reduce its resolution. */}
+      <header
+        className="relative pb-12 bg-cover bg-center rounded-b-xl mb-6"
+        style={{ backgroundImage: 'url(/header-bg.png)' }}
+      >
+        {/* Background image mask */}
+        <div className="absolute inset-0 opacity-20 bg-black"></div>
 
-      <div className="flex flex-col sm:flex-row gap-6 items-start">
-        <Card className="max-w-[780px]">
-          <Typography variant="h5">1. GitHub Repository URL:</Typography>
+        <div className="relative flex items-end my-4 z-10">
+          <HeaderActions />
+        </div>
 
-          <Input
-            id="repository url"
-            autoFocus
-            placeholder="https://github.com/username/repository-name"
-            errorMessage={
-              isGithubUrlDisplayingError ? '*Invalid GitHub URL.' : undefined
-            }
-            isInvalid={isGithubUrlDisplayingError}
-            value={githubUrl}
-            onChange={(value) => {
-              setGithubUrl(value);
+        <div className="relative space-y-4 px-5 z-10">
+          <Typography variant="body4" className="uppercase">
+            Privacy for everyone, everything, everywhere
+          </Typography>
+          <Typography variant="h2" fw="bold">
+            Zero-Knowledge Explorer
+          </Typography>
+          <Typography variant="h5" fw="normal">
+            Dive into the future of privacy with advanced cryptography &
+            zero-knowledge proofs.
+          </Typography>
+        </div>
+      </header>
 
-              const isNewUrlValid = validateGithubUrl(value);
+      <div className="shadow-m py-4 px-6 dark:bg-mono-170 rounded-xl flex gap-2">
+        <Button variant="primary" className="px-3">
+          Projects
+        </Button>
 
-              setIsValidGithubUrl(isNewUrlValid);
-              setIsGithubUrlDisplayingError(value.length > 0 && !isNewUrlValid);
-            }}
-          />
+        <Button
+          variant="primary"
+          className="px-3 dark:bg-transparent border-none dark:text-mono-0"
+        >
+          Circuits
+        </Button>
 
-          <div className="flex gap-4 flex-col sm:flex-row">
-            <Button variant="secondary" isFullWidth>
-              Learn More
-            </Button>
-            {/* TODO: Perform mock submission once the submit button is clicked. */}
-            <Button
-              isDisabled={!isValidGithubUrl}
-              onClick={() => alert('Submit!')}
-              isFullWidth
-            >
-              Submit Project
-            </Button>
-          </div>
-        </Card>
-
-        <Card className="p-6 shadow-md space-y-4 w-auto">
-          <div>
-            <Typography variant="h5">Feedback</Typography>
-
-            <Typography variant="h5" className="dark:text-mono-100" fw="normal">
-              Have feedback? Reach out to share your thoughts & suggestions!
-            </Typography>
-          </div>
-
-          {/* TODO: Replace this with a link to the feedback form. */}
-          <Link href="#">
-            <ArrowRightUp size="lg" />
-          </Link>
-        </Card>
+        <Input
+          id="keyword search"
+          rightIcon={<Search size="lg" />}
+          className="w-full"
+          placeholder="search for keyword"
+        />
       </div>
+
+      <FilteringSidebar />
     </main>
   );
 }
