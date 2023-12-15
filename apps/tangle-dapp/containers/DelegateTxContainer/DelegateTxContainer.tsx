@@ -16,6 +16,7 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import useSWR from 'swr';
 
 import {
   bondExtraTokens,
@@ -26,7 +27,7 @@ import {
   PAYMENT_DESTINATION_OPTIONS,
   updatePaymentDestination,
 } from '../../constants';
-import useValidators from '../../data/DelegateFlow/useValidators';
+import { getActiveValidators } from '../../data';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import { PaymentDestination } from '../../types';
@@ -44,7 +45,10 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { data: validators, error: validatorsError } = useValidators();
+  const { data: activeValidatorsData } = useSWR(
+    [getActiveValidators.name],
+    ([, ...args]) => getActiveValidators(...args)
+  );
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
@@ -265,13 +269,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     walletAddress,
   ]);
 
-  if (validatorsError) {
-    notificationApi({
-      variant: 'error',
-      message: validatorsError.message,
-    });
-  }
-
   return (
     <Modal open>
       <ModalContent
@@ -300,7 +297,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             />
           ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
             <SelectDelegates
-              validators={validators ? validators.validators : []}
+              validators={activeValidatorsData ? activeValidatorsData : []}
               selectedValidators={selectedValidators}
               setSelectedValidators={setSelectedValidators}
             />

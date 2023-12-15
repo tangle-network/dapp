@@ -1,4 +1,4 @@
-import { ValidatorType } from '../../types';
+import { Validator } from '../../types';
 
 export type DelegateTxContainerProps = {
   isModalOpen: boolean;
@@ -18,7 +18,7 @@ export type BondTokensProps = {
 };
 
 export type SelectDelegatesProps = {
-  validators: ValidatorType[];
+  validators: Validator[];
   selectedValidators: string[];
   setSelectedValidators: (selectedValidators: string[]) => void;
 };

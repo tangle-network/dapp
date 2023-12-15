@@ -48,6 +48,7 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
           identity: identity ?? '',
           selfStaked: selfStaked ?? '',
           effectiveAmountStaked: effectiveAmountStaked ?? '',
+          effectiveAmountStakedRaw: totalStakeAmount.toString() ?? '',
           delegations: delegations ?? '',
         };
       })

@@ -11,8 +11,8 @@ const SelectDelegates: FC<SelectDelegatesProps> = ({
 }) => {
   return (
     <div>
-      <div className="grid grid-cols-2 gap-9">
-        <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-3 gap-9">
+        <div className="flex flex-col gap-2 col-span-2">
           <Typography
             variant="body1"
             fw="normal"
@@ -25,6 +25,10 @@ const SelectDelegates: FC<SelectDelegatesProps> = ({
             validators={validators}
             selectedValidators={selectedValidators}
             setSelectedValidators={setSelectedValidators}
+            sortBy={[
+              { key: 'effectiveAmountStakedRaw', title: 'Total Stake' },
+              { key: 'delegations', title: '# of Nominations' },
+            ]}
           />
 
           <Typography
@@ -36,7 +40,7 @@ const SelectDelegates: FC<SelectDelegatesProps> = ({
           </Typography>
         </div>
 
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 col-span-1">
           <Typography variant="body1" fw="normal">
             Validators can be selected manually to nominate from the list of all
             currently available validators.

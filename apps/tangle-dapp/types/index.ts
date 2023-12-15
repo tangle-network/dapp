@@ -3,6 +3,7 @@ export type Validator = {
   identity: string;
   selfStaked: string;
   effectiveAmountStaked: string;
+  effectiveAmountStakedRaw: string;
   delegations: string;
 };
 
@@ -18,8 +19,3 @@ export enum PaymentDestination {
   Stash = 'Stash (do not increase the amount at stake)',
   Controller = 'Controller Account',
 }
-
-export type ValidatorType = {
-  address: string;
-  identity: string;
-};
