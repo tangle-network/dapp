@@ -61,7 +61,7 @@ export default function Submit() {
           </div>
         </Card>
 
-        <Card className="p-6 shadow-md space-y-4 w-auto">
+        <Card className="p-6 shadow-md space-y-4 w-auto items-start">
           <div>
             <Typography variant="h5">Feedback</Typography>
 

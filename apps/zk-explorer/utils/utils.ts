@@ -55,22 +55,3 @@ function reportProblem(message: string): void {
   // TODO: Provide better looking feedback to the user. Is there any toast component that can be used here?
   alert(message);
 }
-
-/**
- * Asserts that the given condition is true. If it is not, an error is thrown
- * with the given reasoning.
- *
- * This is useful for when there are required preconditions that must be met
- * for a function to work properly, but aren't effectively captured
- * by TypeScript's type system.
- */
-export function assert(
-  condition: boolean,
-  reasoning: string
-): asserts condition {
-  if (!condition) {
-    // TODO: This is a perfect place to report logic errors to Sentry (if we ever use it in the future for this project).
-
-    throw new Error(`Assertion failed: ${reasoning}`);
-  }
-}

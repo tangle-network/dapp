@@ -23,6 +23,19 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  // In order to load GitHub avatars for projects' owners,
+  // GitHub must be registered as a host.
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        port: '',
+        pathname: '/u/**',
+      },
+    ],
+  },
 };
 
 const plugins = [

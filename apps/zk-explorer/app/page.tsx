@@ -1,9 +1,54 @@
-import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
+'use client';
+
+import {
+  Typography,
+  Button,
+  Input,
+  Card,
+} from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
 import { Search } from '@webb-tools/icons';
 import { FilteringSidebar } from '../components/FilteringSidebar';
+import { ProjectCard } from '../components/ProjectCard';
+import { Link } from '@webb-tools/webb-ui-components/components/Link';
+
+export type ProjectItem = {
+  avatarUrl: string;
+  repositoryOwner: string;
+  repositoryName: string;
+  description: string;
+  githubStars: number;
+  circuitCount: number;
+  contributorAvatarUrls: string[];
+};
 
 export default function Index() {
+  const projects: ProjectItem[] = [
+    {
+      avatarUrl: 'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+      repositoryOwner: 'webb',
+      repositoryName: 'masp',
+      githubStars: 123,
+      circuitCount: 24,
+      description: 'Short blurb about what the purpose of this circuit.',
+      contributorAvatarUrls: [
+        'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+      ],
+    },
+  ];
+
+  // TODO: This is only for testing purposes. Remove this once the actual data is available.
+  for (let i = 0; i < 4; i++) {
+    projects[0].contributorAvatarUrls.push(
+      projects[0].contributorAvatarUrls[0]
+    );
+  }
+
+  // TODO: This is only for testing purposes. Remove this once the actual data is available.
+  for (let i = 0; i < 13; i++) {
+    projects.push(projects[0]);
+  }
+
   return (
     <main className="flex flex-col gap-6">
       {/* Custom, landing-page-only header */}
@@ -49,11 +94,24 @@ export default function Index() {
           id="keyword search"
           rightIcon={<Search size="lg" />}
           className="w-full"
-          placeholder="search for keyword"
+          placeholder="Search for specific keywords..."
         />
       </div>
 
-      <FilteringSidebar />
+      <div className="flex">
+        <FilteringSidebar />
+
+        <div className="grid grid-cols-2 gap-6 w-full">
+          {projects.map((project, index) => (
+            <Link
+              key={index}
+              href={`/@${project.repositoryOwner}/${project.repositoryName}`}
+            >
+              <ProjectCard {...project} />
+            </Link>
+          ))}
+        </div>
+      </div>
     </main>
   );
 }

@@ -6,6 +6,11 @@ type FilterOption = {
   amount: number;
 };
 
+type FilterCategory = {
+  label: string;
+  options: FilterOption[];
+};
+
 export const FilteringSidebar: FC<unknown> = () => {
   const debugProofSystemsOptions: FilterOption[] = [
     {
@@ -95,8 +100,27 @@ export const FilteringSidebar: FC<unknown> = () => {
     },
   ];
 
+  const categories: FilterCategory[] = [
+    {
+      label: 'Proof system',
+      options: debugProofSystemsOptions,
+    },
+    {
+      label: 'Category',
+      options: debugCategoryOptions,
+    },
+    {
+      label: 'License',
+      options: debugLicenseOptions,
+    },
+    {
+      label: 'Language/Framework',
+      options: debugLanguageOptions,
+    },
+  ];
+
   return (
-    <div className="px-6 flex flex-col gap-9 max-w-[270px]">
+    <div className="px-6 flex flex-col gap-9 min-w-[270px]">
       <div>
         <Typography variant="body1" fw="semibold" className="py-2">
           Filter by:
@@ -104,85 +128,34 @@ export const FilteringSidebar: FC<unknown> = () => {
         <hr className="border-mono-160" />
       </div>
 
-      <div>
-        <Typography variant="body1" fw="normal" className="mb-6">
-          Proof system
-        </Typography>
+      {categories.map((category) => (
+        <div key={category.label}>
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="mb-6 dark:text-mono-0"
+          >
+            Proof system
+          </Typography>
 
-        <div className="flex flex-col gap-2">
-          {debugProofSystemsOptions.map((option) => (
-            <div key={option.label} className="flex">
-              <CheckBox wrapperClassName="items-center" spacingClassName="ml-2">
-                {option.label}
-              </CheckBox>
+          <div className="flex flex-col gap-2">
+            {debugProofSystemsOptions.map((option) => (
+              <div key={option.label} className="flex">
+                <CheckBox
+                  wrapperClassName="items-center"
+                  spacingClassName="ml-2"
+                >
+                  {option.label}
+                </CheckBox>
 
-              <Chip color="grey" className="ml-auto bg-mono-140">
-                {option.amount}
-              </Chip>
-            </div>
-          ))}
+                <Chip color="grey" className="ml-auto bg-mono-140">
+                  {option.amount}
+                </Chip>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div>
-        <Typography variant="body1" fw="normal" className="mb-6">
-          Categories
-        </Typography>
-
-        <div className="flex flex-col gap-2">
-          {debugCategoryOptions.map((option) => (
-            <div key={option.label} className="flex">
-              <CheckBox wrapperClassName="items-center" spacingClassName="ml-2">
-                {option.label}
-              </CheckBox>
-
-              <Chip color="grey" className="ml-auto bg-mono-140">
-                {option.amount}
-              </Chip>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <Typography variant="body1" fw="normal" className="mb-6">
-          License
-        </Typography>
-
-        <div className="flex flex-col gap-2">
-          {debugLicenseOptions.map((option) => (
-            <div key={option.label} className="flex">
-              <CheckBox wrapperClassName="items-center" spacingClassName="ml-2">
-                {option.label}
-              </CheckBox>
-
-              <Chip color="grey" className="ml-auto bg-mono-140">
-                {option.amount}
-              </Chip>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <Typography variant="body1" fw="normal" className="mb-6">
-          Language/Framework
-        </Typography>
-
-        <div className="flex flex-col gap-2">
-          {debugLanguageOptions.map((option) => (
-            <div key={option.label} className="flex">
-              <CheckBox wrapperClassName="items-center" spacingClassName="ml-2">
-                {option.label}
-              </CheckBox>
-
-              <Chip color="grey" className="ml-auto bg-mono-140">
-                {option.amount}
-              </Chip>
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 };

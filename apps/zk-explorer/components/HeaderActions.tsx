@@ -32,7 +32,7 @@ export const HeaderActions: FC<PropsOf<'div'>> = ({ className }) => {
     >
       <Input
         id="search item"
-        placeholder="Search item"
+        placeholder="Search projects & circuits"
         rightIcon={<Search />}
       />
 

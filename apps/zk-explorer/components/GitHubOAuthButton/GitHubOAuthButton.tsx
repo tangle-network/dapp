@@ -68,24 +68,34 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
         'dark:hover:bg-mono-0/10',
         props.className
       )
-    : // TODO: Fix text color. For some reason, the color seems washed out instead of strong black.
-      twMerge('dark:bg-mono-20 dark:text-mono-180');
+    : twMerge('dark:bg-mono-20 dark:text-mono-140');
+
+  const textColor = isSignedIn ? 'dark:text-mono-180' : 'dark:text-mono-140';
+
+  const iconFillColor = isSignedIn
+    ? 'dark:fill-mono-180'
+    : 'dark:fill-mono-140';
 
   return (
     <button
       {...props}
       type="button"
       className={twMerge(
-        colors,
         'rounded-full border-2 py-2 px-4',
+        colors,
         props.className
       )}
       onClick={handleClick}
     >
       <div className="flex items-center gap-2">
-        <GithubFill size="lg" />
+        <GithubFill className={iconFillColor} size="lg" />
 
-        <Typography variant="body1" fw="bold" component="p">
+        <Typography
+          className={textColor}
+          variant="body1"
+          fw="bold"
+          component="p"
+        >
           {props.username ? `@${props.username}` : 'Sign in with GitHub'}
         </Typography>
       </div>
