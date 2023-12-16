@@ -4,6 +4,11 @@ import {
   GitHubOAuthSuccessParams,
 } from '../components/GitHubOAuthButton/types';
 
+export enum PageUrl {
+  Home = '/',
+  SubmitProject = '/submit',
+}
+
 export function validateGithubUrl(url: string): boolean {
   const trimmedUrl = url.trim();
   const GITHUB_URL_PREFIX = 'https://github.com/'; // TODO: Consider whether HTTP URLs should be allowed.

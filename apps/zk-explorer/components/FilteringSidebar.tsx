@@ -1,18 +1,40 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Typography, CheckBox, Chip } from '@webb-tools/webb-ui-components';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import assert from 'assert';
 
-type FilterOption = {
+type FilterOptionItem = {
   label: string;
   amount: number;
 };
 
-type FilterCategory = {
-  label: string;
-  options: FilterOption[];
+type FilterCategoryItem = {
+  category: FilterCategory;
+  options: FilterOptionItem[];
 };
 
-export const FilteringSidebar: FC<unknown> = () => {
-  const debugProofSystemsOptions: FilterOption[] = [
+enum FilterCategory {
+  ProofSystem = 'Proof system',
+  Categories = 'Categories',
+  License = 'License',
+  LanguageOrFramework = 'Language/Framework',
+}
+
+export type FilteringConstraints = Map<FilterCategory, Set<string>>;
+
+export type FilteringSidebarProps = PropsOf<'div'> & {
+  onConstraintsChange: (constraints: FilteringConstraints) => void;
+};
+
+export const FilteringSidebar: FC<FilteringSidebarProps> = ({
+  onConstraintsChange,
+}) => {
+  const [constraints, setConstraints] = useState<FilteringConstraints>(
+    new Map()
+  );
+
+  // TODO: These are only for testing purposes. Remove these once the actual data is available.
+  const debugProofSystemsOptions: FilterOptionItem[] = [
     {
       label: 'Circom',
       amount: 403,
@@ -35,7 +57,7 @@ export const FilteringSidebar: FC<unknown> = () => {
     },
   ];
 
-  const debugCategoryOptions: FilterOption[] = [
+  const debugCategoryOptions: FilterOptionItem[] = [
     {
       label: 'Identity Verification',
       amount: 59,
@@ -58,7 +80,7 @@ export const FilteringSidebar: FC<unknown> = () => {
     },
   ];
 
-  const debugLicenseOptions: FilterOption[] = [
+  const debugLicenseOptions: FilterOptionItem[] = [
     {
       label: 'MIT',
       amount: 392,
@@ -73,7 +95,7 @@ export const FilteringSidebar: FC<unknown> = () => {
     },
   ];
 
-  const debugLanguageOptions: FilterOption[] = [
+  const debugLanguageOptions: FilterOptionItem[] = [
     {
       label: 'TypeScript',
       amount: 410,
@@ -100,27 +122,66 @@ export const FilteringSidebar: FC<unknown> = () => {
     },
   ];
 
-  const categories: FilterCategory[] = [
+  const categories: FilterCategoryItem[] = [
     {
-      label: 'Proof system',
+      category: FilterCategory.ProofSystem,
       options: debugProofSystemsOptions,
     },
     {
-      label: 'Category',
+      category: FilterCategory.Categories,
       options: debugCategoryOptions,
     },
     {
-      label: 'License',
+      category: FilterCategory.License,
       options: debugLicenseOptions,
     },
     {
-      label: 'Language/Framework',
+      category: FilterCategory.LanguageOrFramework,
       options: debugLanguageOptions,
     },
   ];
 
+  useEffect(() => {
+    onConstraintsChange(constraints);
+
+    // Under no circumstances should the `onConstraintsChange` prop
+    // function be called if the constraints themselves have not changed;
+    // therefore, `onConstraintsChange` should not be included in the
+    // effect's dependency array.
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [constraints]);
+
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    category: FilterCategory,
+    label: string
+  ) => {
+    const updatedConstraints = new Map(constraints);
+    const existingConstraintSet = updatedConstraints.get(category);
+
+    const updatedConstraintSet =
+      existingConstraintSet !== undefined
+        ? new Set(existingConstraintSet)
+        : new Set<string>();
+
+    if (e.target.checked) {
+      updatedConstraintSet.add(label);
+    } else {
+      updatedConstraintSet.delete(label);
+
+      assert(
+        updatedConstraints.has(category),
+        'Category should exist in constraints'
+      );
+    }
+
+    updatedConstraints.set(category, updatedConstraintSet);
+    setConstraints(updatedConstraints);
+  };
+
   return (
-    <div className="px-6 flex flex-col gap-9 min-w-[270px]">
+    <div className="flex flex-col gap-9">
       <div>
         <Typography variant="body1" fw="semibold" className="py-2">
           Filter by:
@@ -129,7 +190,7 @@ export const FilteringSidebar: FC<unknown> = () => {
       </div>
 
       {categories.map((category) => (
-        <div key={category.label}>
+        <div key={category.category}>
           <Typography
             variant="body1"
             fw="normal"
@@ -144,6 +205,9 @@ export const FilteringSidebar: FC<unknown> = () => {
                 <CheckBox
                   wrapperClassName="items-center"
                   spacingClassName="ml-2"
+                  onChange={(e) =>
+                    handleCheckboxChange(e, category.category, option.label)
+                  }
                 >
                   {option.label}
                 </CheckBox>

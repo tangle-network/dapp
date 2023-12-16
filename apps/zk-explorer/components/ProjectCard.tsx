@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { ProjectItem } from '../app/page';
 import Image from 'next/image';
 import assert from 'assert';
+import { StarIcon } from '@radix-ui/react-icons';
 
 export const ProjectCard: FC<ProjectItem> = (props) => {
   assert(props.circuitCount >= 0, 'Circuit count should never be negative.');
@@ -10,7 +11,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
   return (
     <Card
       key={`${props.repositoryOwner}/${props.repositoryName}`}
-      className="flex flex-row gap-3 space-y-0"
+      className="flex flex-row gap-3 space-y-0 py-3 px-6"
     >
       <div>
         {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
@@ -19,14 +20,21 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
           src={props.avatarUrl}
           width={48}
           height={48}
-          className="rounded-full bg-mono-200"
+          className="rounded-full bg-mono-200 shadow-md"
         />
       </div>
 
-      <div>
-        <Typography variant="body1" fw="bold" className="dark:text-mono-0">
-          @{props.repositoryOwner}/{props.repositoryName}
-        </Typography>
+      <div className="w-full">
+        <div className="flex">
+          <Typography variant="body1" fw="bold" className="dark:text-mono-0">
+            {props.repositoryOwner}/{props.repositoryName}
+          </Typography>
+
+          <div className="flex items-center ml-auto">
+            <StarIcon className="mr-1 dark:text-mono-100" />{' '}
+            {props.stargazerCount}
+          </div>
+        </div>
 
         <Typography variant="body2" fw="normal" className="dark:text-mono-100">
           {props.description}
