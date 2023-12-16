@@ -1,12 +1,12 @@
-import { Project } from 'next/dist/build/swc';
 import { FilteringConstraints } from '../components/FilteringSidebar';
 import assert from 'assert';
+import { ProjectItem } from '../app/page';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',
 }
 
-export type ApiResponseWrapper<T extends ApiResponse = ApiEmptyResponse> = {
+export type ApiResponseWrapper<T extends ApiResponse> = {
   innerResponse: T;
   fetchResponse: Response;
 };
@@ -17,9 +17,10 @@ export type ApiResponse<T = unknown> = {
   data?: T;
 };
 
-export type ApiEmptyResponse = ApiResponse<Record<string, never>>;
-
-export type ProjectQueryResponse = ApiResponse<Project[]>;
+export type ProjectQueryResponseData = {
+  projects: ProjectItem[];
+  totalCount: number;
+};
 
 export function makeApiRoute(route: ApiRoute): string {
   const API_PREFIX = '/api';
@@ -27,10 +28,10 @@ export function makeApiRoute(route: ApiRoute): string {
   return `${API_PREFIX}/${route}`;
 }
 
-export async function sendApiRequest<T extends ApiResponse = ApiEmptyResponse>(
+export async function sendApiRequest<T = Record<string, never>>(
   route: ApiRoute,
   options?: RequestInit
-): Promise<ApiResponseWrapper<T>> {
+): Promise<ApiResponseWrapper<ApiResponse<T>>> {
   const finalOptions = {
     ...options,
     headers: {
@@ -64,8 +65,8 @@ export async function fetchProjects(
   constraints: FilteringConstraints,
   searchQuery: string,
   page: number
-): Promise<Project[]> {
-  const responseWrapper = await sendApiRequest<ProjectQueryResponse>(
+): Promise<ProjectQueryResponseData> {
+  const responseWrapper = await sendApiRequest<ProjectQueryResponseData>(
     ApiRoute.OAuthGithub,
     {
       method: 'POST',

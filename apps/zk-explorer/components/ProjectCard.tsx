@@ -11,7 +11,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
   return (
     <Card
       key={`${props.repositoryOwner}/${props.repositoryName}`}
-      className="flex flex-row gap-3 space-y-0 py-3 px-6"
+      className="flex flex-row gap-3 space-y-0 py-5 px-6"
     >
       <div>
         {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
@@ -36,7 +36,12 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
           </div>
         </div>
 
-        <Typography variant="body2" fw="normal" className="dark:text-mono-100">
+        <Typography
+          variant="body2"
+          fw="normal"
+          className="dark:text-mono-100"
+          component="p"
+        >
           {props.description}
         </Typography>
 

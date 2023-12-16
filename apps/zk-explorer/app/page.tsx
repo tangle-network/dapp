@@ -5,6 +5,7 @@ import {
   Button,
   Input,
   Card,
+  Pagination,
 } from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
 import { Search } from '@webb-tools/icons';
@@ -32,7 +33,10 @@ export type ProjectItem = {
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 2000;
+  const PROJECT_CARDS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [totalProjectCount, setTotalProjectCount] = useState<number>(0);
+  const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const debouncedSearchQuery = useDebounce(
@@ -52,7 +56,8 @@ export default function Index() {
       repositoryName: 'masp',
       stargazerCount: 123,
       circuitCount: 24,
-      description: 'Short blurb about what the purpose of this circuit.',
+      description:
+        'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
       contributorAvatarUrls: [
         'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
       ],
@@ -88,9 +93,17 @@ export default function Index() {
 
     console.log('Re-fetching projects...');
 
-    // TODO: Use actual page number instead of 0, once pagination is implemented.
-    fetchProjects(constraints, debouncedSearchQuery, 0);
-  }, [constraints, debouncedSearchQuery]);
+    (async () => {
+      const response = await fetchProjects(
+        constraints,
+        debouncedSearchQuery,
+        paginationPage
+      );
+
+      setProjects(response.projects);
+      setTotalProjectCount(response.totalCount);
+    })();
+  }, [constraints, debouncedSearchQuery, paginationPage]);
 
   return (
     <main className="flex flex-col gap-6">
@@ -103,7 +116,7 @@ export default function Index() {
         {/* Background image mask */}
         <div className="absolute inset-0 opacity-20 bg-black"></div>
 
-        <div className="relative flex items-end my-4 z-10">
+        <div className="relative flex items-end my-4 px-4 z-10">
           <HeaderActions />
         </div>
 
@@ -123,33 +136,40 @@ export default function Index() {
         </div>
       </header>
 
-      <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex gap-2">
-        <Button variant="primary" className="px-3">
-          Projects
-        </Button>
+      <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex flex-col sm:flex-row gap-2">
+        <div className="flex gap-2">
+          <Button variant="primary" className="px-3">
+            Projects
+          </Button>
 
-        <Button
-          variant="primary"
-          className="px-3 dark:bg-transparent border-none dark:text-mono-0"
-        >
-          Circuits
-        </Button>
+          <Button
+            variant="primary"
+            className="px-3 dark:bg-transparent border-none dark:text-mono-0"
+          >
+            Circuits
+          </Button>
+        </div>
 
         <Input
           id="keyword search"
           rightIcon={<Search size="lg" />}
           className="w-full"
-          placeholder="Search for specific keywords..."
+          placeholder="Search projects for specific keywords..."
           value={searchQuery}
           onChange={(value) => setSearchQuery(value)}
         />
       </div>
 
-      <div className="flex">
-        <div className="px-6 min-w-[317px] max-w-[317px] space-y-12">
+      {/* Sidebar */}
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="pl-6 max-w-[317px] space-y-12">
           <FilteringSidebar onConstraintsChange={setConstraints} />
 
-          <Link href={PageUrl.SubmitProject} className="block">
+          {/* Project submission card */}
+          <Link
+            href={PageUrl.SubmitProject}
+            className="block hover:translate-y-[-6px] transition duration-100"
+          >
             <Card className="p-6 shadow-xl items-start space-y-0">
               <div className="p-2 bg-mono-120 rounded-full mb-6">
                 <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
@@ -175,15 +195,25 @@ export default function Index() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 w-full h-auto">
-          {projects.map((project, index) => (
-            <Link
-              key={index}
-              href={`/@${project.repositoryOwner}/${project.repositoryName}`}
-            >
-              <ProjectCard {...project} />
-            </Link>
-          ))}
+        <div>
+          <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min mb-6">
+            {projects.map((project, index) => (
+              <Link
+                key={index}
+                href={`/@${project.repositoryOwner}/${project.repositoryName}`}
+              >
+                <ProjectCard {...project} />
+              </Link>
+            ))}
+          </div>
+
+          <Pagination
+            itemsPerPage={PROJECT_CARDS_PER_PAGE}
+            totalItems={totalProjectCount}
+            page={paginationPage}
+            setPageIndex={setPaginationPage}
+            title="Projects"
+          />
         </div>
       </div>
     </main>
