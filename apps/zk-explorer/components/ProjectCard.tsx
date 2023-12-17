@@ -64,7 +64,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
                   src={avatarUrl}
                   width={24}
                   height={24}
-                  className="rounded-full bg-mono-200 border-[1px] border-mono-140"
+                  className="rounded-full bg-mono-200 border-[1px] border-mono-140 shadow-xl"
                 />
               ))}
             </div>

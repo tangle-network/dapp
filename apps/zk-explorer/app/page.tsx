@@ -2,7 +2,6 @@
 
 import {
   Typography,
-  Button,
   Input,
   Card,
   Pagination,
@@ -20,6 +19,8 @@ import { PageUrl } from '../utils/utils';
 import { useEffect, useState } from 'react';
 import { fetchProjects } from '../utils/api';
 import useDebounce from '../hooks/useDebounce';
+import { ButtonSwitcherGroup } from '../components/ButtonSwitcherGroup';
+import { CardTabs } from './CardTabs';
 
 export type ProjectItem = {
   avatarUrl: string;
@@ -30,6 +31,11 @@ export type ProjectItem = {
   circuitCount: number;
   contributorAvatarUrls: string[];
 };
+
+export enum CardType {
+  Project = 'Project',
+  Circuit = 'Circuit',
+}
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 2000;
@@ -63,7 +69,7 @@ export default function Index() {
       ],
     };
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
       debugProject.contributorAvatarUrls.push(
         debugProject.contributorAvatarUrls[0]
       );
@@ -72,7 +78,7 @@ export default function Index() {
     const debugProjects = [];
 
     // TODO: This is only for testing purposes. Remove this once the actual data is available.
-    for (let i = 0; i < 13; i++) {
+    for (let i = 0; i < PROJECT_CARDS_PER_PAGE; i++) {
       debugProjects.push(debugProject);
     }
 
@@ -110,7 +116,7 @@ export default function Index() {
       {/* Custom, landing-page-only header */}
       {/* TODO: Need to figure out a way to significantly reduce the size of the background image (it's 1mb right now). Should be <=100kb for optimal SEO. One way would be to trim it to what is actually used in terms of max proportions visible to the user, or reduce its resolution. */}
       <header
-        className="relative pb-12 bg-cover bg-center rounded-b-xl mb-6"
+        className="relative pb-12 bg-cover bg-center rounded-b-xl"
         style={{ backgroundImage: 'url(/header-bg.png)' }}
       >
         {/* Background image mask */}
@@ -137,18 +143,10 @@ export default function Index() {
       </header>
 
       <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex flex-col sm:flex-row gap-2">
-        <div className="flex gap-2">
-          <Button variant="primary" className="px-3">
-            Projects
-          </Button>
-
-          <Button
-            variant="primary"
-            className="px-3 dark:bg-transparent border-none dark:text-mono-0"
-          >
-            Circuits
-          </Button>
-        </div>
+        <ButtonSwitcherGroup
+          buttonLabels={[CardType.Project, CardType.Circuit]}
+          onSelectionChange={() => void null}
+        />
 
         <Input
           id="keyword search"
@@ -160,8 +158,8 @@ export default function Index() {
         />
       </div>
 
-      {/* Sidebar */}
-      <div className="flex flex-col md:flex-row gap-6">
+      {/* Content: Sidebar & cards */}
+      <div className="flex flex-col sm:flex-row gap-6">
         <div className="pl-6 max-w-[317px] space-y-12">
           <FilteringSidebar onConstraintsChange={setConstraints} />
 
@@ -196,7 +194,16 @@ export default function Index() {
         </div>
 
         <div>
-          <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min mb-6">
+          <CardTabs
+            counts={{
+              [CardType.Project]: 123,
+              [CardType.Circuit]: 456,
+            }}
+            onTabChange={() => void null}
+          />
+
+          {/* Cards */}
+          <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
             {projects.map((project, index) => (
               <Link
                 key={index}
