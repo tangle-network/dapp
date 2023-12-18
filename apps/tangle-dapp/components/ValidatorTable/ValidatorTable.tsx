@@ -61,7 +61,7 @@ const columns = [
     cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Delegations" className="justify-center" />,
+    header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
       <StringCell value={props.getValue()} className="text-center" />
     ),
