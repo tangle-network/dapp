@@ -5,14 +5,19 @@ import {
   DropdownBody,
   Typography,
   DropdownBasicButton,
+  MenuItem,
 } from '@webb-tools/webb-ui-components';
 import { twMerge } from 'tailwind-merge';
 import { ChevronDown } from '@webb-tools/icons';
 import { ItemType } from '../utils/utils';
+import { CheckCircledIcon, CircleIcon } from '@radix-ui/react-icons';
+import { SearchSortByClause } from '../utils/api';
 
 export type CardTabsProps = {
   counts: Record<ItemType, number>;
+  sortByClause: SearchSortByClause;
   onTabChange: (cardType: ItemType) => void;
+  onSortByClauseChange: (sortByClause: SearchSortByClause) => void;
 };
 
 export const CardTabs: FC<CardTabsProps> = (props) => {
@@ -62,7 +67,7 @@ export const CardTabs: FC<CardTabsProps> = (props) => {
               fw="normal"
               className="dark:text-mono-0"
             >
-              Most Popular
+              {props.sortByClause}
             </Typography>
 
             <ChevronDown size="lg" />
@@ -71,9 +76,25 @@ export const CardTabs: FC<CardTabsProps> = (props) => {
           <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
             <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
               <Typography variant="label" fw="bold">
-                Item 1
+                Sort by
               </Typography>
             </div>
+
+            {Object.values(SearchSortByClause).map((clause, index) => {
+              const isSelected = clause === props.sortByClause;
+
+              return (
+                <MenuItem
+                  className={isSelected ? 'cursor-default' : ''}
+                  key={index}
+                  disabled={isSelected}
+                  onClick={() => props.onSortByClauseChange(clause)}
+                  icon={isSelected ? <CheckCircledIcon /> : <CircleIcon />}
+                >
+                  {clause}
+                </MenuItem>
+              );
+            })}
           </DropdownBody>
         </Dropdown>
       </div>

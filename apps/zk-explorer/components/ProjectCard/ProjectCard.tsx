@@ -6,6 +6,8 @@ import { StarIcon } from '@radix-ui/react-icons';
 import { ProjectItem } from './types';
 
 export const ProjectCard: FC<ProjectItem> = (props) => {
+  const MAX_CONTRIBUTOR_AVATAR_URLS = 4;
+
   assert(props.circuitCount >= 0, 'Circuit count should never be negative.');
 
   return (
@@ -52,18 +54,29 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
               Contributors
             </Typography>
 
-            <div className="flex space-x-[-7px]">
-              {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
-              {props.contributorAvatarUrls.map((avatarUrl, index) => (
-                <Image
-                  key={index}
-                  alt="Contributor avatar"
-                  src={avatarUrl}
-                  width={24}
-                  height={24}
-                  className="rounded-full bg-mono-200 border-[1px] border-mono-140 shadow-xl"
-                />
-              ))}
+            <div className="flex items-center space-x-[-7px]">
+              {props.contributorAvatarUrls
+                .slice(0, MAX_CONTRIBUTOR_AVATAR_URLS)
+                .map((avatarUrl, index) => (
+                  // TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component.
+                  <Image
+                    key={index}
+                    alt="Contributor avatar"
+                    src={avatarUrl}
+                    width={24}
+                    height={24}
+                    className="rounded-full bg-mono-200 border-[1px] border-mono-140 shadow-xl w-6 h-6"
+                  />
+                ))}
+
+              {props.contributorAvatarUrls.length >
+                MAX_CONTRIBUTOR_AVATAR_URLS && (
+                <Chip color="grey" className="bg-mono-140 shadow-md">
+                  +
+                  {props.contributorAvatarUrls.length -
+                    MAX_CONTRIBUTOR_AVATAR_URLS}
+                </Chip>
+              )}
             </div>
           </div>
 

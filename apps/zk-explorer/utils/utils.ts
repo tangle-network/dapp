@@ -1,4 +1,9 @@
-import { exchangeAuthCodeForOAuthToken, submitProject } from './api';
+import {
+  CircuitSearchResponseData,
+  ProjectSearchResponseData,
+  exchangeAuthCodeForOAuthToken,
+  submitProject,
+} from './api';
 import {
   GitHubOAuthErrorParams,
   GitHubOAuthSuccessParams,
@@ -16,6 +21,8 @@ export enum PageUrl {
   Home = '/',
   SubmitProject = '/submit',
 }
+
+const ITEMS_PER_PAGE = 12;
 
 export function validateGithubUrl(url: string): boolean {
   return parseGithubUrl(url) !== null;
@@ -121,9 +128,7 @@ export async function handleSubmitProject(
 }
 
 // TODO: This is temporary, until the backend is implemented.
-export function getMockProjectsAndCircuits() {
-  const ITEMS_PER_PAGE = 12;
-
+export function getMockProjects(): ProjectSearchResponseData {
   const mockProject: ProjectItem = {
     ownerAvatarUrl:
       'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
@@ -138,7 +143,7 @@ export function getMockProjectsAndCircuits() {
     ],
   };
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 15; i++) {
     mockProject.contributorAvatarUrls.push(
       mockProject.contributorAvatarUrls[0]
     );
@@ -150,6 +155,14 @@ export function getMockProjectsAndCircuits() {
     mockProjects.push(mockProject);
   }
 
+  return {
+    projects: mockProjects,
+    resultCount: mockProjects.length,
+  };
+}
+
+// TODO: This is temporary, until the backend is implemented.
+export function getMockCircuits(): CircuitSearchResponseData {
   const mockCircuit: CircuitItem = {
     ownerAvatarUrl:
       'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
@@ -166,5 +179,8 @@ export function getMockProjectsAndCircuits() {
     mockCircuits.push(mockCircuit);
   }
 
-  return { mockProjects, mockCircuits };
+  return {
+    circuits: mockCircuits,
+    resultCount: mockCircuits.length,
+  };
 }

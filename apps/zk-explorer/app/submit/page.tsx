@@ -10,6 +10,7 @@ import { ArrowRightUp } from '@webb-tools/icons';
 import { useState } from 'react';
 import { Link } from '@webb-tools/webb-ui-components/components/Link';
 import { handleSubmitProject, validateGithubUrl } from '../../utils/utils';
+import { LinkCard } from '../../components/LinkCard';
 
 export default function Submit() {
   const [githubUrl, setGithubUrl] = useState('');
@@ -24,7 +25,7 @@ export default function Submit() {
 
       <div className="flex flex-col sm:flex-row gap-6 items-start">
         <Card className="max-w-[780px]">
-          <Typography variant="h5">1. GitHub Repository URL:</Typography>
+          <Typography variant="h5">GitHub Repository URL:</Typography>
 
           <Input
             autoFocus
@@ -49,9 +50,11 @@ export default function Submit() {
           />
 
           <div className="flex gap-4 flex-col sm:flex-row">
-            <Button variant="secondary" isFullWidth>
+            {/* TODO: Need link for this. */}
+            <Button href="#" variant="secondary" isFullWidth>
               Learn More
             </Button>
+
             <Button
               isFullWidth
               isDisabled={!isValidGithubUrl}
@@ -68,9 +71,11 @@ export default function Submit() {
           </div>
         </Card>
 
-        <Card className="p-6 shadow-md space-y-4 w-auto items-start">
-          <div>
-            <Typography variant="h5">Feedback</Typography>
+        <LinkCard href="#">
+          <div className="mb-4">
+            <Typography variant="h5" fw="bold">
+              Feedback
+            </Typography>
 
             <Typography variant="h5" className="dark:text-mono-100" fw="normal">
               Have feedback? Reach out to share your thoughts & suggestions!
@@ -81,7 +86,7 @@ export default function Submit() {
           <Link href="#">
             <ArrowRightUp size="lg" />
           </Link>
-        </Card>
+        </LinkCard>
       </div>
     </main>
   );

@@ -48,7 +48,11 @@ export async function sendApiRequest<T = Record<string, never>>(
     },
   };
 
-  const fetchResponse = await fetch(makeApiRoute(route), finalOptions);
+  const finalRoute = makeApiRoute(route);
+
+  console.log('Sending API request to route:', finalRoute, options?.body);
+
+  const fetchResponse = await fetch(finalRoute, finalOptions);
 
   return {
     innerResponse: await fetchResponse.json(),
@@ -70,7 +74,8 @@ export async function exchangeAuthCodeForOAuthToken(
 }
 
 export enum SearchSortByClause {
-  MostPopular = 'most-popular',
+  MostPopular = 'Most Popular',
+  Newest = 'Newest',
 }
 
 export async function searchProjects(

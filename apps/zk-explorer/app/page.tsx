@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  Typography,
-  Input,
-  Card,
-  Pagination,
-} from '@webb-tools/webb-ui-components';
+import { Typography, Input, Pagination } from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
 import { Search } from '@webb-tools/icons';
 import {
@@ -13,9 +8,13 @@ import {
   SidebarFilters,
 } from '../components/SidebarFilters';
 import { ProjectCard } from '../components/ProjectCard/ProjectCard';
-import { Link } from '@webb-tools/webb-ui-components/components/Link';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
-import { ItemType, PageUrl, getMockProjectsAndCircuits } from '../utils/utils';
+import {
+  ItemType,
+  PageUrl,
+  getMockCircuits,
+  getMockProjects,
+} from '../utils/utils';
 import { useEffect, useState } from 'react';
 import {
   searchProjects,
@@ -29,9 +28,10 @@ import assert from 'assert';
 import { CircuitCard } from '../components/CircuitCard/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
+import { LinkCard } from '../components/LinkCard';
 
 export default function Index() {
-  const SEARCH_QUERY_DEBOUNCE_DELAY = 2000;
+  const SEARCH_QUERY_DEBOUNCE_DELAY = 1500;
   const ITEMS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
@@ -39,16 +39,17 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchingForItem, setSearchingForItem] = useState(ItemType.Project);
   const [constraints, setConstraints] = useState<FilterConstraints>(new Map());
+  const [activeItemType, setActiveItemType] = useState(ItemType.Project);
 
-  const [projectSearchResultCount, setCircuitSearchResultCount] =
-    useState<number>(0);
-
-  const [circuitSearchResultCount, setProjectSearchResultCount] =
-    useState<number>(0);
-
-  const [activeItemType, setActiveItemType] = useState<ItemType>(
-    ItemType.Project
+  const [sortByClause, setSortByClause] = useState(
+    SearchSortByClause.MostPopular
   );
+
+  const [projectSearchResultCount, setProjectSearchResultCount] =
+    useState<number>(0);
+
+  const [circuitSearchResultCount, setCircuitSearchResultCount] =
+    useState<number>(0);
 
   const debouncedSearchQuery = useDebounce(
     searchQuery,
@@ -63,16 +64,11 @@ export default function Index() {
       paginationPage,
       SearchSortByClause.MostPopular
     )
-      // Temporarily use mock data until we have a backend.
-      .catch(() => {
-        const mockProjectsAndCircuits = getMockProjectsAndCircuits();
-
-        setProjects(mockProjectsAndCircuits.mockProjects);
-        setCircuits(mockProjectsAndCircuits.mockCircuits);
-      })
+      // TODO: Temporarily use mock data until we have a backend.
+      .catch(getMockProjects)
       .then((response) => {
         setProjects(response.projects);
-        setCircuitSearchResultCount(response.resultCount);
+        setProjectSearchResultCount(response.resultCount);
       });
 
     // This effect should only run once on page load,
@@ -81,6 +77,29 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const fetchItems = () => {
+    if (searchingForItem === ItemType.Project) {
+      searchProjects(constraints, searchQuery, paginationPage, sortByClause)
+        // Temporarily use mock data until we have a backend.
+        .catch(() => getMockProjects())
+        .then((response) => {
+          setProjects(response.projects);
+          setActiveItemType(ItemType.Project);
+          setProjectSearchResultCount(response.resultCount);
+        });
+    } else {
+      searchCircuits(constraints, searchQuery, paginationPage, sortByClause)
+        // TODO: Temporarily use mock data until we have a backend.
+        .catch(getMockCircuits)
+        .then((response) => {
+          setCircuits(response.circuits);
+          setActiveItemType(ItemType.Circuit);
+          setCircuitSearchResultCount(response.resultCount);
+        });
+    }
+  };
+
+  // Fetch items when the search query changes.
   useEffect(() => {
     const MIN_SEARCH_QUERY_LENGTH = 3;
 
@@ -93,34 +112,25 @@ export default function Index() {
       return;
     }
 
-    console.log('Re-fetching projects...');
+    fetchItems();
 
-    (async () => {
-      // TODO: Need to also update the button switcher group to reflect the new card type.
+    // This effect should only run when the (debounced) search
+    // query changes, so other dependencies are intentionally excluded.
 
-      if (searchingForItem === ItemType.Project) {
-        const response = await searchProjects(
-          constraints,
-          debouncedSearchQuery,
-          paginationPage
-        );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchQuery]);
 
-        setProjects(response.projects);
-        setActiveItemType(ItemType.Project);
-        setCircuitSearchResultCount(response.resultCount);
-      } else {
-        const response = await searchCircuits(
-          constraints,
-          debouncedSearchQuery,
-          paginationPage
-        );
+  // Fetch items when constraints, page, or sort by clause changes.
+  // This doesn't depend on the search query, so it is intentionally
+  // excluded from the dependencies.
 
-        setCircuits(response.circuits);
-        setActiveItemType(ItemType.Circuit);
-        setProjectSearchResultCount(response.resultCount);
-      }
-    })();
-  }, [constraints, debouncedSearchQuery, paginationPage, searchingForItem]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(fetchItems, [
+    constraints,
+    paginationPage,
+    searchingForItem,
+    sortByClause,
+  ]);
 
   return (
     <main className="flex flex-col gap-6">
@@ -185,39 +195,37 @@ export default function Index() {
         <div className="pl-6 max-w-[317px] space-y-12">
           <SidebarFilters onConstraintsChange={setConstraints} />
 
-          {/* Project submission card */}
-          <Link
-            href={PageUrl.SubmitProject}
-            className="block hover:translate-y-[-6px] transition duration-100"
-          >
-            <Card className="p-6 shadow-xl items-start space-y-0">
-              <div className="p-2 bg-mono-120 rounded-full mb-6">
-                <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
-              </div>
+          <LinkCard href={PageUrl.SubmitProject}>
+            <div className="p-2 bg-mono-120 rounded-full mb-6">
+              <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
+            </div>
 
-              <Typography
-                variant="body1"
-                fw="bold"
-                className="mb-1 dark:text-mono-0"
-              >
-                Submit Project!
-              </Typography>
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="mb-1 dark:text-mono-0"
+            >
+              Submit Project!
+            </Typography>
 
-              <Typography
-                variant="body1"
-                fw="normal"
-                className="dark:text-mono-100"
-              >
-                Have a zero-knowledge project you&apos;d like to share with the
-                community?
-              </Typography>
-            </Card>
-          </Link>
+            <Typography
+              variant="body1"
+              fw="normal"
+              className="dark:text-mono-100"
+            >
+              Have a zero-knowledge project you&apos;d like to share with the
+              community?
+            </Typography>
+          </LinkCard>
         </div>
 
-        <div>
+        <div className="w-full">
           <CardTabs
+            sortByClause={sortByClause}
             onTabChange={(cardType) => setActiveItemType(cardType)}
+            onSortByClauseChange={(sortByClause) =>
+              setSortByClause(sortByClause)
+            }
             counts={{
               [ItemType.Project]: projectSearchResultCount,
               [ItemType.Circuit]: circuitSearchResultCount,
@@ -228,17 +236,17 @@ export default function Index() {
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
             {activeItemType === ItemType.Project
               ? projects.map((project, index) => (
-                  <Link
+                  <a
                     key={index}
                     href={`/@${project.repositoryOwner}/${project.repositoryName}`}
                   >
                     <ProjectCard {...project} />
-                  </Link>
+                  </a>
                 ))
               : circuits.map((circuit, index) => (
-                  <Link key={index} href={`/@${circuit.filename}`}>
+                  <a key={index} href={`/@${circuit.filename}`}>
                     <CircuitCard {...circuit} />
-                  </Link>
+                  </a>
                 ))}
           </div>
 

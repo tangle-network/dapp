@@ -53,7 +53,7 @@ export const HeaderActions: FC<PropsOf<'div'>> = ({ className }) => {
           <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
             <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
               <Typography variant="label" fw="bold">
-                Item 1
+                User menu
               </Typography>
             </div>
           </DropdownBody>
