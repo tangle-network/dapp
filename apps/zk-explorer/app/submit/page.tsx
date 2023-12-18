@@ -9,13 +9,12 @@ import {
 import { ArrowRightUp } from '@webb-tools/icons';
 import { useState } from 'react';
 import { Link } from '@webb-tools/webb-ui-components/components/Link';
-import { validateGithubUrl } from '../../utils/utils';
+import { handleSubmitProject, validateGithubUrl } from '../../utils/utils';
 
 export default function Submit() {
   const [githubUrl, setGithubUrl] = useState('');
   const [isValidGithubUrl, setIsValidGithubUrl] = useState(false);
-  const [isGithubUrlDisplayingError, setIsGithubUrlDisplayingError] =
-    useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   return (
     <main className="flex flex-col gap-6 pt-6">
@@ -28,13 +27,11 @@ export default function Submit() {
           <Typography variant="h5">1. GitHub Repository URL:</Typography>
 
           <Input
-            id="repository url"
             autoFocus
+            id="repository url"
             placeholder="https://github.com/username/repository-name"
-            errorMessage={
-              isGithubUrlDisplayingError ? '*Invalid GitHub URL.' : undefined
-            }
-            isInvalid={isGithubUrlDisplayingError}
+            errorMessage={errorMessage ? `*${errorMessage}` : undefined}
+            isInvalid={errorMessage !== undefined}
             value={githubUrl}
             onChange={(value) => {
               setGithubUrl(value);
@@ -42,7 +39,12 @@ export default function Submit() {
               const isNewUrlValid = validateGithubUrl(value);
 
               setIsValidGithubUrl(isNewUrlValid);
-              setIsGithubUrlDisplayingError(value.length > 0 && !isNewUrlValid);
+
+              setErrorMessage(
+                value.length > 0 && !isNewUrlValid
+                  ? 'Invalid GitHub URL.'
+                  : undefined
+              );
             }}
           />
 
@@ -50,11 +52,16 @@ export default function Submit() {
             <Button variant="secondary" isFullWidth>
               Learn More
             </Button>
-            {/* TODO: Perform mock submission once the submit button is clicked. */}
             <Button
-              isDisabled={!isValidGithubUrl}
-              onClick={() => alert('Submit!')}
               isFullWidth
+              isDisabled={!isValidGithubUrl}
+              onClick={async () => {
+                const errorMessage = await handleSubmitProject(githubUrl);
+
+                setErrorMessage(
+                  errorMessage !== null ? errorMessage : undefined
+                );
+              }}
             >
               Submit Project
             </Button>

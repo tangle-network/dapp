@@ -1,4 +1,5 @@
 import { Button, ButtonProps } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -9,6 +10,11 @@ export type ButtonSwitcherGroupProps = ButtonProps & {
 };
 
 export const ButtonSwitcherGroup: FC<ButtonSwitcherGroupProps> = (props) => {
+  assert(
+    props.buttonLabels.length > 0,
+    'Button labels should not be empty; There should be at least one button label provided.'
+  );
+
   const [selectedIndex, setSelectedIndex] = useState<number>(
     props.initiallySelectedIndex ?? 0
   );

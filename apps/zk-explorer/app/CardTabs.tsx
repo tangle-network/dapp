@@ -5,7 +5,6 @@ import {
   Dropdown,
   DropdownBody,
   Typography,
-  DropdownMenu,
   DropdownBasicButton,
 } from '@webb-tools/webb-ui-components';
 import { twMerge } from 'tailwind-merge';

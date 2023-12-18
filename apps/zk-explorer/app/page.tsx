@@ -21,15 +21,25 @@ import { fetchProjects } from '../utils/api';
 import useDebounce from '../hooks/useDebounce';
 import { ButtonSwitcherGroup } from '../components/ButtonSwitcherGroup';
 import { CardTabs } from './CardTabs';
+import assert from 'assert';
+import { CircuitCard } from '../components/CircuitCard';
 
 export type ProjectItem = {
-  avatarUrl: string;
+  ownerAvatarUrl: string;
   repositoryOwner: string;
   repositoryName: string;
   description: string;
   stargazerCount: number;
   circuitCount: number;
   contributorAvatarUrls: string[];
+};
+
+export type CircuitItem = {
+  ownerAvatarUrl: string;
+  filename: string;
+  description: string;
+  stargazerCount: number;
+  locks: number;
 };
 
 export enum CardType {
@@ -41,9 +51,13 @@ export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 2000;
   const PROJECT_CARDS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [circuits, setCircuits] = useState<CircuitItem[]>([]);
   const [totalProjectCount, setTotalProjectCount] = useState<number>(0);
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const [isProjectsTabSelected, setIsProjectsTabSelected] =
+    useState<boolean>(true);
 
   const debouncedSearchQuery = useDebounce(
     searchQuery,
@@ -57,7 +71,8 @@ export default function Index() {
   // TODO: This is only for testing purposes. Remove this once the actual data is available.
   useEffect(() => {
     const debugProject: ProjectItem = {
-      avatarUrl: 'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+      ownerAvatarUrl:
+        'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
       repositoryOwner: 'webb',
       repositoryName: 'masp',
       stargazerCount: 123,
@@ -77,12 +92,29 @@ export default function Index() {
 
     const debugProjects = [];
 
-    // TODO: This is only for testing purposes. Remove this once the actual data is available.
     for (let i = 0; i < PROJECT_CARDS_PER_PAGE; i++) {
       debugProjects.push(debugProject);
     }
 
     setProjects(debugProjects);
+
+    const debugCircuit: CircuitItem = {
+      ownerAvatarUrl:
+        'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+      filename: 'circuit.zok',
+      description:
+        'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
+      stargazerCount: 123,
+      locks: 456,
+    };
+
+    const debugCircuits = [];
+
+    for (let i = 0; i < PROJECT_CARDS_PER_PAGE; i++) {
+      debugCircuits.push(debugCircuit);
+    }
+
+    setCircuits(debugCircuits);
   }, []);
 
   useEffect(() => {
@@ -145,7 +177,20 @@ export default function Index() {
       <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex flex-col sm:flex-row gap-2">
         <ButtonSwitcherGroup
           buttonLabels={[CardType.Project, CardType.Circuit]}
-          onSelectionChange={() => void null}
+          onSelectionChange={(selectedButtonIndex) => {
+            alert('Selection changed!');
+
+            assert(
+              selectedButtonIndex >= 0 && selectedButtonIndex <= 1,
+              'Selected button index should be within bounds, which is two buttons.'
+            );
+
+            alert(selectedButtonIndex);
+
+            // The first index corresponds to the projects tab,
+            // while the second index corresponds to the circuits tab.
+            setIsProjectsTabSelected(selectedButtonIndex === 0);
+          }}
         />
 
         <Input
@@ -194,6 +239,7 @@ export default function Index() {
         </div>
 
         <div>
+          {/* TODO: Properly tab switching. */}
           <CardTabs
             counts={{
               [CardType.Project]: 123,
@@ -204,14 +250,20 @@ export default function Index() {
 
           {/* Cards */}
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
-            {projects.map((project, index) => (
-              <Link
-                key={index}
-                href={`/@${project.repositoryOwner}/${project.repositoryName}`}
-              >
-                <ProjectCard {...project} />
-              </Link>
-            ))}
+            {isProjectsTabSelected
+              ? projects.map((project, index) => (
+                  <Link
+                    key={index}
+                    href={`/@${project.repositoryOwner}/${project.repositoryName}`}
+                  >
+                    <ProjectCard {...project} />
+                  </Link>
+                ))
+              : circuits.map((circuit, index) => (
+                  <Link key={index} href={`/@${circuit.filename}`}>
+                    <CircuitCard {...circuit} />
+                  </Link>
+                ))}
           </div>
 
           <Pagination

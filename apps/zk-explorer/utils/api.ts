@@ -82,3 +82,12 @@ export async function fetchProjects(
 
   return responseWrapper.innerResponse.data;
 }
+
+export async function submitProject(githubSlug: string): Promise<ApiResponse> {
+  const responseWrapper = await sendApiRequest(ApiRoute.OAuthGithub, {
+    method: 'POST',
+    body: JSON.stringify({ githubSlug }),
+  });
+
+  return responseWrapper.innerResponse;
+}

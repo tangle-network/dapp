@@ -9,15 +9,12 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
   assert(props.circuitCount >= 0, 'Circuit count should never be negative.');
 
   return (
-    <Card
-      key={`${props.repositoryOwner}/${props.repositoryName}`}
-      className="flex flex-row gap-3 space-y-0 py-5 px-6"
-    >
+    <Card className="flex flex-row gap-3 space-y-0 py-5 px-6">
       <div>
         {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
         <Image
           alt={`${props.repositoryOwner}'s avatar`}
-          src={props.avatarUrl}
+          src={props.ownerAvatarUrl}
           width={48}
           height={48}
           className="rounded-full bg-mono-200 shadow-md"
