@@ -8,17 +8,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ExternalLinkLine } from '@webb-tools/icons';
 import {
   Avatar,
   Chip,
+  CopyWithTooltip,
   fuzzyFilter,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback } from 'react';
+import { type FC } from 'react';
 
 import { Delegator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -43,7 +42,11 @@ const columns = [
             {identity === address ? shortenString(address, 6) : identity}
           </Typography>
 
-          <ExternalLinkLine />
+          <CopyWithTooltip
+            textToCopy={address}
+            isButton={false}
+            className="cursor-pointer"
+          />
         </div>
       );
     },
@@ -88,10 +91,6 @@ const DelegatorTable: FC<DelegatorTableProps> = ({ data = [], pageSize }) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const onRowClick = useCallback(() => {
-    window.open(TANGLE_STAKING_URL, '_blank');
-  }, []);
-
   return (
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
@@ -102,7 +101,6 @@ const DelegatorTable: FC<DelegatorTableProps> = ({ data = [], pageSize }) => {
         tableProps={table}
         isPaginated
         totalRecords={data.length}
-        onRowClick={onRowClick}
       />
     </div>
   );

@@ -12,3 +12,14 @@ export type Delegator = {
   totalStaked: string;
   isActive: boolean;
 };
+
+export enum PaymentDestination {
+  Staked = 'Staked (increase the amount at stake)',
+  Stash = 'Stash (do not increase the amount at stake)',
+  Controller = 'Controller Account',
+}
+
+export type ValidatorType = {
+  address: string;
+  identity: string;
+};
