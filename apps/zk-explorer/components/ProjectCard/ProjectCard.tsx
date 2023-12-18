@@ -71,7 +71,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
 
               {props.contributorAvatarUrls.length >
                 MAX_CONTRIBUTOR_AVATAR_URLS && (
-                <Chip color="grey" className="bg-mono-140 shadow-md">
+                <Chip color="grey" className="bg-mono-140 shadow-md px-2">
                   +
                   {props.contributorAvatarUrls.length -
                     MAX_CONTRIBUTOR_AVATAR_URLS}
@@ -89,7 +89,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
               Circuits
             </Typography>
 
-            <Chip color="grey" className="bg-mono-140">
+            <Chip color="grey" className="bg-mono-140 px-2">
               {props.circuitCount}
             </Chip>
           </div>

@@ -51,7 +51,7 @@ export const CardTabs: FC<CardTabsProps> = (props) => {
                 {cardType}
               </Typography>
 
-              <Chip color="grey" className="bg-mono-140">
+              <Chip color="grey" className="bg-mono-140 px-2">
                 {props.counts[cardType]}
               </Chip>
             </div>

@@ -8,7 +8,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { useState } from 'react';
-import { Link } from '@webb-tools/webb-ui-components/components/Link';
 import { handleSubmitProject, validateGithubUrl } from '../../utils/utils';
 import { LinkCard } from '../../components/LinkCard';
 
@@ -71,6 +70,7 @@ export default function Submit() {
           </div>
         </Card>
 
+        {/* TODO: Replace this with a link to the feedback form. */}
         <LinkCard href="#">
           <div className="mb-4">
             <Typography variant="h5" fw="bold">
@@ -82,10 +82,7 @@ export default function Submit() {
             </Typography>
           </div>
 
-          {/* TODO: Replace this with a link to the feedback form. */}
-          <Link href="#">
-            <ArrowRightUp size="lg" />
-          </Link>
+          <ArrowRightUp size="lg" />
         </LinkCard>
       </div>
     </main>

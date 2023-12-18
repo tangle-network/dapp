@@ -7,7 +7,6 @@ import {
   FilterConstraints,
   SidebarFilters,
 } from '../components/SidebarFilters';
-import { ProjectCard } from '../components/ProjectCard/ProjectCard';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
 import {
   ItemType,
@@ -25,10 +24,10 @@ import useDebounce from '../hooks/useDebounce';
 import { ButtonSwitcherGroup } from '../components/ButtonSwitcherGroup';
 import { CardTabs } from '../components/CardTabs';
 import assert from 'assert';
-import { CircuitCard } from '../components/CircuitCard/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
 import { LinkCard } from '../components/LinkCard';
+import { ItemGrid } from '../components/ItemGrid';
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 1500;
@@ -190,7 +189,7 @@ export default function Index() {
         />
       </div>
 
-      {/* Content: Sidebar & cards */}
+      {/* Content: Sidebar & grid items */}
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="pl-6 max-w-[317px] space-y-12">
           <SidebarFilters onConstraintsChange={setConstraints} />
@@ -232,23 +231,11 @@ export default function Index() {
             }}
           />
 
-          {/* Cards */}
-          <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
-            {activeItemType === ItemType.Project
-              ? projects.map((project, index) => (
-                  <a
-                    key={index}
-                    href={`/@${project.repositoryOwner}/${project.repositoryName}`}
-                  >
-                    <ProjectCard {...project} />
-                  </a>
-                ))
-              : circuits.map((circuit, index) => (
-                  <a key={index} href={`/@${circuit.filename}`}>
-                    <CircuitCard {...circuit} />
-                  </a>
-                ))}
-          </div>
+          <ItemGrid
+            projects={projects}
+            circuits={circuits}
+            activeItemType={activeItemType}
+          />
 
           <Pagination
             itemsPerPage={ITEMS_PER_PAGE}

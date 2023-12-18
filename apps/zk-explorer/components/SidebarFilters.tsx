@@ -210,7 +210,7 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
                   {option.label}
                 </CheckBox>
 
-                <Chip color="grey" className="ml-auto bg-mono-140">
+                <Chip color="grey" className="ml-auto bg-mono-140 px-2">
                   {option.amount}
                 </Chip>
               </div>

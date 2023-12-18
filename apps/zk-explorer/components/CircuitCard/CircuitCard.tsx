@@ -2,8 +2,9 @@ import { Card, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import Image from 'next/image';
 import assert from 'assert';
-import { LockOpen1Icon, StarIcon } from '@radix-ui/react-icons';
+import { StarIcon } from '@radix-ui/react-icons';
 import { CircuitItem } from './types';
+import { ShieldKeyholeLineIcon } from '@webb-tools/icons';
 
 export const CircuitCard: FC<CircuitItem> = (props) => {
   assert(props.locks >= 0, 'Lock count should never be negative.');
@@ -42,7 +43,8 @@ export const CircuitCard: FC<CircuitItem> = (props) => {
           </div>
 
           <div className="inline-flex items-center">
-            <LockOpen1Icon className="mr-1 dark:text-mono-100" /> {props.locks}
+            <ShieldKeyholeLineIcon className="mr-1 dark:fill-mono-100" />{' '}
+            {props.locks}
           </div>
         </div>
       </div>
