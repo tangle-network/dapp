@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import { CardType } from './page';
 import {
   Chip,
   Dropdown,
@@ -9,19 +8,20 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { twMerge } from 'tailwind-merge';
 import { ChevronDown } from '@webb-tools/icons';
+import { ItemType } from '../utils/utils';
 
 export type CardTabsProps = {
-  counts: Record<CardType, number>;
-  onTabChange: (cardType: CardType) => void;
+  counts: Record<ItemType, number>;
+  onTabChange: (cardType: ItemType) => void;
 };
 
 export const CardTabs: FC<CardTabsProps> = (props) => {
-  const [selectedTab, setSelectedTab] = useState<CardType>(CardType.Project);
+  const [selectedTab, setSelectedTab] = useState<ItemType>(ItemType.Project);
 
   return (
     <div className="flex align-center">
       <div className="inline-flex gap-4">
-        {Object.values(CardType).map((cardType) => {
+        {Object.values(ItemType).map((cardType) => {
           const isSelected = cardType === selectedTab;
 
           return (

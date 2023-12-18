@@ -4,6 +4,13 @@ import {
   GitHubOAuthSuccessParams,
 } from '../components/GitHubOAuthButton/types';
 import assert from 'assert';
+import { ProjectItem } from '../components/ProjectCard/types';
+import { CircuitItem } from '../components/CircuitCard/types';
+
+export enum ItemType {
+  Project = 'Project',
+  Circuit = 'Circuit',
+}
 
 export enum PageUrl {
   Home = '/',
@@ -111,4 +118,53 @@ export async function handleSubmitProject(
   );
 
   return response.errorMessage;
+}
+
+// TODO: This is temporary, until the backend is implemented.
+export function getMockProjectsAndCircuits() {
+  const ITEMS_PER_PAGE = 12;
+
+  const mockProject: ProjectItem = {
+    ownerAvatarUrl:
+      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    repositoryOwner: 'webb',
+    repositoryName: 'masp',
+    stargazerCount: 123,
+    circuitCount: 24,
+    description:
+      'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
+    contributorAvatarUrls: [
+      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    ],
+  };
+
+  for (let i = 0; i < 3; i++) {
+    mockProject.contributorAvatarUrls.push(
+      mockProject.contributorAvatarUrls[0]
+    );
+  }
+
+  const mockProjects = [];
+
+  for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+    mockProjects.push(mockProject);
+  }
+
+  const mockCircuit: CircuitItem = {
+    ownerAvatarUrl:
+      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    filename: 'circuit.circom',
+    description:
+      'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
+    stargazerCount: 123,
+    locks: 456,
+  };
+
+  const mockCircuits = [];
+
+  for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+    mockCircuits.push(mockCircuit);
+  }
+
+  return { mockProjects, mockCircuits };
 }

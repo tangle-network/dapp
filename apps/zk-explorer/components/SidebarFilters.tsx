@@ -20,18 +20,16 @@ enum FilterCategory {
   LanguageOrFramework = 'Language/Framework',
 }
 
-export type FilteringConstraints = Map<FilterCategory, Set<string>>;
+export type FilterConstraints = Map<FilterCategory, Set<string>>;
 
-export type FilteringSidebarProps = PropsOf<'div'> & {
-  onConstraintsChange: (constraints: FilteringConstraints) => void;
+export type SidebarFiltersProps = PropsOf<'div'> & {
+  onConstraintsChange: (constraints: FilterConstraints) => void;
 };
 
-export const FilteringSidebar: FC<FilteringSidebarProps> = ({
+export const SidebarFilters: FC<SidebarFiltersProps> = ({
   onConstraintsChange,
 }) => {
-  const [constraints, setConstraints] = useState<FilteringConstraints>(
-    new Map()
-  );
+  const [constraints, setConstraints] = useState<FilterConstraints>(new Map());
 
   // TODO: These are only for testing purposes. Remove these once the actual data is available.
   const debugProofSystemsOptions: FilterOptionItem[] = [

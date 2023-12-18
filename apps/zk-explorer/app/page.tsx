@@ -9,112 +9,76 @@ import {
 import { HeaderActions } from '../components/HeaderActions';
 import { Search } from '@webb-tools/icons';
 import {
-  FilteringConstraints,
-  FilteringSidebar,
-} from '../components/FilteringSidebar';
-import { ProjectCard } from '../components/ProjectCard';
+  FilterConstraints,
+  SidebarFilters,
+} from '../components/SidebarFilters';
+import { ProjectCard } from '../components/ProjectCard/ProjectCard';
 import { Link } from '@webb-tools/webb-ui-components/components/Link';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
-import { PageUrl } from '../utils/utils';
+import { ItemType, PageUrl, getMockProjectsAndCircuits } from '../utils/utils';
 import { useEffect, useState } from 'react';
-import { fetchProjects } from '../utils/api';
+import {
+  searchProjects,
+  SearchSortByClause,
+  searchCircuits,
+} from '../utils/api';
 import useDebounce from '../hooks/useDebounce';
 import { ButtonSwitcherGroup } from '../components/ButtonSwitcherGroup';
-import { CardTabs } from './CardTabs';
+import { CardTabs } from '../components/CardTabs';
 import assert from 'assert';
-import { CircuitCard } from '../components/CircuitCard';
-
-export type ProjectItem = {
-  ownerAvatarUrl: string;
-  repositoryOwner: string;
-  repositoryName: string;
-  description: string;
-  stargazerCount: number;
-  circuitCount: number;
-  contributorAvatarUrls: string[];
-};
-
-export type CircuitItem = {
-  ownerAvatarUrl: string;
-  filename: string;
-  description: string;
-  stargazerCount: number;
-  locks: number;
-};
-
-export enum CardType {
-  Project = 'Project',
-  Circuit = 'Circuit',
-}
+import { CircuitCard } from '../components/CircuitCard/CircuitCard';
+import { ProjectItem } from '../components/ProjectCard/types';
+import { CircuitItem } from '../components/CircuitCard/types';
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 2000;
-  const PROJECT_CARDS_PER_PAGE = 12;
+  const ITEMS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
-  const [totalProjectCount, setTotalProjectCount] = useState<number>(0);
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchingForItem, setSearchingForItem] = useState(ItemType.Project);
+  const [constraints, setConstraints] = useState<FilterConstraints>(new Map());
 
-  const [isProjectsTabSelected, setIsProjectsTabSelected] =
-    useState<boolean>(true);
+  const [projectSearchResultCount, setCircuitSearchResultCount] =
+    useState<number>(0);
+
+  const [circuitSearchResultCount, setProjectSearchResultCount] =
+    useState<number>(0);
+
+  const [activeItemType, setActiveItemType] = useState<ItemType>(
+    ItemType.Project
+  );
 
   const debouncedSearchQuery = useDebounce(
     searchQuery,
     SEARCH_QUERY_DEBOUNCE_DELAY
   );
 
-  const [constraints, setConstraints] = useState<FilteringConstraints>(
-    new Map()
-  );
-
-  // TODO: This is only for testing purposes. Remove this once the actual data is available.
+  // Initial 'most popular' project search.
   useEffect(() => {
-    const debugProject: ProjectItem = {
-      ownerAvatarUrl:
-        'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-      repositoryOwner: 'webb',
-      repositoryName: 'masp',
-      stargazerCount: 123,
-      circuitCount: 24,
-      description:
-        'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-      contributorAvatarUrls: [
-        'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-      ],
-    };
+    searchProjects(
+      constraints,
+      '',
+      paginationPage,
+      SearchSortByClause.MostPopular
+    )
+      // Temporarily use mock data until we have a backend.
+      .catch(() => {
+        const mockProjectsAndCircuits = getMockProjectsAndCircuits();
 
-    for (let i = 0; i < 3; i++) {
-      debugProject.contributorAvatarUrls.push(
-        debugProject.contributorAvatarUrls[0]
-      );
-    }
+        setProjects(mockProjectsAndCircuits.mockProjects);
+        setCircuits(mockProjectsAndCircuits.mockCircuits);
+      })
+      .then((response) => {
+        setProjects(response.projects);
+        setCircuitSearchResultCount(response.resultCount);
+      });
 
-    const debugProjects = [];
+    // This effect should only run once on page load,
+    // so dependencies are intentionally left empty.
 
-    for (let i = 0; i < PROJECT_CARDS_PER_PAGE; i++) {
-      debugProjects.push(debugProject);
-    }
-
-    setProjects(debugProjects);
-
-    const debugCircuit: CircuitItem = {
-      ownerAvatarUrl:
-        'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-      filename: 'circuit.zok',
-      description:
-        'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-      stargazerCount: 123,
-      locks: 456,
-    };
-
-    const debugCircuits = [];
-
-    for (let i = 0; i < PROJECT_CARDS_PER_PAGE; i++) {
-      debugCircuits.push(debugCircuit);
-    }
-
-    setCircuits(debugCircuits);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -123,7 +87,7 @@ export default function Index() {
     // A small query length can yield too many results. Let's
     // wait until the user has typed a more more specific query.
     if (
-      debouncedSearchQuery.length > 0 &&
+      debouncedSearchQuery.length === 0 ||
       debouncedSearchQuery.length < MIN_SEARCH_QUERY_LENGTH
     ) {
       return;
@@ -132,16 +96,31 @@ export default function Index() {
     console.log('Re-fetching projects...');
 
     (async () => {
-      const response = await fetchProjects(
-        constraints,
-        debouncedSearchQuery,
-        paginationPage
-      );
+      // TODO: Need to also update the button switcher group to reflect the new card type.
 
-      setProjects(response.projects);
-      setTotalProjectCount(response.totalCount);
+      if (searchingForItem === ItemType.Project) {
+        const response = await searchProjects(
+          constraints,
+          debouncedSearchQuery,
+          paginationPage
+        );
+
+        setProjects(response.projects);
+        setActiveItemType(ItemType.Project);
+        setCircuitSearchResultCount(response.resultCount);
+      } else {
+        const response = await searchCircuits(
+          constraints,
+          debouncedSearchQuery,
+          paginationPage
+        );
+
+        setCircuits(response.circuits);
+        setActiveItemType(ItemType.Circuit);
+        setProjectSearchResultCount(response.resultCount);
+      }
     })();
-  }, [constraints, debouncedSearchQuery, paginationPage]);
+  }, [constraints, debouncedSearchQuery, paginationPage, searchingForItem]);
 
   return (
     <main className="flex flex-col gap-6">
@@ -176,20 +155,18 @@ export default function Index() {
 
       <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex flex-col sm:flex-row gap-2">
         <ButtonSwitcherGroup
-          buttonLabels={[CardType.Project, CardType.Circuit]}
+          buttonLabels={[ItemType.Project, ItemType.Circuit]}
           onSelectionChange={(selectedButtonIndex) => {
-            alert('Selection changed!');
-
             assert(
               selectedButtonIndex >= 0 && selectedButtonIndex <= 1,
               'Selected button index should be within bounds, which is two buttons.'
             );
 
-            alert(selectedButtonIndex);
-
             // The first index corresponds to the projects tab,
             // while the second index corresponds to the circuits tab.
-            setIsProjectsTabSelected(selectedButtonIndex === 0);
+            setSearchingForItem(
+              selectedButtonIndex === 0 ? ItemType.Project : ItemType.Circuit
+            );
           }}
         />
 
@@ -206,7 +183,7 @@ export default function Index() {
       {/* Content: Sidebar & cards */}
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="pl-6 max-w-[317px] space-y-12">
-          <FilteringSidebar onConstraintsChange={setConstraints} />
+          <SidebarFilters onConstraintsChange={setConstraints} />
 
           {/* Project submission card */}
           <Link
@@ -239,18 +216,17 @@ export default function Index() {
         </div>
 
         <div>
-          {/* TODO: Properly tab switching. */}
           <CardTabs
+            onTabChange={(cardType) => setActiveItemType(cardType)}
             counts={{
-              [CardType.Project]: 123,
-              [CardType.Circuit]: 456,
+              [ItemType.Project]: projectSearchResultCount,
+              [ItemType.Circuit]: circuitSearchResultCount,
             }}
-            onTabChange={() => void null}
           />
 
           {/* Cards */}
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
-            {isProjectsTabSelected
+            {activeItemType === ItemType.Project
               ? projects.map((project, index) => (
                   <Link
                     key={index}
@@ -267,8 +243,8 @@ export default function Index() {
           </div>
 
           <Pagination
-            itemsPerPage={PROJECT_CARDS_PER_PAGE}
-            totalItems={totalProjectCount}
+            itemsPerPage={ITEMS_PER_PAGE}
+            totalItems={projectSearchResultCount}
             page={paginationPage}
             setPageIndex={setPaginationPage}
             title="Projects"

@@ -1,9 +1,12 @@
-import { FilteringConstraints } from '../components/FilteringSidebar';
+import { CircuitItem } from '../components/CircuitCard/types';
+import { ProjectItem } from '../components/ProjectCard/types';
+import { FilterConstraints } from '../components/SidebarFilters';
 import assert from 'assert';
-import { ProjectItem } from '../app/page';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',
+  SearchProjects = 'search/projects',
+  SearchCircuits = 'search/circuits',
 }
 
 export type ApiResponseWrapper<T extends ApiResponse> = {
@@ -17,9 +20,14 @@ export type ApiResponse<T = unknown> = {
   data?: T;
 };
 
-export type ProjectQueryResponseData = {
+export type ProjectSearchResponseData = {
   projects: ProjectItem[];
-  totalCount: number;
+  resultCount: number;
+};
+
+export type CircuitSearchResponseData = {
+  circuits: CircuitItem[];
+  resultCount: number;
 };
 
 export function makeApiRoute(route: ApiRoute): string {
@@ -61,16 +69,54 @@ export async function exchangeAuthCodeForOAuthToken(
   return responseWrapper.innerResponse.isSuccess;
 }
 
-export async function fetchProjects(
-  constraints: FilteringConstraints,
-  searchQuery: string,
-  page: number
-): Promise<ProjectQueryResponseData> {
-  const responseWrapper = await sendApiRequest<ProjectQueryResponseData>(
-    ApiRoute.OAuthGithub,
+export enum SearchSortByClause {
+  MostPopular = 'most-popular',
+}
+
+export async function searchProjects(
+  constraints: FilterConstraints,
+  query: string,
+  page: number,
+  sortBy?: SearchSortByClause
+): Promise<ProjectSearchResponseData> {
+  const responseWrapper = await sendApiRequest<ProjectSearchResponseData>(
+    ApiRoute.SearchProjects,
     {
       method: 'POST',
-      body: JSON.stringify({ constraints, searchQuery, page }),
+      body: JSON.stringify({
+        constraints,
+        query,
+        page,
+        sortBy: sortBy ?? null,
+      }),
+    }
+  );
+
+  // TODO: Temporary; Using `assert` here is incorrect, as this would not necessarily equate to a logic error.
+  assert(
+    responseWrapper.innerResponse.data !== undefined,
+    "Response data shouldn't be undefined"
+  );
+
+  return responseWrapper.innerResponse.data;
+}
+
+export async function searchCircuits(
+  constraints: FilterConstraints,
+  query: string,
+  page: number,
+  sortBy?: SearchSortByClause
+): Promise<CircuitSearchResponseData> {
+  const responseWrapper = await sendApiRequest<CircuitSearchResponseData>(
+    ApiRoute.SearchCircuits,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        constraints,
+        query,
+        page,
+        sortBy: sortBy ?? null,
+      }),
     }
   );
 

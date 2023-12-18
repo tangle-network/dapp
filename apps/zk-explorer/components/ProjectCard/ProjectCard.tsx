@@ -1,9 +1,9 @@
 import { Card, Typography, Chip } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import { ProjectItem } from '../app/page';
 import Image from 'next/image';
 import assert from 'assert';
 import { StarIcon } from '@radix-ui/react-icons';
+import { ProjectItem } from './types';
 
 export const ProjectCard: FC<ProjectItem> = (props) => {
   assert(props.circuitCount >= 0, 'Circuit count should never be negative.');
