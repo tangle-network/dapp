@@ -5,6 +5,7 @@ export * from './HeaderChipsContainer';
 export * from './KeyStatsContainer';
 export { Layout } from './Layout';
 export * from './NominatorStatsContainer';
+export * from './UnbondTxContainer';
 export * from './UpdatePayeeTxContainer';
 export * from './ValidatorTablesContainer';
 export * from './WalletAndChainContainer';

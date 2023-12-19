@@ -14,21 +14,24 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { bondExtraTokens, evmPublicClient } from '../../constants';
-import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
-import BondTokens from './BondTokens';
-import { BondMoreTxContainerProps } from './types';
+import { evmPublicClient, unBondTokens } from '../../constants';
+import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
+import {
+  convertEthereumToSubstrateAddress,
+  splitTokenValueAndSymbol,
+} from '../../utils';
+import { UnbondTxContainerProps } from './types';
+import UnbondTokens from './UnbondTokens';
 
-const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
+const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
 
-  const [amountToBond, setAmountToBond] = useState<number>(0);
-  const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
-    useState<boolean>(false);
+  const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
+  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -36,49 +39,70 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletBalance(walletAddress);
+  const substrateAddress = useMemo(() => {
+    if (!activeAccount?.address) return '';
 
-  const amountToBondError = useMemo(() => {
-    if (walletBalanceError) {
+    return convertEthereumToSubstrateAddress(activeAccount.address);
+  }, [activeAccount?.address]);
+
+  const { data: totalStakedBalanceData, error: totalStakedBalanceError } =
+    useTotalStakedAmountSubscription(substrateAddress);
+
+  const totalStakedBalance = useMemo(() => {
+    if (!totalStakedBalanceData?.value1) return 0;
+
+    const { value: value_ } = splitTokenValueAndSymbol(
+      String(totalStakedBalanceData.value1)
+    );
+
+    return value_;
+  }, [totalStakedBalanceData?.value1]);
+
+  const amountToUnbondError = useMemo(() => {
+    if (totalStakedBalanceError) {
       notificationApi({
         variant: 'error',
-        message: walletBalanceError.message,
+        message: totalStakedBalanceError.message,
       });
     }
 
-    if (!walletBalance) return '';
+    if (!totalStakedBalance) return '';
 
-    if (Number(walletBalance.value1) === 0) {
-      return 'You have zero tTNT in your wallet!';
-    } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough tTNT in your wallet!`;
+    if (totalStakedBalance === 0) {
+      return 'You have no tTNT staked to unbond!';
+    } else if (amountToUnbond > totalStakedBalance) {
+      return `You don't have enough tTNT staked to unbond!`;
     }
-  }, [walletBalanceError, walletBalance, amountToBond, notificationApi]);
+  }, [
+    totalStakedBalanceError,
+    totalStakedBalance,
+    amountToUnbond,
+    notificationApi,
+  ]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
-    return amountToBond > 0 && !amountToBondError && walletAddress !== '0x0'
+    return amountToUnbond > 0 && !amountToUnbondError && walletAddress !== '0x0'
       ? true
       : false;
-  }, [amountToBond, amountToBondError, walletAddress]);
+  }, [amountToUnbond, amountToUnbondError, walletAddress]);
 
   const closeModal = useCallback(() => {
-    setIsBondMoreTxLoading(false);
+    setIsUnbondTxLoading(false);
     setIsModalOpen(false);
-    setAmountToBond(0);
+    setAmountToUnbond(0);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    setIsBondMoreTxLoading(true);
+    setIsUnbondTxLoading(true);
 
     try {
-      const bondExtraTokensTxHash = await bondExtraTokens(
+      const bondExtraTokensTxHash = await unBondTokens(
         walletAddress,
-        amountToBond
+        amountToUnbond
       );
 
       if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to bond tokens!');
+        throw new Error('Failed to unbond tokens!');
       }
 
       const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
@@ -88,12 +112,12 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
       );
 
       if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to bond tokens!');
+        throw new Error('Failed to unbond tokens!');
       }
 
       notificationApi({
         variant: 'success',
-        message: `Successfully bonded ${amountToBond} tTNT.`,
+        message: `Successfully unbonded ${amountToUnbond} tTNT.`,
       });
     } catch (error: any) {
       notificationApi({
@@ -105,7 +129,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     } finally {
       closeModal();
     }
-  }, [amountToBond, closeModal, notificationApi, walletAddress]);
+  }, [amountToUnbond, closeModal, notificationApi, walletAddress]);
 
   return (
     <Modal open>
@@ -115,18 +139,16 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Add Stake
+          Unbond Stake
         </ModalHeader>
 
         <div className="px-8 py-6">
-          <BondTokens
+          <UnbondTokens
             nominatorAddress={walletAddress}
-            amountToBond={amountToBond}
-            setAmountToBond={setAmountToBond}
-            amountToBondError={amountToBondError}
-            amountWalletBalance={
-              walletBalance && walletBalance.value1 ? walletBalance.value1 : 0
-            }
+            amountToUnbond={amountToUnbond}
+            setAmountToUnbond={setAmountToUnbond}
+            amountToUnbondError={amountToUnbondError}
+            totalStakedBalance={totalStakedBalance}
           />
         </div>
 
@@ -134,7 +156,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           <Button
             isFullWidth
             isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isBondMoreTxLoading}
+            isLoading={isUnbondTxLoading}
             onClick={submitAndSignTx}
           >
             Sign & Submit
@@ -151,4 +173,4 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   );
 };
 
-export default BondMoreTxContainer;
+export default UnbondTxContainer;

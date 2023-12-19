@@ -1,7 +1,8 @@
 export type StatsType =
   | 'Wallet Balance'
   | 'Total Staked'
-  | 'Payment Destination';
+  | 'Payment Destination'
+  | 'Unbonding Amount';
 
 export interface NominatorStatsItemProps {
   title: string;
