@@ -9,20 +9,22 @@ import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 
 export type CardGridProps = PropsOf<'div'> & {
-  activeItemType: ItemType;
+  selectedItemType: ItemType;
   projects: ProjectItem[];
   circuits: CircuitItem[];
 };
 
 export const ItemGrid: FC<CardGridProps> = (props) => {
   const items =
-    props.activeItemType === ItemType.Project ? props.projects : props.circuits;
+    props.selectedItemType === ItemType.Project
+      ? props.projects
+      : props.circuits;
 
   const wereResultsFound = items.length > 0;
 
   return wereResultsFound ? (
     <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
-      {props.activeItemType === ItemType.Project
+      {props.selectedItemType === ItemType.Project
         ? props.projects.map((project, index) => (
             <a
               key={index}
@@ -43,14 +45,14 @@ export const ItemGrid: FC<CardGridProps> = (props) => {
       <Search size="lg" className="mb-2" />
 
       <Typography variant="h5" fw="bold">
-        No {props.activeItemType.toLowerCase()}s found matching the search
+        No {props.selectedItemType.toLowerCase()}s found matching the search
         criteria
       </Typography>
 
       <Typography variant="body1" fw="normal">
         Try adjusting your search constraints or
         <Button className="inline" variant="link" href={PageUrl.SubmitProject}>
-          Submit your own project!
+          Submit a new project!
         </Button>
       </Typography>
     </div>

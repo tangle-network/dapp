@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import {
   Chip,
   Dropdown,
@@ -14,6 +14,7 @@ import { CheckCircledIcon, CircleIcon } from '@radix-ui/react-icons';
 import { SearchSortByClause } from '../utils/api';
 
 export type CardTabsProps = {
+  selectedTab: ItemType;
   counts: Record<ItemType, number>;
   sortByClause: SearchSortByClause;
   onTabChange: (cardType: ItemType) => void;
@@ -21,13 +22,11 @@ export type CardTabsProps = {
 };
 
 export const CardTabs: FC<CardTabsProps> = (props) => {
-  const [selectedTab, setSelectedTab] = useState<ItemType>(ItemType.Project);
-
   return (
     <div className="flex align-center">
       <div className="inline-flex gap-4">
         {Object.values(ItemType).map((cardType) => {
-          const isSelected = cardType === selectedTab;
+          const isSelected = cardType === props.selectedTab;
 
           return (
             <div
@@ -38,7 +37,6 @@ export const CardTabs: FC<CardTabsProps> = (props) => {
               )}
               onClick={() => {
                 if (!isSelected) {
-                  setSelectedTab(cardType);
                   props.onTabChange(cardType);
                 }
               }}

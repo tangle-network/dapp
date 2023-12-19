@@ -20,10 +20,7 @@ import {
   SearchSortByClause,
   searchCircuits,
 } from '../utils/api';
-import useDebounce from '../hooks/useDebounce';
-import { ButtonSwitcherGroup } from '../components/ButtonSwitcherGroup';
 import { CardTabs } from '../components/CardTabs';
-import assert from 'assert';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
 import { LinkCard } from '../components/LinkCard';
@@ -36,9 +33,8 @@ export default function Index() {
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchingForItem, setSearchingForItem] = useState(ItemType.Project);
   const [constraints, setConstraints] = useState<FilterConstraints>(new Map());
-  const [activeItemType, setActiveItemType] = useState(ItemType.Project);
+  const [selectedItemType, setSelectedItemType] = useState(ItemType.Project);
 
   const [sortByClause, setSortByClause] = useState(
     SearchSortByClause.MostPopular
@@ -49,11 +45,6 @@ export default function Index() {
 
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
     useState<number>(0);
-
-  const debouncedSearchQuery = useDebounce(
-    searchQuery,
-    SEARCH_QUERY_DEBOUNCE_DELAY
-  );
 
   // Initial 'most popular' project search.
   useEffect(() => {
@@ -77,13 +68,13 @@ export default function Index() {
   }, []);
 
   const fetchItems = () => {
-    if (searchingForItem === ItemType.Project) {
+    if (selectedItemType === ItemType.Project) {
       searchProjects(constraints, searchQuery, paginationPage, sortByClause)
         // Temporarily use mock data until we have a backend.
         .catch(() => getMockProjects())
         .then((response) => {
           setProjects(response.projects);
-          setActiveItemType(ItemType.Project);
+          setSelectedItemType(ItemType.Project);
           setProjectSearchResultCount(response.resultCount);
         });
     } else {
@@ -92,7 +83,7 @@ export default function Index() {
         .catch(getMockCircuits)
         .then((response) => {
           setCircuits(response.circuits);
-          setActiveItemType(ItemType.Circuit);
+          setSelectedItemType(ItemType.Circuit);
           setCircuitSearchResultCount(response.resultCount);
         });
     }
@@ -105,31 +96,26 @@ export default function Index() {
     // A small query length can yield too many results. Let's
     // wait until the user has typed a more more specific query.
     if (
-      debouncedSearchQuery.length === 0 ||
-      debouncedSearchQuery.length < MIN_SEARCH_QUERY_LENGTH
+      searchQuery.length === 0 ||
+      searchQuery.length < MIN_SEARCH_QUERY_LENGTH
     ) {
       return;
     }
 
     fetchItems();
 
-    // This effect should only run when the (debounced) search
-    // query changes, so other dependencies are intentionally excluded.
+    // This effect should only run when the  search query
+    // changes, so other dependencies are intentionally excluded.
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchQuery]);
+  }, [searchQuery]);
 
   // Fetch items when constraints, page, or sort by clause changes.
   // This doesn't depend on the search query, so it is intentionally
   // excluded from the dependencies.
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(fetchItems, [
-    constraints,
-    paginationPage,
-    searchingForItem,
-    sortByClause,
-  ]);
+  useEffect(fetchItems, [constraints, paginationPage, sortByClause]);
 
   return (
     <main className="flex flex-col gap-6">
@@ -143,7 +129,7 @@ export default function Index() {
         <div className="absolute inset-0 opacity-20 bg-black"></div>
 
         <div className="relative flex items-end my-4 px-4 z-10">
-          <HeaderActions />
+          <HeaderActions doHideSearchBar />
         </div>
 
         <div className="relative space-y-4 px-5 z-10">
@@ -163,28 +149,14 @@ export default function Index() {
       </header>
 
       <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex flex-col sm:flex-row gap-2">
-        <ButtonSwitcherGroup
-          buttonLabels={[ItemType.Project, ItemType.Circuit]}
-          onSelectionChange={(selectedButtonIndex) => {
-            assert(
-              selectedButtonIndex >= 0 && selectedButtonIndex <= 1,
-              'Selected button index should be within bounds, which is two buttons.'
-            );
-
-            // The first index corresponds to the projects tab,
-            // while the second index corresponds to the circuits tab.
-            setSearchingForItem(
-              selectedButtonIndex === 0 ? ItemType.Project : ItemType.Circuit
-            );
-          }}
-        />
-
         <Input
           id="keyword search"
-          rightIcon={<Search size="lg" />}
+          rightIcon={<Search size="lg" className="mr-4" />}
           className="w-full"
-          placeholder="Search projects for specific keywords..."
+          inputClassName="rounded-[50px]"
+          placeholder="Search projects and circuits for specific keywords..."
           value={searchQuery}
+          debounceTime={SEARCH_QUERY_DEBOUNCE_DELAY}
           onChange={(value) => setSearchQuery(value)}
         />
       </div>
@@ -221,7 +193,8 @@ export default function Index() {
         <div className="w-full">
           <CardTabs
             sortByClause={sortByClause}
-            onTabChange={(cardType) => setActiveItemType(cardType)}
+            selectedTab={selectedItemType}
+            onTabChange={(cardType) => setSelectedItemType(cardType)}
             onSortByClauseChange={(sortByClause) =>
               setSortByClause(sortByClause)
             }
@@ -234,7 +207,7 @@ export default function Index() {
           <ItemGrid
             projects={projects}
             circuits={circuits}
-            activeItemType={activeItemType}
+            selectedItemType={selectedItemType}
           />
 
           <Pagination

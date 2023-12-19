@@ -181,7 +181,7 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
   return (
     <div className="flex flex-col gap-9">
       <div>
-        <Typography variant="body1" fw="semibold" className="py-2">
+        <Typography variant="h5" fw="bold" className="py-2 dark:text-mono-0">
           Filter by:
         </Typography>
         <hr className="border-mono-160" />

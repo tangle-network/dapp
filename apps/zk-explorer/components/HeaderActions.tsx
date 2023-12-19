@@ -14,7 +14,14 @@ import { FC } from 'react';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { twMerge } from 'tailwind-merge';
 
-export const HeaderActions: FC<PropsOf<'div'>> = ({ className }) => {
+export type HeaderActionsProps = PropsOf<'div'> & {
+  doHideSearchBar?: boolean;
+};
+
+export const HeaderActions: FC<HeaderActionsProps> = ({
+  className,
+  doHideSearchBar,
+}) => {
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID;
 
   if (githubOAuthClientId === undefined || githubOAuthClientId === '') {
@@ -30,11 +37,13 @@ export const HeaderActions: FC<PropsOf<'div'>> = ({ className }) => {
         className
       )}
     >
-      <Input
-        id="search item"
-        placeholder="Search projects & circuits"
-        rightIcon={<Search />}
-      />
+      {!doHideSearchBar && (
+        <Input
+          id="search item"
+          placeholder="Search projects & circuits"
+          rightIcon={<Search />}
+        />
+      )}
 
       <div className="flex">
         {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
