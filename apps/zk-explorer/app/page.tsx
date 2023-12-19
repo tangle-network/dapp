@@ -3,10 +3,7 @@
 import { Typography, Input, Pagination } from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
 import { Search } from '@webb-tools/icons';
-import {
-  FilterConstraints,
-  SidebarFilters,
-} from '../components/SidebarFilters';
+import { SidebarFilters } from '../components/SidebarFilters/SidebarFilters';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
 import {
   ItemType,
@@ -25,6 +22,10 @@ import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
 import { LinkCard } from '../components/LinkCard';
 import { ItemGrid } from '../components/ItemGrid';
+import {
+  FilterConstraints,
+  FilterCategory,
+} from '../components/SidebarFilters/types';
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 1500;
@@ -33,8 +34,14 @@ export default function Index() {
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [constraints, setConstraints] = useState<FilterConstraints>(new Map());
   const [selectedItemType, setSelectedItemType] = useState(ItemType.Project);
+
+  const [constraints, setConstraints] = useState<FilterConstraints>({
+    [FilterCategory.ProofSystem]: [],
+    [FilterCategory.Categories]: [],
+    [FilterCategory.License]: [],
+    [FilterCategory.LanguageOrFramework]: [],
+  });
 
   const [sortByClause, setSortByClause] = useState(
     SearchSortByClause.MostPopular
@@ -164,7 +171,12 @@ export default function Index() {
       {/* Content: Sidebar & grid items */}
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="pl-6 max-w-[317px] space-y-12">
-          <SidebarFilters onConstraintsChange={setConstraints} />
+          <SidebarFilters
+            onConstraintsChange={(newConstraints) => {
+              console.log(newConstraints);
+              setConstraints(newConstraints);
+            }}
+          />
 
           <LinkCard href={PageUrl.SubmitProject}>
             <div className="p-2 bg-mono-120 rounded-full mb-6">

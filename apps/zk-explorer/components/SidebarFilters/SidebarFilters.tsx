@@ -1,26 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 import { Typography, CheckBox, Chip } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import assert from 'assert';
-
-type FilterOptionItem = {
-  label: string;
-  amount: number;
-};
-
-type FilterCategoryItem = {
-  category: FilterCategory;
-  options: FilterOptionItem[];
-};
-
-enum FilterCategory {
-  ProofSystem = 'Proof system',
-  Categories = 'Categories',
-  License = 'License',
-  LanguageOrFramework = 'Language/Framework',
-}
-
-export type FilterConstraints = Map<FilterCategory, Set<string>>;
+import { cloneDeep } from 'lodash';
+import {
+  FilterCategory,
+  FilterCategoryItem,
+  FilterConstraints,
+  FilterOptionItem,
+} from './types';
 
 export type SidebarFiltersProps = PropsOf<'div'> & {
   onConstraintsChange: (constraints: FilterConstraints) => void;
@@ -29,7 +16,12 @@ export type SidebarFiltersProps = PropsOf<'div'> & {
 export const SidebarFilters: FC<SidebarFiltersProps> = ({
   onConstraintsChange,
 }) => {
-  const [constraints, setConstraints] = useState<FilterConstraints>(new Map());
+  const [constraints, setConstraints] = useState<FilterConstraints>({
+    [FilterCategory.ProofSystem]: [],
+    [FilterCategory.Categories]: [],
+    [FilterCategory.License]: [],
+    [FilterCategory.LanguageOrFramework]: [],
+  });
 
   // TODO: These are only for testing purposes. Remove these once the actual data is available.
   const debugProofSystemsOptions: FilterOptionItem[] = [
@@ -150,31 +142,22 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [constraints]);
 
-  const handleCheckboxChange = (
+  const handleConstraintChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     category: FilterCategory,
     label: string
   ) => {
-    const updatedConstraints = new Map(constraints);
-    const existingConstraintSet = updatedConstraints.get(category);
-
-    const updatedConstraintSet =
-      existingConstraintSet !== undefined
-        ? new Set(existingConstraintSet)
-        : new Set<string>();
+    const updatedConstraints: FilterConstraints = cloneDeep(constraints);
 
     if (e.target.checked) {
-      updatedConstraintSet.add(label);
+      updatedConstraints[category].push(label);
     } else {
-      updatedConstraintSet.delete(label);
-
-      assert(
-        updatedConstraints.has(category),
-        'Category should exist in constraints'
+      updatedConstraints[category].splice(
+        updatedConstraints[category].indexOf(label),
+        1
       );
     }
 
-    updatedConstraints.set(category, updatedConstraintSet);
     setConstraints(updatedConstraints);
   };
 
@@ -194,7 +177,7 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
             fw="normal"
             className="mb-6 dark:text-mono-0"
           >
-            Proof system
+            {category.category}
           </Typography>
 
           <div className="flex flex-col gap-2">
@@ -204,7 +187,7 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
                   wrapperClassName="items-center"
                   spacingClassName="ml-2"
                   onChange={(e) =>
-                    handleCheckboxChange(e, category.category, option.label)
+                    handleConstraintChange(e, category.category, option.label)
                   }
                 >
                   {option.label}
