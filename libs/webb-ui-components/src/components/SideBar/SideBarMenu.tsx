@@ -5,7 +5,9 @@ import { twMerge } from 'tailwind-merge';
 import * as Dialog from '@radix-ui/react-dialog';
 import { HamburgerMenu } from '@webb-tools/icons';
 
-import { SideBarLogo, SideBarItems, SideBarFooter } from '.';
+import { SideBarLogo } from './Logo';
+import { SideBarItems } from './Items';
+import { SideBarFooter } from './Footer';
 import { SidebarProps } from './types';
 
 export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(

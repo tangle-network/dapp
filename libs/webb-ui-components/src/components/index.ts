@@ -90,3 +90,6 @@ export * from './WalletModal';
 export * from './WebsiteFooter';
 export * from './WebsiteNewsLetterForm';
 export * from './buttons';
+export * from './InputField';
+export { default as InputField } from './InputField';
+export * from './DropdownField';
