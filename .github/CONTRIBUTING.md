@@ -13,6 +13,7 @@ Reading and following these guidelines will help us make the contribution proces
   - [Getting Started](#getting-started)
     - [Issues](#issues)
     - [Pull Requests](#pull-requests)
+  - [Commit Message Guidelines](#commit-message-guidelines)
   - [Getting Help](#getting-help)
 
 ## Getting Started
@@ -50,6 +51,14 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
 5. Following any formatting and testing guidelines specific to this repo
 6. Push changes to your fork
 7. Open a PR in our repository and follow the PR template so that we can efficiently review the changes.
+
+## Commit Message Guidelines
+
+This repository adheres to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. In case you're not already familiar with it, you can run `yarn commit` in your terminal after staging your changes to interactively generate. The helper should guide you through the process of creating a commit message that adheres to these guidelines:
+
+* All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+* Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
+* Scope should be one of the following: `bridge`, `faucet`, `hubble-stats`, `stats`, `tangle`, `testnet-leaderboard`, `zk-explorer`, `webb-ui`, `icons`, `tools`.
 
 ## Getting Help
 
