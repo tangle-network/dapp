@@ -14,9 +14,11 @@ import {
 import cx from 'classnames';
 import Link from 'next/link';
 import { type FC, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 
 import { NominatorStatsItem } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
+import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -42,6 +44,11 @@ export const NominatorStatsContainer: FC = () => {
     return convertEthereumToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
+  const {
+    data: unbondingRemainingErasData,
+    error: unbondingRemainingErasError,
+  } = useUnbondingRemainingErasSubscription(substrateAddress);
+
   useEffect(() => {
     try {
       const checkIfFirstTimeNominator = async () => {
@@ -64,6 +71,28 @@ export const NominatorStatsContainer: FC = () => {
       });
     }
   }, [substrateAddress]);
+
+  const unbondingRemainingErasTooltip = useMemo(() => {
+    if (unbondingRemainingErasError) {
+      notificationApi({
+        variant: 'error',
+        message: unbondingRemainingErasError.message,
+      });
+    }
+
+    if (!unbondingRemainingErasData?.value1) return null;
+
+    const elements = unbondingRemainingErasData.value1.map((era, index) => (
+      <React.Fragment key={index}>
+        <div className="text-center mb-2">
+          <p>Unbonding {era.amount}</p>
+          <p>{era.remainingEras} eras remaining</p>
+        </div>
+      </React.Fragment>
+    ));
+
+    return <>{elements}</>;
+  }, [unbondingRemainingErasError, unbondingRemainingErasData?.value1]);
 
   return (
     <>
@@ -120,7 +149,7 @@ export const NominatorStatsContainer: FC = () => {
 
             <NominatorStatsItem
               title="Unbonding tTNT"
-              tooltip={`Unbonding tTNT (unbonded)`}
+              tooltip={unbondingRemainingErasTooltip}
               type="Unbonding Amount"
               address={substrateAddress}
             />
@@ -172,7 +201,8 @@ export const NominatorStatsContainer: FC = () => {
                 <Button
                   variant="utility"
                   className="w-full"
-                  isDisabled={!activeAccount}
+                  // isDisabled={!activeAccount}
+                  isDisabled={true}
                   onClick={() => setIsBondMoreModalOpen(true)}
                 >
                   Rebond

@@ -14,6 +14,7 @@ const UnbondTokens: FC<UnbondTokensProps> = ({
   setAmountToUnbond,
   amountToUnbondError,
   totalStakedBalance,
+  remainingStakedBalanceToUnbond,
 }) => {
   return (
     <div className="flex flex-col gap-9">
@@ -43,8 +44,8 @@ const UnbondTokens: FC<UnbondTokensProps> = ({
           title="Unbond Amount"
           isAddressType={false}
           value={amountToUnbond.toString()}
-          isDisabled={totalStakedBalance > 0 ? false : true}
-          placeholder="10 tTNT"
+          isDisabled={remainingStakedBalanceToUnbond > 0 ? false : true}
+          placeholder={remainingStakedBalanceToUnbond.toString()}
           type="number"
           onChange={(e) => setAmountToUnbond(Number(e.target.value))}
         />
@@ -54,7 +55,7 @@ const UnbondTokens: FC<UnbondTokensProps> = ({
             variant="utility"
             size="sm"
             isDisabled={totalStakedBalance > 0 ? false : true}
-            onClick={() => setAmountToUnbond(totalStakedBalance)}
+            onClick={() => setAmountToUnbond(remainingStakedBalanceToUnbond)}
           >
             MAX
           </Button>

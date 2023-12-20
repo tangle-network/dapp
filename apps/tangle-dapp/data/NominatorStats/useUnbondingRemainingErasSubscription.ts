@@ -1,15 +1,21 @@
 'use client';
 
+import { u128 } from '@polkadot/types';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { firstValueFrom, type Subscription } from 'rxjs';
 
-import { getPolkadotApiRx } from '../../constants';
+import { formatTokenBalance, getPolkadotApiRx } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+
+type UnbondingRemainingEras = {
+  amount: string;
+  remainingEras: number;
+};
 
 export default function useUnbondingRemainingErasSubscription(
   address: string,
-  defaultValue: { value1: string | number | null } = {
+  defaultValue: { value1: UnbondingRemainingEras[] | null } = {
     value1: null,
   }
 ) {
@@ -47,15 +53,26 @@ export default function useUnbondingRemainingErasSubscription(
               const currentEraOption = await currentEraPromise;
               const currentEra = currentEraOption.unwrapOrDefault().toNumber();
 
-              const useUnbondingRemainingEras = ledger.unlocking.map(
-                (unlockChunk) => {
+              const unbondingRemainingEras = ledger.unlocking.map(
+                async (unlockChunk) => {
+                  const unbondedAmount = unlockChunk.value;
+                  const unbondingFormattedAmount = await formatTokenBalance(
+                    new u128(api.registry, unbondedAmount.toString())
+                  );
                   const unlockingEra = unlockChunk.era.toNumber();
                   const remainingEras = unlockingEra - currentEra;
-                  return remainingEras;
+                  return {
+                    amount: unbondingFormattedAmount ?? '',
+                    remainingEras,
+                  };
                 }
               );
 
-              setValue1(useUnbondingRemainingEras[0] ?? null);
+              const unbondingRemainingErasFormatted = await Promise.all(
+                unbondingRemainingEras
+              );
+
+              setValue1(unbondingRemainingErasFormatted ?? null);
               setIsLoading(false);
             }
           });

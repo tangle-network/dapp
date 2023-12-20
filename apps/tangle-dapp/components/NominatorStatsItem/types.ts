@@ -1,3 +1,5 @@
+import React from "react";
+
 export type StatsType =
   | 'Wallet Balance'
   | 'Total Staked'
@@ -7,7 +9,7 @@ export type StatsType =
 export interface NominatorStatsItemProps {
   title: string;
   type: StatsType;
-  tooltip?: string;
+  tooltip?: string | React.ReactNode;
   address: string;
   className?: string;
 }

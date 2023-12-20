@@ -45,8 +45,15 @@ export default function useUnbondingAmountSubscription(
                 return unlockChunk.value.toString();
               });
 
+              const totalUnbondingAmount = unbondingAmount.reduce(
+                (accumulator, currentValue) => {
+                  return accumulator + Number(currentValue);
+                },
+                0
+              );
+
               const unbondingFormattedAmount = await formatTokenBalance(
-                new u128(api.registry, unbondingAmount[0])
+                new u128(api.registry, totalUnbondingAmount.toString())
               );
 
               setValue1(unbondingFormattedAmount ?? null);

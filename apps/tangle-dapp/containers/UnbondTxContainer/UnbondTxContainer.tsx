@@ -16,6 +16,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { evmPublicClient, unBondTokens } from '../../constants';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
+import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import {
   convertEthereumToSubstrateAddress,
   splitTokenValueAndSymbol,
@@ -48,17 +49,10 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =
     useTotalStakedAmountSubscription(substrateAddress);
 
+  const { data: unbondingAmountData, error: unbondingAmountError } =
+    useUnbondingAmountSubscription(substrateAddress);
+
   const totalStakedBalance = useMemo(() => {
-    if (!totalStakedBalanceData?.value1) return 0;
-
-    const { value: value_ } = splitTokenValueAndSymbol(
-      String(totalStakedBalanceData.value1)
-    );
-
-    return value_;
-  }, [totalStakedBalanceData?.value1]);
-
-  const amountToUnbondError = useMemo(() => {
     if (totalStakedBalanceError) {
       notificationApi({
         variant: 'error',
@@ -66,19 +60,48 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       });
     }
 
-    if (!totalStakedBalance) return '';
+    if (!totalStakedBalanceData?.value1) return 0;
 
-    if (totalStakedBalance === 0) {
-      return 'You have no tTNT staked to unbond!';
-    } else if (amountToUnbond > totalStakedBalance) {
-      return `You don't have enough tTNT staked to unbond!`;
-    }
+    const { value: value_ } = splitTokenValueAndSymbol(
+      String(totalStakedBalanceData.value1)
+    );
+
+    return value_;
   }, [
-    totalStakedBalanceError,
-    totalStakedBalance,
-    amountToUnbond,
     notificationApi,
+    totalStakedBalanceData?.value1,
+    totalStakedBalanceError,
   ]);
+
+  const remainingStakedBalanceToUnbond = useMemo(() => {
+    if (unbondingAmountError) {
+      notificationApi({
+        variant: 'error',
+        message: unbondingAmountError.message,
+      });
+    }
+
+    if (!unbondingAmountData?.value1) return 0;
+
+    const { value: value_ } = splitTokenValueAndSymbol(
+      String(unbondingAmountData?.value1)
+    );
+
+    return totalStakedBalance - value_;
+  }, [
+    notificationApi,
+    totalStakedBalance,
+    unbondingAmountData?.value1,
+    unbondingAmountError,
+  ]);
+
+  const amountToUnbondError = useMemo(() => {
+    if (remainingStakedBalanceToUnbond === 0) {
+      return 'You have unbonded all your staked tTNT!';
+    } else if (amountToUnbond > remainingStakedBalanceToUnbond) {
+      return `You can only unbond ${remainingStakedBalanceToUnbond} tTNT!`;
+    }
+  }, [remainingStakedBalanceToUnbond, amountToUnbond]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToUnbond > 0 && !amountToUnbondError && walletAddress !== '0x0'
@@ -149,6 +172,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             setAmountToUnbond={setAmountToUnbond}
             amountToUnbondError={amountToUnbondError}
             totalStakedBalance={totalStakedBalance}
+            remainingStakedBalanceToUnbond={remainingStakedBalanceToUnbond}
           />
         </div>
 
