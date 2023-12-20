@@ -60,6 +60,12 @@ This repository adheres to the [Conventional Commits](https://www.conventionalco
 * Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
 * Scope should be one of the following: `bridge`, `faucet`, `hubble-stats`, `stats`, `tangle`, `testnet-leaderboard`, `zk-explorer`, `webb-ui`, `icons`, `tools`.
 
+Here are some examples to follow:
+
+* `feat(bridge): Fixed a certain bug (#123)`
+* `docs: Added documentation for commit message guidelines`
+* `chore: Bump X dependency to latest version`
+
 ## Getting Help
 
 Join us in the [Webb Community](https://discord.gg/cv8EfJu3Tn) and post your question there.
