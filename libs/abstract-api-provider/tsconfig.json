@@ -5,7 +5,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
-    "declaration": true
+    "declaration": true,
+    "noImplicitAny": false
   },
   "files": [],
   "include": [],
