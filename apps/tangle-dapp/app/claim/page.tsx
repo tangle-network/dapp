@@ -3,12 +3,12 @@ import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTempla
 import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
 
 import faqItems from '../../constants/faq';
-import ConnectSection from './ConnectSection';
+import ClaimSection from './ClaimSection';
 
 export default async function ClaimPage() {
   return (
     <AppTemplate.Root>
-      <ConnectSection />
+      <ClaimSection />
 
       <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
 
