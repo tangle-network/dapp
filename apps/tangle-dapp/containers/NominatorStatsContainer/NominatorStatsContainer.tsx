@@ -17,7 +17,6 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { NominatorStatsItem } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
-import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -43,9 +42,6 @@ export const NominatorStatsContainer: FC = () => {
     return convertEthereumToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  const { data: unbondingRemainingEras, error: unbondingRemainingErasError } =
-    useUnbondingRemainingErasSubscription(substrateAddress);
-
   useEffect(() => {
     try {
       const checkIfFirstTimeNominator = async () => {
@@ -68,13 +64,6 @@ export const NominatorStatsContainer: FC = () => {
       });
     }
   }, [substrateAddress]);
-
-  if (unbondingRemainingErasError) {
-    notificationApi({
-      variant: 'error',
-      message: unbondingRemainingErasError.message,
-    });
-  }
 
   return (
     <>
@@ -131,7 +120,7 @@ export const NominatorStatsContainer: FC = () => {
 
             <NominatorStatsItem
               title="Unbonding tTNT"
-              tooltip={`${unbondingRemainingEras?.value1 ?? 0} eras remaining.`}
+              tooltip={`Unbonding tTNT (unbonded)`}
               type="Unbonding Amount"
               address={substrateAddress}
             />
