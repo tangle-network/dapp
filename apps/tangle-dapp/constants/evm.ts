@@ -165,3 +165,24 @@ export const unBondTokens = async (
 
   return txHash;
 };
+
+export const rebondTokens = async (
+  nominatorAddress: string,
+  numberOfTokens: number
+): Promise<`0x${string}`> => {
+  const value = parseEther(numberOfTokens.toString());
+
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'rebond',
+    args: [value],
+    account: ensureHex(nominatorAddress),
+  });
+
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+  const txHash = await evmWalletClient.writeContract(request);
+
+  return txHash;
+};

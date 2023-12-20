@@ -6,14 +6,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { UnbondTokensProps } from './types';
+import { RebondTokensProps } from './types';
 
-const UnbondTokens: FC<UnbondTokensProps> = ({
+const UnbondTokens: FC<RebondTokensProps> = ({
   nominatorAddress,
-  amountToUnbond,
-  setAmountToUnbond,
-  amountToUnbondError,
-  remainingStakedBalanceToUnbond,
+  amountToRebond,
+  setAmountToRebond,
+  amountToRebondError,
+  remainingUnbondedTokensToRebond,
 }) => {
   return (
     <div className="flex flex-col gap-9">
@@ -38,23 +38,23 @@ const UnbondTokens: FC<UnbondTokensProps> = ({
       </InputField.Root>
 
       {/* Amount */}
-      <InputField.Root error={amountToUnbondError}>
+      <InputField.Root error={amountToRebondError}>
         <InputField.Input
           title="Unbond Amount"
           isAddressType={false}
-          value={amountToUnbond.toString()}
-          isDisabled={remainingStakedBalanceToUnbond > 0 ? false : true}
-          placeholder={remainingStakedBalanceToUnbond.toString()}
+          value={amountToRebond.toString()}
+          isDisabled={remainingUnbondedTokensToRebond > 0 ? false : true}
+          placeholder={remainingUnbondedTokensToRebond.toString()}
           type="number"
-          onChange={(e) => setAmountToUnbond(Number(e.target.value))}
+          onChange={(e) => setAmountToRebond(Number(e.target.value))}
         />
 
         <InputField.Slot>
           <Button
             variant="utility"
             size="sm"
-            isDisabled={remainingStakedBalanceToUnbond > 0 ? false : true}
-            onClick={() => setAmountToUnbond(remainingStakedBalanceToUnbond)}
+            isDisabled={remainingUnbondedTokensToRebond > 0 ? false : true}
+            onClick={() => setAmountToRebond(remainingUnbondedTokensToRebond)}
           >
             MAX
           </Button>
@@ -62,9 +62,8 @@ const UnbondTokens: FC<UnbondTokensProps> = ({
       </InputField.Root>
 
       <Typography variant="body1" fw="normal">
-        Once unbonding, you must wait certain number of eras for your funds to
-        become available. You can check the remaining eras for your funds to
-        become available in the Unbonding tTNT tooltip.
+        Rebonding allows you to re-stake your tokens that are currently in the
+        unbonding process.
       </Typography>
     </div>
   );

@@ -8,6 +8,5 @@ export type UnbondTokensProps = {
   amountToUnbond: number;
   setAmountToUnbond: (amount: number) => void;
   amountToUnbondError?: string;
-  totalStakedBalance: number;
   remainingStakedBalanceToUnbond: number;
 };

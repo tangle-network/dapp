@@ -22,6 +22,7 @@ import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/use
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
+import { RebondTxContainer } from '../RebondTxContainer';
 import { UnbondTxContainer } from '../UnbondTxContainer';
 
 export const NominatorStatsContainer: FC = () => {
@@ -30,6 +31,7 @@ export const NominatorStatsContainer: FC = () => {
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
+  const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
 
   const walletAddress = useMemo(() => {
@@ -81,6 +83,10 @@ export const NominatorStatsContainer: FC = () => {
     }
 
     if (!unbondingRemainingErasData?.value1) return null;
+
+    if (unbondingRemainingErasData.value1.length === 0) {
+      return 'You have no unbonding tokens.';
+    }
 
     const elements = unbondingRemainingErasData.value1.map((era, index) => (
       <React.Fragment key={index}>
@@ -201,9 +207,8 @@ export const NominatorStatsContainer: FC = () => {
                 <Button
                   variant="utility"
                   className="w-full"
-                  // isDisabled={!activeAccount}
-                  isDisabled={true}
-                  onClick={() => setIsBondMoreModalOpen(true)}
+                  isDisabled={!activeAccount}
+                  onClick={() => setIsRebondModalOpen(true)}
                 >
                   Rebond
                 </Button>
@@ -226,6 +231,11 @@ export const NominatorStatsContainer: FC = () => {
       <UnbondTxContainer
         isModalOpen={isUnbondModalOpen}
         setIsModalOpen={setIsUnbondModalOpen}
+      />
+
+      <RebondTxContainer
+        isModalOpen={isRebondModalOpen}
+        setIsModalOpen={setIsRebondModalOpen}
       />
     </>
   );
