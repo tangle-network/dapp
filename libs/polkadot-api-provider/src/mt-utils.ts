@@ -1,6 +1,6 @@
 import { Note } from '@webb-tools/sdk-core';
 import { ApiPromise } from '@polkadot/api';
-import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { u8aToHex } from '@polkadot/util';
 
 export async function getLeafIndex(
   api: ApiPromise,
@@ -49,12 +49,6 @@ export async function getLeaves(
   end: number
 ): Promise<Uint8Array[]> {
   return api.derive.merkleTreeBn254.getLeavesForTree(treeId, start, end);
-}
-
-export async function rootOfLeaves(leaves: Uint8Array[]) {
-  const wasm = await import('@webb-tools/wasm-utils');
-  const tree = new wasm.MTBn254X5(leaves, '0');
-  return hexToU8a(`0x${tree.root}`);
 }
 
 export async function validateVAnchorNoteIndex(

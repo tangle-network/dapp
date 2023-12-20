@@ -58,7 +58,7 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core/utxo';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
-import type { Backend } from '@webb-tools/wasm-utils';
+import type { Backend } from '@webb-tools/utils';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import { BehaviorSubject } from 'rxjs';
