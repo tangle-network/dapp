@@ -22,13 +22,8 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
   className,
   doHideSearchBar,
 }) => {
-  const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID;
-
-  if (githubOAuthClientId === undefined || githubOAuthClientId === '') {
-    throw new Error(
-      'GitHub OAuth client ID is not defined. Did you forget to set the corresponding environment variable?'
-    );
-  }
+  // TODO: should throw error when client id is empty
+  const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID ?? '';
 
   return (
     <div

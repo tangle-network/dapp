@@ -8,16 +8,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ExternalLinkLine } from '@webb-tools/icons';
 import {
   Avatar,
+  CopyWithTooltip,
   fuzzyFilter,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback } from 'react';
+import { type FC } from 'react';
 
 import { Validator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -42,7 +41,11 @@ const columns = [
             {identity === address ? shortenString(address, 6) : identity}
           </Typography>
 
-          <ExternalLinkLine />
+          <CopyWithTooltip
+            textToCopy={address}
+            isButton={false}
+            className="cursor-pointer"
+          />
         </div>
       );
     },
@@ -58,7 +61,7 @@ const columns = [
     cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Delegations" className="justify-center" />,
+    header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
       <StringCell value={props.getValue()} className="text-center" />
     ),
@@ -84,10 +87,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const onRowClick = useCallback(() => {
-    window.open(TANGLE_STAKING_URL, '_blank');
-  }, []);
-
   return (
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
@@ -98,7 +97,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
         tableProps={table}
         isPaginated
         totalRecords={data.length}
-        onRowClick={onRowClick}
       />
     </div>
   );
