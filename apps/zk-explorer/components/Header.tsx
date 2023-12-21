@@ -16,8 +16,9 @@ import {
 } from '@webb-tools/icons';
 import { FC } from 'react';
 import { GitHubOAuthButton } from './GitHubOAuthButton/GitHubOAuthButton';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
-export const Header: FC<unknown> = () => {
+export const Header: FC<PropsOf<'header'>> = (props) => {
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID;
 
   if (githubOAuthClientId === undefined || githubOAuthClientId === '') {
@@ -27,7 +28,7 @@ export const Header: FC<unknown> = () => {
   }
 
   return (
-    <header className="py-4 flex flex-col sm:flex-row gap-4">
+    <header className="py-4 flex flex-col sm:flex-row gap-4" {...props}>
       {/* TODO: Base breadcrumbs on the pathname */}
       <Breadcrumbs>
         <BreadcrumbsItem icon={<CheckboxBlankCircleLine />}>
