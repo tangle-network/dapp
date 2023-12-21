@@ -11858,17 +11858,7 @@
     "@webb-tools/utils" "^1.0.11"
     ethers "5.7.0"
 
-"@webb-tools/utils@0.5.39":
-  version "0.5.39"
-  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.39.tgz#f38b10233839c4d23c8bb45d31502ace3026c3d8"
-  integrity sha512-2/2pshBzgPo8Dhnx/fQZGVw9Im3KVAVZp+aOQL1RXjIeOUsqRDkxduI1Lej+TYO+wEQNoV4DOZnPdPQ9NbhqXw==
-  dependencies:
-    "@webb-tools/sdk-core" "0.1.4-126"
-    babyjubjub "^1.0.4"
-    ethers "5.7.0"
-    snarkjs "^0.6.10"
-
-"@webb-tools/utils@^1.0.11", "@webb-tools/utils@^1.0.8":
+"@webb-tools/utils@1.0.11", "@webb-tools/utils@^1.0.11", "@webb-tools/utils@^1.0.8":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-1.0.11.tgz#9795cc8d970428daee3dba3b5365f00b9b9c9013"
   integrity sha512-lQEUAP5OSQfb9L9oSoZq2T3cj2A6G8h5w+/LDw3IMAnRWiCuuC+4iViDsZc/MWsDYPCagW0dhbU+ASsnzDqERA==
@@ -13369,14 +13359,6 @@ babel-types@^6.24.1, babel-types@^6.26.0:
     lodash "^4.17.4"
     to-fast-properties "^1.0.3"
 
-babyjubjub@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/babyjubjub/-/babyjubjub-1.0.4.tgz#7b5ff0814005ea9c0a8bf63c93c5092232529bb6"
-  integrity sha512-R+EcKjxMSoctFCUtRUBKf3oDrnBrbbHUnt7u4LMGaERCx6/8+qfHZlqpBdsgAar9IvoPbDk0BLIj9lL9gfKCkw==
-  dependencies:
-    bignumber.js "^9.0.0"
-    buffer-reverse "^1.0.1"
-
 babylon@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
@@ -13869,11 +13851,6 @@ buffer-from@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
-
-buffer-reverse@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/buffer-reverse/-/buffer-reverse-1.0.1.tgz#49283c8efa6f901bc01fa3304d06027971ae2f60"
-  integrity sha512-M87YIUBsZ6N924W57vDwT/aOu8hw7ZgdByz6ijksLjmHJELBASmYTTlNHRgjE+pTsT9oJXGaDSgqqwfdHotDUg==
 
 buffer-to-arraybuffer@^0.0.5:
   version "0.0.5"
