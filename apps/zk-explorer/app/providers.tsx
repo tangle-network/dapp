@@ -1,10 +1,8 @@
-import { WebbUIProvider } from '@webb-tools/webb-ui-components/provider';
 import type { PropsWithChildren } from 'react';
+import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 
 const Providers = ({ children }: PropsWithChildren) => {
-  return <WebbUIProvider hasErrorBoudary>{children}</WebbUIProvider>;
+  return <NextThemeProvider>{children}</NextThemeProvider>;
 };
-
-//
 
 export default Providers;
