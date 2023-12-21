@@ -20,8 +20,7 @@ import {
   UtxoGenInput,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { hexToU8a } from '@webb-tools/utils';
-import { Backend } from '@webb-tools/wasm-utils';
+import { hexToU8a, Backend } from '@webb-tools/utils';
 import mergeWith from 'lodash/mergeWith';
 import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';

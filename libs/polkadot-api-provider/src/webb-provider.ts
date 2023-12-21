@@ -47,8 +47,12 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
-import type { Backend } from '@webb-tools/wasm-utils';
+import {
+  ZERO_BYTES32,
+  u8aToHex,
+  ZkComponents,
+  Backend,
+} from '@webb-tools/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import {
