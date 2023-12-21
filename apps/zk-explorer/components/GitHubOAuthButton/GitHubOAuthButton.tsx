@@ -3,7 +3,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { GithubFill } from '@webb-tools/icons';
 import { twMerge } from 'tailwind-merge';
-import { FC, MouseEventHandler, useEffect } from 'react';
+import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
 import { GitHubOAuthButtonProps } from './types';
 
 export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
@@ -16,34 +16,38 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
   onOAuthSuccess,
   onOAuthError,
   onSignedInClick,
+  onClick,
   ...rest
 }) => {
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    if (rest.onClick !== undefined) {
-      rest.onClick(e);
-    }
-
-    const isSignedIn = username !== undefined;
-
-    if (isSignedIn) {
-      if (onSignedInClick !== undefined) {
-        onSignedInClick(e);
-      }
-    } else {
-      const authUrl = new URL('https://github.com/login/oauth/authorize');
-      const finalRedirectUri = redirectUri ?? window.location.href;
-
-      authUrl.searchParams.append('client_id', clientId);
-      authUrl.searchParams.append('redirect_uri', finalRedirectUri);
-      authUrl.searchParams.append('scope', scope);
-
-      if (state !== undefined) {
-        authUrl.searchParams.append('state', state);
+  const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      if (onClick !== undefined) {
+        onClick(e);
       }
 
-      window.location.href = authUrl.toString();
-    }
-  };
+      const isSignedIn = username !== undefined;
+
+      if (isSignedIn) {
+        if (onSignedInClick !== undefined) {
+          onSignedInClick(e);
+        }
+      } else {
+        const authUrl = new URL('https://github.com/login/oauth/authorize');
+        const finalRedirectUri = redirectUri ?? window.location.href;
+
+        authUrl.searchParams.append('client_id', clientId);
+        authUrl.searchParams.append('redirect_uri', finalRedirectUri);
+        authUrl.searchParams.append('scope', scope);
+
+        if (state !== undefined) {
+          authUrl.searchParams.append('state', state);
+        }
+
+        window.location.href = authUrl.toString();
+      }
+    },
+    [clientId, redirectUri, scope, state, username, onSignedInClick, onClick]
+  );
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.
   // Handle possible GitHub OAuth redirect and error query parameters.
