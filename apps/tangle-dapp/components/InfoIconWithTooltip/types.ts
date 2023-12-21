@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface InfoIconWithTooltipProps {
-  content: string;
+  content: string | React.ReactNode;
 }
