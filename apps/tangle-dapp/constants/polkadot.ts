@@ -4,9 +4,9 @@ import { formatBalance } from '@polkadot/util';
 import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { firstValueFrom } from 'rxjs';
 
-const apiPromiseCache = new Map<string, ApiPromise>();
-
 const TOKEN_UNIT = 'tTNT';
+
+const apiPromiseCache = new Map<string, ApiPromise>();
 
 export const getPolkadotApiPromise = async (
   endpoint: string = TANGLE_RPC_ENDPOINT

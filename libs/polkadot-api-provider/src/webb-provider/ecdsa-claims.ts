@@ -1,5 +1,3 @@
-import '@webb-tools/tangle-substrate-types';
-
 import { ECDSAClaims } from '@webb-tools/abstract-api-provider/ecdsa-claims';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 

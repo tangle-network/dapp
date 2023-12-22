@@ -2,18 +2,22 @@
 
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
+import { STATEMENT_KIND } from '../../constants/claims';
 
 const EligibleSection = () => {
-  const { activeAccount } = useWebContext();
+  const { activeAccount, activeApi } = useWebContext();
+  const { notificationApi } = useWebbUI();
 
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
@@ -31,6 +35,34 @@ const EligibleSection = () => {
 
     return () => clearTimeout(timeout);
   }, [recipient]);
+
+  const handleClaimClick = useCallback(async () => {
+    if (!activeAccount || !activeApi) {
+      const message = !activeApi
+        ? WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady).message
+        : WebbError.getErrorMessage(WebbErrorCodes.NoAccountAvailable).message;
+
+      notificationApi.addToQueue({
+        variant: 'error',
+        message,
+      });
+      return;
+    }
+
+    try {
+      const signature = await activeApi.sign(
+        activeAccount.address.concat(STATEMENT_KIND.Regular)
+      );
+
+      console.log('signature', signature);
+    } catch (error) {
+      notificationApi.addToQueue({
+        variant: 'error',
+        message: error instanceof Error ? error.message : 'Failed to sign',
+        secondaryMessage: error instanceof Error ? undefined : String(error),
+      });
+    }
+  }, [activeAccount, activeApi, notificationApi]);
 
   if (!activeAccount) {
     return null;
@@ -78,7 +110,13 @@ const EligibleSection = () => {
         </Typography>
       </div>
 
-      <Button isFullWidth>Claim Now</Button>
+      <Button
+        isFullWidth
+        isDisabled={!recipient || !!recipientErrorMsg}
+        onClick={handleClaimClick}
+      >
+        Claim Now
+      </Button>
     </div>
   );
 };

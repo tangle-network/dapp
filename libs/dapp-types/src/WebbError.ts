@@ -11,6 +11,8 @@ export enum WebbErrorCodes {
   NoFungibleTokenAvailable,
   /* No fungible token is available */
   NoWrappableTokenAvailable,
+  /* No signRaw function for this injector */
+  NoSignRaw,
   /* Unsupported provider */
   UnsupportedProvider,
   /* Unsupported chain is switch via the extension */
@@ -173,6 +175,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'No account available',
+        };
+
+      case WebbErrorCodes.NoSignRaw:
+        return {
+          code,
+          message: 'No `signRaw` function for this injector',
         };
 
       case WebbErrorCodes.NoteParsingFailure:

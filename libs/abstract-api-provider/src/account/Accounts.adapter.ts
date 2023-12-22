@@ -9,7 +9,7 @@ export abstract class Account<T = unknown> {
 
   abstract get name(): string;
 
-  protected get inner() {
+  get inner() {
     return this._inner;
   }
 }
@@ -35,7 +35,7 @@ export abstract class AccountsAdapter<T = unknown, K = unknown> {
 
   abstract setActiveAccount(account: Account): PromiseOrT<void>;
 
-  protected get inner() {
+  get inner() {
     return this._inner;
   }
 }

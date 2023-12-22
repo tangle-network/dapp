@@ -284,4 +284,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
     provingLeaves: string[];
     commitmentIndex: number;
   }>;
+
+  sign(message: string): Promise<string>;
 }
