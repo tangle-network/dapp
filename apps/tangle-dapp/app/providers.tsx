@@ -8,12 +8,12 @@ import {
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import NextAdapterApp from 'next-query-params/app';
 import qs from 'query-string';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { QueryParamProvider } from 'use-query-params';
 
 const appEvent = new AppEvent();
 
-const Providers = ({ children }: PropsWithChildren) => {
+const Providers = ({ children }: PropsWithChildren): ReactNode => {
   return (
     <NextThemeProvider>
       <WebbUIProvider hasErrorBoudary>

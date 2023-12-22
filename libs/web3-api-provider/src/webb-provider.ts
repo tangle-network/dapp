@@ -78,7 +78,6 @@ import {
   watchBlockNumber,
   watchNetwork,
 } from 'wagmi/actions';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
@@ -87,6 +86,10 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
+import {
+  MetaMaskConnector,
+  RainbowConnector,
+} from '@webb-tools/dapp-config/wallets/injected';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -527,7 +530,10 @@ export class WebbWeb3Provider
   get capabilities(): ProvideCapabilities {
     const connector = this.connector;
 
-    if (connector instanceof MetaMaskConnector) {
+    if (
+      connector instanceof MetaMaskConnector ||
+      connector instanceof RainbowConnector
+    ) {
       return {
         addNetworkRpc: true,
         hasSessions: false,

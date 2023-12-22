@@ -21,10 +21,10 @@ export type AppTemplateTitleProps = ComponentProps<'div'> & {
   /**
    * Override title props
    */
-  overrideTitleProps?: ComponentProps<typeof Typography>;
+  overrideTitleProps?: Partial<ComponentProps<typeof Typography>>;
 
   /**
    * Override subtitle props
    */
-  overrideSubTitleProps?: ComponentProps<typeof Typography>;
+  overrideSubTitleProps?: Partial<ComponentProps<typeof Typography>>;
 };

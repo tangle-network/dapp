@@ -1,5 +1,7 @@
 'use client';
 
+import { randBoolean } from '@ngneat/falso';
+import type { Account } from '@webb-tools/abstract-api-provider';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
@@ -9,17 +11,20 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 
 const eligibilityCache = new Map<string, boolean>();
 
-const checkEligibility = async (accountAddress: string): Promise<boolean> => {
+const checkClaimEligibility = async (
+  accountAddress: string,
+  options?: { force?: boolean }
+): Promise<boolean> => {
   // Check cache
   const cached = eligibilityCache.get(accountAddress);
-  if (typeof cached === 'boolean') {
+  if (typeof cached === 'boolean' && !options?.force) {
     return cached;
   }
 
@@ -29,7 +34,7 @@ const checkEligibility = async (accountAddress: string): Promise<boolean> => {
   // Cache result
   eligibilityCache.set(accountAddress, true);
 
-  return true;
+  return randBoolean();
 };
 
 function ClaimSection() {
@@ -40,14 +45,14 @@ function ClaimSection() {
   const [checkingEligibility, setCheckingEligibility] = useState(false);
   const [eligible, setEligible] = useState<Nullable<boolean>>(null);
 
-  useEffect(() => {
-    if (!isWalletConnected || !activeAccount) return;
-
-    const check = async () => {
+  const checkEligibility = useCallback(
+    async (activeAccount: Account, force?: boolean) => {
       try {
         setCheckingEligibility(true);
 
-        const isEligible = await checkEligibility(activeAccount.address);
+        const isEligible = await checkClaimEligibility(activeAccount.address, {
+          force,
+        });
         setEligible(isEligible);
       } catch (error) {
         console.log(error);
@@ -58,10 +63,15 @@ function ClaimSection() {
       } finally {
         setCheckingEligibility(false);
       }
-    };
+    },
+    [notificationApi]
+  );
 
-    check();
-  }, [isWalletConnected, activeAccount, notificationApi]);
+  useEffect(() => {
+    if (!activeAccount) return;
+
+    checkEligibility(activeAccount);
+  }, [isWalletConnected, activeAccount, notificationApi, checkEligibility]);
 
   return (
     <AppTemplate.Content>
@@ -80,6 +90,9 @@ function ClaimSection() {
             ? 'GREATE NEWS!'
             : 'OOPS!'
         }
+        overrideSubTitleProps={{
+          className: 'text-blue-70 dark:text-blue-50',
+        }}
       />
 
       <AppTemplate.DescriptionContainer>
@@ -148,7 +161,7 @@ function ClaimSection() {
         ) : eligible === true ? (
           <EligibleSection />
         ) : eligible === false ? (
-          <NotEligibleSection />
+          <NotEligibleSection checkEligibility={checkEligibility} />
         ) : null}
       </AppTemplate.Body>
     </AppTemplate.Content>

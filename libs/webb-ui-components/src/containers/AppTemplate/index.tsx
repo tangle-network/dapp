@@ -54,6 +54,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
       <div {...props} ref={ref} className={twMerge('mb-4', className)}>
         {subTitlePosition === 'top' ? (
           <Typography
+            variant="mkt-small-caps"
             {...overrideSubTitleProps}
             className={twMerge(
               'font-black text-center',
@@ -65,6 +66,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
         ) : null}
 
         <Typography
+          variant="mkt-h3"
           {...overrideTitleProps}
           className={twMerge(
             'font-black text-center text-mono-200',
@@ -76,6 +78,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
 
         {subTitlePosition === 'bottom' ? (
           <Typography
+            variant="mkt-small-caps"
             {...overrideSubTitleProps}
             className={twMerge(
               'font-black text-center',
