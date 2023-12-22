@@ -6,7 +6,13 @@ import { StarIcon } from '@radix-ui/react-icons';
 import { CircuitItem } from './types';
 import { ShieldKeyholeLineIcon } from '@webb-tools/icons';
 
-export const CircuitCard: FC<CircuitItem> = ({filename, description, constraintCount, ownerAvatarUrl, stargazerCount}) => {
+export const CircuitCard: FC<CircuitItem> = ({
+  filename,
+  description,
+  constraintCount,
+  ownerAvatarUrl,
+  stargazerCount,
+}) => {
   assert(constraintCount >= 0, 'Constraint count should never be negative.');
 
   return (
@@ -38,8 +44,7 @@ export const CircuitCard: FC<CircuitItem> = ({filename, description, constraintC
 
         <div className="flex gap-2 items-start">
           <div className="inline-flex items-center">
-            <StarIcon className="mr-1 dark:text-mono-100" />{' '}
-            {stargazerCount}
+            <StarIcon className="mr-1 dark:text-mono-100" /> {stargazerCount}
           </div>
 
           <div className="inline-flex items-center">
