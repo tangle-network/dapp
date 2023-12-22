@@ -7,7 +7,7 @@ export abstract class ECDSAClaims<
   /**
    * Claim the amount of tokens to the given sig.
    * */
-  abstract claim(destAccount: string, claim: Uint8Array): Promise<string>;
+  abstract claim(destAccount: string, signature: string): Promise<string>;
   /**
    * Query the claim amount if any
    * */

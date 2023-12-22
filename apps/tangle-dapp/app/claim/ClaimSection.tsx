@@ -1,18 +1,21 @@
 'use client';
 
-import { randBoolean } from '@ngneat/falso';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import type { Account } from '@webb-tools/abstract-api-provider';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import type { Nullable } from '@webb-tools/dapp-types/utils/types';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { Spinner } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { BN } from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
 
+import { getPolkadotApiPromise } from '../../constants/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 
@@ -20,7 +23,7 @@ const eligibilityCache = new Map<string, boolean>();
 
 const checkClaimEligibility = async (
   accountAddress: string,
-  options?: { force?: boolean }
+  options?: { force?: boolean; rpc?: string }
 ): Promise<boolean> => {
   // Check cache
   const cached = eligibilityCache.get(accountAddress);
@@ -28,18 +31,33 @@ const checkClaimEligibility = async (
     return cached;
   }
 
-  // Simulate a 2s delay
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  const api = await getPolkadotApiPromise(options?.rpc);
+  if (!api) {
+    throw WebbError.from(WebbErrorCodes.ApiNotReady);
+  }
+
+  const claimAmount = await api.query.claims.claims(
+    isEthereumAddress(accountAddress)
+      ? {
+          EVM: accountAddress,
+        }
+      : {
+          Native: accountAddress,
+        }
+  );
+
+  const amount = claimAmount.unwrapOr(null);
+  const eligible = amount !== null && amount.gt(new BN(0));
 
   // Cache result
-  eligibilityCache.set(accountAddress, true);
+  eligibilityCache.set(accountAddress, eligible);
 
-  return randBoolean();
+  return eligible;
 };
 
 function ClaimSection() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
-  const { activeAccount, loading, isConnecting } = useWebContext();
+  const { activeAccount, activeChain, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
 
   const [checkingEligibility, setCheckingEligibility] = useState(false);
@@ -52,6 +70,7 @@ function ClaimSection() {
 
         const isEligible = await checkClaimEligibility(activeAccount.address, {
           force,
+          rpc: activeChain?.rpcUrls?.default?.webSocket?.[0],
         });
         setEligible(isEligible);
       } catch (error) {
@@ -64,7 +83,7 @@ function ClaimSection() {
         setCheckingEligibility(false);
       }
     },
-    [notificationApi]
+    [activeChain?.rpcUrls?.default?.webSocket, notificationApi]
   );
 
   useEffect(() => {

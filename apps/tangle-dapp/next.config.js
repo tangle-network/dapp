@@ -16,6 +16,7 @@ const nextConfig = {
   env: {
     BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID:
       process.env.BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID ?? '',
+    USING_LOCAL_TANGLE: process.env.USING_LOCAL_TANGLE ?? '',
   },
 
   nx: {

@@ -3,12 +3,13 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import { WebbPolkadot } from '@webb-tools/polkadot-api-provider/webb-provider';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
@@ -22,6 +23,8 @@ const EligibleSection = () => {
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
+
+  const signatureRef = useRef('');
 
   // Validate recipient input address after 1s
   useEffect(() => {
@@ -55,6 +58,21 @@ const EligibleSection = () => {
       );
 
       console.log('signature', signature);
+
+      signatureRef.current = signature;
+
+      if (activeApi instanceof WebbPolkadot) {
+        const hash = await activeApi.methods.claim.core.claim(
+          recipient,
+          signature
+        );
+
+        notificationApi.addToQueue({
+          variant: 'success',
+          message: `Claimed successfully!`,
+          secondaryMessage: `Block hash: ${hash}`,
+        });
+      }
     } catch (error) {
       notificationApi.addToQueue({
         variant: 'error',
@@ -62,7 +80,7 @@ const EligibleSection = () => {
         secondaryMessage: error instanceof Error ? undefined : String(error),
       });
     }
-  }, [activeAccount, activeApi, notificationApi]);
+  }, [activeAccount, activeApi, notificationApi, recipient]);
 
   if (!activeAccount) {
     return null;
