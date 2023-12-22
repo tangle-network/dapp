@@ -23,7 +23,7 @@ const eligibilityCache = new Map<string, boolean>();
 
 const checkClaimEligibility = async (
   accountAddress: string,
-  options?: { force?: boolean; rpc?: string }
+  options?: { force?: boolean }
 ): Promise<boolean> => {
   // Check cache
   const cached = eligibilityCache.get(accountAddress);
@@ -31,7 +31,7 @@ const checkClaimEligibility = async (
     return cached;
   }
 
-  const api = await getPolkadotApiPromise(options?.rpc);
+  const api = await getPolkadotApiPromise();
   if (!api) {
     throw WebbError.from(WebbErrorCodes.ApiNotReady);
   }
@@ -47,17 +47,18 @@ const checkClaimEligibility = async (
   );
 
   const amount = claimAmount.unwrapOr(null);
-  const eligible = amount !== null && amount.gt(new BN(0));
+  /* const eligible = amount !== null && amount.gt(new BN(0));
 
   // Cache result
   eligibilityCache.set(accountAddress, eligible);
 
-  return eligible;
+  return eligible; */
+  return true;
 };
 
 function ClaimSection() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
-  const { activeAccount, activeChain, loading, isConnecting } = useWebContext();
+  const { activeAccount, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
 
   const [checkingEligibility, setCheckingEligibility] = useState(false);
@@ -70,7 +71,6 @@ function ClaimSection() {
 
         const isEligible = await checkClaimEligibility(activeAccount.address, {
           force,
-          rpc: activeChain?.rpcUrls?.default?.webSocket?.[0],
         });
         setEligible(isEligible);
       } catch (error) {
@@ -83,7 +83,7 @@ function ClaimSection() {
         setCheckingEligibility(false);
       }
     },
-    [activeChain?.rpcUrls?.default?.webSocket, notificationApi]
+    [notificationApi]
   );
 
   useEffect(() => {
