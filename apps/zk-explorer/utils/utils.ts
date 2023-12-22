@@ -170,7 +170,7 @@ export function getMockCircuits(): CircuitSearchResponseData {
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
     stargazerCount: 123,
-    locks: 456,
+    constraintCount: 456,
   };
 
   const mockCircuits = [];

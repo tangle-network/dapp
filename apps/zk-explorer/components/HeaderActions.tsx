@@ -1,5 +1,3 @@
-'use client';
-
 import { Search, ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import {
   Dropdown,
@@ -13,7 +11,6 @@ import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
 import { FC } from 'react';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { twMerge } from 'tailwind-merge';
-
 export type HeaderActionsProps = PropsOf<'div'> & {
   doHideSearchBar?: boolean;
 };
@@ -21,12 +18,14 @@ export type HeaderActionsProps = PropsOf<'div'> & {
 export const HeaderActions: FC<HeaderActionsProps> = ({
   className,
   doHideSearchBar,
+  ...rest
 }) => {
   // TODO: should throw error when client id is empty
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID ?? '';
 
   return (
     <div
+      {...rest}
       className={twMerge(
         'flex flex-col sm:flex-row gap-4 md:gap-2 md:ml-auto items-start md:items-center',
         className

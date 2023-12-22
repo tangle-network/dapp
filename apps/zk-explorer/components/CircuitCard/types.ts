@@ -3,5 +3,5 @@ export type CircuitItem = {
   filename: string;
   description: string;
   stargazerCount: number;
-  locks: number;
+  constraintCount: number;
 };

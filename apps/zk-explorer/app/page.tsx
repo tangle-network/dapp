@@ -1,6 +1,11 @@
 'use client';
 
-import { Typography, Input, Pagination } from '@webb-tools/webb-ui-components';
+import {
+  Typography,
+  Input,
+  Pagination,
+  Button,
+} from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
 import { Search } from '@webb-tools/icons';
 import { SidebarFilters } from '../components/SidebarFilters/SidebarFilters';
@@ -26,6 +31,7 @@ import {
   FilterConstraints,
   FilterCategory,
 } from '../components/SidebarFilters/types';
+import Link from 'next/link';
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 1500;
@@ -140,15 +146,15 @@ export default function Index() {
         </div>
 
         <div className="relative space-y-4 px-5 z-10">
-          <Typography variant="body4" className="uppercase dark:text-mono-0">
+          <Typography variant="body4" className="uppercase text-mono-0">
             Privacy for everyone, everything, everywhere
           </Typography>
 
-          <Typography variant="h2" fw="bold">
+          <Typography variant="h2" fw="bold" className="text-mono-0">
             Zero-Knowledge Explorer
           </Typography>
 
-          <Typography variant="h5" fw="normal">
+          <Typography variant="h5" fw="normal" className="text-mono-0">
             Dive into the future of privacy with advanced cryptography &
             zero-knowledge proofs.
           </Typography>
@@ -159,13 +165,17 @@ export default function Index() {
         <Input
           id="keyword search"
           rightIcon={<Search size="lg" className="mr-4" />}
-          className="w-full"
+          className="flex-grow"
           inputClassName="rounded-[50px]"
           placeholder="Search projects and circuits for specific keywords..."
           value={searchQuery}
           debounceTime={SEARCH_QUERY_DEBOUNCE_DELAY}
           onChange={(value) => setSearchQuery(value)}
         />
+
+        <Link href={PageUrl.SubmitProject}>
+          <Button>Upload Project</Button>
+        </Link>
       </div>
 
       {/* Content: Sidebar & grid items */}

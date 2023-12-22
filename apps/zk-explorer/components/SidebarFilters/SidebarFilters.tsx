@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Typography, CheckBox, Chip } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { cloneDeep } from 'lodash';
@@ -8,6 +8,7 @@ import {
   FilterConstraints,
   FilterOptionItem,
 } from './types';
+import { SmallChip } from '../SmallChip';
 
 export type SidebarFiltersProps = PropsOf<'div'> & {
   onConstraintsChange: (constraints: FilterConstraints) => void;
@@ -193,9 +194,7 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
                   {option.label}
                 </CheckBox>
 
-                <Chip color="grey" className="ml-auto bg-mono-140 px-2">
-                  {option.amount}
-                </Chip>
+                <SmallChip className="ml-auto">{option.amount}</SmallChip>
               </div>
             ))}
           </div>

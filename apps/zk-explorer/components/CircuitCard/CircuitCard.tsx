@@ -6,16 +6,16 @@ import { StarIcon } from '@radix-ui/react-icons';
 import { CircuitItem } from './types';
 import { ShieldKeyholeLineIcon } from '@webb-tools/icons';
 
-export const CircuitCard: FC<CircuitItem> = (props) => {
-  assert(props.locks >= 0, 'Lock count should never be negative.');
+export const CircuitCard: FC<CircuitItem> = ({filename, description, constraintCount, ownerAvatarUrl, stargazerCount}) => {
+  assert(constraintCount >= 0, 'Constraint count should never be negative.');
 
   return (
     <Card className="flex flex-row items-center gap-3 space-y-0 py-3 px-6">
       <div>
         {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
         <Image
-          alt={`${props.ownerAvatarUrl}'s avatar`}
-          src={props.ownerAvatarUrl}
+          alt={`${ownerAvatarUrl}'s avatar`}
+          src={ownerAvatarUrl}
           width={48}
           height={48}
           className="rounded-full bg-mono-200 shadow-md"
@@ -24,7 +24,7 @@ export const CircuitCard: FC<CircuitItem> = (props) => {
 
       <div className="w-full">
         <Typography variant="body1" fw="bold" className="dark:text-mono-0">
-          {props.filename}
+          {filename}
         </Typography>
 
         <Typography
@@ -33,18 +33,18 @@ export const CircuitCard: FC<CircuitItem> = (props) => {
           className="dark:text-mono-100 mb-1"
           component="p"
         >
-          {props.description}
+          {description}
         </Typography>
 
         <div className="flex gap-2 items-start">
           <div className="inline-flex items-center">
             <StarIcon className="mr-1 dark:text-mono-100" />{' '}
-            {props.stargazerCount}
+            {stargazerCount}
           </div>
 
           <div className="inline-flex items-center">
             <ShieldKeyholeLineIcon className="mr-1 dark:fill-mono-100" />{' '}
-            {props.locks}
+            {constraintCount}
           </div>
         </div>
       </div>

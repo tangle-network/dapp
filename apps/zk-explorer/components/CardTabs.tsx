@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import {
-  Chip,
   Dropdown,
   DropdownBody,
   Typography,
@@ -12,6 +11,7 @@ import { ChevronDown } from '@webb-tools/icons';
 import { ItemType } from '../utils/utils';
 import { CheckCircledIcon, CircleIcon } from '@radix-ui/react-icons';
 import { SearchSortByClause } from '../utils/api';
+import { SmallChip } from './SmallChip';
 
 export type CardTabsProps = {
   selectedTab: ItemType;
@@ -21,37 +21,47 @@ export type CardTabsProps = {
   onSortByClauseChange: (sortByClause: SearchSortByClause) => void;
 };
 
-export const CardTabs: FC<CardTabsProps> = (props) => {
+export const CardTabs: FC<CardTabsProps> = ({
+  selectedTab,
+  counts,
+  sortByClause,
+  onTabChange,
+  onSortByClauseChange,
+}) => {
   return (
     <div className="flex align-center">
       <div className="inline-flex gap-4">
         {Object.values(ItemType).map((cardType) => {
-          const isSelected = cardType === props.selectedTab;
+          const isSelected = cardType === selectedTab;
 
           return (
             <div
               key={cardType}
               className={twMerge(
                 'flex gap-2 py-1 border-b border-transparent',
-                isSelected ? 'border-mono-0' : 'cursor-pointer'
+                isSelected
+                  ? 'border-mono-200 dark:border-mono-0'
+                  : 'cursor-pointer'
               )}
               onClick={() => {
                 if (!isSelected) {
-                  props.onTabChange(cardType);
+                  onTabChange(cardType);
                 }
               }}
             >
               <Typography
                 variant="h5"
                 fw="bold"
-                className={isSelected ? 'text-mono-0' : 'dark:text-mono-100'}
+                className={
+                  isSelected
+                    ? 'dark:text-mono-0'
+                    : 'text-mono-100 dark:text-mono-100'
+                }
               >
                 {cardType}
               </Typography>
 
-              <Chip color="grey" className="bg-mono-140 px-2">
-                {props.counts[cardType]}
-              </Chip>
+              <SmallChip>{counts[cardType]}</SmallChip>
             </div>
           );
         })}
@@ -65,7 +75,7 @@ export const CardTabs: FC<CardTabsProps> = (props) => {
               fw="normal"
               className="dark:text-mono-0"
             >
-              {props.sortByClause}
+              {sortByClause}
             </Typography>
 
             <ChevronDown size="lg" />
@@ -79,14 +89,14 @@ export const CardTabs: FC<CardTabsProps> = (props) => {
             </div>
 
             {Object.values(SearchSortByClause).map((clause, index) => {
-              const isSelected = clause === props.sortByClause;
+              const isSelected = clause === sortByClause;
 
               return (
                 <MenuItem
                   className={isSelected ? 'cursor-default' : ''}
                   key={index}
                   disabled={isSelected}
-                  onClick={() => props.onSortByClauseChange(clause)}
+                  onClick={() => onSortByClauseChange(clause)}
                   icon={isSelected ? <CheckCircledIcon /> : <CircleIcon />}
                 >
                   {clause}
