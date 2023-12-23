@@ -20,7 +20,7 @@ export const ProjectCard: FC<ProjectItem> = ({
   assert(circuitCount >= 0, 'Circuit count should never be negative.');
 
   return (
-    <Card className="flex flex-row gap-3 space-y-0 py-5 px-6">
+    <Card className="flex flex-row gap-3 space-y-0 py-5 px-6 shadow-sm !bg-transparent bg-glass-dark">
       <div>
         {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
         <Image

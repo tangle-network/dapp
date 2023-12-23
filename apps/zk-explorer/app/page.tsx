@@ -189,7 +189,7 @@ export default function Index() {
           />
 
           <LinkCard href={PageUrl.SubmitProject}>
-            <div className="p-2 bg-mono-120 rounded-full mb-6">
+            <div className="p-2 bg-mono-60 dark:bg-mono-120 rounded-full mb-6">
               <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
             </div>
 
