@@ -48,7 +48,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
           onOAuthSuccess={handleOAuthSuccess}
         />
 
-        <Dropdown className="flex items-center justify-center">
+        <Dropdown className="relative flex items-center justify-center">
           <DropdownBasicButton>
             <ThreeDotsVerticalIcon className="fill-mono-0" size="lg" />
           </DropdownBasicButton>

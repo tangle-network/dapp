@@ -9,6 +9,7 @@ import {
   FilterOptionItem,
 } from './types';
 import { SmallChip } from '../SmallChip';
+import { twMerge } from 'tailwind-merge';
 
 export type SidebarFiltersProps = PropsOf<'div'> & {
   onConstraintsChange: (constraints: FilterConstraints) => void;
@@ -16,6 +17,8 @@ export type SidebarFiltersProps = PropsOf<'div'> & {
 
 export const SidebarFilters: FC<SidebarFiltersProps> = ({
   onConstraintsChange,
+  className,
+  ...rest
 }) => {
   const [constraints, setConstraints] = useState<FilterConstraints>({
     [FilterCategory.ProofSystem]: [],
@@ -163,7 +166,7 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-9">
+    <div {...rest} className={twMerge('flex flex-col gap-9', className)}>
       <div>
         <Typography variant="h5" fw="bold" className="py-2 dark:text-mono-0">
           Filter by:

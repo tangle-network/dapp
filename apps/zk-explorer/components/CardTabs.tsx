@@ -5,13 +5,17 @@ import {
   Typography,
   DropdownBasicButton,
   MenuItem,
+  Button,
 } from '@webb-tools/webb-ui-components';
 import { twMerge } from 'tailwind-merge';
-import { ChevronDown } from '@webb-tools/icons';
+import { ChevronDown, FilterIcon2 } from '@webb-tools/icons';
 import { ItemType } from '../utils/utils';
 import { CheckCircledIcon, CircleIcon } from '@radix-ui/react-icons';
 import { SearchSortByClause } from '../utils/api';
 import { SmallChip } from './SmallChip';
+import useTailwindBreakpoint, {
+  TailwindBreakpoint,
+} from '../hooks/useTailwindBreakpoint';
 
 export type CardTabsProps = {
   selectedTab: ItemType;
@@ -28,9 +32,12 @@ export const CardTabs: FC<CardTabsProps> = ({
   onTabChange,
   onSortByClauseChange,
 }) => {
+  const breakpoint = useTailwindBreakpoint();
+
   return (
-    <div className="flex align-center">
-      <div className="inline-flex gap-4">
+    <div className="flex gap-6 sm:gap-0 align-center flex-col sm:flex-row">
+      {/* Tabs */}
+      <div className="inline-flex gap-4 w-full">
         {Object.values(ItemType).map((cardType) => {
           const isSelected = cardType === selectedTab;
 
@@ -38,7 +45,7 @@ export const CardTabs: FC<CardTabsProps> = ({
             <div
               key={cardType}
               className={twMerge(
-                'flex gap-2 py-1 border-b border-transparent',
+                'flex justify-center items-center gap-2 py-1 border-b border-transparent w-full sm:w-auto sm:justify-start',
                 isSelected
                   ? 'border-mono-200 dark:border-mono-0'
                   : 'cursor-pointer'
@@ -67,19 +74,50 @@ export const CardTabs: FC<CardTabsProps> = ({
         })}
       </div>
 
-      <div className="flex items-center ml-auto">
-        <Dropdown className="flex items-center justify-center">
-          <DropdownBasicButton className="flex">
-            <Typography
-              variant="body1"
-              fw="normal"
-              className="dark:text-mono-0"
-            >
-              {sortByClause}
-            </Typography>
+      {/* Filter & Sort by */}
+      <div className="flex items-center md:ml-auto w-full">
+        <Dropdown className="flex justify-end w-full">
+          <div className="flex gap-2 w-full sm:w-auto">
+            <DropdownBasicButton className="w-full sm:w-auto">
+              <Button
+                size="sm"
+                darkMode
+                variant="utility"
+                className="w-full sm:w-auto"
+                isFullWidth={breakpoint <= TailwindBreakpoint.SM}
+                rightIcon={
+                  <ChevronDown className="dark:fill-blue-50" size="lg" />
+                }
+              >
+                <Typography
+                  variant="body4"
+                  fw="bold"
+                  className="dark:text-blue-50"
+                >
+                  {sortByClause}
+                </Typography>
+              </Button>
+            </DropdownBasicButton>
 
-            <ChevronDown size="lg" />
-          </DropdownBasicButton>
+            <Button
+              size="sm"
+              darkMode
+              variant="utility"
+              className="sm:hidden w-full"
+              isFullWidth
+              rightIcon={
+                <FilterIcon2 className="dark:fill-blue-50" size="lg" />
+              }
+            >
+              <Typography
+                variant="body4"
+                fw="bold"
+                className="dark:text-blue-50 w-full"
+              >
+                Filter
+              </Typography>
+            </Button>
+          </div>
 
           <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
             <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">

@@ -32,6 +32,9 @@ import {
   FilterCategory,
 } from '../components/SidebarFilters/types';
 import Link from 'next/link';
+import useTailwindBreakpoint, {
+  TailwindBreakpoint,
+} from '../hooks/useTailwindBreakpoint';
 
 export default function Index() {
   const SEARCH_QUERY_DEBOUNCE_DELAY = 1500;
@@ -41,6 +44,12 @@ export default function Index() {
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedItemType, setSelectedItemType] = useState(ItemType.Project);
+  const breakpoint = useTailwindBreakpoint();
+
+  const searchQueryPlaceholder =
+    breakpoint >= TailwindBreakpoint.SM
+      ? 'Search projects and circuits for specific keywords...'
+      : 'Search projects and circuits...';
 
   const [constraints, setConstraints] = useState<FilterConstraints>({
     [FilterCategory.ProofSystem]: [],
@@ -141,11 +150,11 @@ export default function Index() {
         {/* Background image mask */}
         <div className="absolute inset-0 opacity-20 bg-black"></div>
 
-        <div className="relative flex flex-col items-end my-4 px-4 z-10">
+        <div className="relative flex flex-col items-end my-4 px-4">
           <HeaderActions doHideSearchBar />
         </div>
 
-        <div className="relative space-y-4 px-5 z-10">
+        <div className="relative space-y-4 px-5">
           <Typography
             variant="body4"
             className="uppercase text-mono-0 dark:text-mono-0"
@@ -170,29 +179,32 @@ export default function Index() {
           id="keyword search"
           rightIcon={<Search size="lg" className="mr-4" />}
           className="flex-grow"
-          inputClassName="rounded-[50px]"
-          placeholder="Search projects and circuits for specific keywords..."
+          inputClassName="rounded-[50px] pr-12"
+          placeholder={searchQueryPlaceholder}
           value={searchQuery}
           debounceTime={SEARCH_QUERY_DEBOUNCE_DELAY}
           onChange={(value) => setSearchQuery(value)}
         />
 
-        <Link href={PageUrl.SubmitProject}>
-          <Button>Upload Project</Button>
+        <Link href={PageUrl.SubmitProject} className="flex-grow sm:flex-grow-0">
+          <Button isFullWidth={breakpoint <= TailwindBreakpoint.SM}>
+            Upload Project
+          </Button>
         </Link>
       </div>
 
       {/* Content: Sidebar & grid items */}
-      <div className="flex flex-col sm:flex-row gap-6">
+      <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
         <div className="pl-6 max-w-[317px] space-y-12">
           <SidebarFilters
+            className="hidden sm:flex"
             onConstraintsChange={(newConstraints) => {
               console.log(newConstraints);
               setConstraints(newConstraints);
             }}
           />
 
-          <LinkCard href={PageUrl.SubmitProject}>
+          <LinkCard className="hidden sm:block" href={PageUrl.SubmitProject}>
             <div className="p-2 bg-mono-60 dark:bg-mono-120 rounded-full mb-6">
               <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
             </div>
