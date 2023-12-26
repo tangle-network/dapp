@@ -141,12 +141,16 @@ export default function Index() {
         {/* Background image mask */}
         <div className="absolute inset-0 opacity-20 bg-black"></div>
 
-        <div className="relative flex items-end my-4 px-4 z-10">
+        <div className="relative flex flex-col items-end my-4 px-4 z-10">
           <HeaderActions doHideSearchBar />
         </div>
 
         <div className="relative space-y-4 px-5 z-10">
-          <Typography variant="body4" className="uppercase text-mono-0">
+          <Typography
+            variant="body4"
+            className="uppercase text-mono-0 dark:text-mono-0"
+            fw="bold"
+          >
             Privacy for everyone, everything, everywhere
           </Typography>
 

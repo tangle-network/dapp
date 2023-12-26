@@ -27,7 +27,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
     <div
       {...rest}
       className={twMerge(
-        'flex flex-col sm:flex-row gap-4 md:gap-2 md:ml-auto items-start md:items-center',
+        'flex flex-col sm:flex-row gap-4 md:gap-2 items-start md:items-center',
         className
       )}
     >
@@ -50,7 +50,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
 
         <Dropdown className="flex items-center justify-center">
           <DropdownBasicButton>
-            <ThreeDotsVerticalIcon size="lg" />
+            <ThreeDotsVerticalIcon className="fill-mono-0" size="lg" />
           </DropdownBasicButton>
 
           <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
