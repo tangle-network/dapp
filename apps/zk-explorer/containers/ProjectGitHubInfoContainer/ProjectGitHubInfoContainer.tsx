@@ -12,7 +12,7 @@ import {
   BranchesIcon,
   TagIcon,
 } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@webb-tools/icons/types';
 
 import { GitHubAvatar } from '../../components/GitHubAvatar';
 import { getProjectGitHubInfoContainerData } from '../../server';
@@ -73,7 +73,12 @@ export default async function ProjectGitHubInfoContainer({
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <Chip key={tag} color="grey" className="bg-mono-140 px-2">
+            // TODO: Replace this with chip component (Yuri's working on that)
+            <Chip
+              key={tag}
+              color="grey"
+              className="bg-mono-140 py-1 px-2 !text-mono-0"
+            >
               {tag}
             </Chip>
           ))}
