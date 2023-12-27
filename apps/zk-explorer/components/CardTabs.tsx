@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Dropdown,
   DropdownBody,
@@ -37,17 +37,23 @@ export const CardTabs: FC<CardTabsProps> = ({
   onMobileConstraintsChange,
 }) => {
   const breakpoint = useTailwindBreakpoint();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
-    useState<boolean>(false);
+  // Prevent scrolling the body when mobile sidebar is open.
+  useEffect(() => {
+    document.body.style.overflow = isMobileSidebarOpen ? 'hidden' : 'auto';
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMobileSidebarOpen]);
 
   return (
     <>
-      {/* Show mobil sidebar only on breakpoints <=SM */}
       {isMobileSidebarOpen && breakpoint <= TailwindBreakpoint.SM && (
         <MobileFiltersSidebar
-          onClose={() => setIsMobileSidebarOpen(false)}
           onMobileConstraintsChange={onMobileConstraintsChange}
+          onClose={() => setIsMobileSidebarOpen(false)}
         />
       )}
 

@@ -32,7 +32,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-body">
+      <body className="bg-body relative">
         <Providers>
           <div className="max-w-[1240px] mx-auto flex flex-col h-full min-h-screen px-4">
             {children}
