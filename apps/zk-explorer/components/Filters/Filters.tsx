@@ -3,7 +3,6 @@ import { Typography, CheckBox } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { cloneDeep } from 'lodash';
 import {
-  FilterCategory,
   FilterCategoryItem,
   FilterConstraints,
   FilterOptionItem,
@@ -12,6 +11,8 @@ import { SmallChip } from '../SmallChip';
 import { twMerge } from 'tailwind-merge';
 import assert from 'assert';
 import { Close } from '@webb-tools/icons';
+import { fetchFilterOptions } from '../../utils/api';
+import { MOCK_CATEGORIES } from '../../utils/constants';
 
 export type FiltersProps = PropsOf<'div'> & {
   onConstraintsChange: (constraints: FilterConstraints) => void;
@@ -31,120 +32,16 @@ export const Filters: FC<FiltersProps> = ({
     'If `hasCloseButton` is true, `onClose` must be defined, and vice versa.'
   );
 
-  const [constraints, setConstraints] = useState<FilterConstraints>({
-    [FilterCategory.ProofSystem]: [],
-    [FilterCategory.Categories]: [],
-    [FilterCategory.License]: [],
-    [FilterCategory.LanguageOrFramework]: [],
-  });
+  const [constraints, setConstraints] = useState<FilterConstraints>({});
+  const [categories, setCategories] = useState<FilterCategoryItem[]>([]);
 
-  // TODO: These are only for testing purposes. Remove these once the actual data is available.
-  const mockProofSystemsOptions: FilterOptionItem[] = [
-    {
-      label: 'Circom',
-      amount: 403,
-    },
-    {
-      label: 'Plonk',
-      amount: 123,
-    },
-    {
-      label: 'Halo2',
-      amount: 234,
-    },
-    {
-      label: 'Bulletproof',
-      amount: 43,
-    },
-    {
-      label: 'Stark',
-      amount: 78,
-    },
-  ];
-
-  const mockCategoryOptions: FilterOptionItem[] = [
-    {
-      label: 'Identity Verification',
-      amount: 59,
-    },
-    {
-      label: 'Private Transaction',
-      amount: 290,
-    },
-    {
-      label: 'Voting System',
-      amount: 12,
-    },
-    {
-      label: 'Arithmetic',
-      amount: 90,
-    },
-    {
-      label: 'Cryptography',
-      amount: 183,
-    },
-  ];
-
-  const mockLicenseOptions: FilterOptionItem[] = [
-    {
-      label: 'MIT',
-      amount: 392,
-    },
-    {
-      label: 'GPLv3',
-      amount: 19,
-    },
-    {
-      label: 'Apache 2.0',
-      amount: 128,
-    },
-  ];
-
-  const mockLanguageOptions: FilterOptionItem[] = [
-    {
-      label: 'TypeScript',
-      amount: 410,
-    },
-    {
-      label: 'C++',
-      amount: 319,
-    },
-    {
-      label: 'Rust',
-      amount: 593,
-    },
-    {
-      label: 'Circom',
-      amount: 478,
-    },
-    {
-      label: 'Solidity',
-      amount: 92,
-    },
-    {
-      label: 'JavaScript',
-      amount: 228,
-    },
-  ];
-
-  const categories: FilterCategoryItem[] = [
-    {
-      category: FilterCategory.ProofSystem,
-      options: mockProofSystemsOptions,
-    },
-    {
-      category: FilterCategory.Categories,
-      options: mockCategoryOptions,
-    },
-    {
-      category: FilterCategory.License,
-      options: mockLicenseOptions,
-    },
-    {
-      category: FilterCategory.LanguageOrFramework,
-      options: mockLanguageOptions,
-    },
-  ];
+  // Fetch categories and options from API.
+  useEffect(() => {
+    fetchFilterOptions()
+      .then((responseData) => setCategories(responseData.categories))
+      // TODO: Temporarily use mock data until we have a backend.
+      .catch(() => setCategories(MOCK_CATEGORIES));
+  }, []);
 
   useEffect(() => {
     onConstraintsChange(constraints);
@@ -159,7 +56,7 @@ export const Filters: FC<FiltersProps> = ({
 
   const handleConstraintChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    category: FilterCategory,
+    category: string,
     label: string
   ) => {
     const updatedConstraints: FilterConstraints = cloneDeep(constraints);
@@ -207,7 +104,7 @@ export const Filters: FC<FiltersProps> = ({
           </Typography>
 
           <div className="flex flex-col gap-2">
-            {mockProofSystemsOptions.map((option) => (
+            {category.options.map((option) => (
               <div key={option.label} className="flex">
                 <CheckBox
                   wrapperClassName="items-center"

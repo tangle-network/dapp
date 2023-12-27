@@ -1,12 +1,16 @@
 import { CircuitItem } from '../components/CircuitCard/types';
 import { ProjectItem } from '../components/ProjectCard/types';
-import type { FilterConstraints } from '../components/Filters/types';
+import type {
+  FilterCategoryItem,
+  FilterConstraints,
+} from '../components/Filters/types';
 import assert from 'assert';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',
   SearchProjects = 'search/projects',
   SearchCircuits = 'search/circuits',
+  Constraints = 'constraints',
 }
 
 export type ApiResponseWrapper<T extends ApiResponse> = {
@@ -28,6 +32,10 @@ export type ProjectSearchResponseData = {
 export type CircuitSearchResponseData = {
   circuits: CircuitItem[];
   resultCount: number;
+};
+
+export type FilterOptionsResponseData = {
+  categories: FilterCategoryItem[];
 };
 
 export function makeApiRoute(route: ApiRoute): string {
@@ -128,7 +136,7 @@ export async function searchCircuits(
   // TODO: Temporary; Using `assert` here is incorrect, as this would not necessarily equate to a logic error.
   assert(
     responseWrapper.innerResponse.data !== undefined,
-    "Response data shouldn't be undefined"
+    'Response data should not be undefined'
   );
 
   return responseWrapper.innerResponse.data;
@@ -141,4 +149,21 @@ export async function submitProject(githubSlug: string): Promise<ApiResponse> {
   });
 
   return responseWrapper.innerResponse;
+}
+
+export async function fetchFilterOptions(): Promise<FilterOptionsResponseData> {
+  const responseWrapper = await sendApiRequest<FilterOptionsResponseData>(
+    ApiRoute.Constraints,
+    {
+      method: 'GET',
+    }
+  );
+
+  // TODO: Temporary; Using `assert` here is incorrect, as this would not necessarily equate to a logic error.
+  assert(
+    responseWrapper.innerResponse.data !== undefined,
+    'Response data should not be undefined'
+  );
+
+  return responseWrapper.innerResponse.data;
 }

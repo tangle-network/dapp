@@ -27,7 +27,7 @@ import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
 import { LinkCard } from '../components/LinkCard';
 import { ItemGrid } from '../components/ItemGrid';
-import { FilterConstraints, FilterCategory } from '../components/Filters/types';
+import { FilterConstraints } from '../components/Filters/types';
 import Link from 'next/link';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -48,12 +48,7 @@ export default function Index() {
       ? 'Search projects and circuits for specific keywords...'
       : 'Search projects and circuits...';
 
-  const [constraints, setConstraints] = useState<FilterConstraints>({
-    [FilterCategory.ProofSystem]: [],
-    [FilterCategory.Categories]: [],
-    [FilterCategory.License]: [],
-    [FilterCategory.LanguageOrFramework]: [],
-  });
+  const [constraints, setConstraints] = useState<FilterConstraints>({});
 
   const [sortByClause, setSortByClause] = useState(
     SearchSortByClause.MostPopular
