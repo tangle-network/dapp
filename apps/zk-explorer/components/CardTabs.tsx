@@ -42,10 +42,7 @@ export const CardTabs: FC<CardTabsProps> = ({
   return (
     <>
       {isMobileSidebarOpen && breakpoint <= TailwindBreakpoint.SM && (
-        <MobileFiltersSidebar
-          onMobileConstraintsChange={onMobileConstraintsChange}
-          onClose={() => setIsMobileSidebarOpen(false)}
-        />
+        <MobileFiltersSidebar onClose={() => setIsMobileSidebarOpen(false)} />
       )}
 
       <div className="flex gap-6 sm:gap-0 align-center flex-col sm:flex-row">

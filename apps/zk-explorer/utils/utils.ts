@@ -11,7 +11,6 @@ import {
 import assert from 'assert';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
-import { FilterConstraints } from '../components/Filters/types';
 
 export enum ItemType {
   Project = 'Project',

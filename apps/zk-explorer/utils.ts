@@ -22,3 +22,11 @@ export function validateGithubUrl(url: string): boolean {
 
   return segmentRegex.test(owner) && segmentRegex.test(repo);
 }
+
+export function tryOrElse<T>(fn: () => T, fallback: () => T): T {
+  try {
+    return fn();
+  } catch (error) {
+    return fallback();
+  }
+}

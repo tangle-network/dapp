@@ -1,27 +1,24 @@
+'use client';
+
 import { FC, useEffect, useState } from 'react';
 import { Typography, CheckBox } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { cloneDeep } from 'lodash';
-import {
-  FilterCategoryItem,
-  FilterConstraints,
-  FilterOptionItem,
-} from './types';
+import { FilterCategoryItem, FilterConstraints } from './types';
 import { SmallChip } from '../SmallChip';
 import { twMerge } from 'tailwind-merge';
 import assert from 'assert';
 import { Close } from '@webb-tools/icons';
 import { fetchFilterOptions } from '../../utils/api';
 import { MOCK_CATEGORIES } from '../../utils/constants';
+import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 
 export type FiltersProps = PropsOf<'div'> & {
-  onConstraintsChange: (constraints: FilterConstraints) => void;
   hasCloseButton?: boolean;
   onClose?: () => void;
 };
 
 export const Filters: FC<FiltersProps> = ({
-  onConstraintsChange,
   className,
   hasCloseButton,
   onClose,
@@ -32,7 +29,7 @@ export const Filters: FC<FiltersProps> = ({
     'If `hasCloseButton` is true, `onClose` must be defined, and vice versa.'
   );
 
-  const [constraints, setConstraints] = useState<FilterConstraints>({});
+  const [constraints, setConstraints] = useFilterConstraints();
   const [categories, setCategories] = useState<FilterCategoryItem[]>([]);
 
   // Fetch categories and options from API.
@@ -43,23 +40,16 @@ export const Filters: FC<FiltersProps> = ({
       .catch(() => setCategories(MOCK_CATEGORIES));
   }, []);
 
-  useEffect(() => {
-    onConstraintsChange(constraints);
-
-    // Under no circumstances should the `onConstraintsChange` prop
-    // function be called if the constraints themselves have not changed;
-    // therefore, `onConstraintsChange` should not be included in the
-    // effect's dependency array.
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [constraints]);
-
   const handleConstraintChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     category: string,
     label: string
   ) => {
     const updatedConstraints: FilterConstraints = cloneDeep(constraints);
+
+    if (!(category in updatedConstraints)) {
+      updatedConstraints[category] = [];
+    }
 
     if (e.target.checked) {
       updatedConstraints[category].push(label);

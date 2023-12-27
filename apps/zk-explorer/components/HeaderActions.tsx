@@ -1,3 +1,5 @@
+'use client';
+
 import { Search, ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import {
   Dropdown,
