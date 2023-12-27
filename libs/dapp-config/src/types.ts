@@ -70,3 +70,5 @@ export type ConfigType = Record<
   number,
   { nativeCurrency: ICurrency; anchorMetadatas: AnchorMetadata[] }
 >;
+
+export type AddressType = `0x${string}`;

@@ -58,6 +58,7 @@ import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
 import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
+import { AddressType } from '@webb-tools/dapp-config/types';
 
 export class PolkadotVAnchorActions extends VAnchorActions<
   'polkadot',
@@ -303,7 +304,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     return ensureHex(txHash);
   }
 
-  async waitForFinalization(_hash: `0x${string}`): Promise<void> {
+  async waitForFinalization(_hash: AddressType): Promise<void> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 

@@ -6,18 +6,8 @@ import {
   DropdownBody,
   MenuItem,
 } from '@webb-tools/webb-ui-components';
-import { type FC, type ComponentProps } from 'react';
-
-type ActionItemType = {
-  label: string;
-  icon: React.ReactElement;
-  onClick: ComponentProps<typeof MenuItem>['onClick'];
-};
-
-interface ManageButtonProps {
-  buttonText: string;
-  actionItems: ActionItemType[];
-}
+import { type FC } from 'react';
+import { ManageButtonProps } from './types';
 
 const ActionsDropdown: FC<ManageButtonProps> = ({
   buttonText,

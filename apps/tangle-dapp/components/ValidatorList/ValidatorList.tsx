@@ -11,7 +11,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import React, { useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { Validator } from '../../types';
 import {
@@ -94,7 +93,8 @@ export const ValidatorList = ({
         </div>
         <div className="flex items-center gap-4">
           <Chip color="blue">{validator.effectiveAmountStaked}</Chip>
-          <Chip color="green">{validator.delegations}</Chip>
+          <Chip color="blue">{validator.delegations}</Chip>
+          <Chip color="blue">{validator.commission}%</Chip>
           <CopyWithTooltip
             textToCopy={validator.address}
             isButton={false}
@@ -176,33 +176,19 @@ const SortButton = ({
   onClick: setIsSelected,
 }: SortButtonProps) => {
   return (
-    <div
-      className={twMerge(
-        `flex items-center gap-1 border border-mono-200 dark:border-mono-0 py-1 px-3 rounded-full cursor-pointer ${
-          isSelected
-            ? 'bg-mono-200 dark:bg-mono-0'
-            : 'bg-mono-0 dark:bg-mono-180'
-        }`
-      )}
+    <Chip
       onClick={() => setIsSelected()}
+      color={isSelected ? 'blue' : 'grey'}
+      isSelected
+      className="cursor-pointer"
     >
-      <Typography
-        variant="body1"
-        fw="normal"
-        className={
-          isSelected
-            ? 'text-mono-0 dark:text-mono-200'
-            : 'text-mono-200 dark:text-mono-0'
-        }
-      >
-        {title}
-      </Typography>
+      {title}
       {isSelected && (
         <CloseCircleLineIcon
-          className="stroke-mono-0 fill-mono-0 dark:fill-mono-180 dark:stroke-mono-180"
+          className="stroke-blue-90 fill-blue-90 dark:fill-blue-30 dark:stroke-blue-30"
           size="md"
         />
       )}
-    </div>
+    </Chip>
   );
 };

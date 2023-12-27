@@ -27,7 +27,7 @@ import {
 import { WalletConfig } from './wallets/wallet-config.interface';
 import values from 'lodash/values';
 import keys from 'lodash/keys';
-import { isAppEnvironmentType } from './types';
+import { AddressType, isAppEnvironmentType } from './types';
 
 export type Chain = ChainConfig & {
   wallets: Array<Wallet['id']>;
@@ -241,7 +241,7 @@ export class ApiConfig {
    * @returns true if the anchor identifier is matched with the target system
    */
   isEqTargetSystem(
-    anchorIdentifier: `0x${string}`,
+    anchorIdentifier: AddressType,
     targetSystem: Uint8Array
   ): boolean {
     assert(targetSystem.length === 26, 'target system should be 26-bytes');

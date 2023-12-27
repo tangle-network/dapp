@@ -2,6 +2,7 @@ import {
   formatTokenBalance,
   getPolkadotApiPromise,
   getTotalNumberOfNominators,
+  getValidatorCommission,
   getValidatorIdentity,
 } from '../../constants';
 import { Validator } from '../../types';
@@ -46,6 +47,9 @@ export const getWaitingValidators = async (): Promise<Validator[]> => {
         const delegationsValue = await getTotalNumberOfNominators(address);
         const delegations = delegationsValue?.toString();
 
+        // Commission
+        const commission = await getValidatorCommission(address);
+
         return {
           address: address ?? '',
           identity: identity ?? '',
@@ -53,6 +57,7 @@ export const getWaitingValidators = async (): Promise<Validator[]> => {
           effectiveAmountStaked: effectiveAmountStaked ?? '',
           effectiveAmountStakedRaw: totalStakeAmount.toString() ?? '',
           delegations: delegations ?? '',
+          commission: commission ?? '',
         };
       })
     );
