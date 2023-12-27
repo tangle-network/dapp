@@ -5,7 +5,7 @@ import {
   DropdownBasicButton,
   DropdownBody,
   MenuItem,
-} from '@webb-tools/webb-ui-components';
+} from '../../components';
 import { type FC } from 'react';
 import { ManageButtonProps } from './types';
 

@@ -1,4 +1,4 @@
-import { MenuItem } from '@webb-tools/webb-ui-components';
+import { MenuItem } from '../../components';
 import { type ComponentProps } from 'react';
 
 export type ActionItemType = {
