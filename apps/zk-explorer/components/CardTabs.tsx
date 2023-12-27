@@ -91,7 +91,6 @@ export const CardTabs: FC<CardTabsProps> = ({
               <DropdownBasicButton className="w-full sm:w-auto">
                 <Button
                   size="sm"
-                  darkMode
                   variant="utility"
                   className="w-full sm:w-auto"
                   isFullWidth={breakpoint <= TailwindBreakpoint.SM}
@@ -111,7 +110,6 @@ export const CardTabs: FC<CardTabsProps> = ({
 
               <Button
                 size="sm"
-                darkMode
                 variant="utility"
                 className="sm:hidden w-full"
                 isFullWidth

@@ -9,6 +9,8 @@ export const useFilterConstraints = (): [
   const [filterParam, setFilterParam] = useUrlParam(UrlParamKey.Filters);
   const [constraints, setConstraints] = useState<FilterConstraints>({});
 
+  // Load initial constraints from URL param,
+  // and update constraints when URL param changes.
   useEffect(() => {
     try {
       const parsedConstraints = filterParam ? JSON.parse(filterParam) : {};

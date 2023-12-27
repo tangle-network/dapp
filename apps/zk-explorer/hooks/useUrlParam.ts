@@ -1,42 +1,56 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 export enum UrlParamKey {
   SearchQuery = 'q',
   PaginationPageNumber = 'page',
-  Filters = 'filter',
+  Filters = 'filters',
 }
 
 export const useUrlParam = (
   key: UrlParamKey
-): [string, (query: string | null) => void] => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const searchParams = useSearchParams();
+): [string | null, (value: string | null) => void] => {
+  const [urlParam, setUrlParam] = useState<string | null>(null);
 
   useEffect(() => {
-    // Read the query parameter from the URL.
-    const currentQuery = searchParams.get(key);
+    const handleUrlChange = () => {
+      const newQuery = new URLSearchParams(window.location.search).get(key);
 
-    if (currentQuery !== null) {
-      setSearchQuery(currentQuery);
+      console.log(key, newQuery);
+
+      if (urlParam !== newQuery) {
+        console.log('setUrlParam', newQuery);
+        setUrlParam(newQuery);
+      }
+    };
+
+    // Listen for URL changes.
+    window.addEventListener('popstate', handleUrlChange);
+
+    // Perform initial check.
+    handleUrlChange();
+
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, [key, urlParam]);
+
+  const updateUrlParam = (value: string | null) => {
+    if (value !== urlParam) {
+      const updatedSearchParams = new URLSearchParams(window.location.search);
+
+      if (value === null) {
+        updatedSearchParams.delete(key);
+      } else {
+        updatedSearchParams.set(key, value);
+      }
+
+      const newUrl = `${window.location.pathname}?${updatedSearchParams}`;
+
+      window.history.pushState({}, '', newUrl);
+
+      setUrlParam(value);
     }
-  }, [searchParams, key]);
-
-  const updateSearchQuery = (query: string | null) => {
-    setSearchQuery(query ?? '');
-
-    const updatedSearchParams = new URLSearchParams(window.location.search);
-
-    if (query === null) {
-      updatedSearchParams.delete(key);
-    } else {
-      updatedSearchParams.set(key, query);
-    }
-
-    const newUrl = `${window.location.pathname}?${updatedSearchParams}`;
-
-    window.history.pushState({}, '', newUrl);
   };
 
-  return [searchQuery, updateSearchQuery];
+  return [urlParam, updateUrlParam];
 };

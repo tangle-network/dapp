@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import {
   SearchSortByClause,
   searchCircuits,
@@ -32,23 +32,23 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
     SearchSortByClause.MostPopular
   );
 
+  const DEFAULT_PAGE_NUMBER = 1;
+
   const [paginationPage, setPaginationPage] = useUrlParam(
     UrlParamKey.PaginationPageNumber
   );
 
-  const getOrRepairPaginationPageNumber = (): number => {
+  const getOrRepairPaginationPageNumber = useCallback((): number => {
     return tryOrElse(
-      () => parseInt(paginationPage, 10),
+      () => parseInt(paginationPage ?? DEFAULT_PAGE_NUMBER.toString(), 10),
       // Repair invalid page number if it could not be parsed as an integer.
       () => {
-        const DEFAULT_PAGE_NUMBER = 1;
-
         setPaginationPage(DEFAULT_PAGE_NUMBER.toString());
 
         return DEFAULT_PAGE_NUMBER;
       }
     );
-  };
+  }, [paginationPage, setPaginationPage]);
 
   // Initial 'most popular' project search.
   useEffect(() => {
@@ -73,67 +73,68 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchItems = () => {
-    const paginationPageNumber = getOrRepairPaginationPageNumber();
+  const fetchItems = useCallback(
+    (query: string) => {
+      const paginationPageNumber = getOrRepairPaginationPageNumber();
 
-    if (selectedItemType === ItemType.Project) {
-      searchProjects(
-        constraints,
-        searchQuery,
-        paginationPageNumber,
-        sortByClause
-      )
-        // Temporarily use mock data until we have a backend.
-        .catch(() => getMockProjects())
-        .then((response) => {
-          setProjects(response.projects);
-          setSelectedItemType(ItemType.Project);
-          setProjectSearchResultCount(response.resultCount);
-        });
-    } else {
-      searchCircuits(
-        constraints,
-        searchQuery,
-        paginationPageNumber,
-        sortByClause
-      )
-        // TODO: Temporarily use mock data until we have a backend.
-        .catch(getMockCircuits)
-        .then((response) => {
-          setCircuits(response.circuits);
-          setSelectedItemType(ItemType.Circuit);
-          setCircuitSearchResultCount(response.resultCount);
-        });
-    }
-  };
+      if (selectedItemType === ItemType.Project) {
+        searchProjects(constraints, query, paginationPageNumber, sortByClause)
+          // Temporarily use mock data until we have a backend.
+          .catch(() => getMockProjects())
+          .then((response) => {
+            setProjects(response.projects);
+            setSelectedItemType(ItemType.Project);
+            setProjectSearchResultCount(response.resultCount);
+          });
+      } else {
+        searchCircuits(constraints, query, paginationPageNumber, sortByClause)
+          // TODO: Temporarily use mock data until we have a backend.
+          .catch(getMockCircuits)
+          .then((response) => {
+            setCircuits(response.circuits);
+            setSelectedItemType(ItemType.Circuit);
+            setCircuitSearchResultCount(response.resultCount);
+          });
+      }
+    },
+    [
+      constraints,
+      getOrRepairPaginationPageNumber,
+      selectedItemType,
+      sortByClause,
+    ]
+  );
 
-  // Fetch items when the search query changes.
-  useEffect(() => {
+  const checkSearchQuery = (
+    searchQuery: string | null
+  ): searchQuery is string => {
     const MIN_SEARCH_QUERY_LENGTH = 3;
 
     // A small query length can yield too many results. Let's
     // wait until the user has typed a more more specific query.
-    if (
-      searchQuery.length === 0 ||
-      searchQuery.length < MIN_SEARCH_QUERY_LENGTH
-    ) {
-      return;
+    return (
+      searchQuery !== null &&
+      searchQuery.length > 0 &&
+      searchQuery.length >= MIN_SEARCH_QUERY_LENGTH
+    );
+  };
+
+  // Fetch items when the search query changes.
+  useEffect(() => {
+    if (checkSearchQuery(searchQuery)) {
+      fetchItems(searchQuery);
     }
-
-    fetchItems();
-
-    // This effect should only run when the  search query
-    // changes, so other dependencies are intentionally excluded.
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
+  }, [searchQuery, fetchItems]);
 
   // Fetch items when constraints, page, or sort by clause changes.
-  // This doesn't depend on the search query, so it is intentionally
-  // excluded from the dependencies.
+  useEffect(() => {
+    fetchItems(searchQuery ?? '');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(fetchItems, [constraints, paginationPage, sortByClause]);
+    // This doesn't depend on the search query, so it is intentionally
+    // excluded from the dependencies.
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [constraints, paginationPage, sortByClause]);
 
   return (
     <div className="w-full">

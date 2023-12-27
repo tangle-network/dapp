@@ -15,18 +15,20 @@ export type CardGridProps = PropsOf<'div'> & {
   circuits: CircuitItem[];
 };
 
-export const ItemGrid: FC<CardGridProps> = (props) => {
-  const items =
-    props.selectedItemType === ItemType.Project
-      ? props.projects
-      : props.circuits;
+export const ItemGrid: FC<CardGridProps> = ({
+  selectedItemType,
+  projects,
+  circuits,
+  ...rest
+}) => {
+  const items = selectedItemType === ItemType.Project ? projects : circuits;
 
   const wereResultsFound = items.length > 0;
 
   return wereResultsFound ? (
     <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
-      {props.selectedItemType === ItemType.Project
-        ? props.projects.map((project, index) => (
+      {selectedItemType === ItemType.Project
+        ? projects.map((project, index) => (
             <Link
               key={index}
               href={`/@${project.repositoryOwner}/${project.repositoryName}`}
@@ -34,7 +36,7 @@ export const ItemGrid: FC<CardGridProps> = (props) => {
               <ProjectCard {...project} />
             </Link>
           ))
-        : props.circuits.map((circuit, index) => (
+        : circuits.map((circuit, index) => (
             // TODO: Need proper URL for circuits.
             <Link key={index} href={`/@${circuit.filename}`}>
               <CircuitCard {...circuit} />
@@ -42,12 +44,11 @@ export const ItemGrid: FC<CardGridProps> = (props) => {
           ))}
     </div>
   ) : (
-    <div className="flex flex-col items-center h-full py-16" {...props}>
+    <div className="flex flex-col items-center h-full py-16" {...rest}>
       <Search size="lg" className="mb-2" />
 
       <Typography variant="h5" fw="bold" className="text-center">
-        No {props.selectedItemType.toLowerCase()}s found matching the search
-        criteria
+        No {selectedItemType.toLowerCase()}s found matching the search criteria
       </Typography>
 
       <Typography variant="body1" fw="normal" className="text-center">

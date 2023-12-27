@@ -12,6 +12,7 @@ import { Close } from '@webb-tools/icons';
 import { fetchFilterOptions } from '../../utils/api';
 import { MOCK_CATEGORIES } from '../../utils/constants';
 import { useFilterConstraints } from '../../hooks/useFilterConstraints';
+import { FilterCheckboxItem } from '../FilterCheckboxItem';
 
 export type FiltersProps = PropsOf<'div'> & {
   hasCloseButton?: boolean;
@@ -40,8 +41,8 @@ export const Filters: FC<FiltersProps> = ({
       .catch(() => setCategories(MOCK_CATEGORIES));
   }, []);
 
-  const handleConstraintChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+  const handleOptionCheckboxChange = (
+    isChecked: boolean,
     category: string,
     label: string
   ) => {
@@ -51,7 +52,7 @@ export const Filters: FC<FiltersProps> = ({
       updatedConstraints[category] = [];
     }
 
-    if (e.target.checked) {
+    if (isChecked) {
       updatedConstraints[category].push(label);
     } else {
       updatedConstraints[category].splice(
@@ -94,20 +95,18 @@ export const Filters: FC<FiltersProps> = ({
           </Typography>
 
           <div className="flex flex-col gap-2">
-            {category.options.map((option) => (
-              <div key={option.label} className="flex">
-                <CheckBox
-                  wrapperClassName="items-center"
-                  spacingClassName="ml-2"
-                  onChange={(e) =>
-                    handleConstraintChange(e, category.category, option.label)
-                  }
-                >
-                  {option.label}
-                </CheckBox>
-
-                <SmallChip className="ml-auto">{option.amount}</SmallChip>
-              </div>
+            {category.options.map((option, index) => (
+              <FilterCheckboxItem
+                key={index}
+                category={category.category}
+                label={option.label}
+                amount={option.amount}
+                handleChange={handleOptionCheckboxChange}
+                isChecked={
+                  constraints[category.category]?.includes(option.label) ??
+                  false
+                }
+              />
             ))}
           </div>
         </div>
