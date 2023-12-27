@@ -39,7 +39,7 @@ export const Filters: FC<FiltersProps> = ({
   });
 
   // TODO: These are only for testing purposes. Remove these once the actual data is available.
-  const debugProofSystemsOptions: FilterOptionItem[] = [
+  const mockProofSystemsOptions: FilterOptionItem[] = [
     {
       label: 'Circom',
       amount: 403,
@@ -62,7 +62,7 @@ export const Filters: FC<FiltersProps> = ({
     },
   ];
 
-  const debugCategoryOptions: FilterOptionItem[] = [
+  const mockCategoryOptions: FilterOptionItem[] = [
     {
       label: 'Identity Verification',
       amount: 59,
@@ -85,7 +85,7 @@ export const Filters: FC<FiltersProps> = ({
     },
   ];
 
-  const debugLicenseOptions: FilterOptionItem[] = [
+  const mockLicenseOptions: FilterOptionItem[] = [
     {
       label: 'MIT',
       amount: 392,
@@ -100,7 +100,7 @@ export const Filters: FC<FiltersProps> = ({
     },
   ];
 
-  const debugLanguageOptions: FilterOptionItem[] = [
+  const mockLanguageOptions: FilterOptionItem[] = [
     {
       label: 'TypeScript',
       amount: 410,
@@ -130,19 +130,19 @@ export const Filters: FC<FiltersProps> = ({
   const categories: FilterCategoryItem[] = [
     {
       category: FilterCategory.ProofSystem,
-      options: debugProofSystemsOptions,
+      options: mockProofSystemsOptions,
     },
     {
       category: FilterCategory.Categories,
-      options: debugCategoryOptions,
+      options: mockCategoryOptions,
     },
     {
       category: FilterCategory.License,
-      options: debugLicenseOptions,
+      options: mockLicenseOptions,
     },
     {
       category: FilterCategory.LanguageOrFramework,
-      options: debugLanguageOptions,
+      options: mockLanguageOptions,
     },
   ];
 
@@ -207,7 +207,7 @@ export const Filters: FC<FiltersProps> = ({
           </Typography>
 
           <div className="flex flex-col gap-2">
-            {debugProofSystemsOptions.map((option) => (
+            {mockProofSystemsOptions.map((option) => (
               <div key={option.label} className="flex">
                 <CheckBox
                   wrapperClassName="items-center"
