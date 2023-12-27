@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { Typography, CheckBox, Chip } from '@webb-tools/webb-ui-components';
+import { FC, useEffect, useState } from 'react';
+import { Typography, CheckBox } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { cloneDeep } from 'lodash';
 import {
@@ -10,16 +10,27 @@ import {
 } from './types';
 import { SmallChip } from '../SmallChip';
 import { twMerge } from 'tailwind-merge';
+import assert from 'assert';
+import { Close } from '@webb-tools/icons';
 
-export type SidebarFiltersProps = PropsOf<'div'> & {
+export type FiltersProps = PropsOf<'div'> & {
   onConstraintsChange: (constraints: FilterConstraints) => void;
+  hasCloseButton?: boolean;
+  onClose?: () => void;
 };
 
-export const SidebarFilters: FC<SidebarFiltersProps> = ({
+export const Filters: FC<FiltersProps> = ({
   onConstraintsChange,
   className,
+  hasCloseButton,
+  onClose,
   ...rest
 }) => {
+  assert(
+    hasCloseButton ? onClose !== undefined : onClose === undefined,
+    'If `hasCloseButton` is true, `onClose` must be defined, and vice versa.'
+  );
+
   const [constraints, setConstraints] = useState<FilterConstraints>({
     [FilterCategory.ProofSystem]: [],
     [FilterCategory.Categories]: [],
@@ -168,9 +179,20 @@ export const SidebarFilters: FC<SidebarFiltersProps> = ({
   return (
     <div {...rest} className={twMerge('flex flex-col gap-9', className)}>
       <div>
-        <Typography variant="h5" fw="bold" className="py-2 dark:text-mono-0">
-          Filter by:
-        </Typography>
+        <div className="flex items-center">
+          <Typography variant="h5" fw="bold" className="py-2 dark:text-mono-0">
+            Filter by:
+          </Typography>
+
+          {hasCloseButton && (
+            <Close
+              onClick={onClose}
+              size="lg"
+              className="ml-auto cursor-pointer"
+            />
+          )}
+        </div>
+
         <hr className="border-mono-160" />
       </div>
 

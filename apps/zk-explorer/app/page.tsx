@@ -7,8 +7,8 @@ import {
   Button,
 } from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
-import { Search } from '@webb-tools/icons';
-import { SidebarFilters } from '../components/SidebarFilters/SidebarFilters';
+import { KeyIcon, Search } from '@webb-tools/icons';
+import { Filters } from '../components/Filters/Filters';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
 import {
   ItemType,
@@ -27,10 +27,7 @@ import { ProjectItem } from '../components/ProjectCard/types';
 import { CircuitItem } from '../components/CircuitCard/types';
 import { LinkCard } from '../components/LinkCard';
 import { ItemGrid } from '../components/ItemGrid';
-import {
-  FilterConstraints,
-  FilterCategory,
-} from '../components/SidebarFilters/types';
+import { FilterConstraints, FilterCategory } from '../components/Filters/types';
 import Link from 'next/link';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -193,15 +190,14 @@ export default function Index() {
         </Link>
       </div>
 
-      {/* Content: Sidebar & grid items */}
+      {/* Content: Filters & grid items */}
       <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
         <div className="pl-6 max-w-[317px] space-y-12">
-          <SidebarFilters
+          <Filters
             className="hidden sm:flex"
-            onConstraintsChange={(newConstraints) => {
-              console.log(newConstraints);
-              setConstraints(newConstraints);
-            }}
+            onConstraintsChange={(newConstraints) =>
+              setConstraints(newConstraints)
+            }
           />
 
           <LinkCard className="hidden sm:block" href={PageUrl.SubmitProject}>
@@ -235,6 +231,9 @@ export default function Index() {
             onTabChange={(cardType) => setSelectedItemType(cardType)}
             onSortByClauseChange={(sortByClause) =>
               setSortByClause(sortByClause)
+            }
+            onMobileConstraintsChange={(newConstraints) =>
+              setConstraints(newConstraints)
             }
             counts={{
               [ItemType.Project]: projectSearchResultCount,

@@ -1,6 +1,6 @@
 import { CircuitItem } from '../components/CircuitCard/types';
 import { ProjectItem } from '../components/ProjectCard/types';
-import type { FilterConstraints } from '../components/SidebarFilters/types';
+import type { FilterConstraints } from '../components/Filters/types';
 import assert from 'assert';
 
 export enum ApiRoute {
