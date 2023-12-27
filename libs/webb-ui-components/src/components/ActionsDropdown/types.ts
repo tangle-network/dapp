@@ -1,5 +1,5 @@
 import { MenuItem } from '@webb-tools/webb-ui-components';
-import { type FC, type ComponentProps } from 'react';
+import { type ComponentProps } from 'react';
 
 export type ActionItemType = {
   label: string;
