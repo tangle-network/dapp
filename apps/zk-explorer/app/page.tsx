@@ -7,7 +7,7 @@ import {
   Button,
 } from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
-import { KeyIcon, Search } from '@webb-tools/icons';
+import { Search } from '@webb-tools/icons';
 import { Filters } from '../components/Filters/Filters';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
 import {

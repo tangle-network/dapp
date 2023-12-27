@@ -1,6 +1,5 @@
-import { Card, Typography, Chip, Avatar } from '@webb-tools/webb-ui-components';
+import { Card, Typography, Avatar } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import Image from 'next/image';
 import assert from 'assert';
 import { StarIcon } from '@radix-ui/react-icons';
 import { ProjectItem } from './types';

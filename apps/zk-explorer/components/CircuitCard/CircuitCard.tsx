@@ -1,6 +1,5 @@
 import { Avatar, Card, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import Image from 'next/image';
 import assert from 'assert';
 import { StarIcon } from '@radix-ui/react-icons';
 import { CircuitItem } from './types';
@@ -16,7 +15,7 @@ export const CircuitCard: FC<CircuitItem> = ({
   assert(constraintCount >= 0, 'Constraint count should never be negative.');
 
   return (
-    <Card className="flex flex-row items-center gap-3 space-y-0 py-3 px-6">
+    <Card className="flex flex-row items-center gap-3 space-y-0 py-3 px-6 dark:!bg-transparent dark:bg-glass-dark dark:hover:!bg-mono-180">
       <div>
         <Avatar
           src={ownerAvatarUrl}
