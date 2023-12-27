@@ -42,7 +42,7 @@ export const ItemGrid: FC<CardGridProps> = (props) => {
           ))}
     </div>
   ) : (
-    <div className="flex flex-col items-center h-full pt-16" {...props}>
+    <div className="flex flex-col items-center h-full py-16" {...props}>
       <Search size="lg" className="mb-2" />
 
       <Typography variant="h5" fw="bold" className="text-center">

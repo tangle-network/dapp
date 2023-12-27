@@ -1,4 +1,4 @@
-import { Card, Typography } from '@webb-tools/webb-ui-components';
+import { Avatar, Card, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import Image from 'next/image';
 import assert from 'assert';
@@ -18,13 +18,11 @@ export const CircuitCard: FC<CircuitItem> = ({
   return (
     <Card className="flex flex-row items-center gap-3 space-y-0 py-3 px-6">
       <div>
-        {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
-        <Image
-          alt={`${ownerAvatarUrl}'s avatar`}
+        <Avatar
           src={ownerAvatarUrl}
-          width={48}
-          height={48}
-          className="rounded-full bg-mono-200 shadow-md"
+          size="lg"
+          alt={`${ownerAvatarUrl}'s avatar`}
+          className="shadow-md"
         />
       </div>
 

@@ -14,12 +14,12 @@ export const MobileFiltersSidebar: FC<MobileFiltersSidebarProps> = ({
 }) => {
   return (
     <>
-      <OverlayMask isPrevalent opacity={0.6} />
+      <OverlayMask doPreventBodyScrolling isPrevalent opacity={0.6} />
 
       {/* Sidebar filters */}
       <div
         style={{ maxWidth: 'min(80%, 344px)' }}
-        className="absolute top-0 right-0 bg-mono-190 z-20 px-9 py-6 w-full min-w-[220px] h-screen overflow-y-auto"
+        className="fixed top-0 right-0 bg-mono-0 dark:bg-mono-190 z-20 px-9 py-6 w-full min-w-[220px] h-screen overflow-y-auto"
       >
         <Filters
           hasCloseButton

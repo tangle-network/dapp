@@ -1,4 +1,4 @@
-import { Card, Typography, Chip } from '@webb-tools/webb-ui-components';
+import { Card, Typography, Chip, Avatar } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import Image from 'next/image';
 import assert from 'assert';
@@ -22,13 +22,11 @@ export const ProjectCard: FC<ProjectItem> = ({
   return (
     <Card className="flex flex-row gap-3 space-y-0 py-5 px-6 shadow-sm dark:!bg-transparent dark:bg-glass-dark dark:hover:!bg-mono-180">
       <div>
-        {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
-        <Image
-          alt={`${repositoryOwner}'s avatar`}
+        <Avatar
+          size="lg"
           src={ownerAvatarUrl}
-          width={48}
-          height={48}
-          className="rounded-full bg-mono-200 shadow-md"
+          alt={`${repositoryOwner}'s avatar`}
+          className="shadow-md"
         />
       </div>
 
@@ -66,14 +64,11 @@ export const ProjectCard: FC<ProjectItem> = ({
               {contributorAvatarUrls
                 .slice(0, MAX_CONTRIBUTOR_AVATAR_URLS)
                 .map((avatarUrl, index) => (
-                  // TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component.
-                  <Image
+                  <Avatar
                     key={index}
-                    alt="Contributor avatar"
                     src={avatarUrl}
-                    width={24}
-                    height={24}
-                    className="rounded-full bg-mono-200 border-[1px] border-mono-140 shadow-xl w-6 h-6"
+                    alt={`${repositoryName} contributor's avatar ${index}`}
+                    className="shadow-md"
                   />
                 ))}
 

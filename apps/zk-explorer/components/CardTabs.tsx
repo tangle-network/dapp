@@ -39,15 +39,6 @@ export const CardTabs: FC<CardTabsProps> = ({
   const breakpoint = useTailwindBreakpoint();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // Prevent scrolling the body when mobile sidebar is open.
-  useEffect(() => {
-    document.body.style.overflow = isMobileSidebarOpen ? 'hidden' : 'auto';
-
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isMobileSidebarOpen]);
-
   return (
     <>
       {isMobileSidebarOpen && breakpoint <= TailwindBreakpoint.SM && (
