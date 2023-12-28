@@ -27,7 +27,7 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
       className={cx('dark:bg-mono-180 p-6 space-y-6 rounded-2xl', className)}
     >
       <TabsRoot defaultValue={CIRCUITS_TAB}>
-        <TabsList aria-label="project-detail-tabs" className='mb-6'>
+        <TabsList aria-label="project-detail-tabs" className="mb-6">
           <TabTrigger value={CIRCUITS_TAB}>Circuits</TabTrigger>
           <TabTrigger value={SUMMARY_TAB}>Summary</TabTrigger>
           <TabTrigger value={TRUSTED_SETUP_TAB}>Trusted Setup</TabTrigger>

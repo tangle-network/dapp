@@ -1,0 +1,8 @@
+/* Override pagination styling from Swiper */
+.swiper-pagination {
+  @apply !static;
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-blue-50;
+}
