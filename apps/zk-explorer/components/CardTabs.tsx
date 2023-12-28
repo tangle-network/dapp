@@ -16,8 +16,9 @@ import { SmallChip } from './SmallChip';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import { MobileFiltersSidebar } from './MobileFiltersSidebar';
 import { FilterConstraints } from './Filters/types';
+import { useSidebarContext } from '../hooks/useSidebarContext';
+import { Filters } from './Filters/Filters';
 
 export type CardTabsProps = {
   selectedTab: ItemType;
@@ -25,7 +26,6 @@ export type CardTabsProps = {
   sortByClause: SearchSortByClause;
   onTabChange: (cardType: ItemType) => void;
   onSortByClauseChange: (sortByClause: SearchSortByClause) => void;
-  onMobileConstraintsChange: (constraints: FilterConstraints) => void;
 };
 
 export const CardTabs: FC<CardTabsProps> = ({
@@ -34,17 +34,20 @@ export const CardTabs: FC<CardTabsProps> = ({
   sortByClause,
   onTabChange,
   onSortByClauseChange,
-  onMobileConstraintsChange,
 }) => {
   const breakpoint = useTailwindBreakpoint();
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
+
+  const prepareAndShowMobileSidebar = () => {
+    updateSidebarContent(
+      <Filters hasCloseButton onClose={() => setSidebarOpen(false)} />
+    );
+
+    setSidebarOpen(true);
+  };
 
   return (
     <>
-      {isMobileSidebarOpen && breakpoint <= TailwindBreakpoint.SM && (
-        <MobileFiltersSidebar onClose={() => setIsMobileSidebarOpen(false)} />
-      )}
-
       <div className="flex gap-6 sm:gap-0 align-center flex-col sm:flex-row">
         {/* Tabs */}
         <div className="inline-flex gap-4 w-full">
@@ -113,7 +116,7 @@ export const CardTabs: FC<CardTabsProps> = ({
                 variant="utility"
                 className="sm:hidden w-full"
                 isFullWidth
-                onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+                onClick={() => prepareAndShowMobileSidebar()}
                 rightIcon={
                   <FilterIcon2 className="dark:fill-blue-50" size="lg" />
                 }

@@ -21,7 +21,7 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
   const [searchQuery] = useUrlParam(UrlParamKey.SearchQuery);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
-  const [constraints, setConstraints] = useFilterConstraints();
+  const [constraints] = useFilterConstraints();
   const [projectSearchResultCount, setProjectSearchResultCount] =
     useState<number>(0);
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
@@ -143,9 +143,6 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
         selectedTab={selectedItemType}
         onTabChange={(cardType) => setSelectedItemType(cardType)}
         onSortByClauseChange={(sortByClause) => setSortByClause(sortByClause)}
-        onMobileConstraintsChange={(newConstraints) =>
-          setConstraints(newConstraints)
-        }
         counts={{
           [ItemType.Project]: projectSearchResultCount,
           [ItemType.Circuit]: circuitSearchResultCount,

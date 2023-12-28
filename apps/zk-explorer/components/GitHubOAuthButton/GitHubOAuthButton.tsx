@@ -107,7 +107,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
           fw="bold"
           component="p"
         >
-          {username !== undefined ? `@${username}` : 'Sign in'}
+          {username !== undefined ? `@${username}` : 'Sign In'}
         </Typography>
       </div>
     </Button>

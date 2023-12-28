@@ -66,7 +66,7 @@ export const MOCK_LICENSE_OPTIONS: FilterOptionItem[] = [
 
 export const MOCK_CATEGORIES: FilterCategoryItem[] = [
   {
-    category: 'Proof system',
+    category: 'Proof System',
     options: MOCK_PROOF_SYSTEMS_OPTIONS,
   },
   {

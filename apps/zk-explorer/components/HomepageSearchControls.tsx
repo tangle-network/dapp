@@ -25,7 +25,7 @@ export const HomepageSearchControls: FC<Record<string, never>> = () => {
         id="keyword search"
         rightIcon={<Search size="lg" className="mr-4" />}
         className="flex-grow"
-        inputClassName="rounded-[50px] pr-12"
+        inputClassName="rounded-[50px] pr-12 border-none"
         placeholder={searchQueryPlaceholder}
         value={searchQuery}
         debounceTime={SEARCH_QUERY_DEBOUNCE_DELAY}
