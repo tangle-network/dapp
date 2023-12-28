@@ -13,6 +13,7 @@ import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
 import { FC } from 'react';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { twMerge } from 'tailwind-merge';
+
 export type HeaderActionsProps = PropsOf<'div'> & {
   doHideSearchBar?: boolean;
 };
@@ -29,7 +30,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
     <div
       {...rest}
       className={twMerge(
-        'flex flex-col sm:flex-row gap-4 md:gap-2 items-start md:items-center',
+        'flex flex-row gap-4 md:gap-2 justify-between sm:items-start md:items-center',
         className
       )}
     >
