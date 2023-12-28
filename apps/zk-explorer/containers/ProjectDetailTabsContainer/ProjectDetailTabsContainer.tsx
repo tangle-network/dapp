@@ -1,10 +1,11 @@
-import { type FC } from 'react';
+import { type FC, Suspense } from 'react';
 import cx from 'classnames';
 import {
   TabsRoot,
   TabsList,
   TabTrigger,
   TabContent,
+  SkeletonLoader,
 } from '@webb-tools/webb-ui-components';
 
 import Circuits from './Circuits';
@@ -33,20 +34,42 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
           <TabTrigger value={TRUSTED_SETUP_TAB}>Trusted Setup</TabTrigger>
         </TabsList>
 
-        <TabContent value={CIRCUITS_TAB}>
-          <Circuits />
-        </TabContent>
+        <div className="max-h-[900px] overflow-y-auto">
+          <TabContent value={CIRCUITS_TAB}>
+            <Suspense fallback={<SectionSkeletonLoader />}>
+              <Circuits />
+            </Suspense>
+          </TabContent>
 
-        <TabContent value={SUMMARY_TAB}>
-          <Summary />
-        </TabContent>
+          <TabContent value={SUMMARY_TAB}>
+            <Suspense fallback={<SectionSkeletonLoader />}>
+              <Summary />
+            </Suspense>
+          </TabContent>
 
-        <TabContent value={TRUSTED_SETUP_TAB}>
-          <TrustedSetup />
-        </TabContent>
+          <TabContent value={TRUSTED_SETUP_TAB}>
+            <Suspense fallback={<SectionSkeletonLoader />}>
+              <TrustedSetup />
+            </Suspense>
+          </TabContent>
+        </div>
       </TabsRoot>
     </div>
   );
 };
 
 export default ProjectDetailTabsContainer;
+
+/** @internal */
+const SectionSkeletonLoader: FC = () => {
+  return (
+    <div className="space-y-6">
+      {Array.from({ length: 3 }).map((_, idx) => (
+        <div className="space-y-2" key={idx}>
+          <SkeletonLoader size="xl" />
+          <SkeletonLoader size="xl" />
+        </div>
+      ))}
+    </div>
+  );
+};

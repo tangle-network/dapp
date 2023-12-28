@@ -6,3 +6,8 @@
 .swiper-pagination-bullet-active {
   @apply !bg-blue-50;
 }
+
+/* Override github-markdown-css */
+.markdown-body {
+  @apply !bg-mono-200;
+}
