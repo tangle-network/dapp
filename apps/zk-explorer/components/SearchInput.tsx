@@ -1,6 +1,7 @@
 import { Search } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import assert from 'assert';
 import { useSearchParams } from 'next/navigation';
 import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -28,6 +29,14 @@ export type SearchInputProps = PropsOf<typeof Input> & {
    * when the value is changed, and after the debounce time.
    */
   doesRedirect?: boolean;
+
+  /**
+   * The handler to call when the value of the input changes.
+   *
+   * This is required if `doesRedirect` is `false`, otherwise the
+   * input would be uncontrolled and have no purpose.
+   */
+  onValueChange?: (value: string) => void;
 };
 
 const DEFAULT_DEBOUNCE_DELAY = 1500;
@@ -38,8 +47,16 @@ export const SearchInput: FC<SearchInputProps> = ({
   debounceTime = DEFAULT_DEBOUNCE_DELAY,
   doesRedirect,
   className,
+  onValueChange,
   ...rest
 }) => {
+  if (onValueChange === undefined) {
+    assert(
+      doesRedirect,
+      "a value change handler is required if the input doesn't redirect, otherwise the input will be uncontrolled"
+    );
+  }
+
   const initialSearchQuery = useSearchParams().get(SearchParamKey.SearchQuery);
 
   const [searchQuery, setSearchQuery] = useState(
@@ -66,6 +83,10 @@ export const SearchInput: FC<SearchInputProps> = ({
       window.location.href = searchPageUrl.href;
     } else {
       setSearchParam(SearchParamKey.SearchQuery, newSearchQuery);
+
+      if (onValueChange !== undefined) {
+        onValueChange(newSearchQuery);
+      }
     }
   };
 

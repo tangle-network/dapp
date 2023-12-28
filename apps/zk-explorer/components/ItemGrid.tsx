@@ -1,13 +1,13 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { FC } from 'react';
-import { ItemType, PageUrl } from '../utils/utils';
-import { ProjectItem } from './ProjectCard/types';
-import { ProjectCard } from './ProjectCard/ProjectCard';
-import { CircuitItem } from './CircuitCard/types';
-import { CircuitCard } from './CircuitCard/CircuitCard';
 import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
+import { FC } from 'react';
+import { ItemType, PageUrl } from '../utils/utils';
+import { CircuitCard } from './CircuitCard/CircuitCard';
+import { CircuitItem } from './CircuitCard/types';
+import { ProjectCard } from './ProjectCard/ProjectCard';
+import { ProjectItem } from './ProjectCard/types';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;
@@ -22,7 +22,6 @@ export const ItemGrid: FC<CardGridProps> = ({
   ...rest
 }) => {
   const items = selectedItemType === ItemType.Project ? projects : circuits;
-
   const wereResultsFound = items.length > 0;
 
   return wereResultsFound ? (

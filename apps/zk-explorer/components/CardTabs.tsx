@@ -19,6 +19,7 @@ import useTailwindBreakpoint, {
 import { SearchSortByClause } from '../utils/api';
 import { ItemType } from '../utils/utils';
 import { Filters } from './Filters/Filters';
+import { FilterConstraints } from './Filters/types';
 import { SmallChip } from './SmallChip';
 
 export type CardTabsProps = {
@@ -27,6 +28,7 @@ export type CardTabsProps = {
   sortByClause: SearchSortByClause;
   onTabChange: (cardType: ItemType) => void;
   onSortByClauseChange: (sortByClause: SearchSortByClause) => void;
+  onConstraintsChange: (constraints: FilterConstraints) => void;
 };
 
 export const CardTabs: FC<CardTabsProps> = ({
@@ -35,13 +37,18 @@ export const CardTabs: FC<CardTabsProps> = ({
   sortByClause,
   onTabChange,
   onSortByClauseChange,
+  onConstraintsChange,
 }) => {
   const breakpoint = useTailwindBreakpoint();
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
 
   const prepareAndShowMobileSidebar = () => {
     updateSidebarContent(
-      <Filters hasCloseButton onClose={() => setSidebarOpen(false)} />
+      <Filters
+        onConstraintsChange={onConstraintsChange}
+        hasCloseButton
+        onClose={() => setSidebarOpen(false)}
+      />
     );
 
     setSidebarOpen(true);

@@ -16,11 +16,13 @@ import { FilterCategoryItem, FilterConstraints } from './types';
 export type FiltersProps = PropsOf<'div'> & {
   hasCloseButton?: boolean;
   onClose?: () => void;
+  onConstraintsChange: (constraints: FilterConstraints) => void;
 };
 
 export const Filters: FC<FiltersProps> = ({
   className,
   hasCloseButton,
+  onConstraintsChange,
   onClose,
   ...rest
 }) => {
@@ -60,6 +62,7 @@ export const Filters: FC<FiltersProps> = ({
       );
     }
 
+    onConstraintsChange(updatedConstraints);
     setConstraints(updatedConstraints);
   };
 

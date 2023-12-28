@@ -1,11 +1,6 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { HeaderActions } from '../components/HeaderActions';
-import { Filters } from '../components/Filters/Filters';
-import { ArrowUpIcon } from '@radix-ui/react-icons';
-import { PageUrl } from '../utils/utils';
-import { LinkCard } from '../components/LinkCard';
-import { HomepageSearchControls } from '../components/HomepageSearchControls';
-import { HomepageItemGridContainer } from '../components/HomepageItemGridContainer';
+import { HomepageInteractiveContents } from '../components/HomepageInteractiveContents';
 
 export default function Index() {
   return (
@@ -43,39 +38,7 @@ export default function Index() {
         </div>
       </header>
 
-      <HomepageSearchControls />
-
-      {/* Content: Filters & grid items */}
-      <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
-        <div className="pl-6 max-w-[317px] space-y-12">
-          <Filters className="hidden sm:flex" />
-
-          <LinkCard className="hidden sm:block" href={PageUrl.SubmitProject}>
-            <div className="p-2 bg-mono-60 dark:bg-mono-120 rounded-full mb-6">
-              <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
-            </div>
-
-            <Typography
-              variant="body1"
-              fw="bold"
-              className="mb-1 dark:text-mono-0"
-            >
-              Submit Project!
-            </Typography>
-
-            <Typography
-              variant="body1"
-              fw="normal"
-              className="dark:text-mono-100"
-            >
-              Have a zero-knowledge project you&apos;d like to share with the
-              community?
-            </Typography>
-          </LinkCard>
-        </div>
-
-        <HomepageItemGridContainer />
-      </div>
+      <HomepageInteractiveContents />
     </main>
   );
 }

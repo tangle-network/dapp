@@ -1,9 +1,14 @@
 'use client';
 
-import { Pagination } from '@webb-tools/webb-ui-components';
+import { ArrowUpIcon } from '@radix-ui/react-icons';
+import { Button, Pagination, Typography } from '@webb-tools/webb-ui-components';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useFilterConstraints } from '../hooks/useFilterConstraints';
+import useTailwindBreakpoint, {
+  TailwindBreakpoint,
+} from '../hooks/useTailwindBreakpoint';
 import {
   SearchSortByClause,
   searchCircuits,
@@ -11,6 +16,7 @@ import {
 } from '../utils/api';
 import {
   ItemType,
+  PageUrl,
   SearchParamKey,
   getMockCircuits,
   getMockProjects,
@@ -18,14 +24,18 @@ import {
 } from '../utils/utils';
 import { CardTabs } from './CardTabs';
 import { CircuitItem } from './CircuitCard/types';
+import { Filters } from './Filters/Filters';
 import { ItemGrid } from './ItemGrid';
+import { LinkCard } from './LinkCard';
 import { ProjectItem } from './ProjectCard/types';
+import { SearchInput } from './SearchInput';
 
-export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
+export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
+  const breakpoint = useTailwindBreakpoint();
   const MAX_ITEMS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
-  const [constraints] = useFilterConstraints();
+  const [constraints, setConstraints] = useFilterConstraints();
   const [projectSearchResultCount, setProjectSearchResultCount] =
     useState<number>(0);
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
@@ -116,31 +126,87 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
   }, [constraints, paginationPage, sortByClause]);
 
   return (
-    <div className="w-full">
-      <CardTabs
-        sortByClause={sortByClause}
-        selectedTab={selectedItemType}
-        onTabChange={(cardType) => setSelectedItemType(cardType)}
-        onSortByClauseChange={(sortByClause) => setSortByClause(sortByClause)}
-        counts={{
-          [ItemType.Project]: projectSearchResultCount,
-          [ItemType.Circuit]: circuitSearchResultCount,
-        }}
-      />
+    <>
+      <div className="shadow-xl py-4 px-6 dark:bg-mono-170 rounded-xl flex flex-col sm:flex-row gap-2">
+        <SearchInput
+          onValueChange={setSearchQuery}
+          isHomepageVariant
+          id="homepage search"
+        />
 
-      <ItemGrid
-        projects={projects}
-        circuits={circuits}
-        selectedItemType={selectedItemType}
-      />
+        <Link href={PageUrl.SubmitProject} className="flex-grow sm:flex-grow-0">
+          <Button isFullWidth={breakpoint <= TailwindBreakpoint.SM}>
+            Upload Project
+          </Button>
+        </Link>
+      </div>
 
-      <Pagination
-        itemsPerPage={MAX_ITEMS_PER_PAGE}
-        totalItems={projectSearchResultCount}
-        page={paginationPage}
-        setPageIndex={setPaginationPage}
-        title="Projects"
-      />
-    </div>
+      {/* Content: Filters & grid items */}
+      <div className="flex flex-col sm:flex-row gap-0 sm:gap-6">
+        <div className="pl-6 max-w-[317px] space-y-12">
+          <Filters
+            onConstraintsChange={(newConstraints) =>
+              setConstraints(newConstraints)
+            }
+            className="hidden sm:flex"
+          />
+
+          <LinkCard className="hidden sm:block" href={PageUrl.SubmitProject}>
+            <div className="p-2 bg-mono-60 dark:bg-mono-120 rounded-full mb-6">
+              <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
+            </div>
+
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="mb-1 dark:text-mono-0"
+            >
+              Submit Project!
+            </Typography>
+
+            <Typography
+              variant="body1"
+              fw="normal"
+              className="dark:text-mono-100"
+            >
+              Have a zero-knowledge project you&apos;d like to share with the
+              community?
+            </Typography>
+          </LinkCard>
+        </div>
+
+        <div className="w-full">
+          <CardTabs
+            sortByClause={sortByClause}
+            selectedTab={selectedItemType}
+            onTabChange={(cardType) => setSelectedItemType(cardType)}
+            onSortByClauseChange={(sortByClause) =>
+              setSortByClause(sortByClause)
+            }
+            onConstraintsChange={(newConstraints) =>
+              setConstraints(newConstraints)
+            }
+            counts={{
+              [ItemType.Project]: projectSearchResultCount,
+              [ItemType.Circuit]: circuitSearchResultCount,
+            }}
+          />
+
+          <ItemGrid
+            projects={projects}
+            circuits={circuits}
+            selectedItemType={selectedItemType}
+          />
+
+          <Pagination
+            itemsPerPage={MAX_ITEMS_PER_PAGE}
+            totalItems={projectSearchResultCount}
+            page={paginationPage}
+            setPageIndex={setPaginationPage}
+            title="Projects"
+          />
+        </div>
+      </div>
+    </>
   );
 };
