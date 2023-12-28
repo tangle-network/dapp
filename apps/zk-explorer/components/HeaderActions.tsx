@@ -5,18 +5,18 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { GitHubOAuthButton } from './GitHubOAuthButton';
-import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
-import { FC } from 'react';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import { useSidebarContext } from '../hooks/useSidebarContext';
+import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
+import { GitHubOAuthButton } from './GitHubOAuthButton';
+import { SearchInput } from './SearchInput';
 import { SidebarCloseButton } from './SidebarCloseButton';
 
 export type HeaderActionsProps = PropsOf<'div'> & {
@@ -32,23 +32,14 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID ?? '';
 
   const breakpoint = useTailwindBreakpoint();
-
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
-
-  const searchInput = (
-    <Input
-      id="search item"
-      placeholder="Search projects & circuits"
-      rightIcon={<Search />}
-    />
-  );
 
   const prepareAndShowSearchSidebar = () => {
     updateSidebarContent(
       <div className="flex flex-col gap-4">
         <SidebarCloseButton isRightmost setSidebarOpen={setSidebarOpen} />
 
-        {searchInput}
+        <SearchInput doesRedirect id="sidebar mobile search" />
       </div>
     );
 
@@ -63,7 +54,9 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
         className
       )}
     >
-      {!doHideSearchBar && breakpoint > TailwindBreakpoint.SM && searchInput}
+      {!doHideSearchBar && breakpoint > TailwindBreakpoint.SM && (
+        <SearchInput doesRedirect id="desktop search" />
+      )}
 
       <div className="flex gap-2 items-center">
         {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}

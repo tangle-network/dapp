@@ -1,24 +1,28 @@
 'use client';
 
+import { Pagination } from '@webb-tools/webb-ui-components';
+import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { useFilterConstraints } from '../hooks/useFilterConstraints';
 import {
   SearchSortByClause,
   searchCircuits,
   searchProjects,
 } from '../utils/api';
-import { useFilterConstraints } from '../hooks/useFilterConstraints';
-import { UrlParamKey, useUrlParam } from '../hooks/useUrlParam';
-import { tryOrElse } from '../utils';
-import { ItemType, getMockCircuits, getMockProjects } from '../utils/utils';
-import { ProjectItem } from './ProjectCard/types';
-import { CircuitItem } from './CircuitCard/types';
+import {
+  ItemType,
+  SearchParamKey,
+  getMockCircuits,
+  getMockProjects,
+  validateSearchQuery,
+} from '../utils/utils';
 import { CardTabs } from './CardTabs';
+import { CircuitItem } from './CircuitCard/types';
 import { ItemGrid } from './ItemGrid';
-import { Pagination } from '@webb-tools/webb-ui-components';
+import { ProjectItem } from './ProjectCard/types';
 
 export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
   const MAX_ITEMS_PER_PAGE = 12;
-  const [searchQuery] = useUrlParam(UrlParamKey.SearchQuery);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
   const [constraints] = useFilterConstraints();
@@ -28,36 +32,33 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
     useState<number>(0);
   const [selectedItemType, setSelectedItemType] = useState(ItemType.Project);
 
+  const initialSearchQuery =
+    useSearchParams().get(SearchParamKey.SearchQuery) ?? '';
+
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+
   const [sortByClause, setSortByClause] = useState(
     SearchSortByClause.MostPopular
   );
 
   const DEFAULT_PAGE_NUMBER = 1;
 
-  const [paginationPage, setPaginationPage] = useUrlParam(
-    UrlParamKey.PaginationPageNumber
+  const initialPaginationPage = useSearchParams().get(
+    SearchParamKey.PaginationPageNumber
   );
 
-  const getOrRepairPaginationPageNumber = useCallback((): number => {
-    return tryOrElse(
-      () => parseInt(paginationPage ?? DEFAULT_PAGE_NUMBER.toString(), 10),
-      // Repair invalid page number if it could not be parsed as an integer.
-      () => {
-        setPaginationPage(DEFAULT_PAGE_NUMBER.toString());
-
-        return DEFAULT_PAGE_NUMBER;
-      }
-    );
-  }, [paginationPage, setPaginationPage]);
+  const [paginationPage, setPaginationPage] = useState(
+    initialPaginationPage !== null
+      ? parseInt(initialPaginationPage, 10)
+      : DEFAULT_PAGE_NUMBER
+  );
 
   // Initial 'most popular' project search.
   useEffect(() => {
-    const paginationPageNumber = getOrRepairPaginationPageNumber();
-
     searchProjects(
       constraints,
       '',
-      paginationPageNumber,
+      paginationPage,
       SearchSortByClause.MostPopular
     )
       // TODO: Temporarily use mock data until we have a backend.
@@ -75,58 +76,36 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
 
   const fetchItems = useCallback(
     (query: string) => {
-      const paginationPageNumber = getOrRepairPaginationPageNumber();
-
       if (selectedItemType === ItemType.Project) {
-        searchProjects(constraints, query, paginationPageNumber, sortByClause)
+        searchProjects(constraints, query, paginationPage, sortByClause)
           // Temporarily use mock data until we have a backend.
           .catch(() => getMockProjects())
           .then((response) => {
             setProjects(response.projects);
-            setSelectedItemType(ItemType.Project);
             setProjectSearchResultCount(response.resultCount);
           });
       } else {
-        searchCircuits(constraints, query, paginationPageNumber, sortByClause)
+        searchCircuits(constraints, query, paginationPage, sortByClause)
           // TODO: Temporarily use mock data until we have a backend.
           .catch(getMockCircuits)
           .then((response) => {
             setCircuits(response.circuits);
-            setSelectedItemType(ItemType.Circuit);
             setCircuitSearchResultCount(response.resultCount);
           });
       }
     },
-    [
-      constraints,
-      getOrRepairPaginationPageNumber,
-      selectedItemType,
-      sortByClause,
-    ]
+    [constraints, paginationPage, selectedItemType, sortByClause]
   );
-
-  const checkSearchQuery = (
-    searchQuery: string | null
-  ): searchQuery is string => {
-    const MIN_SEARCH_QUERY_LENGTH = 3;
-
-    // A small query length can yield too many results. Let's
-    // wait until the user has typed a more more specific query.
-    return (
-      searchQuery !== null &&
-      searchQuery.length > 0 &&
-      searchQuery.length >= MIN_SEARCH_QUERY_LENGTH
-    );
-  };
 
   // Fetch items when the search query changes.
   useEffect(() => {
-    if (checkSearchQuery(searchQuery)) {
+    if (validateSearchQuery(searchQuery)) {
       fetchItems(searchQuery);
     }
   }, [searchQuery, fetchItems]);
 
-  // Fetch items when constraints, page, or sort by clause changes.
+  // Fetch items when constraints, page number, or sort
+  // by clause changes.
   useEffect(() => {
     fetchItems(searchQuery ?? '');
 
@@ -158,10 +137,8 @@ export const HomepageItemGridContainer: FC<Record<string, never>> = () => {
       <Pagination
         itemsPerPage={MAX_ITEMS_PER_PAGE}
         totalItems={projectSearchResultCount}
-        page={getOrRepairPaginationPageNumber()}
-        setPageIndex={(newPageIndex) =>
-          setPaginationPage(newPageIndex.toString())
-        }
+        page={paginationPage}
+        setPageIndex={setPaginationPage}
         title="Projects"
       />
     </div>

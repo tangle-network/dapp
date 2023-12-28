@@ -1,24 +1,20 @@
-import { useState, useEffect } from 'react';
-import { useUrlParam, UrlParamKey } from './useUrlParam';
+import { cloneDeep } from 'lodash';
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { FilterConstraints } from '../components/Filters/types';
+import { SearchParamKey, setSearchParam } from '../utils/utils';
 
 export const useFilterConstraints = (): [
   FilterConstraints,
   (newConstraints: FilterConstraints) => void
 ] => {
-  const [filterParam, setFilterParam] = useUrlParam(UrlParamKey.Filters);
-  const [constraints, setConstraints] = useState<FilterConstraints>({});
+  const constraintsSearchParam = useSearchParams().get(SearchParamKey.Filters);
 
-  // Load initial constraints from URL param,
-  // and update constraints when URL param changes.
-  useEffect(() => {
-    try {
-      const parsedConstraints = filterParam ? JSON.parse(filterParam) : {};
-      setConstraints(parsedConstraints);
-    } catch (_error) {
-      // Handle parsing error if necessary
-    }
-  }, [filterParam]);
+  const initialConstraints: FilterConstraints =
+    constraintsSearchParam !== null ? JSON.parse(constraintsSearchParam) : {};
+
+  const [constraints, setConstraints] =
+    useState<FilterConstraints>(initialConstraints);
 
   const updateConstraints = (newConstraints: FilterConstraints) => {
     // Remove empty constraints.
@@ -37,14 +33,13 @@ export const useFilterConstraints = (): [
       Object.keys(processedConstraints).length === 0 ||
       Object.values(processedConstraints).every((value) => value.length === 0);
 
-    if (areFiltersEmpty) {
-      setFilterParam(null);
+    // Reflect the new constraints in the URL's search params.
+    setSearchParam(
+      SearchParamKey.Filters,
+      areFiltersEmpty ? null : JSON.stringify(processedConstraints)
+    );
 
-      return;
-    }
-
-    setConstraints(processedConstraints);
-    setFilterParam(JSON.stringify(processedConstraints));
+    setConstraints(areFiltersEmpty ? {} : cloneDeep(processedConstraints));
   };
 
   return [constraints, updateConstraints];

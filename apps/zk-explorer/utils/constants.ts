@@ -26,7 +26,7 @@ export const MOCK_PROOF_SYSTEMS_OPTIONS: FilterOptionItem[] = [
   },
 ];
 
-export const MOCK_CATEGORY_OPTION: FilterOptionItem[] = [
+export const MOCK_CATEGORY_OPTIONS: FilterOptionItem[] = [
   {
     label: 'Identity Verification',
     amount: 59,
@@ -64,25 +64,6 @@ export const MOCK_LICENSE_OPTIONS: FilterOptionItem[] = [
   },
 ];
 
-export const MOCK_CATEGORIES: FilterCategoryItem[] = [
-  {
-    category: 'Proof System',
-    options: MOCK_PROOF_SYSTEMS_OPTIONS,
-  },
-  {
-    category: 'Categories',
-    options: MOCK_PROOF_SYSTEMS_OPTIONS,
-  },
-  {
-    category: 'License',
-    options: MOCK_PROOF_SYSTEMS_OPTIONS,
-  },
-  {
-    category: 'Language/Framework',
-    options: MOCK_PROOF_SYSTEMS_OPTIONS,
-  },
-];
-
 export const MOCK_LANGUAGE_OPTIONS: FilterOptionItem[] = [
   {
     label: 'TypeScript',
@@ -107,5 +88,24 @@ export const MOCK_LANGUAGE_OPTIONS: FilterOptionItem[] = [
   {
     label: 'JavaScript',
     amount: 228,
+  },
+];
+
+export const MOCK_CATEGORIES: FilterCategoryItem[] = [
+  {
+    category: 'Proof System',
+    options: MOCK_PROOF_SYSTEMS_OPTIONS,
+  },
+  {
+    category: 'Categories',
+    options: MOCK_CATEGORY_OPTIONS,
+  },
+  {
+    category: 'License',
+    options: MOCK_LICENSE_OPTIONS,
+  },
+  {
+    category: 'Language/Framework',
+    options: MOCK_LANGUAGE_OPTIONS,
   },
 ];

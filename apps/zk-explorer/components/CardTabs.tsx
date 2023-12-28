@@ -1,24 +1,25 @@
-import { FC, useEffect, useState } from 'react';
-import {
-  Dropdown,
-  DropdownBody,
-  Typography,
-  DropdownBasicButton,
-  MenuItem,
-  Button,
-} from '@webb-tools/webb-ui-components';
-import { twMerge } from 'tailwind-merge';
-import { ChevronDown, FilterIcon2 } from '@webb-tools/icons';
-import { ItemType } from '../utils/utils';
+'use client';
+
 import { CheckCircledIcon, CircleIcon } from '@radix-ui/react-icons';
-import { SearchSortByClause } from '../utils/api';
-import { SmallChip } from './SmallChip';
+import { ChevronDown, FilterIcon2 } from '@webb-tools/icons';
+import {
+  Button,
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+  MenuItem,
+  Typography,
+} from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import { FilterConstraints } from './Filters/types';
-import { useSidebarContext } from '../hooks/useSidebarContext';
+import { SearchSortByClause } from '../utils/api';
+import { ItemType } from '../utils/utils';
 import { Filters } from './Filters/Filters';
+import { SmallChip } from './SmallChip';
 
 export type CardTabsProps = {
   selectedTab: ItemType;

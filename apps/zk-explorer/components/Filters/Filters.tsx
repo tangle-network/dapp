@@ -1,18 +1,17 @@
 'use client';
 
-import { FC, useEffect, useState } from 'react';
-import { Typography, CheckBox } from '@webb-tools/webb-ui-components';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { cloneDeep } from 'lodash';
-import { FilterCategoryItem, FilterConstraints } from './types';
-import { SmallChip } from '../SmallChip';
-import { twMerge } from 'tailwind-merge';
-import assert from 'assert';
 import { Close } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import assert from 'assert';
+import { cloneDeep } from 'lodash';
+import { FC, useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 import { fetchFilterOptions } from '../../utils/api';
 import { MOCK_CATEGORIES } from '../../utils/constants';
-import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 import { FilterCheckboxItem } from '../FilterCheckboxItem';
+import { FilterCategoryItem, FilterConstraints } from './types';
 
 export type FiltersProps = PropsOf<'div'> & {
   hasCloseButton?: boolean;
