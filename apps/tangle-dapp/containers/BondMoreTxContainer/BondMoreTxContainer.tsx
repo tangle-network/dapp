@@ -115,7 +115,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Add Stake
+          Bond More Tokens
         </ModalHeader>
 
         <div className="px-8 py-6">

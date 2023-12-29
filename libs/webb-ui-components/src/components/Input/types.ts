@@ -82,4 +82,10 @@ export interface InputProps
    * @type React.RefObject<HTMLInputElement>
    */
   inputRef?: React.RefObject<HTMLInputElement> | null;
+
+  /**
+   * A specific class to be added to the input element (not the wrapper)
+   * @type string
+   */
+  inputClassName?: string;
 }

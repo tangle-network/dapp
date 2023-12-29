@@ -1,15 +1,12 @@
-import React from 'react';
-
 export type StatsType =
   | 'Wallet Balance'
   | 'Total Staked'
-  | 'Payment Destination'
-  | 'Unbonding Amount';
+  | 'Payment Destination';
 
 export interface NominatorStatsItemProps {
   title: string;
   type: StatsType;
-  tooltip?: string | React.ReactNode;
+  tooltip?: string;
   address: string;
   className?: string;
 }
