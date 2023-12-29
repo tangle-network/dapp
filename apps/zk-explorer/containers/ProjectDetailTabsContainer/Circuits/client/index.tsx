@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import Header from './Header';
 import NavSideBar from './NavSideBar';
@@ -10,11 +10,18 @@ import type {
   CircuitItemFileType,
 } from '../../../../server';
 
-const CircuitsClient: FC<{ data: GetProjectCircuitDataReturnType }> = ({
-  data,
-}) => {
-  const [activeFile, setActiveFile] = useState<CircuitItemFileType>(
-    Object.values(data).filter((item) => !item.isFolder)[0]
+type CircuitsClientProps = {
+  data: GetProjectCircuitDataReturnType;
+};
+
+const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
+  const activeFileInit = useMemo(
+    () => Object.values(data).find((item) => !item.isFolder),
+    [data]
+  );
+
+  const [activeFile, setActiveFile] = useState<CircuitItemFileType | undefined>(
+    activeFileInit
   );
 
   return (

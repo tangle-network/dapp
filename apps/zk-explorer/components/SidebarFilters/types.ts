@@ -1,3 +1,5 @@
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
+
 export type FilterOptionItem = {
   label: string;
   amount: number;
@@ -51,4 +53,8 @@ export type FilterConstraints = {
   [FilterCategory.Categories]: string[];
   [FilterCategory.License]: string[];
   [FilterCategory.LanguageOrFramework]: string[];
+};
+
+export type SidebarFiltersProps = PropsOf<'div'> & {
+  onConstraintsChange: (constraints: FilterConstraints) => void;
 };

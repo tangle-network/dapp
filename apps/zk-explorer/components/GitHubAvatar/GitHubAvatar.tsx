@@ -21,7 +21,7 @@ const GitHubAvatar: FC<GitHubAvatarProps> = ({
       case 'lg':
         return 32;
       default:
-        throw Error(`Invalid size`);
+        return 24;
     }
   }, [size]);
 

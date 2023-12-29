@@ -1,11 +1,27 @@
 import { type FC } from 'react';
-import { Chip, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Chip,
+  Typography,
+  SkeletonLoader,
+} from '@webb-tools/webb-ui-components';
 import { CheckLineIcon, ShieldedCheckLineIcon } from '@webb-tools/icons';
 
 import GitHubIconWithLink from '../../../../components/GitHubIconWithLink';
 import type { CircuitItemFileType } from '../../../../server';
 
-const Header: FC<{ activeFile: CircuitItemFileType }> = ({ activeFile }) => {
+interface HeaderProps {
+  activeFile?: CircuitItemFileType;
+}
+
+const Header: FC<HeaderProps> = ({ activeFile }) => {
+  if (!activeFile) {
+    return (
+      <div className="p-3 flex items-center justify-between border-b border-mono-180">
+        <SkeletonLoader size="lg" />
+      </div>
+    );
+  }
+
   const { fullPath, isTrustedSetup, gitHubUrl } = activeFile;
 
   return (

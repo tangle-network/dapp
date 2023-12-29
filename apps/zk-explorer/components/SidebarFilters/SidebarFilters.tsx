@@ -1,17 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 import { Typography, CheckBox, Chip } from '@webb-tools/webb-ui-components';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { cloneDeep } from 'lodash';
 import {
   FilterCategory,
   FilterCategoryItem,
   FilterConstraints,
   FilterOptionItem,
+  type SidebarFiltersProps,
 } from './types';
-
-export type SidebarFiltersProps = PropsOf<'div'> & {
-  onConstraintsChange: (constraints: FilterConstraints) => void;
-};
 
 export const SidebarFilters: FC<SidebarFiltersProps> = ({
   onConstraintsChange,
