@@ -1,11 +1,9 @@
-'use client';
-
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { CheckCircledIcon, CircleIcon } from '@radix-ui/react-icons';
 import { ChevronDown, FilterIcon2 } from '@webb-tools/icons';
 import {
   Button,
   Dropdown,
-  DropdownBasicButton,
   DropdownBody,
   MenuItem,
   Typography,
@@ -99,7 +97,7 @@ export const CardTabs: FC<CardTabsProps> = ({
         <div className="flex items-center md:ml-auto w-full">
           <Dropdown className="flex justify-end w-full">
             <div className="flex gap-2 w-full sm:w-auto">
-              <DropdownBasicButton className="w-full sm:w-auto">
+              <DropdownMenuPrimitive.Trigger className="w-full sm:w-auto">
                 <Button
                   size="sm"
                   variant="utility"
@@ -117,7 +115,7 @@ export const CardTabs: FC<CardTabsProps> = ({
                     {sortByClause}
                   </Typography>
                 </Button>
-              </DropdownBasicButton>
+              </DropdownMenuPrimitive.Trigger>
 
               <Button
                 size="sm"

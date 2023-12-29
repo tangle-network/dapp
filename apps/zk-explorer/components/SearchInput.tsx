@@ -3,7 +3,7 @@ import { Input } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
 import { useSearchParams } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -90,10 +90,13 @@ export const SearchInput: FC<SearchInputProps> = ({
     }
   };
 
-  const searchQueryPlaceholder =
-    breakpoint >= TailwindBreakpoint.SM
-      ? 'Search projects and circuits for specific keywords...'
-      : 'Search projects and circuits...';
+  const searchQueryPlaceholder = useMemo(
+    () =>
+      breakpoint >= TailwindBreakpoint.SM
+        ? 'Search projects and circuits for specific keywords...'
+        : 'Search projects and circuits...',
+    [breakpoint]
+  );
 
   const isHomepageVariantClass = isHomepageVariant
     ? 'rounded-[50px] border-none'

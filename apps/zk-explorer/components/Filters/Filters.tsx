@@ -1,11 +1,9 @@
-'use client';
-
 import { Close } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
 import { cloneDeep } from 'lodash';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 import { fetchFilterOptions } from '../../utils/api';
@@ -42,29 +40,28 @@ export const Filters: FC<FiltersProps> = ({
       .catch(() => setCategories(MOCK_CATEGORIES));
   }, []);
 
-  const handleOptionCheckboxChange = (
-    isChecked: boolean,
-    category: string,
-    label: string
-  ) => {
-    const updatedConstraints: FilterConstraints = cloneDeep(constraints);
+  const handleOptionCheckboxChange = useCallback(
+    (isChecked: boolean, category: string, label: string) => {
+      const updatedConstraints: FilterConstraints = cloneDeep(constraints);
 
-    if (!(category in updatedConstraints)) {
-      updatedConstraints[category] = [];
-    }
+      if (!(category in updatedConstraints)) {
+        updatedConstraints[category] = [];
+      }
 
-    if (isChecked) {
-      updatedConstraints[category].push(label);
-    } else {
-      updatedConstraints[category].splice(
-        updatedConstraints[category].indexOf(label),
-        1
-      );
-    }
+      if (isChecked) {
+        updatedConstraints[category].push(label);
+      } else {
+        updatedConstraints[category].splice(
+          updatedConstraints[category].indexOf(label),
+          1
+        );
+      }
 
-    onConstraintsChange(updatedConstraints);
-    setConstraints(updatedConstraints);
-  };
+      onConstraintsChange(updatedConstraints);
+      setConstraints(updatedConstraints);
+    },
+    [constraints, onConstraintsChange, setConstraints]
+  );
 
   return (
     <div {...rest} className={twMerge('flex flex-col gap-9', className)}>

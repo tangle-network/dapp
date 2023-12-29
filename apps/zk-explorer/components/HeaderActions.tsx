@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
@@ -34,7 +34,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
   const breakpoint = useTailwindBreakpoint();
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
 
-  const prepareAndShowSearchSidebar = () => {
+  const prepareAndShowSearchSidebar = useCallback(() => {
     updateSidebarContent(
       <div className="flex flex-col gap-4">
         <SidebarCloseButton isRightmost setSidebarOpen={setSidebarOpen} />
@@ -44,7 +44,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
     );
 
     setSidebarOpen(true);
-  };
+  }, [setSidebarOpen, updateSidebarContent]);
 
   return (
     <div
@@ -72,7 +72,7 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
           <Search
             className="cursor-pointer"
             size="lg"
-            onClick={() => prepareAndShowSearchSidebar()}
+            onClick={prepareAndShowSearchSidebar}
           />
         )}
 

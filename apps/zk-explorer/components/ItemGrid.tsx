@@ -2,7 +2,7 @@ import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { ItemType, PageUrl } from '../utils/utils';
 import { CircuitCard } from './CircuitCard/CircuitCard';
 import { CircuitItem } from './CircuitCard/types';
@@ -21,7 +21,11 @@ export const ItemGrid: FC<CardGridProps> = ({
   circuits,
   ...rest
 }) => {
-  const items = selectedItemType === ItemType.Project ? projects : circuits;
+  const items = useMemo(
+    () => (selectedItemType === ItemType.Project ? projects : circuits),
+    [selectedItemType, projects, circuits]
+  );
+
   const wereResultsFound = items.length > 0;
 
   return wereResultsFound ? (
