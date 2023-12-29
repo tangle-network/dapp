@@ -10,10 +10,10 @@ export const InfoIconWithTooltip: FC<InfoIconWithTooltipProps> = ({
   return (
     <IconWithTooltip
       overrideTooltipBodyProps={{
-        className: 'max-w-[300px]',
+        className: 'max-w-[200px]',
       }}
       icon={<InformationLine className="fill-mono-140 dark:fill-mono-40" />}
-      content={content}
+      content={<p className="break-normal max-w-max">{content}</p>}
     />
   );
 };
