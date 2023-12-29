@@ -3,13 +3,15 @@ import {
   ProjectGitHubInfoContainer,
   ProjectHeaderContainer,
   RelatedProjectsContainer,
-} from '../../../containers';
-import { Header } from '../../../components/Header';
+} from '../../../../containers';
+import { Header } from '../../../../components/Header';
 
-export default function ProjectPage({ params }: { params: { slug: string } }) {
-  // const projectId = params.slug;
-
-  // TODO: Handle invalid project id, return 404
+export default function ProjectPage({
+  params,
+}: {
+  params: { slug: { owner: string; name: string } };
+}) {
+  // TODO: Handle invalid project's owner and name
 
   return (
     <main className="space-y-6">

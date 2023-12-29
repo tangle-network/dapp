@@ -29,7 +29,9 @@ const RelatedProjectsCarousel: FC<{ projects: ProjectItem[] }> = ({
   const projectsCmp = useMemo(() => {
     return projects.map((project, idx) => (
       <SwiperSlide key={idx}>
-        <Link href="#">
+        <Link
+          href={`/project/${project.repositoryOwner}/${project.repositoryName}`}
+        >
           <ProjectCard {...project} />
         </Link>
       </SwiperSlide>

@@ -26,7 +26,7 @@ export const ItemGrid: FC<CardGridProps> = ({
     [selectedItemType, projects, circuits]
   );
 
-  const wereResultsFound = items.length > 0;
+  const wereResultsFound = useMemo(() => items.length > 0, [items]);
 
   return wereResultsFound ? (
     <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
@@ -34,7 +34,7 @@ export const ItemGrid: FC<CardGridProps> = ({
         ? projects.map((project, index) => (
             <Link
               key={index}
-              href={`/@${project.repositoryOwner}/${project.repositoryName}`}
+              href={`project/@${project.repositoryOwner}/${project.repositoryName}`}
             >
               <ProjectCard {...project} />
             </Link>
