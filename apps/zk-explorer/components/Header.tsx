@@ -12,7 +12,7 @@ import Link from 'next/link';
 export const Header: FC<unknown> = () => {
   return (
     <header className="py-4 flex flex-col-reverse sm:flex-row justify-between gap-4">
-      {/* TODO now: Base breadcrumbs on the pathname */}
+      {/* TODO: Base breadcrumbs on the pathname */}
       <Breadcrumbs>
         <Link href={PageUrl.Home}>
           <BreadcrumbsItem icon={<CircleIcon />}>

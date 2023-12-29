@@ -11,6 +11,7 @@ export default async function Summary() {
   return (
     <div className="markdown-body p-6">
       {/* TODO: Consider using GitHub API when integrating instead of react-markdown to get the best result */}
+      {/* https://docs.github.com/en/rest/markdown/markdown#render-a-markdown-document */}
       <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
         {readMeRawMd}
       </Markdown>
