@@ -22,13 +22,14 @@ import {
   getMockProjects,
   validateSearchQuery,
 } from '../utils/utils';
-import { CardTabs } from './CardTabs';
 import { CircuitItem } from './CircuitCard/types';
+import { FilterAndSortBy } from './FilterAndSortBy';
 import { Filters } from './Filters/Filters';
 import { ItemGrid } from './ItemGrid';
 import { LinkCard } from './LinkCard';
 import { ProjectItem } from './ProjectCard/types';
 import { SearchInput } from './SearchInput';
+import { Tabs } from './Tabs';
 
 export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();
@@ -40,7 +41,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
     useState<number>(0);
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
     useState<number>(0);
-  const [selectedItemType, setSelectedItemType] = useState(ItemType.Project);
+  const [selectedTabIndex, setSelectedItemType] = useState(0);
 
   const initialSearchQuery =
     useSearchParams().get(SearchParamKey.SearchQuery) ?? '';
@@ -52,6 +53,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
   );
 
   const DEFAULT_PAGE_NUMBER = 1;
+  const PROJECTS_TAB_INDEX = 0;
 
   const initialPaginationPage = useSearchParams().get(
     SearchParamKey.PaginationPageNumber
@@ -86,7 +88,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
 
   const fetchItems = useCallback(
     (query: string) => {
-      if (selectedItemType === ItemType.Project) {
+      if (selectedTabIndex === PROJECTS_TAB_INDEX) {
         searchProjects(constraints, query, paginationPage, sortByClause)
           // Temporarily use mock data until we have a backend.
           .catch(() => getMockProjects())
@@ -94,7 +96,9 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
             setProjects(response.projects);
             setProjectSearchResultCount(response.resultCount);
           });
-      } else {
+      }
+      // If it's not the projects tab, it's the circuits tab.
+      else {
         searchCircuits(constraints, query, paginationPage, sortByClause)
           // TODO: Temporarily use mock data until we have a backend.
           .catch(getMockCircuits)
@@ -104,7 +108,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
           });
       }
     },
-    [constraints, paginationPage, selectedItemType, sortByClause]
+    [constraints, paginationPage, selectedTabIndex, sortByClause]
   );
 
   // Fetch items when the search query changes.
@@ -176,26 +180,43 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
         </div>
 
         <div className="w-full">
-          <CardTabs
+          <Tabs
             sortByClause={sortByClause}
-            selectedTab={selectedItemType}
-            onTabChange={(cardType) => setSelectedItemType(cardType)}
+            selectedTabIndex={selectedTabIndex}
+            onTabChange={(_tab, index) => setSelectedItemType(index)}
             onSortByClauseChange={(sortByClause) =>
               setSortByClause(sortByClause)
             }
             onConstraintsChange={(newConstraints) =>
               setConstraints(newConstraints)
             }
-            counts={{
-              [ItemType.Project]: projectSearchResultCount,
-              [ItemType.Circuit]: circuitSearchResultCount,
-            }}
+            rightContent={
+              <FilterAndSortBy
+                sortByClause={sortByClause}
+                onConstraintsChange={setConstraints}
+                onSortByClauseChange={setSortByClause}
+              />
+            }
+            tabs={[
+              {
+                name: 'Projects',
+                count: projectSearchResultCount,
+              },
+              {
+                name: 'Circuits',
+                count: circuitSearchResultCount,
+              },
+            ]}
           />
 
           <ItemGrid
             projects={projects}
             circuits={circuits}
-            selectedItemType={selectedItemType}
+            selectedItemType={
+              selectedTabIndex === PROJECTS_TAB_INDEX
+                ? ItemType.Project
+                : ItemType.Circuit
+            }
           />
 
           <Pagination
