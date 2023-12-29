@@ -1,6 +1,7 @@
 'use client';
 
 import { type FC, ComponentProps, useMemo } from 'react';
+import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
 import 'swiper/css';
@@ -28,7 +29,9 @@ const RelatedProjectsCarousel: FC<{ projects: ProjectItem[] }> = ({
   const projectsCmp = useMemo(() => {
     return projects.map((project, idx) => (
       <SwiperSlide key={idx}>
-        <ProjectCard {...project} />
+        <Link href="#">
+          <ProjectCard {...project} />
+        </Link>
       </SwiperSlide>
     ));
   }, [projects]);

@@ -4,6 +4,7 @@ import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { TwitterFill, DiscordFill, GlobalLine } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
 
+import { SmallChip } from '../../components/SmallChip';
 import GitHubIconWithLink from '../../components/GitHubIconWithLink';
 import { getProjectHeaderContainerData } from '../../server';
 
@@ -48,14 +49,7 @@ export default async function ProjectHeaderContainer({
       {/* Tags */}
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          // TODO: Replace this with chip component (Yuri's working on that)
-          <Chip
-            key={tag}
-            color="grey"
-            className="bg-mono-140 py-1 px-2 !text-mono-0"
-          >
-            {tag}
-          </Chip>
+          <SmallChip key={tag}>{tag}</SmallChip>
         ))}
       </div>
     </div>

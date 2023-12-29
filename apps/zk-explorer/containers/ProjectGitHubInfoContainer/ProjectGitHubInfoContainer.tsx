@@ -15,6 +15,7 @@ import {
 import type { IconBase } from '@webb-tools/icons/types';
 
 import { GitHubAvatar } from '../../components/GitHubAvatar';
+import { SmallChip } from '../../components/SmallChip';
 import { getProjectGitHubInfoContainerData } from '../../server';
 
 interface ProjectGitHubInfoContainerProps {
@@ -73,14 +74,7 @@ export default async function ProjectGitHubInfoContainer({
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
-            // TODO: Replace this with chip component (Yuri's working on that)
-            <Chip
-              key={tag}
-              color="grey"
-              className="bg-mono-140 py-1 px-2 !text-mono-0"
-            >
-              {tag}
-            </Chip>
+            <SmallChip key={tag}>{tag}</SmallChip>
           ))}
         </div>
       </div>
