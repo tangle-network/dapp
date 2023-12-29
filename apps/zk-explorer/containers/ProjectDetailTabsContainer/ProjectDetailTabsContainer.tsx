@@ -27,31 +27,33 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
     <div
       className={cx('dark:bg-mono-180 p-6 space-y-6 rounded-2xl', className)}
     >
-      <TabsRoot defaultValue={CIRCUITS_TAB}>
+      <TabsRoot defaultValue={CIRCUITS_TAB} className="h-[100%] flex flex-col">
         <TabsList aria-label="project-detail-tabs" className="mb-6">
           <TabTrigger value={CIRCUITS_TAB}>Circuits</TabTrigger>
           <TabTrigger value={SUMMARY_TAB}>Summary</TabTrigger>
           <TabTrigger value={TRUSTED_SETUP_TAB}>Trusted Setup</TabTrigger>
         </TabsList>
 
-        <div className="max-h-[900px] overflow-y-auto">
-          <TabContent value={CIRCUITS_TAB}>
-            <Suspense fallback={<SectionSkeletonLoader />}>
-              <Circuits />
-            </Suspense>
-          </TabContent>
+        <div className="grow relative bg-mono-200 rounded-2xl">
+          <div className="absolute top-0 bottom-0 left-0 right-0 overflow-y-auto">
+            <TabContent value={CIRCUITS_TAB}>
+              <Suspense fallback={<SectionSkeletonLoader />}>
+                <Circuits />
+              </Suspense>
+            </TabContent>
 
-          <TabContent value={SUMMARY_TAB}>
-            <Suspense fallback={<SectionSkeletonLoader />}>
-              <Summary />
-            </Suspense>
-          </TabContent>
+            <TabContent value={SUMMARY_TAB}>
+              <Suspense fallback={<SectionSkeletonLoader />}>
+                <Summary />
+              </Suspense>
+            </TabContent>
 
-          <TabContent value={TRUSTED_SETUP_TAB}>
-            <Suspense fallback={<SectionSkeletonLoader />}>
-              <TrustedSetup />
-            </Suspense>
-          </TabContent>
+            <TabContent value={TRUSTED_SETUP_TAB}>
+              <Suspense fallback={<SectionSkeletonLoader />}>
+                <TrustedSetup />
+              </Suspense>
+            </TabContent>
+          </div>
         </div>
       </TabsRoot>
     </div>

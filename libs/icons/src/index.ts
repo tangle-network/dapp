@@ -22,6 +22,7 @@ export * from './CheckboxBlankCircleLine';
 export * from './CheckboxCircleFill';
 export * from './CheckboxCircleLine';
 export * from './CheckboxFill';
+export { default as CheckLineIcon } from './CheckLineIcon';
 export * from './ChevronDown';
 export * from './ChevronLeft';
 export * from './ChevronRight';
