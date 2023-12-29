@@ -1,14 +1,10 @@
 import type { FC } from 'react';
 import cx from 'classnames';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
-import {
-  GithubFill,
-  TwitterFill,
-  DiscordFill,
-  GlobalLine,
-} from '@webb-tools/icons';
+import { TwitterFill, DiscordFill, GlobalLine } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
 
+import GitHubIconWithLink from '../../components/GitHubIconWithLink';
 import { getProjectHeaderContainerData } from '../../server';
 
 interface ProjectHeaderContainerProps {
@@ -32,9 +28,7 @@ export default async function ProjectHeaderContainer({
             <Typography variant="h4" fw="bold" className="!text-mono-0">
               {name}
             </Typography>
-            <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-              <GithubFill size="lg" />
-            </a>
+            <GitHubIconWithLink href={githubUrl} size="lg" />
           </div>
 
           {/* Owner */}

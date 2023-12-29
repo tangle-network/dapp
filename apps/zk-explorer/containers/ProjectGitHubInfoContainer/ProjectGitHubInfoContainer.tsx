@@ -53,7 +53,7 @@ export default async function ProjectGitHubInfoContainer({
       className={cx('dark:bg-mono-180 p-6 space-y-6 rounded-2xl', className)}
     >
       {/* Image */}
-      <div>
+      <div className="hidden lg:block">
         <Image
           src={avatarUrl}
           width={200}
