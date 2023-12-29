@@ -41,7 +41,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
     useState<number>(0);
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
     useState<number>(0);
-  const [selectedTabIndex, setSelectedItemType] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const initialSearchQuery =
     useSearchParams().get(SearchParamKey.SearchQuery) ?? '';
@@ -181,15 +181,8 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
 
         <div className="w-full">
           <Tabs
-            sortByClause={sortByClause}
-            selectedTabIndex={selectedTabIndex}
-            onTabChange={(_tab, index) => setSelectedItemType(index)}
-            onSortByClauseChange={(sortByClause) =>
-              setSortByClause(sortByClause)
-            }
-            onConstraintsChange={(newConstraints) =>
-              setConstraints(newConstraints)
-            }
+            initiallySelectedTabIndex={PROJECTS_TAB_INDEX}
+            onTabChange={(_tab, index) => setSelectedTabIndex(index)}
             rightContent={
               <FilterAndSortBy
                 sortByClause={sortByClause}
