@@ -97,7 +97,10 @@ export const CardTabs: FC<CardTabsProps> = ({
         <div className="flex items-center md:ml-auto w-full">
           <Dropdown className="flex justify-end w-full">
             <div className="flex gap-2 w-full sm:w-auto">
-              <DropdownMenuPrimitive.Trigger className="w-full sm:w-auto">
+              <DropdownMenuPrimitive.Trigger
+                asChild
+                className="w-full sm:w-auto"
+              >
                 <Button
                   size="sm"
                   variant="utility"
