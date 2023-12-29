@@ -8,7 +8,7 @@ import {
   MenuItem,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
@@ -40,7 +40,7 @@ export const CardTabs: FC<CardTabsProps> = ({
   const breakpoint = useTailwindBreakpoint();
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
 
-  const prepareAndShowMobileSidebar = () => {
+  const prepareAndShowMobileSidebar = useCallback(() => {
     updateSidebarContent(
       <Filters
         onConstraintsChange={onConstraintsChange}
@@ -50,7 +50,7 @@ export const CardTabs: FC<CardTabsProps> = ({
     );
 
     setSidebarOpen(true);
-  };
+  }, [setSidebarOpen, updateSidebarContent, onConstraintsChange]);
 
   return (
     <>
@@ -125,7 +125,7 @@ export const CardTabs: FC<CardTabsProps> = ({
                 variant="utility"
                 className="sm:hidden w-full"
                 isFullWidth
-                onClick={() => prepareAndShowMobileSidebar()}
+                onClick={prepareAndShowMobileSidebar}
                 rightIcon={
                   <FilterIcon2 className="dark:fill-blue-50" size="lg" />
                 }
