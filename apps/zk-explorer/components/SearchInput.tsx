@@ -98,11 +98,15 @@ export const SearchInput: FC<SearchInputProps> = ({
     [breakpoint]
   );
 
-  const isHomepageVariantClass = isHomepageVariant
-    ? 'rounded-[50px] border-none'
-    : '';
+  const isHomepageVariantClass = useMemo(
+    () => (isHomepageVariant ? 'rounded-[50px] border-none' : ''),
+    [isHomepageVariant]
+  );
 
-  const iconIsHomepageVariantClass = isHomepageVariant ? 'mr-4' : undefined;
+  const iconIsHomepageVariantClass = useMemo(
+    () => (isHomepageVariant ? 'mr-4' : undefined),
+    [isHomepageVariant]
+  );
 
   return (
     <Input
