@@ -10,22 +10,18 @@ import 'swiper/css/pagination';
 import { ProjectCard } from '../../../components/ProjectCard/ProjectCard';
 import type { ProjectItem } from '../../../components/ProjectCard/types';
 
+const sharedSwiperProps = {
+  spaceBetween: 20,
+  pagination: {
+    clickable: true,
+  },
+  navigation: true,
+  modules: [Pagination],
+} satisfies ComponentProps<typeof Swiper>;
+
 const RelatedProjectsCarousel: FC<{ projects: ProjectItem[] }> = ({
   projects,
 }) => {
-  const sharedSwiperProps = useMemo(
-    () =>
-      ({
-        spaceBetween: 20,
-        pagination: {
-          clickable: true,
-        },
-        navigation: true,
-        modules: [Pagination],
-      } satisfies ComponentProps<typeof Swiper>),
-    []
-  );
-
   const projectsCmp = useMemo(() => {
     return projects.map((project, idx) => (
       <SwiperSlide key={idx}>
