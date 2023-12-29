@@ -1,3 +1,4 @@
+import { Button } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { MouseEventHandler } from 'react';
 
@@ -12,7 +13,7 @@ export type GitHubOAuthErrorParams = {
   state: string | null;
 };
 
-export type GitHubOAuthButtonProps = PropsOf<'button'> & {
+export type GitHubOAuthButtonProps = PropsOf<typeof Button> & {
   clientId: string;
   redirectUri?: string;
   scope: string;
@@ -31,7 +32,7 @@ export type GitHubOAuthButtonProps = PropsOf<'button'> & {
   /**
    * The username of the user that is signed in.
    *
-   * If this is `undefined`, the button will display "Sign in with GitHub",
+   * If this is `undefined`, the button will display "Sign In",
    * and the user will be considered to be signed out.
    */
   username?: string;

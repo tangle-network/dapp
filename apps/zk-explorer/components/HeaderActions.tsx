@@ -5,14 +5,19 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { GitHubOAuthButton } from './GitHubOAuthButton';
-import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
-import { FC } from 'react';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useSidebarContext } from '../hooks/useSidebarContext';
+import useTailwindBreakpoint, {
+  TailwindBreakpoint,
+} from '../hooks/useTailwindBreakpoint';
+import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
+import { GitHubOAuthButton } from './GitHubOAuthButton';
+import { SearchInput } from './SearchInput';
+import { SidebarCloseButton } from './SidebarCloseButton';
 
 export type HeaderActionsProps = PropsOf<'div'> & {
   doHideSearchBar?: boolean;
@@ -21,26 +26,39 @@ export type HeaderActionsProps = PropsOf<'div'> & {
 export const HeaderActions: FC<HeaderActionsProps> = ({
   className,
   doHideSearchBar,
+  ...rest
 }) => {
-  // TODO: should throw error when client id is empty
+  // TODO: Should throw error when client id is empty.
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID ?? '';
+
+  const breakpoint = useTailwindBreakpoint();
+  const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
+
+  const prepareAndShowSearchSidebar = useCallback(() => {
+    updateSidebarContent(
+      <div className="flex flex-col gap-4">
+        <SidebarCloseButton isRightmost setSidebarOpen={setSidebarOpen} />
+
+        <SearchInput doesRedirect id="sidebar mobile search" />
+      </div>
+    );
+
+    setSidebarOpen(true);
+  }, [setSidebarOpen, updateSidebarContent]);
 
   return (
     <div
+      {...rest}
       className={twMerge(
-        'flex flex-col sm:flex-row gap-4 md:gap-2 md:ml-auto items-start md:items-center',
+        'flex flex-col items-end sm:flex-row justify-between sm:items-start md:items-center gap-4 md:gap-2',
         className
       )}
     >
-      {!doHideSearchBar && (
-        <Input
-          id="search item"
-          placeholder="Search projects & circuits"
-          rightIcon={<Search />}
-        />
+      {!doHideSearchBar && breakpoint > TailwindBreakpoint.SM && (
+        <SearchInput doesRedirect id="desktop search" />
       )}
 
-      <div className="flex">
+      <div className="flex gap-2 items-center">
         {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
         <GitHubOAuthButton
           clientId={githubOAuthClientId}
@@ -49,9 +67,18 @@ export const HeaderActions: FC<HeaderActionsProps> = ({
           onOAuthSuccess={handleOAuthSuccess}
         />
 
-        <Dropdown className="flex items-center justify-center">
+        {/* Mobile search button */}
+        {!doHideSearchBar && breakpoint <= TailwindBreakpoint.SM && (
+          <Search
+            className="cursor-pointer"
+            size="lg"
+            onClick={prepareAndShowSearchSidebar}
+          />
+        )}
+
+        <Dropdown className="relative flex items-center justify-center">
           <DropdownBasicButton>
-            <ThreeDotsVerticalIcon size="lg" />
+            <ThreeDotsVerticalIcon className="fill-mono-0" size="lg" />
           </DropdownBasicButton>
 
           <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">

@@ -1,16 +1,16 @@
+import assert from 'assert';
+import { CircuitItem } from '../components/CircuitCard/types';
+import {
+  GitHubOAuthErrorParams,
+  GitHubOAuthSuccessParams,
+} from '../components/GitHubOAuthButton/types';
+import { ProjectItem } from '../components/ProjectCard/types';
 import {
   CircuitSearchResponseData,
   ProjectSearchResponseData,
   exchangeAuthCodeForOAuthToken,
   submitProject,
 } from './api';
-import {
-  GitHubOAuthErrorParams,
-  GitHubOAuthSuccessParams,
-} from '../components/GitHubOAuthButton/types';
-import assert from 'assert';
-import { ProjectItem } from '../components/ProjectCard/types';
-import { CircuitItem } from '../components/CircuitCard/types';
 
 export enum ItemType {
   Project = 'Project',
@@ -20,6 +20,12 @@ export enum ItemType {
 export enum PageUrl {
   Home = '/',
   SubmitProject = '/submit',
+}
+
+export enum SearchParamKey {
+  SearchQuery = 'q',
+  PaginationPageNumber = 'page',
+  Filters = 'filters',
 }
 
 const ITEMS_PER_PAGE = 12;
@@ -170,7 +176,7 @@ export function getMockCircuits(): CircuitSearchResponseData {
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
     stargazerCount: 123,
-    locks: 456,
+    constraintCount: 456,
   };
 
   const mockCircuits = [];
@@ -183,4 +189,30 @@ export function getMockCircuits(): CircuitSearchResponseData {
     circuits: mockCircuits,
     resultCount: mockCircuits.length,
   };
+}
+
+export function setSearchParam(key: SearchParamKey, value: string | null) {
+  const updatedSearchParams = new URLSearchParams(window.location.search);
+
+  if (value === null) {
+    updatedSearchParams.delete(key);
+  } else {
+    updatedSearchParams.set(key, value);
+  }
+
+  const newUrl = `${window.location.pathname}?${updatedSearchParams}`;
+
+  window.history.pushState({}, '', newUrl);
+}
+
+export function validateSearchQuery(searchQuery: string | null): boolean {
+  const MIN_SEARCH_QUERY_LENGTH = 3;
+
+  // A small query length can yield too many results. Let's
+  // wait until the user has typed a more more specific query.
+  return (
+    searchQuery !== null &&
+    searchQuery.length > 0 &&
+    searchQuery.length >= MIN_SEARCH_QUERY_LENGTH
+  );
 }

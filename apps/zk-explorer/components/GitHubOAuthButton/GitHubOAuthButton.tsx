@@ -1,40 +1,54 @@
 'use client';
 
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { GithubFill } from '@webb-tools/icons';
-import { twMerge } from 'tailwind-merge';
-import { FC, MouseEventHandler, useEffect } from 'react';
+import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
 import { GitHubOAuthButtonProps } from './types';
+import { twMerge } from 'tailwind-merge';
 
-export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
-  const isSignedIn = props.username !== undefined;
+export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
+  onClick,
+  username,
+  onSignedInClick,
+  redirectUri,
+  clientId,
+  scope,
+  state,
+  doInterceptOauthRedirect,
+  onOAuthError,
+  onOAuthSuccess,
+  className,
+  ...rest
+}) => {
+  const isSignedIn = username !== undefined;
 
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-    if (props.onClick !== undefined) {
-      props.onClick(e);
-    }
-
-    if (isSignedIn) {
-      if (props.onSignedInClick !== undefined) {
-        props.onSignedInClick(e);
+  const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      if (onClick !== undefined) {
+        onClick(e);
       }
-    } else {
-      const authUrl = new URL('https://github.com/login/oauth/authorize');
-      const finalRedirectUri = props.redirectUri ?? window.location.href;
 
-      authUrl.searchParams.append('client_id', props.clientId);
-      authUrl.searchParams.append('redirect_uri', finalRedirectUri);
-      authUrl.searchParams.append('scope', props.scope);
+      if (isSignedIn) {
+        if (onSignedInClick !== undefined) {
+          onSignedInClick(e);
+        }
+      } else {
+        const authUrl = new URL('https://github.com/login/oauth/authorize');
+        const finalRedirectUri = redirectUri ?? window.location.href;
 
-      if (props.state !== undefined) {
-        authUrl.searchParams.append('state', props.state);
+        authUrl.searchParams.append('client_id', clientId);
+        authUrl.searchParams.append('redirect_uri', finalRedirectUri);
+        authUrl.searchParams.append('scope', scope);
+
+        if (state !== undefined) {
+          authUrl.searchParams.append('state', state);
+        }
+
+        window.location.href = authUrl.toString();
       }
-
-      window.location.href = authUrl.toString();
-    }
-  };
-
-  const { doInterceptOauthRedirect, onOAuthSuccess, onOAuthError } = props;
+    },
+    [isSignedIn, clientId, scope, state, redirectUri, onClick, onSignedInClick]
+  );
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.
   // Handle possible GitHub OAuth redirect and error query parameters.
@@ -60,31 +74,28 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
     }
   }, [doInterceptOauthRedirect, onOAuthSuccess, onOAuthError]);
 
-  const colors = isSignedIn
+  const signedInClassName = isSignedIn
     ? twMerge(
-        'bg-mono-0/10 border-mono-60',
-        'hover:bg-mono-0/30',
-        'dark:bg-mono-0/5 dark:border-mono-140',
-        'dark:hover:bg-mono-0/10',
-        props.className
+        'border-mono-60 dark:border-mono-120 hover:dark:border-mono-120',
+        'hover:bg-mono-0/30 dark:bg-mono-140 dark:hover:bg-mono-160'
       )
-    : twMerge('dark:bg-mono-20 dark:text-mono-140');
+    : '';
 
-  const textColor = isSignedIn ? 'dark:text-mono-180' : 'dark:text-mono-140';
+  const textColor = isSignedIn
+    ? 'dark:text-mono-0'
+    : 'text-mono-0 dark:text-mono-140';
 
   const iconFillColor = isSignedIn
-    ? 'dark:fill-mono-180'
-    : 'dark:fill-mono-140';
+    ? 'dark:fill-mono-0'
+    : 'fill-mono-0 dark:fill-mono-140';
+
+  const themeClasses = 'border-mono-140';
 
   return (
-    <button
-      {...props}
-      type="button"
-      className={twMerge(
-        'rounded-full border-2 py-2 px-4',
-        colors,
-        props.className
-      )}
+    <Button
+      {...rest}
+      className={twMerge(signedInClassName, 'px-4', themeClasses, className)}
+      variant={isSignedIn ? 'secondary' : 'primary'}
       onClick={handleClick}
     >
       <div className="flex items-center gap-2">
@@ -96,9 +107,9 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = (props) => {
           fw="bold"
           component="p"
         >
-          {props.username ? `@${props.username}` : 'Sign in with GitHub'}
+          {username !== undefined ? `@${username}` : 'Sign In'}
         </Typography>
       </div>
-    </button>
+    </Button>
   );
 };

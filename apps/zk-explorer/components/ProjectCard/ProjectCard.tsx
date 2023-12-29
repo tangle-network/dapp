@@ -1,37 +1,42 @@
-import { Card, Typography, Chip } from '@webb-tools/webb-ui-components';
+import { Card, Typography, Avatar } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import Image from 'next/image';
 import assert from 'assert';
 import { StarIcon } from '@radix-ui/react-icons';
 import { ProjectItem } from './types';
+import { SmallChip } from '../SmallChip';
 
-export const ProjectCard: FC<ProjectItem> = (props) => {
+export const ProjectCard: FC<ProjectItem> = ({
+  ownerAvatarUrl,
+  repositoryOwner,
+  repositoryName,
+  description,
+  stargazerCount,
+  circuitCount,
+  contributorAvatarUrls,
+}) => {
   const MAX_CONTRIBUTOR_AVATAR_URLS = 4;
 
-  assert(props.circuitCount >= 0, 'Circuit count should never be negative.');
+  assert(circuitCount >= 0, 'Circuit count should never be negative.');
 
   return (
-    <Card className="flex flex-row gap-3 space-y-0 py-5 px-6">
+    <Card className="flex flex-row gap-3 space-y-0 py-5 px-6 shadow-sm dark:!bg-transparent dark:bg-glass-dark dark:hover:!bg-mono-180">
       <div>
-        {/* TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component. */}
-        <Image
-          alt={`${props.repositoryOwner}'s avatar`}
-          src={props.ownerAvatarUrl}
-          width={48}
-          height={48}
-          className="rounded-full bg-mono-200 shadow-md"
+        <Avatar
+          size="lg"
+          src={ownerAvatarUrl}
+          alt={`${repositoryOwner}'s avatar`}
+          className="shadow-md"
         />
       </div>
 
       <div className="w-full">
         <div className="flex">
           <Typography variant="body1" fw="bold" className="dark:text-mono-0">
-            {props.repositoryOwner}/{props.repositoryName}
+            {repositoryOwner}/{repositoryName}
           </Typography>
 
           <div className="flex items-center ml-auto">
-            <StarIcon className="mr-1 dark:text-mono-100" />{' '}
-            {props.stargazerCount}
+            <StarIcon className="mr-1 dark:text-mono-100" /> {stargazerCount}
           </div>
         </div>
 
@@ -41,7 +46,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
           className="dark:text-mono-100"
           component="p"
         >
-          {props.description}
+          {description}
         </Typography>
 
         <div className="flex flex-row w-full mt-2">
@@ -55,27 +60,21 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
             </Typography>
 
             <div className="flex items-center space-x-[-7px]">
-              {props.contributorAvatarUrls
+              {contributorAvatarUrls
                 .slice(0, MAX_CONTRIBUTOR_AVATAR_URLS)
                 .map((avatarUrl, index) => (
-                  // TODO: Likely there's a way to get Tailwind-dependent width & height values for the Image component.
-                  <Image
+                  <Avatar
                     key={index}
-                    alt="Contributor avatar"
                     src={avatarUrl}
-                    width={24}
-                    height={24}
-                    className="rounded-full bg-mono-200 border-[1px] border-mono-140 shadow-xl w-6 h-6"
+                    alt={`${repositoryName} contributor's avatar ${index}`}
+                    className="shadow-md"
                   />
                 ))}
 
-              {props.contributorAvatarUrls.length >
-                MAX_CONTRIBUTOR_AVATAR_URLS && (
-                <Chip color="grey" className="bg-mono-140 shadow-md px-2">
-                  +
-                  {props.contributorAvatarUrls.length -
-                    MAX_CONTRIBUTOR_AVATAR_URLS}
-                </Chip>
+              {contributorAvatarUrls.length > MAX_CONTRIBUTOR_AVATAR_URLS && (
+                <SmallChip>
+                  +{contributorAvatarUrls.length - MAX_CONTRIBUTOR_AVATAR_URLS}
+                </SmallChip>
               )}
             </div>
           </div>
@@ -89,9 +88,7 @@ export const ProjectCard: FC<ProjectItem> = (props) => {
               Circuits
             </Typography>
 
-            <Chip color="grey" className="bg-mono-140 px-2">
-              {props.circuitCount}
-            </Chip>
+            <SmallChip>{circuitCount}</SmallChip>
           </div>
         </div>
       </div>

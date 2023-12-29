@@ -1,12 +1,13 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { FC } from 'react';
-import { ItemType, PageUrl } from '../utils/utils';
-import { ProjectItem } from './ProjectCard/types';
-import { ProjectCard } from './ProjectCard/ProjectCard';
-import { CircuitItem } from './CircuitCard/types';
-import { CircuitCard } from './CircuitCard/CircuitCard';
 import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import Link from 'next/link';
+import { FC, useMemo } from 'react';
+import { ItemType, PageUrl } from '../utils/utils';
+import { CircuitCard } from './CircuitCard/CircuitCard';
+import { CircuitItem } from './CircuitCard/types';
+import { ProjectCard } from './ProjectCard/ProjectCard';
+import { ProjectItem } from './ProjectCard/types';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;
@@ -14,46 +15,51 @@ export type CardGridProps = PropsOf<'div'> & {
   circuits: CircuitItem[];
 };
 
-export const ItemGrid: FC<CardGridProps> = (props) => {
-  const items =
-    props.selectedItemType === ItemType.Project
-      ? props.projects
-      : props.circuits;
+export const ItemGrid: FC<CardGridProps> = ({
+  selectedItemType,
+  projects,
+  circuits,
+  ...rest
+}) => {
+  const items = useMemo(
+    () => (selectedItemType === ItemType.Project ? projects : circuits),
+    [selectedItemType, projects, circuits]
+  );
 
   const wereResultsFound = items.length > 0;
 
   return wereResultsFound ? (
     <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
-      {props.selectedItemType === ItemType.Project
-        ? props.projects.map((project, index) => (
-            <a
+      {selectedItemType === ItemType.Project
+        ? projects.map((project, index) => (
+            <Link
               key={index}
               href={`/@${project.repositoryOwner}/${project.repositoryName}`}
             >
               <ProjectCard {...project} />
-            </a>
+            </Link>
           ))
-        : props.circuits.map((circuit, index) => (
+        : circuits.map((circuit, index) => (
             // TODO: Need proper URL for circuits.
-            <a key={index} href={`/@${circuit.filename}`}>
+            <Link key={index} href={`/@${circuit.filename}`}>
               <CircuitCard {...circuit} />
-            </a>
+            </Link>
           ))}
     </div>
   ) : (
-    <div className="flex flex-col items-center h-full pt-16" {...props}>
+    <div className="flex flex-col items-center h-full py-16" {...rest}>
       <Search size="lg" className="mb-2" />
 
-      <Typography variant="h5" fw="bold">
-        No {props.selectedItemType.toLowerCase()}s found matching the search
-        criteria
+      <Typography variant="h5" fw="bold" className="text-center">
+        No {selectedItemType.toLowerCase()}s found matching the search criteria
       </Typography>
 
-      <Typography variant="body1" fw="normal">
+      <Typography variant="body1" fw="normal" className="text-center">
         Try adjusting your search constraints or
-        <Button className="inline" variant="link" href={PageUrl.SubmitProject}>
-          Submit a new project!
-        </Button>
+        <br />
+        <Link className="inline-block" href={PageUrl.SubmitProject}>
+          <Button variant="link">Submit a new project!</Button>
+        </Link>
       </Typography>
     </div>
   );

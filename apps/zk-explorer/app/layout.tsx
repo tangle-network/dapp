@@ -1,9 +1,9 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
+import { Footer } from '@webb-tools/webb-ui-components';
 import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
-import { Footer } from '@webb-tools/webb-ui-components';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -31,9 +31,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // TODO: Figure out what is injecting 'className="dark"' and 'style="colorScheme: 'dark"' to the html element, since it is producing a hydration error on the console. Might be coming from Webb UI library's theming-related logic.
   return (
     <html lang="en">
-      <body className="bg-body">
+      <body className="bg-body relative">
         <Providers>
           <div className="max-w-[1240px] mx-auto flex flex-col h-full min-h-screen px-4">
             {children}

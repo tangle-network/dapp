@@ -9,27 +9,28 @@ import { FC } from 'react';
 import { HeaderActions } from './HeaderActions';
 import { PageUrl } from '../utils/utils';
 import { CircleIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
 
 export const Header: FC<unknown> = () => {
   return (
-    <header className="py-4 flex flex-col sm:flex-row gap-4">
+    <header className="py-4 flex flex-col-reverse sm:flex-row justify-between gap-4">
       {/* TODO: Base breadcrumbs on the pathname */}
       <Breadcrumbs>
-        <a href={PageUrl.Home}>
+        <Link href={PageUrl.Home}>
           <BreadcrumbsItem icon={<CircleIcon />}>
             <Typography variant="body1" fw="bold">
               ZK Explorer
             </Typography>
           </BreadcrumbsItem>
-        </a>
+        </Link>
 
-        <a href={PageUrl.SubmitProject}>
+        <Link href={PageUrl.SubmitProject}>
           <BreadcrumbsItem icon={<CircleIcon />} isLast>
             <Typography variant="body1" fw="bold">
               Upload Project
             </Typography>
           </BreadcrumbsItem>
-        </a>
+        </Link>
       </Breadcrumbs>
 
       <HeaderActions />
