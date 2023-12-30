@@ -8,6 +8,7 @@ import { CircuitCard } from './CircuitCard/CircuitCard';
 import { CircuitItem } from './CircuitCard/types';
 import { ProjectCard } from './ProjectCard/ProjectCard';
 import { ProjectItem } from './ProjectCard/types';
+import { createProjectDetailPath } from 'apps/zk-explorer/utils';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;

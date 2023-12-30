@@ -194,7 +194,7 @@ export function getMockCircuits(): CircuitSearchResponseData {
 export function setSearchParam(key: SearchParamKey, value: string | null) {
   const updatedSearchParams = new URLSearchParams(window.location.search);
 
-  if (value === null) {
+  if (value === null || value === '') {
     updatedSearchParams.delete(key);
   } else {
     updatedSearchParams.set(key, value);
