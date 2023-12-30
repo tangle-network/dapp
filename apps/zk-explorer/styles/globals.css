@@ -3,8 +3,12 @@
   @apply !static;
 }
 
+.swiper-pagination-bullet {
+  @apply bg-mono-60 dark:bg-mono-140;
+}
+
 .swiper-pagination-bullet-active {
-  @apply !bg-blue-50;
+  @apply bg-mono-160 dark:bg-mono-0;
 }
 
 /* Override github-markdown-css */

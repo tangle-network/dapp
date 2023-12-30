@@ -9,6 +9,7 @@ import 'swiper/css/pagination';
 
 import { ProjectCard } from '../../../components/ProjectCard/ProjectCard';
 import type { ProjectItem } from '../../../components/ProjectCard/types';
+import { createProjectDetailPath } from '../../../utils';
 
 const sharedSwiperProps = {
   spaceBetween: 20,
@@ -26,7 +27,10 @@ const RelatedProjectsCarousel: FC<{ projects: ProjectItem[] }> = ({
     return projects.map((project, idx) => (
       <SwiperSlide key={idx}>
         <Link
-          href={`/project/${project.repositoryOwner}/${project.repositoryName}`}
+          href={createProjectDetailPath(
+            project.repositoryOwner,
+            project.repositoryName
+          )}
         >
           <ProjectCard {...project} />
         </Link>
