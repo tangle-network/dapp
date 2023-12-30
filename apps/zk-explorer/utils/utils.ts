@@ -17,7 +17,7 @@ export enum ItemType {
   Circuit = 'Circuit',
 }
 
-export enum PageUrl {
+export enum RelativePageUrl {
   Home = '/',
   SubmitProject = '/submit',
 }
@@ -135,7 +135,7 @@ export async function handleSubmitProject(
 
 // TODO: This is temporary, until the backend is implemented.
 export function getMockProjects(): ProjectSearchResponseData {
-  const mockProject: ProjectItem = {
+  const mockProjects = Array<ProjectItem>(ITEMS_PER_PAGE).fill({
     ownerAvatarUrl:
       'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
     repositoryOwner: 'webb',
@@ -144,22 +144,10 @@ export function getMockProjects(): ProjectSearchResponseData {
     circuitCount: 24,
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-    contributorAvatarUrls: [
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-    ],
-  };
-
-  for (let i = 0; i < 15; i++) {
-    mockProject.contributorAvatarUrls.push(
-      mockProject.contributorAvatarUrls[0]
-    );
-  }
-
-  const mockProjects = [];
-
-  for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-    mockProjects.push(mockProject);
-  }
+    contributorAvatarUrls: Array(15).fill(
+      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4'
+    ),
+  });
 
   return {
     projects: mockProjects,
@@ -169,7 +157,7 @@ export function getMockProjects(): ProjectSearchResponseData {
 
 // TODO: This is temporary, until the backend is implemented.
 export function getMockCircuits(): CircuitSearchResponseData {
-  const mockCircuit: CircuitItem = {
+  const mockCircuits = Array<CircuitItem>(ITEMS_PER_PAGE).fill({
     ownerAvatarUrl:
       'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
     filename: 'circuit.circom',
@@ -177,13 +165,7 @@ export function getMockCircuits(): CircuitSearchResponseData {
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
     stargazerCount: 123,
     constraintCount: 456,
-  };
-
-  const mockCircuits = [];
-
-  for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-    mockCircuits.push(mockCircuit);
-  }
+  });
 
   return {
     circuits: mockCircuits,

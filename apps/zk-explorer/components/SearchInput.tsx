@@ -9,7 +9,7 @@ import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
 import {
-  PageUrl,
+  RelativePageUrl,
   SearchParamKey,
   setSearchParam,
   validateSearchQuery,
@@ -72,7 +72,10 @@ export const SearchInput: FC<SearchInputProps> = ({
     // Only update the URL search param if the input will not
     // eventually redirect to the search page.
     if (doesRedirect && validateSearchQuery(newSearchQuery)) {
-      const searchPageUrl = new URL(PageUrl.Home, window.location.origin);
+      const searchPageUrl = new URL(
+        RelativePageUrl.Home,
+        window.location.origin
+      );
 
       // Attach the search query to the search page URL.
       searchPageUrl.searchParams.set(

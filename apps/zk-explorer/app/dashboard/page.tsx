@@ -1,5 +1,6 @@
 'use client';
 
+import { PlusIcon } from '@radix-ui/react-icons';
 import {
   Avatar,
   Button,
@@ -11,6 +12,7 @@ import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Header } from '../../components/Header';
 import { Tabs } from '../../components/Tabs';
+import { RelativePageUrl } from '../../utils';
 
 export default function Dashboard() {
   return (
@@ -19,6 +21,26 @@ export default function Dashboard() {
 
       <Tabs
         tabs={[{ name: 'Overview' }, { name: 'Settings' }, { name: 'Billing' }]}
+        rightContent={
+          <div className="flex gap-4">
+            <Button
+              size="sm"
+              variant="utility"
+              isFullWidth
+              className="w-full sm:w-auto"
+              rightIcon={<PlusIcon className="dark:fill-blue-50" />}
+              href={RelativePageUrl.SubmitProject}
+            >
+              <Typography
+                variant="body4"
+                fw="bold"
+                className="dark:text-blue-50 uppercase"
+              >
+                Upload Project
+              </Typography>
+            </Button>
+          </div>
+        }
       >
         <Tabs.Content>
           <OverviewTab />

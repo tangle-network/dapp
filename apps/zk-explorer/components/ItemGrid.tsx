@@ -1,14 +1,14 @@
 import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { createProjectDetailPath } from 'apps/zk-explorer/utils';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
-import { ItemType, PageUrl } from '../utils/utils';
+import { ItemType, RelativePageUrl } from '../utils/utils';
 import { CircuitCard } from './CircuitCard/CircuitCard';
 import { CircuitItem } from './CircuitCard/types';
 import { ProjectCard } from './ProjectCard/ProjectCard';
 import { ProjectItem } from './ProjectCard/types';
-import { createProjectDetailPath } from 'apps/zk-explorer/utils';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;
@@ -61,7 +61,7 @@ export const ItemGrid: FC<CardGridProps> = ({
       <Typography variant="body1" fw="normal" className="text-center">
         Try adjusting your search constraints or
         <br />
-        <Link className="inline-block" href={PageUrl.SubmitProject}>
+        <Link className="inline-block" href={RelativePageUrl.SubmitProject}>
           <Button variant="link">Submit a new project!</Button>
         </Link>
       </Typography>

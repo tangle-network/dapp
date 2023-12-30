@@ -1,12 +1,12 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { PageUrl } from '../utils/utils';
-import { FC } from 'react';
 import { Card } from '@webb-tools/webb-ui-components';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { RelativePageUrl } from '../utils/utils';
 
 export type LinkCardProps = PropsOf<'a'> & {
-  href: PageUrl;
+  href: RelativePageUrl;
 };
 
 export const LinkCard: FC<PropsOf<typeof Link>> = ({

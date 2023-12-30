@@ -19,11 +19,11 @@ import { GitHubOAuthButton } from './GitHubOAuthButton';
 import { SearchInput } from './SearchInput';
 import { SidebarCloseButton } from './SidebarCloseButton';
 
-export type HeaderActionsProps = PropsOf<'div'> & {
+export type HeaderControlsProps = PropsOf<'div'> & {
   doHideSearchBar?: boolean;
 };
 
-export const HeaderActions: FC<HeaderActionsProps> = ({
+export const HeaderControls: FC<HeaderControlsProps> = ({
   className,
   doHideSearchBar,
   ...rest

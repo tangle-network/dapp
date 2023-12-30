@@ -157,7 +157,8 @@ export const Tabs: TabsType = ({
           })}
         </div>
 
-        {rightContent}
+        {/* TODO: Fix not expanding to fill the minimum space required for its contents. */}
+        <div className="flex-grow">{rightContent}</div>
       </div>
 
       {enhancedChildren}

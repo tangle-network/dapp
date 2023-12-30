@@ -16,7 +16,7 @@ import {
 } from '../utils/api';
 import {
   ItemType,
-  PageUrl,
+  RelativePageUrl,
   SearchParamKey,
   getMockCircuits,
   getMockProjects,
@@ -138,7 +138,10 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
           id="homepage search"
         />
 
-        <Link href={PageUrl.SubmitProject} className="flex-grow sm:flex-grow-0">
+        <Link
+          href={RelativePageUrl.SubmitProject}
+          className="flex-grow sm:flex-grow-0"
+        >
           <Button isFullWidth={breakpoint <= TailwindBreakpoint.SM}>
             Upload Project
           </Button>
@@ -155,7 +158,10 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
             className="hidden sm:flex"
           />
 
-          <LinkCard className="hidden sm:block" href={PageUrl.SubmitProject}>
+          <LinkCard
+            className="hidden sm:block"
+            href={RelativePageUrl.SubmitProject}
+          >
             <div className="p-2 bg-mono-60 dark:bg-mono-120 rounded-full mb-6">
               <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
             </div>

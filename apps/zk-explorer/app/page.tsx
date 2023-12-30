@@ -1,5 +1,5 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { HeaderActions } from '../components/HeaderActions';
+import { HeaderControls } from '../components/HeaderControls';
 import { HomepageInteractiveContents } from '../components/HomepageInteractiveContents';
 
 export default function Index() {
@@ -15,7 +15,7 @@ export default function Index() {
         <div className="absolute inset-0 opacity-20 bg-black"></div>
 
         <div className="relative flex flex-col items-end my-4 px-4">
-          <HeaderActions doHideSearchBar />
+          <HeaderControls doHideSearchBar />
         </div>
 
         <div className="relative space-y-4 px-5">
