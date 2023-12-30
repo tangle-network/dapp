@@ -4,7 +4,7 @@
 }
 
 .swiper-pagination-bullet {
-  @apply !bg-mono-80 dark:!bg-mono-140;
+  @apply !bg-mono-100 dark:!bg-mono-60;
 }
 
 .swiper-pagination-bullet-active {
