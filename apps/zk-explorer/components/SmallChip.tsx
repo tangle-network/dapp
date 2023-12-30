@@ -13,7 +13,8 @@ export const SmallChip: FC<PropsWithChildren<PropsOf<typeof Chip>>> = ({
       color="grey"
       {...rest}
       className={twMerge(
-        'bg-mono-60 dark:bg-mono-140 shadow-md px-2',
+        'bg-mono-100 dark:bg-mono-140',
+        '!text-mono-0 px-2',
         className
       )}
     >

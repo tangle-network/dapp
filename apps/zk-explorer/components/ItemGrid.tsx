@@ -34,7 +34,10 @@ export const ItemGrid: FC<CardGridProps> = ({
         ? projects.map((project, index) => (
             <Link
               key={index}
-              href={`/@${project.repositoryOwner}/${project.repositoryName}`}
+              href={createProjectDetailPath(
+                project.repositoryOwner,
+                project.repositoryName
+              )}
             >
               <ProjectCard {...project} />
             </Link>
