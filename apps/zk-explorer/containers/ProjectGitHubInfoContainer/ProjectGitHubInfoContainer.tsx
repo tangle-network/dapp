@@ -1,7 +1,7 @@
 import { type FC } from 'react';
 import Image from 'next/image';
 import cx from 'classnames';
-import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import {
   BookOpenLineIcon,
@@ -51,7 +51,10 @@ export default async function ProjectGitHubInfoContainer({
 
   return (
     <div
-      className={cx('dark:bg-mono-180 p-6 space-y-6 rounded-2xl', className)}
+      className={cx(
+        'bg-mono-0 dark:bg-mono-180 p-6 space-y-6 rounded-2xl',
+        className
+      )}
     >
       {/* Image */}
       <div className="hidden lg:block">
@@ -66,7 +69,11 @@ export default async function ProjectGitHubInfoContainer({
 
       <div className="space-y-4">
         {/* Description */}
-        <Typography variant="body1" fw="bold" className="!text-mono-0">
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="!text-mono-200 dark:!text-mono-0"
+        >
           About
         </Typography>
         <Typography variant="body1">{description}</Typography>
@@ -108,28 +115,33 @@ export default async function ProjectGitHubInfoContainer({
       {/* Releases */}
       <div className="space-y-4">
         <div className="flex items-center gap-1">
-          <Typography variant="body1" fw="bold" className="!text-mono-0">
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="!text-mono-200 dark:!text-mono-0"
+          >
             Releases
           </Typography>
-          <Chip color="grey" className="bg-mono-140 px-2 py-0.5">
-            {releasesCount}
-          </Chip>
+          <SmallChip className="py-0.5">{releasesCount}</SmallChip>
         </div>
         <div className="flex items-center gap-2">
-          <TagIcon className="!fill-green-50" />
+          <TagIcon className="fill-green-70 dark:!fill-green-50" />
           {/* Latest Release */}
           <a
             href={latestReleaseUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:!text-blue-50"
+            className="dark:text- hover:text-blue-70 dark:hover:!text-blue-50"
           >
             <Typography variant="body2" className="!text-inherit">
               {latestRelease}
             </Typography>
           </a>
           <div className="border border-green-90 rounded-3xl py-0.5 px-2">
-            <Typography variant="body4" className="!text-green-50">
+            <Typography
+              variant="body4"
+              className="text-green-70 dark:!text-green-50"
+            >
               Latest
             </Typography>
           </div>
@@ -149,12 +161,14 @@ export default async function ProjectGitHubInfoContainer({
       {/* Contributor */}
       <div className="space-y-4">
         <div className="flex items-center gap-1">
-          <Typography variant="body1" fw="bold" className="!text-mono-0">
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="!text-mono-200 dark:!text-mono-0"
+          >
             Contributors
           </Typography>
-          <Chip color="grey" className="bg-mono-140 px-2 py-0.5">
-            {contributorsCount}
-          </Chip>
+          <SmallChip className="py-0.5">{contributorsCount}</SmallChip>
         </div>
 
         {/* Image */}
@@ -185,7 +199,11 @@ export default async function ProjectGitHubInfoContainer({
 
       {/* Languages */}
       <div className="space-y-4">
-        <Typography variant="body1" fw="bold" className="!text-mono-0">
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="!text-mono-200 dark:!text-mono-0"
+        >
           Languages
         </Typography>
         <div className="space-y-2">
@@ -236,10 +254,10 @@ const BasicInfoItem: FC<{
         href={url}
         className="flex items-center gap-2 group"
       >
-        <Icon className="!fill-mono-80 group-hover:!fill-blue-50" />
+        <Icon className="!fill-mono-160 dark:!fill-mono-80 group-hover:!fill-blue-70 dark:group-hover:!fill-blue-50" />
         <Typography
           variant="body2"
-          className="!text-mono-80 group-hover:!text-blue-50"
+          className="!text-mono-160 dark:!text-mono-80 group-hover:!text-blue-70 dark:group-hover:!text-blue-50"
         >
           {label}
         </Typography>
@@ -277,7 +295,7 @@ const LanguagePercentageInfoItem: FC<{
           fill={color}
         />
       </svg>
-      <Typography variant="body3" className="!text-mono-0">
+      <Typography variant="body3" className="!text-mono-200 dark:!text-mono-0">
         {name}
       </Typography>
       <Typography variant="body3" className="!text-mono-120">

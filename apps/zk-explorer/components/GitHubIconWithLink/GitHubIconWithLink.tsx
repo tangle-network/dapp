@@ -13,7 +13,7 @@ const GitHubIconWithLink: FC<GitHubIconWithLinkProps> = ({
     <a href={href} target="_blank" rel="noopener noreferrer">
       <GithubFill
         size={size}
-        className="!fill-mono-0 hover:!fill-mono-80"
+        className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
         {...props}
       />
     </a>

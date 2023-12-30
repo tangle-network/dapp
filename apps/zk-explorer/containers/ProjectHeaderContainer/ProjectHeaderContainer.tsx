@@ -20,13 +20,20 @@ export default async function ProjectHeaderContainer({
 
   return (
     <div
-      className={cx('dark:bg-mono-180 p-6 space-y-8 rounded-2xl', className)}
+      className={cx(
+        'bg-mono-0 dark:bg-mono-180 p-6 space-y-8 rounded-2xl',
+        className
+      )}
     >
       <div className="flex justify-between items-start">
         <div className="space-y-1">
           {/* Name */}
           <div className="flex items-center gap-1">
-            <Typography variant="h4" fw="bold" className="!text-mono-0">
+            <Typography
+              variant="h4"
+              fw="bold"
+              className="!text-mono-200 dark:!text-mono-0"
+            >
               {name}
             </Typography>
             <GitHubIconWithLink href={githubUrl} size="lg" />
@@ -66,7 +73,7 @@ const SocialChip: FC<{
       {/* TODO: Replace this with chip component (Yuri's working on that) */}
       <Chip
         color="grey"
-        className="bg-mono-140 hover:bg-mono-120 py-1 px-2 !text-mono-0"
+        className="bg-[rgba(0,0,0,.4)] dark:bg-mono-140 hover:bg-mono-120 py-1 px-2 !text-mono-0"
       >
         <Icon className="!fill-mono-0" />
       </Chip>

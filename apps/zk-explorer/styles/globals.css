@@ -4,14 +4,14 @@
 }
 
 .swiper-pagination-bullet {
-  @apply bg-mono-60 dark:bg-mono-140;
+  @apply !bg-mono-80 dark:!bg-mono-140;
 }
 
 .swiper-pagination-bullet-active {
-  @apply bg-mono-160 dark:bg-mono-0;
+  @apply !bg-mono-160 dark:!bg-mono-0;
 }
 
 /* Override github-markdown-css */
 .markdown-body {
-  @apply !bg-mono-200;
+  @apply !bg-mono-20 dark:!bg-mono-200;
 }

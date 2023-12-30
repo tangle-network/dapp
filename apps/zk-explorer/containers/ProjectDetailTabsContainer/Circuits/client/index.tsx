@@ -25,7 +25,7 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
   );
 
   return (
-    <div className="bg-mono-200 rounded-2xl h-[100%]">
+    <div className="bg-mono-20 dark:bg-mono-200 rounded-2xl h-[100%]">
       <Header activeFile={activeFile} />
     </div>
   );

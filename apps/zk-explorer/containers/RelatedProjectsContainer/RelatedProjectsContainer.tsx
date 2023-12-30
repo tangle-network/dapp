@@ -20,7 +20,11 @@ export default async function RelatedProjectsContainer({
 
   return (
     <div className={cx('space-y-6', className)}>
-      <Typography variant="h5" fw="bold" className="!text-mono-0">
+      <Typography
+        variant="h5"
+        fw="bold"
+        className="!text-mono-200 dark:!text-mono-0"
+      >
         Related Projects
       </Typography>
 

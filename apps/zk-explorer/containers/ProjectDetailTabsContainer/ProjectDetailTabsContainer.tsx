@@ -25,7 +25,10 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
 }) => {
   return (
     <div
-      className={cx('dark:bg-mono-180 p-6 space-y-6 rounded-2xl', className)}
+      className={cx(
+        'bg-mono-0 dark:bg-mono-180 p-6 space-y-6 rounded-2xl',
+        className
+      )}
     >
       <TabsRoot defaultValue={CIRCUITS_TAB} className="h-[100%] flex flex-col">
         <TabsList aria-label="project-detail-tabs" className="mb-6">
@@ -34,7 +37,7 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
           <TabTrigger value={TRUSTED_SETUP_TAB}>Trusted Setup</TabTrigger>
         </TabsList>
 
-        <div className="grow relative bg-mono-200 rounded-2xl">
+        <div className="grow relative bg-mono-20 dark:bg-mono-200 rounded-2xl">
           <div className="max-h-[700px] lg:!max-h-[none] lg:absolute lg:top-0 lg:bottom-0 lg:left-0 lg:right-0 overflow-y-auto">
             <TabContent value={CIRCUITS_TAB}>
               <Suspense fallback={<SectionSkeletonLoader />}>
