@@ -3,11 +3,12 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
-import { ItemType, PageUrl } from '../utils/utils';
+
 import { CircuitCard } from './CircuitCard/CircuitCard';
-import { CircuitItem } from './CircuitCard/types';
 import { ProjectCard } from './ProjectCard/ProjectCard';
-import { ProjectItem } from './ProjectCard/types';
+import type { CircuitItem } from './CircuitCard/types';
+import type { ProjectItem } from './ProjectCard/types';
+import { ItemType, PageUrl, createProjectDetailPath } from '../utils';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;
@@ -26,7 +27,7 @@ export const ItemGrid: FC<CardGridProps> = ({
     [selectedItemType, projects, circuits]
   );
 
-  const wereResultsFound = items.length > 0;
+  const wereResultsFound = useMemo(() => items.length > 0, [items]);
 
   return wereResultsFound ? (
     <div className="grid lg:grid-cols-2 gap-4 md:gap-6 w-full h-min my-6">
@@ -34,7 +35,10 @@ export const ItemGrid: FC<CardGridProps> = ({
         ? projects.map((project, index) => (
             <Link
               key={index}
-              href={`/@${project.repositoryOwner}/${project.repositoryName}`}
+              href={createProjectDetailPath(
+                project.repositoryOwner,
+                project.repositoryName
+              )}
             >
               <ProjectCard {...project} />
             </Link>

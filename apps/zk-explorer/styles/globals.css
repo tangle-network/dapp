@@ -1,0 +1,17 @@
+/* Override pagination styling from Swiper */
+.swiper-pagination {
+  @apply !static;
+}
+
+.swiper-pagination-bullet {
+  @apply !bg-mono-100 dark:!bg-mono-60;
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-mono-160 dark:!bg-mono-0;
+}
+
+/* Override github-markdown-css */
+.markdown-body {
+  @apply !bg-mono-20 dark:!bg-mono-200;
+}
