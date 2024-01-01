@@ -220,7 +220,7 @@
     "@webb-tools/api-derive": "0.1.4-127",
     "@webb-tools/app-util": "0.1.4-127",
     "@webb-tools/contracts": "0.5.47",
-    "@webb-tools/interfaces": "0.5.47",
+    "@webb-tools/interfaces": "1.0.11",
     "@webb-tools/sdk-core": "0.1.4-127",
     "@webb-tools/tangle-substrate-types": "^0.4.4",
     "@webb-tools/test-utils": "0.1.4-127",

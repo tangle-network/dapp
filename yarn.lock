@@ -11712,14 +11712,7 @@
     minimatch "^7.4.2"
     mkdirp "^2.1.5"
 
-"@webb-tools/interfaces@0.5.47":
-  version "0.5.47"
-  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.5.47.tgz#b55261cc76b24caa876de7d788afa96caa21eb87"
-  integrity sha512-90H/+jqCjiF8SP/Kxo18zfFI6PbZWuFnuuEe8fBlz6puSUR7tUHgX7dGbUVcdsEXLIEgfGrI1FYS9tOYmh0DsA==
-  dependencies:
-    "@webb-tools/sdk-core" "0.1.4-126"
-
-"@webb-tools/interfaces@^1.0.11":
+"@webb-tools/interfaces@1.0.11", "@webb-tools/interfaces@^1.0.11":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-1.0.11.tgz#18e4443213dc99ba714e5fc8d6fe147383e83b68"
   integrity sha512-efXWTRs63e6ZeAQFknMiHNsfZWTOModR7aDbOq80MedgwaVjLmwleUa5XO7lanmnMC8Xg+T/DoSLodUnskIjMw==
@@ -11768,22 +11761,6 @@
     glob2base "^0.0.12"
     minimatch "^7.4.2"
     mkdirp "^2.1.5"
-
-"@webb-tools/sdk-core@0.1.4-126":
-  version "0.1.4-126"
-  resolved "https://registry.yarnpkg.com/@webb-tools/sdk-core/-/sdk-core-0.1.4-126.tgz#c00b9462e61504a2c26055805f9d1c2b55010036"
-  integrity sha512-QOn/h32bkoX8HLsaw5nxOy4aHOL4eiVywucgVBlvTRSFGGZtVKDbZ/4RaNWaoMB60yjci/yNQ1TiPckMgsY2ZQ==
-  dependencies:
-    "@metamask/eth-sig-util" "^5.0.2"
-    "@polkadot/util" "11.1.3"
-    "@webb-tools/wasm-utils" "0.1.4-126"
-    big-integer "^1.6.51"
-    bignumber.js "^9.0.0"
-    circomlibjs "^0.0.8"
-    elliptic "6.5.4"
-    ethers "5.7.0"
-    ffjavascript "^0.2.57"
-    snarkjs "^0.6.10"
 
 "@webb-tools/sdk-core@0.1.4-127":
   version "0.1.4-127"
@@ -11896,11 +11873,6 @@
     "@graphprotocol/client-cli" "3.0.0"
     ts-node "10.9.1"
     typescript "5.1.6"
-
-"@webb-tools/wasm-utils@0.1.4-126":
-  version "0.1.4-126"
-  resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-126.tgz#6062d028ca426eb03ae9d37eb789b6ab32b361a0"
-  integrity sha512-jdXU5ymruJUkfY7fxtzoL7Q25yjqdkMDzU0vBtZZDjhhJiCMxhzB5y9KkFI00VrysqRbCDHL1GiKnRtkntAUag==
 
 "@webb-tools/wasm-utils@0.1.4-127":
   version "0.1.4-127"
@@ -14394,13 +14366,6 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
-
-circom_runtime@0.1.22:
-  version "0.1.22"
-  resolved "https://registry.yarnpkg.com/circom_runtime/-/circom_runtime-0.1.22.tgz#f957c47662cdd03cd3fb76979c434c719a366373"
-  integrity sha512-V/XYZWBhbZY8SotkaGH4FbiDYAZ8a1Md++MBiKPDOuWS/NIJB+Q+XIiTC8zKMgoDaa9cd2OiTvsC9J6te7twNg==
-  dependencies:
-    ffjavascript "0.2.57"
 
 circom_runtime@0.1.24:
   version "0.1.24"
@@ -18495,15 +18460,6 @@ fets@^0.1.1:
     tslib "^2.3.1"
     zod "^3.21.4"
     zod-to-json-schema "^3.20.5"
-
-ffjavascript@0.2.57:
-  version "0.2.57"
-  resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.57.tgz#ba1be96015b2688192e49f2f4de2cc5150fd8594"
-  integrity sha512-V+vxZ/zPNcthrWmqfe/1YGgqdkTamJeXiED0tsk7B84g40DKlrTdx47IqZuiygqAVG6zMw4qYuvXftIJWsmfKQ==
-  dependencies:
-    wasmbuilder "0.0.16"
-    wasmcurves "0.2.0"
-    web-worker "^1.2.0"
 
 ffjavascript@0.2.60:
   version "0.2.60"
@@ -27976,16 +27932,6 @@ quote-unquote@^1.0.0:
   resolved "https://registry.yarnpkg.com/quote-unquote/-/quote-unquote-1.0.0.tgz#67a9a77148effeaf81a4d428404a710baaac8a0b"
   integrity sha512-twwRO/ilhlG/FIgYeKGFqyHhoEhqgnKVkcmqMKi2r524gz3ZbDTcyFt38E9xjJI2vT+KbRNHVbnJ/e0I25Azwg==
 
-r1csfile@0.0.45:
-  version "0.0.45"
-  resolved "https://registry.yarnpkg.com/r1csfile/-/r1csfile-0.0.45.tgz#59d59a33f8b5280017fc00ee691d003a3d705fe0"
-  integrity sha512-YKIp4D441aZ6OoI9y+bfAyb2j4Cl+OFq/iiX6pPWDrL4ZO968h0dq0w07i65edvrTt7/G43mTnl0qEuLXyp/Yw==
-  dependencies:
-    "@iden3/bigarray" "0.0.2"
-    "@iden3/binfileutils" "0.0.11"
-    fastfile "0.0.20"
-    ffjavascript "0.2.57"
-
 r1csfile@0.0.47:
   version "0.0.47"
   resolved "https://registry.yarnpkg.com/r1csfile/-/r1csfile-0.0.47.tgz#ed95a0dc8e910e9c070253906f7a31bd8c5333c8"
@@ -29905,22 +29851,6 @@ snapdragon@^0.8.1:
     source-map "^0.5.6"
     source-map-resolve "^0.5.0"
     use "^3.1.0"
-
-snarkjs@^0.6.10:
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.6.11.tgz#577b0250c0d9bb93c0ee1d4a3d3075956d11775c"
-  integrity sha512-pYDcrSKmUMMJtYxSQTMNG/MtuGvUWPSk9gZzADeIiHp8vJmFdCscMFa/YtemPAkne4v6Awm5HAhqbfNPyoqjug==
-  dependencies:
-    "@iden3/binfileutils" "0.0.11"
-    bfj "^7.0.2"
-    blake2b-wasm "^2.4.0"
-    circom_runtime "0.1.22"
-    ejs "^3.1.6"
-    fastfile "0.0.20"
-    ffjavascript "0.2.57"
-    js-sha3 "^0.8.0"
-    logplease "^1.2.15"
-    r1csfile "0.0.45"
 
 snarkjs@^0.7.2:
   version "0.7.2"
@@ -32607,13 +32537,6 @@ wasmbuilder@0.0.16:
   version "0.0.16"
   resolved "https://registry.yarnpkg.com/wasmbuilder/-/wasmbuilder-0.0.16.tgz#f34c1f2c047d2f6e1065cbfec5603988f16d8549"
   integrity sha512-Qx3lEFqaVvp1cEYW7Bfi+ebRJrOiwz2Ieu7ZG2l7YyeSJIok/reEQCQCuicj/Y32ITIJuGIM9xZQppGx5LrQdA==
-
-wasmcurves@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/wasmcurves/-/wasmcurves-0.2.0.tgz#ccfc5a7d3778b6e0768b82a9336c80054f9bc0cf"
-  integrity sha512-3e2rbxdujOwaod657gxgmdhZNn+i1qKdHO3Y/bK+8E7bV8ttV/fu5FO4/WLBACF375cK0QDLOP+65Na63qYuWA==
-  dependencies:
-    wasmbuilder "0.0.16"
 
 wasmcurves@0.2.2:
   version "0.2.2"
