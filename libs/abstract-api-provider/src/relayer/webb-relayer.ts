@@ -20,6 +20,7 @@ import type {
   SendTxResponse,
   WithdrawRelayerArgs,
 } from './types';
+import { AddressType } from '@webb-tools/dapp-config/types';
 
 /**
  * Relayer withdraw status
@@ -436,7 +437,7 @@ export class WebbRelayer {
 
     if (req.ok) {
       const jsonResponse = await req.json();
-      const fetchedLeaves: `0x${string}`[] = jsonResponse.leaves;
+      const fetchedLeaves: AddressType[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 

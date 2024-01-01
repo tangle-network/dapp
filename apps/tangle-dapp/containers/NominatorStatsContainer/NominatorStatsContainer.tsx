@@ -8,25 +8,30 @@ import {
 } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
+  WEBB_FAUCET_URL,
   WEBB_TANGLE_DOCS_STAKING_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
 import { type FC, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 
 import { NominatorStatsItem } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
+import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
-import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
+import { RebondTxContainer } from '../RebondTxContainer';
+import { UnbondTxContainer } from '../UnbondTxContainer';
 
 export const NominatorStatsContainer: FC = () => {
   const { activeAccount } = useWebContext();
 
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
-  const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+  const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
+  const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
 
   const walletAddress = useMemo(() => {
@@ -40,6 +45,11 @@ export const NominatorStatsContainer: FC = () => {
 
     return convertEthereumToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
+
+  const {
+    data: unbondingRemainingErasData,
+    error: unbondingRemainingErasError,
+  } = useUnbondingRemainingErasSubscription(substrateAddress);
 
   useEffect(() => {
     try {
@@ -64,6 +74,32 @@ export const NominatorStatsContainer: FC = () => {
     }
   }, [substrateAddress]);
 
+  const unbondingRemainingErasTooltip = useMemo(() => {
+    if (unbondingRemainingErasError) {
+      notificationApi({
+        variant: 'error',
+        message: unbondingRemainingErasError.message,
+      });
+    }
+
+    if (!unbondingRemainingErasData?.value1) return null;
+
+    if (unbondingRemainingErasData.value1.length === 0) {
+      return 'You have no unbonding tokens.';
+    }
+
+    const elements = unbondingRemainingErasData.value1.map((era, index) => (
+      <React.Fragment key={index}>
+        <div className="text-center mb-2">
+          <p>Unbonding {era.amount}</p>
+          <p>{era.remainingEras} eras remaining</p>
+        </div>
+      </React.Fragment>
+    ));
+
+    return <>{elements}</>;
+  }, [unbondingRemainingErasError, unbondingRemainingErasData?.value1]);
+
   return (
     <>
       <div className="flex flex-col md:flex-row gap-4 w-full">
@@ -83,35 +119,21 @@ export const NominatorStatsContainer: FC = () => {
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="flex items-center gap-2 flex-wrap">
-            <Button
-              variant="utility"
-              className="w-full"
-              isDisabled={!activeAccount}
-              onClick={() => setIsDelegateModalOpen(true)}
-            >
-              {isFirstTimeNominator ? 'Nominate' : 'Update Nominations'}
-            </Button>
+            <Link href={WEBB_FAUCET_URL} target="_blank">
+              <Button variant="utility" className="w-full">
+                Get tTNT
+              </Button>
+            </Link>
 
-            {!isFirstTimeNominator && (
-              <>
-                <Button
-                  variant="utility"
-                  className="w-full"
-                  isDisabled={!activeAccount}
-                  onClick={() => setIsBondMoreModalOpen(true)}
-                >
-                  Bond More
-                </Button>
-
-                <Button
-                  variant="utility"
-                  className="w-full"
-                  isDisabled={!activeAccount}
-                  onClick={() => setIsUpdatePayeeModalOpen(true)}
-                >
-                  Change Reward Destination
-                </Button>
-              </>
+            {isFirstTimeNominator && (
+              <Button
+                variant="utility"
+                className="w-full"
+                isDisabled={!activeAccount}
+                onClick={() => setIsDelegateModalOpen(true)}
+              >
+                Nominate
+              </Button>
             )}
           </div>
         </div>
@@ -131,30 +153,67 @@ export const NominatorStatsContainer: FC = () => {
               address={substrateAddress}
             />
 
-            {!isFirstTimeNominator && (
-              <NominatorStatsItem
-                title="Reward Destination"
-                tooltip="The address that will receive your rewards."
-                type="Payment Destination"
-                address={substrateAddress}
-              />
-            )}
+            <NominatorStatsItem
+              title="Unbonding tTNT"
+              tooltip={unbondingRemainingErasTooltip}
+              type="Unbonding Amount"
+              address={substrateAddress}
+            />
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-              <Button variant="utility" className="w-full">
-                Learn More
-              </Button>
-            </Link>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {!isFirstTimeNominator ? (
+                <>
+                  <Button
+                    variant="utility"
+                    className="w-full"
+                    isDisabled={!activeAccount}
+                    onClick={() => setIsBondMoreModalOpen(true)}
+                  >
+                    Add Stake
+                  </Button>
 
-            <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
-              <Button variant="utility" className="w-full">
-                Join Community
-              </Button>
-            </Link>
+                  <Button
+                    variant="utility"
+                    className="w-full"
+                    isDisabled={!activeAccount}
+                    onClick={() => setIsUnbondModalOpen(true)}
+                  >
+                    Unbond
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+                    <Button variant="utility" className="w-full">
+                      Learn More
+                    </Button>
+                  </Link>
+
+                  <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
+                    <Button variant="utility" className="w-full">
+                      Join Community
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {!isFirstTimeNominator && (
+                <Button
+                  variant="utility"
+                  className="w-full"
+                  isDisabled={!activeAccount}
+                  onClick={() => setIsRebondModalOpen(true)}
+                >
+                  Rebond
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -169,9 +228,14 @@ export const NominatorStatsContainer: FC = () => {
         setIsModalOpen={setIsBondMoreModalOpen}
       />
 
-      <UpdatePayeeTxContainer
-        isModalOpen={isUpdatePayeeModalOpen}
-        setIsModalOpen={setIsUpdatePayeeModalOpen}
+      <UnbondTxContainer
+        isModalOpen={isUnbondModalOpen}
+        setIsModalOpen={setIsUnbondModalOpen}
+      />
+
+      <RebondTxContainer
+        isModalOpen={isRebondModalOpen}
+        setIsModalOpen={setIsRebondModalOpen}
       />
     </>
   );

@@ -9,6 +9,8 @@ import {
   formatTokenBalance,
   getPolkadotApiPromise,
   getPolkadotApiRx,
+  getTotalNumberOfNominators,
+  getValidatorCommission,
   getValidatorIdentity,
 } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
@@ -57,13 +59,11 @@ export default function useDelegations(
                   target.toString()
                 );
                 const ledgerData = ledger.unwrapOrDefault();
-                const totalStaked = new u128(
+                const selfStaked = new u128(
                   apiPromise.registry,
                   ledgerData.total.toString()
                 );
-                const totalStakedBalance = await formatTokenBalance(
-                  totalStaked
-                );
+                const selfStakedBalance = await formatTokenBalance(selfStaked);
 
                 const isActive = await apiPromise.query.session
                   .validators()
@@ -75,11 +75,33 @@ export default function useDelegations(
 
                 const identity = await getValidatorIdentity(target.toString());
 
+                const commission = await getValidatorCommission(
+                  target.toString()
+                );
+
+                const delegationsValue = await getTotalNumberOfNominators(
+                  target.toString()
+                );
+                const delegations = delegationsValue?.toString();
+
+                const currentEra = await apiPromise.query.staking.currentEra();
+                const exposure = await apiPromise.query.staking.erasStakers(
+                  currentEra.unwrap(),
+                  target.toString()
+                );
+                const totalStakeAmount = exposure.total.unwrap();
+                const effectiveAmountStaked = await formatTokenBalance(
+                  totalStakeAmount
+                );
+
                 return {
                   address: target.toString(),
                   identity: identity ?? '',
-                  totalStaked: totalStakedBalance ?? '',
+                  selfStaked: selfStakedBalance ?? '',
                   isActive,
+                  commission: commission ?? '',
+                  delegations: delegations ?? '',
+                  effectiveAmountStaked: effectiveAmountStaked ?? '',
                 };
               })
             );

@@ -110,7 +110,7 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
         } satisfies AssetType;
       }),
     // prettier-ignore
-    [type, currencyCfgs, balances, blockExplorer, isBalancesLoading, srcTypedChainId]
+    [currencyCfgs, balances, type, currentWrapperType, isBalancesLoading, srcTypedChainId, blockExplorer]
   );
 
   const targetParam = useMemo(

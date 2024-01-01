@@ -6,7 +6,7 @@ type ExcludeKeys<T, K extends keyof any> = Pick<T, Exclude<KeysOf<T>, K>>;
 
 export type SortableValidatorKeys = ExcludeKeys<
   Validator,
-  'address' | 'identity' | 'effectiveAmountStaked'
+  'address' | 'identity' | 'effectiveAmountStaked' | 'selfStaked'
 >;
 
 type SortBy = {
