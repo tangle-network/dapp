@@ -1,3 +1,14 @@
+export * from './api';
+export * from './constants';
+export * from './utils';
+
+export function createProjectDetailPath(
+  repositoryOwner: string,
+  repositoryName: string
+): string {
+  return `/project/${repositoryOwner}/${repositoryName}`;
+}
+
 export function validateGithubUrl(url: string): boolean {
   const trimmedUrl = url.trim();
   const GITHUB_URL_PREFIX = 'https://github.com/'; // TODO: Consider whether HTTP URLs should be allowed.

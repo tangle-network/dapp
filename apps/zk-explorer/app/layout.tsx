@@ -1,4 +1,5 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
+import '../styles/globals.css';
 
 import { Footer } from '@webb-tools/webb-ui-components';
 import type { Metadata, Viewport } from 'next';
