@@ -14,7 +14,7 @@ const SideBar: FC<SideBarProps> = ({ isExpandedAtDefault }) => {
   return (
     <SideBarCmp
       {...sideBarProps}
-      className="hidden lg:block z-0"
+      className="hidden lg:block !z-0"
       isExpandedAtDefault={isExpandedAtDefault}
       onSideBarToggle={() => setSideBarCookieOnToggle()}
     />
