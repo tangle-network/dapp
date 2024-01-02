@@ -96,6 +96,7 @@ export { default as ShieldKeyholeLineIcon } from './ShieldKeyholeLineIcon';
 export { default as ShieldedAssetIcon } from './ShieldedAssetIcon';
 export { default as ShieldedCheckLineIcon } from './ShieldedCheckLineIcon';
 export * from './ShuffleLine';
+export { default as SideBarLine } from './SideBarLine';
 export * from './SosLineIcon';
 export * from './SparklingIcon';
 export * from './Spinner';

@@ -11,13 +11,14 @@ import type { CircuitItemFileType } from '../../../../server';
 
 interface HeaderProps {
   activeFile?: CircuitItemFileType;
+  isLoading?: boolean;
 }
 
-const Header: FC<HeaderProps> = ({ activeFile }) => {
-  if (!activeFile) {
+const Header: FC<HeaderProps> = ({ activeFile, isLoading }) => {
+  if (!activeFile || isLoading) {
     return (
       <div className="p-3 flex items-center justify-between border-b border-mono-180">
-        <SkeletonLoader size="lg" />
+        <SkeletonLoader size="lg" className="h-7" />
       </div>
     );
   }
