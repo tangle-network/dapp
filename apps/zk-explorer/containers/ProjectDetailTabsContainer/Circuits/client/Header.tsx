@@ -7,10 +7,10 @@ import {
 import { CheckLineIcon, ShieldedCheckLineIcon } from '@webb-tools/icons';
 
 import GitHubIconWithLink from '../../../../components/GitHubIconWithLink';
-import type { CircuitItemFileType } from '../../../../server';
+import type { FileType } from '../../../../server';
 
 interface HeaderProps {
-  activeFile?: CircuitItemFileType;
+  activeFile?: FileType;
   isLoading?: boolean;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useMemo, useState, useEffect } from 'react';
+import { type FC, useMemo, useState, useEffect, useCallback } from 'react';
 import cx from 'classnames';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
@@ -9,26 +9,35 @@ import CodeFile from './CodeFile';
 import Header from './Header';
 import NavSideBar from './NavSideBar';
 
-import type {
-  GetProjectCircuitDataReturnType,
-  CircuitItemFileType,
-} from '../../../../server';
+import type { GetProjectCircuitDataReturnType } from '../../../../server';
 
 type CircuitsClientProps = {
   data: GetProjectCircuitDataReturnType;
 };
 
 const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
-  const activeFileInit = useMemo(
-    () => Object.values(data).find((item) => !item.isFolder),
+  const initActiveFileIndex = useMemo(
+    () =>
+      Object.values(data)
+        .find((item) => !item.isFolder)
+        ?.index?.toString() ?? undefined,
     [data]
   );
 
   const [isMounting, setIsMounting] = useState(true);
-  const [activeFile, setActiveFile] = useState<CircuitItemFileType | undefined>(
-    activeFileInit
+  const [activeFileIndex, setActiveFileIndex] = useState<string | undefined>(
+    initActiveFileIndex
   );
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
+
+  const activeFileData = useMemo(
+    () => (activeFileIndex ? data[activeFileIndex].data : undefined),
+    [data, activeFileIndex]
+  );
+
+  const handleFileSelect = useCallback((fileIdx: string) => {
+    setActiveFileIndex(fileIdx);
+  }, []);
 
   useEffect(() => {
     setIsMounting(false);
@@ -36,19 +45,10 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
 
   return (
     <div className="bg-mono-20 dark:bg-mono-200 rounded-2xl h-[100%] flex flex-col">
-      <Header activeFile={activeFile} isLoading={isMounting} />
+      <Header activeFile={activeFileData} isLoading={isMounting} />
 
       {isMounting ? (
-        <div className="flex-[1_1_auto] flex">
-          <div className="space-y-3 p-3 h-full w-[30%]">
-            <SkeletonLoader size="xl" />
-            <SkeletonLoader size="xl" />
-          </div>
-          <div className="space-y-3 p-3 h-full w-[70%] border-l-2 border-mono-180">
-            <SkeletonLoader size="xl" />
-            <SkeletonLoader size="xl" />
-          </div>
-        </div>
+        <MainSkeleton />
       ) : (
         <PanelGroup direction="horizontal" className="flex-[1_1_auto]">
           <Panel
@@ -60,7 +60,12 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
             onCollapse={() => setSideBarCollapsed(true)}
             onExpand={() => setSideBarCollapsed(false)}
           >
-            <NavSideBar isCollapsed={sideBarCollapsed} />
+            <NavSideBar
+              filesData={data}
+              handleFileSelect={handleFileSelect}
+              activeFileIndex={activeFileIndex}
+              isCollapsed={sideBarCollapsed}
+            />
           </Panel>
           <PanelResizeHandle
             className={cx(
@@ -79,3 +84,19 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
 };
 
 export default CircuitsClient;
+
+/** @internal */
+const MainSkeleton: FC = () => {
+  return (
+    <div className="flex-[1_1_auto] flex">
+      <div className="space-y-3 p-3 h-full w-[30%]">
+        <SkeletonLoader size="xl" />
+        <SkeletonLoader size="xl" />
+      </div>
+      <div className="space-y-3 p-3 h-full w-[70%] border-l-2 border-mono-180">
+        <SkeletonLoader size="xl" />
+        <SkeletonLoader size="xl" />
+      </div>
+    </div>
+  );
+};
