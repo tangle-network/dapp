@@ -116,6 +116,7 @@ export const MOCK_USER: User = {
   email: 'hello@webb.tools',
   twitterHandle: 'webbprotocol',
   githubUsername: 'webb',
+  website: 'https://www.webb.tools/',
   shortBio:
     'An ecosystem of infrastructures and applications designed to extend privacy to the blockchain space.',
   createdAt: new Date().getTime() - 1000 * 60 * 60 * 24 * 7,

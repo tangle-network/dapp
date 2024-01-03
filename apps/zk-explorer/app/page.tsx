@@ -1,6 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { HeaderControls } from '../components/HeaderControls';
 import { HomepageInteractiveContents } from '../components/HomepageInteractiveContents';
+import { OverlayMask } from '../components/OverlayMask';
 
 export default function Index() {
   return (
@@ -12,7 +13,7 @@ export default function Index() {
         style={{ backgroundImage: 'url(/header-bg.png)' }}
       >
         {/* Background image mask */}
-        <div className="absolute inset-0 opacity-20 bg-black"></div>
+        <OverlayMask opacity={0.2} />
 
         <div className="relative flex flex-col items-end my-4 px-4">
           <HeaderControls doHideSearchBar />

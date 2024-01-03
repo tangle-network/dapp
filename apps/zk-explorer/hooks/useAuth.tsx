@@ -82,10 +82,10 @@ export const useRequireAuth = (): User => {
   const auth = useAuth();
 
   if (!auth.isLoggedIn) {
-    throw new Error('You must be logged in');
+    throw new Error('You must be logged in to access this page or resource');
   }
 
-  assert(auth.user !== null, 'User must not be null if logged in');
+  assert(auth.user !== null, 'User should not be null if logged in');
 
   return auth.user;
 };
