@@ -56,7 +56,7 @@ const columns = [
     cell: (props) => {
       const isActive = props.getValue();
       return (
-        <Chip color={isActive ? 'green' : 'blue'}>
+        <Chip color={isActive ? 'green' : 'yellow'}>
           {isActive ? 'Active' : 'Waiting'}
         </Chip>
       );

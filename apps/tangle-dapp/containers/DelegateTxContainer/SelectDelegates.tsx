@@ -18,6 +18,8 @@ const SelectDelegates: FC<SelectDelegatesProps> = ({
         sortBy={[
           { key: 'effectiveAmountStakedRaw', title: 'Total Stake' },
           { key: 'delegations', title: '# of Nominations' },
+          { key: 'commission', title: 'Commission' },
+          { key: 'status', title: 'Status' },
         ]}
       />
 

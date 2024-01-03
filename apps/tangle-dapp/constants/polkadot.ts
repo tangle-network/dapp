@@ -162,7 +162,7 @@ export const getMaxNominationQuota = async (): Promise<number | undefined> => {
 
   if (!api) return NaN;
 
-  const maxNominations = await api.consts.staking.maxNominations.toNumber();
+  const maxNominations = await api.consts.staking.maxNominations?.toNumber();
 
   return maxNominations;
 };
