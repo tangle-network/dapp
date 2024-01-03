@@ -28,7 +28,7 @@ export type SearchInputProps = PropsOf<typeof Input> & {
    * If `true`, the search input will redirect to the search page
    * when the value is changed, and after the debounce time.
    */
-  doesRedirect?: boolean;
+  doesRedirectOnChange?: boolean;
 
   /**
    * The handler to call when the value of the input changes.
@@ -45,7 +45,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   isFullWidth,
   isHomepageVariant,
   debounceTime = DEFAULT_DEBOUNCE_DELAY,
-  doesRedirect,
+  doesRedirectOnChange: doesRedirect,
   className,
   inputClassName,
   onValueChange,

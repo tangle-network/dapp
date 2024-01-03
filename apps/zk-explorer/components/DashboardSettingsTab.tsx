@@ -7,11 +7,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { User, useRequireAuth } from '../hooks/useAuth';
+import { User, useAuth, useRequireAuth } from '../hooks/useAuth';
+import { computeUserDiff, updateUserProfile } from '../utils';
 import { LargeSquareAvatar } from './LargeSquareAvatar';
 
 export const DashboardSettingsTab: FC = () => {
   const user = useRequireAuth();
+  const { refreshAuth } = useAuth();
 
   const initialUser: User = useMemo(
     // Use empty strings as fallbacks for the optional fields.
@@ -47,11 +49,49 @@ export const DashboardSettingsTab: FC = () => {
   );
 
   const restoreChanges = useCallback(() => {
-    setEmail('');
-    setGithubUsername('');
-    setTwitter('');
-    setWebsite('');
-  }, []);
+    setEmail(initialUser.email);
+    setGithubUsername(initialUser.githubUsername);
+    setTwitter(initialUser.twitterHandle || '');
+    setWebsite(initialUser.website || '');
+    setShortBio(initialUser.shortBio || '');
+  }, [
+    initialUser.email,
+    initialUser.githubUsername,
+    initialUser.shortBio,
+    initialUser.twitterHandle,
+    initialUser.website,
+  ]);
+
+  const saveChanges = useCallback(async () => {
+    const diff = computeUserDiff(initialUser, {
+      email,
+      githubUsername,
+      twitterHandle,
+      website,
+      shortBio,
+
+      // Certain properties are not directly editable by
+      // the user, but instead are managed by the backend.
+      id: initialUser.id,
+      createdAt: initialUser.createdAt,
+      activatedCircuitCount: initialUser.activatedCircuitCount,
+    });
+
+    // TODO: Handle potential API request failure.
+    await updateUserProfile(diff);
+
+    // After updating the user profile, refresh the auth's
+    // user object to reflect the changes.
+    await refreshAuth();
+  }, [
+    email,
+    githubUsername,
+    initialUser,
+    refreshAuth,
+    shortBio,
+    twitterHandle,
+    website,
+  ]);
 
   return (
     <Card className="flex flex-col-reverse sm:flex-row justify-between p-6 rounded-2xl space-y-0 gap-7">
@@ -158,7 +198,6 @@ export const DashboardSettingsTab: FC = () => {
         </div>
 
         <div className="flex gap-4 justify-end">
-          {/* TODO: Handle restore unsaved changes button. */}
           <Button
             onClick={restoreChanges}
             isDisabled={!wereChangesMade}
@@ -167,8 +206,9 @@ export const DashboardSettingsTab: FC = () => {
             Cancel
           </Button>
 
-          {/* TODO: Handle save changes button. */}
-          <Button isDisabled={!wereChangesMade}>Save</Button>
+          <Button isDisabled={!wereChangesMade} onClick={saveChanges}>
+            Save
+          </Button>
         </div>
       </div>
 

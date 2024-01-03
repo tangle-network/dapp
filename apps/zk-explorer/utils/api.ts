@@ -6,6 +6,7 @@ import type {
 } from '../components/Filters/types';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { API_PREFIX } from '../constants';
+import { User } from '../hooks/useAuth';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',
@@ -14,6 +15,7 @@ export enum ApiRoute {
   Constraints = 'constraints',
   AuthValidate = 'auth/validate',
   AuthLogout = 'auth/logout',
+  User = 'user',
 }
 
 export type ApiResponseWrapper<T> = {
@@ -21,7 +23,7 @@ export type ApiResponseWrapper<T> = {
   fetchResponse: Response;
 };
 
-export type ApiResponse<T> = {
+export type ApiResponse<T = Record<string, never>> = {
   isSuccess: boolean;
   errorMessage?: string;
   data?: T;
@@ -131,9 +133,7 @@ export async function searchCircuits(
   return extractResponseData(responseWrapper);
 }
 
-export async function submitProject(
-  githubSlug: string
-): Promise<ApiResponse<Record<string, never>>> {
+export async function submitProject(githubSlug: string): Promise<ApiResponse> {
   const responseWrapper = await sendApiRequest(ApiRoute.OAuthGithub, {
     method: 'POST',
     body: JSON.stringify({ githubSlug }),
@@ -157,6 +157,17 @@ export async function fetchFilterOptions(): Promise<FilterOptionsResponseData> {
   );
 
   return responseWrapper.innerResponse.data;
+}
+
+export async function updateUserProfile(
+  changes: Partial<User>
+): Promise<ApiResponse> {
+  const responseWrapper = await sendApiRequest(ApiRoute.User, {
+    method: 'PUT',
+    body: JSON.stringify(changes),
+  });
+
+  return responseWrapper.innerResponse;
 }
 
 export function extractResponseData<T>(

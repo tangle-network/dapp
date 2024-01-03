@@ -32,10 +32,6 @@ type TabsContentProps = {
   index?: number;
 };
 
-interface TabsType extends FC<TabsProps> {
-  Content: FC<TabsContentProps>;
-}
-
 /**
  * Provides a flexible way to manage tabs with or without attached content.
  *
@@ -49,8 +45,8 @@ interface TabsType extends FC<TabsProps> {
  * <Tabs
  *   tabs={[{ name: 'Overview' }, { name: 'Settings' }]}
  * >
- *   <Tabs.Content>first</Tabs.Content>
- *   <Tabs.Content>second</Tabs.Content>
+ *   <TabsContent>first</TabsContent>
+ *   <TabsContent>second</TabsContent>
  * </Tabs>
  * ```
  *
@@ -71,7 +67,7 @@ interface TabsType extends FC<TabsProps> {
  * {selectedTab === 0 && <div>first</div>}
  * ```
  */
-export const Tabs: TabsType = ({
+export const Tabs: FC<TabsProps> = ({
   initiallySelectedTabIndex = 0,
   tabs,
   children,
@@ -171,6 +167,3 @@ export const TabsContent: FC<TabsContentProps> = ({ children, index }) => {
 
   return selectedTabIndex === index ? <div>{children}</div> : null;
 };
-
-// Attach `Content` to `Tabs` for convenience.
-Tabs.Content = TabsContent;

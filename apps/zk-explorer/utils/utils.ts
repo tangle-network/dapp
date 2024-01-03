@@ -1,4 +1,5 @@
 import assert from 'assert';
+import _ from 'lodash';
 import { CircuitItem } from '../components/CircuitCard/types';
 import {
   GitHubOAuthErrorParams,
@@ -6,6 +7,7 @@ import {
 } from '../components/GitHubOAuthButton/types';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { ITEMS_PER_PAGE } from '../constants';
+import { User } from '../hooks/useAuth';
 import {
   CircuitSearchResponseData,
   ProjectSearchResponseData,
@@ -21,6 +23,7 @@ export enum ItemType {
 export enum RelativePageUrl {
   Home = '/',
   SubmitProject = '/submit',
+  Dashboard = '/dashboard',
 }
 
 export enum SearchParamKey {
@@ -79,6 +82,7 @@ export async function handleOAuthSuccess(
 }
 
 export function handleOAuthError(params: GitHubOAuthErrorParams): void {
+  // TODO: Consider showing a modal or toast message to let the user know when OAuth fails.
   reportProblem(`GitHub OAuth login failed: ${params.errorDescription}`);
 }
 
@@ -181,6 +185,12 @@ export function setSearchParam(key: SearchParamKey, value: string | null) {
     updatedSearchParams.set(key, value);
   }
 
+  // This prevents the addition of a trailing `?` in the URL in
+  // case there are no search params.
+  if (updatedSearchParams.size === 0) {
+    return;
+  }
+
   const newUrl = `${window.location.pathname}?${updatedSearchParams}`;
 
   window.history.pushState({}, '', newUrl);
@@ -195,5 +205,25 @@ export function validateSearchQuery(searchQuery: string | null): boolean {
     searchQuery !== null &&
     searchQuery.length > 0 &&
     searchQuery.length >= MIN_SEARCH_QUERY_LENGTH
+  );
+}
+
+export function formatTimestamp(timestamp: number): string {
+  const date = new Date(timestamp);
+
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+export function computeUserDiff(initial: User, updated: User): Partial<User> {
+  // Note that the user object is only composed of
+  // primitive values, so there's no need to worry about
+  // deep equality checks.
+  return _.pickBy(
+    updated,
+    (value, key) => !_.isEqual(value, initial[key as keyof User])
   );
 }

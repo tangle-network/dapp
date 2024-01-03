@@ -1,12 +1,10 @@
-'use client';
-
 import { PlusIcon } from '@radix-ui/react-icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { DashboardOverviewTab } from '../../components/DashboardOverviewTab';
 import { DashboardSettingsTab } from '../../components/DashboardSettingsTab';
 import { Header } from '../../components/Header';
-import { Tabs } from '../../components/Tabs';
+import { Tabs, TabsContent } from '../../components/Tabs';
 import { RelativePageUrl } from '../../utils';
 
 export default function Dashboard() {
@@ -37,17 +35,17 @@ export default function Dashboard() {
           </div>
         }
       >
-        <Tabs.Content>
+        <TabsContent>
           <DashboardOverviewTab />
-        </Tabs.Content>
+        </TabsContent>
 
-        <Tabs.Content>
+        <TabsContent>
           <DashboardSettingsTab />
-        </Tabs.Content>
+        </TabsContent>
 
-        <Tabs.Content>
+        <TabsContent>
           <BillingTab />
-        </Tabs.Content>
+        </TabsContent>
       </Tabs>
     </main>
   );

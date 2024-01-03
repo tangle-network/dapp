@@ -10,11 +10,16 @@ import {
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useAuth } from '../hooks/useAuth';
 import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import { handleOAuthError, handleOAuthSuccess } from '../utils/utils';
+import {
+  RelativePageUrl,
+  handleOAuthError,
+  handleOAuthSuccess,
+} from '../utils/utils';
 import { GitHubOAuthButton } from './GitHubOAuthButton';
 import { SearchInput } from './SearchInput';
 import { SidebarCloseButton } from './SidebarCloseButton';
@@ -32,19 +37,26 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
   const githubOAuthClientId = process.env.ZK_EXPLORER_GITHUB_CLIENT_ID ?? '';
 
   const breakpoint = useTailwindBreakpoint();
+  const { user } = useAuth();
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
 
   const prepareAndShowSearchSidebar = useCallback(() => {
     updateSidebarContent(
       <div className="flex flex-col gap-4">
-        <SidebarCloseButton isRightmost setSidebarOpen={setSidebarOpen} />
+        <SidebarCloseButton isRightAligned setSidebarOpen={setSidebarOpen} />
 
-        <SearchInput doesRedirect id="sidebar mobile search" />
+        <SearchInput doesRedirectOnChange id="sidebar mobile search" />
       </div>
     );
 
     setSidebarOpen(true);
   }, [setSidebarOpen, updateSidebarContent]);
+
+  // When the user is logged in and clicks on the GitHub OAuth
+  // button, redirect them to the dashboard.
+  const handleUserProfileClick = useCallback(() => {
+    window.location.href = RelativePageUrl.Dashboard;
+  }, []);
 
   return (
     <div
@@ -55,16 +67,17 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
       )}
     >
       {!doHideSearchBar && breakpoint > TailwindBreakpoint.SM && (
-        <SearchInput doesRedirect id="desktop search" />
+        <SearchInput doesRedirectOnChange id="desktop search" />
       )}
 
       <div className="flex gap-2 items-center">
-        {/* TODO: Consider showing a modal or toast message to let the user know when OAuth fails. */}
         <GitHubOAuthButton
           clientId={githubOAuthClientId}
           scope="user"
           onOAuthError={handleOAuthError}
           onOAuthSuccess={handleOAuthSuccess}
+          username={user?.githubUsername}
+          onSignedInClick={handleUserProfileClick}
         />
 
         {/* Mobile search button */}

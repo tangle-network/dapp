@@ -120,4 +120,5 @@ export const MOCK_USER: User = {
   shortBio:
     'An ecosystem of infrastructures and applications designed to extend privacy to the blockchain space.',
   createdAt: new Date().getTime() - 1000 * 60 * 60 * 24 * 7,
+  activatedCircuitCount: 0,
 };

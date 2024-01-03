@@ -1,9 +1,20 @@
+'use client';
+
 import { Button, Card, Typography } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useRequireAuth } from '../hooks/useAuth';
+import { formatTimestamp } from '../utils';
 import { LargeSquareAvatar } from './LargeSquareAvatar';
 
 export const DashboardOverviewTab: FC = () => {
+  const { activatedCircuitCount, createdAt } = useRequireAuth();
+
+  const creationTimestampString = useMemo(
+    () => formatTimestamp(createdAt),
+    [createdAt]
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <Card className="p-6 flex rounded-2xl space-y-0">
@@ -14,7 +25,7 @@ export const DashboardOverviewTab: FC = () => {
             </Typography>
 
             <Typography variant="h5" fw="bold">
-              -
+              {activatedCircuitCount === 0 ? '-' : activatedCircuitCount}
             </Typography>
           </div>
 
@@ -26,7 +37,7 @@ export const DashboardOverviewTab: FC = () => {
             </Typography>
 
             <Typography variant="h5" fw="bold">
-              Dec 11, 2023
+              {creationTimestampString}
             </Typography>
           </div>
 

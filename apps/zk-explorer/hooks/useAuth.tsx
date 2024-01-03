@@ -4,22 +4,32 @@ import assert from 'assert';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { IS_DEBUG_MODE } from '../constants';
 import { MOCK_USER } from '../constants/mock';
-import { ApiRoute, extractResponseData, sendApiRequest } from '../utils';
+import {
+  ApiRoute,
+  RelativePageUrl,
+  extractResponseData,
+  sendApiRequest,
+} from '../utils';
 
-export type User = {
+export type User = Readonly<{
   id: string;
   githubUsername: string;
   email: string;
-  createdAt: number;
   twitterHandle?: string;
   website?: string;
   shortBio?: string;
-};
+  activatedCircuitCount: number;
+
+  /**
+   * A Unix timestamp in milliseconds.
+   */
+  createdAt: number;
+}>;
 
 type AuthContextType = {
   user: User | null;
   isLoggedIn: boolean;
-  checkLogin: () => Promise<void>;
+  refreshAuth: () => Promise<void>;
   logout: () => void;
 };
 
@@ -28,8 +38,11 @@ const AuthContext = createContext<AuthContextType>(null!);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(
+    IS_DEBUG_MODE ? MOCK_USER : null
+  );
+
+  const [isLoggedIn, setIsLoggedIn] = useState(!IS_DEBUG_MODE);
 
   const updateAuth = async () => {
     try {
@@ -43,15 +56,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(extractResponseData(response).user);
         setIsLoggedIn(true);
       } else {
+        // No need to redirect to login page, but inform the
+        // user that their credentials are invalid or expired.
+        // TODO: Alert the user that the login attempt failed.
         throw new Error('Not authenticated');
       }
     } catch (error) {
       if (!IS_DEBUG_MODE) {
         setUser(null);
         setIsLoggedIn(false);
-      } else {
-        setUser(MOCK_USER);
-        setIsLoggedIn(true);
       }
     }
   };
@@ -71,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     updateAuth();
   }, []);
 
-  const value = { user, isLoggedIn, checkLogin: updateAuth, logout };
+  const value = { user, isLoggedIn, refreshAuth: updateAuth, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -81,8 +94,12 @@ export const useAuth = (): AuthContextType => useContext(AuthContext);
 export const useRequireAuth = (): User => {
   const auth = useAuth();
 
-  if (!auth.isLoggedIn) {
-    throw new Error('You must be logged in to access this page or resource');
+  if (!auth.isLoggedIn && !IS_DEBUG_MODE) {
+    alert(
+      'You must be logged in to access this page or resource. Please, sign in then try again.'
+    );
+
+    window.location.href = RelativePageUrl.Home;
   }
 
   assert(auth.user !== null, 'User should not be null if logged in');
