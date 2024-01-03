@@ -65,9 +65,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   const isExceedingMaxNominationQuota = useMemo(() => {
-    return (
-      selectedValidators.length > (maxNominationQuota ? maxNominationQuota : 16)
-    );
+    return selectedValidators.length > maxNominationQuota;
   }, [maxNominationQuota, selectedValidators.length]);
 
   const isReadyToSubmitAndSignTx = useMemo(() => {
