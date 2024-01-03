@@ -5,9 +5,10 @@ import assert from 'assert';
 import { cloneDeep } from 'lodash';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { IS_DEBUG_MODE } from '../../constants';
+import { MOCK_CATEGORIES } from '../../constants/mock';
 import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 import { fetchFilterOptions } from '../../utils/api';
-import { MOCK_CATEGORIES } from '../../utils/constants';
 import { FilterCheckboxItem } from '../FilterCheckboxItem';
 import { FilterCategoryItem, FilterConstraints } from './types';
 
@@ -36,8 +37,14 @@ export const Filters: FC<FiltersProps> = ({
   useEffect(() => {
     fetchFilterOptions()
       .then((responseData) => setCategories(responseData.categories))
-      // TODO: Temporarily use mock data until we have a backend.
-      .catch(() => setCategories(MOCK_CATEGORIES));
+      .catch((error) => {
+        // If in debug mode, use mock data if the API call fails.
+        if (IS_DEBUG_MODE) {
+          setCategories(MOCK_CATEGORIES);
+        } else {
+          throw error;
+        }
+      });
   }, []);
 
   const handleOptionCheckboxChange = useCallback(

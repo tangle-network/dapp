@@ -12,6 +12,7 @@ import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Header } from '../../components/Header';
 import { Tabs } from '../../components/Tabs';
+import { User, useRequireAuth } from '../../hooks/useAuth';
 import { RelativePageUrl } from '../../utils';
 
 export default function Dashboard() {
@@ -66,25 +67,44 @@ const BillingTab: FC = () => {
 
 /** @internal */
 const SettingsTab: FC = () => {
-  const [email, setEmail] = useState('');
-  const [github, setGithub] = useState('');
-  const [twitter, setTwitter] = useState('');
-  const [bio, setBio] = useState('');
-  const [website, setWebsite] = useState('');
+  const user = useRequireAuth();
+
+  const initialUser: User = useMemo(
+    // Use empty strings as fallbacks for the optional fields.
+    // This is needed in order to detect whether the user has made
+    // any changes.
+    () => ({
+      twitterHandle: '',
+      website: '',
+      shortBio: '',
+      ...user,
+    }),
+    [user]
+  );
+
+  const [email, setEmail] = useState(initialUser.email);
+
+  const [githubUsername, setGithubUsername] = useState(
+    initialUser.githubUsername
+  );
+
+  const [twitterHandle, setTwitter] = useState(initialUser.twitterHandle || '');
+  const [shortBio, setShortBio] = useState(initialUser.shortBio || '');
+  const [website, setWebsite] = useState(initialUser.website || '');
 
   const wereChangesMade = useMemo(
     () =>
-      email !== '' ||
-      github !== '' ||
-      twitter !== '' ||
-      website !== '' ||
-      bio !== '',
-    [email, github, twitter, website, bio]
+      email !== initialUser.email ||
+      githubUsername !== initialUser.githubUsername ||
+      twitterHandle !== initialUser.twitterHandle ||
+      website !== initialUser.website ||
+      shortBio !== initialUser.shortBio,
+    [email, githubUsername, twitterHandle, website, shortBio, initialUser]
   );
 
   const restoreChanges = useCallback(() => {
     setEmail('');
-    setGithub('');
+    setGithubUsername('');
     setTwitter('');
     setWebsite('');
   }, []);
@@ -109,7 +129,8 @@ const SettingsTab: FC = () => {
             <Input
               id="user github url"
               isDisabled
-              value={github}
+              value={githubUsername}
+              onChange={setGithubUsername}
               className="w-full"
               placeholder="www.github.com/webb"
             />
@@ -129,6 +150,8 @@ const SettingsTab: FC = () => {
               className="w-full"
               placeholder="hello@webb.tools"
               type="email"
+              value={email}
+              onChange={setEmail}
             />
           </div>
         </div>
@@ -146,7 +169,8 @@ const SettingsTab: FC = () => {
             <Input
               id="user twitter url"
               className="w-full"
-              value={twitter}
+              value={twitterHandle}
+              onChange={setTwitter}
               placeholder="@webbprotocol"
             />
           </div>
@@ -165,6 +189,7 @@ const SettingsTab: FC = () => {
               className="w-full"
               placeholder="www.webb.tools"
               value={website}
+              onChange={setWebsite}
               type="url"
             />
           </div>
@@ -183,7 +208,8 @@ const SettingsTab: FC = () => {
             id="user short bio"
             className="w-full"
             placeholder="Share a bit about yourself..."
-            value={twitter}
+            value={shortBio}
+            onChange={setShortBio}
           />
         </div>
 

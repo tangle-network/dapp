@@ -1,10 +1,10 @@
 'use client';
 
-import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { GithubFill } from '@webb-tools/icons';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
-import { GitHubOAuthButtonProps } from './types';
 import { twMerge } from 'tailwind-merge';
+import { GitHubOAuthButtonProps } from './types';
 
 export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
   onClick,

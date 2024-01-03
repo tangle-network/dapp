@@ -1,9 +1,9 @@
 import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { createProjectDetailPath } from 'apps/zk-explorer/utils';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
+import { createProjectDetailPath } from '../utils';
 import { ItemType, RelativePageUrl } from '../utils/utils';
 import { CircuitCard } from './CircuitCard/CircuitCard';
 import { CircuitItem } from './CircuitCard/types';
@@ -45,7 +45,7 @@ export const ItemGrid: FC<CardGridProps> = ({
           ))
         : circuits.map((circuit, index) => (
             // TODO: Need proper URL for circuits.
-            <Link key={index} href={`/@${circuit.filename}`}>
+            <Link key={index} href={`/circuit/${circuit.filename}`}>
               <CircuitCard {...circuit} />
             </Link>
           ))}

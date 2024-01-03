@@ -5,6 +5,7 @@ import { Button, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { ITEMS_PER_PAGE } from '../constants';
 import { useFilterConstraints } from '../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -33,15 +34,16 @@ import { Tabs } from './Tabs';
 
 export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();
-  const MAX_ITEMS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
   const [constraints, setConstraints] = useFilterConstraints();
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
   const [projectSearchResultCount, setProjectSearchResultCount] =
     useState<number>(0);
+
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
     useState<number>(0);
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const initialSearchQuery =
     useSearchParams().get(SearchParamKey.SearchQuery) ?? '';
@@ -219,7 +221,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
           />
 
           <Pagination
-            itemsPerPage={MAX_ITEMS_PER_PAGE}
+            itemsPerPage={ITEMS_PER_PAGE}
             totalItems={projectSearchResultCount}
             page={paginationPage}
             setPageIndex={setPaginationPage}

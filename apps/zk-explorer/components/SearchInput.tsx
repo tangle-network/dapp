@@ -47,6 +47,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   debounceTime = DEFAULT_DEBOUNCE_DELAY,
   doesRedirect,
   className,
+  inputClassName,
   onValueChange,
   ...rest
 }) => {
@@ -95,18 +96,19 @@ export const SearchInput: FC<SearchInputProps> = ({
 
   const searchQueryPlaceholder = useMemo(
     () =>
-      breakpoint >= TailwindBreakpoint.SM
+      breakpoint >= TailwindBreakpoint.SM && isFullWidth && isHomepageVariant
         ? 'Search projects and circuits for specific keywords...'
         : 'Search projects and circuits...',
-    [breakpoint]
+    [breakpoint, isFullWidth, isHomepageVariant]
   );
 
-  const isHomepageVariantClass = useMemo(
-    () => (isHomepageVariant ? 'rounded-[50px] border-none' : ''),
+  const variantClass = useMemo(
+    () =>
+      isHomepageVariant ? 'rounded-[50px] border-none' : 'min-w-[270px] w-full',
     [isHomepageVariant]
   );
 
-  const iconIsHomepageVariantClass = useMemo(
+  const iconHomepageVariantClass = useMemo(
     () => (isHomepageVariant ? 'mr-4' : undefined),
     [isHomepageVariant]
   );
@@ -114,8 +116,8 @@ export const SearchInput: FC<SearchInputProps> = ({
   return (
     <Input
       {...rest}
-      rightIcon={<Search size="lg" className={iconIsHomepageVariantClass} />}
-      inputClassName={isHomepageVariantClass}
+      rightIcon={<Search size="lg" className={iconHomepageVariantClass} />}
+      inputClassName={twMerge(variantClass, inputClassName)}
       className={twMerge('flex-grow', className)}
       placeholder={searchQueryPlaceholder}
       value={searchQuery ?? ''}

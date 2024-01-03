@@ -5,6 +5,7 @@ import {
   GitHubOAuthSuccessParams,
 } from '../components/GitHubOAuthButton/types';
 import { ProjectItem } from '../components/ProjectCard/types';
+import { ITEMS_PER_PAGE } from '../constants';
 import {
   CircuitSearchResponseData,
   ProjectSearchResponseData,
@@ -27,8 +28,6 @@ export enum SearchParamKey {
   PaginationPageNumber = 'page',
   Filters = 'filters',
 }
-
-const ITEMS_PER_PAGE = 12;
 
 export function validateGithubUrl(url: string): boolean {
   return parseGithubUrl(url) !== null;
