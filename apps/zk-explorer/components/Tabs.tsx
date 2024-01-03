@@ -32,12 +32,17 @@ type TabsContentProps = {
   index?: number;
 };
 
+type TabsType = FC<TabsProps> & {
+  Content: FC<TabsContentProps>;
+};
+
 /**
  * Provides a flexible way to manage tabs with or without attached content.
  *
  * @remarks
  * Tabs can optionally include a count chip to be displayed next to the tab name.
  * At least one tab must be provided, otherwise there would be nothing to render.
+ * Failing to provide at least one tab will result in an error.
  *
  * @example
  * Providing content as children:
@@ -67,7 +72,7 @@ type TabsContentProps = {
  * {selectedTab === 0 && <div>first</div>}
  * ```
  */
-export const Tabs: FC<TabsProps> = ({
+export const Tabs: TabsType = ({
   initiallySelectedTabIndex = 0,
   tabs,
   children,
@@ -79,10 +84,10 @@ export const Tabs: FC<TabsProps> = ({
     'Selected tab index is out of range'
   );
 
-  assert(
-    tabs.length > 0,
-    'At least one tab must be provided, otherwise there would be nothing to render'
-  );
+  const ONE_TAB_REQUIRED_ERROR_MESSAGE =
+    'At least one tab must be provided, otherwise there would be nothing to render';
+
+  assert(tabs.length > 0, ONE_TAB_REQUIRED_ERROR_MESSAGE);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
     initiallySelectedTabIndex
@@ -112,9 +117,14 @@ export const Tabs: FC<TabsProps> = ({
 
       return cloneElement(child, childProps);
     }
-
-    return child;
   });
+
+  assert(
+    enhancedChildren !== null &&
+      enhancedChildren !== undefined &&
+      enhancedChildren.length > 0,
+    ONE_TAB_REQUIRED_ERROR_MESSAGE
+  );
 
   return (
     <TabsContext.Provider value={value}>
@@ -162,8 +172,10 @@ export const Tabs: FC<TabsProps> = ({
   );
 };
 
-export const TabsContent: FC<TabsContentProps> = ({ children, index }) => {
+const TabsContent: FC<TabsContentProps> = ({ children, index }) => {
   const { selectedTabIndex } = useTabs();
 
   return selectedTabIndex === index ? <div>{children}</div> : null;
 };
+
+Tabs.Content = TabsContent;
