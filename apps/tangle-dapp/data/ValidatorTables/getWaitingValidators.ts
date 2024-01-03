@@ -58,6 +58,7 @@ export const getWaitingValidators = async (): Promise<Validator[]> => {
           effectiveAmountStakedRaw: totalStakeAmount.toString() ?? '',
           delegations: delegations ?? '',
           commission: commission ?? '',
+          status: 'Waiting',
         };
       })
     );

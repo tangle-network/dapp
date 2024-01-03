@@ -3,6 +3,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isViemError } from '@webb-tools/web3-api-provider/src/utils';
 import {
+  Alert,
   Button,
   Modal,
   ModalContent,
@@ -14,7 +15,7 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 import { evmPublicClient, nominateValidators } from '../../constants';
-import { getActiveValidators } from '../../data';
+import { getActiveValidators, getWaitingValidators } from '../../data';
 import SelectValidators from './SelectValidators';
 import { UpdateNominationsTxContainerProps } from './types';
 
@@ -29,6 +30,16 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     [getActiveValidators.name],
     ([, ...args]) => getActiveValidators(...args)
   );
+  const { data: waitingValidatorsData } = useSWR(
+    [getWaitingValidators.name],
+    ([, ...args]) => getWaitingValidators(...args)
+  );
+
+  const allValidators = useMemo(() => {
+    if (!activeValidatorsData || !waitingValidatorsData) return [];
+
+    return [...activeValidatorsData, ...waitingValidatorsData];
+  }, [activeValidatorsData, waitingValidatorsData]);
 
   const [selectedValidators, setSelectedValidators] =
     useState<string[]>(currentNominations);
@@ -42,7 +53,8 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   const isNewValidatorsSelected = useMemo(() => {
-    if (selectedValidators.length <= 0) return false;
+    if (selectedValidators.length <= 0 || selectedValidators.length > 16)
+      return false;
 
     const sortedSelectedValidators = [...selectedValidators].sort();
     const sortedCurrentNominations = [...currentNominations].sort();
@@ -125,10 +137,18 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
-            validators={activeValidatorsData ? activeValidatorsData : []}
+            validators={allValidators}
             selectedValidators={selectedValidators}
             setSelectedValidators={setSelectedValidators}
           />
+
+          {selectedValidators.length > 16 && (
+            <Alert
+              type="error"
+              className="mt-4"
+              description="You can only nominate up to 16 validators."
+            />
+          )}
         </div>
 
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
