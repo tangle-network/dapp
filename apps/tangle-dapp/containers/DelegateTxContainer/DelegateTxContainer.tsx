@@ -17,21 +17,20 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import useSWR from 'swr';
 
 import {
   bondExtraTokens,
   bondTokens,
   evmPublicClient,
-  getMaxNominationQuota,
   isNominatorFirstTimeNominator,
   nominateValidators,
   PAYMENT_DESTINATION_OPTIONS,
   updatePaymentDestination,
 } from '../../constants';
-import { getActiveValidators, getWaitingValidators } from '../../data';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import AuthorizeTx from './AuthorizeTx';
@@ -47,28 +46,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { data: activeValidatorsData } = useSWR(
-    [getActiveValidators.name],
-    ([, ...args]) => getActiveValidators(...args)
-  );
-  const { data: waitingValidatorsData } = useSWR(
-    [getWaitingValidators.name],
-    ([, ...args]) => getWaitingValidators(...args)
-  );
 
-  const [maxNominationQuota, setMaxNominationQuota] = useState<number>(0);
-
-  useEffect(() => {
-    getMaxNominationQuota().then((maxNominationQuota) => {
-      setMaxNominationQuota(maxNominationQuota ? maxNominationQuota : 16);
-    });
-  }, []);
-
-  const allValidators = useMemo(() => {
-    if (!activeValidatorsData || !waitingValidatorsData) return [];
-
-    return [...activeValidatorsData, ...waitingValidatorsData];
-  }, [activeValidatorsData, waitingValidatorsData]);
+  const maxNominationQuota = useMaxNominationQuota();
+  const allValidators = useAllValidatorsData();
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(

@@ -12,14 +12,10 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import useSWR from 'swr';
 
-import {
-  evmPublicClient,
-  getMaxNominationQuota,
-  nominateValidators,
-} from '../../constants';
-import { getActiveValidators, getWaitingValidators } from '../../data';
+import { evmPublicClient, nominateValidators } from '../../constants';
+import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import SelectValidators from './SelectValidators';
 import { UpdateNominationsTxContainerProps } from './types';
 
@@ -30,28 +26,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { data: activeValidatorsData } = useSWR(
-    [getActiveValidators.name],
-    ([, ...args]) => getActiveValidators(...args)
-  );
-  const { data: waitingValidatorsData } = useSWR(
-    [getWaitingValidators.name],
-    ([, ...args]) => getWaitingValidators(...args)
-  );
 
-  const [maxNominationQuota, setMaxNominationQuota] = useState<number>(0);
-
-  useEffect(() => {
-    getMaxNominationQuota().then((maxNominationQuota) => {
-      setMaxNominationQuota(maxNominationQuota ? maxNominationQuota : 16);
-    });
-  }, []);
-
-  const allValidators = useMemo(() => {
-    if (!activeValidatorsData || !waitingValidatorsData) return [];
-
-    return [...activeValidatorsData, ...waitingValidatorsData];
-  }, [activeValidatorsData, waitingValidatorsData]);
+  const maxNominationQuota = useMaxNominationQuota();
+  const allValidators = useAllValidatorsData();
 
   const [selectedValidators, setSelectedValidators] =
     useState<string[]>(currentNominations);
