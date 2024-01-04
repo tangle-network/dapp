@@ -1,4 +1,4 @@
-import { type FC } from 'react';
+import { type FC, useMemo } from 'react';
 import cx from 'classnames';
 import {
   UncontrolledTreeEnvironment,
@@ -7,7 +7,6 @@ import {
 } from 'react-complex-tree';
 import { Typography } from '@webb-tools/webb-ui-components';
 import {
-  ChevronDown,
   FileLine,
   FolderFill,
   FolderOpenFill,
@@ -34,6 +33,14 @@ const NavSideBar: FC<NavSideBarProps> = ({
   activeFileIndex,
   isCollapsed,
 }) => {
+  const expandedTreeItems = useMemo(
+    () =>
+      activeFileIndex
+        ? getExpandedFoldersFromActiveFileIndex(activeFileIndex)
+        : undefined,
+    [activeFileIndex]
+  );
+
   return (
     <div className="p-2">
       {/* Header */}
@@ -59,7 +66,6 @@ const NavSideBar: FC<NavSideBarProps> = ({
         <UncontrolledTreeEnvironment<FileType>
           dataProvider={new StaticTreeDataProvider(filesData)}
           getItemTitle={(item) => item.data.fileName}
-          // disableMultiselect={true}
           onFocusItem={(item) => {
             if (!item.isFolder) {
               handleFileSelect(item.index.toString());
@@ -67,9 +73,7 @@ const NavSideBar: FC<NavSideBarProps> = ({
           }}
           viewState={{
             'file-tree': {
-              expandedItems: activeFileIndex
-                ? getExpandedFoldersFromActiveFileIndex(activeFileIndex)
-                : undefined,
+              expandedItems: expandedTreeItems,
               selectedItems: activeFileIndex ? [activeFileIndex] : undefined,
             },
           }}
@@ -101,15 +105,22 @@ const NavSideBar: FC<NavSideBarProps> = ({
               <div
                 className="rct-tree-item-arrow-isFolder rct-tree-item-arrow"
                 {...context.arrowProps}
-                // {...context.interactiveElementProps.onClick}
               >
-                <ChevronDown
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="17"
+                  height="16"
+                  viewBox="0 0 17 16"
+                  fill="none"
                   className={cx({
                     '-rotate-90': !context.isExpanded,
                   })}
-                  enableBackground="new 0 0 16 16"
-                  xmlSpace="preserve"
-                />
+                >
+                  <path
+                    d="M8.10201 8.78126L11.4019 5.48145L12.3447 6.42425L8.10201 10.6669L3.85938 6.42425L4.80219 5.48145L8.10201 8.78126Z"
+                    fill="#6C7180"
+                  />
+                </svg>
               </div>
             ) : null
           }
