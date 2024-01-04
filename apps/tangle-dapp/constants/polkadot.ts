@@ -148,3 +148,17 @@ export const isNominatorFirstTimeNominator = async (
 
   return !isAlreadyBonded && !nominatedValidators.isSome;
 };
+
+export const getValidatorCommission = async (
+  validatorAddress: string
+): Promise<string | undefined> => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return '';
+
+  const validatorPrefs = await api.query.staking.validators(validatorAddress);
+  const commissionRate = validatorPrefs.commission.unwrap().toNumber();
+  const commission = commissionRate / 10000000;
+
+  return commission.toString();
+};

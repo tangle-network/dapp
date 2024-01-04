@@ -6,10 +6,13 @@ import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/Tab
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useTxClientStorage } from '@webb-tools/api-provider-environment';
-import { Typography, Button } from '@webb-tools/webb-ui-components';
+import {
+  Typography,
+  Button,
+  ActionsDropdown,
+} from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ActionsDropdown } from '../../components';
 import { FilterButton } from '../../components/tables';
 import ReceiveModal from '../../components/ReceiveModal';
 import { DeleteNotesModal } from '../../containers/DeleteNotesModal';

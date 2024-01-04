@@ -5,13 +5,17 @@ export type Validator = {
   effectiveAmountStaked: string;
   effectiveAmountStakedRaw: string;
   delegations: string;
+  commission: string;
 };
 
 export type Delegator = {
   address: string;
   identity: string;
-  totalStaked: string;
+  selfStaked: string;
   isActive: boolean;
+  commission: string;
+  delegations: string;
+  effectiveAmountStaked: string;
 };
 
 export enum PaymentDestination {

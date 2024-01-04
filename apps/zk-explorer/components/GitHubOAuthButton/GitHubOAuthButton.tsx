@@ -1,31 +1,32 @@
 'use client';
 
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { GithubFill } from '@webb-tools/icons';
-import { twMerge } from 'tailwind-merge';
 import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
 import { GitHubOAuthButtonProps } from './types';
+import { twMerge } from 'tailwind-merge';
 
 export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
-  clientId,
+  onClick,
+  username,
+  onSignedInClick,
   redirectUri,
+  clientId,
   scope,
   state,
   doInterceptOauthRedirect,
-  username,
-  onOAuthSuccess,
   onOAuthError,
-  onSignedInClick,
-  onClick,
+  onOAuthSuccess,
+  className,
   ...rest
 }) => {
+  const isSignedIn = username !== undefined;
+
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       if (onClick !== undefined) {
         onClick(e);
       }
-
-      const isSignedIn = username !== undefined;
 
       if (isSignedIn) {
         if (onSignedInClick !== undefined) {
@@ -46,7 +47,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
         window.location.href = authUrl.toString();
       }
     },
-    [clientId, redirectUri, scope, state, username, onSignedInClick, onClick]
+    [isSignedIn, clientId, scope, state, redirectUri, onClick, onSignedInClick]
   );
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.
@@ -62,7 +63,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
     const error = url.searchParams.get('error');
     const errorDescription = url.searchParams.get('error_description');
 
-    if (code !== null && state !== null) {
+    if (code !== null) {
       if (onOAuthSuccess !== undefined) {
         onOAuthSuccess({ code, state });
       }
@@ -73,27 +74,42 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
     }
   }, [doInterceptOauthRedirect, onOAuthSuccess, onOAuthError]);
 
+  const signedInClassName = isSignedIn
+    ? twMerge(
+        'border-mono-60 dark:border-mono-120 hover:dark:border-mono-120',
+        'hover:bg-mono-0/30 dark:bg-mono-140 dark:hover:bg-mono-160'
+      )
+    : '';
+
+  const textColor = isSignedIn
+    ? 'dark:text-mono-0'
+    : 'text-mono-0 dark:text-mono-140';
+
+  const iconFillColor = isSignedIn
+    ? 'dark:fill-mono-0'
+    : 'fill-mono-0 dark:fill-mono-140';
+
+  const themeClasses = 'border-mono-140';
+
   return (
-    <button
+    <Button
       {...rest}
-      type="button"
-      className={twMerge(
-        'rounded-full border-2 py-2 px-4',
-        'bg-mono-0/10 border-mono-60',
-        'hover:bg-mono-0/30',
-        'dark:bg-mono-0/5 dark:border-mono-140',
-        'dark:hover:bg-mono-0/10',
-        rest.className
-      )}
+      className={twMerge(signedInClassName, 'px-4', themeClasses, className)}
+      variant={isSignedIn ? 'secondary' : 'primary'}
       onClick={handleClick}
     >
       <div className="flex items-center gap-2">
-        <GithubFill size="lg" />
+        <GithubFill className={iconFillColor} size="lg" />
 
-        <Typography variant="body1" fw="bold" component="p">
-          {username ? `@${username}` : 'Sign in with GitHub'}
+        <Typography
+          className={textColor}
+          variant="body1"
+          fw="bold"
+          component="p"
+        >
+          {username !== undefined ? `@${username}` : 'Sign In'}
         </Typography>
       </div>
-    </button>
+    </Button>
   );
 };

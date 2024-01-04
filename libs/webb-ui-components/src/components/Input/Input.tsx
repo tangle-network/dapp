@@ -59,6 +59,7 @@ export const Input: React.FC<InputProps> = (props) => {
     type = 'text',
     value: initialValue = '',
     inputRef,
+    inputClassName,
     ...restProps
   } = props;
   const [value, setValue] = useState(initialValue);
@@ -154,9 +155,17 @@ export const Input: React.FC<InputProps> = (props) => {
           : cx(
               `border-none w-full bg-transparent focus:ring-0 p-0 h4 leading-[30px] font-bold`,
               'text-mono-200 dark:text-mono-0'
-            )
+            ),
+        inputClassName
       ),
-    [inputClsxBase, inputClsxDisabled, inputClsxFocus, inputClsxHover, size]
+    [
+      inputClsxBase,
+      inputClsxDisabled,
+      inputClsxFocus,
+      inputClsxHover,
+      size,
+      inputClassName,
+    ]
   );
 
   const iconClsx = useMemo(
