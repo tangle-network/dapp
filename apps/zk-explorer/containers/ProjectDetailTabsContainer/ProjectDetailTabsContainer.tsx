@@ -38,8 +38,11 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
         </TabsList>
 
         <div className="grow relative bg-mono-20 dark:bg-mono-200 rounded-2xl">
-          <div className="max-h-[700px] lg:!max-h-[none] lg:absolute lg:top-0 lg:bottom-0 lg:left-0 lg:right-0 overflow-y-auto">
-            <TabContent value={CIRCUITS_TAB}>
+          <div className="max-h-[700px] lg:!max-h-[none] lg:absolute lg:top-0 lg:bottom-0 lg:left-0 lg:right-0 overflow-auto">
+            <TabContent
+              value={CIRCUITS_TAB}
+              className="min-w-[875px] md:!min-w-min h-[700px] lg:h-full"
+            >
               <Suspense fallback={<SectionSkeletonLoader />}>
                 <Circuits />
               </Suspense>
