@@ -66,6 +66,8 @@ const NavSideBar: FC<NavSideBarProps> = ({
         <UncontrolledTreeEnvironment<FileType>
           dataProvider={new StaticTreeDataProvider(filesData)}
           getItemTitle={(item) => item.data.fileName}
+          canSearch={false}
+          canSearchByStartingTyping={false}
           onFocusItem={(item) => {
             if (!item.isFolder) {
               handleFileSelect(item.index.toString());

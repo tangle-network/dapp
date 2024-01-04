@@ -38,3 +38,7 @@
 .rct-tree-item-title-container-selected .rct-tree-item-button::before {
   @apply !bg-blue-70 dark:!bg-blue-50;
 }
+
+.rct-tree-item-button:focus-visible {
+  @apply focus-visible:outline-none;
+}
