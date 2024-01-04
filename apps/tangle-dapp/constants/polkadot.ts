@@ -156,3 +156,13 @@ export const getValidatorCommission = async (
 
   return commission.toString();
 };
+
+export const getMaxNominationQuota = async (): Promise<number | undefined> => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return NaN;
+
+  const maxNominations = await api.consts.staking.maxNominations?.toNumber();
+
+  return maxNominations;
+};

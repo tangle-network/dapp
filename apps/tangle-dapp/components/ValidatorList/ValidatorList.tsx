@@ -87,14 +87,17 @@ export const ValidatorList = ({
           <Avatar value={validator.address} theme="substrate" />
           <Typography variant="h5" fw="bold">
             {validator.identity !== ''
-              ? shortenString(validator.identity, 10)
-              : shortenString(validator.address, 6)}
+              ? shortenString(validator.identity, 8)
+              : shortenString(validator.address, 8)}
           </Typography>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <Chip color="blue">{validator.effectiveAmountStaked}</Chip>
           <Chip color="blue">{validator.delegations}</Chip>
           <Chip color="blue">{validator.commission}%</Chip>
+          <Chip color={validator.status === 'Active' ? 'green' : 'yellow'}>
+            {validator.status}
+          </Chip>
           <CopyWithTooltip
             textToCopy={validator.address}
             isButton={false}

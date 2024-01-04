@@ -55,6 +55,7 @@ export const getActiveValidators = async (): Promise<Validator[]> => {
           effectiveAmountStakedRaw: totalStakeAmount.toString() ?? '',
           delegations: delegations ?? '',
           commission: commission ?? '',
+          status: 'Active',
         };
       })
     );
