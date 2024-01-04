@@ -12,16 +12,14 @@ let _notificationApi = {
 };
 
 export const NotificationStacked: React.FC<{
-  setOptions(key: SnackbarKey, opt: SnackBarOpts): void;
   children?: React.ReactNode;
-}> = ({ children, setOptions }) => {
+}> = ({ children }) => {
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
 
   const addToQueue = useCallback(
     (opts: SnackBarOpts) => {
       const snackKey: SnackbarKey =
         opts.key || new Date().getTime() + Math.random();
-      setOptions(snackKey, { ...opts, close: closeSnackbar });
 
       enqueueSnackbar(opts.message, {
         key: snackKey,
@@ -30,7 +28,7 @@ export const NotificationStacked: React.FC<{
       });
       return snackKey;
     },
-    [closeSnackbar, enqueueSnackbar, setOptions]
+    [enqueueSnackbar]
   );
 
   const remove = useCallback(
