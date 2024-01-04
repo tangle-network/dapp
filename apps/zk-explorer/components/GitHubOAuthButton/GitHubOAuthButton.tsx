@@ -2,6 +2,7 @@
 
 import { GithubFill } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { useRouter } from 'next/navigation';
 import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { GitHubOAuthButtonProps } from './types';
@@ -21,6 +22,7 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
   ...rest
 }) => {
   const isSignedIn = username !== undefined;
+  const router = useRouter();
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
@@ -44,10 +46,19 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
           authUrl.searchParams.append('state', state);
         }
 
-        window.location.href = authUrl.toString();
+        router.push(authUrl.toString());
       }
     },
-    [isSignedIn, clientId, scope, state, redirectUri, onClick, onSignedInClick]
+    [
+      onClick,
+      isSignedIn,
+      onSignedInClick,
+      redirectUri,
+      clientId,
+      scope,
+      state,
+      router,
+    ]
   );
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.

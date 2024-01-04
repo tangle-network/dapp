@@ -2,7 +2,7 @@ import { Search } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTailwindBreakpoint, {
@@ -65,6 +65,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   );
 
   const breakpoint = useTailwindBreakpoint();
+  const router = useRouter();
 
   // TODO: Update constraints to match the search query, and re-fetch from API.
   const handleSearchQueryChange = (newSearchQuery: string) => {
@@ -84,7 +85,7 @@ export const SearchInput: FC<SearchInputProps> = ({
         newSearchQuery
       );
 
-      window.location.href = searchPageUrl.href;
+      router.push(searchPageUrl.href);
     } else {
       setSearchParam(SearchParamKey.SearchQuery, newSearchQuery);
 

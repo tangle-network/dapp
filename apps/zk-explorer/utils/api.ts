@@ -102,7 +102,7 @@ export async function searchProjects(
   const responseWrapper = await sendApiRequest<ProjectSearchResponseData>(
     ApiRoute.SearchProjects,
     {
-      method: 'POST',
+      method: 'GET',
       body: JSON.stringify({
         constraints,
         query,
@@ -124,7 +124,7 @@ export async function searchCircuits(
   const responseWrapper = await sendApiRequest<CircuitSearchResponseData>(
     ApiRoute.SearchCircuits,
     {
-      method: 'POST',
+      method: 'GET',
       body: JSON.stringify({
         constraints,
         query,

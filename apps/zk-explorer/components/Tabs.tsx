@@ -84,10 +84,10 @@ export const Tabs: TabsType = ({
     'Initially selected tab index is out of range'
   );
 
-  const ONE_TAB_REQUIRED_ERROR_MESSAGE =
-    'At least one tab must be provided, otherwise there would be nothing to render';
-
-  assert(tabs.length > 0, ONE_TAB_REQUIRED_ERROR_MESSAGE);
+  assert(
+    tabs.length > 0,
+    'At least one tab must be provided, otherwise there would be nothing to render'
+  );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
     initiallySelectedTabIndex

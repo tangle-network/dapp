@@ -1,6 +1,7 @@
 'use client';
 
 import assert from 'assert';
+import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { IS_DEBUG_MODE } from '../constants';
 import { MOCK_USER } from '../constants/mock';
@@ -102,13 +103,14 @@ export const useAuth = (): AuthContextType => useContext(AuthContext);
 
 export const useRequireAuth = (): User => {
   const auth = useAuth();
+  const router = useRouter();
 
   if (!auth.isLoggedIn) {
     alert(
       'You must be logged in to access this page or resource. Please, sign in then try again.'
     );
 
-    window.location.href = RelativePageUrl.Home;
+    router.push(RelativePageUrl.Home);
 
     // To prevent the code below from running, return the
     // mock user object until the page is redirected. This is

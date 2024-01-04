@@ -1,4 +1,3 @@
-import assert from 'assert';
 import _ from 'lodash';
 import { CircuitItem } from '../components/CircuitCard/types';
 import {
@@ -12,7 +11,6 @@ import {
   CircuitSearchResponseData,
   ProjectSearchResponseData,
   exchangeAuthCodeForOAuthToken,
-  submitProject,
 } from './api';
 
 export enum ItemType {
@@ -99,43 +97,6 @@ function reportProblem(message: string): void {
   alert(message);
 }
 
-/**
- * Submit a project to the ZK Explorer.
- *
- * This assumes that the provided GitHub URL is valid.
- * A string is returned in case of an error message from the backend,
- * otherwise `null` is returned.
- */
-export async function handleSubmitProject(
-  githubUrl: string
-): Promise<string | null> {
-  const response = await submitProject(githubUrl);
-
-  if (response.isSuccess) {
-    const githubUrlParseResult = parseGithubUrl(githubUrl);
-
-    assert(
-      githubUrlParseResult !== null,
-      'Github URL should be valid after a successful submission.'
-    );
-
-    const [owner, repo] = githubUrlParseResult;
-
-    // Navigate to the newly created project page.
-    window.location.href = `${window.location.origin}/@${owner}/${repo}`;
-
-    // Note that this function (should) never return at this point.
-    return null;
-  }
-
-  assert(
-    response.errorMessage !== undefined,
-    'Error message should be provided when the response did not indicate success.'
-  );
-
-  return response.errorMessage;
-}
-
 // TODO: This is temporary, until the backend is implemented.
 export function getMockProjects(): ProjectSearchResponseData {
   const mockProjects = Array<ProjectItem>(ITEMS_PER_PAGE).fill({
@@ -185,13 +146,10 @@ export function setSearchParam(key: SearchParamKey, value: string | null) {
     updatedSearchParams.set(key, value);
   }
 
-  // This prevents the addition of a trailing `?` in the URL in
-  // case there are no search params.
-  if (updatedSearchParams.size === 0) {
-    return;
-  }
+  const searchParamsString =
+    updatedSearchParams.size === 0 ? '' : `?${updatedSearchParams}`;
 
-  const newUrl = `${window.location.pathname}?${updatedSearchParams}`;
+  const newUrl = window.location.pathname + searchParamsString;
 
   window.history.pushState({}, '', newUrl);
 }

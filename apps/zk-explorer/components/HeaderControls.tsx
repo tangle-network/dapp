@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useAuth } from '../hooks/useAuth';
@@ -39,6 +40,7 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
   const breakpoint = useTailwindBreakpoint();
   const { user } = useAuth();
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
+  const router = useRouter();
 
   const prepareAndShowSearchSidebar = useCallback(() => {
     updateSidebarContent(
@@ -55,8 +57,8 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
   // When the user is logged in and clicks on the GitHub OAuth
   // button, redirect them to the dashboard.
   const handleUserProfileClick = useCallback(() => {
-    window.location.href = RelativePageUrl.Dashboard;
-  }, []);
+    router.push(RelativePageUrl.Dashboard);
+  }, [router]);
 
   return (
     <div
