@@ -111,7 +111,7 @@ export const DashboardOverviewTab: FC = () => {
         </div>
 
         {breakpoint >= TailwindBreakpoint.MD && (
-          <div className="ml-auto md:self-center">
+          <div className="ml-auto lg:self-center">
             <LargeSquareAvatar />
           </div>
         )}
@@ -150,8 +150,8 @@ export const DashboardOverviewTab: FC = () => {
 /** @internal */
 const Divider: FC = () => {
   return (
-    <div className="inline-block py-3 md:py-0 md:px-7 md:self-center">
-      <div className="dark:border-mono-160 border-t w-full md:w-auto md:border-r md:border-t-0 md:min-h-[57px] md:h-full" />
+    <div className="inline-block py-3 lg:py-0 lg:px-7 lg:self-center">
+      <div className="dark:border-mono-160 border-t w-full lg:w-auto lg:border-r lg:border-t-0 lg:min-h-[57px] lg:h-full" />
     </div>
   );
 };
