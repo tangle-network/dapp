@@ -33,7 +33,16 @@ type AuthContextType = {
   logout: () => void;
 };
 
-const AuthContext = createContext<AuthContextType>(null!);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isLoggedIn: false,
+  refreshAuth: async () => {
+    //
+  },
+  logout: () => {
+    //
+  },
+});
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
