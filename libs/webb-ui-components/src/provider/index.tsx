@@ -31,6 +31,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   children,
   defaultThemeMode = 'dark',
   hasErrorBoudary,
+  notificationOptions,
 }) => {
   const [isDarkMode, toggleMode] = useDarkMode(defaultThemeMode);
 
@@ -73,7 +74,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
         notificationApi,
       }}
     >
-      <NotificationProvider>
+      <NotificationProvider {...notificationOptions}>
         {hasErrorBoudary ? WebbUIEErrorBoundaryElement : children}
       </NotificationProvider>
     </WebbUIContext.Provider>

@@ -1,4 +1,4 @@
-import { SnackbarContent, SnackbarKey, SnackbarProvider } from 'notistack';
+import { SnackbarKey, SnackbarProvider } from 'notistack';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { SnackBarOpts } from './NotificationContext';
@@ -7,7 +7,8 @@ import { NotificationStacked } from './NotificationStacked';
 
 export const NotificationProvider: React.FC<{
   children?: React.ReactNode;
-}> = ({ children }) => {
+  maxStack?: number;
+}> = ({ children, maxStack = 3 }) => {
   const [notificationOptions] = useState<Record<SnackbarKey, SnackBarOpts>>({});
 
   const [domRoot, setDomRoot] = useState<HTMLElement | undefined>(undefined);
@@ -38,25 +39,14 @@ export const NotificationProvider: React.FC<{
       }}
       autoHideDuration={5000}
       preventDuplicate
-      maxSnack={10}
+      maxSnack={maxStack}
       domRoot={domRoot}
-      content={(key) => {
-        const opts = notificationOptions[key];
-
-        if (!opts) {
-          return null;
-        }
-
-        return (
-          <SnackbarContent>
-            <NotificationItem
-              onUnmount={cleanOpt}
-              $key={key}
-              opts={opts}
-              onClose={() => opts.close(key)}
-            />
-          </SnackbarContent>
-        );
+      Components={{
+        default: NotificationItem,
+        error: NotificationItem,
+        info: NotificationItem,
+        success: NotificationItem,
+        warning: NotificationItem,
       }}
     >
       <NotificationStacked children={children} setOptions={appendOpt} />

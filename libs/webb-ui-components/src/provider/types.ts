@@ -1,6 +1,6 @@
-import React from 'react';
-import { notificationApi } from '../components';
-import { ToggleThemeModeFunc } from '../hooks/useDarkMode';
+import React, { type ComponentProps } from 'react';
+import type { NotificationProvider, notificationApi } from '../components';
+import type { ToggleThemeModeFunc } from '../hooks/useDarkMode';
 import type { LoggerService } from '@webb-tools/app-util';
 
 export interface IWebbUIContext {
@@ -28,6 +28,14 @@ export type WebbUIProviderProps = {
    * @default "dark"
    */
   defaultThemeMode?: 'dark' | 'light';
+
+  /**
+   * Notification options
+   */
+  notificationOptions?: Omit<
+    ComponentProps<typeof NotificationProvider>,
+    'children'
+  >;
 
   children?: React.ReactNode;
 };
