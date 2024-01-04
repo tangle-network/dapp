@@ -1,36 +1,53 @@
 'use client';
 
+import '@webb-tools/tangle-substrate-types';
+
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import { isEthereumAddress } from '@polkadot/util-crypto';
+import { hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
+import {
+  decodeAddress,
+  isEthereumAddress,
+  keccakAsHex,
+} from '@polkadot/util-crypto';
+import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { WebbPolkadot } from '@webb-tools/polkadot-api-provider/webb-provider';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { useCallback, useEffect, useState } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
-import { STATEMENT_KIND } from '../../constants/claims';
 import { getPolkadotApiPromise } from '../../constants/polkadot';
+import toAsciiHex from '../../utils/claims/toAsciiHex';
+import getStatement from '../../utils/getStatement';
+import type { ClaimInfoType } from './types';
 
-const EligibleSection = () => {
-  const { activeAccount, activeApi } = useWebContext();
+enum Step {
+  InputAddress,
+  Sign,
+  SendingTx,
+}
+
+const EligibleSection: FC<
+  ClaimInfoType & { onSuccess?: (hash: string) => void }
+> = ({ amount, isRegularStatement, onSuccess }) => {
+  const { activeAccount, activeApi, activeWallet } = useWebContext();
+  const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
 
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
 
-  const [signature, setSignature] = useState('');
-
-  const [claiming, setClaiming] = useState(false);
+  const [step, setStep] = useState(Step.InputAddress);
 
   // Validate recipient input address after 1s
   useEffect(() => {
@@ -45,7 +62,12 @@ const EligibleSection = () => {
     return () => clearTimeout(timeout);
   }, [recipient]);
 
-  const handleClaimClick = useCallback(async () => {
+  const isActiveWalletEvm = useMemo(
+    () => activeWallet?.platform === 'EVM',
+    [activeWallet?.platform]
+  );
+
+  const handleClaimClick = async () => {
     if (!activeAccount || !activeApi) {
       const message = !activeApi
         ? WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady).message
@@ -59,59 +81,60 @@ const EligibleSection = () => {
     }
 
     try {
-      setClaiming(true);
-      const signature = await activeApi.sign(
-        activeAccount.address.concat('\n').concat(STATEMENT_KIND.Regular)
+      setStep(Step.Sign);
+
+      const api = await getPolkadotApiPromise();
+      if (!api) {
+        throw WebbError.from(WebbErrorCodes.ApiNotReady);
+      }
+
+      const accountId = activeAccount.address;
+      const isEvmRecipient = isEthereumAddress(recipient);
+      const isEvmSigner = isEthereumAddress(accountId);
+
+      const systemChain = await api.rpc.system.chain();
+
+      const statementSentence =
+        getStatement(systemChain.toHuman(), isRegularStatement)?.sentence || '';
+
+      const prefix = api.consts.claims.prefix.toU8a(true);
+
+      const payload = preparePayload(
+        prefix,
+        statementSentence,
+        recipient,
+        isEvmSigner,
+        isEvmRecipient
       );
 
-      setSignature(signature);
+      const signature = await activeApi.sign(payload);
 
-      if (activeApi instanceof WebbPolkadot) {
-        const hash = await activeApi.methods.claim.core.claim(
-          recipient,
-          signature
-        );
+      setStep(Step.SendingTx);
 
-        notificationApi.addToQueue({
-          variant: 'success',
-          message: `Claimed successfully!`,
-          secondaryMessage: `Block hash: ${hash}`,
-        });
-      } else {
-        const api = await getPolkadotApiPromise();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
+      const tx = api.tx.claims.claimAttest(
+        isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
+        isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer
+        isEvmSigner ? { EVM: signature } : { Native: signature }, // signataure
+        statementSentence
+      );
 
-        const isDestAccountEth = isEthereumAddress(recipient);
-        const isSignerEth = isEthereumAddress(activeAccount.address);
-
-        const tx = api.tx.claims.claim(
-          isDestAccountEth ? { EVM: recipient } : { Native: recipient }, // destAccount
-          isSignerEth
-            ? { EVM: activeAccount.address }
-            : { Native: activeAccount.address }, // signer
-          isDestAccountEth ? { EVM: signature } : { Native: signature } // signataure
-        );
-
-        const hash = await sendTransaction(tx);
-
-        notificationApi.addToQueue({
-          variant: 'success',
-          message: `Claimed successfully!`,
-          secondaryMessage: `Block hash: ${hash}`,
-        });
-      }
+      const hash = await sendTransaction(tx);
+      onSuccess?.(hash);
     } catch (error) {
       notificationApi.addToQueue({
         variant: 'error',
-        message: error instanceof Error ? error.message : 'Failed to sign',
+        message:
+          error instanceof Error
+            ? error.message
+            : typeof error === 'string'
+            ? `Error: ${error}`
+            : 'Failed to sign & send transaction',
         secondaryMessage: error instanceof Error ? undefined : String(error),
       });
     } finally {
-      setClaiming(false);
+      setStep(Step.InputAddress);
     }
-  }, [activeAccount, activeApi, notificationApi, recipient]);
+  };
 
   if (!activeAccount) {
     return null;
@@ -121,9 +144,13 @@ const EligibleSection = () => {
     <div className="space-y-12">
       <div className="space-y-8">
         <div className="space-y-4">
-          <ClaimingAccountInput activeAccountAddress={activeAccount.address} />
+          <ClaimingAccountInput
+            isDisabled={step !== Step.InputAddress}
+            activeAccountAddress={activeAccount.address}
+          />
 
           <ClaimRecipientInput
+            isDisabled={step !== Step.InputAddress}
             error={recipientErrorMsg}
             recipient={recipient}
             setRecipient={setRecipient}
@@ -142,7 +169,7 @@ const EligibleSection = () => {
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
-            900 TNT{' '}
+            {`${amount} `}
             {isValidAddress(recipient)
               ? `to ${
                   isHex(recipient)
@@ -159,24 +186,71 @@ const EligibleSection = () => {
         </Typography>
       </div>
 
-      <Button
-        isFullWidth
-        loadingText={signature ? 'Claiming...' : 'Signing...'}
-        isLoading={claiming}
-        isDisabled={!recipient || !!recipientErrorMsg}
-        onClick={handleClaimClick}
-      >
-        {signature ? 'Claim Now' : 'Sign & Claim'}
-      </Button>
+      <div className="space-y-2">
+        <Button
+          isFullWidth
+          loadingText={getLoadingText(step)}
+          isLoading={step !== Step.InputAddress}
+          isDisabled={!recipient || !!recipientErrorMsg}
+          onClick={handleClaimClick}
+        >
+          Claim Now
+        </Button>
+
+        <Button
+          variant="secondary"
+          isFullWidth
+          onClick={() =>
+            toggleModal(
+              true,
+              isActiveWalletEvm
+                ? PresetTypedChainId.TangleStandaloneTestnet
+                : PresetTypedChainId.TangleTestnet
+            )
+          }
+        >
+          Connect {isActiveWalletEvm ? 'Substrate' : 'EVM'} Wallet
+        </Button>
+      </div>
     </div>
   );
 };
 
 export default EligibleSection;
 
+function preparePayload(
+  prefix: Uint8Array,
+  statementSentence: string,
+  recipient: string,
+  isEvmSigner: boolean,
+  isEvmRecipient: boolean
+): string {
+  const statementBytes = stringToU8a(statementSentence);
+
+  const addressEncoded = toAsciiHex(
+    isEvmRecipient ? hexToU8a(recipient) : decodeAddress(recipient)
+  );
+
+  const message = new Uint8Array(
+    prefix.length + addressEncoded.length + statementBytes.length
+  );
+
+  message.set(prefix, 0);
+  message.set(addressEncoded, prefix.length);
+  message.set(statementBytes, prefix.length + addressEncoded.length);
+
+  if (isEvmSigner) {
+    return u8aToString(message);
+  }
+
+  // Otherwise, we need to hash the payload
+  return keccakAsHex(message);
+}
+
 function sendTransaction(
   tx: SubmittableExtrinsic<'promise', ISubmittableResult>
 ) {
+  console.log(`Sending transaction with args ${tx.args.toString()}`);
   return new Promise<string>((resolve, reject) => {
     tx.send(async (result) => {
       const status = result.status;
@@ -220,4 +294,15 @@ function sendTransaction(
       reject(error);
     });
   });
+}
+
+function getLoadingText(step: Step) {
+  switch (step) {
+    case Step.Sign:
+      return 'Signing...';
+    case Step.SendingTx:
+      return 'Sending transaction...';
+    default:
+      return '';
+  }
 }

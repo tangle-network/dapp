@@ -111,6 +111,8 @@ export class WebbWeb3Provider
 
   private largeFixtures: ZkComponents | null = null;
 
+  private unsubscribeFns: Set<() => void>;
+
   readonly typedChainidSubject: BehaviorSubject<number>;
 
   readonly backend: Backend = 'Circom';
@@ -147,9 +149,16 @@ export class WebbWeb3Provider
 
     this.publicClient = getPublicClient({ chainId });
 
-    watchBlockNumber({ chainId, listen: true }, (nextBlockNumber) => {
-      this._newBlock.next(nextBlockNumber);
-    });
+    this.unsubscribeFns = new Set();
+
+    const unsub = watchBlockNumber(
+      { chainId, listen: true },
+      (nextBlockNumber) => {
+        this._newBlock.next(nextBlockNumber);
+      }
+    );
+
+    this.unsubscribeFns.add(unsub);
 
     // There are no relay chain methods for Web3 chains
     this.relayChainMethods = null;
@@ -277,19 +286,27 @@ export class WebbWeb3Provider
   }
 
   setChainListener() {
-    return watchNetwork(({ chain }) => {
+    const unsub = watchNetwork(({ chain }) => {
       if (!chain) {
         return;
       }
 
       this.emit('providerUpdate', [chain.id]);
     });
+
+    this.unsubscribeFns.add(unsub);
+
+    return unsub;
   }
 
   setAccountListener() {
-    return watchAccount(async () => {
+    const unsub = watchAccount(async () => {
       this.emit('newAccounts', this.accounts);
     });
+
+    this.unsubscribeFns.add(unsub);
+
+    return unsub;
   }
 
   async destroy(): Promise<void> {
@@ -563,6 +580,7 @@ export class WebbWeb3Provider
   }
 
   async endSession(): Promise<void> {
+    this.unsubscribeFns.forEach((unsub) => unsub());
     return this.unsubscribeAll();
   }
 

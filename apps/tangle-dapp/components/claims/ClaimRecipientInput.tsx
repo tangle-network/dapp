@@ -8,12 +8,14 @@ type Props = {
   recipient: string;
   setRecipient: (recipient: string) => void;
   error: string;
+  isDisabled?: boolean;
 };
 
 const ClaimRecipientInput: FC<Props> = ({
   error,
   recipient: value,
   setRecipient: setValue,
+  isDisabled,
 }) => {
   return (
     <div className="space-y-4">
@@ -25,6 +27,7 @@ const ClaimRecipientInput: FC<Props> = ({
         <TextField.Root
           error={error}
           className="p-4 rounded-full bg-mono-0 dark:bg-mono-180 text-mono-140 dark:text-mono-40 max-w-none"
+          isDisabled={isDisabled}
         >
           <TextField.Slot>
             <Avatar

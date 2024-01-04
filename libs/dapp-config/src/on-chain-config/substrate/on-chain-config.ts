@@ -1,13 +1,8 @@
 import type { ApiPromise } from '@polkadot/api';
-import type { Option } from '@polkadot/types';
-import {
-  PalletAssetRegistryAssetDetails,
-  PalletAssetRegistryAssetMetadata,
-} from '@polkadot/types/lookup';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import type { ChainAddressConfig } from '../../anchors';
 import { chainsConfig } from '../../chains';
-import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from '../../constants';
+import { DEFAULT_NATIVE_INDEX } from '../../constants';
 import { CurrencyConfig } from '../../currencies';
 import type { ICurrency } from '../../types';
 import {
@@ -32,8 +27,8 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
   async fetchFungibleCurrency(
     typedChainId: number,
-    treeId: string,
-    provider: ApiPromise
+    _treeId: string,
+    _provider: ApiPromise
   ): Promise<ICurrency | null> {
     // First check if the fungible currency is already cached
     const cachedFungibleCurrency = this.fungibleCurrencyCache.get(typedChainId);
@@ -48,6 +43,9 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
     try {
       this.assertChainType(typedChainId, ChainType.Substrate);
 
+      return null;
+
+      /* WE DON'T MANAGE VANCHOR ON SUBSTRATE AT THE MOMENT
       const vanchor = await provider.query.vAnchorBn254.vAnchors(treeId);
       if (vanchor.isNone) {
         throw new Error('VAnchor not found with tree id: ' + treeId);
@@ -56,12 +54,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       const vanchorDetail = vanchor.unwrap();
       const assetId = vanchorDetail.asset.toString();
 
-      const [asset, metadata] = await provider.queryMulti<
-        [
-          Option<PalletAssetRegistryAssetDetails>,
-          Option<PalletAssetRegistryAssetMetadata>
-        ]
-      >([
+      const [asset, metadata] = await provider.queryMulti([
         [provider.query.assetRegistry.assets, assetId],
         [provider.query.assetRegistry.assetMetadataMap, assetId],
       ]);
@@ -92,7 +85,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
       // Cache the fungible currency
       this.fungibleCurrencyCache.set(typedChainId, fungible);
-      return fungible;
+      return fungible; */
     } catch (error) {
       console.error('Failed to fetch fungible currency', error);
     }
@@ -101,9 +94,9 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
   }
 
   async fetchWrappableCurrencies(
-    fungibleCurrency: ICurrency,
+    _fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: ApiPromise
+    _provider: ApiPromise
   ): Promise<ICurrency[]> {
     // First check if the wrappable currencies are already cached
     const cachedWrappableCurrencies =
@@ -116,12 +109,13 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       return Promise.resolve(cachedWrappableCurrencies);
     }
 
-    const fungibleId = fungibleCurrency.address;
-
     try {
       this.assertChainType(typedChainId, ChainType.Substrate);
 
-      const asset = await provider.query.assetRegistry.assets(fungibleId);
+      return [];
+
+      // WE REMOVED THE ASSET REGISTRY PALLET FROM TANGLE
+      /* const asset = await provider.query.assetRegistry.assets(fungibleId);
       if (asset.isNone) {
         throw new Error('Asset not found with id: ' + fungibleId);
       }
@@ -170,7 +164,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
       // Cache the wrappable currencies
       this.wrappableCurrenciesCache.set(typedChainId, wrappable);
-      return wrappable;
+      return wrappable; */
     } catch (error) {
       console.error('Failed to fetch wrappable currencies', error);
     }

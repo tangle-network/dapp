@@ -19,9 +19,13 @@ import { twMerge } from 'tailwind-merge';
 
 type Props = {
   activeAccountAddress: string;
+  isDisabled?: boolean;
 };
 
-const ClaimingAccountInput: FC<Props> = ({ activeAccountAddress }) => {
+const ClaimingAccountInput: FC<Props> = ({
+  activeAccountAddress,
+  isDisabled,
+}) => {
   const { activeApi, accounts, setActiveAccount } = useWebContext();
 
   const { notificationApi } = useWebbUI();
@@ -49,6 +53,7 @@ const ClaimingAccountInput: FC<Props> = ({ activeAccountAddress }) => {
       </Typography>
       {activeApi instanceof WebbWeb3Provider ? (
         <button
+          disabled={isDisabled}
           onClick={() => handleEvmSwitch(activeApi.walletClient)}
           className={twMerge(
             'w-full p-4 border rounded-full group',
@@ -56,7 +61,8 @@ const ClaimingAccountInput: FC<Props> = ({ activeAccountAddress }) => {
             'bg-mono-0 dark:bg-mono-180',
             'border-mono-80 dark:border-mono-120',
             'text-mono-140 dark:text-mono-40',
-            'hover:enabled:border-blue-40 dark:hover:enabled:border-blue-70'
+            'hover:enabled:border-blue-40 dark:hover:enabled:border-blue-70',
+            'disabled:opacity-80'
           )}
         >
           <div className="flex items-center space-x-1">
@@ -70,6 +76,7 @@ const ClaimingAccountInput: FC<Props> = ({ activeAccountAddress }) => {
       ) : (
         <Dropdown className="w-full">
           <DropdownButton
+            disabled={isDisabled}
             size="sm"
             className="w-full px-4 py-4 rounded-full"
             icon={<Avatar theme="substrate" value={activeAccountAddress} />}

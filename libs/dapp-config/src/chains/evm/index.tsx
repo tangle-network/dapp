@@ -313,18 +313,24 @@ export const chainsConfig: Record<number, ChainConfig> = {
       symbol: 'tTNT',
       decimals: 18,
     },
-    blockExplorers: {
-      default: {
-        name: 'Tangle Testnet Explorer',
-        url: 'https://explorer.tangle.tools',
-      },
-    },
+    blockExplorers: !process.env['USING_LOCAL_TANGLE']
+      ? {
+          default: {
+            name: 'Tangle Testnet Explorer',
+            url: 'https://explorer.tangle.tools',
+          },
+        }
+      : undefined,
     rpcUrls: {
       default: {
-        http: ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
+        http: process.env['USING_LOCAL_TANGLE']
+          ? ['http://localhost:9944']
+          : ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
       },
       public: {
-        http: ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
+        http: process.env['USING_LOCAL_TANGLE']
+          ? ['http://localhost:9944']
+          : ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
       },
     },
     contracts: hostedOrbitMulticall3Address

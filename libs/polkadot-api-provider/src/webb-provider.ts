@@ -49,20 +49,18 @@ import {
 
 import { VoidFn } from '@polkadot/api/types';
 import {
+  BridgeStorage,
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/browser-utils';
+import Storage from '@webb-tools/dapp-types/Storage';
+import {
   Backend,
   ZERO_BYTES32,
   ZkComponents,
   u8aToHex,
 } from '@webb-tools/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-import { stringToU8a } from '@polkadot/util';
-import {
-  BridgeStorage,
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/browser-utils';
-import Storage from '@webb-tools/dapp-types/Storage';
 import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { getLeaves } from './mt-utils';
@@ -580,6 +578,7 @@ export class WebbPolkadot
         acc.meta.name === account.name &&
         acc.meta.source === this.injectedExtension.name
     );
+
     if (!injectedAccount) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }

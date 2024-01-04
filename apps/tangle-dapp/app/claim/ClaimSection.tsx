@@ -1,8 +1,12 @@
 'use client';
 
+import { Option, u128 } from '@polkadot/types';
+import { PalletAirdropClaimsStatementKind } from '@polkadot/types/lookup';
+import { formatBalance } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import type { Account } from '@webb-tools/abstract-api-provider';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import type { Nullable } from '@webb-tools/dapp-types/utils/types';
@@ -12,22 +16,23 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { BN } from 'bn.js';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../../constants/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
+import SucessClaim from './SucessClaim';
+import type { ClaimInfoType } from './types';
 
-const eligibilityCache = new Map<string, boolean>();
+const eligibilityCache = new Map<string, ClaimInfoType>();
 
-const checkClaimEligibility = async (
+const getClaimsInfo = async (
   accountAddress: string,
   options?: { force?: boolean }
-): Promise<boolean> => {
+): Promise<ClaimInfoType | null> => {
   // Check cache
   const cached = eligibilityCache.get(accountAddress);
-  if (typeof cached === 'boolean' && !options?.force) {
+  if (cached && !options?.force) {
     return cached;
   }
 
@@ -36,43 +41,67 @@ const checkClaimEligibility = async (
     throw WebbError.from(WebbErrorCodes.ApiNotReady);
   }
 
-  const claimAmount = await api.query.claims.claims(
-    isEthereumAddress(accountAddress)
-      ? {
-          EVM: accountAddress,
-        }
-      : {
-          Native: accountAddress,
-        }
-  );
+  const params = isEthereumAddress(accountAddress)
+    ? { EVM: accountAddress }
+    : { Native: accountAddress };
 
-  const amount = claimAmount.unwrapOr(null);
-  /* const eligible = amount !== null && amount.gt(new BN(0));
+  const decimals = api.registry.chainDecimals[0];
+  const tokenSymbol = api.registry.chainTokens[0];
+
+  const [claimAmount, statement] = await api.queryMulti<
+    [Option<u128>, Option<PalletAirdropClaimsStatementKind>]
+  >([
+    [api.query.claims.claims, params], // Claim amount
+    [api.query.claims.signing, params], // Claim statement
+  ]);
+
+  if (claimAmount.isNone || statement.isNone) {
+    return null;
+  }
+
+  const result = {
+    amount: formatBalance(claimAmount.unwrap(), {
+      decimals,
+      withUnit: tokenSymbol,
+    }),
+    isRegularStatement: statement.unwrap().isRegular,
+  } satisfies ClaimInfoType;
 
   // Cache result
-  eligibilityCache.set(accountAddress, eligible);
+  eligibilityCache.set(accountAddress, result);
 
-  return eligible; */
-  return true;
+  return result;
 };
 
 function ClaimSection() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
-  const { activeAccount, loading, isConnecting } = useWebContext();
+  const { apiConfig, activeAccount, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
 
   const [checkingEligibility, setCheckingEligibility] = useState(false);
-  const [eligible, setEligible] = useState<Nullable<boolean>>(null);
+
+  const [successBlockHash, setSuccessBlockHash] = useState('');
+
+  // Default to null to indicate that we are still checking
+  // If false, then we know that the user is not eligible
+  // Otherwise, the state will be the claim info
+  const [claimInfo, setClaimInfo] =
+    useState<Nullable<ClaimInfoType | false>>(null);
 
   const checkEligibility = useCallback(
     async (activeAccount: Account, force?: boolean) => {
       try {
+        setClaimInfo(null);
+        setSuccessBlockHash('');
         setCheckingEligibility(true);
 
-        const isEligible = await checkClaimEligibility(activeAccount.address, {
+        const claimInfo = await getClaimsInfo(activeAccount.address, {
           force,
         });
-        setEligible(isEligible);
+
+        setClaimInfo(
+          claimInfo ? claimInfo : false // If claimInfo is null, then we know that the user is not eligible
+        );
       } catch (error) {
         console.log(error);
         notificationApi({
@@ -86,6 +115,18 @@ function ClaimSection() {
     [notificationApi]
   );
 
+  const txExplorerUrl = useMemo(() => {
+    if (!successBlockHash) return null;
+
+    const explorer =
+      apiConfig.chains[PresetTypedChainId.TangleStandaloneTestnet]
+        ?.blockExplorers?.default?.url;
+
+    if (!explorer) return null;
+
+    return getExplorerURI(explorer, successBlockHash, 'tx', 'polkadot');
+  }, [apiConfig.chains, successBlockHash]);
+
   useEffect(() => {
     if (!activeAccount) return;
 
@@ -96,17 +137,23 @@ function ClaimSection() {
     <AppTemplate.Content>
       <AppTemplate.Title
         title={
-          eligible === null
+          claimInfo === null
             ? 'Claim your $TNT Aidrop'
-            : eligible
-            ? 'You have unclaimed $TNT Airdrop!'
+            : claimInfo
+            ? successBlockHash
+              ? 'You have successfully claimed $TNT Airdrop!'
+              : 'You have unclaimed $TNT Airdrop!'
             : 'You are not eligible for $TNT Airdrop'
         }
         subTitle={
-          eligible === null
+          successBlockHash
+            ? 'CONGRATULATIONS!'
+            : claimInfo === null
             ? 'CLAIM AIRDROP'
-            : eligible
-            ? 'GREATE NEWS!'
+            : claimInfo
+            ? successBlockHash
+              ? 'CONGRATULATIONS!'
+              : 'GREATE NEWS!'
             : 'OOPS!'
         }
         overrideSubTitleProps={{
@@ -114,31 +161,33 @@ function ClaimSection() {
         }}
       />
 
-      <AppTemplate.DescriptionContainer>
-        <AppTemplate.Description
-          variant="mkt-body2"
-          className="text-mono-140 dark:text-mono-80"
-        >
-          {eligible === null ? (
-            <>
-              As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 5,000,000 TNT tokens to the community. Check
-              eligibility below to see if you qualify for TNT Airdrop!
-            </>
-          ) : eligible ? (
-            <>
-              Looks like you are eligible for $TNT airdrop! View your tokens
-              below, and start the claiming process.
-            </>
-          ) : (
-            <>
-              Looks like you are not eligible for $TNT airdrop. You can still
-              participate in the Tangle Network by purchasing $TNT or try again
-              with a different account.
-            </>
-          )}
-        </AppTemplate.Description>
-      </AppTemplate.DescriptionContainer>
+      {!successBlockHash ? (
+        <AppTemplate.DescriptionContainer>
+          <AppTemplate.Description
+            variant="mkt-body2"
+            className="text-mono-140 dark:text-mono-80"
+          >
+            {claimInfo === null ? (
+              <>
+                As part of {"Tangle's"} initial launch, the Tangle Network is
+                distributing 5,000,000 TNT tokens to the community. Check
+                eligibility below to see if you qualify for TNT Airdrop!
+              </>
+            ) : claimInfo ? (
+              <>
+                Looks like you are eligible for $TNT airdrop! View your tokens
+                below, and start the claiming process.
+              </>
+            ) : (
+              <>
+                Looks like you are not eligible for $TNT airdrop. You can still
+                participate in the Tangle Network by purchasing $TNT or try
+                again with a different account.
+              </>
+            )}
+          </AppTemplate.Description>
+        </AppTemplate.DescriptionContainer>
+      ) : null}
 
       <AppTemplate.Body>
         {!isWalletConnected ? (
@@ -177,9 +226,19 @@ function ClaimSection() {
 
             <Spinner size="lg" className="mx-auto" />
           </>
-        ) : eligible === true ? (
-          <EligibleSection />
-        ) : eligible === false ? (
+        ) : claimInfo ? (
+          successBlockHash ? (
+            <SucessClaim
+              successBlockHash={successBlockHash}
+              txExplorerUrl={txExplorerUrl}
+            />
+          ) : (
+            <EligibleSection
+              {...claimInfo}
+              onSuccess={(blockHash) => setSuccessBlockHash(blockHash)}
+            />
+          )
+        ) : claimInfo === false ? (
           <NotEligibleSection checkEligibility={checkEligibility} />
         ) : null}
       </AppTemplate.Body>
