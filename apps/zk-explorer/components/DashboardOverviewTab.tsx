@@ -7,6 +7,9 @@ import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { ComponentType, FC, useMemo } from 'react';
 import { useRequireAuth } from '../hooks/useAuth';
+import useTailwindBreakpoint, {
+  TailwindBreakpoint,
+} from '../hooks/useTailwindBreakpoint';
 import { formatTimestamp } from '../utils';
 import { LargeSquareAvatar } from './LargeSquareAvatar';
 import { SmallChip } from './SmallChip';
@@ -18,6 +21,7 @@ export const DashboardOverviewTab: FC = () => {
     githubUsername,
     website,
     twitterHandle,
+    shortBio,
   } = useRequireAuth();
 
   const creationTimestampString = useMemo(
@@ -25,32 +29,40 @@ export const DashboardOverviewTab: FC = () => {
     [createdAt]
   );
 
+  const breakpoint = useTailwindBreakpoint();
+
   return (
     <div className="flex flex-col gap-6">
-      <Card className="p-6 flex flex-col md:flex-row rounded-2xl space-y-0">
+      <Card className="p-6 flex flex-col md:flex-row rounded-2xl space-y-0 items-start md:gap-6">
+        {breakpoint < TailwindBreakpoint.MD && (
+          <div className="mb-6 md:mb-0">
+            <LargeSquareAvatar />
+          </div>
+        )}
+
         <div className="flex flex-col justify-center gap-1">
           <Typography variant="body2" fw="normal">
             Activated Circuits
           </Typography>
 
-          <Typography variant="h5" fw="bold">
+          <Typography variant="body1" fw="normal" className="dark:text-mono-0">
             {activatedCircuitCount === 0 ? '-' : activatedCircuitCount}
           </Typography>
         </div>
 
-        <VerticalDivider />
+        <Divider />
 
         <div className="flex flex-col justify-center gap-1">
           <Typography variant="body2" fw="normal">
             Member Since
           </Typography>
 
-          <Typography variant="h5" fw="bold">
+          <Typography variant="body1" fw="normal" className="dark:text-mono-0">
             {creationTimestampString}
           </Typography>
         </div>
 
-        <VerticalDivider />
+        <Divider />
 
         <div className="flex flex-col justify-center gap-1">
           <Typography variant="body2" fw="normal">
@@ -82,19 +94,27 @@ export const DashboardOverviewTab: FC = () => {
           </div>
         </div>
 
-        <VerticalDivider />
+        <Divider />
 
         <div className="flex flex-col justify-center gap-1">
           <Typography variant="body2" fw="normal">
             Short Bio
           </Typography>
 
-          <Typography variant="h5" fw="bold">
-            -
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="max-w-[400px] dark:text-mono-0"
+          >
+            {shortBio === undefined ? '-' : shortBio}
           </Typography>
         </div>
 
-        <LargeSquareAvatar />
+        {breakpoint >= TailwindBreakpoint.MD && (
+          <div className="ml-auto md:self-center">
+            <LargeSquareAvatar />
+          </div>
+        )}
       </Card>
 
       <Card className="p-6 flex gap-4 rounded-2xl space-y-0">
@@ -128,10 +148,10 @@ export const DashboardOverviewTab: FC = () => {
 };
 
 /** @internal */
-const VerticalDivider: FC = () => {
+const Divider: FC = () => {
   return (
-    <div className="inline-block py-7 md:py-0 md:px-7">
-      <div className="dark:border-mono-160 border-t w-full md:border-r md:min-h-[57px] md:h-full" />
+    <div className="inline-block py-3 md:py-0 md:px-7 md:self-center">
+      <div className="dark:border-mono-160 border-t w-full md:w-auto md:border-r md:border-t-0 md:min-h-[57px] md:h-full" />
     </div>
   );
 };

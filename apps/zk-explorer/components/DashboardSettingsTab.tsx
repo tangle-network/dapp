@@ -63,6 +63,8 @@ export const DashboardSettingsTab: FC = () => {
   ]);
 
   const saveChanges = useCallback(async () => {
+    // TODO: Need to ensure that the inputs' values are valid before performing the request. For example, the email input might contain an invalid email address.
+
     const diff = computeUserDiff(initialUser, {
       email,
       githubUsername,

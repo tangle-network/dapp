@@ -81,7 +81,7 @@ export const Tabs: TabsType = ({
 }) => {
   assert(
     initiallySelectedTabIndex >= 0 && initiallySelectedTabIndex < tabs.length,
-    'Selected tab index is out of range'
+    'Initially selected tab index is out of range'
   );
 
   const ONE_TAB_REQUIRED_ERROR_MESSAGE =
@@ -128,9 +128,9 @@ export const Tabs: TabsType = ({
 
   return (
     <TabsContext.Provider value={value}>
-      <div className="flex gap-6 sm:gap-0 align-center flex-col sm:flex-row">
+      <div className="flex gap-6 sm:gap-0 items-center flex-col sm:flex-row">
         {/* Tabs */}
-        <div className="inline-flex gap-4 w-full">
+        <div className="inline-flex gap-4 flex-grow w-full sm:w-auto">
           {tabs.map((tab, index) => {
             const isSelected = index === selectedTabIndex;
 
@@ -164,7 +164,7 @@ export const Tabs: TabsType = ({
         </div>
 
         {/* TODO: Fix not expanding to fill the minimum space required for its contents. */}
-        <div className="flex-grow">{rightContent}</div>
+        <div className="w-full sm:w-auto">{rightContent}</div>
       </div>
 
       {enhancedChildren}

@@ -61,7 +61,11 @@ export async function sendApiRequest<T = Record<string, never>>(
 
   const finalRequestUrl = makeAbsoluteApiEndpointUrl(route);
 
-  console.log('Sending API request to route:', finalRequestUrl, options?.body);
+  console.log(
+    `[API] Sending ${finalOptions.method} request:`,
+    finalRequestUrl,
+    options?.body
+  );
 
   const fetchResponse = await fetch(finalRequestUrl, finalOptions);
 
