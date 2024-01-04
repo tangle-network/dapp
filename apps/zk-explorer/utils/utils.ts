@@ -1,15 +1,16 @@
-import assert from 'assert';
+import _ from 'lodash';
 import { CircuitItem } from '../components/CircuitCard/types';
 import {
   GitHubOAuthErrorParams,
   GitHubOAuthSuccessParams,
 } from '../components/GitHubOAuthButton/types';
 import { ProjectItem } from '../components/ProjectCard/types';
+import { ITEMS_PER_PAGE } from '../constants';
+import { User } from '../hooks/useAuth';
 import {
   CircuitSearchResponseData,
   ProjectSearchResponseData,
   exchangeAuthCodeForOAuthToken,
-  submitProject,
 } from './api';
 
 export enum ItemType {
@@ -17,9 +18,10 @@ export enum ItemType {
   Circuit = 'Circuit',
 }
 
-export enum PageUrl {
+export enum RelativePageUrl {
   Home = '/',
   SubmitProject = '/submit',
+  Dashboard = '/dashboard',
 }
 
 export enum SearchParamKey {
@@ -27,8 +29,6 @@ export enum SearchParamKey {
   PaginationPageNumber = 'page',
   Filters = 'filters',
 }
-
-const ITEMS_PER_PAGE = 12;
 
 export function validateGithubUrl(url: string): boolean {
   return parseGithubUrl(url) !== null;
@@ -80,6 +80,7 @@ export async function handleOAuthSuccess(
 }
 
 export function handleOAuthError(params: GitHubOAuthErrorParams): void {
+  // TODO: Consider showing a modal or toast message to let the user know when OAuth fails.
   reportProblem(`GitHub OAuth login failed: ${params.errorDescription}`);
 }
 
@@ -96,46 +97,9 @@ function reportProblem(message: string): void {
   alert(message);
 }
 
-/**
- * Submit a project to the ZK Explorer.
- *
- * This assumes that the provided GitHub URL is valid.
- * A string is returned in case of an error message from the backend,
- * otherwise `null` is returned.
- */
-export async function handleSubmitProject(
-  githubUrl: string
-): Promise<string | null> {
-  const response = await submitProject(githubUrl);
-
-  if (response.isSuccess) {
-    const githubUrlParseResult = parseGithubUrl(githubUrl);
-
-    assert(
-      githubUrlParseResult !== null,
-      'Github URL should be valid after a successful submission.'
-    );
-
-    const [owner, repo] = githubUrlParseResult;
-
-    // Navigate to the newly created project page.
-    window.location.href = `${window.location.origin}/@${owner}/${repo}`;
-
-    // Note that this function (should) never return at this point.
-    return null;
-  }
-
-  assert(
-    response.errorMessage !== undefined,
-    'Error message should be provided when the response did not indicate success.'
-  );
-
-  return response.errorMessage;
-}
-
 // TODO: This is temporary, until the backend is implemented.
 export function getMockProjects(): ProjectSearchResponseData {
-  const mockProject: ProjectItem = {
+  const mockProjects = Array<ProjectItem>(ITEMS_PER_PAGE).fill({
     ownerAvatarUrl:
       'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
     repositoryOwner: 'webb',
@@ -144,22 +108,10 @@ export function getMockProjects(): ProjectSearchResponseData {
     circuitCount: 24,
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-    contributorAvatarUrls: [
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-    ],
-  };
-
-  for (let i = 0; i < 15; i++) {
-    mockProject.contributorAvatarUrls.push(
-      mockProject.contributorAvatarUrls[0]
-    );
-  }
-
-  const mockProjects = [];
-
-  for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-    mockProjects.push(mockProject);
-  }
+    contributorAvatarUrls: Array(15).fill(
+      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4'
+    ),
+  });
 
   return {
     projects: mockProjects,
@@ -169,7 +121,7 @@ export function getMockProjects(): ProjectSearchResponseData {
 
 // TODO: This is temporary, until the backend is implemented.
 export function getMockCircuits(): CircuitSearchResponseData {
-  const mockCircuit: CircuitItem = {
+  const mockCircuits = Array<CircuitItem>(ITEMS_PER_PAGE).fill({
     ownerAvatarUrl:
       'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
     filename: 'circuit.circom',
@@ -177,13 +129,7 @@ export function getMockCircuits(): CircuitSearchResponseData {
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
     stargazerCount: 123,
     constraintCount: 456,
-  };
-
-  const mockCircuits = [];
-
-  for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-    mockCircuits.push(mockCircuit);
-  }
+  });
 
   return {
     circuits: mockCircuits,
@@ -194,13 +140,16 @@ export function getMockCircuits(): CircuitSearchResponseData {
 export function setSearchParam(key: SearchParamKey, value: string | null) {
   const updatedSearchParams = new URLSearchParams(window.location.search);
 
-  if (value === null) {
+  if (value === null || value === '') {
     updatedSearchParams.delete(key);
   } else {
     updatedSearchParams.set(key, value);
   }
 
-  const newUrl = `${window.location.pathname}?${updatedSearchParams}`;
+  const searchParamsString =
+    updatedSearchParams.size === 0 ? '' : `?${updatedSearchParams}`;
+
+  const newUrl = window.location.pathname + searchParamsString;
 
   window.history.pushState({}, '', newUrl);
 }
@@ -214,5 +163,25 @@ export function validateSearchQuery(searchQuery: string | null): boolean {
     searchQuery !== null &&
     searchQuery.length > 0 &&
     searchQuery.length >= MIN_SEARCH_QUERY_LENGTH
+  );
+}
+
+export function formatTimestamp(timestamp: number): string {
+  const date = new Date(timestamp);
+
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+export function computeUserDiff(initial: User, updated: User): Partial<User> {
+  // Note that the user object is only composed of
+  // primitive values, so there's no need to worry about
+  // deep equality checks.
+  return _.pickBy(
+    updated,
+    (value, key) => !_.isEqual(value, initial[key as keyof User])
   );
 }

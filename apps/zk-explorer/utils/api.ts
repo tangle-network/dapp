@@ -1,24 +1,29 @@
+import assert from 'assert';
 import { CircuitItem } from '../components/CircuitCard/types';
-import { ProjectItem } from '../components/ProjectCard/types';
 import type {
   FilterCategoryItem,
   FilterConstraints,
 } from '../components/Filters/types';
-import assert from 'assert';
+import { ProjectItem } from '../components/ProjectCard/types';
+import { API_PREFIX } from '../constants';
+import { User } from '../hooks/useAuth';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',
   SearchProjects = 'search/projects',
   SearchCircuits = 'search/circuits',
   Constraints = 'constraints',
+  AuthValidate = 'auth/validate',
+  AuthLogout = 'auth/logout',
+  User = 'user',
 }
 
-export type ApiResponseWrapper<T extends ApiResponse> = {
-  innerResponse: T;
+export type ApiResponseWrapper<T> = {
+  innerResponse: ApiResponse<T>;
   fetchResponse: Response;
 };
 
-export type ApiResponse<T = unknown> = {
+export type ApiResponse<T = Record<string, never>> = {
   isSuccess: boolean;
   errorMessage?: string;
   data?: T;
@@ -38,16 +43,14 @@ export type FilterOptionsResponseData = {
   categories: FilterCategoryItem[];
 };
 
-export function makeApiRoute(route: ApiRoute): string {
-  const API_PREFIX = '/api';
-
+export function makeAbsoluteApiEndpointUrl(route: ApiRoute): string {
   return `${API_PREFIX}/${route}`;
 }
 
 export async function sendApiRequest<T = Record<string, never>>(
   route: ApiRoute,
   options?: RequestInit
-): Promise<ApiResponseWrapper<ApiResponse<T>>> {
+): Promise<ApiResponseWrapper<T>> {
   const finalOptions = {
     ...options,
     headers: {
@@ -56,11 +59,15 @@ export async function sendApiRequest<T = Record<string, never>>(
     },
   };
 
-  const finalRoute = makeApiRoute(route);
+  const finalRequestUrl = makeAbsoluteApiEndpointUrl(route);
 
-  console.log('Sending API request to route:', finalRoute, options?.body);
+  console.log(
+    `[API] Sending ${finalOptions.method} request:`,
+    finalRequestUrl,
+    options?.body
+  );
 
-  const fetchResponse = await fetch(finalRoute, finalOptions);
+  const fetchResponse = await fetch(finalRequestUrl, finalOptions);
 
   return {
     innerResponse: await fetchResponse.json(),
@@ -95,7 +102,7 @@ export async function searchProjects(
   const responseWrapper = await sendApiRequest<ProjectSearchResponseData>(
     ApiRoute.SearchProjects,
     {
-      method: 'POST',
+      method: 'GET',
       body: JSON.stringify({
         constraints,
         query,
@@ -105,13 +112,7 @@ export async function searchProjects(
     }
   );
 
-  // TODO: Temporary; Using `assert` here is incorrect, as this would not necessarily equate to a logic error.
-  assert(
-    responseWrapper.innerResponse.data !== undefined,
-    "Response data shouldn't be undefined"
-  );
-
-  return responseWrapper.innerResponse.data;
+  return extractResponseData(responseWrapper);
 }
 
 export async function searchCircuits(
@@ -123,7 +124,7 @@ export async function searchCircuits(
   const responseWrapper = await sendApiRequest<CircuitSearchResponseData>(
     ApiRoute.SearchCircuits,
     {
-      method: 'POST',
+      method: 'GET',
       body: JSON.stringify({
         constraints,
         query,
@@ -133,13 +134,7 @@ export async function searchCircuits(
     }
   );
 
-  // TODO: Temporary; Using `assert` here is incorrect, as this would not necessarily equate to a logic error.
-  assert(
-    responseWrapper.innerResponse.data !== undefined,
-    'Response data should not be undefined'
-  );
-
-  return responseWrapper.innerResponse.data;
+  return extractResponseData(responseWrapper);
 }
 
 export async function submitProject(githubSlug: string): Promise<ApiResponse> {
@@ -160,6 +155,35 @@ export async function fetchFilterOptions(): Promise<FilterOptionsResponseData> {
   );
 
   // TODO: Temporary; Using `assert` here is incorrect, as this would not necessarily equate to a logic error.
+  assert(
+    responseWrapper.innerResponse.data !== undefined,
+    'Response data should not be undefined'
+  );
+
+  return responseWrapper.innerResponse.data;
+}
+
+export async function updateUserProfile(
+  changes: Partial<User>
+): Promise<ApiResponse> {
+  const responseWrapper = await sendApiRequest(ApiRoute.User, {
+    method: 'PUT',
+    body: JSON.stringify(changes),
+  });
+
+  return responseWrapper.innerResponse;
+}
+
+export function extractResponseData<T>(
+  responseWrapper: ApiResponseWrapper<T>
+): T {
+  // TODO: Determine whether gracefully handle errors is more appropriate here.
+
+  assert(
+    responseWrapper.innerResponse.isSuccess,
+    'Response should have been successful'
+  );
+
   assert(
     responseWrapper.innerResponse.data !== undefined,
     'Response data should not be undefined'

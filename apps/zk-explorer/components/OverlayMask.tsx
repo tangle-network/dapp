@@ -1,3 +1,5 @@
+'use client';
+
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
 import { FC, useEffect } from 'react';

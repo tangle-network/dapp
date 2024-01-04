@@ -1,6 +1,7 @@
 export { default as getProjectCircuitsData } from './getProjectCircuitsData';
 export type {
-  CircuitItemFileType,
+  FileType,
+  FileTreeItem,
   GetProjectCircuitDataReturnType,
 } from './getProjectCircuitsData';
 export { default as getProjectGitHubInfoContainerData } from './getProjectGitHubInfoContainerData';

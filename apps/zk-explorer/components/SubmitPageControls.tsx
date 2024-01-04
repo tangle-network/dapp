@@ -1,14 +1,50 @@
 'use client';
 
 import { Button, Input } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
-import { validateGithubUrl } from '../utils';
-import { handleSubmitProject } from '../utils/utils';
+import assert from 'assert';
+import { useRouter } from 'next/navigation';
+import { FC, useCallback, useState } from 'react';
+import {
+  createProjectDetailPath,
+  submitProject,
+  validateGithubUrl,
+} from '../utils';
+import { parseGithubUrl } from '../utils/utils';
 
 export const SubmitPageControls: FC<Record<string, never>> = () => {
   const [githubUrl, setGithubUrl] = useState('');
   const [isValidGithubUrl, setIsValidGithubUrl] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const router = useRouter();
+
+  const handleSubmit = useCallback(async () => {
+    const response = await submitProject(githubUrl);
+
+    if (response.isSuccess) {
+      const githubUrlParseResult = parseGithubUrl(githubUrl);
+
+      assert(
+        githubUrlParseResult !== null,
+        'Github URL should be valid after a successful submission.'
+      );
+
+      const [owner, repo] = githubUrlParseResult;
+
+      // Navigate to the newly created project's page.
+      router.push(createProjectDetailPath(owner, repo));
+
+      return;
+    }
+
+    assert(
+      response.errorMessage !== undefined,
+      'Error message should be provided when the response did not indicate success.'
+    );
+
+    const errorMessage = response.errorMessage;
+
+    setErrorMessage(errorMessage !== null ? errorMessage : undefined);
+  }, [githubUrl, router]);
 
   return (
     <>
@@ -43,11 +79,7 @@ export const SubmitPageControls: FC<Record<string, never>> = () => {
         <Button
           isFullWidth
           isDisabled={!isValidGithubUrl}
-          onClick={async () => {
-            const errorMessage = await handleSubmitProject(githubUrl);
-
-            setErrorMessage(errorMessage !== null ? errorMessage : undefined);
-          }}
+          onClick={handleSubmit}
         >
           Submit Project
         </Button>

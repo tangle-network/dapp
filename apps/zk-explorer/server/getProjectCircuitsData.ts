@@ -1,17 +1,15 @@
-export type CircuitItemFileType = {
-  index: string;
-  isFolder?: boolean;
-  children: string[];
+import type { TreeItem } from 'react-complex-tree';
+
+export type FileType = {
   fileName: string;
-  fullPath?: string;
+  fullPath: string;
   isTrustedSetup?: boolean;
   gitHubUrl?: string;
 };
 
-export type GetProjectCircuitDataReturnType = Record<
-  string,
-  CircuitItemFileType
->;
+export type FileTreeItem = TreeItem<FileType>;
+
+export type GetProjectCircuitDataReturnType = Record<string, FileTreeItem>;
 
 export default async function getProjectCircuitsData(): Promise<GetProjectCircuitDataReturnType> {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -20,30 +18,49 @@ export default async function getProjectCircuitsData(): Promise<GetProjectCircui
     root: {
       index: 'root',
       isFolder: true,
-      children: ['child1', 'child2'],
-      fileName: 'Root item',
+      children: ['circuits'],
+      data: {
+        fileName: '',
+        fullPath: '',
+      },
     },
-    child1: {
-      index: 'child1',
-      children: [],
-      fileName: 'ecdsa_verify.circom',
-      fullPath: 'ecdsa_verify.circom',
-      isTrustedSetup: true,
-      gitHubUrl: 'https://github.com/webb-tools/tangle/forks',
-    },
-    child2: {
-      index: 'child2',
+    circuits: {
+      index: 'circuits',
       isFolder: true,
-      children: ['child3'],
-      fileName: 'ChildItem2',
+      children: ['circuits/file1', 'circuits/folder'],
+      data: {
+        fileName: 'circuits',
+        fullPath: 'circuits',
+      },
     },
-    child3: {
-      index: 'child3',
+    ['circuits/file1']: {
+      index: 'circuits/file1',
       children: [],
-      fileName: 'ChildItem3',
-      fullPath: '/ChildItem2/ChildItem3',
-      isTrustedSetup: true,
-      gitHubUrl: 'https://github.com/webb-tools/tangle/forks',
+      data: {
+        fileName: 'file1.circom',
+        fullPath: 'circuits/file1.circom',
+        isTrustedSetup: true,
+        gitHubUrl: 'https://github.com/webb-tools/tangle/forks',
+      },
+    },
+    ['circuits/folder']: {
+      index: 'circuits/folder',
+      isFolder: true,
+      children: ['circuits/folder/file2'],
+      data: {
+        fileName: 'folder',
+        fullPath: 'circuits/folder',
+      },
+    },
+    ['circuits/folder/file2']: {
+      index: 'circuits/folder/file2',
+      children: [],
+      data: {
+        fileName: 'file2.circom',
+        fullPath: 'circuits/folder/file2.circom',
+        isTrustedSetup: true,
+        gitHubUrl: 'https://github.com/webb-tools/tangle/forks',
+      },
     },
   };
 }
