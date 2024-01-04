@@ -2,14 +2,14 @@ import { Search } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
 import {
-  PageUrl,
+  RelativePageUrl,
   SearchParamKey,
   setSearchParam,
   validateSearchQuery,
@@ -28,7 +28,7 @@ export type SearchInputProps = PropsOf<typeof Input> & {
    * If `true`, the search input will redirect to the search page
    * when the value is changed, and after the debounce time.
    */
-  doesRedirect?: boolean;
+  doesRedirectOnChange?: boolean;
 
   /**
    * The handler to call when the value of the input changes.
@@ -45,8 +45,9 @@ export const SearchInput: FC<SearchInputProps> = ({
   isFullWidth,
   isHomepageVariant,
   debounceTime = DEFAULT_DEBOUNCE_DELAY,
-  doesRedirect,
+  doesRedirectOnChange: doesRedirect,
   className,
+  inputClassName,
   onValueChange,
   ...rest
 }) => {
@@ -64,6 +65,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   );
 
   const breakpoint = useTailwindBreakpoint();
+  const router = useRouter();
 
   // TODO: Update constraints to match the search query, and re-fetch from API.
   const handleSearchQueryChange = (newSearchQuery: string) => {
@@ -72,7 +74,10 @@ export const SearchInput: FC<SearchInputProps> = ({
     // Only update the URL search param if the input will not
     // eventually redirect to the search page.
     if (doesRedirect && validateSearchQuery(newSearchQuery)) {
-      const searchPageUrl = new URL(PageUrl.Home, window.location.origin);
+      const searchPageUrl = new URL(
+        RelativePageUrl.Home,
+        window.location.origin
+      );
 
       // Attach the search query to the search page URL.
       searchPageUrl.searchParams.set(
@@ -80,7 +85,7 @@ export const SearchInput: FC<SearchInputProps> = ({
         newSearchQuery
       );
 
-      window.location.href = searchPageUrl.href;
+      router.push(searchPageUrl.href);
     } else {
       setSearchParam(SearchParamKey.SearchQuery, newSearchQuery);
 
@@ -92,18 +97,19 @@ export const SearchInput: FC<SearchInputProps> = ({
 
   const searchQueryPlaceholder = useMemo(
     () =>
-      breakpoint >= TailwindBreakpoint.SM
+      breakpoint >= TailwindBreakpoint.SM && isFullWidth && isHomepageVariant
         ? 'Search projects and circuits for specific keywords...'
         : 'Search projects and circuits...',
-    [breakpoint]
+    [breakpoint, isFullWidth, isHomepageVariant]
   );
 
-  const isHomepageVariantClass = useMemo(
-    () => (isHomepageVariant ? 'rounded-[50px] border-none' : ''),
+  const variantClass = useMemo(
+    () =>
+      isHomepageVariant ? 'rounded-[50px] border-none' : 'min-w-[270px] w-full',
     [isHomepageVariant]
   );
 
-  const iconIsHomepageVariantClass = useMemo(
+  const iconHomepageVariantClass = useMemo(
     () => (isHomepageVariant ? 'mr-4' : undefined),
     [isHomepageVariant]
   );
@@ -111,8 +117,8 @@ export const SearchInput: FC<SearchInputProps> = ({
   return (
     <Input
       {...rest}
-      rightIcon={<Search size="lg" className={iconIsHomepageVariantClass} />}
-      inputClassName={isHomepageVariantClass}
+      rightIcon={<Search size="lg" className={iconHomepageVariantClass} />}
+      inputClassName={twMerge(variantClass, inputClassName)}
       className={twMerge('flex-grow', className)}
       placeholder={searchQueryPlaceholder}
       value={searchQuery ?? ''}

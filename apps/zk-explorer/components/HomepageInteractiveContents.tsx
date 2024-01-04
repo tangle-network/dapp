@@ -5,6 +5,7 @@ import { Button, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { ITEMS_PER_PAGE } from '../constants';
 import { useFilterConstraints } from '../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -16,31 +17,33 @@ import {
 } from '../utils/api';
 import {
   ItemType,
-  PageUrl,
+  RelativePageUrl,
   SearchParamKey,
   getMockCircuits,
   getMockProjects,
   validateSearchQuery,
 } from '../utils/utils';
-import { CardTabs } from './CardTabs';
 import { CircuitItem } from './CircuitCard/types';
+import { FilterAndSortBy } from './FilterAndSortBy';
 import { Filters } from './Filters/Filters';
 import { ItemGrid } from './ItemGrid';
 import { LinkCard } from './LinkCard';
 import { ProjectItem } from './ProjectCard/types';
 import { SearchInput } from './SearchInput';
+import { Tabs } from './Tabs';
 
 export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();
-  const MAX_ITEMS_PER_PAGE = 12;
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
   const [constraints, setConstraints] = useFilterConstraints();
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
   const [projectSearchResultCount, setProjectSearchResultCount] =
     useState<number>(0);
+
   const [circuitSearchResultCount, setCircuitSearchResultCount] =
     useState<number>(0);
-  const [selectedItemType, setSelectedItemType] = useState(ItemType.Project);
 
   const initialSearchQuery =
     useSearchParams().get(SearchParamKey.SearchQuery) ?? '';
@@ -52,6 +55,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
   );
 
   const DEFAULT_PAGE_NUMBER = 1;
+  const PROJECTS_TAB_INDEX = 0;
 
   const initialPaginationPage = useSearchParams().get(
     SearchParamKey.PaginationPageNumber
@@ -86,7 +90,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
 
   const fetchItems = useCallback(
     (query: string) => {
-      if (selectedItemType === ItemType.Project) {
+      if (selectedTabIndex === PROJECTS_TAB_INDEX) {
         searchProjects(constraints, query, paginationPage, sortByClause)
           // Temporarily use mock data until we have a backend.
           .catch(() => getMockProjects())
@@ -94,7 +98,9 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
             setProjects(response.projects);
             setProjectSearchResultCount(response.resultCount);
           });
-      } else {
+      }
+      // If it's not the projects tab, it's the circuits tab.
+      else {
         searchCircuits(constraints, query, paginationPage, sortByClause)
           // TODO: Temporarily use mock data until we have a backend.
           .catch(getMockCircuits)
@@ -104,7 +110,7 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
           });
       }
     },
-    [constraints, paginationPage, selectedItemType, sortByClause]
+    [constraints, paginationPage, selectedTabIndex, sortByClause]
   );
 
   // Fetch items when the search query changes.
@@ -134,7 +140,10 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
           id="homepage search"
         />
 
-        <Link href={PageUrl.SubmitProject} className="flex-grow sm:flex-grow-0">
+        <Link
+          href={RelativePageUrl.SubmitProject}
+          className="flex-grow sm:flex-grow-0"
+        >
           <Button isFullWidth={breakpoint <= TailwindBreakpoint.SM}>
             Upload Project
           </Button>
@@ -151,7 +160,10 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
             className="hidden sm:flex"
           />
 
-          <LinkCard className="hidden sm:block" href={PageUrl.SubmitProject}>
+          <LinkCard
+            className="hidden sm:block"
+            href={RelativePageUrl.SubmitProject}
+          >
             <div className="p-2 bg-mono-60 dark:bg-mono-120 rounded-full mb-6">
               <ArrowUpIcon className="w-6 h-6 fill-mono-0" />
             </div>
@@ -176,30 +188,40 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
         </div>
 
         <div className="w-full">
-          <CardTabs
-            sortByClause={sortByClause}
-            selectedTab={selectedItemType}
-            onTabChange={(cardType) => setSelectedItemType(cardType)}
-            onSortByClauseChange={(sortByClause) =>
-              setSortByClause(sortByClause)
+          <Tabs
+            initiallySelectedTabIndex={PROJECTS_TAB_INDEX}
+            onTabChange={(_tab, index) => setSelectedTabIndex(index)}
+            rightContent={
+              <FilterAndSortBy
+                sortByClause={sortByClause}
+                onConstraintsChange={setConstraints}
+                onSortByClauseChange={setSortByClause}
+              />
             }
-            onConstraintsChange={(newConstraints) =>
-              setConstraints(newConstraints)
-            }
-            counts={{
-              [ItemType.Project]: projectSearchResultCount,
-              [ItemType.Circuit]: circuitSearchResultCount,
-            }}
+            tabs={[
+              {
+                name: 'Projects',
+                count: projectSearchResultCount,
+              },
+              {
+                name: 'Circuits',
+                count: circuitSearchResultCount,
+              },
+            ]}
           />
 
           <ItemGrid
             projects={projects}
             circuits={circuits}
-            selectedItemType={selectedItemType}
+            selectedItemType={
+              selectedTabIndex === PROJECTS_TAB_INDEX
+                ? ItemType.Project
+                : ItemType.Circuit
+            }
           />
 
           <Pagination
-            itemsPerPage={MAX_ITEMS_PER_PAGE}
+            itemsPerPage={ITEMS_PER_PAGE}
             totalItems={projectSearchResultCount}
             page={paginationPage}
             setPageIndex={setPaginationPage}
