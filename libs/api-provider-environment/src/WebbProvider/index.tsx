@@ -723,6 +723,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setActiveChain(chains[net]);
       }
     };
+
     init().finally(() => {
       setIsConnecting(false);
       setLoading(false);
@@ -739,9 +740,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         networkStorage.set('defaultWallet', wallet),
       ]);
     });
+
     appEvent.on('switchNetwork', ([chain, wallet]) => {
       switchChainAndStore(chain, wallet);
     });
+
     appEvent.on('setActiveAccount', (nextAccount) => {
       setActiveAccountWithStorage(nextAccount);
     });
