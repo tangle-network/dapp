@@ -44,6 +44,7 @@ import {
 import { useStatsContext, useSubQLtime } from '../../provider/stats-provider';
 import { getChipColorByKeyStatus } from '../../utils';
 import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
+import { AddressType } from '@webb-tools/dapp-config/types';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
   ({ isPage }, ref) => {
@@ -431,7 +432,7 @@ const KeyGenAuthoredTable: React.FC<KeyGenAuthoredTableProps> = ({ data }) => {
   );
 };
 
-const uncompressPublicKey = (compressed: string): `0x${string}` => {
+const uncompressPublicKey = (compressed: string): AddressType => {
   const ECPair = ECPairFactory(tinysecp);
   const dkgPubKey = ECPair.fromPublicKey(
     Buffer.from(compressed.slice(2), 'hex'),

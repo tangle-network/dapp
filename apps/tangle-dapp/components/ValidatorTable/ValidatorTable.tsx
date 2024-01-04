@@ -51,19 +51,32 @@ const columns = [
     },
   }),
   columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" className="justify-start" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
+    header: () => <HeaderCell title="Self-staked" className="justify-center" />,
+    cell: (props) => (
+      <StringCell value={props.getValue()} className="text-center" />
+    ),
   }),
   columnHelper.accessor('effectiveAmountStaked', {
     header: () => (
-      <HeaderCell title="Effective amount staked" className="justify-start" />
+      <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
-    cell: (props) => <StringCell value={props.getValue()} />,
+    cell: (props) => (
+      <StringCell value={props.getValue()} className="text-center" />
+    ),
   }),
   columnHelper.accessor('delegations', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
       <StringCell value={props.getValue()} className="text-center" />
+    ),
+  }),
+  columnHelper.accessor('commission', {
+    header: () => <HeaderCell title="Commission" className="justify-center" />,
+    cell: (props) => (
+      <StringCell
+        value={Number(props.getValue()).toFixed(2) + '%'}
+        className="text-center"
+      />
     ),
   }),
 ];

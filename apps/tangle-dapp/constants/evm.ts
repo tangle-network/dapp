@@ -2,6 +2,7 @@ import { u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
 import { ensureHex } from '@webb-tools/dapp-config';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { AddressType } from '@webb-tools/dapp-config/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
   createPublicClient,
@@ -51,7 +52,7 @@ export const bondTokens = async (
   nominatorAddress: string,
   numberOfTokens: number,
   paymentDestination: string
-): Promise<`0x${string}`> => {
+): Promise<AddressType> => {
   const value = parseEther(numberOfTokens.toString());
   const payee =
     paymentDestination === PaymentDestination.Staked
@@ -78,7 +79,7 @@ export const bondTokens = async (
 export const bondExtraTokens = async (
   nominatorAddress: string,
   numberOfTokens: number
-): Promise<`0x${string}`> => {
+): Promise<AddressType> => {
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
@@ -99,7 +100,7 @@ export const bondExtraTokens = async (
 export const nominateValidators = async (
   nominatorAddress: string,
   validatorAddresses: string[]
-): Promise<`0x${string}`> => {
+): Promise<AddressType> => {
   const targets = validatorAddresses.map((address) => {
     return u8aToHex(decodeAddress(address));
   });
@@ -122,7 +123,7 @@ export const nominateValidators = async (
 export const updatePaymentDestination = async (
   nominatorAddress: string,
   paymentDestination: string
-): Promise<`0x${string}`> => {
+): Promise<AddressType> => {
   const payee =
     paymentDestination === PaymentDestination.Staked
       ? PAYEE_STAKED
@@ -135,6 +136,48 @@ export const updatePaymentDestination = async (
     abi: StakingInterfacePrecompileABI,
     functionName: 'setPayee',
     args: [payee],
+    account: ensureHex(nominatorAddress),
+  });
+
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+  const txHash = await evmWalletClient.writeContract(request);
+
+  return txHash;
+};
+
+export const unBondTokens = async (
+  nominatorAddress: string,
+  numberOfTokens: number
+): Promise<AddressType> => {
+  const value = parseEther(numberOfTokens.toString());
+
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'unbond',
+    args: [value],
+    account: ensureHex(nominatorAddress),
+  });
+
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+  const txHash = await evmWalletClient.writeContract(request);
+
+  return txHash;
+};
+
+export const rebondTokens = async (
+  nominatorAddress: string,
+  numberOfTokens: number
+): Promise<AddressType> => {
+  const value = parseEther(numberOfTokens.toString());
+
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'rebond',
+    args: [value],
     account: ensureHex(nominatorAddress),
   });
 

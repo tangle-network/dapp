@@ -14,21 +14,24 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { bondExtraTokens, evmPublicClient } from '../../constants';
-import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
-import BondTokens from './BondTokens';
-import { BondMoreTxContainerProps } from './types';
+import { evmPublicClient, rebondTokens } from '../../constants';
+import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import {
+  convertEthereumToSubstrateAddress,
+  splitTokenValueAndSymbol,
+} from '../../utils';
+import RebondTokens from './RebondTokens';
+import { RebondTxContainerProps } from './types';
 
-const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
+const UnbondTxContainer: FC<RebondTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
 
-  const [amountToBond, setAmountToBond] = useState<number>(0);
-  const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
-    useState<boolean>(false);
+  const [amountToRebond, setAmountToRebond] = useState<number>(0);
+  const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -36,49 +39,63 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletBalance(walletAddress);
+  const substrateAddress = useMemo(() => {
+    if (!activeAccount?.address) return '';
 
-  const amountToBondError = useMemo(() => {
-    if (walletBalanceError) {
+    return convertEthereumToSubstrateAddress(activeAccount.address);
+  }, [activeAccount?.address]);
+
+  const { data: unbondingAmountData, error: unbondingAmountError } =
+    useUnbondingAmountSubscription(substrateAddress);
+
+  const remainingUnbondedTokensToRebond = useMemo(() => {
+    if (unbondingAmountError) {
       notificationApi({
         variant: 'error',
-        message: walletBalanceError.message,
+        message: unbondingAmountError.message,
       });
     }
 
-    if (!walletBalance) return '';
+    if (!unbondingAmountData?.value1) return 0;
 
-    if (Number(walletBalance.value1) === 0) {
-      return 'You have zero tTNT in your wallet!';
-    } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough tTNT in your wallet!`;
+    const { value: value_ } = splitTokenValueAndSymbol(
+      String(unbondingAmountData?.value1)
+    );
+
+    return value_;
+  }, [notificationApi, unbondingAmountData?.value1, unbondingAmountError]);
+
+  const amountToRebondError = useMemo(() => {
+    if (remainingUnbondedTokensToRebond === 0) {
+      return 'You have no unbonded tokens to rebond!';
+    } else if (amountToRebond > remainingUnbondedTokensToRebond) {
+      return `You can only rebond ${remainingUnbondedTokensToRebond} tTNT!`;
     }
-  }, [walletBalanceError, walletBalance, amountToBond, notificationApi]);
+  }, [remainingUnbondedTokensToRebond, amountToRebond]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
-    return amountToBond > 0 && !amountToBondError && walletAddress !== '0x0'
+    return amountToRebond > 0 && !amountToRebondError && walletAddress !== '0x0'
       ? true
       : false;
-  }, [amountToBond, amountToBondError, walletAddress]);
+  }, [amountToRebond, amountToRebondError, walletAddress]);
 
   const closeModal = useCallback(() => {
-    setIsBondMoreTxLoading(false);
+    setIsRebondTxLoading(false);
     setIsModalOpen(false);
-    setAmountToBond(0);
+    setAmountToRebond(0);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    setIsBondMoreTxLoading(true);
+    setIsRebondTxLoading(true);
 
     try {
-      const bondExtraTokensTxHash = await bondExtraTokens(
+      const bondExtraTokensTxHash = await rebondTokens(
         walletAddress,
-        amountToBond
+        amountToRebond
       );
 
       if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to bond tokens!');
+        throw new Error('Failed to unbond tokens!');
       }
 
       const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
@@ -88,12 +105,12 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
       );
 
       if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to bond tokens!');
+        throw new Error('Failed to unbond tokens!');
       }
 
       notificationApi({
         variant: 'success',
-        message: `Successfully bonded ${amountToBond} tTNT.`,
+        message: `Successfully unbonded ${amountToRebond} tTNT.`,
       });
     } catch (error: any) {
       notificationApi({
@@ -105,7 +122,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     } finally {
       closeModal();
     }
-  }, [amountToBond, closeModal, notificationApi, walletAddress]);
+  }, [amountToRebond, closeModal, notificationApi, walletAddress]);
 
   return (
     <Modal open>
@@ -115,18 +132,16 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Add Stake
+          Unbond Stake
         </ModalHeader>
 
         <div className="px-8 py-6">
-          <BondTokens
+          <RebondTokens
             nominatorAddress={walletAddress}
-            amountToBond={amountToBond}
-            setAmountToBond={setAmountToBond}
-            amountToBondError={amountToBondError}
-            amountWalletBalance={
-              walletBalance && walletBalance.value1 ? walletBalance.value1 : 0
-            }
+            amountToRebond={amountToRebond}
+            setAmountToRebond={setAmountToRebond}
+            amountToRebondError={amountToRebondError}
+            remainingUnbondedTokensToRebond={remainingUnbondedTokensToRebond}
           />
         </div>
 
@@ -134,7 +149,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           <Button
             isFullWidth
             isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isBondMoreTxLoading}
+            isLoading={isRebondTxLoading}
             onClick={submitAndSignTx}
           >
             Sign & Submit
@@ -151,4 +166,4 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   );
 };
 
-export default BondMoreTxContainer;
+export default UnbondTxContainer;

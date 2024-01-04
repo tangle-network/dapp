@@ -17,7 +17,11 @@ import {
   DEFAULT_NATIVE_INDEX,
   ZERO_BIG_INT,
 } from '@webb-tools/dapp-config/src/constants';
-import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
+import {
+  AddressType,
+  AnchorMetadata,
+  ICurrency,
+} from '@webb-tools/dapp-config/src/types';
 import ensureHex from '@webb-tools/dapp-config/src/utils/ensureHex';
 import '@webb-tools/tangle-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
@@ -136,7 +140,7 @@ async function fetchEVMAnchorMetadata(
     address: fungibleAddr,
   } satisfies ICurrency;
 
-  const wrappableWithoutNative: ReadonlyArray<`0x${string}`> =
+  const wrappableWithoutNative: ReadonlyArray<AddressType> =
     wrappableTokens.filter((addr) => BigInt(addr) !== BigInt(0));
 
   const res = await (isMulticallSupported
