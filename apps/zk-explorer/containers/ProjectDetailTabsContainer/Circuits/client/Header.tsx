@@ -7,17 +7,18 @@ import {
 import { CheckLineIcon, ShieldedCheckLineIcon } from '@webb-tools/icons';
 
 import GitHubIconWithLink from '../../../../components/GitHubIconWithLink';
-import type { CircuitItemFileType } from '../../../../server';
+import type { FileType } from '../../../../server';
 
 interface HeaderProps {
-  activeFile?: CircuitItemFileType;
+  activeFile?: FileType;
+  isLoading?: boolean;
 }
 
-const Header: FC<HeaderProps> = ({ activeFile }) => {
-  if (!activeFile) {
+const Header: FC<HeaderProps> = ({ activeFile, isLoading }) => {
+  if (!activeFile || isLoading) {
     return (
       <div className="p-3 flex items-center justify-between border-b border-mono-180">
-        <SkeletonLoader size="lg" />
+        <SkeletonLoader size="lg" className="h-7" />
       </div>
     );
   }

@@ -15,3 +15,30 @@
 .markdown-body {
   @apply !bg-mono-20 dark:!bg-mono-200;
 }
+
+/* Override react-complex-tree styling */
+.rct-tree-item-button-isFolder,
+.rct-tree-item-button {
+  @apply !bg-inherit dark:hover:!bg-mono-190;
+}
+
+.rct-tree-item-arrow-isFolder,
+.rct-tree-item-arrow {
+  @apply hover:!bg-inherit;
+}
+
+.rct-tree-item-button-selected {
+  @apply dark:!bg-mono-190;
+}
+
+.rct-tree-item-arrow svg {
+  @apply !w-4 !fill-mono-120;
+}
+
+.rct-tree-item-title-container-selected .rct-tree-item-button::before {
+  @apply !bg-blue-70 dark:!bg-blue-50;
+}
+
+.rct-tree-item-button:focus-visible {
+  @apply focus-visible:outline-none;
+}
