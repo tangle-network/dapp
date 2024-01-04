@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     IS_DEBUG_MODE ? MOCK_USER : null
   );
 
-  const [isLoggedIn, setIsLoggedIn] = useState(!IS_DEBUG_MODE);
+  const [isLoggedIn, setIsLoggedIn] = useState(IS_DEBUG_MODE);
 
   const updateAuth = async () => {
     try {
@@ -94,12 +94,19 @@ export const useAuth = (): AuthContextType => useContext(AuthContext);
 export const useRequireAuth = (): User => {
   const auth = useAuth();
 
-  if (!auth.isLoggedIn && !IS_DEBUG_MODE) {
+  if (!auth.isLoggedIn) {
     alert(
       'You must be logged in to access this page or resource. Please, sign in then try again.'
     );
 
     window.location.href = RelativePageUrl.Home;
+
+    // To prevent the code below from running, return the
+    // mock user object until the page is redirected. This is
+    // because of the way that redirects are processed by the
+    // browser: they are asynchronous, so the code below may
+    // run before the redirect is processed.
+    return MOCK_USER;
   }
 
   assert(auth.user !== null, 'User should not be null if logged in');

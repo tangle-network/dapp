@@ -109,7 +109,6 @@ export const Tabs: TabsType = ({
   };
 
   const enhancedChildren = Children.map(children, (child, index) => {
-    // TODO: Assert amount of child tab content elements (if at least one is present) is equal to the amount of tabs.
     // TODO: Consider whether disallowing other elements apart from tab content is a good idea.
 
     if (isValidElement<TabsContentProps>(child) && child.type === TabsContent) {
@@ -118,13 +117,6 @@ export const Tabs: TabsType = ({
       return cloneElement(child, childProps);
     }
   });
-
-  assert(
-    enhancedChildren !== null &&
-      enhancedChildren !== undefined &&
-      enhancedChildren.length > 0,
-    ONE_TAB_REQUIRED_ERROR_MESSAGE
-  );
 
   return (
     <TabsContext.Provider value={value}>
