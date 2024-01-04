@@ -2,7 +2,14 @@
 
 import assert from 'assert';
 import { useRouter } from 'next/navigation';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { IS_DEBUG_MODE } from '../constants';
 import { MOCK_USER } from '../constants/mock';
 import {
@@ -45,9 +52,7 @@ const AuthContext = createContext<AuthContextType>({
   },
 });
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(
     IS_DEBUG_MODE ? MOCK_USER : null
   );
@@ -105,22 +110,24 @@ export const useRequireAuth = (): User => {
   const auth = useAuth();
   const router = useRouter();
 
-  if (!auth.isLoggedIn) {
-    alert(
-      'You must be logged in to access this page or resource. Please, sign in then try again.'
-    );
+  useEffect(() => {
+    if (!auth.isLoggedIn) {
+      alert(
+        'You must be logged in to access this page or resource. Please, sign in then try again.'
+      );
 
-    router.push(RelativePageUrl.Home);
+      router.push(RelativePageUrl.Home);
+    }
+  }, [auth.isLoggedIn, router]);
 
-    // To prevent the code below from running, return the
-    // mock user object until the page is redirected. This is
-    // because of the way that redirects are processed by the
-    // browser: they are asynchronous, so the code below may
-    // run before the redirect is processed.
+  if (auth.isLoggedIn) {
+    assert(auth.user !== null, 'User should not be null if logged in');
+
+    return auth.user;
+  } else {
+    // Since the user will be redirected to the login page,
+    // we can return a mock user to prevent the app from
+    // crashing.
     return MOCK_USER;
   }
-
-  assert(auth.user !== null, 'User should not be null if logged in');
-
-  return auth.user;
 };
