@@ -41,6 +41,10 @@ const getClaimsInfo = async (
     throw WebbError.from(WebbErrorCodes.ApiNotReady);
   }
 
+  if (!('claims' in api.query)) {
+    throw WebbError.from(WebbErrorCodes.NoClaimsPalletFound);
+  }
+
   const params = isEthereumAddress(accountAddress)
     ? { EVM: accountAddress }
     : { Native: accountAddress };
@@ -89,25 +93,47 @@ function ClaimSection() {
     useState<Nullable<ClaimInfoType | false>>(null);
 
   const checkEligibility = useCallback(
-    async (activeAccount: Account, force?: boolean) => {
+    async (
+      activeAccount: Account,
+      force?: boolean,
+      abortSignal?: AbortSignal
+    ) => {
       try {
+        abortSignal?.throwIfAborted();
+
         setClaimInfo(null);
         setSuccessBlockHash('');
         setCheckingEligibility(true);
+
+        abortSignal?.throwIfAborted();
 
         const claimInfo = await getClaimsInfo(activeAccount.address, {
           force,
         });
 
+        abortSignal?.throwIfAborted();
         setClaimInfo(
           claimInfo ? claimInfo : false // If claimInfo is null, then we know that the user is not eligible
         );
       } catch (error) {
-        console.log(error);
-        notificationApi({
-          message: 'Failed to check eligibility',
-          variant: 'error',
-        });
+        // Check if the error is due to abort
+        const isAbortError =
+          error instanceof DOMException && error.name === 'AbortError';
+
+        // Only show error if it is not due to abort
+        // and the abort signal is not aborted
+        if (!isAbortError && !abortSignal?.aborted) {
+          console.log(error);
+          notificationApi({
+            message:
+              typeof error === 'string'
+                ? `Error: ${error}`
+                : error instanceof Error
+                ? error.message
+                : 'Failed to check eligibility',
+            variant: 'error',
+          });
+        }
       } finally {
         setCheckingEligibility(false);
       }
@@ -130,8 +156,14 @@ function ClaimSection() {
   useEffect(() => {
     if (!activeAccount) return;
 
-    checkEligibility(activeAccount);
-  }, [isWalletConnected, activeAccount, notificationApi, checkEligibility]);
+    const abortController = new AbortController();
+
+    checkEligibility(activeAccount, undefined, abortController.signal);
+
+    return () => {
+      abortController.abort();
+    };
+  }, [activeAccount, checkEligibility]);
 
   return (
     <AppTemplate.Content>

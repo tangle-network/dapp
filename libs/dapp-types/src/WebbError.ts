@@ -29,6 +29,8 @@ export enum WebbErrorCodes {
   NoActiveBridge,
   /* Missing endpoints in the configuration */
   NoEndpointsConfigured,
+  /* No claims pallet found */
+  NoClaimsPalletFound,
   /* Failed to parse deposit note */
   NoteParsingFailure,
   /* PolkaDot extension not installed */
@@ -291,6 +293,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `Missing endpoints in the configuration`,
+        };
+
+      case WebbErrorCodes.NoClaimsPalletFound:
+        return {
+          code,
+          message: `No claims pallet found`,
         };
 
       case WebbErrorCodes.AnchorIdNotFound:
