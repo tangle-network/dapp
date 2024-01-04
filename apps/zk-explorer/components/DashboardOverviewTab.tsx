@@ -167,7 +167,7 @@ const SocialChip: FC<SocialChipProps> = ({ Logo, href, title }) => {
   return (
     <Link target="_blank" title={title} href={href}>
       <SmallChip color="grey">
-        <Logo size="md" />
+        <Logo className="fill-mono-0" size="md" />
       </SmallChip>
     </Link>
   );
