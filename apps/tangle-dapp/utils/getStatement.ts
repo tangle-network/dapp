@@ -4,7 +4,7 @@ export interface Statement {
 }
 
 function getPolkadot(isRegularStatement?: boolean | null): Statement | null {
-  if (isRegularStatement == null) {
+  if (isRegularStatement === null || isRegularStatement === undefined) {
     return null;
   }
 
@@ -22,7 +22,7 @@ function getPolkadot(isRegularStatement?: boolean | null): Statement | null {
 }
 
 function getTangle(isRegularStatement?: boolean | null): Statement | null {
-  if (isRegularStatement == null) {
+  if (isRegularStatement === null || isRegularStatement === undefined) {
     return null;
   }
 

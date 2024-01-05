@@ -45,7 +45,9 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
       return null;
 
-      /* WE DON'T MANAGE VANCHOR ON SUBSTRATE AT THE MOMENT
+      /* TODO: Remove or fix this
+      WE DON'T MANAGE VANCHOR ON SUBSTRATE AT THE MOMENT
+
       const vanchor = await provider.query.vAnchorBn254.vAnchors(treeId);
       if (vanchor.isNone) {
         throw new Error('VAnchor not found with tree id: ' + treeId);
@@ -114,6 +116,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
       return [];
 
+      // TODO: Remove or fix this
       // WE REMOVED THE ASSET REGISTRY PALLET FROM TANGLE
       /* const asset = await provider.query.assetRegistry.assets(fungibleId);
       if (asset.isNone) {

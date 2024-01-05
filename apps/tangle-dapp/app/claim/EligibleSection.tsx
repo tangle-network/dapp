@@ -20,7 +20,8 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { type FC, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
@@ -36,12 +37,13 @@ enum Step {
   SendingTx,
 }
 
-const EligibleSection: FC<
-  ClaimInfoType & { onSuccess?: (hash: string) => void }
-> = ({ amount, isRegularStatement, onSuccess }) => {
+const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
   const { activeAccount, activeApi, activeWallet } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
@@ -49,7 +51,7 @@ const EligibleSection: FC<
 
   const [step, setStep] = useState(Step.InputAddress);
 
-  // Validate recipient input address after 1s
+  // Validate recipient input address after 500 ms
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (recipient && !isValidAddress(recipient)) {
@@ -62,10 +64,7 @@ const EligibleSection: FC<
     return () => clearTimeout(timeout);
   }, [recipient]);
 
-  const isActiveWalletEvm = useMemo(
-    () => activeWallet?.platform === 'EVM',
-    [activeWallet?.platform]
-  );
+  const isActiveWalletEvm = activeWallet?.platform === 'EVM';
 
   const handleClaimClick = async () => {
     if (!activeAccount || !activeApi) {
@@ -119,7 +118,10 @@ const EligibleSection: FC<
       );
 
       const hash = await sendTransaction(tx);
-      onSuccess?.(hash);
+
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('h', hash);
+      router.push(`success?${newSearchParams.toString()}`, { scroll: true });
     } catch (error) {
       notificationApi.addToQueue({
         variant: 'error',
@@ -261,12 +263,12 @@ function sendTransaction(
       if (status.isInBlock || status.isFinalized) {
         for (const event of events) {
           const {
-            event: { data, method },
+            event: { method },
           } = event;
-          const [dispatchError] = data as any;
+          const dispatchError = result.dispatchError;
 
-          if (method === 'ExtrinsicFailed') {
-            let message = dispatchError.type;
+          if (dispatchError && method === 'ExtrinsicFailed') {
+            let message: string = dispatchError.type;
 
             if (dispatchError.isModule) {
               try {
