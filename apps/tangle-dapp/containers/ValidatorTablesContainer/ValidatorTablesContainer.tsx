@@ -1,9 +1,10 @@
 'use client';
 
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import useSWR from 'swr';
 
-import { ContainerSkeleton } from '../../components';
+import { ContainerSkeleton, TableStatus } from '../../components';
 import {
   getActiveValidators,
   getWaitingValidators,
@@ -34,7 +35,17 @@ const ValidatorTablesContainer = () => {
     >
       {/* Active Validators Table */}
       <TabContent value={activeValidatorsTableTab}>
-        {activeValidatorsDataLoading || !activeValidatorsData ? (
+        {activeValidatorsData && activeValidatorsData.length === 0 ? (
+          <TableStatus
+            title="No Active Validators"
+            description="Validators might be in the waiting state. Check back soon."
+            buttonText="Learn More"
+            buttonProps={{
+              onClick: () => window.open(TANGLE_STAKING_URL, '_blank'),
+            }}
+            icon="⏳"
+          />
+        ) : activeValidatorsDataLoading || !activeValidatorsData ? (
           <ContainerSkeleton />
         ) : (
           <ValidatorTableContainer
@@ -46,7 +57,18 @@ const ValidatorTablesContainer = () => {
 
       {/* Waiting Validators Table */}
       <TabContent value={waitingValidatorsTableTab}>
-        {waitingValidatorsDataLoading || !waitingValidatorsData ? (
+        {waitingValidatorsData && waitingValidatorsData.length === 0 ? (
+          <TableStatus
+            title="No Validators in Waiting"
+            description="All validators are currently active. There are no validators in the waiting pool at the moment.
+            "
+            buttonText="Learn More"
+            buttonProps={{
+              onClick: () => window.open(TANGLE_STAKING_URL, '_blank'),
+            }}
+            icon="⏳"
+          />
+        ) : waitingValidatorsDataLoading || !waitingValidatorsData ? (
           <ContainerSkeleton />
         ) : (
           <ValidatorTableContainer

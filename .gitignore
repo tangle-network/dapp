@@ -75,6 +75,7 @@ docs-build/
 dist
 tmp
 /out-tsc
+.nx
 
 # IDE - VSCode
 .vscode/*

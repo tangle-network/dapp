@@ -6,6 +6,7 @@ export type Validator = {
   effectiveAmountStakedRaw: string;
   delegations: string;
   commission: string;
+  status: string;
 };
 
 export type Delegator = {
