@@ -19,6 +19,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
           { key: 'effectiveAmountStakedRaw', title: 'Total Staked' },
           { key: 'delegations', title: 'Total Nominations' },
           { key: 'commission', title: 'Commission' },
+          { key: 'status', title: 'Status' },
         ]}
       />
 

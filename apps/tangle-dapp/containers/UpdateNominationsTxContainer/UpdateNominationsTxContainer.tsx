@@ -3,6 +3,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isViemError } from '@webb-tools/web3-api-provider/src/utils';
 import {
+  Alert,
   Button,
   Modal,
   ModalContent,
@@ -11,10 +12,10 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import useSWR from 'swr';
 
 import { evmPublicClient, nominateValidators } from '../../constants';
-import { getActiveValidators } from '../../data';
+import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import SelectValidators from './SelectValidators';
 import { UpdateNominationsTxContainerProps } from './types';
 
@@ -25,10 +26,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { data: activeValidatorsData } = useSWR(
-    [getActiveValidators.name],
-    ([, ...args]) => getActiveValidators(...args)
-  );
+
+  const maxNominationQuota = useMaxNominationQuota();
+  const allValidators = useAllValidatorsData();
 
   const [selectedValidators, setSelectedValidators] =
     useState<string[]>(currentNominations);
@@ -41,8 +41,13 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const isNewValidatorsSelected = useMemo(() => {
-    if (selectedValidators.length <= 0) return false;
+  const isExceedingMaxNominationQuota = useMemo(() => {
+    return selectedValidators.length > maxNominationQuota;
+  }, [maxNominationQuota, selectedValidators.length]);
+
+  const isReadyToSubmitAndSignTx = useMemo(() => {
+    if (selectedValidators.length <= 0 || isExceedingMaxNominationQuota)
+      return false;
 
     const sortedSelectedValidators = [...selectedValidators].sort();
     const sortedCurrentNominations = [...currentNominations].sort();
@@ -54,7 +59,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
       );
 
     return !areArraysEqual;
-  }, [currentNominations, selectedValidators]);
+  }, [currentNominations, isExceedingMaxNominationQuota, selectedValidators]);
 
   useEffect(() => {
     setSelectedValidators(currentNominations);
@@ -69,7 +74,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
 
-    if (!isNewValidatorsSelected) return;
+    if (!isReadyToSubmitAndSignTx) return;
 
     try {
       const updateNominationsTxHash = await nominateValidators(
@@ -105,7 +110,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
       closeModal();
     }
   }, [
-    isNewValidatorsSelected,
+    isReadyToSubmitAndSignTx,
     walletAddress,
     selectedValidators,
     notificationApi,
@@ -125,16 +130,24 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
-            validators={activeValidatorsData ? activeValidatorsData : []}
+            validators={allValidators}
             selectedValidators={selectedValidators}
             setSelectedValidators={setSelectedValidators}
           />
+
+          {isExceedingMaxNominationQuota && (
+            <Alert
+              type="error"
+              className="mt-4"
+              description={`You can only nominate up to ${maxNominationQuota} validators.`}
+            />
+          )}
         </div>
 
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
           <Button
             isFullWidth
-            isDisabled={!isNewValidatorsSelected}
+            isDisabled={!isReadyToSubmitAndSignTx}
             isLoading={isSubmitAndSignTxLoading}
             onClick={submitAndSignTx}
           >

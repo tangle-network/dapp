@@ -3,6 +3,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import {
+  Alert,
   Button,
   Modal,
   ModalContent,
@@ -16,7 +17,6 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import useSWR from 'swr';
 
 import {
   bondExtraTokens,
@@ -27,9 +27,10 @@ import {
   PAYMENT_DESTINATION_OPTIONS,
   updatePaymentDestination,
 } from '../../constants';
-import { getActiveValidators } from '../../data';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import AuthorizeTx from './AuthorizeTx';
@@ -45,10 +46,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { data: activeValidatorsData } = useSWR(
-    [getActiveValidators.name],
-    ([, ...args]) => getActiveValidators(...args)
-  );
+
+  const maxNominationQuota = useMaxNominationQuota();
+  const allValidators = useAllValidatorsData();
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
@@ -61,6 +61,10 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
     useState<boolean>(false);
+
+  const isExceedingMaxNominationQuota = useMemo(() => {
+    return selectedValidators.length > maxNominationQuota;
+  }, [maxNominationQuota, selectedValidators.length]);
 
   const currentStep = useMemo(() => {
     if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
@@ -149,8 +153,10 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   ]);
 
   const continueToAuthorizeTxStep = useMemo(() => {
-    return selectedValidators.length > 0 ? true : false;
-  }, [selectedValidators]);
+    return selectedValidators.length > 0 && !isExceedingMaxNominationQuota
+      ? true
+      : false;
+  }, [isExceedingMaxNominationQuota, selectedValidators.length]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return continueToSelectDelegatesStep && continueToAuthorizeTxStep;
@@ -297,7 +303,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             />
           ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
             <SelectDelegates
-              validators={activeValidatorsData ? activeValidatorsData : []}
+              validators={allValidators}
               selectedValidators={selectedValidators}
               setSelectedValidators={setSelectedValidators}
             />
@@ -308,6 +314,14 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               contractLink={STAKING_PRECOMPILE_LINK}
             />
           ) : null}
+
+          {isExceedingMaxNominationQuota && (
+            <Alert
+              type="error"
+              className="mt-4"
+              description={`You can only nominate up to ${maxNominationQuota} validators.`}
+            />
+          )}
         </div>
 
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
