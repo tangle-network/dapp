@@ -1,3 +1,11 @@
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  all: unset;
+}
+
 /* Override pagination styling from Swiper */
 .swiper-pagination {
   @apply !static;
@@ -41,4 +49,11 @@
 
 .rct-tree-item-button:focus-visible {
   @apply focus-visible:outline-none;
+}
+
+/* Override react-syntax-highlighter styling */
+code span {
+  background: inherit;
+  font-family: 'Cousine' !important;
+  font-weight: 600 !important;
 }

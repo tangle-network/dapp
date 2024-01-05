@@ -41,7 +41,7 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
           <div className="max-h-[700px] lg:!max-h-[none] lg:absolute lg:top-0 lg:bottom-0 lg:left-0 lg:right-0 overflow-auto">
             <TabContent
               value={CIRCUITS_TAB}
-              className="min-w-[875px] md:!min-w-min h-[700px] lg:h-full"
+              className="min-w-[875px] md:!min-w-[unset] h-[700px] lg:h-full"
             >
               <Suspense fallback={<SectionSkeletonLoader />}>
                 <Circuits />
