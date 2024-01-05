@@ -1,6 +1,5 @@
 import { isHex } from '@polkadot/util';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { Alert } from '@webb-tools/webb-ui-components/components/Alert';
+import { redirect } from 'next/navigation';
 
 import { getPolkadotApiPromise } from '../../../constants/polkadot';
 import SuccessClient from './SuccessClient';
@@ -15,15 +14,7 @@ const Page = async ({
   const api = await getPolkadotApiPromise();
 
   if (!api) {
-    const error = WebbError.from(WebbErrorCodes.PolkadotApiNotReady);
-    return (
-      <Alert
-        title={`Error code: ${error.code}`}
-        description={error.message}
-        type="error"
-        className="w-full"
-      />
-    );
+    return redirect('/claim');
   }
 
   const isValidBlockHash =
@@ -32,15 +23,7 @@ const Page = async ({
     (await isBlockHashExistOnChain(api, blockHash));
 
   if (!isValidBlockHash) {
-    const error = WebbError.from(WebbErrorCodes.InvalidBlockHash);
-    return (
-      <Alert
-        title={`Error code: ${error.code}`}
-        description={error.message}
-        type="error"
-        className="w-full"
-      />
-    );
+    return redirect('/claim');
   }
 
   return <SuccessClient blockHash={blockHash} />;

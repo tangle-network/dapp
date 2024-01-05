@@ -121,7 +121,9 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
 
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set('h', hash);
-      router.push(`success?${newSearchParams.toString()}`, { scroll: true });
+      router.push(`claim/success?${newSearchParams.toString()}`, {
+        scroll: true,
+      });
     } catch (error) {
       notificationApi.addToQueue({
         variant: 'error',
@@ -133,7 +135,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
             : 'Failed to sign & send transaction',
         secondaryMessage: error instanceof Error ? undefined : String(error),
       });
-    } finally {
+
       setStep(Step.InputAddress);
     }
   };

@@ -89,10 +89,6 @@ export enum WebbErrorCodes {
   NotesNotReady,
   /* Invalid amount */
   InvalidAmount,
-  /** Invalid block hash */
-  InvalidBlockHash,
-  /** Polkadot API not ready */
-  PolkadotApiNotReady,
   /* Unknown error */
   UnknownError,
 }
@@ -388,18 +384,6 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to disconnect',
-        };
-
-      case WebbErrorCodes.InvalidBlockHash:
-        return {
-          code,
-          message: 'Invalid block hash',
-        };
-
-      case WebbErrorCodes.PolkadotApiNotReady:
-        return {
-          code,
-          message: 'Polkadot API not ready',
         };
 
       default:
