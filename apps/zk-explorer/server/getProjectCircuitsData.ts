@@ -5,6 +5,8 @@ export type FileType = {
   fullPath: string;
   isTrustedSetup?: boolean;
   gitHubUrl?: string;
+  fetchUrl?: string;
+  language?: string;
 };
 
 export type FileTreeItem = TreeItem<FileType>;
@@ -40,7 +42,11 @@ export default async function getProjectCircuitsData(): Promise<GetProjectCircui
         fileName: 'file1.circom',
         fullPath: 'circuits/file1.circom',
         isTrustedSetup: true,
-        gitHubUrl: 'https://github.com/webb-tools/tangle/forks',
+        gitHubUrl:
+          'https://github.com/webb-tools/masp-protocol/blob/main/circuits/main/batch_tree_16.circom',
+        fetchUrl:
+          'https://raw.githubusercontent.com/webb-tools/webb-dapp/develop/apps/zk-explorer/app/page.tsx',
+        language: 'tsx',
       },
     },
     ['circuits/folder']: {
@@ -59,7 +65,11 @@ export default async function getProjectCircuitsData(): Promise<GetProjectCircui
         fileName: 'file2.circom',
         fullPath: 'circuits/folder/file2.circom',
         isTrustedSetup: true,
-        gitHubUrl: 'https://github.com/webb-tools/tangle/forks',
+        gitHubUrl:
+          'https://github.com/webb-tools/masp-protocol/blob/main/circuits/merkle-tree/manyMerkleProof.circom',
+        fetchUrl:
+          'https://raw.githubusercontent.com/webb-tools/webb-dapp/develop/apps/zk-explorer/app/layout.tsx',
+        language: 'tsx',
       },
     },
   };
