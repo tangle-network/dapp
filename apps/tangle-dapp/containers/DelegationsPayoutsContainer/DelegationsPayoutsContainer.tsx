@@ -20,6 +20,7 @@ import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
+import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
 import DelegatorTableContainer from './DelegatorTableContainer';
@@ -36,6 +37,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
     useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+  const [isStopNominationModalOpen, setIsStopNominationModalOpen] =
+    useState(false);
 
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
@@ -99,6 +102,7 @@ const DelegationsPayoutsContainer: FC = () => {
             <RightButtonsContainer
               onUpdateNominations={() => setIsUpdateNominationsModalOpen(true)}
               onChangeRewardDestination={() => setIsUpdatePayeeModalOpen(true)}
+              onStopNomination={() => setIsStopNominationModalOpen(true)}
             />
           ) : null
         }
@@ -190,6 +194,11 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isUpdatePayeeModalOpen}
         setIsModalOpen={setIsUpdatePayeeModalOpen}
       />
+
+      <StopNominationTxContainer
+        isModalOpen={isStopNominationModalOpen}
+        setIsModalOpen={setIsStopNominationModalOpen}
+      />
     </>
   );
 };
@@ -200,8 +209,10 @@ export default DelegationsPayoutsContainer;
 function RightButtonsContainer(props: {
   onUpdateNominations: () => void;
   onChangeRewardDestination: () => void;
+  onStopNomination: () => void;
 }) {
-  const { onUpdateNominations, onChangeRewardDestination } = props;
+  const { onUpdateNominations, onChangeRewardDestination, onStopNomination } =
+    props;
 
   return (
     <div className="items-center hidden space-x-2 md:flex">
@@ -215,6 +226,10 @@ function RightButtonsContainer(props: {
           {
             label: 'Change Reward Destination',
             onClick: onChangeRewardDestination,
+          },
+          {
+            label: 'Stop Nominations',
+            onClick: onStopNomination,
           },
         ]}
       />
