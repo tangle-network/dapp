@@ -1,18 +1,16 @@
 'use client';
 
 import { GithubFill, GlobalLine, TwitterFill } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
 import { Button, Card, Typography } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
-import { ComponentType, FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useRequireAuth } from '../hooks/useAuth';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
 import { formatTimestamp } from '../utils';
 import { LargeSquareAvatar } from './LargeSquareAvatar';
-import { SmallChip } from './SmallChip';
+import { SocialChip } from './SocialChip';
 
 export const DashboardOverviewTab: FC = () => {
   const {
@@ -73,14 +71,14 @@ export const DashboardOverviewTab: FC = () => {
             <SocialChip
               title="View GitHub profile"
               href={`https://github.com/${githubUsername}`}
-              Logo={GithubFill}
+              Icon={GithubFill}
             />
 
             {twitterHandle !== undefined && (
               <SocialChip
                 title="View X profile"
                 href={`https://twitter.com/${twitterHandle}`}
-                Logo={TwitterFill}
+                Icon={TwitterFill}
               />
             )}
 
@@ -88,7 +86,7 @@ export const DashboardOverviewTab: FC = () => {
               <SocialChip
                 title="View website"
                 href={website}
-                Logo={GlobalLine}
+                Icon={GlobalLine}
               />
             )}
           </div>
@@ -153,22 +151,5 @@ const Divider: FC = () => {
     <div className="inline-block py-3 lg:py-0 lg:px-7 lg:self-center">
       <div className="dark:border-mono-160 border-t w-full lg:w-auto lg:border-r lg:border-t-0 lg:min-h-[57px] lg:h-full" />
     </div>
-  );
-};
-
-type SocialChipProps = {
-  href: string;
-  title: string;
-  Logo: ComponentType<IconBase>;
-};
-
-/** @internal */
-const SocialChip: FC<SocialChipProps> = ({ Logo, href, title }) => {
-  return (
-    <Link target="_blank" title={title} href={href}>
-      <SmallChip color="grey">
-        <Logo className="fill-mono-0" size="md" />
-      </SmallChip>
-    </Link>
   );
 };
