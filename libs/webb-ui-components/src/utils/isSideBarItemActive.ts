@@ -15,7 +15,9 @@ function isSideBarItemActive(
           (pathnameOrHash.includes(href) || pathnameOrHash.includes(href))
       );
     } else {
-      return pathnameOrHash.includes(hrefOrArrayOfHrefs);
+      return hrefOrArrayOfHrefs === '/'
+        ? pathnameOrHash === '/'
+        : pathnameOrHash.includes(hrefOrArrayOfHrefs);
     }
   }
 
