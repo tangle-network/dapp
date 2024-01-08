@@ -24,6 +24,15 @@
   @apply !bg-mono-20 dark:!bg-mono-200;
 }
 
+.markdown-body pre {
+  @apply !bg-mono-0 dark:!bg-mono-190 dark:!text-mono-0;
+}
+
+.markdown-body th,
+td {
+  @apply dark:!bg-mono-190;
+}
+
 /* Override react-complex-tree styling */
 .rct-tree-item-button-isFolder,
 .rct-tree-item-button {

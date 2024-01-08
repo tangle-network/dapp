@@ -7,4 +7,9 @@ export type {
 export { default as getProjectGitHubInfoContainerData } from './getProjectGitHubInfoContainerData';
 export { default as getProjectHeaderContainerData } from './getProjectHeaderContainerData';
 export { default as getProjectSummaryData } from './getProjectSummaryData';
+export type {
+  ContributionListItem,
+  ProjectTrustedSetupItem,
+} from './getProjectTrustedSetupData';
+export { default as getProjectTrustedSetupData } from './getProjectTrustedSetupData';
 export { default as getRelatedProjectsContainerData } from './getRelatedProjectsContainerData';

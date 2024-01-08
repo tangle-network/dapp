@@ -1,7 +1,14 @@
-import type { FC } from 'react';
+import TrustedSetupItem from './TrustedSetupItem';
+import { getProjectTrustedSetupData } from '../../../server';
 
-const TrustedSetup: FC = () => {
-  return <div className="p-6">TrustedSetup</div>;
-};
+export default async function TrustedSetup() {
+  const trustedSetupData = await getProjectTrustedSetupData();
 
-export default TrustedSetup;
+  return (
+    <div className="p-6 space-y-9">
+      {trustedSetupData.map((item, idx) => (
+        <TrustedSetupItem {...item} key={idx} />
+      ))}
+    </div>
+  );
+}
