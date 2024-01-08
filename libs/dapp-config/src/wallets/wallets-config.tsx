@@ -46,6 +46,7 @@ const ANY_EVM = [
 
 const ANY_SUBSTRATE = [
   PresetTypedChainId.LocalTangleStandalone,
+  PresetTypedChainId.TangleStandaloneTestnet,
   PresetTypedChainId.DkgSubstrateStandalone,
   PresetTypedChainId.ProtocolSubstrateStandalone,
   PresetTypedChainId.Kusama,

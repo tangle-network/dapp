@@ -10,7 +10,7 @@ import lodash from 'lodash';
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { IKeyringPair, ISubmittableResult } from '@polkadot/types/types';
+import { IKeyringPair } from '@polkadot/types/types';
 import { LoggerService } from '@webb-tools/browser-utils';
 
 const { uniqueId } = lodash;
@@ -114,7 +114,7 @@ export class PolkadotTx<
       api.setSigner(injector.signer);
     }
 
-    let txResults: SubmittableExtrinsic<'promise', ISubmittableResult>;
+    let txResults: SubmittableExtrinsic<'promise'>;
 
     if (this.paths.length === 1) {
       const path = this.paths[0];
@@ -195,9 +195,8 @@ export class PolkadotTx<
     return message;
   }
 
-  private async send(tx: SubmittableExtrinsic<'promise', ISubmittableResult>) {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise<string>(async (resolve, reject) => {
+  private async send(tx: SubmittableExtrinsic<'promise'>) {
+    return new Promise<string>((resolve, reject) => {
       tx.send(async (result) => {
         const status = result.status;
         const events = result.events.filter(
@@ -241,9 +240,8 @@ export class PolkadotTx<
           }
         }
       }).catch(async (e) => {
-        console.log(e);
+        console.error(e);
         const errorMessage = this.errorHandler(e as any);
-
         await this.emitWithPayload('failed', errorMessage);
         reject(errorMessage);
       });

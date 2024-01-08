@@ -2,8 +2,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import '@webb-tools/tangle-substrate-types';
-
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { BridgeApi } from '@webb-tools/abstract-api-provider';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';

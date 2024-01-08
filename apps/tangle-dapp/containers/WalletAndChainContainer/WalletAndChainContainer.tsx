@@ -32,7 +32,7 @@ const WalletAndChainContainer: FC = () => {
         {isConnecting || loading || !activeWallet || !activeAccount ? (
           isMobile ? (
             <ConnectWalletMobileButton>
-              <div className="flex flex-col justify-center items-center gap-4 py-9">
+              <div className="flex flex-col items-center justify-center gap-4 py-9">
                 <ComputerIcon size="xl" className="mx-auto" />
                 <Typography variant="body1" className="text-center">
                   For the best staking experience, we recommend using our
@@ -46,15 +46,19 @@ const WalletAndChainContainer: FC = () => {
               isLoading={loading}
               loadingText="Connecting..."
               onClick={() =>
-                toggleModal(true, PresetTypedChainId.TangleTestnet ?? undefined)
+                toggleModal(true, PresetTypedChainId.TangleTestnet)
               }
-              className="flex justify-center items-center px-6"
+              className="flex items-center justify-center px-6"
             >
               Connect
             </Button>
           )
         ) : (
-          <WalletDropdown account={activeAccount} wallet={activeWallet} />
+          <WalletDropdown
+            accountAddress={activeAccount.address}
+            accountName={activeAccount.name}
+            wallet={activeWallet}
+          />
         )}
       </div>
     </div>

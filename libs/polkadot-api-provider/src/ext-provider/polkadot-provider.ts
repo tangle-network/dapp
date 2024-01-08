@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import '@webb-tools/tangle-substrate-types';
-
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import {
   InjectedExtension,

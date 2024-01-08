@@ -9,7 +9,6 @@ import {
   CrowdloanFundInfo,
 } from '@webb-tools/abstract-api-provider/crowdloan';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import '@webb-tools/tangle-substrate-types';
 
 import { FundInfo } from '@polkadot/types/interfaces';
 

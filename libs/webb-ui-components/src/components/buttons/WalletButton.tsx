@@ -42,7 +42,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
           >
             {isHex(address)
               ? `${shortenHex(address)}`
-              : `${shortenString(address)})}`}
+              : `${shortenString(address)}`}
           </Typography>
         </div>
       </button>

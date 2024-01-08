@@ -18,7 +18,7 @@ export const WalletModalContainer = () => {
     toggleModal,
     connectError,
     supportedWallets,
-  } = useConnectWallet();
+  } = useConnectWallet({ useAllWallets: true });
 
   const { notificationApi } = useWebbUI();
 

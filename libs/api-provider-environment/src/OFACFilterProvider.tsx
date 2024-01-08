@@ -1,10 +1,12 @@
+'use client';
+
 import { useState, useEffect, type FC, type PropsWithChildren } from 'react';
 import { OFACModal } from '@webb-tools/webb-ui-components';
 
 export type OFACFilterProviderProps = {
-  isActivated: boolean;
-  blockedCountryCodes: string[];
-  blockedRegions: string[];
+  isActivated?: boolean;
+  blockedCountryCodes?: string[];
+  blockedRegions?: string[];
 };
 
 /**
@@ -20,24 +22,46 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     if (!isActivated) return;
 
     setIsFetching(true);
+
     fetch('https://geolocation-db.com/json/')
       .then((response) => response.json())
       .then((data) => {
-        if (
-          blockedCountryCodes?.includes(data.country_code) ||
-          blockedRegions?.includes(data.state)
-        ) {
+        const { country_code, state } = data;
+
+        const isBlockedByCountryCode =
+          typeof country_code === 'string' &&
+          blockedCountryCodes &&
+          blockedCountryCodes.find(
+            (code) => code.toLowerCase() === country_code.toLowerCase()
+          );
+
+        const isBlockedByRegion =
+          typeof state === 'string' &&
+          blockedRegions &&
+          blockedRegions.find(
+            (region) => region.toLowerCase() === state.toLowerCase()
+          );
+
+        if (isBlockedByCountryCode || isBlockedByRegion) {
           setIsOFAC(true);
         }
       })
       .catch((error) => console.log(error))
       .finally(() => {
-        setIsFetching(false);
+        if (mounted) {
+          setIsFetching(false);
+        }
       });
-  }, []);
+
+    return () => {
+      mounted = false;
+    };
+  }, [blockedCountryCodes, blockedRegions, isActivated]);
 
   if (isFetching) {
     return null;

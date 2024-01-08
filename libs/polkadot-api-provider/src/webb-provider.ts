@@ -1,7 +1,8 @@
+'use client';
+
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 import '@webb-tools/api-derive';
-import '@webb-tools/tangle-substrate-types';
 
 import {
   ApiInitHandler,
@@ -48,19 +49,18 @@ import {
 
 import { VoidFn } from '@polkadot/api/types';
 import {
-  ZERO_BYTES32,
-  u8aToHex,
-  ZkComponents,
-  Backend,
-} from '@webb-tools/utils';
-import { BehaviorSubject, Observable } from 'rxjs';
-
-import {
   BridgeStorage,
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/browser-utils';
 import Storage from '@webb-tools/dapp-types/Storage';
+import {
+  Backend,
+  ZERO_BYTES32,
+  ZkComponents,
+  u8aToHex,
+} from '@webb-tools/utils';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { getLeaves } from './mt-utils';
@@ -108,11 +108,11 @@ export class WebbPolkadot
   private largeFixtures: ZkComponents | null = null;
 
   private constructor(
-    apiPromise: ApiPromise,
+    readonly apiPromise: ApiPromise,
     typedChainId: number,
-    injectedExtension: InjectedExtension,
+    readonly injectedExtension: InjectedExtension,
     readonly relayerManager: PolkadotRelayerManager,
-    public readonly config: ApiConfig,
+    readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     private readonly provider: PolkadotProvider,
     readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>
@@ -120,12 +120,6 @@ export class WebbPolkadot
     super();
 
     this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
-
-    this.provider = new PolkadotProvider(
-      apiPromise,
-      injectedExtension,
-      new PolkaTXBuilder(apiPromise, notificationHandler, injectedExtension)
-    );
 
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
@@ -281,6 +275,7 @@ export class WebbPolkadot
       errorHandler.onError,
       wallet
     );
+
     const provider = new PolkadotProvider(
       apiPromise,
       injectedExtension,
@@ -564,5 +559,46 @@ export class WebbPolkadot
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {
     return CircomUtxo.generateUtxo(input);
+  }
+
+  async sign(message: string): Promise<string> {
+    const { web3Accounts, web3FromSource } = await import(
+      '@polkadot/extension-dapp'
+    );
+
+    const account = await this.accounts.activeOrDefault;
+    if (!account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+
+    const allAccounts = await web3Accounts();
+    const injectedAccount = allAccounts.find(
+      (acc) =>
+        acc.address === account.address &&
+        acc.meta.name === account.name &&
+        acc.meta.source === this.injectedExtension.name
+    );
+
+    if (!injectedAccount) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+
+    const injector = await web3FromSource(injectedAccount.meta.source);
+
+    // this injector object has a signer and a signRaw method
+    // to be able to sign raw bytes
+    const signRaw = injector?.signer?.signRaw;
+
+    if (!signRaw) {
+      throw WebbError.from(WebbErrorCodes.NoSignRaw);
+    }
+
+    const { signature } = await signRaw({
+      address: account.address,
+      data: message,
+      type: 'bytes',
+    });
+
+    return signature;
   }
 }

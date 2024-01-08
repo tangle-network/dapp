@@ -45,40 +45,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
-  /* [PresetTypedChainId.LocalTangleStandalone]: {
-    chainType: ChainType.Substrate,
-    id: SubstrateChainId.LocalTangleStandalone,
-    name: 'Tangle',
-    network: 'Substrate',
-    group: 'tangle',
-    tag: 'dev',
-    nativeCurrency: {
-      name: 'Tangle',
-      symbol: 'TNT',
-      decimals: 18,
-    },
-    blockExplorers: {
-      default: {
-        name: 'Tangle Explorer',
-        url: populateBlockExplorerStub('ws://127.0.0.1:9944'),
-      },
-    },
-    rpcUrls: {
-      default: {
-        http: [],
-        webSocket: ['ws://127.0.0.1:9944'],
-      },
-      public: {
-        http: [],
-        webSocket: ['ws://127.0.0.1:9944'],
-      },
-    },
-    env: ['development'],
-  }, */
   [PresetTypedChainId.TangleStandaloneTestnet]: {
     chainType: ChainType.Substrate,
     group: 'tangle',
-    tag: 'test',
+    tag: process.env['USING_LOCAL_TANGLE'] ? 'dev' : 'test',
     id: SubstrateChainId.TangleStandaloneTestnet,
     name: 'Tangle Standalone Testnet',
     network: 'Substrate',
@@ -90,17 +60,23 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Explorer',
-        url: populateBlockExplorerStub('wss://rpc-archive.tangle.tools'),
+        url: process.env['USING_LOCAL_TANGLE']
+          ? populateBlockExplorerStub('ws://127.0.0.1:9944')
+          : populateBlockExplorerStub('wss://rpc-archive.tangle.tools'),
       },
     },
     rpcUrls: {
       default: {
         http: [],
-        webSocket: ['wss://rpc-archive.tangle.tools', 'wss://rpc.tangle.tools'],
+        webSocket: process.env['USING_LOCAL_TANGLE']
+          ? ['ws://127.0.0.1:9944']
+          : ['wss://rpc-archive.tangle.tools', 'wss://rpc.tangle.tools'],
       },
       public: {
         http: [],
-        webSocket: ['wss://rpc-archive.tangle.tools', 'wss://rpc.tangle.tools'],
+        webSocket: process.env['USING_LOCAL_TANGLE']
+          ? ['ws://127.0.0.1:9944']
+          : ['wss://rpc-archive.tangle.tools', 'wss://rpc.tangle.tools'],
       },
     },
     env: ['development'],

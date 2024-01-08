@@ -76,10 +76,6 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       [toggleModal]
     );
 
-    const handleCloseAutoFocus = useCallback(() => {
-      resetState();
-    }, [resetState]);
-
     const downloadURL = useMemo(() => {
       if (platformId == null) return;
 
@@ -116,9 +112,9 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       <div ref={ref} {...props}>
         <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
           <ModalContent
-            onCloseAutoFocus={handleCloseAutoFocus}
             isOpen={isModalOpen}
             isCenter
+            onCloseAutoFocus={() => resetState()}
           >
             <WalletConnectionCard
               wallets={supportedWallets}

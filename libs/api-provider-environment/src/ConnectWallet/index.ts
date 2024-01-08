@@ -1,7 +1,7 @@
-import { useActiveChain, useActiveWallet } from '../WebbProvider/subjects';
-import getDefaultAccount from '../utils/getDefaultAccount';
-import { useWebContext } from '../webb-context/webb-context';
+'use client';
+
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
+import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
@@ -17,8 +17,10 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useActiveChain, useActiveWallet } from '../WebbProvider/subjects';
+import getDefaultAccount from '../utils/getDefaultAccount';
+import { useWebContext } from '../webb-context/webb-context';
 import subjects, { WalletState } from './subjects';
-import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 
 export type UseConnectWalletReturnType = {
   /**
@@ -89,8 +91,12 @@ export type UseConnectWalletReturnType = {
 /**
  * Hook contains the logic to connect open the wallet modal
  * and connect to a wallet
+ * @param options.useAllWallet - Boolean to use all supported wallets,
+ * if false, only use the wallets that contains the active anchor
  */
-const useConnectWallet = (): UseConnectWalletReturnType => {
+const useConnectWallet = (options?: {
+  useAllWallets?: boolean;
+}): UseConnectWalletReturnType => {
   // Get the states from the subjects
   const isModalOpen = useObservableState(subjects.isWalletModalOpenSubject);
   const selectedWallet = useObservableState(subjects.selectedWalletSubject);
@@ -169,8 +175,6 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
       // set the next chain
       if (isOpen && typeof typedChainId === 'number') {
         subjects.setWalletTypedChainId(typedChainId);
-      } else {
-        subjects.setWalletTypedChainId(undefined);
       }
     },
     []
@@ -210,7 +214,7 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         } else {
           if (
             typeof typedChainId === 'number' &&
-            !chainsPopulated[typedChainId]
+            chainsPopulated[typedChainId]
           ) {
             await switchChain(chainsPopulated[typedChainId], nextWallet);
           } else {
@@ -241,16 +245,18 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
    * Function to reset the wallet state to idle
    */
   const resetState = useCallback(() => {
-    subjects.setConnectError(undefined);
     subjects.setWalletModalOpen(false);
+    subjects.setConnectError(undefined);
     subjects.setWalletState(WalletState.IDLE);
     subjects.setSelectedWallet(undefined);
+    subjects.setWalletTypedChainId(undefined);
   }, []);
 
   const memoValues = useMemoValues({
     walletState,
     typedChainId,
     selectedWallet,
+    ...options,
   });
 
   return {
@@ -275,12 +281,14 @@ function getChain(chainId: number, chainType: ChainType): Chain | undefined {
 }
 
 /** @internal */
-function useMemoValues(props: {
-  walletState: WalletState;
-  selectedWallet?: WalletConfig;
-  typedChainId?: number;
-}) {
-  const { walletState, selectedWallet, typedChainId } = props;
+function useMemoValues(
+  props: {
+    walletState: WalletState;
+    selectedWallet?: WalletConfig;
+    typedChainId?: number;
+  } & Parameters<typeof useConnectWallet>[0]
+) {
+  const { walletState, selectedWallet, typedChainId, useAllWallets } = props;
   const { apiConfig, activeWallet, loading } = useWebContext();
 
   const connectingWalletId = useMemo<number | undefined>(
@@ -300,8 +308,11 @@ function useMemoValues(props: {
   );
 
   const supportedWallets = useMemo(
-    () => apiConfig.getSupportedWallets(typedChainId),
-    [apiConfig, typedChainId]
+    () =>
+      apiConfig.getSupportedWallets(typedChainId, {
+        filterByActiveAnchor: !useAllWallets,
+      }),
+    [apiConfig, typedChainId, useAllWallets]
   );
 
   return {

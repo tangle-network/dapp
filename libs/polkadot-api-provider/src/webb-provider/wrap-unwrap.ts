@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import '@webb-tools/api-derive';
-import '@webb-tools/tangle-substrate-types';
 
 import {
   Amount,
