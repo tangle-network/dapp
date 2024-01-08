@@ -16,7 +16,7 @@ export enum EVMChainId {
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
   ScrollAlpha = 534353,
-  TangleTestnet = 4006,
+  TangleTestnet = 3799,
 
   /** Self hosted EVM */
   AthenaOrbit = 3884533461,
@@ -29,7 +29,7 @@ export enum EVMChainId {
   DemeterLocalnet = 5003,
 
   /** Local Tangle */
-  LocalTangleTestnet = 4007,
+  LocalTangleTestnet = 3799,
 }
 
 export default EVMChainId;
