@@ -118,14 +118,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     error: currentPaymentDestinationError,
   } = usePaymentDestinationSubscription(substrateAddress);
 
-  const amountToBondError = useMemo(() => {
+  useEffect(() => {
     if (walletBalanceError) {
       notificationApi({
         variant: 'error',
         message: walletBalanceError.message,
       });
     }
+  }, [notificationApi, walletBalanceError]);
 
+  const amountToBondError = useMemo(() => {
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
@@ -133,7 +135,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     } else if (Number(walletBalance.value1) < amountToBond) {
       return `You don't have enough tTNT in your wallet!`;
     }
-  }, [walletBalanceError, walletBalance, amountToBond, notificationApi]);
+  }, [walletBalance, amountToBond]);
 
   const continueToSelectDelegatesStep = useMemo(() => {
     return isFirstTimeNominator
