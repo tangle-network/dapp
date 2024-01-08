@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import 'github-markdown-css/github-markdown.css';
 
-import { getProjectSummaryData } from '../../server';
+import { getProjectSummaryData } from '../../../server';
 
 export default async function Summary() {
   const readMeRawMd = await getProjectSummaryData();
