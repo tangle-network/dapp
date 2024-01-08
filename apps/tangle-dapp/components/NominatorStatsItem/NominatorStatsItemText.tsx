@@ -3,7 +3,7 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import {
   getRoundedDownNumberWith2Decimals,
@@ -31,12 +31,15 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
     };
   }, [data]);
 
-  if (error) {
-    notificationApi({
-      variant: 'error',
-      message: error.message,
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      notificationApi({
+        variant: 'error',
+        message: error.message,
+        key: error.message,
+      });
+    }
+  }, [error]);
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
@@ -46,7 +49,7 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
         ) : error ? (
           'Error'
         ) : data === null ? null : (
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <Typography
               variant="h4"
               fw="bold"
