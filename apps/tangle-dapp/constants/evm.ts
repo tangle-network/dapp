@@ -187,3 +187,21 @@ export const rebondTokens = async (
 
   return txHash;
 };
+
+export const stopNomination = async (
+  nominatorAddress: string
+): Promise<AddressType> => {
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'chill',
+    args: [],
+    account: ensureHex(nominatorAddress),
+  });
+
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+  const txHash = await evmWalletClient.writeContract(request);
+
+  return txHash;
+};

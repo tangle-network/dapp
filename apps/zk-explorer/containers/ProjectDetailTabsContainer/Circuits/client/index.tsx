@@ -69,13 +69,16 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
           </Panel>
           <PanelResizeHandle
             className={cx(
-              'w-[2px] bg-mono-180 ease-linear duration-150',
+              'w-[2px] bg-mono-60 dark:bg-mono-180 ease-linear duration-150',
               'hover:bg-blue-70 dark:hover:bg-blue-50',
               'data-[resize-handle-active]:bg-blue-70 dark:data-[resize-handle-active]:bg-blue-50'
             )}
           />
-          <Panel>
-            <CodeFile />
+          <Panel className="!overflow-auto">
+            <CodeFile
+              fetchUrl={activeFileData?.fetchUrl}
+              language={activeFileData?.language}
+            />
           </Panel>
         </PanelGroup>
       )}
@@ -93,7 +96,7 @@ const MainSkeleton: FC = () => {
         <SkeletonLoader size="xl" />
         <SkeletonLoader size="xl" />
       </div>
-      <div className="space-y-3 p-3 h-full w-[70%] border-l-2 border-mono-180">
+      <div className="space-y-3 p-3 h-full w-[70%] border-l-2 border-mono-60 dark:border-mono-180">
         <SkeletonLoader size="xl" />
         <SkeletonLoader size="xl" />
       </div>

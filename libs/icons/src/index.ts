@@ -86,6 +86,7 @@ export * from './LoginBoxLineIcon';
 export * from './Mail';
 export * from './Memu';
 export * from './MoonLine';
+export * from './ProhibitedLineIcon';
 export * from './QRCode';
 export { default as QRScanLineIcon } from './QRScanLineIcon';
 export { default as RefreshLineIcon } from './RefreshLineIcon';
