@@ -1,35 +1,50 @@
 'use client';
 
-import { FundsLine } from '@webb-tools/icons';
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
+import { FundsLine, GiftLineIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs as BreadcrumbsCmp,
   BreadcrumbsItem,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
+import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { type FC, useMemo } from 'react';
 
 import { BreadcrumbType } from './types';
 
-const Breadcrumbs: FC = () => {
-  const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
-    const md = getIconSizeInPixel('md');
-    const lg = getIconSizeInPixel('lg');
+const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
+  claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
+};
 
-    return [
-      {
-        label: 'EVM Staking',
-        isLast: true,
-        icon: (
-          <FundsLine
-            className={`w-[${md}] h-[${md}] lg:w-[${lg}] lg:h-[${lg}]`}
-          />
-        ),
-        href: '/',
-      },
-    ];
-  }, []);
+const Breadcrumbs: FC = () => {
+  const fullPathname = usePathname();
+  const pathNames = fullPathname.split('/').filter((path) => path);
+
+  const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
+    if (pathNames.length === 0) {
+      return [
+        {
+          label: 'EVM Staking',
+          isLast: true,
+          icon: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
+          href: '/',
+        },
+      ];
+    }
+
+    return pathNames.map((pathName, index) => {
+      const icon =
+        pathName in BREADCRUMB_ICONS ? BREADCRUMB_ICONS[pathName] : null;
+
+      return {
+        label: capitalize(pathName),
+        isLast: index === pathNames.length - 1,
+        href: `/${pathNames.slice(0, index + 1).join('/')}`,
+        icon,
+      };
+    });
+  }, [pathNames]);
 
   return (
     <BreadcrumbsCmp>

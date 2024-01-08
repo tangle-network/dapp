@@ -4,7 +4,7 @@ import type React from 'react';
 export type BreadcrumbType = {
   label: string;
   isLast: boolean;
-  icon: React.ReactElement<IconBase>;
+  icon?: React.ReactElement<IconBase> | null;
   href: string;
   className?: string;
 };
