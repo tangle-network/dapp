@@ -1,11 +1,12 @@
 'use client';
 
-import { type FC, ComponentProps, useMemo } from 'react';
-import Link from 'next/link';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/pagination';
+
+import Link from 'next/link';
+import { ComponentProps, useMemo, type FC } from 'react';
+import { Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { ProjectCard } from '../../../components/ProjectCard/ProjectCard';
 import type { ProjectItem } from '../../../components/ProjectCard/types';
