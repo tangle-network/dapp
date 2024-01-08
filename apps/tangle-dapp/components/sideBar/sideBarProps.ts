@@ -3,6 +3,7 @@ import {
   DocumentationIcon,
   FaucetIcon,
   FundsLine,
+  GiftLineIcon,
   GlobalLine,
   KeyIcon,
 } from '@webb-tools/icons';
@@ -31,6 +32,14 @@ const sideBarItems: SideBarItemProps[] = [
     isInternal: true,
     isNext: true,
     Icon: FundsLine,
+    subItems: [],
+  },
+  {
+    name: 'Claim',
+    href: '/claim',
+    isInternal: true,
+    isNext: true,
+    Icon: GiftLineIcon,
     subItems: [],
   },
   {

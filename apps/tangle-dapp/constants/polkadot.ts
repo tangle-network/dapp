@@ -1,16 +1,22 @@
 import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
 import { u128 } from '@polkadot/types';
 import { formatBalance } from '@polkadot/util';
-import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_RPC_ENDPOINT as TESTNET_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { firstValueFrom } from 'rxjs';
-
-const apiPromiseCache = new Map<string, ApiPromise>();
 
 const TOKEN_UNIT = 'tTNT';
 
-export const getPolkadotApiPromise = async (
+const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
+  ? 'ws://127.0.0.1:9944'
+  : TESTNET_RPC_ENDPOINT;
+
+const apiPromiseCache = new Map<string, ApiPromise>();
+
+export const getPolkadotApiPromise: (
+  endpoint?: string
+) => Promise<ApiPromise | undefined> = async (
   endpoint: string = TANGLE_RPC_ENDPOINT
-): Promise<ApiPromise | undefined> => {
+) => {
   if (apiPromiseCache.has(endpoint)) {
     return apiPromiseCache.get(endpoint);
   }

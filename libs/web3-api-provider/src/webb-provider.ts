@@ -78,7 +78,6 @@ import {
   watchBlockNumber,
   watchNetwork,
 } from 'wagmi/actions';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
@@ -87,6 +86,10 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
+import {
+  MetaMaskConnector,
+  RainbowConnector,
+} from '@webb-tools/dapp-config/wallets/injected';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -107,6 +110,8 @@ export class WebbWeb3Provider
   private smallFixtures: ZkComponents | null = null;
 
   private largeFixtures: ZkComponents | null = null;
+
+  private unsubscribeFns: Set<() => void>;
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
@@ -144,9 +149,16 @@ export class WebbWeb3Provider
 
     this.publicClient = getPublicClient({ chainId });
 
-    watchBlockNumber({ chainId, listen: true }, (nextBlockNumber) => {
-      this._newBlock.next(nextBlockNumber);
-    });
+    this.unsubscribeFns = new Set();
+
+    const unsub = watchBlockNumber(
+      { chainId, listen: true },
+      (nextBlockNumber) => {
+        this._newBlock.next(nextBlockNumber);
+      }
+    );
+
+    this.unsubscribeFns.add(unsub);
 
     // There are no relay chain methods for Web3 chains
     this.relayChainMethods = null;
@@ -274,19 +286,27 @@ export class WebbWeb3Provider
   }
 
   setChainListener() {
-    return watchNetwork(({ chain }) => {
+    const unsub = watchNetwork(({ chain }) => {
       if (!chain) {
         return;
       }
 
       this.emit('providerUpdate', [chain.id]);
     });
+
+    this.unsubscribeFns.add(unsub);
+
+    return unsub;
   }
 
   setAccountListener() {
-    return watchAccount(async () => {
+    const unsub = watchAccount(async () => {
       this.emit('newAccounts', this.accounts);
     });
+
+    this.unsubscribeFns.add(unsub);
+
+    return unsub;
   }
 
   async destroy(): Promise<void> {
@@ -527,7 +547,10 @@ export class WebbWeb3Provider
   get capabilities(): ProvideCapabilities {
     const connector = this.connector;
 
-    if (connector instanceof MetaMaskConnector) {
+    if (
+      connector instanceof MetaMaskConnector ||
+      connector instanceof RainbowConnector
+    ) {
       return {
         addNetworkRpc: true,
         hasSessions: false,
@@ -557,6 +580,7 @@ export class WebbWeb3Provider
   }
 
   async endSession(): Promise<void> {
+    this.unsubscribeFns.forEach((unsub) => unsub());
     return this.unsubscribeAll();
   }
 

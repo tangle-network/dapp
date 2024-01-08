@@ -1,7 +1,6 @@
 'use client';
 
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
@@ -17,17 +16,20 @@ import {
   Dropdown,
   DropdownBody,
   KeyValueWithButton,
+  MenuItem,
+  shortenString,
   Typography,
   useWebbUI,
   WalletButton,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
-export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
-  account,
-  wallet,
-}) => {
-  const { activeApi, activeChain, inactivateApi } = useWebContext();
+export const WalletDropdown: FC<{
+  accountName?: string;
+  accountAddress: string;
+  wallet: WalletConfig;
+}> = ({ accountAddress, accountName, wallet }) => {
+  const { activeChain, inactivateApi } = useWebContext();
 
   const { notificationApi } = useWebbUI();
 
@@ -44,30 +46,8 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
 
     const url = activeChain.blockExplorers.default.url;
 
-    return new URL(`/address/${account.address}`, url).toString();
-  }, [activeChain, account]);
-
-  // Funciton to switch account within the connected wallet
-  const handleSwitchAccount = useCallback(async () => {
-    // Switch account only support on web3 provider
-    if (!activeApi || !(activeApi instanceof WebbWeb3Provider)) {
-      return;
-    }
-
-    try {
-      const walletClient = activeApi.walletClient;
-
-      await walletClient.requestPermissions({ eth_accounts: {} });
-    } catch (error) {
-      let message = WebbError.from(WebbErrorCodes.SwitchAccountFailed).message;
-
-      if (isViemError(error)) {
-        message = error.shortMessage;
-      }
-
-      notificationApi({ variant: 'error', message });
-    }
-  }, [activeApi, notificationApi]);
+    return new URL(`/address/${accountAddress}`, url).toString();
+  }, [activeChain?.blockExplorers, accountAddress]);
 
   // Disconnect function
   const handleDisconnect = useCallback(async () => {
@@ -91,7 +71,7 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
       <DropdownTrigger asChild>
         <WalletButton
           wallet={wallet}
-          address={account.address}
+          address={accountAddress}
           addressClassname="hidden lg:block"
         />
       </DropdownTrigger>
@@ -103,14 +83,14 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
 
             <div>
               <Typography variant="h5" fw="bold" className="capitalize">
-                {account.name || wallet.name}
+                {accountName || wallet.name}
               </Typography>
 
               <div className="flex items-center space-x-1">
                 <KeyValueWithButton
                   className="mt-0.5"
                   isHiddenLabel
-                  keyValue={account.address}
+                  keyValue={accountAddress}
                   size="sm"
                   labelVariant="body1"
                   valueVariant="body1"
@@ -123,13 +103,7 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
             </div>
           </div>
           <div className="flex items-center justify-end space-x-2.5">
-            <Button
-              onClick={handleSwitchAccount}
-              leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
-              variant="link"
-            >
-              Switch
-            </Button>
+            <SwitchAccountButton />
 
             <Button
               onClick={handleDisconnect}
@@ -142,6 +116,78 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
             </Button>
           </div>
         </div>
+      </DropdownBody>
+    </Dropdown>
+  );
+};
+
+const SwitchAccountButton: FC = () => {
+  const { activeApi, accounts, setActiveAccount } = useWebContext();
+
+  const { notificationApi } = useWebbUI();
+
+  // Funciton to switch account within the connected wallet
+  const handleSwitchAccount = useCallback(async () => {
+    // Switch account only support on web3 provider
+    if (!activeApi) {
+      return;
+    }
+
+    if (activeApi instanceof WebbWeb3Provider) {
+      try {
+        const walletClient = activeApi.walletClient;
+
+        await walletClient.requestPermissions({ eth_accounts: {} });
+      } catch (error) {
+        let message = WebbError.from(
+          WebbErrorCodes.SwitchAccountFailed
+        ).message;
+
+        if (isViemError(error)) {
+          message = error.shortMessage;
+        }
+
+        notificationApi({ variant: 'error', message });
+      }
+    }
+  }, [activeApi, notificationApi]);
+
+  if (!activeApi) {
+    return null;
+  }
+
+  return activeApi instanceof WebbWeb3Provider ? (
+    <Button
+      onClick={handleSwitchAccount}
+      leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
+      variant="link"
+    >
+      Switch
+    </Button>
+  ) : (
+    <Dropdown>
+      <DropdownTrigger asChild>
+        <Button
+          leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
+          variant="link"
+        >
+          Switch
+        </Button>
+      </DropdownTrigger>
+
+      <DropdownBody className="mt-2">
+        <ul>
+          {accounts.map((account) => (
+            <li key={account.address} onClick={() => setActiveAccount(account)}>
+              <MenuItem>
+                {account.name}{' '}
+                <Typography variant="mkt-caption">
+                  {shortenString(account.address)}
+                </Typography>
+              </MenuItem>
+            </li>
+          ))}
+        </ul>
       </DropdownBody>
     </Dropdown>
   );

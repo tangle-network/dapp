@@ -1,3 +1,5 @@
+'use client';
+
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronDown } from '@webb-tools/icons';
 import { Typography } from '../../typography';

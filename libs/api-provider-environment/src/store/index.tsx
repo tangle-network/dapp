@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemorized } from './useMemorized';
 import { BareProps } from '@webb-tools/dapp-types';
 import {

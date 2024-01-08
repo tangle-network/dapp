@@ -1,3 +1,5 @@
+'use client';
+
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

@@ -11,6 +11,8 @@ export enum WebbErrorCodes {
   NoFungibleTokenAvailable,
   /* No fungible token is available */
   NoWrappableTokenAvailable,
+  /* No signRaw function for this injector */
+  NoSignRaw,
   /* Unsupported provider */
   UnsupportedProvider,
   /* Unsupported chain is switch via the extension */
@@ -27,6 +29,8 @@ export enum WebbErrorCodes {
   NoActiveBridge,
   /* Missing endpoints in the configuration */
   NoEndpointsConfigured,
+  /* No claims pallet found */
+  NoClaimsPalletFound,
   /* Failed to parse deposit note */
   NoteParsingFailure,
   /* PolkaDot extension not installed */
@@ -175,6 +179,12 @@ export class WebbError extends Error {
           message: 'No account available',
         };
 
+      case WebbErrorCodes.NoSignRaw:
+        return {
+          code,
+          message: 'No `signRaw` function for this injector',
+        };
+
       case WebbErrorCodes.NoteParsingFailure:
         return {
           code,
@@ -283,6 +293,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `Missing endpoints in the configuration`,
+        };
+
+      case WebbErrorCodes.NoClaimsPalletFound:
+        return {
+          code,
+          message: `No claims pallet found`,
         };
 
       case WebbErrorCodes.AnchorIdNotFound:
