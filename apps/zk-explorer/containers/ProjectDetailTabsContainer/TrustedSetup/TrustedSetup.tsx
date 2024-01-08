@@ -5,7 +5,7 @@ export default async function TrustedSetup() {
   const trustedSetupData = await getProjectTrustedSetupData();
 
   return (
-    <div className="p-6 space-y-9">
+    <div className="p-4 md:p-6 space-y-9">
       {trustedSetupData.map((item, idx) => (
         <TrustedSetupItem {...item} key={idx} />
       ))}

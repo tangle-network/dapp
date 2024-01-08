@@ -43,7 +43,7 @@ const TrustedSetupItem: FC<ProjectTrustedSetupItem> = ({
       {/* ZKey */}
       <div className="space-y-1 py-3">
         <Typography variant="body3">Final ZKey:</Typography>
-        <div className="rounded-md bg-mono-20 dark:bg-mono-160 p-3 flex items-center justify-between">
+        <div className="overflow-x-auto rounded-md bg-mono-20 dark:bg-mono-160 p-3 flex items-center justify-between gap-2">
           <Typography variant="body1" className="!font-[Cousine]">
             {finalZKey.filename}
           </Typography>
