@@ -2,17 +2,13 @@ import type { FC } from 'react';
 import {
   Chip,
   type ChipColors,
-  Table,
   Typography,
-  fuzzyFilter,
 } from '@webb-tools/webb-ui-components';
 import { Download } from '@webb-tools/icons';
 
+import ContributionListTable from './ContributorListTable';
 import GitHubIconWithLink from '../../../components/GitHubIconWithLink';
-import type {
-  ContributionListItem,
-  ProjectTrustedSetupItem,
-} from '../../../server';
+import type { ProjectTrustedSetupItem } from '../../../server';
 
 const TrustedSetupItem: FC<ProjectTrustedSetupItem> = ({
   name,
@@ -67,13 +63,6 @@ const TrustedSetupItem: FC<ProjectTrustedSetupItem> = ({
 };
 
 export default TrustedSetupItem;
-
-/** @internal */
-const ContributionListTable: FC<{ data: ContributionListItem[] }> = ({
-  data,
-}) => {
-  return <div></div>;
-};
 
 /** @internal */
 const getChipColorByIdx = (idx: number): ChipColors => {

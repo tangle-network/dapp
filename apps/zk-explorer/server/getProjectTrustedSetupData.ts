@@ -34,6 +34,26 @@ export default async function getProjectTrustedSetupData(): Promise<
         filename: 'example_0063.zkey',
         downloadUrl: '#',
       },
+      contributionList: [
+        {
+          doc: 'pairing_20_00001.zkey',
+          contributionDate: 'Dec 11,2023',
+          hashes:
+            'ca1288cf4e67294c2298ca1288cf4e67294c2298ca1288cf4e67294c2298',
+        },
+        {
+          doc: 'pairing_20_00002.zkey',
+          contributionDate: 'Dec 11,2023',
+          hashes:
+            'ca1288cf4e67294c2298ca1288cf4e67294c2298ca1288cf4e67294c2298',
+        },
+        {
+          doc: 'pairing_20_00003.zkey',
+          contributionDate: 'Dec 11,2023',
+          hashes:
+            'ca1288cf4e67294c2298ca1288cf4e67294c2298ca1288cf4e67294c2298',
+        },
+      ],
     },
     {
       name: 'ecdsa.circom',
