@@ -26,7 +26,7 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
   return (
     <div
       className={cx(
-        'bg-mono-0 dark:bg-mono-180 p-6 space-y-6 rounded-2xl',
+        'bg-mono-0 dark:bg-mono-180 p-4 md:p-6 space-y-6 rounded-2xl',
         className
       )}
     >
