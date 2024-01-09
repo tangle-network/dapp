@@ -12,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { bondExtraTokens, evmPublicClient } from '../../constants';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
@@ -39,14 +39,16 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
 
-  const amountToBondError = useMemo(() => {
+  useEffect(() => {
     if (walletBalanceError) {
       notificationApi({
         variant: 'error',
         message: walletBalanceError.message,
       });
     }
+  }, [notificationApi, walletBalanceError]);
 
+  const amountToBondError = useMemo(() => {
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
@@ -54,7 +56,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     } else if (Number(walletBalance.value1) < amountToBond) {
       return `You don't have enough tTNT in your wallet!`;
     }
-  }, [walletBalanceError, walletBalance, amountToBond, notificationApi]);
+  }, [walletBalance, amountToBond]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToBond > 0 && !amountToBondError && walletAddress !== '0x0'
@@ -130,7 +132,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           />
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
             isDisabled={!continueToSignAndSubmitTx}
