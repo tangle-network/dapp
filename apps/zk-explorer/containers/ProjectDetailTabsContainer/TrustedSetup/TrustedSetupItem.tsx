@@ -28,7 +28,7 @@ const TrustedSetupItem: FC<ProjectTrustedSetupItem> = ({
       </div>
 
       {/* Tags */}
-      <div className="flex overflow-x-auto md:overflow-x-visible md:flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         {tags.map((tag, idx) => (
           <Chip
             key={idx}
