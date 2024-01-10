@@ -325,12 +325,18 @@ export const chainsConfig: Record<number, ChainConfig> = {
       default: {
         http: process.env['USING_LOCAL_TANGLE']
           ? ['http://localhost:9944']
-          : ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
+          : [
+              'https://testnet-rpc-archive.tangle.tools',
+              'https://testnet-rpc.tangle.tools',
+            ],
       },
       public: {
         http: process.env['USING_LOCAL_TANGLE']
           ? ['http://localhost:9944']
-          : ['https://rpc-archive.tangle.tools', 'https://rpc.tangle.tools'],
+          : [
+              'https://testnet-rpc-archive.tangle.tools',
+              'https://testnet-rpc.tangle.tools',
+            ],
       },
     },
     contracts: hostedOrbitMulticall3Address
