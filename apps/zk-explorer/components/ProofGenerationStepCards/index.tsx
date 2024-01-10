@@ -318,11 +318,11 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         title="Select MPC Participants"
         number={4}
         activeStep={activeStep}
+        onNext={handleNextStep}
         isNextButtonDisabled={
           mpcParticipants.length === 0 ||
           selectedMpcParticipantAddresses.length === 0
         }
-        onNext={handleNextStep}
       >
         <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
       </StepCard>

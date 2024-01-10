@@ -58,12 +58,17 @@ export async function sendApiRequest<T = Record<string, never>>(
   errorPrimaryMessage: string,
   options?: RequestInit
 ): Promise<ApiResponseWrapper<T>> {
-  const finalOptions = {
+  const headers = new Headers(options?.headers);
+
+  // If the body is not form data, set the 'Content-Type'
+  // to default to 'application/json'.
+  if (!(options?.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const finalOptions: RequestInit = {
     ...options,
-    headers: {
-      ...options?.headers,
-      'Content-Type': 'application/json',
-    },
+    headers,
   };
 
   const finalRequestUrl = makeAbsoluteApiEndpointUrl(route);
@@ -248,12 +253,29 @@ export async function requestProofGeneration(data: {
   provingKey: File;
   mpcParticipantAddresses: string[];
 }): Promise<ApiResponse> {
+  const formData = new FormData();
+
+  // TODO: Need to centralize these keys somewhere more accessible, so that they can easily be found and updated later on.
+  formData.append('r1cs', data.r1cs);
+  formData.append('plan', JSON.stringify(data.plan));
+  formData.append('verificationKey', data.verificationKey);
+  formData.append('provingKey', data.provingKey);
+
+  formData.append(
+    'mpcParticipantAddresses',
+    JSON.stringify(data.mpcParticipantAddresses)
+  );
+
   const responseWrapper = await sendApiRequest(
     ApiRoute.ProofGeneration,
     'Failed to request proof generation',
     {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: formData,
+      // Do not specify the 'Content-Type' header, as it
+      // will be automatically set by the browser. The browser
+      // will automatically add a 'boundary' parameter to the header,
+      // which is required for multipart form data.
     }
   );
 
