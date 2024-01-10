@@ -17,7 +17,8 @@ const fetchLeaderboardData = async (
   }
 
   const response = await fetch(
-    `${BACKEND_URL}/leaderboard?${searchParams.toString()}`
+    `${BACKEND_URL}/leaderboard?${searchParams.toString()}`,
+    { next: { revalidate: 60 } } // seconds
   );
 
   const data = await response.json();
