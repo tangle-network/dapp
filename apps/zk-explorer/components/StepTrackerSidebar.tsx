@@ -1,12 +1,16 @@
 'use client';
 
 import { Card, Typography } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export const StepTrackerSidebar: FC = () => {
-  const [activeStep, setActiveStep] = useState(1);
+export type StepTrackerSidebarProps = {
+  activeStep: number;
+};
 
+export const StepTrackerSidebar: FC<StepTrackerSidebarProps> = ({
+  activeStep,
+}) => {
   return (
     <div className="flex gap-6 rounded-2xl">
       <Card className="flex flex-col space-y-0">
@@ -49,6 +53,7 @@ export const StepTrackerSidebar: FC = () => {
         <StepTrackerItem
           number={5}
           activeStep={activeStep}
+          isLast
           title="Select Service Tier"
           description="Select a service level that meets your computational and
               throughput requirements, ensuring seamless proof generation

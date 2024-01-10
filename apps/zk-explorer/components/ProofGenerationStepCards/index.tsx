@@ -34,12 +34,20 @@ import { RelativePageUrl } from '../../utils';
 import { requestProofGeneration } from '../../utils/api';
 import { ColumnKey, Location, MpcParticipant, Plan } from './types';
 
-export const ProofGenerationStepCards: FC = () => {
-  const [step, setStep] = useState(1);
+export type ProofGenerationStepCardsProps = {
+  activeStep: number;
+  nextStep: () => void;
+};
+
+export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
+  activeStep,
+  nextStep,
+}) => {
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [r1csFile, setR1csFile] = useState<File | null>(null);
   const [provingKeyFile, setProvingKeyFile] = useState<File | null>(null);
 
+  // TODO: Need to fetch MPC participants from the backend. Create a request function for this.
   const [mpcParticipants, setMpcParticipants] = useState<MpcParticipant[]>(
     MOCK_MPC_PARTICIPANTS
   );
@@ -56,7 +64,7 @@ export const ProofGenerationStepCards: FC = () => {
   const handleNextStep = useCallback(
     async (isLast: boolean) => {
       if (!isLast) {
-        setStep((current) => current + 1);
+        nextStep();
 
         return;
       }
@@ -110,6 +118,7 @@ export const ProofGenerationStepCards: FC = () => {
     },
     [
       mpcParticipants,
+      nextStep,
       notificationApi,
       provingKeyFile,
       r1csFile,
@@ -286,7 +295,7 @@ export const ProofGenerationStepCards: FC = () => {
       <StepCard
         title="Process R1SC File"
         number={1}
-        activeStep={step}
+        activeStep={activeStep}
         isNextButtonDisabled={r1csFile === null}
         onNext={handleNextStep}
       >
@@ -296,7 +305,7 @@ export const ProofGenerationStepCards: FC = () => {
       <StepCard
         title="Upload Verification Key"
         number={2}
-        activeStep={step}
+        activeStep={activeStep}
         isNextButtonDisabled={verificationKeyFile === null}
         onNext={handleNextStep}
       >
@@ -306,7 +315,7 @@ export const ProofGenerationStepCards: FC = () => {
       <StepCard
         title="Upload Proving Key"
         number={3}
-        activeStep={step}
+        activeStep={activeStep}
         isNextButtonDisabled={provingKeyFile === null}
         onNext={handleNextStep}
       >
@@ -316,7 +325,7 @@ export const ProofGenerationStepCards: FC = () => {
       <StepCard
         title="Select MPC Participants"
         number={4}
-        activeStep={step}
+        activeStep={activeStep}
         isNextButtonDisabled={
           mpcParticipants.length === 0 ||
           selectedMpcParticipantAddresses.length === 0
@@ -329,7 +338,7 @@ export const ProofGenerationStepCards: FC = () => {
       <StepCard
         title="Select Service Tier"
         number={5}
-        activeStep={step}
+        activeStep={activeStep}
         isNextButtonDisabled={selectedPlan === null}
         onNext={handleNextStep}
         isLast
