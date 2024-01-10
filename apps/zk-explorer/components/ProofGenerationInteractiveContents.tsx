@@ -5,7 +5,9 @@ import { FeedbackCard } from './FeedbackCard';
 import { ProofGenerationStepCards } from './ProofGenerationStepCards';
 import { StepTrackerSidebar } from './StepTrackerSidebar';
 
-export const ProofGenerationInteractiveContents: FC = () => {
+export const ProofGenerationInteractiveContents: FC<{
+  circuitFilename: string;
+}> = ({ circuitFilename }) => {
   const [activeStep, setActiveStep] = useState(1);
 
   return (
@@ -17,6 +19,7 @@ export const ProofGenerationInteractiveContents: FC = () => {
       </div>
 
       <ProofGenerationStepCards
+        circuitFilename={circuitFilename}
         activeStep={activeStep}
         nextStep={() => setActiveStep((prev) => prev + 1)}
       />

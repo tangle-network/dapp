@@ -5,16 +5,24 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
+import {
+  ChevronDown,
+  ChevronUp,
+  ExternalLinkLine,
+  KeyIcon,
+} from '@webb-tools/icons';
 import {
   Avatar,
   Button,
   Card,
   CheckBox,
   FileUploadArea,
+  FileUploadItem,
+  FileUploadList,
   Progress,
   Table,
   Typography,
+  getHumanFileSize,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
@@ -34,11 +42,13 @@ import { requestProofGeneration } from '../../utils/api';
 import { ColumnKey, Location, MpcParticipant, Plan } from './types';
 
 export type ProofGenerationStepCardsProps = {
+  circuitFilename: string;
   activeStep: number;
   nextStep: () => void;
 };
 
 export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
+  circuitFilename,
   activeStep,
   nextStep,
 }) => {
@@ -259,29 +269,6 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
     setSelectedPlan(plan);
   }, []);
 
-  const handleFileUpload = useCallback(
-    (setter: Dispatch<SetStateAction<File | null>>) => {
-      return (acceptedFiles: File[]) => {
-        // The uploaded file was not accepted; reset the state.
-        if (acceptedFiles.length === 0) {
-          setter(null);
-
-          return;
-        }
-
-        assert(
-          acceptedFiles.length === 1,
-          'Upload file dialog should allow exactly one file to be provided'
-        );
-
-        const uploadedFile = acceptedFiles[0];
-
-        setter(uploadedFile);
-      };
-    },
-    []
-  );
-
   return (
     <div className="flex flex-col gap-6 flex-grow">
       <StepCard
@@ -291,7 +278,12 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         isNextButtonDisabled={r1csFile === null}
         onNext={handleNextStep}
       >
-        <FileUploadArea onDrop={handleFileUpload(setR1csFile)} />
+        <FileUploadAreaWithList
+          title="R1CS"
+          filename={circuitFilename}
+          file={r1csFile}
+          setFile={setR1csFile}
+        />
       </StepCard>
 
       <StepCard
@@ -301,7 +293,12 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         isNextButtonDisabled={verificationKeyFile === null}
         onNext={handleNextStep}
       >
-        <FileUploadArea onDrop={handleFileUpload(setVerificationKeyFile)} />
+        <FileUploadAreaWithList
+          title="Verification Key"
+          filename={circuitFilename}
+          file={verificationKeyFile}
+          setFile={setVerificationKeyFile}
+        />
       </StepCard>
 
       <StepCard
@@ -311,7 +308,12 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         isNextButtonDisabled={provingKeyFile === null}
         onNext={handleNextStep}
       >
-        <FileUploadArea onDrop={handleFileUpload(setProvingKeyFile)} />
+        <FileUploadAreaWithList
+          title="Proving Key"
+          filename={circuitFilename}
+          file={provingKeyFile}
+          setFile={setProvingKeyFile}
+        />
       </StepCard>
 
       <StepCard
@@ -555,5 +557,78 @@ const ServiceTierCard: FC<ServiceTierCardProps> = ({
           : 'Select Plan'}
       </Button>
     </Card>
+  );
+};
+
+type FileUploadAreaWithListProps = {
+  file: File | null;
+  title: string;
+  filename: string;
+  setFile: Dispatch<SetStateAction<File | null>>;
+};
+
+/** @internal */
+const FileUploadAreaWithList: FC<FileUploadAreaWithListProps> = ({
+  file,
+  title,
+  filename,
+  setFile,
+}) => {
+  const handleFileUpload = useCallback(
+    (acceptedFiles: File[]) => {
+      // The uploaded file was not accepted; reset the state.
+      if (acceptedFiles.length === 0) {
+        setFile(null);
+
+        return;
+      }
+
+      assert(
+        acceptedFiles.length === 1,
+        'Upload file dialog should allow exactly one file to be provided'
+      );
+
+      const uploadedFile = acceptedFiles[0];
+
+      setFile(uploadedFile);
+    },
+    [setFile]
+  );
+
+  return (
+    <>
+      <FileUploadArea onDrop={handleFileUpload} />
+
+      {file !== null && (
+        <div className="flex flex-col gap-4">
+          <Typography variant="body1" fw="semibold">
+            {title} for {filename}:
+          </Typography>
+
+          <FileUploadList>
+            <FileUploadItem
+              fileName={file.name}
+              onRemove={() => setFile(null)}
+              Icon={
+                <div className="flex items-center justify-center w-6 h-6 rounded bg-mono-180">
+                  <KeyIcon className="!fill-mono-0" />
+                </div>
+              }
+              extraInfo={
+                <>
+                  <Typography
+                    className="text-mono-120 dark:text-mono-80"
+                    variant="body1"
+                  >
+                    {getHumanFileSize(file.size, true, 0)}
+                  </Typography>
+                  <Progress className="mt-1" value={5.3} />
+                </>
+              }
+            />
+          </FileUploadList>
+        </div>
+      )}
+    </>
   );
 };

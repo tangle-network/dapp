@@ -5,9 +5,9 @@ import { ProofGenerationInteractiveContents } from '../../../../../components/Pr
 export default function ProofGenerationInitiationPage({
   params,
 }: {
-  params: { slug: { circuit: string } };
+  params: { circuit: string };
 }) {
-  // TODO: Handle non-existent circuit.
+  // TODO: Handle non-existent circuit or missing/invalid circuit slug.
 
   return (
     <main className="space-y-6">
@@ -17,7 +17,7 @@ export default function ProofGenerationInitiationPage({
         Proof Generation Service
       </Typography>
 
-      <ProofGenerationInteractiveContents />
+      <ProofGenerationInteractiveContents circuitFilename={params.circuit} />
     </main>
   );
 }
