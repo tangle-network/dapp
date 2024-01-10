@@ -1,5 +1,3 @@
-'use client';
-
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FeedbackCard } from '../../../../../components/FeedbackCard';
 import { Header } from '../../../../../components/Header';
@@ -9,7 +7,7 @@ import { StepTrackerSidebar } from '../../../../../components/StepTrackerSidebar
 export default function ProofGenerationInitiationPage({
   params,
 }: {
-  params: { slug: { owner: string; name: string } };
+  params: { slug: { circuit: string } };
 }) {
   // TODO: Handle non-existent circuit.
 

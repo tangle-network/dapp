@@ -5,6 +5,7 @@ import type {
   FilterConstraints,
 } from '../components/Filters/types';
 import { ProjectItem } from '../components/ProjectCard/types';
+import { Plan } from '../components/ProofGenerationStepCards/types';
 import { API_PREFIX } from '../constants';
 import { User } from '../hooks/useAuth';
 
@@ -16,6 +17,7 @@ export enum ApiRoute {
   AuthValidate = 'auth/validate',
   AuthLogout = 'auth/logout',
   User = 'user',
+  ProofGeneration = 'proof-generation',
 }
 
 export type ApiResponseWrapper<T> = {
@@ -169,6 +171,21 @@ export async function updateUserProfile(
   const responseWrapper = await sendApiRequest(ApiRoute.User, {
     method: 'PUT',
     body: JSON.stringify(changes),
+  });
+
+  return responseWrapper.innerResponse;
+}
+
+export async function requestProofGeneration(data: {
+  r1cs: File;
+  plan: Plan;
+  verificationKey: File;
+  provingKey: File;
+  mpcParticipants: string[];
+}): Promise<ApiResponse> {
+  const responseWrapper = await sendApiRequest(ApiRoute.ProofGeneration, {
+    method: 'POST',
+    body: JSON.stringify(data),
   });
 
   return responseWrapper.innerResponse;

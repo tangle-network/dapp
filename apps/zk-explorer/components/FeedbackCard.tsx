@@ -1,11 +1,11 @@
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { FEEDBACK_URL } from '../constants';
 import { LinkCard } from './LinkCard';
 
 export const FeedbackCard = () => {
   return (
-    // TODO: Replace this with a link to the feedback form. If this takes to an external page, need to add a prop to `LinkCard` to not use `next/link`, but instead use `a` tag.
-    <LinkCard href="#">
+    <LinkCard isExternal href={FEEDBACK_URL}>
       <div className="mb-4">
         <Typography variant="h5" fw="bold">
           Feedback

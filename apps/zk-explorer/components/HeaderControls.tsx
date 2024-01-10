@@ -6,6 +6,7 @@ import {
   DropdownBasicButton,
   DropdownBody,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { useRouter } from 'next/navigation';
@@ -16,12 +17,13 @@ import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import {
-  RelativePageUrl,
-  handleOAuthError,
-  handleOAuthSuccess,
-} from '../utils/utils';
+import { exchangeAuthCodeForOAuthToken } from '../utils';
+import { RelativePageUrl } from '../utils/utils';
 import { GitHubOAuthButton } from './GitHubOAuthButton';
+import {
+  GitHubOAuthErrorParams,
+  GitHubOAuthSuccessParams,
+} from './GitHubOAuthButton/types';
 import { SearchInput } from './SearchInput';
 import { SidebarCloseButton } from './SidebarCloseButton';
 
@@ -41,6 +43,7 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
   const { user } = useAuth();
   const { setSidebarOpen, updateSidebarContent } = useSidebarContext();
   const router = useRouter();
+  const { notificationApi } = useWebbUI();
 
   const prepareAndShowSearchSidebar = useCallback(() => {
     updateSidebarContent(
@@ -59,6 +62,29 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
   const handleUserProfileClick = useCallback(() => {
     router.push(RelativePageUrl.Dashboard);
   }, [router]);
+
+  const handleOAuthError = useCallback(
+    (params: GitHubOAuthErrorParams) => {
+      notificationApi({
+        variant: 'error',
+        message: `GitHub OAuth login failed: ${params.errorDescription}`,
+      });
+    },
+    [notificationApi]
+  );
+
+  const handleOAuthSuccess = useCallback(
+    async (params: GitHubOAuthSuccessParams) => {
+      if (!(await exchangeAuthCodeForOAuthToken(params.code))) {
+        notificationApi({
+          variant: 'error',
+          message:
+            'GitHub OAuth login failed: Could not exchange auth code for OAuth token.',
+        });
+      }
+    },
+    [notificationApi]
+  );
 
   return (
     <div

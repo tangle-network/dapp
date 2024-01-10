@@ -20,39 +20,95 @@ import {
   Table,
   Typography,
   shortenHex,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import { useRouter } from 'next/navigation';
+import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
-
-enum Plan {
-  Free = 'Free',
-  Pro = 'Pro',
-  Enterprise = 'Enterprise',
-}
-
-enum Location {
-  UsWest = 'US West',
-  EuCentral = 'EU Central',
-  AsiaEast = 'Asia East',
-}
-
-enum ColumnKey {
-  IsChecked = 'isChecked',
-  Identity = 'identity',
-  Location = 'location',
-  SlashingIncidents = 'slashingIncidents',
-  Uptime = 'uptime',
-}
+import { RelativePageUrl } from '../../utils';
+import { requestProofGeneration } from '../../utils/api';
+import { ColumnKey, Location, Plan } from './types';
 
 export const ProofGenerationStepCards: FC = () => {
   const [step, setStep] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const router = useRouter();
+  const [mpcParticipants, setMpcParticipants] = useState<string[]>([]);
+  const [r1csFile, setR1csFile] = useState<File | null>(null);
+  const [provingKeyFile, setProvingKeyFile] = useState<File | null>(null);
 
-  const handleNextStep = useCallback(() => {
-    setStep((current) => current + 1);
-  }, []);
+  const [verificationKeyFile, setVerificationKeyFile] = useState<File | null>(
+    null
+  );
+
+  const { notificationApi } = useWebbUI();
+
+  const handleNextStep = useCallback(
+    async (isLast: boolean) => {
+      notificationApi({
+        variant: 'error',
+        message: 'This is a test toast message',
+      });
+
+      if (!isLast) {
+        setStep((current) => current + 1);
+
+        return;
+      }
+
+      // If we are on the last step, we should not increment the step,
+      // but instead initialize the proof generation.
+
+      assert(
+        selectedPlan !== null,
+        'Selected plan should have been selected when the proof generation is initialized'
+      );
+
+      assert(
+        mpcParticipants.length > 0,
+        'At least one MPC participant should be selected when the proof generation is initialized'
+      );
+
+      assert(
+        r1csFile !== null,
+        'R1CS file should have been uploaded when the proof generation is initialized'
+      );
+
+      assert(
+        provingKeyFile !== null,
+        'Proving key file should have been uploaded when the proof generation is initialized'
+      );
+
+      assert(
+        verificationKeyFile !== null,
+        'Verification key file should have been uploaded when the proof generation is initialized'
+      );
+
+      const response = await requestProofGeneration({
+        plan: selectedPlan,
+        mpcParticipants,
+        provingKey: provingKeyFile,
+        r1cs: r1csFile,
+        verificationKey: verificationKeyFile,
+      });
+
+      // TODO: This is temporary. Consider showing a toast, modal, or redirecting to a new page after a response is received from the backend.
+      if (response.isSuccess) {
+        alert('Proof generation has been initialized successfully!');
+        window.open(RelativePageUrl.Dashboard, '_self');
+      } else {
+        alert(
+          `Proof generation has failed to initialize: ${response.errorMessage}`
+        );
+      }
+    },
+    [
+      mpcParticipants,
+      provingKeyFile,
+      r1csFile,
+      selectedPlan,
+      verificationKeyFile,
+    ]
+  );
 
   const getColumnKeyAsTitle = useCallback((key: ColumnKey): string => {
     switch (key) {
@@ -243,7 +299,7 @@ type StepCardProps = {
   title: string;
   children: React.ReactNode;
   isLast?: boolean;
-  onNext: () => void;
+  onNext: (isLast: boolean) => void;
 };
 
 /** @internal */
@@ -265,7 +321,7 @@ const StepCard: FC<StepCardProps> = ({
             Learn More
           </Button>
 
-          <Button onClick={onNext} isFullWidth variant="primary">
+          <Button onClick={() => onNext(isLast)} isFullWidth variant="primary">
             {isLast ? 'Initialize Proof Generation' : 'Next'}
           </Button>
         </div>
