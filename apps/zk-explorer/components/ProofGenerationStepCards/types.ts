@@ -17,3 +17,10 @@ export enum ColumnKey {
   SlashingIncidents = 'slashingIncidents',
   Uptime = 'uptime',
 }
+
+export type MpcParticipant = {
+  address: string;
+  location: Location;
+  slashingIncidents: number;
+  uptime: number;
+};

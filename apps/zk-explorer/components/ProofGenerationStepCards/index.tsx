@@ -2,7 +2,6 @@
 
 import {
   ColumnDef,
-  createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -29,16 +28,24 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { CONTACT_URL } from '../../constants';
+import { MOCK_MPC_PARTICIPANTS } from '../../constants/mock';
 import { RelativePageUrl } from '../../utils';
 import { requestProofGeneration } from '../../utils/api';
-import { ColumnKey, Location, Plan } from './types';
+import { ColumnKey, Location, MpcParticipant, Plan } from './types';
 
 export const ProofGenerationStepCards: FC = () => {
   const [step, setStep] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [mpcParticipants, setMpcParticipants] = useState<string[]>([]);
   const [r1csFile, setR1csFile] = useState<File | null>(null);
   const [provingKeyFile, setProvingKeyFile] = useState<File | null>(null);
+
+  const [mpcParticipants, setMpcParticipants] = useState<MpcParticipant[]>(
+    MOCK_MPC_PARTICIPANTS
+  );
+
+  const [selectedMpcParticipantAddresses, setSelectedMpcParticipantAddresses] =
+    useState<string[]>([]);
 
   const [verificationKeyFile, setVerificationKeyFile] = useState<File | null>(
     null
@@ -126,75 +133,111 @@ export const ProofGenerationStepCards: FC = () => {
     }
   }, []);
 
-  const columnHelper = createColumnHelper<RowData>();
+  const handleMpcParticipantSelection = useCallback(
+    (address: string) => {
+      const participant = MOCK_MPC_PARTICIPANTS.find(
+        (participant) => participant.address === address
+      );
 
-  const columns: ColumnDef<RowData, any>[] = useMemo(
+      assert(
+        participant !== undefined,
+        `MPC participant with address ${address} should exist`
+      );
+
+      const isAlreadySelected =
+        selectedMpcParticipantAddresses.includes(address);
+
+      if (isAlreadySelected) {
+        setSelectedMpcParticipantAddresses((current) =>
+          current.filter((address) => address !== participant.address)
+        );
+
+        return;
+      }
+
+      setSelectedMpcParticipantAddresses((current) => [
+        ...current,
+        participant.address,
+      ]);
+    },
+    [selectedMpcParticipantAddresses]
+  );
+
+  const columns = useMemo<ColumnDef<RowData>[]>(
     () => [
-      columnHelper.accessor(ColumnKey.IsChecked, {
+      {
         header: getColumnKeyAsTitle(ColumnKey.IsChecked),
+        accessorKey: ColumnKey.IsChecked,
         cell: (props) => (
-          <CheckBox inputProps={{ readOnly: true }} isChecked={true} />
+          <CheckBox
+            isChecked={props.row.original[ColumnKey.IsChecked]}
+            onChange={() =>
+              handleMpcParticipantSelection(
+                props.row.original[ColumnKey.Identity]
+              )
+            }
+          />
         ),
-      }),
-      columnHelper.accessor(ColumnKey.Identity, {
+      },
+      {
         header: getColumnKeyAsTitle(ColumnKey.Identity),
+        accessorKey: ColumnKey.Identity,
         cell: (props) => (
-          <IdentityItem address="0x123456789" avatarUrl="./pending.png" />
+          <IdentityItem
+            address={props.row.original[ColumnKey.Identity]}
+            avatarUrl="./pending.png"
+          />
         ),
-      }),
-      columnHelper.accessor(ColumnKey.Location, {
+      },
+      {
         header: getColumnKeyAsTitle(ColumnKey.Location),
+        accessorKey: ColumnKey.Location,
         cell: (props) => props.getValue(),
-      }),
-      columnHelper.accessor(ColumnKey.SlashingIncidents, {
+      },
+      {
         header: getColumnKeyAsTitle(ColumnKey.SlashingIncidents),
+        accessorKey: ColumnKey.SlashingIncidents,
         cell: (props) => props.getValue(),
-      }),
-      columnHelper.accessor(ColumnKey.Uptime, {
+      },
+      {
         header: getColumnKeyAsTitle(ColumnKey.Uptime),
+        accessorKey: ColumnKey.Uptime,
         cell: (props) => (
           <Progress
             suffixLabel="%"
             className="max-h-7"
             size="lg"
-            value={99.3}
+            value={props.row.original[ColumnKey.Uptime]}
           />
         ),
-      }),
+      },
     ],
-    [columnHelper, getColumnKeyAsTitle]
+    [getColumnKeyAsTitle, handleMpcParticipantSelection]
   );
 
-  const data: RowData[] = useMemo(
-    () => [
-      {
-        [ColumnKey.IsChecked]: false,
-        [ColumnKey.Identity]: '0x123...456',
-        [ColumnKey.Location]: Location.UsWest,
-        [ColumnKey.SlashingIncidents]: 0,
-        [ColumnKey.Uptime]: 100,
-      },
-      {
-        [ColumnKey.IsChecked]: false,
-        [ColumnKey.Identity]: '0x123...456',
-        [ColumnKey.Location]: Location.EuCentral,
-        [ColumnKey.SlashingIncidents]: 0,
-        [ColumnKey.Uptime]: 100,
-      },
-      {
-        [ColumnKey.IsChecked]: false,
-        [ColumnKey.Identity]: '0x123...456',
-        [ColumnKey.Location]: Location.AsiaEast,
-        [ColumnKey.SlashingIncidents]: 0,
-        [ColumnKey.Uptime]: 100,
-      },
-    ],
-    []
+  const convertMpcParticipantToRowData = useCallback(
+    (participant: MpcParticipant): RowData => {
+      return {
+        [ColumnKey.IsChecked]: selectedMpcParticipantAddresses.includes(
+          participant.address
+        ),
+        [ColumnKey.Identity]: participant.address,
+        [ColumnKey.Location]: participant.location,
+        [ColumnKey.SlashingIncidents]: participant.slashingIncidents,
+        [ColumnKey.Uptime]: participant.uptime,
+      };
+    },
+    [selectedMpcParticipantAddresses]
+  );
+
+  const rows: RowData[] = useMemo(
+    () => mpcParticipants.map(convertMpcParticipantToRowData),
+    [convertMpcParticipantToRowData, mpcParticipants]
   );
 
   const mpcParticipantsTableProps = useReactTable({
     columns,
-    data,
+    data: rows,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
       // TODO: Handle this.
@@ -207,11 +250,7 @@ export const ProofGenerationStepCards: FC = () => {
     // so it is handled separately.
     if (plan === Plan.Enterprise) {
       setSelectedPlan(null);
-
-      // TODO: Need to change this to a contact form when available.
-      const CONTACT_HREF = 'mailto:hello@webb.tools';
-
-      window.open(CONTACT_HREF, '_blank', 'noopener noreferrer');
+      window.open(CONTACT_URL, '_blank', 'noopener noreferrer');
 
       return;
     }
@@ -222,7 +261,17 @@ export const ProofGenerationStepCards: FC = () => {
   const handleFileUpload = useCallback(
     (setter: Dispatch<SetStateAction<File | null>>) => {
       return (acceptedFiles: File[]) => {
-        assert(acceptedFiles.length === 1, 'Only one file should be uploaded');
+        // The uploaded file was not accepted; reset the state.
+        if (acceptedFiles.length === 0) {
+          setter(null);
+
+          return;
+        }
+
+        assert(
+          acceptedFiles.length === 1,
+          'Upload file dialog should allow exactly one file to be provided'
+        );
 
         const uploadedFile = acceptedFiles[0];
 
@@ -241,10 +290,7 @@ export const ProofGenerationStepCards: FC = () => {
         isNextButtonDisabled={r1csFile === null}
         onNext={handleNextStep}
       >
-        <FileUploadArea
-          acceptType="json"
-          onDrop={handleFileUpload(setR1csFile)}
-        />
+        <FileUploadArea onDrop={handleFileUpload(setR1csFile)} />
       </StepCard>
 
       <StepCard
@@ -271,7 +317,10 @@ export const ProofGenerationStepCards: FC = () => {
         title="Select MPC Participants"
         number={4}
         activeStep={step}
-        isNextButtonDisabled={mpcParticipants.length === 0}
+        isNextButtonDisabled={
+          mpcParticipants.length === 0 ||
+          selectedMpcParticipantAddresses.length === 0
+        }
         onNext={handleNextStep}
       >
         <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />

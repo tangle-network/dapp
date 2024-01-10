@@ -5,7 +5,10 @@ import type {
   FilterConstraints,
 } from '../components/Filters/types';
 import { ProjectItem } from '../components/ProjectCard/types';
-import { Plan } from '../components/ProofGenerationStepCards/types';
+import {
+  MpcParticipant,
+  Plan,
+} from '../components/ProofGenerationStepCards/types';
 import { API_PREFIX } from '../constants';
 import { User } from '../hooks/useAuth';
 
@@ -181,7 +184,7 @@ export async function requestProofGeneration(data: {
   plan: Plan;
   verificationKey: File;
   provingKey: File;
-  mpcParticipants: string[];
+  mpcParticipants: MpcParticipant[];
 }): Promise<ApiResponse> {
   const responseWrapper = await sendApiRequest(ApiRoute.ProofGeneration, {
     method: 'POST',
