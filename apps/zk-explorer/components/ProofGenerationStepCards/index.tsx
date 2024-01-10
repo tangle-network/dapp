@@ -6,15 +6,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
 import {
   Avatar,
   Button,
   Card,
   CheckBox,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   FileUploadArea,
   Progress,
   Table,
@@ -24,7 +21,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
-import { FC, useCallback, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { RelativePageUrl } from '../../utils';
 import { requestProofGeneration } from '../../utils/api';
 import { ColumnKey, Location, Plan } from './types';
@@ -44,11 +48,6 @@ export const ProofGenerationStepCards: FC = () => {
 
   const handleNextStep = useCallback(
     async (isLast: boolean) => {
-      notificationApi({
-        variant: 'error',
-        message: 'This is a test toast message',
-      });
-
       if (!isLast) {
         setStep((current) => current + 1);
 
@@ -96,13 +95,15 @@ export const ProofGenerationStepCards: FC = () => {
         alert('Proof generation has been initialized successfully!');
         window.open(RelativePageUrl.Dashboard, '_self');
       } else {
-        alert(
-          `Proof generation has failed to initialize: ${response.errorMessage}`
-        );
+        notificationApi({
+          variant: 'error',
+          message: `Proof generation has failed to initialize: ${response.errorMessage}`,
+        });
       }
     },
     [
       mpcParticipants,
+      notificationApi,
       provingKeyFile,
       r1csFile,
       selectedPlan,
@@ -218,27 +219,59 @@ export const ProofGenerationStepCards: FC = () => {
     setSelectedPlan(plan);
   }, []);
 
+  const handleFileUpload = useCallback(
+    (setter: Dispatch<SetStateAction<File | null>>) => {
+      return (acceptedFiles: File[]) => {
+        assert(acceptedFiles.length === 1, 'Only one file should be uploaded');
+
+        const uploadedFile = acceptedFiles[0];
+
+        setter(uploadedFile);
+      };
+    },
+    []
+  );
+
   return (
     <div className="flex flex-col gap-6 flex-grow">
-      <StepCard title="Process R1SC File" number={1} onNext={handleNextStep}>
-        <FileUploadArea />
+      <StepCard
+        title="Process R1SC File"
+        number={1}
+        activeStep={step}
+        isNextButtonDisabled={r1csFile === null}
+        onNext={handleNextStep}
+      >
+        <FileUploadArea
+          acceptType="json"
+          onDrop={handleFileUpload(setR1csFile)}
+        />
       </StepCard>
 
       <StepCard
         title="Upload Verification Key"
         number={2}
+        activeStep={step}
+        isNextButtonDisabled={verificationKeyFile === null}
         onNext={handleNextStep}
       >
-        <FileUploadArea />
+        <FileUploadArea onDrop={handleFileUpload(setVerificationKeyFile)} />
       </StepCard>
 
-      <StepCard title="Upload Proving Key" number={3} onNext={handleNextStep}>
-        <FileUploadArea />
+      <StepCard
+        title="Upload Proving Key"
+        number={3}
+        activeStep={step}
+        isNextButtonDisabled={provingKeyFile === null}
+        onNext={handleNextStep}
+      >
+        <FileUploadArea onDrop={handleFileUpload(setProvingKeyFile)} />
       </StepCard>
 
       <StepCard
         title="Select MPC Participants"
         number={4}
+        activeStep={step}
+        isNextButtonDisabled={mpcParticipants.length === 0}
         onNext={handleNextStep}
       >
         <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
@@ -247,6 +280,8 @@ export const ProofGenerationStepCards: FC = () => {
       <StepCard
         title="Select Service Tier"
         number={5}
+        activeStep={step}
+        isNextButtonDisabled={selectedPlan === null}
         onNext={handleNextStep}
         isLast
       >
@@ -296,9 +331,11 @@ export const ProofGenerationStepCards: FC = () => {
 
 type StepCardProps = {
   number: number;
+  activeStep: number;
   title: string;
   children: React.ReactNode;
   isLast?: boolean;
+  isNextButtonDisabled: boolean;
   onNext: (isLast: boolean) => void;
 };
 
@@ -307,11 +344,16 @@ const StepCard: FC<StepCardProps> = ({
   number,
   title,
   children,
+  activeStep,
   isLast = false,
+  isNextButtonDisabled,
   onNext,
 }) => {
   return (
-    <CollapsibleCard title={`${number}. ${title}:`}>
+    <CollapsibleCard
+      isOpen={activeStep === number}
+      title={`${number}. ${title}:`}
+    >
       <div className="flex flex-col gap-4">
         {children}
 
@@ -321,7 +363,12 @@ const StepCard: FC<StepCardProps> = ({
             Learn More
           </Button>
 
-          <Button onClick={() => onNext(isLast)} isFullWidth variant="primary">
+          <Button
+            isDisabled={isNextButtonDisabled}
+            onClick={() => onNext(isLast)}
+            isFullWidth
+            variant="primary"
+          >
             {isLast ? 'Initialize Proof Generation' : 'Next'}
           </Button>
         </div>
@@ -333,20 +380,25 @@ const StepCard: FC<StepCardProps> = ({
 type CollapsibleCardProps = {
   title: string;
   children: React.ReactNode;
+  isOpen: boolean;
 };
 
-const CollapsibleCard: FC<CollapsibleCardProps> = ({ title, children }) => {
+const CollapsibleCard: FC<CollapsibleCardProps> = ({
+  title,
+  children,
+  isOpen,
+}) => {
   return (
-    <Card className="space-y-0 rounded-2xl w-full">
-      <Collapsible>
-        <CollapsibleButton>
-          <Typography variant="body1" fw="normal" className="dark:text-mono-0">
-            {title}
-          </Typography>
-        </CollapsibleButton>
+    <Card className="flex flex-col gap-4 space-y-0 rounded-lg w-full">
+      <div className="flex items-center justify-between">
+        <Typography variant="body1" fw="normal" className="dark:text-mono-0">
+          {title}
+        </Typography>
 
-        <CollapsibleContent>{children}</CollapsibleContent>
-      </Collapsible>
+        {isOpen ? <ChevronUp size="lg" /> : <ChevronDown size="lg" />}
+      </div>
+
+      {isOpen && children}
     </Card>
   );
 };
