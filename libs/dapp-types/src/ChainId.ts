@@ -121,11 +121,6 @@ export enum PresetTypedChainId {
     ChainType.EVM,
     EVMChainId.TangleTestnet
   ),
-
-  LocalTangleTestnet = calculateTypedChainId(
-    ChainType.EVM,
-    EVMChainId.LocalTangleTestnet
-  ),
 }
 
 export { EVMChainId, SubstrateChainId };

@@ -27,9 +27,6 @@ export enum EVMChainId {
   HermesLocalnet = 5001,
   AthenaLocalnet = 5002,
   DemeterLocalnet = 5003,
-
-  /** Local Tangle */
-  LocalTangleTestnet = 3799,
 }
 
 export default EVMChainId;
