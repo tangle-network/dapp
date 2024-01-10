@@ -16,7 +16,6 @@ import {
   Table,
   Typography,
   shortenHex,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
@@ -59,8 +58,6 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
     null
   );
 
-  const { notificationApi } = useWebbUI();
-
   const handleNextStep = useCallback(
     async (isLast: boolean) => {
       if (!isLast) {
@@ -99,7 +96,7 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
 
       const response = await requestProofGeneration({
         plan: selectedPlan,
-        mpcParticipants,
+        mpcParticipantAddresses: selectedMpcParticipantAddresses,
         provingKey: provingKeyFile,
         r1cs: r1csFile,
         verificationKey: verificationKeyFile,
@@ -109,19 +106,14 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
       if (response.isSuccess) {
         alert('Proof generation has been initialized successfully!');
         window.open(RelativePageUrl.Dashboard, '_self');
-      } else {
-        notificationApi({
-          variant: 'error',
-          message: `Proof generation has failed to initialize: ${response.errorMessage}`,
-        });
       }
     },
     [
-      mpcParticipants,
+      mpcParticipants.length,
       nextStep,
-      notificationApi,
       provingKeyFile,
       r1csFile,
+      selectedMpcParticipantAddresses,
       selectedPlan,
       verificationKeyFile,
     ]
