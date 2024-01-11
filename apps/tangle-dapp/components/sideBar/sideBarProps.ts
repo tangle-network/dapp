@@ -43,36 +43,6 @@ const sideBarItems: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    Icon: KeyIcon,
-    href: '',
-    isInternal: false,
-    name: 'DKG Explorer',
-    subItems: [
-      {
-        href: DKG_STATS_KEYS_URL,
-        isInternal: false,
-        name: 'Keys',
-      },
-      {
-        href: DKG_STATS_AUTHORITIES_URL,
-        isInternal: false,
-        name: 'Authorities',
-      },
-      {
-        href: DKG_STATS_PROPOSALS_URL,
-        isInternal: false,
-        name: 'Proposals',
-      },
-    ],
-  },
-  {
-    Icon: FaucetIcon,
-    href: WEBB_FAUCET_URL,
-    isInternal: false,
-    name: 'Faucet',
-    subItems: [],
-  },
-  {
     Icon: AppsLine,
     href: TANGLE_STANDALONE_EXPLORER_URL,
     isInternal: false,
