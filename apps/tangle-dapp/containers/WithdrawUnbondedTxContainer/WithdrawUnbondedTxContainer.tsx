@@ -133,13 +133,13 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         <ModalContent
           isCenter
           isOpen={isModalOpen}
-          className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+          className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
         >
           <ModalHeader titleVariant="h4" onClose={closeModal}>
             Withdraw Funds
           </ModalHeader>
 
-          <div className="px-8 py-6">
+          <div className="p-9">
             <WithdrawUnbonded
               unbondedAmount={
                 totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? 0
