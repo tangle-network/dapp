@@ -114,15 +114,14 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
           Add Stake
         </ModalHeader>
 
-        <div className="px-8 py-6">
+        <div className="p-9">
           <BondTokens
-            nominatorAddress={walletAddress}
             amountToBond={amountToBond}
             setAmountToBond={setAmountToBond}
             amountToBondError={amountToBondError}
