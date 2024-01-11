@@ -33,7 +33,7 @@ const columns = [
 
       return (
         <div className="flex space-x-1 items-center">
-          <Avatar sourceVariant="address" value={address}>
+          <Avatar sourceVariant="address" value={address} theme="substrate">
             hello
           </Avatar>
 
