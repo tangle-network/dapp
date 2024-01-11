@@ -139,7 +139,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
             isLoading={isUpdatePaymentDestinationTxLoading}
             onClick={submitAndSignTx}
           >
-            Sign & Submit
+            Confirm
           </Button>
 
           <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
