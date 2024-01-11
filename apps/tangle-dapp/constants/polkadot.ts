@@ -172,3 +172,15 @@ export const getMaxNominationQuota = async (): Promise<number | undefined> => {
 
   return maxNominations;
 };
+
+export const getSlashingSpans = async (
+  address: string
+): Promise<string | undefined> => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return '';
+
+  const slashingSpans = await api.query.staking.slashingSpans(address);
+
+  return slashingSpans.toString();
+};

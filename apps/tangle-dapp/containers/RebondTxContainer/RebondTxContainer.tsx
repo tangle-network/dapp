@@ -23,7 +23,7 @@ import {
 import RebondTokens from './RebondTokens';
 import { RebondTxContainerProps } from './types';
 
-const UnbondTxContainer: FC<RebondTxContainerProps> = ({
+const RebondTxContainer: FC<RebondTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
@@ -132,7 +132,7 @@ const UnbondTxContainer: FC<RebondTxContainerProps> = ({
         className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Unbond Stake
+          Rebond Funds
         </ModalHeader>
 
         <div className="px-8 py-6">
@@ -152,7 +152,7 @@ const UnbondTxContainer: FC<RebondTxContainerProps> = ({
             isLoading={isRebondTxLoading}
             onClick={submitAndSignTx}
           >
-            Sign & Submit
+            Confirm
           </Button>
 
           <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
@@ -166,4 +166,4 @@ const UnbondTxContainer: FC<RebondTxContainerProps> = ({
   );
 };
 
-export default UnbondTxContainer;
+export default RebondTxContainer;

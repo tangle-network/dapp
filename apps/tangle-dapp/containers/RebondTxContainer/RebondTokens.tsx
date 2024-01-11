@@ -40,7 +40,7 @@ const UnbondTokens: FC<RebondTokensProps> = ({
       {/* Amount */}
       <InputField.Root error={amountToRebondError}>
         <InputField.Input
-          title="Unbond Amount"
+          title="Amount"
           isAddressType={false}
           value={amountToRebond.toString()}
           isDisabled={remainingUnbondedTokensToRebond > 0 ? false : true}

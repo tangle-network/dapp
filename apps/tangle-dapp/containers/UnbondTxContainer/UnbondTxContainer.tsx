@@ -182,7 +182,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             isLoading={isUnbondTxLoading}
             onClick={submitAndSignTx}
           >
-            Sign & Submit
+            Confirm
           </Button>
 
           <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">

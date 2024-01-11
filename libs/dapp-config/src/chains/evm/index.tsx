@@ -339,14 +339,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
             ],
       },
     },
-    contracts: hostedOrbitMulticall3Address
-      ? {
-          multicall3: {
-            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: tangleMulticall3DeploymentBlock,
-          },
-        }
-      : undefined,
+    contracts:
+      !process.env['USING_LOCAL_TANGLE'] && hostedOrbitMulticall3Address
+        ? {
+            multicall3: {
+              address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
+              blockCreated: tangleMulticall3DeploymentBlock,
+            },
+          }
+        : undefined,
   } satisfies ChainConfig,
 
   // Localnet

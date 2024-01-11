@@ -205,3 +205,22 @@ export const stopNomination = async (
 
   return txHash;
 };
+
+export const withdrawUnbondedTokens = async (
+  nominatorAddress: string,
+  slashingSpans: number
+): Promise<AddressType> => {
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'withdrawUnbonded',
+    args: [slashingSpans],
+    account: ensureHex(nominatorAddress),
+  });
+
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+  const txHash = await evmWalletClient.writeContract(request);
+
+  return txHash;
+};
