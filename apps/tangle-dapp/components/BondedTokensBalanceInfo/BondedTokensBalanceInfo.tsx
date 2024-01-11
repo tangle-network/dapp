@@ -12,19 +12,9 @@ export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
     <div className="flex gap-1 items-center">
       {type === 'unbonded' ? <LockUnlockLineIcon /> : <TimeLineIcon />}
 
-      {type === 'unbonded' ? (
-        <>
-          <Typography variant="body1" fw="normal">
-            Unbonded:
-          </Typography>
-        </>
-      ) : (
-        <>
-          <Typography variant="body1" fw="normal">
-            Unbonding:
-          </Typography>
-        </>
-      )}
+      <Typography variant="body1" fw="normal">
+        {type === 'unbonded' ? 'Unbonded:' : 'Unbonding:'}
+      </Typography>
     </div>
 
     <Typography variant="body1" fw="normal">
