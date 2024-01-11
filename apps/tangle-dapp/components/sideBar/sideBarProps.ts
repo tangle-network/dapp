@@ -1,11 +1,9 @@
 import {
   AppsLine,
   DocumentationIcon,
-  FaucetIcon,
   FundsLine,
   GiftLineIcon,
   GlobalLine,
-  KeyIcon,
 } from '@webb-tools/icons';
 import {
   type SideBarFooterType,
@@ -15,13 +13,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
 import {
-  DKG_STATS_AUTHORITIES_URL,
-  DKG_STATS_KEYS_URL,
-  DKG_STATS_PROPOSALS_URL,
   TANGLE_MKT_URL,
   TANGLE_STANDALONE_EXPLORER_URL,
   TANGLE_TESTNET_EXPLORER_URL,
-  WEBB_FAUCET_URL,
   WEBB_TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
