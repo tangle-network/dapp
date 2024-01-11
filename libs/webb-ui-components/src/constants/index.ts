@@ -72,7 +72,7 @@ export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 export const TANGLE_TESTNET_EXPLORER_URL = 'https://explorer.tangle.tools';
 
 export const TANGLE_STANDALONE_EXPLORER_URL =
-  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-archive.tangle.tools#/explorer';
+  'https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=wss%3A%2F%2Ftestnet-rpc-archive.tangle.tools#/explorer';
 
 export const WEBB_DAPP_NEW_ISSUE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new/choose';
@@ -85,7 +85,7 @@ export const GITHUB_BUG_REPORT_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=bug_report.md&title=%5BBUG%5D+';
 
 export const POLKADOT_EXPLORER_URL =
-  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-archive.tangle.tools#/explorer/query';
+  'https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=wss%3A%2F%2Ftestnet-rpc-archive.tangle.tools#/explorer/query';
 
 export const FOLLOW_WEBB_TWITTER_URL =
   'https://twitter.com/intent/follow?screen_name=webbprotocol';
@@ -94,12 +94,12 @@ export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
 export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
 export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 
-export const TANGLE_RPC_ENDPOINT = 'wss://rpc-archive.tangle.tools';
+export const TANGLE_RPC_ENDPOINT = 'wss://testnet-rpc-archive.tangle.tools';
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 
 export const TANGLE_STAKING_URL =
-  'https://polkadot.js.org/apps/?rpc=wss://rpc-archive.tangle.tools#/staking';
+  'https://cloudflare-ipfs.com/ipns/dotapps.io/?rpc=wss%3A%2F%2Ftestnet-rpc-archive.tangle.tools#/staking';
 
 export const STAKING_PRECOMPILE_LINK =
   'https://github.com/webb-tools/tangle/blob/main/precompiles/staking/StakingInterface.sol';

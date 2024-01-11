@@ -42,7 +42,7 @@ export const DEFAULT_SKIP = 0;
  * If we want to paginate on the server side we need to adjust the backend
  * to filter the Webb addresses and return the total count of participants.
  **/
-export const DEFAULT_LIMIT = 500;
+export const DEFAULT_LIMIT = 700;
 
 export const END_DATE = process.env['TESTNET_LEADERBOARD_END_DATE']
   ? new Date(process.env['TESTNET_LEADERBOARD_END_DATE'])
