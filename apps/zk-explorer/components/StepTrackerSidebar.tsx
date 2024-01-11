@@ -119,10 +119,10 @@ const VerticalStepperItem: FC<VerticalStepperItemProps> = ({
   isLast = false,
   number,
 }) => {
-  const isActiveClass =
-    isActive || wasCompleted ? 'bg-gray-400 dark:text-mono-180' : 'bg-mono-160';
-
-  const wasCompletedClass = wasCompleted ? 'bg-gray-400' : 'bg-mono-160';
+  const isActiveOrCompletedClass =
+    isActive || wasCompleted
+      ? 'bg-gray-400 dark:text-mono-180'
+      : 'bg-gray-200 dark:bg-mono-160';
 
   return (
     <div className="flex flex-col items-center">
@@ -130,7 +130,7 @@ const VerticalStepperItem: FC<VerticalStepperItemProps> = ({
       <div
         className={twMerge(
           'flex items-center justify-center px-3 py-1 rounded-full',
-          isActiveClass
+          isActiveOrCompletedClass
         )}
       >
         {number}
@@ -138,7 +138,7 @@ const VerticalStepperItem: FC<VerticalStepperItemProps> = ({
 
       {/* Vertical line */}
       {!isLast && (
-        <div className={twMerge('w-[2px] h-full', wasCompletedClass)} />
+        <div className={twMerge('w-[2px] h-full', isActiveOrCompletedClass)} />
       )}
     </div>
   );
