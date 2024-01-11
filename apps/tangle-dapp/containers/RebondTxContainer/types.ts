@@ -4,9 +4,10 @@ export type RebondTxContainerProps = {
 };
 
 export type RebondTokensProps = {
-  nominatorAddress: string;
   amountToRebond: number;
   setAmountToRebond: (amount: number) => void;
   amountToRebondError?: string;
   remainingUnbondedTokensToRebond: number;
+  unbondedAmount: number;
+  unbondingAmount: number;
 };

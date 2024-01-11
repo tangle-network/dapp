@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { evmPublicClient, rebondTokens } from '../../constants';
+import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import {
   convertEthereumToSubstrateAddress,
@@ -47,6 +48,9 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
 
   const { data: unbondingAmountData, error: unbondingAmountError } =
     useUnbondingAmountSubscription(substrateAddress);
+
+  const { data: totalUnbondedAndUnbondingAmountData } =
+    useTotalUnbondedAndUnbondingAmount(substrateAddress);
 
   const remainingUnbondedTokensToRebond = useMemo(() => {
     if (unbondingAmountError) {
@@ -129,19 +133,24 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
           Rebond Funds
         </ModalHeader>
 
-        <div className="px-8 py-6">
+        <div className="p-9">
           <RebondTokens
-            nominatorAddress={walletAddress}
             amountToRebond={amountToRebond}
             setAmountToRebond={setAmountToRebond}
             amountToRebondError={amountToRebondError}
             remainingUnbondedTokensToRebond={remainingUnbondedTokensToRebond}
+            unbondedAmount={
+              totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? 0
+            }
+            unbondingAmount={
+              totalUnbondedAndUnbondingAmountData?.value1?.unbonding ?? 0
+            }
           />
         </div>
 

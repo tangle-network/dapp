@@ -1,41 +1,23 @@
-import {
-  Button,
-  CopyWithTooltip,
-  InputField,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { Button, InputField, Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
+import { BondedTokensBalanceInfo } from '../../components';
 import { RebondTokensProps } from './types';
 
 const UnbondTokens: FC<RebondTokensProps> = ({
-  nominatorAddress,
   amountToRebond,
   setAmountToRebond,
   amountToRebondError,
   remainingUnbondedTokensToRebond,
+  unbondedAmount,
+  unbondingAmount,
 }) => {
   return (
-    <div className="flex flex-col gap-9">
-      {/* Account */}
-      <InputField.Root>
-        <InputField.Input
-          title="Account"
-          isAddressType={true}
-          value={nominatorAddress}
-          type="text"
-          readOnly
-        />
-
-        <InputField.Slot>
-          <CopyWithTooltip
-            textToCopy={nominatorAddress}
-            isButton={false}
-            iconSize="lg"
-            className="text-mono-160 dark:text-mono-80 cursor-pointer"
-          />
-        </InputField.Slot>
-      </InputField.Root>
+    <div className="flex flex-col gap-4">
+      <Typography variant="body1" fw="normal">
+        Rebond to return unbonding or unbonded tokens to staking without
+        withdrawing.
+      </Typography>
 
       {/* Amount */}
       <InputField.Root error={amountToRebondError}>
@@ -61,10 +43,17 @@ const UnbondTokens: FC<RebondTokensProps> = ({
         </InputField.Slot>
       </InputField.Root>
 
-      <Typography variant="body1" fw="normal">
-        Rebonding allows you to re-stake your tokens that are currently in the
-        unbonding process.
-      </Typography>
+      <div className="flex flex-col gap-2">
+        <BondedTokensBalanceInfo
+          type="unbonded"
+          value={unbondedAmount.toString()}
+        />
+
+        <BondedTokensBalanceInfo
+          type="unbonding"
+          value={unbondingAmount.toString()}
+        />
+      </div>
     </div>
   );
 };
