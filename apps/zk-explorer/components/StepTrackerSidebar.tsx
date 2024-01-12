@@ -1,5 +1,3 @@
-'use client';
-
 import { Card, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';

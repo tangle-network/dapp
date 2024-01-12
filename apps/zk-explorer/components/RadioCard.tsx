@@ -1,7 +1,7 @@
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { IconProps } from '@radix-ui/react-icons/dist/types';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { ComponentType, FC, useCallback } from 'react';
+import { ComponentType, FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type RadioCardProps = {
@@ -39,6 +39,15 @@ export const RadioCard: FC<RadioCardProps> = ({
     ? 'border-mono-180 border-2 dark:bg-mono-0'
     : 'border-mono-100 dark:bg-mono-180';
 
+  const radioButtonClass = useMemo(
+    () =>
+      twMerge(
+        'self-center w-6 h-5 rounded-full border flex-grow',
+        isCheckedClass
+      ),
+    [isCheckedClass]
+  );
+
   return (
     <div
       onClick={handleOnChange}
@@ -68,12 +77,7 @@ export const RadioCard: FC<RadioCardProps> = ({
       </div>
 
       {/* Radio button */}
-      <div
-        className={twMerge(
-          'self-center w-6 h-5 rounded-full border flex-grow',
-          isCheckedClass
-        )}
-      />
+      <div className={radioButtonClass} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { Card } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type LinkCardProps = PropsOf<typeof Link> & {
@@ -20,9 +20,13 @@ export const LinkCard: FC<LinkCardProps> = ({
     <Card className="p-6 shadow-xl items-start space-y-0">{children}</Card>
   );
 
-  const finalClassName = twMerge(
-    'block hover:translate-y-[-6px] transition duration-100',
-    className
+  const finalClassName = useMemo<string>(
+    () =>
+      twMerge(
+        'block hover:translate-y-[-6px] transition duration-100',
+        className
+      ),
+    [className]
   );
 
   return isExternal ? (
