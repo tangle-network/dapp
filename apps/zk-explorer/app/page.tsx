@@ -1,20 +1,27 @@
 import { Typography } from '@webb-tools/webb-ui-components';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { HeaderControls } from '../components/HeaderControls';
-import { HomepageInteractiveContents } from '../components/HomepageInteractiveContents';
 import { OverlayMask } from '../components/OverlayMask';
+
+// TODO: Use this in a more granular way, since most of the content is interactive, but is above the fold. Not much to make lazy-loaded, but consider adding skeleton loaders, and then having the initial API call using `getServerSideProps` to pre-render the page.
+const LazyHomepageInteractiveContents = dynamic(
+  () => import('../components/HomepageInteractiveContents'),
+  { ssr: false }
+);
 
 export default function Index() {
   return (
     <main className="flex flex-col gap-6">
       {/* Custom, landing-page-only header */}
       <header className="relative pb-12 bg-cover bg-center rounded-b-xl overflow-hidden">
-        {/* Background image, this is method preferred because of Next.js' image optimization */}
+        {/* Background illustration image: This is method preferred because of Next.js' image optimization */}
         <Image
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full"
           src="/header-bg.jpg"
-          width={1210}
-          height={300}
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
           alt="A colorful vector illustration of blocks"
         />
 
@@ -45,7 +52,7 @@ export default function Index() {
         </div>
       </header>
 
-      <HomepageInteractiveContents />
+      <LazyHomepageInteractiveContents />
     </main>
   );
 }

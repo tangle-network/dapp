@@ -32,6 +32,7 @@ import { ProjectItem } from './ProjectCard/types';
 import { SearchInput } from './SearchInput';
 import { Tabs } from './Tabs';
 
+// TODO: Break this component up into smaller components.
 export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();
   const [projects, setProjects] = useState<ProjectItem[]>([]);
@@ -232,3 +233,5 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
     </>
   );
 };
+
+export default HomepageInteractiveContents;
