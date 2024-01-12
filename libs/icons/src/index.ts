@@ -82,6 +82,7 @@ export * from './InformationLineFill';
 export * from './KeyIcon';
 export * from './Link';
 export * from './LinkedInFill';
+export * from './LockUnlockLineIcon';
 export * from './LoginBoxLineIcon';
 export * from './Mail';
 export * from './Memu';

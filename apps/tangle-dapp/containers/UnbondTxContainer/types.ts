@@ -4,7 +4,6 @@ export type UnbondTxContainerProps = {
 };
 
 export type UnbondTokensProps = {
-  nominatorAddress: string;
   amountToUnbond: number;
   setAmountToUnbond: (amount: number) => void;
   amountToUnbondError?: string;

@@ -159,15 +159,14 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModal}>
           Unbond Stake
         </ModalHeader>
 
-        <div className="px-8 py-6">
+        <div className="p-9">
           <UnbondTokens
-            nominatorAddress={walletAddress}
             amountToUnbond={amountToUnbond}
             setAmountToUnbond={setAmountToUnbond}
             amountToUnbondError={amountToUnbondError}
@@ -182,7 +181,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             isLoading={isUnbondTxLoading}
             onClick={submitAndSignTx}
           >
-            Sign & Submit
+            Confirm
           </Button>
 
           <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">

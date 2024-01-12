@@ -362,7 +362,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               isLoading={isSubmitAndSignTxLoading}
               onClick={submitAndSignTx}
             >
-              Sign & Submit
+              Confirm
             </Button>
           )}
 

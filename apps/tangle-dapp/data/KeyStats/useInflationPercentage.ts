@@ -3,8 +3,9 @@
 import { BN_ZERO } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
+import { Subscription } from 'rxjs';
 
-import { getPolkadotApiPromise } from '../../constants';
+import { getPolkadotApiPromise, getPolkadotApiRx } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
 
@@ -19,27 +20,54 @@ export default function useInflationPercentage(
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    let sub: Subscription | null = null;
+
     const fetchData = async () => {
       try {
-        const api = await getPolkadotApiPromise();
-        if (!api) {
+        const apiRx = await getPolkadotApiRx();
+        const apiPromise = await getPolkadotApiPromise();
+        if (!apiRx || !apiPromise) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
-        const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
-        const inflationPercentage = inflation.inflation;
+        setIsLoading(true);
 
-        setValue1(inflationPercentage);
-        setIsLoading(false);
+        sub = apiRx.query.staking.currentEra().subscribe(async (currentEra) => {
+          const totalStaked = await apiPromise.query.staking.erasTotalStake(
+            currentEra.unwrapOrDefault()
+          );
+          const totalIssuance = await apiPromise.query.balances.totalIssuance();
+
+          const inflation = calculateInflation(
+            apiPromise,
+            totalStaked,
+            totalIssuance,
+            BN_ZERO
+          );
+          const inflationPercentage = inflation.inflation;
+
+          if (isMounted) {
+            setValue1(Number(inflationPercentage.toFixed(1)));
+            setIsLoading(false);
+          }
+        });
       } catch (e) {
-        setError(
-          e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
-        );
-        setIsLoading(false);
+        if (isMounted) {
+          setError(
+            e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
+          );
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+      sub?.unsubscribe();
+    };
   }, []);
 
   return useFormatReturnType({

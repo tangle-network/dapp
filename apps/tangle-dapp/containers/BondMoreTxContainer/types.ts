@@ -4,7 +4,6 @@ export type BondMoreTxContainerProps = {
 };
 
 export type BondTokensProps = {
-  nominatorAddress: string;
   amountToBond: number;
   setAmountToBond: (amount: number) => void;
   amountToBondError?: string;

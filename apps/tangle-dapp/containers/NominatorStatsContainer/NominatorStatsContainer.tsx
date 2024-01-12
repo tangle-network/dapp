@@ -24,6 +24,7 @@ import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
 import { UnbondTxContainer } from '../UnbondTxContainer';
+import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 
 export const NominatorStatsContainer: FC = () => {
   const { activeAccount } = useWebContext();
@@ -32,6 +33,8 @@ export const NominatorStatsContainer: FC = () => {
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
+  const [isWithdrawUnbondedModalOpen, setIsWithdrawunbondedModalOpen] =
+    useState(false);
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
 
   const walletAddress = useMemo(() => {
@@ -91,8 +94,10 @@ export const NominatorStatsContainer: FC = () => {
     const elements = unbondingRemainingErasData.value1.map((era, index) => (
       <React.Fragment key={index}>
         <div className="text-center mb-2">
-          <p>Unbonding {era.amount}</p>
-          <p>{era.remainingEras} eras remaining</p>
+          <p>
+            {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'} {era.amount}
+          </p>
+          {era.remainingEras > 0 && <p>{era.remainingEras} eras remaining</p>}
         </div>
       </React.Fragment>
     ));
@@ -204,14 +209,25 @@ export const NominatorStatsContainer: FC = () => {
 
             <div className="flex items-center gap-2 flex-wrap">
               {!isFirstTimeNominator && (
-                <Button
-                  variant="utility"
-                  className="w-full"
-                  isDisabled={!activeAccount}
-                  onClick={() => setIsRebondModalOpen(true)}
-                >
-                  Rebond
-                </Button>
+                <>
+                  <Button
+                    variant="utility"
+                    className="w-full"
+                    isDisabled={!activeAccount}
+                    onClick={() => setIsRebondModalOpen(true)}
+                  >
+                    Rebond
+                  </Button>
+
+                  <Button
+                    variant="utility"
+                    className="w-full"
+                    isDisabled={!activeAccount}
+                    onClick={() => setIsWithdrawunbondedModalOpen(true)}
+                  >
+                    Withdraw
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -236,6 +252,11 @@ export const NominatorStatsContainer: FC = () => {
       <RebondTxContainer
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
+      />
+
+      <WithdrawUnbondedTxContainer
+        isModalOpen={isWithdrawUnbondedModalOpen}
+        setIsModalOpen={setIsWithdrawunbondedModalOpen}
       />
     </>
   );

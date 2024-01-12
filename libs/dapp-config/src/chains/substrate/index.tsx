@@ -62,7 +62,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
         name: 'Tangle Explorer',
         url: process.env['USING_LOCAL_TANGLE']
           ? populateBlockExplorerStub('ws://127.0.0.1:9944')
-          : populateBlockExplorerStub('wss://testnet-rpc-archive.tangle.tools'),
+          : populateBlockExplorerStub('wss://testnet-rpc.tangle.tools'),
       },
     },
     rpcUrls: {
@@ -70,19 +70,13 @@ export const chainsConfig: Record<number, ChainConfig> = {
         http: [],
         webSocket: process.env['USING_LOCAL_TANGLE']
           ? ['ws://127.0.0.1:9944']
-          : [
-              'wss://testnet-rpc-archive.tangle.tools',
-              'wss://testnet-rpc.tangle.tools',
-            ],
+          : ['wss://testnet-rpc.tangle.tools'],
       },
       public: {
         http: [],
         webSocket: process.env['USING_LOCAL_TANGLE']
           ? ['ws://127.0.0.1:9944']
-          : [
-              'wss://testnet-rpc-archive.tangle.tools',
-              'wss://testnet-rpc.tangle.tools',
-            ],
+          : ['wss://testnet-rpc.tangle.tools'],
       },
     },
     env: ['development'],

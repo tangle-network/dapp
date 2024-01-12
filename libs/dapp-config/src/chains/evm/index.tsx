@@ -325,28 +325,23 @@ export const chainsConfig: Record<number, ChainConfig> = {
       default: {
         http: process.env['USING_LOCAL_TANGLE']
           ? ['http://localhost:9944']
-          : [
-              'https://testnet-rpc-archive.tangle.tools',
-              'https://testnet-rpc.tangle.tools',
-            ],
+          : ['https://testnet-rpc.tangle.tools'],
       },
       public: {
         http: process.env['USING_LOCAL_TANGLE']
           ? ['http://localhost:9944']
-          : [
-              'https://testnet-rpc-archive.tangle.tools',
-              'https://testnet-rpc.tangle.tools',
-            ],
+          : ['https://testnet-rpc.tangle.tools'],
       },
     },
-    contracts: hostedOrbitMulticall3Address
-      ? {
-          multicall3: {
-            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: tangleMulticall3DeploymentBlock,
-          },
-        }
-      : undefined,
+    contracts:
+      !process.env['USING_LOCAL_TANGLE'] && hostedOrbitMulticall3Address
+        ? {
+            multicall3: {
+              address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
+              blockCreated: tangleMulticall3DeploymentBlock,
+            },
+          }
+        : undefined,
   } satisfies ChainConfig,
 
   // Localnet
@@ -426,36 +421,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
           multicall3: {
             address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: localDemeterMulticall3DeploymentBlock,
-          },
-        }
-      : undefined,
-  } satisfies ChainConfig,
-
-  [PresetTypedChainId.LocalTangleTestnet]: {
-    chainType: ChainType.EVM,
-    id: EVMChainId.LocalTangleTestnet,
-    name: 'Local Tangle Testnet',
-    network: 'Local Tangle',
-    group: 'tangle',
-    tag: 'test',
-    nativeCurrency: {
-      name: 'Test Tangle Network Token',
-      symbol: 'tTNT',
-      decimals: 18,
-    },
-    rpcUrls: {
-      default: {
-        http: ['http://127.0.0.1:9944', 'http://127.0.0.1:9944'],
-      },
-      public: {
-        http: ['http://127.0.0.1:9944', 'http://127.0.0.1:9944'],
-      },
-    },
-    contracts: hostedOrbitMulticall3Address
-      ? {
-          multicall3: {
-            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: tangleMulticall3DeploymentBlock,
           },
         }
       : undefined,

@@ -1,3 +1,4 @@
+export * from './BondedTokensBalanceInfo';
 export * from './Breadcrumbs';
 export * from './ChainSelector';
 export * from './DelegatorTable';
