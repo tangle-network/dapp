@@ -3,6 +3,8 @@ import '../styles/globals.css';
 
 import { Footer } from '@webb-tools/webb-ui-components';
 import type { Metadata, Viewport } from 'next';
+import { METADATA_SITE_DESCRIPTION } from '../constants';
+import { EnvVariableKey, requireEnvVariable } from '../utils';
 import Providers from './providers';
 
 export const viewport: Viewport = {
@@ -17,12 +19,12 @@ export const metadata: Metadata = {
     default: 'ZK Explorer',
     template: 'ZK Explorer | %s',
   },
-  description: 'Welcome to ZK Explorer!',
-  metadataBase: process.env.URL ? new URL(process.env.URL) : null,
+  description: METADATA_SITE_DESCRIPTION,
+  metadataBase: new URL(requireEnvVariable(EnvVariableKey.MetadataBaseUrl)),
   twitter: {
     card: 'summary_large_image',
     title: 'ZK Explorer',
-    description: 'Welcome to ZK Explorer!',
+    description: METADATA_SITE_DESCRIPTION,
   },
 };
 
@@ -39,7 +41,7 @@ export default function RootLayout({
           <div className="max-w-[1240px] mx-auto flex flex-col h-full min-h-screen px-4">
             {children}
 
-            <Footer isMinimal className="w-full py-12 mt-auto" />
+            <Footer isNext isMinimal className="w-full py-12 mt-auto" />
           </div>
         </Providers>
       </body>

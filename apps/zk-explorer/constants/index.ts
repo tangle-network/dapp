@@ -12,3 +12,6 @@ export const CONTACT_URL = 'mailto:hello@webb.tools';
 
 // TODO: Use a better way to detect debug mode. `NODE_ENV` seems to be clashing with Next.js.
 export const IS_DEBUG_MODE = true;
+
+export const METADATA_SITE_DESCRIPTION =
+  'A platform for discovering and learning about zero-knowledge proof projects and circuits, featuring detailed project insights, filtering options, and more.';

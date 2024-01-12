@@ -22,6 +22,11 @@ export enum SearchParamKey {
   Filters = 'filters',
 }
 
+export enum EnvVariableKey {
+  GitHubClientId = 'ZK_EXPLORER_GITHUB_CLIENT_ID',
+  MetadataBaseUrl = 'ZK_EXPLORER_METADATA_BASE_URL',
+}
+
 export function validateGithubUrl(url: string): boolean {
   return parseGithubUrl(url) !== null;
 }
@@ -164,4 +169,16 @@ export function gracefullyParseJson<T = unknown>(
       'Unknown error because the thrown object is not an instance of an error'
     );
   }
+}
+
+export function requireEnvVariable(key: EnvVariableKey): string {
+  const value = process.env[key];
+
+  if (value === undefined || value === '') {
+    throw new Error(
+      `Required environment variable '${key}' is empty or not defined; did you forget to set it to an appropriate value?`
+    );
+  }
+
+  return value;
 }

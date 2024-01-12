@@ -118,7 +118,7 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
         )}
 
         <Dropdown className="relative flex items-center justify-center">
-          <DropdownBasicButton>
+          <DropdownBasicButton aria-label="User options">
             <ThreeDotsVerticalIcon className="fill-mono-0" size="lg" />
           </DropdownBasicButton>
 
