@@ -16,9 +16,6 @@ import {
 } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
 
-import useTailwindBreakpoint, {
-  TailwindBreakpoint,
-} from '../../../hooks/useTailwindBreakpoint';
 import { GitHubAvatar } from '../../../components/GitHubAvatar';
 import { SmallChip } from '../../../components/SmallChip';
 import { PROJECT_DETAIL_CONTAINER_ID } from '../../../constants';
@@ -55,7 +52,6 @@ const ProjectGitHubInfoClient: FC<{
     languagesInfo,
   } = data;
 
-  const breakpoint = useTailwindBreakpoint();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const controllerLeftPosition = useMemo(() => {
@@ -67,11 +63,6 @@ const ProjectGitHubInfoClient: FC<{
     return -(paddingWidth - CONTROLLER_MARGIN_LEFT);
   }, [isCollapsed]);
 
-  const applyCollapseCLassName = useMemo(
-    () => isCollapsed && breakpoint >= TailwindBreakpoint.LG,
-    [breakpoint, isCollapsed]
-  );
-
   return (
     <div
       className={cx(
@@ -79,14 +70,14 @@ const ProjectGitHubInfoClient: FC<{
         'transition-all duration-150 ease-in-out',
         className,
         {
-          'w-0 !m-0': applyCollapseCLassName,
+          'lg:w-0 lg:!m-0': isCollapsed,
         }
       )}
     >
       {/* Main Content */}
       <div
         className={cx('lg:w-[270px] p-4 md:p-6 space-y-6', {
-          '!w-0 !p-0 overflow-hidden': applyCollapseCLassName,
+          'lg:!w-0 lg:!p-0 lg:overflow-hidden': isCollapsed,
         })}
       >
         {/* Image */}
@@ -283,7 +274,7 @@ const ProjectGitHubInfoClient: FC<{
       <div
         className={cx(
           'cursor-pointer absolute top-[50%] translate-y-[-50%] hidden lg:block',
-          { 'rotate-180': applyCollapseCLassName }
+          { 'lg:rotate-180': isCollapsed }
         )}
         style={{
           left: `${controllerLeftPosition}px`,
