@@ -6,7 +6,7 @@ type TopContributorType = {
   profileUrl: string;
 };
 
-type ProjectGitHubInfoContainerDataType = {
+export type ProjectGitHubInfoContainerDataType = {
   fullName: string;
   avatarUrl: string;
   description: string;

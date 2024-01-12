@@ -5,6 +5,7 @@ import {
   RelatedProjectsContainer,
 } from '../../../../containers';
 import { Header } from '../../../../components/Header';
+import { PROJECT_DETAIL_CONTAINER_ID } from '../../../../constants';
 
 export default function ProjectPage({
   params,
@@ -19,12 +20,15 @@ export default function ProjectPage({
       {/* TODO: update breadcrumb */}
       <Header />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 grid-rows-[minmax(min-content,max-content)] lg:grid-rows-[auto_1fr] gap-6">
+      <div
+        id={PROJECT_DETAIL_CONTAINER_ID}
+        className="lg:max-h-[1150px] grid grid-cols-1 lg:grid-cols-[auto_1fr] grid-rows-[minmax(min-content,max-content)] lg:grid-rows-[auto_1fr] gap-y-6"
+      >
         <ProjectGitHubInfoContainer className="row-span-1 lg:row-span-2 order-3 lg:order-1" />
 
-        <ProjectHeaderContainer className="col-span-1 lg:col-span-3 order-1 lg:order-2" />
+        <ProjectHeaderContainer className="col-span-1 order-1 lg:order-2" />
 
-        <ProjectDetailTabsContainer className="col-span-1 lg:col-span-3 order-2 lg:order-3" />
+        <ProjectDetailTabsContainer className="col-span-1 order-2 lg:order-3" />
       </div>
 
       <RelatedProjectsContainer />

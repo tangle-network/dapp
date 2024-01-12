@@ -6,3 +6,5 @@ export const ITEMS_PER_PAGE = 12;
 
 // TODO: Use a better way to detect debug mode. `NODE_ENV` seems to be clashing with Next.js.
 export const IS_DEBUG_MODE = true;
+
+export const PROJECT_DETAIL_CONTAINER_ID = 'project-detail-container';
