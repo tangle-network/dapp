@@ -4,9 +4,6 @@ export const GITHUB_LANGUAGE_COLORS_API_URL =
 export const API_PREFIX = '/api';
 export const ITEMS_PER_PAGE = 12;
 
-export const FEEDBACK_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new/choose';
-
 // TODO: Need to change this to a contact form when available.
 export const CONTACT_URL = 'mailto:hello@webb.tools';
 
