@@ -15,7 +15,6 @@ import {
   getHumanFileSize,
   notificationApi,
 } from '@webb-tools/webb-ui-components';
-import safeParseJson from "@webb-tools/webb-ui-components/src/utils/safeParseJson";
 import { uniqueId } from 'lodash';
 import {
   forwardRef,
@@ -25,8 +24,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { formatUnits } from 'viem';
 import { RefHandle, UploadModalContentProps } from './types';
+import { formatUnits } from 'viem';
+import { safeParseJson } from '../../utils';
 
 export const UploadModalContent = forwardRef<
   RefHandle,
@@ -82,9 +82,9 @@ export const UploadModalContent = forwardRef<
       reader.onload = async () => {
         const text = reader.result as string;
 
-        const parsedNoteOrError = safeParseJson<string | string[]>(text);
+        const [err, parsedNote] = safeParseJson(text);
 
-        if (parsedNoteOrError instanceof Error) {
+        if (err) {
           notificationApi({
             variant: 'error',
             message: 'Invalid note format',
@@ -92,8 +92,8 @@ export const UploadModalContent = forwardRef<
           return;
         }
 
-        if (typeof parsedNoteOrError === 'string') {
-          const note = await Note.deserialize(parsedNoteOrError);
+        if (typeof parsedNote === 'string') {
+          const note = await Note.deserialize(parsedNote);
           setProgress(100);
           const id = uniqueId();
           setNotes((prev) => ({ ...prev, [id]: note }));
@@ -103,11 +103,11 @@ export const UploadModalContent = forwardRef<
         }
 
         if (
-          Array.isArray(parsedNoteOrError) &&
-          parsedNoteOrError.length &&
-          typeof parsedNoteOrError[0] === 'string'
+          Array.isArray(parsedNote) &&
+          parsedNote.length &&
+          typeof parsedNote[0] === 'string'
         ) {
-          const notes = parsedNoteOrError as string[];
+          const notes = parsedNote as string[];
 
           await Promise.all(
             notes.map(async (note, index) => {

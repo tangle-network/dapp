@@ -149,3 +149,19 @@ export function computeUserDiff(initial: User, updated: User): Partial<User> {
     (value, key) => !_.isEqual(value, initial[key as keyof User])
   );
 }
+
+export function gracefullyParseJson<T = unknown>(
+  jsonString: string
+): T | Error {
+  try {
+    return JSON.parse(jsonString);
+  } catch (possibleError) {
+    if (possibleError instanceof Error) {
+      return possibleError;
+    }
+
+    return new Error(
+      'Unknown error because the thrown object is not an instance of an error'
+    );
+  }
+}

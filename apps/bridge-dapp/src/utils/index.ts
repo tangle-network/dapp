@@ -15,3 +15,4 @@ export { default as handleMutateNoteIndex } from './handleMutateNoteIndex';
 export { default as handleStoreNote } from './handleStoreNote';
 export { default as handleTxError } from './handleTxError';
 export * from './isValidNote';
+export { default as safeParseJson } from './safeParseJson';

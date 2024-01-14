@@ -1,5 +1,4 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
-import safeParseJson from "@webb-tools/webb-ui-components/src/utils/safeParseJson";
 import assert from 'assert';
 import { CircuitItem } from '../components/CircuitCard/types';
 import type {
@@ -10,6 +9,7 @@ import { ProjectItem } from '../components/ProjectCard/types';
 import { Plan } from '../components/ProofGenerationStepCards/types';
 import { API_PREFIX } from '../constants';
 import { User } from '../hooks/useAuth';
+import { gracefullyParseJson } from './utils';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',
@@ -85,7 +85,7 @@ export async function sendApiRequest<T = Record<string, never>>(
   const responseAsPlainText = await fetchResponse.text();
 
   const innerResponse =
-    safeParseJson<ApiResponse<T>>(responseAsPlainText);
+    gracefullyParseJson<ApiResponse<T>>(responseAsPlainText);
 
   // Handle the possibility of JSON parsing failing.
   // This could be due to the response being empty, malformed,
