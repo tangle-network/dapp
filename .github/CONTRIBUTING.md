@@ -62,7 +62,7 @@ This repository adheres to the [Conventional Commits](https://www.conventionalco
 
 Here are some examples to follow:
 
-* `feat(bridge): Fixed a certain bug (#123)`
+* `feat(bridge-dapp): Fixed a certain bug (#123)`
 * `docs: Added documentation for commit message guidelines`
 * `chore: Bump X dependency to latest version`
 
