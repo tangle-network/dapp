@@ -1,17 +1,9 @@
 import _ from 'lodash';
 import { CircuitItem } from '../components/CircuitCard/types';
-import {
-  GitHubOAuthErrorParams,
-  GitHubOAuthSuccessParams,
-} from '../components/GitHubOAuthButton/types';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { ITEMS_PER_PAGE } from '../constants';
 import { User } from '../hooks/useAuth';
-import {
-  CircuitSearchResponseData,
-  ProjectSearchResponseData,
-  exchangeAuthCodeForOAuthToken,
-} from './api';
+import { CircuitSearchResponseData, ProjectSearchResponseData } from './api';
 
 export enum ItemType {
   Project = 'Project',
@@ -67,34 +59,6 @@ export function parseGithubUrl(url: string): [string, string] | null {
   }
 
   return [owner, repo];
-}
-
-export async function handleOAuthSuccess(
-  params: GitHubOAuthSuccessParams
-): Promise<void> {
-  if (!(await exchangeAuthCodeForOAuthToken(params.code))) {
-    reportProblem(
-      'GitHub OAuth login failed: Could not exchange auth code for OAuth token.'
-    );
-  }
-}
-
-export function handleOAuthError(params: GitHubOAuthErrorParams): void {
-  // TODO: Consider showing a modal or toast message to let the user know when OAuth fails.
-  reportProblem(`GitHub OAuth login failed: ${params.errorDescription}`);
-}
-
-/**
- * An utility function to report a problem to the user.
- *
- * Compared to `console.error` or throwing an error, this function
- * is intended to be used for problems that are not critical to the
- * application's functionality, but should still be brought to the
- * user's attention.
- */
-function reportProblem(message: string): void {
-  // TODO: Provide better looking feedback to the user. Is there any toast component that can be used here?
-  alert(message);
 }
 
 // TODO: This is temporary, until the backend is implemented.
@@ -184,4 +148,20 @@ export function computeUserDiff(initial: User, updated: User): Partial<User> {
     updated,
     (value, key) => !_.isEqual(value, initial[key as keyof User])
   );
+}
+
+export function gracefullyParseJson<T = unknown>(
+  jsonString: string
+): T | Error {
+  try {
+    return JSON.parse(jsonString);
+  } catch (possibleError) {
+    if (possibleError instanceof Error) {
+      return possibleError;
+    }
+
+    return new Error(
+      'Unknown error because the thrown object is not an instance of an error'
+    );
+  }
 }

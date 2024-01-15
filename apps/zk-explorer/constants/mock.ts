@@ -1,7 +1,12 @@
+import { randomBytes } from 'crypto';
 import {
   FilterCategoryItem,
   FilterOptionItem,
 } from '../components/Filters/types';
+import {
+  Location,
+  MpcParticipant,
+} from '../components/ProofGenerationStepCards/types';
 import { User } from '../hooks/useAuth';
 
 export const MOCK_PROOF_SYSTEMS_OPTIONS: FilterOptionItem[] = [
@@ -122,3 +127,13 @@ export const MOCK_USER: User = {
   createdAt: new Date().getTime() - 1000 * 60 * 60 * 24 * 7,
   activatedCircuitCount: 0,
 };
+
+export const MOCK_MPC_PARTICIPANTS: MpcParticipant[] = Array.from(
+  { length: 5 },
+  () => ({
+    address: randomBytes(20).toString('hex'),
+    location: Location.UsWest,
+    slashingIncidents: 0,
+    uptime: 100,
+  })
+);

@@ -1,6 +1,5 @@
 import { Card, Typography } from '@webb-tools/webb-ui-components';
-import { ArrowRightUp } from '@webb-tools/icons';
-import { LinkCard } from '../../components/LinkCard';
+import { FeedbackCard } from '../../components/FeedbackCard';
 import { SubmitPageControls } from '../../components/SubmitPageControls';
 
 export default function Submit() {
@@ -17,20 +16,7 @@ export default function Submit() {
           <SubmitPageControls />
         </Card>
 
-        {/* TODO: Replace this with a link to the feedback form. */}
-        <LinkCard href="#">
-          <div className="mb-4">
-            <Typography variant="h5" fw="bold">
-              Feedback
-            </Typography>
-
-            <Typography variant="h5" className="dark:text-mono-100" fw="normal">
-              Have feedback? Reach out to share your thoughts & suggestions!
-            </Typography>
-          </div>
-
-          <ArrowRightUp size="lg" />
-        </LinkCard>
+        <FeedbackCard />
       </div>
     </main>
   );

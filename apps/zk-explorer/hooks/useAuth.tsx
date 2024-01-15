@@ -63,7 +63,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       const response = await sendApiRequest<{
         user: User;
-      }>(ApiRoute.AuthValidate, {
+      }>(ApiRoute.AuthValidate, 'Auth could not be validated', {
         credentials: 'include',
       });
 
@@ -85,7 +85,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const logout = async () => {
-    await sendApiRequest(ApiRoute.AuthLogout, {
+    await sendApiRequest(ApiRoute.AuthLogout, 'Could not terminate session', {
       method: 'POST',
       credentials: 'include',
     });
