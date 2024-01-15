@@ -214,7 +214,7 @@
     "@types/yargs": "^17.0.25",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
-    "@vue/compiler-sfc": "3.3.4",
+    "@vue/compiler-sfc": "3.4.14",
     "@webb-tools/anchors": "1.0.11",
     "@webb-tools/api": "0.1.4-127",
     "@webb-tools/api-derive": "0.1.4-127",
