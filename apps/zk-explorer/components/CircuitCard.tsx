@@ -1,9 +1,16 @@
-import { Avatar, Card, Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
-import assert from 'assert';
 import { StarIcon } from '@radix-ui/react-icons';
-import { CircuitItem } from './types';
 import { ShieldKeyholeLineIcon } from '@webb-tools/icons';
+import { Avatar, Card, Typography } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
+import { FC } from 'react';
+
+export type CircuitItem = {
+  ownerAvatarUrl: string;
+  filename: string;
+  description: string;
+  stargazerCount: number;
+  constraintCount: number;
+};
 
 export const CircuitCard: FC<CircuitItem> = ({
   filename,

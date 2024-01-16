@@ -4,9 +4,8 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { ItemType, RelativePageUrl, createProjectDetailPath } from '../utils';
-import { CircuitCard } from './CircuitCard/CircuitCard';
-import { CircuitItem } from './CircuitCard/types';
-import { ProjectCard } from './ProjectCard/ProjectCard';
+import { CircuitCard, CircuitItem } from './CircuitCard';
+import ProjectCard from './ProjectCard';
 import { ProjectItem } from './ProjectCard/types';
 
 export type CardGridProps = PropsOf<'div'> & {

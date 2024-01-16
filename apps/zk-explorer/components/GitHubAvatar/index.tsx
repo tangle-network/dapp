@@ -1,10 +1,10 @@
-import { type FC, useMemo } from 'react';
-import Image from 'next/image';
 import {
   Tooltip,
-  TooltipTrigger,
   TooltipBody,
+  TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
+import Image from 'next/image';
+import { useMemo, type FC } from 'react';
 
 import type { GitHubAvatarProps } from './types';
 

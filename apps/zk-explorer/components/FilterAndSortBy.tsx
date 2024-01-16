@@ -9,12 +9,12 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
-import { useSidebarContext } from '../hooks/useSidebarContext';
+import { SearchSortByClause } from '../api/circuits';
+import { useSidebarContext } from '../context/SidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import { SearchSortByClause } from '../utils/api';
-import { Filters } from './Filters/Filters';
+import Filters from './Filters';
 import { FilterConstraints } from './Filters/types';
 
 export type FilterAndSortByProps = {
@@ -23,7 +23,7 @@ export type FilterAndSortByProps = {
   onConstraintsChange: (constraints: FilterConstraints) => void;
 };
 
-export const FilterAndSortBy: FC<FilterAndSortByProps> = ({
+const FilterAndSortBy: FC<FilterAndSortByProps> = ({
   onConstraintsChange,
   sortByClause,
   onSortByClauseChange,
@@ -112,3 +112,5 @@ export const FilterAndSortBy: FC<FilterAndSortByProps> = ({
     </div>
   );
 };
+
+export default FilterAndSortBy;

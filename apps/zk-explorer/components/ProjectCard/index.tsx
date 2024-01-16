@@ -1,11 +1,11 @@
-import { Card, Typography, Avatar } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
-import assert from 'assert';
 import { StarIcon } from '@radix-ui/react-icons';
-import { ProjectItem } from './types';
+import { Avatar, Card, Typography } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
+import { FC } from 'react';
 import { SmallChip } from '../SmallChip';
+import { ProjectItem } from './types';
 
-export const ProjectCard: FC<ProjectItem> = ({
+const ProjectCard: FC<ProjectItem> = ({
   ownerAvatarUrl,
   repositoryOwner,
   repositoryName,
@@ -95,3 +95,5 @@ export const ProjectCard: FC<ProjectItem> = ({
     </Card>
   );
 };
+
+export default ProjectCard;

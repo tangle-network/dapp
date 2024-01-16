@@ -7,7 +7,7 @@ import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { GitHubOAuthButtonProps } from './types';
 
-export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
+const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
   onClick,
   username,
   onSignedInClick,
@@ -124,3 +124,5 @@ export const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
     </Button>
   );
 };
+
+export default GitHubOAuthButton;

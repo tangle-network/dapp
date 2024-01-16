@@ -5,11 +5,21 @@ import { Button, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { ITEMS_PER_PAGE } from '../constants';
-import { useFilterConstraints } from '../hooks/useFilterConstraints';
+import { SearchSortByClause, searchCircuits } from '../../api/circuits';
+import { searchProjects } from '../../api/projects';
+import { CircuitItem } from '../../components/CircuitCard';
+import FilterAndSortBy from '../../components/FilterAndSortBy';
+import Filters from '../../components/Filters';
+import { ItemGrid } from '../../components/ItemGrid';
+import { LinkCard } from '../../components/LinkCard';
+import { ProjectItem } from '../../components/ProjectCard/types';
+import { SearchInput } from '../../components/SearchInput';
+import { Tabs } from '../../components/Tabs';
+import { ITEMS_PER_PAGE } from '../../constants';
+import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
-} from '../hooks/useTailwindBreakpoint';
+} from '../../hooks/useTailwindBreakpoint';
 import {
   ItemType,
   RelativePageUrl,
@@ -17,22 +27,9 @@ import {
   getMockCircuits,
   getMockProjects,
   validateSearchQuery,
-} from '../utils';
-import {
-  SearchSortByClause,
-  searchCircuits,
-  searchProjects,
-} from '../utils/api';
-import { CircuitItem } from './CircuitCard/types';
-import { FilterAndSortBy } from './FilterAndSortBy';
-import { Filters } from './Filters/Filters';
-import { ItemGrid } from './ItemGrid';
-import { LinkCard } from './LinkCard';
-import { ProjectItem } from './ProjectCard/types';
-import { SearchInput } from './SearchInput';
-import { Tabs } from './Tabs';
+} from '../../utils';
 
-export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
+const SidebarAndItemGrid: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [circuits, setCircuits] = useState<CircuitItem[]>([]);
@@ -232,3 +229,5 @@ export const HomepageInteractiveContents: FC<Record<string, never>> = () => {
     </>
   );
 };
+
+export default SidebarAndItemGrid;

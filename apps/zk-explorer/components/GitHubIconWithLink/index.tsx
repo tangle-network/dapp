@@ -1,8 +1,10 @@
-import type { FC } from 'react';
 import { GithubFill } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
+import type { FC } from 'react';
 
-import type { GitHubIconWithLinkProps } from './types';
+export interface GitHubIconWithLinkProps extends IconBase {
+  href: string;
+}
 
 const GitHubIconWithLink: FC<GitHubIconWithLinkProps> = ({
   href,

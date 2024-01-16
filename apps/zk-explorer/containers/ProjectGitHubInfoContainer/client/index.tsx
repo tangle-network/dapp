@@ -1,25 +1,25 @@
 'use client';
 
-import { type FC, useState, useMemo } from 'react';
-import Image from 'next/image';
-import cx from 'classnames';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import {
-  BookOpenLineIcon,
-  ScalesIcon,
   ActivityIcon,
-  EyeLineIcon,
-  StarLineIcon,
+  BookOpenLineIcon,
   BranchesIcon,
+  EyeLineIcon,
+  ScalesIcon,
+  StarLineIcon,
   TagIcon,
 } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
+import cx from 'classnames';
+import Image from 'next/image';
+import { useMemo, useState, type FC } from 'react';
 
-import { GitHubAvatar } from '../../../components/GitHubAvatar';
 import { SmallChip } from '../../../components/SmallChip';
 import { PROJECT_DETAIL_CONTAINER_ID } from '../../../constants';
 
+import GitHubAvatar from '../../../components/GitHubAvatar';
 import type { ProjectGitHubInfoContainerDataType } from '../../../server';
 
 const CONTROLLER_MARGIN_LEFT = 20;

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, ReactNode } from 'react';
-import { SidebarContext } from '../hooks/useSidebarContext';
-import { OverlayMask } from './OverlayMask';
+import { ReactNode, useCallback, useState } from 'react';
+import { OverlayMask } from '../components/OverlayMask';
+import { SidebarContext } from './SidebarContext';
 
 export const SidebarProvider: React.FC<{ children: ReactNode }> = ({
   children,

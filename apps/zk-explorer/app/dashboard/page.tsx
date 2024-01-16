@@ -1,5 +1,5 @@
-import { DashboardTabs } from '../../components/DashboardTabs';
 import { Header } from '../../components/Header';
+import { DashboardTabs } from './components/DashboardTabs';
 
 export default function Dashboard() {
   return (

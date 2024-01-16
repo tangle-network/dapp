@@ -1,10 +1,11 @@
 export * from './api';
 import _ from 'lodash';
-import { CircuitItem } from '../components/CircuitCard/types';
+import { CircuitSearchResponseData } from '../api/circuits';
+import { ProjectSearchResponseData } from '../api/projects';
+import { CircuitItem } from '../components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard/types';
 import { ITEMS_PER_PAGE } from '../constants';
 import { User } from '../hooks/useAuth';
-import { CircuitSearchResponseData, ProjectSearchResponseData } from './api';
 
 export function createProjectDetailPath(
   repositoryOwner: string,
