@@ -100,9 +100,9 @@ const Account: FC = () => {
     <>
       <div className="mx-auto space-y-4">
         <div className="flex flex-col lg:!flex-row lg:items-end justify-between gap-6">
-          <AccountSummaryCard />
+          <AccountSummaryCard className="flex-[5]" />
 
-          <div className="flex-[1] flex flex-col gap-4">
+          <div className="flex-[7] flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <Typography variant="h5" fw="bold">
                 Recent Transactions
