@@ -1,6 +1,6 @@
 'use client';
 
-import { ClockIcon } from '@radix-ui/react-icons';
+import { ClockIcon, RotateCounterClockwiseIcon } from '@radix-ui/react-icons';
 import {
   Button,
   Modal,
@@ -10,19 +10,77 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import { FC, useState } from 'react';
+import assert from 'assert';
+import { usePathname, useRouter } from 'next/navigation';
+import { FC, useCallback, useState } from 'react';
 import { RadioCard } from './RadioCard';
 
-export const RunCircuitServiceModalTrigger: FC = () => {
+export type RunCircuitServiceModalTriggerProps = {
+  owner: string;
+  repositoryName: string;
+
+  /**
+   * The unique path of the circuit file under the repository.
+   * This helps identify the circuit file for which the service is being run.
+   *
+   * @remarks
+   * This is the path of the circuit file relative to the repository root.
+   *
+   * If omitted, it is assumed that the user is viewing a file that is not
+   * a circuit file, and thus cannot choose to run a service. The `Run Service`
+   * button will be disabled in this case.
+   *
+   * @example
+   * `apps/zk-explorer/circuits/poseidon.circom`
+   */
+  circuitFilePath?: string;
+};
+
+export const RunCircuitServiceModalTrigger: FC<
+  RunCircuitServiceModalTriggerProps
+> = ({ circuitFilePath }) => {
+  enum RadioItem {
+    TrustedSetupService = 'trusted-setup-service',
+    ProofGenerationService = 'proof-generation-service',
+  }
+
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selectedRadioItem, setSelectedRadioItem] = useState<string | null>(
+  const [selectedRadioItemId, setSelectedRadioItemId] = useState<string | null>(
     null
   );
 
+  const router = useRouter();
+  const currentPath = usePathname();
+
+  const handleContinue = useCallback(() => {
+    assert(
+      circuitFilePath !== undefined,
+      'Circuit file path should not be undefined if the user was able to run a service.'
+    );
+
+    if (selectedRadioItemId === RadioItem.ProofGenerationService) {
+      const encodedCircuitFilePath = encodeURIComponent(circuitFilePath);
+
+      router.push(`${currentPath}/${encodedCircuitFilePath}`);
+    }
+
+    // TODO: Handle other services: Trusted Setup Service.
+  }, [
+    RadioItem.ProofGenerationService,
+    circuitFilePath,
+    currentPath,
+    router,
+    selectedRadioItemId,
+  ]);
+
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} variant="secondary">
+      <Button
+        isDisabled={circuitFilePath === undefined}
+        onClick={() => setIsOpen(true)}
+        variant="secondary"
+      >
         Run Service
       </Button>
 
@@ -30,7 +88,7 @@ export const RunCircuitServiceModalTrigger: FC = () => {
         <ModalContent
           usePortal
           isCenter
-          className="bg-mono-0 dark:bg-mono-180 rounded-xl max-w-[478px] w-full"
+          className="bg-mono-0 dark:bg-mono-180 rounded-xl max-w-[550px] w-full"
           isOpen={isOpen}
         >
           <ModalHeader onClose={() => setIsOpen(false)}>
@@ -39,34 +97,45 @@ export const RunCircuitServiceModalTrigger: FC = () => {
 
           <div className="p-9 space-y-9">
             <Typography variant="body1">
-              With Webb, you can run below service(s) for this circom circuit.
+              With Webb, you can easily and seamlessly run services for your
+              circuits.
+              <br />
+              <br />
+              Please choose a service for{' '}
+              <code className="text-mono-0">{circuitFilePath}</code>:
             </Typography>
 
             <div className="space-y-6">
               <RadioCard
-                id="trusted-setup-service"
-                selectedRadioItem={selectedRadioItem}
-                setSelectedRadioItem={setSelectedRadioItem}
+                isDisabled
+                disabledTooltipReason="Coming soon!"
+                id={RadioItem.TrustedSetupService}
+                selectedRadioItem={selectedRadioItemId}
+                setSelectedRadioItem={setSelectedRadioItemId}
                 title="Trusted Setup Service"
                 description="Ensure cryptographic integrity with our tested setups."
-                tooltip="This is a tooltip"
-                Icon={ClockIcon}
+                tooltip="Ensure the security and privacy of your circuits with our trusted setup service."
+                Icon={RotateCounterClockwiseIcon}
               />
 
               <RadioCard
-                id="proof-generation-service"
-                selectedRadioItem={selectedRadioItem}
-                setSelectedRadioItem={setSelectedRadioItem}
+                id={RadioItem.ProofGenerationService}
+                selectedRadioItem={selectedRadioItemId}
+                setSelectedRadioItem={setSelectedRadioItemId}
                 title="Proof Generation Service"
                 description="Generate proofs seamlessly with our zkSaaS platform."
-                tooltip="This is a tooltip"
+                tooltip="Automate the generation of zero-knowledge proofs with our proof generation service."
                 Icon={ClockIcon}
               />
             </div>
           </div>
 
           <ModalFooter>
-            <Button isFullWidth isDisabled={selectedRadioItem === null}>
+            <Button
+              onClick={handleContinue}
+              isFullWidth
+              isDisabled={selectedRadioItemId === null}
+            >
               Continue
             </Button>
 

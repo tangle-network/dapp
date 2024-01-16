@@ -17,8 +17,7 @@ import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import { exchangeAuthCodeForOAuthToken } from '../utils';
-import { RelativePageUrl } from '../utils/utils';
+import { RelativePageUrl, exchangeAuthCodeForOAuthToken } from '../utils';
 import { GitHubOAuthButton } from './GitHubOAuthButton';
 import {
   GitHubOAuthErrorParams,

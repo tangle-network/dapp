@@ -137,3 +137,5 @@ export const MOCK_MPC_PARTICIPANTS: MpcParticipant[] = Array.from(
     uptime: 100,
   })
 );
+
+export const MOCK_CIRCUIT_FILE_PATH = 'pairing.circom';

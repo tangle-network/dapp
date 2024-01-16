@@ -11,18 +11,18 @@ import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
 import {
-  SearchSortByClause,
-  searchCircuits,
-  searchProjects,
-} from '../utils/api';
-import {
   ItemType,
   RelativePageUrl,
   SearchParamKey,
   getMockCircuits,
   getMockProjects,
   validateSearchQuery,
-} from '../utils/utils';
+} from '../utils';
+import {
+  SearchSortByClause,
+  searchCircuits,
+  searchProjects,
+} from '../utils/api';
 import { CircuitItem } from './CircuitCard/types';
 import { FilterAndSortBy } from './FilterAndSortBy';
 import { Filters } from './Filters/Filters';

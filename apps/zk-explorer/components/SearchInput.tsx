@@ -13,7 +13,7 @@ import {
   SearchParamKey,
   setSearchParam,
   validateSearchQuery,
-} from '../utils/utils';
+} from '../utils';
 
 export type SearchInputProps = PropsOf<typeof Input> & {
   isFullWidth?: boolean;
