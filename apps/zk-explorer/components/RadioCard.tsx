@@ -21,7 +21,7 @@ export type RadioCardProps = {
   setSelectedRadioItem: (id: string) => void;
 };
 
-export const RadioCard: FC<RadioCardProps> = ({
+const RadioCard: FC<RadioCardProps> = ({
   id,
   selectedRadioItem,
   title,
@@ -105,3 +105,5 @@ export const RadioCard: FC<RadioCardProps> = ({
     content
   );
 };
+
+export default RadioCard;

@@ -1,4 +1,4 @@
-import type { ProjectItem } from '../components/ProjectCard/types';
+import { ProjectItem } from '../components/ProjectCard';
 
 export default async function getRelatedProjectsContainerData(): Promise<
   ProjectItem[]

@@ -12,26 +12,26 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { exchangeAuthCodeForOAuthToken } from '../api/auth';
-import { useSidebarContext } from '../context/SidebarContext';
-import { useAuth } from '../hooks/useAuth';
-import useTailwindBreakpoint, {
-  TailwindBreakpoint,
-} from '../hooks/useTailwindBreakpoint';
-import { RelativePageUrl } from '../utils';
-import GitHubOAuthButton from './GitHubOAuthButton';
+import { exchangeAuthCodeForOAuthToken } from '../../api/auth';
+import GitHubOAuthButton from '../../containers/GitHubOAuthButton';
 import {
   GitHubOAuthErrorParams,
   GitHubOAuthSuccessParams,
-} from './GitHubOAuthButton/types';
-import { SearchInput } from './SearchInput';
+} from '../../containers/GitHubOAuthButton/types';
+import { useSidebarContext } from '../../context/SidebarContext';
+import { useAuth } from '../../hooks/useAuth';
+import useTailwindBreakpoint, {
+  TailwindBreakpoint,
+} from '../../hooks/useTailwindBreakpoint';
+import { RelativePageUrl } from '../../utils';
+import { SearchInput } from '../SearchInput';
 import { SidebarCloseButton } from './SidebarCloseButton';
 
 export type HeaderControlsProps = PropsOf<'div'> & {
   doHideSearchBar?: boolean;
 };
 
-export const HeaderControls: FC<HeaderControlsProps> = ({
+const HeaderControls: FC<HeaderControlsProps> = ({
   className,
   doHideSearchBar,
   ...rest
@@ -134,3 +134,5 @@ export const HeaderControls: FC<HeaderControlsProps> = ({
     </div>
   );
 };
+
+export default HeaderControls;

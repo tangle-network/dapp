@@ -4,7 +4,7 @@ import cx from 'classnames';
 import GitHubIconWithLink from '../../components/GitHubIconWithLink';
 import { RunCircuitServiceModalTrigger } from '../../components/RunCircuitServiceModalTrigger';
 import { SmallChip } from '../../components/SmallChip';
-import { SocialChip } from '../../components/SocialChip';
+import SocialChip from '../../components/SocialChip';
 import { MOCK_CIRCUIT_FILE_PATH } from '../../constants/mock';
 import { getProjectHeaderContainerData } from '../../server';
 

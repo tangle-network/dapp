@@ -8,11 +8,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { updateUserProfile } from '../../../api/user';
-import { LargeSquareAvatar } from '../../../components/LargeSquareAvatar';
+import LargeSquareAvatar from '../../../components/LargeSquareAvatar';
 import { User, useAuth, useRequireAuth } from '../../../hooks/useAuth';
 import { computeUserDiff } from '../../../utils';
 
-export const DashboardSettingsTab: FC = () => {
+const DashboardSettingsTab: FC = () => {
   const user = useRequireAuth();
   const { refreshAuth } = useAuth();
 
@@ -224,3 +224,5 @@ export const DashboardSettingsTab: FC = () => {
     </Card>
   );
 };
+
+export default DashboardSettingsTab;

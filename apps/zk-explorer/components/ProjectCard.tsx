@@ -2,8 +2,17 @@ import { StarIcon } from '@radix-ui/react-icons';
 import { Avatar, Card, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC } from 'react';
-import { SmallChip } from '../SmallChip';
-import { ProjectItem } from './types';
+import { SmallChip } from './SmallChip';
+
+export type ProjectItem = {
+  ownerAvatarUrl: string;
+  repositoryOwner: string;
+  repositoryName: string;
+  description: string;
+  stargazerCount: number;
+  circuitCount: number;
+  contributorAvatarUrls: string[];
+};
 
 const ProjectCard: FC<ProjectItem> = ({
   ownerAvatarUrl,

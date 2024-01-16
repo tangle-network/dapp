@@ -6,7 +6,16 @@ import {
 import Image from 'next/image';
 import { useMemo, type FC } from 'react';
 
-import type { GitHubAvatarProps } from './types';
+export type GitHubAvatarProps = {
+  name: string;
+  avatarUrl: string;
+  profileUrl: string;
+  /**
+   * The avatar size, possible values: `md` (24px), `lg` (32px)
+   * @default "md"
+   */
+  size?: 'md' | 'lg';
+};
 
 const GitHubAvatar: FC<GitHubAvatarProps> = ({
   name,

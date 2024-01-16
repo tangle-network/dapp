@@ -13,7 +13,7 @@ import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
-import { RadioCard } from './RadioCard';
+import RadioCard from './RadioCard';
 
 export type RunCircuitServiceModalTriggerProps = {
   owner: string;

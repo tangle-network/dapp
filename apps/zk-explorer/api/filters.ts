@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { FilterCategoryItem } from '../components/Filters/types';
+import { FilterCategoryItem } from '../containers/Filters/types';
 import { ApiRoute, sendApiRequest } from '../utils/api';
 
 export type FilterOptionsResponseData = {

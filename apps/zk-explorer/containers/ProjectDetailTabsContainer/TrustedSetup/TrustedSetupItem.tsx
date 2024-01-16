@@ -1,14 +1,14 @@
-import type { FC } from 'react';
+import { Download } from '@webb-tools/icons';
 import {
   Chip,
-  type ChipColors,
   Typography,
+  type ChipColors,
 } from '@webb-tools/webb-ui-components';
-import { Download } from '@webb-tools/icons';
+import type { FC } from 'react';
 
-import ContributionListTable from './ContributorListTable';
 import GitHubIconWithLink from '../../../components/GitHubIconWithLink';
 import type { ProjectTrustedSetupItem } from '../../../server';
+import ContributionListTable from './ContributorListTable';
 
 const TrustedSetupItem: FC<ProjectTrustedSetupItem> = ({
   name,

@@ -1,6 +1,6 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { Header } from '../../../../../components/Header';
-import { ProofGenerationInteractiveContents } from '../../../../../components/ProofGenerationInteractiveContents';
+import Header from '../../../../../components/Header';
+import StepTrackerSidebarAndCards from './components/StepTrackerSidebarAndCards';
 
 export default function ProofGenerationInitiationPage({
   params,
@@ -17,7 +17,7 @@ export default function ProofGenerationInitiationPage({
         Proof Generation Service
       </Typography>
 
-      <ProofGenerationInteractiveContents circuitFilename={params.circuit} />
+      <StepTrackerSidebarAndCards circuitFilename={params.circuit} />
     </main>
   );
 }

@@ -7,15 +7,13 @@ import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { SearchSortByClause, searchCircuits } from '../../api/circuits';
 import { searchProjects } from '../../api/projects';
-import { CircuitItem } from '../../components/CircuitCard';
 import FilterAndSortBy from '../../components/FilterAndSortBy';
-import Filters from '../../components/Filters';
-import { ItemGrid } from '../../components/ItemGrid';
 import { LinkCard } from '../../components/LinkCard';
-import { ProjectItem } from '../../components/ProjectCard/types';
+import { ProjectItem } from '../../components/ProjectCard';
 import { SearchInput } from '../../components/SearchInput';
 import { Tabs } from '../../components/Tabs';
 import { ITEMS_PER_PAGE } from '../../constants';
+import Filters from '../../containers/Filters';
 import { useFilterConstraints } from '../../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -28,6 +26,8 @@ import {
   getMockProjects,
   validateSearchQuery,
 } from '../../utils';
+import { CircuitItem } from './CircuitCard';
+import { ItemGrid } from './ItemGrid';
 
 const SidebarAndItemGrid: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();

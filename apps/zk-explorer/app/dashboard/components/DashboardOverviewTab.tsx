@@ -4,15 +4,15 @@ import { GithubFill, GlobalLine, TwitterFill } from '@webb-tools/icons';
 import { Button, Card, Typography } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
-import { LargeSquareAvatar } from '../../../components/LargeSquareAvatar';
-import { SocialChip } from '../../../components/SocialChip';
+import LargeSquareAvatar from '../../../components/LargeSquareAvatar';
+import SocialChip from '../../../components/SocialChip';
 import { useRequireAuth } from '../../../hooks/useAuth';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../../../hooks/useTailwindBreakpoint';
 import { formatTimestamp } from '../../../utils';
 
-export const DashboardOverviewTab: FC = () => {
+const DashboardOverviewTab: FC = () => {
   const {
     activatedCircuitCount,
     createdAt,
@@ -153,3 +153,5 @@ const Divider: FC = () => {
     </div>
   );
 };
+
+export default DashboardOverviewTab;

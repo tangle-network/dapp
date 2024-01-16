@@ -1,5 +1,5 @@
-import { FilterConstraints } from '../components/Filters/types';
-import { ProjectItem } from '../components/ProjectCard/types';
+import { ProjectItem } from '../components/ProjectCard';
+import { FilterConstraints } from '../containers/Filters/types';
 import {
   ApiResponse,
   ApiRoute,

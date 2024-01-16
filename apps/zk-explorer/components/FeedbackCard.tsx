@@ -1,9 +1,10 @@
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 import { FEEDBACK_URL } from '../constants';
 import { LinkCard } from './LinkCard';
 
-export const FeedbackCard = () => {
+const FeedbackCard: FC = () => {
   return (
     <LinkCard isExternal href={FEEDBACK_URL}>
       <div className="mb-4">
@@ -20,3 +21,5 @@ export const FeedbackCard = () => {
     </LinkCard>
   );
 };
+
+export default FeedbackCard;

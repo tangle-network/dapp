@@ -1,5 +1,5 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { HeaderControls } from '../components/HeaderControls';
+import HeaderControls from '../components/HeaderControls';
 import { OverlayMask } from '../components/OverlayMask';
 import SidebarAndItemGrid from './components/SidebarAndItemGrid';
 

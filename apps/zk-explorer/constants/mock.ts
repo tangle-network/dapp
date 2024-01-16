@@ -1,12 +1,12 @@
 import { randomBytes } from 'crypto';
 import {
-  FilterCategoryItem,
-  FilterOptionItem,
-} from '../components/Filters/types';
-import {
   Location,
   MpcParticipant,
-} from '../components/ProofGenerationStepCards/types';
+} from '../app/project/[owner]/[name]/[circuit]/components/StepCards/types';
+import {
+  FilterCategoryItem,
+  FilterOptionItem,
+} from '../containers/Filters/types';
 import { User } from '../hooks/useAuth';
 
 export const MOCK_PROOF_SYSTEMS_OPTIONS: FilterOptionItem[] = [

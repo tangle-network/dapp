@@ -1,11 +1,11 @@
+import Header from '../../../../components/Header';
+import { PROJECT_DETAIL_CONTAINER_ID } from '../../../../constants';
 import {
   ProjectDetailTabsContainer,
   ProjectGitHubInfoContainer,
   ProjectHeaderContainer,
   RelatedProjectsContainer,
 } from '../../../../containers';
-import { Header } from '../../../../components/Header';
-import { PROJECT_DETAIL_CONTAINER_ID } from '../../../../constants';
 
 export default function ProjectPage({
   params,

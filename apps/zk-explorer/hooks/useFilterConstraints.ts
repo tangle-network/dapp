@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { FilterConstraints } from '../components/Filters/types';
+import { FilterConstraints } from '../containers/Filters/types';
 import { SearchParamKey, setSearchParam } from '../utils';
 
 export const useFilterConstraints = (): [

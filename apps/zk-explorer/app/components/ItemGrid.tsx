@@ -3,10 +3,13 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
-import { ItemType, RelativePageUrl, createProjectDetailPath } from '../utils';
+import ProjectCard, { ProjectItem } from '../../components/ProjectCard';
+import {
+  ItemType,
+  RelativePageUrl,
+  createProjectDetailPath,
+} from '../../utils';
 import { CircuitCard, CircuitItem } from './CircuitCard';
-import ProjectCard from './ProjectCard';
-import { ProjectItem } from './ProjectCard/types';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;

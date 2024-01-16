@@ -8,8 +8,7 @@ import { ComponentProps, useMemo, type FC } from 'react';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import ProjectCard from '../../../components/ProjectCard';
-import type { ProjectItem } from '../../../components/ProjectCard/types';
+import ProjectCard, { ProjectItem } from '../../../components/ProjectCard';
 import { createProjectDetailPath } from '../../../utils';
 
 const sharedSwiperProps = {

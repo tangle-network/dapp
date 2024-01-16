@@ -9,7 +9,7 @@ import { fetchFilterOptions } from '../../api/filters';
 import { IS_DEBUG_MODE } from '../../constants';
 import { MOCK_CATEGORIES } from '../../constants/mock';
 import { useFilterConstraints } from '../../hooks/useFilterConstraints';
-import { FilterCheckboxItem } from '../FilterCheckboxItem';
+import { FilterCheckboxItem } from './FilterCheckboxItem';
 import { FilterCategoryItem, FilterConstraints } from './types';
 
 export type FiltersProps = PropsOf<'div'> & {

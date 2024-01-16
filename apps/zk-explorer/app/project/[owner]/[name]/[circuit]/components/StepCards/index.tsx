@@ -5,14 +5,19 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckBox, Progress, Table } from '@webb-tools/webb-ui-components';
+import {
+  CheckBox,
+  Progress,
+  Table,
+  fuzzyFilter,
+} from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { requestProofGeneration } from '../../api/services';
-import { CONTACT_URL } from '../../constants';
-import { MOCK_MPC_PARTICIPANTS } from '../../constants/mock';
-import { RelativePageUrl } from '../../utils';
-import FileUploadAreaWithList from './FileUploadAreaWithList';
+import { requestProofGeneration } from '../../../../../../../api/services';
+import { CONTACT_URL } from '../../../../../../../constants';
+import { MOCK_MPC_PARTICIPANTS } from '../../../../../../../constants/mock';
+import { RelativePageUrl } from '../../../../../../../utils';
+import FileUploadAreaWithList from '../FileUploadAreaWithList';
 import IdentityItem from './IdentityItem';
 import ServiceTierCard from './ServiceTierCard';
 import StepCard from './StepCard';
@@ -236,8 +241,7 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
     data: rows,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
-      // TODO: Handle this.
-      fuzzy: (value, search) => false,
+      fuzzy: fuzzyFilter,
     },
   });
 

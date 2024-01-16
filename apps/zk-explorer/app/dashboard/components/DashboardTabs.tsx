@@ -6,10 +6,10 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { Tabs } from '../../../components/Tabs';
 import { RelativePageUrl } from '../../../utils';
-import { DashboardOverviewTab } from './DashboardOverviewTab';
-import { DashboardSettingsTab } from './DashboardSettingsTab';
+import DashboardSettingsTab from '../containers/DashboardSettingsTab';
+import DashboardOverviewTab from './DashboardOverviewTab';
 
-export const DashboardTabs: FC = () => {
+const DashboardTabs: FC = () => {
   return (
     <Tabs
       tabs={[{ name: 'Overview' }, { name: 'Settings' }, { name: 'Billing' }]}
@@ -54,3 +54,5 @@ const BillingTab: FC = () => {
   // TODO: Implement billing tab.
   return <div>Billing details will be shown here in the future.</div>;
 };
+
+export default DashboardTabs;

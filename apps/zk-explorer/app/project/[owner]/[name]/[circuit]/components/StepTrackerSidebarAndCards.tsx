@@ -1,11 +1,11 @@
 'use client';
 
 import { FC, useState } from 'react';
-import { FeedbackCard } from './FeedbackCard';
-import { ProofGenerationStepCards } from './ProofGenerationStepCards';
-import { StepTrackerSidebar } from './StepTrackerSidebar';
+import FeedbackCard from '../../../../../../components/FeedbackCard';
+import { StepTrackerSidebar } from './StepCards/StepTrackerSidebar';
+import { ProofGenerationStepCards } from './StepCards';
 
-export const ProofGenerationInteractiveContents: FC<{
+const StepTrackerSidebarAndCards: FC<{
   circuitFilename: string;
 }> = ({ circuitFilename }) => {
   const [activeStep, setActiveStep] = useState(1);
@@ -26,3 +26,5 @@ export const ProofGenerationInteractiveContents: FC<{
     </div>
   );
 };
+
+export default StepTrackerSidebarAndCards;

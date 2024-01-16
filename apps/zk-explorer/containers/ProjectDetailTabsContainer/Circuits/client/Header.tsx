@@ -1,10 +1,10 @@
-import { type FC } from 'react';
+import { CheckLineIcon, ShieldedCheckLineIcon } from '@webb-tools/icons';
 import {
   Chip,
-  Typography,
   SkeletonLoader,
+  Typography,
 } from '@webb-tools/webb-ui-components';
-import { CheckLineIcon, ShieldedCheckLineIcon } from '@webb-tools/icons';
+import { type FC } from 'react';
 
 import GitHubIconWithLink from '../../../../components/GitHubIconWithLink';
 import type { FileType } from '../../../../server';
