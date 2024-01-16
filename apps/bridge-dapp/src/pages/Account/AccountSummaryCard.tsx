@@ -74,7 +74,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
           <Actions />
         </div>
 
-        <Logo className="absolute bottom-0 right-0" />
+        <Logo className="absolute bottom-0 right-0 rounded-br-2xl overflow-hidden" />
       </div>
     );
   }
@@ -278,7 +278,7 @@ function Actions() {
 /** @internal */
 const Logo: FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={twMerge('rounded-br-2xl overflow-hidden', className)}>
+    <div className={className}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="215"
