@@ -1,4 +1,4 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 // The CurrencyType distinguishes how to interact with a particular currency in terms of
