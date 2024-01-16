@@ -1,6 +1,6 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import HeaderControls from '../components/HeaderControls';
 import { OverlayMask } from '../components/OverlayMask';
+import HeaderControls from '../containers/HeaderControls';
 import SidebarAndItemGrid from './components/SidebarAndItemGrid';
 
 export default function Index() {

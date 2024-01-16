@@ -16,7 +16,7 @@ import cx from 'classnames';
 import Image from 'next/image';
 import { useMemo, useState, type FC } from 'react';
 
-import { SmallChip } from '../../../components/SmallChip';
+import SmallChip from '../../../components/SmallChip';
 import { PROJECT_DETAIL_CONTAINER_ID } from '../../../constants';
 
 import GitHubAvatar from '../../../components/GitHubAvatar';

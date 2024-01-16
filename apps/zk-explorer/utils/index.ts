@@ -4,23 +4,8 @@ import { CircuitSearchResponseData } from '../api/circuits';
 import { ProjectSearchResponseData } from '../api/projects';
 import { CircuitItem } from '../app/components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard';
-import { ITEMS_PER_PAGE } from '../constants';
+import { GITHUB_URL_PREFIX, ITEMS_PER_PAGE } from '../constants';
 import { User } from '../hooks/useAuth';
-
-export function createProjectDetailPath(
-  repositoryOwner: string,
-  repositoryName: string
-): string {
-  return `/project/${repositoryOwner}/${repositoryName}`;
-}
-
-export function tryOrElse<T>(fn: () => T, fallback: () => T): T {
-  try {
-    return fn();
-  } catch (error) {
-    return fallback();
-  }
-}
 
 export enum ItemType {
   Project = 'Project',
@@ -39,6 +24,13 @@ export enum SearchParamKey {
   Filters = 'filters',
 }
 
+export function createProjectDetailPath(
+  repositoryOwner: string,
+  repositoryName: string
+): string {
+  return `/project/${repositoryOwner}/${repositoryName}`;
+}
+
 /**
  * A utility function to parse a GitHub URL into its owner and
  * repository name segments.
@@ -47,7 +39,6 @@ export enum SearchParamKey {
  */
 export function parseGithubUrl(url: string): [string, string] | null {
   const trimmedUrl = url.trim();
-  const GITHUB_URL_PREFIX = 'https://github.com/'; // TODO: Consider whether HTTP URLs should be allowed.
 
   if (!trimmedUrl.startsWith(GITHUB_URL_PREFIX)) {
     return null;

@@ -1,6 +1,5 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { API_PREFIX } from '../constants';
 import { gracefullyParseJson } from './index';
 
 export enum ApiRoute {
@@ -27,7 +26,10 @@ export type ApiResponse<T = Record<string, never>> = {
 };
 
 export function makeAbsoluteApiEndpointUrl(route: ApiRoute): string {
-  return `${API_PREFIX}/${route}`;
+  // TODO: Use `requireEnvVariable` instead.
+  const API_BASE_URL = process.env.ZK_EXPLORER_API_BASE_URL ?? '/api';
+
+  return `${API_BASE_URL}/${route}`;
 }
 
 // TODO: Consider encapsulating all of these functions into a `useApi` hook. There would obviously need to be some benefits to that approach, though. Need to investigate further.

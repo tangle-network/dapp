@@ -1,6 +1,6 @@
 import { IconBase } from '@webb-tools/icons/types';
 import { FC } from 'react';
-import { SmallChip } from './SmallChip';
+import SmallChip from './SmallChip';
 
 type SocialChipProps = {
   href: string;

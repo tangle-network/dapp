@@ -1,6 +1,5 @@
 'use client';
 
-import type { FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -13,8 +12,9 @@ import {
   fuzzyFilter,
   shortenString,
 } from '@webb-tools/webb-ui-components';
+import type { FC } from 'react';
 
-import { SmallChip } from '../../../components/SmallChip';
+import SmallChip from '../../../components/SmallChip';
 import type { ContributionListItem } from '../../../server';
 
 const PAGE_SIZE = 5;

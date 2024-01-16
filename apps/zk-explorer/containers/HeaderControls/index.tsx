@@ -13,18 +13,18 @@ import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { exchangeAuthCodeForOAuthToken } from '../../api/auth';
-import GitHubOAuthButton from '../../containers/GitHubOAuthButton';
-import {
-  GitHubOAuthErrorParams,
-  GitHubOAuthSuccessParams,
-} from '../../containers/GitHubOAuthButton/types';
+import { SearchInput } from '../../components/SearchInput';
 import { useSidebarContext } from '../../context/SidebarContext';
 import { useAuth } from '../../hooks/useAuth';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../../hooks/useTailwindBreakpoint';
 import { RelativePageUrl } from '../../utils';
-import { SearchInput } from '../SearchInput';
+import GitHubOAuthButton from '../GitHubOAuthButton';
+import {
+  GitHubOAuthErrorParams,
+  GitHubOAuthSuccessParams,
+} from '../GitHubOAuthButton/types';
 import { SidebarCloseButton } from './SidebarCloseButton';
 
 export type HeaderControlsProps = PropsOf<'div'> & {

@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { TabsContext, useTabs } from '../hooks/useTabs';
-import { SmallChip } from './SmallChip';
+import SmallChip from './SmallChip';
 
 export type Tab = {
   name: string;

@@ -1,6 +1,6 @@
 import { CheckBox } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import { SmallChip } from '../../components/SmallChip';
+import SmallChip from '../../components/SmallChip';
 
 export type FilterCheckboxItemProps = {
   category: string;
