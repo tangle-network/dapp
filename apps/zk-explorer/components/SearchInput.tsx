@@ -2,18 +2,14 @@ import { Search } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { FC, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueryState } from 'nuqs';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import {
-  RelativePageUrl,
-  SearchParamKey,
-  setSearchParam,
-  validateSearchQuery,
-} from '../utils';
+import { RelativePageUrl, SearchParamKey, validateSearchQuery } from '../utils';
 
 export type SearchInputProps = PropsOf<typeof Input> & {
   isFullWidth?: boolean;
@@ -58,10 +54,8 @@ export const SearchInput: FC<SearchInputProps> = ({
     );
   }
 
-  const initialSearchQuery = useSearchParams().get(SearchParamKey.SearchQuery);
-
-  const [searchQuery, setSearchQuery] = useState(
-    doesRedirect ? '' : initialSearchQuery ?? ''
+  const [searchQuery, setSearchQuery] = useQueryState(
+    SearchParamKey.SearchQuery
   );
 
   const breakpoint = useTailwindBreakpoint();
@@ -87,7 +81,7 @@ export const SearchInput: FC<SearchInputProps> = ({
 
       router.push(searchPageUrl.href);
     } else {
-      setSearchParam(SearchParamKey.SearchQuery, newSearchQuery);
+      setSearchQuery(newSearchQuery);
 
       if (onValueChange !== undefined) {
         onValueChange(newSearchQuery);

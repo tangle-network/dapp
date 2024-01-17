@@ -36,14 +36,14 @@ export type RunCircuitServiceModalTriggerProps = {
   circuitFilePath?: string;
 };
 
+enum RadioItem {
+  TrustedSetupService = 'trusted-setup-service',
+  ProofGenerationService = 'proof-generation-service',
+}
+
 export const RunCircuitServiceModalTrigger: FC<
   RunCircuitServiceModalTriggerProps
 > = ({ circuitFilePath }) => {
-  enum RadioItem {
-    TrustedSetupService = 'trusted-setup-service',
-    ProofGenerationService = 'proof-generation-service',
-  }
-
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedRadioItemId, setSelectedRadioItemId] = useState<string | null>(

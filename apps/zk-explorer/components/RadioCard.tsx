@@ -35,13 +35,11 @@ export const RadioCard: FC<RadioCardProps> = ({
   const isChecked = selectedRadioItem === id;
 
   const handleOnChange = useCallback(() => {
-    {
-      if (isDisabled || selectedRadioItem === id) {
-        return;
-      }
-
-      setSelectedRadioItem(id);
+    if (isDisabled || selectedRadioItem === id) {
+      return;
     }
+
+    setSelectedRadioItem(id);
   }, [id, isDisabled, selectedRadioItem, setSelectedRadioItem]);
 
   const isCheckedClass = isChecked

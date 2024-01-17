@@ -1,14 +1,16 @@
 import { cloneDeep } from 'lodash';
-import { useSearchParams } from 'next/navigation';
+import { useQueryState } from 'nuqs';
 import { useState } from 'react';
 import { FilterConstraints } from '../components/Filters/types';
-import { SearchParamKey, setSearchParam } from '../utils';
+import { SearchParamKey } from '../utils';
 
 export const useFilterConstraints = (): [
   FilterConstraints,
   (newConstraints: FilterConstraints) => void
 ] => {
-  const constraintsSearchParam = useSearchParams().get(SearchParamKey.Filters);
+  const [constraintsSearchParam, setConstraintsSearchParam] = useQueryState(
+    SearchParamKey.Filters
+  );
 
   const initialConstraints: FilterConstraints =
     constraintsSearchParam !== null ? JSON.parse(constraintsSearchParam) : {};
@@ -34,8 +36,7 @@ export const useFilterConstraints = (): [
       Object.values(processedConstraints).every((value) => value.length === 0);
 
     // Reflect the new constraints in the URL's search params.
-    setSearchParam(
-      SearchParamKey.Filters,
+    setConstraintsSearchParam(
       areFiltersEmpty ? null : JSON.stringify(processedConstraints)
     );
 

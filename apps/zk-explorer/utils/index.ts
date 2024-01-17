@@ -117,23 +117,6 @@ export function getMockCircuits(): CircuitSearchResponseData {
   };
 }
 
-export function setSearchParam(key: SearchParamKey, value: string | null) {
-  const updatedSearchParams = new URLSearchParams(window.location.search);
-
-  if (value === null || value === '') {
-    updatedSearchParams.delete(key);
-  } else {
-    updatedSearchParams.set(key, value);
-  }
-
-  const searchParamsString =
-    updatedSearchParams.size === 0 ? '' : `?${updatedSearchParams}`;
-
-  const newUrl = window.location.pathname + searchParamsString;
-
-  window.history.pushState({}, '', newUrl);
-}
-
 export function validateSearchQuery(searchQuery: string | null): boolean {
   const MIN_SEARCH_QUERY_LENGTH = 3;
 
