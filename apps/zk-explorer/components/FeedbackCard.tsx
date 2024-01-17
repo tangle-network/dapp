@@ -1,12 +1,12 @@
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { WEBB_DAPP_NEW_ISSUE_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
-import { FEEDBACK_URL } from '../constants';
 import LinkCard from './LinkCard';
 
 const FeedbackCard: FC = () => {
   return (
-    <LinkCard isExternal href={FEEDBACK_URL}>
+    <LinkCard isExternal href={WEBB_DAPP_NEW_ISSUE_URL}>
       <div className="mb-4">
         <Typography variant="h5" fw="bold">
           Feedback

@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto';
+import { ProjectItem } from '../components/ProjectCard';
 import {
   Location,
   MpcParticipant,
@@ -342,7 +343,7 @@ export const MOCK_PROJECT_GITHUB_INFO = (
 ): ProjectDetailsGitHubInfo =>
   ({
     fullName: 'webb-tools/tangle',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/76852793?v=4',
+    avatarUrl: MOCK_AVATAR_URL,
     description: 'An MPC as a service restaking network.',
     tags: [
       'blockchain',
@@ -373,7 +374,7 @@ export const MOCK_PROJECT_GITHUB_INFO = (
     contributorsCount: 13,
     topContributors: Array(13).fill({
       name: '1xstj',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/106580853?v=4',
+      avatarUrl: MOCK_AVATAR_URL,
       profileUrl: 'https://github.com/1xstj',
     }) satisfies TopContributorType[],
     contributorsUrl: 'https://github.com/webb-tools/tangle/graphs/contributors',
@@ -475,4 +476,18 @@ export const MOCK_FILE_TREE: FileTree = {
       language: 'tsx',
     },
   },
+};
+
+export const MOCK_AVATAR_URL =
+  'https://avatars.githubusercontent.com/u/76852793?s=200&v=4';
+
+export const MOCK_RELATED_PROJECT: ProjectItem = {
+  ownerAvatarUrl: MOCK_AVATAR_URL,
+  repositoryOwner: 'webb',
+  repositoryName: 'masp',
+  stargazerCount: 123,
+  circuitCount: 24,
+  description:
+    'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
+  contributorAvatarUrls: [MOCK_AVATAR_URL],
 };

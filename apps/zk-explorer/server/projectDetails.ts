@@ -7,6 +7,7 @@ import {
   MOCK_PROJECT_DETAILS_SUMMARY,
   MOCK_PROJECT_GITHUB_INFO,
   MOCK_PROJECT_TRUSTED_SETUP_DATA,
+  MOCK_RELATED_PROJECT,
 } from '../constants/mock';
 import { artificialDelay, getGitHubLanguageColors } from '../utils';
 
@@ -131,19 +132,7 @@ export async function fetchProjectBasicInfo(): Promise<ProjectBasicInfo> {
 export async function fetchRelatedProjects(): Promise<ProjectItem[]> {
   await artificialDelay(DEBUG_ARTIFICIAL_DELAY_MS);
 
-  return Array(5).fill({
-    ownerAvatarUrl:
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-    repositoryOwner: 'webb',
-    repositoryName: 'masp',
-    stargazerCount: 123,
-    circuitCount: 24,
-    description:
-      'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-    contributorAvatarUrls: [
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
-    ],
-  }) satisfies ProjectItem[];
+  return Array(5).fill(MOCK_RELATED_PROJECT) satisfies ProjectItem[];
 }
 
 export async function fetchProjectFileTree(): Promise<FileTree> {

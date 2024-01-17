@@ -7,6 +7,7 @@ import {
   GITHUB_URL_PREFIX,
   ITEMS_PER_PAGE,
 } from '../constants';
+import { MOCK_AVATAR_URL } from '../constants/mock';
 import { User } from '../hooks/useAuth';
 import { CircuitSearchResponseData } from '../server/circuits';
 import { ProjectSearchResponseData } from '../server/projects';
@@ -101,17 +102,14 @@ export function validateGithubUrl(url: string): boolean {
 // TODO: This is temporary, until the backend is implemented.
 export function getMockProjects(): ProjectSearchResponseData {
   const mockProjects = Array<ProjectItem>(ITEMS_PER_PAGE).fill({
-    ownerAvatarUrl:
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    ownerAvatarUrl: MOCK_AVATAR_URL,
     repositoryOwner: 'webb',
     repositoryName: 'masp',
     stargazerCount: 123,
     circuitCount: 24,
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-    contributorAvatarUrls: Array(15).fill(
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4'
-    ),
+    contributorAvatarUrls: Array(15).fill(MOCK_AVATAR_URL),
   });
 
   return {
@@ -123,8 +121,7 @@ export function getMockProjects(): ProjectSearchResponseData {
 // TODO: This is temporary, until the backend is implemented.
 export function getMockCircuits(): CircuitSearchResponseData {
   const mockCircuits = Array<CircuitItem>(ITEMS_PER_PAGE).fill({
-    ownerAvatarUrl:
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    ownerAvatarUrl: MOCK_AVATAR_URL,
     filename: 'circuit.circom',
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',

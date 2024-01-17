@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { MOCK_AVATAR_URL } from '../constants/mock';
 import { User, useAuth, useRequireAuth } from '../hooks/useAuth';
 import { updateUserProfile } from '../server/user';
 import { computeUserDiff } from '../utils';
@@ -213,7 +214,7 @@ const DashboardSettingsTab: FC = () => {
       </div>
 
       <div className="flex flex-col gap-6 items-end">
-        <LargeSquareAvatar />
+        <LargeSquareAvatar src={MOCK_AVATAR_URL} />
 
         {/* TODO: Handle upload avatar button. */}
         <Button variant="secondary">Upload</Button>
