@@ -2,7 +2,7 @@ import { ArrowRightUp } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { FEEDBACK_URL } from '../constants';
-import { LinkCard } from './LinkCard';
+import LinkCard from './LinkCard';
 
 const FeedbackCard: FC = () => {
   return (

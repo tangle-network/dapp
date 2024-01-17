@@ -1,6 +1,6 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import Header from '../../../../../components/Header';
-import StepTrackerSidebarAndCards from './components/StepTrackerSidebarAndCards';
+import StepTrackerSidebarAndCards from '../../../../../components/StepTrackerSidebarAndCards';
 
 export default function ProofGenerationInitiationPage({
   params,

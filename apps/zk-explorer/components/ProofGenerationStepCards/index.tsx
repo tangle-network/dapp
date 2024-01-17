@@ -13,10 +13,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { requestProofGeneration } from '../../../../../../../api/services';
-import { CONTACT_URL } from '../../../../../../../constants';
-import { MOCK_MPC_PARTICIPANTS } from '../../../../../../../constants/mock';
-import { RelativePageUrl } from '../../../../../../../utils';
+import { requestProofGeneration } from '../../api/services';
+import { CONTACT_URL } from '../../constants';
+import { MOCK_MPC_PARTICIPANTS } from '../../constants/mock';
+import { RelativePageUrl } from '../../utils';
 import FileUploadAreaWithList from '../FileUploadAreaWithList';
 import IdentityItem from './IdentityItem';
 import ServiceTierCard from './ServiceTierCard';
@@ -37,7 +37,7 @@ type RowData = {
   [ColumnKey.Uptime]: number;
 };
 
-export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
+const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   circuitFilename,
   activeStep,
   nextStep,
@@ -315,7 +315,9 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
           selectedMpcParticipantAddresses.length === 0
         }
       >
-        <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
+        <div className="overflow-x-auto">
+          <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
+        </div>
       </StepCard>
 
       <StepCard
@@ -369,3 +371,5 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
     </div>
   );
 };
+
+export default ProofGenerationStepCards;

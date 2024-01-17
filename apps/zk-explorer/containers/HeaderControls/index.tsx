@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { exchangeAuthCodeForOAuthToken } from '../../api/auth';
-import { SearchInput } from '../../components/SearchInput';
+import SearchInput from '../../components/SearchInput';
 import { useSidebarContext } from '../../context/SidebarContext';
 import { useAuth } from '../../hooks/useAuth';
 import useTailwindBreakpoint, {
@@ -25,7 +25,7 @@ import {
   GitHubOAuthErrorParams,
   GitHubOAuthSuccessParams,
 } from '../GitHubOAuthButton/types';
-import { SidebarCloseButton } from './SidebarCloseButton';
+import SidebarCloseButton from './SidebarCloseButton';
 
 export type HeaderControlsProps = PropsOf<'div'> & {
   doHideSearchBar?: boolean;

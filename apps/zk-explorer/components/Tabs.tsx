@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { TabsContext, useTabs } from '../hooks/useTabs';
+import { TabsContext, useTabs } from '../context/TabsContext';
 import SmallChip from './SmallChip';
 
 export type Tab = {
@@ -72,7 +72,7 @@ type TabsType = FC<TabsProps> & {
  * {selectedTab === 0 && <div>first</div>}
  * ```
  */
-export const Tabs: TabsType = ({
+const Tabs: TabsType = ({
   initiallySelectedTabIndex = 0,
   tabs,
   children,
@@ -171,3 +171,5 @@ const TabsContent: FC<TabsContentProps> = ({ children, index }) => {
 };
 
 Tabs.Content = TabsContent;
+
+export default Tabs;

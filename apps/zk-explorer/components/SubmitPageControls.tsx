@@ -11,7 +11,7 @@ import {
   validateGithubUrl,
 } from '../utils';
 
-export const SubmitPageControls: FC<Record<string, never>> = () => {
+const SubmitPageControls: FC<Record<string, never>> = () => {
   const [githubUrl, setGithubUrl] = useState('');
   const [isValidGithubUrl, setIsValidGithubUrl] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -87,3 +87,5 @@ export const SubmitPageControls: FC<Record<string, never>> = () => {
     </>
   );
 };
+
+export default SubmitPageControls;

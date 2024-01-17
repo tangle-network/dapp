@@ -22,7 +22,7 @@ export type SidebarCloseButtonProps = PropsOf<'div'> & {
  *
  * This is not required for the sidebar to work.
  */
-export const SidebarCloseButton: FC<SidebarCloseButtonProps> = ({
+const SidebarCloseButton: FC<SidebarCloseButtonProps> = ({
   isRightAligned,
   setSidebarOpen,
   className,
@@ -42,3 +42,5 @@ export const SidebarCloseButton: FC<SidebarCloseButtonProps> = ({
     </div>
   );
 };
+
+export default SidebarCloseButton;

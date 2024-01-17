@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { updateUserProfile } from '../../../api/user';
-import LargeSquareAvatar from '../../../components/LargeSquareAvatar';
-import { User, useAuth, useRequireAuth } from '../../../hooks/useAuth';
-import { computeUserDiff } from '../../../utils';
+import { updateUserProfile } from '../api/user';
+import { User, useAuth, useRequireAuth } from '../hooks/useAuth';
+import { computeUserDiff } from '../utils';
+import LargeSquareAvatar from './LargeSquareAvatar';
 
 const DashboardSettingsTab: FC = () => {
   const user = useRequireAuth();
@@ -39,15 +39,12 @@ const DashboardSettingsTab: FC = () => {
   const [shortBio, setShortBio] = useState(initialUser.shortBio || '');
   const [website, setWebsite] = useState(initialUser.website || '');
 
-  const wereChangesMade = useMemo(
-    () =>
-      email !== initialUser.email ||
-      githubUsername !== initialUser.githubUsername ||
-      twitterHandle !== initialUser.twitterHandle ||
-      website !== initialUser.website ||
-      shortBio !== initialUser.shortBio,
-    [email, githubUsername, twitterHandle, website, shortBio, initialUser]
-  );
+  const wereChangesMade =
+    email !== initialUser.email ||
+    githubUsername !== initialUser.githubUsername ||
+    twitterHandle !== initialUser.twitterHandle ||
+    website !== initialUser.website ||
+    shortBio !== initialUser.shortBio;
 
   const restoreChanges = useCallback(() => {
     setEmail(initialUser.email);

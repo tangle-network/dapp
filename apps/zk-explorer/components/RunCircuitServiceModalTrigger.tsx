@@ -11,8 +11,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
+import { createProofGenerationUrl } from '../utils';
 import RadioCard from './RadioCard';
 
 export type RunCircuitServiceModalTriggerProps = {
@@ -36,14 +37,14 @@ export type RunCircuitServiceModalTriggerProps = {
   circuitFilePath?: string;
 };
 
+enum RadioItem {
+  TrustedSetupService = 'trusted-setup-service',
+  ProofGenerationService = 'proof-generation-service',
+}
+
 export const RunCircuitServiceModalTrigger: FC<
   RunCircuitServiceModalTriggerProps
-> = ({ circuitFilePath }) => {
-  enum RadioItem {
-    TrustedSetupService = 'trusted-setup-service',
-    ProofGenerationService = 'proof-generation-service',
-  }
-
+> = ({ circuitFilePath, owner, repositoryName }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedRadioItemId, setSelectedRadioItemId] = useState<string | null>(
@@ -51,7 +52,6 @@ export const RunCircuitServiceModalTrigger: FC<
   );
 
   const router = useRouter();
-  const currentPath = usePathname();
 
   const handleContinue = useCallback(() => {
     assert(
@@ -60,19 +60,13 @@ export const RunCircuitServiceModalTrigger: FC<
     );
 
     if (selectedRadioItemId === RadioItem.ProofGenerationService) {
-      const encodedCircuitFilePath = encodeURIComponent(circuitFilePath);
-
-      router.push(`${currentPath}/${encodedCircuitFilePath}`);
+      router.push(
+        createProofGenerationUrl(owner, repositoryName, circuitFilePath)
+      );
     }
 
     // TODO: Handle other services: Trusted Setup Service.
-  }, [
-    RadioItem.ProofGenerationService,
-    circuitFilePath,
-    currentPath,
-    router,
-    selectedRadioItemId,
-  ]);
+  }, [circuitFilePath, owner, repositoryName, router, selectedRadioItemId]);
 
   return (
     <>
@@ -154,3 +148,5 @@ export const RunCircuitServiceModalTrigger: FC<
     </>
   );
 };
+
+export default RunCircuitServiceModalTrigger;

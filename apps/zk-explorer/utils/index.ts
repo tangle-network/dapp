@@ -2,7 +2,7 @@ export * from './api';
 import _ from 'lodash';
 import { CircuitSearchResponseData } from '../api/circuits';
 import { ProjectSearchResponseData } from '../api/projects';
-import { CircuitItem } from '../app/components/CircuitCard';
+import { CircuitItem } from '../components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard';
 import {
   GITHUB_LANGUAGE_COLORS_API_URL,
@@ -10,6 +10,38 @@ import {
   ITEMS_PER_PAGE,
 } from '../constants';
 import { User } from '../hooks/useAuth';
+
+export function createProjectDetailPath(
+  repositoryOwner: string,
+  repositoryName: string
+): string {
+  const encodedRepositoryOwner = encodeURIComponent(repositoryOwner);
+  const encodedRepositoryName = encodeURIComponent(repositoryName);
+
+  return `/project/${encodedRepositoryOwner}/${encodedRepositoryName}`;
+}
+
+export function createProofGenerationUrl(
+  owner: string,
+  repositoryName: string,
+  circuitFilePath: string
+): string {
+  const encodedCircuitFilePath = encodeURIComponent(circuitFilePath);
+
+  return (
+    createProjectDetailPath(owner, repositoryName) +
+    '/' +
+    encodedCircuitFilePath
+  );
+}
+
+export function tryOrElse<T>(fn: () => T, fallback: () => T): T {
+  try {
+    return fn();
+  } catch (error) {
+    return fallback();
+  }
+}
 
 export enum ItemType {
   Project = 'Project',
@@ -26,13 +58,6 @@ export enum SearchParamKey {
   SearchQuery = 'q',
   PaginationPageNumber = 'page',
   Filters = 'filters',
-}
-
-export function createProjectDetailPath(
-  repositoryOwner: string,
-  repositoryName: string
-): string {
-  return `/project/${repositoryOwner}/${repositoryName}`;
 }
 
 /**
@@ -111,23 +136,6 @@ export function getMockCircuits(): CircuitSearchResponseData {
     circuits: mockCircuits,
     resultCount: mockCircuits.length,
   };
-}
-
-export function setSearchParam(key: SearchParamKey, value: string | null) {
-  const updatedSearchParams = new URLSearchParams(window.location.search);
-
-  if (value === null || value === '') {
-    updatedSearchParams.delete(key);
-  } else {
-    updatedSearchParams.set(key, value);
-  }
-
-  const searchParamsString =
-    updatedSearchParams.size === 0 ? '' : `?${updatedSearchParams}`;
-
-  const newUrl = window.location.pathname + searchParamsString;
-
-  window.history.pushState({}, '', newUrl);
 }
 
 export function validateSearchQuery(searchQuery: string | null): boolean {

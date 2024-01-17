@@ -1,4 +1,4 @@
-import { Plan } from '../app/project/[owner]/[name]/[circuit]/components/StepCards/types';
+import { Plan } from '../components/ProofGenerationStepCards/types';
 import { ApiResponse, ApiRoute, sendApiRequest } from '../utils/api';
 
 export async function requestProofGeneration(data: {

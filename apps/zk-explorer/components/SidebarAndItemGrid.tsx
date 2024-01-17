@@ -5,19 +5,14 @@ import { Button, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { SearchSortByClause, searchCircuits } from '../../api/circuits';
-import { searchProjects } from '../../api/projects';
-import FilterAndSortBy from '../../components/FilterAndSortBy';
-import { LinkCard } from '../../components/LinkCard';
-import { ProjectItem } from '../../components/ProjectCard';
-import { SearchInput } from '../../components/SearchInput';
-import { Tabs } from '../../components/Tabs';
-import { ITEMS_PER_PAGE } from '../../constants';
-import Filters from '../../containers/Filters';
-import { useFilterConstraints } from '../../hooks/useFilterConstraints';
+import { SearchSortByClause, searchCircuits } from '../api/circuits';
+import { searchProjects } from '../api/projects';
+import { ITEMS_PER_PAGE } from '../constants';
+import Filters from '../containers/Filters';
+import useFilterConstraints from '../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
-} from '../../hooks/useTailwindBreakpoint';
+} from '../hooks/useTailwindBreakpoint';
 import {
   ItemType,
   RelativePageUrl,
@@ -25,9 +20,14 @@ import {
   getMockCircuits,
   getMockProjects,
   validateSearchQuery,
-} from '../../utils';
+} from '../utils';
 import { CircuitItem } from './CircuitCard';
-import { ItemGrid } from './ItemGrid';
+import FilterAndSortBy from './FilterAndSortBy';
+import ItemGrid from './ItemGrid';
+import LinkCard from './LinkCard';
+import { ProjectItem } from './ProjectCard';
+import SearchInput from './SearchInput';
+import Tabs from './Tabs';
 
 const SidebarAndItemGrid: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();

@@ -4,7 +4,7 @@ import {
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
-import { useMemo, type FC } from 'react';
+import { type FC } from 'react';
 
 export type GitHubAvatarProps = {
   name: string;
@@ -23,16 +23,7 @@ const GitHubAvatar: FC<GitHubAvatarProps> = ({
   profileUrl,
   size = 'md',
 }) => {
-  const _size = useMemo(() => {
-    switch (size) {
-      case 'md':
-        return 24;
-      case 'lg':
-        return 32;
-      default:
-        return 24;
-    }
-  }, [size]);
+  const size_ = size === 'lg' ? 32 : 24;
 
   return (
     <Tooltip>
@@ -41,8 +32,8 @@ const GitHubAvatar: FC<GitHubAvatarProps> = ({
           <Image
             src={avatarUrl}
             alt={name}
-            width={_size}
-            height={_size}
+            width={size_}
+            height={size_}
             className="rounded-full"
           />
         </a>

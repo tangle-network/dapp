@@ -1,7 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { OverlayMask } from '../components/OverlayMask';
+import OverlayMask from '../components/OverlayMask';
+import SidebarAndItemGrid from '../components/SidebarAndItemGrid';
 import HeaderControls from '../containers/HeaderControls';
-import SidebarAndItemGrid from './components/SidebarAndItemGrid';
 
 export default function Index() {
   return (

@@ -1,4 +1,4 @@
-import { CircuitItem } from '../app/components/CircuitCard';
+import { CircuitItem } from '../components/CircuitCard';
 import { FilterConstraints } from '../containers/Filters/types';
 import { ApiRoute, extractResponseData, sendApiRequest } from '../utils/api';
 

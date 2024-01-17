@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import {
   Location,
   MpcParticipant,
-} from '../app/project/[owner]/[name]/[circuit]/components/StepCards/types';
+} from '../components/ProofGenerationStepCards/types';
 import {
   FilterCategoryItem,
   FilterOptionItem,

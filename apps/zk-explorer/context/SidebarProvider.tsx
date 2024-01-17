@@ -1,12 +1,10 @@
 'use client';
 
 import { ReactNode, useCallback, useState } from 'react';
-import { OverlayMask } from '../components/OverlayMask';
+import OverlayMask from '../components/OverlayMask';
 import { SidebarContext } from './SidebarContext';
 
-export const SidebarProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+const SidebarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState<ReactNode>(null);
 
@@ -50,3 +48,5 @@ export const SidebarProvider: React.FC<{ children: ReactNode }> = ({
     </SidebarContext.Provider>
   );
 };
+
+export default SidebarProvider;

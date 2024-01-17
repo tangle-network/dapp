@@ -1,9 +1,9 @@
 'use client';
 
-import { type FC, useMemo, useState, useEffect, useCallback } from 'react';
-import cx from 'classnames';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
 import CodeFile from './CodeFile';
 import Header from './Header';
@@ -30,10 +30,9 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
   );
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
 
-  const activeFileData = useMemo(
-    () => (activeFileIndex ? data[activeFileIndex].data : undefined),
-    [data, activeFileIndex]
-  );
+  const activeFileData = activeFileIndex
+    ? data[activeFileIndex].data
+    : undefined;
 
   const handleFileSelect = useCallback((fileIdx: string) => {
     setActiveFileIndex(fileIdx);

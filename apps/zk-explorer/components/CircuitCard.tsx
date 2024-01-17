@@ -12,7 +12,7 @@ export type CircuitItem = {
   constraintCount: number;
 };
 
-export const CircuitCard: FC<CircuitItem> = ({
+const CircuitCard: FC<CircuitItem> = ({
   filename,
   description,
   constraintCount,
@@ -60,3 +60,5 @@ export const CircuitCard: FC<CircuitItem> = ({
     </Card>
   );
 };
+
+export default CircuitCard;

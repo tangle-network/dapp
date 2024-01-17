@@ -25,7 +25,7 @@ export type OverlayMaskProps = PropsOf<'div'> & {
   doPreventBodyScrolling?: boolean;
 };
 
-export const OverlayMask: FC<OverlayMaskProps> = ({
+const OverlayMask: FC<OverlayMaskProps> = ({
   opacity,
   className,
   children,
@@ -59,3 +59,5 @@ export const OverlayMask: FC<OverlayMaskProps> = ({
     </>
   );
 };
+
+export default OverlayMask;
