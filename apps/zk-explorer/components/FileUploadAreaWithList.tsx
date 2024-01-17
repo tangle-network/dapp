@@ -54,7 +54,7 @@ const FileUploadAreaWithList: FC<FileUploadAreaWithListProps> = ({
             {title} for {filename}:
           </Typography>
 
-          <FileUploadList>
+          <FileUploadList className="w-full max-w-none">
             <FileUploadItem
               fileName={file.name}
               onRemove={() => setFile(null)}

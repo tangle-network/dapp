@@ -11,7 +11,7 @@ const StepTrackerSidebarAndCards: FC<{
   const [activeStep, setActiveStep] = useState(1);
 
   return (
-    <div className="flex gap-6 flex-col md:flex-row">
+    <div className="flex gap-6 flex-col-reverse md:flex-row">
       <div className="flex flex-col gap-6 md:max-w-[391px]">
         <StepTrackerSidebar activeStep={activeStep} />
 

@@ -30,7 +30,7 @@ const StepCard: FC<StepCardProps> = ({
       <div className="flex flex-col gap-4">
         {children}
 
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* TODO: Replace with link to more specific docs, when available. */}
           <Button isFullWidth variant="secondary" href={WEBB_DOCS_URL}>
             Learn More

@@ -315,7 +315,9 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
           selectedMpcParticipantAddresses.length === 0
         }
       >
-        <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
+        <div className="overflow-x-auto">
+          <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
+        </div>
       </StepCard>
 
       <StepCard
