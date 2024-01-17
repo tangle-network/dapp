@@ -16,3 +16,5 @@ export const PROJECT_DETAIL_CONTAINER_ID = 'project-detail-container';
 
 // TODO: Consider whether HTTP URLs should be allowed.
 export const GITHUB_URL_PREFIX = 'https://github.com/';
+
+export const DEBUG_ARTIFICIAL_DELAY_MS = 1000;

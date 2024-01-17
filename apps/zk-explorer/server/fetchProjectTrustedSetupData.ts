@@ -1,3 +1,6 @@
+import { DEBUG_ARTIFICIAL_DELAY_MS } from '../constants';
+import { artificialWait } from '../utils';
+
 export type ContributionListItem = {
   doc: string;
   contributionDate: string;
@@ -15,9 +18,11 @@ export type ProjectTrustedSetupItem = {
   contributionList?: ContributionListItem[];
 };
 
-export default async function getProjectTrustedSetupData(): Promise<
+export default async function fetchProjectTrustedSetupData(): Promise<
   ProjectTrustedSetupItem[]
 > {
+  await artificialWait(DEBUG_ARTIFICIAL_DELAY_MS);
+
   return [
     {
       name: 'bignit.circom',

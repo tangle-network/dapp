@@ -1,4 +1,6 @@
 import type { TreeItem } from 'react-complex-tree';
+import { DEBUG_ARTIFICIAL_DELAY_MS } from '../constants';
+import { artificialWait } from '../utils';
 
 export type FileType = {
   fileName: string;
@@ -11,10 +13,10 @@ export type FileType = {
 
 export type FileTreeItem = TreeItem<FileType>;
 
-export type GetProjectCircuitDataReturnType = Record<string, FileTreeItem>;
+export type FileTree = Record<string, FileTreeItem>;
 
-export default async function getProjectCircuitsData(): Promise<GetProjectCircuitDataReturnType> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+export default async function fetchFileTree(): Promise<FileTree> {
+  await artificialWait(DEBUG_ARTIFICIAL_DELAY_MS);
 
   return {
     root: {

@@ -1,3 +1,6 @@
+import { DEBUG_ARTIFICIAL_DELAY_MS } from '../constants';
+import { artificialWait } from '../utils';
+
 type ProjectHeaderContainerDataType = {
   name: string;
   owner: string;
@@ -8,8 +11,8 @@ type ProjectHeaderContainerDataType = {
   discordUrl?: string;
 };
 
-export default async function getProjectHeaderContainerData(): Promise<ProjectHeaderContainerDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
+export default async function fetchProjectHeaderContainerData(): Promise<ProjectHeaderContainerDataType> {
+  await artificialWait(DEBUG_ARTIFICIAL_DELAY_MS);
 
   return {
     name: 'tangle',

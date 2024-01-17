@@ -19,8 +19,8 @@ import { useMemo, useState, type FC } from 'react';
 import SmallChip from '../../../components/SmallChip';
 import { PROJECT_DETAIL_CONTAINER_ID } from '../../../constants';
 
-import GitHubAvatar from '../../../components/GitHubAvatar';
-import type { ProjectGitHubInfoContainerDataType } from '../../../server';
+import GitHubAvatar from '@components/GitHubAvatar';
+import { ProjectGitHubInfoContainerDataType } from '../../../server/fetchProjectGitHubInfoContainerData';
 
 const CONTROLLER_MARGIN_LEFT = 20;
 

@@ -1,4 +1,4 @@
-import { getGitHubLanguageColors } from './utils';
+import { getGitHubLanguageColors } from '../utils';
 
 type TopContributorType = {
   name: string;
@@ -39,7 +39,7 @@ export type ProjectGitHubInfoContainerDataType = {
   >;
 };
 
-export default async function getProjectGitHubInfoContainerData(): Promise<ProjectGitHubInfoContainerDataType> {
+export default async function fetchProjectGitHubInfoContainerData(): Promise<ProjectGitHubInfoContainerDataType> {
   await new Promise((r) => setTimeout(r, 1000));
 
   const languageColors = await getGitHubLanguageColors([

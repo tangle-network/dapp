@@ -1,9 +1,11 @@
 import { ProjectItem } from '../components/ProjectCard';
+import { DEBUG_ARTIFICIAL_DELAY_MS } from '../constants';
+import { artificialWait } from '../utils';
 
-export default async function getRelatedProjectsContainerData(): Promise<
+export default async function fetchRelatedProjectsContainerData(): Promise<
   ProjectItem[]
 > {
-  await new Promise((r) => setTimeout(r, 1000));
+  await artificialWait(DEBUG_ARTIFICIAL_DELAY_MS);
 
   return Array(5).fill({
     ownerAvatarUrl:

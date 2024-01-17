@@ -4,7 +4,11 @@ import { CircuitSearchResponseData } from '../api/circuits';
 import { ProjectSearchResponseData } from '../api/projects';
 import { CircuitItem } from '../app/components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard';
-import { GITHUB_URL_PREFIX, ITEMS_PER_PAGE } from '../constants';
+import {
+  GITHUB_LANGUAGE_COLORS_API_URL,
+  GITHUB_URL_PREFIX,
+  ITEMS_PER_PAGE,
+} from '../constants';
 import { User } from '../hooks/useAuth';
 
 export enum ItemType {
@@ -182,4 +186,29 @@ export function getPathFilename(path: string): string {
   // out-of-bounds error. Even if the path is just an empty
   // string, the last segment will be an empty string.
   return segments[segments.length - 1];
+}
+
+export async function getGitHubLanguageColors(
+  colorList: string[]
+): Promise<Record<string, string>> {
+  const res = await fetch(GITHUB_LANGUAGE_COLORS_API_URL);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch GitHub language colors');
+  }
+
+  const formattedRes = await res.json();
+  const filteredData = Object.keys(formattedRes).filter((color) =>
+    colorList.includes(color)
+  );
+
+  return filteredData.reduce((map, language) => {
+    const updatedMap = map;
+    map[language] = formattedRes[language].color;
+    return updatedMap;
+  }, {} as Record<string, string>);
+}
+
+export function artificialWait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
