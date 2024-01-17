@@ -25,12 +25,6 @@ const maxBlockStepCfg: MaxBlockStepConfigType = {
   [PresetTypedChainId.AvalancheFuji]: 2 ** 11,
 
   [PresetTypedChainId.ScrollAlpha]: 2 ** 20,
-
-  [PresetTypedChainId.HermesOrbit]: 2 ** 20,
-
-  [PresetTypedChainId.AthenaOrbit]: 2 ** 20,
-
-  [PresetTypedChainId.DemeterOrbit]: 2 ** 20,
 };
 
 export default maxBlockStepCfg;

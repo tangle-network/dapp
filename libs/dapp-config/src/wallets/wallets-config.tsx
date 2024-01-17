@@ -32,12 +32,6 @@ const ANY_EVM = [
   PresetTypedChainId.AvalancheFuji,
   PresetTypedChainId.ScrollAlpha,
 
-  // Self hosted
-  PresetTypedChainId.HermesOrbit,
-  PresetTypedChainId.AthenaOrbit,
-  PresetTypedChainId.DemeterOrbit,
-  PresetTypedChainId.TangleTestnet,
-
   // Localnet
   PresetTypedChainId.HermesLocalnet,
   PresetTypedChainId.AthenaLocalnet,

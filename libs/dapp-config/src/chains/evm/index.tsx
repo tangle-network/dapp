@@ -17,31 +17,8 @@ import {
   sepolia,
   type Chain,
 } from 'viem/chains';
-import { DEFAULT_EVM_CURRENCY, ORBIT_NATIVE_CURRENCY } from '../../currencies';
+import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import type { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
-
-const hostedOrbitMulticall3Address =
-  process.env.BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS;
-
-const athenaOrbitMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
-
-const hermesOrbitMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
-
-const demeterOrbitMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
-
-const tangleMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_TANGLE_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_TANGLE_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
 
 const localOrbitMulticall3Address =
   process.env.BRIDGE_DAPP_LOCAL_ORBIT_MULTICALL3_ADDRESS;
@@ -204,103 +181,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
   }),
 
-  // Self hosted chains
-  [PresetTypedChainId.HermesOrbit]: {
-    chainType: ChainType.EVM,
-    id: EVMChainId.HermesOrbit,
-    name: 'Orbit Hermes',
-    network: 'Orbit',
-    group: 'orbit',
-    tag: 'test',
-    nativeCurrency: ORBIT_NATIVE_CURRENCY,
-    blockExplorers: {
-      default: {
-        name: 'Hermes Orbit Explorer',
-        url: 'https://hermes-explorer.webb.tools',
-      },
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://hermes-testnet.webb.tools'],
-      },
-      public: {
-        http: ['https://hermes-testnet.webb.tools'],
-      },
-    },
-    contracts: hostedOrbitMulticall3Address
-      ? {
-          multicall3: {
-            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: hermesOrbitMulticall3DeploymentBlock,
-          },
-        }
-      : undefined,
-  } satisfies ChainConfig,
-
-  [PresetTypedChainId.AthenaOrbit]: {
-    chainType: ChainType.EVM,
-    id: EVMChainId.AthenaOrbit,
-    name: 'Orbit Athena',
-    network: 'Orbit',
-    group: 'orbit',
-    tag: 'test',
-    nativeCurrency: ORBIT_NATIVE_CURRENCY,
-    blockExplorers: {
-      default: {
-        name: 'Athena Orbit Explorer',
-        url: 'https://athena-explorer.webb.tools',
-      },
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://athena-testnet.webb.tools'],
-      },
-      public: {
-        http: ['https://athena-testnet.webb.tools'],
-      },
-    },
-    contracts: hostedOrbitMulticall3Address
-      ? {
-          multicall3: {
-            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: athenaOrbitMulticall3DeploymentBlock,
-          },
-        }
-      : undefined,
-  } satisfies ChainConfig,
-
-  [PresetTypedChainId.DemeterOrbit]: {
-    chainType: ChainType.EVM,
-    id: EVMChainId.DemeterOrbit,
-    name: 'Orbit Demeter',
-    network: 'Orbit',
-    group: 'orbit',
-    tag: 'test',
-    nativeCurrency: ORBIT_NATIVE_CURRENCY,
-    blockExplorers: {
-      default: {
-        name: 'Demeter Orbit Explorer',
-        url: 'https://demeter-explorer.webb.tools',
-      },
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://demeter-testnet.webb.tools'],
-      },
-      public: {
-        http: ['https://demeter-testnet.webb.tools'],
-      },
-    },
-    contracts: hostedOrbitMulticall3Address
-      ? {
-          multicall3: {
-            address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: demeterOrbitMulticall3DeploymentBlock,
-          },
-        }
-      : undefined,
-  } satisfies ChainConfig,
-
   [PresetTypedChainId.TangleTestnet]: {
     chainType: ChainType.EVM,
     id: EVMChainId.TangleTestnet,
@@ -333,15 +213,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
           : ['https://testnet-rpc.tangle.tools'],
       },
     },
-    contracts:
-      !process.env['USING_LOCAL_TANGLE'] && hostedOrbitMulticall3Address
-        ? {
-            multicall3: {
-              address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
-              blockCreated: tangleMulticall3DeploymentBlock,
-            },
-          }
-        : undefined,
   } satisfies ChainConfig,
 
   // Localnet
