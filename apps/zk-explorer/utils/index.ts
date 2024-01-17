@@ -2,7 +2,7 @@ export * from './api';
 import _ from 'lodash';
 import { CircuitSearchResponseData } from '../api/circuits';
 import { ProjectSearchResponseData } from '../api/projects';
-import { CircuitItem } from '../app/components/CircuitCard';
+import { CircuitItem } from '../components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard';
 import { GITHUB_URL_PREFIX, ITEMS_PER_PAGE } from '../constants';
 import { User } from '../hooks/useAuth';

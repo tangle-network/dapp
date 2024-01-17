@@ -4,10 +4,10 @@
 import { PlusIcon } from '@radix-ui/react-icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import { Tabs } from '../../../components/Tabs';
-import { RelativePageUrl } from '../../../utils';
-import DashboardSettingsTab from '../containers/DashboardSettingsTab';
+import { RelativePageUrl } from '../utils';
 import DashboardOverviewTab from './DashboardOverviewTab';
+import DashboardSettingsTab from './DashboardSettingsTab';
+import { Tabs } from './Tabs';
 
 const DashboardTabs: FC = () => {
   return (

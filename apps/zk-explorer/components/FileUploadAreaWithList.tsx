@@ -8,7 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { Dispatch, FC, SetStateAction, useCallback } from 'react';
-import { FileUploadItem } from '../../../../../../../../libs/webb-ui-components/src/components/FileUploads/FileUploadItem';
+import { FileUploadItem } from '../../../libs/webb-ui-components/src/components/FileUploads/FileUploadItem';
 
 type FileUploadAreaWithListProps = {
   file: File | null;

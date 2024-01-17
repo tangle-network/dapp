@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, useState } from 'react';
-import FeedbackCard from '../../../../../../components/FeedbackCard';
-import { StepTrackerSidebar } from './StepCards/StepTrackerSidebar';
+import FeedbackCard from './FeedbackCard';
 import { ProofGenerationStepCards } from './StepCards';
+import { StepTrackerSidebar } from './StepCards/StepTrackerSidebar';
 
 const StepTrackerSidebarAndCards: FC<{
   circuitFilename: string;

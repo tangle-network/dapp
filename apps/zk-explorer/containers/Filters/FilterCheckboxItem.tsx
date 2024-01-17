@@ -10,7 +10,7 @@ export type FilterCheckboxItemProps = {
   handleChange: (isChecked: boolean, category: string, label: string) => void;
 };
 
-export const FilterCheckboxItem: FC<FilterCheckboxItemProps> = ({
+const FilterCheckboxItem: FC<FilterCheckboxItemProps> = ({
   category,
   label,
   isChecked,
@@ -32,3 +32,5 @@ export const FilterCheckboxItem: FC<FilterCheckboxItemProps> = ({
     </div>
   );
 };
+
+export default FilterCheckboxItem;

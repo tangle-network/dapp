@@ -1,8 +1,5 @@
 import { randomBytes } from 'crypto';
-import {
-  Location,
-  MpcParticipant,
-} from '../app/project/[owner]/[name]/[circuit]/components/StepCards/types';
+import { Location, MpcParticipant } from '../components/StepCards/types';
 import {
   FilterCategoryItem,
   FilterOptionItem,

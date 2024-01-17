@@ -13,10 +13,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { requestProofGeneration } from '../../../../../../../api/services';
-import { CONTACT_URL } from '../../../../../../../constants';
-import { MOCK_MPC_PARTICIPANTS } from '../../../../../../../constants/mock';
-import { RelativePageUrl } from '../../../../../../../utils';
+import { requestProofGeneration } from '../../api/services';
+import { CONTACT_URL } from '../../constants';
+import { MOCK_MPC_PARTICIPANTS } from '../../constants/mock';
+import { RelativePageUrl } from '../../utils';
 import FileUploadAreaWithList from '../FileUploadAreaWithList';
 import IdentityItem from './IdentityItem';
 import ServiceTierCard from './ServiceTierCard';

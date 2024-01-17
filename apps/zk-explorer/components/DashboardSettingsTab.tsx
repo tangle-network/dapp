@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { updateUserProfile } from '../../../api/user';
-import LargeSquareAvatar from '../../../components/LargeSquareAvatar';
-import { User, useAuth, useRequireAuth } from '../../../hooks/useAuth';
-import { computeUserDiff } from '../../../utils';
+import { updateUserProfile } from '../api/user';
+import { User, useAuth, useRequireAuth } from '../hooks/useAuth';
+import { computeUserDiff } from '../utils';
+import LargeSquareAvatar from './LargeSquareAvatar';
 
 const DashboardSettingsTab: FC = () => {
   const user = useRequireAuth();
