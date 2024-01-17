@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FilterConstraints } from '../containers/Filters/types';
 import { SearchParamKey, setSearchParam } from '../utils';
 
-export const useFilterConstraints = (): [
+const useFilterConstraints = (): [
   FilterConstraints,
   (newConstraints: FilterConstraints) => void
 ] => {
@@ -44,3 +44,5 @@ export const useFilterConstraints = (): [
 
   return [constraints, updateConstraints];
 };
+
+export default useFilterConstraints;

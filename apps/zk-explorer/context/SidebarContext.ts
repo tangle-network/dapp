@@ -1,12 +1,12 @@
 import assert from 'assert';
-import { createContext, useContext, ReactNode } from 'react';
+import { ReactNode, createContext, useContext } from 'react';
 
-interface SidebarContextType {
+type SidebarContextType = {
   isSidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
   sidebarContent: ReactNode;
+  setSidebarOpen: (open: boolean) => void;
   updateSidebarContent: (content: ReactNode) => void;
-}
+};
 
 export const SidebarContext = createContext<SidebarContextType | undefined>(
   undefined

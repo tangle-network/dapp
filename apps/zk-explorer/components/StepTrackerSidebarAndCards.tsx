@@ -2,8 +2,8 @@
 
 import { FC, useState } from 'react';
 import FeedbackCard from './FeedbackCard';
-import { ProofGenerationStepCards } from './StepCards';
-import { StepTrackerSidebar } from './StepCards/StepTrackerSidebar';
+import ProofGenerationStepCards from './ProofGenerationStepCards';
+import StepTrackerSidebar from './ProofGenerationStepCards/StepTrackerSidebar';
 
 const StepTrackerSidebarAndCards: FC<{
   circuitFilename: string;

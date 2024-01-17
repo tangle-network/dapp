@@ -37,7 +37,7 @@ type RowData = {
   [ColumnKey.Uptime]: number;
 };
 
-export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
+const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   circuitFilename,
   activeStep,
   nextStep,
@@ -369,3 +369,5 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
     </div>
   );
 };
+
+export default ProofGenerationStepCards;

@@ -41,7 +41,7 @@ export type SearchInputProps = PropsOf<typeof Input> & {
 
 const DEFAULT_DEBOUNCE_DELAY = 1500;
 
-export const SearchInput: FC<SearchInputProps> = ({
+const SearchInput: FC<SearchInputProps> = ({
   isFullWidth,
   isHomepageVariant,
   debounceTime = DEFAULT_DEBOUNCE_DELAY,
@@ -127,3 +127,5 @@ export const SearchInput: FC<SearchInputProps> = ({
     />
   );
 };
+
+export default SearchInput;

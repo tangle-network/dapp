@@ -6,9 +6,7 @@ export type StepTrackerSidebarProps = {
   activeStep: number;
 };
 
-export const StepTrackerSidebar: FC<StepTrackerSidebarProps> = ({
-  activeStep,
-}) => {
+const StepTrackerSidebar: FC<StepTrackerSidebarProps> = ({ activeStep }) => {
   return (
     <div className="flex gap-6 rounded-2xl">
       <Card className="flex flex-col space-y-0">
@@ -141,3 +139,5 @@ const VerticalStepperItem: FC<VerticalStepperItemProps> = ({
     </div>
   );
 };
+
+export default StepTrackerSidebar;

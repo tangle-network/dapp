@@ -1,5 +1,8 @@
 import { randomBytes } from 'crypto';
-import { Location, MpcParticipant } from '../components/StepCards/types';
+import {
+  Location,
+  MpcParticipant,
+} from '../components/ProofGenerationStepCards/types';
 import {
   FilterCategoryItem,
   FilterOptionItem,

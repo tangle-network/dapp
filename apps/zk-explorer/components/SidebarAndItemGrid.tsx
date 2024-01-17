@@ -9,7 +9,7 @@ import { SearchSortByClause, searchCircuits } from '../api/circuits';
 import { searchProjects } from '../api/projects';
 import { ITEMS_PER_PAGE } from '../constants';
 import Filters from '../containers/Filters';
-import { useFilterConstraints } from '../hooks/useFilterConstraints';
+import useFilterConstraints from '../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
@@ -23,11 +23,11 @@ import {
 } from '../utils';
 import { CircuitItem } from './CircuitCard';
 import FilterAndSortBy from './FilterAndSortBy';
-import { ItemGrid } from './ItemGrid';
-import { LinkCard } from './LinkCard';
+import ItemGrid from './ItemGrid';
+import LinkCard from './LinkCard';
 import { ProjectItem } from './ProjectCard';
-import { SearchInput } from './SearchInput';
-import { Tabs } from './Tabs';
+import SearchInput from './SearchInput';
+import Tabs from './Tabs';
 
 const SidebarAndItemGrid: FC<Record<string, never>> = () => {
   const breakpoint = useTailwindBreakpoint();

@@ -4,7 +4,7 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { ItemType, RelativePageUrl, createProjectDetailPath } from '../utils';
-import { CircuitCard, CircuitItem } from './CircuitCard';
+import CircuitCard, { CircuitItem } from './CircuitCard';
 import ProjectCard, { ProjectItem } from './ProjectCard';
 
 export type CardGridProps = PropsOf<'div'> & {
@@ -13,7 +13,7 @@ export type CardGridProps = PropsOf<'div'> & {
   circuits: CircuitItem[];
 };
 
-export const ItemGrid: FC<CardGridProps> = ({
+const ItemGrid: FC<CardGridProps> = ({
   selectedItemType,
   projects,
   circuits,
@@ -65,3 +65,5 @@ export const ItemGrid: FC<CardGridProps> = ({
     </div>
   );
 };
+
+export default ItemGrid;

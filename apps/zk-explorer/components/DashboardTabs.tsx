@@ -7,7 +7,7 @@ import { FC } from 'react';
 import { RelativePageUrl } from '../utils';
 import DashboardOverviewTab from './DashboardOverviewTab';
 import DashboardSettingsTab from './DashboardSettingsTab';
-import { Tabs } from './Tabs';
+import Tabs from './Tabs';
 
 const DashboardTabs: FC = () => {
   return (
