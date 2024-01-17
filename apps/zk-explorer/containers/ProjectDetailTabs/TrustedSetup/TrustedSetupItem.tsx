@@ -7,7 +7,7 @@ import {
 import type { FC } from 'react';
 
 import GitHubIconWithLink from '../../../components/GitHubIconWithLink';
-import type { ProjectTrustedSetupItem } from '../../../server';
+import { ProjectTrustedSetupItem } from '../../../server/projectDetails';
 import ContributionListTable from './ContributorListTable';
 
 const TrustedSetupItem: FC<ProjectTrustedSetupItem> = ({

@@ -1,8 +1,8 @@
+import { fetchProjectTrustedSetupData } from '../../../server/projectDetails';
 import TrustedSetupItem from './TrustedSetupItem';
-import { getProjectTrustedSetupData } from '../../../server';
 
 export default async function TrustedSetup() {
-  const trustedSetupData = await getProjectTrustedSetupData();
+  const trustedSetupData = await fetchProjectTrustedSetupData();
 
   return (
     <div className="p-4 md:p-6 space-y-9">

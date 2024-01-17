@@ -1,12 +1,12 @@
 import { DiscordFill, GlobalLine, TwitterFill } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import GitHubIconWithLink from '../../components/GitHubIconWithLink';
-import RunCircuitServiceModalTrigger from '../../components/RunCircuitServiceModalTrigger';
-import SmallChip from '../../components/SmallChip';
-import SocialChip from '../../components/SocialChip';
-import { MOCK_CIRCUIT_FILE_PATH } from '../../constants/mock';
-import { getProjectHeaderContainerData } from '../../server';
+import GitHubIconWithLink from '../components/GitHubIconWithLink';
+import RunCircuitServiceModalTrigger from '../components/RunCircuitServiceModalTrigger';
+import SmallChip from '../components/SmallChip';
+import SocialChip from '../components/SocialChip';
+import { MOCK_CIRCUIT_FILE_PATH } from '../constants/mock';
+import { fetchProjectBasicInfo } from '../server/projectDetails';
 
 interface ProjectHeaderContainerProps {
   className?: string;
@@ -16,7 +16,7 @@ export default async function ProjectHeaderContainer({
   className,
 }: ProjectHeaderContainerProps) {
   const { name, owner, tags, githubUrl, twitterUrl, websiteUrl, discordUrl } =
-    await getProjectHeaderContainerData();
+    await fetchProjectBasicInfo();
 
   return (
     <div

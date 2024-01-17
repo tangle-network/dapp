@@ -4,7 +4,7 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
-import { submitProject } from '../api/projects';
+import { submitProject } from '../server/projects';
 import {
   createProjectDetailPath,
   parseGithubUrl,

@@ -5,9 +5,8 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
-
 import GitHubIconWithLink from '../../../../components/GitHubIconWithLink';
-import type { FileType } from '../../../../server';
+import { FileType } from '../../../../server/projectDetails';
 
 interface HeaderProps {
   activeFile?: FileType;

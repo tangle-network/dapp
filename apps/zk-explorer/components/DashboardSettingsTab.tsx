@@ -7,8 +7,8 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { updateUserProfile } from '../api/user';
 import { User, useAuth, useRequireAuth } from '../hooks/useAuth';
+import { updateUserProfile } from '../server/user';
 import { computeUserDiff } from '../utils';
 import LargeSquareAvatar from './LargeSquareAvatar';
 

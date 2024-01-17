@@ -12,13 +12,13 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { exchangeAuthCodeForOAuthToken } from '../../api/auth';
 import SearchInput from '../../components/SearchInput';
 import { useSidebarContext } from '../../context/SidebarContext';
 import { useAuth } from '../../hooks/useAuth';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../../hooks/useTailwindBreakpoint';
+import { exchangeAuthCodeForOAuthToken } from '../../server/auth';
 import { RelativePageUrl } from '../../utils';
 import GitHubOAuthButton from '../GitHubOAuthButton';
 import {

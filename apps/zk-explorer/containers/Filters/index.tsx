@@ -5,10 +5,10 @@ import assert from 'assert';
 import { cloneDeep } from 'lodash';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { fetchFilterOptions } from '../../api/filters';
 import { IS_DEBUG_MODE } from '../../constants';
 import { MOCK_CATEGORIES } from '../../constants/mock';
 import useFilterConstraints from '../../hooks/useFilterConstraints';
+import { fetchFilterOptions } from '../../server/filters';
 import FilterCheckboxItem from './FilterCheckboxItem';
 import { FilterCategoryItem, FilterConstraints } from './types';
 

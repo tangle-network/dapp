@@ -1,22 +1,21 @@
-import dynamic from 'next/dynamic';
-import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
-
-import { getRelatedProjectsContainerData } from '../../server';
+import cx from 'classnames';
+import dynamic from 'next/dynamic';
+import { fetchRelatedProjects } from '../../server/projectDetails';
 
 const RelatedProjectsCarousel = dynamic(
   () => import('./client/RelatedProjectsCarousel'),
   { ssr: false }
 );
 
-interface RelatedProjectsContainerProps {
+type RelatedProjectsContainerProps = {
   className?: string;
-}
+};
 
 export default async function RelatedProjectsContainer({
   className,
 }: RelatedProjectsContainerProps) {
-  const relatedProjects = await getRelatedProjectsContainerData();
+  const relatedProjects = await fetchRelatedProjects();
 
   return (
     <div className={cx('space-y-6', className)}>

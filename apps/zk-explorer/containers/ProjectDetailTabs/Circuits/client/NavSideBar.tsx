@@ -1,11 +1,3 @@
-import { type FC, useMemo } from 'react';
-import cx from 'classnames';
-import {
-  UncontrolledTreeEnvironment,
-  Tree,
-  StaticTreeDataProvider,
-} from 'react-complex-tree';
-import { Typography } from '@webb-tools/webb-ui-components';
 import {
   FileLine,
   FolderFill,
@@ -13,22 +5,26 @@ import {
   ShieldedCheckLineIcon,
   SideBarLine,
 } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
+import { useMemo, type FC } from 'react';
+import {
+  StaticTreeDataProvider,
+  Tree,
+  UncontrolledTreeEnvironment,
+} from 'react-complex-tree';
 import 'react-complex-tree/lib/style-modern.css';
-
-import type {
-  FileType,
-  GetProjectCircuitDataReturnType,
-} from '../../../../server';
+import { FileTree, FileType } from '../../../../server/projectDetails';
 
 interface NavSideBarProps {
-  filesData: GetProjectCircuitDataReturnType;
+  fileTree: FileTree;
   handleFileSelect: (fileIdx: string) => void;
   activeFileIndex?: string;
   isCollapsed?: boolean;
 }
 
 const NavSideBar: FC<NavSideBarProps> = ({
-  filesData,
+  fileTree,
   handleFileSelect,
   activeFileIndex,
   isCollapsed,
@@ -64,7 +60,7 @@ const NavSideBar: FC<NavSideBarProps> = ({
       {/* Files Tree */}
       <div className={cx({ hidden: isCollapsed })}>
         <UncontrolledTreeEnvironment<FileType>
-          dataProvider={new StaticTreeDataProvider(filesData)}
+          dataProvider={new StaticTreeDataProvider(fileTree)}
           getItemTitle={(item) => item.data.fileName}
           canSearch={false}
           canSearchByStartingTyping={false}

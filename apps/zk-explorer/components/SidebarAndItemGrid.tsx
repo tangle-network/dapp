@@ -5,14 +5,14 @@ import { Button, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { SearchSortByClause, searchCircuits } from '../api/circuits';
-import { searchProjects } from '../api/projects';
 import { ITEMS_PER_PAGE } from '../constants';
 import Filters from '../containers/Filters';
 import useFilterConstraints from '../hooks/useFilterConstraints';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
+import { SearchSortByClause, searchCircuits } from '../server/circuits';
+import { searchProjects } from '../server/projects';
 import {
   ItemType,
   RelativePageUrl,

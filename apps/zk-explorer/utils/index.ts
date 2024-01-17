@@ -1,7 +1,5 @@
 export * from './api';
 import _ from 'lodash';
-import { CircuitSearchResponseData } from '../api/circuits';
-import { ProjectSearchResponseData } from '../api/projects';
 import { CircuitItem } from '../components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard';
 import {
@@ -10,6 +8,8 @@ import {
   ITEMS_PER_PAGE,
 } from '../constants';
 import { User } from '../hooks/useAuth';
+import { CircuitSearchResponseData } from '../server/circuits';
+import { ProjectSearchResponseData } from '../server/projects';
 
 export function createProjectDetailPath(
   repositoryOwner: string,
@@ -199,24 +199,29 @@ export function getPathFilename(path: string): string {
 export async function getGitHubLanguageColors(
   colorList: string[]
 ): Promise<Record<string, string>> {
-  const res = await fetch(GITHUB_LANGUAGE_COLORS_API_URL);
+  const response = await fetch(GITHUB_LANGUAGE_COLORS_API_URL);
 
-  if (!res.ok) {
+  if (!response.ok) {
+    // TODO: Provide reason why the request failed.
     throw new Error('Failed to fetch GitHub language colors');
   }
 
-  const formattedRes = await res.json();
-  const filteredData = Object.keys(formattedRes).filter((color) =>
-    colorList.includes(color)
+  const formattedResponse = await response.json();
+
+  const relevantLanguageColors = Object.keys(formattedResponse).filter(
+    (color) => colorList.includes(color)
   );
 
-  return filteredData.reduce((map, language) => {
+  return relevantLanguageColors.reduce((map, language) => {
+    // TODO: Might need to perform a deep copy here to avoid mutating the original object.
     const updatedMap = map;
-    map[language] = formattedRes[language].color;
+
+    map[language] = formattedResponse[language].color;
+
     return updatedMap;
   }, {} as Record<string, string>);
 }
 
-export function artificialWait(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+export function artificialDelay(timeInMs: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, timeInMs));
 }

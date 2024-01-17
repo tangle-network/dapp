@@ -20,12 +20,6 @@
       "jest",
       "node"
     ],
-    "baseUrl": ".",
-    "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-    }
   },
   "include": [
     "**/*.ts",

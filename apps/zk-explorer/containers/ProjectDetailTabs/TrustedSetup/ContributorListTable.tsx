@@ -13,9 +13,8 @@ import {
   shortenString,
 } from '@webb-tools/webb-ui-components';
 import type { FC } from 'react';
-
 import SmallChip from '../../../components/SmallChip';
-import type { ContributionListItem } from '../../../server';
+import { ContributionListItem } from '../../../server/projectDetails';
 
 const PAGE_SIZE = 5;
 const columnHelper = createColumnHelper<ContributionListItem>();

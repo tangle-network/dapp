@@ -1,12 +1,11 @@
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
 import 'github-markdown-css/github-markdown.css';
-
-import { getProjectSummaryData } from '../../../server';
+import Markdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
+import { fetchProjectDetailsSummary } from '../../server/projectDetails';
 
 export default async function Summary() {
-  const readMeRawMd = await getProjectSummaryData();
+  const readMeRawMd = await fetchProjectDetailsSummary();
 
   return (
     <div className="markdown-body p-6">

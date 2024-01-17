@@ -15,19 +15,17 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/get
 import cx from 'classnames';
 import Image from 'next/image';
 import { useMemo, useState, type FC } from 'react';
-
+import GitHubAvatar from '../../../components/GitHubAvatar';
 import SmallChip from '../../../components/SmallChip';
 import { PROJECT_DETAIL_CONTAINER_ID } from '../../../constants';
-
-import GitHubAvatar from '@components/GitHubAvatar';
-import { ProjectGitHubInfoContainerDataType } from '../../../server/fetchProjectGitHubInfoContainerData';
+import { ProjectDetailsGitHubInfo } from '../../../server/projectDetails';
 
 const CONTROLLER_MARGIN_LEFT = 20;
 
 const ProjectGitHubInfoClient: FC<{
-  data: ProjectGitHubInfoContainerDataType;
+  githubInfo: ProjectDetailsGitHubInfo;
   className?: string;
-}> = ({ data, className }) => {
+}> = ({ githubInfo, className }) => {
   const {
     fullName,
     avatarUrl,
@@ -50,17 +48,21 @@ const ProjectGitHubInfoClient: FC<{
     topContributors,
     contributorsUrl,
     languagesInfo,
-  } = data;
+  } = githubInfo;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const controllerLeftPosition = useMemo(() => {
-    if (!isCollapsed) return -30;
+    if (!isCollapsed) {
+      return -30;
+    }
+
     const container = document.getElementById(PROJECT_DETAIL_CONTAINER_ID);
     const containerWidth = container?.offsetWidth as number;
     const { innerWidth: windowWidth } = window;
     const paddingWidth = (windowWidth - containerWidth) / 2;
-    return -(paddingWidth - CONTROLLER_MARGIN_LEFT);
+
+    return CONTROLLER_MARGIN_LEFT - paddingWidth;
   }, [isCollapsed]);
 
   return (
@@ -100,6 +102,7 @@ const ProjectGitHubInfoClient: FC<{
           >
             About
           </Typography>
+
           <Typography variant="body1">{description}</Typography>
 
           {/* Tags */}
@@ -117,26 +120,31 @@ const ProjectGitHubInfoClient: FC<{
             label="Readme"
             url={readmeUrl}
           />
+
           <BasicInfoItem
             Icon={ScalesIcon}
             label={license.name}
             url={license.url}
           />
+
           <BasicInfoItem
             Icon={ActivityIcon}
             label="Activity"
             url={activityUrl}
           />
+
           <BasicInfoItem
             Icon={EyeLineIcon}
             label={`${getRoundedAmountString(watchersCount)} watching`}
             url={watchersUrl}
           />
+
           <BasicInfoItem
             Icon={StarLineIcon}
             label={`${getRoundedAmountString(starsCount)} stars`}
             url={starsUrl}
           />
+
           <BasicInfoItem
             Icon={BranchesIcon}
             label={`${getRoundedAmountString(forksCount)} forks`}
@@ -154,10 +162,13 @@ const ProjectGitHubInfoClient: FC<{
             >
               Releases
             </Typography>
+
             <SmallChip className="py-0.5">{releasesCount}</SmallChip>
           </div>
+
           <div className="flex items-center gap-2">
             <TagIcon className="fill-green-70 dark:!fill-green-50" />
+
             {/* Latest Release */}
             <a
               href={latestReleaseUrl}
@@ -169,6 +180,7 @@ const ProjectGitHubInfoClient: FC<{
                 {latestRelease}
               </Typography>
             </a>
+
             <div className="border border-green-90 rounded-3xl py-0.5 px-2">
               <Typography
                 variant="body4"
@@ -178,6 +190,7 @@ const ProjectGitHubInfoClient: FC<{
               </Typography>
             </div>
           </div>
+
           {releasesCount > 1 && (
             <Button
               href={releasesUrl}
@@ -238,6 +251,7 @@ const ProjectGitHubInfoClient: FC<{
           >
             Languages
           </Typography>
+
           <div className="space-y-2">
             {/* Languages bar */}
             <div className="h-2 rounded-md overflow-hidden flex">
@@ -288,8 +302,6 @@ const ProjectGitHubInfoClient: FC<{
     </div>
   );
 };
-
-export default ProjectGitHubInfoClient;
 
 /** @internal */
 const BasicInfoItem: FC<{
@@ -370,3 +382,5 @@ const ArrowController: FC = () => {
     </svg>
   );
 };
+
+export default ProjectGitHubInfoClient;

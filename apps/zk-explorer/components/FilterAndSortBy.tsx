@@ -9,13 +9,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
-import { SearchSortByClause } from '../api/circuits';
 import Filters from '../containers/Filters';
 import { FilterConstraints } from '../containers/Filters/types';
 import { useSidebarContext } from '../context/SidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
+import { SearchSortByClause } from '../server/circuits';
 
 export type FilterAndSortByProps = {
   sortByClause: SearchSortByClause;

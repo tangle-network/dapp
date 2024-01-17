@@ -1,14 +1,13 @@
-import { type FC, Suspense } from 'react';
-import cx from 'classnames';
 import {
-  TabsRoot,
-  TabsList,
-  TabTrigger,
-  TabContent,
   SkeletonLoader,
+  TabContent,
+  TabTrigger,
+  TabsList,
+  TabsRoot,
 } from '@webb-tools/webb-ui-components';
-
-import Circuits from './Circuits';
+import cx from 'classnames';
+import { Suspense, type FC } from 'react';
+import Circuits from './Circuits/Circuits';
 import Summary from './Summary';
 import TrustedSetup from './TrustedSetup';
 

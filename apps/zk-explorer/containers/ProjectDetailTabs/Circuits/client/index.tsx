@@ -4,34 +4,34 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-
+import { FileTree } from '../../../../server/projectDetails';
 import CodeFile from './CodeFile';
 import Header from './Header';
 import NavSideBar from './NavSideBar';
 
-import type { GetProjectCircuitDataReturnType } from '../../../../server';
-
 type CircuitsClientProps = {
-  data: GetProjectCircuitDataReturnType;
+  fileTree: FileTree;
 };
 
-const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
+const CircuitsClient: FC<CircuitsClientProps> = ({ fileTree }) => {
   const initActiveFileIndex = useMemo(
     () =>
-      Object.values(data)
+      Object.values(fileTree)
         .find((item) => !item.isFolder)
         ?.index?.toString() ?? undefined,
-    [data]
+    [fileTree]
   );
 
   const [isMounting, setIsMounting] = useState(true);
+
   const [activeFileIndex, setActiveFileIndex] = useState<string | undefined>(
     initActiveFileIndex
   );
+
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
 
   const activeFileData = activeFileIndex
-    ? data[activeFileIndex].data
+    ? fileTree[activeFileIndex].data
     : undefined;
 
   const handleFileSelect = useCallback((fileIdx: string) => {
@@ -60,12 +60,13 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
             onExpand={() => setSideBarCollapsed(false)}
           >
             <NavSideBar
-              filesData={data}
+              fileTree={fileTree}
               handleFileSelect={handleFileSelect}
               activeFileIndex={activeFileIndex}
               isCollapsed={sideBarCollapsed}
             />
           </Panel>
+
           <PanelResizeHandle
             className={cx(
               'w-[2px] bg-mono-60 dark:bg-mono-180 ease-linear duration-150',
@@ -73,6 +74,7 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
               'data-[resize-handle-active]:bg-blue-70 dark:data-[resize-handle-active]:bg-blue-50'
             )}
           />
+
           <Panel className="!overflow-auto">
             <CodeFile
               fetchUrl={activeFileData?.fetchUrl}
@@ -85,20 +87,23 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ data }) => {
   );
 };
 
-export default CircuitsClient;
-
 /** @internal */
 const MainSkeleton: FC = () => {
   return (
     <div className="flex-[1_1_auto] flex">
       <div className="space-y-3 p-3 h-full w-[30%]">
         <SkeletonLoader size="xl" />
+
         <SkeletonLoader size="xl" />
       </div>
+
       <div className="space-y-3 p-3 h-full w-[70%] border-l-2 border-mono-60 dark:border-mono-180">
         <SkeletonLoader size="xl" />
+
         <SkeletonLoader size="xl" />
       </div>
     </div>
   );
 };
+
+export default CircuitsClient;
