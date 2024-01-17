@@ -39,15 +39,12 @@ const DashboardSettingsTab: FC = () => {
   const [shortBio, setShortBio] = useState(initialUser.shortBio || '');
   const [website, setWebsite] = useState(initialUser.website || '');
 
-  const wereChangesMade = useMemo(
-    () =>
-      email !== initialUser.email ||
-      githubUsername !== initialUser.githubUsername ||
-      twitterHandle !== initialUser.twitterHandle ||
-      website !== initialUser.website ||
-      shortBio !== initialUser.shortBio,
-    [email, githubUsername, twitterHandle, website, shortBio, initialUser]
-  );
+  const wereChangesMade =
+    email !== initialUser.email ||
+    githubUsername !== initialUser.githubUsername ||
+    twitterHandle !== initialUser.twitterHandle ||
+    website !== initialUser.website ||
+    shortBio !== initialUser.shortBio;
 
   const restoreChanges = useCallback(() => {
     setEmail(initialUser.email);

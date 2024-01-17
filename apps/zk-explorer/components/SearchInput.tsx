@@ -4,7 +4,7 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
@@ -89,24 +89,16 @@ const SearchInput: FC<SearchInputProps> = ({
     }
   };
 
-  const searchQueryPlaceholder = useMemo(
-    () =>
-      breakpoint >= TailwindBreakpoint.SM && isFullWidth && isHomepageVariant
-        ? 'Search projects and circuits for specific keywords...'
-        : 'Search projects and circuits...',
-    [breakpoint, isFullWidth, isHomepageVariant]
-  );
+  const searchQueryPlaceholder =
+    breakpoint >= TailwindBreakpoint.SM && isFullWidth && isHomepageVariant
+      ? 'Search projects and circuits for specific keywords...'
+      : 'Search projects and circuits...';
 
-  const variantClass = useMemo(
-    () =>
-      isHomepageVariant ? 'rounded-[50px] border-none' : 'min-w-[270px] w-full',
-    [isHomepageVariant]
-  );
+  const variantClass = isHomepageVariant
+    ? 'rounded-[50px] border-none'
+    : 'min-w-[270px] w-full';
 
-  const iconHomepageVariantClass = useMemo(
-    () => (isHomepageVariant ? 'mr-4' : undefined),
-    [isHomepageVariant]
-  );
+  const iconHomepageVariantClass = isHomepageVariant ? 'mr-4' : undefined;
 
   return (
     <Input
