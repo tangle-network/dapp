@@ -11,8 +11,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
+import { createProofGenerationUrl } from '../utils';
 import { RadioCard } from './RadioCard';
 
 export type RunCircuitServiceModalTriggerProps = {
@@ -43,7 +44,7 @@ enum RadioItem {
 
 export const RunCircuitServiceModalTrigger: FC<
   RunCircuitServiceModalTriggerProps
-> = ({ circuitFilePath }) => {
+> = ({ circuitFilePath, owner, repositoryName }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedRadioItemId, setSelectedRadioItemId] = useState<string | null>(
@@ -51,7 +52,6 @@ export const RunCircuitServiceModalTrigger: FC<
   );
 
   const router = useRouter();
-  const currentPath = usePathname();
 
   const handleContinue = useCallback(() => {
     assert(
@@ -60,19 +60,13 @@ export const RunCircuitServiceModalTrigger: FC<
     );
 
     if (selectedRadioItemId === RadioItem.ProofGenerationService) {
-      const encodedCircuitFilePath = encodeURIComponent(circuitFilePath);
-
-      router.push(`${currentPath}/${encodedCircuitFilePath}`);
+      router.push(
+        createProofGenerationUrl(owner, repositoryName, circuitFilePath)
+      );
     }
 
     // TODO: Handle other services: Trusted Setup Service.
-  }, [
-    RadioItem.ProofGenerationService,
-    circuitFilePath,
-    currentPath,
-    router,
-    selectedRadioItemId,
-  ]);
+  }, [circuitFilePath, owner, repositoryName, router, selectedRadioItemId]);
 
   return (
     <>

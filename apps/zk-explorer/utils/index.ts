@@ -10,7 +10,24 @@ export function createProjectDetailPath(
   repositoryOwner: string,
   repositoryName: string
 ): string {
-  return `/project/${repositoryOwner}/${repositoryName}`;
+  const encodedRepositoryOwner = encodeURIComponent(repositoryOwner);
+  const encodedRepositoryName = encodeURIComponent(repositoryName);
+
+  return `/project/${encodedRepositoryOwner}/${encodedRepositoryName}`;
+}
+
+export function createProofGenerationUrl(
+  owner: string,
+  repositoryName: string,
+  circuitFilePath: string
+): string {
+  const encodedCircuitFilePath = encodeURIComponent(circuitFilePath);
+
+  return (
+    createProjectDetailPath(owner, repositoryName) +
+    '/' +
+    encodedCircuitFilePath
+  );
 }
 
 export function tryOrElse<T>(fn: () => T, fallback: () => T): T {
