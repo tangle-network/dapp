@@ -13,7 +13,7 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useTokenWalletBalance(
   address: string,
-  defaultValue: { value1: number | string | null } = { value1: null }
+  defaultValue: { value1: number | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,11 +59,10 @@ export default function useTokenWalletBalance(
 
         sub = api.query.system.account(address).subscribe(async (accData) => {
           if (isMounted) {
-            const ledger = accData;
             const freeBalance = accData.data.free.toBigInt();
             const reservedBalance = accData.data.reserved.toBigInt();
             // total balance = free balance + reserved balance
-            setValue1(formatEther(freeBalance + reservedBalance));
+            setValue1(Number(formatEther(freeBalance + reservedBalance)));
             setIsLoading(false);
           }
         });

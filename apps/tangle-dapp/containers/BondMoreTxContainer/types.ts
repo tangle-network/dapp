@@ -7,5 +7,5 @@ export type BondTokensProps = {
   amountToBond: number;
   setAmountToBond: (amount: number) => void;
   amountToBondError?: string;
-  amountWalletBalance: number | string;
+  amountWalletBalance: number;
 };
