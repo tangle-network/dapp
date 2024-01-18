@@ -56,6 +56,9 @@ export const WEBB_MKT_URL = 'https://webb.tools';
 export const TESTNET_LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
+export const TANGLE_PRESS_KIT_URL = 'https://www.tangle.tools/press-kit';
+export const TANGLE_DOCS_URL = 'https://docs.tangle.tools';
+export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_URL =
@@ -65,7 +68,7 @@ export const WEBB_TANGLE_DOCS_STAKING_URL =
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
-  'https://assets-global.website-files.com/6494562b44a28080aafcbad4/650b1ccdfa5173ba4977825a_Tangle_Network_Whitepaper.pdf';
+  'https://github.com/webb-tools/tangle/blob/main/Tangle_Network_Whitepaper_V1.pdf';
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
@@ -89,6 +92,8 @@ export const POLKADOT_EXPLORER_URL =
 
 export const FOLLOW_WEBB_TWITTER_URL =
   'https://twitter.com/intent/follow?screen_name=webbprotocol';
+
+export const TANGLE_TWITTER_URL = 'https://twitter.com/tangle_network';
 
 export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
 export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
@@ -180,7 +185,7 @@ export const WEBB_DOC_ROUTES_RECORD = {
   },
 } as const;
 
-export const WEBB_AVAIABLE_SOCIALS = [
+export const WEBB_AVAILABLE_SOCIALS = [
   'telegram',
   'discord',
   'commonwealth',
@@ -199,7 +204,7 @@ export const SOCIAL_URLS_RECORD = {
   github: 'https://github.com/webb-tools',
   youTube: 'https://www.youtube.com/channel/UCDro1mNK9yHGQNDvFuucwVw',
 } as const satisfies {
-  [key in (typeof WEBB_AVAIABLE_SOCIALS)[number]]: string;
+  [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
 };
 
 export const SOCIAL_ICONS_RECORD = {
@@ -211,7 +216,7 @@ export const SOCIAL_ICONS_RECORD = {
   github: GithubFill,
   youTube: YouTubeFill,
 } as const satisfies {
-  [key in (typeof WEBB_AVAIABLE_SOCIALS)[number]]: (
+  [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: (
     props: IconBase
   ) => JSX.Element;
 };
@@ -347,7 +352,7 @@ export const bottomLinks: ExternalLink[] = [
   },
 ];
 
-export const defaultSocialConfigs = WEBB_AVAIABLE_SOCIALS.map(
+export const defaultSocialConfigs = WEBB_AVAILABLE_SOCIALS.map(
   (name) =>
     ({
       name,

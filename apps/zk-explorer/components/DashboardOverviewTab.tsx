@@ -4,15 +4,16 @@ import { GithubFill, GlobalLine, TwitterFill } from '@webb-tools/icons';
 import { Button, Card, Typography } from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
+import { MOCK_AVATAR_URL } from '../constants/mock';
 import { useRequireAuth } from '../hooks/useAuth';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
 import { formatTimestamp } from '../utils';
-import { LargeSquareAvatar } from './LargeSquareAvatar';
-import { SocialChip } from './SocialChip';
+import LargeSquareAvatar from './LargeSquareAvatar';
+import SocialChip from './SocialChip';
 
-export const DashboardOverviewTab: FC = () => {
+const DashboardOverviewTab: FC = () => {
   const {
     activatedCircuitCount,
     createdAt,
@@ -34,7 +35,7 @@ export const DashboardOverviewTab: FC = () => {
       <Card className="p-6 flex flex-col md:flex-row rounded-2xl space-y-0 items-start md:gap-6">
         {breakpoint < TailwindBreakpoint.MD && (
           <div className="mb-6 md:mb-0">
-            <LargeSquareAvatar />
+            <LargeSquareAvatar src={MOCK_AVATAR_URL} />
           </div>
         )}
 
@@ -110,7 +111,7 @@ export const DashboardOverviewTab: FC = () => {
 
         {breakpoint >= TailwindBreakpoint.MD && (
           <div className="ml-auto lg:self-center">
-            <LargeSquareAvatar />
+            <LargeSquareAvatar src={MOCK_AVATAR_URL} />
           </div>
         )}
       </Card>
@@ -153,3 +154,5 @@ const Divider: FC = () => {
     </div>
   );
 };
+
+export default DashboardOverviewTab;

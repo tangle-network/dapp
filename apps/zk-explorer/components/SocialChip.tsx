@@ -1,6 +1,6 @@
 import { IconBase } from '@webb-tools/icons/types';
 import { FC } from 'react';
-import { SmallChip } from './SmallChip';
+import SmallChip from './SmallChip';
 
 type SocialChipProps = {
   href: string;
@@ -8,7 +8,7 @@ type SocialChipProps = {
   Icon: (props: IconBase) => JSX.Element;
 };
 
-export const SocialChip: FC<SocialChipProps> = ({ Icon, href, title }) => {
+const SocialChip: FC<SocialChipProps> = ({ Icon, href, title }) => {
   return (
     <a target="_blank" rel="noopener noreferrer" title={title} href={href}>
       <SmallChip
@@ -20,3 +20,5 @@ export const SocialChip: FC<SocialChipProps> = ({ Icon, href, title }) => {
     </a>
   );
 };
+
+export default SocialChip;
