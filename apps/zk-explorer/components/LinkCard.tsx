@@ -9,7 +9,7 @@ export type LinkCardProps = PropsOf<typeof Link> & {
   isExternal?: boolean;
 };
 
-export const LinkCard: FC<LinkCardProps> = ({
+const LinkCard: FC<LinkCardProps> = ({
   href,
   className,
   isExternal = false,
@@ -39,3 +39,5 @@ export const LinkCard: FC<LinkCardProps> = ({
     </Link>
   );
 };
+
+export default LinkCard;

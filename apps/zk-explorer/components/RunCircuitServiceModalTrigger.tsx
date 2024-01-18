@@ -14,7 +14,7 @@ import assert from 'assert';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
 import { createProofGenerationUrl } from '../utils';
-import { RadioCard } from './RadioCard';
+import RadioCard from './RadioCard';
 
 export type RunCircuitServiceModalTriggerProps = {
   owner: string;
@@ -148,3 +148,5 @@ export const RunCircuitServiceModalTrigger: FC<
     </>
   );
 };
+
+export default RunCircuitServiceModalTrigger;
