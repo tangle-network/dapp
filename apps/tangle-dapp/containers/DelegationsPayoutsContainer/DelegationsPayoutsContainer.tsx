@@ -12,20 +12,21 @@ import {
   TableAndChartTabs,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
+import usePayouts from '../../data/DelegationsPayouts/usePayouts';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
 import DelegatorTableContainer from './DelegatorTableContainer';
+import PayoutTableContainer from './PayoutTableContainer';
 
-const pageSize = 5;
+const pageSize = 10;
 const delegationsTableTab = 'Nominations';
 const payoutsTableTab = 'Payouts';
 
@@ -57,6 +58,9 @@ const DelegationsPayoutsContainer: FC = () => {
 
     return delegatorsData.delegators.map((delegator) => delegator.address);
   }, [delegatorsData?.delegators]);
+
+  const { data: payoutsData, isLoading: payoutsIsLoading } =
+    usePayouts(substrateAddress);
 
   const { isMobile } = useCheckMobile();
 
@@ -165,17 +169,25 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
-          ) : (
+          ) : payoutsIsLoading ? (
+            <ContainerSkeleton />
+          ) : !payoutsData ||
+            (payoutsData && payoutsData.payouts.length === 0) ? (
             <TableStatus
-              title="Work In Progress"
-              description="This feature is currently under development."
-              buttonText="View Network"
+              title="Ready to Get Rewarded?"
+              description="It looks like you haven't nominated any tokens yet. Start by choosing a validator to support and earn rewards!"
+              buttonText="Nominate"
               buttonProps={{
-                onClick: () => window.open(TANGLE_STAKING_URL, '_blank'),
+                onClick: () => setIsDelegateModalOpen(true),
               }}
-              icon="🔧"
+              icon="🔍"
             />
-          )}
+          ) : payoutsData ? (
+            <PayoutTableContainer
+              value={payoutsData.payouts}
+              pageSize={pageSize}
+            />
+          ) : null}
         </TabContent>
       </TableAndChartTabs>
 

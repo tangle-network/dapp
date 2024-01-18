@@ -94,7 +94,7 @@ export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
 export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
 export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 
-export const TANGLE_RPC_ENDPOINT = 'wss://testnet-rpc.tangle.tools';
+export const TANGLE_RPC_ENDPOINT = 'wss://testnet-rpc-archive.tangle.tools';
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 
