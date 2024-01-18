@@ -10,7 +10,7 @@ import {
 
 export default async function Index() {
   return (
-    <div>
+    <div className="space-y-12">
       <div className="flex items-center justify-between">
         <Typography variant="h4" fw="bold">
           Staking Overview
@@ -19,21 +19,13 @@ export default async function Index() {
         <HeaderChipsContainer />
       </div>
 
-      <div className="mt-12">
-        <KeyStatsContainer />
-      </div>
+      <KeyStatsContainer />
 
-      <div className="mt-12">
-        <NominatorStatsContainer />
-      </div>
+      <NominatorStatsContainer />
 
-      <div className="mt-12">
-        <DelegationsPayoutsContainer />
-      </div>
+      <DelegationsPayoutsContainer />
 
-      <div className="mt-12">
-        <ValidatorTablesContainer />
-      </div>
+      <ValidatorTablesContainer />
     </div>
   );
 }

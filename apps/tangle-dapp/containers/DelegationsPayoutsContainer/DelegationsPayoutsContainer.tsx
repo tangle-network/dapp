@@ -18,6 +18,7 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 import { ContainerSkeleton, TableStatus } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
+import useChooseWalletModal from '../../hooks/useChooseWalletModal';
 import { convertEthereumToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -31,6 +32,7 @@ const payoutsTableTab = 'Payouts';
 
 const DelegationsPayoutsContainer: FC = () => {
   const { activeAccount, loading } = useWebContext();
+  const { setIsSelectWalletTypeModalOpen } = useChooseWalletModal();
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -118,11 +120,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 isLoading: loading,
                 isDisabled: isMobile,
                 loadingText: 'Connecting...',
-                onClick: () =>
-                  toggleModal(
-                    true,
-                    PresetTypedChainId.TangleTestnet ?? undefined
-                  ),
+                onClick: () => setIsSelectWalletTypeModalOpen(true),
               }}
               icon="🔗"
             />

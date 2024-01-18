@@ -3,6 +3,7 @@ import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-u
 import React, { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+import ChooseWalletTypeModalContainer from '../ChooseWalletTypeModalContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
 
@@ -28,6 +29,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           {children}
 
           <WalletModalContainer />
+
+          <ChooseWalletTypeModalContainer />
         </div>
 
         <Footer isMinimal className="py-8" />
