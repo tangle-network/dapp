@@ -1,7 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { HeaderControls } from '../components/HeaderControls';
-import { HomepageInteractiveContents } from '../components/HomepageInteractiveContents';
-import { OverlayMask } from '../components/OverlayMask';
+import OverlayMask from '../components/OverlayMask';
+import SidebarAndItemGrid from '../components/SidebarAndItemGrid';
+import HeaderControls from '../containers/HeaderControls';
 
 export default function Index() {
   return (
@@ -39,7 +39,7 @@ export default function Index() {
         </div>
       </header>
 
-      <HomepageInteractiveContents />
+      <SidebarAndItemGrid />
     </main>
   );
 }

@@ -14,11 +14,12 @@ _Put an `x` in the boxes that apply._
 - [ ] `apps/tangle-dapp`
 - [ ] `apps/testnet-leaderboard`
 - [ ] `apps/faucet`
+- [ ] `apps/zk-explorer`
 - [ ] `libs/webb-ui-components`
 
 ### Reference issue to close (if applicable)
 
-_Specify any issues that can be closed from these changes (e.g. Closes #233)._
+_Specify any issues that can be closed from these changes (e.g. `Closes #233`)._
 
 - Closes
 

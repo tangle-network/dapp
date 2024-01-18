@@ -7,11 +7,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { MOCK_AVATAR_URL } from '../constants/mock';
 import { User, useAuth, useRequireAuth } from '../hooks/useAuth';
-import { computeUserDiff, updateUserProfile } from '../utils';
-import { LargeSquareAvatar } from './LargeSquareAvatar';
+import { updateUserProfile } from '../server/user';
+import { computeUserDiff } from '../utils';
+import LargeSquareAvatar from './LargeSquareAvatar';
 
-export const DashboardSettingsTab: FC = () => {
+const DashboardSettingsTab: FC = () => {
   const user = useRequireAuth();
   const { refreshAuth } = useAuth();
 
@@ -38,15 +40,12 @@ export const DashboardSettingsTab: FC = () => {
   const [shortBio, setShortBio] = useState(initialUser.shortBio || '');
   const [website, setWebsite] = useState(initialUser.website || '');
 
-  const wereChangesMade = useMemo(
-    () =>
-      email !== initialUser.email ||
-      githubUsername !== initialUser.githubUsername ||
-      twitterHandle !== initialUser.twitterHandle ||
-      website !== initialUser.website ||
-      shortBio !== initialUser.shortBio,
-    [email, githubUsername, twitterHandle, website, shortBio, initialUser]
-  );
+  const wereChangesMade =
+    email !== initialUser.email ||
+    githubUsername !== initialUser.githubUsername ||
+    twitterHandle !== initialUser.twitterHandle ||
+    website !== initialUser.website ||
+    shortBio !== initialUser.shortBio;
 
   const restoreChanges = useCallback(() => {
     setEmail(initialUser.email);
@@ -215,7 +214,7 @@ export const DashboardSettingsTab: FC = () => {
       </div>
 
       <div className="flex flex-col gap-6 items-end">
-        <LargeSquareAvatar />
+        <LargeSquareAvatar src={MOCK_AVATAR_URL} />
 
         {/* TODO: Handle upload avatar button. */}
         <Button variant="secondary">Upload</Button>
@@ -223,3 +222,5 @@ export const DashboardSettingsTab: FC = () => {
     </Card>
   );
 };
+
+export default DashboardSettingsTab;

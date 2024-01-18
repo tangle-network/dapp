@@ -3,7 +3,7 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export const SmallChip: FC<PropsWithChildren<PropsOf<typeof Chip>>> = ({
+const SmallChip: FC<PropsWithChildren<PropsOf<typeof Chip>>> = ({
   children,
   className,
   ...rest
@@ -22,3 +22,5 @@ export const SmallChip: FC<PropsWithChildren<PropsOf<typeof Chip>>> = ({
     </Chip>
   );
 };
+
+export default SmallChip;
