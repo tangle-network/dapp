@@ -1,5 +1,3 @@
-import { IconBase } from '@webb-tools/icons/types';
-import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
 import {
   forwardRef,
@@ -8,161 +6,18 @@ import {
   type ElementRef,
 } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  BRIDGE_URL,
-  DKG_STATS_URL,
-  SOCIAL_ICONS_RECORD,
-  SOCIAL_URLS_RECORD,
-  TANGLE_MKT_URL,
-  TANGLE_PRIVACY_POLICY_URL,
-  TANGLE_TERMS_OF_SERVICE_URL,
-  TANGLE_WHITEPAPER_URL,
-  WEBB_AVAIABLE_SOCIALS,
-  WEBB_CAREERS_URL,
-  WEBB_DOCS_URL,
-  WEBB_MKT_URL,
-} from '../../constants';
 import { Typography } from '../../typography';
 import { InternalOrExternalLink } from '../Navbar/InternalOrExternalLink';
 import { TangleLogo } from '../TangleLogo';
 import { WebsiteNewsletterForm } from '../WebsiteNewsLetterForm';
 
-type NavLinkType = {
-  group: string;
-  links: Array<
-    ComponentProps<typeof InternalOrExternalLink> & { label: string }
-  >;
-};
-
-type SocialType = {
-  Icon: (props: IconBase) => JSX.Element;
-  name: string;
-  href: string;
-};
-
-type Props = {
-  hideNewsletter?: boolean;
-};
-
-const NAV_LINKS = [
-  {
-    group: 'Community',
-    links: [
-      {
-        label: 'Github',
-        url: SOCIAL_URLS_RECORD.github,
-        isInternal: false,
-      },
-      {
-        label: 'Telegram',
-        url: SOCIAL_URLS_RECORD.telegram,
-        isInternal: false,
-      },
-      {
-        label: 'Discord',
-        url: SOCIAL_URLS_RECORD.discord,
-        isInternal: false,
-      },
-      {
-        label: 'Twitter',
-        url: SOCIAL_URLS_RECORD.twitter,
-        isInternal: false,
-      },
-      {
-        label: 'Commonwealth',
-        url: SOCIAL_URLS_RECORD.commonwealth,
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Ecosystem',
-    links: [
-      {
-        label: 'Tangle',
-        url: TANGLE_MKT_URL,
-        isInternal: false,
-      },
-      {
-        label: 'DKG Explorer',
-        url: DKG_STATS_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Hubble Bridge',
-        url: BRIDGE_URL,
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Developer',
-    links: [
-      {
-        label: 'Documentation',
-        url: WEBB_DOCS_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Source Code',
-        url: SOCIAL_URLS_RECORD.github,
-        isInternal: false,
-      },
-      {
-        label: 'Whitepaper',
-        url: TANGLE_WHITEPAPER_URL,
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Company',
-    links: [
-      {
-        label: 'About Us',
-        url: WEBB_MKT_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Careers',
-        url: WEBB_CAREERS_URL,
-        isInternal: false,
-      },
-      {
-        label: 'Brand Kit',
-        url: '/brand-kit',
-        isInternal: false,
-      },
-    ],
-  },
-  {
-    group: 'Legal',
-    links: [
-      {
-        label: 'Privacy Policy',
-        url: TANGLE_PRIVACY_POLICY_URL,
-      },
-      {
-        label: 'Terms of Service',
-        url: TANGLE_TERMS_OF_SERVICE_URL,
-      },
-    ],
-  },
-] as const satisfies Array<NavLinkType>;
-
-const socials = WEBB_AVAIABLE_SOCIALS.map(
-  (name) =>
-    ({
-      name: capitalize(name),
-      Icon: SOCIAL_ICONS_RECORD[name],
-      href: SOCIAL_URLS_RECORD[name],
-    } as const satisfies SocialType)
-);
+import type { WebbFooterProps } from './types';
+import { getNavLinks, getSocials } from './utils';
 
 export const WebsiteFooter = forwardRef<
   ElementRef<'footer'>,
-  ComponentProps<'footer'> & Props
->(({ hideNewsletter, className, ...props }, ref) => {
+  ComponentProps<'footer'> & WebbFooterProps
+>(({ websiteType = 'webb', hideNewsletter, className, ...props }, ref) => {
   // State for subscription success
   const [success, setSuccess] = useState(false);
 
@@ -233,7 +88,7 @@ export const WebsiteFooter = forwardRef<
         {/** Logo and links */}
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{<TangleLogo />}</Link>
-          {NAV_LINKS.map(({ group, links }) => (
+          {getNavLinks(websiteType).map(({ group, links }) => (
             <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
               <Typography
                 variant="mkt-body2"
@@ -260,7 +115,7 @@ export const WebsiteFooter = forwardRef<
 
         {/** Socials */}
         <div className="flex items-center justify-center space-x-4 md:justify-end">
-          {socials.map(({ Icon, name, href }) => (
+          {getSocials(websiteType).map(({ Icon, name, href }) => (
             <a
               key={name}
               href={href}

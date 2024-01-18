@@ -2,13 +2,10 @@ import { Search } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import Link from 'next/link';
-import { FC, useMemo } from 'react';
-import { createProjectDetailPath } from '../utils';
-import { ItemType, RelativePageUrl } from '../utils/utils';
-import { CircuitCard } from './CircuitCard/CircuitCard';
-import { CircuitItem } from './CircuitCard/types';
-import { ProjectCard } from './ProjectCard/ProjectCard';
-import { ProjectItem } from './ProjectCard/types';
+import { FC } from 'react';
+import { ItemType, RelativePageUrl, createProjectDetailPath } from '../utils';
+import CircuitCard, { CircuitItem } from './CircuitCard';
+import ProjectCard, { ProjectItem } from './ProjectCard';
 
 export type CardGridProps = PropsOf<'div'> & {
   selectedItemType: ItemType;
@@ -16,17 +13,13 @@ export type CardGridProps = PropsOf<'div'> & {
   circuits: CircuitItem[];
 };
 
-export const ItemGrid: FC<CardGridProps> = ({
+const ItemGrid: FC<CardGridProps> = ({
   selectedItemType,
   projects,
   circuits,
   ...rest
 }) => {
-  const items = useMemo(
-    () => (selectedItemType === ItemType.Project ? projects : circuits),
-    [selectedItemType, projects, circuits]
-  );
-
+  const items = selectedItemType === ItemType.Project ? projects : circuits;
   const wereResultsFound = items.length > 0;
 
   return wereResultsFound ? (
@@ -68,3 +61,5 @@ export const ItemGrid: FC<CardGridProps> = ({
     </div>
   );
 };
+
+export default ItemGrid;
