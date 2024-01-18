@@ -9,7 +9,7 @@ import { ProjectItem } from '../components/ProjectCard/types';
 import { Plan } from '../components/ProofGenerationStepCards/types';
 import { API_PREFIX } from '../constants';
 import { User } from '../hooks/useAuth';
-import { gracefullyParseJson } from './utils';
+import { gracefullyParseJson } from './index';
 
 export enum ApiRoute {
   OAuthGithub = 'oauth/github',

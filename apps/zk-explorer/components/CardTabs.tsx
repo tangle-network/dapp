@@ -14,8 +14,8 @@ import { useSidebarContext } from '../hooks/useSidebarContext';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
+import { ItemType } from '../utils';
 import { SearchSortByClause } from '../utils/api';
-import { ItemType } from '../utils/utils';
 import { Filters } from './Filters/Filters';
 import { FilterConstraints } from './Filters/types';
 import { SmallChip } from './SmallChip';

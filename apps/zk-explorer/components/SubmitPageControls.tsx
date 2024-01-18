@@ -6,10 +6,10 @@ import { useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
 import {
   createProjectDetailPath,
+  parseGithubUrl,
   submitProject,
   validateGithubUrl,
 } from '../utils';
-import { parseGithubUrl } from '../utils/utils';
 
 export const SubmitPageControls: FC<Record<string, never>> = () => {
   const [githubUrl, setGithubUrl] = useState('');

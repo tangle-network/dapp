@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { FC } from 'react';
-import { RelativePageUrl } from '../utils/utils';
+import { RelativePageUrl } from '../utils';
 import { HeaderControls } from './HeaderControls';
 
 export const Header: FC<unknown> = () => {
