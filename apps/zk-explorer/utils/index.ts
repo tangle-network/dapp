@@ -209,7 +209,7 @@ export function getPageName(page: RelativePageUrl): string {
     case RelativePageUrl.SubmitProject:
       return 'Upload Project';
     case RelativePageUrl.Dashboard:
-      return 'Dashboard';
+      return 'My Dashboard';
   }
 }
 
