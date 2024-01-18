@@ -1,4 +1,4 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import {
@@ -95,11 +95,6 @@ export enum PresetTypedChainId {
   ),
 
   ScrollAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha),
-
-  // Self hosted chains
-  HermesOrbit = calculateTypedChainId(ChainType.EVM, EVMChainId.HermesOrbit),
-  AthenaOrbit = calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaOrbit),
-  DemeterOrbit = calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterOrbit),
 
   // Localnets
   HermesLocalnet = calculateTypedChainId(

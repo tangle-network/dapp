@@ -51,23 +51,6 @@ export const anchorSignatureBridge: ChainWithAnchorsMapType = {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': '',
   },
 
-  [PresetTypedChainId.HermesOrbit]: {
-    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
-      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
-  },
-  [PresetTypedChainId.AthenaOrbit]: {
-    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
-      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
-  },
-  [PresetTypedChainId.DemeterOrbit]: {
-    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
-      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
-  },
-  [PresetTypedChainId.TangleTestnet]: {
-    '0x183E06aaa0Bf4A16781856ccf5DcFa13A66EC6f8':
-      '0x746796A176bA774C6cEbEd4E10F3062474e35085',
-  },
-
   ...localAnchorRecord,
 
   // Substrate

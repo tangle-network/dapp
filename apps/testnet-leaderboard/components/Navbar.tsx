@@ -15,11 +15,11 @@ import {
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import {
-  DKG_STATS_URL,
-  WEBB_DOC_ROUTES_RECORD,
+  TANGLE_MKT_URL,
+  TANGLE_STANDALONE_EXPLORER_URL,
+  WEBB_BLOG_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
 import cx from 'classnames';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
@@ -35,34 +35,41 @@ const isNavItem = (
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   {
     children: 'community',
-    href: populateDocsUrl(WEBB_DOC_ROUTES_RECORD.community.route),
+    href: new URL('/community', TANGLE_MKT_URL).toString(),
     target: '_blank',
   } satisfies NavItem,
   {
-    children: 'docs',
-    href: populateDocsUrl(WEBB_DOC_ROUTES_RECORD['tangle-network'].overview),
+    children: 'ecosystem',
+    href: new URL('/ecosystem', TANGLE_MKT_URL).toString(),
     target: '_blank',
   } satisfies NavItem,
-  // TODO: Add ecosystem link
-  /* {
-    children: 'ecosystem',
-    href: '#',
-  } satisfies NavItem, */
+  {
+    children: 'validators',
+    href: new URL('/validators', TANGLE_MKT_URL).toString(),
+    target: '_blank',
+  } satisfies NavItem,
+  {
+    children: 'Webb Blog',
+    href: WEBB_BLOG_URL,
+    target: '_blank',
+  } satisfies NavItem,
 ];
 
 export const Navbar = () => {
   return (
     <nav>
-      <ul className="flex items-center space-x-2 md:space-x-6">
+      <ul className="flex items-center space-x-2 lg:space-x-1.5">
         {navItems.map((item, idx) => {
           if (isNavItem(item)) {
             return (
-              <li className="hidden md:block" key={idx}>
+              <li
+                className="hidden lg:block px-6 py-2 rounded-[50px] hover:bg-[#f3f5fb]"
+                key={idx}
+              >
                 <Link {...item}>
                   <Typography
                     className="capitalize"
                     variant="body1"
-                    fw="bold"
                     component="span"
                   >
                     {item.children}
@@ -76,10 +83,10 @@ export const Navbar = () => {
           const props = Object.values(item)[0];
 
           return (
-            <li className="hidden md:block" key={idx}>
+            <li className="hidden lg:block" key={idx}>
               <Dropdown>
                 <DropdownBasicButton className="flex items-center space-x-2 group">
-                  <Typography className="capitalize" variant="body1" fw="bold">
+                  <Typography className="capitalize" variant="body1">
                     {label}
                   </Typography>
 
@@ -114,12 +121,16 @@ export const Navbar = () => {
         })}
 
         <li>
-          <Button href={DKG_STATS_URL} target="blank" className="px-5 md:px-9">
-            View Network
+          <Button
+            href={TANGLE_STANDALONE_EXPLORER_URL}
+            target="blank"
+            className="px-5 lg:py-4 border"
+          >
+            Explore Testnet
           </Button>
         </li>
 
-        <li className="flex items-center justify-center md:hidden">
+        <li className="flex items-center justify-center lg:hidden">
           <MobileNav />
         </li>
       </ul>
@@ -136,7 +147,7 @@ const MobileNav = () => {
 
       <DropdownBody
         isPortal={false}
-        className="mt-4 pt-4 w-screen sm:w-[374px] border-0 rounded-none"
+        className="mt-4 pt-4 w-screen border-0 rounded-none"
         size="sm"
         align="start"
       >

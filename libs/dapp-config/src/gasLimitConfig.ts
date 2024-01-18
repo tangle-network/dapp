@@ -18,11 +18,6 @@ const gasLimitConfig: GasLimitConfigType = {
   [PresetTypedChainId.AvalancheFuji]: BigInt(2000000),
   [PresetTypedChainId.ScrollAlpha]: BigInt(2000000),
 
-  // Orbit
-  [PresetTypedChainId.HermesOrbit]: BigInt(2000000), // TODO: benchmark gas limit
-  [PresetTypedChainId.AthenaOrbit]: BigInt(2000000), // TODO: benchmark gas limit
-  [PresetTypedChainId.DemeterOrbit]: BigInt(2000000), // TODO: benchmark gas limit
-
   // Local Orbit
   [PresetTypedChainId.HermesLocalnet]: BigInt(2000000), // TODO: benchmark gas limit
   [PresetTypedChainId.AthenaLocalnet]: BigInt(2000000), // TODO: benchmark gas limit
