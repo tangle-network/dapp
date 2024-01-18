@@ -69,7 +69,7 @@ export const SearchInput: FC<SearchInputProps> = ({
     // eventually redirect to the search page.
     if (doesRedirect && validateSearchQuery(newSearchQuery)) {
       const searchPageUrl = new URL(
-        RelativePageUrl.Home,
+        RelativePageUrl.Root,
         window.location.origin
       );
 
