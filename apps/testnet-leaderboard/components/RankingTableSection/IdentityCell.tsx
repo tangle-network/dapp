@@ -11,14 +11,9 @@ import {
 import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import cx from 'classnames';
-import { type FC, useEffect, useState } from 'react';
+import { type FC } from 'react';
 
 import { IdentityType } from './types';
-
-function handleClick() {
-  console.log('click');
-}
 
 const IdentityCell: FC<{ address: string; identity: IdentityType }> = ({
   address,
@@ -27,7 +22,7 @@ const IdentityCell: FC<{ address: string; identity: IdentityType }> = ({
   const { isCopied, copy } = useCopyable();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center max-w-[160px] 2xl:max-w-xs gap-2">
       <Avatar
         value={address}
         theme={isEthereumAddress(address) ? 'ethereum' : 'substrate'}
@@ -38,7 +33,7 @@ const IdentityCell: FC<{ address: string; identity: IdentityType }> = ({
       <Typography
         variant="mkt-small-caps"
         fw="semibold"
-        className="!normal-case"
+        className="!normal-case truncate"
       >
         {identity?.info.display || shortenString(address)}
       </Typography>
