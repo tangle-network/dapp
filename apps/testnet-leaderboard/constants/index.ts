@@ -36,13 +36,7 @@ export const DAY = HOUR * 24;
 /** Default pagination skip */
 export const DEFAULT_SKIP = 0;
 
-/**
- * Default pagination limit, by default we only fetch 500 participants
- * to filter the Webb addresses and paginate the results on the client side.
- * If we want to paginate on the server side we need to adjust the backend
- * to filter the Webb addresses and return the total count of participants.
- **/
-export const DEFAULT_LIMIT = 700;
+export const DEFAULT_LIMIT = 20;
 
 export const END_DATE = process.env['TESTNET_LEADERBOARD_END_DATE']
   ? new Date(process.env['TESTNET_LEADERBOARD_END_DATE'])

@@ -2,12 +2,6 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 const LIVE_SUBGRAPH_MAP = {
-  [PresetTypedChainId.AthenaOrbit]:
-    vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
-  [PresetTypedChainId.HermesOrbit]:
-    vAnchorClient.SubgraphUrl.vAnchorOrbitHermes,
-  [PresetTypedChainId.DemeterOrbit]:
-    vAnchorClient.SubgraphUrl.vAnchorOrbitDemeter,
   [PresetTypedChainId.TangleTestnet]:
     vAnchorClient.SubgraphUrl.vAnchorTangleTestnet,
 };
