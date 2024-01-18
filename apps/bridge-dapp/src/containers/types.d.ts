@@ -1,5 +1,5 @@
 // Shared container types for the bridge dapp
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @webb-tools/
 
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { Chain } from '@webb-tools/dapp-config';

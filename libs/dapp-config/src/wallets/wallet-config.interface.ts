@@ -1,4 +1,4 @@
-// Copyright 2023 @webb-tools/
+// Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
