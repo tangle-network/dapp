@@ -86,7 +86,7 @@ class VAnchor {
     const vAnchorContract = getContract({
       address: address,
       abi: VAnchorTree__factory.abi,
-      publicClient,
+      client: publicClient,
     });
 
     const [maxEdges, treeHeight, token] = await Promise.all([
@@ -418,7 +418,7 @@ class VAnchor {
           encryptedOutput2: extData.encryptedOutput2,
         },
       ],
-      merge({ account: walletClient.account }, txValueOption, override)
+      merge({ account: walletClient.account.address }, txValueOption, override)
     );
 
     console.log('request', request);
@@ -444,7 +444,7 @@ class VAnchor {
       const tokenWrapperContract = getContract({
         address: this.fungibleToken,
         abi: TokenWrapper__factory.abi,
-        publicClient: this.publicClient,
+        client: this.publicClient,
       });
 
       const valueToSend = await tokenWrapperContract.read.getAmountToWrap([
@@ -496,7 +496,7 @@ class VAnchor {
     const tokenInstance = getContract({
       address: tokenAddress,
       abi: ERC20__factory.abi,
-      publicClient: this.publicClient,
+      client: this.publicClient,
     });
 
     // When wrapping, we need to check allowance of the fungible token
@@ -521,7 +521,7 @@ class VAnchor {
     return getContract({
       address: this.fungibleToken,
       abi: ERC20__factory.abi,
-      publicClient: this.publicClient,
+      client: this.publicClient,
     });
   }
 

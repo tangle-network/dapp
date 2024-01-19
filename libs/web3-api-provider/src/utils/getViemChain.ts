@@ -45,7 +45,6 @@ function defineViemChain(typedChainId: number): chains.Chain {
   return {
     id: chain.id,
     name: chain.name,
-    network: chain.group,
     testnet: true,
     nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: chain.rpcUrls,

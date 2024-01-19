@@ -33,7 +33,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
     const fungibleContract = getContract({
       address: ensureHex(fungibleTokenAddress),
       abi: FungibleTokenWrapper__factory.abi,
-      publicClient: this.inner.publicClient,
+      client: this.inner.publicClient,
     });
 
     const [allTokenAddresses, isNativeAllowed] = await Promise.all([
@@ -54,7 +54,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
           const newERC20Token = getContract({
             address: tokenAddress,
             abi: ERC20Factory.abi,
-            publicClient: this.inner.publicClient,
+            client: this.inner.publicClient,
           });
 
           const [decimals, name, symbol] = await Promise.all([

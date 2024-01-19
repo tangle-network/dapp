@@ -335,7 +335,7 @@ export class WebbWeb3Provider
     return getContract({
       abi: VAnchor__factory.abi,
       address: ensureHex(address),
-      publicClient: provider ?? this.publicClient,
+      client: provider ?? this.publicClient,
     });
   }
 
@@ -697,7 +697,7 @@ export class WebbWeb3Provider
     const vAnchorContract = getContract({
       address: `0x${vAnchorAddress.replace(/^0x/, '')}`,
       abi: VAnchor__factory.abi,
-      publicClient: provider,
+      client: provider,
     });
 
     const maxEdges = await vAnchorContract.read.maxEdges();
@@ -722,7 +722,7 @@ export class WebbWeb3Provider
     const vAnchorContract = getContract({
       address: `0x${vAnchorAddressOrTreeId.replace(/^0x/, '')}`,
       abi: VAnchor__factory.abi,
-      publicClient: provider,
+      client: provider,
     });
     const levels = await vAnchorContract.read.getLevels();
 
@@ -1063,7 +1063,7 @@ export class WebbWeb3Provider
           acc[chainId] = getContract({
             address: ensureHex(vAnchorIdentifier),
             abi: VAnchor__factory.abi,
-            publicClient: getPublicClient({ chainId }),
+            client: getPublicClient({ chainId }),
           });
         }
 
