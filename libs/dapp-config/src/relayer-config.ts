@@ -42,8 +42,6 @@ export function relayerSubstrateNameToTypedChainId(
   name: string
 ): PresetTypedChainId {
   switch (name) {
-    case 'localnode':
-      return PresetTypedChainId.ProtocolSubstrateStandalone;
     case 'tangle':
       return PresetTypedChainId.LocalTangleStandalone;
   }
@@ -53,8 +51,6 @@ export function relayerSubstrateNameToTypedChainId(
 
 export function typedChainIdToSubstrateRelayerName(id: number): string {
   switch (id) {
-    case PresetTypedChainId.ProtocolSubstrateStandalone:
-      return 'localnode';
     case PresetTypedChainId.LocalTangleStandalone:
       return 'tangle';
   }
