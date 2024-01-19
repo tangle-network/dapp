@@ -2,18 +2,14 @@ import { Search } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import assert from 'assert';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { FC, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueryState } from 'nuqs';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTailwindBreakpoint, {
   TailwindBreakpoint,
 } from '../hooks/useTailwindBreakpoint';
-import {
-  RelativePageUrl,
-  SearchParamKey,
-  setSearchParam,
-  validateSearchQuery,
-} from '../utils/utils';
+import { RelativePageUrl, SearchParamKey, validateSearchQuery } from '../utils';
 
 export type SearchInputProps = PropsOf<typeof Input> & {
   isFullWidth?: boolean;
@@ -41,7 +37,7 @@ export type SearchInputProps = PropsOf<typeof Input> & {
 
 const DEFAULT_DEBOUNCE_DELAY = 1500;
 
-export const SearchInput: FC<SearchInputProps> = ({
+const SearchInput: FC<SearchInputProps> = ({
   isFullWidth,
   isHomepageVariant,
   debounceTime = DEFAULT_DEBOUNCE_DELAY,
@@ -58,10 +54,8 @@ export const SearchInput: FC<SearchInputProps> = ({
     );
   }
 
-  const initialSearchQuery = useSearchParams().get(SearchParamKey.SearchQuery);
-
-  const [searchQuery, setSearchQuery] = useState(
-    doesRedirect ? '' : initialSearchQuery ?? ''
+  const [searchQuery, setSearchQuery] = useQueryState(
+    SearchParamKey.SearchQuery
   );
 
   const breakpoint = useTailwindBreakpoint();
@@ -87,7 +81,7 @@ export const SearchInput: FC<SearchInputProps> = ({
 
       router.push(searchPageUrl.href);
     } else {
-      setSearchParam(SearchParamKey.SearchQuery, newSearchQuery);
+      setSearchQuery(newSearchQuery);
 
       if (onValueChange !== undefined) {
         onValueChange(newSearchQuery);
@@ -95,24 +89,16 @@ export const SearchInput: FC<SearchInputProps> = ({
     }
   };
 
-  const searchQueryPlaceholder = useMemo(
-    () =>
-      breakpoint >= TailwindBreakpoint.SM && isFullWidth && isHomepageVariant
-        ? 'Search projects and circuits for specific keywords...'
-        : 'Search projects and circuits...',
-    [breakpoint, isFullWidth, isHomepageVariant]
-  );
+  const searchQueryPlaceholder =
+    breakpoint >= TailwindBreakpoint.SM && isFullWidth && isHomepageVariant
+      ? 'Search projects and circuits for specific keywords...'
+      : 'Search projects and circuits...';
 
-  const variantClass = useMemo(
-    () =>
-      isHomepageVariant ? 'rounded-[50px] border-none' : 'min-w-[270px] w-full',
-    [isHomepageVariant]
-  );
+  const variantClass = isHomepageVariant
+    ? 'rounded-[50px] border-none'
+    : 'min-w-[270px] w-full';
 
-  const iconHomepageVariantClass = useMemo(
-    () => (isHomepageVariant ? 'mr-4' : undefined),
-    [isHomepageVariant]
-  );
+  const iconHomepageVariantClass = isHomepageVariant ? 'mr-4' : undefined;
 
   return (
     <Input
@@ -127,3 +113,5 @@ export const SearchInput: FC<SearchInputProps> = ({
     />
   );
 };
+
+export default SearchInput;

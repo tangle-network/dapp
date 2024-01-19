@@ -9,8 +9,4 @@ export const LOCALNET_CHAIN_IDS = [
   EVMChainId.DemeterLocalnet,
 ];
 
-export const SELF_HOSTED_CHAIN_IDS = [
-  EVMChainId.HermesOrbit,
-  EVMChainId.AthenaOrbit,
-  EVMChainId.DemeterOrbit,
-];
+export const SELF_HOSTED_CHAIN_IDS = [];

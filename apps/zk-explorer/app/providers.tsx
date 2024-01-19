@@ -1,7 +1,7 @@
 import NextThemeProvider from '@webb-tools/api-provider-environment/NextThemeProvider';
 import { NotificationProvider } from '@webb-tools/webb-ui-components';
 import type { PropsWithChildren } from 'react';
-import { SidebarProvider } from '../components/SidebarProvider';
+import SidebarProvider from '../context/SidebarProvider';
 import { AuthProvider } from '../hooks/useAuth';
 
 const Providers = ({ children }: PropsWithChildren) => {

@@ -1,6 +1,6 @@
 'use client';
 
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import Storage from '@webb-tools/dapp-types/Storage';

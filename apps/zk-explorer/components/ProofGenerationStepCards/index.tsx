@@ -6,39 +6,21 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  ChevronDown,
-  ChevronUp,
-  ExternalLinkLine,
-  KeyIcon,
-} from '@webb-tools/icons';
-import {
-  Avatar,
-  Button,
-  Card,
   CheckBox,
-  FileUploadArea,
-  FileUploadItem,
-  FileUploadList,
   Progress,
   Table,
-  Typography,
-  getHumanFileSize,
-  shortenHex,
+  fuzzyFilter,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { CONTACT_URL } from '../../constants';
 import { MOCK_MPC_PARTICIPANTS } from '../../constants/mock';
+import { requestProofGeneration } from '../../server/services';
 import { RelativePageUrl } from '../../utils';
-import { requestProofGeneration } from '../../utils/api';
+import FileUploadAreaWithList from '../FileUploadAreaWithList';
+import IdentityItem from './IdentityItem';
+import ServiceTierCard from './ServiceTierCard';
+import StepCard from './StepCard';
 import { ColumnKey, Location, MpcParticipant, Plan } from './types';
 
 export type ProofGenerationStepCardsProps = {
@@ -47,7 +29,15 @@ export type ProofGenerationStepCardsProps = {
   nextStep: () => void;
 };
 
-export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
+type RowData = {
+  [ColumnKey.IsChecked]: boolean;
+  [ColumnKey.Identity]: string;
+  [ColumnKey.Location]: Location;
+  [ColumnKey.SlashingIncidents]: number;
+  [ColumnKey.Uptime]: number;
+};
+
+const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   circuitFilename,
   activeStep,
   nextStep,
@@ -251,8 +241,7 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
     data: rows,
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
-      // TODO: Handle this.
-      fuzzy: (value, search) => false,
+      fuzzy: fuzzyFilter,
     },
   });
 
@@ -326,7 +315,9 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
           selectedMpcParticipantAddresses.length === 0
         }
       >
-        <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
+        <div className="overflow-x-auto">
+          <Table isPaginated={false} tableProps={mpcParticipantsTableProps} />
+        </div>
       </StepCard>
 
       <StepCard
@@ -381,254 +372,4 @@ export const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   );
 };
 
-type StepCardProps = {
-  number: number;
-  activeStep: number;
-  title: string;
-  children: React.ReactNode;
-  isLast?: boolean;
-  isNextButtonDisabled: boolean;
-  onNext: (isLast: boolean) => void;
-};
-
-/** @internal */
-const StepCard: FC<StepCardProps> = ({
-  number,
-  title,
-  children,
-  activeStep,
-  isLast = false,
-  isNextButtonDisabled,
-  onNext,
-}) => {
-  return (
-    <CollapsibleCard
-      isOpen={activeStep === number}
-      title={`${number}. ${title}:`}
-    >
-      <div className="flex flex-col gap-4">
-        {children}
-
-        <div className="flex gap-4">
-          {/* TODO: Replace with link to more specific docs, when available. */}
-          <Button isFullWidth variant="secondary" href={WEBB_DOCS_URL}>
-            Learn More
-          </Button>
-
-          <Button
-            isDisabled={isNextButtonDisabled}
-            onClick={() => onNext(isLast)}
-            isFullWidth
-            variant="primary"
-          >
-            {isLast ? 'Initialize Proof Generation' : 'Next'}
-          </Button>
-        </div>
-      </div>
-    </CollapsibleCard>
-  );
-};
-
-type CollapsibleCardProps = {
-  title: string;
-  children: React.ReactNode;
-  isOpen: boolean;
-};
-
-const CollapsibleCard: FC<CollapsibleCardProps> = ({
-  title,
-  children,
-  isOpen,
-}) => {
-  return (
-    <Card className="flex flex-col gap-4 space-y-0 rounded-lg w-full">
-      <div className="flex items-center justify-between">
-        <Typography variant="body1" fw="normal" className="dark:text-mono-0">
-          {title}
-        </Typography>
-
-        {isOpen ? <ChevronUp size="lg" /> : <ChevronDown size="lg" />}
-      </div>
-
-      {isOpen && children}
-    </Card>
-  );
-};
-
-type IdentityItemProps = {
-  address: string;
-  avatarUrl: string;
-};
-
-/** @internal */
-const IdentityItem: FC<IdentityItemProps> = ({ address, avatarUrl }) => {
-  return (
-    <a
-      href={WEBB_DOCS_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex gap-1 items-center"
-    >
-      <Avatar src={avatarUrl} />
-
-      {shortenHex(address)}
-
-      <ExternalLinkLine />
-    </a>
-  );
-};
-
-type RowData = {
-  [ColumnKey.IsChecked]: boolean;
-  [ColumnKey.Identity]: string;
-  [ColumnKey.Location]: Location;
-  [ColumnKey.SlashingIncidents]: number;
-  [ColumnKey.Uptime]: number;
-};
-
-type ServiceTierCardProps = {
-  plan: Plan;
-  description: string;
-  benefits: string[];
-  monthlyPrice: number | null;
-  isSelected?: boolean;
-  onSelect: (plan: Plan) => void;
-};
-
-const ServiceTierCard: FC<ServiceTierCardProps> = ({
-  plan,
-  monthlyPrice,
-  description,
-  benefits,
-  isSelected = false,
-  onSelect,
-}) => {
-  const billingText =
-    monthlyPrice === null
-      ? null
-      : monthlyPrice > 0
-      ? `Billed $${monthlyPrice * 12}/year`
-      : 'Free';
-
-  return (
-    <Card className="flex flex-col gap-1 space-y-0 rounded-2xl w-full dark:bg-mono-160 px-6 py-3">
-      <Typography variant="h4" fw="bold" className="dark:text-mono-0">
-        {plan}
-      </Typography>
-
-      <Typography variant="body1">{description}</Typography>
-
-      {monthlyPrice !== null && (
-        <>
-          <div className="flex items-center">
-            <Typography variant="h4" fw="bold">
-              ${monthlyPrice}
-            </Typography>
-
-            <Typography variant="body1" fw="normal">
-              /mo
-            </Typography>
-          </div>
-
-          <Typography variant="body1" fw="normal">
-            {billingText}
-          </Typography>
-        </>
-      )}
-
-      <ul className="list-disc pl-5">
-        {benefits.map((benefit, index) => (
-          <li className="list-item" key={index}>
-            {benefit}
-          </li>
-        ))}
-      </ul>
-
-      <Button
-        isDisabled={isSelected}
-        onClick={() => onSelect(plan)}
-        className="ml-auto"
-        variant={monthlyPrice === null ? 'secondary' : 'primary'}
-      >
-        {monthlyPrice === null
-          ? 'Contact Us'
-          : isSelected
-          ? 'Selected'
-          : 'Select Plan'}
-      </Button>
-    </Card>
-  );
-};
-
-type FileUploadAreaWithListProps = {
-  file: File | null;
-  title: string;
-  filename: string;
-  setFile: Dispatch<SetStateAction<File | null>>;
-};
-
-/** @internal */
-const FileUploadAreaWithList: FC<FileUploadAreaWithListProps> = ({
-  file,
-  title,
-  filename,
-  setFile,
-}) => {
-  const handleFileUpload = useCallback(
-    (acceptedFiles: File[]) => {
-      // The uploaded file was not accepted; reset the state.
-      if (acceptedFiles.length === 0) {
-        setFile(null);
-
-        return;
-      }
-
-      assert(
-        acceptedFiles.length === 1,
-        'Upload file dialog should allow exactly one file to be provided'
-      );
-
-      const uploadedFile = acceptedFiles[0];
-
-      setFile(uploadedFile);
-    },
-    [setFile]
-  );
-
-  return (
-    <>
-      <FileUploadArea onDrop={handleFileUpload} />
-
-      {file !== null && (
-        <div className="flex flex-col gap-4">
-          <Typography variant="body1" fw="semibold">
-            {title} for {filename}:
-          </Typography>
-
-          <FileUploadList>
-            <FileUploadItem
-              fileName={file.name}
-              onRemove={() => setFile(null)}
-              Icon={
-                <div className="flex items-center justify-center w-6 h-6 rounded bg-mono-180">
-                  <KeyIcon className="!fill-mono-0" />
-                </div>
-              }
-              extraInfo={
-                <>
-                  <Typography
-                    className="text-mono-120 dark:text-mono-80"
-                    variant="body1"
-                  >
-                    {getHumanFileSize(file.size, true, 0)}
-                  </Typography>
-                  <Progress className="mt-1" value={5.3} />
-                </>
-              }
-            />
-          </FileUploadList>
-        </div>
-      )}
-    </>
-  );
-};
+export default ProofGenerationStepCards;
