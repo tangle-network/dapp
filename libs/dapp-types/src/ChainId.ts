@@ -54,14 +54,14 @@ export enum PresetTypedChainId {
     EVMChainId.PolygonTestnet
   ),
 
-  LocalTangleStandalone = calculateTypedChainId(
+  LocalTangleNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.LocalTangleStandalone
+    SubstrateChainId.LocalTangleNative
   ),
 
-  TangleStandaloneTestnet = calculateTypedChainId(
+  TangleTestnetNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.TangleStandaloneTestnet
+    SubstrateChainId.TangleTestnetNative
   ),
 
   Kusama = calculateTypedChainId(

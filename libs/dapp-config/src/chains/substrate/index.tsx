@@ -15,12 +15,12 @@ function populateBlockExplorerStub(connString: string): string {
 
 // All substrate chains temporary use in `development` environment now
 export const chainsConfig: Record<number, ChainConfig> = {
-  [PresetTypedChainId.TangleStandaloneTestnet]: {
+  [PresetTypedChainId.TangleTestnetNative]: {
     chainType: ChainType.Substrate,
     group: 'tangle',
     tag: process.env['USING_LOCAL_TANGLE'] ? 'dev' : 'test',
-    id: SubstrateChainId.TangleStandaloneTestnet,
-    name: 'Tangle Standalone Testnet',
+    id: SubstrateChainId.TangleTestnetNative,
+    name: 'Tangle Testnet Native',
     network: 'Substrate',
     nativeCurrency: {
       name: 'Tangle',

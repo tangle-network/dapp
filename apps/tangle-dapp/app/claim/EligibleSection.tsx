@@ -208,7 +208,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
             toggleModal(
               true,
               isActiveWalletEvm
-                ? PresetTypedChainId.TangleStandaloneTestnet
+                ? PresetTypedChainId.TangleTestnetNative
                 : PresetTypedChainId.TangleTestnet
             )
           }

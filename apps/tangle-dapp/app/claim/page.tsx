@@ -173,7 +173,7 @@ export default function Page() {
                 isDisabled={loading || isConnecting}
                 isFullWidth
                 onClick={() =>
-                  toggleModal(true, PresetTypedChainId.TangleStandaloneTestnet)
+                  toggleModal(true, PresetTypedChainId.TangleTestnetNative)
                 }
               >
                 Connect Substrate Wallet

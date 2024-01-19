@@ -235,7 +235,7 @@ export const webbNetworks: webbNetworksType[] = [
     networkType: 'testnet',
     networks: [
       {
-        name: 'Tangle Standalone',
+        name: 'Tangle Testnet Native',
         networkType: 'testnet',
         networkNodeType: 'standalone',
         subqueryEndpoint: SUBQUERY_ENDPOINT,

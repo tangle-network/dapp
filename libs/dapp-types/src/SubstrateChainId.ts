@@ -1,8 +1,8 @@
 // Enums for network IDs / SS58 encodings for Substrate chains
 export enum SubstrateChainId {
   Edgeware = 7,
-  LocalTangleStandalone = 1081, // Local Tangle Standalone
-  TangleStandaloneTestnet = 1081, // Live Tangle Standalone Testnet
+  LocalTangleNative = 1081, // Local Tangle Native
+  TangleTestnetNative = 1081, // Live Tangle Native Testnet
   Kusama = 2,
   Polkadot = 0,
 }

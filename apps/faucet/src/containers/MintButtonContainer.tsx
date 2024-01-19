@@ -77,7 +77,7 @@ const mintTokens = async (
 
   const typedChainIdReq: T = useSubstrate
     ? {
-        id: SubstrateChainId.TangleStandaloneTestnet,
+        id: SubstrateChainId.TangleTestnetNative,
         type: 'Substrate',
       }
     : {
