@@ -18,7 +18,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { evmPublicClient, stopNomination } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
-import { convertEthereumToSubstrateAddress } from '../../utils';
+import { convertToSubstrateAddress } from '../../utils';
 import { StopNominationTxContainerProps } from './types';
 
 const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
@@ -40,7 +40,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertEthereumToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);
