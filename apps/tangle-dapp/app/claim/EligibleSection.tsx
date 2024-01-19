@@ -209,7 +209,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
               true,
               isActiveWalletEvm
                 ? PresetTypedChainId.TangleTestnetNative
-                : PresetTypedChainId.TangleTestnet
+                : PresetTypedChainId.TangleTestnetEVM
             )
           }
         >

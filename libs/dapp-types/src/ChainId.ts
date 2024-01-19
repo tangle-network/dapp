@@ -102,9 +102,9 @@ export enum PresetTypedChainId {
     EVMChainId.DemeterLocalnet
   ),
 
-  TangleTestnet = calculateTypedChainId(
+  TangleTestnetEVM = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.TangleTestnet
+    EVMChainId.TangleTestnetEVM
   ),
 }
 

@@ -31,6 +31,7 @@ const ANY_EVM = [
   PresetTypedChainId.MoonbaseAlpha,
   PresetTypedChainId.AvalancheFuji,
   PresetTypedChainId.ScrollAlpha,
+  PresetTypedChainId.TangleTestnetEVM,
 
   // Localnet
   PresetTypedChainId.HermesLocalnet,

@@ -121,7 +121,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 onClick: () =>
                   toggleModal(
                     true,
-                    PresetTypedChainId.TangleTestnet ?? undefined
+                    PresetTypedChainId.TangleTestnetEVM ?? undefined
                   ),
               }}
               icon="🔗"
@@ -160,7 +160,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 onClick: () =>
                   toggleModal(
                     true,
-                    PresetTypedChainId.TangleTestnet ?? undefined
+                    PresetTypedChainId.TangleTestnetEVM ?? undefined
                   ),
               }}
               icon="🔗"

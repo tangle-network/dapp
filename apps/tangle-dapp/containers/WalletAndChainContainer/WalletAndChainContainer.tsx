@@ -46,7 +46,7 @@ const WalletAndChainContainer: FC = () => {
               isLoading={loading}
               loadingText="Connecting..."
               onClick={() =>
-                toggleModal(true, PresetTypedChainId.TangleTestnet)
+                toggleModal(true, PresetTypedChainId.TangleTestnetEVM)
               }
               className="flex items-center justify-center px-6"
             >

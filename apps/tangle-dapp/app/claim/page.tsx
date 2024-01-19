@@ -163,7 +163,7 @@ export default function Page() {
                 isFullWidth
                 isDisabled={loading || isConnecting}
                 onClick={() =>
-                  toggleModal(true, PresetTypedChainId.TangleTestnet)
+                  toggleModal(true, PresetTypedChainId.TangleTestnetEVM)
                 }
               >
                 Connect EVM Wallet
