@@ -43,7 +43,13 @@ export interface WalletModalProps extends PropsOf<'div'> {
   /**
    * Connect the wallet
    */
-  connectWallet: (wallet: WalletConfig) => void | Promise<void>;
+  connectWallet: (
+    wallet: WalletConfig,
+    targetTypedChainIds?: {
+      evm?: number;
+      substrate?: number;
+    }
+  ) => void | Promise<void>;
 
   /**
    * Toggle the modal
@@ -67,4 +73,12 @@ export interface WalletModalProps extends PropsOf<'div'> {
    * The current browser platform id
    */
   platformId: SupportedBrowsers | null;
+
+  /**
+   * The targeting specific evm or substrate chain when connecting wallets
+   */
+  targetTypedChainIds?: {
+    evm?: number;
+    substrate?: number;
+  };
 }

@@ -36,7 +36,7 @@ const ChooseWalletTypeModalContainer: FC = () => {
             isFullWidth
             onClick={() => {
               setIsSelectWalletTypeModalOpen(false);
-              toggleModal(true, PresetTypedChainId.TangleTestnet);
+              toggleModal(true);
             }}
           >
             Connect EVM Wallet
@@ -45,7 +45,7 @@ const ChooseWalletTypeModalContainer: FC = () => {
             isFullWidth
             onClick={() => {
               setIsSelectWalletTypeModalOpen(false);
-              toggleModal(true, PresetTypedChainId.TangleStandaloneTestnet);
+              toggleModal(true);
             }}
             variant="secondary"
           >
