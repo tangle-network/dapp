@@ -94,6 +94,7 @@ export const WalletDropdown: FC<{
                   size="sm"
                   labelVariant="body1"
                   valueVariant="body1"
+                  shortenFn={(str) => shortenString(str, 5)}
                 />
 
                 <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
@@ -126,7 +127,7 @@ const SwitchAccountButton: FC = () => {
 
   const { notificationApi } = useWebbUI();
 
-  // Funciton to switch account within the connected wallet
+  // Function to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
     // Switch account only support on web3 provider
     if (!activeApi) {
