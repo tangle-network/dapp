@@ -1,5 +1,4 @@
 export * from './BondMoreTxContainer';
-export * from './ChooseWalletTypeModalContainer';
 export * from './DelegateTxContainer';
 export * from './DelegationsPayoutsContainer';
 export * from './HeaderChipsContainer';

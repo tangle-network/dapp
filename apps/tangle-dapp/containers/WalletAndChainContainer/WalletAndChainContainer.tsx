@@ -1,6 +1,9 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useConnectWallet,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { ComputerIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -11,12 +14,11 @@ import {
 import { type FC } from 'react';
 
 import { ChainSelector, WalletDropdown } from '../../components';
-import useChooseWalletModal from '../../hooks/useChooseWalletModal';
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
-  const { setIsSelectWalletTypeModalOpen } = useChooseWalletModal();
+  const { toggleModal } = useConnectWallet();
 
   const { isMobile } = useCheckMobile();
 
@@ -42,7 +44,7 @@ const WalletAndChainContainer: FC = () => {
               isDisabled={loading}
               isLoading={loading}
               loadingText="Connecting..."
-              onClick={() => setIsSelectWalletTypeModalOpen(true)}
+              onClick={() => toggleModal(true)}
               className="flex items-center justify-center px-6"
             >
               Connect

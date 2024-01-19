@@ -13,8 +13,6 @@ import { type PropsWithChildren, type ReactNode } from 'react';
 import { QueryParamProvider } from 'use-query-params';
 import z from 'zod';
 
-import ChooseWalletTypeProvider from '../provider/ChooseWalletTypeProvider';
-
 const appEvent = new AppEvent();
 
 const envSchema = z.object({
@@ -36,23 +34,21 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
     <NextThemeProvider>
       <WebbUIProvider hasErrorBoudary>
         <WebbProvider appEvent={appEvent} applicationName="Tangle Dapp">
-          <ChooseWalletTypeProvider>
-            <QueryParamProvider
-              adapter={NextAdapterApp}
-              options={{
-                searchStringToObject: qs.parse,
-                objectToSearchString: qs.stringify,
-              }}
+          <QueryParamProvider
+            adapter={NextAdapterApp}
+            options={{
+              searchStringToObject: qs.parse,
+              objectToSearchString: qs.stringify,
+            }}
+          >
+            <OFACFilterProvider
+              isActivated
+              blockedRegions={blockedRegions}
+              blockedCountryCodes={blockedCountryCodes}
             >
-              <OFACFilterProvider
-                isActivated
-                blockedRegions={blockedRegions}
-                blockedCountryCodes={blockedCountryCodes}
-              >
-                {children}
-              </OFACFilterProvider>
-            </QueryParamProvider>
-          </ChooseWalletTypeProvider>
+              {children}
+            </OFACFilterProvider>
+          </QueryParamProvider>
         </WebbProvider>
       </WebbUIProvider>
     </NextThemeProvider>
