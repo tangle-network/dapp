@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-// Copyright 2022 @webb-tools/
+// Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import { Currency } from '@webb-tools/abstract-api-provider';

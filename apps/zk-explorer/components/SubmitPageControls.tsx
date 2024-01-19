@@ -4,14 +4,14 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useState } from 'react';
+import { submitProject } from '../server/projects';
 import {
   createProjectDetailPath,
   parseGithubUrl,
-  submitProject,
   validateGithubUrl,
 } from '../utils';
 
-export const SubmitPageControls: FC<Record<string, never>> = () => {
+const SubmitPageControls: FC<Record<string, never>> = () => {
   const [githubUrl, setGithubUrl] = useState('');
   const [isValidGithubUrl, setIsValidGithubUrl] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -87,3 +87,5 @@ export const SubmitPageControls: FC<Record<string, never>> = () => {
     </>
   );
 };
+
+export default SubmitPageControls;

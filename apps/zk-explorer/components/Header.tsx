@@ -1,8 +1,8 @@
 import { FC } from 'react';
+import HeaderControls from '../containers/HeaderControls';
 import ComputedBreadcrumbs from './ComputedBreadcrumbs';
-import { HeaderControls } from './HeaderControls';
 
-export const Header: FC<unknown> = () => {
+const Header: FC = () => {
   return (
     <header className="py-4 flex flex-col-reverse sm:flex-row justify-between gap-4">
       <ComputedBreadcrumbs />
@@ -11,3 +11,5 @@ export const Header: FC<unknown> = () => {
     </header>
   );
 };
+
+export default Header;

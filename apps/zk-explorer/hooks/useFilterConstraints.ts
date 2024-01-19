@@ -1,10 +1,10 @@
 import { cloneDeep } from 'lodash';
 import { useQueryState } from 'nuqs';
 import { useState } from 'react';
-import { FilterConstraints } from '../components/Filters/types';
+import { FilterConstraints } from '../containers/Filters/types';
 import { SearchParamKey } from '../utils';
 
-export const useFilterConstraints = (): [
+const useFilterConstraints = (): [
   FilterConstraints,
   (newConstraints: FilterConstraints) => void
 ] => {
@@ -45,3 +45,5 @@ export const useFilterConstraints = (): [
 
   return [constraints, updateConstraints];
 };
+
+export default useFilterConstraints;

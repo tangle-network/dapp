@@ -1,6 +1,6 @@
 import { Card, Typography } from '@webb-tools/webb-ui-components';
-import { FeedbackCard } from '../../components/FeedbackCard';
-import { SubmitPageControls } from '../../components/SubmitPageControls';
+import FeedbackCard from '../../components/FeedbackCard';
+import SubmitPageControls from '../../components/SubmitPageControls';
 
 export default function Submit() {
   return (

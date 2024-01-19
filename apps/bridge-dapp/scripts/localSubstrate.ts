@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Webb Technologies Inc.
+ * Copyright 2024 Webb Technologies Inc.
  * SPDX-License-Identifier: Apache-2.0
  *
  * This script is used to setup a local protocol substrate and create a pool share asset

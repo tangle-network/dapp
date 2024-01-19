@@ -1,10 +1,16 @@
 export * from './api';
 import _, { capitalize } from 'lodash';
-import { CircuitItem } from '../components/CircuitCard/types';
-import { ProjectItem } from '../components/ProjectCard/types';
-import { ITEMS_PER_PAGE } from '../constants';
+import { CircuitItem } from '../components/CircuitCard';
+import { ProjectItem } from '../components/ProjectCard';
+import {
+  GITHUB_LANGUAGE_COLORS_API_URL,
+  GITHUB_URL_PREFIX,
+  ITEMS_PER_PAGE,
+} from '../constants';
+import { MOCK_AVATAR_URL } from '../constants/mock';
 import { User } from '../hooks/useAuth';
-import { CircuitSearchResponseData, ProjectSearchResponseData } from './api';
+import { CircuitSearchResponseData } from '../server/circuits';
+import { ProjectSearchResponseData } from '../server/projects';
 
 export function createProjectDetailPath(
   repositoryOwner: string,
@@ -67,7 +73,6 @@ export enum SearchParamKey {
  */
 export function parseGithubUrl(url: string): [string, string] | null {
   const trimmedUrl = url.trim();
-  const GITHUB_URL_PREFIX = 'https://github.com/'; // TODO: Consider whether HTTP URLs should be allowed.
 
   if (!trimmedUrl.startsWith(GITHUB_URL_PREFIX)) {
     return null;
@@ -101,17 +106,14 @@ export function validateGithubUrl(url: string): boolean {
 // TODO: This is temporary, until the backend is implemented.
 export function getMockProjects(): ProjectSearchResponseData {
   const mockProjects = Array<ProjectItem>(ITEMS_PER_PAGE).fill({
-    ownerAvatarUrl:
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    ownerAvatarUrl: MOCK_AVATAR_URL,
     repositoryOwner: 'webb',
     repositoryName: 'masp',
     stargazerCount: 123,
     circuitCount: 24,
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
-    contributorAvatarUrls: Array(15).fill(
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4'
-    ),
+    contributorAvatarUrls: Array(15).fill(MOCK_AVATAR_URL),
   });
 
   return {
@@ -123,8 +125,7 @@ export function getMockProjects(): ProjectSearchResponseData {
 // TODO: This is temporary, until the backend is implemented.
 export function getMockCircuits(): CircuitSearchResponseData {
   const mockCircuits = Array<CircuitItem>(ITEMS_PER_PAGE).fill({
-    ownerAvatarUrl:
-      'https://avatars.githubusercontent.com/u/76852793?s=200&v=4',
+    ownerAvatarUrl: MOCK_AVATAR_URL,
     filename: 'circuit.circom',
     description:
       'Short blurb about what the purpose of this circuit. This is a longer line to test multiline.',
@@ -245,4 +246,34 @@ export function getPathBreadcrumbNames(pathSegments: string[]): string[] {
   // nor a known dynamic dynamic path, simply capitalize
   // each segment. This serves as a graceful fallback.
   return pathSegments.map(capitalize);
+}
+
+export async function getGitHubLanguageColors(
+  colorList: string[]
+): Promise<Record<string, string>> {
+  const response = await fetch(GITHUB_LANGUAGE_COLORS_API_URL);
+
+  if (!response.ok) {
+    // TODO: Provide reason why the request failed.
+    throw new Error('Failed to fetch GitHub language colors');
+  }
+
+  const formattedResponse = await response.json();
+
+  const relevantLanguageColors = Object.keys(formattedResponse).filter(
+    (color) => colorList.includes(color)
+  );
+
+  return relevantLanguageColors.reduce((map, language) => {
+    // TODO: Might need to perform a deep copy here to avoid mutating the original object.
+    const updatedMap = map;
+
+    map[language] = formattedResponse[language].color;
+
+    return updatedMap;
+  }, {} as Record<string, string>);
+}
+
+export function artificialDelay(timeInMs: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, timeInMs));
 }

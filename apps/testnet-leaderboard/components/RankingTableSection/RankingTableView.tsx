@@ -4,24 +4,22 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
+  type PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
-import { Search } from '@webb-tools/icons';
-import {
-  fuzzyFilter,
-  Input,
-  Pagination,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { LoggerService } from '@webb-tools/browser-utils/logger';
+import { Search, Spinner } from '@webb-tools/icons';
+import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
+import useSWR from 'swr';
 
 import { BadgeEnum } from '../../types';
 import BadgesCell from './BadgesCell';
+import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import IdentityCell from './IdentityCell';
+import ParseReponseErrorView from './ParseReponseErrorView';
 import SessionsCell from './SessionsCell';
 import SocialLinksCell from './SocialLinksCell';
 import type {
@@ -34,7 +32,6 @@ import type {
 type RankingItemType = {
   rank: number;
   address: string;
-  addresses: string[];
   badges: BadgeEnum[];
   points: number;
   sessions: SessionsType;
@@ -43,14 +40,15 @@ type RankingItemType = {
 
 const columnHelper = createColumnHelper<RankingItemType>();
 
-const columns = [
+const getColumns = (pageIndex: number, pageSize: number) => [
   columnHelper.accessor('rank', {
     id: 'rank',
     header: () => <HeaderCell title="Rank" />,
     cell: (cellCtx) => {
+      const globalRowIndex = cellCtx.row.index + pageIndex * pageSize;
       return (
         <Typography variant="mkt-small-caps" fw="bold">
-          #{cellCtx.getValue()}
+          #{globalRowIndex + 1}
         </Typography>
       );
     },
@@ -89,27 +87,9 @@ const columns = [
     header: () => <HeaderCell title="Social" />,
     cell: (cellCtx) => <SocialLinksCell identity={cellCtx.getValue()} />,
   }),
-
-  // For global search
-  columnHelper.accessor((row) => row.addresses.join(', '), {
-    id: 'addresses',
-  }),
-
-  columnHelper.accessor((row) => row.badges.join(' ,'), {
-    id: 'badges string',
-  }),
-
-  columnHelper.accessor(
-    (row) => (row.identity ? Object.values(row.identity.info).join(', ') : ''),
-    {
-      id: 'identity string',
-    }
-  ),
 ];
 
-type Props = {
-  participants: LeaderboardSuccessResponseType['data']['participants'];
-};
+type Props = LeaderboardSuccessResponseType['data'];
 
 const participantToRankingItem = (participant: ParticipantType, idx: number) =>
   ({
@@ -119,51 +99,100 @@ const participantToRankingItem = (participant: ParticipantType, idx: number) =>
     address:
       participant.addresses.find((a) => a.type === 'stash')?.address ||
       participant.addresses[0].address,
-    addresses: participant.addresses.map((a) => a.address),
     badges: participant.badges,
     points: participant.points,
     sessions: participant.sessions,
     identity: participant.identity,
   } satisfies RankingItemType);
 
-const PAGE_SIZE = 20;
+const logger = LoggerService.get('RankingTableView');
 
-const RankingTableView: FC<Props> = ({ participants }) => {
+const RankingTableView: FC<Props> = ({
+  participants,
+  limit: defaultLimit,
+  skip: defaultSkip,
+  total: defaultTotal,
+}) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const rankingData = useMemo(
-    () => participants.map(participantToRankingItem),
-    [participants]
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: defaultSkip,
+    pageSize: defaultLimit,
+  });
+
+  const { data, isLoading } = useSWR(
+    [fetchLeaderboardData.name, pageIndex * pageSize, pageSize, searchTerm],
+    ([, ...args]) => fetchLeaderboardData(...args),
+    { keepPreviousData: true }
   );
 
-  const total = useMemo(() => rankingData.length, [rankingData]);
+  const total = useMemo(() => {
+    if (data && data.success && data.data.success) {
+      return data.data.data.total;
+    }
 
-  const table = useReactTable({
+    return defaultTotal;
+  }, [data, defaultTotal]);
+
+  const rankingData = useMemo(() => {
+    if (!data) {
+      return participants.map(participantToRankingItem);
+    }
+
+    if (data && data.success && data.data.success) {
+      return data.data.data.participants
+        .filter((p) => p.addresses.length > 0)
+        .map(participantToRankingItem);
+    }
+
+    return [];
+  }, [data, participants]);
+
+  const columns = useMemo(
+    () => getColumns(pageIndex, pageSize),
+    [pageIndex, pageSize]
+  );
+
+  const {
+    getHeaderGroups,
+    getRowModel,
+    getPageCount,
+    setPageIndex,
+    previousPage,
+    nextPage,
+    getCanPreviousPage,
+    getCanNextPage,
+  } = useReactTable({
     data: rankingData,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
+    pageCount: Math.ceil(total / defaultLimit),
+    onPaginationChange: setPagination,
     initialState: {
       pagination: {
-        pageSize: PAGE_SIZE,
-      },
-      columnVisibility: {
-        addresses: false,
-        'badges string': false,
-        'identity string': false,
+        pageSize,
+        pageIndex,
       },
     },
-    state: {
-      globalFilter: searchTerm,
-    },
-    globalFilterFn: fuzzyFilter,
-    enableGlobalFilter: true,
-    onGlobalFilterChange: setSearchTerm,
+    getCoreRowModel: getCoreRowModel(),
     filterFns: {
-      fuzzy: fuzzyFilter,
+      fuzzy: () => {
+        return true;
+      },
     },
   });
+
+  if (!isLoading && data && !data.success) {
+    logger.error(
+      'Error when parsing the response',
+      data.error.issues.map((issue) => issue.message).join('\n')
+    );
+    return <ParseReponseErrorView />;
+  }
+
+  if (!isLoading && data && data.success && !data.data.success) {
+    return <ParseReponseErrorView errorMessage={data.data.error} />;
+  }
 
   return (
     <div className="space-y-4">
@@ -186,10 +215,10 @@ const RankingTableView: FC<Props> = ({ participants }) => {
           />
         </div>
       </div>
-      <div className="overflow-scroll border rounded-lg border-mono-60">
+      <div className="relative overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
           <thead className="border-b border-mono-60">
-            {table.getHeaderGroups().map((headerGroup) => (
+            {getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, idx) => (
                   <th key={idx} className={cx('px-2 py-2 md:px-4 md:py-2')}>
@@ -205,8 +234,8 @@ const RankingTableView: FC<Props> = ({ participants }) => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
+            {getRowModel().rows.length > 0 ? (
+              getRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell, idx) => (
                     <td key={idx} className="px-2 py-2 md:px-4 md:py-2">
@@ -230,18 +259,24 @@ const RankingTableView: FC<Props> = ({ participants }) => {
             )}
           </tbody>
         </table>
+
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/5">
+            <Spinner size="xl" />
+          </div>
+        )}
       </div>
 
       <Pagination
-        canNextPage={table.getCanNextPage()}
-        canPreviousPage={table.getCanPreviousPage()}
-        itemsPerPage={table.getState().pagination.pageSize}
+        canNextPage={getCanNextPage()}
+        canPreviousPage={getCanPreviousPage()}
+        itemsPerPage={pageSize}
         totalItems={total}
-        totalPages={table.getPageCount()}
-        previousPage={table.previousPage}
-        nextPage={table.nextPage}
-        page={table.getState().pagination.pageIndex + 1}
-        setPageIndex={table.setPageIndex}
+        totalPages={getPageCount()}
+        previousPage={previousPage}
+        nextPage={nextPage}
+        page={pageIndex + 1}
+        setPageIndex={setPageIndex}
         title="participants"
         className="gap-3 p-0 border-0"
         iconSize="md"
