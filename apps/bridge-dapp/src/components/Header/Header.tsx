@@ -20,7 +20,7 @@ import {
 import {
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
-  TANGLE_STANDALONE_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
@@ -145,7 +145,7 @@ export const Header: FC<HeaderProps> = () => {
               version={process.env.BRIDGE_VERSION}
               onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
               onTestnetClick={() =>
-                window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
+                window.open(TANGLE_TESTNET_NATIVE_EXPLORER_URL, '_blank')
               }
               onFaucetClick={() => {
                 window.open(WEBB_FAUCET_URL, '_blank');
