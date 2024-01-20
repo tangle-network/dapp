@@ -10,8 +10,6 @@ import { Validator } from '../../types';
 export const getWaitingValidators = async (): Promise<Validator[]> => {
   const api = await getPolkadotApiPromise();
 
-  if (!api) return [] as Validator[];
-
   try {
     const waitingValidatorsDetails = await api.derive.staking.waitingInfo();
 

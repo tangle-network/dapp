@@ -19,9 +19,6 @@ function useSessionCountSubscription(defaultValue = NaN) {
     const subscritbeData = async () => {
       try {
         const api = await getPolkadotApiRx();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         sub = api.query.session.currentIndex().subscribe((nextSession) => {
           const idx = nextSession.toNumber();

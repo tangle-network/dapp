@@ -42,9 +42,6 @@ export default function useDelegations(
       try {
         const apiSub = await getPolkadotApiRx();
         const apiPromise = await getPolkadotApiPromise();
-        if (!apiSub || !apiPromise) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         setIsLoading(true);
 

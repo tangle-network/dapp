@@ -21,7 +21,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { type FC, useEffect, useState } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
@@ -83,10 +83,6 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
       setStep(Step.Sign);
 
       const api = await getPolkadotApiPromise();
-      if (!api) {
-        throw WebbError.from(WebbErrorCodes.ApiNotReady);
-      }
-
       const accountId = activeAccount.address;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);

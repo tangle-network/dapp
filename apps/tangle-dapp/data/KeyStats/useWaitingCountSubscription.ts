@@ -24,9 +24,6 @@ export default function useWaitingCountSubscription(
     const subscribeData = async () => {
       try {
         const api = await getPolkadotApiRx();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         sub = api.derive.staking.waitingInfo().subscribe((waitingInfo) => {
           if (isMounted) {

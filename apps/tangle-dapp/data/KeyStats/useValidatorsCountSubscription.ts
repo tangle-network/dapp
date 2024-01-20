@@ -25,9 +25,6 @@ export default function useValidatorCountSubscription(
     const subscribeData = async () => {
       try {
         const api = await getPolkadotApiRx();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         sub = api.query.session.validators().subscribe(async (validators) => {
           try {

@@ -10,8 +10,6 @@ import { Validator } from '../../types';
 export const getActiveValidators = async (): Promise<Validator[]> => {
   const api = await getPolkadotApiPromise();
 
-  if (!api) return [] as Validator[];
-
   try {
     const [validators, currentEra] = await Promise.all([
       api.query.session.validators(),

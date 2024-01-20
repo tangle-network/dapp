@@ -4,6 +4,7 @@ import {
   FundsLine,
   GiftLineIcon,
   GlobalLine,
+  UserLineIcon,
 } from '@webb-tools/icons';
 import {
   type SideBarFooterType,
@@ -20,6 +21,14 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 
 const sideBarItems: SideBarItemProps[] = [
+  {
+    name: 'Account',
+    href: '/account',
+    isInternal: true,
+    isNext: true,
+    Icon: UserLineIcon,
+    subItems: [],
+  },
   {
     name: 'EVM Staking',
     href: '/',

@@ -13,10 +13,6 @@ const Page = async ({
 
   const api = await getPolkadotApiPromise();
 
-  if (!api) {
-    return redirect('/claim');
-  }
-
   const isValidBlockHash =
     typeof blockHash === 'string' &&
     isHex(blockHash) &&

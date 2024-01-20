@@ -27,9 +27,6 @@ export default function useInflationPercentage(
       try {
         const apiRx = await getPolkadotApiRx();
         const apiPromise = await getPolkadotApiPromise();
-        if (!apiRx || !apiPromise) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         setIsLoading(true);
 
