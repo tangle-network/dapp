@@ -57,7 +57,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       const vAcnhorContract = getContract({
         address: `0x${anchorAddress.replace('0x', '')}`,
         abi: VAnchor__factory.abi,
-        publicClient: provider,
+        client: provider,
       });
 
       const fungibleCurrencyAddress = await vAcnhorContract.read.token();
@@ -65,7 +65,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       const fungibleCurrencyContract = getContract({
         address: fungibleCurrencyAddress,
         abi: ERC20__factory.abi,
-        publicClient: provider,
+        client: provider,
       });
 
       // This will be batched in one call
@@ -118,7 +118,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     const fungibleTokenWrapperContract = getContract({
       address: `0x${fungibleCurrency.address.replace('0x', '')}`,
       abi: FungibleTokenWrapper__factory.abi,
-      publicClient: provider,
+      client: provider,
     });
 
     try {
@@ -138,7 +138,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         getContract({
           address,
           abi: ERC20__factory.abi,
-          publicClient: provider,
+          client: provider,
         })
       );
 

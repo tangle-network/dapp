@@ -18,7 +18,7 @@ import { evmPublicClient, rebondTokens } from '../../constants';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import {
-  convertEthereumToSubstrateAddress,
+  convertToSubstrateAddress,
   splitTokenValueAndSymbol,
 } from '../../utils';
 import RebondTokens from './RebondTokens';
@@ -43,7 +43,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertEthereumToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: unbondingAmountData, error: unbondingAmountError } =

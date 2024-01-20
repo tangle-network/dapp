@@ -38,7 +38,7 @@ const KeyStatsItemText = ({ title, prefix, suffix }: Props) => {
               {data.value1 !== null
                 ? getRoundedDownNumberWith2Decimals(data.value1)
                 : ''}
-              {data.value2 && data.value2 !== null && (
+              {data.value2 !== null && (
                 <> / {getRoundedDownNumberWith2Decimals(data.value2)}</>
               )}
             </Typography>

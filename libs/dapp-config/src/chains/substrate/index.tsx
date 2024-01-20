@@ -19,7 +19,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.Substrate,
     id: SubstrateChainId.ProtocolSubstrateStandalone,
     name: 'Substrate',
-    network: 'Substrate',
     group: 'webb-dev',
     tag: 'dev',
     nativeCurrency: {
@@ -51,7 +50,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     tag: process.env['USING_LOCAL_TANGLE'] ? 'dev' : 'test',
     id: SubstrateChainId.TangleStandaloneTestnet,
     name: 'Tangle Standalone Testnet',
-    network: 'Substrate',
     nativeCurrency: {
       name: 'Tangle',
       symbol: 'tTNT',
@@ -85,7 +83,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.KusamaRelayChain,
     id: SubstrateChainId.Kusama,
     name: 'Kusama',
-    network: 'Kusama',
     group: 'kusama',
     tag: 'live',
     nativeCurrency: {
@@ -115,7 +112,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.PolkadotRelayChain,
     id: SubstrateChainId.Polkadot,
     name: 'Polkadot',
-    network: 'Polkadot',
     group: 'polkadot',
     tag: 'live',
     nativeCurrency: {

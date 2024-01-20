@@ -4,7 +4,6 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
   ActionsDropdown,
   notificationApi,
@@ -18,7 +17,7 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 import { ContainerSkeleton, TableStatus } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
-import { convertEthereumToSubstrateAddress } from '../../utils';
+import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
@@ -43,7 +42,7 @@ const DelegationsPayoutsContainer: FC = () => {
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertEthereumToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
@@ -118,11 +117,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 isLoading: loading,
                 isDisabled: isMobile,
                 loadingText: 'Connecting...',
-                onClick: () =>
-                  toggleModal(
-                    true,
-                    PresetTypedChainId.TangleTestnet ?? undefined
-                  ),
+                onClick: () => toggleModal(true),
               }}
               icon="🔗"
             />
@@ -157,11 +152,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 isLoading: loading,
                 isDisabled: isMobile,
                 loadingText: 'Connecting...',
-                onClick: () =>
-                  toggleModal(
-                    true,
-                    PresetTypedChainId.TangleTestnet ?? undefined
-                  ),
+                onClick: () => toggleModal(true),
               }}
               icon="🔗"
             />
