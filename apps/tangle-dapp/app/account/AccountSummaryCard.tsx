@@ -13,7 +13,6 @@ import { twMerge } from 'tailwind-merge';
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
 import IdentityWithAvatar from '../../components/NoteAccountAvatarWithKey';
-import { TOKEN_UNIT } from '../../constants';
 import useFormattedBalances from '../../hooks/useFormattedBalances';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
@@ -123,7 +122,8 @@ function Balances() {
                 <HiddenValue>{totalBalance}</HiddenValue>
               </Typography>
 
-              <Typography variant="body1">{TOKEN_UNIT}</Typography>
+              {/* TODO: Get the token symbol from the API, or the constants if appropriate. */}
+              <Typography variant="body1">tTNT</Typography>
             </div>
           ) : (
             <SkeletonLoader size="xl" />

@@ -1,8 +1,8 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 
+import { StakingStatsContainer } from '../../containers/StakingStatsContainer';
 import AccountSummaryCard from './AccountSummaryCard';
 import Actions from './Actions';
-import StakingDashboard from './StakingDashboard';
 
 export default function AccountPage() {
   return (
@@ -13,7 +13,7 @@ export default function AccountPage() {
         <Actions />
       </div>
 
-      <StakingDashboard />
+      <StakingStatsContainer />
 
       <Typography variant="h4" fw="bold">
         Manage Balances

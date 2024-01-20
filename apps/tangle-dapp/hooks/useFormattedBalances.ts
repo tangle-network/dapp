@@ -31,13 +31,6 @@ export default function useFormattedBalances(
       return;
     }
 
-    console.debug(
-      'Formatting balances:',
-      balances.total.toString(),
-      balances.locked.toString(),
-      balances.free.toString()
-    );
-
     let isMounted = true;
 
     const formatSingleBalance = async (balanceKey: keyof AccountBalances) => {

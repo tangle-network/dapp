@@ -21,7 +21,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, type FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
