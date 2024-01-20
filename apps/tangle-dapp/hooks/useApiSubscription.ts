@@ -46,7 +46,7 @@ export default function useApiSubscription<T>(
       typedChainId
     );
 
-    // TODO: Better error handling.
+    // TODO: Better error handling. Use notification API.
     if (nativeCurrency === undefined) {
       console.warn('Not native currency found for chain ', activeChain);
 
