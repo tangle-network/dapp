@@ -9,52 +9,52 @@ const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
   ? 'ws://127.0.0.1:9944'
   : TESTNET_RPC_ENDPOINT;
 
-const apiPromiseCache = new Map<string, ApiPromise>();
+const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
+
+async function getOrCacheApiVariant<T>(
+  endpoint: string,
+  cache: Map<string, Promise<T>>,
+  factory: () => Promise<T>
+): Promise<T> {
+  const possiblyCachedInstance = cache.get(endpoint);
+
+  if (possiblyCachedInstance !== undefined) {
+    return possiblyCachedInstance;
+  }
+
+  // Immediately cache the promise to prevent data races
+  // that would result in multiple API instances being created.
+  const newInstance = factory();
+
+  cache.set(endpoint, newInstance);
+
+  return newInstance;
+}
 
 export const getPolkadotApiPromise: (
   endpoint?: string
 ) => Promise<ApiPromise> = async (endpoint: string = TANGLE_RPC_ENDPOINT) => {
-  const possiblyCachedApiPromise = apiPromiseCache.get(endpoint);
+  return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
+    const wsProvider = new WsProvider(endpoint);
 
-  if (possiblyCachedApiPromise !== undefined) {
-    return possiblyCachedApiPromise;
-  }
-
-  const wsProvider = new WsProvider(endpoint);
-
-  const apiPromise = await ApiPromise.create({
-    provider: wsProvider,
-    noInitWarn: true,
+    return ApiPromise.create({
+      provider: wsProvider,
+      noInitWarn: true,
+    });
   });
-
-  apiPromiseCache.set(endpoint, apiPromise);
-
-  return apiPromise;
 };
 
-const apiRxCache = new Map<string, ApiRx>();
+const apiRxCache = new Map<string, Promise<ApiRx>>();
 
 export const getPolkadotApiRx = async (
   endpoint: string = TANGLE_RPC_ENDPOINT
 ): Promise<ApiRx> => {
-  const possiblyCachedApiRx = apiRxCache.get(endpoint);
+  return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
+    const provider = new WsProvider(endpoint);
+    const api = new ApiRx({ provider, noInitWarn: true });
 
-  if (possiblyCachedApiRx !== undefined) {
-    return possiblyCachedApiRx;
-  }
-
-  const provider = new WsProvider(endpoint);
-
-  const api = new ApiRx({
-    provider,
-    noInitWarn: true,
+    return firstValueFrom(api.isReady);
   });
-
-  const apiRx = await firstValueFrom(api.isReady);
-
-  apiRxCache.set(endpoint, apiRx);
-
-  return apiRx;
 };
 
 export const formatTokenBalance = async (
@@ -68,8 +68,6 @@ export const formatTokenBalance = async (
 
   return formatBalance(balance, {
     decimals,
-    // For some reason, it defaults to 'Unit' if 'undefined'
-    // is passed instead of 'false'.
     withUnit: includeUnit ? TOKEN_UNIT : false,
   });
 };

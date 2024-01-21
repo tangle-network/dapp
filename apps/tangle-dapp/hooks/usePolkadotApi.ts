@@ -25,9 +25,9 @@ function usePolkadotApi<T>(
     usePromise<ApiPromise | null>(getPolkadotApiPromise, null);
 
   // Include the dependency list as part of the cache key.
-  // This allows SWR to revalidate the cache when the dependency
+  // This allows SWR to refresh the cache when the dependency
   // list changes.
-  const dynamicKey = [swrConfig.cacheUniqueKey, ...deps];
+  const dynamicKey = [swrConfig.cacheUniqueKey, isApiLoading, ...deps];
 
   const response = useSWR(
     dynamicKey,
@@ -35,8 +35,6 @@ function usePolkadotApi<T>(
       if (polkadotApi === null) {
         return Promise.resolve(null);
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       return fetcher(polkadotApi);
     },

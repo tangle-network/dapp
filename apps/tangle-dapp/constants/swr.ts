@@ -11,6 +11,6 @@ export const SWR_ERA: SWRConfigConst = {
 
 export const SWR_STAKING_REWARDS: SWRConfigConst = {
   cacheUniqueKey: 'staking-rewards',
-  // 1 minutes.
-  refreshInterval: 1 * 1000 * 60,
+  // 3 minutes.
+  refreshInterval: 3 * 1000 * 60,
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { TimerLine } from '@webb-tools/icons';
+import { ListCheckIcon, LoopRightFillIcon, TimerLine } from '@webb-tools/icons';
 import { FC } from 'react';
 
 import PillCard from '../../app/account/PillCard';
@@ -15,13 +15,17 @@ const StakingStats: FC = () => {
 
   const { value: rewards } = useStakingRewards();
 
-  const totalRewards = rewards !== null ? rewards.totalRewards.toString() : '-';
+  // TODO: Format as token balance.
+  const totalRewards =
+    rewards !== null ? rewards.totalRewards.toString() : null;
 
+  // TODO: Format as token balance.
   const claimedRewards =
-    rewards !== null ? rewards.claimedRewards.toString() : '-';
+    rewards !== null ? rewards.claimedRewards.toString() : null;
 
+  // TODO: Format as token balance.
   const pendingRewards =
-    rewards !== null ? rewards.pendingRewards.toString() : '-';
+    rewards !== null ? rewards.pendingRewards.toString() : null;
 
   return (
     <>
@@ -29,7 +33,7 @@ const StakingStats: FC = () => {
         <PillCard
           isFirst
           title="Current Era"
-          value={currentEra || '-'}
+          value={currentEra}
           Icon={TimerLine}
         />
 
@@ -38,14 +42,14 @@ const StakingStats: FC = () => {
         <PillCard
           title="Claimed Amount"
           value={claimedRewards}
-          Icon={TimerLine}
+          Icon={LoopRightFillIcon}
         />
 
         <PillCard
           isLast
           title="Pending Rewards"
           value={pendingRewards}
-          Icon={TimerLine}
+          Icon={ListCheckIcon}
         />
       </div>
     </>

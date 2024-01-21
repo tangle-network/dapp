@@ -15,6 +15,7 @@ function usePromise<T>(fetcher: () => Promise<T>, fallbackValue: T) {
       }
 
       setResult(newResult);
+      setIsLoading(false);
     });
 
     return () => {

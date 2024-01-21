@@ -1,5 +1,9 @@
 import { IconBase } from '@webb-tools/icons/types';
-import { Card, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -7,8 +11,16 @@ export type PillCardProps = {
   isFirst?: boolean;
   isLast?: boolean;
   title: string;
-  value: string;
   Icon: FC<IconBase>;
+
+  /**
+   * The value to display as a string.
+   *
+   * @remarks
+   * If `null`, the value will be displayed as a skeleton loader
+   * to indicate that the value is loading.
+   */
+  value: string | null;
 };
 
 const PillCard: FC<PillCardProps> = ({
@@ -43,7 +55,7 @@ const PillCard: FC<PillCardProps> = ({
         </div>
 
         <Typography variant="h4" fw="bold">
-          {value}
+          {value !== null ? value : <SkeletonLoader size="lg" />}
         </Typography>
       </div>
     </Card>
