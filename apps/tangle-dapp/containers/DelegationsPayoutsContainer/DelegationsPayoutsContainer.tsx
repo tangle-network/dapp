@@ -6,13 +6,13 @@ import {
 } from '@webb-tools/api-provider-environment';
 import {
   ActionsDropdown,
+  notificationApi,
   TabContent,
   TableAndChartTabs,
-  notificationApi,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { useEffect, useMemo, useState, type FC } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
