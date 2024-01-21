@@ -35,7 +35,11 @@ const ComputedBreadcrumbs: FC = () => {
 
     return (
       <Link key={index} href={href}>
-        <BreadcrumbsItem isLast={isLast} icon={icon}>
+        <BreadcrumbsItem
+          className="whitespace-nowrap"
+          isLast={isLast}
+          icon={icon}
+        >
           <Typography variant="body1" fw="bold" className="normal-case">
             {segmentName}
           </Typography>
@@ -45,9 +49,9 @@ const ComputedBreadcrumbs: FC = () => {
   });
 
   return (
-    <Breadcrumbs>
+    <Breadcrumbs className="overflow-x-auto">
       <Link href={RelativePageUrl.Root}>
-        <BreadcrumbsItem icon={<CircleIcon />}>
+        <BreadcrumbsItem className="whitespace-nowrap" icon={<CircleIcon />}>
           <Typography variant="body1" fw="bold">
             ZK Explorer
           </Typography>
