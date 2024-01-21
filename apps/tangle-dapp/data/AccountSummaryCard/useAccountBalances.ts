@@ -23,7 +23,7 @@ export default function useAccountBalances(): AccountBalances | null {
         map((accountInfo) => ({
           total: accountInfo.data.free.add(accountInfo.data.reserved),
           free: accountInfo.data.free,
-          locked: accountInfo.data.reserved,
+          locked: accountInfo.data.frozen,
         }))
       ),
     []

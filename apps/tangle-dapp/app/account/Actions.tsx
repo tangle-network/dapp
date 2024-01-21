@@ -3,11 +3,12 @@
 import { ArrowRightUp, QRScanLineIcon } from '@webb-tools/icons';
 import ArrowLeftRightLineIcon from '@webb-tools/icons/ArrowLeftRightLineIcon';
 import { IconBase } from '@webb-tools/icons/types';
-import { Card, IconButton, Typography } from '@webb-tools/webb-ui-components';
+import { IconButton, Typography } from '@webb-tools/webb-ui-components';
 import { capitalize } from 'lodash';
 import { useRouter } from 'next/navigation';
 import { ComponentProps, FC, ReactElement } from 'react';
 
+import GlassCard from '../../components/GlassCard/GlassCard';
 import useReceiveModal from '../../hooks/useReceiveModal';
 
 const BRIDGE_PATH = 'TEMP_BRIDGE';
@@ -53,14 +54,13 @@ const ActionItem = (props: {
   );
 };
 
-/** @internal */
 const Actions: FC = () => {
   const navigate = useRouter();
   const { toggleModal } = useReceiveModal();
 
   return (
-    <Card className="flex items-center justify-center space-y-0">
-      <div className="flex items-center gap-6">
+    <GlassCard className="flex justify-center align-center">
+      <div className="flex items-center justify-center gap-6">
         <ActionItem
           icon={<QRScanLineIcon size="lg" />}
           label="Receive"
@@ -75,7 +75,7 @@ const Actions: FC = () => {
           />
         ))}
       </div>
-    </Card>
+    </GlassCard>
   );
 };
 

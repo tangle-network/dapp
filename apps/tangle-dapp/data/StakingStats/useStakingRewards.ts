@@ -8,7 +8,7 @@ import usePolkadotLedger, {
   PolkadotLedgerFetcher,
 } from '../../hooks/usePolkadotLedger';
 
-const sumIndividualRewards = async (
+const sumStakerRewardsInClaimedEraRange = async (
   ledger: StakingLedger,
   api: ApiPromise,
   startEra: number,
@@ -46,7 +46,8 @@ const sumIndividualRewards = async (
     // Avoid division by zero.
     const safeTotalPoints = totalPoints.isZero() ? new BN(1) : totalPoints;
 
-    // Calculate the staker's share of the rewards for the era.
+    // Calculate the staker's share of the rewards for the era:
+    // stakerShareForEra = totalRewardsForEra * stakerPoints / totalPoints
     const stakerShareForEra = totalRewardsForEra
       .toBn()
       .mul(stashPoints)
@@ -60,7 +61,13 @@ const sumIndividualRewards = async (
 };
 
 const fetchClaimedRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
-  return sumIndividualRewards(ledger, api, 0, ledger.claimedRewards.length - 1);
+  // Claimed rewards = Sum of all rewards in claimed eras.
+  return sumStakerRewardsInClaimedEraRange(
+    ledger,
+    api,
+    0,
+    ledger.claimedRewards.length - 1
+  );
 };
 
 const fetchPendingRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
@@ -79,7 +86,8 @@ const fetchPendingRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
 
   const currentEraIndex = currentEraIndexOpt.unwrap().toNumber();
 
-  return sumIndividualRewards(
+  // Pending rewards = Sum of all rewards in unclaimed eras.
+  return sumStakerRewardsInClaimedEraRange(
     ledger,
     api,
     // Exclude the last claimed era.

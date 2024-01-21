@@ -1,6 +1,6 @@
 'use client';
 
-import { FundsLine, GiftLineIcon } from '@webb-tools/icons';
+import { FundsLine, GiftLineIcon, UserFillIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs as BreadcrumbsCmp,
   BreadcrumbsItem,
@@ -9,12 +9,13 @@ import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { type FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
 import { BreadcrumbType } from './types';
 
 const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
+  account: <UserFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
 };
 
 const Breadcrumbs: FC = () => {
