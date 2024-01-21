@@ -79,7 +79,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const vAnchorContract = getContract({
       abi: VAnchor__factory.abi,
       address: ensureHex(anchor),
-      publicClient: getPublicClient({ chainId: chainId }),
+      client: getPublicClient({ chainId: chainId }),
     });
 
     const nextIdx = await vAnchorContract.read.getNextIndex();
@@ -547,7 +547,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       getContract({
         address: ensureHex(addressOrTreeId),
         abi: VAnchor__factory.abi,
-        publicClient: this.inner.publicClient,
+        client: this.inner.publicClient,
       }),
       receipt.blockNumber,
       receipt.blockNumber
@@ -584,7 +584,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const vAnchorContract = getContract({
       abi: VAnchor__factory.abi,
       address: ensureHex(anchor),
-      publicClient,
+      client: publicClient,
     });
 
     const nextIdx = await vAnchorContract.read.getNextIndex();
@@ -783,7 +783,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       const sourceVAnchorContract = getContract({
         abi: VAnchor__factory.abi,
         address: ensureHex(sourceAnchorId),
-        publicClient: sourcePublicClient,
+        client: sourcePublicClient,
       });
 
       const resourceId = ResourceId.newFromContractAddress(
@@ -897,7 +897,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     return getContract({
       abi: FungibleTokenWrapper__factory.abi,
       address: currentWebbToken,
-      publicClient: this.inner.publicClient,
+      client: this.inner.publicClient,
     });
   }
 
@@ -927,7 +927,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       const erc20Contract = getContract({
         address: ensureHex(wrapUnwrapToken),
         abi: ERC20__factory.abi,
-        publicClient: this.inner.publicClient,
+        client: this.inner.publicClient,
       });
       const balance = await erc20Contract.read.balanceOf([account.address]);
       console.log('Balance: ', balance);
@@ -1019,7 +1019,7 @@ export class Web3VAnchorActions extends VAnchorActions<
           const tokenContract = getContract({
             address: ensureHex(wrapUnwrapToken),
             abi: ERC20__factory.abi,
-            publicClient: this.inner.publicClient,
+            client: this.inner.publicClient,
           });
 
           // On the wrap case, we need to approve the tokenWrapper contract
@@ -1028,7 +1028,7 @@ export class Web3VAnchorActions extends VAnchorActions<
             [currentFungibleToken.address, approvalValue],
             {
               gas: BigInt('0x5B8D80'),
-              account,
+              account: account.address,
             }
           );
 
@@ -1040,7 +1040,7 @@ export class Web3VAnchorActions extends VAnchorActions<
             [srcVAnchor.contract.address, amountBI],
             {
               gas: BigInt('0x5B8D80'),
-              account,
+              account: account.address,
             }
           );
 

@@ -41,19 +41,26 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
 
   const fncCallerProps = useMemo<GovernanceFncCallerProps[]>(
     () =>
-      governanceFncNames.map((fncName) => {
-        const item = getAbiItem({
-          abi,
-          name: fncName,
-        });
-        return {
-          fncName: item.name,
-          fncParams: item.inputs.map((input) => ({
-            name: input.name,
-            type: input.type,
-          })),
-        };
-      }),
+      governanceFncNames
+        .map((fncName) => {
+          const item = getAbiItem({
+            abi,
+            name: fncName,
+          });
+
+          if (!item || item.type !== 'function') {
+            return null;
+          }
+
+          return {
+            fncName: item.name,
+            fncParams: item.inputs.map((input) => ({
+              name: input.name,
+              type: input.type,
+            })),
+          } as GovernanceFncCallerProps;
+        })
+        .filter((item): item is GovernanceFncCallerProps => item !== null),
     [abi, governanceFncNames]
   );
 
@@ -65,7 +72,7 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
       )}
     >
       {/* Chains Ring */}
-      <div className="flex justify-center items-center">
+      <div className="flex items-center justify-center">
         <ChainsRing
           chainItems={chainRingItems}
           circleContent={
@@ -74,7 +81,7 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
                 variant="body1"
                 fw="bold"
                 ta="center"
-                className="text-mono-140 dark:text-mono-80 capitalize"
+                className="capitalize text-mono-140 dark:text-mono-80"
               >
                 {selectedTypedChainId !== undefined
                   ? chainsConfig[selectedTypedChainId].name
@@ -85,7 +92,7 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
         />
       </div>
 
-      <div className="h-max space-y-2">
+      <div className="space-y-2 h-max">
         <Typography variant="h5" fw="bold">
           Metadata
         </Typography>
@@ -108,7 +115,7 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
         <Typography variant="h5" fw="bold">
           Governance Functions
         </Typography>
-        <div className="space-y-3 w-full">
+        <div className="w-full space-y-3">
           {fncCallerProps.map((fncInfo) => (
             <FunctionInputs
               {...fncInfo}
