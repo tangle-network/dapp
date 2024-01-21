@@ -22,7 +22,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
           'relative rounded-2xl border-2 p-6',
           'border-mono-0 bg-mono-0/70 dark:border-mono-160 dark:bg-mono-0/5',
           'dark:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] dark:backdrop-blur-sm',
-          'w-full flex items-center lg:h-[325px] max-w-[556px]',
+          'w-full flex items-center lg:h-[325px] md:max-w-[556px]',
           className
         )}
         ref={ref}

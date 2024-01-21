@@ -7,7 +7,7 @@ import Actions from './Actions';
 export default function AccountPage() {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-col md:flex-row">
         <AccountSummaryCard />
 
         <Actions />

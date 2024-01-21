@@ -60,7 +60,7 @@ const Actions: FC = () => {
 
   return (
     <GlassCard className="flex justify-center align-center">
-      <div className="flex items-center justify-center gap-6">
+      <div className="flex items-center justify-center gap-6 overflow-x-auto">
         <ActionItem
           icon={<QRScanLineIcon size="lg" />}
           label="Receive"
