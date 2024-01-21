@@ -1,37 +1,50 @@
 'use client';
 
-import { ArrowRightUp, QRScanLineIcon } from '@webb-tools/icons';
+import {
+  ArrowRightUp,
+  GiftLineIcon,
+  QRScanLineIcon,
+  ShieldKeyholeLineIcon,
+} from '@webb-tools/icons';
 import ArrowLeftRightLineIcon from '@webb-tools/icons/ArrowLeftRightLineIcon';
 import { IconBase } from '@webb-tools/icons/types';
 import { IconButton, Typography } from '@webb-tools/webb-ui-components';
-import { capitalize } from 'lodash';
 import { useRouter } from 'next/navigation';
 import { ComponentProps, FC, ReactElement } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useReceiveModal from '../../hooks/useReceiveModal';
+import { AnchorLinkId, InternalPath } from '../../types';
 
-const BRIDGE_PATH = 'TEMP_BRIDGE';
-const DEPOSIT_PATH = 'DEPOSIT';
-const TRANSFER_PATH = 'TRANSFER';
-const WITHDRAW_PATH = 'WITHDRAW';
+type ActionItemDef = {
+  label: string;
+  path: string;
+  icon: ReactElement<IconBase>;
+};
 
 /** @internal */
-const paths = [DEPOSIT_PATH, TRANSFER_PATH, WITHDRAW_PATH] as const;
-
-/** @internal */
-const icons = [
-  <ArrowRightUp key={0} size="lg" />,
-  <ArrowLeftRightLineIcon key={1} size="lg" />,
-  <ArrowRightUp key={2} size="lg" className="rotate-90" />,
+const actionItems: ActionItemDef[] = [
+  {
+    label: 'Transfer',
+    path: InternalPath.Claim,
+    icon: <ArrowLeftRightLineIcon size="lg" />,
+  },
+  {
+    label: 'Vest',
+    path: InternalPath.Claim,
+    icon: <ShieldKeyholeLineIcon size="lg" />,
+  },
+  {
+    label: 'Claim Airdrop',
+    path: InternalPath.Claim,
+    icon: <GiftLineIcon size="lg" />,
+  },
+  {
+    label: 'Nominate',
+    path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
+    icon: <ArrowRightUp size="lg" className="rotate-90" />,
+  },
 ] as const;
-
-/** @internal */
-const actionItems = paths.map((path, idx) => ({
-  label: capitalize(path),
-  path: `/${BRIDGE_PATH}/${path}`,
-  icon: icons[idx],
-}));
 
 /** @internal */
 const ActionItem = (props: {
@@ -47,7 +60,11 @@ const ActionItem = (props: {
         {icon}
       </IconButton>
 
-      <Typography component="span" variant="body1" className="block">
+      <Typography
+        component="span"
+        variant="body1"
+        className="block text-center"
+      >
         {label}
       </Typography>
     </p>
@@ -56,7 +73,7 @@ const ActionItem = (props: {
 
 const Actions: FC = () => {
   const navigate = useRouter();
-  const { toggleModal } = useReceiveModal();
+  const { toggleModal: toggleReceiveModal } = useReceiveModal();
 
   return (
     <GlassCard className="flex justify-center align-center">
@@ -64,7 +81,7 @@ const Actions: FC = () => {
         <ActionItem
           icon={<QRScanLineIcon size="lg" />}
           label="Receive"
-          onClick={() => toggleModal()}
+          onClick={() => toggleReceiveModal()}
         />
 
         {actionItems.map(({ path, ...restItem }) => (

@@ -24,3 +24,13 @@ export enum PaymentDestination {
   Stash = 'Stash (do not increase the amount at stake)',
   Controller = 'Controller Account',
 }
+
+export enum InternalPath {
+  EvmStaking = '/',
+  Claim = '/claim',
+  Account = '/account',
+}
+
+export enum AnchorLinkId {
+  NominationAndPayouts = 'nomination-and-payouts',
+}

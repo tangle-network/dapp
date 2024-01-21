@@ -6,17 +6,18 @@ import {
 } from '@webb-tools/api-provider-environment';
 import {
   ActionsDropdown,
-  notificationApi,
   TabContent,
   TableAndChartTabs,
+  notificationApi,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FC } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
+import { AnchorLinkId } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -94,6 +95,7 @@ const DelegationsPayoutsContainer: FC = () => {
   return (
     <>
       <TableAndChartTabs
+        id={AnchorLinkId.NominationAndPayouts}
         tabs={[delegationsTableTab, payoutsTableTab]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={

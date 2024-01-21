@@ -2,6 +2,7 @@ import { isHex } from '@polkadot/util';
 import { redirect } from 'next/navigation';
 
 import { getPolkadotApiPromise } from '../../../constants/polkadot';
+import { InternalPath } from '../../../types';
 import SuccessClient from './SuccessClient';
 
 const Page = async ({
@@ -19,7 +20,7 @@ const Page = async ({
     (await isBlockHashExistOnChain(api, blockHash));
 
   if (!isValidBlockHash) {
-    return redirect('/claim');
+    return redirect(InternalPath.Claim);
   }
 
   return <SuccessClient blockHash={blockHash} />;

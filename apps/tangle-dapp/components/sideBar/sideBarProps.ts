@@ -7,9 +7,9 @@ import {
   UserLineIcon,
 } from '@webb-tools/icons';
 import {
-  type SideBarFooterType,
-  type SideBarItemProps,
-  type SidebarProps,
+  SideBarFooterType,
+  SideBarItemProps,
+  SidebarProps,
   TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
@@ -20,10 +20,12 @@ import {
   WEBB_TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
+import { InternalPath } from '../../types';
+
 const sideBarItems: SideBarItemProps[] = [
   {
     name: 'Account',
-    href: '/account',
+    href: InternalPath.Account,
     isInternal: true,
     isNext: true,
     Icon: UserLineIcon,
@@ -31,15 +33,15 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'EVM Staking',
-    href: '/',
+    href: InternalPath.EvmStaking,
     isInternal: true,
     isNext: true,
     Icon: FundsLine,
     subItems: [],
   },
   {
-    name: 'Claim',
-    href: '/claim',
+    name: 'Claim Airdrop',
+    href: InternalPath.Claim,
     isInternal: true,
     isNext: true,
     Icon: GiftLineIcon,

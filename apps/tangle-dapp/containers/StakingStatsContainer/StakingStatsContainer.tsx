@@ -1,6 +1,11 @@
 'use client';
 
-import { ListCheckIcon, LoopRightFillIcon, TimerLine } from '@webb-tools/icons';
+import {
+  ListCheckIcon,
+  LoopRightFillIcon,
+  SunLine,
+  TimerLine,
+} from '@webb-tools/icons';
 import { FC } from 'react';
 
 import PillCard from '../../app/account/PillCard';
@@ -37,7 +42,7 @@ const StakingStats: FC = () => {
           Icon={TimerLine}
         />
 
-        <PillCard title="Total Rewards" value={totalRewards} Icon={TimerLine} />
+        <PillCard title="Total Rewards" value={totalRewards} Icon={SunLine} />
 
         <PillCard
           title="Claimed Amount"
