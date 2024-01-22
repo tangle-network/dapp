@@ -21,9 +21,11 @@ export default function useAccountBalances(): AccountBalances | null {
     (api, activeAccountAddress) =>
       api.query.system.account(activeAccountAddress).pipe(
         map((accountInfo) => ({
-          total: accountInfo.data.free.add(accountInfo.data.reserved),
+          total: accountInfo.data.free
+            .add(accountInfo.data.reserved)
+            .add(accountInfo.data.frozen),
           free: accountInfo.data.free,
-          locked: accountInfo.data.frozen,
+          locked: accountInfo.data.frozen.add(accountInfo.data.reserved),
         }))
       ),
     []
