@@ -18,8 +18,8 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
     if (!blockHash) return null;
 
     const explorer =
-      apiConfig.chains[PresetTypedChainId.TangleStandaloneTestnet]
-        ?.blockExplorers?.default?.url;
+      apiConfig.chains[PresetTypedChainId.TangleTestnetNative]?.blockExplorers
+        ?.default?.url;
 
     if (!explorer) return null;
 

@@ -16,7 +16,7 @@ export enum EVMChainId {
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
   ScrollAlpha = 534353,
-  TangleTestnet = 3799,
+  TangleTestnetEVM = 3799,
 
   /** Local EVM */
   HermesLocalnet = 5001,

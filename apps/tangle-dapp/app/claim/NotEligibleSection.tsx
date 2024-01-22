@@ -40,8 +40,8 @@ const NotEligibleSection: FC<Props> = ({ checkEligibility }) => {
             toggleModal(
               true,
               isActiveWalletEvm
-                ? PresetTypedChainId.TangleStandaloneTestnet
-                : PresetTypedChainId.TangleTestnet
+                ? PresetTypedChainId.TangleTestnetNative
+                : PresetTypedChainId.TangleTestnetEVM
             )
           }
         >
