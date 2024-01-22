@@ -40,7 +40,6 @@ const ANY_EVM = [
 ];
 
 const ANY_SUBSTRATE = [
-  PresetTypedChainId.LocalTangleNative,
   PresetTypedChainId.TangleTestnetNative,
   PresetTypedChainId.Kusama,
   PresetTypedChainId.Polkadot,

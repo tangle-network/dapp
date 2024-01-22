@@ -54,7 +54,7 @@ export const anchorSignatureBridge: ChainWithAnchorsMapType = {
   ...localAnchorRecord,
 
   // Substrate
-  [PresetTypedChainId.LocalTangleNative]: {
+  [PresetTypedChainId.TangleTestnetNative]: {
     '1': '',
   },
 };

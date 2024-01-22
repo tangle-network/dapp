@@ -43,7 +43,7 @@ export function relayerSubstrateNameToTypedChainId(
 ): PresetTypedChainId {
   switch (name) {
     case 'tangle':
-      return PresetTypedChainId.LocalTangleNative;
+      return PresetTypedChainId.TangleTestnetNative;
   }
 
   throw new Error('unhandled relayed chain name  ' + name);
@@ -51,7 +51,7 @@ export function relayerSubstrateNameToTypedChainId(
 
 export function typedChainIdToSubstrateRelayerName(id: number): string {
   switch (id) {
-    case PresetTypedChainId.LocalTangleNative:
+    case PresetTypedChainId.TangleTestnetNative:
       return 'tangle';
   }
 
