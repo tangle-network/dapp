@@ -22,7 +22,6 @@ import {
   bondExtraTokens,
   bondTokens,
   evmPublicClient,
-  isNominatorFirstTimeNominator,
   nominateValidators,
   PAYMENT_DESTINATION_OPTIONS,
   updatePaymentDestination,
@@ -33,6 +32,7 @@ import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
+import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
 import SelectDelegates from './SelectDelegates';
@@ -175,6 +175,18 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const submitAndSignTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
+
+    // TODO: execute Substrate case
+
+    // first time nominator
+    // bondTokens
+    // updatePaymentDestination?
+    // nominateValidators
+
+    // not first time nominator
+    // amountToBond > 0 -> bondExtraTokens
+    // updatePaymentDestination
+    // nominateValidators
 
     const executeTransaction = async (
       action: any,

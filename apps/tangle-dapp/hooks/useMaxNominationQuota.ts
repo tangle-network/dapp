@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { getMaxNominationQuota } from '../constants';
+import { getMaxNominationQuota } from '../utils/polkadot';
 
 const useMaxNominationQuota = () => {
   const [maxNominationQuota, setMaxNominationQuota] = useState<number>(0);

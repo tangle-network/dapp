@@ -17,9 +17,9 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem } from '../../components';
-import { isNominatorFirstTimeNominator } from '../../constants';
 import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
 import { convertToSubstrateAddress } from '../../utils';
+import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';

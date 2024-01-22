@@ -7,9 +7,9 @@ import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 import { formatEther } from 'viem';
 
-import { getPolkadotApiRx } from '../../constants';
 import { evmPublicClient } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useTokenWalletBalance(
   address: string,

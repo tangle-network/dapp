@@ -12,13 +12,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import {
-  evmPublicClient,
-  getSlashingSpans,
-  withdrawUnbondedTokens,
-} from '../../constants';
+import { evmPublicClient, withdrawUnbondedTokens } from '../../constants';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import { convertToSubstrateAddress } from '../../utils';
+import { getSlashingSpans } from '../../utils/polkadot';
 import { RebondTxContainer } from '../RebondTxContainer';
 import { WithdrawUnbondedTxContainerProps } from './types';
 import WithdrawUnbonded from './WithdrawUnbonded';

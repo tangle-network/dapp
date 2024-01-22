@@ -15,9 +15,9 @@ import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
-import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import { convertToSubstrateAddress } from '../../utils';
+import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';

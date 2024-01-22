@@ -5,8 +5,8 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 
-import { formatTokenBalance, getPolkadotApiRx } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import { formatTokenBalance, getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useUnbondingAmountSubscription(
   address: string,

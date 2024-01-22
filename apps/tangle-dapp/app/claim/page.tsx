@@ -17,7 +17,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getPolkadotApiPromise } from '../../constants/polkadot';
+import { getPolkadotApiPromise } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
