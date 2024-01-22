@@ -1,5 +1,5 @@
 export * from './api';
-import _ from 'lodash';
+import _, { capitalize } from 'lodash';
 import { CircuitItem } from '../components/CircuitCard';
 import { ProjectItem } from '../components/ProjectCard';
 import {
@@ -50,9 +50,13 @@ export enum ItemType {
 }
 
 export enum RelativePageUrl {
-  Home = '/',
+  Root = '/',
   SubmitProject = '/submit',
   Dashboard = '/dashboard',
+}
+
+export enum DynamicPath {
+  Project = 'project',
 }
 
 export enum SearchParamKey {
@@ -191,6 +195,57 @@ export function getPathFilename(path: string): string {
   // out-of-bounds error. Even if the path is just an empty
   // string, the last segment will be an empty string.
   return segments[segments.length - 1];
+}
+
+export function isPageUrl(pathSegment: string): pathSegment is RelativePageUrl {
+  return Object.values(RelativePageUrl).includes(
+    pathSegment as RelativePageUrl
+  );
+}
+
+export function getPageName(page: RelativePageUrl): string {
+  switch (page) {
+    case RelativePageUrl.Root:
+      return 'Home';
+    case RelativePageUrl.SubmitProject:
+      return 'Upload Project';
+    case RelativePageUrl.Dashboard:
+      return 'My Dashboard';
+  }
+}
+
+export function getDynamicPathSegmentNames(
+  dynamicPath: DynamicPath,
+  segments: string[]
+): string[] {
+  switch (dynamicPath) {
+    case DynamicPath.Project:
+      return ['Project', ...segments];
+  }
+}
+
+function isDynamicPath(pathSegment: string): pathSegment is DynamicPath {
+  return Object.values(DynamicPath).includes(pathSegment as DynamicPath);
+}
+
+export function getPathBreadcrumbNames(pathSegments: string[]): string[] {
+  if (pathSegments.length === 0) {
+    return [];
+  }
+
+  const firstSegment = pathSegments[0];
+  const firstSegmentWithSlash = `/${firstSegment}`;
+
+  if (isPageUrl(firstSegmentWithSlash)) {
+    return [getPageName(firstSegmentWithSlash)];
+  } else if (isDynamicPath(firstSegment)) {
+    return getDynamicPathSegmentNames(firstSegment, pathSegments.slice(1));
+  }
+
+  // If the first segment is neither a known page URL
+  // nor a known dynamic dynamic path, simply capitalize
+  // each segment. This serves as a graceful fallback.
+  return pathSegments.map(capitalize);
 }
 
 export async function getGitHubLanguageColors(
