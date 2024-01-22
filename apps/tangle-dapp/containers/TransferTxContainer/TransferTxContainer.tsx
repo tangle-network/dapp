@@ -19,7 +19,6 @@ import useFormattedAccountBalances from '../../data/AccountSummaryCard/useFormat
 import useTx, { TxStatus } from '../../hooks/useTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import { TransferTxContainerProps } from './types';
-import { notificationApi } from '../../../../libs/webb-ui-components/src/components/Notification/NotificationStacked';
 
 const getTxStatusText = (status: TxStatus) => {
   switch (status) {
@@ -91,7 +90,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         secondaryMessage: 'Your transaction has been successfully processed.',
       });
     }
-  }, [reset, status]);
+  }, [notificationApi, reset, status]);
 
   const setMaxAmount = useCallback(() => {
     if (formattedFreeBalance === null) {

@@ -66,13 +66,19 @@ const Balances: FC = () => {
 
         <div className="flex items-center gap-4">
           {totalBalance !== null ? (
-            <div className="flex gap-1 items-end">
-              <Typography variant="h2" component="p" fw="bold">
+            <div className="flex gap-2 items-end py-2">
+              <Typography variant="h2" fw="bold" className="!leading-none">
                 <HiddenValue>{totalBalance}</HiddenValue>
               </Typography>
 
               {/* TODO: Get the token symbol from the API, or the constants if appropriate. */}
-              <Typography variant="body1">tTNT</Typography>
+              <Typography
+                variant="h4"
+                fw="normal"
+                className="!leading-none pb-1"
+              >
+                tTNT
+              </Typography>
             </div>
           ) : (
             <SkeletonLoader size="xl" />

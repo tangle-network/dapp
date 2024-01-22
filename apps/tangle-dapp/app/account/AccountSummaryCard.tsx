@@ -7,13 +7,16 @@ import type { ElementRef } from 'react';
 import { FC, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import IdentityWithAvatar from '../../components/NoteAccountAvatarWithKey';
+import AvatarWithAddress from '../../components/AvatarWithAddress';
 import Balances from './Balances';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
     const activeAccount = useActiveAccount();
     const activeAccountAddress = activeAccount?.[0]?.address ?? null;
+
+    // TODO: This is a hacky way of determining if the address is an EVM address. Use a more robust way.
+    const isEvmAddress = activeAccount?.[0]?.address.startsWith('0x') || false;
 
     return (
       <div
@@ -30,7 +33,8 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         <div className="space-y-6 w-full">
           <header>
             {activeAccountAddress !== null ? (
-              <IdentityWithAvatar
+              <AvatarWithAddress
+                isEvmAddress={isEvmAddress}
                 keyValue={activeAccountAddress}
                 fontWeight="normal"
                 label="Address:"

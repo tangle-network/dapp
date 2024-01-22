@@ -1,5 +1,7 @@
 'use client';
 
+import { BN } from '@polkadot/util';
+import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import {
   ArrowLeftRightLineIcon,
   ArrowRightUp,
@@ -10,11 +12,14 @@ import {
 import { IconBase } from '@webb-tools/icons/types';
 import { IconButton, Typography } from '@webb-tools/webb-ui-components';
 import { useRouter } from 'next/navigation';
-import { ComponentProps, FC, ReactElement, useState } from 'react';
+import { ComponentProps, FC, ReactElement, useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import useStakingRewards from '../../data/StakingStats/useStakingRewards';
 import useReceiveModal from '../../hooks/useReceiveModal';
+import useTx from '../../hooks/useTx';
 import { AnchorLinkId, InternalPath } from '../../types';
 
 type ActionItemDef = {
@@ -31,11 +36,6 @@ const staticActionItems: ActionItemDef[] = [
     icon: <ShieldKeyholeLineIcon size="lg" />,
   },
   {
-    label: 'Claim Airdrop',
-    path: InternalPath.Claim,
-    icon: <GiftLineIcon size="lg" />,
-  },
-  {
     label: 'Nominate',
     path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
     icon: <ArrowRightUp size="lg" className="rotate-90" />,
@@ -47,12 +47,18 @@ const ActionItem = (props: {
   icon: ReactElement<IconBase>;
   label: string;
   onClick?: ComponentProps<'button'>['onClick'];
+  isDisabled?: boolean;
 }) => {
-  const { icon, label, onClick } = props;
+  const { icon, label, onClick, isDisabled = false } = props;
+  const cursorClass = isDisabled ? '!cursor-not-allowed' : '';
+  const isDisabledClass = isDisabled ? 'opacity-50' : '';
 
   return (
-    <p className="space-y-2">
-      <IconButton className="block mx-auto" onClick={onClick}>
+    <p className={twMerge('space-y-2', isDisabledClass, cursorClass)}>
+      <IconButton
+        className={twMerge('block mx-auto', cursorClass)}
+        onClick={onClick}
+      >
         {icon}
       </IconButton>
 
@@ -71,6 +77,63 @@ const Actions: FC = () => {
   const router = useRouter();
   const { toggleModal: toggleReceiveModal } = useReceiveModal();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const { value: rewards } = useStakingRewards();
+  const activeAccount = useActiveAccount();
+
+  const { perform: performClaimRewardsTx } = useTx(async (api) => {
+    if (
+      rewards === null ||
+      activeAccount[0] === null ||
+      activeAccount[0].address === null
+    ) {
+      return null;
+    }
+
+    const activeAccountAddress = activeAccount[0].address;
+    const ledgerOpt = await api.query.staking.ledger(activeAccountAddress);
+
+    if (ledgerOpt.isNone) {
+      return null;
+    }
+
+    const ledger = ledgerOpt.unwrap();
+
+    const startEra = ledger.claimedRewards[ledger.claimedRewards.length - 1]
+      .add(new BN(1))
+      .toNumber();
+
+    const currentEraOpt = await api.query.staking.currentEra();
+
+    if (currentEraOpt.isNone) {
+      return null;
+    }
+
+    const endEra = currentEraOpt.unwrap().toNumber();
+
+    return api.tx.staking.claimRewards({});
+  });
+
+  // Prefetch static actions that take the user
+  // to another internal page. Only do so on the
+  // first render, or when the router changes.
+  useEffect(() => {
+    for (const staticActionItem of staticActionItems) {
+      router.prefetch(staticActionItem.path);
+    }
+  }, [router]);
+
+  const hasUnclaimedRewards =
+    rewards !== null && rewards.pendingRewards.gt(new BN(0));
+
+  const claimStakingRewards = () => {
+    // Sanity check. Claim button should be disabled
+    // if there are no rewards to claim, but just in case.
+    if (!hasUnclaimedRewards) {
+      return;
+    }
+
+    performClaimRewardsTx();
+  };
 
   return (
     <>
@@ -86,6 +149,13 @@ const Actions: FC = () => {
             icon={<ArrowLeftRightLineIcon size="lg" />}
             label="Transfer"
             onClick={() => setIsTransferModalOpen(true)}
+          />
+
+          <ActionItem
+            icon={<GiftLineIcon size="lg" />}
+            label="Claim Rewards"
+            isDisabled={!hasUnclaimedRewards}
+            onClick={claimStakingRewards}
           />
 
           {staticActionItems.map(({ path, ...restItem }, index) => (

@@ -17,7 +17,7 @@ export enum TxStatus {
 
 export type TxFactory<T extends ISubmittableResult> = (
   api: ApiPromise
-) => Promise<SubmittableExtrinsic<'promise', T>>;
+) => Promise<SubmittableExtrinsic<'promise', T> | null>;
 
 function useTx<T extends ISubmittableResult>(
   factory: TxFactory<T>,
@@ -53,6 +53,12 @@ function useTx<T extends ISubmittableResult>(
       const api = await getPolkadotApiPromise();
       const injector = await getInjector();
       const tx = await factory(api);
+
+      // Factory is not yet ready to produce the transaction.
+      // This is usually because the user hasn't yet connected their wallet.
+      if (tx === null) {
+        return;
+      }
 
       tx.signAndSend(senderAddress, { signer: injector?.signer }, (status) => {
         if (!isMounted) {
