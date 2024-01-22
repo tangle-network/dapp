@@ -32,7 +32,7 @@ import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalan
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
-import { convertEthereumToSubstrateAddress } from '../../utils';
+import { convertToSubstrateAddress } from '../../utils';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
 import SelectDelegates from './SelectDelegates';
@@ -85,7 +85,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertEthereumToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   useEffect(() => {

@@ -63,25 +63,6 @@ export const connectors = {
 export const walletsConfig: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
   // https://wagmi.sh/examples/custom-connector
-  [WalletId.Polkadot]: {
-    id: WalletId.Polkadot,
-    Logo: <PolkadotJsIcon />,
-    name: 'polkadot-js',
-    title: `PolkadotJS Extension`,
-    platform: 'Substrate',
-    enabled: true,
-    async detect() {
-      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'polkadot-js');
-    },
-    supportedChainIds: [...ANY_SUBSTRATE],
-    homeLink: 'https://polkadot.js.org/extension',
-    installLinks: {
-      [SupportedBrowsers.FireFox]:
-        'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
-      [SupportedBrowsers.Chrome]:
-        'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
-    },
-  },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
     Logo: <MetaMaskIcon />,
@@ -146,6 +127,25 @@ export const walletsConfig: Record<number, WalletConfig> = {
         'https://addons.mozilla.org/en-US/firefox/addon/rainbow-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/rainbow/opfgelmcmbiajamepnmloijbpoleiama',
+    },
+  },
+  [WalletId.Polkadot]: {
+    id: WalletId.Polkadot,
+    Logo: <PolkadotJsIcon />,
+    name: 'polkadot-js',
+    title: `PolkadotJS Extension`,
+    platform: 'Substrate',
+    enabled: true,
+    async detect() {
+      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'polkadot-js');
+    },
+    supportedChainIds: [...ANY_SUBSTRATE],
+    homeLink: 'https://polkadot.js.org/extension',
+    installLinks: {
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
+      [SupportedBrowsers.Chrome]:
+        'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
     },
   },
   [WalletId.Talisman]: {

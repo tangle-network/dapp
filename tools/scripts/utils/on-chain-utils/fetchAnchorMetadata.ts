@@ -57,7 +57,7 @@ async function fetchEVMAnchorMetadata(
   // Use when multicall is not supported
   const vAnchorContract = getContract({
     ...sharedAnchorProps,
-    publicClient: client,
+    client,
   });
 
   const isMulticallSupported = !!client.chain.contracts?.multicall3;
@@ -89,7 +89,7 @@ async function fetchEVMAnchorMetadata(
   // Use when multicall is not supported
   const fungibleContract = getContract({
     ...sharedFungibleProps,
-    publicClient: client,
+    client,
   });
 
   const [
@@ -172,7 +172,7 @@ async function fetchEVMAnchorMetadata(
           const contract = getContract({
             address: addr,
             abi: ERC20__factory.abi,
-            publicClient: client,
+            client,
           });
 
           return Promise.all([

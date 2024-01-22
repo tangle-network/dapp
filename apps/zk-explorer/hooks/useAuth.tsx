@@ -116,7 +116,7 @@ export const useRequireAuth = (): User => {
         'You must be logged in to access this page or resource. Please, sign in then try again.'
       );
 
-      router.push(RelativePageUrl.Home);
+      router.push(RelativePageUrl.Root);
     }
   }, [auth.isLoggedIn, router]);
 

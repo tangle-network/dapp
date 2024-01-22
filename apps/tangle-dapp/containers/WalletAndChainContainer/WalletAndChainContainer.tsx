@@ -4,7 +4,6 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { ComputerIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -12,20 +11,19 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 import { ChainSelector, WalletDropdown } from '../../components';
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
+  const { toggleModal } = useConnectWallet();
 
   const { isMobile } = useCheckMobile();
 
-  const { toggleModal } = useConnectWallet();
-
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center gap-2">
       <ChainSelector />
 
       <div>
@@ -43,11 +41,10 @@ const WalletAndChainContainer: FC = () => {
             </ConnectWalletMobileButton>
           ) : (
             <Button
+              isDisabled={loading}
               isLoading={loading}
               loadingText="Connecting..."
-              onClick={() =>
-                toggleModal(true, PresetTypedChainId.TangleTestnetEVM)
-              }
+              onClick={() => toggleModal(true)}
               className="flex items-center justify-center px-6"
             >
               Connect

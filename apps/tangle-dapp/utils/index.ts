@@ -1,4 +1,4 @@
 export * from './calculateInflation';
-export * from './convertEthereumToSubstrateAddress';
+export * from './convertToSubstrateAddress';
 export { default as getRoundedDownNumberWith2Decimals } from './getRoundedDownNumberWith2Decimals';
 export * from './splitTokenValueAndSymbol';

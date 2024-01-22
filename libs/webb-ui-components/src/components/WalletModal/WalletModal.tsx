@@ -21,6 +21,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       connectError,
       supportedWallets,
       platformId,
+      targetTypedChainIds,
       ...props
     },
     ref
@@ -118,7 +119,9 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
           >
             <WalletConnectionCard
               wallets={supportedWallets}
-              onWalletSelect={(nextWallet) => connectWallet(nextWallet)}
+              onWalletSelect={(nextWallet) =>
+                connectWallet(nextWallet, targetTypedChainIds)
+              }
               onClose={() => toggleModal(false)}
               connectingWalletId={connectingWalletId}
               errorBtnText={errorBtnText}
