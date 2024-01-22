@@ -18,20 +18,20 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  bondExtraTokens,
-  bondTokens,
-  evmPublicClient,
-  nominateValidators,
-  PAYMENT_DESTINATION_OPTIONS,
-  updatePaymentDestination,
-} from '../../constants';
+import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
+import {
+  bondExtraTokens,
+  bondTokens,
+  evmPublicClient,
+  nominateValidators,
+  updatePaymentDestination,
+} from '../../utils/evm';
 import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';

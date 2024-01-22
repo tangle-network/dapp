@@ -14,14 +14,11 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import {
-  evmPublicClient,
-  PAYMENT_DESTINATION_OPTIONS,
-  updatePaymentDestination,
-} from '../../constants';
+import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
+import { evmPublicClient, updatePaymentDestination } from '../../utils/evm';
 import { UpdatePayeeTxContainerProps } from './types';
 import UpdatePayee from './UpdatePayee';
 

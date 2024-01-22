@@ -14,8 +14,8 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { bondExtraTokens, evmPublicClient } from '../../constants';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import { bondExtraTokens, evmPublicClient } from '../../utils/evm';
 import BondTokens from './BondTokens';
 import { BondMoreTxContainerProps } from './types';
 
