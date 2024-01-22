@@ -1,4 +1,3 @@
-import { BN } from '@polkadot/util';
 import {
   AmountInput,
   BridgeInputGroup,
@@ -10,18 +9,21 @@ import {
   RecipientInput,
   Switcher,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import useFormattedAccountBalances from '../../data/AccountSummaryCard/useFormattedAccountBalances';
 import useTx, { TxStatus } from '../../hooks/useTx';
+import convertToChainUnits from '../../utils/convertToChainUnits';
 import { TransferTxContainerProps } from './types';
+import { notificationApi } from '../../../../libs/webb-ui-components/src/components/Notification/NotificationStacked';
 
 const getTxStatusText = (status: TxStatus) => {
   switch (status) {
-    case TxStatus.NotInitiated:
+    case TxStatus.NotYetInitiated:
       return 'Not initiated';
     case TxStatus.Processing:
       return 'Processing';
@@ -29,6 +31,8 @@ const getTxStatusText = (status: TxStatus) => {
       return 'Error';
     case TxStatus.Complete:
       return 'Complete';
+    case TxStatus.TimedOut:
+      return 'Timed out';
   }
 };
 
@@ -40,22 +44,54 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const [recipientAddress, setRecipientAddress] = useState('');
   const [isSendingToSubstrate, setIsSendingToSubstrate] = useState(false);
   const { free: formattedFreeBalance } = useFormattedAccountBalances(false);
+  const { notificationApi } = useWebbUI();
 
-  const { perform: performTransferTx, status } = useTx(
+  const {
+    perform: performTransferTx,
+    status,
+    reset: resetTx,
+    error: txError,
+  } = useTx(
     useCallback(
-      // TODO: Need to format amount appropriately, since BN will interpret it as a decimal, thus having it be a significantly lower value than what it actually is. Find if there's a way to do this with the Polkadot API, or if there's already a utility function for this. Verify that this is the case by looking at the transaction details on a wallet when sending a transaction.
-      async (api) => api.tx.balances.transfer(recipientAddress, new BN(amount)),
+      async (api) => {
+        const decimals = api.registry.chainDecimals[0];
+        const amountAsNumber = Number(amount);
+
+        // The amount is in the smallest unit of the token,
+        // so it needs to be converted to the appropriate amount
+        // of decimals.
+        const amountInChainUnits = convertToChainUnits(
+          amountAsNumber,
+          decimals
+        );
+
+        return api.tx.balances.transfer(recipientAddress, amountInChainUnits);
+      },
       [amount, recipientAddress]
     )
   );
 
-  // TODO: Likely would want to control this from the parent component.
-  const reset = () => {
+  // TODO: Likely would ideally want to control this from the parent component.
+  const reset = useCallback(() => {
     setIsModalOpen(false);
     setAmount('');
     setRecipientAddress('');
     setIsSendingToSubstrate(false);
-  };
+    resetTx();
+  }, [setIsModalOpen, resetTx]);
+
+  // Close modal and reset state when the transaction is complete.
+  useEffect(() => {
+    if (status === TxStatus.Complete) {
+      reset();
+
+      notificationApi({
+        variant: 'success',
+        message: 'Transaction complete',
+        secondaryMessage: 'Your transaction has been successfully processed.',
+      });
+    }
+  }, [reset, status]);
 
   const setMaxAmount = useCallback(() => {
     if (formattedFreeBalance === null) {
@@ -65,12 +101,13 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setAmount(formattedFreeBalance);
   }, [formattedFreeBalance]);
 
-  const canInitiateTx =
-    status === TxStatus.NotInitiated &&
-    amount !== '' &&
-    recipientAddress !== '';
+  const isReady =
+    status === TxStatus.NotYetInitiated ||
+    status === TxStatus.TimedOut ||
+    status === TxStatus.Error;
 
-  const isProcessingAndNotReady = status > TxStatus.NotInitiated;
+  const isDataValid = amount !== '' && recipientAddress !== '';
+  const canInitiateTx = isReady && isDataValid;
 
   return (
     <Modal>
@@ -101,12 +138,20 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
             <AmountInput
               onMaxBtnClick={setMaxAmount}
-              isDisabled={isProcessingAndNotReady}
+              isDisabled={!isReady}
               amount={amount}
               onAmountChange={(nextAmount) => setAmount(nextAmount)}
               className="dark:bg-mono-160"
             />
           </BridgeInputGroup>
+
+          {txError !== null && (
+            <Typography variant="body1" color="red" fw="normal">
+              {txError instanceof Error
+                ? txError.message
+                : JSON.stringify(txError)}
+            </Typography>
+          )}
 
           <div className="flex items-center justify-end gap-2">
             <Typography variant="body1" fw="normal">
@@ -126,7 +171,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           <Button
             isFullWidth
             isDisabled={!canInitiateTx}
-            isLoading={isProcessingAndNotReady}
+            isLoading={!isReady}
             loadingText={getTxStatusText(status)}
             onClick={performTransferTx}
           >
