@@ -5340,7 +5340,7 @@
   dependencies:
     "@nx/devkit" "17.2.8"
 
-"@nrwl/eslint-plugin-nx@*", "@nrwl/eslint-plugin-nx@17.2.8":
+"@nrwl/eslint-plugin-nx@17.2.8":
   version "17.2.8"
   resolved "https://registry.yarnpkg.com/@nrwl/eslint-plugin-nx/-/eslint-plugin-nx-17.2.8.tgz#bf3a3c0820eb9a6bf42355ec1012799136595801"
   integrity sha512-g76ZzBvJ7jenvLXQuXdBUs7p3KP2vr00u7TV4A/J01eDJMFHYVZhYfQNjLhr4nnE4NvNRr8WdrMD2KeGYtdycQ==
@@ -5477,22 +5477,6 @@
     ignore "^5.0.4"
     semver "7.5.3"
     tmp "~0.2.1"
-    tslib "^2.3.0"
-
-"@nx/eslint-plugin@16.9.0":
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/@nx/eslint-plugin/-/eslint-plugin-16.9.0.tgz#e37949cd0b1fe2806ae7bc020f8bf2892b7bbba3"
-  integrity sha512-fM9ZZuLOxlZQ+V6OvPgZ20kgXbfONiVtXeqxQMHfCVRLOQKkeGn79qJDhM99smXlv2DukQ2WPaihRjKN3ADMIw==
-  dependencies:
-    "@nrwl/eslint-plugin-nx" "*"
-    "@nx/devkit" "16.9.0"
-    "@nx/js" "16.9.0"
-    "@typescript-eslint/type-utils" "^5.60.1"
-    "@typescript-eslint/utils" "^5.60.1"
-    chalk "^4.1.0"
-    confusing-browser-globals "^1.0.9"
-    jsonc-eslint-parser "^2.1.0"
-    semver "7.5.3"
     tslib "^2.3.0"
 
 "@nx/eslint-plugin@17.2.8":
@@ -11026,7 +11010,7 @@
     "@typescript-eslint/types" "6.17.0"
     "@typescript-eslint/visitor-keys" "6.17.0"
 
-"@typescript-eslint/type-utils@5.62.0", "@typescript-eslint/type-utils@^5.60.1":
+"@typescript-eslint/type-utils@5.62.0":
   version "5.62.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/type-utils/-/type-utils-5.62.0.tgz#286f0389c41681376cdad96b309cedd17d70346a"
   integrity sha512-xsSQreu+VnfbqQpW5vnCJdq1Z3Q0U31qiWmRhr98ONQmcp/yhiPJFPq8MXiJVLiksmOKSjIldZzkebzHuCGzew==
@@ -11101,7 +11085,7 @@
     semver "^7.3.5"
     tsutils "^3.21.0"
 
-"@typescript-eslint/utils@5.62.0", "@typescript-eslint/utils@^5.10.0", "@typescript-eslint/utils@^5.45.0", "@typescript-eslint/utils@^5.60.1":
+"@typescript-eslint/utils@5.62.0", "@typescript-eslint/utils@^5.10.0", "@typescript-eslint/utils@^5.45.0":
   version "5.62.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.62.0.tgz#141e809c71636e4a75daa39faed2fb5f4b10df86"
   integrity sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==
