@@ -5389,7 +5389,7 @@
   dependencies:
     "@nx/rollup" "17.2.8"
 
-"@nrwl/storybook@*", "@nrwl/storybook@17.2.8":
+"@nrwl/storybook@17.2.8":
   version "17.2.8"
   resolved "https://registry.yarnpkg.com/@nrwl/storybook/-/storybook-17.2.8.tgz#7e4f4b5bcf6f19b5dd759c4e729d6443e6b78aa6"
   integrity sha512-YBedhVfpylP48lG7VqB7xdiPp5DsEY6aFeabiZC3DQWK+oaMAIOYUKFD6+LiviDoPGpIJCeoJRC0UcnAuaLO7g==
@@ -5882,21 +5882,6 @@
     rollup-plugin-postcss "^4.0.1"
     rollup-plugin-typescript2 "0.34.1"
     rxjs "^7.8.0"
-    tslib "^2.3.0"
-
-"@nx/storybook@16.9.0":
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/@nx/storybook/-/storybook-16.9.0.tgz#75efd4502528c025beb33f0c0d61ef373aee349f"
-  integrity sha512-IXmHCfH0E/0taCfH+Lf3a/OM/36037osPKPhjgnWTSdf8bFFsNu/TuYE3CU5KmJtRcSu2MWuJeeBEMkZRuRyQg==
-  dependencies:
-    "@nrwl/storybook" "*"
-    "@nx/cypress" "16.9.0"
-    "@nx/devkit" "16.9.0"
-    "@nx/js" "16.9.0"
-    "@nx/linter" "16.9.0"
-    "@nx/workspace" "16.9.0"
-    "@phenomnomnominal/tsquery" "~5.0.1"
-    semver "7.5.3"
     tslib "^2.3.0"
 
 "@nx/storybook@17.2.8":
