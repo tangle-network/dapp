@@ -112,3 +112,14 @@ export const nominateValidators = async (
   const hash = await tx.signAndSend(nominatorAddress);
   return hash.toString();
 };
+
+// stop nomination
+export const stopNomination = async (nominatorAddress: string) => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return undefined;
+
+  const tx = api.tx.staking.chill();
+  const hash = await tx.signAndSend(nominatorAddress);
+  return hash.toString();
+};

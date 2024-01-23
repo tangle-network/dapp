@@ -44,6 +44,48 @@ export const bondExtraTokens = async (
   return hash.toString();
 };
 
+export const unbondTokens = async (
+  nominatorAddress: string,
+  amount_: number
+) => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return undefined;
+  const amount = new u128(api.registry, amount_.toString());
+
+  const tx = api.tx.staking.unbond(amount);
+  const hash = await tx.signAndSend(nominatorAddress);
+  return hash.toString();
+};
+
+export const rebondTokens = async (
+  nominatorAddress: string,
+  amount_: number
+) => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return undefined;
+  const amount = new u128(api.registry, amount_.toString());
+
+  const tx = api.tx.staking.rebond(amount);
+  const hash = await tx.signAndSend(nominatorAddress);
+  return hash.toString();
+};
+
+// withdrawUnbondedTokens
+export const withdrawUnbondedTokens = async (
+  nominatorAddress: string,
+  slashingSpans: number
+) => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return undefined;
+
+  const tx = api.tx.staking.withdrawUnbonded(slashingSpans);
+  const hash = await tx.signAndSend(nominatorAddress);
+  return hash.toString();
+};
+
 export const updatePaymentDestination = async (
   nominatorAddress: string,
   paymentDestination: string
