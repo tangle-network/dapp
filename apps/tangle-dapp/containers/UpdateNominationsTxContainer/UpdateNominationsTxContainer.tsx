@@ -13,9 +13,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { evmPublicClient, nominateValidators } from '../../constants';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
+import { evmPublicClient, nominateValidators } from '../../utils/evm';
 import SelectValidators from './SelectValidators';
 import { UpdateNominationsTxContainerProps } from './types';
 

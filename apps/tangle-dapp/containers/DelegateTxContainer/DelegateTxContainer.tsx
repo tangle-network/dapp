@@ -22,16 +22,22 @@ import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import {
-  bondExtraTokens,
-  bondTokens,
-  evmPublicClient,
-  nominateValidators,
-  updatePaymentDestination,
+  bondExtraTokens as bondExtraTokensEvm,
+  bondTokens as bondTokensEvm,
+  nominateValidators as nominateValidatorsEvm,
+  updatePaymentDestination as updatePaymentDestinationEvm,
 } from '../../utils/evm';
+import {
+  bondExtraTokens as bondExtraTokensSubstrate,
+  bondTokens as bondTokensSubstrate,
+  nominateValidators as nominateValidatorsSubstrate,
+  updatePaymentDestination as updatePaymentDestinationSubstrate,
+} from '../../utils/polkadot';
 import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
@@ -49,6 +55,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
+
+  const executeTx = useExecuteTxWithNotification();
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
@@ -173,100 +181,93 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
-  const submitAndSignTx = useCallback(async () => {
-    setIsSubmitAndSignTxLoading(true);
+  const executeDelegate: () => Promise<void> = useCallback(async () => {
+    if (isFirstTimeNominator) {
+      await executeTx(
+        () =>
+          bondTokensEvm(walletAddress, amountToBond, PaymentDestination.Stash),
+        () =>
+          bondTokensSubstrate(
+            walletAddress,
+            amountToBond,
+            PaymentDestination.Stash
+          ),
+        `Successfully bonded ${amountToBond} tTNT.`,
+        'Failed to bond tokens!'
+      );
 
-    // TODO: execute Substrate case
+      await executeTx(
+        () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+        () =>
+          updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
+        `Successfully updated payment destination to ${paymentDestination}.`,
+        'Failed to update payment destination!'
+      );
 
-    // first time nominator
-    // bondTokens
-    // updatePaymentDestination?
-    // nominateValidators
-
-    // not first time nominator
-    // amountToBond > 0 -> bondExtraTokens
-    // updatePaymentDestination
-    // nominateValidators
-
-    const executeTransaction = async (
-      action: any,
-      successMessage: string,
-      errorMessage: string
-    ) => {
-      try {
-        const txHash = await action();
-        if (!txHash) throw new Error(errorMessage);
-
-        const tx = await evmPublicClient.waitForTransactionReceipt({
-          hash: txHash,
-        });
-        if (tx.status !== 'success') throw new Error(errorMessage);
-
-        notificationApi({ variant: 'success', message: successMessage });
-      } catch (error) {
-        notificationApi({
-          variant: 'error',
-          message: errorMessage || 'Something went wrong.',
-        });
-
-        throw error; // Rethrowing the error to be caught by the outer try-catch
-      }
-    };
-
-    try {
-      if (isFirstTimeNominator) {
-        await executeTransaction(
-          () =>
-            bondTokens(walletAddress, amountToBond, PaymentDestination.Stash),
+      await executeTx(
+        () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        `Successfully nominated ${selectedValidators.length} validators.`,
+        'Failed to nominate validators!'
+      );
+    } else {
+      if (amountToBond > 0) {
+        await executeTx(
+          () => bondExtraTokensEvm(walletAddress, amountToBond),
+          () => bondExtraTokensSubstrate(walletAddress, amountToBond),
           `Successfully bonded ${amountToBond} tTNT.`,
           'Failed to bond tokens!'
         );
+      }
 
-        await executeTransaction(
-          () => updatePaymentDestination(walletAddress, paymentDestination),
+      if (currentPaymentDestinationError)
+        notificationApi({
+          variant: 'error',
+          message: currentPaymentDestinationError.message,
+        });
+
+      const currPaymentDestination =
+        currentPaymentDestination?.value1 === 'Staked'
+          ? PaymentDestination.Staked
+          : PaymentDestination.Stash;
+
+      if (currPaymentDestination !== paymentDestination) {
+        await executeTx(
+          () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+          () =>
+            updatePaymentDestinationSubstrate(
+              walletAddress,
+              paymentDestination
+            ),
           `Successfully updated payment destination to ${paymentDestination}.`,
           'Failed to update payment destination!'
         );
-
-        await executeTransaction(
-          () => nominateValidators(walletAddress, selectedValidators),
-          `Successfully nominated ${selectedValidators.length} validators.`,
-          'Failed to nominate validators!'
-        );
-      } else {
-        if (amountToBond > 0) {
-          await executeTransaction(
-            () => bondExtraTokens(walletAddress, amountToBond),
-            `Successfully bonded ${amountToBond} tTNT.`,
-            'Failed to bond tokens!'
-          );
-        }
-
-        if (currentPaymentDestinationError)
-          notificationApi({
-            variant: 'error',
-            message: currentPaymentDestinationError.message,
-          });
-
-        const currPaymentDestination =
-          currentPaymentDestination?.value1 === 'Staked'
-            ? PaymentDestination.Staked
-            : PaymentDestination.Stash;
-
-        if (currPaymentDestination !== paymentDestination) {
-          await executeTransaction(
-            () => updatePaymentDestination(walletAddress, paymentDestination),
-            `Successfully updated payment destination to ${paymentDestination}.`,
-            'Failed to update payment destination!'
-          );
-        }
-
-        await executeTransaction(
-          () => nominateValidators(walletAddress, selectedValidators),
-          `Successfully nominated ${selectedValidators.length} validators.`,
-          'Failed to nominate validators!'
-        );
       }
+
+      await executeTx(
+        () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        `Successfully nominated ${selectedValidators.length} validators.`,
+        'Failed to nominate validators!'
+      );
+    }
+  }, [
+    amountToBond,
+    currentPaymentDestination?.value1,
+    currentPaymentDestinationError,
+    executeTx,
+    isFirstTimeNominator,
+    notificationApi,
+    paymentDestination,
+    selectedValidators,
+    walletAddress,
+  ]);
+
+  const submitAndSignTx = useCallback(async () => {
+    setIsSubmitAndSignTxLoading(true);
+
+    try {
+      await executeDelegate();
     } catch (error: any) {
       notificationApi({
         variant: 'error',
@@ -277,17 +278,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     } finally {
       closeModal();
     }
-  }, [
-    amountToBond,
-    closeModal,
-    currentPaymentDestination?.value1,
-    currentPaymentDestinationError,
-    isFirstTimeNominator,
-    notificationApi,
-    paymentDestination,
-    selectedValidators,
-    walletAddress,
-  ]);
+  }, [closeModal, executeDelegate, notificationApi]);
 
   return (
     <Modal open>

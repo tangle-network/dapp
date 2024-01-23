@@ -14,13 +14,13 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, unBondTokens } from '../../constants';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import {
   convertToSubstrateAddress,
   splitTokenValueAndSymbol,
 } from '../../utils';
+import { evmPublicClient, unBondTokens } from '../../utils/evm';
 import { UnbondTxContainerProps } from './types';
 import UnbondTokens from './UnbondTokens';
 

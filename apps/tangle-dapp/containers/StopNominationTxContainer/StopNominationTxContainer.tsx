@@ -16,9 +16,9 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, stopNomination } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import { convertToSubstrateAddress } from '../../utils';
+import { evmPublicClient, stopNomination } from '../../utils/evm';
 import { StopNominationTxContainerProps } from './types';
 
 const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({

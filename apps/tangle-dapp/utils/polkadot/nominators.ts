@@ -99,3 +99,16 @@ export const getMaxNominationQuota = async (): Promise<number | undefined> => {
 
   return maxNominations;
 };
+
+export const nominateValidators = async (
+  nominatorAddress: string,
+  validatorAddresses: string[]
+) => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return undefined;
+
+  const tx = api.tx.staking.nominate(validatorAddresses);
+  const hash = await tx.signAndSend(nominatorAddress);
+  return hash.toString();
+};
