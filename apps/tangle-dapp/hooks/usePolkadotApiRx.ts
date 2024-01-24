@@ -1,9 +1,9 @@
 import { ApiRx } from '@polkadot/api';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
 
 import { getPolkadotApiRx } from '../constants/polkadot';
+import useSubstrateAddress from './useSubstrateAddress';
 
 export type ObservableFactory<T> = (
   api: ApiRx,
@@ -13,11 +13,10 @@ export type ObservableFactory<T> = (
 function usePolkadotApiRx<T>(createObservable: ObservableFactory<T>) {
   const [data, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
-  const activeAccount = useActiveAccount();
-  const activeAccountAddress = activeAccount[0]?.address;
+  const activeSubstrateAddress = useSubstrateAddress();
 
   useEffect(() => {
-    if (activeAccountAddress === undefined) {
+    if (activeSubstrateAddress === null) {
       return;
     }
 
@@ -26,7 +25,7 @@ function usePolkadotApiRx<T>(createObservable: ObservableFactory<T>) {
 
       const subscription = createObservable(
         apiRx,
-        activeAccountAddress
+        activeSubstrateAddress
       ).subscribe((newResult) => {
         setResult(newResult);
         setLoading(false);
@@ -36,7 +35,7 @@ function usePolkadotApiRx<T>(createObservable: ObservableFactory<T>) {
     };
 
     createSubscription();
-  }, [activeAccountAddress, createObservable]);
+  }, [activeSubstrateAddress, createObservable]);
 
   return { data, isLoading };
 }

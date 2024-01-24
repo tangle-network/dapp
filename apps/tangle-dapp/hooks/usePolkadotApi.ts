@@ -32,6 +32,7 @@ function usePolkadotApi<T>(
   const response = useSWR(
     dynamicKey,
     async () => {
+      // Wait until the Polkadot API is ready.
       if (polkadotApi === null) {
         return Promise.resolve(null);
       }

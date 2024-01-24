@@ -1,3 +1,3 @@
-export * from './evm';
+export * from './evmActions';
 export * from './polkadot';
 export * from './swr';

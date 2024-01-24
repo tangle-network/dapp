@@ -1,7 +1,33 @@
-export const StakingInterfacePrecompileAddress =
-  '0x0000000000000000000000000000000000000800';
+type InputType =
+  | 'uint256'
+  | 'bytes32'
+  | 'uint32'
+  | 'bool'
+  | 'address'
+  | 'uint8';
 
-export const StakingInterfacePrecompileABI = [
+type InputTypeSuper = InputType | `${InputType}[]`;
+
+type InputOutput = {
+  internalType: InputTypeSuper;
+  name: string;
+  type: InputTypeSuper;
+};
+
+export enum PrecompileAddress {
+  Staking = '0x0000000000000000000000000000000000000800',
+  Vesting = '0x0000000000000000000000000000000000000801',
+}
+
+export type PrecompileAbiFunction = {
+  inputs: InputOutput[];
+  name: string;
+  outputs: InputOutput[];
+  stateMutability: 'nonpayable' | 'view';
+  type: 'function';
+};
+
+export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction[] = [
   {
     inputs: [
       {
@@ -278,4 +304,16 @@ export const StakingInterfacePrecompileABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as const;
+
+export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction[] = [
+  {
+    name: 'vest',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+
+  // TODO: Add missing ABI functions. See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
+] as const;

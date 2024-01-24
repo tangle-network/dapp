@@ -7,7 +7,6 @@ import {
   ModalFooter,
   ModalHeader,
   RecipientInput,
-  Switcher,
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -27,7 +26,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const [amount, setAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const [isSendingToSubstrate, setIsSendingToSubstrate] = useState(false);
   const { free: formattedFreeBalance } = useFormattedAccountBalances(false);
   const { notificationApi } = useWebbUI();
 
@@ -62,7 +60,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setIsModalOpen(false);
     setAmount('');
     setRecipientAddress('');
-    setIsSendingToSubstrate(false);
     resetTx();
   }, [setIsModalOpen, resetTx]);
 
@@ -104,8 +101,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         <div className="p-9 flex flex-col gap-4">
           <Typography variant="body1" fw="normal">
             Quickly transfer your TNT tokens to a recipient on the Tangle
-            Network. Enter the recipient&apos;s EVM address. You can choose to
-            send to either an EVM or a Substrate address.
+            Network. You can choose to send to either an EVM or a Substrate
+            address.
           </Typography>
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
@@ -132,19 +129,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
                 : JSON.stringify(txError)}
             </Typography>
           )}
-
-          <div className="flex items-center justify-end gap-2">
-            <Typography variant="body1" fw="normal">
-              Send to Substrate
-            </Typography>
-
-            <Switcher
-              checked={isSendingToSubstrate}
-              onCheckedChange={(isChecked) =>
-                setIsSendingToSubstrate(isChecked)
-              }
-            />
-          </div>
         </div>
 
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
@@ -155,7 +139,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             loadingText={getTxStatusText(status)}
             onClick={performTransferTx}
           >
-            Send to {isSendingToSubstrate ? 'Substrate' : 'EVM'}
+            Send
           </Button>
 
           <Link href={WEBB_TANGLE_DOCS_URL} target="_blank">

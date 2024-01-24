@@ -14,10 +14,7 @@ import {
 } from 'viem';
 
 import { PaymentDestination } from '../types';
-import {
-  StakingInterfacePrecompileABI,
-  StakingInterfacePrecompileAddress,
-} from './contract';
+import { PrecompileAddress, STAKING_PRECOMPILE_ABI } from './evmPrecompiles';
 
 const PAYEE_STAKED =
   '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -41,7 +38,7 @@ export const evmPublicClient = createPublicClient({
   transport: http(),
 });
 
-const createEvmWalletClient = (nominatorAddress: string) =>
+export const createEvmWalletClient = (nominatorAddress: string) =>
   createWalletClient({
     chain: tangleTestnet,
     account: ensureHex(nominatorAddress),
@@ -62,8 +59,8 @@ export const bondTokens = async (
       : PAYEE_CONTROLLER;
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'bond',
     args: [value, payee],
     account: ensureHex(nominatorAddress),
@@ -83,8 +80,8 @@ export const bondExtraTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'bondExtra',
     args: [value],
     account: ensureHex(nominatorAddress),
@@ -106,8 +103,8 @@ export const nominateValidators = async (
   });
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'nominate',
     args: [targets],
     account: ensureHex(nominatorAddress),
@@ -132,8 +129,8 @@ export const updatePaymentDestination = async (
       : PAYEE_CONTROLLER;
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'setPayee',
     args: [payee],
     account: ensureHex(nominatorAddress),
@@ -153,8 +150,8 @@ export const unBondTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'unbond',
     args: [value],
     account: ensureHex(nominatorAddress),
@@ -174,8 +171,8 @@ export const rebondTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'rebond',
     args: [value],
     account: ensureHex(nominatorAddress),
@@ -192,8 +189,8 @@ export const stopNomination = async (
   nominatorAddress: string
 ): Promise<AddressType> => {
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'chill',
     args: [],
     account: ensureHex(nominatorAddress),
@@ -211,8 +208,8 @@ export const withdrawUnbondedTokens = async (
   slashingSpans: number
 ): Promise<AddressType> => {
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'withdrawUnbonded',
     args: [slashingSpans],
     account: ensureHex(nominatorAddress),

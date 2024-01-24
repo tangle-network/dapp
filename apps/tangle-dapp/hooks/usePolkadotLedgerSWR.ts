@@ -1,10 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
 import { StakingLedger } from '@polkadot/types/interfaces';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { DependencyList } from 'react';
 
 import { SWRConfigConst } from '../constants';
 import usePolkadotApi from './usePolkadotApi';
+import useSubstrateAddress from './useSubstrateAddress';
 
 export type PolkadotLedgerFetcher<T> = (
   ledger: StakingLedger,
@@ -16,25 +16,23 @@ function usePolkadotLedgerSWR<T>(
   fetcher: PolkadotLedgerFetcher<T>,
   deps: DependencyList = []
 ) {
-  const activeAccount = useActiveAccount();
+  const activeSubstrateAddress = useSubstrateAddress();
 
   return usePolkadotApi(
     swrConfig,
     async (api) => {
-      const activeAccountAddress = activeAccount?.[0]?.address;
-
-      if (!activeAccountAddress) {
+      if (activeSubstrateAddress === null) {
         return Promise.resolve(null);
       }
 
       const ledger = await api.query.staking
-        .ledger(activeAccountAddress)
+        .ledger(activeSubstrateAddress)
         // TODO: Error handling.
         .then((ledger) => ledger.unwrapOrDefault());
 
       return fetcher(ledger, api);
     },
-    [activeAccount, ...deps]
+    [activeSubstrateAddress, ...deps]
   );
 }
 

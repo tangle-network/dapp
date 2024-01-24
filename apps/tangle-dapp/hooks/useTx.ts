@@ -2,11 +2,11 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ISubmittableResult } from '@polkadot/types/types';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../constants';
+import useSubstrateAddress from './useSubstrateAddress';
 
 export enum TxStatus {
   NotYetInitiated,
@@ -27,17 +27,17 @@ function useTx<T extends ISubmittableResult>(
 ) {
   const [status, setStatus] = useState(TxStatus.NotYetInitiated);
   const [hash, setHash] = useState<string | null>(null);
-  const activeAccount = useActiveAccount();
   const [error, setError] = useState<Error | null>(null);
   const { notificationApi } = useWebbUI();
+  const activeSubstrateAddress = useSubstrateAddress();
 
-  const getInjector = useCallback(async () => {
-    if (activeAccount === null || activeAccount[0] === null) {
+  const requestInjector = useCallback(async () => {
+    if (activeSubstrateAddress === null) {
       return null;
     }
 
-    return web3FromAddress(activeAccount[0].address);
-  }, [activeAccount]);
+    return web3FromAddress(activeSubstrateAddress);
+  }, [activeSubstrateAddress]);
 
   useEffect(() => {
     // Still waiting for the consumer to perform the transaction.
@@ -48,13 +48,12 @@ function useTx<T extends ISubmittableResult>(
     let isMounted = true;
 
     const signAndSend = async () => {
-      if (activeAccount === null || activeAccount[0] === null) {
+      if (activeSubstrateAddress === null) {
         return;
       }
 
-      const senderAddress = activeAccount[0].address;
+      const injector = await requestInjector();
       const api = await getPolkadotApiPromise();
-      const injector = await getInjector();
       const tx = await factory(api);
 
       // Factory is not yet ready to produce the transaction.
@@ -67,27 +66,31 @@ function useTx<T extends ISubmittableResult>(
         return;
       }
 
-      tx.signAndSend(senderAddress, { signer: injector.signer }, (status) => {
-        if (!isMounted) {
-          return;
+      tx.signAndSend(
+        activeSubstrateAddress,
+        { signer: injector.signer },
+        (status) => {
+          if (!isMounted) {
+            return;
+          }
+
+          setHash(status.txHash.toHex());
+
+          const didSucceed = !status.isError && !status.isWarning;
+
+          setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
+
+          const error =
+            status.internalError ||
+            new Error(
+              'Unexpected error with no additional information available'
+            );
+
+          if (!didSucceed) {
+            setError(error);
+          }
         }
-
-        setHash(status.txHash.toHex());
-
-        const didSucceed = !status.isError && !status.isWarning;
-
-        setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
-
-        const error =
-          status.internalError ||
-          new Error(
-            'Unexpected error with no additional information available'
-          );
-
-        if (!didSucceed) {
-          setError(error);
-        }
-      }).catch((error) => {
+      ).catch((error) => {
         if (!isMounted) {
           return;
         }
@@ -111,7 +114,14 @@ function useTx<T extends ISubmittableResult>(
       clearTimeout(timeoutHandle);
       isMounted = false;
     };
-  }, [activeAccount, factory, getInjector, hash, status, timeoutDelay]);
+  }, [
+    activeSubstrateAddress,
+    factory,
+    hash,
+    requestInjector,
+    status,
+    timeoutDelay,
+  ]);
 
   useEffect(() => {
     if (!notifyStatusUpdates) {
