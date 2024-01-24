@@ -18,7 +18,7 @@ const StakingStats: FC = () => {
     api.query.staking.currentEra().then((era) => era.toString())
   );
 
-  const { value: rewards } = useStakingRewards();
+  const rewards = useStakingRewards();
 
   // TODO: Format as token balance.
   const totalRewards =

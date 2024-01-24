@@ -11,7 +11,7 @@ export type PolkadotLedgerFetcher<T> = (
   api: ApiPromise
 ) => Promise<T>;
 
-function usePolkadotLedger<T>(
+function usePolkadotLedgerSWR<T>(
   swrConfig: SWRConfigConst,
   fetcher: PolkadotLedgerFetcher<T>,
   deps: DependencyList = []
@@ -38,4 +38,4 @@ function usePolkadotLedger<T>(
   );
 }
 
-export default usePolkadotLedger;
+export default usePolkadotLedgerSWR;

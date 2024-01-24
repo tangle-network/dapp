@@ -26,7 +26,7 @@ function useTx<T extends ISubmittableResult>(
   const [status, setStatus] = useState(TxStatus.NotYetInitiated);
   const [hash, setHash] = useState<string | null>(null);
   const activeAccount = useActiveAccount();
-  const [error, setError] = useState<unknown | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const getInjector = useCallback(async () => {
     if (activeAccount === null || activeAccount[0] === null) {
@@ -59,17 +59,31 @@ function useTx<T extends ISubmittableResult>(
       if (tx === null) {
         return;
       }
+      // Wait until the injector is ready.
+      else if (injector === null) {
+        return;
+      }
 
-      tx.signAndSend(senderAddress, { signer: injector?.signer }, (status) => {
+      tx.signAndSend(senderAddress, { signer: injector.signer }, (status) => {
         if (!isMounted) {
           return;
         }
 
         setHash(status.txHash.toHex());
 
-        const didSucceed = !status.isError;
+        const didSucceed = !status.isError && !status.isWarning;
 
         setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
+
+        const error =
+          status.internalError ||
+          new Error(
+            'Unexpected error with no additional information available'
+          );
+
+        if (!didSucceed) {
+          setError(error);
+        }
       }).catch((error) => {
         if (!isMounted) {
           return;
@@ -99,7 +113,7 @@ function useTx<T extends ISubmittableResult>(
   const perform = () => {
     // Prevent the consumer from re-triggering the transaction
     // while it's still processing.
-    if (status !== TxStatus.NotYetInitiated) {
+    if (status === TxStatus.Processing) {
       return;
     }
 
@@ -107,8 +121,9 @@ function useTx<T extends ISubmittableResult>(
   };
 
   const reset = () => {
-    setStatus(TxStatus.NotYetInitiated);
+    setError(null);
     setHash(null);
+    setStatus(TxStatus.NotYetInitiated);
   };
 
   return { perform, status, error, hash, reset };

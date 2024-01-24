@@ -4,9 +4,9 @@ import { BN } from '@polkadot/util';
 import assert from 'assert';
 
 import { SWR_STAKING_REWARDS } from '../../constants';
-import usePolkadotLedger, {
+import usePolkadotLedgerSWR, {
   PolkadotLedgerFetcher,
-} from '../../hooks/usePolkadotLedger';
+} from '../../hooks/usePolkadotLedgerSWR';
 
 const sumStakerRewardsInClaimedEraRange = async (
   ledger: StakingLedger,
@@ -96,16 +96,22 @@ const fetchPendingRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
   );
 };
 
-const useStakingRewards = () =>
-  usePolkadotLedger(SWR_STAKING_REWARDS, async (ledger, api) => {
-    const claimed = await fetchClaimedRewards(ledger, api);
-    const pending = await fetchPendingRewards(ledger, api);
+const useStakingRewards = () => {
+  const { value: rewards } = usePolkadotLedgerSWR(
+    SWR_STAKING_REWARDS,
+    async (ledger, api) => {
+      const claimed = await fetchClaimedRewards(ledger, api);
+      const pending = await fetchPendingRewards(ledger, api);
 
-    return {
-      claimedRewards: claimed,
-      pendingRewards: pending,
-      totalRewards: claimed.add(pending),
-    };
-  });
+      return {
+        claimedRewards: claimed,
+        pendingRewards: pending,
+        totalRewards: claimed.add(pending),
+      };
+    }
+  );
+
+  return rewards;
+};
 
 export default useStakingRewards;

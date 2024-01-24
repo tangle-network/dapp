@@ -18,22 +18,8 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import useFormattedAccountBalances from '../../data/AccountSummaryCard/useFormattedAccountBalances';
 import useTx, { TxStatus } from '../../hooks/useTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
+import getTxStatusText from '../../utils/getTxStatusText';
 import { TransferTxContainerProps } from './types';
-
-const getTxStatusText = (status: TxStatus) => {
-  switch (status) {
-    case TxStatus.NotYetInitiated:
-      return 'Not initiated';
-    case TxStatus.Processing:
-      return 'Processing';
-    case TxStatus.Error:
-      return 'Error';
-    case TxStatus.Complete:
-      return 'Complete';
-    case TxStatus.TimedOut:
-      return 'Timed out';
-  }
-};
 
 const TransferTxContainer: FC<TransferTxContainerProps> = ({
   isModalOpen,
