@@ -5,6 +5,7 @@ import {
   useWebContext,
 } from '@webb-tools/api-provider-environment';
 import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { useWebbUI, WalletModal } from '@webb-tools/webb-ui-components';
 
 export const WalletModalContainer = () => {
@@ -38,6 +39,10 @@ export const WalletModalContainer = () => {
       supportedWallets={supportedWallets}
       notificationApi={notificationApi}
       apiConfig={apiConfig}
+      targetTypedChainIds={{
+        evm: PresetTypedChainId.TangleTestnetEVM,
+        substrate: PresetTypedChainId.TangleTestnetNative,
+      }}
     />
   );
 };

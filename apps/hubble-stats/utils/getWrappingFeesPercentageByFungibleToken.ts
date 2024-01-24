@@ -13,7 +13,7 @@ const getWrappingFeesPercentageByFungibleToken = async (
   const fungibleTokenContract = getContract({
     address: addressHex,
     abi: FungibleTokenWrapper__factory.abi,
-    publicClient: client,
+    client,
   });
 
   const feesPercentage = await fungibleTokenContract.read.feePercentage();

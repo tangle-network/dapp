@@ -76,8 +76,8 @@ export const WalletDropdown: FC<{
         />
       </DropdownTrigger>
 
-      <DropdownBody className="mt-6 w-[480px] p-4 space-y-4 dark:bg-mono-160">
-        <div className="flex items-center justify-between">
+      <DropdownBody className="mt-6 md:w-[480px] p-4 space-y-4 dark:bg-mono-160">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <div className="flex space-x-2">
             {wallet.Logo}
 
@@ -94,6 +94,7 @@ export const WalletDropdown: FC<{
                   size="sm"
                   labelVariant="body1"
                   valueVariant="body1"
+                  shortenFn={(str) => shortenString(str, 5)}
                 />
 
                 <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
@@ -102,7 +103,7 @@ export const WalletDropdown: FC<{
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-end space-x-2.5">
+          <div className="flex items-center md:justify-end space-x-2.5">
             <SwitchAccountButton />
 
             <Button
@@ -126,7 +127,7 @@ const SwitchAccountButton: FC = () => {
 
   const { notificationApi } = useWebbUI();
 
-  // Funciton to switch account within the connected wallet
+  // Function to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
     // Switch account only support on web3 provider
     if (!activeApi) {

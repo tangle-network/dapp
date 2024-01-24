@@ -2,7 +2,7 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 const LIVE_SUBGRAPH_MAP = {
-  [PresetTypedChainId.TangleTestnet]:
+  [PresetTypedChainId.TangleTestnetEVM]:
     vAnchorClient.SubgraphUrl.vAnchorTangleTestnet,
 };
 

@@ -25,10 +25,7 @@ const gasLimitConfig: GasLimitConfigType = {
 
   // Substrate
   // On substrate we don't use the gas amount, we use the partial fee instead
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigInt(
-    '10840000100000000000'
-  ), // Temporary
-  [PresetTypedChainId.LocalTangleStandalone]: BigInt('10840000100000000000'), // Temporary
+  [PresetTypedChainId.TangleTestnetNative]: BigInt('10840000100000000000'), // Temporary
 };
 
 export default gasLimitConfig;

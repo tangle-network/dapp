@@ -19,7 +19,7 @@ import React from 'react';
 import { NominatorStatsItem } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
 import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
-import { convertEthereumToSubstrateAddress } from '../../utils';
+import { convertToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -46,7 +46,7 @@ export const NominatorStatsContainer: FC = () => {
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertEthereumToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {

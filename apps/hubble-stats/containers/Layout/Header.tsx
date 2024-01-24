@@ -16,7 +16,7 @@ import {
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
   TANGLE_MKT_URL,
-  TANGLE_STANDALONE_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const Header: FC = () => {
@@ -44,7 +44,7 @@ const Header: FC = () => {
           <NavigationMenuContent
             onDocsClick={() => window.open(WEBB_DOCS_URL, '_blank')}
             onTestnetClick={() =>
-              window.open(TANGLE_STANDALONE_EXPLORER_URL, '_blank')
+              window.open(TANGLE_TESTNET_NATIVE_EXPLORER_URL, '_blank')
             }
             onHelpCenterClick={() =>
               window.open(SOCIAL_URLS_RECORD.telegram, '_blank')

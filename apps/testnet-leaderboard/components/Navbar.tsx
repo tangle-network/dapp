@@ -16,7 +16,7 @@ import {
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import {
   TANGLE_MKT_URL,
-  TANGLE_STANDALONE_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   WEBB_BLOG_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -122,7 +122,7 @@ export const Navbar = () => {
 
         <li>
           <Button
-            href={TANGLE_STANDALONE_EXPLORER_URL}
+            href={TANGLE_TESTNET_NATIVE_EXPLORER_URL}
             target="blank"
             className="px-5 lg:py-4 border"
           >

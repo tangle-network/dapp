@@ -74,7 +74,7 @@ export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
 export const TANGLE_TESTNET_EXPLORER_URL = 'https://explorer.tangle.tools';
 
-export const TANGLE_STANDALONE_EXPLORER_URL =
+export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer';
 
 export const WEBB_DAPP_NEW_ISSUE_URL =
@@ -235,12 +235,12 @@ export const webbNetworks: webbNetworksType[] = [
     networkType: 'testnet',
     networks: [
       {
-        name: 'Tangle Standalone',
+        name: 'Tangle Testnet Native',
         networkType: 'testnet',
         networkNodeType: 'standalone',
         subqueryEndpoint: SUBQUERY_ENDPOINT,
         polkadotEndpoint: TANGLE_RPC_ENDPOINT,
-        polkadotExplorer: TANGLE_STANDALONE_EXPLORER_URL,
+        polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
         avatar: '',
       },
     ],
@@ -299,7 +299,7 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'polkadot explorer',
-      href: TANGLE_STANDALONE_EXPLORER_URL,
+      href: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
       ...commonExternalProps,
     },
   ],

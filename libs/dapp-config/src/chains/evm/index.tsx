@@ -181,11 +181,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
   }),
 
-  [PresetTypedChainId.TangleTestnet]: {
+  [PresetTypedChainId.TangleTestnetEVM]: {
     chainType: ChainType.EVM,
-    id: EVMChainId.TangleTestnet,
-    name: 'Tangle Testnet',
-    network: 'Tangle',
+    id: EVMChainId.TangleTestnetEVM,
+    name: 'Tangle Testnet EVM',
     group: 'tangle',
     tag: 'test',
     nativeCurrency: {
@@ -196,7 +195,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: !process.env['USING_LOCAL_TANGLE']
       ? {
           default: {
-            name: 'Tangle Testnet Explorer',
+            name: 'Tangle Testnet EVM Explorer',
             url: 'https://explorer.tangle.tools',
           },
         }
@@ -220,7 +219,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     id: EVMChainId.HermesLocalnet,
     name: 'Hermes',
-    network: 'Orbit',
     group: 'webb-dev',
     tag: 'dev',
     nativeCurrency: DEFAULT_EVM_CURRENCY,
@@ -247,7 +245,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     id: EVMChainId.AthenaLocalnet,
     name: 'Athena',
-    network: 'Orbit',
     group: 'webb-dev',
     tag: 'dev',
     nativeCurrency: DEFAULT_EVM_CURRENCY,
@@ -274,7 +271,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     id: EVMChainId.DemeterLocalnet,
     name: 'Demeter',
-    network: 'Orbit',
     group: 'webb-dev',
     tag: 'dev',
     nativeCurrency: DEFAULT_EVM_CURRENCY,

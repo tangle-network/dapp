@@ -181,7 +181,13 @@ const useConnectWallet = (options?: {
   );
 
   const connectWallet = useCallback(
-    async (nextWallet: WalletConfig) => {
+    async (
+      nextWallet: WalletConfig,
+      targetTypedChainIds?: {
+        evm?: number;
+        substrate?: number;
+      }
+    ) => {
       try {
         subjects.setSelectedWallet(nextWallet);
         subjects.setWalletState(WalletState.CONNECTING);
@@ -200,7 +206,9 @@ const useConnectWallet = (options?: {
             chain: { id, unsupported },
           } = await provider.connect({
             chainId:
-              typeof typedChainId === 'number'
+              typeof targetTypedChainIds?.evm === 'number'
+                ? parseTypedChainId(targetTypedChainIds.evm).chainId
+                : typeof typedChainId === 'number'
                 ? parseTypedChainId(typedChainId).chainId
                 : undefined,
           });
@@ -212,11 +220,16 @@ const useConnectWallet = (options?: {
             await switchChain(chain, nextWallet);
           }
         } else {
+          const targetSubstrateChainId =
+            targetTypedChainIds?.substrate ?? typedChainId;
           if (
-            typeof typedChainId === 'number' &&
-            chainsPopulated[typedChainId]
+            typeof targetSubstrateChainId === 'number' &&
+            chainsPopulated[targetSubstrateChainId]
           ) {
-            await switchChain(chainsPopulated[typedChainId], nextWallet);
+            await switchChain(
+              chainsPopulated[targetSubstrateChainId],
+              nextWallet
+            );
           } else {
             const account = await getDefaultAccount(provider);
             setActiveAccount(account);

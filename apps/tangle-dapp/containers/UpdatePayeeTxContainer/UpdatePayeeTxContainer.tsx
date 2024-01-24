@@ -21,7 +21,7 @@ import {
 } from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import { PaymentDestination } from '../../types';
-import { convertEthereumToSubstrateAddress } from '../../utils';
+import { convertToSubstrateAddress } from '../../utils';
 import { UpdatePayeeTxContainerProps } from './types';
 import UpdatePayee from './UpdatePayee';
 
@@ -49,7 +49,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertEthereumToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
