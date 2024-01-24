@@ -53,7 +53,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         return api.tx.balances.transfer(recipientAddress, amountInChainUnits);
       },
       [amount, recipientAddress]
-    )
+    ),
+    true
   );
 
   // TODO: Likely would ideally want to control this from the parent component.
@@ -69,12 +70,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   useEffect(() => {
     if (status === TxStatus.Complete) {
       reset();
-
-      notificationApi({
-        variant: 'success',
-        message: 'Transaction complete',
-        secondaryMessage: 'Your transaction has been successfully processed.',
-      });
     }
   }, [notificationApi, reset, status]);
 

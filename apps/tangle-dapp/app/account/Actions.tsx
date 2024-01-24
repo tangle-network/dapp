@@ -79,7 +79,7 @@ const Actions: FC = () => {
     performVestTx,
     vestTxStatus,
     hasClaimableTokens: hasCLaimableVestingTokens,
-  } = useVesting();
+  } = useVesting(true);
 
   // Prefetch static actions that take the user
   // to another internal page. Only do so on the

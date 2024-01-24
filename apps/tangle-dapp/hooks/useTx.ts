@@ -3,6 +3,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../constants';
@@ -21,12 +22,14 @@ export type TxFactory<T extends ISubmittableResult> = (
 
 function useTx<T extends ISubmittableResult>(
   factory: TxFactory<T>,
+  notifyStatusUpdates = false,
   timeoutDelay = 60_000
 ) {
   const [status, setStatus] = useState(TxStatus.NotYetInitiated);
   const [hash, setHash] = useState<string | null>(null);
   const activeAccount = useActiveAccount();
   const [error, setError] = useState<Error | null>(null);
+  const { notificationApi } = useWebbUI();
 
   const getInjector = useCallback(async () => {
     if (activeAccount === null || activeAccount[0] === null) {
@@ -109,6 +112,44 @@ function useTx<T extends ISubmittableResult>(
       isMounted = false;
     };
   }, [activeAccount, factory, getInjector, hash, status, timeoutDelay]);
+
+  useEffect(() => {
+    if (!notifyStatusUpdates) {
+      return;
+    }
+
+    let primaryMessage: string | null = null;
+    let secondaryMessage: string | null = null;
+    let variant: 'error' | 'success' | 'warning' | 'default' | 'info' =
+      'default';
+
+    switch (status) {
+      case TxStatus.Complete:
+        primaryMessage = 'Transaction completed successfully.';
+        variant = 'success';
+
+        break;
+      case TxStatus.TimedOut:
+        primaryMessage = 'The transaction timed out.';
+        variant = 'warning';
+
+        break;
+      case TxStatus.Error:
+        primaryMessage = 'An error occurred during the transaction';
+        secondaryMessage = error?.message || null;
+        variant = 'error';
+
+        break;
+      default:
+        return;
+    }
+
+    notificationApi({
+      variant,
+      message: primaryMessage,
+      secondaryMessage: secondaryMessage ?? undefined,
+    });
+  }, [error?.message, notificationApi, notifyStatusUpdates, status]);
 
   const perform = () => {
     // Prevent the consumer from re-triggering the transaction

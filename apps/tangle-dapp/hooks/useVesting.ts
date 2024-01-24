@@ -1,9 +1,10 @@
 import usePolkadotApiRx from './usePolkadotApiRx';
 import useTx from './useTx';
 
-const useVesting = () => {
-  const { perform: performVestTx, status: vestTxStatus } = useTx((api) =>
-    Promise.resolve(api.tx.vesting.vest())
+const useVesting = (notifyVestTxStatusUpdates?: boolean) => {
+  const { perform: performVestTx, status: vestTxStatus } = useTx(
+    (api) => Promise.resolve(api.tx.vesting.vest()),
+    notifyVestTxStatusUpdates
   );
 
   const { data: vestingInfo } = usePolkadotApiRx((api, activeAccountAddress) =>
