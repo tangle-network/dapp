@@ -1,8 +1,11 @@
+import useAgnosticTx from './useAgnosticTx';
 import usePolkadotApiRx from './usePolkadotApiRx';
-import useTx from './useTx';
 
 const useVesting = (notifyVestTxStatusUpdates?: boolean) => {
-  const { perform: performVestTx, status: vestTxStatus } = useTx(
+  const { perform: performAgnosticVestTx, status } = useAgnosticTx(
+    'vesting',
+    'vest',
+    [],
     (api) => Promise.resolve(api.tx.vesting.vest()),
     notifyVestTxStatusUpdates
   );
@@ -14,8 +17,8 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean) => {
   return {
     isVesting: vestingInfo?.isSome ?? null,
     vestingInfo,
-    performVestTx,
-    vestTxStatus,
+    performVestTx: performAgnosticVestTx,
+    vestTxStatus: status,
     hasClaimableTokens: true,
   };
 };

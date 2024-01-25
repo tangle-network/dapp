@@ -6,6 +6,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../constants';
+import prepareTxNotification from '../utils/prepareTxNotification';
 import useSubstrateAddress from './useSubstrateAddress';
 
 export enum TxStatus {
@@ -17,10 +18,11 @@ export enum TxStatus {
 }
 
 export type TxFactory<T extends ISubmittableResult> = (
-  api: ApiPromise
+  api: ApiPromise,
+  activeSubstrateAddress: string
 ) => Promise<SubmittableExtrinsic<'promise', T> | null>;
 
-function useTx<T extends ISubmittableResult>(
+function useSubstrateTx<T extends ISubmittableResult>(
   factory: TxFactory<T>,
   notifyStatusUpdates = false,
   timeoutDelay = 60_000
@@ -29,6 +31,8 @@ function useTx<T extends ISubmittableResult>(
   const [hash, setHash] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const { notificationApi } = useWebbUI();
+
+  // TODO: Throw error if address is EVM address of an EVM account.
   const activeSubstrateAddress = useSubstrateAddress();
 
   const requestInjector = useCallback(async () => {
@@ -39,6 +43,7 @@ function useTx<T extends ISubmittableResult>(
     return web3FromAddress(activeSubstrateAddress);
   }, [activeSubstrateAddress]);
 
+  // TODO: Why not move this into `perform`?
   useEffect(() => {
     // Still waiting for the consumer to perform the transaction.
     if (status !== TxStatus.Processing) {
@@ -54,7 +59,7 @@ function useTx<T extends ISubmittableResult>(
 
       const injector = await requestInjector();
       const api = await getPolkadotApiPromise();
-      const tx = await factory(api);
+      const tx = await factory(api, activeSubstrateAddress);
 
       // Factory is not yet ready to produce the transaction.
       // This is usually because the user hasn't yet connected their wallet.
@@ -128,38 +133,14 @@ function useTx<T extends ISubmittableResult>(
       return;
     }
 
-    let primaryMessage: string | null = null;
-    let secondaryMessage: string | null = null;
-    let variant: 'error' | 'success' | 'warning' | 'default' | 'info' =
-      'default';
+    const notificationOpts = prepareTxNotification(status, error);
 
-    switch (status) {
-      case TxStatus.Complete:
-        primaryMessage = 'Transaction completed successfully.';
-        variant = 'success';
-
-        break;
-      case TxStatus.TimedOut:
-        primaryMessage = 'The transaction timed out.';
-        variant = 'warning';
-
-        break;
-      case TxStatus.Error:
-        primaryMessage = 'An error occurred during the transaction';
-        secondaryMessage = error?.message || null;
-        variant = 'error';
-
-        break;
-      default:
-        return;
+    if (notificationOpts === null) {
+      return;
     }
 
-    notificationApi({
-      variant,
-      message: primaryMessage,
-      secondaryMessage: secondaryMessage ?? undefined,
-    });
-  }, [error?.message, notificationApi, notifyStatusUpdates, status]);
+    notificationApi(notificationOpts);
+  }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
 
   const perform = () => {
     // Prevent the consumer from re-triggering the transaction
@@ -180,4 +161,4 @@ function useTx<T extends ISubmittableResult>(
   return { perform, status, error, hash, reset };
 }
 
-export default useTx;
+export default useSubstrateTx;

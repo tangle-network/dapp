@@ -1,16 +1,19 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { ensureHex } from '@webb-tools/dapp-config';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   createEvmWalletClient,
   evmPublicClient,
 } from '../constants/evmActions';
 import {
-  PrecompileAddress,
-  STAKING_PRECOMPILE_ABI,
+  AbiFunctionName,
+  AbiPrecompileCategory,
+  getPrecompileAbiFromCategory,
+  getPrecompileAddressFromCategory,
 } from '../constants/evmPrecompiles';
 import useEvmAddress from './useEvmAddress';
+import { TxStatus } from './useSubstrateTx';
 
 /**
  * Obtain a function that can be used to perform a precompile contract call.
@@ -21,37 +24,45 @@ import useEvmAddress from './useEvmAddress';
  * (ex. those using MetaMask).
  *
  * This is used for performing actions from EVM accounts. Substrate accounts
- * should use `useTx` for transactions instead, or `usePolkadotApi` for queries.
+ * should use `useSubstrateTx` for transactions instead, or `usePolkadotApi` for queries.
  */
-const useEvmPrecompileAbiCall = (
-  address: PrecompileAddress,
-  targetFunctionName: string,
+function useEvmPrecompileAbiCall<T extends AbiPrecompileCategory>(
+  category: T,
+  targetFunctionName: AbiFunctionName<T>,
   args: unknown[]
-) => {
+) {
+  const [status, setStatus] = useState(TxStatus.NotYetInitiated);
   const activeEvmAddress = useEvmAddress();
 
   const perform = useCallback(async () => {
-    if (activeEvmAddress === null || !isEthereumAddress(activeEvmAddress)) {
+    if (
+      activeEvmAddress === null ||
+      !isEthereumAddress(activeEvmAddress) ||
+      status !== TxStatus.NotYetInitiated
+    ) {
       return;
     }
 
-    // TODO: Create `getOrSetEvmPublicClientSingleton` singleton-style function.
+    setStatus(TxStatus.Processing);
 
     const { request } = await evmPublicClient.simulateContract({
-      address,
-      abi: STAKING_PRECOMPILE_ABI,
+      address: getPrecompileAddressFromCategory(category),
+      abi: getPrecompileAbiFromCategory(category),
       functionName: targetFunctionName,
       args: args,
       account: ensureHex(activeEvmAddress),
     });
 
+    // TODO: Handle errors.
     const evmWalletClient = createEvmWalletClient(activeEvmAddress);
     const txHash = await evmWalletClient.writeContract(request);
 
-    // TODO: Handle txHash.
-  }, [activeEvmAddress, address, args, targetFunctionName]);
+    setStatus(TxStatus.Complete);
 
-  return perform;
-};
+    // TODO: Handle txHash.
+  }, [activeEvmAddress, args, category, status, targetFunctionName]);
+
+  return { perform, status };
+}
 
 export default useEvmPrecompileAbiCall;

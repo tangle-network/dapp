@@ -1,3 +1,36 @@
+export type AbiPrecompileCategory = 'staking' | 'vesting';
+
+type StakingAbiFunctionName =
+  | 'bond'
+  | 'bondExtra'
+  | 'chill'
+  | 'currentEra'
+  | 'erasTotalStake'
+  | 'isNominator'
+  | 'isValidator'
+  | 'maxNominatorCount'
+  | 'maxValidatorCount'
+  | 'minActiveStake'
+  | 'minNominatorBond'
+  | 'minValidatorBond'
+  | 'nominate'
+  | 'payoutStakers'
+  | 'rebond'
+  | 'setController'
+  | 'setPayee'
+  | 'unbond'
+  | 'validatorCount'
+  | 'withdrawUnbonded';
+
+type VestingAbiFunctionName = 'vest';
+
+export type AbiFunctionName<T extends AbiPrecompileCategory> =
+  T extends 'staking'
+    ? StakingAbiFunctionName
+    : T extends 'vesting'
+    ? VestingAbiFunctionName
+    : never;
+
 type InputType =
   | 'uint256'
   | 'bytes32'
@@ -19,15 +52,15 @@ export enum PrecompileAddress {
   Vesting = '0x0000000000000000000000000000000000000801',
 }
 
-export type PrecompileAbiFunction = {
+export type PrecompileAbiFunction<T extends AbiPrecompileCategory> = {
   inputs: InputOutput[];
-  name: string;
+  name: AbiFunctionName<T>;
   outputs: InputOutput[];
   stateMutability: 'nonpayable' | 'view';
   type: 'function';
 };
 
-export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction[] = [
+export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
   {
     inputs: [
       {
@@ -306,7 +339,7 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction[] = [
   },
 ] as const;
 
-export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction[] = [
+export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<'vesting'>[] = [
   {
     name: 'vest',
     inputs: [],
@@ -317,3 +350,25 @@ export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction[] = [
 
   // TODO: Add missing ABI functions. See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
 ] as const;
+
+export function getPrecompileAddressFromCategory(
+  category: AbiPrecompileCategory
+): PrecompileAddress {
+  switch (category) {
+    case 'staking':
+      return PrecompileAddress.Staking;
+    case 'vesting':
+      return PrecompileAddress.Vesting;
+  }
+}
+
+export function getPrecompileAbiFromCategory(
+  category: AbiPrecompileCategory
+): PrecompileAbiFunction<AbiPrecompileCategory>[] {
+  switch (category) {
+    case 'staking':
+      return STAKING_PRECOMPILE_ABI;
+    case 'vesting':
+      return VESTING_PRECOMPILE_ABI;
+  }
+}

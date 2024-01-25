@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useFormattedAccountBalances from '../../data/AccountSummaryCard/useFormattedAccountBalances';
-import useTx, { TxStatus } from '../../hooks/useTx';
+import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
 import { TransferTxContainerProps } from './types';
@@ -34,7 +34,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     status,
     reset: resetTx,
     error: txError,
-  } = useTx(
+  } = useSubstrateTx(
     useCallback(
       async (api) => {
         const decimals = api.registry.chainDecimals[0];

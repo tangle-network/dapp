@@ -1,4 +1,4 @@
-import { TxStatus } from '../hooks/useTx';
+import { TxStatus } from '../hooks/useSubstrateTx';
 
 function getTxStatusText(status: TxStatus) {
   switch (status) {

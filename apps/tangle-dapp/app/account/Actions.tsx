@@ -18,7 +18,7 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useStakingRewards from '../../data/StakingStats/useStakingRewards';
 import useReceiveModal from '../../hooks/useReceiveModal';
-import { TxStatus } from '../../hooks/useTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
 import { AnchorLinkId, InternalPath } from '../../types';
 
