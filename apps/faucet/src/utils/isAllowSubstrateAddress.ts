@@ -12,7 +12,7 @@ function isAllowSubstrateAddress(typedChainId: number, tokenAddress?: string) {
     // Ignore error
   }
 
-  return typedChainId === PresetTypedChainId.TangleTestnet && isNative;
+  return typedChainId === PresetTypedChainId.TangleTestnetEVM && isNative;
 }
 
 export default isAllowSubstrateAddress;

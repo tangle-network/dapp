@@ -15,8 +15,8 @@ import {
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
 import {
   TANGLE_MKT_URL,
-  TANGLE_STANDALONE_EXPLORER_URL,
   TANGLE_TESTNET_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   WEBB_TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
@@ -49,7 +49,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     Icon: AppsLine,
-    href: TANGLE_STANDALONE_EXPLORER_URL,
+    href: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
     isInternal: false,
     name: 'Substrate Portal',
     subItems: [],

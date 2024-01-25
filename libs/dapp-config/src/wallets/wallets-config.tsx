@@ -31,7 +31,7 @@ const ANY_EVM = [
   PresetTypedChainId.MoonbaseAlpha,
   PresetTypedChainId.AvalancheFuji,
   PresetTypedChainId.ScrollAlpha,
-  PresetTypedChainId.TangleTestnet,
+  PresetTypedChainId.TangleTestnetEVM,
 
   // Localnet
   PresetTypedChainId.HermesLocalnet,
@@ -40,10 +40,7 @@ const ANY_EVM = [
 ];
 
 const ANY_SUBSTRATE = [
-  PresetTypedChainId.LocalTangleStandalone,
-  PresetTypedChainId.TangleStandaloneTestnet,
-  PresetTypedChainId.DkgSubstrateStandalone,
-  PresetTypedChainId.ProtocolSubstrateStandalone,
+  PresetTypedChainId.TangleTestnetNative,
   PresetTypedChainId.Kusama,
   PresetTypedChainId.Polkadot,
 ];

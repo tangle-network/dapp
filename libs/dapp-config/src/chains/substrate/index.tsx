@@ -15,41 +15,12 @@ function populateBlockExplorerStub(connString: string): string {
 
 // All substrate chains temporary use in `development` environment now
 export const chainsConfig: Record<number, ChainConfig> = {
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
-    chainType: ChainType.Substrate,
-    id: SubstrateChainId.ProtocolSubstrateStandalone,
-    name: 'Substrate',
-    group: 'webb-dev',
-    tag: 'dev',
-    nativeCurrency: {
-      name: 'Webb Substrate',
-      symbol: 'WEBB',
-      decimals: 18,
-    },
-    blockExplorers: {
-      default: {
-        name: 'Substrate Explorer',
-        url: populateBlockExplorerStub('ws://127.0.0.1:9944'),
-      },
-    },
-    rpcUrls: {
-      default: {
-        http: [],
-        webSocket: ['ws://127.0.0.1:9944'],
-      },
-      public: {
-        http: [],
-        webSocket: ['ws://127.0.0.1:9944'],
-      },
-    },
-    env: ['development'],
-  },
-  [PresetTypedChainId.TangleStandaloneTestnet]: {
+  [PresetTypedChainId.TangleTestnetNative]: {
     chainType: ChainType.Substrate,
     group: 'tangle',
     tag: process.env['USING_LOCAL_TANGLE'] ? 'dev' : 'test',
-    id: SubstrateChainId.TangleStandaloneTestnet,
-    name: 'Tangle Standalone Testnet',
+    id: SubstrateChainId.TangleTestnetNative,
+    name: 'Tangle Testnet Native',
     nativeCurrency: {
       name: 'Tangle',
       symbol: 'tTNT',

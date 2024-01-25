@@ -181,10 +181,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
   }),
 
-  [PresetTypedChainId.TangleTestnet]: {
+  [PresetTypedChainId.TangleTestnetEVM]: {
     chainType: ChainType.EVM,
-    id: EVMChainId.TangleTestnet,
-    name: 'Tangle Testnet',
+    id: EVMChainId.TangleTestnetEVM,
+    name: 'Tangle Testnet EVM',
     group: 'tangle',
     tag: 'test',
     nativeCurrency: {
@@ -195,7 +195,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: !process.env['USING_LOCAL_TANGLE']
       ? {
           default: {
-            name: 'Tangle Testnet Explorer',
+            name: 'Tangle Testnet EVM Explorer',
             url: 'https://explorer.tangle.tools',
           },
         }

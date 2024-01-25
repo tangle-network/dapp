@@ -40,8 +40,8 @@ export const WalletModalContainer = () => {
       notificationApi={notificationApi}
       apiConfig={apiConfig}
       targetTypedChainIds={{
-        evm: PresetTypedChainId.TangleTestnet,
-        substrate: PresetTypedChainId.TangleStandaloneTestnet,
+        evm: PresetTypedChainId.TangleTestnetEVM,
+        substrate: PresetTypedChainId.TangleTestnetNative,
       }}
     />
   );

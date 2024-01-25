@@ -73,7 +73,7 @@ export default async function ProjectHeaderContainer({
         </div>
       </div>
 
-      <div className="flex flex-row justify-between gap-4">
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (

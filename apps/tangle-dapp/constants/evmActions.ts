@@ -28,7 +28,7 @@ export const PAYMENT_DESTINATION_OPTIONS = [
   'Stash (do not increase the amount at stake)',
 ];
 
-const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnet];
+const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
 delete tangleTestnetConfig.contracts;
 
 const tangleTestnet = defineChain(tangleTestnetConfig);
