@@ -113,7 +113,7 @@ const BondMoreTxContainer: FC<PayoutTxContainerProps> = ({
               <InputField.Input
                 title="Payout Stakers For"
                 isAddressType={true}
-                addressTheme='substrate'
+                addressTheme="substrate"
                 value={validatorAddress}
                 type="text"
                 readOnly

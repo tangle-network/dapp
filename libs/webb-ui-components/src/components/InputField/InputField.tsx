@@ -110,7 +110,13 @@ const InputFieldInput = forwardRef<
       </Typography>
 
       <div className="flex gap-1 items-center">
-        {isAddressType && <Avatar value={String(value)} sourceVariant='address' theme={addressTheme} />}
+        {isAddressType && (
+          <Avatar
+            value={String(value)}
+            sourceVariant="address"
+            theme={addressTheme}
+          />
+        )}
 
         <input
           spellCheck="false"
