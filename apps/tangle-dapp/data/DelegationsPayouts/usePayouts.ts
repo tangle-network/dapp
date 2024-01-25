@@ -111,6 +111,14 @@ export default function usePayouts(
                       validator,
                       validatorRewardPoints,
                     } = reward;
+                    const validatorLedger =
+                      await apiPromise.query.staking.ledger(validator);
+
+                    const claimedEras = validatorLedger
+                      .unwrap()
+                      .claimedRewards.map((era) => era.toString());
+
+                    if (claimedEras.includes(era)) return;
 
                     const erasTotalReward =
                       await apiPromise.query.staking.erasValidatorReward(era);
@@ -169,7 +177,7 @@ export default function usePayouts(
 
                               const validatorCommission =
                                 validatorTotalReward *
-                                Number(validatorCommissionPercentage);
+                                (Number(validatorCommissionPercentage) / 100);
 
                               const distributableReward =
                                 validatorTotalReward - validatorCommission;
@@ -221,6 +229,7 @@ export default function usePayouts(
                                     validatorTotalRewardFormatted,
                                   nominatorTotalReward:
                                     nominatorTotalRewardFormatted,
+                                  status: 'unclaimed',
                                 };
                               }
                             }

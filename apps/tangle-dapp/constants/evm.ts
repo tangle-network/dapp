@@ -1,5 +1,9 @@
 import { u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/util-crypto';
+import {
+  addressToEvm,
+  base58Decode,
+  decodeAddress,
+} from '@polkadot/util-crypto';
 import { ensureHex } from '@webb-tools/dapp-config';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { AddressType } from '@webb-tools/dapp-config/types';
@@ -215,6 +219,28 @@ export const withdrawUnbondedTokens = async (
     abi: StakingInterfacePrecompileABI,
     functionName: 'withdrawUnbonded',
     args: [slashingSpans],
+    account: ensureHex(nominatorAddress),
+  });
+
+  const evmWalletClient = createEvmWalletClient(nominatorAddress);
+
+  const txHash = await evmWalletClient.writeContract(request);
+
+  return txHash;
+};
+
+export const payoutStakers = async (
+  nominatorAddress: string,
+  validatorAddress: string,
+  era: number
+): Promise<AddressType> => {
+  const validator = u8aToHex(decodeAddress(validatorAddress));
+
+  const { request } = await evmPublicClient.simulateContract({
+    address: StakingInterfacePrecompileAddress,
+    abi: StakingInterfacePrecompileABI,
+    functionName: 'payoutStakers',
+    args: [validator, era],
     account: ensureHex(nominatorAddress),
   });
 

@@ -61,6 +61,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const { data: payoutsData, isLoading: payoutsIsLoading } =
     usePayouts(substrateAddress);
 
+  console.log('payoutsData', payoutsData);
+
   const { isMobile } = useCheckMobile();
 
   const { toggleModal } = useConnectWallet();

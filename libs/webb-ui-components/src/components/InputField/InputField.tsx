@@ -10,7 +10,7 @@ import {
   InputFieldSlotProps,
 } from './types';
 import { Avatar } from '../Avatar';
-import { shortenHex } from '../../utils';
+import { shortenHex, shortenString } from '../../utils';
 
 const InputFieldContext = createContext<InputFieldContextValue | undefined>(
   undefined
@@ -95,11 +95,12 @@ const InputFieldInput = forwardRef<
     title,
     type,
     value,
+    addressTheme = 'ethereum',
     ...inputProps
   } = props;
 
   const input = (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 w-full">
       <Typography
         variant="body1"
         fw="bold"
@@ -109,12 +110,18 @@ const InputFieldInput = forwardRef<
       </Typography>
 
       <div className="flex gap-1 items-center">
-        {isAddressType && <Avatar value={String(value)} theme="ethereum" />}
+        {isAddressType && <Avatar value={String(value)} sourceVariant='address' theme={addressTheme} />}
 
         <input
           spellCheck="false"
           type={type ?? 'text'}
-          value={isAddressType ? shortenHex(String(value), 7) : value}
+          value={
+            isAddressType
+              ? addressTheme === 'ethereum'
+                ? shortenHex(String(value), 7)
+                : shortenString(String(value), 7)
+              : value
+          }
           {...inputProps}
           disabled={context?.isDisabled ?? isDisabled}
           ref={forwardedRef}
