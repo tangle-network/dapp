@@ -86,7 +86,7 @@ const Balances: FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-6 w-full">
+      {/* <div className="flex gap-6 w-full">
         <div className="flex flex-col gap-4 w-full">
           <Typography variant="body1" fw="normal">
             Free Balance
@@ -114,7 +114,7 @@ const Balances: FC = () => {
             <SkeletonLoader size="lg" />
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

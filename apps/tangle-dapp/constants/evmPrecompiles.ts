@@ -46,6 +46,7 @@ type InputOutput = {
   type: InputTypeSuper;
 };
 
+// See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
 export enum PrecompileAddress {
   Staking = '0x0000000000000000000000000000000000000800',
   Vesting = '0x0000000000000000000000000000000000000801',

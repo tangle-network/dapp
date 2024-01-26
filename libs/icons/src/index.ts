@@ -129,6 +129,7 @@ export { default as WalletFillIcon } from './WalletFillIcon';
 export { default as WalletLineIcon } from './WalletLineIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
+export * from './CoinsLineIcon';
 
 // Wallet icons
 export * from './wallets';

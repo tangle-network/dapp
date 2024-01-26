@@ -13,12 +13,12 @@ import { useRouter } from 'next/navigation';
 import { ComponentProps, FC, ReactElement, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../components/GlassCard/GlassCard';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useReceiveModal from '../../hooks/useReceiveModal';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
 import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
+import { CoinsLineIcon } from '../../../../libs/icons/src/CoinsLineIcon';
 
 type ActionItemDef = {
   label: string;
@@ -36,7 +36,7 @@ const staticActionItems: ActionItemDef[] = [
   {
     label: 'Payouts',
     path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
-    icon: <CoinIcon size="lg" />,
+    icon: <CoinsLineIcon size="lg" />,
   },
   {
     label: 'Claim Airdrop',
@@ -68,7 +68,7 @@ const ActionItem = (props: {
       <Typography
         component="span"
         variant="body1"
-        className="block text-center"
+        className="block text-center dark:text-mono-0"
       >
         {label}
       </Typography>
@@ -100,43 +100,41 @@ const Actions: FC = () => {
 
   return (
     <>
-      <GlassCard className="flex justify-center align-center">
-        <div className="flex items-center justify-center gap-6 overflow-x-auto">
+      <div className="flex items-center justify-start gap-6 overflow-x-auto">
+        <ActionItem
+          icon={<ArrowLeftRightLineIcon size="lg" />}
+          label="Transfer"
+          onClick={() => setIsTransferModalOpen(true)}
+        />
+
+        {staticActionItems.map(({ path, ...restItem }, index) => (
           <ActionItem
-            icon={<ArrowLeftRightLineIcon size="lg" />}
-            label="Transfer"
-            onClick={() => setIsTransferModalOpen(true)}
+            key={index}
+            {...restItem}
+            onClick={() => router.push(path)}
           />
+        ))}
 
-          {staticActionItems.map(({ path, ...restItem }, index) => (
-            <ActionItem
-              key={index}
-              {...restItem}
-              onClick={() => router.push(path)}
-            />
-          ))}
+        {/* This is a special case, so hide it for most users if they're not vesting. */}
+        {isVesting && (
+          <ActionItem
+            icon={<ShieldKeyholeLineIcon size="lg" />}
+            label="Vest"
+            isDisabled={vestTxStatus === TxStatus.Processing}
+            onClick={performVestTx}
+          />
+        )}
+      </div>
 
-          {/* This is a special case, so hide it for most users if they're not vesting. */}
-          {isVesting && (
-            <ActionItem
-              icon={<ShieldKeyholeLineIcon size="lg" />}
-              label="Vest"
-              isDisabled={vestTxStatus === TxStatus.Processing}
-              onClick={performVestTx}
-            />
-          )}
-        </div>
-
-        <div>
-          Claimable vesting tokens:
-          {claimableTokenAmount !== null
-            ? formatBalance(claimableTokenAmount, {
-                decimals: 18,
-                withUnit: 'tTNT',
-              })
-            : 'WAITING'}
-        </div>
-      </GlassCard>
+      <div>
+        Claimable vesting tokens:
+        {claimableTokenAmount !== null
+          ? formatBalance(claimableTokenAmount, {
+              decimals: 18,
+              withUnit: 'tTNT',
+            })
+          : 'WAITING'}
+      </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}
       <div className="absolute">

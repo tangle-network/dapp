@@ -18,8 +18,10 @@ import { PrecompileAddress, STAKING_PRECOMPILE_ABI } from './evmPrecompiles';
 
 const PAYEE_STAKED =
   '0x0000000000000000000000000000000000000000000000000000000000000000';
+
 const PAYEE_STASH =
   '0x0000000000000000000000000000000000000000000000000000000000000001';
+
 const PAYEE_CONTROLLER =
   '0x0000000000000000000000000000000000000000000000000000000000000002';
 
@@ -29,6 +31,8 @@ export const PAYMENT_DESTINATION_OPTIONS = [
 ];
 
 const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
+
+// TODO: Explain why this is being done.
 delete tangleTestnetConfig.contracts;
 
 const tangleTestnet = defineChain(tangleTestnetConfig);
