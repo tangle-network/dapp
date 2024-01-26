@@ -3,6 +3,7 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import { type FC, Fragment, useMemo } from 'react';
 
+import { TOKEN_UNIT } from '../../constants';
 import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
@@ -44,7 +45,7 @@ const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
 
   return (
     <NominatorStatsItem
-      title="Unbonding tTNT"
+      title={`Unbonding ${TOKEN_UNIT}`}
       tooltip={unbondingRemainingErasTooltip}
       type="Unbonding Amount"
       address={address}

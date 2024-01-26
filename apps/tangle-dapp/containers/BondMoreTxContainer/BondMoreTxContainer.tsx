@@ -13,6 +13,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { TOKEN_UNIT } from '../../constants';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
@@ -54,9 +55,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
-      return 'You have zero tTNT in your wallet!';
+      return `You have zero ${TOKEN_UNIT} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough tTNT in your wallet!`;
+      return `You don't have enough ${TOKEN_UNIT} in your wallet!`;
     }
   }, [walletBalance, amountToBond]);
 
@@ -78,7 +79,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     await executeTx(
       () => bondExtraTokensEvm(walletAddress, amountToBond),
       () => bondExtraTokensSubstrate(walletAddress, amountToBond),
-      `Successfully bonded ${amountToBond} tTNT.`,
+      `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
       'Failed to bond extra tokens!'
     );
 

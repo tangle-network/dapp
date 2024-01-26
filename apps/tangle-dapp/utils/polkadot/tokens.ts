@@ -1,9 +1,8 @@
 import { u128 } from '@polkadot/types';
 import { formatBalance } from '@polkadot/util';
 
+import { TOKEN_UNIT } from '../../constants';
 import { getPolkadotApiPromise } from './api';
-
-const TOKEN_UNIT = 'tTNT';
 
 export const formatTokenBalance = async (
   balance: u128

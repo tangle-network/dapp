@@ -17,6 +17,7 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
+import { TOKEN_UNIT } from '../../constants';
 import { convertToSubstrateAddress } from '../../utils';
 import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
@@ -82,7 +83,7 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <NominatorStatsItem
-            title="Available tTNT in Wallet"
+            title={`Available ${TOKEN_UNIT} in Wallet`}
             type="Wallet Balance"
             address={walletAddress}
           />
@@ -92,7 +93,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <Link href={WEBB_FAUCET_URL} target="_blank">
               <Button variant="utility" className="w-full">
-                Get tTNT
+                {`Get ${TOKEN_UNIT}`}
               </Button>
             </Link>
 
@@ -118,8 +119,8 @@ const NominatorStatsContainer: FC = () => {
         >
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
-              title="Total Staked tTNT"
-              tooltip="Total Staked tTNT (bonded)."
+              title={`Total Staked ${TOKEN_UNIT}`}
+              tooltip={`Total Staked ${TOKEN_UNIT} (bonded).`}
               type="Total Staked"
               address={substrateAddress}
             />

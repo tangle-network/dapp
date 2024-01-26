@@ -13,6 +13,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import { TOKEN_UNIT } from '../../constants';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -99,9 +100,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 
   const amountToUnbondError = useMemo(() => {
     if (remainingStakedBalanceToUnbond === 0) {
-      return 'You have unbonded all your staked tTNT!';
+      return `You have unbonded all your staked ${TOKEN_UNIT}!`;
     } else if (amountToUnbond > remainingStakedBalanceToUnbond) {
-      return `You can only unbond ${remainingStakedBalanceToUnbond} tTNT!`;
+      return `You can only unbond ${remainingStakedBalanceToUnbond} ${TOKEN_UNIT}!`;
     }
   }, [remainingStakedBalanceToUnbond, amountToUnbond]);
 
@@ -123,7 +124,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     await executeTx(
       () => unbondTokensEvm(walletAddress, amountToUnbond),
       () => unbondTokensSubstrate(walletAddress, amountToUnbond),
-      `Successfully unbonded ${amountToUnbond} tTNT.`,
+      `Successfully unbonded ${amountToUnbond} ${TOKEN_UNIT}.`,
       'Failed to unbond tokens!'
     );
 

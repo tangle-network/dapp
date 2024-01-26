@@ -7,6 +7,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
+import { TOKEN_UNIT } from '../../constants';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -56,7 +57,7 @@ const BondTokens: FC<BondTokensProps> = ({
                   : true
                 : false
             }
-            placeholder="10 tTNT"
+            placeholder={`10 ${TOKEN_UNIT}`}
             type="number"
             onChange={(e) => setAmountToBond(Number(e.target.value))}
           />
