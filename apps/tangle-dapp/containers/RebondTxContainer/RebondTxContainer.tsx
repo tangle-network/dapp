@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -16,11 +15,13 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import {
   convertToSubstrateAddress,
   splitTokenValueAndSymbol,
 } from '../../utils';
-import { evmPublicClient, rebondTokens } from '../../utils/evm';
+import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
+import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
 import RebondTokens from './RebondTokens';
 import { RebondTxContainerProps } from './types';
 
@@ -30,6 +31,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [amountToRebond, setAmountToRebond] = useState<number>(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
@@ -92,41 +94,15 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsRebondTxLoading(true);
 
-    try {
-      const bondExtraTokensTxHash = await rebondTokens(
-        walletAddress,
-        amountToRebond
-      );
+    await executeTx(
+      () => rebondTokensEvm(walletAddress, amountToRebond),
+      () => rebondTokensSubstrate(walletAddress, amountToRebond),
+      `Successfully rebonded ${amountToRebond} tTNT.`,
+      'Failed to rebond tokens!'
+    );
 
-      if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
-        {
-          hash: bondExtraTokensTxHash,
-        }
-      );
-
-      if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully unbonded ${amountToRebond} tTNT.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
-    } finally {
-      closeModal();
-    }
-  }, [amountToRebond, closeModal, notificationApi, walletAddress]);
+    closeModal();
+  }, [amountToRebond, closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>

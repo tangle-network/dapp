@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -16,11 +15,13 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import {
   convertToSubstrateAddress,
   splitTokenValueAndSymbol,
 } from '../../utils';
-import { evmPublicClient, unBondTokens } from '../../utils/evm';
+import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
+import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
 import { UnbondTxContainerProps } from './types';
 import UnbondTokens from './UnbondTokens';
 
@@ -30,6 +31,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
@@ -118,41 +120,15 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsUnbondTxLoading(true);
 
-    try {
-      const bondExtraTokensTxHash = await unBondTokens(
-        walletAddress,
-        amountToUnbond
-      );
+    await executeTx(
+      () => unbondTokensEvm(walletAddress, amountToUnbond),
+      () => unbondTokensSubstrate(walletAddress, amountToUnbond),
+      `Successfully unbonded ${amountToUnbond} tTNT.`,
+      'Failed to unbond tokens!'
+    );
 
-      if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
-        {
-          hash: bondExtraTokensTxHash,
-        }
-      );
-
-      if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully unbonded ${amountToUnbond} tTNT.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
-    } finally {
-      closeModal();
-    }
-  }, [amountToUnbond, closeModal, notificationApi, walletAddress]);
+    closeModal();
+  }, [amountToUnbond, closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>

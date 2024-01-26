@@ -1,5 +1,6 @@
 import type { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isViemError } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback } from 'react';
 
@@ -31,10 +32,12 @@ const useExecuteTxWithNotification = () => {
         }
 
         notificationApi({ variant: 'success', message: successMessage });
-      } catch (error) {
+      } catch (error: any) {
         notificationApi({
           variant: 'error',
-          message: errorMessage || 'Something went wrong.',
+          message: isViemError(error)
+            ? error.shortMessage
+            : error.message || 'Something went wrong!',
         });
 
         throw error; // Rethrowing the error to be caught by the outer try-catch

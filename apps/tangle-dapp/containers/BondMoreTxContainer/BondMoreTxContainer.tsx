@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -15,7 +14,9 @@ import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
-import { bondExtraTokens, evmPublicClient } from '../../utils/evm';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
+import { bondExtraTokens as bondExtraTokensSubstrate } from '../../utils/polkadot';
 import BondTokens from './BondTokens';
 import { BondMoreTxContainerProps } from './types';
 
@@ -25,6 +26,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
@@ -73,41 +75,15 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsBondMoreTxLoading(true);
 
-    try {
-      const bondExtraTokensTxHash = await bondExtraTokens(
-        walletAddress,
-        amountToBond
-      );
+    await executeTx(
+      () => bondExtraTokensEvm(walletAddress, amountToBond),
+      () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+      `Successfully bonded ${amountToBond} tTNT.`,
+      'Failed to bond extra tokens!'
+    );
 
-      if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to bond tokens!');
-      }
-
-      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
-        {
-          hash: bondExtraTokensTxHash,
-        }
-      );
-
-      if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to bond tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully bonded ${amountToBond} tTNT.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
-    } finally {
-      closeModal();
-    }
-  }, [amountToBond, closeModal, notificationApi, walletAddress]);
+    closeModal();
+  }, [amountToBond, closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>
