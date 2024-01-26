@@ -8,13 +8,13 @@ import {
   ModalHeader,
   RecipientInput,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useFormattedAccountBalances from '../../data/AccountSummaryCard/useFormattedAccountBalances';
+import useAccountBalances from '../../data/AccountSummaryCard/useAccountBalances';
+import useFormattedBalance from '../../hooks/useFormattedBalance';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
@@ -26,8 +26,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const [amount, setAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const { free: formattedFreeBalance } = useFormattedAccountBalances(false);
-  const { notificationApi } = useWebbUI();
+  const balances = useAccountBalances();
+
+  const formattedFreeBalance = useFormattedBalance(
+    balances?.free ?? null,
+    false
+  );
 
   const {
     perform: performTransferTx,
@@ -68,7 +72,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     if (status === TxStatus.Complete) {
       reset();
     }
-  }, [notificationApi, reset, status]);
+  }, [reset, status]);
 
   const setMaxAmount = useCallback(() => {
     if (formattedFreeBalance === null) {

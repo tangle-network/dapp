@@ -1,24 +1,29 @@
 'use client';
 
-import { formatBalance } from '@polkadot/util';
 import {
   ArrowLeftRightLineIcon,
   CoinIcon,
+  CoinsLineIcon,
   GiftLineIcon,
   ShieldKeyholeLineIcon,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
-import { IconButton, Typography } from '@webb-tools/webb-ui-components';
+import {
+  IconButton,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { useRouter } from 'next/navigation';
 import { ComponentProps, FC, ReactElement, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
-import useReceiveModal from '../../hooks/useReceiveModal';
+import useFormattedBalance from '../../hooks/useFormattedBalance';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
 import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
-import { CoinsLineIcon } from '../../../../libs/icons/src/CoinsLineIcon';
 
 type ActionItemDef = {
   label: string;
@@ -45,40 +50,8 @@ const staticActionItems: ActionItemDef[] = [
   },
 ] as const;
 
-/** @internal */
-const ActionItem = (props: {
-  icon: ReactElement<IconBase>;
-  label: string;
-  onClick?: ComponentProps<'button'>['onClick'];
-  isDisabled?: boolean;
-}) => {
-  const { icon, label, onClick, isDisabled = false } = props;
-  const cursorClass = isDisabled ? '!cursor-not-allowed' : '';
-  const isDisabledClass = isDisabled ? 'opacity-50' : '';
-
-  return (
-    <p className={twMerge('space-y-2', isDisabledClass, cursorClass)}>
-      <IconButton
-        className={twMerge('block mx-auto', cursorClass)}
-        onClick={onClick}
-      >
-        {icon}
-      </IconButton>
-
-      <Typography
-        component="span"
-        variant="body1"
-        className="block text-center dark:text-mono-0"
-      >
-        {label}
-      </Typography>
-    </p>
-  );
-};
-
 const Actions: FC = () => {
   const router = useRouter();
-  const { toggleModal: toggleReceiveModal } = useReceiveModal();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const {
@@ -88,6 +61,9 @@ const Actions: FC = () => {
     hasClaimableTokens: hasClaimableVestingTokens,
     claimableTokenAmount,
   } = useVesting(true);
+
+  const formattedClaimableTokenAmount =
+    useFormattedBalance(claimableTokenAmount);
 
   // Prefetch static actions that take the user
   // to another internal page. Only do so on the
@@ -115,25 +91,37 @@ const Actions: FC = () => {
           />
         ))}
 
-        {/* This is a special case, so hide it for most users if they're not vesting. */}
+        {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
-          <ActionItem
-            icon={<ShieldKeyholeLineIcon size="lg" />}
-            label="Vest"
-            isDisabled={vestTxStatus === TxStatus.Processing}
-            onClick={performVestTx}
-          />
-        )}
-      </div>
+          <Tooltip>
+            <TooltipBody className="break-normal max-w-[250px] text-center">
+              {hasClaimableVestingTokens ? (
+                <>
+                  You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
+                  claimable vested tokens. Use this action to release them.
+                </>
+              ) : (
+                <>
+                  You have vesting schedules in your account, but there are no
+                  tokens available to claim yet.
+                </>
+              )}
+            </TooltipBody>
 
-      <div>
-        Claimable vesting tokens:
-        {claimableTokenAmount !== null
-          ? formatBalance(claimableTokenAmount, {
-              decimals: 18,
-              withUnit: 'tTNT',
-            })
-          : 'WAITING'}
+            <TooltipTrigger>
+              <ActionItem
+                icon={<ShieldKeyholeLineIcon size="lg" />}
+                label="Vest"
+                isDisabled={
+                  vestTxStatus === TxStatus.Processing ||
+                  !hasClaimableVestingTokens
+                }
+                onClick={performVestTx}
+                isImportant={hasClaimableVestingTokens}
+              />
+            </TooltipTrigger>
+          </Tooltip>
+        )}
       </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}
@@ -144,6 +132,58 @@ const Actions: FC = () => {
         />
       </div>
     </>
+  );
+};
+
+/** @internal */
+const ActionItem = (props: {
+  icon: ReactElement<IconBase>;
+  label: string;
+  onClick?: () => void;
+  isDisabled?: boolean;
+  isImportant?: boolean;
+}) => {
+  const {
+    icon,
+    label,
+    onClick,
+    isDisabled = false,
+    isImportant = false,
+  } = props;
+
+  const cursorClass = isDisabled ? '!cursor-not-allowed' : '';
+  const isDisabledClass = isDisabled ? 'opacity-50' : '';
+
+  const handleClick = () => {
+    if (isDisabled || onClick === undefined) {
+      return;
+    }
+
+    onClick();
+  };
+
+  return (
+    <p className={twMerge('space-y-2', isDisabledClass, cursorClass)}>
+      <IconButton
+        className={twMerge('block mx-auto relative', cursorClass)}
+        onClick={handleClick}
+      >
+        {/* Notification dot */}
+        {isImportant && (
+          <div className="absolute right-1 top-1 rounded-full w-3 h-3 bg-red-40"></div>
+        )}
+
+        {icon}
+      </IconButton>
+
+      <Typography
+        component="span"
+        variant="body1"
+        className="block text-center dark:text-mono-0"
+      >
+        {label}
+      </Typography>
+    </p>
   );
 };
 

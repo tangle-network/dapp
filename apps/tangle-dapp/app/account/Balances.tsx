@@ -7,16 +7,15 @@ import { FC, useEffect } from 'react';
 
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
-import useFormattedAccountBalances from '../../data/AccountSummaryCard/useFormattedAccountBalances';
+import useAccountBalances from '../../data/AccountSummaryCard/useAccountBalances';
+import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const Balances: FC = () => {
   const { activeAccount, loading, isConnecting, wallets } = useWebContext();
-
-  const {
-    total: totalBalance,
-    locked: lockedBalance,
-    free: freeBalance,
-  } = useFormattedAccountBalances(false);
+  const balances = useAccountBalances();
+  const total = useFormattedBalance(balances?.total ?? null, false);
+  const free = useFormattedBalance(balances?.free ?? null);
+  const locked = useFormattedBalance(balances?.locked ?? null);
 
   const {
     toggleModal: toggleWalletConnectModal,
@@ -65,10 +64,10 @@ const Balances: FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {totalBalance !== null ? (
+          {total !== null ? (
             <div className="flex gap-2 items-end py-2">
               <Typography variant="h2" fw="bold" className="!leading-none">
-                <HiddenValue>{totalBalance}</HiddenValue>
+                <HiddenValue>{total}</HiddenValue>
               </Typography>
 
               {/* TODO: Get the token symbol from the API, or the constants if appropriate. */}

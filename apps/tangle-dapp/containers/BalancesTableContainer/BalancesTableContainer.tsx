@@ -7,7 +7,7 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 
 const BalancesTableContainer: FC = () => {
   return (
-    <GlassCard>
+    <GlassCard className="overflow-x-auto">
       <div className="flex flex-row">
         {/* Asset column */}
         <div className="flex flex-col w-full">
@@ -41,7 +41,7 @@ const HeaderRow: FC<{ title: string }> = ({ title }) => {
     <Typography
       variant="body1"
       fw="semibold"
-      className="border-b dark:border-mono-140 px-3 pb-3 capitalize"
+      className="border-b dark:border-mono-140 px-3 pb-3 capitalize whitespace-nowrap"
     >
       {title}
     </Typography>
@@ -64,7 +64,7 @@ const AssetRow: FC<{
         </Typography>
       </div>
 
-      <Typography variant="body1" fw="semibold">
+      <Typography variant="body1" fw="semibold" className="whitespace-nowrap">
         {title}
       </Typography>
     </div>

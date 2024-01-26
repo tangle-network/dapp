@@ -61,12 +61,10 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
 
 AccountSummaryCard.displayName = AccountSummaryCard.name;
 
-export default AccountSummaryCard;
-
 /** @internal */
 const Logo: FC<{ className?: string }> = ({ className }) => {
   return (
-    <div className={className}>
+    <div className={twMerge('pointer-events-none', className)}>
       <svg
         width="183"
         height="236"
@@ -84,3 +82,5 @@ const Logo: FC<{ className?: string }> = ({ className }) => {
     </div>
   );
 };
+
+export default AccountSummaryCard;

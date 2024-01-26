@@ -9,6 +9,13 @@ import prepareTxNotification from '../utils/prepareTxNotification';
 import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { TxFactory, TxStatus } from './useSubstrateTx';
 
+/**
+ * Enables the execution of a transaction that can be either a Substrate
+ * transaction or an EVM precompile ABI call.
+ *
+ * This effectively abstracts away the handling of actions of Substrate
+ * and EVM accounts.
+ */
 function useAgnosticTx<
   PrecompileT extends Precompile,
   SubstrateTxResult extends ISubmittableResult
@@ -81,7 +88,7 @@ function useAgnosticTx<
   ]);
 
   return {
-    perform,
+    perform: () => void perform(),
     status: agnosticStatus,
   };
 }
