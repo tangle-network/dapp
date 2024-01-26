@@ -8,7 +8,6 @@ export const getTxPromise = async (
   address: string,
   tx: SubmittableExtrinsic<'promise', ISubmittableResult>
 ): Promise<HexString> => {
-
   const injector = await getInjector(address);
   if (!injector) {
     throw new Error('Failed to get Polkadot injector');

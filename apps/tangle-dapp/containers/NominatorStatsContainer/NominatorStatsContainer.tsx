@@ -69,7 +69,7 @@ const NominatorStatsContainer: FC = () => {
           'Failed to check if the user is a first time nominator.',
       });
     }
-  }, [substrateAddress]);
+  }, [substrateAddress, isDelegateModalOpen]);
 
   return (
     <>
