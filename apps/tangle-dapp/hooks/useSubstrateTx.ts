@@ -41,9 +41,13 @@ function useSubstrateTx<T extends ISubmittableResult>(
       return null;
     }
 
-    console.debug('Requesting injector for address', activeSubstrateAddress);
-
     return web3FromAddress(activeSubstrateAddress);
+  }, [activeSubstrateAddress]);
+
+  // Abandon the transaction if the user switches accounts.
+  useEffect(() => {
+    console.debug('Resetting Substrate transaction due to account switch');
+    reset();
   }, [activeSubstrateAddress]);
 
   useEffect(() => {
