@@ -1,5 +1,5 @@
+import type { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { AddressType } from '@webb-tools/dapp-config/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback } from 'react';
 
@@ -11,8 +11,8 @@ const useExecuteTxWithNotification = () => {
 
   const executeTx = useCallback(
     async (
-      evmFnc: () => Promise<AddressType>,
-      substrateFnc: () => Promise<string | undefined>,
+      evmFnc: () => Promise<HexString>,
+      substrateFnc: () => Promise<HexString>,
       successMessage: string,
       errorMessage: string
     ) => {

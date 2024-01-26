@@ -16,8 +16,7 @@ import Link from 'next/link';
 import { type FC, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
-import { NominatorStatsItem } from '../../components';
-import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
+import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import { convertToSubstrateAddress } from '../../utils';
 import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
@@ -26,7 +25,7 @@ import { RebondTxContainer } from '../RebondTxContainer';
 import { UnbondTxContainer } from '../UnbondTxContainer';
 import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 
-export const NominatorStatsContainer: FC = () => {
+const NominatorStatsContainer: FC = () => {
   const { activeAccount } = useWebContext();
 
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -48,11 +47,6 @@ export const NominatorStatsContainer: FC = () => {
 
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
-
-  const {
-    data: unbondingRemainingErasData,
-    error: unbondingRemainingErasError,
-  } = useUnbondingRemainingErasSubscription(substrateAddress);
 
   useEffect(() => {
     try {
@@ -76,34 +70,6 @@ export const NominatorStatsContainer: FC = () => {
       });
     }
   }, [substrateAddress]);
-
-  const unbondingRemainingErasTooltip = useMemo(() => {
-    if (unbondingRemainingErasError) {
-      notificationApi({
-        variant: 'error',
-        message: unbondingRemainingErasError.message,
-      });
-    }
-
-    if (!unbondingRemainingErasData?.value1) return null;
-
-    if (unbondingRemainingErasData.value1.length === 0) {
-      return 'You have no unbonding tokens.';
-    }
-
-    const elements = unbondingRemainingErasData.value1.map((era, index) => (
-      <React.Fragment key={index}>
-        <div className="text-center mb-2">
-          <p>
-            {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'} {era.amount}
-          </p>
-          {era.remainingEras > 0 && <p>{era.remainingEras} eras remaining</p>}
-        </div>
-      </React.Fragment>
-    ));
-
-    return <>{elements}</>;
-  }, [unbondingRemainingErasError, unbondingRemainingErasData?.value1]);
 
   return (
     <>
@@ -158,12 +124,7 @@ export const NominatorStatsContainer: FC = () => {
               address={substrateAddress}
             />
 
-            <NominatorStatsItem
-              title="Unbonding tTNT"
-              tooltip={unbondingRemainingErasTooltip}
-              type="Unbonding Amount"
-              address={substrateAddress}
-            />
+            <UnbondingStatsItem address={substrateAddress} />
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -261,3 +222,5 @@ export const NominatorStatsContainer: FC = () => {
     </>
   );
 };
+
+export default NominatorStatsContainer;

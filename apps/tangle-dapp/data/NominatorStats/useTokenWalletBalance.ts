@@ -61,8 +61,11 @@ export default function useTokenWalletBalance(
           if (isMounted) {
             const freeBalance = accData.data.free.toBigInt();
             const reservedBalance = accData.data.reserved.toBigInt();
-            // total balance = free balance + reserved balance
-            setValue1(Number(formatEther(freeBalance + reservedBalance)));
+            const frozenBalance = accData.data.frozen.toBigInt();
+            // total balance = free balance + reserved balance - frozenBalance
+            setValue1(
+              Number(formatEther(freeBalance + reservedBalance - frozenBalance))
+            );
             setIsLoading(false);
           }
         });

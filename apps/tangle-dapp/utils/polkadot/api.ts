@@ -48,3 +48,17 @@ export const getPolkadotApiRx = async (
 
   return apiRx;
 };
+
+export const getInjector = async (address: string) => {
+  const { web3Enable, web3FromAddress } = await import(
+    '@polkadot/extension-dapp'
+  );
+  const extensions = await web3Enable('Tangle');
+
+  if (extensions.length === 0) {
+    return undefined;
+  }
+
+  const injector = await web3FromAddress(address);
+  return injector;
+};

@@ -1,4 +1,6 @@
-import { getPolkadotApiPromise } from './api';
+import type { HexString } from '@polkadot/util/types';
+
+import { getInjector, getPolkadotApiPromise } from './api';
 
 export const getTotalNumberOfNominators = async (
   validatorAddress: string
@@ -95,31 +97,54 @@ export const getMaxNominationQuota = async (): Promise<number | undefined> => {
 
   if (!api) return NaN;
 
-  const maxNominations = await api.consts.staking.maxNominations?.toNumber();
+  const maxNominations = await api.query.staking.maxNominatorsCount;
 
-  return maxNominations;
+  return parseInt(maxNominations.toString());
 };
 
 export const nominateValidators = async (
   nominatorAddress: string,
   validatorAddresses: string[]
-) => {
+): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
+  const injector = await getInjector(nominatorAddress);
 
-  if (!api) return undefined;
+  if (!api || !injector) {
+    throw new Error('Failed to get Polkadot API or injector');
+  }
 
-  const tx = api.tx.staking.nominate(validatorAddresses);
-  const hash = await tx.signAndSend(nominatorAddress);
-  return hash.toString();
+  const nonce = await api.rpc.system.accountNextIndex(nominatorAddress);
+  return new Promise((resolve) => {
+    api.tx.staking.nominate(validatorAddresses).signAndSend(
+      nominatorAddress,
+      {
+        signer: injector.signer,
+        nonce,
+      },
+      ({ status, dispatchError }) => {
+        if (status.isInBlock || status.isFinalized) {
+          if (dispatchError) {
+            throw new Error('Failed to nominate validators');
+          } else {
+            resolve(status.hash.toHex());
+          }
+        }
+      }
+    );
+  });
 };
 
-// stop nomination
+// TODO: update this func
 export const stopNomination = async (nominatorAddress: string) => {
   const api = await getPolkadotApiPromise();
+  const injector = await getInjector(nominatorAddress);
 
-  if (!api) return undefined;
+  if (!api || !injector) return undefined;
 
   const tx = api.tx.staking.chill();
-  const hash = await tx.signAndSend(nominatorAddress);
+  const hash = await tx.signAndSend(nominatorAddress, {
+    signer: injector.signer,
+    nonce: -1,
+  });
   return hash.toString();
 };

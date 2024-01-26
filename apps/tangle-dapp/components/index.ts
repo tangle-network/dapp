@@ -9,6 +9,7 @@ export * from './NominatorStatsItem';
 export * from './sideBar';
 export * from './skeleton';
 export * from './TableStatus';
+export * from './UnbondingStatsItem';
 export * from './ValidatorList';
 export * from './ValidatorTable';
 export * from './WalletDropdown';
