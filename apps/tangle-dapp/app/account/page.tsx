@@ -2,7 +2,6 @@ import { Typography } from '@webb-tools/webb-ui-components';
 
 import BalancesTableContainer from '../../containers/BalancesTableContainer/BalancesTableContainer';
 import RecentTxContainer from '../../containers/RecentTxContainer/RecentTxContainer';
-import { StakingStatsContainer } from '../../containers/StakingStatsContainer';
 import AccountSummaryCard from './AccountSummaryCard';
 
 export default function AccountPage() {
@@ -13,8 +12,6 @@ export default function AccountPage() {
 
         <RecentTxContainer />
       </div>
-
-      {/* <StakingStatsContainer /> */}
 
       <Typography variant="h4" fw="bold">
         Manage Balances

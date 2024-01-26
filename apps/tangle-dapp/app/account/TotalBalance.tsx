@@ -7,15 +7,14 @@ import { FC, useEffect } from 'react';
 
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
+import { TOKEN_UNIT } from '../../constants/polkadot';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
-const Balances: FC = () => {
+const TotalBalance: FC = () => {
   const { activeAccount, loading, isConnecting, wallets } = useWebContext();
   const balances = useAccountBalances();
   const total = useFormattedBalance(balances?.total ?? null, false);
-  const free = useFormattedBalance(balances?.free ?? null);
-  const locked = useFormattedBalance(balances?.locked ?? null);
 
   const {
     toggleModal: toggleWalletConnectModal,
@@ -70,13 +69,12 @@ const Balances: FC = () => {
                 <HiddenValue>{total}</HiddenValue>
               </Typography>
 
-              {/* TODO: Get the token symbol from the API, or the constants if appropriate. */}
               <Typography
                 variant="h4"
                 fw="normal"
                 className="!leading-none pb-1"
               >
-                tTNT
+                {TOKEN_UNIT}
               </Typography>
             </div>
           ) : (
@@ -84,38 +82,8 @@ const Balances: FC = () => {
           )}
         </div>
       </div>
-
-      {/* <div className="flex gap-6 w-full">
-        <div className="flex flex-col gap-4 w-full">
-          <Typography variant="body1" fw="normal">
-            Free Balance
-          </Typography>
-
-          {freeBalance !== null ? (
-            <Typography variant="h4" fw="bold">
-              <HiddenValue>{freeBalance}</HiddenValue>
-            </Typography>
-          ) : (
-            <SkeletonLoader size="lg" />
-          )}
-        </div>
-
-        <div className="flex flex-col gap-4 w-full">
-          <Typography variant="body1" fw="normal">
-            Locked Balance
-          </Typography>
-
-          {lockedBalance !== null ? (
-            <Typography variant="h4" fw="bold">
-              <HiddenValue>{lockedBalance}</HiddenValue>
-            </Typography>
-          ) : (
-            <SkeletonLoader size="lg" />
-          )}
-        </div>
-      </div> */}
     </div>
   );
 };
 
-export default Balances;
+export default TotalBalance;

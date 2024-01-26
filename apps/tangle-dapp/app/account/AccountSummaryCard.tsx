@@ -9,7 +9,7 @@ import { twMerge } from 'tailwind-merge';
 import Identity from '../../components/Identity';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import Actions from './Actions';
-import Balances from './Balances';
+import TotalBalance from './TotalBalance';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
@@ -41,7 +41,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
             )}
           </header>
 
-          <Balances />
+          <TotalBalance />
 
           <Actions />
         </div>

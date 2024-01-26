@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { useRouter } from 'next/navigation';
-import { ComponentProps, FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
