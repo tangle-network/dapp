@@ -1,9 +1,9 @@
-import { u128 } from '@polkadot/types';
 import type { HexString } from '@polkadot/util/types';
 import { parseEther } from 'viem';
 
 import { PaymentDestination } from '../../types';
-import { getInjector, getPolkadotApiPromise } from './api';
+import { getPolkadotApiPromise } from './api';
+import { getTxPromise } from './utils';
 
 const PAYEE_STAKED = 'Staked';
 const PAYEE_STASH = 'Stash';
@@ -15,10 +15,8 @@ export const bondTokens = async (
   paymentDestination: string
 ): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
-
-  if (!api || !injector) {
-    throw new Error('Failed to get Polkadot API or injector');
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
   }
 
   const payee =
@@ -27,102 +25,68 @@ export const bondTokens = async (
       : paymentDestination === PaymentDestination.Stash
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
-
-  const nonce = await api.rpc.system.accountNextIndex(nominatorAddress);
   const value = parseEther(amount.toString());
-  return new Promise((resolve) => {
-    api.tx.staking.bond(value, payee).signAndSend(
-      nominatorAddress,
-      {
-        signer: injector.signer,
-        nonce,
-      },
-      ({ status, dispatchError }) => {
-        if (status.isInBlock || status.isFinalized) {
-          if (dispatchError) {
-            throw new Error('Failed to bond tokens');
-          } else {
-            resolve(status.hash.toHex());
-          }
-        }
-      }
-    );
-  });
+
+  const tx = api.tx.staking.bond(value, payee);
+  return getTxPromise(nominatorAddress, tx);
 };
 
-// TODO: update this func
 export const bondExtraTokens = async (
   nominatorAddress: string,
-  amount_: number
-) => {
+  amount: number
+): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
+  }
 
-  if (!api || !injector) return undefined;
-  const amount = new u128(api.registry, amount_.toString());
+  const value = parseEther(amount.toString());
 
-  const nonce = await api.rpc.system.accountNextIndex(nominatorAddress);
-  const tx = api.tx.staking.bondExtra(amount);
-  const hash = await tx.signAndSend(nominatorAddress, {
-    signer: injector.signer,
-    nonce,
-  });
-  return hash.toString();
+  const tx = api.tx.staking.bondExtra(value);
+  return getTxPromise(nominatorAddress, tx);
 };
 
-// TODO: update this func
 export const unbondTokens = async (
   nominatorAddress: string,
-  amount_: number
+  amount: number
 ) => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
+  }
 
-  if (!api || !injector) return undefined;
-  const amount = new u128(api.registry, amount_.toString());
+  const value = parseEther(amount.toString());
 
-  const tx = api.tx.staking.unbond(amount);
-  const hash = await tx.signAndSend(nominatorAddress, {
-    signer: injector.signer,
-    nonce: -1,
-  });
-  return hash.toString();
+  const tx = api.tx.staking.unbond(value);
+  return getTxPromise(nominatorAddress, tx);
 };
 
-// TODO: update this func
 export const rebondTokens = async (
   nominatorAddress: string,
-  amount_: number
+  amount: number
 ) => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
+  }
 
-  if (!api || !injector) return undefined;
-  const amount = new u128(api.registry, amount_.toString());
+  const value = parseEther(amount.toString());
 
-  const tx = api.tx.staking.rebond(amount);
-  const hash = await tx.signAndSend(nominatorAddress, {
-    signer: injector.signer,
-  });
-  return hash.toString();
+  const tx = api.tx.staking.rebond(value);
+  return getTxPromise(nominatorAddress, tx);
 };
 
-// TODO: update this func
 export const withdrawUnbondedTokens = async (
   nominatorAddress: string,
   slashingSpans: number
 ) => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
-
-  if (!api || !injector) return undefined;
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
+  }
 
   const tx = api.tx.staking.withdrawUnbonded(slashingSpans);
-  const hash = await tx.signAndSend(nominatorAddress, {
-    signer: injector.signer,
-    nonce: -1,
-  });
-  return hash.toString();
+  return getTxPromise(nominatorAddress, tx);
 };
 
 export const updatePaymentDestination = async (
@@ -130,10 +94,8 @@ export const updatePaymentDestination = async (
   paymentDestination: string
 ): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
-
-  if (!api || !injector) {
-    throw new Error('Failed to get Polkadot API or injector');
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
   }
 
   const payee =
@@ -143,23 +105,18 @@ export const updatePaymentDestination = async (
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
-  const nonce = await api.rpc.system.accountNextIndex(nominatorAddress);
-  return new Promise((resolve) => {
-    api.tx.staking.setPayee(payee).signAndSend(
-      nominatorAddress,
-      {
-        signer: injector.signer,
-        nonce,
-      },
-      ({ status, dispatchError }) => {
-        if (status.isInBlock || status.isFinalized) {
-          if (dispatchError) {
-            throw new Error('Failed to update payment destination');
-          } else {
-            resolve(status.hash.toHex());
-          }
-        }
-      }
-    );
-  });
+  const tx = api.tx.staking.setPayee(payee);
+  return getTxPromise(nominatorAddress, tx);
+};
+
+export const getSlashingSpans = async (
+  address: string
+): Promise<string | undefined> => {
+  const api = await getPolkadotApiPromise();
+
+  if (!api) return '';
+
+  const slashingSpans = await api.query.staking.slashingSpans(address);
+
+  return slashingSpans.toString();
 };

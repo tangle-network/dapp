@@ -1,6 +1,7 @@
 import type { HexString } from '@polkadot/util/types';
 
-import { getInjector, getPolkadotApiPromise } from './api';
+import { getPolkadotApiPromise } from './api';
+import { getTxPromise } from './utils';
 
 export const getTotalNumberOfNominators = async (
   validatorAddress: string
@@ -107,44 +108,20 @@ export const nominateValidators = async (
   validatorAddresses: string[]
 ): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
-
-  if (!api || !injector) {
-    throw new Error('Failed to get Polkadot API or injector');
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
   }
 
-  const nonce = await api.rpc.system.accountNextIndex(nominatorAddress);
-  return new Promise((resolve) => {
-    api.tx.staking.nominate(validatorAddresses).signAndSend(
-      nominatorAddress,
-      {
-        signer: injector.signer,
-        nonce,
-      },
-      ({ status, dispatchError }) => {
-        if (status.isInBlock || status.isFinalized) {
-          if (dispatchError) {
-            throw new Error('Failed to nominate validators');
-          } else {
-            resolve(status.hash.toHex());
-          }
-        }
-      }
-    );
-  });
+  const tx = api.tx.staking.nominate(validatorAddresses);
+  return getTxPromise(nominatorAddress, tx);
 };
 
-// TODO: update this func
 export const stopNomination = async (nominatorAddress: string) => {
   const api = await getPolkadotApiPromise();
-  const injector = await getInjector(nominatorAddress);
-
-  if (!api || !injector) return undefined;
+  if (!api) {
+    throw new Error('Failed to get Polkadot API');
+  }
 
   const tx = api.tx.staking.chill();
-  const hash = await tx.signAndSend(nominatorAddress, {
-    signer: injector.signer,
-    nonce: -1,
-  });
-  return hash.toString();
+  return getTxPromise(nominatorAddress, tx);
 };
