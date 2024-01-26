@@ -9,17 +9,17 @@ export default function AccountPage() {
     <div className="flex flex-col gap-5">
       <div className="flex gap-6 flex-col md:flex-row">
         <AccountSummaryCard />
-
-        <Actions />
       </div>
 
       <StakingStatsContainer />
+
+      <Actions />
 
       <Typography variant="h4" fw="bold">
         Manage Balances
       </Typography>
 
-      {/* TODO: Notes table here. */}
+      {/* TODO: Custom balances table here. */}
     </div>
   );
 }

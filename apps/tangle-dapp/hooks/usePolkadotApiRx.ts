@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
 
 import { getPolkadotApiRx } from '../constants/polkadot';
+import usePromise from './usePromise';
 import useSubstrateAddress from './useSubstrateAddress';
 
 export type ObservableFactory<T> = (
@@ -10,32 +11,27 @@ export type ObservableFactory<T> = (
   activeAccountAddress: string
 ) => Observable<T>;
 
-function usePolkadotApiRx<T>(createObservable: ObservableFactory<T>) {
+function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   const [data, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const activeSubstrateAddress = useSubstrateAddress();
+  const { result: polkadotApiRx } = usePromise(getPolkadotApiRx, null);
 
   useEffect(() => {
-    if (activeSubstrateAddress === null) {
+    if (activeSubstrateAddress === null || polkadotApiRx === null) {
       return;
     }
 
-    const createSubscription = async () => {
-      const apiRx = await getPolkadotApiRx();
+    const subscription = factory(
+      polkadotApiRx,
+      activeSubstrateAddress
+    ).subscribe((newResult) => {
+      setResult(newResult);
+      setLoading(false);
+    });
 
-      const subscription = createObservable(
-        apiRx,
-        activeSubstrateAddress
-      ).subscribe((newResult) => {
-        setResult(newResult);
-        setLoading(false);
-      });
-
-      return () => subscription.unsubscribe();
-    };
-
-    createSubscription();
-  }, [activeSubstrateAddress, createObservable]);
+    return () => subscription.unsubscribe();
+  }, [activeSubstrateAddress, factory, polkadotApiRx]);
 
   return { data, isLoading };
 }

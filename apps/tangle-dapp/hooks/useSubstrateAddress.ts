@@ -1,7 +1,7 @@
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { useMemo } from 'react';
 
 import { convertToSubstrateAddress } from '../utils';
+import useActiveAccountAddress from './useActiveAccountAddress';
 
 /**
  * Obtain the Substrate address of the active account, if any.
@@ -14,11 +14,10 @@ import { convertToSubstrateAddress } from '../utils';
  * converted into a Substrate address via hashing.
  */
 const useSubstrateAddress = () => {
-  const activeAccount = useActiveAccount();
-  const activeAccountAddress = activeAccount[0]?.address ?? null;
+  const activeAccountAddress = useActiveAccountAddress();
 
   const substrateAddress = useMemo(() => {
-    // Wait for the active account to be set.
+    // Wait for the active account address to be set.
     if (activeAccountAddress === null) {
       return null;
     }

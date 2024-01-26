@@ -38,12 +38,19 @@ export const evmPublicClient = createPublicClient({
   transport: http(),
 });
 
-export const createEvmWalletClient = (nominatorAddress: string) =>
-  createWalletClient({
+export const createEvmWalletClient = (accountAddress: string) => {
+  if (typeof window.ethereum === 'undefined') {
+    throw new Error(
+      'window.ethereum is undefined, but is required for EVM actions'
+    );
+  }
+
+  return createWalletClient({
     chain: tangleTestnet,
-    account: ensureHex(nominatorAddress),
+    account: ensureHex(accountAddress),
     transport: custom(window.ethereum),
   });
+};
 
 export const bondTokens = async (
   nominatorAddress: string,

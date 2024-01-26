@@ -8,9 +8,9 @@ import {
 } from '../constants/evmActions';
 import {
   AbiFunctionName,
-  AbiPrecompileCategory,
-  getPrecompileAbiFromCategory,
-  getPrecompileAddressFromCategory,
+  getAbiForPrecompile,
+  getAddressOfPrecompile,
+  Precompile,
 } from '../constants/evmPrecompiles';
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
@@ -26,9 +26,9 @@ import { TxStatus } from './useSubstrateTx';
  * This is used for performing actions from EVM accounts. Substrate accounts
  * should use `useSubstrateTx` for transactions instead, or `usePolkadotApi` for queries.
  */
-function useEvmPrecompileAbiCall<T extends AbiPrecompileCategory>(
-  category: T,
-  targetFunctionName: AbiFunctionName<T>,
+function useEvmPrecompileAbiCall<T extends Precompile>(
+  precompile: T,
+  functionName: AbiFunctionName<T>,
   args: unknown[]
 ) {
   const [status, setStatus] = useState(TxStatus.NotYetInitiated);
@@ -45,22 +45,30 @@ function useEvmPrecompileAbiCall<T extends AbiPrecompileCategory>(
 
     setStatus(TxStatus.Processing);
 
+    // TODO: Handle errors.
+    const evmWalletClient = createEvmWalletClient(activeEvmAddress);
+
+    // TODO: Handle errors.
     const { request } = await evmPublicClient.simulateContract({
-      address: getPrecompileAddressFromCategory(category),
-      abi: getPrecompileAbiFromCategory(category),
-      functionName: targetFunctionName,
-      args: args,
+      address: getAddressOfPrecompile(precompile),
+      abi: getAbiForPrecompile(precompile),
+      functionName: functionName,
+      args,
       account: ensureHex(activeEvmAddress),
     });
 
-    // TODO: Handle errors.
-    const evmWalletClient = createEvmWalletClient(activeEvmAddress);
+    // TODO: Handle errors/failure.
     const txHash = await evmWalletClient.writeContract(request);
 
-    setStatus(TxStatus.Complete);
+    // TODO: Need proper typing for this, currently `any`.
+    const tx = await evmPublicClient.waitForTransactionReceipt({
+      hash: txHash,
+    });
 
-    // TODO: Handle txHash.
-  }, [activeEvmAddress, args, category, status, targetFunctionName]);
+    setStatus(tx.status === 'success' ? TxStatus.Complete : TxStatus.Error);
+
+    // TODO: Return clean up.
+  }, [activeEvmAddress, args, precompile, status, functionName]);
 
   return { perform, status };
 }

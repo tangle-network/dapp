@@ -27,9 +27,11 @@ export enum PaymentDestination {
 
 export enum InternalPath {
   EvmStaking = '/',
-  Claim = '/claim',
+  ClaimAirdrop = '/claim',
   Account = '/account',
 }
+
+export type InternalPathString = InternalPath | `${InternalPath}/${string}`;
 
 export enum AnchorLinkId {
   NominationAndPayouts = 'nomination-and-payouts',

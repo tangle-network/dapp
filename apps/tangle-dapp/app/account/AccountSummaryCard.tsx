@@ -1,6 +1,6 @@
 'use client';
 
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import type { ElementRef } from 'react';
@@ -8,15 +8,17 @@ import { FC, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import AvatarWithAddress from '../../components/AvatarWithAddress';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import Balances from './Balances';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
-    const activeAccount = useActiveAccount();
-    const activeAccountAddress = activeAccount?.[0]?.address ?? null;
+    const activeAccountAddress = useActiveAccountAddress();
 
-    // TODO: This is a hacky way of determining if the address is an EVM address. Use a more robust way.
-    const isEvmAddress = activeAccount?.[0]?.address.startsWith('0x') || false;
+    const isEvmAddress =
+      activeAccountAddress === null
+        ? false
+        : isEthereumAddress(activeAccountAddress);
 
     return (
       <div

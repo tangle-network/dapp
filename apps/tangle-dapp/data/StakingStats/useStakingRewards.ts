@@ -60,16 +60,6 @@ const sumStakerRewardsInClaimedEraRange = async (
   return rewardSum;
 };
 
-const fetchClaimedRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
-  // Claimed rewards = Sum of all rewards in claimed eras.
-  return sumStakerRewardsInClaimedEraRange(
-    ledger,
-    api,
-    0,
-    ledger.claimedRewards.length - 1
-  );
-};
-
 const fetchPendingRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
   const lastClaimedEraIndex =
     ledger.claimedRewards[ledger.claimedRewards.length - 1].toNumber();
@@ -96,22 +86,13 @@ const fetchPendingRewards: PolkadotLedgerFetcher<BN> = async (ledger, api) => {
   );
 };
 
-const useStakingRewards = () => {
-  const { value: rewards } = usePolkadotLedgerSWR(
+const usePendingStakingRewards = () => {
+  const { value: pendingRewards } = usePolkadotLedgerSWR(
     SWR_STAKING_REWARDS,
-    async (ledger, api) => {
-      const claimed = await fetchClaimedRewards(ledger, api);
-      const pending = await fetchPendingRewards(ledger, api);
-
-      return {
-        claimedRewards: claimed,
-        pendingRewards: pending,
-        totalRewards: claimed.add(pending),
-      };
-    }
+    async (ledger, api) => fetchPendingRewards(ledger, api)
   );
 
-  return rewards;
+  return pendingRewards;
 };
 
-export default useStakingRewards;
+export default usePendingStakingRewards;

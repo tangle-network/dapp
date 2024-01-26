@@ -11,6 +11,7 @@ export type AccountBalances = {
   total: BN;
   free: BN;
   locked: BN;
+  misc: BN;
 };
 
 export default function useAccountBalances(): AccountBalances | null {
@@ -21,11 +22,15 @@ export default function useAccountBalances(): AccountBalances | null {
     (api, activeAccountAddress) =>
       api.query.system.account(activeAccountAddress).pipe(
         map((accountInfo) => ({
-          total: accountInfo.data.free
-            .add(accountInfo.data.reserved)
-            .add(accountInfo.data.frozen),
+          total: accountInfo.data.free.add(accountInfo.data.reserved),
           free: accountInfo.data.free,
-          locked: accountInfo.data.frozen.add(accountInfo.data.reserved),
+          locked: accountInfo.data.frozen
+            .add(accountInfo.data.reserved)
+            // Note that without the null/undefined check, an error
+            // reports that `num` is undefined for some reason. Might be
+            // a gap in the types.
+            .add(accountInfo.data.miscFrozen || new BN(0)),
+          misc: accountInfo.data.miscFrozen,
         }))
       ),
     []

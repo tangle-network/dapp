@@ -13,6 +13,7 @@ export default function useFormattedAccountBalances(
     total: null,
     free: null,
     locked: null,
+    misc: null,
   });
 
   const balances = useAccountBalances();
@@ -43,6 +44,7 @@ export default function useFormattedAccountBalances(
         total: null,
         free: null,
         locked: null,
+        misc: null,
       });
 
       return;

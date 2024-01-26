@@ -4,20 +4,17 @@ import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvi
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect } from 'react';
 
-import {
-  AbiFunctionName,
-  AbiPrecompileCategory,
-} from '../constants/evmPrecompiles';
+import { AbiFunctionName, Precompile } from '../constants/evmPrecompiles';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { TxFactory, TxStatus } from './useSubstrateTx';
 
 function useAgnosticTx<
-  EvmPrecompileCategory extends AbiPrecompileCategory,
+  PrecompileT extends Precompile,
   SubstrateTxResult extends ISubmittableResult
 >(
-  evmCategory: EvmPrecompileCategory,
-  evmTarget: AbiFunctionName<EvmPrecompileCategory>,
+  precompile: PrecompileT,
+  evmTarget: AbiFunctionName<PrecompileT>,
   evmArguments: unknown[],
   substrateTxFactory: TxFactory<SubstrateTxResult>,
   notifyStatusUpdates = false
@@ -30,7 +27,7 @@ function useAgnosticTx<
     useSubstrateTx(substrateTxFactory);
 
   const { perform: performEvmPrecompileAbiCall, status: evmTxStatus } =
-    useEvmPrecompileAbiCall(evmCategory, evmTarget, evmArguments);
+    useEvmPrecompileAbiCall(precompile, evmTarget, evmArguments);
 
   const isEvmAccount =
     activeAccountAddress === null

@@ -7,6 +7,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../constants';
 import prepareTxNotification from '../utils/prepareTxNotification';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateAddress from './useSubstrateAddress';
 
 export enum TxStatus {
@@ -31,8 +33,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
   const [hash, setHash] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const { notificationApi } = useWebbUI();
-
-  // TODO: Throw error if address is EVM address of an EVM account.
+  const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
 
   const requestInjector = useCallback(async () => {
@@ -40,23 +41,44 @@ function useSubstrateTx<T extends ISubmittableResult>(
       return null;
     }
 
+    console.debug('Requesting injector for address', activeSubstrateAddress);
+
     return web3FromAddress(activeSubstrateAddress);
   }, [activeSubstrateAddress]);
 
-  // TODO: Why not move this into `perform`?
   useEffect(() => {
-    // Still waiting for the consumer to perform the transaction.
-    if (status !== TxStatus.Processing) {
+    if (!notifyStatusUpdates) {
       return;
+    }
+
+    const notificationOpts = prepareTxNotification(status, error);
+
+    if (notificationOpts === null) {
+      return;
+    }
+
+    notificationApi(notificationOpts);
+  }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
+
+  const perform = useCallback(() => {
+    // Prevent the consumer from re-triggering the transaction
+    // while it's still processing. Also wait for the Substrate
+    // address to be set.
+    if (
+      status === TxStatus.Processing ||
+      activeSubstrateAddress === null ||
+      isEvmAccount === null
+    ) {
+      return;
+    } else if (isEvmAccount) {
+      throw new Error(
+        `Attempted to perform a Substrate transaction from an EVM account. Use '${useEvmPrecompileAbiCall.name}' instead.`
+      );
     }
 
     let isMounted = true;
 
     const signAndSend = async () => {
-      if (activeSubstrateAddress === null) {
-        return;
-      }
-
       const injector = await requestInjector();
       const api = await getPolkadotApiPromise();
       const tx = await factory(api, activeSubstrateAddress);
@@ -68,6 +90,8 @@ function useSubstrateTx<T extends ISubmittableResult>(
       }
       // Wait until the injector is ready.
       else if (injector === null) {
+        return;
+      } else if (!isMounted) {
         return;
       }
 
@@ -122,35 +146,11 @@ function useSubstrateTx<T extends ISubmittableResult>(
   }, [
     activeSubstrateAddress,
     factory,
-    hash,
+    isEvmAccount,
     requestInjector,
     status,
     timeoutDelay,
   ]);
-
-  useEffect(() => {
-    if (!notifyStatusUpdates) {
-      return;
-    }
-
-    const notificationOpts = prepareTxNotification(status, error);
-
-    if (notificationOpts === null) {
-      return;
-    }
-
-    notificationApi(notificationOpts);
-  }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
-
-  const perform = () => {
-    // Prevent the consumer from re-triggering the transaction
-    // while it's still processing.
-    if (status === TxStatus.Processing) {
-      return;
-    }
-
-    setStatus(TxStatus.Processing);
-  };
 
   const reset = () => {
     setError(null);

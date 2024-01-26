@@ -1,16 +1,11 @@
 'use client';
 
-import {
-  ListCheckIcon,
-  LoopRightFillIcon,
-  SunLine,
-  TimerLine,
-} from '@webb-tools/icons';
+import { ListCheckIcon, TimerLine } from '@webb-tools/icons';
 import { FC } from 'react';
 
 import PillCard from '../../app/account/PillCard';
 import { SWR_ERA } from '../../constants';
-import useStakingRewards from '../../data/StakingStats/useStakingRewards';
+import usePendingStakingRewards from '../../data/StakingStats/useStakingRewards';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 
 const StakingStats: FC = () => {
@@ -18,19 +13,11 @@ const StakingStats: FC = () => {
     api.query.staking.currentEra().then((era) => era.toString())
   );
 
-  const rewards = useStakingRewards();
+  const pendingRewards = usePendingStakingRewards();
 
   // TODO: Format as token balance.
-  const totalRewards =
-    rewards !== null ? rewards.totalRewards.toString() : null;
-
-  // TODO: Format as token balance.
-  const claimedRewards =
-    rewards !== null ? rewards.claimedRewards.toString() : null;
-
-  // TODO: Format as token balance.
-  const pendingRewards =
-    rewards !== null ? rewards.pendingRewards.toString() : null;
+  const pendingRewardsString =
+    pendingRewards !== null ? pendingRewards.toString() : null;
 
   return (
     <>
@@ -42,18 +29,10 @@ const StakingStats: FC = () => {
           Icon={TimerLine}
         />
 
-        <PillCard title="Total Rewards" value={totalRewards} Icon={SunLine} />
-
-        <PillCard
-          title="Claimed Amount"
-          value={claimedRewards}
-          Icon={LoopRightFillIcon}
-        />
-
         <PillCard
           isLast
-          title="Pending Rewards"
-          value={pendingRewards}
+          title="Pending Staking Rewards"
+          value={pendingRewardsString}
           Icon={ListCheckIcon}
         />
       </div>

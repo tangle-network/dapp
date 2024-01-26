@@ -1,4 +1,4 @@
-export type AbiPrecompileCategory = 'staking' | 'vesting';
+export type Precompile = 'staking' | 'vesting';
 
 type StakingAbiFunctionName =
   | 'bond'
@@ -22,14 +22,13 @@ type StakingAbiFunctionName =
   | 'validatorCount'
   | 'withdrawUnbonded';
 
-type VestingAbiFunctionName = 'vest';
+type VestingAbiFunctionName = 'vest' | 'vestOther' | 'vestedTransfer';
 
-export type AbiFunctionName<T extends AbiPrecompileCategory> =
-  T extends 'staking'
-    ? StakingAbiFunctionName
-    : T extends 'vesting'
-    ? VestingAbiFunctionName
-    : never;
+export type AbiFunctionName<T extends Precompile> = T extends 'staking'
+  ? StakingAbiFunctionName
+  : T extends 'vesting'
+  ? VestingAbiFunctionName
+  : never;
 
 type InputType =
   | 'uint256'
@@ -52,7 +51,7 @@ export enum PrecompileAddress {
   Vesting = '0x0000000000000000000000000000000000000801',
 }
 
-export type PrecompileAbiFunction<T extends AbiPrecompileCategory> = {
+export type PrecompileAbiFunction<T extends Precompile> = {
   inputs: InputOutput[];
   name: AbiFunctionName<T>;
   outputs: InputOutput[];
@@ -339,22 +338,66 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
   },
 ] as const;
 
+// See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
+// Be careful with the input/outputs, as they can lead to a lot of trouble
+// if not properly specified.
 export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<'vesting'>[] = [
   {
-    name: 'vest',
     inputs: [],
+    name: 'vest',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
-
-  // TODO: Add missing ABI functions. See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'target',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint8',
+        name: 'index',
+        type: 'uint8',
+      },
+    ],
+    name: 'vestedTransfer',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'target',
+        type: 'bytes32',
+      },
+    ],
+    name: 'vestOther',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
 ] as const;
 
-export function getPrecompileAddressFromCategory(
-  category: AbiPrecompileCategory
+export function getAddressOfPrecompile(
+  precompile: Precompile
 ): PrecompileAddress {
-  switch (category) {
+  switch (precompile) {
     case 'staking':
       return PrecompileAddress.Staking;
     case 'vesting':
@@ -362,10 +405,10 @@ export function getPrecompileAddressFromCategory(
   }
 }
 
-export function getPrecompileAbiFromCategory(
-  category: AbiPrecompileCategory
-): PrecompileAbiFunction<AbiPrecompileCategory>[] {
-  switch (category) {
+export function getAbiForPrecompile(
+  precompile: Precompile
+): PrecompileAbiFunction<Precompile>[] {
+  switch (precompile) {
     case 'staking':
       return STAKING_PRECOMPILE_ABI;
     case 'vesting':

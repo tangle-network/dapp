@@ -94,7 +94,7 @@ const Balances: FC = () => {
 
           {freeBalance !== null ? (
             <Typography variant="h4" fw="bold">
-              {freeBalance}
+              <HiddenValue>{freeBalance}</HiddenValue>
             </Typography>
           ) : (
             <SkeletonLoader size="lg" />
@@ -108,7 +108,7 @@ const Balances: FC = () => {
 
           {lockedBalance !== null ? (
             <Typography variant="h4" fw="bold">
-              {lockedBalance}
+              <HiddenValue>{lockedBalance}</HiddenValue>
             </Typography>
           ) : (
             <SkeletonLoader size="lg" />

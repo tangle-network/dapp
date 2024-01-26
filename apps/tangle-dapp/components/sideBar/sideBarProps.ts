@@ -41,7 +41,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'Claim Airdrop',
-    href: InternalPath.Claim,
+    href: InternalPath.ClaimAirdrop,
     isInternal: true,
     isNext: true,
     Icon: GiftLineIcon,

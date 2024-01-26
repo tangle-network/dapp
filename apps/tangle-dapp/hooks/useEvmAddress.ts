@@ -1,6 +1,7 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { useMemo } from 'react';
+
+import useActiveAccountAddress from './useActiveAccountAddress';
 
 /**
  * Obtain the EVM address of the active account, if any.
@@ -9,10 +10,9 @@ import { useMemo } from 'react';
  * If there is no active account, `null` will be returned instead.
  */
 const useEvmAddress = () => {
-  const activeAccount = useActiveAccount();
-  const activeAccountAddress = activeAccount[0]?.address ?? null;
+  const activeAccountAddress = useActiveAccountAddress();
 
-  const substrateAddress = useMemo(() => {
+  const evmAddress = useMemo(() => {
     // Wait for the active account to be set, and ensure
     // that the active account is an EVM account.
     if (
@@ -22,11 +22,11 @@ const useEvmAddress = () => {
       return null;
     }
 
-    // TODO: May need to convert to an EVM address, in case that the active account is a Substrate account.
+    // TODO: May need to convert to an EVM address, in case that the active account is a EVM account. See https://github.com/webb-tools/tangle/issues/379 for more details.
     return activeAccountAddress;
   }, [activeAccountAddress]);
 
-  return substrateAddress;
+  return evmAddress;
 };
 
 export default useEvmAddress;

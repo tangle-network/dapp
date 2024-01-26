@@ -1,11 +1,10 @@
 'use client';
 
-import { BN } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util';
 import {
   ArrowLeftRightLineIcon,
-  ArrowRightUp,
+  CoinIcon,
   GiftLineIcon,
-  QRScanLineIcon,
   ShieldKeyholeLineIcon,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
@@ -16,15 +15,14 @@ import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
-import useStakingRewards from '../../data/StakingStats/useStakingRewards';
 import useReceiveModal from '../../hooks/useReceiveModal';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
-import { AnchorLinkId, InternalPath } from '../../types';
+import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
 
 type ActionItemDef = {
   label: string;
-  path: string;
+  path: InternalPathString;
   icon: ReactElement<IconBase>;
 };
 
@@ -33,7 +31,17 @@ const staticActionItems: ActionItemDef[] = [
   {
     label: 'Nominate',
     path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
-    icon: <ArrowRightUp size="lg" className="rotate-90" />,
+    icon: <CoinIcon size="lg" />,
+  },
+  {
+    label: 'Payouts',
+    path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
+    icon: <CoinIcon size="lg" />,
+  },
+  {
+    label: 'Claim Airdrop',
+    path: InternalPath.ClaimAirdrop,
+    icon: <GiftLineIcon size="lg" />,
   },
 ] as const;
 
@@ -72,13 +80,13 @@ const Actions: FC = () => {
   const router = useRouter();
   const { toggleModal: toggleReceiveModal } = useReceiveModal();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-  const stakingRewards = useStakingRewards();
 
   const {
     isVesting,
     performVestTx,
     vestTxStatus,
-    hasClaimableTokens: hasCLaimableVestingTokens,
+    hasClaimableTokens: hasClaimableVestingTokens,
+    claimableTokenAmount,
   } = useVesting(true);
 
   // Prefetch static actions that take the user
@@ -90,48 +98,15 @@ const Actions: FC = () => {
     }
   }, [router]);
 
-  const hasUnclaimedRewards =
-    stakingRewards !== null && stakingRewards.pendingRewards.gt(new BN(0));
-
-  const claimStakingRewards = () => {
-    // Sanity check. Claim button should be disabled
-    // if there are no rewards to claim, but just in case.
-    if (!hasUnclaimedRewards) {
-      return;
-    }
-  };
-
   return (
     <>
       <GlassCard className="flex justify-center align-center">
         <div className="flex items-center justify-center gap-6 overflow-x-auto">
           <ActionItem
-            icon={<QRScanLineIcon size="lg" />}
-            label="Receive"
-            onClick={() => toggleReceiveModal()}
-          />
-
-          <ActionItem
             icon={<ArrowLeftRightLineIcon size="lg" />}
             label="Transfer"
             onClick={() => setIsTransferModalOpen(true)}
           />
-
-          <ActionItem
-            icon={<GiftLineIcon size="lg" />}
-            label="Claim Rewards"
-            isDisabled={!hasUnclaimedRewards}
-            onClick={claimStakingRewards}
-          />
-
-          {hasCLaimableVestingTokens && (
-            <ActionItem
-              icon={<ShieldKeyholeLineIcon size="lg" />}
-              label="Vest"
-              isDisabled={vestTxStatus === TxStatus.Processing}
-              onClick={performVestTx}
-            />
-          )}
 
           {staticActionItems.map(({ path, ...restItem }, index) => (
             <ActionItem
@@ -140,6 +115,26 @@ const Actions: FC = () => {
               onClick={() => router.push(path)}
             />
           ))}
+
+          {/* This is a special case, so hide it for most users if they're not vesting. */}
+          {isVesting && (
+            <ActionItem
+              icon={<ShieldKeyholeLineIcon size="lg" />}
+              label="Vest"
+              isDisabled={vestTxStatus === TxStatus.Processing}
+              onClick={performVestTx}
+            />
+          )}
+        </div>
+
+        <div>
+          Claimable vesting tokens:
+          {claimableTokenAmount !== null
+            ? formatBalance(claimableTokenAmount, {
+                decimals: 18,
+                withUnit: 'tTNT',
+              })
+            : 'WAITING'}
         </div>
       </GlassCard>
 
