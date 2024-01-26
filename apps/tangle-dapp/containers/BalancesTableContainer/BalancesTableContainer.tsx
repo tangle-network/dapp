@@ -1,5 +1,13 @@
+'use client';
+
 import { BN } from '@polkadot/util';
-import { TangleIcon } from '@webb-tools/icons';
+import {
+  ChevronDown,
+  ChevronUp,
+  CoinIcon,
+  SendPlanLineIcon,
+  TangleIcon,
+} from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
   Chip,
@@ -10,11 +18,16 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, JSX } from 'react';
+import { FC, JSX, useState } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
+import useAccountBalances from '../../hooks/useAccountBalances';
+import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const BalancesTableContainer: FC = () => {
+  const balances = useAccountBalances();
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+
   return (
     <GlassCard className="overflow-x-auto">
       <div className="flex flex-row">
@@ -31,15 +44,39 @@ const BalancesTableContainer: FC = () => {
         <div className="flex flex-col w-full">
           <HeaderRow title="Balance" />
 
-          <BalanceRow amount={new BN(250)} />
+          {/* Free balance */}
+          <div className="flex flex-row justify-between">
+            <BalanceRow amount={balances?.free ?? null} />
 
-          <BalanceRow amount={new BN(5)} />
+            <div className="flex flex-row gap-1">
+              <BalanceAction
+                Icon={SendPlanLineIcon}
+                tooltip="Send"
+                onClick={() => void 0}
+              />
 
-          <BalanceRow amount={null} />
+              <BalanceAction
+                Icon={CoinIcon}
+                tooltip="Nominate"
+                onClick={() => void 0}
+              />
+            </div>
+          </div>
+
+          {/* Locked balance */}
+          <div className="flex flex-row justify-between">
+            <BalanceRow amount={balances?.locked ?? null} />
+
+            <BalanceAction
+              Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
+              tooltip={`${isDetailsCollapsed ? 'Show' : 'Collapse'} Details`}
+              onClick={() => setIsDetailsCollapsed((previous) => !previous)}
+            />
+          </div>
         </div>
       </div>
 
-      <LockedBalanceDetails />
+      {!isDetailsCollapsed && <LockedBalanceDetails />}
     </GlassCard>
   );
 };
@@ -64,7 +101,7 @@ const AssetRow: FC<{
   return (
     <div className="flex px-3 py-3 gap-6">
       <div className="flex flex-row items-center gap-1">
-        <div className="dark:bg-mono-0 p-1 rounded-full">
+        <div className="bg-mono-40 dark:bg-mono-0 p-1 rounded-full">
           <TangleIcon />
         </div>
 
@@ -84,13 +121,13 @@ const AssetRow: FC<{
 const BalanceRow: FC<{
   amount: BN | null;
 }> = ({ amount }) => {
-  // TODO: Use chain token constant or fetch it.
+  const formattedBalance = useFormattedBalance(amount, true);
 
   return (
-    <div className="flex px-3 py-3 gap-6">
+    <div className="flex flex-col justify-between px-3 py-3 gap-6">
       {amount !== null ? (
         <Typography variant="body1" fw="semibold">
-          {amount.toString()} TNT
+          {formattedBalance}
         </Typography>
       ) : (
         <SkeletonLoader size="md" />
@@ -103,33 +140,51 @@ const BalanceRow: FC<{
 const LockedBalanceDetails: FC = () => {
   return (
     <div className="flex flex-row dark:bg-mono-180 px-3 py-2 rounded-lg">
-      {/* Type column */}
-      <div className="flex flex-col gap-6 w-full">
-        <HeaderRow title="Type" />
+      <div className="flex flex-row w-full">
+        {/* Type column */}
+        <div className="flex flex-col gap-6 w-full">
+          <HeaderRow title="Type" />
 
-        <SmallChip title="Vesting" />
+          <SmallChip title="Vesting" />
 
-        <SmallChip title="Democracy" />
+          <SmallChip title="Democracy" />
 
-        <SmallChip title="Nomination" />
-      </div>
+          <SmallChip title="Nomination" />
+        </div>
 
-      {/* Unlock details column */}
-      <div className="flex flex-col gap-6 w-full">
-        <HeaderRow title="Unlocks At" />
+        {/* Unlock details column */}
+        <div className="flex flex-col gap-6 w-full">
+          <HeaderRow title="Unlocks At" />
 
-        <BalanceRow amount={null} />
+          <BalanceRow amount={null} />
 
-        <BalanceRow amount={null} />
+          <BalanceRow amount={null} />
 
-        <BalanceRow amount={null} />
+          <BalanceRow amount={null} />
+        </div>
       </div>
 
       {/* Balance column */}
       <div className="flex flex-col gap-6 w-full">
         <HeaderRow title="Balance" />
 
-        <BalanceRow amount={null} />
+        <div className="flex flex-row justify-between">
+          <BalanceRow amount={null} />
+
+          <div className="flex flex-row gap-1">
+            <BalanceAction
+              Icon={SendPlanLineIcon}
+              tooltip="Send"
+              onClick={() => void 0}
+            />
+
+            <BalanceAction
+              Icon={CoinIcon}
+              tooltip="Nominate"
+              onClick={() => void 0}
+            />
+          </div>
+        </div>
 
         <BalanceRow amount={null} />
 
@@ -142,8 +197,12 @@ const LockedBalanceDetails: FC = () => {
 /** @internal */
 const SmallChip: FC<{ title: string }> = ({ title }) => {
   return (
-    <Chip className="!inline" color="purple">
-      <Typography variant="body2" fw="semibold" className="uppercase">
+    <Chip className="!inline rounded-[50px]" color="purple">
+      <Typography
+        variant="body2"
+        fw="semibold"
+        className="uppercase text-purple-50 dark:text-purple-50"
+      >
         {title}
       </Typography>
     </Chip>
@@ -160,7 +219,7 @@ const BalanceAction: FC<{
     <Tooltip>
       <TooltipTrigger>
         <IconButton onClick={onClick}>
-          <Icon size="lg" />
+          <Icon size="md" />
         </IconButton>
       </TooltipTrigger>
 

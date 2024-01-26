@@ -7,7 +7,7 @@ import { FC, useEffect } from 'react';
 
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
-import useAccountBalances from '../../data/AccountSummaryCard/useAccountBalances';
+import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const Balances: FC = () => {

@@ -13,7 +13,7 @@ import { WEBB_TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useAccountBalances from '../../data/AccountSummaryCard/useAccountBalances';
+import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';

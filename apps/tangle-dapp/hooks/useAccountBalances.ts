@@ -3,9 +3,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs/operators';
 
-import usePolkadotApiRx, {
-  ObservableFactory,
-} from '../../hooks/usePolkadotApiRx';
+import usePolkadotApiRx, { ObservableFactory } from './usePolkadotApiRx';
 
 export type AccountBalances = {
   total: BN;
@@ -14,7 +12,7 @@ export type AccountBalances = {
   misc: BN;
 };
 
-export default function useAccountBalances(): AccountBalances | null {
+const useAccountBalances = (): AccountBalances | null => {
   const { activeAccount } = useWebContext();
   const [balances, setBalances] = useState<AccountBalances | null>(null);
 
@@ -53,4 +51,6 @@ export default function useAccountBalances(): AccountBalances | null {
   }, [activeAccount]);
 
   return balances;
-}
+};
+
+export default useAccountBalances;

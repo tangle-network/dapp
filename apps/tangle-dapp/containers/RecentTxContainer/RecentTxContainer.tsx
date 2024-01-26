@@ -21,7 +21,7 @@ const RecentTxContainer: FC = () => {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-4 justify-center items-center h-full text-center">
+      <div className="flex flex-col gap-3 justify-center items-center h-full text-center">
         <Typography variant="h4" fw="bold" className="capitalize">
           ✨ Upcoming Feature
         </Typography>
