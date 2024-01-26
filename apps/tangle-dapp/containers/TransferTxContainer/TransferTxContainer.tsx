@@ -26,10 +26,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const [amount, setAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const balances = useAccountBalances();
+  const { transferrable: transferrableBalance } = useAccountBalances();
 
-  const formattedFreeBalance = useFormattedBalance(
-    balances?.free ?? null,
+  const formattedTransferrableBalance = useFormattedBalance(
+    transferrableBalance,
     false
   );
 
@@ -75,12 +75,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   }, [reset, status]);
 
   const setMaxAmount = useCallback(() => {
-    if (formattedFreeBalance === null) {
+    if (formattedTransferrableBalance === null) {
       return;
     }
 
-    setAmount(formattedFreeBalance);
-  }, [formattedFreeBalance]);
+    setAmount(formattedTransferrableBalance);
+  }, [formattedTransferrableBalance]);
 
   const isReady =
     status === TxStatus.NotYetInitiated ||

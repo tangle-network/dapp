@@ -14,7 +14,7 @@ import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { ComponentProps, ElementRef } from 'react';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useHiddenValue from '../hooks/useHiddenValue';
@@ -48,6 +48,10 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
 
     const [displayAddress, setDisplayAddress] = useState(address);
 
+    useEffect(() => {
+      setDisplayAddress(address);
+    }, [address]);
+
     const shortenFn = isHiddenValue
       ? shortenString
       : isDisplayingEvmAddress
@@ -60,7 +64,7 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
           .join('')
       : displayAddress;
 
-    const handleAddressTypeToggle = () => {
+    const handleAddressTypeToggle = useCallback(() => {
       setIsDisplayingEvmAddress((previous) => !previous);
 
       if (!isDisplayingEvmAddress && isEvmAccountAddress) {
@@ -68,16 +72,16 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
       } else if (isEvmAccountAddress) {
         setDisplayAddress(convertToSubstrateAddress(address));
       }
-    };
+    }, [address, isDisplayingEvmAddress, isEvmAccountAddress]);
 
-    const handleCopy = () => {
+    const handleCopy = useCallback(() => {
       copyableResult.copy(finalDisplayAddress);
 
       notificationApi({
         variant: 'success',
         message: 'Address copied to clipboard',
       });
-    };
+    }, [copyableResult, finalDisplayAddress, notificationApi]);
 
     const prefix = isDisplayingEvmAddress ? 'EVM' : 'Substrate';
     const oppositePrefix = isDisplayingEvmAddress ? 'Substrate' : 'EVM';

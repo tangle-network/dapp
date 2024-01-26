@@ -25,7 +25,7 @@ import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const BalancesTableContainer: FC = () => {
-  const balances = useAccountBalances();
+  const { transferrable, locked } = useAccountBalances();
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
 
   return (
@@ -35,7 +35,7 @@ const BalancesTableContainer: FC = () => {
         <div className="flex flex-col w-full">
           <HeaderRow title="Asset" />
 
-          <AssetRow title="Free Balance" />
+          <AssetRow title="Transferrable Balance" />
 
           <AssetRow title="Locked Balance" />
         </div>
@@ -44,9 +44,9 @@ const BalancesTableContainer: FC = () => {
         <div className="flex flex-col w-full">
           <HeaderRow title="Balance" />
 
-          {/* Free balance */}
+          {/* Transferrable balance */}
           <div className="flex flex-row justify-between">
-            <BalanceRow amount={balances?.free ?? null} />
+            <BalanceRow amount={transferrable} />
 
             <div className="flex flex-row gap-1">
               <BalanceAction
@@ -65,7 +65,7 @@ const BalancesTableContainer: FC = () => {
 
           {/* Locked balance */}
           <div className="flex flex-row justify-between">
-            <BalanceRow amount={balances?.locked ?? null} />
+            <BalanceRow amount={locked} />
 
             <BalanceAction
               Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}

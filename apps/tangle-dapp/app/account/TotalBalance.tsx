@@ -13,8 +13,8 @@ import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const TotalBalance: FC = () => {
   const { activeAccount, loading, isConnecting, wallets } = useWebContext();
-  const balances = useAccountBalances();
-  const total = useFormattedBalance(balances?.total ?? null, false);
+  const { total } = useAccountBalances();
+  const formattedTotal = useFormattedBalance(total, false);
 
   const {
     toggleModal: toggleWalletConnectModal,
@@ -63,10 +63,10 @@ const TotalBalance: FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {total !== null ? (
+          {formattedTotal !== null ? (
             <div className="flex gap-2 items-end py-2">
               <Typography variant="h2" fw="bold" className="!leading-none">
-                <HiddenValue>{total}</HiddenValue>
+                <HiddenValue>{formattedTotal}</HiddenValue>
               </Typography>
 
               <Typography
