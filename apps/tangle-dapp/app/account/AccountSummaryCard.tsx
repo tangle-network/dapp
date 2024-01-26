@@ -1,13 +1,12 @@
 'use client';
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import type { ElementRef } from 'react';
 import { FC, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import AvatarWithAddress from '../../components/AvatarWithAddress';
+import Identity from '../../components/Identity';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import Actions from './Actions';
 import Balances from './Balances';
@@ -15,11 +14,6 @@ import Balances from './Balances';
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {
     const activeAccountAddress = useActiveAccountAddress();
-
-    const isEvmAddress =
-      activeAccountAddress === null
-        ? false
-        : isEthereumAddress(activeAccountAddress);
 
     return (
       <div
@@ -36,9 +30,8 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         <div className="space-y-6 w-full">
           <header>
             {activeAccountAddress !== null ? (
-              <AvatarWithAddress
-                isEvmAddress={isEvmAddress}
-                keyValue={activeAccountAddress}
+              <Identity
+                address={activeAccountAddress}
                 fontWeight="normal"
                 label="Address:"
                 iconTooltipContent="Account public key"

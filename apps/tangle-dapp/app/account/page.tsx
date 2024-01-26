@@ -14,7 +14,7 @@ export default function AccountPage() {
         <RecentTxContainer />
       </div>
 
-      <StakingStatsContainer />
+      {/* <StakingStatsContainer /> */}
 
       <Typography variant="h4" fw="bold">
         Manage Balances

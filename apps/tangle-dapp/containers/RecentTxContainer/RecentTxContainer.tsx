@@ -5,7 +5,7 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 
 const RecentTxContainer: FC = () => {
   return (
-    <GlassCard>
+    <GlassCard className="space-y-4">
       <div className="flex flex-row justify-between">
         <Typography variant="h5" fw="bold" className="dark:text-mono-0">
           Recent Transactions
@@ -21,15 +21,15 @@ const RecentTxContainer: FC = () => {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-4 justify-center items-center h-full text-center ">
+      <div className="flex flex-col gap-4 justify-center items-center h-full text-center">
         <Typography variant="h4" fw="bold" className="capitalize">
           ✨ Upcoming Feature
         </Typography>
 
         <Typography variant="body1" className="text-center max-w-lg">
-          In the future, you will be able to quickly glance over your recent
-          transactions, including Transfers, Vesting, Airdrop claim, and staking
-          rewards. Stay tuned!
+          Soon, you&apos;ll be able to conveniently glance at your recent
+          transactions, like Transfers, Vesting, Airdrop claims, and Staking
+          Rewards. Stay tuned!
         </Typography>
 
         <Button>View Network</Button>

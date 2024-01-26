@@ -131,12 +131,8 @@ function useSubstrateTx<T extends ISubmittableResult>(
 
     signAndSend();
 
-    // TODO: Clear timeout when transaction completes.
     const timeoutHandle = setTimeout(() => {
-      if (!isMounted) {
-        return;
-      }
-
+      // TODO: Ignore timeout if transaction is not still processing.
       setStatus(TxStatus.TimedOut);
     }, timeoutDelay);
 

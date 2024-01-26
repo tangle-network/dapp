@@ -38,7 +38,7 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
     if (
       activeEvmAddress === null ||
       !isEthereumAddress(activeEvmAddress) ||
-      status !== TxStatus.NotYetInitiated
+      status === TxStatus.Processing
     ) {
       return;
     }
