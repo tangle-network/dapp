@@ -32,12 +32,14 @@ const useExecuteTxWithNotification = () => {
         }
 
         notificationApi({ variant: 'success', message: successMessage });
-      } catch (error: any) {
+      } catch (error: unknown) {
         notificationApi({
           variant: 'error',
           message: isViemError(error)
             ? error.shortMessage
-            : error.message || 'Something went wrong!',
+            : error instanceof Error
+            ? error.message
+            : 'Something went wrong!',
         });
 
         throw error; // Rethrowing the error to be caught by the outer try-catch
