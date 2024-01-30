@@ -1,8 +1,9 @@
 import { Option, Vec } from '@polkadot/types';
 import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import { BN, u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
+import { LockId } from '../constants/polkadot';
 import useAgnosticTx from './useAgnosticTx';
 import usePolkadotApiRx from './usePolkadotApiRx';
 import { TxStatus } from './useSubstrateTx';
@@ -28,7 +29,8 @@ export type Vesting = {
    * Note that this does not represent the **total** amount of tokens
    * locked in all vesting schedules, but rather the amount of tokens
    * that has been vested by the vesting schedules, and that is now
-   * **claimable** by the active account.
+   * **claimable** by the active account, by calling the `vesting.vest`
+   * extrinsic.
    */
   claimableTokenAmount: BN | null;
 
@@ -41,9 +43,9 @@ export type Vesting = {
   vestTxStatus: TxStatus;
 
   /**
-   * Performs the `vest` Substrate transaction.
+   * Performs the `vesting.vest` extrinsic call.
    *
-   * This transaction will claim all **claimable** tokens from all vesting
+   * This action will claim all **claimable** tokens from all vesting
    * schedules associated with the active account.
    *
    * Vesting schedules that have not yet started (i.e. have not reached their
@@ -144,9 +146,8 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
       return new BN(0);
     }
 
-    // TODO: Find out if there's a better way to check the lock ID, perhaps Polkadot offers a constant for this. Otherwise, move this to a constant, and somehow attach type constraints to the different known lock IDs. There's also 'staking'. Check the Polkadot Explorer for debugging.
     const vestingLock = locks.find(
-      (lock) => lock.id.toHuman()?.toString().trim() === 'vesting'
+      (lock) => u8aToString(lock.id) === LockId.Vesting
     );
 
     const vestingLockAmount = vestingLock?.amount ?? new BN(0);

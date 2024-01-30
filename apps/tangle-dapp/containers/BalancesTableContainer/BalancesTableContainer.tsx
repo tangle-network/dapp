@@ -10,7 +10,6 @@ import {
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
-  Chip,
   IconButton,
   SkeletonLoader,
   Tooltip,
@@ -95,7 +94,7 @@ const HeaderRow: FC<{ title: string }> = ({ title }) => {
     <Typography
       variant="body1"
       fw="semibold"
-      className="border-b dark:border-mono-140 px-3 pb-3 capitalize whitespace-nowrap"
+      className="block border-b dark:border-mono-140 px-3 pb-3 capitalize whitespace-nowrap"
     >
       {title}
     </Typography>
@@ -119,34 +118,17 @@ const AssetRow: FC<{
         </Typography>
       </div>
 
-      <Typography variant="body1" fw="semibold" className="whitespace-nowrap">
-        {title}
-      </Typography>
-
-      {tooltip !== undefined && (
-        <InfoIconWithTooltip
-          content={<span className="block text-center">{tooltip}</span>}
-        />
-      )}
-    </div>
-  );
-};
-
-/** @internal */
-const BalanceRow: FC<{
-  amount: BN | null;
-}> = ({ amount }) => {
-  const formattedBalance = useFormattedBalance(amount, true);
-
-  return (
-    <div className="flex flex-col justify-between px-3 py-3 gap-6">
-      {amount !== null ? (
-        <Typography variant="body1" fw="semibold">
-          {formattedBalance}
+      <div className="flex gap-1">
+        <Typography variant="body1" fw="semibold" className="whitespace-nowrap">
+          {title}
         </Typography>
-      ) : (
-        <SkeletonLoader size="md" />
-      )}
+
+        {tooltip !== undefined && (
+          <InfoIconWithTooltip
+            content={<span className="block text-center">{tooltip}</span>}
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -157,25 +139,27 @@ const LockedBalanceDetails: FC = () => {
     <div className="flex flex-row dark:bg-mono-180 px-3 py-2 rounded-lg">
       <div className="flex flex-row w-full">
         {/* Type column */}
-        <div className="flex flex-col gap-6 w-full">
-          <HeaderRow title="Type" />
+        <div className="flex flex-col gap-6 w-full items-start">
+          <div className="self-stretch">
+            <HeaderRow title="Type" />
+          </div>
 
-          <SmallChip title="Vesting" />
+          <SmallPurpleChip title="Vesting" />
 
-          <SmallChip title="Democracy" />
+          <SmallPurpleChip title="Democracy" />
 
-          <SmallChip title="Nomination" />
+          <SmallPurpleChip title="Nomination" />
         </div>
 
         {/* Unlock details column */}
         <div className="flex flex-col gap-6 w-full">
           <HeaderRow title="Unlocks At" />
 
-          <BalanceRow amount={null} />
+          <TextRow text="Block #100 / Era #90" />
 
-          <BalanceRow amount={null} />
+          <TextRow text="Block #100 / Era #90" />
 
-          <BalanceRow amount={null} />
+          <TextRow text="Block #100 / Era #90" />
         </div>
       </div>
 
@@ -210,17 +194,55 @@ const LockedBalanceDetails: FC = () => {
 };
 
 /** @internal */
-const SmallChip: FC<{ title: string }> = ({ title }) => {
+const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
   return (
-    <Chip className="!inline rounded-[50px]" color="purple">
-      <Typography
-        variant="body2"
-        fw="semibold"
-        className="uppercase text-purple-50 dark:text-purple-50"
-      >
-        {title}
-      </Typography>
-    </Chip>
+    <div className="p-3">
+      <div className="dark:bg-purple-120 rounded-3xl px-4 py-1">
+        <Typography
+          variant="body2"
+          fw="semibold"
+          className="uppercase text-purple-50 dark:text-purple-50"
+        >
+          {title}
+        </Typography>
+      </div>
+    </div>
+  );
+};
+
+/** @internal */
+const TextRow: FC<{
+  text: string | null;
+}> = ({ text }) => {
+  return (
+    <div className="flex flex-col justify-between p-3 gap-6">
+      {text !== null ? (
+        <Typography variant="body1" fw="semibold">
+          {text}
+        </Typography>
+      ) : (
+        <SkeletonLoader size="md" />
+      )}
+    </div>
+  );
+};
+
+/** @internal */
+const BalanceRow: FC<{
+  amount: BN | null;
+}> = ({ amount }) => {
+  const formattedBalance = useFormattedBalance(amount, true);
+
+  return (
+    <div className="flex flex-col justify-between p-3 gap-6">
+      {amount !== null ? (
+        <Typography variant="body1" fw="semibold">
+          {formattedBalance}
+        </Typography>
+      ) : (
+        <SkeletonLoader size="md" />
+      )}
+    </div>
   );
 };
 
