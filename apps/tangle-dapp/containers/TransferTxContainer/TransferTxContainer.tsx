@@ -13,6 +13,7 @@ import { WEBB_TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import { TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
@@ -36,7 +37,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const {
     perform: performTransferTx,
     status,
-    reset: resetTx,
     error: txError,
   } = useSubstrateTx(
     useCallback(
@@ -64,8 +64,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setIsModalOpen(false);
     setAmount('');
     setRecipientAddress('');
-    resetTx();
-  }, [setIsModalOpen, resetTx]);
+  }, [setIsModalOpen]);
 
   // Close modal and reset state when the transaction is complete.
   useEffect(() => {
@@ -82,11 +81,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setAmount(formattedTransferrableBalance);
   }, [formattedTransferrableBalance]);
 
-  const isReady =
-    status === TxStatus.NotYetInitiated ||
-    status === TxStatus.TimedOut ||
-    status === TxStatus.Error;
-
+  const isReady = status !== TxStatus.Processing;
   const isDataValid = amount !== '' && recipientAddress !== '';
   const canInitiateTx = isReady && isDataValid;
 
@@ -98,15 +93,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         className="w-full max-w-[550px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={reset}>
-          {/* TODO: Fetch or get network token unit instead of having it be hard-coded. */}
-          Transfer TNT Tokens
+          Transfer {TOKEN_UNIT} Tokens
         </ModalHeader>
 
         <div className="p-9 flex flex-col gap-4">
           <Typography variant="body1" fw="normal">
-            Quickly transfer your TNT tokens to a recipient on the Tangle
-            Network. You can choose to send to either an EVM or a Substrate
-            address.
+            Quickly transfer your {TOKEN_UNIT} tokens to a recipient on the
+            Tangle Network. You can choose to send to either an EVM or a
+            Substrate address.
           </Typography>
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
@@ -126,11 +120,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             />
           </BridgeInputGroup>
 
+          {/* TODO: This is temporary, to display the error message if one ocurred during the transaction. */}
           {txError !== null && (
             <Typography variant="body1" color="red" fw="normal">
-              {txError instanceof Error
-                ? txError.message
-                : JSON.stringify(txError)}
+              {txError.message}
             </Typography>
           )}
         </div>

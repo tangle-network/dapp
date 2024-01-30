@@ -6,9 +6,9 @@ import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../constants';
+import ensureError from '../utils/ensureError';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateAddress from './useSubstrateAddress';
 
 export enum TxStatus {
@@ -44,12 +44,6 @@ function useSubstrateTx<T extends ISubmittableResult>(
     return web3FromAddress(activeSubstrateAddress);
   }, [activeSubstrateAddress]);
 
-  // Abandon the transaction if the user switches accounts.
-  useEffect(() => {
-    console.debug('Resetting Substrate transaction due to account switch');
-    reset();
-  }, [activeSubstrateAddress]);
-
   useEffect(() => {
     if (!notifyStatusUpdates) {
       return;
@@ -64,7 +58,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
     notificationApi(notificationOpts);
   }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
 
-  const perform = useCallback(() => {
+  const perform = useCallback(async () => {
     // Prevent the consumer from re-triggering the transaction
     // while it's still processing. Also wait for the Substrate
     // address to be set.
@@ -76,30 +70,36 @@ function useSubstrateTx<T extends ISubmittableResult>(
       return;
     } else if (isEvmAccount) {
       throw new Error(
-        `Attempted to perform a Substrate transaction from an EVM account. Use '${useEvmPrecompileAbiCall.name}' instead.`
+        `Attempted to perform a Substrate transaction from an EVM account. Use an EVM-equivalent transaction or Precompile call instead.`
       );
     }
 
     let isMounted = true;
 
-    const signAndSend = async () => {
-      const injector = await requestInjector();
-      const api = await getPolkadotApiPromise();
-      const tx = await factory(api, activeSubstrateAddress);
+    const injector = await requestInjector();
+    const api = await getPolkadotApiPromise();
+    const tx = await factory(api, activeSubstrateAddress);
 
-      // Factory is not yet ready to produce the transaction.
-      // This is usually because the user hasn't yet connected their wallet.
-      if (tx === null) {
-        return;
-      }
-      // Wait until the injector is ready.
-      else if (injector === null) {
-        return;
-      } else if (!isMounted) {
-        return;
-      }
+    // Factory is not yet ready to produce the transaction.
+    // This is usually because the user hasn't yet connected their wallet.
+    if (tx === null) {
+      return;
+    }
+    // Wait until the injector is ready.
+    else if (injector === null) {
+      return;
+    } else if (!isMounted) {
+      return;
+    }
 
-      tx.signAndSend(
+    // At this point, the transaction is ready to be sent.
+    // Reset the status and error, and begin the transaction.
+    setError(null);
+    setHash(null);
+    setStatus(TxStatus.Processing);
+
+    try {
+      await tx.signAndSend(
         activeSubstrateAddress,
         { signer: injector.signer },
         (status) => {
@@ -123,43 +123,34 @@ function useSubstrateTx<T extends ISubmittableResult>(
             setError(error);
           }
         }
-      ).catch((error) => {
-        if (!isMounted) {
-          return;
-        }
-
-        setStatus(TxStatus.Error);
-        setError(error);
-      });
-    };
-
-    signAndSend();
-
-    const timeoutHandle = setTimeout(() => {
-      // TODO: Ignore timeout if transaction is not still processing.
-      setStatus(TxStatus.TimedOut);
-    }, timeoutDelay);
+      );
+    } catch (possibleError: unknown) {
+      setStatus(TxStatus.Error);
+      setError(ensureError(possibleError));
+    }
 
     return () => {
-      clearTimeout(timeoutHandle);
       isMounted = false;
     };
-  }, [
-    activeSubstrateAddress,
-    factory,
-    isEvmAccount,
-    requestInjector,
-    status,
-    timeoutDelay,
-  ]);
+  }, [activeSubstrateAddress, factory, isEvmAccount, requestInjector, status]);
 
-  const reset = () => {
-    setError(null);
-    setHash(null);
-    setStatus(TxStatus.NotYetInitiated);
-  };
+  // Timeout the transaction if it's taking too long.
+  useEffect(() => {
+    const timeoutHandle =
+      status === TxStatus.Processing
+        ? setTimeout(() => {
+            setStatus(TxStatus.TimedOut);
+          }, timeoutDelay)
+        : null;
 
-  return { perform, status, error, hash, reset };
+    return () => {
+      if (timeoutHandle !== null) {
+        clearTimeout(timeoutHandle);
+      }
+    };
+  }, [status, timeoutDelay]);
+
+  return { perform, status, error, hash };
 }
 
 export default useSubstrateTx;

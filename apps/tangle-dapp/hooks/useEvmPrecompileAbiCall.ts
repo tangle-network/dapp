@@ -1,5 +1,3 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import { ensureHex } from '@webb-tools/dapp-config';
 import { useCallback, useState } from 'react';
 
 import {
@@ -12,6 +10,7 @@ import {
   getAddressOfPrecompile,
   Precompile,
 } from '../constants/evmPrecompiles';
+import ensureError from '../utils/ensureError';
 import useEvmAddress from './useEvmAddress';
 import { EvmAddressOrHash } from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
@@ -50,50 +49,51 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
   args: unknown[]
 ) {
   const [status, setStatus] = useState(TxStatus.NotYetInitiated);
+  const [error, setError] = useState<Error | null>(null);
   const activeEvmAddress = useEvmAddress();
 
   const perform = useCallback(async () => {
-    if (
-      activeEvmAddress === null ||
-      !isEthereumAddress(activeEvmAddress) ||
-      status === TxStatus.Processing
-    ) {
+    if (activeEvmAddress === null || status === TxStatus.Processing) {
       return;
     }
 
+    setError(null);
     setStatus(TxStatus.Processing);
 
-    // TODO: Handle errors.
-    const evmWalletClient = createEvmWalletClient(activeEvmAddress);
-
-    // TODO: Handle errors.
-    const { request } = await evmPublicClient.simulateContract({
-      address: getAddressOfPrecompile(precompile),
-      abi: getAbiForPrecompile(precompile),
-      functionName: functionName,
-      args,
-      account: activeEvmAddress,
-    });
-
-    // TODO: Handle errors/failure.
-    const txHash = await evmWalletClient.writeContract(request);
-
-    // TODO: Need proper typing for this, currently `any`.
-    const txReceipt: TxReceipt =
-      await evmPublicClient.waitForTransactionReceipt({
-        hash: txHash,
+    try {
+      const { request } = await evmPublicClient.simulateContract({
+        address: getAddressOfPrecompile(precompile),
+        abi: getAbiForPrecompile(precompile),
+        functionName: functionName,
+        args,
+        account: activeEvmAddress,
       });
 
-    console.debug('txReceipt', txReceipt);
+      const evmWalletClient = createEvmWalletClient(activeEvmAddress);
+      const txHash = await evmWalletClient.writeContract(request);
 
-    setStatus(
-      txReceipt.status === 'success' ? TxStatus.Complete : TxStatus.Error
-    );
+      const txReceipt: TxReceipt =
+        await evmPublicClient.waitForTransactionReceipt({
+          hash: txHash,
+          // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+        });
+
+      console.debug('txReceipt', txReceipt);
+
+      setStatus(
+        txReceipt.status === 'success' ? TxStatus.Complete : TxStatus.Error
+      );
+    } catch (possibleError) {
+      const error = ensureError(possibleError);
+
+      setStatus(TxStatus.Error);
+      setError(error);
+    }
 
     // TODO: Return clean up.
   }, [activeEvmAddress, args, precompile, status, functionName]);
 
-  return { perform, status };
+  return { perform, status, error };
 }
 
 export default useEvmPrecompileAbiCall;

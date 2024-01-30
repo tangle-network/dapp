@@ -346,13 +346,7 @@ export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<'vesting'>[] = [
   {
     inputs: [],
     name: 'vest',
-    outputs: [
-      {
-        internalType: 'uint8',
-        name: '',
-        type: 'uint8',
-      },
-    ],
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },

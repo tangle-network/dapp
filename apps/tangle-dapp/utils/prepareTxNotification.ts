@@ -17,7 +17,8 @@ const prepareTxNotification = (
 
       break;
     case TxStatus.TimedOut:
-      primaryMessage = 'The transaction timed out.';
+      primaryMessage =
+        'The transaction is taking too long. It is unknown if it succeeded or not.';
       variant = 'warning';
 
       break;

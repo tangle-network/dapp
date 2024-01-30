@@ -43,6 +43,7 @@ export const evmPublicClient = createPublicClient({
 });
 
 export const createEvmWalletClient = (accountAddress: string) => {
+  // TODO: Might need to handle this more gracefully. Or at least from the caller(s) (add description to the function to make it clear that it may fail and throw an error).
   if (typeof window.ethereum === 'undefined') {
     throw new Error(
       'window.ethereum is undefined, but is required for EVM actions'

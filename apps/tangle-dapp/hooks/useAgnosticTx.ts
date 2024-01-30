@@ -30,11 +30,17 @@ function useAgnosticTx<
   const activeAccountAddress = activeAccount[0]?.address ?? null;
   const { notificationApi } = useWebbUI();
 
-  const { perform: performSubstrateTx, status: substrateTxStatus } =
-    useSubstrateTx(substrateTxFactory);
+  const {
+    perform: performSubstrateTx,
+    status: substrateTxStatus,
+    error: substrateError,
+  } = useSubstrateTx(substrateTxFactory);
 
-  const { perform: performEvmPrecompileAbiCall, status: evmTxStatus } =
-    useEvmPrecompileAbiCall(precompile, evmTarget, evmArguments);
+  const {
+    perform: performEvmPrecompileAbiCall,
+    status: evmTxStatus,
+    error: evmError,
+  } = useEvmPrecompileAbiCall(precompile, evmTarget, evmArguments);
 
   const isEvmAccount =
     activeAccountAddress === null
@@ -48,6 +54,9 @@ function useAgnosticTx<
       ? evmTxStatus
       : substrateTxStatus;
 
+  const agnosticError =
+    isEvmAccount === null ? null : isEvmAccount ? evmError : substrateError;
+
   // Notify the user of the transaction status, if applicable.
   useEffect(() => {
     if (
@@ -58,7 +67,10 @@ function useAgnosticTx<
       return;
     }
 
-    const notificationOpts = prepareTxNotification(agnosticStatus, null);
+    const notificationOpts = prepareTxNotification(
+      agnosticStatus,
+      agnosticError
+    );
 
     if (notificationOpts === null) {
       return;
@@ -72,6 +84,7 @@ function useAgnosticTx<
     notificationApi,
     agnosticStatus,
     notifyStatusUpdates,
+    agnosticError,
   ]);
 
   const perform = useCallback(async () => {

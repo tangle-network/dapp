@@ -6,6 +6,7 @@ import { FC } from 'react';
 import PillCard from '../../app/account/PillCard';
 import { SWR_ERA } from '../../constants';
 import usePendingStakingRewards from '../../data/StakingStats/useStakingRewards';
+import useFormattedBalance from '../../hooks/useFormattedBalance';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 
 const StakingStats: FC = () => {
@@ -14,10 +15,7 @@ const StakingStats: FC = () => {
   );
 
   const pendingRewards = usePendingStakingRewards();
-
-  // TODO: Format as token balance.
-  const pendingRewardsString =
-    pendingRewards !== null ? pendingRewards.toString() : null;
+  const formattedPendingRewards = useFormattedBalance(pendingRewards);
 
   return (
     <>
@@ -32,7 +30,7 @@ const StakingStats: FC = () => {
         <PillCard
           isLast
           title="Pending Staking Rewards"
-          value={pendingRewardsString}
+          value={formattedPendingRewards}
           Icon={ListCheckIcon}
         />
       </div>
