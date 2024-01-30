@@ -100,7 +100,8 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     if (
       vestingInfoOpt === null ||
       vestingInfoOpt.isNone ||
-      currentBlockNumber === null
+      currentBlockNumber === null ||
+      totalVestedAmount === null
     ) {
       return null;
     }
@@ -124,8 +125,11 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
       totalReleased = totalReleased.add(released);
     }
 
-    return totalReleased;
-  }, [currentBlockNumber, vestingInfoOpt]);
+    // The total released amount cannot exceed the total vested amount.
+    // Without this, the total released amount would eventually exceed
+    // the total vested amount, displaying incorrect information.
+    return BN.min(totalReleased, totalVestedAmount);
+  }, [currentBlockNumber, totalVestedAmount, vestingInfoOpt]);
 
   const claimableAmount = useMemo(() => {
     if (

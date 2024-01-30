@@ -15,6 +15,23 @@ import {
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 
+// TODO: For some reason, Viem returns `any` for the tx receipt. Perhaps it is because it has no knowledge of the network, and thus no knowledge of its produced tx receipts. As a temporary workaround, use this custom type.
+type TxReceipt = {
+  transactionHash: string;
+  transactionIndex: number;
+  blockHash: string;
+  from: string;
+  to: string;
+  blockNumber: bigint;
+  cumulativeGasUsed: bigint;
+  gasUsed: bigint;
+  logs: unknown[];
+  logsBloom: string;
+  status: 'success' | 'failure';
+  type: string;
+  contractAddress: unknown | null;
+};
+
 /**
  * Obtain a function that can be used to perform a precompile contract call.
  *
@@ -61,11 +78,16 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
     const txHash = await evmWalletClient.writeContract(request);
 
     // TODO: Need proper typing for this, currently `any`.
-    const tx = await evmPublicClient.waitForTransactionReceipt({
-      hash: txHash,
-    });
+    const txReceipt: TxReceipt =
+      await evmPublicClient.waitForTransactionReceipt({
+        hash: txHash,
+      });
 
-    setStatus(tx.status === 'success' ? TxStatus.Complete : TxStatus.Error);
+    console.debug('txReceipt', txReceipt);
+
+    setStatus(
+      txReceipt.status === 'success' ? TxStatus.Complete : TxStatus.Error
+    );
 
     // TODO: Return clean up.
   }, [activeEvmAddress, args, precompile, status, functionName]);

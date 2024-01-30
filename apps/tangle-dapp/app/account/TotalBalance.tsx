@@ -1,9 +1,5 @@
-import {
-  useConnectWallet,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
@@ -12,41 +8,8 @@ import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const TotalBalance: FC = () => {
-  const { activeAccount, loading, isConnecting, wallets } = useWebContext();
   const { total } = useAccountBalances();
   const formattedTotal = useFormattedBalance(total, false);
-
-  const {
-    toggleModal: toggleWalletConnectModal,
-    isWalletConnected,
-    isModalOpen,
-  } = useConnectWallet();
-
-  // Initially open connect wallet modal for the user to
-  // connect their wallet if not already connected. This
-  // is required on the account page.
-  useEffect(() => {
-    const isAlreadyConnectingOrConnected =
-      loading ||
-      isConnecting ||
-      activeAccount !== null ||
-      isModalOpen ||
-      isWalletConnected;
-
-    if (isAlreadyConnectingOrConnected) {
-      return;
-    }
-
-    toggleWalletConnectModal(true);
-  }, [
-    activeAccount,
-    isConnecting,
-    isModalOpen,
-    isWalletConnected,
-    loading,
-    toggleWalletConnectModal,
-    wallets,
-  ]);
 
   return (
     <div className="flex flex-col gap-5 w-full">
