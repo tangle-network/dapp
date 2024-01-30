@@ -109,7 +109,6 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     }
   }, [amountToRebond, closeModal, executeTx, walletAddress]);
 
-
   return (
     <Modal open>
       <ModalContent

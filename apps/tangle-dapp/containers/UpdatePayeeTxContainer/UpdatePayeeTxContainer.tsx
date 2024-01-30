@@ -72,7 +72,8 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     try {
       await executeTx(
         () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
-        () => updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
+        () =>
+          updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
         `Successfully updated payment destination to ${paymentDestination}.`,
         'Failed to update payment destination!'
       );
@@ -82,7 +83,6 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       closeModal();
     }
   }, [closeModal, executeTx, paymentDestination, walletAddress]);
-
 
   if (currentPaymentDestinationError) {
     notificationApi({

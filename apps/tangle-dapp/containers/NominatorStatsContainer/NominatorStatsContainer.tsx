@@ -195,31 +195,27 @@ const NominatorStatsContainer: FC = () => {
           </div>
         </div>
       </div>
-
       <DelegateTxContainer
         isModalOpen={isDelegateModalOpen}
         setIsModalOpen={setIsDelegateModalOpen}
       />
-
       <BondMoreTxContainer
         isModalOpen={isBondMoreModalOpen}
         setIsModalOpen={setIsBondMoreModalOpen}
       />
-
       <UnbondTxContainer
         isModalOpen={isUnbondModalOpen}
         setIsModalOpen={setIsUnbondModalOpen}
       />
-
       <RebondTxContainer
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
       />
-
       <WithdrawUnbondedTxContainer
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawunbondedModalOpen}
-      />.
+      />
+      .
     </>
   );
 };
