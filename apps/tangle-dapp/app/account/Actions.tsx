@@ -98,7 +98,8 @@ const Actions: FC = () => {
               {hasClaimableVestingTokens ? (
                 <>
                   You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
-                  claimable vested tokens. Use this action to release them.
+                  vested tokens that are ready to be claimed. Use this action to
+                  release them.
                 </>
               ) : (
                 <>

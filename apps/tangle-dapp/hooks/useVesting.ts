@@ -83,7 +83,21 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     api.query.balances.locks(activeSubstrateAddress)
   );
 
-  const totalVestedAmount = useMemo(() => {
+  const vestingLockAmount = useMemo(() => {
+    if (locks === null) {
+      return null;
+    }
+
+    const vestingLock = locks.find(
+      // For some reason, the lock id has an extra space at the end when
+      // converted to a string, so trim it.
+      (lock) => u8aToString(lock.id).trim() === LockId.Vesting
+    );
+
+    return vestingLock?.amount ?? new BN(0);
+  }, [locks]);
+
+  const totalVestingAmount = useMemo(() => {
     if (vestingInfoOpt === null || vestingInfoOpt.isNone) {
       return null;
     }
@@ -98,12 +112,15 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     return total;
   }, [vestingInfoOpt]);
 
+  // The total amount of tokens that has been released by existing
+  // vesting schedules so far, including vested/claimed tokens.
   const totalReleasedAmount = useMemo(() => {
     if (
       vestingInfoOpt === null ||
       vestingInfoOpt.isNone ||
       currentBlockNumber === null ||
-      totalVestedAmount === null
+      totalVestingAmount === null ||
+      vestingLockAmount === null
     ) {
       return null;
     }
@@ -130,46 +147,44 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     // The total released amount cannot exceed the total vested amount.
     // Without this, the total released amount would eventually exceed
     // the total vested amount, displaying incorrect information.
-    return BN.min(totalReleased, totalVestedAmount);
-  }, [currentBlockNumber, totalVestedAmount, vestingInfoOpt]);
+    return BN.min(totalReleased, totalVestingAmount);
+  }, [
+    currentBlockNumber,
+    totalVestingAmount,
+    vestingInfoOpt,
+    vestingLockAmount,
+  ]);
 
   const claimableAmount = useMemo(() => {
     if (
       locks === null ||
-      totalVestedAmount === null ||
-      totalReleasedAmount === null
+      totalVestingAmount === null ||
+      totalReleasedAmount === null ||
+      vestingLockAmount === null
     ) {
       return null;
     }
     // If there's no vesting schedule(s), there's nothing to claim.
-    else if (totalVestedAmount.isZero()) {
+    else if (totalVestingAmount.isZero()) {
       return new BN(0);
     }
-
-    const vestingLock = locks.find(
-      (lock) => u8aToString(lock.id) === LockId.Vesting
-    );
-
-    const vestingLockAmount = vestingLock?.amount ?? new BN(0);
-
     // Nothing locked in vesting, which means that everything is
     // ready to be claimed.
-    if (vestingLockAmount.isZero()) {
-      return totalVestedAmount;
+    else if (vestingLockAmount.isZero()) {
+      return totalVestingAmount;
     }
 
     // Claimable = total released - (total vested - vesting lock amount).
-    return totalReleasedAmount.sub(totalVestedAmount.sub(vestingLockAmount));
-  }, [locks, totalVestedAmount, totalReleasedAmount]);
+    return totalReleasedAmount.sub(totalVestingAmount.sub(vestingLockAmount));
+  }, [locks, totalVestingAmount, totalReleasedAmount, vestingLockAmount]);
 
   return {
-    isVesting: vestingInfoOpt?.isSome ?? null,
+    isVesting: totalVestingAmount !== null && !totalVestingAmount.isZero(),
     vestingInfo: vestingInfoOpt,
     performVestTx: () => void performAgnosticVestTx(),
     vestTxStatus: status,
     claimableTokenAmount: claimableAmount,
-    hasClaimableTokens:
-      claimableAmount !== null && claimableAmount.gt(new BN(0)),
+    hasClaimableTokens: claimableAmount !== null && !claimableAmount.isZero(),
   };
 };
 
