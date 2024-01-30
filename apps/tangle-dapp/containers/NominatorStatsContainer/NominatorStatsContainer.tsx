@@ -215,7 +215,6 @@ const NominatorStatsContainer: FC = () => {
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawunbondedModalOpen}
       />
-      .
     </>
   );
 };

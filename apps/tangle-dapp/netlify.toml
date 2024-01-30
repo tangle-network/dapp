@@ -4,8 +4,3 @@ package = "@netlify/plugin-nextjs"
 [build]
 command = "yarn nx build tangle-dapp --verbose --skip-nx-cache"
 publish = "./dist/apps/tangle-dapp/.next"
-
-[[headers]]
-    for = "/*"
-    [headers.values]
-        Access-Control-Allow-Origin = "*"
