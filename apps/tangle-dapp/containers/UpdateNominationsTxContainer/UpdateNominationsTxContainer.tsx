@@ -72,18 +72,22 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [currentNominations, setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    setIsSubmitAndSignTxLoading(true);
-
     if (!isReadyToSubmitAndSignTx) return;
 
-    await executeTx(
-      () => nominateValidatorsEvm(walletAddress, selectedValidators),
-      () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
-      `Successfully updated nominations!`,
-      'Failed to update nominations!'
-    );
+    setIsSubmitAndSignTxLoading(true);
 
-    closeModal();
+    try {
+      await executeTx(
+        () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        `Successfully updated nominations!`,
+        'Failed to update nominations!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [
     isReadyToSubmitAndSignTx,
     executeTx,

@@ -57,14 +57,18 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsStopNominationTxLoading(true);
 
-    await executeTx(
-      () => stopNominationEvm(walletAddress),
-      () => stopNominationSubstrate(walletAddress),
-      `Successfully stopped nomination!`,
-      'Failed to stop nomination!'
-    );
-
-    closeModal();
+    try {
+      await executeTx(
+        () => stopNominationEvm(walletAddress),
+        () => stopNominationSubstrate(walletAddress),
+        `Successfully stopped nomination!`,
+        'Failed to stop nomination!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [closeModal, executeTx, walletAddress]);
 
   return (

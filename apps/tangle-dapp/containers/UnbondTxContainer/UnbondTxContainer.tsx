@@ -121,14 +121,18 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsUnbondTxLoading(true);
 
-    await executeTx(
-      () => unbondTokensEvm(walletAddress, amountToUnbond),
-      () => unbondTokensSubstrate(walletAddress, amountToUnbond),
-      `Successfully unbonded ${amountToUnbond} ${TOKEN_UNIT}.`,
-      'Failed to unbond tokens!'
-    );
-
-    closeModal();
+    try {
+      await executeTx(
+        () => unbondTokensEvm(walletAddress, amountToUnbond),
+        () => unbondTokensSubstrate(walletAddress, amountToUnbond),
+        `Successfully unbonded ${amountToUnbond} ${TOKEN_UNIT}.`,
+        'Failed to unbond tokens!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [amountToUnbond, closeModal, executeTx, walletAddress]);
 
   return (

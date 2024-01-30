@@ -268,17 +268,12 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
     try {
       await executeDelegate();
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [closeModal, executeDelegate, notificationApi]);
+  }, [closeModal, executeDelegate]);
 
   return (
     <Modal open>

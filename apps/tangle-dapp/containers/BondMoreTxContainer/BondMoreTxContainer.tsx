@@ -76,14 +76,18 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsBondMoreTxLoading(true);
 
-    await executeTx(
-      () => bondExtraTokensEvm(walletAddress, amountToBond),
-      () => bondExtraTokensSubstrate(walletAddress, amountToBond),
-      `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
-      'Failed to bond extra tokens!'
-    );
-
-    closeModal();
+    try {
+      await executeTx(
+        () => bondExtraTokensEvm(walletAddress, amountToBond),
+        () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+        `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
+        'Failed to bond extra tokens!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [amountToBond, closeModal, executeTx, walletAddress]);
 
   return (

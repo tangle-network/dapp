@@ -95,15 +95,20 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsRebondTxLoading(true);
 
-    await executeTx(
-      () => rebondTokensEvm(walletAddress, amountToRebond),
-      () => rebondTokensSubstrate(walletAddress, amountToRebond),
-      `Successfully rebonded ${amountToRebond} ${TOKEN_UNIT}.`,
-      'Failed to rebond tokens!'
-    );
-
-    closeModal();
+    try {
+      await executeTx(
+        () => rebondTokensEvm(walletAddress, amountToRebond),
+        () => rebondTokensSubstrate(walletAddress, amountToRebond),
+        `Successfully rebonded ${amountToRebond} ${TOKEN_UNIT}.`,
+        'Failed to rebond tokens!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [amountToRebond, closeModal, executeTx, walletAddress]);
+
 
   return (
     <Modal open>

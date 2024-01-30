@@ -69,16 +69,20 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsUpdatePaymentDestinationTxLoading(true);
 
-    await executeTx(
-      () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
-      () =>
-        updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
-      `Successfully updated payment destination to ${paymentDestination}.`,
-      'Failed to update payment destination!'
-    );
-
-    closeModal();
+    try {
+      await executeTx(
+        () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+        () => updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
+        `Successfully updated payment destination to ${paymentDestination}.`,
+        'Failed to update payment destination!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [closeModal, executeTx, paymentDestination, walletAddress]);
+
 
   if (currentPaymentDestinationError) {
     notificationApi({

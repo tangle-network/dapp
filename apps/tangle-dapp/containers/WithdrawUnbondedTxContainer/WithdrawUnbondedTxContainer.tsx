@@ -84,23 +84,30 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const submitAndSignTx = useCallback(async () => {
     setIsWithdrawUnbondedTxLoading(true);
 
-    await executeTx(
-      async () => {
-        const slashingSpans = await getSlashingSpans(substrateAddress);
-        return withdrawUnbondedTokensEvm(walletAddress, Number(slashingSpans));
-      },
-      async () => {
-        const slashingSpans = await getSlashingSpans(substrateAddress);
-        return withdrawUnbondedTokensSubstrate(
-          walletAddress,
-          Number(slashingSpans)
-        );
-      },
-      `Successfully withdraw!`,
-      'Failed to withdraw tokens!'
-    );
-
-    closeModal();
+    try {
+      await executeTx(
+        async () => {
+          const slashingSpans = await getSlashingSpans(substrateAddress);
+          return withdrawUnbondedTokensEvm(
+            walletAddress,
+            Number(slashingSpans)
+          );
+        },
+        async () => {
+          const slashingSpans = await getSlashingSpans(substrateAddress);
+          return withdrawUnbondedTokensSubstrate(
+            walletAddress,
+            Number(slashingSpans)
+          );
+        },
+        `Successfully withdraw!`,
+        'Failed to withdraw tokens!'
+      );
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
   }, [closeModal, executeTx, substrateAddress, walletAddress]);
 
   const onRebondClick = () => {
