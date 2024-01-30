@@ -20,7 +20,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, JSX, useState } from 'react';
 
+import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
+import { TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
@@ -35,9 +37,15 @@ const BalancesTableContainer: FC = () => {
         <div className="flex flex-col w-full">
           <HeaderRow title="Asset" />
 
-          <AssetRow title="Transferrable Balance" />
+          <AssetRow
+            title="Transferrable Balance"
+            tooltip="The amount of tokens you can freely transfer right now."
+          />
 
-          <AssetRow title="Locked Balance" />
+          <AssetRow
+            title="Locked Balance"
+            tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
+          />
         </div>
 
         {/* Balance column */}
@@ -97,7 +105,8 @@ const HeaderRow: FC<{ title: string }> = ({ title }) => {
 /** @internal */
 const AssetRow: FC<{
   title: string;
-}> = ({ title }) => {
+  tooltip?: string;
+}> = ({ title, tooltip }) => {
   return (
     <div className="flex px-3 py-3 gap-6">
       <div className="flex flex-row items-center gap-1">
@@ -106,13 +115,19 @@ const AssetRow: FC<{
         </div>
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
-          TNT
+          {TOKEN_UNIT}
         </Typography>
       </div>
 
       <Typography variant="body1" fw="semibold" className="whitespace-nowrap">
         {title}
       </Typography>
+
+      {tooltip !== undefined && (
+        <InfoIconWithTooltip
+          content={<span className="block text-center">{tooltip}</span>}
+        />
+      )}
     </div>
   );
 };

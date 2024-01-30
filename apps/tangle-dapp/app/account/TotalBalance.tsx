@@ -1,6 +1,7 @@
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
+import { InfoIconWithTooltip } from '../../components';
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
 import { TOKEN_UNIT } from '../../constants/polkadot';
@@ -23,6 +24,16 @@ const TotalBalance: FC = () => {
           </Typography>
 
           <HiddenValueEye />
+
+          <InfoIconWithTooltip
+            content={
+              <span className="block text-center">
+                The total balance is defined as:{' '}
+                <strong>Transferrable + locked</strong> balances. This includes
+                tokens locked in staking, vesting, and more.
+              </span>
+            }
+          />
         </div>
 
         <div className="flex items-center gap-4">

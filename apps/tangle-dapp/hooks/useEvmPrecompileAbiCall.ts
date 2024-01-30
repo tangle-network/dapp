@@ -13,15 +13,16 @@ import {
   Precompile,
 } from '../constants/evmPrecompiles';
 import useEvmAddress from './useEvmAddress';
+import { EvmAddressOrHash } from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 
 // TODO: For some reason, Viem returns `any` for the tx receipt. Perhaps it is because it has no knowledge of the network, and thus no knowledge of its produced tx receipts. As a temporary workaround, use this custom type.
 type TxReceipt = {
-  transactionHash: string;
+  transactionHash: EvmAddressOrHash;
   transactionIndex: number;
-  blockHash: string;
-  from: string;
-  to: string;
+  blockHash: EvmAddressOrHash;
+  from: EvmAddressOrHash;
+  to: EvmAddressOrHash;
   blockNumber: bigint;
   cumulativeGasUsed: bigint;
   gasUsed: bigint;
@@ -71,7 +72,7 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
       abi: getAbiForPrecompile(precompile),
       functionName: functionName,
       args,
-      account: ensureHex(activeEvmAddress),
+      account: activeEvmAddress,
     });
 
     // TODO: Handle errors/failure.

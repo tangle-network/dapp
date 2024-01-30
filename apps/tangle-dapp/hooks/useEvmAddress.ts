@@ -1,7 +1,9 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { useMemo } from 'react';
 
+import { isEvmAddress } from '../utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
+
+export type EvmAddressOrHash = `0x${string}`;
 
 /**
  * Obtain the EVM address of the active account, if any.
@@ -9,16 +11,13 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress = () => {
+const useEvmAddress = (): EvmAddressOrHash | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {
     // Wait for the active account to be set, and ensure
     // that the active account is an EVM account.
-    if (
-      activeAccountAddress === null ||
-      !isEthereumAddress(activeAccountAddress)
-    ) {
+    if (activeAccountAddress === null || !isEvmAddress(activeAccountAddress)) {
       return null;
     }
 
