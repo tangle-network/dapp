@@ -5,10 +5,10 @@ export type PayoutTxProps = {
   era: string;
 };
 
-export type PayoutTxContainerProps = {
+export type PayoutAllTxContainerProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  payoutTxProps: PayoutTxProps;
+  validatorsAndEras: PayoutTxProps[];
   payouts: Payout[];
   updatePayouts: (payouts: Payout[]) => void;
 };

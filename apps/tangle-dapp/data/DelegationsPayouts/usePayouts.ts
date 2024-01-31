@@ -55,7 +55,7 @@ export default function usePayouts(
           .entries()
           .subscribe(async (points) => {
             const allRewards: {
-              era: string;
+              era: number;
               totalRewardPoints: number;
               validator: string;
               validatorRewardPoints: number;
@@ -66,7 +66,9 @@ export default function usePayouts(
             if (myNominations.length > 0) {
               myNominations.forEach((validator) => {
                 points.forEach((point) => {
-                  const era = point[0].toHuman()?.toString();
+                  const era = Number(
+                    point[0].toHuman()?.toString().replace(/,/g, '')
+                  );
 
                   if (era) {
                     const rewards = point[1].toHuman();
@@ -116,7 +118,9 @@ export default function usePayouts(
 
                     const claimedEras = validatorLedger
                       .unwrap()
-                      .claimedRewards.map((era) => era.toString());
+                      .claimedRewards.map((era) =>
+                        Number(era.toString().replace(/,/g, ''))
+                      );
 
                     if (claimedEras.includes(era)) return;
 
@@ -140,7 +144,7 @@ export default function usePayouts(
 
                         const eraStaker =
                           await apiPromise.query.staking.erasStakers(
-                            Number(era),
+                            era,
                             validator
                           );
 

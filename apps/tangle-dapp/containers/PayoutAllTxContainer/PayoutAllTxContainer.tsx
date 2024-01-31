@@ -16,21 +16,21 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, payoutStakers } from '../../constants';
-import { PayoutTxContainerProps } from './types';
+import { batchPayoutStakers, evmPublicClient } from '../../constants';
+import { PayoutAllTxContainerProps } from './types';
 
-const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
+const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
-  payoutTxProps,
+  validatorsAndEras,
   payouts,
   updatePayouts,
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const { validatorAddress, era } = payoutTxProps;
 
-  const [isPayoutTxLoading, setIsPayoutTxLoading] = useState<boolean>(false);
+  const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] =
+    useState<boolean>(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -39,41 +39,55 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
-    return walletAddress && validatorAddress && era;
-  }, [era, validatorAddress, walletAddress]);
+    return validatorsAndEras.length > 0;
+  }, [validatorsAndEras]);
+
+  const payoutValidatorsAndEras = useMemo(() => {
+    return validatorsAndEras.slice(0, 10);
+  }, [validatorsAndEras]);
+
+  const allValidators = useMemo(() => {
+    return [...new Set(payoutValidatorsAndEras.map((v) => v.validatorAddress))];
+  }, [payoutValidatorsAndEras]);
+
+  const eraRange = useMemo(() => {
+    const eras = [...new Set(payoutValidatorsAndEras.map((v) => v.era))];
+
+    return [eras[0], eras[eras.length - 1]];
+  }, [payoutValidatorsAndEras]);
 
   const closeModal = useCallback(() => {
-    setIsPayoutTxLoading(false);
+    setIsPayoutAllTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    setIsPayoutTxLoading(true);
+    setIsPayoutAllTxLoading(true);
 
     try {
-      const payoutTxHash = await payoutStakers(
+      const payoutAllTxHash = await batchPayoutStakers(
         walletAddress,
-        validatorAddress,
-        Number(era)
+        payoutValidatorsAndEras
       );
 
-      if (!payoutTxHash) {
-        throw new Error('Failed to payout stakers!');
+      if (!payoutAllTxHash) {
+        throw new Error('Failed to payout all stakers!');
       }
 
-      const payoutTx = await evmPublicClient.waitForTransactionReceipt({
-        hash: payoutTxHash,
+      const payoutAllTx = await evmPublicClient.waitForTransactionReceipt({
+        hash: payoutAllTxHash,
       });
 
-      if (payoutTx.status !== 'success') {
-        throw new Error('Failed to payout stakers!');
+      if (payoutAllTx.status !== 'success') {
+        throw new Error('Failed to payout all stakers!');
       }
 
       const updatedPayouts = payouts.filter(
         (payout) =>
-          !(
-            payout.era === Number(era) &&
-            payout.validator.address === validatorAddress
+          !payoutValidatorsAndEras.find(
+            (v) =>
+              v.validatorAddress === payout.validator.address &&
+              v.era === payout.era.toString()
           )
       );
 
@@ -81,7 +95,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
 
       notificationApi({
         variant: 'success',
-        message: `Successfully claimed rewards for Era ${era}.`,
+        message: `Successfully claimed rewards for all stakers!`,
       });
     } catch (error: any) {
       notificationApi({
@@ -94,13 +108,12 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       closeModal();
     }
   }, [
-    closeModal,
-    era,
-    notificationApi,
+    walletAddress,
+    payoutValidatorsAndEras,
     payouts,
     updatePayouts,
-    validatorAddress,
-    walletAddress,
+    notificationApi,
+    closeModal,
   ]);
 
   return (
@@ -127,31 +140,36 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
               />
             </InputField.Root>
 
-            {/* Validator */}
-            <InputField.Root>
-              <InputField.Input
-                title="Payout Stakers For"
-                isAddressType={true}
-                addressTheme="substrate"
-                value={validatorAddress}
-                type="text"
-                readOnly
-              />
-            </InputField.Root>
+            <div className="flex flex-col gap-2">
+              {allValidators.map((validator) => (
+                <InputField.Root key={validator}>
+                  <InputField.Input
+                    title="Validator"
+                    isAddressType={true}
+                    addressTheme="substrate"
+                    value={validator}
+                    type="text"
+                    readOnly
+                  />
+                </InputField.Root>
+              ))}
+            </div>
 
-            {/* Era */}
-            <InputField.Root>
-              <InputField.Input
-                title="Request Payout for Era"
-                isAddressType={false}
-                value={era}
-                type="number"
-                readOnly
-              />
-            </InputField.Root>
+            {/* Eras */}
+            {eraRange.length > 0 && (
+              <InputField.Root>
+                <InputField.Input
+                  title="Request Payout for Eras"
+                  isAddressType={false}
+                  value={`${eraRange[0]} - ${eraRange[1]}`}
+                  type="text"
+                  readOnly
+                />
+              </InputField.Root>
+            )}
           </div>
 
-          <div className="flex flex-col gap-9">
+          <div className="flex flex-col gap-16">
             <Typography variant="body1" fw="normal">
               Any account can request payout for stakers, this is not limited to
               accounts that will be rewarded.
@@ -163,7 +181,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
             </Typography>
 
             <Typography variant="body1" fw="normal">
-              The UI puts a limit of 40 payouts at a time, where each payout is
+              The UI puts a limit of 10 payouts at a time, where each payout is
               a single validator for a single era.
             </Typography>
           </div>
@@ -173,7 +191,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
           <Button
             isFullWidth
             isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isPayoutTxLoading}
+            isLoading={isPayoutAllTxLoading}
             onClick={submitAndSignTx}
           >
             Confirm
@@ -190,4 +208,4 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   );
 };
 
-export default PayoutTxContainer;
+export default PayoutAllTxContainer;

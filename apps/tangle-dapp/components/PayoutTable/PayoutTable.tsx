@@ -22,13 +22,17 @@ import {
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
-import { Payout } from '../../types';
+import { AddressWithIdentity, Payout } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
 import { PayoutTableProps } from './types';
 
 const columnHelper = createColumnHelper<Payout>();
 
-const PayoutTable: FC<PayoutTableProps> = ({ data = [], pageSize }) => {
+const PayoutTable: FC<PayoutTableProps> = ({
+  data = [],
+  pageSize,
+  updateData,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [payoutTxProps, setPayoutTxProps] = useState<{
     validatorAddress: string;
@@ -90,7 +94,7 @@ const PayoutTable: FC<PayoutTableProps> = ({ data = [], pageSize }) => {
           <HeaderCell title="Nominators" className="justify-start" />
         ),
         cell: (props) => {
-          const nominators = props.getValue();
+          const nominators: AddressWithIdentity[] = props.getValue();
 
           return (
             <AvatarGroup total={nominators.length}>
@@ -139,7 +143,7 @@ const PayoutTable: FC<PayoutTableProps> = ({ data = [], pageSize }) => {
               onClick={() => {
                 setPayoutTxProps({
                   validatorAddress: rowData.validator.address,
-                  era: rowData.era,
+                  era: rowData.era.toString(),
                 });
                 setIsModalOpen(true);
               }}
@@ -184,6 +188,8 @@ const PayoutTable: FC<PayoutTableProps> = ({ data = [], pageSize }) => {
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         payoutTxProps={payoutTxProps}
+        payouts={data}
+        updatePayouts={updateData}
       />
     </>
   );

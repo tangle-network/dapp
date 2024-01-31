@@ -6,6 +6,7 @@ import {
 } from '@webb-tools/api-provider-environment';
 import {
   ActionsDropdown,
+  Button,
   notificationApi,
   TabContent,
   TableAndChartTabs,
@@ -17,8 +18,10 @@ import { ContainerSkeleton, TableStatus } from '../../components';
 import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
+import { Payout } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
+import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
@@ -31,6 +34,10 @@ const payoutsTableTab = 'Payouts';
 
 const DelegationsPayoutsContainer: FC = () => {
   const { activeAccount, loading } = useWebContext();
+  const [activeTab, setActiveTab] = useState(delegationsTableTab);
+
+  const [payouts, setPayouts] = useState<Payout[]>([]);
+  const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
 
   const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -39,6 +46,7 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
   const [isStopNominationModalOpen, setIsStopNominationModalOpen] =
     useState(false);
+  const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
 
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
@@ -61,7 +69,30 @@ const DelegationsPayoutsContainer: FC = () => {
   const { data: payoutsData, isLoading: payoutsIsLoading } =
     usePayouts(substrateAddress);
 
-  console.log('payoutsData', payoutsData);
+  useEffect(() => {
+    if (updatedPayouts.length > 0) {
+      setPayouts(updatedPayouts);
+    } else if (payoutsData && payoutsData.payouts) {
+      setPayouts(payoutsData.payouts);
+    }
+  }, [payoutsData, updatedPayouts]);
+
+  const validatorAndEras = useMemo(() => {
+    if (payouts) {
+      return payouts.map((payout) => ({
+        validatorAddress: payout.validator.address,
+        era: payout.era.toString(),
+      }));
+    }
+
+    return [];
+  }, [payouts]);
+
+  useEffect(() => {
+    if (!activeAccount?.address) {
+      setUpdatedPayouts([]);
+    }
+  }, [activeAccount?.address]);
 
   const { isMobile } = useCheckMobile();
 
@@ -104,13 +135,29 @@ const DelegationsPayoutsContainer: FC = () => {
         headerClassName="w-full overflow-x-auto"
         filterComponent={
           activeAccount?.address && !isFirstTimeNominator ? (
-            <RightButtonsContainer
-              onUpdateNominations={() => setIsUpdateNominationsModalOpen(true)}
-              onChangeRewardDestination={() => setIsUpdatePayeeModalOpen(true)}
-              onStopNomination={() => setIsStopNominationModalOpen(true)}
-            />
+            activeTab === delegationsTableTab ? (
+              <ManageButtonContainer
+                onUpdateNominations={() =>
+                  setIsUpdateNominationsModalOpen(true)
+                }
+                onChangeRewardDestination={() =>
+                  setIsUpdatePayeeModalOpen(true)
+                }
+                onStopNomination={() => setIsStopNominationModalOpen(true)}
+              />
+            ) : (
+              <div>
+                <Button
+                  variant="utility"
+                  onClick={() => setIsPayoutAllModalOpen(true)}
+                >
+                  Payout All
+                </Button>
+              </div>
+            )
           ) : null
         }
+        onValueChange={(tab) => setActiveTab(tab)}
       >
         {/* Delegations Table */}
         <TabContent value={delegationsTableTab}>
@@ -164,8 +211,7 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : payoutsIsLoading ? (
             <ContainerSkeleton />
-          ) : !payoutsData ||
-            (payoutsData && payoutsData.payouts.length === 0) ? (
+          ) : !payoutsData || payouts.length === 0 ? (
             <TableStatus
               title="Ready to Get Rewarded?"
               description="It looks like you haven't nominated any tokens yet. Start by choosing a validator to support and earn rewards!"
@@ -175,12 +221,13 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔍"
             />
-          ) : payoutsData ? (
+          ) : (
             <PayoutTableContainer
-              value={payoutsData.payouts}
+              value={payouts}
               pageSize={pageSize}
+              updateValue={setUpdatedPayouts}
             />
-          ) : null}
+          )}
         </TabContent>
       </TableAndChartTabs>
 
@@ -204,6 +251,14 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isStopNominationModalOpen}
         setIsModalOpen={setIsStopNominationModalOpen}
       />
+
+      <PayoutAllTxContainer
+        isModalOpen={isPayoutAllModalOpen}
+        setIsModalOpen={setIsPayoutAllModalOpen}
+        validatorsAndEras={validatorAndEras}
+        payouts={payouts}
+        updatePayouts={setUpdatedPayouts}
+      />
     </>
   );
 };
@@ -211,7 +266,7 @@ const DelegationsPayoutsContainer: FC = () => {
 export default DelegationsPayoutsContainer;
 
 /** @internal */
-function RightButtonsContainer(props: {
+function ManageButtonContainer(props: {
   onUpdateNominations: () => void;
   onChangeRewardDestination: () => void;
   onStopNomination: () => void;
@@ -229,12 +284,12 @@ function RightButtonsContainer(props: {
             onClick: onUpdateNominations,
           },
           {
-            label: 'Change Reward Destination',
-            onClick: onChangeRewardDestination,
-          },
-          {
             label: 'Stop Nominations',
             onClick: onStopNomination,
+          },
+          {
+            label: 'Change Reward Destination',
+            onClick: onChangeRewardDestination,
           },
         ]}
       />

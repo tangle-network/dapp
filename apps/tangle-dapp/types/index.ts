@@ -25,13 +25,13 @@ export enum PaymentDestination {
   Controller = 'Controller Account',
 }
 
-type AddressWithIdentity = {
+export type AddressWithIdentity = {
   address: string;
   identity: string;
 };
 
 export type Payout = {
-  era: string;
+  era: number;
   validator: AddressWithIdentity;
   validatorTotalStake: string;
   nominators: AddressWithIdentity[];
