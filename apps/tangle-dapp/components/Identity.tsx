@@ -5,6 +5,7 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  useHiddenValue,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
@@ -17,7 +18,6 @@ import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useHiddenValue from '../hooks/useHiddenValue';
 import { convertToSubstrateAddress } from '../utils';
 
 type Props = {

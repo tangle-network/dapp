@@ -5,9 +5,9 @@ import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import useHiddenValue from '../hooks/useHiddenValue';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
+import { useHiddenValue } from '@webb-tools/webb-ui-components';
 
 type Props = {
   keyValue: string;

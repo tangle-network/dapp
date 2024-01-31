@@ -1,9 +1,12 @@
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  HiddenValue,
+  HiddenValueEye,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
-import HiddenValue from '../../components/HiddenValue';
-import HiddenValueEye from '../../components/HiddenValueEye';
 import { TANGLE_TOKEN_UNIT } from '../../constants/polkadotApiUtils';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';

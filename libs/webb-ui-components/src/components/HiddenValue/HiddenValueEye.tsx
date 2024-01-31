@@ -1,10 +1,9 @@
 import { EyeClosedLine, EyeLineIcon } from '@webb-tools/icons';
-import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
 import { type FC } from 'react';
+import { IconButton } from '../buttons';
+import { useHiddenValue } from '../../hooks';
 
-import useHiddenValue from '../hooks/useHiddenValue';
-
-const HiddenValueEye: FC = () => {
+export const HiddenValueEye: FC = () => {
   const [isHiddenValue, setIsHiddenValue] = useHiddenValue();
 
   return (
@@ -13,5 +12,3 @@ const HiddenValueEye: FC = () => {
     </IconButton>
   );
 };
-
-export default HiddenValueEye;
