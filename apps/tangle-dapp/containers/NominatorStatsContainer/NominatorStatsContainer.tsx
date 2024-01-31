@@ -1,11 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import {
-  Button,
-  Divider,
-  notificationApi,
-} from '@webb-tools/webb-ui-components';
+import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
   WEBB_FAUCET_URL,
@@ -13,13 +9,13 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import { TOKEN_UNIT } from '../../constants';
+import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import { convertToSubstrateAddress } from '../../utils';
-import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -35,7 +31,6 @@ const NominatorStatsContainer: FC = () => {
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const [isWithdrawUnbondedModalOpen, setIsWithdrawunbondedModalOpen] =
     useState(false);
-  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -49,28 +44,11 @@ const NominatorStatsContainer: FC = () => {
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  useEffect(() => {
-    try {
-      const checkIfFirstTimeNominator = async () => {
-        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-          substrateAddress
-        );
-
-        setIsFirstTimeNominator(isFirstTimeNominator);
-      };
-
-      if (substrateAddress) {
-        checkIfFirstTimeNominator();
-      }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message:
-          error.message ||
-          'Failed to check if the user is a first time nominator.',
-      });
-    }
-  }, [substrateAddress, isDelegateModalOpen]);
+  const {
+    isFirstTimeNominator,
+    isFirstTimeNominatorLoading,
+    isFirstTimeNominatorError,
+  } = useIsFirstTimeNominatorSubscription(substrateAddress);
 
   return (
     <>
@@ -170,27 +148,29 @@ const NominatorStatsContainer: FC = () => {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              {!isFirstTimeNominator && (
-                <>
-                  <Button
-                    variant="utility"
-                    className="w-full"
-                    isDisabled={!activeAccount}
-                    onClick={() => setIsRebondModalOpen(true)}
-                  >
-                    Rebond
-                  </Button>
+              {isFirstTimeNominator === false &&
+                !isFirstTimeNominatorLoading &&
+                !isFirstTimeNominatorError && (
+                  <>
+                    <Button
+                      variant="utility"
+                      className="w-full"
+                      isDisabled={!activeAccount}
+                      onClick={() => setIsRebondModalOpen(true)}
+                    >
+                      Rebond
+                    </Button>
 
-                  <Button
-                    variant="utility"
-                    className="w-full"
-                    isDisabled={!activeAccount}
-                    onClick={() => setIsWithdrawunbondedModalOpen(true)}
-                  >
-                    Withdraw
-                  </Button>
-                </>
-              )}
+                    <Button
+                      variant="utility"
+                      className="w-full"
+                      isDisabled={!activeAccount}
+                      onClick={() => setIsWithdrawunbondedModalOpen(true)}
+                    >
+                      Withdraw
+                    </Button>
+                  </>
+                )}
             </div>
           </div>
         </div>

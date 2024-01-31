@@ -6,18 +6,17 @@ import {
 } from '@webb-tools/api-provider-environment';
 import {
   ActionsDropdown,
-  notificationApi,
   TabContent,
   TableAndChartTabs,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
+import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import { convertToSubstrateAddress } from '../../utils';
-import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
@@ -30,8 +29,6 @@ const payoutsTableTab = 'Payouts';
 
 const DelegationsPayoutsContainer: FC = () => {
   const { activeAccount, loading } = useWebContext();
-
-  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
     useState(false);
@@ -51,6 +48,9 @@ const DelegationsPayoutsContainer: FC = () => {
     error: delegatorsError,
   } = useDelegations(substrateAddress);
 
+  const { isFirstTimeNominator } =
+    useIsFirstTimeNominatorSubscription(substrateAddress);
+
   const currentNominations = useMemo(() => {
     if (!delegatorsData?.delegators) return [];
 
@@ -60,36 +60,6 @@ const DelegationsPayoutsContainer: FC = () => {
   const { isMobile } = useCheckMobile();
 
   const { toggleModal } = useConnectWallet();
-
-  useEffect(() => {
-    try {
-      const checkIfFirstTimeNominator = async () => {
-        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-          substrateAddress
-        );
-
-        setIsFirstTimeNominator(isFirstTimeNominator);
-      };
-
-      if (substrateAddress) {
-        checkIfFirstTimeNominator();
-      }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message:
-          error.message ||
-          'Failed to check if the user is a first time nominator.',
-      });
-    }
-  }, [substrateAddress]);
-
-  if (delegatorsError) {
-    notificationApi({
-      variant: 'error',
-      message: delegatorsError.message,
-    });
-  }
 
   return (
     <>

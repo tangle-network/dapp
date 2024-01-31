@@ -22,6 +22,7 @@ import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaym
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
@@ -37,7 +38,6 @@ import {
   nominateValidators as nominateValidatorsSubstrate,
   updatePaymentDestination as updatePaymentDestinationSubstrate,
 } from '../../utils/polkadot';
-import { isNominatorFirstTimeNominator } from '../../utils/polkadot';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
 import SelectDelegates from './SelectDelegates';
@@ -57,7 +57,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const executeTx = useExecuteTxWithNotification();
 
-  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
     DelegateTxSteps.BOND_TOKENS
   );
@@ -95,28 +94,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  useEffect(() => {
-    try {
-      const checkIfFirstTimeNominator = async () => {
-        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-          substrateAddress
-        );
-
-        setIsFirstTimeNominator(isFirstTimeNominator);
-      };
-
-      if (substrateAddress) {
-        checkIfFirstTimeNominator();
-      }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message:
-          error.message ||
-          'Failed to check if the user is a first time nominator.',
-      });
-    }
-  }, [notificationApi, substrateAddress]);
+  const {
+    isFirstTimeNominator,
+    isFirstTimeNominatorLoading,
+    isFirstTimeNominatorError,
+  } = useIsFirstTimeNominatorSubscription(substrateAddress);
 
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
@@ -273,6 +255,14 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       closeModal();
     }
   }, [closeModal, executeDelegate]);
+
+  if (
+    isFirstTimeNominator == null ||
+    isFirstTimeNominatorLoading ||
+    isFirstTimeNominatorError
+  ) {
+    return null;
+  }
 
   return (
     <Modal open>

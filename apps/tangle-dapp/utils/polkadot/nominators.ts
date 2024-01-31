@@ -52,33 +52,6 @@ export const getValidatorIdentity = async (
   return name;
 };
 
-export const isNominatorAlreadyBonded = async (
-  nominatorAddress: string
-): Promise<boolean> => {
-  const api = await getPolkadotApiPromise();
-
-  if (!api) throw new Error('Failed to get Polkadot API');
-
-  const isBondedInfo = await api.query.staking.bonded(nominatorAddress);
-
-  return isBondedInfo.isSome;
-};
-
-export const isNominatorFirstTimeNominator = async (
-  nominatorAddress: string
-): Promise<boolean> => {
-  const api = await getPolkadotApiPromise();
-
-  if (!api) throw new Error('Failed to get Polkadot API');
-
-  const isAlreadyBonded = await isNominatorAlreadyBonded(nominatorAddress);
-  const nominatedValidators = await api.query.staking.nominators(
-    nominatorAddress
-  );
-
-  return !isAlreadyBonded && !nominatedValidators.isSome;
-};
-
 export const getValidatorCommission = async (
   validatorAddress: string
 ): Promise<string | undefined> => {
