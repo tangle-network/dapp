@@ -93,7 +93,9 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : delegatorsIsLoading ? (
             <ContainerSkeleton />
-          ) : delegatorsData && delegatorsData.delegators.length === 0 ? (
+          ) : !delegatorsError &&
+            delegatorsData &&
+            delegatorsData.delegators.length === 0 ? (
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
@@ -103,7 +105,7 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔍"
             />
-          ) : delegatorsData ? (
+          ) : !delegatorsError && delegatorsData ? (
             <DelegatorTableContainer
               value={delegatorsData.delegators}
               pageSize={pageSize}
