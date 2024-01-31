@@ -3,7 +3,7 @@ import { BN, formatBalance } from '@polkadot/util';
 import { TANGLE_RPC_ENDPOINT as TESTNET_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { firstValueFrom } from 'rxjs';
 
-export const TOKEN_UNIT = 'tTNT';
+export const TANGLE_TOKEN_UNIT = 'tTNT';
 
 const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
   ? 'ws://127.0.0.1:9944'
@@ -73,7 +73,7 @@ export const formatTokenBalance = async (
 
   return formatBalance(balance, {
     decimals,
-    withUnit: includeUnit ? TOKEN_UNIT : false,
+    withUnit: includeUnit ? TANGLE_TOKEN_UNIT : false,
   });
 };
 

@@ -58,7 +58,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
     notificationApi(notificationOpts);
   }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
 
-  const perform = useCallback(async () => {
+  const execute = useCallback(async () => {
     // Prevent the consumer from re-triggering the transaction
     // while it's still processing. Also wait for the Substrate
     // address to be set.
@@ -70,12 +70,11 @@ function useSubstrateTx<T extends ISubmittableResult>(
       return;
     } else if (isEvmAccount) {
       throw new Error(
-        `Attempted to perform a Substrate transaction from an EVM account. Use an EVM-equivalent transaction or Precompile call instead.`
+        `Attempted to execute a Substrate transaction from an EVM account. Use an EVM-equivalent transaction or Precompile call instead.`
       );
     }
 
     let isMounted = true;
-
     const injector = await requestInjector();
     const api = await getPolkadotApiPromise();
     const tx = await factory(api, activeSubstrateAddress);
@@ -113,14 +112,8 @@ function useSubstrateTx<T extends ISubmittableResult>(
 
           setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
 
-          const error =
-            status.internalError ||
-            new Error(
-              'Unexpected error with no additional information available'
-            );
-
           if (!didSucceed) {
-            setError(error);
+            setError(ensureError(status.internalError));
           }
         }
       );
@@ -134,7 +127,11 @@ function useSubstrateTx<T extends ISubmittableResult>(
     };
   }, [activeSubstrateAddress, factory, isEvmAccount, requestInjector, status]);
 
-  // Timeout the transaction if it's taking too long.
+  // Timeout the transaction if it's taking too long. This
+  // won't cancel it, but it will alert the user that something
+  // may have gone wrong, and also unlock anything waiting for
+  // the transaction to complete, so that the user can try again
+  // if they want.
   useEffect(() => {
     const timeoutHandle =
       status === TxStatus.Processing
@@ -150,7 +147,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
     };
   }, [status, timeoutDelay]);
 
-  return { perform, status, error, hash };
+  return { execute, status, error, hash };
 }
 
 export default useSubstrateTx;

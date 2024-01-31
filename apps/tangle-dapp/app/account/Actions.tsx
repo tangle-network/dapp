@@ -56,7 +56,7 @@ const Actions: FC = () => {
 
   const {
     isVesting,
-    performVestTx,
+    executeVestTx,
     vestTxStatus,
     hasClaimableTokens: hasClaimableVestingTokens,
     claimableTokenAmount,
@@ -117,7 +117,7 @@ const Actions: FC = () => {
                   vestTxStatus === TxStatus.Processing ||
                   !hasClaimableVestingTokens
                 }
-                onClick={performVestTx}
+                onClick={executeVestTx}
                 isImportant={hasClaimableVestingTokens}
               />
             </TooltipTrigger>

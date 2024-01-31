@@ -40,7 +40,6 @@ const useAccountBalances = (): AccountBalances => {
             // reports that `num` is undefined for some reason. Might be
             // a gap in the type definitions of Polkadot JS.
             .add(accountInfo.data.miscFrozen || new BN(0));
-
           // Seems like Substrate has an interesting definition of what
           // "free" means. It's not the same as "transferrable", which
           // is what we want. See more here: https://docs.subsocial.network/rust-docs/latest/pallet_balances/struct.AccountData.html#structfield.free

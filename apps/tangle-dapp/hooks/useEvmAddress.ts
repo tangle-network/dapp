@@ -1,9 +1,8 @@
+import { AddressType } from '@webb-tools/dapp-config/types';
 import { useMemo } from 'react';
 
 import { isEvmAddress } from '../utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
-
-export type EvmAddressOrHash = `0x${string}`;
 
 /**
  * Obtain the EVM address of the active account, if any.
@@ -11,7 +10,7 @@ export type EvmAddressOrHash = `0x${string}`;
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress = (): EvmAddressOrHash | null => {
+const useEvmAddress = (): AddressType | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {

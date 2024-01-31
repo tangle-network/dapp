@@ -1,3 +1,4 @@
+import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useState } from 'react';
 
 import {
@@ -12,16 +13,15 @@ import {
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
 import useEvmAddress from './useEvmAddress';
-import { EvmAddressOrHash } from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 
 // TODO: For some reason, Viem returns `any` for the tx receipt. Perhaps it is because it has no knowledge of the network, and thus no knowledge of its produced tx receipts. As a temporary workaround, use this custom type.
 type TxReceipt = {
-  transactionHash: EvmAddressOrHash;
+  transactionHash: AddressType;
   transactionIndex: number;
-  blockHash: EvmAddressOrHash;
-  from: EvmAddressOrHash;
-  to: EvmAddressOrHash;
+  blockHash: AddressType;
+  from: AddressType;
+  to: AddressType;
   blockNumber: bigint;
   cumulativeGasUsed: bigint;
   gasUsed: bigint;
@@ -33,11 +33,11 @@ type TxReceipt = {
 };
 
 /**
- * Obtain a function that can be used to perform a precompile contract call.
+ * Obtain a function that can be used to execute a precompile contract call.
  *
  * @remarks
  * Precompiles run on the chain's EVM, and are used for performing actions
- * that are not possible to perform on the Substrate chain for EVM accounts
+ * that are not possible to execute on the Substrate chain for EVM accounts
  * (ex. those using MetaMask).
  *
  * This is used for performing actions from EVM accounts. Substrate accounts
@@ -52,7 +52,7 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
   const [error, setError] = useState<Error | null>(null);
   const activeEvmAddress = useEvmAddress();
 
-  const perform = useCallback(async () => {
+  const execute = useCallback(async () => {
     if (activeEvmAddress === null || status === TxStatus.Processing) {
       return;
     }
@@ -93,7 +93,7 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
     // TODO: Return clean up.
   }, [activeEvmAddress, args, precompile, status, functionName]);
 
-  return { perform, status, error };
+  return { execute, status, error };
 }
 
 export default useEvmPrecompileAbiCall;

@@ -21,7 +21,7 @@ import { FC, JSX, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
@@ -114,7 +114,7 @@ const AssetRow: FC<{
         </div>
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
-          {TOKEN_UNIT}
+          {TANGLE_TOKEN_UNIT}
         </Typography>
       </div>
 

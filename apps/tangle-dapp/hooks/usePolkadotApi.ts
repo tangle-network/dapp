@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { DependencyList } from 'react';
 import useSWR from 'swr';
 
-import { getPolkadotApiPromise } from '../constants/polkadot';
+import { getPolkadotApiPromise } from '../constants/polkadotApiUtils';
 import { SWRConfigConst } from '../constants/swr';
 import usePromise from './usePromise';
 
@@ -10,11 +10,36 @@ import usePromise from './usePromise';
  * Fetch data from the Polkadot API, using SWR to
  * cache the response and handle revalidation.
  *
- * @param swrConfig SWR configuration constants. These define the
- * unique key needed for caching and refresh interval for the SWR cache.
+ * @param swrConfig SWR (Stale-While-Revalidate) configuration constants.
+ * These define the unique key needed for caching and refresh interval for
+ * the SWR cache.
+ *
  * @param fetcher Function that takes the Polkadot API instance
  * and returns a promise that resolves to the data to be cached.
- * @returns Polkadot API instance, loading state, and cached data.
+ *
+ * @returns Polkadot API instance, request status, and fetched data.
+ *
+ * @remarks
+ * The SWR (Stale-While-Revalidate) caching & revalidation strategy
+ * is used under the hood, so its configuration is needed to configure
+ * the re-fetching polling interval. [Learn more about SWR](https://swr.vercel.app/).
+ *
+ * @example
+ * ```ts
+ * const { value: currentEra } = usePolkadotApi(SWR_ERA, (api) =>
+ *  api.query.staking.currentEra().then((era) => era.toString())
+ * );
+ *
+ * // ...
+ *
+ * return (
+ *   <div>
+ *     {currentEra !== null && (
+ *      <p>Current era: {currentEra}</p>
+ *     )}
+ *   </div>
+ * )
+ * ```
  */
 function usePolkadotApi<T>(
   swrConfig: SWRConfigConst,

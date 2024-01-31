@@ -61,7 +61,6 @@ export const TANGLE_DOCS_URL = 'https://docs.tangle.tools';
 export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
-export const WEBB_TANGLE_DOCS_URL = 'https://docs.tangle.tools/docs/';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
   'https://docs.webb.tools/docs/tangle-network/learn/incentives/#staking';
 

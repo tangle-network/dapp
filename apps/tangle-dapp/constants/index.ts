@@ -1,3 +1,3 @@
 export * from './evmActions';
-export * from './polkadot';
+export * from './polkadotApiUtils';
 export * from './swr';

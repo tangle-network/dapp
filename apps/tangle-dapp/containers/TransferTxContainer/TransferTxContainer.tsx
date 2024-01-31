@@ -9,11 +9,11 @@ import {
   RecipientInput,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
@@ -35,7 +35,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   );
 
   const {
-    perform: performTransferTx,
+    execute: executeTransferTx,
     status,
     error: txError,
   } = useSubstrateTx(
@@ -93,13 +93,13 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         className="w-full max-w-[550px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={reset}>
-          Transfer {TOKEN_UNIT} Tokens
+          Transfer {TANGLE_TOKEN_UNIT} Tokens
         </ModalHeader>
 
         <div className="p-9 flex flex-col gap-4">
           <Typography variant="body1" fw="normal">
-            Quickly transfer your {TOKEN_UNIT} tokens to a recipient on the
-            Tangle Network. You can choose to send to either an EVM or a
+            Quickly transfer your {TANGLE_TOKEN_UNIT} tokens to a recipient on
+            the Tangle Network. You can choose to send to either an EVM or a
             Substrate address.
           </Typography>
 
@@ -134,12 +134,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             isDisabled={!canInitiateTx}
             isLoading={!isReady}
             loadingText={getTxStatusText(status)}
-            onClick={performTransferTx}
+            onClick={executeTransferTx}
           >
             Send
           </Button>
 
-          <Link href={WEBB_TANGLE_DOCS_URL} target="_blank">
+          <Link href={TANGLE_DOCS_URL} target="_blank">
             <Button isFullWidth variant="secondary">
               Learn More
             </Button>

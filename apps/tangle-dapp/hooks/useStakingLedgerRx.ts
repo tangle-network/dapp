@@ -9,7 +9,7 @@ export type LedgerObservableFactory<T> = (
   api: ApiRx
 ) => Promise<T>;
 
-function usePolkadotLedger<T>(createObservable: LedgerObservableFactory<T>) {
+function useStakingLedgerRx<T>(createObservable: LedgerObservableFactory<T>) {
   return usePolkadotApiRx((api, activeAccountAddress) => {
     return (
       api.query.staking
@@ -21,4 +21,4 @@ function usePolkadotLedger<T>(createObservable: LedgerObservableFactory<T>) {
   });
 }
 
-export default usePolkadotLedger;
+export default useStakingLedgerRx;

@@ -31,13 +31,13 @@ function useAgnosticTx<
   const { notificationApi } = useWebbUI();
 
   const {
-    perform: performSubstrateTx,
+    execute: executeSubstrateTx,
     status: substrateTxStatus,
     error: substrateError,
   } = useSubstrateTx(substrateTxFactory);
 
   const {
-    perform: performEvmPrecompileAbiCall,
+    execute: executeEvmPrecompileAbiCall,
     status: evmTxStatus,
     error: evmError,
   } = useEvmPrecompileAbiCall(precompile, evmTarget, evmArguments);
@@ -87,21 +87,21 @@ function useAgnosticTx<
     agnosticError,
   ]);
 
-  const perform = useCallback(async () => {
+  const execute = useCallback(async () => {
     if (activeAccountAddress === null || isEvmAccount === null) {
       return;
     }
 
-    return isEvmAccount ? performEvmPrecompileAbiCall() : performSubstrateTx();
+    return isEvmAccount ? executeEvmPrecompileAbiCall() : executeSubstrateTx();
   }, [
     activeAccountAddress,
     isEvmAccount,
-    performEvmPrecompileAbiCall,
-    performSubstrateTx,
+    executeEvmPrecompileAbiCall,
+    executeSubstrateTx,
   ]);
 
   return {
-    perform: () => void perform(),
+    execute: () => void execute(),
     status: agnosticStatus,
   };
 }

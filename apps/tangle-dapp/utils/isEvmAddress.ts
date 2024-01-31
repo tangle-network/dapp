@@ -1,7 +1,6 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
+import { AddressType } from '@webb-tools/dapp-config/types';
 
-import { EvmAddressOrHash } from '../hooks/useEvmAddress';
-
-export function isEvmAddress(address: string): address is EvmAddressOrHash {
+export function isEvmAddress(address: string): address is AddressType {
   return isEthereumAddress(address);
 }

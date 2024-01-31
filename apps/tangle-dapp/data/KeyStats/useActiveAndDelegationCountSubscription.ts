@@ -4,7 +4,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { firstValueFrom, type Subscription } from 'rxjs';
 
-import { getPolkadotApiRx } from '../../constants/polkadot';
+import { getPolkadotApiRx } from '../../constants/polkadotApiUtils';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useActiveAndDelegationCountSubscription(

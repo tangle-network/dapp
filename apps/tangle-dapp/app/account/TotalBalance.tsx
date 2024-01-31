@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { InfoIconWithTooltip } from '../../components';
 import HiddenValue from '../../components/HiddenValue';
 import HiddenValueEye from '../../components/HiddenValueEye';
-import { TOKEN_UNIT } from '../../constants/polkadot';
+import { TANGLE_TOKEN_UNIT } from '../../constants/polkadotApiUtils';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 
@@ -48,7 +48,7 @@ const TotalBalance: FC = () => {
                 fw="normal"
                 className="!leading-none pb-1"
               >
-                {TOKEN_UNIT}
+                {TANGLE_TOKEN_UNIT}
               </Typography>
             </div>
           ) : (

@@ -3,7 +3,7 @@ import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN, u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { LockId } from '../constants/polkadot';
+import { LockId } from '../constants/polkadotApiUtils';
 import useAgnosticTx from './useAgnosticTx';
 import usePolkadotApiRx from './usePolkadotApiRx';
 import { TxStatus } from './useSubstrateTx';
@@ -51,7 +51,7 @@ export type Vesting = {
    * Vesting schedules that have not yet started (i.e. have not reached their
    * "cliff") will be omitted.
    */
-  performVestTx: () => void;
+  executeVestTx: () => void;
 };
 
 /**
@@ -62,7 +62,7 @@ export type Vesting = {
  * Substrate and EVM accounts.
  */
 const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
-  const { perform: performAgnosticVestTx, status } = useAgnosticTx(
+  const { execute: executeAgnosticVestTx, status } = useAgnosticTx(
     'vesting',
     'vest',
     [],
@@ -181,7 +181,7 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
   return {
     isVesting: totalVestingAmount !== null && !totalVestingAmount.isZero(),
     vestingInfo: vestingInfoOpt,
-    performVestTx: () => void performAgnosticVestTx(),
+    executeVestTx: () => void executeAgnosticVestTx(),
     vestTxStatus: status,
     claimableTokenAmount: claimableAmount,
     hasClaimableTokens: claimableAmount !== null && !claimableAmount.isZero(),

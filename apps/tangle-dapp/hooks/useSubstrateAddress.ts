@@ -13,7 +13,7 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * If the active account is an EVM account, its EVM address will be
  * converted into a Substrate address via hashing.
  */
-const useSubstrateAddress = () => {
+const useSubstrateAddress = (): string | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const substrateAddress = useMemo(() => {

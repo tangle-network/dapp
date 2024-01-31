@@ -6,14 +6,27 @@ import { SWRConfigConst } from '../constants';
 import usePolkadotApi from './usePolkadotApi';
 import useSubstrateAddress from './useSubstrateAddress';
 
-export type PolkadotLedgerFetcher<T> = (
+/**
+ * A function provided by the consumer of the `useStakingLedger`
+ * hook to select which data to fetch from the ledger.
+ */
+export type StakingLedgerFetcher<T> = (
   ledger: StakingLedger,
   api: ApiPromise
 ) => Promise<T>;
 
-function usePolkadotLedgerSWR<T>(
+/**
+ * Allows the retrieval of data from the Substrate staking ledger, by
+ * providing a function which selects the data needed.
+ *
+ * @remarks
+ * The SWR (Stale-While-Revalidate) caching & revalidation strategy
+ * is used under the hood, so its configuration is needed to configure
+ * the re-fetching polling interval. [Learn more about SWR](https://swr.vercel.app/).
+ */
+function useStakingLedger<T>(
   swrConfig: SWRConfigConst,
-  fetcher: PolkadotLedgerFetcher<T>,
+  fetcher: StakingLedgerFetcher<T>,
   deps: DependencyList = []
 ) {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -36,4 +49,4 @@ function usePolkadotLedgerSWR<T>(
   );
 }
 
-export default usePolkadotLedgerSWR;
+export default useStakingLedger;
