@@ -14,8 +14,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
 
       <main className="flex flex-col justify-between flex-1 h-full max-w-[1448px] m-auto px-10 overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col justify-between">
-          <div className="flex items-center justify-between py-6 mb-10">
+        <div className="flex flex-col justify-between space-y-5">
+          <div className="flex items-center justify-between py-6">
             <div className="flex items-center space-x-4 lg:space-x-0">
               <SideBarMenu />
 

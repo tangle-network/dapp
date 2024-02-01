@@ -1,9 +1,15 @@
 'use client';
 
-import { FundsLine, GiftLineIcon } from '@webb-tools/icons';
+import { isAddress } from '@polkadot/util-crypto';
+import {
+  CheckboxBlankCircleLine,
+  FundsLine,
+  GiftLineIcon,
+} from '@webb-tools/icons';
 import {
   Breadcrumbs as BreadcrumbsCmp,
   BreadcrumbsItem,
+  shortenString,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
@@ -35,10 +41,16 @@ const Breadcrumbs: FC = () => {
 
     return pathNames.map((pathName, index) => {
       const icon =
-        pathName in BREADCRUMB_ICONS ? BREADCRUMB_ICONS[pathName] : null;
+        pathName in BREADCRUMB_ICONS ? (
+          BREADCRUMB_ICONS[pathName]
+        ) : (
+          <CheckboxBlankCircleLine className="w-4 h-4" />
+        );
 
       return {
-        label: capitalize(pathName),
+        label: isAddress(pathName)
+          ? shortenString(pathName)
+          : capitalize(pathName),
         isLast: index === pathNames.length - 1,
         href: `/${pathNames.slice(0, index + 1).join('/')}`,
         icon,

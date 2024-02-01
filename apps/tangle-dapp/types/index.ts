@@ -1,3 +1,4 @@
+import { memo } from 'react';
 export type Validator = {
   address: string;
   identity: string;
@@ -17,6 +18,16 @@ export type Delegator = {
   commission: string;
   delegations: string;
   effectiveAmountStaked: string;
+};
+
+export type NodeSpecification = {
+  os: string;
+  version: string;
+  cpuCores: number;
+  memory: number;
+  isVirtualMachine: boolean;
+  linuxDistribution: string;
+  linuxKernel: string;
 };
 
 export enum PaymentDestination {
