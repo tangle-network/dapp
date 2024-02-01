@@ -1,9 +1,10 @@
 import { Option, Vec } from '@polkadot/types';
 import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
-import { BN, u8aToString } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { LockId } from '../constants/polkadotApiUtils';
+import { SubstrateLockId } from '../constants/polkadotApiUtils';
+import getSubstrateLockId from '../utils/getSubstrateLockId';
 import useAgnosticTx from './useAgnosticTx';
 import usePolkadotApiRx from './usePolkadotApiRx';
 import { TxStatus } from './useSubstrateTx';
@@ -21,7 +22,7 @@ export type Vesting = {
    * Information from Substrate vesting schedules associated with
    * the active account.
    */
-  vestingInfo: Option<Vec<PalletVestingVestingInfo>> | null;
+  schedulesOpt: Option<Vec<PalletVestingVestingInfo>> | null;
 
   /**
    * The amount of tokens that can be claimed by the active account.
@@ -55,8 +56,9 @@ export type Vesting = {
 };
 
 /**
- * Fetch essential vesting information from Substrate, and enable the
- * execution of the `vest` Substrate transaction for the active account.
+ * Fetch essential vesting information from Substrate such as the vesting
+ * schedules, and enable the execution of the `vest` Substrate transaction
+ * for the active account.
  *
  * This is an account-agnostic hook, meaning that it will work for both
  * Substrate and EVM accounts.
@@ -70,7 +72,7 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     notifyVestTxStatusUpdates
   );
 
-  const { data: vestingInfoOpt } = usePolkadotApiRx(
+  const { data: vestingSchedulesOpt } = usePolkadotApiRx(
     (api, activeSubstrateAddress) =>
       api.query.vesting.vesting(activeSubstrateAddress)
   );
@@ -89,35 +91,33 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     }
 
     const vestingLock = locks.find(
-      // For some reason, the lock id has an extra space at the end when
-      // converted to a string, so trim it.
-      (lock) => u8aToString(lock.id).trim() === LockId.Vesting
+      (lock) => getSubstrateLockId(lock.id) === SubstrateLockId.Vesting
     );
 
     return vestingLock?.amount ?? new BN(0);
   }, [locks]);
 
   const totalVestingAmount = useMemo(() => {
-    if (vestingInfoOpt === null || vestingInfoOpt.isNone) {
+    if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
       return null;
     }
 
-    const vestingInfo = vestingInfoOpt.unwrap();
+    const vestingSchedules = vestingSchedulesOpt.unwrap();
     let total = new BN(0);
 
-    for (const vestingSchedule of vestingInfo) {
+    for (const vestingSchedule of vestingSchedules) {
       total = total.add(vestingSchedule.locked);
     }
 
     return total;
-  }, [vestingInfoOpt]);
+  }, [vestingSchedulesOpt]);
 
   // The total amount of tokens that has been released by existing
   // vesting schedules so far, including vested/claimed tokens.
   const totalReleasedAmount = useMemo(() => {
     if (
-      vestingInfoOpt === null ||
-      vestingInfoOpt.isNone ||
+      vestingSchedulesOpt === null ||
+      vestingSchedulesOpt.isNone ||
       currentBlockNumber === null ||
       totalVestingAmount === null ||
       vestingLockAmount === null
@@ -125,10 +125,10 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
       return null;
     }
 
-    const vestingInfo = vestingInfoOpt.unwrap();
+    const vestingSchedules = vestingSchedulesOpt.unwrap();
     let totalReleased = new BN(0);
 
-    for (const vestingSchedule of vestingInfo) {
+    for (const vestingSchedule of vestingSchedules) {
       // This vesting schedule has not yet reached its "cliff", so
       // omit it since it is not relevant for the claimable amount.
       if (vestingSchedule.startingBlock.gt(currentBlockNumber)) {
@@ -151,7 +151,7 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
   }, [
     currentBlockNumber,
     totalVestingAmount,
-    vestingInfoOpt,
+    vestingSchedulesOpt,
     vestingLockAmount,
   ]);
 
@@ -180,7 +180,7 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
 
   return {
     isVesting: totalVestingAmount !== null && !totalVestingAmount.isZero(),
-    vestingInfo: vestingInfoOpt,
+    schedulesOpt: vestingSchedulesOpt,
     executeVestTx: () => void executeAgnosticVestTx(),
     vestTxStatus: status,
     claimableTokenAmount: claimableAmount,

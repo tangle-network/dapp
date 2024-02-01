@@ -23,7 +23,7 @@ export type ObservableFactory<T> = (
  *
  * @example
  * ```ts
- * const { data: vestingInfoOpt } = usePolkadotApiRx(
+ * const { data: vestingSchedulesOpt } = usePolkadotApiRx(
  *   (api, activeSubstrateAddress) =>
  *     api.query.vesting.vesting(activeSubstrateAddress)
  * );

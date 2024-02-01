@@ -11,9 +11,12 @@ const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
 
 const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 
-export enum LockId {
+export enum SubstrateLockId {
   Vesting = 'vesting',
   Staking = 'staking',
+
+  // TODO: Need to account for the other lock types.
+  Other = 'other',
 }
 
 async function getOrCacheApiVariant<T>(

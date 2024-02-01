@@ -17,13 +17,17 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, JSX, useState } from 'react';
+import assert from 'assert';
+import { FC, JSX, useMemo, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { SubstrateLockId, TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useVesting from '../../hooks/useVesting';
+import getSubstrateLockId from '../../utils/getSubstrateLockId';
 
 const BalancesTableContainer: FC = () => {
   const { transferrable, locked } = useAccountBalances();
@@ -74,6 +78,7 @@ const BalancesTableContainer: FC = () => {
           <div className="flex flex-row justify-between">
             <BalanceRow amount={locked} />
 
+            {/* TODO: Do not show this action if there are no locks whatsoever. */}
             <BalanceAction
               Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
               tooltip={`${isDetailsCollapsed ? 'Show' : 'Collapse'} Details`}
@@ -133,8 +138,60 @@ const AssetRow: FC<{
   );
 };
 
+// TODO: Consider moving this to a separate file since it's getting quite big.
 /** @internal */
 const LockedBalanceDetails: FC = () => {
+  const { schedulesOpt: vestingSchedulesOpt, isVesting } = useVesting();
+
+  const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
+    api.query.balances.locks(activeSubstrateAddress)
+  );
+
+  const lockedInVesting = useMemo(() => {
+    if (locks === null) {
+      return null;
+    }
+
+    for (const lock of locks) {
+      // If the reason of the lock is vesting, then consider it.
+      if (getSubstrateLockId(lock.id) === SubstrateLockId.Vesting) {
+        return lock.amount;
+      }
+    }
+
+    return new BN(0);
+  }, [locks]);
+
+  const longestVestingScheduleEndingBlock = useMemo(() => {
+    if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
+      return null;
+    }
+
+    const vestingSchedules = vestingSchedulesOpt.unwrap();
+
+    assert(
+      vestingSchedules.length > 0,
+      'There should be at least one vesting schedule if the vesting schedules are not `None`'
+    );
+
+    const firstVestingSchedule = vestingSchedules[0];
+
+    let longestEndingBlockNumber = firstVestingSchedule.startingBlock.add(
+      firstVestingSchedule.locked.div(firstVestingSchedule.perBlock)
+    );
+
+    for (const schedule of vestingSchedules.slice(1)) {
+      const duration = schedule.locked.div(schedule.perBlock);
+      const endingBlockNumber = schedule.startingBlock.add(duration);
+
+      if (endingBlockNumber.gt(longestEndingBlockNumber)) {
+        longestEndingBlockNumber = endingBlockNumber;
+      }
+    }
+
+    return longestEndingBlockNumber;
+  }, [vestingSchedulesOpt]);
+
   return (
     <div className="flex flex-row dark:bg-mono-180 px-3 py-2 rounded-lg">
       <div className="flex flex-row w-full">
@@ -144,7 +201,7 @@ const LockedBalanceDetails: FC = () => {
             <HeaderRow title="Type" />
           </div>
 
-          <SmallPurpleChip title="Vesting" />
+          {isVesting && <SmallPurpleChip title="Vesting" />}
 
           <SmallPurpleChip title="Democracy" />
 
@@ -155,7 +212,11 @@ const LockedBalanceDetails: FC = () => {
         <div className="flex flex-col gap-6 w-full">
           <HeaderRow title="Unlocks At" />
 
-          <TextRow text="Block #100 / Era #90" />
+          {isVesting && (
+            <TextRow
+              text={`Block #${longestVestingScheduleEndingBlock} / Era #90`}
+            />
+          )}
 
           <TextRow text="Block #100 / Era #90" />
 
@@ -168,7 +229,7 @@ const LockedBalanceDetails: FC = () => {
         <HeaderRow title="Balance" />
 
         <div className="flex flex-row justify-between">
-          <BalanceRow amount={null} />
+          {isVesting && <BalanceRow amount={lockedInVesting} />}
 
           <div className="flex flex-row gap-1">
             <BalanceAction
@@ -234,13 +295,13 @@ const BalanceRow: FC<{
   const formattedBalance = useFormattedBalance(amount, true);
 
   return (
-    <div className="flex flex-col justify-between p-3 gap-6">
+    <div className="flex flex-col justify-between p-3 gap-6 flex-grow">
       {amount !== null ? (
         <Typography variant="body1" fw="semibold">
           {formattedBalance}
         </Typography>
       ) : (
-        <SkeletonLoader size="md" />
+        <SkeletonLoader className="max-w-[128px]" size="md" />
       )}
     </div>
   );
