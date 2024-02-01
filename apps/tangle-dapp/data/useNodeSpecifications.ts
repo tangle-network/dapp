@@ -16,7 +16,7 @@ const useNodeSpecifications = (validatorAddress: string) => {
   const [nodeSpecifications, setNodeSpecifications] = useState<
     NodeSpecification[]
   >([mock]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   return {

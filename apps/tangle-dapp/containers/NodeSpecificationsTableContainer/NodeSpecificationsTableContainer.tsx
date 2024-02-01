@@ -15,8 +15,9 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
+import ContainerSkeleton from '../../components/skeleton/ContainerSkeleton';
 import { HeaderCell } from '../../components/tableCells';
 import useNodeSpecifications from '../../data/useNodeSpecifications';
 import { NodeSpecification } from '../../types';
@@ -59,7 +60,9 @@ const columns = [
     },
   }),
   columnHelper.accessor('isVirtualMachine', {
-    header: () => <HeaderCell title="Memory" className="justify-start" />,
+    header: () => (
+      <HeaderCell title="Is Virtual Machine?" className="justify-start" />
+    ),
     cell: (props) => {
       return (
         <Chip
@@ -92,10 +95,11 @@ const columns = [
 const NodeSpecificationsTableContainer: FC<
   NodeSpecificationsTableContainerProps
 > = ({ validatorAddress }) => {
-  const { data } = useNodeSpecifications(validatorAddress);
+  const { data, isLoading, error } = useNodeSpecifications(validatorAddress);
+  const nodeSpecifications = useMemo(() => data.nodeSpecifications, [data]);
 
   const table = useReactTable({
-    data: data.nodeSpecifications,
+    data: nodeSpecifications,
     columns,
     filterFns: {
       fuzzy: fuzzyFilter,
@@ -114,18 +118,42 @@ const NodeSpecificationsTableContainer: FC<
       </Typography>
       <div
         className={cx(
-          'bg-glass dark:bg-glass_dark py-3 px-4 rounded-2xl overflow-x-auto',
+          'min-h-[120px] bg-glass dark:bg-glass_dark py-3 px-4 rounded-2xl overflow-x-auto',
+          'flex flex-col',
           'border border-mono-0 dark:border-mono-160'
         )}
       >
-        <Table
-          tableClassName="!bg-inherit block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
-          thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
-          trClassName="!bg-inherit cursor-pointer"
-          tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
-          tableProps={table}
-          totalRecords={data.nodeSpecifications.length}
-        />
+        {/* Loading */}
+        {isLoading && <ContainerSkeleton numOfRows={2} />}
+
+        {/* Error */}
+        {!isLoading && error && (
+          <div className="flex-1 flex items-center justify-center">
+            <Typography variant="body1">
+              Oops! There was an error when retrieving the data
+            </Typography>
+          </div>
+        )}
+
+        {!isLoading && !error && nodeSpecifications.length === 0 && (
+          <div className="flex-1 flex items-center justify-center">
+            <Typography variant="body1">
+              No node specifications from this validator was found!
+            </Typography>
+          </div>
+        )}
+
+        {/* Successfully get the data */}
+        {!isLoading && !error && nodeSpecifications.length > 0 && (
+          <Table
+            tableClassName="!bg-inherit block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
+            thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
+            trClassName="!bg-inherit cursor-pointer"
+            tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
+            tableProps={table}
+            totalRecords={nodeSpecifications.length}
+          />
+        )}
       </div>
     </div>
   );
