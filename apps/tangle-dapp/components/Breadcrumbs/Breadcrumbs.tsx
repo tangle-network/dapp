@@ -23,7 +23,7 @@ const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
 };
 
-const Breadcrumbs: FC = () => {
+const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
   const fullPathname = usePathname();
   const pathNames = fullPathname.split('/').filter((path) => path);
 
@@ -59,24 +59,26 @@ const Breadcrumbs: FC = () => {
   }, [pathNames]);
 
   return (
-    <BreadcrumbsCmp>
-      {breadCrumbs.map((breadcrumb, index) => (
-        /**
-         * Data on the client-side needs to be up-to-date when the user navigates to a page
-         * Therefore, do not need to prefetch routes in breadcrumb items
-         */
-        <Link key={index} href={breadcrumb.href} prefetch={false}>
-          <BreadcrumbsItem
-            icon={breadcrumb.icon}
-            className={cx('whitespace-nowrap', breadcrumb.className)}
-            textClassName="!text-[12px] lg:!text-[16px] normal-case"
-            isLast={breadcrumb.isLast}
-          >
-            {breadcrumb.label}
-          </BreadcrumbsItem>
-        </Link>
-      ))}
-    </BreadcrumbsCmp>
+    <div className={className}>
+      <BreadcrumbsCmp>
+        {breadCrumbs.map((breadcrumb, index) => (
+          /**
+           * Data on the client-side needs to be up-to-date when the user navigates to a page
+           * Therefore, do not need to prefetch routes in breadcrumb items
+           */
+          <Link key={index} href={breadcrumb.href} prefetch={false}>
+            <BreadcrumbsItem
+              icon={breadcrumb.icon}
+              className={cx('whitespace-nowrap', breadcrumb.className)}
+              textClassName="!text-[12px] lg:!text-[16px] normal-case"
+              isLast={breadcrumb.isLast}
+            >
+              {breadcrumb.label}
+            </BreadcrumbsItem>
+          </Link>
+        ))}
+      </BreadcrumbsCmp>
+    </div>
   );
 };
 

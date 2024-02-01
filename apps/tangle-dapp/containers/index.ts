@@ -7,6 +7,7 @@ export { Layout } from './Layout';
 export * from './NodeSpecificationsTableContainer';
 export * from './NominatorStatsContainer';
 export * from './RebondTxContainer';
+export * from './ServiceTablesContainer';
 export * from './UnbondTxContainer';
 export * from './UpdatePayeeTxContainer';
 export * from './ValidatorTablesContainer';

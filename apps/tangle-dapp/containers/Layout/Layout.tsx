@@ -19,11 +19,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             <div className="flex items-center space-x-4 lg:space-x-0">
               <SideBarMenu />
 
-              <Breadcrumbs />
+              <Breadcrumbs className="hidden md:block" />
             </div>
 
             <WalletAndChainContainer />
           </div>
+
+          <Breadcrumbs className="md:hidden !mt-0" />
 
           {children}
 

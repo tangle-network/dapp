@@ -116,6 +116,7 @@ const NodeSpecificationsTableContainer: FC<
       <Typography variant="h4" fw="bold">
         Node Specifications
       </Typography>
+
       <div
         className={cx(
           'min-h-[120px] bg-glass dark:bg-glass_dark py-3 px-4 rounded-2xl overflow-x-auto',

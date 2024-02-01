@@ -1,7 +1,10 @@
 import { isAddress } from '@polkadot/util-crypto';
 import { notFound } from 'next/navigation';
 
-import { NodeSpecificationsTableContainer } from '../../../containers';
+import {
+  NodeSpecificationsTableContainer,
+  ServiceTablesContainer,
+} from '../../../containers';
 
 export default function Index({
   params,
@@ -15,16 +18,11 @@ export default function Index({
   }
 
   return (
-    <div className="my-5">
-      <div>
-        {/* Validator Card */}
-
-        {/* Role  */}
-      </div>
+    <div className="my-5 space-y-10">
 
       <NodeSpecificationsTableContainer validatorAddress={validatorAddress} />
 
-      {/* Services */}
+      <ServiceTablesContainer validatorAddress={validatorAddress} />
     </div>
   );
 }

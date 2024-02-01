@@ -35,3 +35,16 @@ export enum PaymentDestination {
   Stash = 'Stash (do not increase the amount at stake)',
   Controller = 'Controller Account',
 }
+
+export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
+
+export type Service = {
+  serviceType: string;
+  roleType: RoleType;
+  initialJobId: number;
+  participants: string[];
+  thresholds?: number;
+  phase2Executions?: number;
+  earnings?: number;
+  expirationBlock: number;
+};
