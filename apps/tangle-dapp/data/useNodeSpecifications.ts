@@ -13,11 +13,11 @@ const mock: NodeSpecification = {
 };
 
 const useNodeSpecifications = (validatorAddress: string) => {
-  const [nodeSpecifications, setNodeSpecifications] = useState<
-    NodeSpecification[]
-  >([mock]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  // TODO: handle validatorAddress
+  console.log('validatorAddress :', validatorAddress);
+  const [nodeSpecifications] = useState<NodeSpecification[]>([mock]);
+  const [isLoading] = useState(false);
+  const [error] = useState<Error | null>(null);
 
   return {
     isLoading,

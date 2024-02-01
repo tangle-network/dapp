@@ -16,9 +16,7 @@ const pageSize = 10;
 const ACTIVE_SERVICES_TAB = 'Active Services';
 const PAST_SERVICES_TAB = 'Past Services';
 
-const ServiceTablesContainer: FC<ServiceTablesContainerProps> = ({
-  validatorAddress,
-}) => {
+const ServiceTablesContainer: FC<ServiceTablesContainerProps> = () => {
   const { data: activeServicesData, isLoading: activeServicesDataLoading } =
     useSWR([getActiveServices.name], ([, ...args]) =>
       getActiveServices(...args)
