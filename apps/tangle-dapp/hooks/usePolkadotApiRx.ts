@@ -1,8 +1,9 @@
 import { ApiRx } from '@polkadot/api';
 import { useEffect, useState } from 'react';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 
 import { getPolkadotApiRx } from '../constants/polkadotApiUtils';
+import ensureError from '../utils/ensureError';
 import usePromise from './usePromise';
 import useSubstrateAddress from './useSubstrateAddress';
 
@@ -47,24 +48,35 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   const [isLoading, setLoading] = useState(true);
   const activeSubstrateAddress = useSubstrateAddress();
   const { result: polkadotApiRx } = usePromise(getPolkadotApiRx, null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (activeSubstrateAddress === null || polkadotApiRx === null) {
       return;
     }
 
-    const subscription = factory(
-      polkadotApiRx,
-      activeSubstrateAddress
-    ).subscribe((newResult) => {
-      setResult(newResult);
-      setLoading(false);
-    });
+    const subscription = factory(polkadotApiRx, activeSubstrateAddress)
+      .pipe(
+        catchError((possibleError: unknown) => {
+          setError(ensureError(possibleError));
+          setLoading(false);
+
+          // By returning an empty observable, the subscription will be
+          // automatically completed, effectively unsubscribing from the
+          // observable. Since the empty observable emits nothing, the
+          // data/state is left unchanged.
+          return new Observable<T>();
+        })
+      )
+      .subscribe((newResult) => {
+        setResult(newResult);
+        setLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, [activeSubstrateAddress, factory, polkadotApiRx]);
 
-  return { data, isLoading };
+  return { data, isLoading, error };
 }
 
 export default usePolkadotApiRx;

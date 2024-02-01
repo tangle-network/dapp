@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import ensureError from '../utils/ensureError';
+
 /**
  * An utility hook that simplifies working with Promise objects
  * in React components. This abstracts away the need for manually
@@ -38,27 +40,42 @@ import { useEffect, useState } from 'react';
 function usePromise<T>(action: () => Promise<T>, fallbackValue: T) {
   const [result, setResult] = useState<T>(fallbackValue);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     setIsLoading(true);
 
-    action().then((newResult) => {
-      if (!isMounted) {
-        return;
-      }
+    action()
+      .then((newResult) => {
+        if (!isMounted) {
+          return;
+        }
 
-      setResult(newResult);
-      setIsLoading(false);
-    });
+        setResult(newResult);
+      })
+      .catch((possibleError: unknown) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setError(ensureError(possibleError));
+      })
+      .finally(() => {
+        if (!isMounted) {
+          return;
+        }
+
+        setIsLoading(false);
+      });
 
     return () => {
       isMounted = false;
     };
   }, [action]);
 
-  return { result, isLoading };
+  return { result, isLoading, error };
 }
 
 export default usePromise;

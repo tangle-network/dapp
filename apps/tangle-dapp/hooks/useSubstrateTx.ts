@@ -3,7 +3,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getPolkadotApiPromise } from '../constants';
 import ensureError from '../utils/ensureError';
@@ -35,6 +35,13 @@ function useSubstrateTx<T extends ISubmittableResult>(
   const { notificationApi } = useWebbUI();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const requestInjector = useCallback(async () => {
     if (activeSubstrateAddress === null) {
@@ -74,10 +81,21 @@ function useSubstrateTx<T extends ISubmittableResult>(
       );
     }
 
-    let isMounted = true;
     const injector = await requestInjector();
     const api = await getPolkadotApiPromise();
-    const tx = await factory(api, activeSubstrateAddress);
+    let tx: SubmittableExtrinsic<'promise', T> | null;
+
+    // The transaction factory may throw an error if it encounters
+    // a problem, such as invalid input data. Need to handle that case
+    // gracefully here.
+    try {
+      tx = await factory(api, activeSubstrateAddress);
+    } catch (possibleError: unknown) {
+      setError(ensureError(possibleError));
+      setStatus(TxStatus.Error);
+
+      return;
+    }
 
     // Factory is not yet ready to produce the transaction.
     // This is usually because the user hasn't yet connected their wallet.
@@ -86,8 +104,6 @@ function useSubstrateTx<T extends ISubmittableResult>(
     }
     // Wait until the injector is ready.
     else if (injector === null) {
-      return;
-    } else if (!isMounted) {
       return;
     }
 
@@ -102,7 +118,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
         activeSubstrateAddress,
         { signer: injector.signer },
         (status) => {
-          if (!isMounted) {
+          if (!isMountedRef.current) {
             return;
           }
 
@@ -121,10 +137,6 @@ function useSubstrateTx<T extends ISubmittableResult>(
       setStatus(TxStatus.Error);
       setError(ensureError(possibleError));
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [activeSubstrateAddress, factory, isEvmAccount, requestInjector, status]);
 
   // Timeout the transaction if it's taking too long. This

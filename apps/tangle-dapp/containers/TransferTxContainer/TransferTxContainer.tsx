@@ -66,7 +66,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setRecipientAddress('');
   }, [setIsModalOpen]);
 
-  // Close modal and reset state when the transaction is complete.
+  // Reset state when the transaction is complete.
   useEffect(() => {
     if (status === TxStatus.Complete) {
       reset();

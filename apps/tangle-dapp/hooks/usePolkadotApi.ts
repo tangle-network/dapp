@@ -1,9 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
-import { DependencyList } from 'react';
+import { DependencyList, useCallback, useState } from 'react';
 import useSWR from 'swr';
 
 import { getPolkadotApiPromise } from '../constants/polkadotApiUtils';
 import { SWRConfigConst } from '../constants/swr';
+import ensureError from '../utils/ensureError';
 import usePromise from './usePromise';
 
 /**
@@ -46,33 +47,45 @@ function usePolkadotApi<T>(
   fetcher: (api: ApiPromise) => Promise<T>,
   deps: DependencyList = []
 ) {
-  const { result: polkadotApi, isLoading: isApiLoading } =
-    usePromise<ApiPromise | null>(getPolkadotApiPromise, null);
+  const {
+    result: polkadotApi,
+    isLoading: isApiLoading,
+    error: apiError,
+  } = usePromise<ApiPromise | null>(getPolkadotApiPromise, null);
+
+  const [error, setError] = useState<Error | null>(apiError);
+
+  const runFetcher = useCallback(async () => {
+    // Wait until the Polkadot API is ready.
+    if (polkadotApi === null || error !== null) {
+      return Promise.resolve(null);
+    }
+
+    return fetcher(polkadotApi).catch((possibleError: unknown) => {
+      setError(ensureError(possibleError));
+
+      return null;
+    });
+  }, [error, fetcher, polkadotApi]);
 
   // Include the dependency list as part of the cache key.
   // This allows SWR to refresh the cache when the dependency
   // list changes.
   const dynamicKey = [swrConfig.cacheUniqueKey, isApiLoading, ...deps];
 
-  const response = useSWR(
-    dynamicKey,
-    async () => {
-      // Wait until the Polkadot API is ready.
-      if (polkadotApi === null) {
-        return Promise.resolve(null);
-      }
+  const response = useSWR(dynamicKey, runFetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    fallbackData: null,
+    refreshInterval: swrConfig.refreshInterval,
+  });
 
-      return fetcher(polkadotApi);
-    },
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      fallbackData: null,
-      refreshInterval: swrConfig.refreshInterval,
-    }
-  );
-
-  return { polkadotApi, isApiLoading, value: response.data };
+  return {
+    polkadotApi,
+    isApiLoading,
+    value: response.data,
+    error,
+  };
 }
 
 export default usePolkadotApi;

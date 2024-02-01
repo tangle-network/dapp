@@ -6,7 +6,7 @@ function ensureError(possibleError: unknown): Error {
   } else if (typeof possibleError === 'string') {
     return new Error(possibleError);
   } else if (isViemError(possibleError)) {
-    return new Error(possibleError.message);
+    return new Error(possibleError.shortMessage);
   }
 
   return new Error(
