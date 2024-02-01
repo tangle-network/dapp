@@ -19,7 +19,6 @@ export default function Index({
 
   return (
     <div className="my-5 space-y-10">
-
       <NodeSpecificationsTableContainer validatorAddress={validatorAddress} />
 
       <ServiceTablesContainer validatorAddress={validatorAddress} />
