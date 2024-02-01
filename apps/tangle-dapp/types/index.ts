@@ -1,4 +1,3 @@
-import { memo } from 'react';
 export type Validator = {
   address: string;
   identity: string;
