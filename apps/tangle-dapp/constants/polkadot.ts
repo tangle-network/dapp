@@ -4,7 +4,7 @@ import { formatBalance } from '@polkadot/util';
 import { TANGLE_RPC_ENDPOINT as TESTNET_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { firstValueFrom } from 'rxjs';
 
-const TOKEN_UNIT = 'tTNT';
+export const TOKEN_UNIT = 'tTNT';
 
 const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
   ? 'ws://127.0.0.1:9944'

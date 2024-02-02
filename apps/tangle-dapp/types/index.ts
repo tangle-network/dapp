@@ -19,8 +19,31 @@ export type Delegator = {
   effectiveAmountStaked: string;
 };
 
+export type NodeSpecification = {
+  os: string;
+  version: string;
+  cpuCores: number;
+  memory: number;
+  isVirtualMachine: boolean;
+  linuxDistribution: string;
+  linuxKernel: string;
+};
+
 export enum PaymentDestination {
   Staked = 'Staked (increase the amount at stake)',
   Stash = 'Stash (do not increase the amount at stake)',
   Controller = 'Controller Account',
 }
+
+export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
+
+export type Service = {
+  serviceType: string;
+  roleType: RoleType;
+  initialJobId: number;
+  participants: string[];
+  thresholds?: number;
+  phase2Executions?: number;
+  earnings?: number;
+  expirationBlock: number;
+};

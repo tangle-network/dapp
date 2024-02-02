@@ -1,5 +1,8 @@
-import { InjectedConnectorOptions, WindowProvider } from '@wagmi/core';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import {
+  InjectedConnector,
+  InjectedConnectorOptions,
+  WindowProvider,
+} from '@wagmi/core';
 import { Chain } from 'wagmi';
 import { getExplicitInjectedProvider } from './utils';
 
