@@ -9,7 +9,10 @@ import {
 } from '../components/Notification';
 
 import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
-import { useDarkMode } from '../hooks/useDarkMode';
+import {
+  useDarkMode as useNormalDarkMode,
+  useNextDarkMode,
+} from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
 
 const initialContext: IWebbUIContext = {
@@ -32,7 +35,13 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   defaultThemeMode = 'dark',
   hasErrorBoudary,
   notificationOptions,
+  isNextApp = false,
 }) => {
+  const useDarkMode = useMemo(
+    () => (isNextApp ? useNextDarkMode : useNormalDarkMode),
+    [isNextApp]
+  );
+
   const [isDarkMode, toggleMode] = useDarkMode(defaultThemeMode);
 
   // The CustomMainComponent is a component that should be renderable inside of Pages -
