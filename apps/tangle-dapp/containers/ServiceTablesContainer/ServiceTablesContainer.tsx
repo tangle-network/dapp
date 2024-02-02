@@ -37,10 +37,6 @@ const ServiceTablesContainer: FC<ServiceTablesContainerProps> = () => {
           <TableStatus
             title="No Active Services Found"
             description="No ongoing MPC services at the moment. Active services will be listed here."
-            buttonText="Learn More"
-            buttonProps={{
-              onClick: () => window.open('#', '_blank'),
-            }}
             icon="⏳"
           />
         ) : activeServicesDataLoading || !activeServicesData ? (
@@ -58,10 +54,6 @@ const ServiceTablesContainer: FC<ServiceTablesContainerProps> = () => {
           <TableStatus
             title="No Past Services Found"
             description="No ongoing MPC services at the moment. Active services will be listed here."
-            buttonText="Learn More"
-            buttonProps={{
-              onClick: () => window.open('#', '_blank'),
-            }}
             icon="⏳"
           />
         ) : pastServicesDataLoading || !pastServicesData ? (

@@ -79,7 +79,13 @@ const columns = [
     },
   }),
   columnHelper.accessor('earnings', {
-    header: () => <HeaderCell title="Earnings" className="justify-start" />,
+    header: () => (
+      <HeaderCell
+        title="Earnings"
+        className="justify-start"
+        tooltip="The rewards received by each participant in the service"
+      />
+    ),
     cell: (props) => {
       const earnings = props.getValue();
       return earnings ? (
