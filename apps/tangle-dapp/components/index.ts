@@ -6,6 +6,7 @@ export * from './HeaderChip';
 export * from './InfoIconWithTooltip';
 export * from './KeyStatsItem';
 export * from './NominatorStatsItem';
+export * from './ServiceTable';
 export * from './sideBar';
 export * from './skeleton';
 export * from './TableStatus';

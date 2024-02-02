@@ -191,7 +191,7 @@
     "@nx/workspace": "16.9.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@rollup/plugin-commonjs": "^25.0.0",
-    "@rollup/plugin-image": "3.0.2",
+    "@rollup/plugin-image": "3.0.3",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-typescript": "^11.1.1",
