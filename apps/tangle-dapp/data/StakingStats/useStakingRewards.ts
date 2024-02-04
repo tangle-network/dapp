@@ -2,8 +2,9 @@ import { ApiPromise } from '@polkadot/api';
 import { StakingLedger } from '@polkadot/types/interfaces';
 import { BN } from '@polkadot/util';
 import assert from 'assert';
+import { useCallback } from 'react';
 
-import { SWR_STAKING_REWARDS } from '../../constants';
+import { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 import useStakingLedger, {
   StakingLedgerFetcher,
 } from '../../hooks/useStakingLedger';
@@ -88,8 +89,8 @@ const fetchPendingRewards: StakingLedgerFetcher<BN> = async (ledger, api) => {
 
 const usePendingStakingRewards = () => {
   const { value: pendingRewards } = useStakingLedger(
-    SWR_STAKING_REWARDS,
-    async (ledger, api) => fetchPendingRewards(ledger, api)
+    useCallback(async (ledger, api) => fetchPendingRewards(ledger, api), []),
+    PolkadotApiSwrKey.StakingRewards
   );
 
   return pendingRewards;

@@ -6,6 +6,7 @@ import {
   CoinsLineIcon,
   GiftLineIcon,
   ShieldKeyholeLineIcon,
+  StatusIndicator,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
@@ -15,11 +16,12 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { useRouter } from 'next/navigation';
-import { FC, ReactElement, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import useClaims from '../../hooks/useClaims';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
@@ -27,7 +29,7 @@ import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
 
 type ActionItemDef = {
   label: string;
-  path: InternalPathString;
+  internalHref: InternalPathString;
   icon: ReactElement<IconBase>;
 };
 
@@ -35,23 +37,17 @@ type ActionItemDef = {
 const staticActionItems: ActionItemDef[] = [
   {
     label: 'Nominate',
-    path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
+    internalHref: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
     icon: <CoinIcon size="lg" />,
   },
   {
     label: 'Payouts',
-    path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
+    internalHref: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
     icon: <CoinsLineIcon size="lg" />,
-  },
-  {
-    label: 'Claim Airdrop',
-    path: InternalPath.ClaimAirdrop,
-    icon: <GiftLineIcon size="lg" />,
   },
 ] as const;
 
 const Actions: FC = () => {
-  const router = useRouter();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const {
@@ -65,14 +61,7 @@ const Actions: FC = () => {
   const formattedClaimableTokenAmount =
     useFormattedBalance(claimableTokenAmount);
 
-  // Prefetch static actions that take the user
-  // to another internal page. Only do so on the
-  // first render, or when the router changes.
-  useEffect(() => {
-    for (const staticActionItem of staticActionItems) {
-      router.prefetch(staticActionItem.path);
-    }
-  }, [router]);
+  const { isAirdropEligible } = useClaims();
 
   return (
     <>
@@ -83,13 +72,29 @@ const Actions: FC = () => {
           onClick={() => setIsTransferModalOpen(true)}
         />
 
-        {staticActionItems.map(({ path, ...restItem }, index) => (
-          <ActionItem
-            key={index}
-            {...restItem}
-            onClick={() => router.push(path)}
-          />
+        {staticActionItems.map((props, index) => (
+          // Note that it's fine to use index as key here, since the
+          // items are static and won't change.
+          <ActionItem key={index} {...props} />
         ))}
+
+        {isAirdropEligible && (
+          <Tooltip>
+            <TooltipBody className="break-normal max-w-[250px] text-center">
+              Congratulations, you are eligible for Airdrop! Click here to visit
+              the Airdrop claim page.
+            </TooltipBody>
+
+            <TooltipTrigger>
+              <ActionItem
+                hasNotificationDot
+                label="Claim Airdrop"
+                icon={<GiftLineIcon size="lg" />}
+                internalHref={InternalPath.ClaimAirdrop}
+              />
+            </TooltipTrigger>
+          </Tooltip>
+        )}
 
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
@@ -118,7 +123,7 @@ const Actions: FC = () => {
                   !hasClaimableVestingTokens
                 }
                 onClick={executeVestTx}
-                isImportant={hasClaimableVestingTokens}
+                hasNotificationDot={hasClaimableVestingTokens}
               />
             </TooltipTrigger>
           </Tooltip>
@@ -142,36 +147,42 @@ const ActionItem = (props: {
   label: string;
   onClick?: () => void;
   isDisabled?: boolean;
-  isImportant?: boolean;
+  hasNotificationDot?: boolean;
+  internalHref?: InternalPathString;
 }) => {
   const {
     icon,
     label,
     onClick,
+    internalHref,
     isDisabled = false,
-    isImportant = false,
+    hasNotificationDot = false,
   } = props;
 
   const cursorClass = isDisabled ? '!cursor-not-allowed' : '';
   const isDisabledClass = isDisabled ? 'opacity-50' : '';
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
       return;
     }
 
     onClick();
-  };
+  }, [isDisabled, onClick]);
 
-  return (
+  const content = (
     <p className={twMerge('space-y-2', isDisabledClass, cursorClass)}>
       <IconButton
         className={twMerge('block mx-auto relative', cursorClass)}
         onClick={handleClick}
       >
         {/* Notification dot */}
-        {isImportant && (
-          <div className="absolute right-1 top-1 rounded-full w-3 h-3 bg-red-40"></div>
+        {hasNotificationDot && (
+          <StatusIndicator
+            variant="success"
+            size={12}
+            className="absolute right-0 top-0"
+          />
         )}
 
         {icon}
@@ -185,6 +196,12 @@ const ActionItem = (props: {
         {label}
       </Typography>
     </p>
+  );
+
+  return internalHref !== undefined ? (
+    <Link href={internalHref}>{content}</Link>
+  ) : (
+    content
   );
 };
 

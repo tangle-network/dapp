@@ -38,14 +38,14 @@ const BalancesTableContainer: FC = () => {
       <div className="flex flex-row">
         {/* Asset column */}
         <div className="flex flex-col w-full">
-          <HeaderRow title="Asset" />
+          <HeaderCell title="Asset" />
 
-          <AssetRow
+          <AssetCell
             title="Transferrable Balance"
             tooltip="The amount of tokens you can freely transfer right now."
           />
 
-          <AssetRow
+          <AssetCell
             title="Locked Balance"
             tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
           />
@@ -53,11 +53,11 @@ const BalancesTableContainer: FC = () => {
 
         {/* Balance column */}
         <div className="flex flex-col w-full">
-          <HeaderRow title="Balance" />
+          <HeaderCell title="Balance" />
 
           {/* Transferrable balance */}
           <div className="flex flex-row justify-between">
-            <BalanceRow amount={transferrable} />
+            <BalanceCell amount={transferrable} />
 
             <div className="flex flex-row gap-1">
               <BalanceAction
@@ -76,7 +76,7 @@ const BalancesTableContainer: FC = () => {
 
           {/* Locked balance */}
           <div className="flex flex-row justify-between">
-            <BalanceRow amount={locked} />
+            <BalanceCell amount={locked} />
 
             {/* TODO: Do not show this action if there are no locks whatsoever. */}
             <BalanceAction
@@ -94,7 +94,7 @@ const BalancesTableContainer: FC = () => {
 };
 
 /** @internal */
-const HeaderRow: FC<{ title: string }> = ({ title }) => {
+const HeaderCell: FC<{ title: string }> = ({ title }) => {
   return (
     <Typography
       variant="body1"
@@ -107,7 +107,7 @@ const HeaderRow: FC<{ title: string }> = ({ title }) => {
 };
 
 /** @internal */
-const AssetRow: FC<{
+const AssetCell: FC<{
   title: string;
   tooltip?: string;
 }> = ({ title, tooltip }) => {
@@ -141,114 +141,94 @@ const AssetRow: FC<{
 // TODO: Consider moving this to a separate file since it's getting quite big.
 /** @internal */
 const LockedBalanceDetails: FC = () => {
-  const { schedulesOpt: vestingSchedulesOpt, isVesting } = useVesting();
+  const { schedulesOpt: vestingSchedulesOpt } = useVesting();
 
   const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
     api.query.balances.locks(activeSubstrateAddress)
   );
 
-  const lockedInVesting = useMemo(() => {
-    if (locks === null) {
-      return null;
-    }
+  const vestingSchedulesLabels =
+    vestingSchedulesOpt !== null &&
+    !vestingSchedulesOpt.isNone &&
+    vestingSchedulesOpt
+      .unwrap()
+      .map((_schedule, index) => (
+        <SmallPurpleChip key={index} title="Vesting" />
+      ));
 
-    for (const lock of locks) {
-      // If the reason of the lock is vesting, then consider it.
-      if (getSubstrateLockId(lock.id) === SubstrateLockId.Vesting) {
-        return lock.amount;
-      }
-    }
+  const vestingSchedulesBalances =
+    vestingSchedulesOpt !== null &&
+    vestingSchedulesOpt.isSome &&
+    vestingSchedulesOpt.unwrap().map((schedule, index) => (
+      <div key={index} className="flex flex-row justify-between">
+        <BalanceCell amount={schedule.locked} />
 
-    return new BN(0);
-  }, [locks]);
+        <div className="flex flex-row gap-1">
+          <BalanceAction
+            Icon={SendPlanLineIcon}
+            tooltip="Send"
+            onClick={() => void 0}
+          />
 
-  const longestVestingScheduleEndingBlock = useMemo(() => {
-    if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
-      return null;
-    }
+          <BalanceAction
+            Icon={CoinIcon}
+            tooltip="Nominate"
+            onClick={() => void 0}
+          />
+        </div>
+      </div>
+    ));
 
-    const vestingSchedules = vestingSchedulesOpt.unwrap();
+  const vestingSchedulesUnlocking =
+    vestingSchedulesOpt !== null &&
+    !vestingSchedulesOpt.isNone &&
+    vestingSchedulesOpt.unwrap().map((schedule, index) => {
+      const endingBlockNumber = schedule.startingBlock.add(
+        schedule.locked.div(schedule.perBlock)
+      );
 
-    assert(
-      vestingSchedules.length > 0,
-      'There should be at least one vesting schedule if the vesting schedules are not `None`'
-    );
-
-    const firstVestingSchedule = vestingSchedules[0];
-
-    let longestEndingBlockNumber = firstVestingSchedule.startingBlock.add(
-      firstVestingSchedule.locked.div(firstVestingSchedule.perBlock)
-    );
-
-    for (const schedule of vestingSchedules.slice(1)) {
-      const duration = schedule.locked.div(schedule.perBlock);
-      const endingBlockNumber = schedule.startingBlock.add(duration);
-
-      if (endingBlockNumber.gt(longestEndingBlockNumber)) {
-        longestEndingBlockNumber = endingBlockNumber;
-      }
-    }
-
-    return longestEndingBlockNumber;
-  }, [vestingSchedulesOpt]);
+      return (
+        <TextCell key={index} text={`Block #${endingBlockNumber} / Era #90`} />
+      );
+    });
 
   return (
     <div className="flex flex-row dark:bg-mono-180 px-3 py-2 rounded-lg">
       <div className="flex flex-row w-full">
-        {/* Type column */}
+        {/* Type */}
         <div className="flex flex-col gap-6 w-full items-start">
           <div className="self-stretch">
-            <HeaderRow title="Type" />
+            <HeaderCell title="Type" />
           </div>
 
-          {isVesting && <SmallPurpleChip title="Vesting" />}
+          {vestingSchedulesLabels}
 
           <SmallPurpleChip title="Democracy" />
 
           <SmallPurpleChip title="Nomination" />
         </div>
 
-        {/* Unlock details column */}
+        {/* Unlocks at */}
         <div className="flex flex-col gap-6 w-full">
-          <HeaderRow title="Unlocks At" />
+          <HeaderCell title="Unlocks At" />
 
-          {isVesting && (
-            <TextRow
-              text={`Block #${longestVestingScheduleEndingBlock} / Era #90`}
-            />
-          )}
+          {vestingSchedulesUnlocking}
 
-          <TextRow text="Block #100 / Era #90" />
+          <TextCell text="Block #100 / Era #90" />
 
-          <TextRow text="Block #100 / Era #90" />
+          <TextCell text="Block #100 / Era #90" />
         </div>
       </div>
 
-      {/* Balance column */}
+      {/* Balances */}
       <div className="flex flex-col gap-6 w-full">
-        <HeaderRow title="Balance" />
+        <HeaderCell title="Balance" />
 
-        <div className="flex flex-row justify-between">
-          {isVesting && <BalanceRow amount={lockedInVesting} />}
+        {vestingSchedulesBalances}
 
-          <div className="flex flex-row gap-1">
-            <BalanceAction
-              Icon={SendPlanLineIcon}
-              tooltip="Send"
-              onClick={() => void 0}
-            />
+        <BalanceCell amount={null} />
 
-            <BalanceAction
-              Icon={CoinIcon}
-              tooltip="Nominate"
-              onClick={() => void 0}
-            />
-          </div>
-        </div>
-
-        <BalanceRow amount={null} />
-
-        <BalanceRow amount={null} />
+        <BalanceCell amount={null} />
       </div>
     </div>
   );
@@ -272,7 +252,7 @@ const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
 };
 
 /** @internal */
-const TextRow: FC<{
+const TextCell: FC<{
   text: string | null;
 }> = ({ text }) => {
   return (
@@ -289,7 +269,7 @@ const TextRow: FC<{
 };
 
 /** @internal */
-const BalanceRow: FC<{
+const BalanceCell: FC<{
   amount: BN | null;
 }> = ({ amount }) => {
   const formattedBalance = useFormattedBalance(amount, true);
