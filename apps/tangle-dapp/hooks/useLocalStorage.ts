@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 export enum LocalStorageKey {
   AirdropEligibilityCache = 'airdropEligibilityCache',
+  IsBalancesTableDetailsCollapsed = 'isBalancesTableDetailsCollapsed',
 }
 
 type AirdropEligibilityCache = {
@@ -11,6 +12,8 @@ type AirdropEligibilityCache = {
 export type LocalStorageValueType<T extends LocalStorageKey> =
   T extends LocalStorageKey.AirdropEligibilityCache
     ? AirdropEligibilityCache
+    : T extends LocalStorageKey.IsBalancesTableDetailsCollapsed
+    ? boolean
     : never;
 
 // TODO: During development cycles, changing local storage value types will lead to any users depending on that value to possibly break (because they may be stuck with an older type schema). Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
@@ -27,7 +30,10 @@ const useLocalStorage = <Key extends LocalStorageKey>(
 
     const item = window.localStorage.getItem(key);
 
-    return item ? (JSON.parse(item) as LocalStorageValueType<Key>) : null;
+    // TODO: Use zod to validate the value, this helps prevent logic errors.
+    return item !== null
+      ? (JSON.parse(item) as LocalStorageValueType<Key>)
+      : null;
   });
 
   const refresh = useCallback(() => {

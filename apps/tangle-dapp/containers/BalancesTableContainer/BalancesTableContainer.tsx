@@ -17,21 +17,31 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
-import { FC, JSX, useMemo, useState } from 'react';
+import { FC, JSX, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { SubstrateLockId, TANGLE_TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useVesting from '../../hooks/useVesting';
-import getSubstrateLockId from '../../utils/getSubstrateLockId';
 
 const BalancesTableContainer: FC = () => {
   const { transferrable, locked } = useAccountBalances();
-  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+
+  const { value: isDetailsCollapsedCached, set: setIsDetailsCollapsedCached } =
+    useLocalStorage(LocalStorageKey.IsBalancesTableDetailsCollapsed, false);
+
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(
+    isDetailsCollapsedCached ?? false
+  );
+
+  // Cache the collapsed state to local storage when it changes.
+  useEffect(() => {
+    setIsDetailsCollapsedCached(isDetailsCollapsed);
+  }, [isDetailsCollapsed, setIsDetailsCollapsedCached]);
 
   return (
     <GlassCard className="overflow-x-auto">

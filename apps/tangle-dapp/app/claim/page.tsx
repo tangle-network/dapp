@@ -72,7 +72,7 @@ export default function Page() {
       title: `You have unclaimed $${TANGLE_TOKEN_UNIT} Airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
-  }, [activeAccount, claimInfo]);
+  }, [activeAccount, claimInfo, setEligibilityCache]);
 
   const checkEligibility = useCallback(
     async (
