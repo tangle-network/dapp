@@ -212,7 +212,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
           : ['https://testnet-rpc.tangle.tools'],
       },
     },
-    network: EVMChainId.TangleTestnetEVM.toString(),
   } satisfies ChainConfig,
 
   // Localnet
@@ -240,7 +239,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
           },
         }
       : undefined,
-    network: EVMChainId.HermesLocalnet.toString(),
   } satisfies ChainConfig,
 
   [PresetTypedChainId.AthenaLocalnet]: {
@@ -267,7 +265,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
           },
         }
       : undefined,
-    network: EVMChainId.AthenaLocalnet.toString(),
   } satisfies ChainConfig,
 
   [PresetTypedChainId.DemeterLocalnet]: {
@@ -294,6 +291,5 @@ export const chainsConfig: Record<number, ChainConfig> = {
           },
         }
       : undefined,
-    network: EVMChainId.DemeterLocalnet.toString(),
   } satisfies ChainConfig,
 };
