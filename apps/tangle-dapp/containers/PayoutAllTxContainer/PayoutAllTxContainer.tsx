@@ -16,7 +16,12 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { batchPayoutStakers, evmPublicClient } from '../../utils/evm';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import {
+  batchPayoutStakers as batchPayoutStakersEvm,
+  evmPublicClient,
+} from '../../utils/evm';
+import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
 import { PayoutAllTxContainerProps } from './types';
 
 const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
@@ -28,6 +33,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] =
     useState<boolean>(false);
@@ -65,22 +71,13 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     setIsPayoutAllTxLoading(true);
 
     try {
-      const payoutAllTxHash = await batchPayoutStakers(
-        walletAddress,
-        payoutValidatorsAndEras
+      await executeTx(
+        () => batchPayoutStakersEvm(walletAddress, payoutValidatorsAndEras),
+        () =>
+          batchPayoutStakersSubstrate(walletAddress, payoutValidatorsAndEras),
+        `Successfully claimed rewards for all stakers!`,
+        'Failed to payout all stakers!'
       );
-
-      if (!payoutAllTxHash) {
-        throw new Error('Failed to payout all stakers!');
-      }
-
-      const payoutAllTx = await evmPublicClient.waitForTransactionReceipt({
-        hash: payoutAllTxHash,
-      });
-
-      if (payoutAllTx.status !== 'success') {
-        throw new Error('Failed to payout all stakers!');
-      }
 
       const updatedPayouts = payouts.filter(
         (payout) =>
@@ -92,27 +89,17 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       );
 
       updatePayouts(updatedPayouts);
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully claimed rewards for all stakers!`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
   }, [
-    walletAddress,
-    payoutValidatorsAndEras,
+    executeTx,
     payouts,
     updatePayouts,
-    notificationApi,
+    walletAddress,
+    payoutValidatorsAndEras,
     closeModal,
   ]);
 

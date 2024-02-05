@@ -16,7 +16,12 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, payoutStakers } from '../../utils/evm';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import {
+  evmPublicClient,
+  payoutStakers as payoutStakersEvm,
+} from '../../utils/evm';
+import { payoutStakers as payoutStakersSubstrate } from '../../utils/polkadot';
 import { PayoutTxContainerProps } from './types';
 
 const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
@@ -29,6 +34,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const { validatorAddress, era } = payoutTxProps;
+  const executeTx = useExecuteTxWithNotification();
 
   const [isPayoutTxLoading, setIsPayoutTxLoading] = useState<boolean>(false);
 
@@ -51,23 +57,12 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     setIsPayoutTxLoading(true);
 
     try {
-      const payoutTxHash = await payoutStakers(
-        walletAddress,
-        validatorAddress,
-        Number(era)
+      await executeTx(
+        () => payoutStakersEvm(walletAddress, validatorAddress, era),
+        () => payoutStakersSubstrate(walletAddress, validatorAddress, era),
+        `Successfully claimed rewards for Era ${era}.`,
+        'Failed to payout stakers!'
       );
-
-      if (!payoutTxHash) {
-        throw new Error('Failed to payout stakers!');
-      }
-
-      const payoutTx = await evmPublicClient.waitForTransactionReceipt({
-        hash: payoutTxHash,
-      });
-
-      if (payoutTx.status !== 'success') {
-        throw new Error('Failed to payout stakers!');
-      }
 
       const updatedPayouts = payouts.filter(
         (payout) =>
@@ -78,25 +73,15 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       );
 
       updatePayouts(updatedPayouts);
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully claimed rewards for Era ${era}.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
   }, [
     closeModal,
     era,
-    notificationApi,
+    executeTx,
     payouts,
     updatePayouts,
     validatorAddress,
