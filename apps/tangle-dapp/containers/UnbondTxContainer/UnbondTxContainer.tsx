@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -14,13 +13,16 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, unBondTokens } from '../../constants';
+import { TOKEN_UNIT } from '../../constants';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import {
   convertToSubstrateAddress,
   splitTokenValueAndSymbol,
 } from '../../utils';
+import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
+import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
 import { UnbondTxContainerProps } from './types';
 import UnbondTokens from './UnbondTokens';
 
@@ -30,6 +32,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
@@ -97,9 +100,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 
   const amountToUnbondError = useMemo(() => {
     if (remainingStakedBalanceToUnbond === 0) {
-      return 'You have unbonded all your staked tTNT!';
+      return `You have unbonded all your staked ${TOKEN_UNIT}!`;
     } else if (amountToUnbond > remainingStakedBalanceToUnbond) {
-      return `You can only unbond ${remainingStakedBalanceToUnbond} tTNT!`;
+      return `You can only unbond ${remainingStakedBalanceToUnbond} ${TOKEN_UNIT}!`;
     }
   }, [remainingStakedBalanceToUnbond, amountToUnbond]);
 
@@ -119,40 +122,18 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     setIsUnbondTxLoading(true);
 
     try {
-      const bondExtraTokensTxHash = await unBondTokens(
-        walletAddress,
-        amountToUnbond
+      await executeTx(
+        () => unbondTokensEvm(walletAddress, amountToUnbond),
+        () => unbondTokensSubstrate(walletAddress, amountToUnbond),
+        `Successfully unbonded ${amountToUnbond} ${TOKEN_UNIT}.`,
+        'Failed to unbond tokens!'
       );
-
-      if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
-        {
-          hash: bondExtraTokensTxHash,
-        }
-      );
-
-      if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully unbonded ${amountToUnbond} tTNT.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [amountToUnbond, closeModal, notificationApi, walletAddress]);
+  }, [amountToUnbond, closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>

@@ -1,2 +1,6 @@
-export * from './evm';
-export * from './polkadot';
+export const PAYMENT_DESTINATION_OPTIONS = [
+  'Staked (increase the amount at stake)',
+  'Stash (do not increase the amount at stake)',
+];
+
+export const TOKEN_UNIT = 'tTNT';

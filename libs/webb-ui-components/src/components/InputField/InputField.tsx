@@ -1,6 +1,10 @@
 import cx from 'classnames';
-import { createContext, forwardRef, useContext } from 'react';
+import { createContext, forwardRef, useContext, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import {
+  isEthereumAddress,
+  isAddress as isSubstrateAddress,
+} from '@polkadot/util-crypto';
 
 import { Typography } from '../../typography';
 import {
@@ -10,7 +14,7 @@ import {
   InputFieldSlotProps,
 } from './types';
 import { Avatar } from '../Avatar';
-import { shortenHex } from '../../utils';
+import { shortenHex, shortenString } from '../../utils';
 
 const InputFieldContext = createContext<InputFieldContextValue | undefined>(
   undefined
@@ -91,12 +95,24 @@ const InputFieldInput = forwardRef<
     isDisabled,
     error,
     isDisabledHoverStyle,
-    isAddressType = 'false',
+    isAddressType = false,
     title,
     type,
     value,
     ...inputProps
   } = props;
+
+  const inputValue = useMemo(
+    () =>
+      isAddressType
+        ? isEthereumAddress(String(value))
+          ? shortenHex(String(value), 7)
+          : isSubstrateAddress(String(value))
+          ? shortenString(String(value), 7)
+          : value
+        : value,
+    [isAddressType, value]
+  );
 
   const input = (
     <div className="flex flex-col gap-1">
@@ -109,12 +125,23 @@ const InputFieldInput = forwardRef<
       </Typography>
 
       <div className="flex gap-1 items-center">
-        {isAddressType && <Avatar value={String(value)} theme="ethereum" />}
+        {isAddressType && (
+          <Avatar
+            value={String(value)}
+            theme={
+              isEthereumAddress(String(value))
+                ? 'ethereum'
+                : isSubstrateAddress(String(value))
+                ? 'polkadot'
+                : undefined
+            }
+          />
+        )}
 
         <input
           spellCheck="false"
           type={type ?? 'text'}
-          value={isAddressType ? shortenHex(String(value), 7) : value}
+          value={inputValue}
           {...inputProps}
           disabled={context?.isDisabled ?? isDisabled}
           ref={forwardedRef}

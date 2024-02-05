@@ -1,7 +1,7 @@
 import { isHex } from '@polkadot/util';
 import { redirect } from 'next/navigation';
 
-import { getPolkadotApiPromise } from '../../../constants/polkadot';
+import { getPolkadotApiPromise } from '../../../utils/polkadot';
 import SuccessClient from './SuccessClient';
 
 const Page = async ({

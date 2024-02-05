@@ -5,6 +5,8 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useFormatReturnType from '../../hooks/useFormatReturnType';
+import { Delegator } from '../../types';
 import {
   formatTokenBalance,
   getPolkadotApiPromise,
@@ -12,9 +14,7 @@ import {
   getTotalNumberOfNominators,
   getValidatorCommission,
   getValidatorIdentity,
-} from '../../constants';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { Delegator } from '../../types';
+} from '../../utils/polkadot';
 
 export default function useDelegations(
   address: string,

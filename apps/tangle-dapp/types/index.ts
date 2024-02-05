@@ -1,3 +1,5 @@
+import '@webb-tools/tangle-substrate-types';
+
 export type Validator = {
   address: string;
   identity: string;

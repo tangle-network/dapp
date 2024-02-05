@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider/src/utils';
 import {
   Alert,
   Button,
@@ -9,13 +8,14 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { evmPublicClient, nominateValidators } from '../../constants';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
+import { nominateValidators as nominateValidatorsEvm } from '../../utils/evm';
+import { nominateValidators as nominateValidatorsSubstrate } from '../../utils/polkadot';
 import SelectValidators from './SelectValidators';
 import { UpdateNominationsTxContainerProps } from './types';
 
@@ -24,8 +24,8 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   setIsModalOpen,
   currentNominations,
 }) => {
-  const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
@@ -72,48 +72,27 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [currentNominations, setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    setIsSubmitAndSignTxLoading(true);
-
     if (!isReadyToSubmitAndSignTx) return;
 
+    setIsSubmitAndSignTxLoading(true);
+
     try {
-      const updateNominationsTxHash = await nominateValidators(
-        walletAddress,
-        selectedValidators
+      await executeTx(
+        () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        `Successfully updated nominations!`,
+        'Failed to update nominations!'
       );
-
-      if (!updateNominationsTxHash) {
-        throw new Error('Failed to update nominations!');
-      }
-
-      const updateNominationsTx =
-        await evmPublicClient.waitForTransactionReceipt({
-          hash: updateNominationsTxHash,
-        });
-
-      if (updateNominationsTx.status !== 'success') {
-        throw new Error('Failed to update nominations!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully updated nominations!`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
   }, [
     isReadyToSubmitAndSignTx,
+    executeTx,
     walletAddress,
     selectedValidators,
-    notificationApi,
     closeModal,
   ]);
 

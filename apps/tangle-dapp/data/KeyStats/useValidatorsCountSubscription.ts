@@ -4,8 +4,8 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { firstValueFrom, type Subscription } from 'rxjs';
 
-import { getPolkadotApiRx } from '../../constants/polkadot';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useValidatorCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
