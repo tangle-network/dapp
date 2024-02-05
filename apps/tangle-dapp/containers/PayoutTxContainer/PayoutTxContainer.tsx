@@ -16,7 +16,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, payoutStakers } from '../../constants';
+import { evmPublicClient, payoutStakers } from '../../utils/evm';
 import { PayoutTxContainerProps } from './types';
 
 const PayoutTxContainer: FC<PayoutTxContainerProps> = ({

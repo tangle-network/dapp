@@ -1,1 +1,1 @@
-export * from './HeaderChipsContainer';
+export { default as HeaderChipsContainer } from './HeaderChipsContainer';

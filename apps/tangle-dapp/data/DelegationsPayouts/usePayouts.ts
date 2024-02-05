@@ -5,15 +5,15 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useFormatReturnType from '../../hooks/useFormatReturnType';
+import { Payout } from '../../types';
 import {
   formatTokenBalance,
   getPolkadotApiPromise,
   getPolkadotApiRx,
   getValidatorCommission,
   getValidatorIdentity,
-} from '../../constants';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { Payout } from '../../types';
+} from '../../utils/polkadot';
 
 export default function usePayouts(
   address: string,

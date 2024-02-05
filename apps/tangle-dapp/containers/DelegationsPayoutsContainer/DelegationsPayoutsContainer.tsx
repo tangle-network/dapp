@@ -4,10 +4,10 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   ActionsDropdown,
   Button,
-  notificationApi,
   TabContent,
   TableAndChartTabs,
   useCheckMobile,
@@ -15,9 +15,9 @@ import {
 import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
-import { isNominatorFirstTimeNominator } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
+import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import { Payout } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -39,7 +39,6 @@ const DelegationsPayoutsContainer: FC = () => {
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
 
-  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
     useState(false);
@@ -51,6 +50,9 @@ const DelegationsPayoutsContainer: FC = () => {
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
+    if (isSubstrateAddress(activeAccount?.address))
+      return activeAccount.address;
+
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
@@ -59,6 +61,9 @@ const DelegationsPayoutsContainer: FC = () => {
     isLoading: delegatorsIsLoading,
     error: delegatorsError,
   } = useDelegations(substrateAddress);
+
+  const { isFirstTimeNominator } =
+    useIsFirstTimeNominatorSubscription(substrateAddress);
 
   const currentNominations = useMemo(() => {
     if (!delegatorsData?.delegators) return [];
@@ -97,36 +102,6 @@ const DelegationsPayoutsContainer: FC = () => {
   const { isMobile } = useCheckMobile();
 
   const { toggleModal } = useConnectWallet();
-
-  useEffect(() => {
-    try {
-      const checkIfFirstTimeNominator = async () => {
-        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-          substrateAddress
-        );
-
-        setIsFirstTimeNominator(isFirstTimeNominator);
-      };
-
-      if (substrateAddress) {
-        checkIfFirstTimeNominator();
-      }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message:
-          error.message ||
-          'Failed to check if the user is a first time nominator.',
-      });
-    }
-  }, [substrateAddress]);
-
-  if (delegatorsError) {
-    notificationApi({
-      variant: 'error',
-      message: delegatorsError.message,
-    });
-  }
 
   return (
     <>
@@ -176,7 +151,9 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : delegatorsIsLoading ? (
             <ContainerSkeleton />
-          ) : delegatorsData && delegatorsData.delegators.length === 0 ? (
+          ) : !delegatorsError &&
+            delegatorsData &&
+            delegatorsData.delegators.length === 0 ? (
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
@@ -186,7 +163,7 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔍"
             />
-          ) : delegatorsData ? (
+          ) : !delegatorsError && delegatorsData ? (
             <DelegatorTableContainer
               value={delegatorsData.delegators}
               pageSize={pageSize}

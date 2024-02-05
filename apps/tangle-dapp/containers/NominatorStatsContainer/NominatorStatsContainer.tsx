@@ -1,11 +1,8 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import {
-  Button,
-  Divider,
-  notificationApi,
-} from '@webb-tools/webb-ui-components';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
+import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
   WEBB_FAUCET_URL,
@@ -13,12 +10,12 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 import React from 'react';
 
-import { NominatorStatsItem } from '../../components';
-import { isNominatorFirstTimeNominator } from '../../constants';
-import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
+import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
+import { TOKEN_UNIT } from '../../constants';
+import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import { convertToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -26,7 +23,7 @@ import { RebondTxContainer } from '../RebondTxContainer';
 import { UnbondTxContainer } from '../UnbondTxContainer';
 import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 
-export const NominatorStatsContainer: FC = () => {
+const NominatorStatsContainer: FC = () => {
   const { activeAccount } = useWebContext();
 
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -35,7 +32,6 @@ export const NominatorStatsContainer: FC = () => {
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const [isWithdrawUnbondedModalOpen, setIsWithdrawunbondedModalOpen] =
     useState(false);
-  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -46,64 +42,17 @@ export const NominatorStatsContainer: FC = () => {
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
+    if (isSubstrateAddress(activeAccount?.address))
+      return activeAccount.address;
+
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
-    data: unbondingRemainingErasData,
-    error: unbondingRemainingErasError,
-  } = useUnbondingRemainingErasSubscription(substrateAddress);
-
-  useEffect(() => {
-    try {
-      const checkIfFirstTimeNominator = async () => {
-        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-          substrateAddress
-        );
-
-        setIsFirstTimeNominator(isFirstTimeNominator);
-      };
-
-      if (substrateAddress) {
-        checkIfFirstTimeNominator();
-      }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message:
-          error.message ||
-          'Failed to check if the user is a first time nominator.',
-      });
-    }
-  }, [substrateAddress]);
-
-  const unbondingRemainingErasTooltip = useMemo(() => {
-    if (unbondingRemainingErasError) {
-      notificationApi({
-        variant: 'error',
-        message: unbondingRemainingErasError.message,
-      });
-    }
-
-    if (!unbondingRemainingErasData?.value1) return null;
-
-    if (unbondingRemainingErasData.value1.length === 0) {
-      return 'You have no unbonding tokens.';
-    }
-
-    const elements = unbondingRemainingErasData.value1.map((era, index) => (
-      <React.Fragment key={index}>
-        <div className="text-center mb-2">
-          <p>
-            {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'} {era.amount}
-          </p>
-          {era.remainingEras > 0 && <p>{era.remainingEras} eras remaining</p>}
-        </div>
-      </React.Fragment>
-    ));
-
-    return <>{elements}</>;
-  }, [unbondingRemainingErasError, unbondingRemainingErasData?.value1]);
+    isFirstTimeNominator,
+    isFirstTimeNominatorLoading,
+    isFirstTimeNominatorError,
+  } = useIsFirstTimeNominatorSubscription(substrateAddress);
 
   return (
     <>
@@ -116,7 +65,7 @@ export const NominatorStatsContainer: FC = () => {
           )}
         >
           <NominatorStatsItem
-            title="Available tTNT in Wallet"
+            title={`Available ${TOKEN_UNIT} in Wallet`}
             type="Wallet Balance"
             address={walletAddress}
           />
@@ -126,7 +75,7 @@ export const NominatorStatsContainer: FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <Link href={WEBB_FAUCET_URL} target="_blank">
               <Button variant="utility" className="w-full">
-                Get tTNT
+                {`Get ${TOKEN_UNIT}`}
               </Button>
             </Link>
 
@@ -152,18 +101,13 @@ export const NominatorStatsContainer: FC = () => {
         >
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
-              title="Total Staked tTNT"
-              tooltip="Total Staked tTNT (bonded)."
+              title={`Total Staked ${TOKEN_UNIT}`}
+              tooltip={`Total Staked ${TOKEN_UNIT} (bonded).`}
               type="Total Staked"
               address={substrateAddress}
             />
 
-            <NominatorStatsItem
-              title="Unbonding tTNT"
-              tooltip={unbondingRemainingErasTooltip}
-              type="Unbonding Amount"
-              address={substrateAddress}
-            />
+            <UnbondingStatsItem address={substrateAddress} />
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -208,52 +152,49 @@ export const NominatorStatsContainer: FC = () => {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              {!isFirstTimeNominator && (
-                <>
-                  <Button
-                    variant="utility"
-                    className="w-full"
-                    isDisabled={!activeAccount}
-                    onClick={() => setIsRebondModalOpen(true)}
-                  >
-                    Rebond
-                  </Button>
+              {isFirstTimeNominator === false &&
+                !isFirstTimeNominatorLoading &&
+                !isFirstTimeNominatorError && (
+                  <>
+                    <Button
+                      variant="utility"
+                      className="w-full"
+                      isDisabled={!activeAccount}
+                      onClick={() => setIsRebondModalOpen(true)}
+                    >
+                      Rebond
+                    </Button>
 
-                  <Button
-                    variant="utility"
-                    className="w-full"
-                    isDisabled={!activeAccount}
-                    onClick={() => setIsWithdrawunbondedModalOpen(true)}
-                  >
-                    Withdraw
-                  </Button>
-                </>
-              )}
+                    <Button
+                      variant="utility"
+                      className="w-full"
+                      isDisabled={!activeAccount}
+                      onClick={() => setIsWithdrawunbondedModalOpen(true)}
+                    >
+                      Withdraw
+                    </Button>
+                  </>
+                )}
             </div>
           </div>
         </div>
       </div>
-
       <DelegateTxContainer
         isModalOpen={isDelegateModalOpen}
         setIsModalOpen={setIsDelegateModalOpen}
       />
-
       <BondMoreTxContainer
         isModalOpen={isBondMoreModalOpen}
         setIsModalOpen={setIsBondMoreModalOpen}
       />
-
       <UnbondTxContainer
         isModalOpen={isUnbondModalOpen}
         setIsModalOpen={setIsUnbondModalOpen}
       />
-
       <RebondTxContainer
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
       />
-
       <WithdrawUnbondedTxContainer
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawunbondedModalOpen}
@@ -261,3 +202,5 @@ export const NominatorStatsContainer: FC = () => {
     </>
   );
 };
+
+export default NominatorStatsContainer;

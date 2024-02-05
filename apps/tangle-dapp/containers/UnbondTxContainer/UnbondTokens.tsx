@@ -1,6 +1,7 @@
 import { Button, InputField, Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
+import { TOKEN_UNIT } from '../../constants';
 import { UnbondTokensProps } from './types';
 
 const UnbondTokens: FC<UnbondTokensProps> = ({
@@ -42,7 +43,7 @@ const UnbondTokens: FC<UnbondTokensProps> = ({
 
       <Typography variant="body1" fw="normal">
         You can check the remaining eras for your funds to become available in
-        the Unbonding tTNT tooltip.
+        the Unbonding {TOKEN_UNIT} tooltip.
       </Typography>
     </div>
   );

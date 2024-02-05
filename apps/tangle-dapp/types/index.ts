@@ -1,3 +1,5 @@
+import '@webb-tools/tangle-substrate-types';
+
 export type Validator = {
   address: string;
   identity: string;
@@ -19,6 +21,16 @@ export type Delegator = {
   effectiveAmountStaked: string;
 };
 
+export type NodeSpecification = {
+  os: string;
+  version: string;
+  cpuCores: number;
+  memory: number;
+  isVirtualMachine: boolean;
+  linuxDistribution: string;
+  linuxKernel: string;
+};
+
 export enum PaymentDestination {
   Staked = 'Staked (increase the amount at stake)',
   Stash = 'Stash (do not increase the amount at stake)',
@@ -38,4 +50,17 @@ export type Payout = {
   validatorTotalReward: string;
   nominatorTotalReward: string;
   status: 'claimed' | 'unclaimed';
+};
+
+export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
+
+export type Service = {
+  serviceType: string;
+  roleType: RoleType;
+  initialJobId: number;
+  participants: string[];
+  thresholds?: number;
+  phase2Executions?: number;
+  earnings?: number;
+  expirationBlock: number;
 };

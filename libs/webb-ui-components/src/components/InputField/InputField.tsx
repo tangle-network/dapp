@@ -1,6 +1,10 @@
 import cx from 'classnames';
-import { createContext, forwardRef, useContext } from 'react';
+import { createContext, forwardRef, useContext, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import {
+  isEthereumAddress,
+  isAddress as isSubstrateAddress,
+} from '@polkadot/util-crypto';
 
 import { Typography } from '../../typography';
 import {
@@ -91,13 +95,25 @@ const InputFieldInput = forwardRef<
     isDisabled,
     error,
     isDisabledHoverStyle,
-    isAddressType = 'false',
+    isAddressType = false,
     title,
     type,
     value,
     addressTheme = 'ethereum',
     ...inputProps
   } = props;
+
+  const inputValue = useMemo(
+    () =>
+      isAddressType
+        ? isEthereumAddress(String(value))
+          ? shortenHex(String(value), 7)
+          : isSubstrateAddress(String(value))
+          ? shortenString(String(value), 7)
+          : value
+        : value,
+    [isAddressType, value]
+  );
 
   const input = (
     <div className="flex flex-col gap-1 w-full">
@@ -121,13 +137,7 @@ const InputFieldInput = forwardRef<
         <input
           spellCheck="false"
           type={type ?? 'text'}
-          value={
-            isAddressType
-              ? addressTheme === 'ethereum'
-                ? shortenHex(String(value), 7)
-                : shortenString(String(value), 7)
-              : value
-          }
+          value={inputValue}
           {...inputProps}
           disabled={context?.isDisabled ?? isDisabled}
           ref={forwardedRef}
