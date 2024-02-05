@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -14,14 +13,13 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import {
-  evmPublicClient,
-  PAYMENT_DESTINATION_OPTIONS,
-  updatePaymentDestination,
-} from '../../constants';
+import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
+import { updatePaymentDestination as updatePaymentDestinationEvm } from '../../utils/evm';
+import { updatePaymentDestination as updatePaymentDestinationSubstrate } from '../../utils/polkadot';
 import { UpdatePayeeTxContainerProps } from './types';
 import UpdatePayee from './UpdatePayee';
 
@@ -31,6 +29,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.Staked
@@ -71,39 +70,19 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     setIsUpdatePaymentDestinationTxLoading(true);
 
     try {
-      const updatePaymentDestinationTxHash = await updatePaymentDestination(
-        walletAddress,
-        paymentDestination
+      await executeTx(
+        () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+        () =>
+          updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
+        `Successfully updated payment destination to ${paymentDestination}.`,
+        'Failed to update payment destination!'
       );
-
-      if (!updatePaymentDestinationTxHash) {
-        throw new Error('Failed to update payment destination!');
-      }
-
-      const updatePaymentDestinationTx =
-        await evmPublicClient.waitForTransactionReceipt({
-          hash: updatePaymentDestinationTxHash,
-        });
-
-      if (updatePaymentDestinationTx.status !== 'success') {
-        throw new Error('Failed to update payment destination!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully updated payment destination to ${paymentDestination}.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [closeModal, notificationApi, paymentDestination, walletAddress]);
+  }, [closeModal, executeTx, paymentDestination, walletAddress]);
 
   if (currentPaymentDestinationError) {
     notificationApi({

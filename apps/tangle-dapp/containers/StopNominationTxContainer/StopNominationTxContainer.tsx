@@ -2,7 +2,6 @@
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ProhibitedLineIcon } from '@webb-tools/icons';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -10,23 +9,24 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, stopNomination } from '../../constants';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
+import { stopNomination as stopNominationEvm } from '../../utils/evm';
+import { stopNomination as stopNominationSubstrate } from '../../utils/polkadot';
 import { StopNominationTxContainerProps } from './types';
 
 const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
     useState<boolean>(false);
@@ -58,35 +58,18 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     setIsStopNominationTxLoading(true);
 
     try {
-      const stopNominationTxHash = await stopNomination(walletAddress);
-
-      if (!stopNominationTxHash) {
-        throw new Error('Failed to stop nomination!');
-      }
-
-      const stopNominationTx = await evmPublicClient.waitForTransactionReceipt({
-        hash: stopNominationTxHash,
-      });
-
-      if (stopNominationTx.status !== 'success') {
-        throw new Error('Failed to stop nomination!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully stopped nomination!`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+      await executeTx(
+        () => stopNominationEvm(walletAddress),
+        () => stopNominationSubstrate(walletAddress),
+        `Successfully stopped nomination!`,
+        'Failed to stop nomination!'
+      );
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [closeModal, notificationApi, walletAddress]);
+  }, [closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>

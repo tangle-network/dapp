@@ -1,8 +1,8 @@
 import { isHex } from '@polkadot/util';
 import { redirect } from 'next/navigation';
 
-import { getPolkadotApiPromise } from '../../../constants/polkadotApiUtils';
 import { InternalPath } from '../../../types';
+import { getPolkadotApiPromise } from '../../../utils/polkadot';
 import SuccessClient from './SuccessClient';
 
 const Page = async ({

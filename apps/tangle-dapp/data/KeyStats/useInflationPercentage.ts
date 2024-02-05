@@ -5,9 +5,9 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
+import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useInflationPercentage(
   defaultValue: { value1: number | null; value2: number | null } = {

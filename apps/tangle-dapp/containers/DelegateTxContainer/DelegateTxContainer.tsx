@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Alert,
   Button,
@@ -18,21 +17,27 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  bondExtraTokens,
-  bondTokens,
-  evmPublicClient,
-  isNominatorFirstTimeNominator,
-  nominateValidators,
-  PAYMENT_DESTINATION_OPTIONS,
-  updatePaymentDestination,
-} from '../../constants';
+import { PAYMENT_DESTINATION_OPTIONS, TOKEN_UNIT } from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
+import {
+  bondExtraTokens as bondExtraTokensEvm,
+  bondTokens as bondTokensEvm,
+  nominateValidators as nominateValidatorsEvm,
+  updatePaymentDestination as updatePaymentDestinationEvm,
+} from '../../utils/evm';
+import {
+  bondExtraTokens as bondExtraTokensSubstrate,
+  bondTokens as bondTokensSubstrate,
+  nominateValidators as nominateValidatorsSubstrate,
+  updatePaymentDestination as updatePaymentDestinationSubstrate,
+} from '../../utils/polkadot';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
 import SelectDelegates from './SelectDelegates';
@@ -50,7 +55,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
 
-  const [isFirstTimeNominator, setIsFirstTimeNominator] = useState(true);
+  const executeTx = useExecuteTxWithNotification();
+
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
     DelegateTxSteps.BOND_TOKENS
   );
@@ -88,28 +94,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  useEffect(() => {
-    try {
-      const checkIfFirstTimeNominator = async () => {
-        const isFirstTimeNominator = await isNominatorFirstTimeNominator(
-          substrateAddress
-        );
-
-        setIsFirstTimeNominator(isFirstTimeNominator);
-      };
-
-      if (substrateAddress) {
-        checkIfFirstTimeNominator();
-      }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message:
-          error.message ||
-          'Failed to check if the user is a first time nominator.',
-      });
-    }
-  }, [notificationApi, substrateAddress]);
+  const {
+    isFirstTimeNominator,
+    isFirstTimeNominatorLoading,
+    isFirstTimeNominatorError,
+  } = useIsFirstTimeNominatorSubscription(substrateAddress);
 
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
@@ -131,9 +120,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
-      return 'You have zero tTNT in your wallet!';
+      return `You have zero ${TOKEN_UNIT} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough tTNT in your wallet!`;
+      return `You don't have enough ${TOKEN_UNIT} in your wallet!`;
     }
   }, [walletBalance, amountToBond]);
 
@@ -173,109 +162,107 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
-  const submitAndSignTx = useCallback(async () => {
-    setIsSubmitAndSignTxLoading(true);
+  const executeDelegate: () => Promise<void> = useCallback(async () => {
+    if (isFirstTimeNominator) {
+      await executeTx(
+        () =>
+          bondTokensEvm(walletAddress, amountToBond, PaymentDestination.Stash),
+        () =>
+          bondTokensSubstrate(
+            walletAddress,
+            amountToBond,
+            PaymentDestination.Stash
+          ),
+        `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
+        'Failed to bond tokens!'
+      );
 
-    const executeTransaction = async (
-      action: any,
-      successMessage: string,
-      errorMessage: string
-    ) => {
-      try {
-        const txHash = await action();
-        if (!txHash) throw new Error(errorMessage);
+      await executeTx(
+        () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+        () =>
+          updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
+        `Successfully updated payment destination to ${paymentDestination}.`,
+        'Failed to update payment destination!'
+      );
 
-        const tx = await evmPublicClient.waitForTransactionReceipt({
-          hash: txHash,
-        });
-        if (tx.status !== 'success') throw new Error(errorMessage);
-
-        notificationApi({ variant: 'success', message: successMessage });
-      } catch (error) {
-        notificationApi({
-          variant: 'error',
-          message: errorMessage || 'Something went wrong.',
-        });
-
-        throw error; // Rethrowing the error to be caught by the outer try-catch
-      }
-    };
-
-    try {
-      if (isFirstTimeNominator) {
-        await executeTransaction(
-          () =>
-            bondTokens(walletAddress, amountToBond, PaymentDestination.Stash),
-          `Successfully bonded ${amountToBond} tTNT.`,
+      await executeTx(
+        () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        `Successfully nominated ${selectedValidators.length} validators.`,
+        'Failed to nominate validators!'
+      );
+    } else {
+      if (amountToBond > 0) {
+        await executeTx(
+          () => bondExtraTokensEvm(walletAddress, amountToBond),
+          () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+          `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
           'Failed to bond tokens!'
         );
+      }
 
-        await executeTransaction(
-          () => updatePaymentDestination(walletAddress, paymentDestination),
+      if (currentPaymentDestinationError)
+        notificationApi({
+          variant: 'error',
+          message: currentPaymentDestinationError.message,
+        });
+
+      const currPaymentDestination =
+        currentPaymentDestination?.value1 === 'Staked'
+          ? PaymentDestination.Staked
+          : PaymentDestination.Stash;
+
+      if (currPaymentDestination !== paymentDestination) {
+        await executeTx(
+          () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+          () =>
+            updatePaymentDestinationSubstrate(
+              walletAddress,
+              paymentDestination
+            ),
           `Successfully updated payment destination to ${paymentDestination}.`,
           'Failed to update payment destination!'
         );
-
-        await executeTransaction(
-          () => nominateValidators(walletAddress, selectedValidators),
-          `Successfully nominated ${selectedValidators.length} validators.`,
-          'Failed to nominate validators!'
-        );
-      } else {
-        if (amountToBond > 0) {
-          await executeTransaction(
-            () => bondExtraTokens(walletAddress, amountToBond),
-            `Successfully bonded ${amountToBond} tTNT.`,
-            'Failed to bond tokens!'
-          );
-        }
-
-        if (currentPaymentDestinationError)
-          notificationApi({
-            variant: 'error',
-            message: currentPaymentDestinationError.message,
-          });
-
-        const currPaymentDestination =
-          currentPaymentDestination?.value1 === 'Staked'
-            ? PaymentDestination.Staked
-            : PaymentDestination.Stash;
-
-        if (currPaymentDestination !== paymentDestination) {
-          await executeTransaction(
-            () => updatePaymentDestination(walletAddress, paymentDestination),
-            `Successfully updated payment destination to ${paymentDestination}.`,
-            'Failed to update payment destination!'
-          );
-        }
-
-        await executeTransaction(
-          () => nominateValidators(walletAddress, selectedValidators),
-          `Successfully nominated ${selectedValidators.length} validators.`,
-          'Failed to nominate validators!'
-        );
       }
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
-    } finally {
-      closeModal();
+
+      await executeTx(
+        () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        `Successfully nominated ${selectedValidators.length} validators.`,
+        'Failed to nominate validators!'
+      );
     }
   }, [
     amountToBond,
-    closeModal,
     currentPaymentDestination?.value1,
     currentPaymentDestinationError,
+    executeTx,
     isFirstTimeNominator,
     notificationApi,
     paymentDestination,
     selectedValidators,
     walletAddress,
   ]);
+
+  const submitAndSignTx = useCallback(async () => {
+    setIsSubmitAndSignTxLoading(true);
+
+    try {
+      await executeDelegate();
+    } catch {
+      // notification is already handled in executeTx
+    } finally {
+      closeModal();
+    }
+  }, [closeModal, executeDelegate]);
+
+  if (
+    isFirstTimeNominator == null ||
+    isFirstTimeNominatorLoading ||
+    isFirstTimeNominatorError
+  ) {
+    return null;
+  }
 
   return (
     <Modal open>

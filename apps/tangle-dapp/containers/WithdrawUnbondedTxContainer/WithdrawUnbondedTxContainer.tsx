@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -12,13 +11,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import {
-  evmPublicClient,
-  getSlashingSpans,
-  withdrawUnbondedTokens,
-} from '../../constants';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
+import { withdrawUnbondedTokens as withdrawUnbondedTokensEvm } from '../../utils/evm';
+import { withdrawUnbondedTokens as withdrawUnbondedTokensSubstrate } from '../../utils/polkadot';
+import { getSlashingSpans } from '../../utils/polkadot';
 import { RebondTxContainer } from '../RebondTxContainer';
 import { WithdrawUnbondedTxContainerProps } from './types';
 import WithdrawUnbonded from './WithdrawUnbonded';
@@ -29,6 +27,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
@@ -86,41 +85,30 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     setIsWithdrawUnbondedTxLoading(true);
 
     try {
-      const slashingSpans = await getSlashingSpans(substrateAddress);
-
-      const withdrawUnbondedTxHash = await withdrawUnbondedTokens(
-        walletAddress,
-        Number(slashingSpans)
+      await executeTx(
+        async () => {
+          const slashingSpans = await getSlashingSpans(substrateAddress);
+          return withdrawUnbondedTokensEvm(
+            walletAddress,
+            Number(slashingSpans)
+          );
+        },
+        async () => {
+          const slashingSpans = await getSlashingSpans(substrateAddress);
+          return withdrawUnbondedTokensSubstrate(
+            walletAddress,
+            Number(slashingSpans)
+          );
+        },
+        `Successfully withdraw!`,
+        'Failed to withdraw tokens!'
       );
-
-      if (!withdrawUnbondedTxHash) {
-        throw new Error('Failed to withdraw unbonded tokens!');
-      }
-
-      const withdrawUnbondedTx =
-        await evmPublicClient.waitForTransactionReceipt({
-          hash: withdrawUnbondedTxHash,
-        });
-
-      if (withdrawUnbondedTx.status !== 'success') {
-        throw new Error('Failed to withdraw unbonded tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully withdraw!`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [closeModal, notificationApi, substrateAddress, walletAddress]);
+  }, [closeModal, executeTx, substrateAddress, walletAddress]);
 
   const onRebondClick = () => {
     closeModal();
