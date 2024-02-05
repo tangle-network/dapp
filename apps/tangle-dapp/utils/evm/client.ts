@@ -10,7 +10,6 @@ import {
 } from 'viem';
 
 const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
-delete tangleTestnetConfig.contracts;
 
 const tangleTestnet = defineChain(tangleTestnetConfig);
 

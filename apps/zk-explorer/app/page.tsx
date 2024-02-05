@@ -2,6 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import OverlayMask from '../components/OverlayMask';
 import SidebarAndItemGrid from '../components/SidebarAndItemGrid';
 import HeaderControls from '../containers/HeaderControls';
+import { Suspense } from 'react';
 
 export default function Index() {
   return (
@@ -39,7 +40,9 @@ export default function Index() {
         </div>
       </header>
 
-      <SidebarAndItemGrid />
+      <Suspense>
+        <SidebarAndItemGrid />
+      </Suspense>
     </main>
   );
 }
