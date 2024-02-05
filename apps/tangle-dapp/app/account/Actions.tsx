@@ -20,9 +20,9 @@ import Link from 'next/link';
 import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { formatTokenBalance } from '../../constants';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useClaims from '../../hooks/useClaims';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
 import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
@@ -59,7 +59,9 @@ const Actions: FC = () => {
   } = useVesting(true);
 
   const formattedClaimableTokenAmount =
-    useFormattedBalance(claimableTokenAmount);
+    claimableTokenAmount !== null
+      ? formatTokenBalance(claimableTokenAmount)
+      : null;
 
   const { isAirdropEligible } = useClaims();
 

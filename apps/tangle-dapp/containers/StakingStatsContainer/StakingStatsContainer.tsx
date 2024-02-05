@@ -4,8 +4,8 @@ import { ListCheckIcon, TimerLine } from '@webb-tools/icons';
 import { FC, useCallback } from 'react';
 
 import PillCard from '../../app/account/PillCard';
+import { formatTokenBalance } from '../../constants';
 import usePendingStakingRewards from '../../data/StakingStats/useStakingRewards';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 
 const StakingStatsContainer: FC = () => {
@@ -20,7 +20,9 @@ const StakingStatsContainer: FC = () => {
   );
 
   const pendingRewards = usePendingStakingRewards();
-  const formattedPendingRewards = useFormattedBalance(pendingRewards);
+
+  const formattedPendingRewards =
+    pendingRewards !== null ? formatTokenBalance(pendingRewards) : null;
 
   return (
     <div className="flex flex-col md:flex-row">

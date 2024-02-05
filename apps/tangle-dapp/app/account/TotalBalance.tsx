@@ -7,13 +7,17 @@ import {
 import { FC } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
-import { TANGLE_TOKEN_UNIT } from '../../constants/polkadotApiUtils';
+import {
+  formatTokenBalance,
+  TANGLE_TOKEN_UNIT,
+} from '../../constants/polkadotApiUtils';
 import useAccountBalances from '../../hooks/useAccountBalances';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
 
 const TotalBalance: FC = () => {
   const { total } = useAccountBalances();
-  const formattedTotal = useFormattedBalance(total, false);
+
+  const formattedTotal =
+    total !== null ? formatTokenBalance(total, false) : null;
 
   return (
     <div className="flex flex-col gap-5 w-full">

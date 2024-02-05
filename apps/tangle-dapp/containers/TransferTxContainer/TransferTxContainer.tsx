@@ -13,9 +13,8 @@ import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { formatTokenBalance, TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
@@ -29,10 +28,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const [recipientAddress, setRecipientAddress] = useState('');
   const { transferrable: transferrableBalance } = useAccountBalances();
 
-  const formattedTransferrableBalance = useFormattedBalance(
-    transferrableBalance,
-    false
-  );
+  const formattedTransferrableBalance =
+    transferrableBalance !== null
+      ? formatTokenBalance(transferrableBalance, false)
+      : null;
 
   const {
     execute: executeTransferTx,
@@ -41,16 +40,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   } = useSubstrateTx(
     useCallback(
       async (api) => {
-        const decimals = api.registry.chainDecimals[0];
         const amountAsNumber = Number(amount);
 
         // The amount is in the smallest unit of the token,
         // so it needs to be converted to the appropriate amount
         // of decimals.
-        const amountInChainUnits = convertToChainUnits(
-          amountAsNumber,
-          decimals
-        );
+        const amountInChainUnits = convertToChainUnits(amountAsNumber);
 
         return api.tx.balances.transfer(recipientAddress, amountInChainUnits);
       },

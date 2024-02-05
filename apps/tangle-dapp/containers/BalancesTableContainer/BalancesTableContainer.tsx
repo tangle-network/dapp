@@ -21,9 +21,8 @@ import { FC, JSX, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { formatTokenBalance, TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useVesting from '../../hooks/useVesting';
@@ -282,7 +281,8 @@ const TextCell: FC<{
 const BalanceCell: FC<{
   amount: BN | null;
 }> = ({ amount }) => {
-  const formattedBalance = useFormattedBalance(amount, true);
+  const formattedBalance =
+    amount !== null ? formatTokenBalance(amount, true) : null;
 
   return (
     <div className="flex flex-col justify-between p-3 gap-6 flex-grow">

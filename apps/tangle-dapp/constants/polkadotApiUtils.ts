@@ -5,6 +5,13 @@ import { firstValueFrom } from 'rxjs';
 
 export const TANGLE_TOKEN_UNIT = 'tTNT';
 
+// Note that the chain decimal count is usually constant, and set when
+// the blockchain is deployed. It could be technically changed due to
+// governance decisions and subsequent runtime upgrades, but that would
+// be exceptionally rare, so it is best to assume that it remains constant
+// here. Regardless, it can easily be changed here in the future if need be.
+export const TANGLE_TOKEN_DECIMALS = 18;
+
 const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
   ? 'ws://127.0.0.1:9944'
   : TESTNET_RPC_ENDPOINT;
@@ -65,17 +72,9 @@ export const getPolkadotApiRx = async (
   });
 };
 
-export const formatTokenBalance = async (
-  balance: BN,
-  includeUnit = true
-): Promise<string> => {
-  const api = await getPolkadotApiPromise();
-
-  // Use 18 as default decimals as a fallback.
-  const decimals = api.registry.chainDecimals[0] || 18;
-
+export const formatTokenBalance = (balance: BN, includeUnit = true): string => {
   return formatBalance(balance, {
-    decimals,
+    decimals: TANGLE_TOKEN_DECIMALS,
     withUnit: includeUnit ? TANGLE_TOKEN_UNIT : false,
   });
 };
