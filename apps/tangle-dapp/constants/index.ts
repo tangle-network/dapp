@@ -1,5 +1,3 @@
-export * from './evmActions';
-export * from './polkadotApiUtils';
 export * from './swr';
 
 export const PAYMENT_DESTINATION_OPTIONS = [
@@ -7,4 +5,9 @@ export const PAYMENT_DESTINATION_OPTIONS = [
   'Stash (do not increase the amount at stake)',
 ];
 
-export const TOKEN_UNIT = 'tTNT';
+export const TANGLE_TOKEN_UNIT = 'tTNT';
+
+export enum LockId {
+  Vesting = 'vesting',
+  Staking = 'staking',
+}

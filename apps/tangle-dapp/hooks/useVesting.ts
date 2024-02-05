@@ -3,7 +3,7 @@ import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN, u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { LockId } from '../constants/polkadotApiUtils';
+import { LockId } from '../constants';
 import useAgnosticTx from './useAgnosticTx';
 import usePolkadotApiRx from './usePolkadotApiRx';
 import { TxStatus } from './useSubstrateTx';

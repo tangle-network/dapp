@@ -17,7 +17,10 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { PAYMENT_DESTINATION_OPTIONS, TOKEN_UNIT } from '../../constants';
+import {
+  PAYMENT_DESTINATION_OPTIONS,
+  TANGLE_TOKEN_UNIT,
+} from '../../constants';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
@@ -120,9 +123,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
-      return `You have zero ${TOKEN_UNIT} in your wallet!`;
+      return `You have zero ${TANGLE_TOKEN_UNIT} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough ${TOKEN_UNIT} in your wallet!`;
+      return `You don't have enough ${TANGLE_TOKEN_UNIT} in your wallet!`;
     }
   }, [walletBalance, amountToBond]);
 
@@ -173,7 +176,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             amountToBond,
             PaymentDestination.Stash
           ),
-        `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
+        `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to bond tokens!'
       );
 
@@ -196,7 +199,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         await executeTx(
           () => bondExtraTokensEvm(walletAddress, amountToBond),
           () => bondExtraTokensSubstrate(walletAddress, amountToBond),
-          `Successfully bonded ${amountToBond} ${TOKEN_UNIT}.`,
+          `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
           'Failed to bond tokens!'
         );
       }

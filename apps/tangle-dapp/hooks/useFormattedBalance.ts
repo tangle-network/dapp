@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
-import { formatTokenBalance } from '../constants';
+import { formatTokenBalance } from '../utils/polkadot';
 
 /**
  * Format a token balance for display.

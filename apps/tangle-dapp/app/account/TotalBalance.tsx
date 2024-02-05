@@ -7,7 +7,7 @@ import {
 import { FC } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
-import { TANGLE_TOKEN_UNIT } from '../../constants/polkadotApiUtils';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useFormattedBalance from '../../hooks/useFormattedBalance';
 

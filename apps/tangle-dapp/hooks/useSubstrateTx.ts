@@ -5,8 +5,8 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { getPolkadotApiPromise } from '../constants';
 import ensureError from '../utils/ensureError';
+import { getPolkadotApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useSubstrateAddress from './useSubstrateAddress';
