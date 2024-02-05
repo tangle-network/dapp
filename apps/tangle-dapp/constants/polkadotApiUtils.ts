@@ -21,9 +21,10 @@ const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 export enum SubstrateLockId {
   Vesting = 'vesting',
   Staking = 'staking',
+  ElectionsPhragmen = 'phrelect',
 
   // TODO: Need to account for the other lock types.
-  Other = 'other',
+  Other = '?other',
 }
 
 async function getOrCacheApiVariant<T>(

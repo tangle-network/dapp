@@ -81,28 +81,28 @@ const Actions: FC = () => {
         ))}
 
         {isAirdropEligible && (
-          <Tooltip>
-            <TooltipBody className="break-normal max-w-[250px] text-center">
-              Congratulations, you are eligible for Airdrop! Click here to visit
-              the Airdrop claim page.
-            </TooltipBody>
-
-            <TooltipTrigger>
-              <ActionItem
-                hasNotificationDot
-                label="Claim Airdrop"
-                icon={<GiftLineIcon size="lg" />}
-                internalHref={InternalPath.ClaimAirdrop}
-              />
-            </TooltipTrigger>
-          </Tooltip>
+          <ActionItem
+            hasNotificationDot
+            label="Claim Airdrop"
+            icon={<GiftLineIcon size="lg" />}
+            internalHref={InternalPath.ClaimAirdrop}
+            tooltip="Congratulations, you are eligible for Airdrop! Click here to visit
+              the Airdrop claim page."
+          />
         )}
 
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
-          <Tooltip>
-            <TooltipBody className="break-normal max-w-[250px] text-center">
-              {hasClaimableVestingTokens ? (
+          <ActionItem
+            icon={<ShieldKeyholeLineIcon size="lg" />}
+            label="Vest"
+            onClick={executeVestTx}
+            hasNotificationDot={hasClaimableVestingTokens}
+            isDisabled={
+              vestTxStatus === TxStatus.Processing || !hasClaimableVestingTokens
+            }
+            tooltip={
+              hasClaimableVestingTokens ? (
                 <>
                   You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
                   vested tokens that are ready to be claimed. Use this action to
@@ -113,22 +113,9 @@ const Actions: FC = () => {
                   You have vesting schedules in your account, but there are no
                   tokens available to claim yet.
                 </>
-              )}
-            </TooltipBody>
-
-            <TooltipTrigger>
-              <ActionItem
-                icon={<ShieldKeyholeLineIcon size="lg" />}
-                label="Vest"
-                isDisabled={
-                  vestTxStatus === TxStatus.Processing ||
-                  !hasClaimableVestingTokens
-                }
-                onClick={executeVestTx}
-                hasNotificationDot={hasClaimableVestingTokens}
-              />
-            </TooltipTrigger>
-          </Tooltip>
+              )
+            }
+          />
         )}
       </div>
 
@@ -151,17 +138,19 @@ const ActionItem = (props: {
   isDisabled?: boolean;
   hasNotificationDot?: boolean;
   internalHref?: InternalPathString;
+  tooltip?: ReactElement | string;
 }) => {
   const {
     icon,
     label,
     onClick,
     internalHref,
+    tooltip,
     isDisabled = false,
     hasNotificationDot = false,
   } = props;
 
-  const cursorClass = isDisabled ? '!cursor-not-allowed' : '';
+  const cursorClass = isDisabled ? '!cursor-not-allowed' : 'cursor-pointer';
   const isDisabledClass = isDisabled ? 'opacity-50' : '';
 
   const handleClick = useCallback(() => {
@@ -173,10 +162,19 @@ const ActionItem = (props: {
   }, [isDisabled, onClick]);
 
   const content = (
-    <p className={twMerge('space-y-2', isDisabledClass, cursorClass)}>
-      <IconButton
-        className={twMerge('block mx-auto relative', cursorClass)}
+    <div
+      className={twMerge(
+        'inline-flex flex-col justify-center items-center gap-2',
+        isDisabledClass,
+        cursorClass
+      )}
+    >
+      <div
         onClick={handleClick}
+        className={twMerge(
+          'inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0',
+          cursorClass
+        )}
       >
         {/* Notification dot */}
         {hasNotificationDot && (
@@ -188,7 +186,7 @@ const ActionItem = (props: {
         )}
 
         {icon}
-      </IconButton>
+      </div>
 
       <Typography
         component="span"
@@ -197,13 +195,26 @@ const ActionItem = (props: {
       >
         {label}
       </Typography>
-    </p>
+    </div>
   );
 
-  return internalHref !== undefined ? (
-    <Link href={internalHref}>{content}</Link>
+  const withLink =
+    internalHref !== undefined ? (
+      <Link href={internalHref}>{content}</Link>
+    ) : (
+      content
+    );
+
+  return tooltip !== undefined ? (
+    <Tooltip>
+      <TooltipBody className="break-normal max-w-[250px] text-center">
+        {tooltip}
+      </TooltipBody>
+
+      <TooltipTrigger asChild>{withLink}</TooltipTrigger>
+    </Tooltip>
   ) : (
-    content
+    withLink
   );
 };
 

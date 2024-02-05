@@ -16,14 +16,11 @@ function getSubstrateLockId(rawLockId: U8aFixed): SubstrateLockId {
   // converted to a string, so trim it.
   const lockIdString = u8aToString(rawLockId).trim();
 
-  switch (lockIdString) {
-    case 'vesting':
-      return SubstrateLockId.Vesting;
-    case 'staking':
-      return SubstrateLockId.Staking;
-    default:
-      return SubstrateLockId.Other;
-  }
+  return Object.values(SubstrateLockId).includes(
+    lockIdString as SubstrateLockId
+  )
+    ? (lockIdString as SubstrateLockId)
+    : SubstrateLockId.Other;
 }
 
 export default getSubstrateLockId;

@@ -305,7 +305,7 @@ const BalanceAction: FC<{
 }> = ({ tooltip, Icon, onClick }) => {
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <IconButton onClick={onClick}>
           <Icon size="md" />
         </IconButton>
