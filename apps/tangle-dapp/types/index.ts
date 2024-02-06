@@ -37,6 +37,20 @@ export enum PaymentDestination {
   Controller = 'Controller Account',
 }
 
+export type AddressWithIdentity = {
+  address: string;
+  identity: string;
+};
+
+export type Payout = {
+  era: number;
+  validator: AddressWithIdentity;
+  validatorTotalStake: string;
+  nominators: AddressWithIdentity[];
+  validatorTotalReward: string;
+  nominatorTotalReward: string;
+  status: 'claimed' | 'unclaimed';
+};
 export enum InternalPath {
   EvmStaking = '/',
   ClaimAirdrop = '/claim',

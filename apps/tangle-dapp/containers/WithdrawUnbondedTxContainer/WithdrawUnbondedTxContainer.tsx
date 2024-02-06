@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -43,7 +44,10 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertToSubstrateAddress(activeAccount.address);
+    if (isSubstrateAddress(activeAccount?.address))
+      return activeAccount.address;
+
+    return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const {

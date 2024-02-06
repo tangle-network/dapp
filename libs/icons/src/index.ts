@@ -127,6 +127,7 @@ export { default as UserLineIcon } from './UserLineIcon';
 export * from './UserStarFillIcon';
 export { default as WalletFillIcon } from './WalletFillIcon';
 export { default as WalletLineIcon } from './WalletLineIcon';
+export { default as WalletPayIcon } from './WalletPayIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 export * from './CoinsLineIcon';

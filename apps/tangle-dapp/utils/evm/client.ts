@@ -11,9 +11,6 @@ import {
 
 const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
 
-// TODO: Explain why this is being done.
-delete tangleTestnetConfig.contracts;
-
 const tangleTestnet = defineChain(tangleTestnetConfig);
 
 export const evmPublicClient = createPublicClient({

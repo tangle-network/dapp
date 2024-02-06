@@ -99,6 +99,7 @@ const InputFieldInput = forwardRef<
     title,
     type,
     value,
+    addressTheme = 'ethereum',
     ...inputProps
   } = props;
 
@@ -115,7 +116,7 @@ const InputFieldInput = forwardRef<
   );
 
   const input = (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 w-full">
       <Typography
         variant="body1"
         fw="bold"
@@ -128,13 +129,8 @@ const InputFieldInput = forwardRef<
         {isAddressType && (
           <Avatar
             value={String(value)}
-            theme={
-              isEthereumAddress(String(value))
-                ? 'ethereum'
-                : isSubstrateAddress(String(value))
-                ? 'polkadot'
-                : undefined
-            }
+            sourceVariant="address"
+            theme={addressTheme}
           />
         )}
 

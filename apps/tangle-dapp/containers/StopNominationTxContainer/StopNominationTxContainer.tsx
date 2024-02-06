@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import { ProhibitedLineIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -40,7 +41,10 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertToSubstrateAddress(activeAccount.address);
+    if (isSubstrateAddress(activeAccount?.address))
+      return activeAccount.address;
+
+    return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);

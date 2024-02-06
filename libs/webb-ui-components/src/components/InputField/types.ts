@@ -28,6 +28,7 @@ export interface InputFieldInputProps
   extends Omit<PropsOf<'input'>, 'disabled'>,
     InputFieldContextValue {
   isAddressType?: boolean;
+  addressTheme?: 'ethereum' | 'substrate';
 }
 
 export interface InputFieldDropdownProps extends PropsOf<'div'> {
