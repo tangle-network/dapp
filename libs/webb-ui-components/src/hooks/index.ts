@@ -7,3 +7,4 @@ export * from './useModal';
 export * from './useTimeAgo';
 export { default as useTimeAgo } from './useTimeAgo';
 export * from './useWebbUI';
+export * from './useHiddenValue';

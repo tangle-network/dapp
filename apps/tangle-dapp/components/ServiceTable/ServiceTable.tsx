@@ -17,7 +17,7 @@ import {
 import cx from 'classnames';
 import { FC } from 'react';
 
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import type { Service } from '../../types';
 import { getChipColorByRoleType } from '../../utils';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -89,7 +89,7 @@ const columns = [
     cell: (props) => {
       const earnings = props.getValue();
       return earnings ? (
-        <StringCell value={`${earnings} ${TOKEN_UNIT}`} />
+        <StringCell value={`${earnings} ${TANGLE_TOKEN_UNIT}`} />
       ) : (
         '---'
       );

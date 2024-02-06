@@ -16,6 +16,7 @@ import { type FC, useMemo, useState } from 'react';
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import { AnchorLinkId } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -64,6 +65,7 @@ const DelegationsPayoutsContainer: FC = () => {
   return (
     <>
       <TableAndChartTabs
+        id={AnchorLinkId.NominationAndPayouts}
         tabs={[delegationsTableTab, payoutsTableTab]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={

@@ -22,10 +22,6 @@ export default function useIdealStakedPercentage(
     const fetchData = async () => {
       try {
         const api = await getPolkadotApiPromise();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
-
         const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
         const idealStakePercentage = inflation.idealStake * 100;
 

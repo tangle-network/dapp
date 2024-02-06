@@ -2,7 +2,7 @@ import { LockUnlockLineIcon, TimeLineIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { BondedTokensBalanceInfoProps } from './types';
 
 export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
@@ -19,7 +19,7 @@ export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
     </div>
 
     <Typography variant="body1" fw="normal">
-      {value} {TOKEN_UNIT}
+      {value} {TANGLE_TOKEN_UNIT}
     </Typography>
   </div>
 );

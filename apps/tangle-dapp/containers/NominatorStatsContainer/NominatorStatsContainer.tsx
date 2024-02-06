@@ -13,7 +13,7 @@ import { type FC, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import { convertToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
@@ -61,7 +61,7 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <NominatorStatsItem
-            title={`Available ${TOKEN_UNIT} in Wallet`}
+            title={`Available ${TANGLE_TOKEN_UNIT} in Wallet`}
             type="Wallet Balance"
             address={walletAddress}
           />
@@ -71,7 +71,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <Link href={WEBB_FAUCET_URL} target="_blank">
               <Button variant="utility" className="w-full">
-                {`Get ${TOKEN_UNIT}`}
+                {`Get ${TANGLE_TOKEN_UNIT}`}
               </Button>
             </Link>
 
@@ -97,8 +97,8 @@ const NominatorStatsContainer: FC = () => {
         >
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
-              title={`Total Staked ${TOKEN_UNIT}`}
-              tooltip={`Total Staked ${TOKEN_UNIT} (bonded).`}
+              title={`Total Staked ${TANGLE_TOKEN_UNIT}`}
+              tooltip={`Total Staked ${TANGLE_TOKEN_UNIT} (bonded).`}
               type="Total Staked"
               address={substrateAddress}
             />

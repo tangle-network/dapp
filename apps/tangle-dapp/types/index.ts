@@ -37,6 +37,18 @@ export enum PaymentDestination {
   Controller = 'Controller Account',
 }
 
+export enum InternalPath {
+  EvmStaking = '/',
+  ClaimAirdrop = '/claim',
+  Account = '/account',
+}
+
+export type InternalPathString = InternalPath | `${InternalPath}/${string}`;
+
+export enum AnchorLinkId {
+  NominationAndPayouts = 'nomination-and-payouts',
+}
+
 export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
 
 export type Service = {

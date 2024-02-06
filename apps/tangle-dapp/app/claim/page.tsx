@@ -211,9 +211,6 @@ const getClaimsInfo = async (
   }
 
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw WebbError.from(WebbErrorCodes.ApiNotReady);
-  }
 
   if (!('claims' in api.query)) {
     throw WebbError.from(WebbErrorCodes.NoClaimsPalletFound);

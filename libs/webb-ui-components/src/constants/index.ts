@@ -1,3 +1,12 @@
+import {
+  Common2Icon,
+  DiscordFill,
+  GithubFill,
+  LinkedInFill,
+  TelegramFill,
+  TwitterFill,
+  YouTubeFill,
+} from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
 import type {
   ExternalLink,
@@ -5,15 +14,6 @@ import type {
   Link,
   SocialConfigsType,
 } from '../types';
-import {
-  Common2Icon,
-  DiscordFill,
-  LinkedInFill,
-  GithubFill,
-  TelegramFill,
-  TwitterFill,
-  YouTubeFill,
-} from '@webb-tools/icons';
 
 /** TODO: Determine the best way to put thess configs to share across the project */
 const commonExternalProps = {
@@ -57,12 +57,10 @@ export const TESTNET_LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const TANGLE_PRESS_KIT_URL = 'https://www.tangle.tools/press-kit';
-export const TANGLE_DOCS_URL = 'https://docs.tangle.tools';
+export const TANGLE_DOCS_URL = 'https://docs.tangle.tools/docs/';
 export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
-export const WEBB_TANGLE_DOCS_URL =
-  'https://docs.webb.tools/docs/tangle-network/overview/';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
   'https://docs.webb.tools/docs/tangle-network/learn/incentives/#staking';
 

@@ -1,25 +1,19 @@
-import { u128 } from '@polkadot/types';
-import { formatBalance } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { getPolkadotApiPromise } from './api';
 
 export const formatTokenBalance = async (
-  balance: u128
-): Promise<string | undefined> => {
+  balance: BN,
+  includeUnit = true
+): Promise<string> => {
   const api = await getPolkadotApiPromise();
 
-  if (!api) return balance.toString();
+  // Use 18 as default decimals as a fallback.
+  const decimals = api.registry.chainDecimals[0] || 18;
 
-  if (balance.toString() === '0') return `0 ${TOKEN_UNIT}`;
-
-  const chainDecimals = await api.registry.chainDecimals;
-  const balanceFormatType = {
-    decimals: chainDecimals[0],
-    withUnit: TOKEN_UNIT,
-  };
-
-  const formattedBalance = formatBalance(balance, balanceFormatType);
-
-  return formattedBalance;
+  return formatBalance(balance, {
+    decimals,
+    withUnit: includeUnit ? TANGLE_TOKEN_UNIT : false,
+  });
 };
