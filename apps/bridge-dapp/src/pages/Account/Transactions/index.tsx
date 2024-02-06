@@ -1,12 +1,15 @@
 import { type FC, useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
-import { ActionsDropdown, Typography } from '@webb-tools/webb-ui-components';
+import {
+  ActionsDropdown,
+  HiddenValueEye,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { DeleteBinIcon, UploadLine, Download } from '@webb-tools/icons';
 import { useTxClientStorage } from '@webb-tools/api-provider-environment';
 
 import ClearTxHistoryModal from '../../../containers/ClearTxHistoryModal';
 import UploadTxHistoryModal from '../../../containers/UploadTxHistoryModal';
-import HiddenValueEye from '../../../components/HiddenValueEye';
 import NoTx from '../NoTx';
 import TxTableContainer from '../../../containers/TxTableContainer';
 import downloadTxHistory from '../../../utils/downloadTxHistory';

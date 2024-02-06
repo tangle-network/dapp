@@ -19,12 +19,12 @@ import {
   getTimeDetailByEpoch,
   shortenHex,
   formatTokenAmount,
+  HiddenValue,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useState, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useNavigate } from 'react-router';
 
-import HiddenValue from '../../components/HiddenValue';
 import type { TxTableContainerProps } from './types';
 import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
 

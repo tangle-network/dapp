@@ -1,10 +1,73 @@
-export const StakingInterfacePrecompileAddress =
-  '0x0000000000000000000000000000000000000800';
+export type Precompile = 'staking' | 'vesting' | 'batch';
 
-export const BatchPrecompileAddress =
-  '0x0000000000000000000000000000000000000808';
+type StakingAbiFunctionName =
+  | 'bond'
+  | 'bondExtra'
+  | 'chill'
+  | 'currentEra'
+  | 'erasTotalStake'
+  | 'isNominator'
+  | 'isValidator'
+  | 'maxNominatorCount'
+  | 'maxValidatorCount'
+  | 'minActiveStake'
+  | 'minNominatorBond'
+  | 'minValidatorBond'
+  | 'nominate'
+  | 'payoutStakers'
+  | 'rebond'
+  | 'setController'
+  | 'setPayee'
+  | 'unbond'
+  | 'validatorCount'
+  | 'withdrawUnbonded';
 
-export const StakingInterfacePrecompileABI = [
+type VestingAbiFunctionName = 'vest' | 'vestOther' | 'vestedTransfer';
+
+type BatchAbiFunctionName = 'batchAll' | 'batchSome' | 'batchSomeUntilFailure';
+
+export type AbiFunctionName<T extends Precompile> = T extends 'staking'
+  ? StakingAbiFunctionName
+  : T extends 'vesting'
+  ? VestingAbiFunctionName
+  : T extends 'batch'
+  ? BatchAbiFunctionName
+  : never;
+
+type InputType =
+  | 'uint256'
+  | 'bytes32'
+  | 'uint32'
+  | 'bool'
+  | 'address'
+  | 'uint8'
+  | 'bytes'
+  | 'uint64';
+
+type InputTypeSuper = InputType | `${InputType}[]`;
+
+type InputOutput = {
+  internalType: InputTypeSuper;
+  name: string;
+  type: InputTypeSuper;
+};
+
+// See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
+export enum PrecompileAddress {
+  Staking = '0x0000000000000000000000000000000000000800',
+  Vesting = '0x0000000000000000000000000000000000000801',
+  Batch = '0x0000000000000000000000000000000000000808',
+}
+
+export type PrecompileAbiFunction<T extends Precompile> = {
+  inputs: InputOutput[];
+  name: AbiFunctionName<T>;
+  outputs: InputOutput[];
+  stateMutability: 'nonpayable' | 'view';
+  type: 'function';
+};
+
+export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
   {
     inputs: [
       {
@@ -281,35 +344,65 @@ export const StakingInterfacePrecompileABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as const;
 
-export const BatchPrecompileABI = [
+// See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
+// Be careful with the input/outputs, as they can lead to a lot of trouble
+// if not properly specified.
+export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<'vesting'>[] = [
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'index',
-        type: 'uint256',
-      },
-    ],
-    name: 'SubcallFailed',
-    type: 'event',
+    inputs: [],
+    name: 'vest',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: 'uint256',
+        internalType: 'bytes32',
+        name: 'target',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint8',
         name: 'index',
-        type: 'uint256',
+        type: 'uint8',
       },
     ],
-    name: 'SubcallSucceeded',
-    type: 'event',
+    name: 'vestedTransfer',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'target',
+        type: 'bytes32',
+      },
+    ],
+    name: 'vestOther',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
+
+export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<'batch'>[] = [
   {
     inputs: [
       {
@@ -394,4 +487,30 @@ export const BatchPrecompileABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as const;
+
+export function getAddressOfPrecompile(
+  precompile: Precompile
+): PrecompileAddress {
+  switch (precompile) {
+    case 'staking':
+      return PrecompileAddress.Staking;
+    case 'vesting':
+      return PrecompileAddress.Vesting;
+    case 'batch':
+      return PrecompileAddress.Batch;
+  }
+}
+
+export function getAbiForPrecompile(
+  precompile: Precompile
+): PrecompileAbiFunction<Precompile>[] {
+  switch (precompile) {
+    case 'staking':
+      return STAKING_PRECOMPILE_ABI;
+    case 'vesting':
+      return VESTING_PRECOMPILE_ABI;
+    case 'batch':
+      return BATCH_PRECOMPILE_ABI;
+  }
+}

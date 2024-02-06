@@ -14,7 +14,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -80,7 +80,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (remainingUnbondedTokensToRebond === 0) {
       return 'You have no unbonded tokens to rebond!';
     } else if (amountToRebond > remainingUnbondedTokensToRebond) {
-      return `You can only rebond ${remainingUnbondedTokensToRebond} ${TOKEN_UNIT}!`;
+      return `You can only rebond ${remainingUnbondedTokensToRebond} ${TANGLE_TOKEN_UNIT}!`;
     }
   }, [remainingUnbondedTokensToRebond, amountToRebond]);
 
@@ -103,7 +103,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       await executeTx(
         () => rebondTokensEvm(walletAddress, amountToRebond),
         () => rebondTokensSubstrate(walletAddress, amountToRebond),
-        `Successfully rebonded ${amountToRebond} ${TOKEN_UNIT}.`,
+        `Successfully rebonded ${amountToRebond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to rebond tokens!'
       );
     } catch {

@@ -4,9 +4,9 @@ import { ensureHex } from '@webb-tools/dapp-config';
 import { AddressType } from '@webb-tools/dapp-config/types';
 
 import {
-  StakingInterfacePrecompileABI,
-  StakingInterfacePrecompileAddress,
-} from '../../constants/contract';
+  PrecompileAddress,
+  STAKING_PRECOMPILE_ABI,
+} from '../../constants/evmPrecompiles';
 import { createEvmWalletClient, evmPublicClient } from './client';
 
 export const nominateValidators = async (
@@ -18,8 +18,8 @@ export const nominateValidators = async (
   });
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'nominate',
     args: [targets],
     account: ensureHex(nominatorAddress),
@@ -36,8 +36,8 @@ export const stopNomination = async (
   nominatorAddress: string
 ): Promise<AddressType> => {
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'chill',
     args: [],
     account: ensureHex(nominatorAddress),

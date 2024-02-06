@@ -9,6 +9,8 @@ import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { IconBase } from '@webb-tools/icons/types';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import {
+  HiddenValue,
+  HiddenValueEye,
   MenuItem,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
@@ -27,8 +29,6 @@ import { forwardRef, useEffect, useMemo, useState, type FC } from 'react';
 import { useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
-import HiddenValue from '../../components/HiddenValue';
-import HiddenValueEye from '../../components/HiddenValueEye';
 import NoteAccountAvatarWithKey from '../../components/NoteAccountAvatarWithKey';
 import {
   BRIDGE_PATH,

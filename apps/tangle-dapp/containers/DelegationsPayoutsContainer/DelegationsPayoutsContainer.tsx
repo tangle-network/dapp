@@ -19,6 +19,7 @@ import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import { Payout } from '../../types';
+import { AnchorLinkId } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
@@ -106,6 +107,7 @@ const DelegationsPayoutsContainer: FC = () => {
   return (
     <>
       <TableAndChartTabs
+        id={AnchorLinkId.NominationAndPayouts}
         tabs={[delegationsTableTab, payoutsTableTab]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={

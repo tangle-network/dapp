@@ -5,11 +5,10 @@ import { AddressType } from '@webb-tools/dapp-config/types';
 import { ethers } from 'ethers';
 
 import {
-  BatchPrecompileABI,
-  BatchPrecompileAddress,
-  StakingInterfacePrecompileABI,
-  StakingInterfacePrecompileAddress,
-} from '../../constants/contract';
+  BATCH_PRECOMPILE_ABI,
+  PrecompileAddress,
+  STAKING_PRECOMPILE_ABI,
+} from '../../constants/evmPrecompiles';
 import { createEvmWalletClient, evmPublicClient } from './client';
 
 export const payoutStakers = async (
@@ -20,8 +19,8 @@ export const payoutStakers = async (
   const validator = u8aToHex(decodeAddress(validatorAddress));
 
   const { request } = await evmPublicClient.simulateContract({
-    address: StakingInterfacePrecompileAddress,
-    abi: StakingInterfacePrecompileABI,
+    address: PrecompileAddress.Staking,
+    abi: STAKING_PRECOMPILE_ABI,
     functionName: 'payoutStakers',
     args: [validator, era],
     account: ensureHex(nominatorAddress),
@@ -34,9 +33,7 @@ export const payoutStakers = async (
   return txHash;
 };
 
-const stakingInterface = new ethers.utils.Interface(
-  StakingInterfacePrecompileABI
-);
+const stakingInterface = new ethers.utils.Interface(STAKING_PRECOMPILE_ABI);
 
 export const batchPayoutStakers = async (
   nominatorAddress: string,
@@ -45,7 +42,7 @@ export const batchPayoutStakers = async (
   const batchCalls = validatorEraPairs.map(({ validatorAddress, era }) => {
     const validator = u8aToHex(decodeAddress(validatorAddress));
     return {
-      to: StakingInterfacePrecompileAddress,
+      to: PrecompileAddress.Staking as AddressType,
       value: 0,
       callData: stakingInterface.encodeFunctionData('payoutStakers', [
         validator,
@@ -56,8 +53,8 @@ export const batchPayoutStakers = async (
   });
 
   const { request } = await evmPublicClient.simulateContract({
-    address: BatchPrecompileAddress as AddressType,
-    abi: BatchPrecompileABI,
+    address: PrecompileAddress.Batch as AddressType,
+    abi: BATCH_PRECOMPILE_ABI,
     functionName: 'batchAll',
     args: [
       batchCalls.map((call) => call.to),

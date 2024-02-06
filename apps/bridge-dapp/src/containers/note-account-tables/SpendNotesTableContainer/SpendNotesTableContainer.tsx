@@ -12,6 +12,7 @@ import {
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
+  HiddenValue,
   IconWithTooltip,
   IconsGroup,
   KeyValueWithButton,
@@ -25,7 +26,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import HiddenValue from '../../../components/HiddenValue';
 import { EmptyTable, LoadingTable } from '../../../components/tables';
 import { downloadNotes } from '../../../utils';
 import { ActionWithTooltip } from '../ActionWithTooltip';

@@ -1,6 +1,7 @@
 import { isHex } from '@polkadot/util';
 import { redirect } from 'next/navigation';
 
+import { InternalPath } from '../../../types';
 import { getPolkadotApiPromise } from '../../../utils/polkadot';
 import SuccessClient from './SuccessClient';
 
@@ -13,17 +14,13 @@ const Page = async ({
 
   const api = await getPolkadotApiPromise();
 
-  if (!api) {
-    return redirect('/claim');
-  }
-
   const isValidBlockHash =
     typeof blockHash === 'string' &&
     isHex(blockHash) &&
     (await isBlockHashExistOnChain(api, blockHash));
 
   if (!isValidBlockHash) {
-    return redirect('/claim');
+    return redirect(InternalPath.ClaimAirdrop);
   }
 
   return <SuccessClient blockHash={blockHash} />;

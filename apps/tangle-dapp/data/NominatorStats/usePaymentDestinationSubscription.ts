@@ -22,9 +22,6 @@ export default function usePaymentDestinationSubscription(
     const subscribeData = async () => {
       try {
         const api = await getPolkadotApiRx();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         if (!address) {
           setValue1(null);

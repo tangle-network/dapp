@@ -21,9 +21,6 @@ export default function useEraCountSubscription(
     const subscritbeData = async () => {
       try {
         const api = await getPolkadotApiRx();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
 
         sub = api.query.staking.activeEra().subscribe((nextEra) => {
           const activeEra = nextEra.unwrapOr(null);
