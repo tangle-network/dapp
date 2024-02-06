@@ -21,25 +21,25 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   const { apiConfig } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
 
-  const { value: airdropEligibilityCache, set: setAirdropEligibilityCache } =
-    useLocalStorage(LocalStorageKey.AirdropEligibilityCache);
+  const { setWithPreviousValue: setAirdropEligibilityCache } = useLocalStorage(
+    LocalStorageKey.AirdropEligibilityCache
+  );
 
-  // Mark active account address as no longer eligible in the local storage
-  // after claiming the airdrop.
+  // Mark active account address as no longer eligible in the
+  // local storage after claiming the airdrop.
   useEffect(() => {
+    // There should be an active account address right after claiming
+    // the airdrop and being redirected to this page, but just in case
+    // that there isn't, simply don't update the cache.
     if (activeAccountAddress === null) {
       return;
     }
 
-    setAirdropEligibilityCache({
-      ...airdropEligibilityCache,
+    setAirdropEligibilityCache((previous) => ({
+      ...previous,
       [activeAccountAddress]: false,
-    });
-  }, [
-    activeAccountAddress,
-    airdropEligibilityCache,
-    setAirdropEligibilityCache,
-  ]);
+    }));
+  }, [activeAccountAddress, setAirdropEligibilityCache]);
 
   const txExplorerUrl = useMemo(() => {
     if (!blockHash) return null;

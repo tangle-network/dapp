@@ -5,7 +5,7 @@ export enum LocalStorageKey {
   IsBalancesTableDetailsCollapsed = 'isBalancesTableDetailsCollapsed',
 }
 
-type AirdropEligibilityCache = {
+export type AirdropEligibilityCache = {
   [address: string]: boolean;
 };
 
@@ -15,6 +15,35 @@ export type LocalStorageValueType<T extends LocalStorageKey> =
     : T extends LocalStorageKey.IsBalancesTableDetailsCollapsed
     ? boolean
     : never;
+
+const extractFromLocalStorage = <Key extends LocalStorageKey>(
+  key: Key,
+  canClearIfInvalid: boolean
+): LocalStorageValueType<Key> | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const jsonString = window.localStorage.getItem(key);
+
+  // Item was not present in local storage.
+  if (jsonString === null) {
+    return null;
+  }
+
+  const value: LocalStorageValueType<Key> | null = null;
+
+  try {
+    // TODO: Use zod to validate the value, this helps prevent logic errors.
+    JSON.parse(jsonString) as LocalStorageValueType<Key>;
+  } catch {
+    if (canClearIfInvalid) {
+      window.localStorage.removeItem(key);
+    }
+  }
+
+  return value;
+};
 
 // TODO: During development cycles, changing local storage value types will lead to any users depending on that value to possibly break (because they may be stuck with an older type schema). Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
 const useLocalStorage = <Key extends LocalStorageKey>(
@@ -28,12 +57,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
       return null;
     }
 
-    const item = window.localStorage.getItem(key);
-
-    // TODO: Use zod to validate the value, this helps prevent logic errors.
-    return item !== null
-      ? (JSON.parse(item) as LocalStorageValueType<Key>)
-      : null;
+    return extractFromLocalStorage(key, isUsedAsCache);
   });
 
   const refresh = useCallback(() => {
@@ -52,12 +76,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
       return null;
     }
 
-    const value = localStorage.getItem(key);
-
-    // TODO: Use zod to validate the value, this helps prevent logic errors.
-    return value !== null
-      ? (JSON.parse(value) as LocalStorageValueType<Key>)
-      : null;
+    return extractFromLocalStorage(key, isUsedAsCache);
   }, [isUsedAsCache, key]);
 
   // Listen for changes to local storage. This is useful in case
@@ -85,7 +104,21 @@ const useLocalStorage = <Key extends LocalStorageKey>(
     localStorage.removeItem(key);
   }, [key]);
 
-  return { value, set, remove, refresh };
+  const setWithPreviousValue = useCallback(
+    (
+      updater: (
+        previousValue: LocalStorageValueType<Key> | null
+      ) => LocalStorageValueType<Key>
+    ) => {
+      const previousValue = refresh();
+      const nextValue = updater(previousValue);
+
+      set(nextValue);
+    },
+    [refresh, set]
+  );
+
+  return { value, set, setWithPreviousValue, remove, refresh };
 };
 
 export default useLocalStorage;

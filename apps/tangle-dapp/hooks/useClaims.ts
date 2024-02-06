@@ -18,10 +18,8 @@ const useClaims = () => {
 
   useDebugValue(isEligible);
 
-  const { value: eligibilityCache, set: setEligibilityCache } = useLocalStorage(
-    LocalStorageKey.AirdropEligibilityCache,
-    true
-  );
+  const { value: eligibilityCache, setWithPreviousValue: setEligibilityCache } =
+    useLocalStorage(LocalStorageKey.AirdropEligibilityCache, true);
 
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -89,15 +87,14 @@ const useClaims = () => {
     setIsEligible(isNowEligible);
 
     // Update the eligibility cache in local storage.
-    setEligibilityCache({
-      ...eligibilityCache,
+    setEligibilityCache((previous) => ({
+      ...previous,
       [activeAccountAddress]: isNowEligible,
-    });
+    }));
   }, [
     activeAccountAddress,
     claimAmountOpt,
     claimStatementOpt,
-    eligibilityCache,
     isAirdropEligibleByCache,
     isEligible,
     setEligibilityCache,

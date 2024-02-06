@@ -37,7 +37,7 @@ export default function Page() {
     useState<Nullable<ClaimInfoType | false>>(null);
   const [checkingEligibility, setCheckingEligibility] = useState(false);
 
-  const { set: setEligibilityCache } = useLocalStorage(
+  const { setWithPreviousValue: setEligibilityCache } = useLocalStorage(
     LocalStorageKey.AirdropEligibilityCache,
     true
   );
@@ -55,9 +55,10 @@ export default function Page() {
     // This is reused in the account page, to avoid checking eligibility
     // multiple times.
     if (activeAccount !== null) {
-      setEligibilityCache({
+      setEligibilityCache((previous) => ({
+        ...previous,
         [activeAccount.address]: claimInfo !== false,
-      });
+      }));
     }
 
     if (claimInfo === false) {
