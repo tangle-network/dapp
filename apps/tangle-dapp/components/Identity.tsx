@@ -70,7 +70,7 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
       if (!isDisplayingEvmAddress && isEvmAccountAddress) {
         setDisplayAddress(address);
       } else if (isEvmAccountAddress) {
-        setDisplayAddress(convertToSubstrateAddress(address));
+        setDisplayAddress(convertToSubstrateAddress(address) ?? '');
       }
     }, [address, isDisplayingEvmAddress, isEvmAccountAddress]);
 
