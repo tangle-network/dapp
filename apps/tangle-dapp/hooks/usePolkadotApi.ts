@@ -2,8 +2,8 @@ import { ApiPromise } from '@polkadot/api';
 import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 
-import { getPolkadotApiPromise } from '../constants/polkadotApiUtils';
 import ensureError from '../utils/ensureError';
+import { getPolkadotApiPromise } from '../utils/polkadot';
 import usePromise from './usePromise';
 
 export type PolkadotApiFetcher<T> = (api: ApiPromise) => Promise<T>;

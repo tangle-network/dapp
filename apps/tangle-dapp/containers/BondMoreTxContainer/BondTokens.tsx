@@ -1,6 +1,7 @@
 import { Button, InputField, Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -18,7 +19,7 @@ const BondTokens: FC<BondTokensProps> = ({
           isAddressType={false}
           value={amountToBond.toString()}
           isDisabled={amountWalletBalance > 0 ? false : true}
-          placeholder="10 tTNT"
+          placeholder={`10 ${TANGLE_TOKEN_UNIT}`}
           type="number"
           onChange={(e) => setAmountToBond(Number(e.target.value))}
         />

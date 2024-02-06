@@ -9,7 +9,7 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 import { MetaMaskConnector, RainbowConnector } from './injected';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';

@@ -1,4 +1,4 @@
-export type Precompile = 'staking' | 'vesting';
+export type Precompile = 'staking' | 'vesting' | 'batch';
 
 type StakingAbiFunctionName =
   | 'bond'
@@ -24,10 +24,14 @@ type StakingAbiFunctionName =
 
 type VestingAbiFunctionName = 'vest' | 'vestOther' | 'vestedTransfer';
 
+type BatchAbiFunctionName = 'batchAll' | 'batchSome' | 'batchSomeUntilFailure';
+
 export type AbiFunctionName<T extends Precompile> = T extends 'staking'
   ? StakingAbiFunctionName
   : T extends 'vesting'
   ? VestingAbiFunctionName
+  : T extends 'batch'
+  ? BatchAbiFunctionName
   : never;
 
 type InputType =
@@ -36,7 +40,9 @@ type InputType =
   | 'uint32'
   | 'bool'
   | 'address'
-  | 'uint8';
+  | 'uint8'
+  | 'bytes'
+  | 'uint64';
 
 type InputTypeSuper = InputType | `${InputType}[]`;
 
@@ -50,6 +56,7 @@ type InputOutput = {
 export enum PrecompileAddress {
   Staking = '0x0000000000000000000000000000000000000800',
   Vesting = '0x0000000000000000000000000000000000000801',
+  Batch = '0x0000000000000000000000000000000000000808',
 }
 
 export type PrecompileAbiFunction<T extends Precompile> = {
@@ -395,6 +402,93 @@ export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<'vesting'>[] = [
   },
 ] as const;
 
+export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<'batch'>[] = [
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'to',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'value',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'callData',
+        type: 'bytes[]',
+      },
+      {
+        internalType: 'uint64[]',
+        name: 'gasLimit',
+        type: 'uint64[]',
+      },
+    ],
+    name: 'batchAll',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'to',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'value',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'callData',
+        type: 'bytes[]',
+      },
+      {
+        internalType: 'uint64[]',
+        name: 'gasLimit',
+        type: 'uint64[]',
+      },
+    ],
+    name: 'batchSome',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'to',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'value',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'callData',
+        type: 'bytes[]',
+      },
+      {
+        internalType: 'uint64[]',
+        name: 'gasLimit',
+        type: 'uint64[]',
+      },
+    ],
+    name: 'batchSomeUntilFailure',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
+
 export function getAddressOfPrecompile(
   precompile: Precompile
 ): PrecompileAddress {
@@ -403,6 +497,8 @@ export function getAddressOfPrecompile(
       return PrecompileAddress.Staking;
     case 'vesting':
       return PrecompileAddress.Vesting;
+    case 'batch':
+      return PrecompileAddress.Batch;
   }
 }
 
@@ -414,5 +510,7 @@ export function getAbiForPrecompile(
       return STAKING_PRECOMPILE_ABI;
     case 'vesting':
       return VESTING_PRECOMPILE_ABI;
+    case 'batch':
+      return BATCH_PRECOMPILE_ABI;
   }
 }

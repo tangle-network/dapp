@@ -3,7 +3,7 @@ import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { SubstrateLockId } from '../constants/polkadotApiUtils';
+import { SubstrateLockId } from '../constants/index';
 import useAgnosticTx from './useAgnosticTx';
 import useBalancesLock from './useBalancesLock';
 import usePolkadotApiRx from './usePolkadotApiRx';

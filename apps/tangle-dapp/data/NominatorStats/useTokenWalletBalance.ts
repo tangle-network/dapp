@@ -7,9 +7,9 @@ import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 import { formatEther } from 'viem';
 
-import { getPolkadotApiRx } from '../../constants';
-import { evmPublicClient } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import { evmPublicClient } from '../../utils/evm';
+import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useTokenWalletBalance(
   address: string,
@@ -61,8 +61,11 @@ export default function useTokenWalletBalance(
           if (isMounted) {
             const freeBalance = accData.data.free.toBigInt();
             const reservedBalance = accData.data.reserved.toBigInt();
-            // total balance = free balance + reserved balance
-            setValue1(Number(formatEther(freeBalance + reservedBalance)));
+            const frozenBalance = accData.data.frozen.toBigInt();
+            // total balance = free balance + reserved balance - frozenBalance
+            setValue1(
+              Number(formatEther(freeBalance + reservedBalance - frozenBalance))
+            );
             setIsLoading(false);
           }
         });

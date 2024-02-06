@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { formatTokenBalance } from '../../constants';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 
 const BalanceCell: FC<{
   amount: BN | null;

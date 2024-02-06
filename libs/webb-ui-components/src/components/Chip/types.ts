@@ -7,7 +7,8 @@ export type ChipColors =
   | 'purple'
   | 'yellow'
   | 'red'
-  | 'grey';
+  | 'grey'
+  | 'dark-grey';
 
 /**
  * The `Chip` props
@@ -16,7 +17,7 @@ export interface ChipProps extends WebbComponentBase {
   /**
    * The visual style of the badge
    *
-   * @type {("green"|"blue"|"purple"|"yellow"|"red" | "grey")}
+   * @type {("green"|"blue"|"purple"|"yellow"|"red" | "grey" | "dark-grey")}
    *
    * @default "green"
    */

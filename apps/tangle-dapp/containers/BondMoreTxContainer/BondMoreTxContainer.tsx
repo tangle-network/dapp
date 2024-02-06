@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Modal,
@@ -14,8 +13,11 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { bondExtraTokens, evmPublicClient } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
+import { bondExtraTokens as bondExtraTokensSubstrate } from '../../utils/polkadot';
 import BondTokens from './BondTokens';
 import { BondMoreTxContainerProps } from './types';
 
@@ -25,6 +27,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
@@ -52,9 +55,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
-      return 'You have zero tTNT in your wallet!';
+      return `You have zero ${TANGLE_TOKEN_UNIT} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough tTNT in your wallet!`;
+      return `You don't have enough ${TANGLE_TOKEN_UNIT} in your wallet!`;
     }
   }, [walletBalance, amountToBond]);
 
@@ -74,40 +77,18 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setIsBondMoreTxLoading(true);
 
     try {
-      const bondExtraTokensTxHash = await bondExtraTokens(
-        walletAddress,
-        amountToBond
+      await executeTx(
+        () => bondExtraTokensEvm(walletAddress, amountToBond),
+        () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+        `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
+        'Failed to bond extra tokens!'
       );
-
-      if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to bond tokens!');
-      }
-
-      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
-        {
-          hash: bondExtraTokensTxHash,
-        }
-      );
-
-      if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to bond tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully bonded ${amountToBond} tTNT.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [amountToBond, closeModal, notificationApi, walletAddress]);
+  }, [amountToBond, closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>

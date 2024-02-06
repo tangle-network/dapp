@@ -1,7 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -14,13 +14,16 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { evmPublicClient, rebondTokens } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import {
   convertToSubstrateAddress,
   splitTokenValueAndSymbol,
 } from '../../utils';
+import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
+import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
 import RebondTokens from './RebondTokens';
 import { RebondTxContainerProps } from './types';
 
@@ -30,6 +33,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
+  const executeTx = useExecuteTxWithNotification();
 
   const [amountToRebond, setAmountToRebond] = useState<number>(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
@@ -43,7 +47,10 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) return '';
 
-    return convertToSubstrateAddress(activeAccount.address);
+    if (isSubstrateAddress(activeAccount?.address))
+      return activeAccount.address;
+
+    return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: unbondingAmountData, error: unbondingAmountError } =
@@ -73,7 +80,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (remainingUnbondedTokensToRebond === 0) {
       return 'You have no unbonded tokens to rebond!';
     } else if (amountToRebond > remainingUnbondedTokensToRebond) {
-      return `You can only rebond ${remainingUnbondedTokensToRebond} tTNT!`;
+      return `You can only rebond ${remainingUnbondedTokensToRebond} ${TANGLE_TOKEN_UNIT}!`;
     }
   }, [remainingUnbondedTokensToRebond, amountToRebond]);
 
@@ -93,40 +100,18 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     setIsRebondTxLoading(true);
 
     try {
-      const bondExtraTokensTxHash = await rebondTokens(
-        walletAddress,
-        amountToRebond
+      await executeTx(
+        () => rebondTokensEvm(walletAddress, amountToRebond),
+        () => rebondTokensSubstrate(walletAddress, amountToRebond),
+        `Successfully rebonded ${amountToRebond} ${TANGLE_TOKEN_UNIT}.`,
+        'Failed to rebond tokens!'
       );
-
-      if (!bondExtraTokensTxHash) {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      const bondExtraTokensTx = await evmPublicClient.waitForTransactionReceipt(
-        {
-          hash: bondExtraTokensTxHash,
-        }
-      );
-
-      if (bondExtraTokensTx.status !== 'success') {
-        throw new Error('Failed to unbond tokens!');
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Successfully unbonded ${amountToRebond} tTNT.`,
-      });
-    } catch (error: any) {
-      notificationApi({
-        variant: 'error',
-        message: isViemError(error)
-          ? error.shortMessage
-          : error.message || 'Something went wrong!',
-      });
+    } catch {
+      // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [amountToRebond, closeModal, notificationApi, walletAddress]);
+  }, [amountToRebond, closeModal, executeTx, walletAddress]);
 
   return (
     <Modal open>

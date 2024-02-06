@@ -7,11 +7,9 @@ import {
 import { FC } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
-import {
-  formatTokenBalance,
-  TANGLE_TOKEN_UNIT,
-} from '../../constants/polkadotApiUtils';
+import { TANGLE_TOKEN_UNIT } from '../../constants/index';
 import useAccountBalances from '../../hooks/useAccountBalances';
+import { formatTokenBalance } from '../../utils/polkadot';
 
 const TotalBalance: FC = () => {
   const { total } = useAccountBalances();

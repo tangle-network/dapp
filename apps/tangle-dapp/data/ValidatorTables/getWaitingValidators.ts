@@ -1,11 +1,11 @@
+import { Validator } from '../../types';
 import {
   formatTokenBalance,
   getPolkadotApiPromise,
   getTotalNumberOfNominators,
   getValidatorCommission,
   getValidatorIdentity,
-} from '../../constants';
-import { Validator } from '../../types';
+} from '../../utils/polkadot';
 
 export const getWaitingValidators = async (): Promise<Validator[]> => {
   const api = await getPolkadotApiPromise();

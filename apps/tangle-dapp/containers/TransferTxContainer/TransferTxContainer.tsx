@@ -13,11 +13,12 @@ import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { formatTokenBalance, TANGLE_TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import { TransferTxContainerProps } from './types';
 
 const TransferTxContainer: FC<TransferTxContainerProps> = ({

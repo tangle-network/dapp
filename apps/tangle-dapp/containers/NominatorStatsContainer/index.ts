@@ -1,1 +1,1 @@
-export * from './NominatorStatsContainer';
+export { default as NominatorStatsContainer } from './NominatorStatsContainer';

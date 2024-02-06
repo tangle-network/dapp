@@ -26,9 +26,9 @@ import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
-import { getPolkadotApiPromise } from '../../constants/polkadotApiUtils';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import getStatement from '../../utils/getStatement';
+import { getPolkadotApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
 
 enum Step {

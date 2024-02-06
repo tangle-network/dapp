@@ -2,8 +2,8 @@ import { ApiRx } from '@polkadot/api';
 import { useEffect, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
 
-import { getPolkadotApiRx } from '../constants/polkadotApiUtils';
 import ensureError from '../utils/ensureError';
+import { getPolkadotApiRx } from '../utils/polkadot';
 import usePromise from './usePromise';
 import useSubstrateAddress from './useSubstrateAddress';
 

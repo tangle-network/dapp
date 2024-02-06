@@ -16,10 +16,10 @@ import {
   DKG_STATS_AUTHORITIES_URL,
   DKG_STATS_KEYS_URL,
   DKG_STATS_PROPOSALS_URL,
+  TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
   TANGLE_TESTNET_EXPLORER_URL,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-  WEBB_TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [
@@ -87,7 +87,7 @@ const items: SideBarItemProps[] = [
 
 const footer: SideBarFooterType = {
   Icon: DocumentationIcon,
-  href: WEBB_TANGLE_DOCS_URL,
+  href: TANGLE_DOCS_URL,
   isInternal: false,
   name: 'Tangle Docs',
   useNextThemesForThemeToggle: true,

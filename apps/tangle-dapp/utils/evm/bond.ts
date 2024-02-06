@@ -1,20 +1,13 @@
-import { u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/util-crypto';
 import { ensureHex } from '@webb-tools/dapp-config';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import {
-  createPublicClient,
-  createWalletClient,
-  custom,
-  defineChain,
-  http,
-  parseEther,
-} from 'viem';
+import { parseEther } from 'viem';
 
-import { PaymentDestination } from '../types';
-import { PrecompileAddress, STAKING_PRECOMPILE_ABI } from './evmPrecompiles';
+import {
+  PrecompileAddress,
+  STAKING_PRECOMPILE_ABI,
+} from '../../constants/evmPrecompiles';
+import { PaymentDestination } from '../../types';
+import { createEvmWalletClient, evmPublicClient } from './client';
 
 const PAYEE_STAKED =
   '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -24,38 +17,6 @@ const PAYEE_STASH =
 
 const PAYEE_CONTROLLER =
   '0x0000000000000000000000000000000000000000000000000000000000000002';
-
-export const PAYMENT_DESTINATION_OPTIONS = [
-  'Staked (increase the amount at stake)',
-  'Stash (do not increase the amount at stake)',
-];
-
-const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
-
-// TODO: Explain why this is being done.
-delete tangleTestnetConfig.contracts;
-
-const tangleTestnet = defineChain(tangleTestnetConfig);
-
-export const evmPublicClient = createPublicClient({
-  chain: tangleTestnet,
-  transport: http(),
-});
-
-export const createEvmWalletClient = (accountAddress: string) => {
-  // TODO: Might need to handle this more gracefully. Or at least from the caller(s) (add description to the function to make it clear that it may fail and throw an error).
-  if (typeof window.ethereum === 'undefined') {
-    throw new Error(
-      'window.ethereum is undefined, but is required for EVM actions'
-    );
-  }
-
-  return createWalletClient({
-    chain: tangleTestnet,
-    account: ensureHex(accountAddress),
-    transport: custom(window.ethereum),
-  });
-};
 
 export const bondTokens = async (
   nominatorAddress: string,
@@ -96,29 +57,6 @@ export const bondExtraTokens = async (
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'bondExtra',
     args: [value],
-    account: ensureHex(nominatorAddress),
-  });
-
-  const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
-  const txHash = await evmWalletClient.writeContract(request);
-
-  return txHash;
-};
-
-export const nominateValidators = async (
-  nominatorAddress: string,
-  validatorAddresses: string[]
-): Promise<AddressType> => {
-  const targets = validatorAddresses.map((address) => {
-    return u8aToHex(decodeAddress(address));
-  });
-
-  const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
-    abi: STAKING_PRECOMPILE_ABI,
-    functionName: 'nominate',
-    args: [targets],
     account: ensureHex(nominatorAddress),
   });
 
@@ -187,24 +125,6 @@ export const rebondTokens = async (
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'rebond',
     args: [value],
-    account: ensureHex(nominatorAddress),
-  });
-
-  const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
-  const txHash = await evmWalletClient.writeContract(request);
-
-  return txHash;
-};
-
-export const stopNomination = async (
-  nominatorAddress: string
-): Promise<AddressType> => {
-  const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
-    abi: STAKING_PRECOMPILE_ABI,
-    functionName: 'chill',
-    args: [],
     account: ensureHex(nominatorAddress),
   });
 

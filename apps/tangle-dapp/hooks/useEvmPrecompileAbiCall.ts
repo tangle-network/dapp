@@ -2,16 +2,13 @@ import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useState } from 'react';
 
 import {
-  createEvmWalletClient,
-  evmPublicClient,
-} from '../constants/evmActions';
-import {
   AbiFunctionName,
   getAbiForPrecompile,
   getAddressOfPrecompile,
   Precompile,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
+import { createEvmWalletClient, evmPublicClient } from '../utils/evm';
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 

@@ -19,12 +19,12 @@ import Link from 'next/link';
 import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { formatTokenBalance } from '../../constants';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useClaims from '../../hooks/useClaims';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useVesting from '../../hooks/useVesting';
 import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
 
 type ActionItemDef = {
   label: string;

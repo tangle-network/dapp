@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   useReactTable,
 } from '@tanstack/react-table';
 import {
@@ -16,7 +17,8 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { type FC } from 'react';
+import { useRouter } from 'next/navigation';
+import { FC, useCallback } from 'react';
 
 import { Validator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -82,6 +84,15 @@ const columns = [
 ];
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
+  const router = useRouter();
+
+  const onRowClick = useCallback(
+    (row: Row<Validator>) => {
+      router.push(`/nomination/${row.original.address}`);
+    },
+    [router]
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -110,6 +121,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
         tableProps={table}
         isPaginated
         totalRecords={data.length}
+        onRowClick={onRowClick}
       />
     </div>
   );

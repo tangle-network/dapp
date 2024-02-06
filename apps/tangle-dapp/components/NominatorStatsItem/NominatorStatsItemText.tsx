@@ -5,6 +5,7 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useEffect, useMemo } from 'react';
 
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import {
   getRoundedDownNumberWith2Decimals,
   splitTokenValueAndSymbol,
@@ -66,7 +67,7 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
                 fw="normal"
                 className="text-mono-140 dark:text-mono-40"
               >
-                {splitData?.symbol ? splitData.symbol : 'tTNT'}
+                {splitData?.symbol ? splitData.symbol : TANGLE_TOKEN_UNIT}
               </Typography>
             ) : (
               data.value1 && (

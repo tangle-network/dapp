@@ -1,3 +1,4 @@
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
 import {
   CopyWithTooltip,
@@ -13,25 +14,31 @@ const AuthorizeTx: FC<AuthorizeTxProps> = ({
   contractLink,
   nominatorAddress,
 }) => {
+  const isEvmWallet = isEthereumAddress(nominatorAddress);
+
   return (
     <div className="grid grid-cols-2 gap-9">
       <div className="flex flex-col gap-9">
         {/* Contract */}
-        <InputField.Root>
-          <InputField.Input
-            title="Contract"
-            isAddressType={false}
-            value={contractFunc}
-            type="text"
-            readOnly
-          />
+        {isEvmWallet && (
+          <InputField.Root>
+            {
+              <InputField.Input
+                title="Contract"
+                isAddressType={false}
+                value={contractFunc}
+                type="text"
+                readOnly
+              />
+            }
 
-          <InputField.Slot>
-            <a href={contractLink} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkLine size="lg" />
-            </a>
-          </InputField.Slot>
-        </InputField.Root>
+            <InputField.Slot>
+              <a href={contractLink} target="_blank" rel="noopener noreferrer">
+                <ExternalLinkLine size="lg" />
+              </a>
+            </InputField.Slot>
+          </InputField.Root>
+        )}
 
         {/* Account */}
         <InputField.Root>
@@ -55,10 +62,12 @@ const AuthorizeTx: FC<AuthorizeTxProps> = ({
       </div>
 
       <div className="flex flex-col gap-9">
-        <Typography variant="body1" fw="normal">
-          StakingInterface.sol is a precompile contract used for bonding tokens
-          and nominating validators.
-        </Typography>
+        {isEvmWallet && (
+          <Typography variant="body1" fw="normal">
+            StakingInterface.sol is a precompile contract used for bonding
+            tokens and nominating validators.
+          </Typography>
+        )}
 
         <Typography variant="body1" fw="normal">
           The sending account that will be used to send this transaction. Any

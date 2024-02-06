@@ -4,9 +4,9 @@ import { BN_ZERO } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 
-import { getPolkadotApiPromise } from '../../constants';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
+import { getPolkadotApiPromise } from '../../utils/polkadot';
 
 export default function useIdealStakedPercentage(
   defaultValue: { value1: number | null; value2: number | null } = {
