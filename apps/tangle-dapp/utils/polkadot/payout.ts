@@ -19,7 +19,7 @@ export const payoutStakers = async (
 
 export const batchPayoutStakers = async (
   nominatorAddress: string,
-  validatorEraPairs: { validatorAddress: string; era: number }[]
+  validatorEraPairs: { validatorAddress: string; era: string }[]
 ): Promise<AddressType> => {
   const api = await getPolkadotApiPromise();
   if (!api) {
@@ -28,7 +28,7 @@ export const batchPayoutStakers = async (
 
   const tx = api.tx.utility.batch(
     validatorEraPairs.map(({ validatorAddress, era }) =>
-      api.tx.staking.payoutStakers(validatorAddress, era)
+      api.tx.staking.payoutStakers(validatorAddress, Number(era))
     )
   );
   return getTxPromise(nominatorAddress, tx);

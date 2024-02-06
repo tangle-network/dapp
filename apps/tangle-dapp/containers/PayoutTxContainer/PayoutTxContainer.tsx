@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   InputField,
@@ -10,16 +9,12 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import {
-  evmPublicClient,
-  payoutStakers as payoutStakersEvm,
-} from '../../utils/evm';
+import { payoutStakers as payoutStakersEvm } from '../../utils/evm';
 import { payoutStakers as payoutStakersSubstrate } from '../../utils/polkadot';
 import { PayoutTxContainerProps } from './types';
 
@@ -30,7 +25,6 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   payouts,
   updatePayouts,
 }) => {
-  const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const { validatorAddress, era } = payoutTxProps;
   const executeTx = useExecuteTxWithNotification();
@@ -57,8 +51,9 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
 
     try {
       await executeTx(
-        () => payoutStakersEvm(walletAddress, validatorAddress, era),
-        () => payoutStakersSubstrate(walletAddress, validatorAddress, era),
+        () => payoutStakersEvm(walletAddress, validatorAddress, Number(era)),
+        () =>
+          payoutStakersSubstrate(walletAddress, validatorAddress, Number(era)),
         `Successfully claimed rewards for Era ${era}.`,
         'Failed to payout stakers!'
       );
@@ -163,7 +158,11 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
             Confirm
           </Button>
 
-          <a href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+          <a
+            href={WEBB_TANGLE_DOCS_STAKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button isFullWidth variant="secondary">
               Learn More
             </Button>

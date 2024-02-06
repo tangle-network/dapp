@@ -50,7 +50,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =

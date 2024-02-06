@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   Button,
   InputField,
@@ -10,16 +9,12 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import {
-  batchPayoutStakers as batchPayoutStakersEvm,
-  evmPublicClient,
-} from '../../utils/evm';
+import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
 import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
 import { PayoutAllTxContainerProps } from './types';
 
@@ -30,7 +25,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   payouts,
   updatePayouts,
 }) => {
-  const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
@@ -187,7 +181,11 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             Confirm
           </Button>
 
-          <a href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+          <a
+            href={WEBB_TANGLE_DOCS_STAKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button isFullWidth variant="secondary">
               Learn More
             </Button>

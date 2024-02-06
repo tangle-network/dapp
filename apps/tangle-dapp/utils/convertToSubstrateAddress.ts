@@ -6,7 +6,7 @@ import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
  * @param address - The address to be converted.
  * @returns The converted Substrate address
  */
-export const convertToSubstrateAddress = (address: string): string => {
+export const convertToSubstrateAddress = (address: string) => {
   if (isEthereumAddress(address)) {
     return evmToAddress(address);
   } else {

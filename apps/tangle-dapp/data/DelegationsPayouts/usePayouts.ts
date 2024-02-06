@@ -83,13 +83,17 @@ export default function usePayouts(
                         rewards.total?.toString().replace(/,/g, '') ?? '0'
                       );
 
-                      for (const [key, value] of Object.entries(
-                        rewards.individual
-                      )) {
-                        if (key === validator.toString()) {
-                          validatorRewardPoints = Number(value);
-                          break;
-                        }
+                      if (
+                        typeof rewards.individual === 'object' &&
+                        rewards.individual !== null
+                      ) {
+                        Object.entries(rewards.individual).forEach(
+                          ([key, value]) => {
+                            if (key === validator.toString()) {
+                              validatorRewardPoints = Number(value);
+                            }
+                          }
+                        );
                       }
 
                       if (validatorRewardPoints > 0) {

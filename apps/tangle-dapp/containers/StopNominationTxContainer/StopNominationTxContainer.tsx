@@ -44,7 +44,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);
