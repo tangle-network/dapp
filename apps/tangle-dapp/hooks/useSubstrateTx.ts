@@ -1,12 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
-import { getPolkadotApiPromise } from '../utils/polkadot';
+import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useSubstrateAddress from './useSubstrateAddress';
@@ -43,14 +42,6 @@ function useSubstrateTx<T extends ISubmittableResult>(
     };
   }, []);
 
-  const requestInjector = useCallback(async () => {
-    if (activeSubstrateAddress === null) {
-      return null;
-    }
-
-    return web3FromAddress(activeSubstrateAddress);
-  }, [activeSubstrateAddress]);
-
   useEffect(() => {
     if (!notifyStatusUpdates) {
       return;
@@ -81,7 +72,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
       );
     }
 
-    const injector = await requestInjector();
+    const injector = await getInjector(activeSubstrateAddress);
     const api = await getPolkadotApiPromise();
     let tx: SubmittableExtrinsic<'promise', T> | null;
 
@@ -137,7 +128,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
       setStatus(TxStatus.Error);
       setError(ensureError(possibleError));
     }
-  }, [activeSubstrateAddress, factory, isEvmAccount, requestInjector, status]);
+  }, [activeSubstrateAddress, factory, isEvmAccount, status]);
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something
