@@ -4,8 +4,8 @@ import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { SubstrateLockId } from '../constants/polkadotApiUtils';
-import getSubstrateLockId from '../utils/getSubstrateLockId';
 import useAgnosticTx from './useAgnosticTx';
+import useBalancesLock from './useBalancesLock';
 import usePolkadotApiRx from './usePolkadotApiRx';
 import { TxStatus } from './useSubstrateTx';
 
@@ -81,21 +81,9 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
     api.derive.chain.bestNumber()
   );
 
-  const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
-    api.query.balances.locks(activeSubstrateAddress)
+  const { amount: vestingLockAmount } = useBalancesLock(
+    SubstrateLockId.Vesting
   );
-
-  const vestingLockAmount = useMemo(() => {
-    if (locks === null) {
-      return null;
-    }
-
-    const vestingLock = locks.find(
-      (lock) => getSubstrateLockId(lock.id) === SubstrateLockId.Vesting
-    );
-
-    return vestingLock?.amount ?? new BN(0);
-  }, [locks]);
 
   const totalVestingAmount = useMemo(() => {
     if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
@@ -157,7 +145,6 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
 
   const claimableAmount = useMemo(() => {
     if (
-      locks === null ||
       totalVestingAmount === null ||
       totalReleasedAmount === null ||
       vestingLockAmount === null
@@ -176,7 +163,7 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
 
     // Claimable = total released - (total vested - vesting lock amount).
     return totalReleasedAmount.sub(totalVestingAmount.sub(vestingLockAmount));
-  }, [locks, totalVestingAmount, totalReleasedAmount, vestingLockAmount]);
+  }, [totalVestingAmount, totalReleasedAmount, vestingLockAmount]);
 
   return {
     isVesting: totalVestingAmount !== null && !totalVestingAmount.isZero(),

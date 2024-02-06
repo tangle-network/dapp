@@ -10,7 +10,6 @@ import {
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
-  IconButton,
   Tooltip,
   TooltipBody,
   TooltipTrigger,

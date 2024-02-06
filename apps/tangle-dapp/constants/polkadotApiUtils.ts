@@ -18,10 +18,17 @@ const TANGLE_RPC_ENDPOINT = process.env['USING_LOCAL_TANGLE']
 
 const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 
+/**
+ * The lock ids are always 8 characters long, due to their representation
+ * as a `U8aFixed` in the Substrate runtime. That is why the enum values
+ * are all 8 characters long, and may look a bit odd (e.g. `phrelect`, and
+ * `vesting ` with a trailing space).
+ */
 export enum SubstrateLockId {
-  Vesting = 'vesting',
-  Staking = 'staking',
+  Vesting = 'vesting ',
+  Staking = 'staking ',
   ElectionsPhragmen = 'phrelect',
+  Democracy = 'democrac',
 
   // TODO: Need to account for the other lock types.
   Other = '?other',

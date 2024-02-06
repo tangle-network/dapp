@@ -12,9 +12,7 @@ import { SubstrateLockId } from '../constants';
  * to improve type safety.
  */
 function getSubstrateLockId(rawLockId: U8aFixed): SubstrateLockId {
-  // For some reason, the lock id has an extra space at the end when
-  // converted to a string, so trim it.
-  const lockIdString = u8aToString(rawLockId).trim();
+  const lockIdString = u8aToString(rawLockId);
 
   return Object.values(SubstrateLockId).includes(
     lockIdString as SubstrateLockId

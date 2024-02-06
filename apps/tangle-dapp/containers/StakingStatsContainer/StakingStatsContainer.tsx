@@ -5,8 +5,8 @@ import { FC, useCallback } from 'react';
 
 import PillCard from '../../app/account/PillCard';
 import { formatTokenBalance } from '../../constants';
-import usePendingStakingRewards from '../../data/StakingStats/useStakingRewards';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
+import useStaking from '../../hooks/useStaking';
 
 const StakingStatsContainer: FC = () => {
   const { value: currentEra } = usePolkadotApi<string | null>(
@@ -19,7 +19,7 @@ const StakingStatsContainer: FC = () => {
     PolkadotApiSwrKey.Era
   );
 
-  const pendingRewards = usePendingStakingRewards();
+  const { pendingRewards } = useStaking();
 
   const formattedPendingRewards =
     pendingRewards !== null ? formatTokenBalance(pendingRewards) : null;

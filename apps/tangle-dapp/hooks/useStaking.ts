@@ -4,10 +4,10 @@ import { BN } from '@polkadot/util';
 import assert from 'assert';
 import { useCallback } from 'react';
 
-import { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
-import useStakingLedger, {
-  StakingLedgerFetcher,
-} from '../../hooks/useStakingLedger';
+import { SubstrateLockId } from '../constants';
+import useBalancesLock from './useBalancesLock';
+import { PolkadotApiSwrKey } from './usePolkadotApi';
+import useStakingLedger, { StakingLedgerFetcher } from './useStakingLedger';
 
 const sumStakerRewardsInClaimedEraRange = async (
   ledger: StakingLedger,
@@ -87,13 +87,15 @@ const fetchPendingRewards: StakingLedgerFetcher<BN> = async (ledger, api) => {
   );
 };
 
-const usePendingStakingRewards = () => {
+const useStaking = () => {
   const { value: pendingRewards } = useStakingLedger(
     useCallback(async (ledger, api) => fetchPendingRewards(ledger, api), []),
     PolkadotApiSwrKey.StakingRewards
   );
 
-  return pendingRewards;
+  const { amount: lockedBalance } = useBalancesLock(SubstrateLockId.Staking);
+
+  return { pendingRewards, lockedBalance };
 };
 
-export default usePendingStakingRewards;
+export default useStaking;
