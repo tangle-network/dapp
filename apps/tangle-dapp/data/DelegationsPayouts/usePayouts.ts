@@ -49,7 +49,9 @@ export default function usePayouts(
         setIsLoading(true);
 
         const nominations = await apiPromise.query.staking.nominators(address);
-        const myNominations = nominations.unwrap().targets;
+        const myNominations = nominations.isSome
+          ? nominations.unwrap().targets
+          : [];
 
         sub = apiSub.query.staking.erasRewardPoints
           .entries()
@@ -66,6 +68,7 @@ export default function usePayouts(
             if (myNominations.length > 0) {
               myNominations.forEach((validator) => {
                 points.forEach((point) => {
+                  // regex to remove commas from the era number
                   const era = Number(
                     point[0].toHuman()?.toString().replace(/,/g, '')
                   );
@@ -80,17 +83,13 @@ export default function usePayouts(
                         rewards.total?.toString().replace(/,/g, '') ?? '0'
                       );
 
-                      if (
-                        typeof rewards.individual === 'object' &&
-                        rewards.individual !== null
-                      ) {
-                        Object.entries(rewards.individual).forEach(
-                          ([key, value]) => {
-                            if (key === validator.toString()) {
-                              validatorRewardPoints = Number(value);
-                            }
-                          }
-                        );
+                      for (const [key, value] of Object.entries(
+                        rewards.individual
+                      )) {
+                        if (key === validator.toString()) {
+                          validatorRewardPoints = Number(value);
+                          break;
+                        }
                       }
 
                       if (validatorRewardPoints > 0) {

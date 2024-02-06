@@ -10,6 +10,6 @@ export const convertToSubstrateAddress = (address: string): string => {
   if (isEthereumAddress(address)) {
     return evmToAddress(address);
   } else {
-    return 'invalid';
+    return null;
   }
 };

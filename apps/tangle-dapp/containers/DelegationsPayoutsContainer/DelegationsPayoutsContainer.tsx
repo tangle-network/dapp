@@ -124,6 +124,7 @@ const DelegationsPayoutsContainer: FC = () => {
               <div>
                 <Button
                   variant="utility"
+                  isDisabled={payouts.length === 0}
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
                   Payout All

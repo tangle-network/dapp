@@ -13,7 +13,6 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -148,7 +147,11 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
                 <InputField.Input
                   title="Request Payout for Eras"
                   isAddressType={false}
-                  value={`${eraRange[0]} - ${eraRange[1]}`}
+                  value={
+                    eraRange[0] === eraRange[1]
+                      ? eraRange[0]
+                      : `${eraRange[0]} - ${eraRange[1]}`
+                  }
                   type="text"
                   readOnly
                 />
@@ -184,11 +187,11 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             Confirm
           </Button>
 
-          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+          <a href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
             <Button isFullWidth variant="secondary">
               Learn More
             </Button>
-          </Link>
+          </a>
         </ModalFooter>
       </ModalContent>
     </Modal>
