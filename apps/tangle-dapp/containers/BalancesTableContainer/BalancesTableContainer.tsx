@@ -15,6 +15,7 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import LockedBalanceDetails from './LockedBalanceDetails';
@@ -33,6 +34,12 @@ const BalancesTableContainer: FC = () => {
   useEffect(() => {
     setIsDetailsCollapsedCached(isDetailsCollapsed);
   }, [isDetailsCollapsed, setIsDetailsCollapsedCached]);
+
+  const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
+    api.query.balances.locks(activeSubstrateAddress)
+  );
+
+  const hasLocks = locks !== null && locks.length > 0;
 
   return (
     <GlassCard className="overflow-x-auto">
@@ -79,17 +86,18 @@ const BalancesTableContainer: FC = () => {
           <div className="flex flex-row justify-between">
             <BalanceCell amount={locked} />
 
-            {/* TODO: Do not show this action if there are no locks whatsoever. */}
-            <BalanceAction
-              Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
-              tooltip={`${isDetailsCollapsed ? 'Show' : 'Collapse'} Details`}
-              onClick={() => setIsDetailsCollapsed((previous) => !previous)}
-            />
+            {hasLocks && (
+              <BalanceAction
+                Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
+                tooltip={`${isDetailsCollapsed ? 'Show' : 'Collapse'} Details`}
+                onClick={() => setIsDetailsCollapsed((previous) => !previous)}
+              />
+            )}
           </div>
         </div>
       </div>
 
-      {!isDetailsCollapsed && <LockedBalanceDetails />}
+      {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
     </GlassCard>
   );
 };

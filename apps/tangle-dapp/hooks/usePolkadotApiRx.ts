@@ -9,8 +9,8 @@ import useSubstrateAddress from './useSubstrateAddress';
 
 export type ObservableFactory<T> = (
   api: ApiRx,
-  activeAccountAddress: string
-) => Observable<T>;
+  activeSubstrateAddress: string
+) => Observable<T> | null;
 
 /**
  * Fetch data from the Polkadot API, using RxJS. This is especially useful
@@ -55,7 +55,14 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
       return;
     }
 
-    const subscription = factory(polkadotApiRx, activeSubstrateAddress)
+    const observable = factory(polkadotApiRx, activeSubstrateAddress);
+
+    // The factory is not yet ready to produce an observable.
+    if (observable === null) {
+      return;
+    }
+
+    const subscription = observable
       .pipe(
         catchError((possibleError: unknown) => {
           setError(ensureError(possibleError));

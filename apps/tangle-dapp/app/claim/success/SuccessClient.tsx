@@ -9,12 +9,37 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type FC, useMemo } from 'react';
+import { type FC, useEffect, useMemo } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '../../../hooks/useLocalStorage';
 
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   const { apiConfig } = useWebContext();
+  const activeAccountAddress = useActiveAccountAddress();
+
+  const { value: airdropEligibilityCache, set: setAirdropEligibilityCache } =
+    useLocalStorage(LocalStorageKey.AirdropEligibilityCache);
+
+  // Mark active account address as no longer eligible in the local storage
+  // after claiming the airdrop.
+  useEffect(() => {
+    if (activeAccountAddress === null) {
+      return;
+    }
+
+    setAirdropEligibilityCache({
+      ...airdropEligibilityCache,
+      [activeAccountAddress]: false,
+    });
+  }, [
+    activeAccountAddress,
+    airdropEligibilityCache,
+    setAirdropEligibilityCache,
+  ]);
 
   const txExplorerUrl = useMemo(() => {
     if (!blockHash) return null;
@@ -47,7 +72,7 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
           />
 
           <Typography variant="body1" ta="center">
-            You have successfully claimed $${TANGLE_TOKEN_UNIT} Airdrop! Your
+            You have successfully claimed ${TANGLE_TOKEN_UNIT} Airdrop! Your
             transaction has been confirmed on the Tangle Network. You can view
             your transaction on the explorer below.
           </Typography>

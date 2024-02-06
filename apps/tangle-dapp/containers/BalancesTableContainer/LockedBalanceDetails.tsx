@@ -1,12 +1,10 @@
-// TODO: Consider moving this to a separate file since it's getting quite big.
-
 import { CoinIcon, SendPlanLineIcon } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { HeaderCell } from '../../components/tableCells';
-import { SubstrateLockId } from '../../constants';
-import useBalancesLock from '../../hooks/useBalancesLock';
+import useDemocracy from '../../hooks/useDemocracy';
+import useStaking from '../../hooks/useStaking';
 import useVesting from '../../hooks/useVesting';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
@@ -15,11 +13,23 @@ import BalanceCell from './BalanceCell';
 const LockedBalanceDetails: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVesting();
 
-  const { amount: democracyBalance } = useBalancesLock(
-    SubstrateLockId.Democracy
-  );
+  const {
+    lockedBalance: democracyBalance,
+    latestReferendum: latestDemocracyReferendum,
+  } = useDemocracy();
 
-  const isInDemocracy = democracyBalance !== null && democracyBalance.gtn(0);
+  const hasDemocracyLockedBalance =
+    democracyBalance !== null && democracyBalance.gtn(0);
+
+  const democracyLockEndBlock =
+    latestDemocracyReferendum !== null && latestDemocracyReferendum.isOngoing
+      ? latestDemocracyReferendum.asOngoing.end
+      : null;
+
+  const { lockedBalance: stakingBalance } = useStaking();
+
+  const hasStakingLockedBalance =
+    stakingBalance !== null && stakingBalance.gtn(0);
 
   const vestingSchedulesLabels =
     vestingSchedulesOpt !== null &&
@@ -53,7 +63,7 @@ const LockedBalanceDetails: FC = () => {
       </div>
     ));
 
-  const vestingSchedulesUnlocking =
+  const vestingSchedulesUnlockingAt =
     vestingSchedulesOpt !== null &&
     !vestingSchedulesOpt.isNone &&
     vestingSchedulesOpt.unwrap().map((schedule, index) => {
@@ -66,6 +76,17 @@ const LockedBalanceDetails: FC = () => {
       );
     });
 
+  const democracyUnlockingAt =
+    democracyLockEndBlock !== null ? (
+      <TextCell text={`Block #${democracyLockEndBlock} / Era #90`} />
+    ) : (
+      <TextCell text={hasDemocracyLockedBalance ? '—' : null} />
+    );
+
+  const stakingUnlockingAt = hasStakingLockedBalance && (
+    <TextCell text={`Block #100 / Era #90`} />
+  );
+
   return (
     <div className="flex flex-row dark:bg-mono-180 px-3 py-2 rounded-lg">
       <div className="flex flex-row w-full">
@@ -77,21 +98,20 @@ const LockedBalanceDetails: FC = () => {
 
           {vestingSchedulesLabels}
 
-          {isInDemocracy && <SmallPurpleChip title="Democracy" />}
+          {hasDemocracyLockedBalance && <SmallPurpleChip title="Democracy" />}
 
-          <SmallPurpleChip title="Nomination" />
+          {hasStakingLockedBalance && <SmallPurpleChip title="Nomination" />}
         </div>
 
         {/* Unlocks at */}
         <div className="flex flex-col gap-6 w-full">
           <HeaderCell title="Unlocks At" />
 
-          {vestingSchedulesUnlocking}
+          {vestingSchedulesUnlockingAt}
 
-          {/* TODO: Calculate unlocking period. This may be a bit complex. */}
-          {isInDemocracy && <TextCell text="Block #100 / Era #90" />}
+          {democracyUnlockingAt}
 
-          <TextCell text="Block #100 / Era #90" />
+          {stakingUnlockingAt}
         </div>
       </div>
 
@@ -101,9 +121,9 @@ const LockedBalanceDetails: FC = () => {
 
         {vestingSchedulesBalances}
 
-        {isInDemocracy && <BalanceCell amount={democracyBalance} />}
+        {hasDemocracyLockedBalance && <BalanceCell amount={democracyBalance} />}
 
-        <BalanceCell amount={null} />
+        {hasStakingLockedBalance && <BalanceCell amount={stakingBalance} />}
       </div>
     </div>
   );
