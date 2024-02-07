@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Substrate wallet connection - https://github.com/webb-tools/webb-dapp/pull/1965
 - Payouts Table update & Payout Flow (Payout single and Payout All) supported for both EVM and Substrate wallets  - https://github.com/webb-tools/webb-dapp/pull/1966
 - Substrate wallet support for all staking flows (Nominate, Bond More, Unbond, Rebond, Withdraw, Stop Nomination, Update Payee, Update Nominations) - https://github.com/webb-tools/webb-dapp/pull/1997
+- Account page with total, transferrable, and locked balances, token transfer modal, vesting information, EVM & Substrate `vest` functionality, and useful links - https://github.com/webb-tools/webb-dapp/pull/2000
 
 ### Removed
 
