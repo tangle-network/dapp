@@ -50,7 +50,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: unbondingAmountData, error: unbondingAmountError } =

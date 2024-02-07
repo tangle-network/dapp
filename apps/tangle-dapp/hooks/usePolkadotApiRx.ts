@@ -44,7 +44,7 @@ export type ObservableFactory<T> = (
  * ```
  */
 function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
-  const [data, setResult] = useState<T | null>(null);
+  const [data, setData] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const activeSubstrateAddress = useSubstrateAddress();
   const { result: polkadotApiRx } = usePromise(getPolkadotApiRx, null);
@@ -76,7 +76,7 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
         })
       )
       .subscribe((newResult) => {
-        setResult(newResult);
+        setData(newResult);
         setLoading(false);
       });
 

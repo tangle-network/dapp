@@ -54,7 +54,7 @@ const DelegationsPayoutsContainer: FC = () => {
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
