@@ -148,10 +148,10 @@ const LockedBalanceDetails: FC = () => {
     ));
 
   return (
-    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg">
+    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg min-w-[630px]">
       <div className="flex flex-row w-full">
         {/* Type */}
-        <div className="flex flex-col gap-6 w-full items-start">
+        <div className="flex flex-col w-full items-start">
           <div className="self-stretch">
             <HeaderCell title="Lock Type" />
           </div>
@@ -160,13 +160,15 @@ const LockedBalanceDetails: FC = () => {
 
           {hasDemocracyLockedBalance && <SmallPurpleChip title="Democracy" />}
 
-          {stakingLockedBalance !== null && <SmallPurpleChip title="Staking" />}
+          {stakingLockedBalance !== null && (
+            <SmallPurpleChip title="Nomination" />
+          )}
 
           {unbondingLabels}
         </div>
 
         {/* Unlocks at */}
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col w-full">
           <HeaderCell title="Unlocks At" />
 
           {vestingSchedulesUnlockingAt}
@@ -180,7 +182,7 @@ const LockedBalanceDetails: FC = () => {
       </div>
 
       {/* Balances */}
-      <div className="flex flex-col gap-6 w-full">
+      <div className="flex flex-col w-full">
         <HeaderCell title="Balance" />
 
         {vestingSchedulesBalances}

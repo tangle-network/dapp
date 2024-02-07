@@ -48,14 +48,14 @@ const BalancesTableContainer: FC = () => {
   return (
     <>
       <GlassCard className="overflow-x-auto">
-        <div className="flex flex-row">
+        <div className="flex flex-row min-w-[630px]">
           {/* Asset column */}
           <div className="flex flex-col w-full">
             <HeaderCell title="Asset" />
 
             <AssetCell
               title="Transferrable Balance"
-              tooltip="The amount of tokens you can freely transfer right now."
+              tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
             <AssetCell
@@ -72,7 +72,7 @@ const BalancesTableContainer: FC = () => {
             <div className="flex flex-row justify-between">
               <BalanceCell amount={transferrable} />
 
-              <div className="flex flex-row gap-1 items-center">
+              <div className="flex flex-row gap-1 items-center p-3">
                 <BalanceAction
                   Icon={SendPlanLineIcon}
                   tooltip="Send"
@@ -94,13 +94,17 @@ const BalancesTableContainer: FC = () => {
               <BalanceCell amount={locked} />
 
               {hasLocks && (
-                <BalanceAction
-                  Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
-                  tooltip={`${
-                    isDetailsCollapsed ? 'Show' : 'Collapse'
-                  } Details`}
-                  onClick={() => setIsDetailsCollapsed((previous) => !previous)}
-                />
+                <div className="p-3">
+                  <BalanceAction
+                    Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
+                    onClick={() =>
+                      setIsDetailsCollapsed((previous) => !previous)
+                    }
+                    tooltip={`${
+                      isDetailsCollapsed ? 'Show' : 'Collapse'
+                    } Details`}
+                  />
+                </div>
               )}
             </div>
           </div>
