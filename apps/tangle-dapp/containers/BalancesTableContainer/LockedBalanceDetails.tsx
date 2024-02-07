@@ -1,4 +1,4 @@
-import { LockUnlockLineIcon } from '@webb-tools/icons';
+import { ArrowRightUp, LockUnlockLineIcon } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
@@ -9,6 +9,7 @@ import useUnbonding from '../../data/staking/useUnbonding';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import useDemocracy from '../../hooks/useDemocracy';
+import { PagePath } from '../../types';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
@@ -32,11 +33,18 @@ const LockedBalanceDetails: FC = () => {
       : null;
 
   const { data: currentEra } = useCurrentEra();
-  const { amount: stakingBalance } = useBalancesLock(SubstrateLockId.Staking);
+
+  const { amount: stakingLockedBalance } = useBalancesLock(
+    SubstrateLockId.Staking
+  );
   const { data: unbondingEntries } = useUnbonding();
 
-  const hasStakingLockedBalance =
-    stakingBalance !== null && stakingBalance.gtn(0);
+  const stakingLongestUnbondingEra =
+    unbondingEntries === null
+      ? null
+      : unbondingEntries.reduce((longest, current) => {
+          return current.unlockEra.gt(longest) ? current.unlockEra : longest;
+        }, unbondingEntries[0].unlockEra);
 
   const vestingSchedulesLabels =
     vestingSchedulesOpt !== null &&
@@ -86,9 +94,8 @@ const LockedBalanceDetails: FC = () => {
     />
   );
 
-  const stakingUnlockingAt = hasStakingLockedBalance && (
-    <TextCell text={`Block #100 / Era #90`} />
-  );
+  const stakingUnlockingAt = stakingLockedBalance !== null &&
+    stakingLongestUnbondingEra !== null && <TextCell text="—" />;
 
   const unbondingLabels =
     unbondingEntries !== null &&
@@ -110,10 +117,34 @@ const LockedBalanceDetails: FC = () => {
       );
     });
 
+  const evmStakingAction = (
+    <BalanceAction
+      Icon={ArrowRightUp}
+      internalHref={PagePath.EvmStaking}
+      tooltip={
+        <>
+          View more information on the <strong>EVM Staking</strong> page.
+        </>
+      }
+    />
+  );
+
+  const stakingBalance = stakingLockedBalance !== null && (
+    <div className="flex flex-row justify-between items-center">
+      <BalanceCell amount={stakingLockedBalance} />
+
+      {evmStakingAction}
+    </div>
+  );
+
   const unbondingBalances =
     unbondingEntries !== null &&
     unbondingEntries.map((entry, index) => (
-      <BalanceCell key={index} amount={entry.amount} />
+      <div key={index} className="flex flex-row justify-between items-center">
+        <BalanceCell key={index} amount={entry.amount} />
+
+        {evmStakingAction}
+      </div>
     ));
 
   return (
@@ -129,7 +160,7 @@ const LockedBalanceDetails: FC = () => {
 
           {hasDemocracyLockedBalance && <SmallPurpleChip title="Democracy" />}
 
-          {hasStakingLockedBalance && <SmallPurpleChip title="Nomination" />}
+          {stakingLockedBalance !== null && <SmallPurpleChip title="Staking" />}
 
           {unbondingLabels}
         </div>
@@ -156,7 +187,7 @@ const LockedBalanceDetails: FC = () => {
 
         {hasDemocracyLockedBalance && <BalanceCell amount={democracyBalance} />}
 
-        {hasStakingLockedBalance && <BalanceCell amount={stakingBalance} />}
+        {stakingBalance}
 
         {unbondingBalances}
       </div>

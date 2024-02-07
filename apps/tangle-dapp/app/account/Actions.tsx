@@ -24,12 +24,12 @@ import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
+import { AnchorPath, InternalPath, PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 type ActionItemDef = {
   label: string;
-  internalHref: InternalPathString;
+  internalHref: InternalPath;
   icon: ReactElement<IconBase>;
 };
 
@@ -37,12 +37,12 @@ type ActionItemDef = {
 const staticActionItems: ActionItemDef[] = [
   {
     label: 'Nominate',
-    internalHref: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
+    internalHref: AnchorPath.NominationAndPayouts,
     icon: <CoinsStackedLineIcon size="lg" />,
   },
   {
     label: 'Payouts',
-    internalHref: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
+    internalHref: AnchorPath.NominationAndPayouts,
     icon: <CoinsLineIcon size="lg" />,
   },
 ] as const;
@@ -85,7 +85,7 @@ const Actions: FC = () => {
             hasNotificationDot
             label="Claim Airdrop"
             icon={<GiftLineIcon size="lg" />}
-            internalHref={InternalPath.ClaimAirdrop}
+            internalHref={PagePath.ClaimAirdrop}
             tooltip={
               <>
                 Congratulations, you are eligible for Airdrop! Click here to
@@ -141,7 +141,7 @@ const ActionItem = (props: {
   onClick?: () => void;
   isDisabled?: boolean;
   hasNotificationDot?: boolean;
-  internalHref?: InternalPathString;
+  internalHref?: InternalPath;
   tooltip?: ReactElement | string;
 }) => {
   const {
