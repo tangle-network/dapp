@@ -15,6 +15,7 @@ import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { SubstrateLockId } from '../../constants';
 import useBalancesLock from '../../data/balances/useBalancesLock';
 import useDemocracy from '../../data/democracy/useDemocracy';
+import useDemocracyUnlockTx from '../../data/democracy/useDemocracyUnlockTx';
 import useCurrentEra from '../../data/staking/useCurrentEra';
 import useUnbonding from '../../data/staking/useUnbonding';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -33,6 +34,7 @@ const LockedBalanceDetails: FC = () => {
     schedulesOpt: vestingSchedulesOpt,
     currentBlockNumber,
     vestingLockAmount,
+    isVesting,
   } = useVestingInfo();
 
   const { execute: executeVestTx } = useVestTx();
@@ -42,7 +44,10 @@ const LockedBalanceDetails: FC = () => {
     latestReferendum: latestDemocracyReferendum,
   } = useDemocracy();
 
-  const hasDemocracyLockedBalance =
+  // TODO: Need to remove all expired democracy votes, and THEN perform the unlock transaction.
+  const { execute: executeDemocracyUnlockTx } = useDemocracyUnlockTx();
+
+  const isInDemocracy =
     lockedDemocracyBalance !== null && lockedDemocracyBalance.gtn(0);
 
   const democracyLockEndBlock =
@@ -64,14 +69,19 @@ const LockedBalanceDetails: FC = () => {
           return current.unlockEra.gt(longest) ? current.unlockEra : longest;
         }, unbondingEntries[0].unlockEra);
 
-  const democracyBalance = lockedDemocracyBalance !== null && (
+  const democracyBalance = lockedDemocracyBalance !== null && isInDemocracy && (
     <div className="flex flex-row justify-between items-center">
       <BalanceCell amount={lockedDemocracyBalance} />
 
       <BalanceAction
         Icon={LockUnlockLineIcon}
         tooltip="Clear expired democracy locks."
-        onClick={() => void 0}
+        isDisabled={executeDemocracyUnlockTx === null}
+        onClick={
+          executeDemocracyUnlockTx !== null
+            ? executeDemocracyUnlockTx
+            : undefined
+        }
       />
     </div>
   );
@@ -85,7 +95,7 @@ const LockedBalanceDetails: FC = () => {
         <SmallPurpleChip key={index} title="Vesting" />
       ));
 
-  const vestingSchedulesBalances = vestingLockAmount !== null && (
+  const vestingSchedulesBalances = isVesting && vestingLockAmount !== null && (
     <div className="flex flex-row justify-between items-center">
       <BalanceCell amount={vestingLockAmount} />
 
@@ -147,7 +157,7 @@ const LockedBalanceDetails: FC = () => {
   }, [babeExpectedBlockTime, currentBlockNumber, vestingSchedulesOpt]);
 
   const democracyUnlockingAt =
-    hasDemocracyLockedBalance &&
+    isInDemocracy &&
     (() => {
       const timeRemaining = calculateTimeRemaining(
         babeExpectedBlockTime,
@@ -170,6 +180,7 @@ const LockedBalanceDetails: FC = () => {
     })();
 
   const stakingUnlockingAt = stakingLockedBalance !== null &&
+    stakingLockedBalance.gtn(0) &&
     stakingLongestUnbondingEra !== null && <TextCell text="—" />;
 
   const unbondingLabels =
@@ -233,7 +244,7 @@ const LockedBalanceDetails: FC = () => {
 
           {vestingSchedulesLabels}
 
-          {hasDemocracyLockedBalance && <SmallPurpleChip title="Democracy" />}
+          {isInDemocracy && <SmallPurpleChip title="Democracy" />}
 
           {stakingLockedBalance !== null && (
             <SmallPurpleChip title="Nomination" />
