@@ -24,8 +24,6 @@ export type AccountBalances = {
    * reasons, such as vesting or being reserved.
    */
   locked: BN | null;
-
-  misc: BN | null;
 };
 
 const useBalances = (): AccountBalances => {
@@ -37,11 +35,12 @@ const useBalances = (): AccountBalances => {
       api.query.system.account(activeAccountAddress).pipe(
         map((accountInfo) => {
           const locked = accountInfo.data.frozen
-            .add(accountInfo.data.reserved)
             // Note that without the null/undefined check, an error
             // reports that `num` is undefined for some reason. Might be
             // a gap in the type definitions of Polkadot JS.
-            .add(accountInfo.data.miscFrozen || new BN(0));
+            .add(accountInfo.data.miscFrozen || new BN(0))
+            .add(accountInfo.data.feeFrozen || new BN(0));
+
           // Seems like Substrate has an interesting definition of what
           // "free" means. It's not the same as "transferrable", which
           // is what we want. See more here: https://docs.subsocial.network/rust-docs/latest/pallet_balances/struct.AccountData.html#structfield.free
@@ -50,7 +49,6 @@ const useBalances = (): AccountBalances => {
           return {
             total: transferrable.add(locked),
             transferrable,
-            misc: accountInfo.data.miscFrozen,
             locked,
           };
         })
@@ -78,7 +76,6 @@ const useBalances = (): AccountBalances => {
     total: balances?.total ?? null,
     transferrable: balances?.transferrable ?? null,
     locked: balances?.locked ?? null,
-    misc: balances?.misc ?? null,
   };
 };
 

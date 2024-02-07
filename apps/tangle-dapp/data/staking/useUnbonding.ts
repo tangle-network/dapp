@@ -21,11 +21,15 @@ const useUnbonding = () => {
         }
 
         const unbonding: StakingUnbondingEntry[] = ledger.unlocking.map(
-          (unlockChunk) => ({
-            amount: unlockChunk.value.toBn(),
-            unlockEra: unlockChunk.era.toBn(),
-            remainingEras: currentEra.sub(unlockChunk.era.toBn()),
-          })
+          (unlockChunk) => {
+            const eraDifference = unlockChunk.era.toBn().sub(currentEra);
+
+            return {
+              amount: unlockChunk.value.toBn(),
+              unlockEra: unlockChunk.era.toBn(),
+              remainingEras: eraDifference.gtn(0) ? eraDifference : new BN(0),
+            };
+          }
         );
 
         return unbonding;

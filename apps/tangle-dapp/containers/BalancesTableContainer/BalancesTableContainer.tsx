@@ -50,7 +50,7 @@ const BalancesTableContainer: FC = () => {
       <GlassCard className="overflow-x-auto">
         <div className="flex flex-row min-w-[630px]">
           {/* Asset column */}
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full justify-between">
             <HeaderCell title="Asset" />
 
             <AssetCell

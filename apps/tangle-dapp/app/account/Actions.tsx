@@ -100,10 +100,12 @@ const Actions: FC = () => {
           <ActionItem
             icon={<ShieldKeyholeLineIcon size="lg" />}
             label="Vest"
-            onClick={executeVestTx}
+            onClick={executeVestTx !== null ? executeVestTx : undefined}
             hasNotificationDot={hasClaimableVestingTokens}
             isDisabled={
-              vestTxStatus === TxStatus.Processing || !hasClaimableVestingTokens
+              vestTxStatus === TxStatus.Processing ||
+              !hasClaimableVestingTokens ||
+              executeVestTx === null
             }
             tooltip={
               hasClaimableVestingTokens ? (

@@ -127,10 +127,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!canInitiateTx}
+            isDisabled={!canInitiateTx || executeTransferTx === null}
             isLoading={!isReady}
             loadingText={getTxStatusText(status)}
-            onClick={executeTransferTx}
+            onClick={executeTransferTx !== null ? executeTransferTx : undefined}
           >
             Send
           </Button>

@@ -90,7 +90,9 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
     // TODO: Return clean up.
   }, [activeEvmAddress, args, precompile, status, functionName]);
 
-  return { execute, status, error };
+  // Prevent the consumer from executing the call if the active
+  // account is not an EVM account.
+  return { execute: activeEvmAddress !== null ? execute : null, status, error };
 }
 
 export default useEvmPrecompileAbiCall;

@@ -11,7 +11,7 @@ const BalanceCell: FC<{
     amount !== null ? formatTokenBalance(amount, true) : null;
 
   return (
-    <div className="flex flex-col justify-between p-3 gap-6 flex-grow">
+    <div className="flex flex-col justify-center p-3 gap-6 flex-grow">
       {amount !== null ? (
         <Typography variant="body1" fw="semibold">
           {formattedBalance}

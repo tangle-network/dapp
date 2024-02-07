@@ -10,8 +10,6 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { formatDistance } from 'date-fns';
-import { capitalize } from 'lodash';
 import { FC, ReactNode, useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants';
@@ -23,6 +21,7 @@ import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { PagePath } from '../../types';
+import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
@@ -30,18 +29,21 @@ import HeaderCell from './HeaderCell';
 // TODO: Break this component into smaller components, as it is too big and complex (in terms of readability).
 /** @internal */
 const LockedBalanceDetails: FC = () => {
-  const { schedulesOpt: vestingSchedulesOpt, currentBlockNumber } =
-    useVestingInfo();
+  const {
+    schedulesOpt: vestingSchedulesOpt,
+    currentBlockNumber,
+    vestingLockAmount,
+  } = useVestingInfo();
 
   const { execute: executeVestTx } = useVestTx();
 
   const {
-    lockedBalance: democracyBalance,
+    lockedBalance: lockedDemocracyBalance,
     latestReferendum: latestDemocracyReferendum,
   } = useDemocracy();
 
   const hasDemocracyLockedBalance =
-    democracyBalance !== null && democracyBalance.gtn(0);
+    lockedDemocracyBalance !== null && lockedDemocracyBalance.gtn(0);
 
   const democracyLockEndBlock =
     latestDemocracyReferendum !== null && latestDemocracyReferendum.isOngoing
@@ -62,6 +64,18 @@ const LockedBalanceDetails: FC = () => {
           return current.unlockEra.gt(longest) ? current.unlockEra : longest;
         }, unbondingEntries[0].unlockEra);
 
+  const democracyBalance = lockedDemocracyBalance !== null && (
+    <div className="flex flex-row justify-between items-center">
+      <BalanceCell amount={lockedDemocracyBalance} />
+
+      <BalanceAction
+        Icon={LockUnlockLineIcon}
+        tooltip="Clear expired democracy locks."
+        onClick={() => void 0}
+      />
+    </div>
+  );
+
   const vestingSchedulesLabels =
     vestingSchedulesOpt !== null &&
     !vestingSchedulesOpt.isNone &&
@@ -71,25 +85,23 @@ const LockedBalanceDetails: FC = () => {
         <SmallPurpleChip key={index} title="Vesting" />
       ));
 
-  const vestingSchedulesBalances =
-    vestingSchedulesOpt !== null &&
-    vestingSchedulesOpt.isSome &&
-    vestingSchedulesOpt.unwrap().map((schedule, index) => (
-      <div key={index} className="flex flex-row justify-between items-center">
-        <BalanceCell amount={schedule.locked} />
+  const vestingSchedulesBalances = vestingLockAmount !== null && (
+    <div className="flex flex-row justify-between items-center">
+      <BalanceCell amount={vestingLockAmount} />
 
-        <BalanceAction
-          Icon={LockUnlockLineIcon}
-          onClick={executeVestTx}
-          tooltip={
-            <>
-              Unlock this balance by performing a <strong>vest</strong>{' '}
-              transaction.
-            </>
-          }
-        />
-      </div>
-    ));
+      <BalanceAction
+        Icon={LockUnlockLineIcon}
+        onClick={executeVestTx !== null ? executeVestTx : undefined}
+        isDisabled={executeVestTx === null}
+        tooltip={
+          <>
+            Unlock this balance by performing a <strong>vest</strong>{' '}
+            transaction.
+          </>
+        }
+      />
+    </div>
+  );
 
   const { value: babeExpectedBlockTime } = usePolkadotApi(
     useCallback((api) => Promise.resolve(api.consts.babe.expectedBlockTime), [])
@@ -110,12 +122,10 @@ const LockedBalanceDetails: FC = () => {
         schedule.locked.div(schedule.perBlock)
       );
 
-      const timeRemainingInMs = babeExpectedBlockTime
-        .mul(endingBlockNumber.sub(currentBlockNumber).abs())
-        .toNumber();
-
-      const timeRemaining = capitalize(
-        formatDistance(Date.now() + timeRemainingInMs, Date.now())
+      const timeRemaining = calculateTimeRemaining(
+        babeExpectedBlockTime,
+        currentBlockNumber,
+        endingBlockNumber
       );
 
       const isComplete = currentBlockNumber.gte(endingBlockNumber);
@@ -136,13 +146,28 @@ const LockedBalanceDetails: FC = () => {
     });
   }, [babeExpectedBlockTime, currentBlockNumber, vestingSchedulesOpt]);
 
-  const democracyUnlockingAt = hasDemocracyLockedBalance && (
-    <TextCell
-      text={
-        democracyLockEndBlock === null ? '—' : `Block #${democracyLockEndBlock}`
-      }
-    />
-  );
+  const democracyUnlockingAt =
+    hasDemocracyLockedBalance &&
+    (() => {
+      const timeRemaining = calculateTimeRemaining(
+        babeExpectedBlockTime,
+        currentBlockNumber,
+        democracyLockEndBlock
+      );
+
+      return (
+        <TextCell
+          status={
+            timeRemaining !== null ? `${timeRemaining} remaining.` : undefined
+          }
+          text={
+            democracyLockEndBlock === null
+              ? 'Referendum ended'
+              : `Referendum ongoing; ends at block #${democracyLockEndBlock}`
+          }
+        />
+      );
+    })();
 
   const stakingUnlockingAt = stakingLockedBalance !== null &&
     stakingLongestUnbondingEra !== null && <TextCell text="—" />;
@@ -162,7 +187,7 @@ const LockedBalanceDetails: FC = () => {
       <TextCell
         key={index}
         text={`Era #${entry.unlockEra}`}
-        status={`${entry.remainingEras.toString()} eras remaining.`}
+        status={`${entry.remainingEras.toString()} era(s) remaining.`}
       />
     ));
 
@@ -237,7 +262,7 @@ const LockedBalanceDetails: FC = () => {
 
         {vestingSchedulesBalances}
 
-        {hasDemocracyLockedBalance && <BalanceCell amount={democracyBalance} />}
+        {democracyBalance}
 
         {stakingBalance}
 

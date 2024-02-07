@@ -2,6 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
@@ -66,11 +67,13 @@ function useSubstrateTx<T extends ISubmittableResult>(
       isEvmAccount === null
     ) {
       return;
-    } else if (isEvmAccount) {
-      throw new Error(
-        `Attempted to execute a Substrate transaction from an EVM account. Use an EVM-equivalent transaction or Precompile call instead.`
-      );
     }
+
+    // Catch logic errors.
+    assert(
+      !isEvmAccount,
+      'Should not be able to execute a Substrate transaction while the active account is an EVM account'
+    );
 
     const injector = await getInjector(activeSubstrateAddress);
     const api = await getPolkadotApiPromise();
@@ -150,7 +153,9 @@ function useSubstrateTx<T extends ISubmittableResult>(
     };
   }, [status, timeoutDelay]);
 
-  return { execute, status, error, hash };
+  // Prevent the consumer from executing the transaction if
+  // the active account is an EVM account.
+  return { execute: isEvmAccount ? null : execute, status, error, hash };
 }
 
 export default useSubstrateTx;
