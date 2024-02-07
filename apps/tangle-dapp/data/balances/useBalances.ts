@@ -3,7 +3,9 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs/operators';
 
-import usePolkadotApiRx, { ObservableFactory } from './usePolkadotApiRx';
+import usePolkadotApiRx, {
+  ObservableFactory,
+} from '../../hooks/usePolkadotApiRx';
 
 export type AccountBalances = {
   /**

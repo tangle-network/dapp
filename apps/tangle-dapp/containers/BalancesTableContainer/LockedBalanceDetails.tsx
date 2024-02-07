@@ -2,17 +2,21 @@ import { LockUnlockLineIcon } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
+import { SubstrateLockId } from '../../constants';
+import useBalancesLock from '../../data/balances/useBalancesLock';
+import useCurrentEra from '../../data/staking/useCurrentEra';
+import useUnbonding from '../../data/staking/useUnbonding';
+import useVestingInfo from '../../data/vesting/useVestingInfo';
+import useVestTx from '../../data/vesting/useVestTx';
 import useDemocracy from '../../hooks/useDemocracy';
-import useStaking from '../../hooks/useStaking';
-import useVesting from '../../hooks/useVesting';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
 
 /** @internal */
 const LockedBalanceDetails: FC = () => {
-  const { schedulesOpt: vestingSchedulesOpt } = useVesting();
-  const { executeVestTx } = useVesting();
+  const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
+  const { execute: executeVestTx } = useVestTx();
 
   const {
     lockedBalance: democracyBalance,
@@ -27,7 +31,9 @@ const LockedBalanceDetails: FC = () => {
       ? latestDemocracyReferendum.asOngoing.end
       : null;
 
-  const { lockedBalance: stakingBalance } = useStaking();
+  const { data: currentEra } = useCurrentEra();
+  const { amount: stakingBalance } = useBalancesLock(SubstrateLockId.Staking);
+  const { data: unbondingEntries } = useUnbonding();
 
   const hasStakingLockedBalance =
     stakingBalance !== null && stakingBalance.gtn(0);
@@ -84,6 +90,32 @@ const LockedBalanceDetails: FC = () => {
     <TextCell text={`Block #100 / Era #90`} />
   );
 
+  const unbondingLabels =
+    unbondingEntries !== null &&
+    unbondingEntries.map((_unbondingInfo, index) => (
+      <SmallPurpleChip key={index} title="Unbonding" />
+    ));
+
+  const unbondingUnlockingAt =
+    currentEra !== null &&
+    unbondingEntries !== null &&
+    unbondingEntries.map((entry, index) => {
+      const progressPercentage = currentEra.divRound(entry.unlockEra).muln(100);
+
+      return (
+        <TextCell
+          key={index}
+          text={`Era #${entry.unlockEra} (${progressPercentage}%)`}
+        />
+      );
+    });
+
+  const unbondingBalances =
+    unbondingEntries !== null &&
+    unbondingEntries.map((entry, index) => (
+      <BalanceCell key={index} amount={entry.amount} />
+    ));
+
   return (
     <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg">
       <div className="flex flex-row w-full">
@@ -98,6 +130,8 @@ const LockedBalanceDetails: FC = () => {
           {hasDemocracyLockedBalance && <SmallPurpleChip title="Democracy" />}
 
           {hasStakingLockedBalance && <SmallPurpleChip title="Nomination" />}
+
+          {unbondingLabels}
         </div>
 
         {/* Unlocks at */}
@@ -109,6 +143,8 @@ const LockedBalanceDetails: FC = () => {
           {democracyUnlockingAt}
 
           {stakingUnlockingAt}
+
+          {unbondingUnlockingAt}
         </div>
       </div>
 
@@ -121,6 +157,8 @@ const LockedBalanceDetails: FC = () => {
         {hasDemocracyLockedBalance && <BalanceCell amount={democracyBalance} />}
 
         {hasStakingLockedBalance && <BalanceCell amount={stakingBalance} />}
+
+        {unbondingBalances}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import usePolkadotApi, {
 import useSubstrateAddress from './useSubstrateAddress';
 
 /**
- * A function provided by the consumer of the `useStakingLedger`
+ * A function provided by the consumer of the {@link useStakingLedger}
  * hook to select which data to fetch from the ledger.
  */
 export type StakingLedgerFetcher<T> = (

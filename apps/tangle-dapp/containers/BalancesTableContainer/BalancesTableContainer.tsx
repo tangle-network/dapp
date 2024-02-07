@@ -13,7 +13,7 @@ import { FC, useEffect, useState } from 'react';
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useBalances from '../../hooks/useBalances';
+import useBalances from '../../data/balances/useBalances';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';

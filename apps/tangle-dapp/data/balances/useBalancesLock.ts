@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { SubstrateLockId } from '../constants';
-import getSubstrateLockId from '../utils/getSubstrateLockId';
-import usePolkadotApiRx from './usePolkadotApiRx';
+import { SubstrateLockId } from '../../constants';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import getSubstrateLockId from '../../utils/getSubstrateLockId';
 
 const useBalancesLock = (lockId: SubstrateLockId) => {
   const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>

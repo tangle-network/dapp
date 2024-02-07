@@ -4,8 +4,8 @@ import { ListCheckIcon, TimerLine } from '@webb-tools/icons';
 import { FC, useCallback } from 'react';
 
 import PillCard from '../../app/account/PillCard';
+import useStakingPendingRewards from '../../data/staking/useStakingPendingRewards';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
-import useStaking from '../../hooks/useStaking';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 
 const StakingStatsContainer: FC = () => {
@@ -19,7 +19,7 @@ const StakingStatsContainer: FC = () => {
     PolkadotApiSwrKey.Era
   );
 
-  const { pendingRewards } = useStaking();
+  const pendingRewards = useStakingPendingRewards();
 
   const formattedPendingRewards =
     pendingRewards !== null ? formatTokenBalance(pendingRewards) : null;

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { SubstrateLockId } from '../constants';
-import useBalancesLock from './useBalancesLock';
+import useBalancesLock from '../data/balances/useBalancesLock';
 import usePolkadotApiRx from './usePolkadotApiRx';
 
 const useDemocracy = () => {

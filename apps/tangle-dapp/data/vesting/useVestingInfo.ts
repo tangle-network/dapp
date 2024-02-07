@@ -3,13 +3,11 @@ import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { SubstrateLockId } from '../constants/index';
-import useAgnosticTx from './useAgnosticTx';
-import useBalancesLock from './useBalancesLock';
-import usePolkadotApiRx from './usePolkadotApiRx';
-import { TxStatus } from './useSubstrateTx';
+import { SubstrateLockId } from '../../constants/index';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useBalancesLock from '../balances/useBalancesLock';
 
-export type Vesting = {
+export type VestingInfo = {
   /**
    * Whether or not the account is currently vesting.
    *
@@ -40,19 +38,6 @@ export type Vesting = {
    * from vesting schedules.
    */
   hasClaimableTokens: boolean;
-
-  vestTxStatus: TxStatus;
-
-  /**
-   * Performs the `vesting.vest` extrinsic call.
-   *
-   * This action will claim all **claimable** tokens from all vesting
-   * schedules associated with the active account.
-   *
-   * Vesting schedules that have not yet started (i.e. have not reached their
-   * "cliff") will be omitted.
-   */
-  executeVestTx: () => void;
 };
 
 /**
@@ -63,15 +48,7 @@ export type Vesting = {
  * This is an account-agnostic hook, meaning that it will work for both
  * Substrate and EVM accounts.
  */
-const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
-  const { execute: executeAgnosticVestTx, status } = useAgnosticTx(
-    'vesting',
-    'vest',
-    [],
-    (api) => Promise.resolve(api.tx.vesting.vest()),
-    notifyVestTxStatusUpdates
-  );
-
+const useVestingInfo = (): VestingInfo => {
   const { data: vestingSchedulesOpt } = usePolkadotApiRx(
     (api, activeSubstrateAddress) =>
       api.query.vesting.vesting(activeSubstrateAddress)
@@ -168,11 +145,9 @@ const useVesting = (notifyVestTxStatusUpdates?: boolean): Vesting => {
   return {
     isVesting: totalVestingAmount !== null && !totalVestingAmount.isZero(),
     schedulesOpt: vestingSchedulesOpt,
-    executeVestTx: () => void executeAgnosticVestTx(),
-    vestTxStatus: status,
     claimableTokenAmount: claimableAmount,
     hasClaimableTokens: claimableAmount !== null && !claimableAmount.isZero(),
   };
 };
 
-export default useVesting;
+export default useVestingInfo;

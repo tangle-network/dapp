@@ -9,11 +9,11 @@ import {
   useState,
 } from 'react';
 
-import useActiveAccountAddress from './useActiveAccountAddress';
-import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
-import usePolkadotApi from './usePolkadotApi';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import usePolkadotApi from '../../hooks/usePolkadotApi';
 
-const useClaims = () => {
+const useAirdropEligibility = () => {
   const [isEligible, setIsEligible] = useState<boolean | null>(null);
 
   useDebugValue(isEligible);
@@ -108,4 +108,4 @@ const useClaims = () => {
   };
 };
 
-export default useClaims;
+export default useAirdropEligibility;

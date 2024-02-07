@@ -19,6 +19,9 @@ export type ObservableFactory<T> = (
  * @param factory Function that takes the Polkadot Rx instance
  * and returns a promise that resolves to the data to be streamed.
  *
+ * If the consumer of this hook utilizes any returned state, this function
+ * should be memoized using `useCallback` to avoid infinite re-render loops.
+ *
  * @returns Data and request status.
  *
  * @example

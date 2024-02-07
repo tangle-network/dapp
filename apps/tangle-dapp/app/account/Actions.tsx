@@ -20,9 +20,10 @@ import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
-import useClaims from '../../hooks/useClaims';
+import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
+import useVestingInfo from '../../data/vesting/useVestingInfo';
+import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import useVesting from '../../hooks/useVesting';
 import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
@@ -51,18 +52,18 @@ const Actions: FC = () => {
 
   const {
     isVesting,
-    executeVestTx,
-    vestTxStatus,
     hasClaimableTokens: hasClaimableVestingTokens,
     claimableTokenAmount,
-  } = useVesting(true);
+  } = useVestingInfo();
+
+  const { execute: executeVestTx, status: vestTxStatus } = useVestTx(true);
 
   const formattedClaimableTokenAmount =
     claimableTokenAmount !== null
       ? formatTokenBalance(claimableTokenAmount)
       : null;
 
-  const { isAirdropEligible } = useClaims();
+  const { isAirdropEligible } = useAirdropEligibility();
 
   return (
     <>
@@ -85,8 +86,12 @@ const Actions: FC = () => {
             label="Claim Airdrop"
             icon={<GiftLineIcon size="lg" />}
             internalHref={InternalPath.ClaimAirdrop}
-            tooltip="Congratulations, you are eligible for Airdrop! Click here to visit
-              the Airdrop claim page."
+            tooltip={
+              <>
+                Congratulations, you are eligible for Airdrop! Click here to
+                visit the <strong>Claim Airdrop</strong> page.
+              </>
+            }
           />
         )}
 
