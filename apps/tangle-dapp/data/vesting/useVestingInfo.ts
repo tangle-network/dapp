@@ -38,6 +38,8 @@ export type VestingInfo = {
    * from vesting schedules.
    */
   hasClaimableTokens: boolean;
+
+  currentBlockNumber: BN | null;
 };
 
 /**
@@ -147,6 +149,7 @@ const useVestingInfo = (): VestingInfo => {
     schedulesOpt: vestingSchedulesOpt,
     claimableTokenAmount: claimableAmount,
     hasClaimableTokens: claimableAmount !== null && !claimableAmount.isZero(),
+    currentBlockNumber,
   };
 };
 

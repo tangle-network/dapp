@@ -1,22 +1,38 @@
-import { ArrowRightUp, LockUnlockLineIcon } from '@webb-tools/icons';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import {
+  ArrowRightUp,
+  LockUnlockLineIcon,
+  StatusIndicator,
+} from '@webb-tools/icons';
+import {
+  SkeletonLoader,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+  Typography,
+} from '@webb-tools/webb-ui-components';
+import { formatDistance } from 'date-fns';
+import { capitalize } from 'lodash';
+import { FC, ReactNode, useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants';
 import useBalancesLock from '../../data/balances/useBalancesLock';
+import useDemocracy from '../../data/democracy/useDemocracy';
 import useCurrentEra from '../../data/staking/useCurrentEra';
 import useUnbonding from '../../data/staking/useUnbonding';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import useDemocracy from '../../data/democracy/useDemocracy';
+import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { PagePath } from '../../types';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
 
+// TODO: Break this component into smaller components, as it is too big and complex (in terms of readability).
 /** @internal */
 const LockedBalanceDetails: FC = () => {
-  const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
+  const { schedulesOpt: vestingSchedulesOpt, currentBlockNumber } =
+    useVestingInfo();
+
   const { execute: executeVestTx } = useVestTx();
 
   const {
@@ -40,7 +56,7 @@ const LockedBalanceDetails: FC = () => {
   const { data: unbondingEntries } = useUnbonding();
 
   const stakingLongestUnbondingEra =
-    unbondingEntries === null
+    unbondingEntries === null || unbondingEntries.length === 0
       ? null
       : unbondingEntries.reduce((longest, current) => {
           return current.unlockEra.gt(longest) ? current.unlockEra : longest;
@@ -75,21 +91,55 @@ const LockedBalanceDetails: FC = () => {
       </div>
     ));
 
-  const vestingSchedulesUnlockingAt =
-    vestingSchedulesOpt !== null &&
-    !vestingSchedulesOpt.isNone &&
-    vestingSchedulesOpt.unwrap().map((schedule, index) => {
+  const { value: babeExpectedBlockTime } = usePolkadotApi(
+    useCallback((api) => Promise.resolve(api.consts.babe.expectedBlockTime), [])
+  );
+
+  const vestingSchedulesUnlockingAt = useMemo(() => {
+    if (
+      babeExpectedBlockTime === null ||
+      currentBlockNumber === null ||
+      vestingSchedulesOpt === null ||
+      vestingSchedulesOpt.isNone
+    ) {
+      return null;
+    }
+
+    return vestingSchedulesOpt.unwrap().map((schedule, index) => {
       const endingBlockNumber = schedule.startingBlock.add(
         schedule.locked.div(schedule.perBlock)
       );
 
-      return <TextCell key={index} text={`Block #${endingBlockNumber}`} />;
+      const timeRemainingInMs = babeExpectedBlockTime
+        .mul(endingBlockNumber.sub(currentBlockNumber).abs())
+        .toNumber();
+
+      const timeRemaining = capitalize(
+        formatDistance(Date.now() + timeRemainingInMs, Date.now())
+      );
+
+      const isComplete = currentBlockNumber.gte(endingBlockNumber);
+
+      const progressText = isComplete ? (
+        <>All of your vested tokens are now available to claim. </>
+      ) : (
+        `${timeRemaining} remaining.`
+      );
+
+      return (
+        <TextCell
+          key={index}
+          text={`Block #${endingBlockNumber}`}
+          status={progressText}
+        />
+      );
     });
+  }, [babeExpectedBlockTime, currentBlockNumber, vestingSchedulesOpt]);
 
   const democracyUnlockingAt = hasDemocracyLockedBalance && (
     <TextCell
       text={
-        democracyLockEndBlock !== null ? '—' : `Block #${democracyLockEndBlock}`
+        democracyLockEndBlock === null ? '—' : `Block #${democracyLockEndBlock}`
       }
     />
   );
@@ -99,6 +149,7 @@ const LockedBalanceDetails: FC = () => {
 
   const unbondingLabels =
     unbondingEntries !== null &&
+    unbondingEntries.length > 0 &&
     unbondingEntries.map((_unbondingInfo, index) => (
       <SmallPurpleChip key={index} title="Unbonding" />
     ));
@@ -106,16 +157,14 @@ const LockedBalanceDetails: FC = () => {
   const unbondingUnlockingAt =
     currentEra !== null &&
     unbondingEntries !== null &&
-    unbondingEntries.map((entry, index) => {
-      const progressPercentage = currentEra.divRound(entry.unlockEra).muln(100);
-
-      return (
-        <TextCell
-          key={index}
-          text={`Era #${entry.unlockEra} (${progressPercentage}%)`}
-        />
-      );
-    });
+    unbondingEntries.length > 0 &&
+    unbondingEntries.map((entry, index) => (
+      <TextCell
+        key={index}
+        text={`Era #${entry.unlockEra}`}
+        status={`${entry.remainingEras.toString()} eras remaining.`}
+      />
+    ));
 
   const evmStakingAction = (
     <BalanceAction
@@ -139,6 +188,7 @@ const LockedBalanceDetails: FC = () => {
 
   const unbondingBalances =
     unbondingEntries !== null &&
+    unbondingEntries.length > 0 &&
     unbondingEntries.map((entry, index) => (
       <div key={index} className="flex flex-row justify-between items-center">
         <BalanceCell key={index} amount={entry.amount} />
@@ -151,7 +201,7 @@ const LockedBalanceDetails: FC = () => {
     <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg min-w-[630px]">
       <div className="flex flex-row w-full">
         {/* Type */}
-        <div className="flex flex-col w-full items-start">
+        <div className="flex flex-col w-full h-full items-start">
           <div className="self-stretch">
             <HeaderCell title="Lock Type" />
           </div>
@@ -200,7 +250,7 @@ const LockedBalanceDetails: FC = () => {
 /** @internal */
 const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
   return (
-    <div className="p-3">
+    <div className="py-2">
       <div className="bg-purple-10 dark:bg-purple-120 rounded-3xl px-4 py-1">
         <Typography
           variant="body2"
@@ -217,15 +267,28 @@ const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
 /** @internal */
 const TextCell: FC<{
   text: string | null;
-}> = ({ text }) => {
+  status?: ReactNode;
+}> = ({ text, status }) => {
   return (
-    <div className="flex flex-col justify-between p-3 gap-6">
+    <div className="flex flex-row p-3 gap-2">
       {text !== null ? (
         <Typography variant="body1" fw="semibold">
           {text}
         </Typography>
       ) : (
         <SkeletonLoader size="md" />
+      )}
+
+      {status !== undefined && (
+        <Tooltip>
+          <TooltipTrigger className="cursor-default">
+            <StatusIndicator size={12} variant="info" />
+          </TooltipTrigger>
+
+          <TooltipBody className="break-normal max-w-[250px] text-center">
+            {status}
+          </TooltipBody>
+        </Tooltip>
       )}
     </div>
   );
