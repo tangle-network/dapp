@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { map } from 'rxjs';
 
-import { SubstrateLockId } from '../constants';
-import useBalancesLock from '../data/balances/useBalancesLock';
-import usePolkadotApiRx from './usePolkadotApiRx';
+import { SubstrateLockId } from '../../constants';
+import useBalancesLock from '../balances/useBalancesLock';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
 const useDemocracy = () => {
   const { data: votes } = usePolkadotApiRx((api, activeSubstrateAddress) =>

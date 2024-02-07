@@ -8,7 +8,7 @@ import useCurrentEra from '../../data/staking/useCurrentEra';
 import useUnbonding from '../../data/staking/useUnbonding';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import useDemocracy from '../../hooks/useDemocracy';
+import useDemocracy from '../../data/democracy/useDemocracy';
 import { PagePath } from '../../types';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
