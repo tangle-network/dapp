@@ -13,15 +13,16 @@ import { FC, useEffect, useState } from 'react';
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useAccountBalances from '../../hooks/useAccountBalances';
+import useBalances from '../../hooks/useBalances';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
+import HeaderCell from './HeaderCell';
 import LockedBalanceDetails from './LockedBalanceDetails';
 
 const BalancesTableContainer: FC = () => {
-  const { transferrable, locked } = useAccountBalances();
+  const { transferrable, locked } = useBalances();
 
   const { value: isDetailsCollapsedCached, set: setIsDetailsCollapsedCached } =
     useLocalStorage(LocalStorageKey.IsBalancesTableDetailsCollapsed, false);
@@ -67,23 +68,25 @@ const BalancesTableContainer: FC = () => {
           <div className="flex flex-row justify-between">
             <BalanceCell amount={transferrable} />
 
-            <div className="flex flex-row gap-1">
+            <div className="flex flex-row gap-1 items-center">
               <BalanceAction
                 Icon={SendPlanLineIcon}
                 tooltip="Send"
+                isDisabled={transferrable === null || transferrable.eqn(0)}
                 onClick={() => void 0}
               />
 
               <BalanceAction
                 Icon={CoinIcon}
                 tooltip="Nominate"
+                isDisabled={transferrable === null || transferrable.eqn(0)}
                 onClick={() => void 0}
               />
             </div>
           </div>
 
           {/* Locked balance */}
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between items-center">
             <BalanceCell amount={locked} />
 
             {hasLocks && (
@@ -99,19 +102,6 @@ const BalancesTableContainer: FC = () => {
 
       {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
     </GlassCard>
-  );
-};
-
-/** @internal */
-const HeaderCell: FC<{ title: string }> = ({ title }) => {
-  return (
-    <Typography
-      variant="body1"
-      fw="semibold"
-      className="block border-b dark:border-mono-140 px-3 pb-3 capitalize whitespace-nowrap"
-    >
-      {title}
-    </Typography>
   );
 };
 

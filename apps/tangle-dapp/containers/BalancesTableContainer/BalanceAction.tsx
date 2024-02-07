@@ -5,18 +5,31 @@ import {
   TooltipBody,
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
-import { FC, JSX } from 'react';
+import { FC, JSX, ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const BalanceAction: FC<{
-  tooltip: string;
+  tooltip: string | ReactNode;
   onClick: () => void;
   Icon: (props: IconBase) => JSX.Element;
-}> = ({ tooltip, Icon, onClick }) => {
+  isDisabled?: boolean;
+}> = ({ tooltip, Icon, onClick, isDisabled = false }) => {
+  const isDisabledClass = isDisabled
+    ? 'opacity-50 cursor-not-allowed dark:hover:bg-blue-120'
+    : '';
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <IconButton onClick={onClick}>
-          <Icon size="md" />
+        <IconButton
+          className={twMerge(
+            'bg-blue-10 hover:bg-blue-10 dark:bg-blue-120 dark:hover:bg-blue-110',
+            isDisabledClass
+          )}
+          disabled={isDisabled}
+          onClick={onClick}
+        >
+          <Icon className="fill-blue-80 dark:fill-blue-50" size="md" />
         </IconButton>
       </TooltipTrigger>
 

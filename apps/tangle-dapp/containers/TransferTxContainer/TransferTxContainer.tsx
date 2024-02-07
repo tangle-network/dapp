@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useAccountBalances from '../../hooks/useAccountBalances';
+import useBalances from '../../hooks/useBalances';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
@@ -27,7 +27,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const [amount, setAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const { transferrable: transferrableBalance } = useAccountBalances();
+  const { transferrable: transferrableBalance } = useBalances();
 
   const formattedTransferrableBalance =
     transferrableBalance !== null

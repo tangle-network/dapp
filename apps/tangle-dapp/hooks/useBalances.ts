@@ -26,7 +26,7 @@ export type AccountBalances = {
   misc: BN | null;
 };
 
-const useAccountBalances = (): AccountBalances => {
+const useBalances = (): AccountBalances => {
   const { activeAccount } = useWebContext();
   const [balances, setBalances] = useState<AccountBalances | null>(null);
 
@@ -80,4 +80,4 @@ const useAccountBalances = (): AccountBalances => {
   };
 };
 
-export default useAccountBalances;
+export default useBalances;

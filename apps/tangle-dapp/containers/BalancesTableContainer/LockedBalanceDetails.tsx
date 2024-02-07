@@ -1,17 +1,18 @@
-import { CoinIcon, SendPlanLineIcon } from '@webb-tools/icons';
+import { SendPlanLineIcon } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { HeaderCell } from '../../components/tableCells';
 import useDemocracy from '../../hooks/useDemocracy';
 import useStaking from '../../hooks/useStaking';
 import useVesting from '../../hooks/useVesting';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
+import HeaderCell from './HeaderCell';
 
 /** @internal */
 const LockedBalanceDetails: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVesting();
+  const { executeVestTx } = useVesting();
 
   const {
     lockedBalance: democracyBalance,
@@ -47,19 +48,16 @@ const LockedBalanceDetails: FC = () => {
       <div key={index} className="flex flex-row justify-between">
         <BalanceCell amount={schedule.locked} />
 
-        <div className="flex flex-row gap-1">
-          <BalanceAction
-            Icon={SendPlanLineIcon}
-            tooltip="Send"
-            onClick={() => void 0}
-          />
-
-          <BalanceAction
-            Icon={CoinIcon}
-            tooltip="Nominate"
-            onClick={() => void 0}
-          />
-        </div>
+        <BalanceAction
+          Icon={SendPlanLineIcon}
+          onClick={executeVestTx}
+          tooltip={
+            <>
+              Unlock this balance by performing a <strong>vest</strong>{' '}
+              transaction.
+            </>
+          }
+        />
       </div>
     ));
 
@@ -71,29 +69,28 @@ const LockedBalanceDetails: FC = () => {
         schedule.locked.div(schedule.perBlock)
       );
 
-      return (
-        <TextCell key={index} text={`Block #${endingBlockNumber} / Era #90`} />
-      );
+      return <TextCell key={index} text={`Block #${endingBlockNumber}`} />;
     });
 
-  const democracyUnlockingAt =
-    democracyLockEndBlock !== null ? (
-      <TextCell text={`Block #${democracyLockEndBlock} / Era #90`} />
-    ) : (
-      <TextCell text={hasDemocracyLockedBalance ? '—' : null} />
-    );
+  const democracyUnlockingAt = hasDemocracyLockedBalance && (
+    <TextCell
+      text={
+        democracyLockEndBlock !== null ? '—' : `Block #${democracyLockEndBlock}`
+      }
+    />
+  );
 
   const stakingUnlockingAt = hasStakingLockedBalance && (
     <TextCell text={`Block #100 / Era #90`} />
   );
 
   return (
-    <div className="flex flex-row dark:bg-mono-180 px-3 py-2 rounded-lg">
+    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg">
       <div className="flex flex-row w-full">
         {/* Type */}
         <div className="flex flex-col gap-6 w-full items-start">
           <div className="self-stretch">
-            <HeaderCell title="Type" />
+            <HeaderCell title="Lock Type" />
           </div>
 
           {vestingSchedulesLabels}
@@ -133,11 +130,11 @@ const LockedBalanceDetails: FC = () => {
 const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
   return (
     <div className="p-3">
-      <div className="dark:bg-purple-120 rounded-3xl px-4 py-1">
+      <div className="bg-purple-10 dark:bg-purple-120 rounded-3xl px-4 py-1">
         <Typography
           variant="body2"
           fw="semibold"
-          className="uppercase text-purple-50 dark:text-purple-50"
+          className="uppercase text-purple-60 dark:text-purple-50"
         >
           {title}
         </Typography>

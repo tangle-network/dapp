@@ -8,11 +8,11 @@ import { FC } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import { TANGLE_TOKEN_UNIT } from '../../constants/index';
-import useAccountBalances from '../../hooks/useAccountBalances';
+import useBalances from '../../hooks/useBalances';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 const TotalBalance: FC = () => {
-  const { total } = useAccountBalances();
+  const { total } = useBalances();
 
   const formattedTotal =
     total !== null ? formatTokenBalance(total, false) : null;
