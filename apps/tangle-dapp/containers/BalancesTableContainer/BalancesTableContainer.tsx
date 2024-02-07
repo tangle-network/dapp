@@ -3,7 +3,7 @@
 import {
   ChevronDown,
   ChevronUp,
-  CoinIcon,
+  CoinsStackedLineIcon,
   SendPlanLineIcon,
   TangleIcon,
 } from '@webb-tools/icons';
@@ -16,6 +16,7 @@ import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../hooks/useBalances';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
@@ -23,6 +24,7 @@ import LockedBalanceDetails from './LockedBalanceDetails';
 
 const BalancesTableContainer: FC = () => {
   const { transferrable, locked } = useBalances();
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const { value: isDetailsCollapsedCached, set: setIsDetailsCollapsedCached } =
     useLocalStorage(LocalStorageKey.IsBalancesTableDetailsCollapsed, false);
@@ -43,65 +45,74 @@ const BalancesTableContainer: FC = () => {
   const hasLocks = locks !== null && locks.length > 0;
 
   return (
-    <GlassCard className="overflow-x-auto">
-      <div className="flex flex-row">
-        {/* Asset column */}
-        <div className="flex flex-col w-full">
-          <HeaderCell title="Asset" />
+    <>
+      <GlassCard className="overflow-x-auto">
+        <div className="flex flex-row">
+          {/* Asset column */}
+          <div className="flex flex-col w-full">
+            <HeaderCell title="Asset" />
 
-          <AssetCell
-            title="Transferrable Balance"
-            tooltip="The amount of tokens you can freely transfer right now."
-          />
+            <AssetCell
+              title="Transferrable Balance"
+              tooltip="The amount of tokens you can freely transfer right now."
+            />
 
-          <AssetCell
-            title="Locked Balance"
-            tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
-          />
-        </div>
+            <AssetCell
+              title="Locked Balance"
+              tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
+            />
+          </div>
 
-        {/* Balance column */}
-        <div className="flex flex-col w-full">
-          <HeaderCell title="Balance" />
+          {/* Balance column */}
+          <div className="flex flex-col w-full">
+            <HeaderCell title="Balance" />
 
-          {/* Transferrable balance */}
-          <div className="flex flex-row justify-between">
-            <BalanceCell amount={transferrable} />
+            {/* Transferrable balance */}
+            <div className="flex flex-row justify-between">
+              <BalanceCell amount={transferrable} />
 
-            <div className="flex flex-row gap-1 items-center">
-              <BalanceAction
-                Icon={SendPlanLineIcon}
-                tooltip="Send"
-                isDisabled={transferrable === null || transferrable.eqn(0)}
-                onClick={() => void 0}
-              />
+              <div className="flex flex-row gap-1 items-center">
+                <BalanceAction
+                  Icon={SendPlanLineIcon}
+                  tooltip="Send"
+                  isDisabled={transferrable === null || transferrable.eqn(0)}
+                  onClick={() => setIsTransferModalOpen(true)}
+                />
 
-              <BalanceAction
-                Icon={CoinIcon}
-                tooltip="Nominate"
-                isDisabled={transferrable === null || transferrable.eqn(0)}
-                onClick={() => void 0}
-              />
+                <BalanceAction
+                  Icon={CoinsStackedLineIcon}
+                  tooltip="Nominate"
+                  isDisabled={transferrable === null || transferrable.eqn(0)}
+                  onClick={() => void 0}
+                />
+              </div>
+            </div>
+
+            {/* Locked balance */}
+            <div className="flex flex-row justify-between items-center">
+              <BalanceCell amount={locked} />
+
+              {hasLocks && (
+                <BalanceAction
+                  Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
+                  tooltip={`${
+                    isDetailsCollapsed ? 'Show' : 'Collapse'
+                  } Details`}
+                  onClick={() => setIsDetailsCollapsed((previous) => !previous)}
+                />
+              )}
             </div>
           </div>
-
-          {/* Locked balance */}
-          <div className="flex flex-row justify-between items-center">
-            <BalanceCell amount={locked} />
-
-            {hasLocks && (
-              <BalanceAction
-                Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
-                tooltip={`${isDetailsCollapsed ? 'Show' : 'Collapse'} Details`}
-                onClick={() => setIsDetailsCollapsed((previous) => !previous)}
-              />
-            )}
-          </div>
         </div>
-      </div>
 
-      {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
-    </GlassCard>
+        {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
+      </GlassCard>
+
+      <TransferTxContainer
+        isModalOpen={isTransferModalOpen}
+        setIsModalOpen={setIsTransferModalOpen}
+      />
+    </>
   );
 };
 

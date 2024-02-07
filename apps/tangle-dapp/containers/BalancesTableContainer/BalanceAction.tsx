@@ -33,7 +33,9 @@ const BalanceAction: FC<{
         </IconButton>
       </TooltipTrigger>
 
-      <TooltipBody>{tooltip}</TooltipBody>
+      <TooltipBody className="break-normal max-w-[250px] text-center">
+        {tooltip}
+      </TooltipBody>
     </Tooltip>
   );
 };

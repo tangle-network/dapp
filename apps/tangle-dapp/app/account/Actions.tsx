@@ -2,8 +2,8 @@
 
 import {
   ArrowLeftRightLineIcon,
-  CoinIcon,
   CoinsLineIcon,
+  CoinsStackedLineIcon,
   GiftLineIcon,
   ShieldKeyholeLineIcon,
   StatusIndicator,
@@ -37,7 +37,7 @@ const staticActionItems: ActionItemDef[] = [
   {
     label: 'Nominate',
     internalHref: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
-    icon: <CoinIcon size="lg" />,
+    icon: <CoinsStackedLineIcon size="lg" />,
   },
   {
     label: 'Payouts',
@@ -119,7 +119,7 @@ const Actions: FC = () => {
       </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}
-      <div className="absolute">
+      <div className="fixed">
         <TransferTxContainer
           isModalOpen={isTransferModalOpen}
           setIsModalOpen={setIsTransferModalOpen}

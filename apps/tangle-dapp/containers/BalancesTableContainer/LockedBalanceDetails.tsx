@@ -1,4 +1,4 @@
-import { SendPlanLineIcon } from '@webb-tools/icons';
+import { LockUnlockLineIcon } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
@@ -45,11 +45,11 @@ const LockedBalanceDetails: FC = () => {
     vestingSchedulesOpt !== null &&
     vestingSchedulesOpt.isSome &&
     vestingSchedulesOpt.unwrap().map((schedule, index) => (
-      <div key={index} className="flex flex-row justify-between">
+      <div key={index} className="flex flex-row justify-between items-center">
         <BalanceCell amount={schedule.locked} />
 
         <BalanceAction
-          Icon={SendPlanLineIcon}
+          Icon={LockUnlockLineIcon}
           onClick={executeVestTx}
           tooltip={
             <>
