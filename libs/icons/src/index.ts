@@ -31,6 +31,7 @@ export { default as ClipboardLineIcon } from './ClipboardLineIcon';
 export * from './Close';
 export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
+export * from './CoinsLineIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
 export * from './ComputerIcon';
@@ -118,6 +119,7 @@ export * from './ThreeDotsVerticalIcon';
 export * from './TimeLineIcon';
 export { default as TimerLine } from './TimerLine';
 export * from './TokenIcon';
+export { default as TokenSwapLineIcon } from './TokenSwapLineIcon';
 export * from './TwitterFill';
 export * from './UploadCloudIcon';
 export { default as UploadLine } from './UploadLine';
@@ -130,7 +132,6 @@ export { default as WalletLineIcon } from './WalletLineIcon';
 export { default as WalletPayIcon } from './WalletPayIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
-export * from './CoinsLineIcon';
 
 // Wallet icons
 export * from './wallets';

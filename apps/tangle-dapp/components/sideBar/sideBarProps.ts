@@ -4,6 +4,7 @@ import {
   FundsLine,
   GiftLineIcon,
   GlobalLine,
+  GridFillIcon,
   UserLineIcon,
 } from '@webb-tools/icons';
 import {
@@ -30,6 +31,27 @@ const sideBarItems: SideBarItemProps[] = [
     isNext: true,
     Icon: UserLineIcon,
     subItems: [],
+  },
+  {
+    name: 'Services',
+    href: '',
+    isInternal: true,
+    isNext: true,
+    Icon: GridFillIcon,
+    subItems: [
+      {
+        name: 'Overview',
+        href: InternalPath.ServicesOverview,
+        isInternal: true,
+        isNext: true,
+      },
+      {
+        name: 'Restake',
+        href: InternalPath.ServicesRestake,
+        isInternal: true,
+        isNext: true,
+      },
+    ],
   },
   {
     name: 'EVM Staking',

@@ -55,6 +55,8 @@ export enum InternalPath {
   EvmStaking = '/',
   ClaimAirdrop = '/claim',
   Account = '/account',
+  ServicesOverview = '/services/overview',
+  ServicesRestake = '/services/restake',
 }
 
 export type InternalPathString = InternalPath | `${InternalPath}/${string}`;
