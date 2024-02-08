@@ -141,7 +141,7 @@ export default function usePayouts(
                           await formatTokenBalance(
                             new u128(
                               apiPromise.registry,
-                              validatorTotalReward.toString()
+                              BigInt(Math.floor(validatorTotalReward))
                             )
                           );
 
@@ -197,7 +197,7 @@ export default function usePayouts(
                                 await formatTokenBalance(
                                   new u128(
                                     apiPromise.registry,
-                                    Math.floor(nominatorTotalReward)
+                                    BigInt(Math.floor(nominatorTotalReward))
                                   )
                                 );
 
