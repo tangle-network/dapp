@@ -60,6 +60,7 @@ const LockedBalanceDetails: FC = () => {
   const { amount: stakingLockedBalance } = useBalancesLock(
     SubstrateLockId.Staking
   );
+
   const { data: unbondingEntries } = useUnbonding();
 
   const stakingLongestUnbondingEra =

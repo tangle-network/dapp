@@ -19,10 +19,6 @@ export type AccountBalances = {
    */
   transferrable: BN | null;
 
-  /**
-   * The total amount of tokens that is locked due to staking or other
-   * reasons, such as vesting or being reserved.
-   */
   locked: BN | null;
 };
 
