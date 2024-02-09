@@ -8,6 +8,8 @@ import {
 } from '../../utils/polkadot';
 
 export const getActiveValidators = async (): Promise<Validator[]> => {
+  console.debug('Fetching active validators');
+
   const api = await getPolkadotApiPromise();
 
   try {

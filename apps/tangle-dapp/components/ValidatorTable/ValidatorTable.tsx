@@ -6,6 +6,8 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  PaginationState,
   Row,
   useReactTable,
 } from '@tanstack/react-table';
@@ -83,7 +85,13 @@ const columns = [
   }),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
+const ValidatorTable: FC<ValidatorTableProps> = ({
+  data,
+  pageSize,
+  pageIndex,
+  totalRecordCount,
+  setPageIndex,
+}) => {
   const router = useRouter();
 
   const onRowClick = useCallback(
@@ -93,17 +101,42 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
     [router]
   );
 
+  const handlePaginationChange = useCallback<OnChangeFn<PaginationState>>(
+    (updaterOrState) => {
+      let newPaginationState;
+
+      if (typeof updaterOrState === 'function') {
+        // Handle updater function
+        newPaginationState = updaterOrState({ pageIndex, pageSize });
+        setPageIndex(newPaginationState.pageIndex);
+      } else {
+        // Handle direct state object
+        newPaginationState = { ...updaterOrState, pageSize };
+        setPageIndex(newPaginationState.pageIndex);
+      }
+
+      // Return the updated state
+      return newPaginationState;
+    },
+    [pageIndex, pageSize, setPageIndex]
+  );
+
   const table = useReactTable({
     data,
     columns,
-    initialState: {
+    // initialState: { pagination },
+    manualPagination: true,
+    onPaginationChange: handlePaginationChange,
+    state: {
       pagination: {
+        pageIndex,
         pageSize,
       },
     },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    pageCount: Math.ceil(totalRecordCount / pageSize),
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -120,7 +153,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
-        totalRecords={data.length}
         onRowClick={onRowClick}
       />
     </div>

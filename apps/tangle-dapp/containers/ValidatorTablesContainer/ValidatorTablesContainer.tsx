@@ -2,13 +2,14 @@
 
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
 import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import { useCallback, useEffect, useState } from 'react';
+import { map } from 'rxjs';
 import useSWR from 'swr';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
-import {
-  getActiveValidators,
-  getWaitingValidators,
-} from '../../data/ValidatorTables';
+import { getWaitingValidators } from '../../data/ValidatorTables';
+import useActiveValidators from '../../hooks/useActiveValidators';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import ValidatorTableContainer from './ValidatorTableContainer';
 
 const pageSize = 10;
@@ -16,17 +17,32 @@ const activeValidatorsTableTab = 'Active Validators';
 const waitingValidatorsTableTab = 'Waiting';
 
 const ValidatorTablesContainer = () => {
-  const { data: activeValidatorsData, isLoading: activeValidatorsDataLoading } =
-    useSWR([getActiveValidators.name], ([, ...args]) =>
-      getActiveValidators(...args)
-    );
+  const { data: activeValidatorCount } = usePolkadotApiRx(
+    useCallback(
+      (api) =>
+        api.query.session
+          .validators()
+          .pipe(map((validators) => validators.length)),
+      []
+    )
+  );
+
+  const [activeValidatorsPageIndex, setActiveValidatorsPageIndex] = useState(0);
 
   const {
-    data: waitingValidatorsData,
+    result: activeValidatorsData,
+    isLoading: activeValidatorsDataLoading,
+  } = useActiveValidators(activeValidatorsPageIndex, pageSize);
+
+  const {
+    // data: waitingValidatorsData,
     isLoading: waitingValidatorsDataLoading,
   } = useSWR([getWaitingValidators.name], ([, ...args]) =>
     getWaitingValidators(...args)
   );
+
+  // TODO: This is temporary.
+  const waitingValidatorsData = [] as any;
 
   return (
     <TableAndChartTabs
@@ -46,11 +62,14 @@ const ValidatorTablesContainer = () => {
             icon="⏳"
           />
         ) : activeValidatorsDataLoading || !activeValidatorsData ? (
-          <ContainerSkeleton />
+          <ContainerSkeleton numOfRows={5} />
         ) : (
           <ValidatorTableContainer
-            value={activeValidatorsData}
+            data={activeValidatorsData}
             pageSize={pageSize}
+            pageIndex={activeValidatorsPageIndex}
+            totalRecordCount={activeValidatorCount || 0}
+            setPageIndex={setActiveValidatorsPageIndex}
           />
         )}
       </TabContent>
@@ -72,8 +91,11 @@ const ValidatorTablesContainer = () => {
           <ContainerSkeleton />
         ) : (
           <ValidatorTableContainer
-            value={waitingValidatorsData}
+            data={waitingValidatorsData}
             pageSize={pageSize}
+            pageIndex={0}
+            totalRecordCount={waitingValidatorsData.length}
+            setPageIndex={() => void 0}
           />
         )}
       </TabContent>

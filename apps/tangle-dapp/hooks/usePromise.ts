@@ -12,7 +12,7 @@ import ensureError from '../utils/ensureError';
  * hooks because it doesn't focus around data fetching, but rather around
  * general Promise execution.
  *
- * @param action The Promise to execute.
+ * @param factory The Promise to execute.
  *
  * @param fallbackValue The value to use while the Promise is executing.
  *
@@ -37,7 +37,7 @@ import ensureError from '../utils/ensureError';
  *  }, null);
  * ```
  */
-function usePromise<T>(action: () => Promise<T>, fallbackValue: T) {
+function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
   const [result, setResult] = useState<T>(fallbackValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -47,7 +47,7 @@ function usePromise<T>(action: () => Promise<T>, fallbackValue: T) {
 
     setIsLoading(true);
 
-    action()
+    factory()
       .then((newResult) => {
         if (!isMounted) {
           return;
@@ -73,7 +73,7 @@ function usePromise<T>(action: () => Promise<T>, fallbackValue: T) {
     return () => {
       isMounted = false;
     };
-  }, [action]);
+  }, [factory]);
 
   return { result, isLoading, error };
 }

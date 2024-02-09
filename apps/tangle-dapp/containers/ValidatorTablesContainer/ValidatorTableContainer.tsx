@@ -1,12 +1,6 @@
 import { ValidatorTable } from '../../components';
-import { Validator } from '../../types';
+import { ValidatorTableProps } from '../../components/ValidatorTable/types';
 
-export default function ValidatorTableContainer({
-  pageSize,
-  value,
-}: {
-  pageSize: number;
-  value: Validator[];
-}) {
-  return <ValidatorTable data={value} pageSize={pageSize} />;
+export default function ValidatorTableContainer(props: ValidatorTableProps) {
+  return <ValidatorTable {...props} />;
 }

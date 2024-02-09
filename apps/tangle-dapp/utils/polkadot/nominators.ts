@@ -5,14 +5,13 @@ import { getTxPromise } from './utils';
 
 export const getTotalNumberOfNominators = async (
   validatorAddress: string
-): Promise<number | undefined> => {
+): Promise<number> => {
   const api = await getPolkadotApiPromise();
-
-  if (!api) return NaN;
-
   const nominators = await api.query.staking.nominators.entries();
+
   const totalNominators = nominators.filter(([, nominatorData]) => {
     const nominations = nominatorData.unwrapOrDefault();
+
     return (
       nominations.targets &&
       nominations.targets.some(
@@ -20,6 +19,7 @@ export const getTotalNumberOfNominators = async (
       )
     );
   });
+
   const delegations = totalNominators.length.toString();
 
   return Number(delegations);
@@ -27,13 +27,9 @@ export const getTotalNumberOfNominators = async (
 
 export const getValidatorIdentity = async (
   validatorAddress: string
-): Promise<string | undefined> => {
+): Promise<string> => {
   const api = await getPolkadotApiPromise();
-
-  if (!api) return '';
-
   const identityOption = await api.query.identity.identityOf(validatorAddress);
-
   let name = '';
 
   if (identityOption.isSome) {
@@ -54,11 +50,8 @@ export const getValidatorIdentity = async (
 
 export const getValidatorCommission = async (
   validatorAddress: string
-): Promise<string | undefined> => {
+): Promise<string> => {
   const api = await getPolkadotApiPromise();
-
-  if (!api) return '';
-
   const validatorPrefs = await api.query.staking.validators(validatorAddress);
   const commissionRate = validatorPrefs.commission.unwrap().toNumber();
   const commission = commissionRate / 10000000;
