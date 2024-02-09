@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
 
-import { InternalPath } from '../../types';
+import { PagePath } from '../../types';
 import { BreadcrumbType } from './types';
 
 const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
@@ -37,7 +37,7 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
           label: 'EVM Staking',
           isLast: true,
           icon: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
-          href: InternalPath.EvmStaking,
+          href: PagePath.EvmStaking,
         },
       ];
     }

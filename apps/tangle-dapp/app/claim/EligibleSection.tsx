@@ -109,7 +109,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
       const tx = api.tx.claims.claimAttest(
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
         isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer
-        isEvmSigner ? { EVM: signature } : { Native: signature }, // signataure
+        isEvmSigner ? { EVM: signature } : { Native: signature }, // signature
         statementSentence
       );
 
