@@ -5,6 +5,8 @@ import { getActiveValidators, getWaitingValidators } from '../data';
 
 // TODO: This needs to be optimized as it is causing significant performance pause & many requests. Instead of loading all the data at once, prefer a lazy/incremental approach such as paginated approach. Will need to adjust the consumer component of this hook to handle paginated data.
 const useAllValidatorsData = () => {
+  console.debug('Fetching ALL validator data (this may take a while)');
+
   const { data: activeValidatorsData } = useSWR(
     [getActiveValidators.name],
     ([, ...args]) => getActiveValidators(...args)

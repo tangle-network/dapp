@@ -103,19 +103,13 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
 
   const handlePaginationChange = useCallback<OnChangeFn<PaginationState>>(
     (updaterOrState) => {
-      let newPaginationState;
+      const newPaginationState =
+        typeof updaterOrState === 'function'
+          ? updaterOrState({ pageIndex, pageSize })
+          : { ...updaterOrState, pageSize };
 
-      if (typeof updaterOrState === 'function') {
-        // Handle updater function
-        newPaginationState = updaterOrState({ pageIndex, pageSize });
-        setPageIndex(newPaginationState.pageIndex);
-      } else {
-        // Handle direct state object
-        newPaginationState = { ...updaterOrState, pageSize };
-        setPageIndex(newPaginationState.pageIndex);
-      }
+      setPageIndex(newPaginationState.pageIndex);
 
-      // Return the updated state
       return newPaginationState;
     },
     [pageIndex, pageSize, setPageIndex]
@@ -124,7 +118,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
   const table = useReactTable({
     data,
     columns,
-    // initialState: { pagination },
+    initialState: { pagination: { pageIndex, pageSize } },
     manualPagination: true,
     onPaginationChange: handlePaginationChange,
     state: {

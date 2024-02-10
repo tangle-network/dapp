@@ -1,5 +1,3 @@
-export * from './swr';
-
 export const PAYMENT_DESTINATION_OPTIONS = [
   'Staked (increase the amount at stake)',
   'Stash (do not increase the amount at stake)',
@@ -28,4 +26,21 @@ export enum SubstrateLockId {
 
   // TODO: Need to account for the other lock types.
   Other = '?other',
+}
+
+/**
+ * Stale-while-revalidate (SWR) is a strategy for caching fetch requests.
+ *
+ * It helps automatically avoid redundant requests if made again before
+ * a specified period has elapsed. This can be particularly useful for
+ * Polkadot API requests that return Promise objects.
+ *
+ * Since these requests don't always require real-time data and their
+ * responses might not change frequently, caching them for a particular
+ * duration can be efficient.
+ *
+ * [Learn more about SWR](https://swr.vercel.app/)
+ */
+export enum SwrBaseKey {
+  ActiveValidatorsPaginated = 'active-validator-paginated',
 }
