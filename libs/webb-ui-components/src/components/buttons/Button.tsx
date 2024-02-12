@@ -111,8 +111,10 @@ function ButtonContent(props: ButtonContentProps) {
           {leftIcon}
         </span>
       )}
-     {/* The whitespace-nowrap class is added here to prevent text wrapping */}
-      <span className={cx('block !text-inherit whitespace-nowrap')}>{children}</span>
+      {/* The whitespace-nowrap class is added here to prevent text wrapping */}
+      <span className={cx('block !text-inherit whitespace-nowrap')}>
+        {children}
+      </span>
       {rightIcon && (
         <span
           className={cx(
