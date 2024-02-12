@@ -42,5 +42,7 @@ export enum SubstrateLockId {
  * [Learn more about SWR](https://swr.vercel.app/)
  */
 export enum SwrBaseKey {
+  ActiveValidators = 'active-validators',
+  WaitingValidators = 'waiting-validators',
   ActiveValidatorsPaginated = 'active-validator-paginated',
 }

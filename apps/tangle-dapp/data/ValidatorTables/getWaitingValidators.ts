@@ -8,6 +8,8 @@ import {
 } from '../../utils/polkadot';
 
 export const getWaitingValidators = async (): Promise<Validator[]> => {
+  console.debug('Fetching WAITING validator data (this may take a while)');
+
   const api = await getPolkadotApiPromise();
 
   try {

@@ -6,11 +6,11 @@ import { useCallback, useState } from 'react';
 import { map } from 'rxjs';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
-import useValidators from '../../data/ValidatorTables/useActiveValidators';
+import useValidators from '../../data/ValidatorTables/useValidators';
 import {
   activeValidatorFactory,
   waitingValidatorFactory,
-} from '../../data/ValidatorTables/useActiveValidators';
+} from '../../data/ValidatorTables/useValidators';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import ValidatorTableContainer from './ValidatorTableContainer';
 

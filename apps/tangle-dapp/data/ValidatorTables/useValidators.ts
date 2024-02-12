@@ -2,10 +2,11 @@ import { ApiRx } from '@polkadot/api';
 import { AccountId } from '@polkadot/types/interfaces';
 import { useCallback, useMemo } from 'react';
 import { map, Observable } from 'rxjs';
-import useSWR from 'swr';
 
 import { SwrBaseKey } from '../../constants';
+import { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useSwrWithLocalStorage from '../../hooks/useSwrWithLocalStorage';
 import { Validator } from '../../types';
 import {
   formatTokenBalance,
@@ -28,7 +29,6 @@ export const waitingValidatorFactory: ValidatorObservableFactory = (api) =>
 export const activeValidatorFactory: ValidatorObservableFactory = (api) =>
   api.query.session.validators();
 
-// TODO: This can be optimized even further by utilizing local storage as a another caching layer. Would be good to abstract that logic away by using some intermediate utility hook for local storage caching.
 const useValidators = (
   status: 'Active' | 'Waiting',
   pageIndex: number,
@@ -102,19 +102,25 @@ const useValidators = (
     });
   }, [currentEra, pagedValidators, status]);
 
-  const result = useSWR(
-    [SwrBaseKey.ActiveValidatorsPaginated, status, pageIndex, pageSize],
-    batchPromise,
-    {
+  const localStorageKey =
+    status === 'Active'
+      ? LocalStorageKey.ActiveValidatorCache
+      : LocalStorageKey.WaitingValidatorCache;
+
+  // Note that the page index does not matter much here, since
+  // the validator list is not sorted in any particular order,
+  // thus it's okay to show an initial arbitrary set of validators.
+  const result = useSwrWithLocalStorage({
+    localStorageKey,
+    swrKey: [SwrBaseKey.ActiveValidatorsPaginated, status, pageIndex, pageSize],
+    fetcher: batchPromise,
+    swrConfig: {
       // 3 minute polling interval.
       refreshInterval: 3 * 60 * 1000,
-    }
-  );
+    },
+  });
 
-  return {
-    ...result,
-    data: result.data ?? null,
-  };
+  return result;
 };
 
 export default useValidators;

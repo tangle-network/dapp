@@ -1,20 +1,32 @@
 import { useMemo } from 'react';
-import useSWR from 'swr';
+import useSWR, { SWRConfiguration } from 'swr';
 
+import { SwrBaseKey } from '../constants';
 import { getActiveValidators, getWaitingValidators } from '../data';
+
+const swrConfig: SWRConfiguration = {
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  refreshWhenHidden: false,
+  // 3 minute polling interval.
+  refreshInterval: 3 * 60 * 1000,
+  // 2 minute deduping interval.
+  dedupingInterval: 2 * 60 * 1000,
+};
 
 // TODO: This needs to be optimized as it is causing significant performance pause & many requests. Instead of loading all the data at once, prefer a lazy/incremental approach such as paginated approach. Will need to adjust the consumer component of this hook to handle paginated data.
 const useAllValidatorsData = () => {
-  console.debug('Fetching ALL validator data (this may take a while)');
-
+  console.debug('Making useAllValidatorsData request....');
   const { data: activeValidatorsData } = useSWR(
-    [getActiveValidators.name],
-    ([, ...args]) => getActiveValidators(...args)
+    SwrBaseKey.ActiveValidators,
+    getActiveValidators,
+    swrConfig
   );
 
   const { data: waitingValidatorsData } = useSWR(
-    [getWaitingValidators.name],
-    ([, ...args]) => getWaitingValidators(...args)
+    SwrBaseKey.WaitingValidators,
+    getWaitingValidators,
+    swrConfig
   );
 
   const allValidators = useMemo(() => {
@@ -22,6 +34,8 @@ const useAllValidatorsData = () => {
 
     return [...activeValidatorsData, ...waitingValidatorsData];
   }, [activeValidatorsData, waitingValidatorsData]);
+
+  console.debug('useAllValidatorsData request COMPLETED!');
 
   return allValidators;
 };
