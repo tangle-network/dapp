@@ -181,7 +181,7 @@
     "@nx/eslint-plugin": "16.9.0",
     "@nx/jest": "16.9.0",
     "@nx/js": "16.9.0",
-    "@nx/linter": "16.9.0",
+    "@nx/linter": "18.0.4",
     "@nx/next": "16.9.0",
     "@nx/react": "16.9.0",
     "@nx/rollup": "16.9.0",
