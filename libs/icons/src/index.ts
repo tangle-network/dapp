@@ -132,6 +132,7 @@ export { default as WalletPayIcon } from './WalletPayIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 export * from './CoinsLineIcon';
+export * from './CoinsStackedLineIcon';
 
 // Wallet icons
 export * from './wallets';

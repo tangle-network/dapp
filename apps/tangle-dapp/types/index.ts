@@ -51,17 +51,21 @@ export type Payout = {
   nominatorTotalReward: string;
   status: 'claimed' | 'unclaimed';
 };
-export enum InternalPath {
+export enum PagePath {
   EvmStaking = '/',
   ClaimAirdrop = '/claim',
   Account = '/account',
 }
 
-export type InternalPathString = InternalPath | `${InternalPath}/${string}`;
-
-export enum AnchorLinkId {
+export enum AnchorId {
   NominationAndPayouts = 'nomination-and-payouts',
 }
+
+export enum AnchorPath {
+  NominationAndPayouts = `${PagePath.EvmStaking}/#${AnchorId.NominationAndPayouts}`,
+}
+
+export type InternalPath = PagePath | AnchorPath;
 
 export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
 
