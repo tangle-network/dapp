@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   InputField,
@@ -13,6 +14,7 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
 import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
@@ -27,6 +29,16 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+
+  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
+    useState(false);
+  const [txnStatus, setTxnStatus] = useState<{
+    status: 'success' | 'error';
+    hash: string;
+  }>({
+    status: 'error',
+    hash: '',
+  });
 
   const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] =
     useState<boolean>(false);
@@ -64,7 +76,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     setIsPayoutAllTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => batchPayoutStakersEvm(walletAddress, payoutValidatorsAndEras),
         () =>
           batchPayoutStakersSubstrate(walletAddress, payoutValidatorsAndEras),
@@ -82,8 +94,12 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       );
 
       updatePayouts(updatedPayouts);
+
+      setTxnStatus({ status: 'success', hash });
+      setTxnConfirmationCardIsOpen(true);
     } catch {
-      // notification is already handled in executeTx
+      setTxnStatus({ status: 'error', hash: '' });
+      setTxnConfirmationCardIsOpen(true);
     } finally {
       closeModal();
     }
@@ -97,102 +113,112 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   ]);
 
   return (
-    <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-      >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Payout Stakers
-        </ModalHeader>
+    <>
+      <Modal open>
+        <ModalContent
+          isCenter
+          isOpen={isModalOpen}
+          className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        >
+          <ModalHeader titleVariant="h4" onClose={closeModal}>
+            Payout Stakers
+          </ModalHeader>
 
-        <div className="grid grid-cols-2 gap-9 p-9">
-          <div className="flex flex-col gap-9">
-            {/* Initiator */}
-            <InputField.Root>
-              <InputField.Input
-                title="Request Payout From"
-                isAddressType={true}
-                value={walletAddress}
-                type="text"
-                readOnly
-              />
-            </InputField.Root>
-
-            <div className="flex flex-col gap-2">
-              {allValidators.map((validator) => (
-                <InputField.Root key={validator}>
-                  <InputField.Input
-                    title="Validator"
-                    isAddressType={true}
-                    addressTheme="substrate"
-                    value={validator}
-                    type="text"
-                    readOnly
-                  />
-                </InputField.Root>
-              ))}
-            </div>
-
-            {/* Eras */}
-            {eraRange.length > 0 && (
+          <div className="grid grid-cols-2 gap-9 p-9">
+            <div className="flex flex-col gap-9">
+              {/* Initiator */}
               <InputField.Root>
                 <InputField.Input
-                  title="Request Payout for Eras"
-                  isAddressType={false}
-                  value={
-                    eraRange[0] === eraRange[1]
-                      ? eraRange[0]
-                      : `${eraRange[0]} - ${eraRange[1]}`
-                  }
+                  title="Request Payout From"
+                  isAddressType={true}
+                  value={walletAddress}
                   type="text"
                   readOnly
                 />
               </InputField.Root>
-            )}
+
+              <div className="flex flex-col gap-2">
+                {allValidators.map((validator) => (
+                  <InputField.Root key={validator}>
+                    <InputField.Input
+                      title="Validator"
+                      isAddressType={true}
+                      addressTheme="substrate"
+                      value={validator}
+                      type="text"
+                      readOnly
+                    />
+                  </InputField.Root>
+                ))}
+              </div>
+
+              {/* Eras */}
+              {eraRange.length > 0 && (
+                <InputField.Root>
+                  <InputField.Input
+                    title="Request Payout for Eras"
+                    isAddressType={false}
+                    value={
+                      eraRange[0] === eraRange[1]
+                        ? eraRange[0]
+                        : `${eraRange[0]} - ${eraRange[1]}`
+                    }
+                    type="text"
+                    readOnly
+                  />
+                </InputField.Root>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-16">
+              <Typography variant="body1" fw="normal">
+                Any account can request payout for stakers, this is not limited
+                to accounts that will be rewarded.
+              </Typography>
+
+              <Typography variant="body1" fw="normal">
+                All the listed validators and all their nominators will receive
+                their rewards.
+              </Typography>
+
+              <Typography variant="body1" fw="normal">
+                The UI puts a limit of 10 payouts at a time, where each payout
+                is a single validator for a single era.
+              </Typography>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-16">
-            <Typography variant="body1" fw="normal">
-              Any account can request payout for stakers, this is not limited to
-              accounts that will be rewarded.
-            </Typography>
-
-            <Typography variant="body1" fw="normal">
-              All the listed validators and all their nominators will receive
-              their rewards.
-            </Typography>
-
-            <Typography variant="body1" fw="normal">
-              The UI puts a limit of 10 payouts at a time, where each payout is
-              a single validator for a single era.
-            </Typography>
-          </div>
-        </div>
-
-        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          <Button
-            isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isPayoutAllTxLoading}
-            onClick={submitAndSignTx}
-          >
-            Confirm
-          </Button>
-
-          <a
-            href={WEBB_TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button isFullWidth variant="secondary">
-              Learn More
+          <ModalFooter className="flex flex-col gap-1 px-8 py-6">
+            <Button
+              isFullWidth
+              isDisabled={!continueToSignAndSubmitTx}
+              isLoading={isPayoutAllTxLoading}
+              onClick={submitAndSignTx}
+            >
+              Confirm
             </Button>
-          </a>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+
+            <a
+              href={WEBB_TANGLE_DOCS_STAKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </a>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <TxnConfirmationCard
+        isModalOpen={txnConfirmationCardIsOpen}
+        setIsModalOpen={setTxnConfirmationCardIsOpen}
+        txnStatus={txnStatus.status}
+        txnHash={txnStatus.hash}
+        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
+      />
+    </>
   );
 };
 

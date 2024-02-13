@@ -104,6 +104,7 @@ export * from './ShieldKeyholeLineIcon';
 export { default as ShieldKeyholeLineIcon } from './ShieldKeyholeLineIcon';
 export { default as ShieldedAssetIcon } from './ShieldedAssetIcon';
 export { default as ShieldedCheckLineIcon } from './ShieldedCheckLineIcon';
+export { default as SpamLineIcon } from './SpamLineIcon';
 export * from './ShuffleLine';
 export { default as SideBarLine } from './SideBarLine';
 export * from './SosLineIcon';

@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -13,6 +14,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -28,6 +30,16 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+
+  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
+    useState(false);
+  const [txnStatus, setTxnStatus] = useState<{
+    status: 'success' | 'error';
+    hash: string;
+  }>({
+    status: 'error',
+    hash: '',
+  });
 
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
@@ -77,59 +89,73 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setIsBondMoreTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => bondExtraTokensEvm(walletAddress, amountToBond),
         () => bondExtraTokensSubstrate(walletAddress, amountToBond),
         `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to bond extra tokens!'
       );
+
+      setTxnStatus({ status: 'success', hash });
+      setTxnConfirmationCardIsOpen(true);
     } catch {
-      // notification is already handled in executeTx
+      setTxnStatus({ status: 'error', hash: '' });
+      setTxnConfirmationCardIsOpen(true);
     } finally {
       closeModal();
     }
   }, [amountToBond, closeModal, executeTx, walletAddress]);
 
   return (
-    <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-      >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Add Stake
-        </ModalHeader>
+    <>
+      <Modal open>
+        <ModalContent
+          isCenter
+          isOpen={isModalOpen}
+          className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        >
+          <ModalHeader titleVariant="h4" onClose={closeModal}>
+            Add Stake
+          </ModalHeader>
 
-        <div className="p-9">
-          <BondTokens
-            amountToBond={amountToBond}
-            setAmountToBond={setAmountToBond}
-            amountToBondError={amountToBondError}
-            amountWalletBalance={
-              walletBalance && walletBalance.value1 ? walletBalance.value1 : 0
-            }
-          />
-        </div>
+          <div className="p-9">
+            <BondTokens
+              amountToBond={amountToBond}
+              setAmountToBond={setAmountToBond}
+              amountToBondError={amountToBondError}
+              amountWalletBalance={
+                walletBalance && walletBalance.value1 ? walletBalance.value1 : 0
+              }
+            />
+          </div>
 
-        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          <Button
-            isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isBondMoreTxLoading}
-            onClick={submitAndSignTx}
-          >
-            Confirm
-          </Button>
-
-          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-            <Button isFullWidth variant="secondary">
-              Learn More
+          <ModalFooter className="flex flex-col gap-1 px-8 py-6">
+            <Button
+              isFullWidth
+              isDisabled={!continueToSignAndSubmitTx}
+              isLoading={isBondMoreTxLoading}
+              onClick={submitAndSignTx}
+            >
+              Confirm
             </Button>
-          </Link>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+
+            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <TxnConfirmationCard
+        isModalOpen={txnConfirmationCardIsOpen}
+        setIsModalOpen={setTxnConfirmationCardIsOpen}
+        txnStatus={txnStatus.status}
+        txnHash={txnStatus.hash}
+        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
+      />
+    </>
   );
 };
 

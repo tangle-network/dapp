@@ -15,6 +15,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -28,6 +29,16 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+
+  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
+    useState(false);
+  const [txnStatus, setTxnStatus] = useState<{
+    status: 'success' | 'error';
+    hash: string;
+  }>({
+    status: 'error',
+    hash: '',
+  });
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
     useState<boolean>(false);
@@ -62,58 +73,72 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     setIsStopNominationTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => stopNominationEvm(walletAddress),
         () => stopNominationSubstrate(walletAddress),
         `Successfully stopped nomination!`,
         'Failed to stop nomination!'
       );
+
+      setTxnStatus({ status: 'success', hash });
+      setTxnConfirmationCardIsOpen(true);
     } catch {
-      // notification is already handled in executeTx
+      setTxnStatus({ status: 'error', hash: '' });
+      setTxnConfirmationCardIsOpen(true);
     } finally {
       closeModal();
     }
   }, [closeModal, executeTx, walletAddress]);
 
   return (
-    <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-      >
-        <ModalHeader titleVariant="h4" onClose={closeModal} className="mb-4">
-          Stop Nominations
-        </ModalHeader>
+    <>
+      <Modal open>
+        <ModalContent
+          isCenter
+          isOpen={isModalOpen}
+          className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        >
+          <ModalHeader titleVariant="h4" onClose={closeModal} className="mb-4">
+            Stop Nominations
+          </ModalHeader>
 
-        <div className="block m-auto p-9">
-          <ProhibitedLineIcon className="m-auto fill-blue-50 dark:fill-blue-50" />
+          <div className="block m-auto p-9">
+            <ProhibitedLineIcon className="m-auto fill-blue-50 dark:fill-blue-50" />
 
-          <Typography variant="body1" className="mt-4 text-center">
-            Are you sure you want to stop all staking activities? You will be
-            removed from current validator nominations and cease rewards from
-            the next era, your tokens will stay bonded.
-          </Typography>
-        </div>
+            <Typography variant="body1" className="mt-4 text-center">
+              Are you sure you want to stop all staking activities? You will be
+              removed from current validator nominations and cease rewards from
+              the next era, your tokens will stay bonded.
+            </Typography>
+          </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-          <Button
-            isFullWidth
-            isDisabled={!userHasActiveNominations}
-            isLoading={isStopNominationTxLoading}
-            onClick={submitAndSignTx}
-          >
-            Confirm
-          </Button>
-
-          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-            <Button isFullWidth variant="secondary">
-              Learn More
+          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+            <Button
+              isFullWidth
+              isDisabled={!userHasActiveNominations}
+              isLoading={isStopNominationTxLoading}
+              onClick={submitAndSignTx}
+            >
+              Confirm
             </Button>
-          </Link>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+
+            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <TxnConfirmationCard
+        isModalOpen={txnConfirmationCardIsOpen}
+        setIsModalOpen={setTxnConfirmationCardIsOpen}
+        txnStatus={txnStatus.status}
+        txnHash={txnStatus.hash}
+        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
+      />
+    </>
   );
 };
 
