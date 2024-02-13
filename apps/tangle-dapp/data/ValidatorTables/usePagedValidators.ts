@@ -9,7 +9,7 @@ import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSwrWithLocalStorage from '../../hooks/useSwrWithLocalStorage';
 import { Validator } from '../../types';
 import useCurrentEra from '../staking/useCurrentEra';
-import { getValidatorDetails } from './getValidatorDetails';
+import { getValidatorDetails, ValidatorStatus } from './getValidatorDetails';
 
 type ValidatorObservableFactory = (api: ApiRx) => Observable<AccountId[]>;
 
@@ -24,7 +24,7 @@ export const activeValidatorFactory: ValidatorObservableFactory = (api) =>
   api.query.session.validators();
 
 const usePagedValidators = (
-  status: 'Active' | 'Waiting',
+  status: ValidatorStatus,
   pageIndex: number,
   pageSize: number
 ) => {

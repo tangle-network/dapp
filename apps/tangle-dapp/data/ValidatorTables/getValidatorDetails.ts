@@ -9,10 +9,14 @@ import {
   getValidatorIdentity,
 } from '../../utils/polkadot';
 
+export type ValidatorStatus = 'Active' | 'Waiting';
+
 export async function getValidatorDetails(
   address: AccountId,
-  status: 'Active' | 'Waiting'
+  status: ValidatorStatus
 ): Promise<Validator> {
+  console.debug("Fetching a single validator's details");
+
   const addressAsString = address.toString();
   const api = await getPolkadotApiPromise();
   const currentEra = (await api.query.staking.currentEra()).unwrap();

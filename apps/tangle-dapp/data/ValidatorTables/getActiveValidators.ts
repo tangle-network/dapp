@@ -3,7 +3,7 @@ import { getPolkadotApiPromise } from '../../utils/polkadot';
 import { getValidatorDetails } from './getValidatorDetails';
 
 export const getActiveValidators = async (): Promise<Validator[]> => {
-  console.debug('Fetching ACTIVE validator data (this may take a while)');
+  console.debug('Fetching ACTIVE validator data (this may stall the UI)');
 
   const api = await getPolkadotApiPromise();
 
