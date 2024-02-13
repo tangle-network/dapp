@@ -3,11 +3,13 @@ import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-u
 import React, { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+import ApiDevStats from '../ApiDevStats';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
     <div className="flex bg-body h-screen">
@@ -34,6 +36,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
         <Footer isMinimal className="py-8" />
       </main>
+
+      {isDevelopment && <ApiDevStats />}
     </div>
   );
 };
