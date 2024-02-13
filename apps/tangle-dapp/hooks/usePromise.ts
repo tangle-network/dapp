@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
+import useIsMountedRef from './useIsMountedRef';
 
 /**
  * An utility hook that simplifies working with Promise objects
@@ -41,39 +42,38 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
   const [result, setResult] = useState<T>(fallbackValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const isMounted = useIsMountedRef();
 
   useEffect(() => {
-    let isMounted = true;
+    if (!isMounted.current) {
+      return;
+    }
 
     setIsLoading(true);
 
     factory()
       .then((newResult) => {
-        if (!isMounted) {
+        if (!isMounted.current) {
           return;
         }
 
         setResult(newResult);
       })
       .catch((possibleError: unknown) => {
-        if (!isMounted) {
+        if (!isMounted.current) {
           return;
         }
 
         setError(ensureError(possibleError));
       })
       .finally(() => {
-        if (!isMounted) {
+        if (!isMounted.current) {
           return;
         }
 
         setIsLoading(false);
       });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [factory]);
+  }, [factory, isMounted]);
 
   return { result, isLoading, error };
 }
