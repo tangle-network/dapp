@@ -1,5 +1,5 @@
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR, { SWRConfiguration } from 'swr';
 
 import { SwrBaseKey } from '../constants';
@@ -29,6 +29,8 @@ const useSwrWithLocalStorage = <T extends LocalStorageKey>(
 ) => {
   // TODO: Add a logic-error catching method to prevent the use of the same hook with the same local storage key more than once at a given time.
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const { value: localStorageCachedValue, set } = useLocalStorage(
     options.localStorageKey,
     true
@@ -44,13 +46,22 @@ const useSwrWithLocalStorage = <T extends LocalStorageKey>(
     }
   }, [response.data, set]);
 
-  const data = response.data ?? localStorageCachedValue;
+  // Set initial value from local storage. This is only done once,
+  // and helps to improve user-perceived initial load time.
+  useEffect(() => {
+    const noResponseDataYet =
+      response.data === undefined || response.data === null;
 
-  return {
-    ...response,
-    data,
-    isLoading: data === null,
-  };
+    const mutate =
+      localStorageCachedValue !== null && noResponseDataYet && isInitialLoad;
+
+    if (mutate) {
+      response.mutate(localStorageCachedValue, false);
+      setIsInitialLoad(false);
+    }
+  }, [isInitialLoad, localStorageCachedValue, response]);
+
+  return response;
 };
 
 export default useSwrWithLocalStorage;
