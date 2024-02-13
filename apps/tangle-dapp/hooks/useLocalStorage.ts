@@ -19,21 +19,21 @@ export type AirdropEligibilityCache = {
  * Type definition associating local storage keys with their
  * respective value types.
  */
-export type LocalStorageValueType<T extends LocalStorageKey> =
+export type LocalStorageValueOf<T extends LocalStorageKey> =
   T extends LocalStorageKey.AirdropEligibilityCache
     ? AirdropEligibilityCache
     : T extends LocalStorageKey.IsBalancesTableDetailsCollapsed
     ? boolean
-    : T extends
-        | LocalStorageKey.ActiveValidatorCache
-        | LocalStorageKey.WaitingValidatorCache
+    : T extends LocalStorageKey.ActiveValidatorCache
     ? Validator[]
     : never;
 
-const extractFromLocalStorage = <Key extends LocalStorageKey>(
+export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
   canClearIfInvalid: boolean
-): LocalStorageValueType<Key> | null => {
+): LocalStorageValueOf<Key> | null => {
+  type Value = LocalStorageValueOf<Key>;
+
   const jsonString = window.localStorage.getItem(key);
 
   // Item was not present in local storage.
@@ -41,13 +41,13 @@ const extractFromLocalStorage = <Key extends LocalStorageKey>(
     return null;
   }
 
-  let value: LocalStorageValueType<Key> | null = null;
+  let value: Value | null = null;
 
   // Clear the local storage value if parsing fails, and the
   // entry is set to be cleared if invalid.
   try {
     // TODO: Use zod to validate the value, this helps prevent logic errors.
-    value = JSON.parse(jsonString) as LocalStorageValueType<Key>;
+    value = JSON.parse(jsonString) as Value;
   } catch {
     if (canClearIfInvalid) {
       window.localStorage.removeItem(key);
@@ -62,12 +62,14 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
   isUsedAsCache = false
 ) => {
+  type Value = LocalStorageValueOf<Key>;
+
   // Use lazy state initialization to avoid reading from
   // local storage on every render.
-  const [value, setValue] = useState<LocalStorageValueType<Key> | null>(null);
+  const [value, setValue] = useState<Value | null>(null);
 
   const refresh = useCallback(() => {
-    const freshValue = extractFromLocalStorage(key, isUsedAsCache);
+    const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
 
     setValue(freshValue);
 
@@ -92,7 +94,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   }, [key, refresh]);
 
   const set = useCallback(
-    (value: LocalStorageValueType<Key>) => {
+    (value: Value) => {
       setValue(value);
       localStorage.setItem(key, JSON.stringify(value));
     },
@@ -105,11 +107,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   }, [key]);
 
   const setWithPreviousValue = useCallback(
-    (
-      updater: (
-        previousValue: LocalStorageValueType<Key> | null
-      ) => LocalStorageValueType<Key>
-    ) => {
+    (updater: (previousValue: Value | null) => Value) => {
       const previousValue = refresh();
       const nextValue = updater(previousValue);
 

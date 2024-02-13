@@ -16,7 +16,6 @@ const swrConfig: SWRConfiguration = {
 
 // TODO: This needs to be optimized as it is causing significant performance pause & many requests. Instead of loading all the data at once, prefer a lazy/incremental approach such as paginated approach. Will need to adjust the consumer component of this hook to handle paginated data.
 const useAllValidatorsData = () => {
-  console.debug('Making useAllValidatorsData request....');
   const { data: activeValidatorsData } = useSWR(
     SwrBaseKey.ActiveValidators,
     getActiveValidators,
@@ -34,8 +33,6 @@ const useAllValidatorsData = () => {
 
     return [...activeValidatorsData, ...waitingValidatorsData];
   }, [activeValidatorsData, waitingValidatorsData]);
-
-  console.debug('useAllValidatorsData request COMPLETED!');
 
   return allValidators;
 };

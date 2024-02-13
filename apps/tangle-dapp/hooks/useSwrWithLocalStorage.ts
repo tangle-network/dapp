@@ -5,14 +5,14 @@ import useSWR, { SWRConfiguration } from 'swr';
 import { SwrBaseKey } from '../constants';
 import useLocalStorage, {
   LocalStorageKey,
-  LocalStorageValueType,
+  LocalStorageValueOf,
 } from './useLocalStorage';
 
 export type SwrWithLocalStorageOptions<T extends LocalStorageKey> = {
   localStorageKey: T;
   swrKey: SwrBaseKey | [SwrBaseKey, ...unknown[]];
   swrConfig?: SWRConfiguration;
-  fetcher: () => PromiseOrT<LocalStorageValueType<T> | null>;
+  fetcher: () => PromiseOrT<LocalStorageValueOf<T> | null>;
 };
 
 /**
