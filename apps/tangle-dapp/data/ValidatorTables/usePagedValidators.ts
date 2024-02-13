@@ -8,14 +8,8 @@ import { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSwrWithLocalStorage from '../../hooks/useSwrWithLocalStorage';
 import { Validator } from '../../types';
-import {
-  formatTokenBalance,
-  getPolkadotApiPromise,
-  getTotalNumberOfNominators,
-  getValidatorCommission,
-  getValidatorIdentity,
-} from '../../utils/polkadot';
 import useCurrentEra from '../staking/useCurrentEra';
+import { getValidatorDetails } from './getValidatorDetails';
 
 type ValidatorObservableFactory = (api: ApiRx) => Observable<AccountId[]>;
 
@@ -29,7 +23,7 @@ export const waitingValidatorFactory: ValidatorObservableFactory = (api) =>
 export const activeValidatorFactory: ValidatorObservableFactory = (api) =>
   api.query.session.validators();
 
-const useValidators = (
+const usePagedValidators = (
   status: 'Active' | 'Waiting',
   pageIndex: number,
   pageSize: number
@@ -43,7 +37,7 @@ const useValidators = (
     useCallback(fetcher, [fetcher])
   );
 
-  const pagedValidators = useMemo(
+  const pagedValidatorAddresses = useMemo(
     () =>
       validators === null
         ? null
@@ -52,47 +46,14 @@ const useValidators = (
   );
 
   const batchPromise = useCallback(async (): Promise<Validator[] | null> => {
-    if (pagedValidators === null || currentEra === null) {
+    if (pagedValidatorAddresses === null || currentEra === null) {
       return null;
     }
 
-    const api = await getPolkadotApiPromise();
-
     return Promise.all(
-      pagedValidators.map(async (validator) => {
-        const address = validator.toString();
-        const identity = await getValidatorIdentity(address);
-
-        // Self Staked Amount & Effective Amount Staked
-        const exposure = await api.query.staking.erasStakers(
-          currentEra,
-          address
-        );
-
-        const selfStakedAmount = exposure.own.unwrap();
-        const selfStaked = formatTokenBalance(selfStakedAmount);
-
-        // Effective Amount Staked (Total)
-        const totalStakeAmount = exposure.total.unwrap();
-        const effectiveAmountStaked = formatTokenBalance(totalStakeAmount);
-
-        // Delegations (Total # of Nominators)
-        const delegationsValue = await getTotalNumberOfNominators(address);
-        const delegations = delegationsValue.toString();
-
-        const commission = await getValidatorCommission(address);
-
-        return {
-          address,
-          identity,
-          selfStaked,
-          effectiveAmountStaked,
-          effectiveAmountStakedRaw: totalStakeAmount.toString(),
-          delegations,
-          commission,
-          status,
-        };
-      })
+      pagedValidatorAddresses.map(async (address) =>
+        getValidatorDetails(address, status)
+      )
     ).then((validators) => {
       console.debug(
         `Fetched ${validators.length} ${status} paginated validators`
@@ -100,7 +61,7 @@ const useValidators = (
 
       return validators;
     });
-  }, [currentEra, pagedValidators, status]);
+  }, [currentEra, pagedValidatorAddresses, status]);
 
   const localStorageKey =
     status === 'Active'
@@ -123,4 +84,4 @@ const useValidators = (
   return result;
 };
 
-export default useValidators;
+export default usePagedValidators;

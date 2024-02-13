@@ -6,11 +6,11 @@ import { useCallback, useState } from 'react';
 import { map } from 'rxjs';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
-import useValidators from '../../data/ValidatorTables/useValidators';
+import usePagedValidators from '../../data/ValidatorTables/usePagedValidators';
 import {
   activeValidatorFactory,
   waitingValidatorFactory,
-} from '../../data/ValidatorTables/useValidators';
+} from '../../data/ValidatorTables/usePagedValidators';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import ValidatorTableContainer from './ValidatorTableContainer';
 
@@ -45,10 +45,10 @@ const ValidatorTablesContainer = () => {
     useState(0);
 
   const { data: activeValidatorsData, isLoading: isActiveValidatorsLoading } =
-    useValidators('Active', activeValidatorsPageIndex, pageSize);
+    usePagedValidators('Active', activeValidatorsPageIndex, pageSize);
 
   const { data: waitingValidatorsData, isLoading: isWaitingValidatorsLoading } =
-    useValidators('Waiting', waitingValidatorsPageIndex, pageSize);
+    usePagedValidators('Waiting', waitingValidatorsPageIndex, pageSize);
 
   return (
     <TableAndChartTabs
