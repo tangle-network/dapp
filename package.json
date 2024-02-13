@@ -175,7 +175,7 @@
     "@graphql-codegen/introspection": "3.0.1",
     "@graphql-codegen/typescript": "3.0.4",
     "@graphql-codegen/typescript-operations": "3.0.4",
-    "@graphql-codegen/typescript-react-apollo": "3.3.7",
+    "@graphql-codegen/typescript-react-apollo": "4.3.0",
     "@netlify/plugin-nextjs": "^4.41.2",
     "@nx/cypress": "16.9.0",
     "@nx/eslint-plugin": "16.9.0",
