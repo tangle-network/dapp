@@ -17,6 +17,9 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { TANGLE_TOKEN_UNIT } from '../../constants/index';
+import { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
@@ -34,26 +37,42 @@ export default function Page() {
     useState<Nullable<ClaimInfoType | false>>(null);
   const [checkingEligibility, setCheckingEligibility] = useState(false);
 
+  const { setWithPreviousValue: setEligibilityCache } = useLocalStorage(
+    LocalStorageKey.AirdropEligibilityCache,
+    true
+  );
+
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: 'Claim your $TNT Aidrop',
+        title: `Claim your $${TANGLE_TOKEN_UNIT} Airdrop`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
+    // Update the eligibility cache in local storage once it
+    // is known whether the user is eligible or not for the airdrop.
+    // This is reused in the account page, to avoid checking eligibility
+    // multiple times.
+    if (activeAccount !== null) {
+      setEligibilityCache((previous) => ({
+        ...previous,
+        [activeAccount.address]: claimInfo !== false,
+      }));
+    }
+
     if (claimInfo === false) {
       return {
-        title: 'You are not eligible for $TNT Airdrop',
+        title: `You are not eligible for $${TANGLE_TOKEN_UNIT} Airdrop`,
         subTitle: 'OOPS!',
       };
     }
 
     return {
-      title: 'You have unclaimed $TNT Airdrop!',
+      title: `You have unclaimed $${TANGLE_TOKEN_UNIT} Airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
-  }, [claimInfo]);
+  }, [activeAccount, claimInfo, setEligibilityCache]);
 
   const checkEligibility = useCallback(
     async (
@@ -133,19 +152,20 @@ export default function Page() {
           {claimInfo === null ? (
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 5,000,000 TNT tokens to the community. Check
-              eligibility below to see if you qualify for TNT Airdrop!
+              distributing 5,000,000 {TANGLE_TOKEN_UNIT} tokens to the
+              community. Check eligibility below to see if you qualify for{' '}
+              {TANGLE_TOKEN_UNIT} Airdrop!
             </>
           ) : claimInfo ? (
             <>
-              Looks like you are eligible for $TNT airdrop! View your tokens
-              below, and start the claiming process.
+              Looks like you are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View
+              your tokens below, and start the claiming process.
             </>
           ) : (
             <>
-              Looks like you are not eligible for $TNT airdrop. You can still
-              participate in the Tangle Network by purchasing $TNT or try again
-              with a different account.
+              Looks like you are not eligible for ${TANGLE_TOKEN_UNIT} airdrop.
+              You can still participate in the Tangle Network by purchasing $
+              {TANGLE_TOKEN_UNIT} or try again with a different account.
             </>
           )}
         </AppTemplate.Description>

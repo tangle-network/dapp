@@ -58,12 +58,13 @@ export const getInjector = async (address: string) => {
   const { web3Enable, web3FromAddress } = await import(
     '@polkadot/extension-dapp'
   );
+
   const extensions = await web3Enable('Tangle');
 
+  // No wallet extensions installed in the browser.
   if (extensions.length === 0) {
-    return undefined;
+    return null;
   }
 
-  const injector = await web3FromAddress(address);
-  return injector;
+  return web3FromAddress(address);
 };

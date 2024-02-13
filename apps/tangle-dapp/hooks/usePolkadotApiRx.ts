@@ -9,8 +9,8 @@ import useSubstrateAddress from './useSubstrateAddress';
 
 export type ObservableFactory<T> = (
   api: ApiRx,
-  activeAccountAddress: string
-) => Observable<T>;
+  activeSubstrateAddress: string
+) => Observable<T> | null;
 
 /**
  * Fetch data from the Polkadot API, using RxJS. This is especially useful
@@ -19,11 +19,14 @@ export type ObservableFactory<T> = (
  * @param factory Function that takes the Polkadot Rx instance
  * and returns a promise that resolves to the data to be streamed.
  *
+ * If the consumer of this hook utilizes any returned state, this function
+ * should be memoized using `useCallback` to avoid infinite re-render loops.
+ *
  * @returns Data and request status.
  *
  * @example
  * ```ts
- * const { data: vestingInfoOpt } = usePolkadotApiRx(
+ * const { data: vestingSchedulesOpt } = usePolkadotApiRx(
  *   (api, activeSubstrateAddress) =>
  *     api.query.vesting.vesting(activeSubstrateAddress)
  * );
@@ -44,7 +47,7 @@ export type ObservableFactory<T> = (
  * ```
  */
 function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
-  const [data, setResult] = useState<T | null>(null);
+  const [data, setData] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const activeSubstrateAddress = useSubstrateAddress();
   const { result: polkadotApiRx } = usePromise(getPolkadotApiRx, null);
@@ -55,7 +58,14 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
       return;
     }
 
-    const subscription = factory(polkadotApiRx, activeSubstrateAddress)
+    const observable = factory(polkadotApiRx, activeSubstrateAddress);
+
+    // The factory is not yet ready to produce an observable.
+    if (observable === null) {
+      return;
+    }
+
+    const subscription = observable
       .pipe(
         catchError((possibleError: unknown) => {
           setError(ensureError(possibleError));
@@ -69,7 +79,7 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
         })
       )
       .subscribe((newResult) => {
-        setResult(newResult);
+        setData(newResult);
         setLoading(false);
       });
 

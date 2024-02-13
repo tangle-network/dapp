@@ -1,12 +1,12 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
-import { getPolkadotApiPromise } from '../utils/polkadot';
+import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useSubstrateAddress from './useSubstrateAddress';
@@ -43,14 +43,6 @@ function useSubstrateTx<T extends ISubmittableResult>(
     };
   }, []);
 
-  const requestInjector = useCallback(async () => {
-    if (activeSubstrateAddress === null) {
-      return null;
-    }
-
-    return web3FromAddress(activeSubstrateAddress);
-  }, [activeSubstrateAddress]);
-
   useEffect(() => {
     if (!notifyStatusUpdates) {
       return;
@@ -75,13 +67,15 @@ function useSubstrateTx<T extends ISubmittableResult>(
       isEvmAccount === null
     ) {
       return;
-    } else if (isEvmAccount) {
-      throw new Error(
-        `Attempted to execute a Substrate transaction from an EVM account. Use an EVM-equivalent transaction or Precompile call instead.`
-      );
     }
 
-    const injector = await requestInjector();
+    // Catch logic errors.
+    assert(
+      !isEvmAccount,
+      'Should not be able to execute a Substrate transaction while the active account is an EVM account'
+    );
+
+    const injector = await getInjector(activeSubstrateAddress);
     const api = await getPolkadotApiPromise();
     let tx: SubmittableExtrinsic<'promise', T> | null;
 
@@ -137,7 +131,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
       setStatus(TxStatus.Error);
       setError(ensureError(possibleError));
     }
-  }, [activeSubstrateAddress, factory, isEvmAccount, requestInjector, status]);
+  }, [activeSubstrateAddress, factory, isEvmAccount, status]);
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something
@@ -159,7 +153,9 @@ function useSubstrateTx<T extends ISubmittableResult>(
     };
   }, [status, timeoutDelay]);
 
-  return { execute, status, error, hash };
+  // Prevent the consumer from executing the transaction if
+  // the active account is an EVM account.
+  return { execute: isEvmAccount ? null : execute, status, error, hash };
 }
 
 export default useSubstrateTx;

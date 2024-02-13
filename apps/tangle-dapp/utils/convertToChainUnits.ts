@@ -1,6 +1,8 @@
 import { BN } from '@polkadot/util';
 import assert from 'assert';
 
+import { TANGLE_TOKEN_DECIMALS } from '../constants';
+
 /**
  * Converts a numeric amount to blockchain format based on the
  * specified decimals.
@@ -17,12 +19,11 @@ import assert from 'assert';
  * @example
  * ```ts
  * const amount = 123.456;
- * const decimals = 18;
- * const convertedAmount = convertToChainUnits(amount, decimals);
+ * const convertedAmount = convertToChainUnits(amount);
  * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
  * ```
  */
-const convertToChainUnits = (amount: number, decimals: number): BN => {
+const convertToChainUnits = (amount: number): BN => {
   assert(amount >= 0, 'Amount should be 0 or positive');
 
   // Convert the amount to a string to avoid floating point inaccuracies.
@@ -31,7 +32,7 @@ const convertToChainUnits = (amount: number, decimals: number): BN => {
   const [whole, fraction = ''] = amountStr.split('.');
 
   // Pad the fractional part with zeros to match the decimals length.
-  const fractionPadded = fraction.padEnd(decimals, '0');
+  const fractionPadded = fraction.padEnd(TANGLE_TOKEN_DECIMALS, '0');
 
   const fullAmountStr = whole + fractionPadded;
 

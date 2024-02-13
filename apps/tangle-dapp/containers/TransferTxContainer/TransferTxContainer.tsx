@@ -14,11 +14,11 @@ import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useAccountBalances from '../../hooks/useAccountBalances';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
+import useBalances from '../../data/balances/useBalances';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import { TransferTxContainerProps } from './types';
 
 const TransferTxContainer: FC<TransferTxContainerProps> = ({
@@ -27,12 +27,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const [amount, setAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const { transferrable: transferrableBalance } = useAccountBalances();
+  const { transferrable: transferrableBalance } = useBalances();
 
-  const formattedTransferrableBalance = useFormattedBalance(
-    transferrableBalance,
-    false
-  );
+  const formattedTransferrableBalance =
+    transferrableBalance !== null
+      ? formatTokenBalance(transferrableBalance, false)
+      : null;
 
   const {
     execute: executeTransferTx,
@@ -41,16 +41,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   } = useSubstrateTx(
     useCallback(
       async (api) => {
-        const decimals = api.registry.chainDecimals[0];
         const amountAsNumber = Number(amount);
 
         // The amount is in the smallest unit of the token,
         // so it needs to be converted to the appropriate amount
         // of decimals.
-        const amountInChainUnits = convertToChainUnits(
-          amountAsNumber,
-          decimals
-        );
+        const amountInChainUnits = convertToChainUnits(amountAsNumber);
 
         return api.tx.balances.transfer(recipientAddress, amountInChainUnits);
       },
@@ -131,10 +127,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!canInitiateTx}
+            isDisabled={!canInitiateTx || executeTransferTx === null}
             isLoading={!isReady}
             loadingText={getTxStatusText(status)}
-            onClick={executeTransferTx}
+            onClick={executeTransferTx !== null ? executeTransferTx : undefined}
           >
             Send
           </Button>

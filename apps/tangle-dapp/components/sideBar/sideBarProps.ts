@@ -21,12 +21,12 @@ import {
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
-import { InternalPath } from '../../types';
+import { PagePath } from '../../types';
 
 const sideBarItems: SideBarItemProps[] = [
   {
     name: 'Account',
-    href: InternalPath.Account,
+    href: PagePath.Account,
     isInternal: true,
     isNext: true,
     Icon: UserLineIcon,
@@ -41,13 +41,13 @@ const sideBarItems: SideBarItemProps[] = [
     subItems: [
       {
         name: 'Overview',
-        href: InternalPath.ServicesOverview,
+        href: PagePath.ServicesOverview,
         isInternal: true,
         isNext: true,
       },
       {
         name: 'Restake',
-        href: InternalPath.ServicesRestake,
+        href: PagePath.ServicesRestake,
         isInternal: true,
         isNext: true,
       },
@@ -55,7 +55,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'EVM Staking',
-    href: InternalPath.EvmStaking,
+    href: PagePath.EvmStaking,
     isInternal: true,
     isNext: true,
     Icon: FundsLine,
@@ -63,7 +63,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'Claim Airdrop',
-    href: InternalPath.ClaimAirdrop,
+    href: PagePath.ClaimAirdrop,
     isInternal: true,
     isNext: true,
     Icon: GiftLineIcon,

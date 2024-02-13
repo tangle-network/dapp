@@ -32,6 +32,7 @@ export * from './Close';
 export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
 export * from './CoinsLineIcon';
+export * from './CoinsStackedLineIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
 export * from './ComputerIcon';
