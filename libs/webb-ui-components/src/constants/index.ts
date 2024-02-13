@@ -70,7 +70,8 @@ export const TANGLE_WHITEPAPER_URL =
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
-export const TANGLE_TESTNET_EXPLORER_URL = 'https://testnet-explorer.tangle.tools/';
+export const TANGLE_TESTNET_EXPLORER_URL =
+  'https://testnet-explorer.tangle.tools/';
 
 export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer';
