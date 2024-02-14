@@ -7,9 +7,14 @@ import { FC, useEffect, useState } from 'react';
 import usePromise from '../../hooks/usePromise';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
-const MEGABYTE_FACTOR = 0.000001;
-
+/**
+ * Format bytes to megabytes, rounded to two decimal places
+ * and suffixed with `mb`.
+ */
 function formatBytes(bytes: number): string {
+  // The multiplier to convert bytes to megabytes.
+  const MEGABYTE_FACTOR = 0.000001;
+
   return Math.round(bytes * MEGABYTE_FACTOR * 100) / 100 + 'mb';
 }
 
