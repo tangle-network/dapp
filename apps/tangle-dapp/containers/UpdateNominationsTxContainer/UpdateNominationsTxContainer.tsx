@@ -29,7 +29,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
@@ -88,14 +88,14 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
         'Failed to update nominations!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -107,7 +107,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [
     isReadyToSubmitAndSignTx,
     executeTx,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     walletAddress,
     selectedValidators,
     closeModal,

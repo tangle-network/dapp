@@ -4,14 +4,14 @@ import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 
 export const TxConfirmationModalContainer = () => {
-  const { txnConfirmationState, setTxnConfirmationState } =
+  const { txnConfirmationState, setTxConfirmationState } =
     useTxConfirmationModal();
 
   return (
     <TxConfirmationModal
       isModalOpen={txnConfirmationState.isOpen}
       setIsModalOpen={(isOpen) =>
-        setTxnConfirmationState({ ...txnConfirmationState, isOpen })
+        setTxConfirmationState({ ...txnConfirmationState, isOpen })
       }
       txnStatus={txnConfirmationState.status}
       txnHash={txnConfirmationState.hash}

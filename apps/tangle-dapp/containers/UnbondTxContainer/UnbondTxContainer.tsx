@@ -35,7 +35,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
@@ -135,14 +135,14 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         'Failed to unbond tokens!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash: hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -155,7 +155,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     amountToUnbond,
     closeModal,
     executeTx,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     walletAddress,
   ]);
 

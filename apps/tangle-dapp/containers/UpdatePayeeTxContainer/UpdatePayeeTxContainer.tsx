@@ -33,7 +33,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.Staked
   );
@@ -84,14 +84,14 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
         'Failed to update payment destination!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -104,7 +104,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     closeModal,
     executeTx,
     paymentDestination,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     walletAddress,
   ]);
 

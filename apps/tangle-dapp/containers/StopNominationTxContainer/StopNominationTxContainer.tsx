@@ -30,7 +30,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
     useState<boolean>(false);
@@ -72,14 +72,14 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
         'Failed to stop nomination!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -88,7 +88,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     } finally {
       closeModal();
     }
-  }, [closeModal, executeTx, setTxnConfirmationState, walletAddress]);
+  }, [closeModal, executeTx, setTxConfirmationState, walletAddress]);
 
   return (
     <Modal open>

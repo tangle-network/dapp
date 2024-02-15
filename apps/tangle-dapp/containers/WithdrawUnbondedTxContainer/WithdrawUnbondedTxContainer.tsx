@@ -31,7 +31,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
@@ -111,14 +111,14 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         'Failed to withdraw tokens!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -130,7 +130,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   }, [
     closeModal,
     executeTx,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     substrateAddress,
     walletAddress,
   ]);

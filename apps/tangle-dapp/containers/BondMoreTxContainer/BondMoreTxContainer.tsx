@@ -30,7 +30,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
@@ -87,14 +87,14 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         'Failed to bond extra tokens!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash: hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -107,7 +107,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     amountToBond,
     closeModal,
     executeTx,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     walletAddress,
   ]);
 

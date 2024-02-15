@@ -11,7 +11,7 @@ interface TxConfirmationState {
 
 interface TxConfirmationContextType {
   txnConfirmationState: TxConfirmationState;
-  setTxnConfirmationState: (state: TxConfirmationState) => void;
+  setTxConfirmationState: (state: TxConfirmationState) => void;
 }
 
 const initialState: TxConfirmationState = {
@@ -25,15 +25,15 @@ const TxConfirmationContext = createContext<
   TxConfirmationContextType | undefined
 >(undefined);
 
-export const TxnConfirmationProvider: React.FC<{
+export const TxConfirmationProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [txnConfirmationState, setTxnConfirmationState] =
+  const [txnConfirmationState, setTxConfirmationState] =
     useState<TxConfirmationState>(initialState);
 
   const value = {
     txnConfirmationState,
-    setTxnConfirmationState,
+    setTxConfirmationState,
   };
 
   return (
@@ -47,7 +47,7 @@ export const useTxConfirmationModal = () => {
   const context = useContext(TxConfirmationContext);
   if (context === undefined) {
     throw new Error(
-      'useTxnConfirmationModal must be used within a TxnConfirmationProvider'
+      'useTxnConfirmationModal must be used within a TxConfirmationProvider'
     );
   }
   return context;

@@ -30,7 +30,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] =
     useState<boolean>(false);
@@ -87,14 +87,14 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
 
       updatePayouts(updatedPayouts);
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash: hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -107,7 +107,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     executeTx,
     payouts,
     updatePayouts,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     walletAddress,
     payoutValidatorsAndEras,
     closeModal,

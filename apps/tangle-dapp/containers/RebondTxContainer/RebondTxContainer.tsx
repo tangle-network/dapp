@@ -36,7 +36,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxConfirmationModal();
+  const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToRebond, setAmountToRebond] = useState<number>(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
 
@@ -109,14 +109,14 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
         'Failed to rebond tokens!'
       );
 
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'success',
         hash,
         txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
-      setTxnConfirmationState({
+      setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
@@ -129,7 +129,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     amountToRebond,
     closeModal,
     executeTx,
-    setTxnConfirmationState,
+    setTxConfirmationState,
     walletAddress,
   ]);
 
