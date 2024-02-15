@@ -15,7 +15,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -30,7 +30,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
     useState<boolean>(false);

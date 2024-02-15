@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
@@ -30,7 +30,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
 
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =

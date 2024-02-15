@@ -12,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -31,7 +31,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
 
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 

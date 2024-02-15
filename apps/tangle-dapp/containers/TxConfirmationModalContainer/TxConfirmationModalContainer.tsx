@@ -1,14 +1,14 @@
 'use client';
 
-import { TxnConfirmationModal } from '../../components/TxnConfirmationModal';
-import { useTxnConfirmationModal } from '../../context/TxnConfirmationContext';
+import { TxConfirmationModal } from '../../components/TxConfirmationModal';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 
-export const TxnConfirmationModalContainer = () => {
+export const TxConfirmationModalContainer = () => {
   const { txnConfirmationState, setTxnConfirmationState } =
-    useTxnConfirmationModal();
+    useTxConfirmationModal();
 
   return (
-    <TxnConfirmationModal
+    <TxConfirmationModal
       isModalOpen={txnConfirmationState.isOpen}
       setIsModalOpen={(isOpen) =>
         setTxnConfirmationState({ ...txnConfirmationState, isOpen })

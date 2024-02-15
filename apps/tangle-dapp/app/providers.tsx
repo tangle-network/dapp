@@ -10,7 +10,7 @@ import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import z from 'zod';
 
-import { TxnConfirmationProvider } from '../context/TxnConfirmationContext';
+import { TxnConfirmationProvider } from '../context/TxConfirmationContext';
 
 const appEvent = new AppEvent();
 

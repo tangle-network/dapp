@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
@@ -33,7 +33,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.Staked
   );

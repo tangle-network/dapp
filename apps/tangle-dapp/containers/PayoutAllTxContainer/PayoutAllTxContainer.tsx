@@ -14,7 +14,7 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
 import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
@@ -30,7 +30,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
 
   const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] =
     useState<boolean>(false);

@@ -20,9 +20,9 @@ import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/Ke
 import { TANGLE_TESTNET_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useMemo } from 'react';
 
-import { TxnConfirmationModalProps } from './types';
+import { TxConfirmationModalProps } from './types';
 
-export const TxnConfirmationModal = (props: TxnConfirmationModalProps) => {
+export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
   const { isModalOpen, setIsModalOpen, txnStatus, txnHash, txnType } = props;
 
   const { apiConfig } = useWebContext();

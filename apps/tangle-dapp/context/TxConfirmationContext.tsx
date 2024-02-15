@@ -2,34 +2,34 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-interface TxnConfirmationState {
+interface TxConfirmationState {
   isOpen: boolean;
   status: 'success' | 'error';
   hash: string;
   txnType: 'substrate' | 'evm';
 }
 
-interface TxnConfirmationContextType {
-  txnConfirmationState: TxnConfirmationState;
-  setTxnConfirmationState: (state: TxnConfirmationState) => void;
+interface TxConfirmationContextType {
+  txnConfirmationState: TxConfirmationState;
+  setTxnConfirmationState: (state: TxConfirmationState) => void;
 }
 
-const initialState: TxnConfirmationState = {
+const initialState: TxConfirmationState = {
   isOpen: false,
   status: 'error',
   hash: '',
   txnType: 'evm',
 };
 
-const TxnConfirmationContext = createContext<
-  TxnConfirmationContextType | undefined
+const TxConfirmationContext = createContext<
+  TxConfirmationContextType | undefined
 >(undefined);
 
 export const TxnConfirmationProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [txnConfirmationState, setTxnConfirmationState] =
-    useState<TxnConfirmationState>(initialState);
+    useState<TxConfirmationState>(initialState);
 
   const value = {
     txnConfirmationState,
@@ -37,14 +37,14 @@ export const TxnConfirmationProvider: React.FC<{
   };
 
   return (
-    <TxnConfirmationContext.Provider value={value}>
+    <TxConfirmationContext.Provider value={value}>
       {children}
-    </TxnConfirmationContext.Provider>
+    </TxConfirmationContext.Provider>
   );
 };
 
-export const useTxnConfirmationModal = () => {
-  const context = useContext(TxnConfirmationContext);
+export const useTxConfirmationModal = () => {
+  const context = useContext(TxConfirmationContext);
   if (context === undefined) {
     throw new Error(
       'useTxnConfirmationModal must be used within a TxnConfirmationProvider'

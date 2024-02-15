@@ -12,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -29,7 +29,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
 
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();

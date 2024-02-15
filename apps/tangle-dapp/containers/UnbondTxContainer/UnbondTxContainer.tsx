@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -35,7 +35,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxnConfirmationState } = useTxnConfirmation();
+  const { setTxnConfirmationState } = useTxConfirmationModal();
 
   const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);

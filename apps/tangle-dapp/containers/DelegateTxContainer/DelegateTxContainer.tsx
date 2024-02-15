@@ -18,7 +18,7 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TxnConfirmationModal } from '../../components/TxnConfirmationModal';
+import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import {
   PAYMENT_DESTINATION_OPTIONS,
   TANGLE_TOKEN_UNIT,
@@ -419,7 +419,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         </ModalContent>
       </Modal>
 
-      <TxnConfirmationModal
+      <TxConfirmationModal
         isModalOpen={txnConfirmationModalIsOpen}
         setIsModalOpen={setTxnConfirmationModalIsOpen}
         txnStatus={txnStatus.status}
