@@ -144,9 +144,7 @@ const AssetCell: FC<{
         </Typography>
 
         {tooltip !== undefined && (
-          <InfoIconWithTooltip
-            content={<span className="block text-center">{tooltip}</span>}
-          />
+          <InfoIconWithTooltip content={<>{tooltip}</>} />
         )}
       </div>
     </div>

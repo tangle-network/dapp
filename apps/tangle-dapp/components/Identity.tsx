@@ -5,6 +5,7 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  Typography,
   useHiddenValue,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -15,7 +16,7 @@ import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { ComponentProps, ElementRef } from 'react';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { convertToSubstrateAddress } from '../utils';
@@ -48,10 +49,6 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
 
     const [displayAddress, setDisplayAddress] = useState(address);
 
-    useEffect(() => {
-      setDisplayAddress(address);
-    }, [address]);
-
     const shortenFn = isHiddenValue
       ? shortenString
       : isDisplayingEvmAddress
@@ -77,6 +74,7 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
     const handleCopy = useCallback(() => {
       copyableResult.copy(finalDisplayAddress);
 
+      // TODO: Instead of showing a toast notification, change the tooltip to show `Copied!` for a few seconds. This way, it stays consistent with the rest of the places that use Copy buttons.
       notificationApi({
         variant: 'success',
         message: 'Address copied to clipboard',
@@ -89,7 +87,7 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
     return (
       <div
         {...divProps}
-        className={twMerge(className, 'flex items-center gap-2')}
+        className={twMerge(className, 'flex items-center gap-1')}
         ref={ref}
       >
         <IconWithTooltip
@@ -97,12 +95,18 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
           content={iconTooltipContent}
         />
 
-        <span>Address: </span>
+        <Typography variant="body1" fw="normal">
+          Address:
+        </Typography>
 
         <Tooltip>
-          <TooltipTrigger>{shortenFn(finalDisplayAddress, 5)}</TooltipTrigger>
+          <TooltipTrigger className="cursor-default">
+            <Typography variant="body1" fw="normal">
+              {shortenFn(finalDisplayAddress, 5)}
+            </Typography>
+          </TooltipTrigger>
 
-          <TooltipBody>{displayAddress}</TooltipBody>
+          <TooltipBody className="max-w-full">{displayAddress}</TooltipBody>
         </Tooltip>
 
         <Tooltip>
@@ -127,6 +131,6 @@ const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
   }
 );
 
-Identity.displayName = Identity.name;
+Identity.displayName = 'Identity';
 
 export default Identity;
