@@ -46,9 +46,9 @@ const columns = [
       const participants = props.getValue();
       return (
         <AvatarGroup>
-          {participants.map((participantAddr, idx) => (
+          {participants.map((participantAddr) => (
             <Avatar
-              key={idx}
+              key={participantAddr}
               sourceVariant="address"
               value={participantAddr}
               theme="substrate"

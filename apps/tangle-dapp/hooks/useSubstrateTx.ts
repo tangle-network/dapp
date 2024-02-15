@@ -3,12 +3,13 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
 import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useIsMountedRef from './useIsMountedRef';
 import useSubstrateAddress from './useSubstrateAddress';
 
 export enum TxStatus {
@@ -35,13 +36,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
   const { notificationApi } = useWebbUI();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
-  const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+  const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
     if (!notifyStatusUpdates) {
@@ -131,7 +126,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
       setStatus(TxStatus.Error);
       setError(ensureError(possibleError));
     }
-  }, [activeSubstrateAddress, factory, isEvmAccount, status]);
+  }, [activeSubstrateAddress, factory, isEvmAccount, isMountedRef, status]);
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something
