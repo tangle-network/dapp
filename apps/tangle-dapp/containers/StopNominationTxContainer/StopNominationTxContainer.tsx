@@ -76,14 +76,14 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
         isOpen: true,
         status: 'success',
         hash,
-        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
       setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
-        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } finally {
       closeModal();

@@ -60,9 +60,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
 
-  const [txnConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
+  const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
-  const [txnStatus, setTxnStatus] = useState<{
+  const [txStatus, setTxnStatus] = useState<{
     status: 'success' | 'error';
     hash: string;
   }>({
@@ -420,11 +420,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       </Modal>
 
       <TxConfirmationModal
-        isModalOpen={txnConfirmationModalIsOpen}
+        isModalOpen={txConfirmationModalIsOpen}
         setIsModalOpen={setTxnConfirmationModalIsOpen}
-        txnStatus={txnStatus.status}
-        txnHash={txnStatus.hash}
-        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
+        txStatus={txStatus.status}
+        txHash={txStatus.hash}
+        txType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
       />
     </>
   );

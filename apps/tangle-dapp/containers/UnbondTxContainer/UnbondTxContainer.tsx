@@ -139,14 +139,14 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         isOpen: true,
         status: 'success',
         hash: hash,
-        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } catch {
       setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
-        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
       });
     } finally {
       closeModal();
