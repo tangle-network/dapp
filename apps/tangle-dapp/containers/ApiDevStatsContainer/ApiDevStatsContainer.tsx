@@ -110,7 +110,7 @@ const ApiDevStats: FC = () => {
 
   return (
     <div
-      className="cursor-pointer fixed left-3 bottom-3 z-10 bg-mono-180 border border-mono-140 rounded-md shadow-md px-4 py-2 transition-opacity opacity-50 hover:opacity-100 flex flex-row gap-4 max-w-lg overflow-x-auto"
+      className="cursor-pointer fixed left-3 bottom-3 z-10 bg-mono-20 dark:bg-mono-180 border border-mono-140 rounded-md shadow-md px-4 py-2 transition-opacity opacity-50 hover:opacity-100 flex flex-row gap-4 max-w-lg overflow-x-auto"
       onClick={() => setIsCollapsed((isCollapsed) => !isCollapsed)}
     >
       {isCollapsed ? (
