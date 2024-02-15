@@ -21,6 +21,7 @@ import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
+import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -39,11 +40,6 @@ const staticActionItems: ActionItemDef[] = [
     label: 'Nominate',
     internalHref: AnchorPath.NominationAndPayouts,
     icon: <CoinsStackedLineIcon size="lg" />,
-  },
-  {
-    label: 'Payouts',
-    internalHref: AnchorPath.NominationAndPayouts,
-    icon: <CoinsLineIcon size="lg" />,
   },
 ] as const;
 
@@ -64,6 +60,7 @@ const Actions: FC = () => {
       : null;
 
   const { isAirdropEligible } = useAirdropEligibility();
+  const { isPayoutsAvailable } = usePayoutsAvailability();
 
   return (
     <>
@@ -79,6 +76,16 @@ const Actions: FC = () => {
           // items are static and won't change.
           <ActionItem key={index} {...props} />
         ))}
+
+        {isPayoutsAvailable && (
+          <ActionItem
+            hasNotificationDot
+            label="Payouts"
+            icon={<CoinsLineIcon size="lg" />}
+            internalHref={AnchorPath.NominationAndPayouts}
+            tooltip="You have payouts available. Click here to visit the Payouts page."
+          />
+        )}
 
         {isAirdropEligible && (
           <ActionItem
