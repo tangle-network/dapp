@@ -5,6 +5,7 @@ import {
   NodeSpecificationsTableContainer,
   ServiceTablesContainer,
 } from '../../../containers';
+import ValidatorOverviewCard from './ValidatorOverviewCard';
 
 export default function Index({
   params,
@@ -19,6 +20,14 @@ export default function Index({
 
   return (
     <div className="my-5 space-y-10">
+      <div className="flex gap-5">
+        <ValidatorOverviewCard
+          validatorAddress={validatorAddress}
+          className="flex-1"
+        />
+        <div className="flex-1"></div>
+      </div>
+
       <NodeSpecificationsTableContainer validatorAddress={validatorAddress} />
 
       <ServiceTablesContainer validatorAddress={validatorAddress} />
