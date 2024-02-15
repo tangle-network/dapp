@@ -114,7 +114,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data = [], pageSize }) => {
   return (
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
-        tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0"
         trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
