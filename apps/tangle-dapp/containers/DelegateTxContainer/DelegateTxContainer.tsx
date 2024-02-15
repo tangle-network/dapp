@@ -18,7 +18,7 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
+import { TxnConfirmationModal } from '../../components/TxnConfirmationCard';
 import {
   PAYMENT_DESTINATION_OPTIONS,
   TANGLE_TOKEN_UNIT,
@@ -60,7 +60,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
 
-  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
+  const [txnConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
   const [txnStatus, setTxnStatus] = useState<{
     status: 'success' | 'error';
@@ -264,11 +264,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         setTxnStatus({ status: 'success', hash });
       }
 
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationModalIsOpen(true);
     } catch (e) {
       setTxnStatus({ status: 'error', hash: '' });
 
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationModalIsOpen(true);
     }
   }, [
     amountToBond,
@@ -419,9 +419,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         </ModalContent>
       </Modal>
 
-      <TxnConfirmationCard
-        isModalOpen={txnConfirmationCardIsOpen}
-        setIsModalOpen={setTxnConfirmationCardIsOpen}
+      <TxnConfirmationModal
+        isModalOpen={txnConfirmationModalIsOpen}
+        setIsModalOpen={setTxnConfirmationModalIsOpen}
         txnStatus={txnStatus.status}
         txnHash={txnStatus.hash}
         txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}

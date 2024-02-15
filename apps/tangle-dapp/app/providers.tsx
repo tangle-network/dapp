@@ -10,6 +10,8 @@ import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import z from 'zod';
 
+import { TxnConfirmationProvider } from '../context/TxnConfirmationContext';
+
 const appEvent = new AppEvent();
 
 const envSchema = z.object({
@@ -36,7 +38,7 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >
-            {children}
+            <TxnConfirmationProvider>{children}</TxnConfirmationProvider>
           </OFACFilterProvider>
         </WebbProvider>
       </WebbUIProvider>

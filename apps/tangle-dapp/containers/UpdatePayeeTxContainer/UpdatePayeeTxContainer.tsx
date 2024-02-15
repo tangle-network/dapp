@@ -14,8 +14,8 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
+import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
@@ -33,16 +33,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
-    useState(false);
-  const [txnStatus, setTxnStatus] = useState<{
-    status: 'success' | 'error';
-    hash: string;
-  }>({
-    status: 'error',
-    hash: '',
-  });
-
+  const { setTxnConfirmationState } = useTxnConfirmation();
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.Staked
   );
@@ -93,15 +84,29 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
         'Failed to update payment destination!'
       );
 
-      setTxnStatus({ status: 'success', hash });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      setTxnStatus({ status: 'error', hash: '' });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [closeModal, executeTx, paymentDestination, walletAddress]);
+  }, [
+    closeModal,
+    executeTx,
+    paymentDestination,
+    setTxnConfirmationState,
+    walletAddress,
+  ]);
 
   if (currentPaymentDestinationError) {
     notificationApi({
@@ -111,53 +116,43 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   }
 
   return (
-    <>
-      <Modal open>
-        <ModalContent
-          isCenter
-          isOpen={isModalOpen}
-          className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-        >
-          <ModalHeader titleVariant="h4" onClose={closeModal}>
-            Change Reward Destination
-          </ModalHeader>
+    <Modal open>
+      <ModalContent
+        isCenter
+        isOpen={isModalOpen}
+        className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+      >
+        <ModalHeader titleVariant="h4" onClose={closeModal}>
+          Change Reward Destination
+        </ModalHeader>
 
-          <div className="px-8 py-6">
-            <UpdatePayee
-              currentPayee={currentPaymentDestination?.value1 ?? ''}
-              paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
-              paymentDestination={paymentDestination}
-              setPaymentDestination={setPaymentDestination}
-            />
-          </div>
+        <div className="px-8 py-6">
+          <UpdatePayee
+            currentPayee={currentPaymentDestination?.value1 ?? ''}
+            paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
+            paymentDestination={paymentDestination}
+            setPaymentDestination={setPaymentDestination}
+          />
+        </div>
 
-          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-            <Button
-              isFullWidth
-              isDisabled={!continueToSignAndSubmitTx}
-              isLoading={isUpdatePaymentDestinationTxLoading}
-              onClick={submitAndSignTx}
-            >
-              Confirm
+        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+          <Button
+            isFullWidth
+            isDisabled={!continueToSignAndSubmitTx}
+            isLoading={isUpdatePaymentDestinationTxLoading}
+            onClick={submitAndSignTx}
+          >
+            Confirm
+          </Button>
+
+          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+            <Button isFullWidth variant="secondary">
+              Learn More
             </Button>
-
-            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-              <Button isFullWidth variant="secondary">
-                Learn More
-              </Button>
-            </Link>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      <TxnConfirmationCard
-        isModalOpen={txnConfirmationCardIsOpen}
-        setIsModalOpen={setTxnConfirmationCardIsOpen}
-        txnStatus={txnStatus.status}
-        txnHash={txnStatus.hash}
-        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
-      />
-    </>
+          </Link>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

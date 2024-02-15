@@ -12,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
+import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -29,15 +29,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
-    useState(false);
-  const [txnStatus, setTxnStatus] = useState<{
-    status: 'success' | 'error';
-    hash: string;
-  }>({
-    status: 'error',
-    hash: '',
-  });
+  const { setTxnConfirmationState } = useTxnConfirmation();
 
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
@@ -96,75 +88,74 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
         'Failed to update nominations!'
       );
 
-      setTxnStatus({ status: 'success', hash });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      setTxnStatus({ status: 'error', hash: '' });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
   }, [
     isReadyToSubmitAndSignTx,
     executeTx,
+    setTxnConfirmationState,
     walletAddress,
     selectedValidators,
     closeModal,
   ]);
 
   return (
-    <>
-      <Modal open>
-        <ModalContent
-          isCenter
-          isOpen={isModalOpen}
-          className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-        >
-          <ModalHeader titleVariant="h4" onClose={closeModal}>
-            Update Nominations
-          </ModalHeader>
+    <Modal open>
+      <ModalContent
+        isCenter
+        isOpen={isModalOpen}
+        className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+      >
+        <ModalHeader titleVariant="h4" onClose={closeModal}>
+          Update Nominations
+        </ModalHeader>
 
-          <div className="px-8 py-6">
-            <SelectValidators
-              validators={allValidators}
-              selectedValidators={selectedValidators}
-              setSelectedValidators={setSelectedValidators}
+        <div className="px-8 py-6">
+          <SelectValidators
+            validators={allValidators}
+            selectedValidators={selectedValidators}
+            setSelectedValidators={setSelectedValidators}
+          />
+
+          {isExceedingMaxNominationQuota && (
+            <Alert
+              type="error"
+              className="mt-4"
+              description={`You can only nominate up to ${maxNominationQuota} validators.`}
             />
+          )}
+        </div>
 
-            {isExceedingMaxNominationQuota && (
-              <Alert
-                type="error"
-                className="mt-4"
-                description={`You can only nominate up to ${maxNominationQuota} validators.`}
-              />
-            )}
-          </div>
+        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+          <Button
+            isFullWidth
+            isDisabled={!isReadyToSubmitAndSignTx}
+            isLoading={isSubmitAndSignTxLoading}
+            onClick={submitAndSignTx}
+          >
+            Sign & Submit
+          </Button>
 
-          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-            <Button
-              isFullWidth
-              isDisabled={!isReadyToSubmitAndSignTx}
-              isLoading={isSubmitAndSignTxLoading}
-              onClick={submitAndSignTx}
-            >
-              Sign & Submit
-            </Button>
-
-            <Button isFullWidth variant="secondary" onClick={closeModal}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      <TxnConfirmationCard
-        isModalOpen={txnConfirmationCardIsOpen}
-        setIsModalOpen={setTxnConfirmationCardIsOpen}
-        txnStatus={txnStatus.status}
-        txnHash={txnStatus.hash}
-        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
-      />
-    </>
+          <Button isFullWidth variant="secondary" onClick={closeModal}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

@@ -12,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
+import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -31,15 +31,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
-    useState(false);
-  const [txnStatus, setTxnStatus] = useState<{
-    status: 'success' | 'error';
-    hash: string;
-  }>({
-    status: 'error',
-    hash: '',
-  });
+  const { setTxnConfirmationState } = useTxnConfirmation();
 
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
@@ -119,15 +111,29 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         'Failed to withdraw tokens!'
       );
 
-      setTxnStatus({ status: 'success', hash });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      setTxnStatus({ status: 'error', hash: '' });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [closeModal, executeTx, substrateAddress, walletAddress]);
+  }, [
+    closeModal,
+    executeTx,
+    setTxnConfirmationState,
+    substrateAddress,
+    walletAddress,
+  ]);
 
   const onRebondClick = () => {
     closeModal();
@@ -177,14 +183,6 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
       <RebondTxContainer
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
-      />
-
-      <TxnConfirmationCard
-        isModalOpen={txnConfirmationCardIsOpen}
-        setIsModalOpen={setTxnConfirmationCardIsOpen}
-        txnStatus={txnStatus.status}
-        txnHash={txnStatus.hash}
-        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
       />
     </>
   );

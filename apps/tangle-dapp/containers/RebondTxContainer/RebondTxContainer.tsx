@@ -14,8 +14,8 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TxnConfirmationCard } from '../../components/TxnConfirmationCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { useTxnConfirmation } from '../../context/TxnConfirmationContext';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -36,16 +36,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
-  const [txnConfirmationCardIsOpen, setTxnConfirmationCardIsOpen] =
-    useState(false);
-  const [txnStatus, setTxnStatus] = useState<{
-    status: 'success' | 'error';
-    hash: string;
-  }>({
-    status: 'error',
-    hash: '',
-  });
-
+  const { setTxnConfirmationState } = useTxnConfirmation();
   const [amountToRebond, setAmountToRebond] = useState<number>(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
 
@@ -118,70 +109,74 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
         'Failed to rebond tokens!'
       );
 
-      setTxnStatus({ status: 'success', hash });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      setTxnStatus({ status: 'error', hash: '' });
-      setTxnConfirmationCardIsOpen(true);
+      setTxnConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [amountToRebond, closeModal, executeTx, walletAddress]);
+  }, [
+    amountToRebond,
+    closeModal,
+    executeTx,
+    setTxnConfirmationState,
+    walletAddress,
+  ]);
 
   return (
-    <>
-      <Modal open>
-        <ModalContent
-          isCenter
-          isOpen={isModalOpen}
-          className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-        >
-          <ModalHeader titleVariant="h4" onClose={closeModal}>
-            Rebond Funds
-          </ModalHeader>
+    <Modal open>
+      <ModalContent
+        isCenter
+        isOpen={isModalOpen}
+        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+      >
+        <ModalHeader titleVariant="h4" onClose={closeModal}>
+          Rebond Funds
+        </ModalHeader>
 
-          <div className="p-9">
-            <RebondTokens
-              amountToRebond={amountToRebond}
-              setAmountToRebond={setAmountToRebond}
-              amountToRebondError={amountToRebondError}
-              remainingUnbondedTokensToRebond={remainingUnbondedTokensToRebond}
-              unbondedAmount={
-                totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? 0
-              }
-              unbondingAmount={
-                totalUnbondedAndUnbondingAmountData?.value1?.unbonding ?? 0
-              }
-            />
-          </div>
+        <div className="p-9">
+          <RebondTokens
+            amountToRebond={amountToRebond}
+            setAmountToRebond={setAmountToRebond}
+            amountToRebondError={amountToRebondError}
+            remainingUnbondedTokensToRebond={remainingUnbondedTokensToRebond}
+            unbondedAmount={
+              totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? 0
+            }
+            unbondingAmount={
+              totalUnbondedAndUnbondingAmountData?.value1?.unbonding ?? 0
+            }
+          />
+        </div>
 
-          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-            <Button
-              isFullWidth
-              isDisabled={!continueToSignAndSubmitTx}
-              isLoading={isRebondTxLoading}
-              onClick={submitAndSignTx}
-            >
-              Confirm
+        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+          <Button
+            isFullWidth
+            isDisabled={!continueToSignAndSubmitTx}
+            isLoading={isRebondTxLoading}
+            onClick={submitAndSignTx}
+          >
+            Confirm
+          </Button>
+
+          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+            <Button isFullWidth variant="secondary">
+              Learn More
             </Button>
-
-            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-              <Button isFullWidth variant="secondary">
-                Learn More
-              </Button>
-            </Link>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      <TxnConfirmationCard
-        isModalOpen={txnConfirmationCardIsOpen}
-        setIsModalOpen={setTxnConfirmationCardIsOpen}
-        txnStatus={txnStatus.status}
-        txnHash={txnStatus.hash}
-        txnType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
-      />
-    </>
+          </Link>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

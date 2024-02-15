@@ -1,3 +1,5 @@
+'use client';
+
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
@@ -18,9 +20,9 @@ import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/Ke
 import { TANGLE_TESTNET_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useMemo } from 'react';
 
-import { TxnConfirmationCardProps } from './types';
+import { TxnConfirmationModalProps } from './types';
 
-export const TxnConfirmationCard = (props: TxnConfirmationCardProps) => {
+export const TxnConfirmationModal = (props: TxnConfirmationModalProps) => {
   const { isModalOpen, setIsModalOpen, txnStatus, txnHash, txnType } = props;
 
   const { apiConfig } = useWebContext();
