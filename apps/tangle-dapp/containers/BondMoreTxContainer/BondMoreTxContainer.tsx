@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -14,6 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
@@ -28,6 +30,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
@@ -77,18 +80,36 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setIsBondMoreTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => bondExtraTokensEvm(walletAddress, amountToBond),
         () => bondExtraTokensSubstrate(walletAddress, amountToBond),
         `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to bond extra tokens!'
       );
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash: hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [amountToBond, closeModal, executeTx, walletAddress]);
+  }, [
+    amountToBond,
+    closeModal,
+    executeTx,
+    setTxConfirmationState,
+    walletAddress,
+  ]);
 
   return (
     <Modal open>

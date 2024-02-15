@@ -32,7 +32,7 @@ const sideBarItems: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'EVM Staking',
+    name: 'Nomination',
     href: PagePath.EvmStaking,
     isInternal: true,
     isNext: true,

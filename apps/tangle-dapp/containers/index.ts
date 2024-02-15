@@ -8,6 +8,7 @@ export * from './NodeSpecificationsTableContainer';
 export * from './NominatorStatsContainer';
 export * from './RebondTxContainer';
 export * from './ServiceTablesContainer';
+export * from './TxConfirmationModalContainer';
 export * from './UnbondTxContainer';
 export * from './UpdatePayeeTxContainer';
 export * from './ValidatorTablesContainer';
