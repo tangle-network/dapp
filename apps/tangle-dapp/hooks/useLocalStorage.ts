@@ -1,6 +1,12 @@
+'use client';
+
 import { useCallback, useEffect, useState } from 'react';
 
+import { Validator } from '../types';
+
 export enum LocalStorageKey {
+  ActiveValidatorCache = 'activeValidatorCache',
+  WaitingValidatorCache = 'waitingValidatorCache',
   AirdropEligibilityCache = 'airdropEligibilityCache',
   IsBalancesTableDetailsCollapsed = 'isBalancesTableDetailsCollapsed',
 }
@@ -9,20 +15,24 @@ export type AirdropEligibilityCache = {
   [address: string]: boolean;
 };
 
-export type LocalStorageValueType<T extends LocalStorageKey> =
+/**
+ * Type definition associating local storage keys with their
+ * respective value types.
+ */
+export type LocalStorageValueOf<T extends LocalStorageKey> =
   T extends LocalStorageKey.AirdropEligibilityCache
     ? AirdropEligibilityCache
     : T extends LocalStorageKey.IsBalancesTableDetailsCollapsed
     ? boolean
+    : T extends LocalStorageKey.ActiveValidatorCache
+    ? Validator[]
     : never;
 
-const extractFromLocalStorage = <Key extends LocalStorageKey>(
+export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
   canClearIfInvalid: boolean
-): LocalStorageValueType<Key> | null => {
-  if (typeof window === 'undefined') {
-    return null;
-  }
+): LocalStorageValueOf<Key> | null => {
+  type Value = LocalStorageValueOf<Key>;
 
   const jsonString = window.localStorage.getItem(key);
 
@@ -31,11 +41,13 @@ const extractFromLocalStorage = <Key extends LocalStorageKey>(
     return null;
   }
 
-  const value: LocalStorageValueType<Key> | null = null;
+  let value: Value | null = null;
 
+  // Clear the local storage value if parsing fails, and the
+  // entry is set to be cleared if invalid.
   try {
     // TODO: Use zod to validate the value, this helps prevent logic errors.
-    JSON.parse(jsonString) as LocalStorageValueType<Key>;
+    value = JSON.parse(jsonString) as Value;
   } catch {
     if (canClearIfInvalid) {
       window.localStorage.removeItem(key);
@@ -50,34 +62,24 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
   isUsedAsCache = false
 ) => {
+  type Value = LocalStorageValueOf<Key>;
+
   // Use lazy state initialization to avoid reading from
   // local storage on every render.
-  const [value, setValue] = useState<LocalStorageValueType<Key> | null>(() => {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    return extractFromLocalStorage(key, isUsedAsCache);
-  });
+  const [value, setValue] = useState<Value | null>(null);
 
   const refresh = useCallback(() => {
-    const isDevelopmentMode = process.env.NODE_ENV === 'development';
+    const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
 
-    // In development mode, invalidate and return `null` for values
-    // from local storage used as cache. This approach is particularly
-    // useful for scenarios like sudo actions in development, where normally
-    // static data might change unexpectedly (ie. sudo actions are performed
-    // that change things that are normally static, such as airdrop eligibility).
-    if (isDevelopmentMode && isUsedAsCache) {
-      console.debug(
-        `Retrieved the cache key '${key}' from local storage. However, as the application is currently in development mode, caches are invalidated and 'null' is returned. This ensures fresh data is always loaded during development.`
-      );
+    setValue(freshValue);
 
-      return null;
-    }
-
-    return extractFromLocalStorage(key, isUsedAsCache);
+    return freshValue;
   }, [isUsedAsCache, key]);
+
+  // Extract the value from local storage on mount.
+  useEffect(() => {
+    refresh();
+  }, [isUsedAsCache, key, refresh]);
 
   // Listen for changes to local storage. This is useful in case
   // that other logic changes the local storage value.
@@ -92,7 +94,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   }, [key, refresh]);
 
   const set = useCallback(
-    (value: LocalStorageValueType<Key>) => {
+    (value: Value) => {
       setValue(value);
       localStorage.setItem(key, JSON.stringify(value));
     },
@@ -105,11 +107,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   }, [key]);
 
   const setWithPreviousValue = useCallback(
-    (
-      updater: (
-        previousValue: LocalStorageValueType<Key> | null
-      ) => LocalStorageValueType<Key>
-    ) => {
+    (updater: (previousValue: Value | null) => Value) => {
       const previousValue = refresh();
       const nextValue = updater(previousValue);
 
