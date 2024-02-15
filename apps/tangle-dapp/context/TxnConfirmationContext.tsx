@@ -43,11 +43,11 @@ export const TxnConfirmationProvider: React.FC<{
   );
 };
 
-export const useTxnConfirmation = () => {
+export const useTxnConfirmationModal = () => {
   const context = useContext(TxnConfirmationContext);
   if (context === undefined) {
     throw new Error(
-      'useTxnConfirmation must be used within a TxnConfirmationProvider'
+      'useTxnConfirmationModal must be used within a TxnConfirmationProvider'
     );
   }
   return context;

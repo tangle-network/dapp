@@ -18,7 +18,7 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TxnConfirmationModal } from '../../components/TxnConfirmationCard';
+import { TxnConfirmationModal } from '../../components/TxnConfirmationModal';
 import {
   PAYMENT_DESTINATION_OPTIONS,
   TANGLE_TOKEN_UNIT,
