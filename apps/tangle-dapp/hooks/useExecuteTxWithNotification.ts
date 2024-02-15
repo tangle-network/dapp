@@ -16,10 +16,12 @@ const useExecuteTxWithNotification = () => {
       substrateFnc: () => Promise<HexString>,
       successMessage: string,
       errorMessage: string
-    ) => {
+    ): Promise<HexString> => {
+      let txHash: HexString = '0x0';
+
       try {
         if (activeWallet?.platform === 'EVM') {
-          const txHash = await evmFnc();
+          txHash = await evmFnc();
           if (!txHash) throw new Error(errorMessage);
 
           const tx = await evmPublicClient.waitForTransactionReceipt({
@@ -27,11 +29,12 @@ const useExecuteTxWithNotification = () => {
           });
           if (tx.status !== 'success') throw new Error(errorMessage);
         } else if (activeWallet?.platform === 'Substrate') {
-          const txHash = await substrateFnc();
+          txHash = await substrateFnc();
           if (!txHash) throw new Error(errorMessage);
         }
 
         notificationApi({ variant: 'success', message: successMessage });
+        return txHash;
       } catch (error: unknown) {
         notificationApi({
           variant: 'error',
@@ -42,7 +45,7 @@ const useExecuteTxWithNotification = () => {
             : 'Something went wrong!',
         });
 
-        throw error; // Rethrowing the error to be caught by the outer try-catch
+        throw error;
       }
     },
     [notificationApi, activeWallet?.platform]

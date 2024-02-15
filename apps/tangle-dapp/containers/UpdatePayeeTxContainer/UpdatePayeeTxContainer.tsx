@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
@@ -32,6 +33,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
+  const { setTxConfirmationState } = useTxConfirmationModal();
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.Staked
   );
@@ -74,19 +76,37 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     setIsUpdatePaymentDestinationTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
         () =>
           updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
         `Successfully updated payment destination to ${paymentDestination}.`,
         'Failed to update payment destination!'
       );
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [closeModal, executeTx, paymentDestination, walletAddress]);
+  }, [
+    closeModal,
+    executeTx,
+    paymentDestination,
+    setTxConfirmationState,
+    walletAddress,
+  ]);
 
   if (currentPaymentDestinationError) {
     notificationApi({

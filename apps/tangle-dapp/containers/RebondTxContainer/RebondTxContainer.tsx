@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -35,6 +36,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
 
+  const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToRebond, setAmountToRebond] = useState<number>(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
 
@@ -100,18 +102,36 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     setIsRebondTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => rebondTokensEvm(walletAddress, amountToRebond),
         () => rebondTokensSubstrate(walletAddress, amountToRebond),
         `Successfully rebonded ${amountToRebond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to rebond tokens!'
       );
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [amountToRebond, closeModal, executeTx, walletAddress]);
+  }, [
+    amountToRebond,
+    closeModal,
+    executeTx,
+    setTxConfirmationState,
+    walletAddress,
+  ]);
 
   return (
     <Modal open>

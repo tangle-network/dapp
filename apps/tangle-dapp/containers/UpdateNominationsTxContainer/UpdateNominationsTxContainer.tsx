@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Alert,
   Button,
@@ -11,6 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -26,6 +28,8 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
@@ -77,20 +81,33 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     setIsSubmitAndSignTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => nominateValidatorsEvm(walletAddress, selectedValidators),
         () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
         `Successfully updated nominations!`,
         'Failed to update nominations!'
       );
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
   }, [
     isReadyToSubmitAndSignTx,
     executeTx,
+    setTxConfirmationState,
     walletAddress,
     selectedValidators,
     closeModal,
