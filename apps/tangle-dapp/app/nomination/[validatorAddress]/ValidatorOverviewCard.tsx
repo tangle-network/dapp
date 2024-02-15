@@ -88,7 +88,7 @@ export default async function ValidatorOverviewCard({
         </div>
 
         {/* Restake & Nomination Info */}
-        <div className="flex">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-2">
           <div className="flex-1 space-y-3">
             <Typography variant="h5" fw="bold" className="!text-mono-100">
               Total Restaked
@@ -111,7 +111,7 @@ export default async function ValidatorOverviewCard({
         </div>
 
         {/* Socials & Location */}
-        <div className="flex">
+        <div className="flex gap-2">
           <div className="flex-1 flex gap-2 items-center">
             {twitter && <SocialChip Icon={TwitterFill} href={twitter} />}
             {discord && <SocialChip Icon={DiscordFill} href={discord} />}
