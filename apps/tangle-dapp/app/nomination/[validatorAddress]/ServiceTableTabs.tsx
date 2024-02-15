@@ -4,11 +4,17 @@ import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import useSWR from 'swr';
 
-import { ContainerSkeleton, TableStatus } from '../../components';
-import { getActiveServices, getPastServices } from '../../data/ServiceTables';
-import ServiceTableContainer from './ServiceTableContainer';
+import {
+  ContainerSkeleton,
+  ServiceTable,
+  TableStatus,
+} from '../../../components';
+import {
+  getActiveServicesByValidator,
+  getPastServicesByValidator,
+} from '../../../data/ServiceTables';
 
-interface ServiceTablesContainerProps {
+interface ServiceTableTabsProps {
   validatorAddress: string;
 }
 
@@ -16,15 +22,15 @@ const pageSize = 10;
 const ACTIVE_SERVICES_TAB = 'Active Services';
 const PAST_SERVICES_TAB = 'Past Services';
 
-const ServiceTablesContainer: FC<ServiceTablesContainerProps> = () => {
+const ServiceTableTabs: FC<ServiceTableTabsProps> = () => {
   const { data: activeServicesData, isLoading: activeServicesDataLoading } =
-    useSWR([getActiveServices.name], ([, ...args]) =>
-      getActiveServices(...args)
+    useSWR([getActiveServicesByValidator.name], ([, ...args]) =>
+      getActiveServicesByValidator(...args)
     );
 
   const { data: pastServicesData, isLoading: pastServicesDataLoading } = useSWR(
-    [getPastServices.name],
-    ([, ...args]) => getPastServices(...args)
+    [getPastServicesByValidator.name],
+    ([, ...args]) => getPastServicesByValidator(...args)
   );
 
   return (
@@ -42,10 +48,7 @@ const ServiceTablesContainer: FC<ServiceTablesContainerProps> = () => {
         ) : activeServicesDataLoading || !activeServicesData ? (
           <ContainerSkeleton />
         ) : (
-          <ServiceTableContainer
-            value={activeServicesData}
-            pageSize={pageSize}
-          />
+          <ServiceTable data={activeServicesData} pageSize={pageSize} />
         )}
       </TabContent>
 
@@ -59,11 +62,11 @@ const ServiceTablesContainer: FC<ServiceTablesContainerProps> = () => {
         ) : pastServicesDataLoading || !pastServicesData ? (
           <ContainerSkeleton />
         ) : (
-          <ServiceTableContainer value={pastServicesData} pageSize={pageSize} />
+          <ServiceTable data={pastServicesData} pageSize={pageSize} />
         )}
       </TabContent>
     </TableAndChartTabs>
   );
 };
 
-export default ServiceTablesContainer;
+export default ServiceTableTabs;

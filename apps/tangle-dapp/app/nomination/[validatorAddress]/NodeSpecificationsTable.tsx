@@ -17,12 +17,12 @@ import {
 import cx from 'classnames';
 import { FC, useMemo } from 'react';
 
-import ContainerSkeleton from '../../components/skeleton/ContainerSkeleton';
-import { HeaderCell } from '../../components/tableCells';
-import useNodeSpecifications from '../../data/useNodeSpecifications';
-import { NodeSpecification } from '../../types';
+import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
+import { HeaderCell } from '../../../components/tableCells';
+import useNodeSpecifications from '../../../data/useNodeSpecifications';
+import { NodeSpecification } from '../../../types';
 
-interface NodeSpecificationsTableContainerProps {
+interface NodeSpecificationsTableProps {
   validatorAddress: string;
 }
 
@@ -92,9 +92,9 @@ const columns = [
   }),
 ];
 
-const NodeSpecificationsTableContainer: FC<
-  NodeSpecificationsTableContainerProps
-> = ({ validatorAddress }) => {
+const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
+  validatorAddress,
+}) => {
   const { data, isLoading, error } = useNodeSpecifications(validatorAddress);
   const nodeSpecifications = useMemo(() => data.nodeSpecifications, [data]);
 
@@ -160,4 +160,4 @@ const NodeSpecificationsTableContainer: FC<
   );
 };
 
-export default NodeSpecificationsTableContainer;
+export default NodeSpecificationsTable;
