@@ -30,7 +30,7 @@ const NominatorStatsContainer: FC = () => {
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
-  const [isWithdrawUnbondedModalOpen, setIsWithdrawunbondedModalOpen] =
+  const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
   const walletAddress = useMemo(() => {
@@ -169,7 +169,7 @@ const NominatorStatsContainer: FC = () => {
                       variant="utility"
                       className="w-full"
                       isDisabled={!activeAccount}
-                      onClick={() => setIsWithdrawunbondedModalOpen(true)}
+                      onClick={() => setIsWithdrawUnbondedModalOpen(true)}
                     >
                       Withdraw
                     </Button>
@@ -197,7 +197,7 @@ const NominatorStatsContainer: FC = () => {
       />
       <WithdrawUnbondedTxContainer
         isModalOpen={isWithdrawUnbondedModalOpen}
-        setIsModalOpen={setIsWithdrawunbondedModalOpen}
+        setIsModalOpen={setIsWithdrawUnbondedModalOpen}
       />
     </>
   );

@@ -2,13 +2,16 @@
 
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
 import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import useSWR from 'swr';
+import { useCallback, useState } from 'react';
+import { map } from 'rxjs';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
+import usePagedValidators from '../../data/ValidatorTables/usePagedValidators';
 import {
-  getActiveValidators,
-  getWaitingValidators,
-} from '../../data/ValidatorTables';
+  activeValidatorFactory,
+  waitingValidatorFactory,
+} from '../../data/ValidatorTables/usePagedValidators';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import ValidatorTableContainer from './ValidatorTableContainer';
 
 const pageSize = 10;
@@ -16,17 +19,36 @@ const activeValidatorsTableTab = 'Active Validators';
 const waitingValidatorsTableTab = 'Waiting';
 
 const ValidatorTablesContainer = () => {
-  const { data: activeValidatorsData, isLoading: activeValidatorsDataLoading } =
-    useSWR([getActiveValidators.name], ([, ...args]) =>
-      getActiveValidators(...args)
-    );
-
-  const {
-    data: waitingValidatorsData,
-    isLoading: waitingValidatorsDataLoading,
-  } = useSWR([getWaitingValidators.name], ([, ...args]) =>
-    getWaitingValidators(...args)
+  const { data: activeValidatorCount } = usePolkadotApiRx(
+    useCallback(
+      (api) =>
+        activeValidatorFactory(api).pipe(
+          map((validators) => validators.length)
+        ),
+      []
+    )
   );
+
+  const { data: waitingValidatorCount } = usePolkadotApiRx(
+    useCallback(
+      (api) =>
+        waitingValidatorFactory(api).pipe(
+          map((validators) => validators.length)
+        ),
+      []
+    )
+  );
+
+  const [activeValidatorsPageIndex, setActiveValidatorsPageIndex] = useState(0);
+
+  const [waitingValidatorsPageIndex, setWaitingValidatorsPageIndex] =
+    useState(0);
+
+  const { data: activeValidatorsData, isLoading: isActiveValidatorsLoading } =
+    usePagedValidators('Active', activeValidatorsPageIndex, pageSize);
+
+  const { data: waitingValidatorsData, isLoading: isWaitingValidatorsLoading } =
+    usePagedValidators('Waiting', waitingValidatorsPageIndex, pageSize);
 
   return (
     <TableAndChartTabs
@@ -45,12 +67,15 @@ const ValidatorTablesContainer = () => {
             }}
             icon="⏳"
           />
-        ) : activeValidatorsDataLoading || !activeValidatorsData ? (
-          <ContainerSkeleton />
+        ) : isActiveValidatorsLoading || !activeValidatorsData ? (
+          <ContainerSkeleton numOfRows={5} />
         ) : (
           <ValidatorTableContainer
-            value={activeValidatorsData}
+            data={activeValidatorsData}
             pageSize={pageSize}
+            pageIndex={activeValidatorsPageIndex}
+            totalRecordCount={activeValidatorCount || 0}
+            setPageIndex={setActiveValidatorsPageIndex}
           />
         )}
       </TabContent>
@@ -68,12 +93,15 @@ const ValidatorTablesContainer = () => {
             }}
             icon="⏳"
           />
-        ) : waitingValidatorsDataLoading || !waitingValidatorsData ? (
+        ) : isWaitingValidatorsLoading || !waitingValidatorsData ? (
           <ContainerSkeleton />
         ) : (
           <ValidatorTableContainer
-            value={waitingValidatorsData}
+            data={waitingValidatorsData}
             pageSize={pageSize}
+            pageIndex={waitingValidatorsPageIndex}
+            totalRecordCount={waitingValidatorCount || 0}
+            setPageIndex={setWaitingValidatorsPageIndex}
           />
         )}
       </TabContent>

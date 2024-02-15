@@ -4,11 +4,13 @@ import React, { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 import { TxnConfirmationContainer } from '../../containers';
+import ApiDevStatsContainer from '../ApiDevStatsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
     <div className="flex bg-body h-screen">
@@ -37,6 +39,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       </main>
 
       <TxnConfirmationContainer />
+
+      {isDevelopment && <ApiDevStatsContainer />}
     </div>
   );
 };
