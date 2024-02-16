@@ -24,7 +24,11 @@ import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
+import {
+  InternalPath,
+  PagePath,
+  StaticSearchQueryPath,
+} from '../../types/paths';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {

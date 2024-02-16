@@ -22,7 +22,7 @@ import useUnbonding from '../../data/staking/useUnbonding';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
-import { PagePath } from '../../types';
+import { PagePath } from '../../types/paths';
 import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';

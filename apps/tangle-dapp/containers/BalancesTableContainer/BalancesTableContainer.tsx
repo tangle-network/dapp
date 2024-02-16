@@ -16,7 +16,7 @@ import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import { StaticSearchQueryPath } from '../../types';
+import { StaticSearchQueryPath } from '../../types/paths';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';

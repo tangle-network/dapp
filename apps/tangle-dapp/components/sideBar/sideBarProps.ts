@@ -20,7 +20,7 @@ import {
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
-import { PagePath } from '../../types';
+import { PagePath } from '../../types/paths';
 
 const sideBarItems: SideBarItemProps[] = [
   {
