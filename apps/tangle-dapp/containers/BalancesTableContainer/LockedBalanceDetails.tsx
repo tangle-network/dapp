@@ -227,7 +227,7 @@ const LockedBalanceDetails: FC = () => {
     ));
 
   return (
-    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg min-w-[630px]">
+    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 pt-6 rounded-lg min-w-[630px]">
       <div className="flex flex-row w-full">
         {/* Type */}
         <div className="flex flex-col w-full h-full items-start">
