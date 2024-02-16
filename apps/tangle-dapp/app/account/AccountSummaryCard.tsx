@@ -4,7 +4,7 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import Identity from '../../components/Identity';
+import { Identity, TangleBigLogo } from '../../components';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import Actions from './Actions';
 import TangleLogo from './TangleLogo';

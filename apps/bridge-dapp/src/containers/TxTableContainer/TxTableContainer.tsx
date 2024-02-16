@@ -199,7 +199,6 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
       )}
     >
       <Table
-        tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:!table md:!max-w-none"
         thClassName="border-t-0 bg-mono-0"
         trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"

@@ -12,6 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -29,6 +30,8 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
@@ -89,7 +92,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     setIsWithdrawUnbondedTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         async () => {
           const slashingSpans = await getSlashingSpans(substrateAddress);
           return withdrawUnbondedTokensEvm(
@@ -107,12 +110,30 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         `Successfully withdraw!`,
         'Failed to withdraw tokens!'
       );
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txnType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [closeModal, executeTx, substrateAddress, walletAddress]);
+  }, [
+    closeModal,
+    executeTx,
+    setTxConfirmationState,
+    substrateAddress,
+    walletAddress,
+  ]);
 
   const onRebondClick = () => {
     closeModal();

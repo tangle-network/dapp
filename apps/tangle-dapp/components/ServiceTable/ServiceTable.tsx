@@ -46,9 +46,9 @@ const columns = [
       const participants = props.getValue();
       return (
         <AvatarGroup>
-          {participants.map((participantAddr, idx) => (
+          {participants.map((participantAddr) => (
             <Avatar
-              key={idx}
+              key={participantAddr}
               sourceVariant="address"
               value={participantAddr}
               theme="substrate"
@@ -143,7 +143,6 @@ const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
       )}
     >
       <Table
-        tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit lg:table lg:max-w-none"
         thClassName="!bg-inherit !px-3 border-t-0 bg-mono-0 whitespace-nowrap"
         trClassName="!bg-inherit cursor-pointer"
         tdClassName="!bg-inherit !px-3 whitespace-nowrap !border-t-0"

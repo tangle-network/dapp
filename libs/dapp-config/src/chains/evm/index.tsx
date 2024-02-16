@@ -196,7 +196,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
       ? {
           default: {
             name: 'Tangle Testnet EVM Explorer',
-            url: 'https://explorer.tangle.tools',
+            url: 'https://testnet-explorer.tangle.tools/',
           },
         }
       : undefined,
