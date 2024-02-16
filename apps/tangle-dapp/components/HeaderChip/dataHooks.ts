@@ -1,5 +1,5 @@
-import useEraCountSubscription from '../../data/HeaderChips/useEraCountSubscription';
-import useSessionCountSubscription from '../../data/HeaderChips/useSessionCountSubscription';
+import useEraCountSubscription from '../../data/useEraCountSubscription';
+import useSessionCountSubscription from '../../data/useSessionCountSubscription';
 
 const dataHooks = {
   ERA: useEraCountSubscription,
