@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
 
-import { PagePath } from '../../types/paths';
+import { PagePath } from '../../types';
 import { BreadcrumbType } from './types';
 
 const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {

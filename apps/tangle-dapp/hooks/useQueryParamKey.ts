@@ -2,12 +2,21 @@ import { useSearchParams } from 'next/navigation';
 import { z } from 'zod';
 
 import { DelegationsAndPayoutsTab } from '../containers/DelegationsPayoutsContainer/DelegationsPayoutsContainer';
-import {
-  PagePath,
-  QueryParamKey,
-  QueryParamKeyOf,
-  QueryParamValueOf,
-} from '../types/paths';
+import { PagePath } from '../types';
+
+export enum QueryParamKey {
+  DelegationsAndPayoutsTab = 'tab',
+}
+
+export type QueryParamKeyOf<Page extends PagePath> =
+  Page extends PagePath.Nomination
+    ? QueryParamKey.DelegationsAndPayoutsTab
+    : never;
+
+export type QueryParamValueOf<Key extends QueryParamKey> =
+  Key extends QueryParamKey.DelegationsAndPayoutsTab
+    ? DelegationsAndPayoutsTab
+    : never;
 
 type UseQueryParamsReturn<Page extends PagePath> = {
   value: QueryParamValueOf<QueryParamKeyOf<Page>> | null;

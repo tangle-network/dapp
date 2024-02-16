@@ -1,7 +1,7 @@
 import { isHex } from '@polkadot/util';
 import { redirect } from 'next/navigation';
 
-import { PagePath } from '../../../types/paths';
+import { PagePath } from '../../../types';
 import { getPolkadotApiPromise } from '../../../utils/polkadot';
 import SuccessClient from './SuccessClient';
 

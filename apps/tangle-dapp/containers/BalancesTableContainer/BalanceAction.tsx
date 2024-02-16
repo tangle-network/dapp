@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { FC, JSX, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InternalPath } from '../../types/paths';
+import { InternalPath } from '../../types';
 
 const BalanceAction: FC<{
   tooltip: string | ReactNode;
