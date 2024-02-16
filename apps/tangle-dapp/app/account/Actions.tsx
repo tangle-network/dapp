@@ -27,26 +27,6 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
-type ActionItemDef = {
-  label: string;
-  internalHref: InternalPath;
-  icon: ReactElement<IconBase>;
-};
-
-/** @internal */
-const staticActionItems: ActionItemDef[] = [
-  {
-    label: 'Nominate',
-    internalHref: StaticSearchQueryPath.NominationsTable,
-    icon: <CoinsStackedLineIcon size="lg" />,
-  },
-  {
-    label: 'Payouts',
-    internalHref: StaticSearchQueryPath.PayoutsTable,
-    icon: <CoinsLineIcon size="lg" />,
-  },
-] as const;
-
 const Actions: FC = () => {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
@@ -69,22 +49,28 @@ const Actions: FC = () => {
     <>
       <div className="flex items-center justify-start gap-6 overflow-x-auto">
         <ActionItem
-          icon={<ArrowLeftRightLineIcon size="lg" />}
           label="Transfer"
+          Icon={ArrowLeftRightLineIcon}
           onClick={() => setIsTransferModalOpen(true)}
         />
 
-        {staticActionItems.map((props, index) => (
-          // Note that it's fine to use index as key here, since the
-          // items are static and won't change.
-          <ActionItem key={index} {...props} />
-        ))}
+        <ActionItem
+          label="Nominate"
+          internalHref={StaticSearchQueryPath.NominationsTable}
+          Icon={CoinsStackedLineIcon}
+        />
+
+        <ActionItem
+          label="Payouts"
+          internalHref={StaticSearchQueryPath.PayoutsTable}
+          Icon={CoinsLineIcon}
+        />
 
         {isAirdropEligible && (
           <ActionItem
-            hasNotificationDot
             label="Claim Airdrop"
-            icon={<GiftLineIcon size="lg" />}
+            hasNotificationDot
+            Icon={GiftLineIcon}
             internalHref={PagePath.ClaimAirdrop}
             tooltip={
               <>
@@ -98,7 +84,7 @@ const Actions: FC = () => {
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
           <ActionItem
-            icon={<ShieldKeyholeLineIcon size="lg" />}
+            Icon={ShieldKeyholeLineIcon}
             label="Vest"
             onClick={executeVestTx !== null ? executeVestTx : undefined}
             hasNotificationDot={hasClaimableVestingTokens}
@@ -138,7 +124,7 @@ const Actions: FC = () => {
 
 /** @internal */
 const ActionItem = (props: {
-  icon: ReactElement<IconBase>;
+  Icon: (props: IconBase) => ReactElement;
   label: string;
   onClick?: () => void;
   isDisabled?: boolean;
@@ -147,7 +133,7 @@ const ActionItem = (props: {
   tooltip?: ReactElement | string;
 }) => {
   const {
-    icon,
+    Icon,
     label,
     onClick,
     internalHref,
@@ -191,7 +177,7 @@ const ActionItem = (props: {
           />
         )}
 
-        {icon}
+        <Icon size="lg" />
       </div>
 
       <Typography
