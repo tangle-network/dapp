@@ -64,7 +64,6 @@ const ContributionListTable: FC<{ data: ContributionListItem[] }> = ({
 
       <div className="overflow-x-auto rounded-lg border border-mono-40 dark:border-mono-160">
         <Table
-          tableClassName="lg:table-fixed block overflow-x-auto max-w-[-moz-fit-content] md:table md:max-w-none"
           thClassName="last:text-right dark:bg-mono-180 border-t-0 text-mono-140 dark:text-mono-60"
           tdClassName="last:text-right dark:!bg-mono-180 text-mono-140 dark:text-mono-60"
           paginationClassName="dark:bg-mono-180 text-mono-140 dark:text-mono-60"

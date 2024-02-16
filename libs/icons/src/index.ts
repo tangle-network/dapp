@@ -87,6 +87,7 @@ export * from './LockUnlockLineIcon';
 export * from './LoginBoxLineIcon';
 export { default as LoopRightFillIcon } from './LoopRightFillIcon';
 export * from './Mail';
+export { default as MapPinLine } from './MapPinLine';
 export * from './Memu';
 export * from './MoonLine';
 export * from './ProhibitedLineIcon';

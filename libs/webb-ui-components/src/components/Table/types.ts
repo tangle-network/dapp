@@ -38,6 +38,11 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
   tableClassName?: string;
 
   /**
+   * The optional class name for overriding style of the div that wraps the table
+   */
+  tableWrapperClassName?: string;
+
+  /**
    * The optional class name for overriding style THeader component
    */
   thClassName?: string;
