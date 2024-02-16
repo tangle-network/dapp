@@ -33,7 +33,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'EVM Staking',
-    href: PagePath.EvmStaking,
+    href: PagePath.Nominations,
     isInternal: true,
     isNext: true,
     Icon: FundsLine,

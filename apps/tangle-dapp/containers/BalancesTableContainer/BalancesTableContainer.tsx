@@ -16,7 +16,7 @@ import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import { AnchorPath } from '../../types';
+import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
@@ -84,7 +84,7 @@ const BalancesTableContainer: FC = () => {
                   Icon={CoinsStackedLineIcon}
                   tooltip="Nominate"
                   isDisabled={transferrable === null || transferrable.eqn(0)}
-                  internalHref={AnchorPath.NominationAndPayouts}
+                  internalHref={StaticSearchQueryPath.NominationsTable}
                 />
               </div>
             </div>

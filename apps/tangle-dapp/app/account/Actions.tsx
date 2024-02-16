@@ -24,7 +24,7 @@ import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { AnchorPath, InternalPath, PagePath } from '../../types';
+import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 type ActionItemDef = {
@@ -37,12 +37,12 @@ type ActionItemDef = {
 const staticActionItems: ActionItemDef[] = [
   {
     label: 'Nominate',
-    internalHref: AnchorPath.NominationAndPayouts,
+    internalHref: StaticSearchQueryPath.NominationsTable,
     icon: <CoinsStackedLineIcon size="lg" />,
   },
   {
     label: 'Payouts',
-    internalHref: AnchorPath.NominationAndPayouts,
+    internalHref: StaticSearchQueryPath.PayoutsTable,
     icon: <CoinsLineIcon size="lg" />,
   },
 ] as const;
