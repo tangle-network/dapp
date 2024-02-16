@@ -60,7 +60,7 @@ export type Payout = {
 };
 
 export enum PagePath {
-  Nominations = '/',
+  Nomination = '/',
   ClaimAirdrop = '/claim',
   Account = '/account',
 }
@@ -98,18 +98,18 @@ type SearchQueryPathOf<
  */
 export const StaticSearchQueryPath: {
   NominationsTable: SearchQueryPathOf<
-    PagePath.Nominations,
+    PagePath.Nomination,
     QueryParamKey.DelegationsAndPayoutsTab,
     DelegationsAndPayoutsTab.Nominations
   >;
   PayoutsTable: SearchQueryPathOf<
-    PagePath.Nominations,
+    PagePath.Nomination,
     QueryParamKey.DelegationsAndPayoutsTab,
     DelegationsAndPayoutsTab.Payouts
   >;
 } = {
-  NominationsTable: `${PagePath.Nominations}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Nominations}`,
-  PayoutsTable: `${PagePath.Nominations}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Payouts}`,
+  NominationsTable: `${PagePath.Nomination}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Nominations}`,
+  PayoutsTable: `${PagePath.Nomination}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Payouts}`,
 } as const;
 
 export type InternalPath =

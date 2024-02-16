@@ -7,7 +7,6 @@ import { twMerge } from 'tailwind-merge';
 import { Identity, TangleBigLogo } from '../../components';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import Actions from './Actions';
-import TangleLogo from './TangleLogo';
 import TotalBalance from './TotalBalance';
 import { AccountSummaryCardProps } from './types';
 
@@ -42,7 +41,7 @@ const AccountSummaryCard: FC<AccountSummaryCardProps> = ({ className }) => {
         <Actions />
       </div>
 
-      <TangleLogo className="absolute top-[50%] right-0 translate-y-[-50%]" />
+      <TangleBigLogo className="absolute top-[50%] right-0 translate-y-[-50%]" />
     </div>
   );
 };

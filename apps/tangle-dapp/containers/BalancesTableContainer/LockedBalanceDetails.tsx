@@ -198,7 +198,7 @@ const LockedBalanceDetails: FC = () => {
   const evmStakingAction = (
     <BalanceAction
       Icon={ArrowRightUp}
-      internalHref={PagePath.Nominations}
+      internalHref={PagePath.Nomination}
       tooltip={
         <>
           View more information on the <strong>EVM Staking</strong> page.

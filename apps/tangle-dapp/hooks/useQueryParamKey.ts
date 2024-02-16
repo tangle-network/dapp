@@ -9,7 +9,7 @@ export enum QueryParamKey {
 }
 
 export type QueryParamKeyOf<Page extends PagePath> =
-  Page extends PagePath.Nominations
+  Page extends PagePath.Nomination
     ? QueryParamKey.DelegationsAndPayoutsTab
     : never;
 
