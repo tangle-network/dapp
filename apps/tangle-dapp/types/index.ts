@@ -1,3 +1,6 @@
+// Note that this import is necessary to fix a strange type error
+// in Polkadot API's `api.tx.staking.bond` method, which complains
+// about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
 import { DelegationsAndPayoutsTab } from '../containers/DelegationsPayoutsContainer/DelegationsPayoutsContainer';
