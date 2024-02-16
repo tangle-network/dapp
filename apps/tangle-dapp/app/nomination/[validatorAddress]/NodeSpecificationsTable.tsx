@@ -136,6 +136,7 @@ const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
           </div>
         )}
 
+        {/* No data */}
         {!isLoading && !error && nodeSpecifications.length === 0 && (
           <div className="flex-1 flex items-center justify-center">
             <Typography variant="body1">
@@ -147,7 +148,6 @@ const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
         {/* Successfully get the data */}
         {!isLoading && !error && nodeSpecifications.length > 0 && (
           <Table
-            tableClassName="!bg-inherit block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
             thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
             trClassName="!bg-inherit cursor-pointer"
             tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
