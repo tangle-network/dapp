@@ -1,3 +1,5 @@
+'use client';
+
 import { noop } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

@@ -101,7 +101,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
             <RecipientInput
-              className="dark:bg-mono-160"
+              className="bg-mono-20 dark:bg-mono-160"
               onChange={(nextRecipientAddress) =>
                 setRecipientAddress(nextRecipientAddress)
               }
@@ -112,7 +112,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isDisabled={!isReady}
               amount={amount}
               onAmountChange={(nextAmount) => setAmount(nextAmount)}
-              className="dark:bg-mono-160"
+              className="bg-mono-20 dark:bg-mono-160"
             />
           </BridgeInputGroup>
 

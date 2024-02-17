@@ -5,6 +5,7 @@ import {
   CheckboxBlankCircleLine,
   FundsLine,
   GiftLineIcon,
+  GridFillIcon,
 } from '@webb-tools/icons';
 import { UserFillIcon } from '@webb-tools/icons';
 import {
@@ -24,6 +25,13 @@ import { BreadcrumbType } from './types';
 const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
   account: <UserFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
+  services: (
+    <GridFillIcon className="w-4 h-4 lg:w-6 lg:h-6 !fill-mono-160 dark:!fill-mono-0" />
+  ),
+};
+
+const BREADCRUMB_LABELS: Record<string, string> = {
+  services: 'Service Overview',
 };
 
 const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
@@ -34,7 +42,7 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
     if (pathNames.length === 0) {
       return [
         {
-          label: 'EVM Staking',
+          label: 'Nomination',
           isLast: true,
           icon: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
           href: PagePath.EvmStaking,
@@ -51,9 +59,12 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
         );
 
       return {
-        label: isAddress(pathName)
-          ? shortenString(pathName)
-          : capitalize(pathName),
+        label:
+          pathName in BREADCRUMB_LABELS
+            ? BREADCRUMB_LABELS[pathName]
+            : isAddress(pathName)
+            ? shortenString(pathName)
+            : capitalize(pathName),
         isLast: index === pathNames.length - 1,
         href: `/${pathNames.slice(0, index + 1).join('/')}`,
         icon,

@@ -17,12 +17,12 @@ import {
 import cx from 'classnames';
 import { FC, useMemo } from 'react';
 
-import ContainerSkeleton from '../../components/skeleton/ContainerSkeleton';
-import { HeaderCell } from '../../components/tableCells';
-import useNodeSpecifications from '../../data/useNodeSpecifications';
-import { NodeSpecification } from '../../types';
+import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
+import { HeaderCell } from '../../../components/tableCells';
+import useNodeSpecifications from '../../../data/useNodeSpecifications';
+import { NodeSpecification } from '../../../types';
 
-interface NodeSpecificationsTableContainerProps {
+interface NodeSpecificationsTableProps {
   validatorAddress: string;
 }
 
@@ -92,9 +92,9 @@ const columns = [
   }),
 ];
 
-const NodeSpecificationsTableContainer: FC<
-  NodeSpecificationsTableContainerProps
-> = ({ validatorAddress }) => {
+const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
+  validatorAddress,
+}) => {
   const { data, isLoading, error } = useNodeSpecifications(validatorAddress);
   const nodeSpecifications = useMemo(() => data.nodeSpecifications, [data]);
 
@@ -136,6 +136,7 @@ const NodeSpecificationsTableContainer: FC<
           </div>
         )}
 
+        {/* No data */}
         {!isLoading && !error && nodeSpecifications.length === 0 && (
           <div className="flex-1 flex items-center justify-center">
             <Typography variant="body1">
@@ -147,7 +148,6 @@ const NodeSpecificationsTableContainer: FC<
         {/* Successfully get the data */}
         {!isLoading && !error && nodeSpecifications.length > 0 && (
           <Table
-            tableClassName="!bg-inherit block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
             thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
             trClassName="!bg-inherit cursor-pointer"
             tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
@@ -160,4 +160,4 @@ const NodeSpecificationsTableContainer: FC<
   );
 };
 
-export default NodeSpecificationsTableContainer;
+export default NodeSpecificationsTable;

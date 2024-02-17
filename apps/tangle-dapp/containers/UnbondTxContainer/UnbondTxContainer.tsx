@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -34,6 +35,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
@@ -126,18 +128,36 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     setIsUnbondTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => unbondTokensEvm(walletAddress, amountToUnbond),
         () => unbondTokensSubstrate(walletAddress, amountToUnbond),
         `Successfully unbonded ${amountToUnbond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to unbond tokens!'
       );
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash: hash,
+        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
-  }, [amountToUnbond, closeModal, executeTx, walletAddress]);
+  }, [
+    amountToUnbond,
+    closeModal,
+    executeTx,
+    setTxConfirmationState,
+    walletAddress,
+  ]);
 
   return (
     <Modal open>

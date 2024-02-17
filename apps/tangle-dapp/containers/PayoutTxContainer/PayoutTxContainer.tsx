@@ -1,6 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   InputField,
@@ -13,6 +14,7 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { payoutStakers as payoutStakersEvm } from '../../utils/evm';
 import { payoutStakers as payoutStakersSubstrate } from '../../utils/polkadot';
@@ -28,6 +30,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const { validatorAddress, era } = payoutTxProps;
   const executeTx = useExecuteTxWithNotification();
+  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [isPayoutTxLoading, setIsPayoutTxLoading] = useState<boolean>(false);
 
@@ -50,7 +53,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     setIsPayoutTxLoading(true);
 
     try {
-      await executeTx(
+      const hash = await executeTx(
         () => payoutStakersEvm(walletAddress, validatorAddress, Number(era)),
         () =>
           payoutStakersSubstrate(walletAddress, validatorAddress, Number(era)),
@@ -67,8 +70,20 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       );
 
       updatePayouts(updatedPayouts);
+
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'success',
+        hash,
+        txType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
+      });
     } catch {
-      // notification is already handled in executeTx
+      setTxConfirmationState({
+        isOpen: true,
+        status: 'error',
+        hash: '',
+        txType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
+      });
     } finally {
       closeModal();
     }
@@ -77,6 +92,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     era,
     executeTx,
     payouts,
+    setTxConfirmationState,
     updatePayouts,
     validatorAddress,
     walletAddress,

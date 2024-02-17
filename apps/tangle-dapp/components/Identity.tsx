@@ -1,3 +1,5 @@
+'use client';
+
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { FileCopyLine, LoopRightFillIcon } from '@webb-tools/icons';
 import {

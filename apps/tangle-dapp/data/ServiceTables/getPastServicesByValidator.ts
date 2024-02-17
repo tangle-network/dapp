@@ -4,7 +4,7 @@ const participationArr = new Array(5).fill(
   '5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy'
 );
 
-export default async function getPastServices(): Promise<Service[]> {
+export default async function getPastServicesByValidator(): Promise<Service[]> {
   return [
     {
       serviceType: 'zksaas (groth16)',
