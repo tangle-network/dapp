@@ -18,12 +18,14 @@ export type FAQItem = {
 export type FAQSectionProps = {
   items: Array<FAQItem>;
   overrideTitleProps?: Partial<ComponentProps<typeof Typography>>;
+  answerClassName?: string;
 } & ComponentProps<'div'>;
 
 const FAQSection: FC<FAQSectionProps> = ({
   items,
   className,
   overrideTitleProps,
+  answerClassName,
   ...props
 }) => {
   return (
@@ -58,7 +60,10 @@ const FAQSection: FC<FAQSectionProps> = ({
             <AccordionContent className="px-0">
               <Typography
                 variant="mkt-body2"
-                className="font-medium whitespace-pre-wrap text-mono-160"
+                className={twMerge(
+                  'font-medium whitespace-pre-wrap text-mono-160',
+                  answerClassName
+                )}
               >
                 {item.answer}
               </Typography>
