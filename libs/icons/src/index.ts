@@ -73,6 +73,7 @@ export * from './GithubFill';
 export { default as GlobalLine } from './GlobalLine';
 export * from './GraphIcon';
 export * from './GridFillIcon';
+export { default as GroupLine } from './GroupLine';
 export * from './HamburgerMenu';
 export * from './HelpLineIcon';
 export * from './IndeterminateCircleFillIcon';

@@ -75,14 +75,14 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
         isOpen: true,
         status: 'success',
         hash,
-        txnType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
+        txType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
       });
     } catch {
       setTxConfirmationState({
         isOpen: true,
         status: 'error',
         hash: '',
-        txnType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
+        txType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
       });
     } finally {
       closeModal();

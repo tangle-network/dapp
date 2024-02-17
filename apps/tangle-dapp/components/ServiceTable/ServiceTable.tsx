@@ -66,9 +66,7 @@ const columns = [
     },
   }),
   columnHelper.accessor('phase2Executions', {
-    header: () => (
-      <HeaderCell title="Phase 2 executions" className="justify-start" />
-    ),
+    header: () => <HeaderCell title="# of Jobs" className="justify-start" />,
     cell: (props) => {
       const phase2Executions = props.getValue();
       return phase2Executions ? (

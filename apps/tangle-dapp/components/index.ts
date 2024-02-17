@@ -8,6 +8,7 @@ export * from './InfoIconWithTooltip';
 export * from './KeyStatsItem';
 export * from './NominatorStatsItem';
 export * from './PayoutTable';
+export * from './ServicesKeyMetricItem';
 export * from './ServiceTable';
 export * from './sideBar';
 export * from './skeleton';
