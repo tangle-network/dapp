@@ -1,8 +1,8 @@
 import { ArrowRight } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
-import cx from 'classnames';
 import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { ServicesKeyMetricItemProps } from './types';
 
@@ -17,7 +17,7 @@ const ServicesKeyMetricItem: FC<ServicesKeyMetricItemProps> = ({
 }) => {
   return (
     <div
-      className={cx(
+      className={twMerge(
         'overflow-hidden p-6 flex flex-col gap-2 justify-between',
         className
       )}
@@ -50,19 +50,19 @@ const ServicesKeyMetricItem: FC<ServicesKeyMetricItemProps> = ({
                 <Typography
                   variant="body4"
                   fw="bold"
-                  className={cx({
-                    '!text-green-70': changeRate >= 0,
-                    '!text-red-70': changeRate < 0,
-                  })}
+                  className={twMerge(
+                    changeRate >= 0 ? '!text-green-70' : '!text-red-70'
+                  )}
                 >
                   {changeRate >= 0 ? `+` : `-`}
                   {getRoundedAmountString(Math.abs(changeRate), 2)}%
                 </Typography>
                 <ArrowRight
-                  className={cx({
-                    '!fill-green-70 rotate-[-90deg]': changeRate >= 0,
-                    '!fill-red-70 rotate-90': changeRate < 0,
-                  })}
+                  className={twMerge(
+                    changeRate >= 0
+                      ? '!fill-green-70 rotate-[-90deg]'
+                      : '!fill-red-70 rotate-90'
+                  )}
                 />
               </div>
             )}
