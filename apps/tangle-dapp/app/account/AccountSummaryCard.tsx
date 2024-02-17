@@ -27,8 +27,6 @@ const AccountSummaryCard: FC<AccountSummaryCardProps> = ({ className }) => {
           {activeAccountAddress !== null ? (
             <Identity
               address={activeAccountAddress}
-              fontWeight="normal"
-              label="Address:"
               iconTooltipContent="Account public key"
             />
           ) : (
