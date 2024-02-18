@@ -64,6 +64,7 @@ const Identity: FC<IdentityProps> = ({
 
   const prefix = isDisplayingEvmAddress ? 'EVM' : 'Substrate';
   const oppositePrefix = isDisplayingEvmAddress ? 'Substrate' : 'EVM';
+  const iconFillColorClassName = 'dark:!fill-mono-80 !fill-mono-160';
 
   return (
     <div className={twMerge('flex items-center gap-1', className)}>
@@ -78,7 +79,7 @@ const Identity: FC<IdentityProps> = ({
 
       <Tooltip>
         <TooltipTrigger className="cursor-default">
-          <Typography variant="body1" fw="normal">
+          <Typography variant="body1" fw="normal" className="text-mono-160">
             {shortenFn(finalDisplayAddress, 5)}
           </Typography>
         </TooltipTrigger>
@@ -87,8 +88,8 @@ const Identity: FC<IdentityProps> = ({
       </Tooltip>
 
       <CopyWithTooltip
-        className="!bg-transparent !bg-none dark:bg-none !p-0"
-        iconClassName="!fill-mono-80"
+        className="!bg-transparent !p-0"
+        iconClassName={iconFillColorClassName}
         copyLabel={`Copy ${prefix} address`}
         textToCopy={finalDisplayAddress}
       />
@@ -97,7 +98,7 @@ const Identity: FC<IdentityProps> = ({
         <Tooltip>
           <TooltipTrigger>
             <LoopRightFillIcon
-              className="fill-mono-80 dark:fill-mono-80"
+              className={iconFillColorClassName}
               onClick={handleAddressTypeToggle}
             />
           </TooltipTrigger>
