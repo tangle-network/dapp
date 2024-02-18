@@ -37,7 +37,15 @@ enum Step {
   SendingTx,
 }
 
-const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
+type Props = {
+  claimInfo: ClaimInfoType;
+  onClaimCompleted: (accountAddress: string) => void;
+};
+
+const EligibleSection: FC<Props> = ({
+  claimInfo: { amount, isRegularStatement },
+  onClaimCompleted,
+}) => {
   const { activeAccount, activeApi, activeWallet } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
@@ -112,9 +120,11 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
       );
 
       const hash = await sendTransaction(tx);
-
       const newSearchParams = new URLSearchParams(searchParams.toString());
+
       newSearchParams.set('h', hash);
+      onClaimCompleted(accountId);
+
       router.push(`claim/success?${newSearchParams.toString()}`, {
         scroll: true,
       });
