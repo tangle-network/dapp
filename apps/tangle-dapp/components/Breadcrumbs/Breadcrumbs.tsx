@@ -3,6 +3,7 @@
 import { isAddress } from '@polkadot/util-crypto';
 import {
   CheckboxBlankCircleLine,
+  CodeFill,
   FundsLine,
   GiftLineIcon,
   GridFillIcon,
@@ -34,6 +35,37 @@ const BREADCRUMB_LABELS: Record<string, string> = {
   services: 'Service Overview',
 };
 
+// Function to get breadcrumb labels
+const getBreadcrumbLabel = (
+  pathName: string,
+  index: number,
+  pathNames: string[]
+) => {
+  if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
+    return `Details: ${pathName}`;
+  }
+  if (pathName in BREADCRUMB_LABELS) return BREADCRUMB_LABELS[pathName];
+  if (isAddress(pathName)) return shortenString(pathName);
+  return capitalize(pathName);
+};
+
+// Function to get breadcrumb icons
+const getBreadcrumbIcon = (
+  pathName: string,
+  index: number,
+  pathNames: string[]
+) => {
+  if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
+    return <CodeFill className="w-4 h-4 lg:w-6 lg:h-6" />;
+  }
+
+  if (pathName in BREADCRUMB_ICONS) {
+    return BREADCRUMB_ICONS[pathName];
+  }
+
+  return <CheckboxBlankCircleLine className="w-4 h-4" />;
+};
+
 const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
   const fullPathname = usePathname();
   const pathNames = fullPathname.split('/').filter((path) => path);
@@ -51,20 +83,11 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
     }
 
     return pathNames.map((pathName, index) => {
-      const icon =
-        pathName in BREADCRUMB_ICONS ? (
-          BREADCRUMB_ICONS[pathName]
-        ) : (
-          <CheckboxBlankCircleLine className="w-4 h-4" />
-        );
+      const icon = getBreadcrumbIcon(pathName, index, pathNames);
+      const label = getBreadcrumbLabel(pathName, index, pathNames);
 
       return {
-        label:
-          pathName in BREADCRUMB_LABELS
-            ? BREADCRUMB_LABELS[pathName]
-            : isAddress(pathName)
-            ? shortenString(pathName)
-            : capitalize(pathName),
+        label,
         isLast: index === pathNames.length - 1,
         href: `/${pathNames.slice(0, index + 1).join('/')}`,
         icon,
