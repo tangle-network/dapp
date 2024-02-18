@@ -1,11 +1,4 @@
-import {
-  DiscordFill,
-  GlobalLine,
-  Mail,
-  MapPinLine,
-  TwitterFill,
-} from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
+import { MapPinLine } from '@webb-tools/icons';
 import {
   Avatar,
   Chip,
@@ -13,10 +6,9 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { FC, ReactElement } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TangleBigLogo } from '../../../components';
+import { SocialChip, TangleBigLogo } from '../../../components';
 import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import getValidatorOverviewData from '../../../data/getValidatorOverviewData';
 
@@ -113,10 +105,10 @@ export default async function ValidatorOverviewCard({
         {/* Socials & Location */}
         <div className="flex gap-2">
           <div className="flex-1 flex gap-2 items-center">
-            {twitter && <SocialChip Icon={TwitterFill} href={twitter} />}
-            {discord && <SocialChip Icon={DiscordFill} href={discord} />}
-            {email && <SocialChip Icon={Mail} href={`mailto:${email}`} />}
-            {web && <SocialChip Icon={GlobalLine} href={web} />}
+            {twitter && <SocialChip type="twitter" href={twitter} />}
+            {discord && <SocialChip type="discord" href={discord} />}
+            {email && <SocialChip type="email" href={`mailto:${email}`} />}
+            {web && <SocialChip type="web" href={web} />}
           </div>
           <div className="flex-1">
             {location && (
@@ -139,17 +131,3 @@ export default async function ValidatorOverviewCard({
     </div>
   );
 }
-
-/** @internal */
-const SocialChip: FC<{
-  href: string;
-  Icon: (props: IconBase) => ReactElement;
-}> = ({ Icon, href }) => {
-  return (
-    <a target="_blank" rel="noopener noreferrer" href={href}>
-      <Chip color="dark-grey" className="hover:!bg-mono-120">
-        <Icon className="fill-mono-0" size="md" />
-      </Chip>
-    </a>
-  );
-};
