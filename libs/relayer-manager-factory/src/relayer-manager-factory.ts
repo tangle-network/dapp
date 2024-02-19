@@ -25,7 +25,12 @@ import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 
-export async function getRelayerManagerFactory() {
+export async function getRelayerManagerFactory(options?: {
+  /**
+   * If true, the relayer info will be fetched lazily
+   */
+  isLazyFetch?: boolean;
+}) {
   const env = process.env.NODE_ENV ?? '';
 
   const appEnv = isAppEnvironmentType(env) ? env : 'development'; // Fallback to `development`
@@ -38,7 +43,8 @@ export async function getRelayerManagerFactory() {
   if (!relayerManagerFactory) {
     relayerManagerFactory = await WebbRelayerManagerFactory.init(
       filteredRelayerConfigs,
-      chainNameAdapter
+      chainNameAdapter,
+      options?.isLazyFetch
     );
   }
 
@@ -165,12 +171,17 @@ export class WebbRelayerManagerFactory {
   }
 
   /**
-   * init the builder
-   *  create new instance and fetch the relayers
+   * init the builder create new instance and fetch the relayers
+   * @param config - The relayers configuration
+   * @param chainNameAdapter - An adapter for getting the typedChainId from the chain name and the base
+   * @param isLazyFetch - If true, the relayer info will be fetched lazily
+   *
+   * @returns - The WebbRelayerManagerFactory instance
    **/
   static async init(
     config: RelayerConfig[],
-    chainNameAdapter: ChainNameIntoChainId
+    chainNameAdapter: ChainNameIntoChainId,
+    isLazyFetch?: boolean
   ): Promise<WebbRelayerManagerFactory> {
     const relayerManagerFactory = new WebbRelayerManagerFactory(
       config,
@@ -179,16 +190,18 @@ export class WebbRelayerManagerFactory {
 
     // For all relayers in the relayerConfigs, fetch the info - but timeout after 5 seconds
     // This is done to prevent issues with relayers which are not operating properly
-    await Promise.allSettled(
-      config.map((p) => {
-        return Promise.race([
-          relayerManagerFactory.fetchCapabilitiesAndInsert(p),
-          new Promise((resolve) => {
-            setTimeout(resolve.bind(null, null), 5000);
-          }),
-        ]);
-      })
-    );
+    if (!isLazyFetch) {
+      await Promise.allSettled(
+        config.map((p) => {
+          return Promise.race([
+            relayerManagerFactory.fetchCapabilitiesAndInsert(p),
+            new Promise((resolve) => {
+              setTimeout(resolve.bind(null, null), 5000);
+            }),
+          ]);
+        })
+      );
+    }
 
     return relayerManagerFactory;
   }
