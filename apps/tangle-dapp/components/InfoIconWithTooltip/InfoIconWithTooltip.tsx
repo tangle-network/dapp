@@ -11,11 +11,14 @@ export const InfoIconWithTooltip: FC<InfoIconWithTooltipProps> = ({
 }) => {
   return (
     <IconWithTooltip
-      overrideTooltipBodyProps={{
-        className: twMerge('!max-w-[400px] !break-normal', className),
-      }}
       icon={<InformationLine className="fill-mono-140 dark:fill-mono-40" />}
       content={content}
+      overrideTooltipBodyProps={{
+        className: twMerge(
+          '!max-w-[400px] !break-normal text-center',
+          className
+        ),
+      }}
     />
   );
 };
