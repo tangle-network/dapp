@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 
+import ChartTooltip from '../../../../components/ChartTooltip';
 import { ServiceType } from '../../../../types';
 
 const data = [
@@ -95,23 +96,7 @@ const EarningsChart = () => {
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" />
         <YAxis axisLine={false} />
-        <Tooltip
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              return (
-                <ul className="px-4 py-2 bg-mono-0 rounded-lg dark:bg-mono-180 text-mono-120 dark:text-mono-80">
-                  {payload.map((entry) => (
-                    <li key={entry.name}>
-                      {entry.name}: {entry.value}
-                    </li>
-                  ))}
-                </ul>
-              );
-            }
-
-            return null;
-          }}
-        />
+        <Tooltip content={ChartTooltip} />
         <Legend />
         <Bar dataKey={ServiceType.DKG_TSS_CGGMP} stackId="a" fill="#85DC8E" />
         <Bar dataKey={ServiceType.ZK_SAAS_GROTH16} stackId="a" fill="#B8D6FF" />

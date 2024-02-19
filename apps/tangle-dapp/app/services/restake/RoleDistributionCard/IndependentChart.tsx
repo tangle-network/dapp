@@ -2,6 +2,7 @@
 
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 
+import ChartTooltip from '../../../../components/ChartTooltip';
 import { ServiceType } from '../../../../types';
 
 const data = [
@@ -30,19 +31,7 @@ const IndependentChart = () => {
           ))}
         </Pie>
 
-        <Tooltip
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              return (
-                <div className="px-4 py-2 bg-mono-0 rounded-lg dark:bg-mono-180 text-mono-120 dark:text-mono-80">
-                  {payload[0].name}: {payload[0].value}
-                </div>
-              );
-            }
-
-            return null;
-          }}
-        />
+        <Tooltip content={ChartTooltip} />
       </PieChart>
     </div>
   );
