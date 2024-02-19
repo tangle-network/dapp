@@ -41,6 +41,7 @@ export default function useActiveAndDelegationCountSubscription(
             const currentEra = activeEra.index;
             const activeNominators = new Set<string>();
 
+            // TODO: This needs to be optimized somehow, as it is making a significant amount of requests. For example, assuming that there's 650 validators (as of the time of writing this comment), this would make 650 requests. A better approach would be to handle this incrementally, so that only the new validators are fetched and the rest are cached, but still all validators would need to be fetched initially.
             for (const validator of validators) {
               const exposure = await firstValueFrom(
                 api.query.staking.erasStakers(currentEra, validator)

@@ -4,11 +4,13 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import useFormatReturnType from '../hooks/useFormatReturnType';
+import { getPolkadotApiRx } from '../utils/polkadot';
 
-function useSessionCountSubscription(defaultValue = NaN) {
-  const [session, setSession] = useState(defaultValue);
+export default function useEraCountSubscription(
+  defaultValue: number | null = null
+) {
+  const [era, setEra] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -16,15 +18,20 @@ function useSessionCountSubscription(defaultValue = NaN) {
     let isMounted = true;
     let sub: Subscription | null = null;
 
-    const subscritbeData = async () => {
+    const subscribeData = async () => {
       try {
         const api = await getPolkadotApiRx();
 
-        sub = api.query.session.currentIndex().subscribe((nextSession) => {
-          const idx = nextSession.toNumber();
+        sub = api.query.staking.activeEra().subscribe((nextEra) => {
+          const activeEra = nextEra.unwrapOr(null);
+          if (activeEra == null) {
+            return;
+          }
+
+          const idx = activeEra.index.toNumber();
 
           if (isMounted) {
-            setSession(idx);
+            setEra(idx);
             setIsLoading(false);
           }
         });
@@ -40,7 +47,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
       }
     };
 
-    subscritbeData();
+    subscribeData();
 
     return () => {
       isMounted = false;
@@ -48,7 +55,5 @@ function useSessionCountSubscription(defaultValue = NaN) {
     };
   }, []);
 
-  return useFormatReturnType({ isLoading, error, data: session });
+  return useFormatReturnType({ isLoading, error, data: era });
 }
-
-export default useSessionCountSubscription;

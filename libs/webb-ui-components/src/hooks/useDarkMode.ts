@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import useLocalStorageState from 'use-local-storage-state';

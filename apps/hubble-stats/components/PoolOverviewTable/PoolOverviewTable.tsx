@@ -116,7 +116,6 @@ const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
   return (
     <div className="overflow-x-auto border rounded-lg border-mono-40 dark:border-mono-160">
       <Table
-        tableClassName="lg:table-fixed block overflow-x-auto max-w-[-moz-fit-content] md:table md:max-w-none"
         thClassName="lg:first:w-[200px] border-t-0 bg-mono-0 border-r first:px-3 last:border-r-0 last:pr-2"
         tdClassName="border-r last:border-r-0 first:px-3 last:pr-2"
         tableProps={table}

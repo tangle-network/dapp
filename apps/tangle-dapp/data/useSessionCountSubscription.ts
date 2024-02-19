@@ -4,13 +4,11 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import useFormatReturnType from '../hooks/useFormatReturnType';
+import { getPolkadotApiRx } from '../utils/polkadot';
 
-export default function useEraCountSubscription(
-  defaultValue: number | null = null
-) {
-  const [era, setEra] = useState(defaultValue);
+function useSessionCountSubscription(defaultValue = NaN) {
+  const [session, setSession] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -22,16 +20,11 @@ export default function useEraCountSubscription(
       try {
         const api = await getPolkadotApiRx();
 
-        sub = api.query.staking.activeEra().subscribe((nextEra) => {
-          const activeEra = nextEra.unwrapOr(null);
-          if (activeEra == null) {
-            return;
-          }
-
-          const idx = activeEra.index.toNumber();
+        sub = api.query.session.currentIndex().subscribe((nextSession) => {
+          const idx = nextSession.toNumber();
 
           if (isMounted) {
-            setEra(idx);
+            setSession(idx);
             setIsLoading(false);
           }
         });
@@ -55,5 +48,7 @@ export default function useEraCountSubscription(
     };
   }, []);
 
-  return useFormatReturnType({ isLoading, error, data: era });
+  return useFormatReturnType({ isLoading, error, data: session });
 }
+
+export default useSessionCountSubscription;
