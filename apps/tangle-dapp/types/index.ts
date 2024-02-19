@@ -89,3 +89,11 @@ export enum ServiceType {
   TX_RELAY = 'Tx Relay',
   DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
 }
+
+export type JobType = {
+  id?: number;
+  serviceType: ServiceType;
+  thresholds?: number;
+  earnings?: number;
+  expiration: number;
+};

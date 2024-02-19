@@ -9,7 +9,7 @@ import ActionButton from './ActionButton';
 const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
   (props, ref) => {
     return (
-      <TangleCard {...props} className="h-[300px]" ref={ref}>
+      <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
         <div className="grid content-between w-full h-full grid-cols-2">
           <StatsItem
             title="Total Restaked"

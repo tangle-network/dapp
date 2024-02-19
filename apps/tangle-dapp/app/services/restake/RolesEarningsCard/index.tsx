@@ -8,7 +8,7 @@ const EarningsChart = dynamic(() => import('./EarningsChart'), { ssr: false });
 
 const RolesEarningsCard: FC = () => {
   return (
-    <GlassCard className="justify-between h-[350px]">
+    <GlassCard className="h-[409px] overflow-hidden">
       <Typography variant="h5" fw="bold">
         Roles Earnings
       </Typography>

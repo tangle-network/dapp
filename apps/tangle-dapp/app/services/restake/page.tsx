@@ -5,18 +5,14 @@ import RolesEarningsCard from './RolesEarningsCard';
 
 const RestakePage = () => {
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <OverviewCard />
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">
+      <OverviewCard />
 
-        <RoleDistributionCard />
-      </div>
+      <RoleDistributionCard />
 
-      <div className="flex flex-col gap-6 md:flex-row">
-        <RolesEarningsCard />
+      <RolesEarningsCard />
 
-        <JobsCard />
-      </div>
+      <JobsCard />
     </div>
   );
 };
