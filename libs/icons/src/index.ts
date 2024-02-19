@@ -30,6 +30,7 @@ export * from './ChevronUp';
 export { default as ClipboardLineIcon } from './ClipboardLineIcon';
 export * from './Close';
 export * from './CloseCircleLineIcon';
+export { default as CodeFill } from './CodeFill';
 export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';

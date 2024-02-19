@@ -79,3 +79,12 @@ export type Service = {
   earnings?: number;
   expirationBlock: number;
 };
+
+export type ServiceParticipant = {
+  address: string;
+  identity?: string;
+  twitter?: string;
+  discord?: string;
+  email?: string;
+  web?: string;
+};

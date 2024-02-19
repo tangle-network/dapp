@@ -15,6 +15,7 @@ import {
   Table,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
+import Link from 'next/link';
 import { FC } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
@@ -103,11 +104,12 @@ const columns = [
   }),
   columnHelper.accessor('initialJobId', {
     header: () => null,
-    cell: () => (
-      // TODO: handle click
-      <Button variant="link" size="sm" className="mx-auto">
-        DETAILS
-      </Button>
+    cell: (props) => (
+      <Link href={`/services/${props.row.original.initialJobId}`}>
+        <Button variant="link" size="sm" className="mx-auto">
+          DETAILS
+        </Button>
+      </Link>
     ),
   }),
 ];
