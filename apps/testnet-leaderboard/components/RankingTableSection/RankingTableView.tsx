@@ -19,7 +19,7 @@ import BadgesCell from './BadgesCell';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import IdentityCell from './IdentityCell';
-import ParseReponseErrorView from './ParseReponseErrorView';
+import ParseResponseErrorView from './ParseResponseErrorView';
 import SessionsCell from './SessionsCell';
 import SocialLinksCell from './SocialLinksCell';
 import type {
@@ -187,15 +187,15 @@ const RankingTableView: FC<Props> = ({
       'Error when parsing the response',
       data.error.issues.map((issue) => issue.message).join('\n')
     );
-    return <ParseReponseErrorView />;
+    return <ParseResponseErrorView />;
   }
 
   if (!isLoading && data && data.success && !data.data.success) {
-    return <ParseReponseErrorView errorMessage={data.data.error} />;
+    return <ParseResponseErrorView errorMessage={data.data.error} />;
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4 h-full">
       <div className="flex items-center justify-between">
         <Typography variant="mkt-body2" fw="black">
           Latest ranking:
@@ -215,6 +215,7 @@ const RankingTableView: FC<Props> = ({
           />
         </div>
       </div>
+
       <div className="relative overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
           <thead className="border-b border-mono-60">
