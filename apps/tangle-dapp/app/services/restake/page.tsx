@@ -1,4 +1,6 @@
 import OverviewCard from './OverviewCard';
+import RoleDistributionCard from './RoleDistributionCard';
+import RolesEarningsCard from './RolesEarningsCard';
 
 const RestakePage = () => {
   return (
@@ -6,13 +8,13 @@ const RestakePage = () => {
       <div className="flex flex-col gap-6 md:flex-row">
         <OverviewCard />
 
-        {/* <RoleDistributionCard /> */}
+        <RoleDistributionCard />
       </div>
 
       <div className="flex flex-col gap-6 md:flex-row">
-        {/* <RolesEarningsCard />
+        <RolesEarningsCard />
 
-        <JobsCard /> */}
+        {/* <JobsCard /> */}
       </div>
     </div>
   );

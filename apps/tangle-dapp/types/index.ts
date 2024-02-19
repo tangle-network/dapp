@@ -51,6 +51,7 @@ export type Payout = {
   nominatorTotalReward: string;
   status: 'claimed' | 'unclaimed';
 };
+
 export enum PagePath {
   EvmStaking = '/',
   ClaimAirdrop = '/claim',
@@ -81,3 +82,10 @@ export type Service = {
   earnings?: number;
   expirationBlock: number;
 };
+
+export enum ServiceType {
+  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
+  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
+  TX_RELAY = 'Tx Relay',
+  DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
+}
