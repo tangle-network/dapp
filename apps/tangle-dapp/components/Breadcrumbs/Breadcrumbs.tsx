@@ -35,7 +35,6 @@ const BREADCRUMB_LABELS: Record<string, string> = {
   services: 'Service Overview',
 };
 
-// Function to get breadcrumb labels
 const getBreadcrumbLabel = (
   pathName: string,
   index: number,
@@ -49,7 +48,6 @@ const getBreadcrumbLabel = (
   return capitalize(pathName);
 };
 
-// Function to get breadcrumb icons
 const getBreadcrumbIcon = (
   pathName: string,
   index: number,
