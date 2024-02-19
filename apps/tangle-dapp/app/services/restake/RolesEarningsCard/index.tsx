@@ -2,7 +2,13 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC } from 'react';
 
 import GlassCard from '../../../../components/GlassCard/GlassCard';
-import EarningsChart from './EarningsChart';
+
+import dynamic from 'next/dynamic';
+
+const EarningsChart = dynamic(
+    () => import('./EarningsChart'),
+    { ssr: false }
+  )
 
 const RolesEarningsCard: FC = () => {
   return (

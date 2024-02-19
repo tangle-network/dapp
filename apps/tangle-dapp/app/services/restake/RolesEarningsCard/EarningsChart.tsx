@@ -98,7 +98,6 @@ const EarningsChart = () => {
         <Tooltip
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
-              console.log({ payload });
               return (
                 <ul className="px-4 py-2 bg-mono-0 rounded-lg dark:bg-mono-180 text-mono-120 dark:text-mono-80">
                   {payload.map((entry) => (
