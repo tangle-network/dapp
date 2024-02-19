@@ -80,6 +80,12 @@ export type Service = {
   expirationBlock: number;
 };
 
+export type ServiceJob = {
+  id: string;
+  txHash: string;
+  timestamp: Date;
+};
+
 export type ServiceParticipant = {
   address: string;
   identity?: string;
