@@ -15,8 +15,8 @@ export default function EmbedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="box-border h-full p-0 m-0">
-      <body className="box-border h-full p-0 m-0">
+    <html lang="en" className="box-border h-full p-0 m-0 bg-transparent">
+      <body className="box-border h-full p-0 m-0 bg-transparent">
         <Providers>{children}</Providers>
 
         <Script

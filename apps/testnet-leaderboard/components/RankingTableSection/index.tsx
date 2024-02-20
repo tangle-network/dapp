@@ -1,4 +1,5 @@
 import { LoggerService } from '@webb-tools/browser-utils/logger';
+import { FC } from 'react';
 import { unstable_serialize } from 'swr';
 
 import { DEFAULT_LIMIT, DEFAULT_SKIP } from '../../constants';
@@ -9,7 +10,7 @@ import SWRProvider from './SWRProvider';
 
 const logger = LoggerService.get('RankingTableSection');
 
-const RankingTableSection = async () => {
+const RankingTableSection: FC = async () => {
   const result = await fetchLeaderboardData();
 
   if (!result.success) {
