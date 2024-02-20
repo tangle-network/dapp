@@ -17,13 +17,11 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
 
     return (
       <TangleCard {...props} ref={ref}>
-        <div className="w-full space-y-6">
+        <div className="w-full space-y-5">
           <header>
             {activeAccountAddress !== null ? (
               <Identity
                 address={activeAccountAddress}
-                fontWeight="normal"
-                label="Address:"
                 iconTooltipContent="Account public key"
               />
             ) : (
@@ -40,6 +38,6 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   }
 );
 
-AccountSummaryCard.displayName = AccountSummaryCard.name;
+AccountSummaryCard.displayName = 'AccountSummaryCard';
 
 export default AccountSummaryCard;

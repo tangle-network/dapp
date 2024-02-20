@@ -32,11 +32,11 @@ const TotalBalance: FC = () => {
 
           <InfoIconWithTooltip
             content={
-              <span className="block text-center">
+              <>
                 The total balance is defined as:{' '}
                 <strong>Transferrable + locked</strong> balances. This includes
                 tokens locked in staking, vesting, and more.
-              </span>
+              </>
             }
           />
         </div>

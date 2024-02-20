@@ -179,7 +179,7 @@
     "@netlify/plugin-nextjs": "^4.41.2",
     "@nx/cypress": "16.9.0",
     "@nx/eslint-plugin": "16.9.0",
-    "@nx/jest": "16.9.0",
+    "@nx/jest": "18.0.4",
     "@nx/js": "16.9.0",
     "@nx/linter": "16.9.0",
     "@nx/next": "16.9.0",

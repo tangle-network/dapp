@@ -12,10 +12,9 @@ const TangleCard = forwardRef<ElementRef<'div'>, TangleCardProps>(
         {...props}
         ref={ref}
         className={twMerge(
-          'relative rounded-2xl border-2 p-6',
-          'border-mono-0 bg-mono-0/70 dark:border-mono-160 dark:bg-mono-0/5',
-          'dark:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]',
           'w-full flex items-center md:max-w-[556px] overflow-hidden',
+          'relative rounded-2xl shadow-sm border-2 p-6',
+          'border-mono-0 bg-mono-0/70 dark:border-mono-160 dark:bg-mono-0/5',
           className
         )}
       >
