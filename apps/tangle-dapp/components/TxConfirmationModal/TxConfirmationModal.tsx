@@ -23,15 +23,15 @@ import { useCallback, useMemo } from 'react';
 import { TxConfirmationModalProps } from './types';
 
 export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
-  const { isModalOpen, setIsModalOpen, txnStatus, txnHash, txnType } = props;
+  const { isModalOpen, setIsModalOpen, txStatus, txHash, txType } = props;
 
   const { apiConfig } = useWebContext();
 
   const txExplorerUrl = useMemo(() => {
-    if (!txnHash) return null;
+    if (!txHash) return null;
 
-    if (txnType === 'evm') {
-      return `${TANGLE_TESTNET_EXPLORER_URL}/tx/${txnHash}`;
+    if (txType === 'evm') {
+      return `${TANGLE_TESTNET_EXPLORER_URL}/tx/${txHash}`;
     } else {
       const explorer =
         apiConfig.chains[PresetTypedChainId.TangleTestnetNative]?.blockExplorers
@@ -39,9 +39,9 @@ export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
 
       if (!explorer) return null;
 
-      return getExplorerURI(explorer, txnHash, 'tx', 'polkadot');
+      return getExplorerURI(explorer, txHash, 'tx', 'polkadot');
     }
-  }, [apiConfig.chains, txnHash, txnType]);
+  }, [apiConfig.chains, txHash, txType]);
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
@@ -59,11 +59,11 @@ export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
           onClose={closeModal}
           className="p-9 pb-4"
         >
-          Transaction {txnStatus === 'success' ? 'Successful' : 'Failed'}
+          Transaction {txStatus === 'success' ? 'Successful' : 'Failed'}
         </ModalHeader>
 
         <div className="flex flex-col gap-4 p-9">
-          {txnStatus === 'success' ? (
+          {txStatus === 'success' ? (
             <ShieldedCheckLineIcon
               width={54}
               height={54}
@@ -78,7 +78,7 @@ export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
           )}
 
           <Typography variant="body1" className="w-[344px]" ta="center">
-            {txnStatus === 'success'
+            {txStatus === 'success'
               ? 'Your transaction has been submitted to the network.'
               : 'Your transaction has failed to be submitted to the network.'}
           </Typography>
@@ -101,12 +101,12 @@ export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
             >
               Open Explorer
             </Button>
-          ) : txnHash ? (
+          ) : txHash ? (
             <KeyValueWithButton
               label="Transaction Hash"
               size="sm"
               className="mx-auto"
-              keyValue={txnHash}
+              keyValue={txHash}
             />
           ) : null}
         </ModalFooter>

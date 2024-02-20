@@ -6,11 +6,11 @@ interface TxConfirmationState {
   isOpen: boolean;
   status: 'success' | 'error';
   hash: string;
-  txnType: 'substrate' | 'evm';
+  txType: 'substrate' | 'evm';
 }
 
 interface TxConfirmationContextType {
-  txnConfirmationState: TxConfirmationState;
+  txConfirmationState: TxConfirmationState;
   setTxConfirmationState: (state: TxConfirmationState) => void;
 }
 
@@ -18,7 +18,7 @@ const initialState: TxConfirmationState = {
   isOpen: false,
   status: 'error',
   hash: '',
-  txnType: 'evm',
+  txType: 'evm',
 };
 
 const TxConfirmationContext = createContext<
@@ -28,11 +28,11 @@ const TxConfirmationContext = createContext<
 export const TxConfirmationProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [txnConfirmationState, setTxConfirmationState] =
+  const [txConfirmationState, setTxConfirmationState] =
     useState<TxConfirmationState>(initialState);
 
   const value = {
-    txnConfirmationState,
+    txConfirmationState,
     setTxConfirmationState,
   };
 

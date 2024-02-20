@@ -31,5 +31,21 @@ export default async function getActiveServices(): Promise<Service[]> {
       participants: participationArr,
       expirationBlock: 456,
     },
+    {
+      serviceType: 'zksaas (groth16)',
+      roleType: 'ZkSaaS',
+      initialJobId: 123,
+      participants: participationArr,
+      thresholds: 3,
+      earnings: 10,
+      expirationBlock: 456,
+    },
+    {
+      serviceType: 'Tx Relay',
+      roleType: 'TxRelay',
+      initialJobId: 125,
+      participants: participationArr,
+      expirationBlock: 456,
+    },
   ];
 }

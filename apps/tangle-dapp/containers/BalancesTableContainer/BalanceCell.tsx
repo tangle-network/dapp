@@ -1,5 +1,9 @@
 import { BN } from '@polkadot/util';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  HiddenValue,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
@@ -12,9 +16,9 @@ const BalanceCell: FC<{
 
   return (
     <div className="flex flex-col justify-center p-3 gap-6 flex-grow">
-      {amount !== null ? (
+      {formattedBalance !== null ? (
         <Typography variant="body1" fw="semibold">
-          {formattedBalance}
+          <HiddenValue>{formattedBalance}</HiddenValue>
         </Typography>
       ) : (
         <SkeletonLoader className="max-w-[128px]" size="md" />
