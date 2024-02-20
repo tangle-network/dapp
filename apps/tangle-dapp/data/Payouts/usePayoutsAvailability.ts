@@ -1,22 +1,12 @@
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { convertToSubstrateAddress } from '../../utils';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import usePayouts from '../DelegationsPayouts/usePayouts';
 
 const usePayoutsAvailability = () => {
-  const activeAccountAddress = useActiveAccountAddress();
+  const activeSubstrateAddress = useSubstrateAddress();
 
-  const substrateAddress = useMemo(() => {
-    if (!activeAccountAddress) return '';
-
-    if (isSubstrateAddress(activeAccountAddress)) return activeAccountAddress;
-
-    return convertToSubstrateAddress(activeAccountAddress);
-  }, [activeAccountAddress]);
-
-  const { data: payouts } = usePayouts(substrateAddress);
+  const { data: payouts } = usePayouts(activeSubstrateAddress ?? '');
 
   const [isPayoutsAvailable, setIsPayoutsAvailable] = useState<boolean>(false);
 
@@ -26,7 +16,7 @@ const usePayoutsAvailability = () => {
     }
   }, [payouts]);
 
-  return { isPayoutsAvailable };
+  return isPayoutsAvailable;
 };
 
 export default usePayoutsAvailability;

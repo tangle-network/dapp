@@ -28,21 +28,6 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
-type ActionItemDef = {
-  label: string;
-  internalHref: InternalPath;
-  icon: ReactElement<IconBase>;
-};
-
-/** @internal */
-const staticActionItems: ActionItemDef[] = [
-  {
-    label: 'Nominate',
-    internalHref: AnchorPath.NominationAndPayouts,
-    icon: <CoinsStackedLineIcon size="lg" />,
-  },
-] as const;
-
 const Actions: FC = () => {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
@@ -60,7 +45,7 @@ const Actions: FC = () => {
       : null;
 
   const { isAirdropEligible } = useAirdropEligibility();
-  const { isPayoutsAvailable } = usePayoutsAvailability();
+  const isPayoutsAvailable = usePayoutsAvailability();
 
   return (
     <>
@@ -77,18 +62,12 @@ const Actions: FC = () => {
           Icon={CoinsStackedLineIcon}
         />
 
-        <ActionItem
-          label="Payouts"
-          internalHref={StaticSearchQueryPath.PayoutsTable}
-          Icon={CoinsLineIcon}
-        />
-
         {isPayoutsAvailable && (
           <ActionItem
             hasNotificationDot
             label="Payouts"
-            icon={<CoinsLineIcon size="lg" />}
-            internalHref={AnchorPath.NominationAndPayouts}
+            Icon={CoinsLineIcon}
+            internalHref={StaticSearchQueryPath.PayoutsTable}
             tooltip="You have payouts available. Click here to visit the Payouts page."
           />
         )}
