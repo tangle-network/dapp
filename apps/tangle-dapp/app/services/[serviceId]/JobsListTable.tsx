@@ -32,7 +32,7 @@ interface JobsListTableProps {
 const PAGE_SIZE = 10;
 const TANGLE_BLOCK_EXPLORER =
   chainsConfig[PresetTypedChainId.TangleTestnetNative].blockExplorers?.default
-    ?.url;
+    .url;
 
 const columnHelper = createColumnHelper<ServiceJob>();
 
@@ -105,9 +105,9 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
       {/* Successfully get data */}
       {data && !isLoading && !error && (
         <Table
-          thClassName="!bg-inherit !px-3 border-t-0 bg-mono-0 whitespace-nowrap"
+          thClassName="!bg-inherit px-3 first:pl-3 border-t-0 bg-mono-0 whitespace-nowrap"
           trClassName="!bg-inherit cursor-pointer"
-          tdClassName="!bg-inherit !px-3 whitespace-nowrap !border-t-0"
+          tdClassName="!bg-inherit px-3 first:pl-3 whitespace-nowrap !border-t-0"
           tableProps={table}
           totalRecords={data.length}
           className="h-full flex flex-col"
