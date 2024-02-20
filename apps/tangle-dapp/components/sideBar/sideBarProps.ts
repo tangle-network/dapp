@@ -40,13 +40,13 @@ const sideBarItems: SideBarItemProps[] = [
     subItems: [
       {
         name: 'Overview',
-        href: PagePath.ServicesOverview,
+        href: '/services/overview',
         isInternal: true,
         isNext: true,
       },
       {
         name: 'Restake',
-        href: PagePath.ServicesRestake,
+        href: '/services/restake',
         isInternal: true,
         isNext: true,
       },

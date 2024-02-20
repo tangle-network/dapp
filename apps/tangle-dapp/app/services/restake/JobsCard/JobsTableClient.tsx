@@ -14,7 +14,6 @@ import {
   fuzzyFilter,
   Table,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
 import { FC } from 'react';
 
 import { HeaderCell, StringCell } from '../../../../components/tableCells';
