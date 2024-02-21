@@ -8,8 +8,8 @@ export enum PagePath {
   Nomination = '/',
   ClaimAirdrop = '/claim',
   Account = '/account',
-  ServicesOverview = '/services/overview',
-  ServicesRestake = '/services/restake',
+  ServicesOverview = '/services',
+  ServicesRestake = '/restake',
 }
 
 export enum QueryParamKey {
