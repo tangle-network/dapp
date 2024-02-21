@@ -1,41 +1,46 @@
-import { type FC, useEffect, useState, useCallback } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {
-  Button,
-  notificationApi,
-  Typography,
-  SkeletonLoader,
-  useNextDarkMode as useDarkMode,
-} from '@webb-tools/webb-ui-components';
+'use client';
+
 import { Alert } from '@webb-tools/icons';
+import { type FC, useEffect, useState, useCallback, useMemo } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { twMerge } from 'tailwind-merge';
 
-interface CodeFileProps {
-  fetchUrl?: string;
-  language?: string;
-}
+import { Button, notificationApi, SkeletonLoader } from '..';
+import {
+  useDarkMode as useNormalDarkMode,
+  useNextDarkMode,
+} from '../../hooks/useDarkMode';
+import { Typography } from '../../typography';
+import type { CodeFileProps } from './types';
 
-const CodeFile: FC<CodeFileProps> = ({ fetchUrl, language }) => {
-  const [isDarkMode] = useDarkMode();
-  const [code, setCode] = useState<string | undefined>();
+const CodeFile: FC<CodeFileProps> = ({
+  getCodeFileFnc,
+  language,
+  isInNextProject,
+  className,
+}) => {
+  const [code, setCode] = useState<string | null>(null);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<Error | null>(null);
+
+  const useDarkMode = useMemo(
+    () => (isInNextProject ? useNextDarkMode : useNormalDarkMode),
+    [isInNextProject]
+  );
+  const [isDarkMode] = useDarkMode();
 
   const fetchCodeFile = useCallback(async () => {
-    if (!fetchUrl) return;
     setIsLoadingCode(true);
     try {
-      const res = await fetch(fetchUrl);
-      if (res.ok) {
-        const code = await res.text();
-        setCode(code);
-      }
+      const code = await getCodeFileFnc();
+      setCode(code);
     } catch (e) {
       if (e instanceof Error) {
-        setError(e.message);
+        setError(e);
         notificationApi({
           variant: 'error',
           message: 'Cannot load file',
@@ -44,7 +49,7 @@ const CodeFile: FC<CodeFileProps> = ({ fetchUrl, language }) => {
     } finally {
       setIsLoadingCode(false);
     }
-  }, [fetchUrl]);
+  }, [getCodeFileFnc]);
 
   useEffect(() => {
     fetchCodeFile();
@@ -52,14 +57,14 @@ const CodeFile: FC<CodeFileProps> = ({ fetchUrl, language }) => {
 
   if (isLoadingCode) {
     return (
-      <div className="space-y-3 p-3">
+      <div className="h-full space-y-3 p-3">
         <SkeletonLoader size="xl" />
         <SkeletonLoader size="xl" />
       </div>
     );
   }
 
-  if (error) {
+  if (!isLoadingCode && error) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="flex flex-col gap-2.5 items-center">
@@ -85,7 +90,7 @@ const CodeFile: FC<CodeFileProps> = ({ fetchUrl, language }) => {
   }
 
   return (
-    <div className="p-6 h-full">
+    <div className={twMerge('p-6 h-full flex flex-col', className)}>
       {!isLoadingCode && !error && code && (
         <SyntaxHighlighter
           language={language}
@@ -93,14 +98,16 @@ const CodeFile: FC<CodeFileProps> = ({ fetchUrl, language }) => {
           showLineNumbers
           customStyle={{
             height: '100%',
-            backgroundColor: 'inherit',
+            background: 'inherit',
             padding: 0,
             margin: 0,
             textShadow: 'none',
+            display: 'flex',
+            flexDirection: 'column',
           }}
           codeTagProps={{
             style: {
-              backgroundColor: 'inherit',
+              background: 'inherit',
               textShadow: 'none',
             },
           }}

@@ -15,7 +15,7 @@ export default function ServiceDetails({
         {/* Tabs */}
         <DetailTabs
           serviceId={serviceId}
-          className="lg:min-h-[600px] md:flex-[3]"
+          className="lg:min-h-[600px] md:flex-[3] min-w-0"
         />
 
         {/* Participants Table */}

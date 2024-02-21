@@ -40,6 +40,7 @@ const getBreadcrumbLabel = (
   index: number,
   pathNames: string[]
 ) => {
+  // Service Details page
   if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
     return `Details: ${pathName}`;
   }
@@ -53,6 +54,7 @@ const getBreadcrumbIcon = (
   index: number,
   pathNames: string[]
 ) => {
+  // Service Details page
   if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
     return <CodeFill className="w-4 h-4 lg:w-6 lg:h-6" />;
   }

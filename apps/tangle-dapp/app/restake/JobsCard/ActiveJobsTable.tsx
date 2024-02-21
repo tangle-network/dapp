@@ -3,9 +3,9 @@
 import { FC } from 'react';
 import useSWR from 'swr';
 
-import ContainerSkeleton from '../../../../components/skeleton/ContainerSkeleton';
-import TableStatus from '../../../../components/TableStatus/TableStatus';
-import getActiveJobs from '../../../../data/JobTables/getActiveJobs';
+import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
+import TableStatus from '../../../components/TableStatus/TableStatus';
+import getActiveJobs from '../../../data/JobTables/getActiveJobs';
 import JobsTableClient from './JobsTableClient';
 import { JobsTableProps } from './types';
 

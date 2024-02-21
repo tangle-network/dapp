@@ -1,14 +1,35 @@
 // Note that this import is necessary to fix a strange type error
 // in Polkadot API's `api.tx.staking.bond` method, which complains
 // about requiring three arguments instead of two.
+
 import '@webb-tools/tangle-substrate-types';
 
-import { DelegationsAndPayoutsTab } from '../containers/DelegationsPayoutsContainer/DelegationsPayoutsContainer';
-import {
-  QueryParamKey,
-  QueryParamKeyOf,
-  QueryParamValueOf,
-} from '../hooks/useQueryParamKey';
+export enum PagePath {
+  Nomination = '/',
+  ClaimAirdrop = '/claim',
+  Account = '/account',
+  ServicesOverview = '/services',
+  ServicesRestake = '/restake',
+}
+
+export enum QueryParamKey {
+  DelegationsAndPayoutsTab = 'tab',
+}
+
+export type QueryParamKeyOf<Page extends PagePath> =
+  Page extends PagePath.Nomination
+    ? QueryParamKey.DelegationsAndPayoutsTab
+    : never;
+
+export type QueryParamValueOf<Key extends QueryParamKey> =
+  Key extends QueryParamKey.DelegationsAndPayoutsTab
+    ? DelegationsAndPayoutsTab
+    : never;
+
+export enum DelegationsAndPayoutsTab {
+  Nominations = 'Nominations',
+  Payouts = 'Payouts',
+}
 
 export type Validator = {
   address: string;
@@ -61,14 +82,6 @@ export type Payout = {
   nominatorTotalReward: string;
   status: 'claimed' | 'unclaimed';
 };
-
-export enum PagePath {
-  Nomination = '/',
-  ClaimAirdrop = '/claim',
-  Account = '/account',
-  ServicesOverview = '/services/overview',
-  ServicesRestake = '/services/restake',
-}
 
 /**
  * Utility type to remove trailing slash from a string.

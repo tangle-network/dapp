@@ -26,7 +26,7 @@ const DetailTabs: FC<DetailTabsProps> = ({ serviceId, className }) => {
         <JobsListTable serviceId={serviceId} />
       </TabContent>
       <TabContent value={SIGNING_RULES_TAB} className="flex-1">
-        <SigningRules />
+        <SigningRules serviceId={serviceId} />
       </TabContent>
     </TableAndChartTabs>
   );
