@@ -7,6 +7,7 @@ import {
   oneDark,
   oneLight,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { twMerge } from 'tailwind-merge';
 
 import { Button, notificationApi, SkeletonLoader } from '..';
 import {
@@ -20,6 +21,7 @@ const CodeFile: FC<CodeFileProps> = ({
   getCodeFileFnc,
   language,
   isInNextProject,
+  className,
 }) => {
   const [code, setCode] = useState<string | null>(null);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
@@ -88,7 +90,7 @@ const CodeFile: FC<CodeFileProps> = ({
   }
 
   return (
-    <div className="p-6 h-full">
+    <div className={twMerge('p-6 h-full flex flex-col', className)}>
       {!isLoadingCode && !error && code && (
         <SyntaxHighlighter
           language={language}
@@ -96,14 +98,16 @@ const CodeFile: FC<CodeFileProps> = ({
           showLineNumbers
           customStyle={{
             height: '100%',
-            backgroundColor: 'inherit',
+            background: 'inherit',
             padding: 0,
             margin: 0,
             textShadow: 'none',
+            display: 'flex',
+            flexDirection: 'column',
           }}
           codeTagProps={{
             style: {
-              backgroundColor: 'inherit',
+              background: 'inherit',
               textShadow: 'none',
             },
           }}

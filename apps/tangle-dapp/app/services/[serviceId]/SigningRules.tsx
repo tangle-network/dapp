@@ -27,7 +27,7 @@ const SigningRules: FC<SigningRulesProps> = ({ className }) => {
       className={twMerge(
         'bg-[linear-gradient(180deg,#FFF_0%,rgba(255,255,255,0.50)_100%)]',
         'dark:bg-[linear-gradient(180deg,#2B2F40_0%,rgba(43,47,64,0.00)_100%)]',
-        'h-full p-6 rounded-2xl',
+        'h-full p-6 rounded-2xl flex flex-col',
         'border border-mono-0 dark:border-mono-160',
         className
       )}
@@ -36,14 +36,13 @@ const SigningRules: FC<SigningRulesProps> = ({ className }) => {
 
       {/* Signing Rules Available  */}
       {typeof signingRulesContractAddr === 'string' && (
-        <div className="h-full bg-mono-20 dark:bg-mono-200">
-          <CodeFile
-            getCodeFileFnc={() => getSigningRules(signingRulesContractAddr)}
-            isInNextProject
-            // smart contract language: Solidity
-            language="sol"
-          />
-        </div>
+        <CodeFile
+          getCodeFileFnc={() => getSigningRules(signingRulesContractAddr)}
+          isInNextProject
+          className="bg-mono-20 dark:bg-mono-200 overflow-auto max-h-[740px]"
+          // smart contract language: Solidity
+          language="sol"
+        />
       )}
     </div>
   );

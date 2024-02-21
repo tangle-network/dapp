@@ -13,4 +13,9 @@ export interface CodeFileProps {
    * @default true
    */
   isInNextProject: boolean;
+
+  /**
+   * The tailwindcss className to override the style
+   */
+  className?: string;
 }

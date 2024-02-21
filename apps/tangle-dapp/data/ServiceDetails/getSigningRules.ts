@@ -86,7 +86,6 @@ function nthZero(n) {
     if (n == 15) return 14825089209834329031146290681677780462512538924857394026404638992248153156554;
 }`;
 
-export default async function getSigningRules(contractAddr: string) {
-  console.log('contractAddr :', contractAddr);
+export default async function getSigningRules(_: string) {
   return MOCK_FILE;
 }
