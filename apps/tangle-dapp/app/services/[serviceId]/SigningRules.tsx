@@ -40,6 +40,7 @@ const SigningRules: FC<SigningRulesProps> = ({ className }) => {
           <CodeFile
             getCodeFileFnc={() => getSigningRules(signingRulesContractAddr)}
             isInNextProject
+            // smart contract language: Solidity
             language="sol"
           />
         </div>

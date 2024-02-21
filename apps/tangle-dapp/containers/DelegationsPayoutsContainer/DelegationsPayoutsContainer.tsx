@@ -18,8 +18,8 @@ import { ContainerSkeleton, TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
-import useQueryParamKey, { QueryParamKey } from '../../hooks/useQueryParamKey';
-import { Payout } from '../../types';
+import useQueryParamKey from '../../hooks/useQueryParamKey';
+import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
@@ -30,11 +30,6 @@ import DelegatorTableContainer from './DelegatorTableContainer';
 import PayoutTableContainer from './PayoutTableContainer';
 
 const PAGE_SIZE = 10;
-
-export enum DelegationsAndPayoutsTab {
-  Nominations = 'Nominations',
-  Payouts = 'Payouts',
-}
 
 function assertTab(tab: string): DelegationsAndPayoutsTab {
   if (
