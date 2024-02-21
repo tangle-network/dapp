@@ -4,6 +4,7 @@ import {
   StatusIndicator,
 } from '@webb-tools/icons';
 import {
+  Chip,
   SkeletonLoader,
   Tooltip,
   TooltipBody,
@@ -63,13 +64,6 @@ const LockedBalanceDetails: FC = () => {
 
   const { data: unbondingEntries } = useUnbonding();
 
-  const stakingLongestUnbondingEra =
-    unbondingEntries === null || unbondingEntries.length === 0
-      ? null
-      : unbondingEntries.reduce((longest, current) => {
-          return current.unlockEra.gt(longest) ? current.unlockEra : longest;
-        }, unbondingEntries[0].unlockEra);
-
   const democracyBalance = lockedDemocracyBalance !== null && isInDemocracy && (
     <div className="flex flex-row justify-between items-center">
       <BalanceCell amount={lockedDemocracyBalance} />
@@ -92,9 +86,7 @@ const LockedBalanceDetails: FC = () => {
     !vestingSchedulesOpt.isNone &&
     vestingSchedulesOpt
       .unwrap()
-      .map((_schedule, index) => (
-        <SmallPurpleChip key={index} title="Vesting" />
-      ));
+      .map((_schedule, index) => <LabelChip key={index} title="Vesting" />);
 
   const vestingSchedulesBalances = isVesting && vestingLockAmount !== null && (
     <div className="flex flex-row justify-between items-center">
@@ -180,15 +172,15 @@ const LockedBalanceDetails: FC = () => {
       );
     })();
 
-  const stakingUnlockingAt = stakingLockedBalance !== null &&
-    stakingLockedBalance.gtn(0) &&
-    stakingLongestUnbondingEra !== null && <TextCell text="—" />;
+  const stakingUnlockingAt = stakingLockedBalance !== null && (
+    <TextCell text="—" />
+  );
 
   const unbondingLabels =
     unbondingEntries !== null &&
     unbondingEntries.length > 0 &&
     unbondingEntries.map((_unbondingInfo, index) => (
-      <SmallPurpleChip key={index} title="Unbonding" />
+      <LabelChip key={index} title="Unbonding" />
     ));
 
   const unbondingUnlockingAt =
@@ -206,7 +198,7 @@ const LockedBalanceDetails: FC = () => {
   const evmStakingAction = (
     <BalanceAction
       Icon={ArrowRightUp}
-      internalHref={PagePath.EvmStaking}
+      internalHref={PagePath.Nomination}
       tooltip={
         <>
           View more information on the <strong>EVM Staking</strong> page.
@@ -235,7 +227,7 @@ const LockedBalanceDetails: FC = () => {
     ));
 
   return (
-    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 rounded-lg min-w-[630px]">
+    <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 pt-6 rounded-lg min-w-[630px]">
       <div className="flex flex-row w-full">
         {/* Type */}
         <div className="flex flex-col w-full h-full items-start">
@@ -245,11 +237,9 @@ const LockedBalanceDetails: FC = () => {
 
           {vestingSchedulesLabels}
 
-          {isInDemocracy && <SmallPurpleChip title="Democracy" />}
+          {isInDemocracy && <LabelChip title="Democracy" />}
 
-          {stakingLockedBalance !== null && (
-            <SmallPurpleChip title="Nomination" />
-          )}
+          {stakingLockedBalance !== null && <LabelChip title="Nomination" />}
 
           {unbondingLabels}
         </div>
@@ -285,10 +275,10 @@ const LockedBalanceDetails: FC = () => {
 };
 
 /** @internal */
-const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
+const LabelChip: FC<{ title: string }> = ({ title }) => {
   return (
     <div className="py-2">
-      <div className="bg-purple-10 dark:bg-purple-120 rounded-3xl px-4 py-1">
+      <Chip color="purple">
         <Typography
           variant="body2"
           fw="semibold"
@@ -296,7 +286,7 @@ const SmallPurpleChip: FC<{ title: string }> = ({ title }) => {
         >
           {title}
         </Typography>
-      </div>
+      </Chip>
     </div>
   );
 };

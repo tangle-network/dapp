@@ -7,8 +7,8 @@ import AccountSummaryCard from './AccountSummaryCard';
 export default function AccountPage() {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-6 flex-col md:flex-row">
-        <AccountSummaryCard />
+      <div className="flex gap-6 flex-col xl:flex-row">
+        <AccountSummaryCard className="md:max-w-full xl:max-w-[556px]" />
 
         <RecentTxContainer />
       </div>

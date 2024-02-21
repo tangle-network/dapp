@@ -1,3 +1,7 @@
+import type { ChipColors } from '@webb-tools/webb-ui-components/components/Chip';
+
+import { ServiceType } from '../types';
+
 export const PAYMENT_DESTINATION_OPTIONS = [
   'Staked (increase the amount at stake)',
   'Stash (do not increase the amount at stake)',
@@ -46,3 +50,10 @@ export enum SwrBaseKey {
   WaitingValidators = 'waiting-validators',
   ActiveValidatorsPaginated = 'active-validator-paginated',
 }
+
+export const serviceTypeToChipColor = {
+  [ServiceType.DKG_TSS_CGGMP]: 'purple',
+  [ServiceType.TX_RELAY]: 'green',
+  [ServiceType.ZK_SAAS_GROTH16]: 'blue',
+  [ServiceType.ZK_SAAS_MARLIN]: 'yellow',
+} as const satisfies Record<ServiceType, ChipColors>;

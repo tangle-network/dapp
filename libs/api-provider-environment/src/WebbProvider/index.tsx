@@ -330,7 +330,10 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           status: 'loading',
         });
 
-        const relayerManagerFactory = await getRelayerManagerFactory();
+        const relayerManagerFactory = await getRelayerManagerFactory({
+          isLazyFetch: true,
+        });
+
         const networkStorage =
           _networkStorage ?? (await appNetworkStoragePromise);
 
