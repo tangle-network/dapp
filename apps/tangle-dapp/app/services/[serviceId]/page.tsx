@@ -11,7 +11,7 @@ export default function ServiceDetails({
     <div className="space-y-5">
       {/* Service Info Card */}
 
-      <div className="flex flex-col lg:flex-row lg:items-stretch">
+      <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
         {/* Tabs */}
         <DetailTabs
           serviceId={serviceId}

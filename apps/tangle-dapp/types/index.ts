@@ -66,6 +66,8 @@ export enum PagePath {
   Nomination = '/',
   ClaimAirdrop = '/claim',
   Account = '/account',
+  ServicesOverview = '/services/overview',
+  ServicesRestake = '/services/restake',
 }
 
 /**
@@ -130,6 +132,27 @@ export type Service = {
   phase2Executions?: number;
   earnings?: number;
   expirationBlock: number;
+};
+
+export type ServiceJob = {
+  id: string;
+  txHash: string;
+  timestamp: Date;
+};
+
+export enum ServiceType {
+  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
+  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
+  TX_RELAY = 'Tx Relay',
+  DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
+}
+
+export type JobType = {
+  id?: number;
+  serviceType: ServiceType;
+  thresholds?: number;
+  earnings?: number;
+  expiration: number;
 };
 
 export type ServiceParticipant = {
