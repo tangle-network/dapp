@@ -226,7 +226,7 @@ export default function Page() {
             onClaimCompleted={handleClaimCompletion}
           />
         ) : claimInfo === false ? (
-          <NotEligibleSection checkEligibility={checkEligibility} />
+          <NotEligibleSection />
         ) : checkingEligibility ? (
           <>
             <Typography variant="mkt-body2" ta="center" fw="bold">
