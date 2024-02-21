@@ -13,7 +13,10 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
 
       <AppTemplate.Content>
-        <FAQSection items={faqItems} />
+        <FAQSection
+          items={faqItems}
+          answerClassName="[&_a:hover]:text-mono-100 [&_a]:underline"
+        />
       </AppTemplate.Content>
     </AppTemplate.Root>
   );

@@ -33,10 +33,10 @@ export const KeyStatsContainer = () => {
           title="Waiting"
           tooltip="Nodes waiting in line to become active validators."
         />
-        {/* Active/Delegation */}
+        {/* Active/Nominators */}
         <KeyStatsItem
-          title="Active/Delegation"
-          tooltip="Current active delegations out of the total possible."
+          title="Active/Nominators"
+          tooltip="Current active nominators out of the total possible."
         />
         {/* Ideal Staked */}
         <KeyStatsItem

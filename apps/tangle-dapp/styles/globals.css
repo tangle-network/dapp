@@ -1,0 +1,14 @@
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  all: unset;
+}
+
+/* Override react-syntax-highlighter styling */
+code span {
+  background: inherit;
+  font-family: 'Cousine' !important;
+  font-weight: 400 !important;
+}

@@ -23,6 +23,7 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
   isButton = true,
   iconSize = 'md',
   iconClassName,
+  copyLabel,
 }) => {
   const { copy, isCopied } = useCopyable();
 
@@ -36,6 +37,7 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
       isButton={isButton}
       iconSize={iconSize}
       iconClassName={iconClassName}
+      copyLabel={copyLabel}
     />
   );
 };
@@ -54,6 +56,7 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
   iconClassName,
   isButton,
   iconSize,
+  copyLabel = 'Copy',
 }) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -84,7 +87,7 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
       </TooltipTrigger>
       <TooltipBody>
         <Typography className="capitalize" variant="body3">
-          {isCopied ? 'Copied!' : 'Copy'}
+          {isCopied ? 'Copied!' : copyLabel}
         </Typography>
       </TooltipBody>
     </Tooltip>

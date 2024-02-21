@@ -12,13 +12,14 @@ import {
   TableAndChartTabs,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
-import { AnchorId, Payout } from '../../types';
+import useQueryParamKey from '../../hooks/useQueryParamKey';
+import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
@@ -28,13 +29,34 @@ import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
 import DelegatorTableContainer from './DelegatorTableContainer';
 import PayoutTableContainer from './PayoutTableContainer';
 
-const pageSize = 10;
-const delegationsTableTab = 'Nominations';
-const payoutsTableTab = 'Payouts';
+const PAGE_SIZE = 10;
+
+function assertTab(tab: string): DelegationsAndPayoutsTab {
+  if (
+    !Object.values(DelegationsAndPayoutsTab).includes(
+      tab as DelegationsAndPayoutsTab
+    )
+  ) {
+    throw new Error(`Invalid tab: ${tab}`);
+  }
+
+  return tab as DelegationsAndPayoutsTab;
+}
 
 const DelegationsPayoutsContainer: FC = () => {
+  const { value: queryParamsTab } = useQueryParamKey(
+    QueryParamKey.DelegationsAndPayoutsTab
+  );
+
+  const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading } = useWebContext();
-  const [activeTab, setActiveTab] = useState(delegationsTableTab);
+
+  // Allow other pages to link directly to the payouts tab.
+  // Default to the nominations tab if no matching browser URL
+  // hash is present.
+  const [activeTab, setActiveTab] = useState(
+    queryParamsTab ?? DelegationsAndPayoutsTab.Nominations
+  );
 
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
@@ -74,6 +96,16 @@ const DelegationsPayoutsContainer: FC = () => {
   const { data: payoutsData, isLoading: payoutsIsLoading } =
     usePayouts(substrateAddress);
 
+  // Scroll to the table when the tab changes, or when the page
+  // is first loaded with a tab query parameter present.
+  useEffect(() => {
+    if (queryParamsTab === null) {
+      return;
+    }
+
+    tableRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [queryParamsTab]);
+
   useEffect(() => {
     if (updatedPayouts.length > 0) {
       setPayouts(updatedPayouts);
@@ -82,17 +114,17 @@ const DelegationsPayoutsContainer: FC = () => {
     }
   }, [payoutsData, updatedPayouts]);
 
-  const validatorAndEras = useMemo(() => {
-    if (payouts) {
-      return payouts.map((payout) => ({
+  const validatorAndEras = useMemo(
+    () =>
+      payouts.map((payout) => ({
         validatorAddress: payout.validator.address,
         era: payout.era.toString(),
-      }));
-    }
+      })),
+    [payouts]
+  );
 
-    return [];
-  }, [payouts]);
-
+  // Clear the updated payouts when the active account changes,
+  // and the user is no longer logged in.
   useEffect(() => {
     if (!activeAccount?.address) {
       setUpdatedPayouts([]);
@@ -104,14 +136,15 @@ const DelegationsPayoutsContainer: FC = () => {
   const { toggleModal } = useConnectWallet();
 
   return (
-    <>
+    <div ref={tableRef}>
       <TableAndChartTabs
-        id={AnchorId.NominationAndPayouts}
-        tabs={[delegationsTableTab, payoutsTableTab]}
+        value={activeTab}
+        onValueChange={(tabString) => setActiveTab(assertTab(tabString))}
+        tabs={[...Object.values(DelegationsAndPayoutsTab)]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={
           activeAccount?.address && !isFirstTimeNominator ? (
-            activeTab === delegationsTableTab ? (
+            activeTab === DelegationsAndPayoutsTab.Nominations ? (
               <ManageButtonContainer
                 onUpdateNominations={() =>
                   setIsUpdateNominationsModalOpen(true)
@@ -134,10 +167,9 @@ const DelegationsPayoutsContainer: FC = () => {
             )
           ) : null
         }
-        onValueChange={(tab) => setActiveTab(tab)}
       >
         {/* Delegations Table */}
-        <TabContent value={delegationsTableTab}>
+        <TabContent value={DelegationsAndPayoutsTab.Nominations}>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -168,13 +200,13 @@ const DelegationsPayoutsContainer: FC = () => {
           ) : !delegatorsError && delegatorsData ? (
             <DelegatorTableContainer
               value={delegatorsData.delegators}
-              pageSize={pageSize}
+              pageSize={PAGE_SIZE}
             />
           ) : null}
         </TabContent>
 
         {/* Payouts Table */}
-        <TabContent value={payoutsTableTab} aria-disabled>
+        <TabContent value={DelegationsAndPayoutsTab.Payouts} aria-disabled>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -203,7 +235,7 @@ const DelegationsPayoutsContainer: FC = () => {
           ) : (
             <PayoutTableContainer
               value={payouts}
-              pageSize={pageSize}
+              pageSize={PAGE_SIZE}
               updateValue={setUpdatedPayouts}
             />
           )}
@@ -238,7 +270,7 @@ const DelegationsPayoutsContainer: FC = () => {
         payouts={payouts}
         updatePayouts={setUpdatedPayouts}
       />
-    </>
+    </div>
   );
 };
 

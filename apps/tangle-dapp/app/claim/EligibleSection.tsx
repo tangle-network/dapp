@@ -1,7 +1,5 @@
 'use client';
 
-import '@webb-tools/tangle-substrate-types';
-
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import { hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
