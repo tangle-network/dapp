@@ -134,6 +134,12 @@ export type Service = {
   expirationBlock: number;
 };
 
+export type ServiceJob = {
+  id: string;
+  txHash: string;
+  timestamp: Date;
+};
+
 export enum ServiceType {
   ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
   ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',

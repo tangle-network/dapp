@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 
+import type { WebbTypographyProps } from '../../typography/types';
+
 export interface TableAndChartTabsProps extends Tabs.TabsProps {
   /**
    * The list of value for the tabs
@@ -31,4 +33,10 @@ export interface TableAndChartTabsProps extends Tabs.TabsProps {
    * The className for trigger items (optional)
    */
   triggerClassName?: string;
+
+  /**
+   * The variant for the trigger text (optional)
+   * @default 'h5'
+   */
+  triggerTypographyVariant?: WebbTypographyProps['variant'];
 }
