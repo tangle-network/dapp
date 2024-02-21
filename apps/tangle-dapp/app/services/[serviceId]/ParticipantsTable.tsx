@@ -81,7 +81,7 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({
   });
 
   return (
-    <div className={twMerge('flex flex-col gap-5', className)}>
+    <div className={twMerge('overflow-x-auto flex flex-col gap-5', className)}>
       <Typography variant="h4" fw="bold">
         Participants
       </Typography>

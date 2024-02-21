@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import dynamic from 'next/dynamic';
 import type { FC } from 'react';
 
-import GlassCard from '../../../../components/GlassCard/GlassCard';
+import GlassCard from '../../../components/GlassCard/GlassCard';
 
 const IndependentChart = dynamic(() => import('./IndependentChart'), {
   ssr: false,

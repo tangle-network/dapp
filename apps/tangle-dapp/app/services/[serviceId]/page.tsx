@@ -11,11 +11,11 @@ export default function ServiceDetails({
     <div className="space-y-5">
       {/* Service Info Card */}
 
-      <div className="flex flex-col lg:flex-row lg:items-stretch">
+      <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
         {/* Tabs */}
         <DetailTabs
           serviceId={serviceId}
-          className="lg:min-h-[600px] md:flex-[3]"
+          className="lg:min-h-[600px] md:flex-[3] min-w-0"
         />
 
         {/* Participants Table */}

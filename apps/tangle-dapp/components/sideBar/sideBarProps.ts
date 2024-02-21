@@ -40,13 +40,13 @@ const sideBarItems: SideBarItemProps[] = [
     subItems: [
       {
         name: 'Overview',
-        href: '/services/overview',
+        href: '/services',
         isInternal: true,
         isNext: true,
       },
       {
         name: 'Restake',
-        href: '/services/restake',
+        href: '/restake',
         isInternal: true,
         isNext: true,
       },

@@ -9,6 +9,10 @@ export enum LocalStorageKey {
   WaitingValidatorCache = 'waitingValidatorCache',
   AirdropEligibilityCache = 'airdropEligibilityCache',
   IsBalancesTableDetailsCollapsed = 'isBalancesTableDetailsCollapsed',
+  ActiveAndDelegationCount = 'activeAndDelegationCount',
+  IdealStakePercentage = 'idealStakePercentage',
+  ValidatorCounts = 'validatorCounts',
+  WaitingCount = 'waitingCount',
 }
 
 export type AirdropEligibilityCache = {
@@ -26,6 +30,14 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? boolean
     : T extends LocalStorageKey.ActiveValidatorCache
     ? Validator[]
+    : T extends LocalStorageKey.ActiveAndDelegationCount
+    ? { value1: number | null; value2: number | null }
+    : T extends LocalStorageKey.IdealStakePercentage
+    ? { value1: number | null }
+    : T extends LocalStorageKey.ValidatorCounts
+    ? { value1: number | null; value2: number | null }
+    : T extends LocalStorageKey.WaitingCount
+    ? { value1: number | null }
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(

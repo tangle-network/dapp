@@ -16,12 +16,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { HeaderCell, StringCell } from '../../../../components/tableCells';
-import {
-  serviceTypeToChipColor,
-  TANGLE_TOKEN_UNIT,
-} from '../../../../constants';
-import { JobType } from '../../../../types';
+import { HeaderCell, StringCell } from '../../../components/tableCells';
+import { serviceTypeToChipColor, TANGLE_TOKEN_UNIT } from '../../../constants';
+import { JobType } from '../../../types';
 
 const columnHelper = createColumnHelper<JobType>();
 

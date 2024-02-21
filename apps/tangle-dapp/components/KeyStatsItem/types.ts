@@ -1,7 +1,7 @@
 export type TitleType =
   | 'Validators'
   | 'Waiting'
-  | `Active/Delegation`
+  | `Active/Nominators`
   | 'Ideal Staked'
   | 'Inflation';
 

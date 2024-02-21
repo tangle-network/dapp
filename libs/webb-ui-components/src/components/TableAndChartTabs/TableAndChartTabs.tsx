@@ -12,6 +12,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   headerClassName,
   listClassName,
   triggerClassName,
+  triggerTypographyVariant = 'h5',
   children,
   ...tabsProps
 }) => {
@@ -42,9 +43,9 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                 )}
               >
                 <Typography
-                  variant="h5"
+                  variant={triggerTypographyVariant}
                   fw="black"
-                  className="!text-[18px] md:!text-[20px] md:!leading-[30px] !text-inherit"
+                  className="!text-inherit"
                 >
                   {tab}
                 </Typography>

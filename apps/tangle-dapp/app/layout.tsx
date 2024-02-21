@@ -1,4 +1,5 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
+import '../styles/globals.css';
 
 import Suspense from '@webb-tools/webb-ui-components/components/Suspense';
 import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
