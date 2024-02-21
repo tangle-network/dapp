@@ -13,10 +13,16 @@ export default function ServiceDetails({
 
       <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
         {/* Tabs */}
-        <DetailTabs serviceId={serviceId} className="md:flex-[3] min-w-0" />
+        <DetailTabs
+          serviceId={serviceId}
+          className="lg:min-h-[600px] md:flex-[3] min-w-0"
+        />
 
         {/* Participants Table */}
-        <ParticipantsTable serviceId={serviceId} className="md:flex-[2]" />
+        <ParticipantsTable
+          serviceId={serviceId}
+          className="lg:min-h-[600px] md:flex-[2]"
+        />
       </div>
     </div>
   );
