@@ -841,6 +841,8 @@ video {
   height: 376px;
 }.h-\[504px\]{
   height: 504px;
+}.h-\[600px\]{
+  height: 600px;
 }.h-\[60px\]{
   height: 60px;
 }.h-\[74px\]{
@@ -1270,6 +1272,8 @@ video {
   overflow: hidden !important;
 }.overflow-hidden{
   overflow: hidden;
+}.overflow-x-auto{
+  overflow-x: auto;
 }.overflow-y-auto{
   overflow-y: auto;
 }.overflow-x-hidden{
@@ -1584,6 +1588,8 @@ video {
   fill: none !important;
 }.\!fill-red-50{
   fill: #EF570D !important;
+}.\!fill-red-70{
+  fill: #C64A17 !important;
 }.\!fill-transparent{
   fill: transparent !important;
 }.\!fill-yellow-70{
@@ -1811,8 +1817,6 @@ video {
   vertical-align: middle;
 }.\!text-\[12px\]{
   font-size: 12px !important;
-}.\!text-\[18px\]{
-  font-size: 18px !important;
 }.\!text-\[20px\]{
   font-size: 20px !important;
 }.\!text-\[24px\]{
@@ -1897,6 +1901,9 @@ video {
 }.\!text-red-50{
   --tw-text-opacity: 1 !important;
   color: rgb(239 87 13 / var(--tw-text-opacity)) !important;
+}.\!text-red-70{
+  --tw-text-opacity: 1 !important;
+  color: rgb(198 74 23 / var(--tw-text-opacity)) !important;
 }.text-black{
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
@@ -3319,6 +3326,8 @@ main{
   background-color: rgb(63 53 23 / var(--tw-bg-opacity));
 }:is(.dark .dark\:\!fill-mono-60){
   fill: #D3D8E2 !important;
+}:is(.dark .dark\:\!fill-red-50){
+  fill: #EF570D !important;
 }:is(.dark .dark\:fill-blue-120){
   fill: #181F2B;
 }:is(.dark .dark\:fill-blue-30){
@@ -3378,6 +3387,9 @@ main{
 }:is(.dark .dark\:\!text-mono-80){
   --tw-text-opacity: 1 !important;
   color: rgb(194 200 212 / var(--tw-text-opacity)) !important;
+}:is(.dark .dark\:\!text-red-50){
+  --tw-text-opacity: 1 !important;
+  color: rgb(239 87 13 / var(--tw-text-opacity)) !important;
 }:is(.dark .dark\:text-blue-0){
   --tw-text-opacity: 1;
   color: rgb(236 244 255 / var(--tw-text-opacity));
@@ -3831,14 +3843,6 @@ main{
 
   .md\:text-right{
     text-align: right;
-  }
-
-  .md\:\!text-\[20px\]{
-    font-size: 20px !important;
-  }
-
-  .md\:\!leading-\[30px\]{
-    line-height: 30px !important;
   }
 }@media (min-width: 1024px){
 
