@@ -11,8 +11,7 @@ const jobsArr = new Array(11).fill({
   timestamp: new Date(),
 } satisfies ServiceJob);
 
-export default function useServiceJobs(serviceId: string) {
-  console.log('serviceId :', serviceId);
+export default function useServiceJobs(_: string) {
   const [jobs, setJobs] = useState<ServiceJob[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

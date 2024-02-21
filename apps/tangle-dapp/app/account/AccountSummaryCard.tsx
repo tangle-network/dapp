@@ -1,47 +1,43 @@
 'use client';
 
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
-import { twMerge } from 'tailwind-merge';
+import type { PropsOf } from '@webb-tools/webb-ui-components/types';
+import type { ElementRef } from 'react';
+import { forwardRef } from 'react';
 
-import { Identity, TangleBigLogo } from '../../components';
+import Identity from '../../components/Identity';
+import TangleCard from '../../components/TangleCard';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import Actions from './Actions';
 import TotalBalance from './TotalBalance';
-import { AccountSummaryCardProps } from './types';
 
-const AccountSummaryCard: FC<AccountSummaryCardProps> = ({ className }) => {
-  const activeAccountAddress = useActiveAccountAddress();
+const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
+  (props, ref) => {
+    const activeAccountAddress = useActiveAccountAddress();
 
-  return (
-    <div
-      className={twMerge(
-        'w-full flex items-center md:max-w-[556px] overflow-hidden',
-        'relative rounded-2xl shadow-sm border-2 p-6',
-        'border-mono-0 bg-mono-0/70 dark:border-mono-160 dark:bg-mono-0/5',
-        className
-      )}
-    >
-      <div className="space-y-5 w-full">
-        <header>
-          {activeAccountAddress !== null ? (
-            <Identity
-              address={activeAccountAddress}
-              iconTooltipContent="Account public key"
-            />
-          ) : (
-            <SkeletonLoader size="lg" />
-          )}
-        </header>
+    return (
+      <TangleCard {...props} ref={ref}>
+        <div className="w-full space-y-5">
+          <header>
+            {activeAccountAddress !== null ? (
+              <Identity
+                address={activeAccountAddress}
+                iconTooltipContent="Account public key"
+              />
+            ) : (
+              <SkeletonLoader size="lg" />
+            )}
+          </header>
 
-        <TotalBalance />
+          <TotalBalance />
 
-        <Actions />
-      </div>
+          <Actions />
+        </div>
+      </TangleCard>
+    );
+  }
+);
 
-      <TangleBigLogo className="absolute top-[50%] right-0 translate-y-[-50%]" />
-    </div>
-  );
-};
+AccountSummaryCard.displayName = 'AccountSummaryCard';
 
 export default AccountSummaryCard;
