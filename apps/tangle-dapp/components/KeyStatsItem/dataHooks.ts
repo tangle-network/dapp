@@ -7,7 +7,7 @@ import useWaitingCountSubscription from '../../data/KeyStats/useWaitingCountSubs
 const dataHooks = {
   Validators: useValidatorsCountSubscription,
   Waiting: useWaitingCountSubscription,
-  'Active/Delegation': useActiveAndDelegationCountSubscription,
+  'Active/Nominators': useActiveAndDelegationCountSubscription,
   'Ideal Staked': useIdealStakePercentage,
   Inflation: useInflationPercentage,
 } as const;
