@@ -21,6 +21,7 @@ import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
+import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -44,6 +45,7 @@ const Actions: FC = () => {
       : null;
 
   const { isAirdropEligible } = useAirdropEligibility();
+  const isPayoutsAvailable = usePayoutsAvailability();
 
   return (
     <>
@@ -60,11 +62,15 @@ const Actions: FC = () => {
           Icon={CoinsStackedLineIcon}
         />
 
-        <ActionItem
-          label="Payouts"
-          internalHref={StaticSearchQueryPath.PayoutsTable}
-          Icon={CoinsLineIcon}
-        />
+        {isPayoutsAvailable && (
+          <ActionItem
+            hasNotificationDot
+            label="Payouts"
+            Icon={CoinsLineIcon}
+            internalHref={StaticSearchQueryPath.PayoutsTable}
+            tooltip="You have payouts available. Click here to visit the Payouts page."
+          />
+        )}
 
         {isAirdropEligible && (
           <ActionItem

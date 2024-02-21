@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InfoIconWithTooltip } from '..';
+import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 import KeyStatsItemText from './KeyStatsText';
 import { KeyStatsItemProps } from './types';
 
