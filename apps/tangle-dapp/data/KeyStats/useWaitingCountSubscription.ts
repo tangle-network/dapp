@@ -2,9 +2,10 @@
 
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
-import { type Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useWaitingCountSubscription(
@@ -13,7 +14,14 @@ export default function useWaitingCountSubscription(
     value2: null,
   }
 ) {
-  const [value1, setValue1] = useState(defaultValue.value1);
+  const { value: cachedValue, set: setCache } = useLocalStorage(
+    LocalStorageKey.WaitingCount,
+    true
+  );
+
+  const [value1, setValue1] = useState(
+    cachedValue?.value1 ?? defaultValue.value1
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -26,8 +34,11 @@ export default function useWaitingCountSubscription(
         const api = await getPolkadotApiRx();
 
         sub = api.derive.staking.waitingInfo().subscribe((waitingInfo) => {
-          if (isMounted) {
-            setValue1(waitingInfo.waiting.length);
+          const newWaitingCount = waitingInfo.waiting.length;
+
+          if (isMounted && newWaitingCount !== value1) {
+            setValue1(newWaitingCount);
+            setCache({ value1: newWaitingCount });
             setIsLoading(false);
           }
         });
@@ -49,7 +60,7 @@ export default function useWaitingCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, []);
+  }, [value1, setCache]);
 
   return useFormatReturnType({
     isLoading,
