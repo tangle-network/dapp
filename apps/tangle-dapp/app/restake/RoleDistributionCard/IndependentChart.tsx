@@ -2,8 +2,8 @@
 
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 
-import ChartTooltip from '../../../../components/ChartTooltip';
-import { ServiceType } from '../../../../types';
+import ChartTooltip from '../../../components/ChartTooltip';
+import { ServiceType } from '../../../types';
 
 const data = [
   { name: [ServiceType.ZK_SAAS_GROTH16], value: 400 },

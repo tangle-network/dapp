@@ -1,9 +1,9 @@
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
 
-import { InfoIconWithTooltip } from '../../../../components/InfoIconWithTooltip';
-import TangleCard from '../../../../components/TangleCard';
-import { TANGLE_TOKEN_UNIT } from '../../../../constants';
+import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
+import TangleCard from '../../../components/TangleCard';
+import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import ActionButton from './ActionButton';
 
 const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(

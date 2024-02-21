@@ -3,7 +3,7 @@
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 
-import GlassCard from '../../../../components/GlassCard/GlassCard';
+import GlassCard from '../../../components/GlassCard/GlassCard';
 import ActiveJobsTable from './ActiveJobsTable';
 import PastJobsTable from './PastJobsTable';
 
