@@ -12,9 +12,14 @@ import { getPolkadotApiPromise } from '../../utils/polkadot';
 export default function useIdealStakedPercentage(
   defaultValue: { value1: number | null } = { value1: null }
 ) {
-  const { value: cachedValue, set: setCache } = useLocalStorage(LocalStorageKey.IdealStakePercentage, true);
+  const { value: cachedValue, set: setCache } = useLocalStorage(
+    LocalStorageKey.IdealStakePercentage,
+    true
+  );
 
-  const [value1, setValue1] = useState(cachedValue?.value1 ?? defaultValue.value1);
+  const [value1, setValue1] = useState(
+    cachedValue?.value1 ?? defaultValue.value1
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
