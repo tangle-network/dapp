@@ -134,12 +134,16 @@ export type InternalPath =
   | PagePath
   | (typeof StaticSearchQueryPath)[keyof typeof StaticSearchQueryPath];
 
-export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
+export enum ServiceType {
+  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
+  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
+  TX_RELAY = 'Tx Relay',
+  DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
+}
 
 export type Service = {
-  serviceType: string;
-  roleType: RoleType;
-  initialJobId: number;
+  id: number;
+  serviceType: ServiceType;
   participants: string[];
   thresholds?: number;
   phase2Executions?: number;
@@ -152,13 +156,6 @@ export type ServiceJob = {
   txHash: string;
   timestamp: Date;
 };
-
-export enum ServiceType {
-  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
-  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
-  TX_RELAY = 'Tx Relay',
-  DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
-}
 
 export type JobType = {
   id?: number;

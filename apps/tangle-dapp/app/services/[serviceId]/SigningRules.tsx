@@ -49,8 +49,7 @@ const SigningRules: FC<SigningRulesProps> = ({ className }) => {
   return (
     <div
       className={twMerge(
-        'bg-[linear-gradient(180deg,#FFF_0%,rgba(255,255,255,0.50)_100%)]',
-        'dark:bg-[linear-gradient(180deg,#2B2F40_0%,rgba(43,47,64,0.00)_100%)]',
+        'bg-glass dark:bg-glass_dark',
         'h-full p-6 rounded-2xl flex flex-col',
         'border border-mono-0 dark:border-mono-160',
         className
