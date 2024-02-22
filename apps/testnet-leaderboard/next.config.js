@@ -35,6 +35,23 @@ const nextConfig = {
       },
     ],
   },
+
+  // Allow the leaderboard component to be embedded on the marketing
+  // site (tangle.tools), which uses Webflow.
+  headers: async () => {
+    return [
+      {
+        source: '/embed',
+        headers: [
+          // Allows embedding on tangle.tools.
+          {
+            key: 'Content-Security-Policy',
+            value: 'frame-ancestors https://www.tangle.tools/',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 const plugins = [

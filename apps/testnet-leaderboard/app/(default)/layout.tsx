@@ -4,8 +4,8 @@ import { TESTNET_LEADERBOARD_URL } from '@webb-tools/webb-ui-components/constant
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import Footer from '../../components/Footer';
+import Header from '../../components/Header';
 import Providers from './providers';
 
 export const viewport: Viewport = {

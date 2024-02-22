@@ -1,26 +1,31 @@
 import { LoggerService } from '@webb-tools/browser-utils/logger';
+import { FC } from 'react';
 import { unstable_serialize } from 'swr';
 
 import { DEFAULT_LIMIT, DEFAULT_SKIP } from '../../constants';
 import fetchLeaderboardData from './fetchLeaderboardData';
-import ParseReponseErrorView from './ParseReponseErrorView';
+import ParseResponseErrorView from './ParseResponseErrorView';
 import RankingTableView from './RankingTableView';
 import SWRProvider from './SWRProvider';
 
 const logger = LoggerService.get('RankingTableSection');
 
-const RankingTableSection = async () => {
+type Props = {
+  className?: string;
+};
+
+const RankingTableSection: FC<Props> = async ({ className }) => {
   const result = await fetchLeaderboardData();
 
   if (!result.success) {
     logger.error('Failed to fetch leaderboard data', result.error.issues);
-    return <ParseReponseErrorView />;
+    return <ParseResponseErrorView />;
   }
 
   const parsedData = result.data;
 
   if (!parsedData.success) {
-    return <ParseReponseErrorView errorMessage={parsedData.error} />;
+    return <ParseResponseErrorView errorMessage={parsedData.error} />;
   }
 
   return (
@@ -32,7 +37,7 @@ const RankingTableSection = async () => {
       ])}
       result={result}
     >
-      <RankingTableView {...parsedData.data} />
+      <RankingTableView className={className} {...parsedData.data} />
     </SWRProvider>
   );
 };

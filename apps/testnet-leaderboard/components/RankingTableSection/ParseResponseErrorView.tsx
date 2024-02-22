@@ -9,7 +9,7 @@ type Props = {
   errorMessage?: string;
 };
 
-const ParseReponseErrorView: FC<Props> = ({ errorMessage }) => {
+const ParseResponseErrorView: FC<Props> = ({ errorMessage }) => {
   return (
     <Typography variant="mkt-body2" fw="semibold" ta="center">
       {typeof errorMessage === 'string' && errorMessage.length > 0 ? (
@@ -33,4 +33,4 @@ const ParseReponseErrorView: FC<Props> = ({ errorMessage }) => {
   );
 };
 
-export default ParseReponseErrorView;
+export default ParseResponseErrorView;
