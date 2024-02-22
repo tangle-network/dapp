@@ -14,7 +14,12 @@ export interface TimeProgressProps extends WebbComponentBase {
   endTime: Date | string | null;
 
   /**
-   * Coustome time object
+   * Custom time object
    * */
   now?: ISubQlTime;
+
+  /**
+   * The className to override the style of the labels (optional)
+   */
+  labelClassName?: string;
 }

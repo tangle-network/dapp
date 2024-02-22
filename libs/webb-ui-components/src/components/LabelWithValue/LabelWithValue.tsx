@@ -33,7 +33,11 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
     ref
   ) => {
     const mergedClsx = useMemo(
-      () => twMerge('flex items-center space-x-1', className),
+      () =>
+        twMerge(
+          'flex items-center space-x-1 text-mono-140 dark:text-mono-80',
+          className
+        ),
       [className]
     );
     return (
@@ -42,7 +46,7 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
           <Label
             hidden={isHiddenLabel}
             className={cx(
-              'text-mono-140 dark:text-mono-80',
+              '!text-inherit',
               getFontWeightClassName(valueVariant, valueFontWeight),
               labelVariant,
               isHiddenLabel && 'hidden'
@@ -57,7 +61,10 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
             <Typography
               component="span"
               variant={valueVariant}
-              className={getFontWeightClassName(valueVariant, valueFontWeight)}
+              className={cx(
+                '!text-inherit',
+                getFontWeightClassName(valueVariant, valueFontWeight)
+              )}
             >
               {value.toString()}
             </Typography>

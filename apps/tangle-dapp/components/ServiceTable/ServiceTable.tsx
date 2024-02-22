@@ -30,12 +30,12 @@ const columns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={getChipColorByRoleType(props.row.original.roleType)}>
+      <Chip color={getChipColorByRoleType(props.getValue())}>
         {props.getValue()}
       </Chip>
     ),
   }),
-  columnHelper.accessor('initialJobId', {
+  columnHelper.accessor('id', {
     header: () => (
       <HeaderCell title="Initial Job Id" className="justify-start" />
     ),
@@ -102,10 +102,10 @@ const columns = [
       <StringCell value={`${props.getValue()}`} className="text-center" />
     ),
   }),
-  columnHelper.accessor('initialJobId', {
+  columnHelper.accessor('id', {
     header: () => null,
     cell: (props) => (
-      <Link href={`/services/${props.row.original.initialJobId}`}>
+      <Link href={`/services/${props.row.original.id}`}>
         <Button variant="link" size="sm" className="mx-auto">
           DETAILS
         </Button>
