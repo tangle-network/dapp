@@ -171,7 +171,7 @@ export default function Page() {
           {claimInfo === null ? (
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 5,000,000 {TANGLE_TOKEN_UNIT} tokens to the
+              distributing 4 million {TANGLE_TOKEN_UNIT} tokens to the
               community. Check eligibility below to see if you qualify for{' '}
               {TANGLE_TOKEN_UNIT} Airdrop!
             </>
