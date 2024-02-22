@@ -1,5 +1,5 @@
 import RankingTableSection from '../../../components/RankingTableSection';
 
 export default function Embed() {
-  return <RankingTableSection />;
+  return <RankingTableSection className="p-1" />;
 }

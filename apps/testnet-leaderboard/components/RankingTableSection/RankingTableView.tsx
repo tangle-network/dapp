@@ -13,6 +13,7 @@ import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
+import { twMerge } from 'tailwind-merge';
 
 import { BadgeEnum } from '../../types';
 import BadgesCell from './BadgesCell';
@@ -89,7 +90,9 @@ const getColumns = (pageIndex: number, pageSize: number) => [
   }),
 ];
 
-type Props = LeaderboardSuccessResponseType['data'];
+type Props = LeaderboardSuccessResponseType['data'] & {
+  className?: string;
+};
 
 const participantToRankingItem = (participant: ParticipantType, idx: number) =>
   ({
@@ -112,6 +115,7 @@ const RankingTableView: FC<Props> = ({
   limit: defaultLimit,
   skip: defaultSkip,
   total: defaultTotal,
+  className,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -195,7 +199,7 @@ const RankingTableView: FC<Props> = ({
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div className={twMerge('flex flex-col gap-4 h-full', className)}>
       <div className="flex items-center justify-between">
         <Typography variant="mkt-body2" fw="black">
           Latest ranking:

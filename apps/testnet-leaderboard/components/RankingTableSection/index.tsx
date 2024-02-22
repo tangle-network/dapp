@@ -10,7 +10,11 @@ import SWRProvider from './SWRProvider';
 
 const logger = LoggerService.get('RankingTableSection');
 
-const RankingTableSection: FC = async () => {
+type Props = {
+  className?: string;
+};
+
+const RankingTableSection: FC<Props> = async ({ className }) => {
   const result = await fetchLeaderboardData();
 
   if (!result.success) {
@@ -33,7 +37,7 @@ const RankingTableSection: FC = async () => {
       ])}
       result={result}
     >
-      <RankingTableView {...parsedData.data} />
+      <RankingTableView className={className} {...parsedData.data} />
     </SWRProvider>
   );
 };
