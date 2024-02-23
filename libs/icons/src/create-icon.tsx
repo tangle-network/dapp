@@ -2,7 +2,12 @@ import React, { Children } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { IconBase } from './types';
-import { getFillColor, getIconSizeInPixel, getStrokeColor } from './utils';
+import {
+  getFillColor,
+  getIconSizeInPixel,
+  getMinSizeClassName,
+  getStrokeColor,
+} from './utils';
 
 interface CreateIconOptions extends IconBase {
   /**
@@ -62,7 +67,7 @@ export function createIcon(options: CreateIconOptions) {
   // Prevent the icon from being squished when the parent
   // container or the window is small. Width & height attributes
   // are not enough to prevent squishing, so this must be set.
-  const minSizeClassName = `min-w-${size_} min-h-${size_}`;
+  const minSizeClassName = getMinSizeClassName(size);
 
   const Comp: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
