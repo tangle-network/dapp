@@ -2,7 +2,12 @@ import React, { Children } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { IconBase } from './types';
-import { getFillColor, getIconSizeInPixel, getStrokeColor } from './utils';
+import {
+  getFillColor,
+  getIconSizeInPixel,
+  getMinSizeClassName,
+  getStrokeColor,
+} from './utils';
 
 interface CreateIconOptions extends IconBase {
   /**
@@ -51,28 +56,36 @@ export function createIcon(options: CreateIconOptions) {
     colorUsingStroke = false,
     ...restOptions
   } = options;
-  const _path = Children.toArray(path);
-  const _size = getIconSizeInPixel(size);
 
-  const _className = colorUsingStroke
+  const path_ = Children.toArray(path);
+  const size_ = getIconSizeInPixel(size);
+
+  const className_ = colorUsingStroke
     ? getStrokeColor(darkMode)
     : getFillColor(darkMode);
+
+  // Prevent the icon from being squished when the parent
+  // container or the window is small. Width & height attributes
+  // are not enough to prevent squishing, so this must be set.
+  const minSizeClassName = getMinSizeClassName(size);
 
   const Comp: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
       viewBox={viewBox}
-      width={_size}
-      height={_size}
+      width={size_}
+      height={size_}
+      style={{ minWidth: size_, minHeight: size_ }}
       className={twMerge(
-        _className,
+        className_,
         colorUsingStroke ? 'fill-transparent' : 'stroke-transparent',
+        minSizeClassName,
         className
       )}
       {...restOptions}
       {...defaultProps}
       {...props}
     >
-      {_path.length ? _path : <path fill="inherit" d={pathDefinition} />}
+      {path_.length ? path_ : <path fill="inherit" d={pathDefinition} />}
     </svg>
   );
 

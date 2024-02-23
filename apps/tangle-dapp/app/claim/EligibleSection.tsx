@@ -35,18 +35,24 @@ enum Step {
   SendingTx,
 }
 
-const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
+type Props = {
+  claimInfo: ClaimInfoType;
+  onClaimCompleted: (accountAddress: string) => void;
+};
+
+const EligibleSection: FC<Props> = ({
+  claimInfo: { amount, isRegularStatement },
+  onClaimCompleted,
+}) => {
   const { activeAccount, activeApi, activeWallet } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
-
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
-
   const [step, setStep] = useState(Step.InputAddress);
 
   // Validate recipient input address after 500 ms
@@ -112,9 +118,11 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
       );
 
       const hash = await sendTransaction(tx);
-
       const newSearchParams = new URLSearchParams(searchParams.toString());
+
       newSearchParams.set('h', hash);
+      onClaimCompleted(accountId);
+
       router.push(`claim/success?${newSearchParams.toString()}`, {
         scroll: true,
       });
@@ -155,13 +163,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
           />
         </div>
 
-        <div
-          className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)]"
-          style={{
-            backgroundColor:
-              'linear-gradient(180deg,rgba(255, 255, 255, 0.8) 0.18%,rgba(255, 255, 255, 0) 146.88%)',
-          }}
-        >
+        <div className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
             You will receive...
           </Typography>

@@ -9,37 +9,12 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type FC, useEffect, useMemo } from 'react';
+import { type FC, useMemo } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../../constants';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import useLocalStorage, {
-  LocalStorageKey,
-} from '../../../hooks/useLocalStorage';
 
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   const { apiConfig } = useWebContext();
-  const activeAccountAddress = useActiveAccountAddress();
-
-  const { setWithPreviousValue: setAirdropEligibilityCache } = useLocalStorage(
-    LocalStorageKey.AirdropEligibilityCache
-  );
-
-  // Mark active account address as no longer eligible in the
-  // local storage after claiming the airdrop.
-  useEffect(() => {
-    // There should be an active account address right after claiming
-    // the airdrop and being redirected to this page, but just in case
-    // that there isn't, simply don't update the cache.
-    if (activeAccountAddress === null) {
-      return;
-    }
-
-    setAirdropEligibilityCache((previous) => ({
-      ...previous,
-      [activeAccountAddress]: false,
-    }));
-  }, [activeAccountAddress, setAirdropEligibilityCache]);
 
   const txExplorerUrl = useMemo(() => {
     if (!blockHash) return null;

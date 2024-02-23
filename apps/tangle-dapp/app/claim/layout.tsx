@@ -7,7 +7,7 @@ import faqItems from '../../constants/faq';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <AppTemplate.Root>
+    <AppTemplate.Root className="bg-glass dark:bg-glass_dark">
       {children}
 
       <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
