@@ -20,7 +20,7 @@ import { FC } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import type { Service } from '../../types';
-import { getChipColorByRoleType } from '../../utils';
+import { getChipColorByServiceType } from '../../utils';
 import { HeaderCell, StringCell } from '../tableCells';
 import type { ServiceTableProps } from './types';
 
@@ -30,7 +30,7 @@ const columns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={getChipColorByRoleType(props.getValue())}>
+      <Chip color={getChipColorByServiceType(props.getValue())}>
         {props.getValue()}
       </Chip>
     ),

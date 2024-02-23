@@ -4,9 +4,9 @@ import { ServiceType } from '../types';
 
 // TODO: update this to match the actual service types
 export default function getChipColorByServiceType(
-  roleType: ServiceType
+  serviceType: ServiceType
 ): ChipColors {
-  switch (roleType) {
+  switch (serviceType) {
     case ServiceType.ZK_SAAS_GROTH16:
     case ServiceType.ZK_SAAS_MARLIN:
       return 'blue';
