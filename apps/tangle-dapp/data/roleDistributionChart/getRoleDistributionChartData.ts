@@ -6,10 +6,10 @@ export default async function getRoleDistributionChartData(): Promise<
   ProportionPieChartItem[]
 > {
   const data = [
-    { name: ServiceType.ZK_SAAS_GROTH16, value: 400 },
-    { name: ServiceType.ZK_SAAS_MARLIN, value: 300 },
-    { name: ServiceType.TX_RELAY, value: 300 },
-    { name: ServiceType.DKG_TSS_CGGMP, value: 200 },
+    { name: ServiceType.ZK_SAAS_GROTH16, value: 4000 },
+    { name: ServiceType.ZK_SAAS_MARLIN, value: 3000 },
+    { name: ServiceType.TX_RELAY, value: 3000 },
+    { name: ServiceType.DKG_TSS_CGGMP, value: 2000 },
   ];
 
   return data.map((role) => {

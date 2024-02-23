@@ -1,6 +1,9 @@
 'use client';
 
-import { Typography } from '@webb-tools/webb-ui-components';
+import {
+  getRoundedAmountString,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
@@ -46,7 +49,10 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
             fw="bold"
             className="text-mono-200 dark:text-mono-0"
           >
-            {data.reduce((acc, item) => acc + item.value, 0)} {unit}
+            {getRoundedAmountString(
+              data.reduce((acc, item) => acc + item.value, 0)
+            )}{' '}
+            {unit}
           </Typography>
         )}
       </div>

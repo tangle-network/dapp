@@ -1,4 +1,7 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import {
+  getRoundedAmountString,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { TooltipProps } from 'recharts';
 import {
   NameType,
@@ -15,13 +18,19 @@ const ChartTooltip = <TValue extends ValueType, TName extends NameType>({
 
   return (
     <ul className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80">
-      {payload.map((entry) => (
-        <li key={entry.name}>
-          <Typography variant="body2" fw="semibold">
-            {entry.name}: {entry.value}
-          </Typography>
-        </li>
-      ))}
+      {payload.map((entry) => {
+        const { name, value } = entry;
+        return (
+          <li key={entry.name}>
+            <Typography variant="body2" fw="semibold">
+              {name}:{' '}
+              {typeof value === 'number' && value >= 10000
+                ? getRoundedAmountString(value)
+                : value}
+            </Typography>
+          </li>
+        );
+      })}
     </ul>
   );
 };
