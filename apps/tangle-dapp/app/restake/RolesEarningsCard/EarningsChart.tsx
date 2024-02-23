@@ -12,7 +12,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import ChartTooltip from '../../../components/ChartTooltip';
+import ChartTooltip from '../../../components/charts/ChartTooltip';
 import { ServiceType } from '../../../types';
 
 const randNum = () => randNumber({ min: 1000, max: 4000, precision: 100 });
