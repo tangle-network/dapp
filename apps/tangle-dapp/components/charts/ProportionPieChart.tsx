@@ -11,7 +11,7 @@ import type { ProportionPieChartProps } from './types';
 const ProportionPieChart: FC<ProportionPieChartProps> = ({
   data,
   title,
-  calculateTotal = false,
+  showTotal = false,
   unit,
 }) => {
   return (
@@ -35,13 +35,18 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
 
       <div
         className={twMerge(
-          'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] space-y-2'
+          'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]',
+          'flex flex-col items-center gap-1'
         )}
       >
         {title && <Typography variant="body2">{title}</Typography>}
-        {calculateTotal && (
-          <Typography variant="h4" fw="bold">
-            Total: {data.reduce((acc, item) => acc + item.value, 0)} {unit}
+        {showTotal && (
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {data.reduce((acc, item) => acc + item.value, 0)} {unit}
           </Typography>
         )}
       </div>

@@ -7,6 +7,6 @@ export type ProportionPieChartItem = {
 export interface ProportionPieChartProps {
   data: ProportionPieChartItem[];
   title?: string;
-  calculateTotal?: boolean;
+  showTotal?: boolean;
   unit?: string;
 }

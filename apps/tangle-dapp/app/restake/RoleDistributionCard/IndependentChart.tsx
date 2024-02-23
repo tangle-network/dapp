@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { ProportionPieChart } from '../../../components/charts';
 import type { ProportionPieChartItem } from '../../../components/charts/types';
+import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributionChart';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 
@@ -22,7 +23,12 @@ const IndependentChart = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <ProportionPieChart data={data} />
+      <ProportionPieChart
+        data={data}
+        title="Restaked"
+        showTotal
+        unit={TANGLE_TOKEN_UNIT}
+      />
     </div>
   );
 };
