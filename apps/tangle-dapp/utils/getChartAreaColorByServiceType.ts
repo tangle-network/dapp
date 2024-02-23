@@ -1,5 +1,6 @@
 import { ServiceType } from '../types';
 
+// TODO: update this to match the actual service types
 export default function getChartDataAreaColorByServiceType(
   serviceType: ServiceType
 ) {

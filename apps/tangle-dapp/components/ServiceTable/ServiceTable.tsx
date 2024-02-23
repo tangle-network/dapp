@@ -103,6 +103,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('id', {
+    id: 'details',
     header: () => null,
     cell: (props) => (
       <Link href={`/services/${props.row.original.id}`}>

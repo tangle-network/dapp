@@ -1,10 +1,17 @@
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import dynamic from 'next/dynamic';
 import { twMerge } from 'tailwind-merge';
 
-import { ProportionPieChart } from '../../components/charts';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { getRoleDistributionChartData } from '../../data/roleDistributionChart';
+
+const ProportionPieChart = dynamic(
+  () => import('../../components/charts/ProportionPieChart'),
+  {
+    ssr: false,
+  }
+);
 
 interface RoleDistributionCardProps {
   className?: string;
@@ -21,13 +28,15 @@ const RoleDistributionCard = async ({
         Role Distribution
       </Typography>
 
-      <div className="flex items-center justify-center">
-        <ProportionPieChart
-          data={data}
-          title="Total:"
-          showTotal
-          unit={TANGLE_TOKEN_UNIT}
-        />
+      <div className="min-h-[200px]">
+        <div className="h-full flex items-center justify-center">
+          <ProportionPieChart
+            data={data}
+            title="Total:"
+            showTotal
+            unit={TANGLE_TOKEN_UNIT}
+          />
+        </div>
       </div>
     </GlassCard>
   );

@@ -33,7 +33,7 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
           ))}
         </Pie>
 
-        <Tooltip content={ChartTooltip} />
+        <Tooltip content={ChartTooltip} wrapperStyle={{ zIndex: 100 }} />
       </PieChart>
 
       <div
