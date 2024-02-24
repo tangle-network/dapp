@@ -29,7 +29,7 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
           dataKey="value"
         >
           {data.map((item, index) => (
-            <Cell key={`cell-${index}`} fill={item.color} />
+            <Cell key={`cell-${index}`} fill={item.color} stroke="none" />
           ))}
         </Pie>
 
