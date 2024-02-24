@@ -57,3 +57,8 @@ export const serviceTypeToChipColor = {
   [ServiceType.ZK_SAAS_GROTH16]: 'blue',
   [ServiceType.ZK_SAAS_MARLIN]: 'yellow',
 } as const satisfies Record<ServiceType, ChipColors>;
+
+export enum StaticAssetPath {
+  RestakingMethodIndependent = '/static/assets/restaking-method-independent.svg',
+  RestakingMethodShared = '/static/assets/restaking-method-shared.svg',
+}
