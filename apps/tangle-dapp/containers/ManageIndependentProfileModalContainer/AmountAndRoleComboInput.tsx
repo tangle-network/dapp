@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from '@webb-tools/icons';
 import {
@@ -8,20 +9,35 @@ import {
   InputWrapper,
   Label,
 } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { ServiceType } from '../../types';
 
 export type AmountAndRoleComboInputProps = {
+  role: ServiceType | null;
   title: string;
   id: string;
+  onChange?: (newAmount: BN) => void;
+  setRole: (role: ServiceType) => void;
 };
 
 const AmountAndRoleComboInput: FC<AmountAndRoleComboInputProps> = ({
   title,
   id,
+  onChange,
+  role,
+  setRole,
 }) => {
   const [amount, setAmount] = useState('');
+
+  const handleAmountChange = (newValue: string) => {
+    setAmount(newValue);
+
+    if (onChange) {
+      onChange(new BN(newValue));
+    }
+  };
 
   return (
     <InputWrapper className="flex gap-2 dark:bg-mono-160 cursor-default">
@@ -36,7 +52,7 @@ const AmountAndRoleComboInput: FC<AmountAndRoleComboInputProps> = ({
           value={amount}
           type="number"
           inputMode="numeric"
-          onChange={(amount) => setAmount(amount)}
+          onChange={handleAmountChange}
           placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
           size="sm"
           autoComplete="off"
