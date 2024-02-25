@@ -9,27 +9,41 @@ import {
 import { FC, ReactNode, useEffect, useState } from 'react';
 
 import useIsMountedRef from '../../hooks/useIsMountedRef';
+import { ServiceType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
+import ConfirmAllocationsStep from './ConfirmAllocationsStep';
 import IndependentAllocationStep from './IndependentAllocationStep';
-import { ManageProfileModalContainerProps } from './types';
+import {
+  ManageProfileModalContainerProps,
+  RestakingAllocationMap,
+} from './types';
 
 export enum RestakingMethod {
   Independent,
   Shared,
 }
 
+/**
+ * The steps in the manage profile modal.
+ *
+ * @remarks
+ * The order of the steps is important, as it determines
+ * the flow of the modal.
+ */
 enum Step {
   ChooseMethod,
   Allocation,
+  ConfirmAllocations,
 }
 
-function getNextStep(currentStep: Step): Step | null {
-  switch (currentStep) {
-    case Step.ChooseMethod:
-      return Step.Allocation;
-    case Step.Allocation:
-      return null;
+function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
+  const difference = isNext ? 1 : -1;
+
+  if (Object.values(Step).includes(currentStep + difference)) {
+    return currentStep + difference;
   }
+
+  return null;
 }
 
 function getStepTitle(step: Step, method: RestakingMethod): string {
@@ -42,6 +56,8 @@ function getStepTitle(step: Step, method: RestakingMethod): string {
 
       return `Manage ${profileKindString} Profile`;
     }
+    case Step.ConfirmAllocations:
+      return 'Review and Confirm Your Allocations:';
   }
 }
 
@@ -51,15 +67,30 @@ function getStepNextButtonLabel(step: Step): string {
       return 'Next';
     case Step.Allocation:
       return 'Confirm';
+    case Step.ConfirmAllocations:
+      return 'Confirm and Proceed';
   }
 }
 
-function getStepDescription(step: Step): string {
+function getStepPreviousButtonLabel(step: Step): string {
+  switch (step) {
+    case Step.ChooseMethod:
+      return "What's the Difference?";
+    case Step.Allocation:
+      return 'Back';
+    case Step.ConfirmAllocations:
+      return 'Go Back and Edit';
+  }
+}
+
+function getStepDescription(step: Step): string | null {
   switch (step) {
     case Step.ChooseMethod:
       return 'To participate in MPC services, allocate your staked TNT tokens using one of the available restaking methods. Your choice determines your risk allocation strategy. Would you like to restake as independent or shared?';
     case Step.Allocation:
       return 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.';
+    case Step.ConfirmAllocations:
+      return null;
   }
 }
 
@@ -72,13 +103,29 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const isMountedRef = useIsMountedRef();
   let stepContents: ReactNode;
 
+  const [allocations, setAllocations] = useState<RestakingAllocationMap>({
+    [ServiceType.DKG_TSS_CGGMP]: null,
+    [ServiceType.TX_RELAY]: null,
+    [ServiceType.ZK_SAAS_GROTH16]: null,
+    [ServiceType.ZK_SAAS_MARLIN]: null,
+  });
+
   switch (step) {
     case Step.ChooseMethod:
       stepContents = <ChooseMethodStep method={method} setMethod={setMethod} />;
       break;
     case Step.Allocation:
-      stepContents = <IndependentAllocationStep />;
+      stepContents = (
+        <IndependentAllocationStep
+          allocations={allocations}
+          setAllocations={setAllocations}
+        />
+      );
       break;
+    case Step.ConfirmAllocations:
+      stepContents = (
+        <ConfirmAllocationsStep method={method} allocations={allocations} />
+      );
   }
 
   const closeModal = () => {
@@ -86,7 +133,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   };
 
   const handleNextStep = () => {
-    const nextStep = getNextStep(step);
+    const nextStep = getStepDiff(step, true);
 
     // Have reached the end. Close the modal.
     if (nextStep === null) {
@@ -115,6 +162,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     return () => clearTimeout(timeoutHandle);
   }, [isModalOpen, isMountedRef]);
 
+  const stepDescription = getStepDescription(step);
+  const previousStep = getStepDiff(step, false);
+
   return (
     <Modal open>
       <ModalContent
@@ -131,9 +181,11 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         </ModalHeader>
 
         <div className="flex flex-col gap-4 p-9">
-          <Typography variant="body2" fw="normal">
-            {getStepDescription(step)}
-          </Typography>
+          {stepDescription !== null && (
+            <Typography variant="body2" fw="normal">
+              stepDescription
+            </Typography>
+          )}
 
           {stepContents}
         </div>
@@ -144,8 +196,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             variant="secondary"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => setStep(previousStep ?? Step.ChooseMethod)}
           >
-            What&apos;s the difference?
+            {getStepPreviousButtonLabel(step)}
           </Button>
 
           <Button

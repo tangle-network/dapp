@@ -9,7 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
-import { FC, useMemo, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 
 import { INDEPENDENT_CHART_COLORS } from '../../app/restake/RoleDistributionCard/IndependentChart';
@@ -20,6 +20,7 @@ import { ServiceType } from '../../types';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import { formatTokenBalance } from '../../utils/polkadot';
 import AllocationInput from './AllocationInput';
+import { RestakingAllocationMap } from './types';
 
 function getPercentageOfTotal(amount: BN, total: BN): number {
   // Default to 100% if the total is 0, to avoid division by zero.
@@ -37,7 +38,15 @@ type AllocationDataEntry = {
   value: number;
 };
 
-const IndependentAllocationStep: FC = () => {
+export type IndependentAllocationStepProps = {
+  allocations: RestakingAllocationMap;
+  setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
+};
+
+const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
+  allocations,
+  setAllocations,
+}) => {
   const { transferrable: transferrableBalance } = useBalances();
   const themeProps = useTheme();
   const themeCellColor = themeProps.theme === 'dark' ? '#3A3E53' : '#8884d8';
@@ -51,15 +60,6 @@ const IndependentAllocationStep: FC = () => {
 
   // TODO: Need to load initial restaked amount from Polkadot API. For now, it's hardcoded to 0. Will likely need a `useEffect` hook for this, since it requires an active account.
   const [restakedAmount, setRestakedAmount] = useState(convertToChainUnits(0));
-
-  const [allocations, setAllocations] = useState<
-    Record<ServiceType, BN | null>
-  >({
-    [ServiceType.DKG_TSS_CGGMP]: null,
-    [ServiceType.TX_RELAY]: null,
-    [ServiceType.ZK_SAAS_GROTH16]: null,
-    [ServiceType.ZK_SAAS_MARLIN]: null,
-  });
 
   const data: AllocationDataEntry[] = [
     {
