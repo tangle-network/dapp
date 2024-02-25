@@ -13,7 +13,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useState } from 'react';
 
-import ManageIndependentProfileModalContainer from '../../../containers/ManageIndependentProfileModalContainer/ManageIndependentProfileModalContainer';
+import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
 
 const ActionButton = () => {
   const { loading, isConnecting, activeAccount, activeWallet } =
@@ -47,7 +47,7 @@ const ActionButton = () => {
           Manage Profile
         </Button>
 
-        <ManageIndependentProfileModalContainer
+        <ManageProfileModalContainer
           isModalOpen={isManageProfileModalOpen}
           setIsModalOpen={setIsManageProfileModalOpen}
         />

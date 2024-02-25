@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { useTheme } from 'next-themes';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
@@ -18,7 +18,7 @@ import convertToChainUnits from '../../utils/convertToChainUnits';
 import { formatTokenBalance } from '../../utils/polkadot';
 import AmountAndRoleComboInput from './AmountAndRoleComboInput';
 
-const AllocationStep: FC = () => {
+const IndependentAllocationStep: FC = () => {
   const { transferrable: transferrableBalance } = useBalances();
   const themeProps = useTheme();
   const themeCellColor = themeProps.theme === 'dark' ? '#3A3E53' : '#8884d8';
@@ -67,6 +67,31 @@ const AllocationStep: FC = () => {
 
     setRestakedAmount(newRestakedAmount);
     setNewAllocationRole(null);
+    setNewAllocationAmount(new BN(0));
+  };
+
+  const handleClearAllocations = () => {
+    setAllocations({
+      [ServiceType.DKG_TSS_CGGMP]: null,
+      [ServiceType.TX_RELAY]: null,
+      [ServiceType.ZK_SAAS_GROTH16]: null,
+      [ServiceType.ZK_SAAS_MARLIN]: null,
+    });
+
+    setRestakedAmount(convertToChainUnits(0));
+  };
+
+  const handleDeallocation = (role: ServiceType) => {
+    const deallocatedAmount = allocations[role] ?? new BN(0);
+
+    setRestakedAmount((restakedAmount) =>
+      restakedAmount.sub(deallocatedAmount)
+    );
+
+    setAllocations((prev) => ({
+      ...prev,
+      [role]: null,
+    }));
   };
 
   const isNewAllocationAmountValid = (() => {
@@ -82,6 +107,12 @@ const AllocationStep: FC = () => {
     return newAllocationAmount.lte(amountRemaining);
   })();
 
+  const availableRoles = useMemo(() => {
+    return Object.entries(allocations)
+      .filter((entry) => entry[1] === null)
+      .map(([role]) => role as ServiceType);
+  }, [allocations]);
+
   return (
     <div className="flex gap-5 items-start justify-center">
       <div className="flex flex-col gap-4 items-end justify-start min-w-max">
@@ -89,31 +120,52 @@ const AllocationStep: FC = () => {
           .filter((entry) => entry[1] !== null)
           .map(([role, amount]) => (
             <AmountAndRoleComboInput
+              initialAmount={amount ?? new BN(0)}
+              isDisabled
               key={role}
               title="Total Restake"
               id={`manage-profile-allocation-${role}`}
+              availableRoles={availableRoles}
               role={role as ServiceType}
               setRole={setNewAllocationRole}
+              hasDeleteButton
+              onDelete={handleDeallocation}
             />
           ))}
 
-        <AmountAndRoleComboInput
-          title="Total Restake"
-          id="role1"
-          role={newAllocationRole}
-          setRole={setNewAllocationRole}
-          onChange={setNewAllocationAmount}
-        />
+        {availableRoles.length > 0 && (
+          <>
+            <AmountAndRoleComboInput
+              title="Total Restake"
+              id="role1"
+              availableRoles={availableRoles}
+              role={newAllocationRole}
+              setRole={setNewAllocationRole}
+              onChange={setNewAllocationAmount}
+            />
 
-        <Button
-          size="sm"
-          variant="utility"
-          className="uppercase"
-          onClick={handleNewAllocation}
-          isDisabled={!isNewAllocationAmountValid}
-        >
-          Add Allocation
-        </Button>
+            <Button
+              size="sm"
+              variant="utility"
+              className="uppercase"
+              onClick={handleNewAllocation}
+              isDisabled={!isNewAllocationAmountValid}
+            >
+              Add Allocation
+            </Button>
+          </>
+        )}
+
+        {restakedAmount.gtn(0) && (
+          <Button
+            size="sm"
+            variant="utility"
+            className="uppercase"
+            onClick={handleClearAllocations}
+          >
+            Clear All Allocations
+          </Button>
+        )}
       </div>
 
       <div className="relative flex items-center justify-center w-full">
@@ -176,4 +228,4 @@ const AllocationStep: FC = () => {
   );
 };
 
-export default AllocationStep;
+export default IndependentAllocationStep;

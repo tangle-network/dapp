@@ -4,7 +4,7 @@ import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StaticAssetPath } from '../../constants/index';
-import { RestakingMethod } from './ManageIndependentProfileModalContainer';
+import { RestakingMethod } from './ManageProfileModalContainer';
 
 export type ChooseMethodStepProps = {
   method: RestakingMethod;

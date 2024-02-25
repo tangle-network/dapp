@@ -9,9 +9,9 @@ import {
 import { FC, ReactNode, useEffect, useState } from 'react';
 
 import useIsMountedRef from '../../hooks/useIsMountedRef';
-import AllocationStep from './AllocationStep';
 import ChooseMethodStep from './ChooseMethodStep';
-import { ManageIndependentProfileModalContainerProps } from './types';
+import IndependentAllocationStep from './IndependentAllocationStep';
+import { ManageProfileModalContainerProps } from './types';
 
 export enum RestakingMethod {
   Independent,
@@ -63,9 +63,10 @@ function getStepDescription(step: Step): string {
   }
 }
 
-const ManageIndependentProfileModalContainer: FC<
-  ManageIndependentProfileModalContainerProps
-> = ({ isModalOpen, setIsModalOpen }) => {
+const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
+  isModalOpen,
+  setIsModalOpen,
+}) => {
   const [method, setMethod] = useState(RestakingMethod.Independent);
   const [step, setStep] = useState(Step.ChooseMethod);
   const isMountedRef = useIsMountedRef();
@@ -76,7 +77,7 @@ const ManageIndependentProfileModalContainer: FC<
       stepContents = <ChooseMethodStep method={method} setMethod={setMethod} />;
       break;
     case Step.Allocation:
-      stepContents = <AllocationStep />;
+      stepContents = <IndependentAllocationStep />;
       break;
   }
 
@@ -162,4 +163,4 @@ const ManageIndependentProfileModalContainer: FC<
   );
 };
 
-export default ManageIndependentProfileModalContainer;
+export default ManageProfileModalContainer;
