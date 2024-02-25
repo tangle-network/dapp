@@ -7,40 +7,50 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { useTheme } from 'next-themes';
 import { FC, useMemo, useState } from 'react';
-import { Cell, Pie, PieChart } from 'recharts';
+import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 
+import { INDEPENDENT_CHART_COLORS } from '../../app/restake/RoleDistributionCard/IndependentChart';
+import BnChartTooltip from '../../components/BnChartTooltip';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import { ServiceType } from '../../types';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import { formatTokenBalance } from '../../utils/polkadot';
-import AmountAndRoleComboInput from './AmountAndRoleComboInput';
+import AllocationInput from './AllocationInput';
+
+function getPercentageOfTotal(amount: BN, total: BN): number {
+  // Default to 100% if the total is 0, to avoid division by zero.
+  if (total.isZero()) {
+    return 1;
+  }
+
+  // It's safe to convert to a number here, since the
+  // value will always be fraction between 0 and 1.
+  return amount.mul(new BN(100)).div(total).toNumber() / 100;
+}
+
+type AllocationDataEntry = {
+  name: string;
+  value: number;
+};
 
 const IndependentAllocationStep: FC = () => {
   const { transferrable: transferrableBalance } = useBalances();
   const themeProps = useTheme();
   const themeCellColor = themeProps.theme === 'dark' ? '#3A3E53' : '#8884d8';
-  const [newAllocationAmount, setNewAllocationAmount] = useState(new BN(0));
+
+  const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
+    null
+  );
 
   const [newAllocationRole, setNewAllocationRole] =
     useState<ServiceType | null>(null);
 
   // TODO: Need to load initial restaked amount from Polkadot API. For now, it's hardcoded to 0. Will likely need a `useEffect` hook for this, since it requires an active account.
   const [restakedAmount, setRestakedAmount] = useState(convertToChainUnits(0));
-
-  const usedRatio =
-    transferrableBalance === null
-      ? 0
-      : // It's safe to convert to a number here, since the
-        // value will always be fraction between 0 and 1.
-        restakedAmount.muln(100).div(transferrableBalance).toNumber() / 100;
-
-  const data = [
-    { name: ['used'], value: usedRatio },
-    { name: ['remaining'], value: 1 - usedRatio },
-  ];
 
   const [allocations, setAllocations] = useState<
     Record<ServiceType, BN | null>
@@ -51,23 +61,41 @@ const IndependentAllocationStep: FC = () => {
     [ServiceType.ZK_SAAS_MARLIN]: null,
   });
 
+  const data: AllocationDataEntry[] = [
+    {
+      name: 'Remaining',
+      value:
+        1 -
+        getPercentageOfTotal(restakedAmount, transferrableBalance ?? new BN(0)),
+    },
+  ].concat(
+    Object.entries(allocations)
+      .filter((entry) => entry[1] !== null)
+      .map(([service, amount]) => ({
+        name: service,
+        // TODO: Fix bug: Result is `1`. Perhaps the amount isn't being converted to chain units properly?
+        value: getPercentageOfTotal(amount as BN, restakedAmount),
+      }))
+  );
+
   const amountRemaining = transferrableBalance?.sub(restakedAmount) ?? null;
 
   const handleNewAllocation = () => {
-    if (newAllocationRole === null) {
+    if (newAllocationRole === null || newAllocationAmount === null) {
       return;
     }
 
     setAllocations((prev) => ({
       ...prev,
-      [newAllocationRole]: restakedAmount,
+      [newAllocationRole]: newAllocationAmount,
     }));
 
-    const newRestakedAmount = restakedAmount.add(newAllocationAmount);
+    setRestakedAmount((restakedAmount) =>
+      restakedAmount.add(newAllocationAmount)
+    );
 
-    setRestakedAmount(newRestakedAmount);
     setNewAllocationRole(null);
-    setNewAllocationAmount(new BN(0));
+    setNewAllocationAmount(null);
   };
 
   const handleClearAllocations = () => {
@@ -81,8 +109,13 @@ const IndependentAllocationStep: FC = () => {
     setRestakedAmount(convertToChainUnits(0));
   };
 
-  const handleDeallocation = (role: ServiceType) => {
-    const deallocatedAmount = allocations[role] ?? new BN(0);
+  const handleDeallocation = (service: ServiceType) => {
+    const deallocatedAmount = allocations[service];
+
+    assert(
+      deallocatedAmount !== null,
+      'Deallocated amount should not be null because that would imply that during its allocation, it had no amount set'
+    );
 
     setRestakedAmount((restakedAmount) =>
       restakedAmount.sub(deallocatedAmount)
@@ -90,13 +123,14 @@ const IndependentAllocationStep: FC = () => {
 
     setAllocations((prev) => ({
       ...prev,
-      [role]: null,
+      [service]: null,
     }));
   };
 
   const isNewAllocationAmountValid = (() => {
     if (
       newAllocationRole === null ||
+      newAllocationAmount === null ||
       newAllocationAmount.isZero() ||
       amountRemaining === null ||
       amountRemaining.isZero()
@@ -110,7 +144,7 @@ const IndependentAllocationStep: FC = () => {
   const availableRoles = useMemo(() => {
     return Object.entries(allocations)
       .filter((entry) => entry[1] === null)
-      .map(([role]) => role as ServiceType);
+      .map(([service]) => service as ServiceType);
   }, [allocations]);
 
   return (
@@ -118,15 +152,15 @@ const IndependentAllocationStep: FC = () => {
       <div className="flex flex-col gap-4 items-end justify-start min-w-max">
         {Object.entries(allocations)
           .filter((entry) => entry[1] !== null)
-          .map(([role, amount]) => (
-            <AmountAndRoleComboInput
-              initialAmount={amount ?? new BN(0)}
+          .map(([service, amount]) => (
+            <AllocationInput
+              amount={amount}
               isDisabled
-              key={role}
+              key={service}
               title="Total Restake"
-              id={`manage-profile-allocation-${role}`}
+              id={`manage-profile-allocation-${service}`}
               availableRoles={availableRoles}
-              role={role as ServiceType}
+              service={service as ServiceType}
               setRole={setNewAllocationRole}
               hasDeleteButton
               onDelete={handleDeallocation}
@@ -135,12 +169,13 @@ const IndependentAllocationStep: FC = () => {
 
         {availableRoles.length > 0 && (
           <>
-            <AmountAndRoleComboInput
+            <AllocationInput
               title="Total Restake"
-              id="role1"
+              id="manage-profile-new-allocation"
               availableRoles={availableRoles}
-              role={newAllocationRole}
+              service={newAllocationRole}
               setRole={setNewAllocationRole}
+              amount={newAllocationAmount}
               onChange={setNewAllocationAmount}
             />
 
@@ -177,16 +212,31 @@ const IndependentAllocationStep: FC = () => {
                 innerRadius={65}
                 outerRadius={95}
                 stroke="none"
-                fill="#8884d8"
                 dataKey="value"
-                accumulate="sum"
-                startAngle={90}
-                endAngle={-270}
+                paddingAngle={5}
+                animationDuration={200}
               >
-                <Cell fill="#B8D6FF" />
+                <Cell key="Remaining" fill={themeCellColor} />
 
-                <Cell fill={themeCellColor} />
+                {data.map((_entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={
+                      INDEPENDENT_CHART_COLORS[
+                        index % INDEPENDENT_CHART_COLORS.length
+                      ]
+                    }
+                  />
+                ))}
               </Pie>
+
+              <RechartsTooltip
+                content={BnChartTooltip(
+                  allocations,
+                  transferrableBalance ?? new BN(0),
+                  restakedAmount
+                )}
+              />
             </PieChart>
           </TooltipTrigger>
 
@@ -202,7 +252,7 @@ const IndependentAllocationStep: FC = () => {
           </TooltipBody>
         </Tooltip>
 
-        <div className="absolute center flex flex-col justify-center items-center">
+        <div className="absolute center flex flex-col justify-center items-center z-[-1]">
           <Typography
             variant="body2"
             fw="normal"

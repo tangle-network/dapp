@@ -10,15 +10,15 @@ import {
 import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_DECIMALS, TANGLE_TOKEN_UNIT } from '../../constants';
 import { ServiceType } from '../../types';
 
-export type AmountAndRoleComboInputProps = {
+export type AllocationInputProps = {
+  amount: BN | null;
   availableRoles: ServiceType[];
-  role: ServiceType | null;
+  service: ServiceType | null;
   title: string;
   id: string;
-  initialAmount?: BN;
   isDisabled?: boolean;
   hasDeleteButton?: boolean;
   onDelete?: (role: ServiceType) => void;
@@ -40,27 +40,32 @@ export function getRoleChipColor(
   }
 }
 
-const AmountAndRoleComboInput: FC<AmountAndRoleComboInputProps> = ({
-  initialAmount,
+const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
+  new BN(TANGLE_TOKEN_DECIMALS)
+);
+
+const AllocationInput: FC<AllocationInputProps> = ({
+  amount = null,
   hasDeleteButton = false,
   isDisabled = false,
   availableRoles,
   title,
   id,
-  role,
+  service: role,
   onChange,
   setRole,
   onDelete,
 }) => {
-  const [amount, setAmount] = useState(initialAmount?.toString() ?? '');
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const handleAmountChange = useCallback(
     (newValue: string) => {
-      setAmount(newValue);
-
       if (onChange !== undefined) {
-        onChange(new BN(newValue));
+        const newAmountInChainUnits = new BN(newValue).mul(
+          CHAIN_UNIT_CONVERSION_FACTOR
+        );
+
+        onChange(newAmountInChainUnits);
       }
     },
     [onChange]
@@ -74,6 +79,9 @@ const AmountAndRoleComboInput: FC<AmountAndRoleComboInputProps> = ({
 
   const isDisabledCursorClassName = isDisabled ? '' : 'cursor-pointer';
   const isDisabledOpacityClassName = isDisabled ? 'opacity-50' : '';
+
+  const amountAsString =
+    amount?.div(CHAIN_UNIT_CONVERSION_FACTOR).toString() ?? '';
 
   return (
     <InputWrapper
@@ -90,7 +98,7 @@ const AmountAndRoleComboInput: FC<AmountAndRoleComboInputProps> = ({
         <Input
           id={id}
           className="placeholder:text-mono-0 text-mono-200"
-          value={amount}
+          value={amountAsString}
           type="number"
           inputMode="numeric"
           onChange={handleAmountChange}
@@ -159,4 +167,4 @@ const AmountAndRoleComboInput: FC<AmountAndRoleComboInputProps> = ({
   );
 };
 
-export default AmountAndRoleComboInput;
+export default AllocationInput;

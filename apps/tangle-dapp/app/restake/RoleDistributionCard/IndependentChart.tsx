@@ -12,7 +12,12 @@ const data = [
   { name: [ServiceType.DKG_TSS_CGGMP], value: 200 },
 ];
 
-const COLORS = ['#85DC8E', '#B8D6FF', '#E7E2FF', '#FFEAA6'];
+export const INDEPENDENT_CHART_COLORS = [
+  '#85DC8E',
+  '#B8D6FF',
+  '#E7E2FF',
+  '#FFEAA6',
+];
 
 const IndependentChart = () => {
   return (
@@ -27,7 +32,14 @@ const IndependentChart = () => {
           dataKey="value"
         >
           {data.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Cell
+              key={`cell-${index}`}
+              fill={
+                INDEPENDENT_CHART_COLORS[
+                  index % INDEPENDENT_CHART_COLORS.length
+                ]
+              }
+            />
           ))}
         </Pie>
 
