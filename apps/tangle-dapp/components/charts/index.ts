@@ -1,1 +1,2 @@
-export { default as ProportionPieChart } from './ProportionPieChart'; // apps/tangle-dapp/components/charts/ProportionPieChart.tsx
+export { default as ProportionPieChart } from './ProportionPieChart';
+export { default as RoleEarningsChart } from './RoleEarningsChart';

@@ -46,7 +46,7 @@ const ServiceKeyMetrics: FC = () => {
       className={twMerge(
         'w-full rounded-2xl overflow-hidden',
         'bg-glass dark:bg-glass_dark',
-        'border-2 border-mono-0 dark:border-mono-160'
+        'border border-mono-0 dark:border-mono-160'
       )}
     >
       <div
