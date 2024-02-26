@@ -114,10 +114,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const remainingDataEntry: AllocationDataEntry = {
     name: 'Remaining',
-    value: getPercentageOfTotal(
-      restakedAmount,
-      transferrableBalance ?? new BN(0)
-    ),
+    value:
+      1 -
+      getPercentageOfTotal(restakedAmount, transferrableBalance ?? new BN(0)),
   };
 
   const allocationDataEntries: AllocationDataEntry[] = cleanAllocations(
@@ -125,11 +124,10 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   ).map(([service, amount]) => ({
     name: service,
     // TODO: Fix bug: Result is `1`. Perhaps the amount isn't being converted to chain units properly?
-    value: getPercentageOfTotal(amount, restakedAmount),
+    value: getPercentageOfTotal(amount, transferrableBalance ?? new BN(1)),
   }));
 
   const data = [remainingDataEntry].concat(allocationDataEntries);
-  const amountRemaining = transferrableBalance?.sub(restakedAmount) ?? null;
 
   const handleNewAllocation = () => {
     if (newAllocationRole === null || newAllocationAmount === null) {
@@ -177,6 +175,8 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       [service]: null,
     }));
   };
+
+  const amountRemaining = transferrableBalance?.sub(restakedAmount) ?? null;
 
   const isNewAllocationAmountValid = (() => {
     if (
