@@ -183,7 +183,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         <div className="flex flex-col gap-4 p-9">
           {stepDescription !== null && (
             <Typography variant="body2" fw="normal">
-              stepDescription
+              {stepDescription}
             </Typography>
           )}
 
