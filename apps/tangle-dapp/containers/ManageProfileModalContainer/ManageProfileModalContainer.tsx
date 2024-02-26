@@ -12,7 +12,9 @@ import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { ServiceType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
-import IndependentAllocationStep from './IndependentAllocationStep';
+import IndependentAllocationStep, {
+  cleanAllocations,
+} from './IndependentAllocationStep';
 import {
   ManageProfileModalContainerProps,
   RestakingAllocationMap,
@@ -66,9 +68,9 @@ function getStepNextButtonLabel(step: Step): string {
     case Step.ChooseMethod:
       return 'Next';
     case Step.Allocation:
-      return 'Confirm';
+      return 'Review Changes';
     case Step.ConfirmAllocations:
-      return 'Confirm and Proceed';
+      return 'Confirm';
   }
 }
 
@@ -180,7 +182,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           {getStepTitle(step, method)}
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 p-9">
+        <div className="flex flex-col gap-4 px-9 py-3">
           {stepDescription !== null && (
             <Typography variant="body2" fw="normal">
               {stepDescription}

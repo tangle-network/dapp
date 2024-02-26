@@ -68,7 +68,7 @@ function getChartColor(
   }
 }
 
-function cleanAllocations(
+export function cleanAllocations(
   allocations: RestakingAllocationMap
 ): [ServiceType, BN][] {
   return Object.entries(allocations)

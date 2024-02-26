@@ -1,7 +1,12 @@
+import { BN } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
+import { ServiceType } from '../../types';
+import getChipColorByServiceType from '../../utils/getChipColorByServiceType';
+import { formatTokenBalance } from '../../utils/polkadot';
+import { cleanAllocations } from './IndependentAllocationStep';
 import { RestakingMethod } from './ManageProfileModalContainer';
 import { RestakingAllocationMap } from './types';
 
@@ -10,12 +15,62 @@ export type ConfirmAllocationsStepProps = {
   allocations: RestakingAllocationMap;
 };
 
-const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = () => {
+const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
+  method,
+  allocations,
+}) => {
+  const restakedAmount = cleanAllocations(allocations).reduce(
+    (acc, [, amount]) => acc.add(amount),
+    new BN(0)
+  );
+
+  const cleanedAllocations = cleanAllocations(allocations);
+
   return (
     <div className="flex flex-row gap-2 w-full">
-      <div className="dark:bg-mono-160 rounded-lg w-full p-3"></div>
+      <div className="flex flex-col gap-2 dark:bg-mono-160 rounded-lg w-full p-4">
+        <div className="flex justify-between">
+          <Typography variant="body2" fw="semibold">
+            Profile Type
+          </Typography>
 
-      <div className="flex flex-col gap-2 dark:bg-mono-160 rounded-lg w-full p-3 text-mono-0 dark:text-mono-0">
+          <Chip color="dark-grey">
+            {method === RestakingMethod.Independent ? 'Independent' : 'Shared'}
+          </Chip>
+        </div>
+
+        <div className="flex flex-col gap-2 mb-auto">
+          {cleanedAllocations.map(([service, amount]) => (
+            <AllocationItem key={service} service={service} amount={amount} />
+          ))}
+
+          {cleanedAllocations.length === 0 && (
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="w-full text-center dark:bg-mono-140 rounded-lg px-3 py-2"
+            >
+              No allocations
+            </Typography>
+          )}
+        </div>
+
+        <div className="flex justify-between">
+          <Typography variant="body2" fw="semibold">
+            Total Restake Amount
+          </Typography>
+
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="text-mono-0 dark:text-mono-0"
+          >
+            {formatTokenBalance(restakedAmount)}
+          </Typography>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 dark:bg-mono-160 rounded-lg w-full p-4 text-mono-0 dark:text-mono-0">
         <div className="flex justify-between">
           <Typography
             variant="body2"
@@ -75,6 +130,24 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = () => {
           </ul>
         </div>
       </div>
+    </div>
+  );
+};
+
+type AllocationItemProps = {
+  service: ServiceType;
+  amount: BN;
+};
+
+/** @internal */
+const AllocationItem: FC<AllocationItemProps> = ({ service, amount }) => {
+  return (
+    <div className="flex items-center justify-between dark:bg-mono-140 rounded-lg px-3 py-2">
+      <Chip color={getChipColorByServiceType(service)}>{service}</Chip>
+
+      <Typography variant="body2" fw="semibold" className="dark:text-mono-0">
+        {formatTokenBalance(amount)}
+      </Typography>
     </div>
   );
 };
