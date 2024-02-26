@@ -4,18 +4,18 @@ import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StaticAssetPath } from '../../constants/index';
-import { RestakingMethod } from './ManageProfileModalContainer';
+import { RestakingProfileType } from './ManageProfileModalContainer';
 
 export type ChooseMethodStepProps = {
-  method: RestakingMethod;
-  setMethod: (method: RestakingMethod) => void;
+  method: RestakingProfileType;
+  setMethod: (method: RestakingProfileType) => void;
 };
 
 const ChooseMethodStep: FC<ChooseMethodStepProps> = ({ method, setMethod }) => {
   return (
     <div className="flex gap-5">
       <OptionCard
-        method={RestakingMethod.Independent}
+        method={RestakingProfileType.Independent}
         selectedMethod={method}
         setSelected={setMethod}
       >
@@ -36,7 +36,7 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({ method, setMethod }) => {
       </OptionCard>
 
       <OptionCard
-        method={RestakingMethod.Shared}
+        method={RestakingProfileType.Shared}
         selectedMethod={method}
         setSelected={setMethod}
       >
@@ -60,10 +60,10 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({ method, setMethod }) => {
 };
 
 type OptionCardProps = {
-  method: RestakingMethod;
-  selectedMethod: RestakingMethod;
+  method: RestakingProfileType;
+  selectedMethod: RestakingProfileType;
   children: ReactNode;
-  setSelected: (method: RestakingMethod) => void;
+  setSelected: (method: RestakingProfileType) => void;
 };
 
 /** @internal */

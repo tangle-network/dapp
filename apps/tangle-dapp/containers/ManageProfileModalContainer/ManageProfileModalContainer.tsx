@@ -20,7 +20,7 @@ import {
   RestakingAllocationMap,
 } from './types';
 
-export enum RestakingMethod {
+export enum RestakingProfileType {
   Independent,
   Shared,
 }
@@ -48,13 +48,13 @@ function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
   return null;
 }
 
-function getStepTitle(step: Step, method: RestakingMethod): string {
+function getStepTitle(step: Step, method: RestakingProfileType): string {
   switch (step) {
     case Step.ChooseMethod:
       return 'Choose Your Restaking Method';
     case Step.Allocation: {
       const profileKindString =
-        method === RestakingMethod.Independent ? 'Independent' : 'Shared';
+        method === RestakingProfileType.Independent ? 'Independent' : 'Shared';
 
       return `Manage ${profileKindString} Profile`;
     }
@@ -100,7 +100,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const [method, setMethod] = useState(RestakingMethod.Independent);
+  const [method, setMethod] = useState(RestakingProfileType.Independent);
   const [step, setStep] = useState(Step.ChooseMethod);
   const isMountedRef = useIsMountedRef();
   let stepContents: ReactNode;
@@ -156,7 +156,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     // a few hundred milliseconds to complete).
     const timeoutHandle = setTimeout(() => {
       if (isMountedRef.current) {
-        setMethod(RestakingMethod.Independent);
+        setMethod(RestakingProfileType.Independent);
         setStep(Step.ChooseMethod);
       }
     }, 500);

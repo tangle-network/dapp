@@ -7,11 +7,11 @@ import { ServiceType } from '../../types';
 import getChipColorByServiceType from '../../utils/getChipColorByServiceType';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { cleanAllocations } from './IndependentAllocationStep';
-import { RestakingMethod } from './ManageProfileModalContainer';
+import { RestakingProfileType } from './ManageProfileModalContainer';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {
-  method: RestakingMethod;
+  method: RestakingProfileType;
   allocations: RestakingAllocationMap;
 };
 
@@ -35,7 +35,9 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
           </Typography>
 
           <Chip color="dark-grey">
-            {method === RestakingMethod.Independent ? 'Independent' : 'Shared'}
+            {method === RestakingProfileType.Independent
+              ? 'Independent'
+              : 'Shared'}
           </Chip>
         </div>
 
