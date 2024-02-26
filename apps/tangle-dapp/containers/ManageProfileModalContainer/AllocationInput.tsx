@@ -9,6 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { z } from 'zod';
 
 import { TANGLE_TOKEN_DECIMALS, TANGLE_TOKEN_UNIT } from '../../constants';
 import { ServiceType } from '../../types';
@@ -60,7 +61,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
   const handleAmountChange = useCallback(
     (newValue: string) => {
-      if (onChange !== undefined) {
+      if (onChange !== undefined && newValue !== '') {
         const newAmountInChainUnits = new BN(newValue).mul(
           CHAIN_UNIT_CONVERSION_FACTOR
         );
@@ -77,17 +78,29 @@ const AllocationInput: FC<AllocationInputProps> = ({
     }
   };
 
-  const isDisabledCursorClassName = isDisabled ? '' : 'cursor-pointer';
-  const isDisabledOpacityClassName = isDisabled ? 'opacity-50' : '';
-
-  const amountAsString =
+  const amountString =
     amount?.div(CHAIN_UNIT_CONVERSION_FACTOR).toString() ?? '';
+
+  const schema = z
+    .string()
+    .regex(/^(\d+)?$/, 'Only digits allowed')
+    .refine((value) => value === '' || value !== '0'.repeat(value.length), {
+      message: 'Value cannot be just zero(s)',
+    });
+
+  const validation = schema.safeParse(amountString);
+
+  const errorMessage = !validation.success
+    ? // Pick the first error message, since the input component does
+      // not support displaying a list of error messages.
+      validation.error.issues[0].message
+    : undefined;
 
   return (
     <InputWrapper
       className={twMerge(
         'flex gap-2 dark:bg-mono-160 cursor-default relative !w-full !max-w-[400px]',
-        isDisabledOpacityClassName
+        isDisabled && 'opacity-50'
       )}
     >
       <div className="flex flex-col gap-1 mr-auto">
@@ -97,14 +110,16 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
         <Input
           id={id}
-          className="placeholder:text-mono-0 text-mono-200"
-          value={amountAsString}
+          inputClassName="placeholder:text-md"
+          value={amountString}
           type="number"
           inputMode="numeric"
           onChange={handleAmountChange}
           placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
           size="sm"
           autoComplete="off"
+          isInvalid={!validation.success}
+          errorMessage={errorMessage}
           isDisabled={isDisabled}
           min={0}
         />
@@ -119,7 +134,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
         }}
         className={twMerge(
           'flex items-center justify-center gap-1',
-          isDisabledCursorClassName
+          !isDisabled && 'cursor-pointer'
         )}
       >
         <Chip

@@ -9,8 +9,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
+import { z } from 'zod';
 
 import { INDEPENDENT_CHART_COLORS } from '../../app/restake/RoleDistributionCard/IndependentChart';
 import BnChartTooltip from '../../components/BnChartTooltip';
@@ -28,13 +29,19 @@ function getPercentageOfTotal(amount: BN, total: BN): number {
     return 1;
   }
 
+  assert(amount.lte(total), 'Amount should be less than or equal to total');
+
   // It's safe to convert to a number here, since the
   // value will always be fraction between 0 and 1.
   return amount.mul(new BN(100)).div(total).toNumber() / 100;
 }
 
+type EntryName = 'Remaining' | ServiceType;
+
+type RemainingThemeColor = '#3A3E53';
+
 type AllocationDataEntry = {
-  name: string;
+  name: EntryName;
   value: number;
 };
 
@@ -43,13 +50,57 @@ export type IndependentAllocationStepProps = {
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
+function getServiceChartColor(
+  service: ServiceType
+): (typeof INDEPENDENT_CHART_COLORS)[number] {
+  switch (service) {
+    case ServiceType.ZK_SAAS_MARLIN:
+    case ServiceType.ZK_SAAS_GROTH16:
+      return '#B8D6FF';
+    case ServiceType.DKG_TSS_CGGMP:
+      return '#E7E2FF';
+    case ServiceType.TX_RELAY:
+      return '#85DC8E';
+  }
+}
+
+function getChartColor(
+  entryName: EntryName
+): RemainingThemeColor | (typeof INDEPENDENT_CHART_COLORS)[number] {
+  switch (entryName) {
+    case 'Remaining':
+      return '#3A3E53';
+    default:
+      return getServiceChartColor(entryName);
+  }
+}
+
+function cleanAllocations(
+  allocations: RestakingAllocationMap
+): [ServiceType, BN][] {
+  return Object.entries(allocations)
+    .filter(([_service, amount]) => amount !== null)
+    .map(([serviceString, amount]) => {
+      const service = z.nativeEnum(ServiceType).parse(serviceString);
+
+      assert(
+        amount !== null,
+        'Entries without amounts should have been filtered out'
+      );
+
+      return [service, amount];
+    });
+}
+
 const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
   const { transferrable: transferrableBalance } = useBalances();
   const themeProps = useTheme();
-  const themeCellColor = themeProps.theme === 'dark' ? '#3A3E53' : '#8884d8';
+
+  const themeCellColor: RemainingThemeColor =
+    themeProps.theme === 'dark' ? '#3A3E53' : '#3A3E53';
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
@@ -59,25 +110,25 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     useState<ServiceType | null>(null);
 
   // TODO: Need to load initial restaked amount from Polkadot API. For now, it's hardcoded to 0. Will likely need a `useEffect` hook for this, since it requires an active account.
-  const [restakedAmount, setRestakedAmount] = useState(convertToChainUnits(0));
+  const [restakedAmount, setRestakedAmount] = useState(new BN(0));
 
-  const data: AllocationDataEntry[] = [
-    {
-      name: 'Remaining',
-      value:
-        1 -
-        getPercentageOfTotal(restakedAmount, transferrableBalance ?? new BN(0)),
-    },
-  ].concat(
-    Object.entries(allocations)
-      .filter((entry) => entry[1] !== null)
-      .map(([service, amount]) => ({
-        name: service,
-        // TODO: Fix bug: Result is `1`. Perhaps the amount isn't being converted to chain units properly?
-        value: getPercentageOfTotal(amount as BN, restakedAmount),
-      }))
-  );
+  const remainingDataEntry: AllocationDataEntry = {
+    name: 'Remaining',
+    value: getPercentageOfTotal(
+      restakedAmount,
+      transferrableBalance ?? new BN(0)
+    ),
+  };
 
+  const allocationDataEntries: AllocationDataEntry[] = cleanAllocations(
+    allocations
+  ).map(([service, amount]) => ({
+    name: service,
+    // TODO: Fix bug: Result is `1`. Perhaps the amount isn't being converted to chain units properly?
+    value: getPercentageOfTotal(amount, restakedAmount),
+  }));
+
+  const data = [remainingDataEntry].concat(allocationDataEntries);
   const amountRemaining = transferrableBalance?.sub(restakedAmount) ?? null;
 
   const handleNewAllocation = () => {
@@ -141,18 +192,15 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     return newAllocationAmount.lte(amountRemaining);
   })();
 
-  const availableRoles = useMemo(() => {
-    return Object.entries(allocations)
-      .filter((entry) => entry[1] === null)
-      .map(([service]) => service as ServiceType);
-  }, [allocations]);
+  const availableRoles = Object.entries(allocations)
+    .filter((entry) => entry[1] === null)
+    .map(([service]) => z.nativeEnum(ServiceType).parse(service));
 
   return (
     <div className="flex gap-5 items-start justify-center">
       <div className="flex flex-col gap-4 items-end justify-start min-w-max">
-        {Object.entries(allocations)
-          .filter((entry) => entry[1] !== null)
-          .map(([service, amount]) => (
+        <div className="flex flex-col gap-4">
+          {cleanAllocations(allocations).map(([service, amount]) => (
             <AllocationInput
               amount={amount}
               isDisabled
@@ -167,8 +215,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
             />
           ))}
 
-        {availableRoles.length > 0 && (
-          <>
+          {availableRoles.length > 0 && (
             <AllocationInput
               title="Total Restake"
               id="manage-profile-new-allocation"
@@ -178,7 +225,22 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               amount={newAllocationAmount}
               onChange={setNewAllocationAmount}
             />
+          )}
+        </div>
 
+        <div className="flex gap-2">
+          {restakedAmount.gtn(0) && (
+            <Button
+              size="sm"
+              variant="utility"
+              className="uppercase"
+              onClick={handleClearAllocations}
+            >
+              Clear All
+            </Button>
+          )}
+
+          {availableRoles.length > 0 && (
             <Button
               size="sm"
               variant="utility"
@@ -188,69 +250,36 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
             >
               Add Allocation
             </Button>
-          </>
-        )}
-
-        {restakedAmount.gtn(0) && (
-          <Button
-            size="sm"
-            variant="utility"
-            className="uppercase"
-            onClick={handleClearAllocations}
-          >
-            Clear All Allocations
-          </Button>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="relative flex items-center justify-center w-full">
-        <Tooltip>
-          <TooltipTrigger>
-            <PieChart width={190} height={190}>
-              <Pie
-                data={data}
-                innerRadius={65}
-                outerRadius={95}
-                stroke="none"
-                dataKey="value"
-                paddingAngle={5}
-                animationDuration={200}
-              >
-                <Cell key="Remaining" fill={themeCellColor} />
+        <PieChart width={190} height={190}>
+          <Pie
+            data={data}
+            innerRadius={65}
+            outerRadius={95}
+            stroke="none"
+            dataKey="value"
+            paddingAngle={5}
+            animationDuration={200}
+          >
+            <Cell key="Remaining" fill={themeCellColor} />
 
-                {data.map((_entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={
-                      INDEPENDENT_CHART_COLORS[
-                        index % INDEPENDENT_CHART_COLORS.length
-                      ]
-                    }
-                  />
-                ))}
-              </Pie>
+            {allocationDataEntries.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={getChartColor(entry.name)} />
+            ))}
+          </Pie>
 
-              <RechartsTooltip
-                content={BnChartTooltip(
-                  allocations,
-                  transferrableBalance ?? new BN(0),
-                  restakedAmount
-                )}
-              />
-            </PieChart>
-          </TooltipTrigger>
-
-          <TooltipBody>
-            {transferrableBalance !== null ? (
-              <>
-                Remaining:{' '}
-                {formatTokenBalance(transferrableBalance.sub(restakedAmount))}
-              </>
-            ) : (
-              <SkeletonLoader />
+          <RechartsTooltip
+            content={BnChartTooltip(
+              allocations,
+              transferrableBalance ?? new BN(0),
+              restakedAmount
             )}
-          </TooltipBody>
-        </Tooltip>
+          />
+        </PieChart>
 
         <div className="absolute center flex flex-col justify-center items-center z-[-1]">
           <Typography

@@ -17,7 +17,7 @@ export const INDEPENDENT_CHART_COLORS = [
   '#B8D6FF',
   '#E7E2FF',
   '#FFEAA6',
-];
+] as const;
 
 const IndependentChart = () => {
   return (
