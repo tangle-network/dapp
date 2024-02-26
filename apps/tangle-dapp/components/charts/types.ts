@@ -1,5 +1,11 @@
 import type { ServiceType } from '../../types';
 
+export type PirChartTooltipContentProps = {
+  name: string;
+  value: number;
+  suffix?: string;
+};
+
 export type ProportionPieChartItem = {
   name: string;
   value: number;
@@ -22,4 +28,5 @@ export type RoleEarningsChartItem = {
 
 export interface RoleEarningsChartProps {
   data: RoleEarningsChartItem[];
+  unit?: string;
 }

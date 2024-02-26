@@ -2,6 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import dynamic from 'next/dynamic';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { getProtocolEarningsChartData } from '../../data/roleEarningsChart';
 
 const RoleEarningsChart = dynamic(
@@ -15,9 +16,9 @@ interface ProtocolEarningsCardProps {
   className?: string;
 }
 
-const ProtocolEarningsCard = async ({
+export default async function ProtocolEarningsCard({
   className,
-}: ProtocolEarningsCardProps) => {
+}: ProtocolEarningsCardProps) {
   const data = await getProtocolEarningsChartData();
 
   return (
@@ -26,13 +27,7 @@ const ProtocolEarningsCard = async ({
         Protocol Earnings
       </Typography>
 
-      <div className="min-h-[200px]">
-        <div className="h-full flex items-center justify-center">
-          <RoleEarningsChart data={data} />
-        </div>
-      </div>
+      <RoleEarningsChart data={data} unit={TANGLE_TOKEN_UNIT} />
     </GlassCard>
   );
-};
-
-export default ProtocolEarningsCard;
+}

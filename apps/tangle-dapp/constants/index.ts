@@ -16,10 +16,6 @@ export const TANGLE_TOKEN_UNIT = 'tTNT';
 // here. Regardless, it can easily be changed here in the future if need be.
 export const TANGLE_TOKEN_DECIMALS = 18;
 
-// The date when the genesis block was created
-// TODO: This should be updated to the actual genesis block date
-export const GENESIS_BLOCK_DATE = new Date('2023-01-01');
-
 /**
  * The lock ids are always 8 characters long, due to their representation
  * as a `U8aFixed` in the Substrate runtime. That is why the enum values
