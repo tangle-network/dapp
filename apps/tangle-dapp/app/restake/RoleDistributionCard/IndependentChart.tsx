@@ -1,38 +1,35 @@
 'use client';
 
-import { Cell, Pie, PieChart, Tooltip } from 'recharts';
+import { useEffect, useState } from 'react';
 
-import ChartTooltip from '../../../components/ChartTooltip';
-import { ServiceType } from '../../../types';
-
-const data = [
-  { name: [ServiceType.ZK_SAAS_GROTH16], value: 400 },
-  { name: [ServiceType.ZK_SAAS_MARLIN], value: 300 },
-  { name: [ServiceType.TX_RELAY], value: 300 },
-  { name: [ServiceType.DKG_TSS_CGGMP], value: 200 },
-];
-
-const COLORS = ['#85DC8E', '#B8D6FF', '#E7E2FF', '#FFEAA6'];
+import { ProportionPieChart } from '../../../components/charts';
+import type { ProportionPieChartItem } from '../../../components/charts/types';
+import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributionChart';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 
 const IndependentChart = () => {
+  const [data, setData] = useState<ProportionPieChartItem[]>([]);
+  const accAddress = useActiveAccountAddress();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = accAddress
+        ? await getRoleDistributionChartDataByAcc(accAddress)
+        : [];
+      setData(data);
+    };
+    fetchData();
+  }, [accAddress]);
+
   return (
     <div className="flex items-center justify-center">
-      <PieChart width={200} height={200}>
-        <Pie
-          data={data}
-          innerRadius={60}
-          outerRadius={80}
-          fill="#8884d8"
-          paddingAngle={5}
-          dataKey="value"
-        >
-          {data.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-
-        <Tooltip content={ChartTooltip} />
-      </PieChart>
+      <ProportionPieChart
+        data={data}
+        title="Restaked"
+        showTotal
+        unit={TANGLE_TOKEN_UNIT}
+      />
     </div>
   );
 };
