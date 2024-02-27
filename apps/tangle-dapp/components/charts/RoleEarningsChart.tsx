@@ -26,7 +26,7 @@ const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data, unit }) => {
   const [isDarkMode] = useNextDarkMode();
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" className="min-h-[200px]">
       <BarChart data={data} margin={{ top: 24 }} maxBarSize={20} barGap={0}>
         <CartesianGrid vertical={false} />
         <XAxis

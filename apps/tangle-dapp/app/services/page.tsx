@@ -2,6 +2,7 @@ import ActiveServicesTable from './ActiveServicesTable';
 import ProtocolEarningsCard from './ProtocolEarningsCard';
 import RoleDistributionCard from './RoleDistributionCard';
 import ServiceKeyMetrics from './ServiceKeyMetrics';
+import WhatIsRestakingCard from './WhatIsRestakingCard';
 
 export default function ServiceOverview() {
   return (
@@ -10,7 +11,7 @@ export default function ServiceOverview() {
       <div className="flex flex-col lg:flex-row gap-5 lg:items-stretch">
         <RoleDistributionCard className="flex-1" />
         <ProtocolEarningsCard className="flex-1" />
-        <div className="flex-1">What is Restaking?</div>
+        <WhatIsRestakingCard className="flex-1" />
       </div>
 
       {/* Service Key Metrics */}
