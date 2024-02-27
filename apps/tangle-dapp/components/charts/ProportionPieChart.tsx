@@ -3,6 +3,7 @@
 import {
   getRoundedAmountString,
   Typography,
+  useNextDarkMode,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
@@ -17,23 +18,33 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
   showTotal = false,
   unit,
 }) => {
+  const [isDarkMode] = useNextDarkMode();
+
+  const hasData = data.length > 0;
+
+  const dataOrDefault = hasData
+    ? data
+    : [{ value: 1, color: isDarkMode ? '#3A3E53' : '#D3D8E2' }];
+
   return (
     <div className="relative">
       <PieChart width={200} height={200}>
         <Pie
-          data={data}
+          data={dataOrDefault}
           innerRadius={60}
           outerRadius={80}
           fill="#8884d8"
-          paddingAngle={5}
+          paddingAngle={hasData ? 5 : 0}
           dataKey="value"
         >
-          {data.map((item, index) => (
+          {dataOrDefault.map((item, index) => (
             <Cell key={`cell-${index}`} fill={item.color} stroke="none" />
           ))}
         </Pie>
 
-        <Tooltip content={ChartTooltip} wrapperStyle={{ zIndex: 100 }} />
+        {hasData && (
+          <Tooltip content={ChartTooltip} wrapperStyle={{ zIndex: 100 }} />
+        )}
       </PieChart>
 
       <div
