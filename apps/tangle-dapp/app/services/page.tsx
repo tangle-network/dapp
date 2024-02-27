@@ -1,4 +1,5 @@
 import ActiveServicesTable from './ActiveServicesTable';
+import ProtocolEarningsCard from './ProtocolEarningsCard';
 import RoleDistributionCard from './RoleDistributionCard';
 import ServiceKeyMetrics from './ServiceKeyMetrics';
 
@@ -8,7 +9,7 @@ export default function ServiceOverview() {
       {/* Charts */}
       <div className="flex flex-col lg:flex-row gap-5 lg:items-stretch">
         <RoleDistributionCard className="flex-1" />
-        <div className="flex-1">Protocols Earnings</div>
+        <ProtocolEarningsCard className="flex-1" />
         <div className="flex-1">What is Restaking?</div>
       </div>
 

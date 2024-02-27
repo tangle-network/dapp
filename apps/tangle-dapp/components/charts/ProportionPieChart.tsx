@@ -8,7 +8,7 @@ import { FC } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
-import ChartTooltip from './ChartTooltip';
+import PieChartTooltipContent from './PieChartTooltipContent';
 import type { ProportionPieChartProps } from './types';
 
 const ProportionPieChart: FC<ProportionPieChartProps> = ({
@@ -33,7 +33,20 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
           ))}
         </Pie>
 
-        <Tooltip content={ChartTooltip} wrapperStyle={{ zIndex: 100 }} />
+        <Tooltip
+          content={({ active, payload }) => {
+            if (active && payload && payload.length) {
+              return (
+                <PieChartTooltipContent
+                  name={payload[0].payload.name}
+                  value={payload[0].payload.value}
+                  suffix={unit}
+                />
+              );
+            }
+          }}
+          wrapperStyle={{ zIndex: 100 }}
+        />
       </PieChart>
 
       <div

@@ -1,23 +1,3 @@
-export type DataHookReturnType<
-  DataType = unknown,
-  ErrorType extends Error | unknown = unknown
-> =
-  | {
-      isLoading: true;
-      error: null;
-      data: null;
-    }
-  | {
-      isLoading: false;
-      error: null;
-      data: DataType;
-    }
-  | {
-      isLoading: false;
-      error: ErrorType;
-      data: null;
-    };
-
 const useFormatReturnType = <
   DataType = unknown,
   ErrorType extends Error | unknown = unknown

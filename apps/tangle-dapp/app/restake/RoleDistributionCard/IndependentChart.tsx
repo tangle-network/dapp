@@ -1,5 +1,6 @@
 'use client';
 
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 
 import { ProportionPieChart } from '../../../components/charts';
@@ -9,18 +10,34 @@ import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributio
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 
 const IndependentChart = () => {
-  const [data, setData] = useState<ProportionPieChartItem[]>([]);
   const accAddress = useActiveAccountAddress();
+  const [data, setData] = useState<ProportionPieChartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = accAddress
-        ? await getRoleDistributionChartDataByAcc(accAddress)
-        : [];
-      setData(data);
+      try {
+        const data = accAddress
+          ? await getRoleDistributionChartDataByAcc(accAddress)
+          : [];
+        setData(data);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error
+            : WebbError.from(WebbErrorCodes.UnknownError)
+        );
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, [accAddress]);
+
+  if (isLoading) return null;
+
+  if (error) return <div>Error fetching data</div>;
 
   return (
     <div className="flex items-center justify-center">
