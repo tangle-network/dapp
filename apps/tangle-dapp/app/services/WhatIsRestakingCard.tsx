@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import TangleBigLogo from '../../components/TangleBigLogo';
+import { PagePath } from '../../types';
 
 interface WhatIsRestakingCardProps {
   className?: string;
@@ -29,7 +30,7 @@ const WhatIsRestakingCard: FC<WhatIsRestakingCardProps> = ({ className }) => {
         </Typography>
       </div>
       <div className="flex flex-wrap flex-row justify-end items-end md:items-center gap-2">
-        <Link href="/restake">
+        <Link href={PagePath.ServicesRestake}>
           <Button>Restake Now</Button>
         </Link>
         {/* TODO: update this after the restaking page on docs available */}
