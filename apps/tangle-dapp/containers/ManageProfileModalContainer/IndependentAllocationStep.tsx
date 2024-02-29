@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 import { z } from 'zod';
 
@@ -11,23 +11,9 @@ import BnChartTooltip from '../../components/BnChartTooltip';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import { ServiceType } from '../../types';
-import convertToChainUnits from '../../utils/convertToChainUnits';
 import { formatTokenBalance } from '../../utils/polkadot';
 import AllocationInput from './AllocationInput';
 import { RestakingAllocationMap } from './types';
-
-function getPercentageOfTotal(amount: BN, total: BN): number {
-  // Default to 100% if the total is 0, to avoid division by zero.
-  if (total.isZero()) {
-    return 1;
-  }
-
-  assert(amount.lte(total), 'Amount should be less than or equal to total');
-
-  // It's safe to convert to a number here, since the
-  // value will always be fraction between 0 and 1.
-  return amount.mul(new BN(100)).div(total).toNumber() / 100;
-}
 
 type EntryName = 'Remaining' | ServiceType;
 
@@ -42,6 +28,19 @@ export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
+
+function getPercentageOfTotal(amount: BN, total: BN): number {
+  // Avoid division by zero.
+  if (total.isZero()) {
+    throw new Error('Total should not be zero');
+  }
+
+  assert(amount.lte(total), 'Amount should be less than or equal to total');
+
+  // It's safe to convert to a number here, since the
+  // value will always be fraction between 0 and 1.
+  return amount.mul(new BN(100)).div(total).toNumber() / 100;
+}
 
 function getServiceChartColor(
   service: ServiceType
@@ -102,14 +101,25 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   const [newAllocationRole, setNewAllocationRole] =
     useState<ServiceType | null>(null);
 
-  // TODO: Need to load initial restaked amount from Polkadot API. For now, it's hardcoded to 0. Will likely need a `useEffect` hook for this, since it requires an active account.
-  const [restakedAmount, setRestakedAmount] = useState(new BN(0));
+  // TODO: Need to load initial restaked amount from Polkadot API. For now, it's hardcoded to 0. Will likely need a `useEffect` hook for this, since it requires an active account. Base it off the `allocations` prop, so in reality the parent should be the one fetching the initial restaking allocations on load from the Polkadot API.
+  const restakedAmount = useMemo(() => {
+    let amount = new BN(0);
+
+    for (const [_service, serviceAmount] of Object.entries(allocations)) {
+      if (serviceAmount !== null) {
+        amount = amount.add(serviceAmount);
+      }
+    }
+
+    return amount;
+  }, [allocations]);
 
   const remainingDataEntry: AllocationDataEntry = {
     name: 'Remaining',
     value:
-      1 -
-      getPercentageOfTotal(restakedAmount, transferrableBalance ?? new BN(0)),
+      transferrableBalance === null
+        ? 1
+        : 1 - getPercentageOfTotal(restakedAmount, transferrableBalance),
   };
 
   const allocationDataEntries: AllocationDataEntry[] = cleanAllocations(
@@ -117,7 +127,10 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   ).map(([service, amount]) => ({
     name: service,
     // TODO: Fix bug: Result is `1`. Perhaps the amount isn't being converted to chain units properly?
-    value: getPercentageOfTotal(amount, transferrableBalance ?? new BN(1)),
+    value:
+      transferrableBalance === null
+        ? 1
+        : getPercentageOfTotal(amount, transferrableBalance),
   }));
 
   const data = [remainingDataEntry].concat(allocationDataEntries);
@@ -132,10 +145,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       [newAllocationRole]: newAllocationAmount,
     }));
 
-    setRestakedAmount((restakedAmount) =>
-      restakedAmount.add(newAllocationAmount)
-    );
-
     setNewAllocationRole(null);
     setNewAllocationAmount(null);
   };
@@ -147,8 +156,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       [ServiceType.ZK_SAAS_GROTH16]: null,
       [ServiceType.ZK_SAAS_MARLIN]: null,
     });
-
-    setRestakedAmount(convertToChainUnits(0));
   };
 
   const handleDeallocation = (service: ServiceType) => {
@@ -157,10 +164,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     assert(
       deallocatedAmount !== null,
       'Deallocated amount should not be null because that would imply that during its allocation, it had no amount set'
-    );
-
-    setRestakedAmount((restakedAmount) =>
-      restakedAmount.sub(deallocatedAmount)
     );
 
     setAllocations((prev) => ({
