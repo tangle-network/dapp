@@ -8,13 +8,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useEffect, useState } from 'react';
 
+import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { ServiceType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
-import IndependentAllocationStep, {
-  cleanAllocations,
-} from './IndependentAllocationStep';
+import IndependentAllocationStep from './IndependentAllocationStep';
 import {
   ManageProfileModalContainerProps,
   RestakingAllocationMap,
@@ -104,6 +103,10 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const [step, setStep] = useState(Step.ChooseMethod);
   const isMountedRef = useIsMountedRef();
   let stepContents: ReactNode;
+  const { value: existingAllocations } = useRestakingAllocations(method);
+
+  const [isLoadingExistingAllocations, setIsLoadingExistingAllocations] =
+    useState(true);
 
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({
     [ServiceType.DKG_TSS_CGGMP]: null,
@@ -144,6 +147,18 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       setStep(nextStep);
     }
   };
+
+  // Set the local allocations state when existing allocations
+  // are fetched from the Polkadot API.
+  useEffect(() => {
+    if (existingAllocations === null || !isLoadingExistingAllocations) {
+      return;
+    }
+
+    setAllocations(existingAllocations);
+    setIsLoadingExistingAllocations(false);
+    console.debug('Set initial allocations', existingAllocations);
+  }, [existingAllocations, isLoadingExistingAllocations]);
 
   // Reset state when modal is closed.
   useEffect(() => {
@@ -209,6 +224,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             className="!mt-0"
+            // Prevent the user from continuing or making changes while
+            // the existing allocations are being fetched.
+            isDisabled={isLoadingExistingAllocations}
           >
             {getStepNextButtonLabel(step)}
           </Button>

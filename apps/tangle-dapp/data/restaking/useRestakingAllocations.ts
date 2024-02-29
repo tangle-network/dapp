@@ -41,10 +41,9 @@ function convertRecordToAllocation(
   return [serviceType, record.amount.unwrap()];
 }
 
-const useRestakingAllocations = (
-  profileType: RestakingProfileType
-): RestakingAllocationMap | null => {
-  const { data: ledger } = useRestakingRoleLedger();
+const useRestakingAllocations = (profileType: RestakingProfileType) => {
+  const ledgerResult = useRestakingRoleLedger();
+  const ledger = ledgerResult.value;
 
   const allocations: RestakingAllocationMap = {
     [ServiceType.ZK_SAAS_GROTH16]: null,
@@ -72,9 +71,7 @@ const useRestakingAllocations = (
     }
   }
 
-  // If the ledger is null, return null. Otherwise, return the allocations.
-  // This signals the caller that the ledger is not available yet.
-  return ledger === null ? null : allocations;
+  return { ...ledgerResult, value: ledger !== null ? allocations : null };
 };
 
 export default useRestakingAllocations;
