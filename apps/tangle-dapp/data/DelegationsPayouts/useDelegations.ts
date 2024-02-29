@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Delegator } from '../../types';
 import {
   formatTokenBalance,
@@ -22,7 +23,11 @@ export default function useDelegations(
     delegators: [],
   }
 ) {
-  const [delegators, setDelegators] = useState(defaultValue.delegators);
+  const { value: cachedNominations, set: setCachedNominations } =
+    useLocalStorage(LocalStorageKey.Nominations, true);
+  const [delegators, setDelegators] = useState(
+    (cachedNominations && cachedNominations[address]) ?? defaultValue.delegators
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -105,6 +110,10 @@ export default function useDelegations(
 
             if (isMounted) {
               setDelegators(delegators);
+              setCachedNominations({
+                ...cachedNominations,
+                [address]: delegators,
+              });
               setIsLoading(false);
             }
           });
@@ -124,7 +133,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, cachedNominations, setCachedNominations]);
 
   return useFormatReturnType({
     isLoading,

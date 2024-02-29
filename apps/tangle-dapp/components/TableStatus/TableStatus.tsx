@@ -20,7 +20,7 @@ const TableStatus = ({
         className
       )}
     >
-      <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex flex-col items-center justify-center gap-2 pt-4">
         {icon}
         <Typography
           variant="h5"
@@ -38,7 +38,11 @@ const TableStatus = ({
         </Typography>
       </div>
 
-      {buttonText && <Button {...buttonProps}>{buttonText}</Button>}
+      {buttonText && (
+        <span className="pb-4">
+          <Button {...buttonProps}>{buttonText}</Button>
+        </span>
+      )}
     </div>
   );
 };

@@ -74,7 +74,7 @@ const NominatorStatsContainer: FC = () => {
 
           <div className="flex items-center gap-2 flex-wrap">
             <Link href={WEBB_FAUCET_URL} target="_blank">
-              <Button variant="utility" className="w-full">
+              <Button variant="utility" className="!min-w-[100px]">
                 {`Get ${TANGLE_TOKEN_UNIT}`}
               </Button>
             </Link>
@@ -82,7 +82,7 @@ const NominatorStatsContainer: FC = () => {
             {isFirstTimeNominator && (
               <Button
                 variant="utility"
-                className="w-full"
+                className="!min-w-[100px]"
                 isDisabled={!activeAccount}
                 onClick={() => setIsDelegateModalOpen(true)}
               >
@@ -118,7 +118,7 @@ const NominatorStatsContainer: FC = () => {
                 <>
                   <Button
                     variant="utility"
-                    className="w-full"
+                    className="!min-w-[100px]"
                     isDisabled={!activeAccount}
                     onClick={() => setIsBondMoreModalOpen(true)}
                   >
@@ -127,7 +127,7 @@ const NominatorStatsContainer: FC = () => {
 
                   <Button
                     variant="utility"
-                    className="w-full"
+                    className="!min-w-[100px]"
                     isDisabled={!activeAccount}
                     onClick={() => setIsUnbondModalOpen(true)}
                   >
@@ -137,13 +137,13 @@ const NominatorStatsContainer: FC = () => {
               ) : (
                 <>
                   <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-                    <Button variant="utility" className="w-full">
+                    <Button variant="utility" className="!min-w-[150px]">
                       Learn More
                     </Button>
                   </Link>
 
                   <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
-                    <Button variant="utility" className="w-full">
+                    <Button variant="utility" className="!min-w-[150px]">
                       Join Community
                     </Button>
                   </Link>
@@ -158,7 +158,7 @@ const NominatorStatsContainer: FC = () => {
                   <>
                     <Button
                       variant="utility"
-                      className="w-full"
+                      className="!min-w-[100px]"
                       isDisabled={!activeAccount}
                       onClick={() => setIsRebondModalOpen(true)}
                     >
@@ -167,7 +167,7 @@ const NominatorStatsContainer: FC = () => {
 
                     <Button
                       variant="utility"
-                      className="w-full"
+                      className="!min-w-[100px]"
                       isDisabled={!activeAccount}
                       onClick={() => setIsWithdrawUnbondedModalOpen(true)}
                     >

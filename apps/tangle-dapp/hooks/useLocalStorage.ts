@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Validator } from '../types';
+import { Delegator, Payout, Validator } from '../types';
 
 export enum LocalStorageKey {
   ActiveValidatorCache = 'activeValidatorCache',
@@ -13,10 +13,20 @@ export enum LocalStorageKey {
   IdealStakePercentage = 'idealStakePercentage',
   ValidatorCounts = 'validatorCounts',
   WaitingCount = 'waitingCount',
+  Payouts = 'payouts',
+  Nominations = 'nominations',
 }
 
 export type AirdropEligibilityCache = {
   [address: string]: boolean;
+};
+
+export type PayoutsCache = {
+  [address: string]: Payout[];
+};
+
+export type NominationsCache = {
+  [address: string]: Delegator[];
 };
 
 /**
@@ -38,6 +48,10 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.WaitingCount
     ? { value1: number | null }
+    : T extends LocalStorageKey.Payouts
+    ? PayoutsCache
+    : T extends LocalStorageKey.Nominations
+    ? NominationsCache
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(

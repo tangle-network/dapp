@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Payout } from '../../types';
 import {
   formatTokenBalance,
@@ -21,7 +22,13 @@ export default function usePayouts(
     payouts: [],
   }
 ) {
-  const [payouts, setPayouts] = useState(defaultValue.payouts);
+  const { value: cachedPayouts, set: setCachedPayouts } = useLocalStorage(
+    LocalStorageKey.Payouts,
+    true
+  );
+  const [payouts, setPayouts] = useState(
+    (cachedPayouts && cachedPayouts[address]) ?? defaultValue.payouts
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -255,11 +262,15 @@ export default function usePayouts(
                   validatorPayoutsPromises
                 );
 
-                setPayouts(
-                  validatorPayouts
-                    .filter((payout) => payout !== undefined)
-                    .sort((a, b) => Number(a.era) - Number(b.era))
-                );
+                const payoutsData = validatorPayouts
+                  .filter((payout) => payout !== undefined)
+                  .sort((a, b) => Number(a.era) - Number(b.era));
+
+                setPayouts(payoutsData);
+                setCachedPayouts({
+                  ...cachedPayouts,
+                  [address]: payoutsData,
+                });
                 setIsLoading(false);
               }
             }
@@ -281,7 +292,7 @@ export default function usePayouts(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, cachedPayouts, setCachedPayouts]);
 
   return useFormatReturnType({
     isLoading,
