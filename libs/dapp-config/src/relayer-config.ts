@@ -36,6 +36,10 @@ export const relayerConfig: RelayerConfig[] = [
     endpoint: 'https://relayer4.webb.tools',
     env: ['development', 'staging', 'test'],
   },
+  {
+    endpoint: 'https://relayprotocols.com/relayer',
+    env: ['development', 'test'],
+  },
 ];
 
 export function relayerSubstrateNameToTypedChainId(

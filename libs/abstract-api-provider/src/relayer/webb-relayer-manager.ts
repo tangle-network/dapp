@@ -15,9 +15,59 @@ import {
 } from '../transaction/transactionExecutor';
 import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
 import { WebbProviderType } from '../types';
-import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
+import { Capabilities, Contract, OptionalActiveRelayer, OptionalRelayer, Pallet, RelayedChainConfig, RelayerFeatures, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
 import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
+
+function getRelayProtocolsRelayer(): WebbRelayer {
+  const relayProtocolsRelayerFeatures: RelayerFeatures = {
+    dataQuery: true,
+    governanceRelay: true,
+    // https://docs.webb.tools/docs/ecosystem-roles/relayer/managing-liabilities/#liabilities-and-risks
+    privateTxRelay: false,
+  };
+  const relayProtocolsRelayerFeeConfig = {
+    relayerProfitPercent: 5,
+    maxRefundAmount: 0, // https://docs.webb.tools/docs/projects/hubble-bridge/usage-guide/refund/#introduction-to-refunds
+  };
+  const relayProtocolsContracts: Contract[] = [];
+  const relayProtocolsPallets: Pallet[] = [];
+
+  // Add RelayProtocols EVM Relayer to list
+  const relayProtocolsEVMRelayerRelayedChainConfig: RelayedChainConfig<'evm'> = {
+    account: '', // TODO: Add account to sign transactions
+    beneficiary: '', // TODO: Add account to receive Relayer rewards
+    enabled: false,
+    contracts: relayProtocolsContracts, // TODO: Add EVM contracts supported by this Relayer
+    relayerFeeConfig: relayProtocolsRelayerFeeConfig,
+  };
+  // Add RelayProtocols Substrate Relayer to list
+  const relayProtocolsSubstrateRelayerRelayedChainConfig: RelayedChainConfig<'substrate'> = {
+    account: '', // TODO: Add account to sign transactions
+    beneficiary: '', // TODO: Add account to receive Relayer rewards
+    enabled: false,
+    pallets: relayProtocolsPallets, // TODO: Add Substrate pallets supported by this Relayer
+  };
+  const relayProtocolsRelayerCapabilities: Capabilities = {
+    hasIpService: true,
+    features: relayProtocolsRelayerFeatures,
+    supportedChains: {
+      // TODO: Change to relevant Substrate chain id
+      substrate: new Map([[1, relayProtocolsSubstrateRelayerRelayedChainConfig]]),
+      // chain id is 5 for Goerli Testnet Ethereum
+      // TODO: Investigate legal liabilities and since Goerli Testnet Ethereum
+      // tokens have a monetary value as mentioned here:
+      // https://docs.webb.tools/docs/ecosystem-roles/relayer/managing-liabilities/#liabilities-and-risks
+      evm: new Map([[5, relayProtocolsEVMRelayerRelayedChainConfig]]),
+    },
+  };
+  const relayProtocolsRelayer = new WebbRelayer(
+    'https://relayprotocols.com/relayer',
+    relayProtocolsRelayerCapabilities,
+  );
+
+  return relayProtocolsRelayer;
+}
 
 export abstract class WebbRelayerManager<
   Provider extends WebbProviderType,
@@ -42,6 +92,8 @@ export abstract class WebbRelayerManager<
   abstract cmdKey: CMDKey;
 
   constructor(relayers: WebbRelayer[]) {
+    // Add community Relayers to the list
+    relayers.push(getRelayProtocolsRelayer());
     this.relayers = relayers;
     this.activeRelayerWatcher = this.activeRelayerSubject.asObservable();
     this.listUpdated = this._listUpdated.asObservable();
