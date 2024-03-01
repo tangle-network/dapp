@@ -4,8 +4,33 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
+import { Capabilities, Contract, OptionalActiveRelayer, OptionalRelayer,
+  RelayedChainConfig, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
+
+function getRelayProtocolsRelayer(): WebbRelayer {
+  // Add RelayProtocols Relayer to list
+  const relayProtocolsRelayerRelayedChainConfig: RelayedChainConfig = {
+    account: '0x1F7ACe08aF5c49a5D69fbb98FB9339a729B27161',
+    beneficiary: '0x1F7ACe08aF5c49a5D69fbb98FB9339a729B27161',
+    contracts: [], // TODO: Add contracts supported by this Relayer
+  }
+  const relayProtocolsRelayerCapabilities: Capabilities = {
+    hasIpService: true,
+    supportedChains: {
+      // TODO: Change to relevant Substrate chain id
+      substrate: new Map([[1, relayProtocolsRelayerRelayedChainConfig]]),
+      // chain id is 5 for Goerli Ethereum
+      evm: new Map([[5, relayProtocolsRelayerRelayedChainConfig]]),
+    },
+  };
+  const relayProtocolsRelayer = new WebbRelayer(
+    'https://relayprotocols.com/relayer',
+    relayProtocolsRelayerCapabilities,
+  );
+
+  return relayProtocolsRelayer;
+}
 
 export abstract class WebbRelayerManager {
   private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(null);
@@ -16,6 +41,8 @@ export abstract class WebbRelayerManager {
   public activeRelayer: OptionalActiveRelayer = null;
 
   constructor(relayers: WebbRelayer[]) {
+    // Add community Relayers to the list
+    relayers.push(getRelayProtocolsRelayer());
     this.relayers = relayers;
     this.activeRelayerWatcher = this.activeRelayerSubject.asObservable();
     this.listUpdated = this._listUpdated.asObservable();
