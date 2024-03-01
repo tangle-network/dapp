@@ -71,7 +71,10 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
     }
   }
 
-  return { ...ledgerResult, value: ledger !== null ? allocations : null };
+  return {
+    ...ledgerResult,
+    value: ledger !== null ? allocations : null,
+  };
 };
 
 export default useRestakingAllocations;

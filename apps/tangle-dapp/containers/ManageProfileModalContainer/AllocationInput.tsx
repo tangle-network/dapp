@@ -11,20 +11,24 @@ import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 
-import { TANGLE_TOKEN_DECIMALS, TANGLE_TOKEN_UNIT } from '../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { ServiceType } from '../../types';
+import convertChainUnitsToNumber, {
+  CHAIN_UNIT_CONVERSION_FACTOR,
+} from '../../utils/convertChainUnitsToNumber';
+import convertNumberToChainUnits from '../../utils/convertNumberToChainUnits';
 
 export type AllocationInputProps = {
   amount: BN | null;
-  availableRoles: ServiceType[];
+  availableServices: ServiceType[];
   service: ServiceType | null;
   title: string;
   id: string;
   isDisabled?: boolean;
   hasDeleteButton?: boolean;
-  onDelete?: (role: ServiceType) => void;
-  onChange?: (newAmount: BN) => void;
-  setRole: (role: ServiceType) => void;
+  onDelete?: (service: ServiceType) => void;
+  onChange?: (newAmountInChainUnits: BN) => void;
+  setService: (service: ServiceType) => void;
 };
 
 export function getRoleChipColor(
@@ -41,59 +45,69 @@ export function getRoleChipColor(
   }
 }
 
-const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
-  new BN(TANGLE_TOKEN_DECIMALS)
-);
+const VALIDATION_SCHEMA = z
+  .string()
+  .regex(
+    /^\d*(\.\d+)?$/,
+    'Only digits or numbers with a decimal point are allowed'
+  )
+  .refine(
+    (value) => {
+      // Check if the value is not just zeros after removing the decimal point
+      return (
+        value === '' ||
+        value.replace('.', '') !== '0'.repeat(value.replace('.', '').length)
+      );
+    },
+    {
+      message: 'Value must be greater than zero',
+    }
+  );
 
 const AllocationInput: FC<AllocationInputProps> = ({
   amount = null,
   hasDeleteButton = false,
   isDisabled = false,
-  availableRoles,
+  availableServices,
   title,
   id,
-  service: role,
+  service,
   onChange,
-  setRole,
+  setService,
   onDelete,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const handleAmountChange = useCallback(
     (newValue: string) => {
-      if (onChange !== undefined && newValue !== '') {
-        const newAmountInChainUnits = new BN(newValue).mul(
-          CHAIN_UNIT_CONVERSION_FACTOR
-        );
-
-        onChange(newAmountInChainUnits);
+      // Do nothing if the input is invalid.
+      if (onChange === undefined || newValue === '' || newValue.includes('.')) {
+        return;
       }
+
+      const newValueAsNumber = Number(newValue);
+      const newAmountInChainUnits = convertNumberToChainUnits(newValueAsNumber);
+
+      onChange(newAmountInChainUnits);
     },
     [onChange]
   );
 
   const handleOnDelete = () => {
-    if (onDelete !== undefined && role !== null) {
-      onDelete(role);
+    if (onDelete !== undefined && service !== null) {
+      onDelete(service);
     }
   };
 
-  const amountString =
-    amount?.div(CHAIN_UNIT_CONVERSION_FACTOR).toString() ?? '';
+  const amountAsString =
+    amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
 
-  const schema = z
-    .string()
-    .regex(/^(\d+)?$/, 'Only digits allowed')
-    .refine((value) => value === '' || value !== '0'.repeat(value.length), {
-      message: 'Value cannot be just zero(s)',
-    });
+  const validationResult = VALIDATION_SCHEMA.safeParse(amountAsString);
 
-  const validation = schema.safeParse(amountString);
-
-  const errorMessage = !validation.success
+  const errorMessage = !validationResult.success
     ? // Pick the first error message, since the input component does
       // not support displaying a list of error messages.
-      validation.error.issues[0].message
+      validationResult.error.issues[0].message
     : undefined;
 
   return (
@@ -111,14 +125,14 @@ const AllocationInput: FC<AllocationInputProps> = ({
         <Input
           id={id}
           inputClassName="placeholder:text-md"
-          value={amountString}
+          value={amountAsString}
           type="number"
           inputMode="numeric"
           onChange={handleAmountChange}
           placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
           size="sm"
           autoComplete="off"
-          isInvalid={!validation.success}
+          isInvalid={!validationResult.success}
           errorMessage={errorMessage}
           isDisabled={isDisabled}
           min={0}
@@ -138,10 +152,10 @@ const AllocationInput: FC<AllocationInputProps> = ({
         )}
       >
         <Chip
-          color={role === null ? 'grey' : getRoleChipColor(role)}
+          color={service === null ? 'grey' : getRoleChipColor(service)}
           className="uppercase dark:bg-mono-140 whitespace-nowrap"
         >
-          {role ?? 'Select role'}
+          {service ?? 'Select role'}
         </Chip>
 
         <ChevronDown size="lg" />
@@ -150,12 +164,12 @@ const AllocationInput: FC<AllocationInputProps> = ({
       {/* Dropdown body */}
       {isDropdownVisible && (
         <div className="absolute top-[100%] left-0 mt-1 w-full dark:bg-mono-160 shadow-inner rounded-lg overflow-hidden z-50">
-          {availableRoles
-            .filter((availableRole) => availableRole !== role)
+          {availableServices
+            .filter((availableRole) => availableRole !== service)
             .map((role) => (
               <div
                 key={role}
-                onClick={() => setRole(role)}
+                onClick={() => setService(role)}
                 className="flex justify-between p-2 cursor-pointer dark:hover:bg-mono-120"
               >
                 <Chip color={getRoleChipColor(role)}>{role}</Chip>
@@ -171,7 +185,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
       {/* Delete button */}
       {hasDeleteButton && (
         <IconButton
-          disabled={role === null}
+          disabled={service === null}
           onClick={handleOnDelete}
           className="p-1 rounded-full shadow-xl absolute top-0 right-0 translate-x-[50%] translate-y-[-50%] dark:bg-mono-140 dark:hover:bg-mono-120"
         >

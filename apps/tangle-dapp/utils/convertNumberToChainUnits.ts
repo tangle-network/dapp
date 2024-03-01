@@ -23,7 +23,7 @@ import { TANGLE_TOKEN_DECIMALS } from '../constants';
  * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
  * ```
  */
-const convertToChainUnits = (amount: number): BN => {
+const convertNumberToChainUnits = (amount: number): BN => {
   assert(amount >= 0, 'Amount should be 0 or positive');
 
   // Convert the amount to a string to avoid floating point inaccuracies.
@@ -39,4 +39,4 @@ const convertToChainUnits = (amount: number): BN => {
   return new BN(fullAmountStr);
 };
 
-export default convertToChainUnits;
+export default convertNumberToChainUnits;

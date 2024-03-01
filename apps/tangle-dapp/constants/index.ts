@@ -62,3 +62,11 @@ export enum StaticAssetPath {
   RestakingMethodIndependent = '/static/assets/restaking-method-independent.svg',
   RestakingMethodShared = '/static/assets/restaking-method-shared.svg',
 }
+
+export const SUBSTRATE_ROLE_TYPE_MAPPING = {
+  [ServiceType.ZK_SAAS_GROTH16]: { ZkSaaS: 'ZkSaaSGroth16' },
+  [ServiceType.ZK_SAAS_MARLIN]: { ZkSaaS: 'ZkSaaSMarlin' },
+  [ServiceType.TX_RELAY]: 'LightClientRelaying',
+  // TODO: The current implementation of the `ServiceType` enum is a dummy only used to test UI. Awaiting the actual implementation of the `ServiceType` enum before properly implementing this case. For now, default to `ZkSaaSMarlin`.
+  [ServiceType.DKG_TSS_CGGMP]: { ZkSaaS: 'ZkSaaSGroth16' },
+} as const satisfies { [key in ServiceType]: string | Record<string, string> };

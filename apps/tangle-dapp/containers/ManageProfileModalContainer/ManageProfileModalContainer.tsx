@@ -105,8 +105,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   let stepContents: ReactNode;
   const { value: existingAllocations } = useRestakingAllocations(method);
 
-  const [isLoadingExistingAllocations, setIsLoadingExistingAllocations] =
-    useState(true);
+  const [hasLoadedExistingAllocations, setHasLoadedExistingAllocations] =
+    useState(false);
 
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({
     [ServiceType.DKG_TSS_CGGMP]: null,
@@ -118,6 +118,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   switch (step) {
     case Step.ChooseMethod:
       stepContents = <ChooseMethodStep method={method} setMethod={setMethod} />;
+
       break;
     case Step.Allocation:
       stepContents = (
@@ -126,6 +127,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           setAllocations={setAllocations}
         />
       );
+
       break;
     case Step.ConfirmAllocations:
       stepContents = (
@@ -133,32 +135,29 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       );
   }
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
   const handleNextStep = () => {
     const nextStep = getStepDiff(step, true);
 
-    // Have reached the end. Close the modal.
+    // Have reached the end; submit the transaction, and then
+    // close the modal.
     if (nextStep === null) {
-      closeModal();
+      setIsModalOpen(false);
     } else {
       setStep(nextStep);
     }
   };
 
   // Set the local allocations state when existing allocations
-  // are fetched from the Polkadot API.
+  // are fetched from the Polkadot API. Only do this once when
+  // the component is mounted.
   useEffect(() => {
-    if (existingAllocations === null || !isLoadingExistingAllocations) {
+    if (existingAllocations === null || hasLoadedExistingAllocations) {
       return;
     }
 
     setAllocations(existingAllocations);
-    setIsLoadingExistingAllocations(false);
-    console.debug('Set initial allocations', existingAllocations);
-  }, [existingAllocations, isLoadingExistingAllocations]);
+    setHasLoadedExistingAllocations(true);
+  }, [existingAllocations, hasLoadedExistingAllocations]);
 
   // Reset state when modal is closed.
   useEffect(() => {
@@ -191,7 +190,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       >
         <ModalHeader
           titleVariant="h4"
-          onClose={closeModal}
+          onClose={() => setIsModalOpen(false)}
           className="p-9 pb-4"
         >
           {getStepTitle(step, method)}
@@ -226,7 +225,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             className="!mt-0"
             // Prevent the user from continuing or making changes while
             // the existing allocations are being fetched.
-            isDisabled={isLoadingExistingAllocations}
+            isDisabled={!hasLoadedExistingAllocations}
+            isLoading={!hasLoadedExistingAllocations}
           >
             {getStepNextButtonLabel(step)}
           </Button>

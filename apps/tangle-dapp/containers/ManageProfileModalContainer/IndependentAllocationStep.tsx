@@ -126,10 +126,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     allocations
   ).map(([service, amount]) => ({
     name: service,
-    // TODO: Fix bug: Result is `1`. Perhaps the amount isn't being converted to chain units properly?
     value:
       transferrableBalance === null
-        ? 1
+        ? 0
         : getPercentageOfTotal(amount, transferrableBalance),
   }));
 
@@ -203,9 +202,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               key={service}
               title="Total Restake"
               id={`manage-profile-allocation-${service}`}
-              availableRoles={availableRoles}
-              service={service as ServiceType}
-              setRole={setNewAllocationRole}
+              availableServices={availableRoles}
+              service={service}
+              setService={setNewAllocationRole}
               hasDeleteButton
               onDelete={handleDeallocation}
             />
@@ -215,9 +214,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
             <AllocationInput
               title="Total Restake"
               id="manage-profile-new-allocation"
-              availableRoles={availableRoles}
+              availableServices={availableRoles}
               service={newAllocationRole}
-              setRole={setNewAllocationRole}
+              setService={setNewAllocationRole}
               amount={newAllocationAmount}
               onChange={setNewAllocationAmount}
             />

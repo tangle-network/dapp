@@ -118,6 +118,7 @@ function usePolkadotApi<T>(
   return {
     polkadotApi,
     isApiLoading,
+    isValueLoading: response.data === null,
     value: response.data,
     error,
     refetch,
