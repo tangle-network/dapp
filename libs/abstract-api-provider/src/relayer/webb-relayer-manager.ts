@@ -75,7 +75,7 @@ function getRelayProtocolsRelayer(): WebbRelayer {
     },
   };
   const relayProtocolsRelayer = new WebbRelayer(
-    'https://relayprotocols.com/relayer',
+    'https://relayprotocols.com/api',
     relayProtocolsRelayerCapabilities
   );
 

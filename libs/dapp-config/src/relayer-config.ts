@@ -37,7 +37,7 @@ export const relayerConfig: RelayerConfig[] = [
     env: ['development', 'staging', 'test'],
   },
   {
-    endpoint: 'https://relayprotocols.com/relayer',
+    endpoint: 'https://relayprotocols.com/api',
     env: ['development', 'test'],
   },
 ];
