@@ -43,7 +43,8 @@ function convertRecordToAllocation(
 
 const useRestakingAllocations = (profileType: RestakingProfileType) => {
   const ledgerResult = useRestakingRoleLedger();
-  const ledger = ledgerResult.value;
+  const ledgerOpt = ledgerResult.data;
+  const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
   const allocations: RestakingAllocationMap = {
     [ServiceType.ZK_SAAS_GROTH16]: null,
@@ -52,7 +53,9 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
     [ServiceType.TX_RELAY]: null,
   };
 
-  if (ledger !== null) {
+  if (isLedgerAvailable) {
+    const ledger = ledgerOpt.unwrap();
+
     const profile =
       profileType === RestakingProfileType.Independent
         ? ledger.profile.isIndependent
@@ -73,7 +76,7 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
 
   return {
     ...ledgerResult,
-    value: ledger !== null ? allocations : null,
+    value: isLedgerAvailable ? allocations : null,
   };
 };
 

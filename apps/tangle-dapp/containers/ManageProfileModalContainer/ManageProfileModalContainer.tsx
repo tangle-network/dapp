@@ -111,10 +111,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const isMountedRef = useIsMountedRef();
   let stepContents: ReactNode;
 
-  const {
-    value: remoteAllocations,
-    isValueLoading: isLoadingRemoteAllocations,
-  } = useRestakingAllocations(profileType);
+  const { value: remoteAllocations, isLoading: isLoadingRemoteAllocations } =
+    useRestakingAllocations(profileType);
 
   const [hasProcessedRemoteAllocations, setHasProcessedRemoteAllocations] =
     useState(false);
@@ -175,7 +173,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     // Wait until the remote allocations have been fetched, and
     // prevent processing them again if they have already been
     // loaded.
-    if (!isLoadingRemoteAllocations || hasProcessedRemoteAllocations) {
+    if (isLoadingRemoteAllocations || hasProcessedRemoteAllocations) {
       return;
     }
     // If there were any existing allocations on Substrate, set them

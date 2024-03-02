@@ -37,10 +37,8 @@ const useUpdateRestakingProfileTx = (
   // in the same render cycle.
   const recordsRef = useRef<ProfileRecord[] | null>(null);
 
-  const { value: roleLedger, isValueLoading: isRoleLedgerLoading } =
-    useRestakingRoleLedger();
-
-  const hasExistingProfile = roleLedger !== null && !isRoleLedgerLoading;
+  const { data: roleLedger } = useRestakingRoleLedger();
+  const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
   const { execute, ...other } = useSubstrateTx(
     useCallback(

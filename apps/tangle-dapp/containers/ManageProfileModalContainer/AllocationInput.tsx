@@ -152,7 +152,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
             id={id}
             inputClassName="placeholder:text-md"
             value={amountAsString}
-            type="text"
+            type="number"
             inputMode="numeric"
             onChange={handleAmountChange}
             placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
@@ -160,9 +160,6 @@ const AllocationInput: FC<AllocationInputProps> = ({
             autoComplete="off"
             isInvalid={!validationResult.success}
             isReadOnly={isDisabled}
-            // The absolute maximum length for a token amount of 18
-            // decimals is 28 characters.
-            maxLength={28}
           />
         </div>
 
