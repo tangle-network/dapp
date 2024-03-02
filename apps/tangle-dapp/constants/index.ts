@@ -70,3 +70,11 @@ export const SUBSTRATE_ROLE_TYPE_MAPPING = {
   // TODO: The current implementation of the `ServiceType` enum is a dummy only used to test UI. Awaiting the actual implementation of the `ServiceType` enum before properly implementing this case. For now, default to `ZkSaaSMarlin`.
   [ServiceType.DKG_TSS_CGGMP]: { ZkSaaS: 'ZkSaaSGroth16' },
 } as const satisfies { [key in ServiceType]: string | Record<string, string> };
+
+export enum ChartColor {
+  Blue = '#B8D6FF',
+  Green = '#85DC8E',
+  DarkGray = '#3A3E53',
+  Yellow = '#FFEAA6',
+  Lavender = '#E7E2FF',
+}

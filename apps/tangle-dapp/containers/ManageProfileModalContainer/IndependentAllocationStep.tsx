@@ -6,9 +6,8 @@ import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 import { z } from 'zod';
 
-import { INDEPENDENT_CHART_COLORS } from '../../app/restake/RoleDistributionCard/IndependentChart';
 import BnChartTooltip from '../../components/BnChartTooltip';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -16,8 +15,6 @@ import AllocationInput from './AllocationInput';
 import { RestakingAllocationMap } from './types';
 
 type EntryName = 'Remaining' | ServiceType;
-
-type RemainingThemeColor = '#3A3E53';
 
 type AllocationDataEntry = {
   name: EntryName;
@@ -42,26 +39,22 @@ function getPercentageOfTotal(amount: BN, total: BN): number {
   return amount.mul(new BN(100)).div(total).toNumber() / 100;
 }
 
-function getServiceChartColor(
-  service: ServiceType
-): (typeof INDEPENDENT_CHART_COLORS)[number] {
+function getServiceChartColor(service: ServiceType): ChartColor {
   switch (service) {
     case ServiceType.ZK_SAAS_MARLIN:
     case ServiceType.ZK_SAAS_GROTH16:
-      return '#B8D6FF';
+      return ChartColor.Blue;
     case ServiceType.DKG_TSS_CGGMP:
-      return '#E7E2FF';
+      return ChartColor.Lavender;
     case ServiceType.TX_RELAY:
-      return '#85DC8E';
+      return ChartColor.Green;
   }
 }
 
-function getChartColor(
-  entryName: EntryName
-): RemainingThemeColor | (typeof INDEPENDENT_CHART_COLORS)[number] {
+function getChartColor(entryName: EntryName): ChartColor {
   switch (entryName) {
     case 'Remaining':
-      return '#3A3E53';
+      return ChartColor.DarkGray;
     default:
       return getServiceChartColor(entryName);
   }
@@ -91,8 +84,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   const { transferrable: transferrableBalance } = useBalances();
   const themeProps = useTheme();
 
-  const themeCellColor: RemainingThemeColor =
-    themeProps.theme === 'dark' ? '#3A3E53' : '#3A3E53';
+  // TODO: Provide actual color for light theme.
+  const themeCellColor: ChartColor =
+    themeProps.theme === 'dark' ? ChartColor.DarkGray : ChartColor.DarkGray;
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
