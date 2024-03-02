@@ -2,13 +2,20 @@ import { BN } from '@polkadot/util';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
-import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 import { z } from 'zod';
 
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
-import useBalances from '../../data/balances/useBalances';
+import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import AllocationInput from './AllocationInput';
@@ -81,7 +88,17 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const { transferrable: transferrableBalance } = useBalances();
+  const { data: stakedBalance } = useStakingLedgerRx(
+    useCallback((ledger) => ledger.total.toBn(), [])
+  );
+
+  // Max restaking amount = 50% of the total staked balance, which
+  // is equivalent to dividing the staked balance by 2. This is taken
+  // from Tangle's source code, as it seems that it is not obtainable
+  // from the Polkadot API.
+  // See: https://github.com/webb-tools/tangle/blob/8be20aa02a764422e1fd0ba30bc70b99d5f66887/runtime/mainnet/src/lib.rs#L1137
+  const maxRestakingAmount = stakedBalance?.divn(2) ?? null;
+
   const themeProps = useTheme();
 
   // TODO: Provide actual color for light theme.
@@ -111,9 +128,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   const remainingDataEntry: AllocationDataEntry = {
     name: 'Remaining',
     value:
-      transferrableBalance === null
+      maxRestakingAmount === null
         ? 1
-        : 1 - getPercentageOfTotal(restakedAmount, transferrableBalance),
+        : 1 - getPercentageOfTotal(restakedAmount, maxRestakingAmount),
   };
 
   const allocationDataEntries: AllocationDataEntry[] = cleanAllocations(
@@ -121,9 +138,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   ).map(([service, amount]) => ({
     name: service,
     value:
-      transferrableBalance === null
+      maxRestakingAmount === null
         ? 0
-        : getPercentageOfTotal(amount, transferrableBalance),
+        : getPercentageOfTotal(amount, maxRestakingAmount),
   }));
 
   const data = [remainingDataEntry].concat(allocationDataEntries);
@@ -165,7 +182,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     }));
   };
 
-  const amountRemaining = transferrableBalance?.sub(restakedAmount) ?? null;
+  const amountRemaining = maxRestakingAmount?.sub(restakedAmount) ?? null;
 
   const isNewAllocationAmountValid = (() => {
     if (
@@ -273,7 +290,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           <RechartsTooltip
             content={BnChartTooltip(
               allocations,
-              transferrableBalance ?? new BN(0),
+              maxRestakingAmount ?? new BN(0),
               restakedAmount
             )}
           />
