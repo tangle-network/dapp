@@ -49,13 +49,15 @@ function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
   return null;
 }
 
-function getStepTitle(step: Step, method: RestakingProfileType): string {
+function getStepTitle(step: Step, profileType: RestakingProfileType): string {
   switch (step) {
     case Step.ChooseMethod:
       return 'Choose Your Restaking Method';
     case Step.Allocation: {
       const profileKindString =
-        method === RestakingProfileType.Independent ? 'Independent' : 'Shared';
+        profileType === RestakingProfileType.Independent
+          ? 'Independent'
+          : 'Shared';
 
       return `Manage ${profileKindString} Profile`;
     }
@@ -101,17 +103,24 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const [method, setMethod] = useState(RestakingProfileType.Independent);
+  const [profileType, setProfileType] = useState(
+    RestakingProfileType.Independent
+  );
+
   const [step, setStep] = useState(Step.ChooseMethod);
   const isMountedRef = useIsMountedRef();
   let stepContents: ReactNode;
-  const { value: existingAllocations } = useRestakingAllocations(method);
 
-  const [hasLoadedExistingAllocations, setHasLoadedExistingAllocations] =
+  const {
+    value: remoteAllocations,
+    isValueLoading: isLoadingRemoteAllocations,
+  } = useRestakingAllocations(profileType);
+
+  const [hasProcessedRemoteAllocations, setHasProcessedRemoteAllocations] =
     useState(false);
 
   const { execute: executeUpdateProfileTx, status: updateProfileTxStatus } =
-    useUpdateRestakingProfileTx(method, true);
+    useUpdateRestakingProfileTx(profileType, true, true);
 
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({
     [ServiceType.DKG_TSS_CGGMP]: null,
@@ -122,7 +131,12 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   switch (step) {
     case Step.ChooseMethod:
-      stepContents = <ChooseMethodStep method={method} setMethod={setMethod} />;
+      stepContents = (
+        <ChooseMethodStep
+          profileType={profileType}
+          setProfileType={setProfileType}
+        />
+      );
 
       break;
     case Step.Allocation:
@@ -136,7 +150,10 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       break;
     case Step.ConfirmAllocations:
       stepContents = (
-        <ConfirmAllocationsStep method={method} allocations={allocations} />
+        <ConfirmAllocationsStep
+          profileType={profileType}
+          allocations={allocations}
+        />
       );
   }
 
@@ -155,13 +172,24 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   // are fetched from the Polkadot API. Only do this once when
   // the component is mounted.
   useEffect(() => {
-    if (existingAllocations === null || hasLoadedExistingAllocations) {
+    // Wait until the remote allocations have been fetched, and
+    // prevent processing them again if they have already been
+    // loaded.
+    if (!isLoadingRemoteAllocations || hasProcessedRemoteAllocations) {
       return;
     }
+    // If there were any existing allocations on Substrate, set them
+    // in the local state.
+    else if (remoteAllocations !== null) {
+      setAllocations(remoteAllocations);
+    }
 
-    setAllocations(existingAllocations);
-    setHasLoadedExistingAllocations(true);
-  }, [existingAllocations, hasLoadedExistingAllocations]);
+    setHasProcessedRemoteAllocations(true);
+  }, [
+    remoteAllocations,
+    hasProcessedRemoteAllocations,
+    isLoadingRemoteAllocations,
+  ]);
 
   // Close modal when the transaction is complete, and reset the
   // transaction to be ready for the next time the modal is opened.
@@ -182,7 +210,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     // a few hundred milliseconds to complete).
     const timeoutHandle = setTimeout(() => {
       if (isMountedRef.current) {
-        setMethod(RestakingProfileType.Independent);
+        setProfileType(RestakingProfileType.Independent);
         setStep(Step.ChooseMethod);
       }
     }, 500);
@@ -205,7 +233,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           onClose={() => setIsModalOpen(false)}
           className="p-9 pb-4"
         >
-          {getStepTitle(step, method)}
+          {getStepTitle(step, profileType)}
         </ModalHeader>
 
         <div className="flex flex-col gap-4 px-9 py-3">
@@ -238,11 +266,11 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             // Prevent the user from continuing or making changes while
             // the existing allocations are being fetched.
             isDisabled={
-              !hasLoadedExistingAllocations ||
+              !hasProcessedRemoteAllocations ||
               updateProfileTxStatus === TxStatus.Processing
             }
             isLoading={
-              !hasLoadedExistingAllocations ||
+              !hasProcessedRemoteAllocations ||
               updateProfileTxStatus === TxStatus.Processing
             }
           >

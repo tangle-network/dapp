@@ -136,6 +136,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
               error = ensureError(status.internalError);
             }
 
+            console.error('Transaction failed', error);
             setError(error);
           }
         }

@@ -14,7 +14,6 @@ import {
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
 import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';

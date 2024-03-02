@@ -1,9 +1,5 @@
 import { BN } from '@polkadot/util';
-import {
-  Button,
-  SkeletonLoader,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';

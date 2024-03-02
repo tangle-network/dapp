@@ -11,12 +11,12 @@ import { RestakingProfileType } from './ManageProfileModalContainer';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {
-  method: RestakingProfileType;
+  profileType: RestakingProfileType;
   allocations: RestakingAllocationMap;
 };
 
 const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
-  method,
+  profileType,
   allocations,
 }) => {
   const restakedAmount = cleanAllocations(allocations).reduce(
@@ -35,7 +35,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
           </Typography>
 
           <Chip color="dark-grey">
-            {method === RestakingProfileType.Independent
+            {profileType === RestakingProfileType.Independent
               ? 'Independent'
               : 'Shared'}
           </Chip>

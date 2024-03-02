@@ -8,14 +8,27 @@ import { RestakingProfileType } from '../../containers/ManageProfileModalContain
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
 import { ServiceType } from '../../types';
+import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
   role: (typeof SUBSTRATE_ROLE_TYPE_MAPPING)[ServiceType];
   amount: BN;
 };
 
+/**
+ * Allows the execution of the `updateProfile` or `createProfile`
+ * transaction for the roles pallet.
+ *
+ * Also provides the ability to create a profile if it does not exist.
+ *
+ * @param profileType The type of profile to update.
+ * @param createIfMissing Whether to create a profile if it does not exist.
+ * @param notifyTxStatusUpdates Whether to notify the user of transaction
+ * status updates.
+ */
 const useUpdateRestakingProfileTx = (
   profileType: RestakingProfileType,
+  createIfMissing = false,
   notifyTxStatusUpdates?: boolean
 ) => {
   // A ref must be used here instead of state, because the execute
@@ -24,24 +37,36 @@ const useUpdateRestakingProfileTx = (
   // in the same render cycle.
   const recordsRef = useRef<ProfileRecord[] | null>(null);
 
+  const { value: roleLedger, isValueLoading: isRoleLedgerLoading } =
+    useRestakingRoleLedger();
+
+  const hasExistingProfile = roleLedger !== null && !isRoleLedgerLoading;
+
   const { execute, ...other } = useSubstrateTx(
     useCallback(
       async (api) => {
+        // Cannot update a profile that does not exist.
+        if (!hasExistingProfile && !createIfMissing) {
+          return null;
+        }
+
         assert(
           recordsRef.current !== null,
           'Records should be set before calling execute'
         );
 
-        console.debug('Sending records', recordsRef.current);
+        const callee = hasExistingProfile
+          ? api.tx.roles.updateProfile
+          : api.tx.roles.createProfile;
 
         // TODO: This has type any. Investigate why type definitions seem to be missing for this function/transaction call.
-        return api.tx.roles.updateProfile(
+        return callee(
           profileType === RestakingProfileType.Independent
             ? { Independent: { records: recordsRef.current } }
             : { Shared: { records: recordsRef.current } }
         );
       },
-      [profileType]
+      [createIfMissing, hasExistingProfile, profileType]
     ),
     notifyTxStatusUpdates
   );

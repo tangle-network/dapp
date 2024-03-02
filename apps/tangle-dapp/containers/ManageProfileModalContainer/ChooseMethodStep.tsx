@@ -7,17 +7,20 @@ import { StaticAssetPath } from '../../constants/index';
 import { RestakingProfileType } from './ManageProfileModalContainer';
 
 export type ChooseMethodStepProps = {
-  method: RestakingProfileType;
-  setMethod: (method: RestakingProfileType) => void;
+  profileType: RestakingProfileType;
+  setProfileType: (profileType: RestakingProfileType) => void;
 };
 
-const ChooseMethodStep: FC<ChooseMethodStepProps> = ({ method, setMethod }) => {
+const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
+  profileType,
+  setProfileType,
+}) => {
   return (
     <div className="flex gap-5">
       <OptionCard
-        method={RestakingProfileType.Independent}
-        selectedMethod={method}
-        setSelected={setMethod}
+        profileType={RestakingProfileType.Independent}
+        selectedProfileType={profileType}
+        setSelected={setProfileType}
       >
         <Image
           src={StaticAssetPath.RestakingMethodIndependent}
@@ -36,9 +39,9 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({ method, setMethod }) => {
       </OptionCard>
 
       <OptionCard
-        method={RestakingProfileType.Shared}
-        selectedMethod={method}
-        setSelected={setMethod}
+        profileType={RestakingProfileType.Shared}
+        selectedProfileType={profileType}
+        setSelected={setProfileType}
       >
         <Image
           src={StaticAssetPath.RestakingMethodShared}
@@ -60,20 +63,20 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({ method, setMethod }) => {
 };
 
 type OptionCardProps = {
-  method: RestakingProfileType;
-  selectedMethod: RestakingProfileType;
+  profileType: RestakingProfileType;
+  selectedProfileType: RestakingProfileType;
   children: ReactNode;
-  setSelected: (method: RestakingProfileType) => void;
+  setSelected: (profileType: RestakingProfileType) => void;
 };
 
 /** @internal */
 const OptionCard: FC<OptionCardProps> = ({
-  method,
-  selectedMethod,
+  profileType,
+  selectedProfileType,
   children,
   setSelected,
 }) => {
-  const isSelected = selectedMethod === method;
+  const isSelected = selectedProfileType === profileType;
 
   const isSelectedClassName = isSelected
     ? 'dark:border-mono-140'
@@ -81,7 +84,7 @@ const OptionCard: FC<OptionCardProps> = ({
 
   return (
     <Card
-      onClick={() => setSelected(method)}
+      onClick={() => setSelected(profileType)}
       className={twMerge(
         'flex justify-center items-center gap-1 space-y-0 border-[3px]  rounded-2xl dark:bg-mono-160',
         isSelectedClassName
