@@ -186,7 +186,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     .map(([service]) => z.nativeEnum(ServiceType).parse(service));
 
   return (
-    <div className="flex gap-5 items-start justify-center">
+    <div className="flex flex-col-reverse sm:flex-row gap-5 items-center sm:items-start justify-center">
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
           {cleanAllocations(allocations).map(([service, amount]) => (

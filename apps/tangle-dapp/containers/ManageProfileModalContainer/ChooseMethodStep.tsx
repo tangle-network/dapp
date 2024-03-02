@@ -16,7 +16,7 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
   setProfileType,
 }) => {
   return (
-    <div className="flex gap-5">
+    <div className="flex flex-col sm:flex-row gap-5">
       <OptionCard
         profileType={RestakingProfileType.Independent}
         selectedProfileType={profileType}

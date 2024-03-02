@@ -246,7 +246,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           {stepContents}
         </div>
 
-        <ModalFooter className="flex flex-row gap-2">
+        <ModalFooter className="flex flex-col-reverse sm:flex-row gap-2">
           <Button
             isFullWidth
             variant="secondary"
