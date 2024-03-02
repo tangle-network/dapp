@@ -107,18 +107,36 @@ function useSubstrateTx<T extends ISubmittableResult>(
         activeSubstrateAddress,
         { signer: injector.signer },
         (status) => {
-          if (!isMountedRef.current) {
+          // If the component is unmounted, or the transaction
+          // has not yet been included in a block, ignore the
+          // status update.
+          if (!isMountedRef.current || !status.isInBlock) {
             return;
           }
 
           setHash(status.txHash.toHex());
 
-          const didSucceed = !status.isError && !status.isWarning;
+          const didSucceed =
+            !status.isError &&
+            !status.isWarning &&
+            status.dispatchError === undefined;
 
           setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
 
           if (!didSucceed) {
-            setError(ensureError(status.internalError));
+            let error: Error;
+
+            if (status.dispatchError !== undefined) {
+              error = new Error(
+                `Dispatch error occurred at the runtime execution level. Error code: ${status.dispatchError.asModule.error.toHuman()}, index: ${
+                  status.dispatchError.asModule.index
+                }`
+              );
+            } else {
+              error = ensureError(status.internalError);
+            }
+
+            setError(error);
           }
         }
       );

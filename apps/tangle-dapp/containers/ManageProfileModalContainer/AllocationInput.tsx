@@ -13,9 +13,7 @@ import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { ServiceType } from '../../types';
-import convertChainUnitsToNumber, {
-  CHAIN_UNIT_CONVERSION_FACTOR,
-} from '../../utils/convertChainUnitsToNumber';
+import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import convertNumberToChainUnits from '../../utils/convertNumberToChainUnits';
 
 export type AllocationInputProps = {

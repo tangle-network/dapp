@@ -9,7 +9,9 @@ import {
 import { FC, ReactNode, useEffect, useState } from 'react';
 
 import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
+import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { ServiceType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
@@ -108,6 +110,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const [hasLoadedExistingAllocations, setHasLoadedExistingAllocations] =
     useState(false);
 
+  const { execute: executeUpdateProfileTx, status: updateProfileTxStatus } =
+    useUpdateRestakingProfileTx(method, true);
+
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({
     [ServiceType.DKG_TSS_CGGMP]: null,
     [ServiceType.TX_RELAY]: null,
@@ -138,10 +143,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const handleNextStep = () => {
     const nextStep = getStepDiff(step, true);
 
-    // Have reached the end; submit the transaction, and then
-    // close the modal.
+    // Have reached the end; submit the transaction.
     if (nextStep === null) {
-      setIsModalOpen(false);
+      executeUpdateProfileTx(allocations);
     } else {
       setStep(nextStep);
     }
@@ -158,6 +162,14 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     setAllocations(existingAllocations);
     setHasLoadedExistingAllocations(true);
   }, [existingAllocations, hasLoadedExistingAllocations]);
+
+  // Close modal when the transaction is complete, and reset the
+  // transaction to be ready for the next time the modal is opened.
+  useEffect(() => {
+    if (updateProfileTxStatus === TxStatus.Complete) {
+      setIsModalOpen(false);
+    }
+  }, [updateProfileTxStatus, setIsModalOpen]);
 
   // Reset state when modal is closed.
   useEffect(() => {
@@ -225,8 +237,14 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             className="!mt-0"
             // Prevent the user from continuing or making changes while
             // the existing allocations are being fetched.
-            isDisabled={!hasLoadedExistingAllocations}
-            isLoading={!hasLoadedExistingAllocations}
+            isDisabled={
+              !hasLoadedExistingAllocations ||
+              updateProfileTxStatus === TxStatus.Processing
+            }
+            isLoading={
+              !hasLoadedExistingAllocations ||
+              updateProfileTxStatus === TxStatus.Processing
+            }
           >
             {getStepNextButtonLabel(step)}
           </Button>
