@@ -29,7 +29,7 @@ export default async function getActiveServices(): Promise<Service[]> {
       expirationBlock: 456,
     },
     {
-      id: 123,
+      id: 126,
       serviceType: ServiceType.ZK_SAAS_MARLIN,
       participants: participationArr,
       thresholds: 3,
@@ -37,7 +37,7 @@ export default async function getActiveServices(): Promise<Service[]> {
       expirationBlock: 456,
     },
     {
-      id: 125,
+      id: 127,
       serviceType: ServiceType.TX_RELAY,
       participants: participationArr,
       expirationBlock: 456,

@@ -1,18 +1,17 @@
-import type { ChipColors } from '@webb-tools/webb-ui-components';
-
 import { ServiceType } from '../types';
 
 // TODO: update this to match the actual service types
-export default function getChipColorByServiceType(
+export default function getChartDataAreaColorByServiceType(
   serviceType: ServiceType
-): ChipColors {
+) {
   switch (serviceType) {
     case ServiceType.ZK_SAAS_GROTH16:
+      return '#85DC8E';
     case ServiceType.ZK_SAAS_MARLIN:
-      return 'blue';
+      return '#B8D6FF';
     case ServiceType.DKG_TSS_CGGMP:
-      return 'purple';
+      return '#FFEAA6';
     case ServiceType.TX_RELAY:
-      return 'green';
+      return '#E7E2FF';
   }
 }
