@@ -101,9 +101,8 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const themeProps = useTheme();
 
-  // TODO: Provide actual color for light theme.
   const themeCellColor: ChartColor =
-    themeProps.theme === 'dark' ? ChartColor.DarkGray : ChartColor.DarkGray;
+    themeProps.theme === 'dark' ? ChartColor.DarkGray : ChartColor.Gray;
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null

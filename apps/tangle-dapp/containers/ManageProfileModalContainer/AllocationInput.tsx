@@ -139,12 +139,17 @@ const AllocationInput: FC<AllocationInputProps> = ({
     <div className="flex flex-col items-end gap-1">
       <InputWrapper
         className={twMerge(
-          'flex gap-2 dark:bg-mono-160 cursor-default relative !w-full !max-w-[400px] border border-mono-160',
+          'flex gap-2 cursor-default relative !w-full !max-w-[400px]',
+          'border border-mono-20 dark:border-mono-160',
+          'bg-mono-20 dark:bg-mono-160',
           !validationResult.success && 'border-red-50'
         )}
       >
         <div className="flex flex-col gap-1 mr-auto">
-          <Label className="dark:text-mono-80 font-bold" htmlFor={id}>
+          <Label
+            className="text-mono-100 dark:text-mono-80 font-bold"
+            htmlFor={id}
+          >
             {title}
           </Label>
 
@@ -174,7 +179,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
             onClick={toggleDropdown}
             color={service === null ? 'grey' : getRoleChipColor(service)}
             className={twMerge(
-              'uppercase dark:bg-mono-140 whitespace-nowrap',
+              'uppercase text-mono-0 bg-mono-100 dark:bg-mono-140 whitespace-nowrap',
               !isDisabled && 'cursor-pointer'
             )}
           >
@@ -201,19 +206,22 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
         {/* Dropdown body */}
         {isDropdownVisible && (
-          <div className="absolute top-[100%] left-0 mt-1 w-full dark:bg-mono-160 shadow-inner rounded-lg overflow-hidden z-50">
+          <div className="absolute z-50 top-[100%] left-0 mt-1 w-full bg-mono-0 border border-mono-40 dark:border-mono-140 dark:bg-mono-160 shadow-md rounded-lg overflow-hidden">
             {availableServices
               .filter((availableRole) => availableRole !== service)
               .map((role) => (
                 <div
                   key={role}
                   onClick={() => setService(role)}
-                  className="flex justify-between p-2 cursor-pointer dark:hover:bg-mono-120"
+                  className="flex justify-between p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-140"
                 >
                   <Chip color={getRoleChipColor(role)}>{role}</Chip>
 
                   {minRestakingBond !== null ? (
-                    <Chip color="grey" className="dark:bg-mono-140">
+                    <Chip
+                      color="grey"
+                      className="text-mono-0 bg-mono-100 dark:bg-mono-140"
+                    >
                       {`≥ ${formatTokenBalance(minRestakingBond)}`}
                     </Chip>
                   ) : (
@@ -247,20 +255,21 @@ const Action: FC<ActionProps> = ({
   Icon,
   onClick,
 }) => {
-  return (
-    <IconWithTooltip
-      icon={
-        <Icon
-          onClick={onClick}
-          size={iconSize}
-          className={twMerge(
-            'dark:fill-mono-0',
-            onClick !== undefined && 'cursor-pointer'
-          )}
-        />
-      }
-      content={<>{tooltip}</>}
+  const icon = (
+    <Icon
+      onClick={onClick}
+      size={iconSize}
+      className={twMerge(
+        'dark:fill-mono-0',
+        onClick !== undefined && 'cursor-pointer'
+      )}
     />
+  );
+
+  return tooltip === undefined ? (
+    icon
+  ) : (
+    <IconWithTooltip content={<>{tooltip}</>} icon={icon} />
   );
 };
 

@@ -74,6 +74,7 @@ export const SUBSTRATE_ROLE_TYPE_MAPPING = {
 export enum ChartColor {
   Blue = '#B8D6FF',
   Green = '#85DC8E',
+  Gray = '#D3D8E2',
   DarkGray = '#3A3E53',
   Yellow = '#FFEAA6',
   Lavender = '#E7E2FF',

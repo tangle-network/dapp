@@ -2,6 +2,7 @@ import { BN } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { ServiceType } from '../../types';
 import getChipColorByServiceType from '../../utils/getChipColorByServiceType';
@@ -26,9 +27,12 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 
   const cleanedAllocations = cleanAllocations(allocations);
 
+  const cardBaseClassName =
+    'flex flex-col gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg w-full p-4 border border-mono-40 dark:border-mono-140';
+
   return (
     <div className="flex flex-col sm:flex-row items-start gap-2 w-full">
-      <div className="flex flex-col gap-2 dark:bg-mono-160 rounded-lg w-full p-4">
+      <div className={cardBaseClassName}>
         <div className="flex justify-between">
           <Typography variant="body2" fw="semibold">
             Profile Type
@@ -50,7 +54,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             <Typography
               variant="body2"
               fw="normal"
-              className="w-full text-center dark:bg-mono-140 rounded-lg px-3 py-2"
+              className="w-full text-center bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2"
             >
               No allocations
             </Typography>
@@ -65,14 +69,14 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
           <Typography
             variant="body2"
             fw="semibold"
-            className="text-mono-0 dark:text-mono-0"
+            className="dark:text-mono-0"
           >
             {formatTokenBalance(restakedAmount)}
           </Typography>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 dark:bg-mono-160 rounded-lg w-full p-4 text-mono-0 dark:text-mono-0">
+      <div className={twMerge(cardBaseClassName, 'dark:text-mono-0')}>
         <div className="flex justify-between">
           <Typography
             variant="body2"
@@ -144,7 +148,7 @@ type AllocationItemProps = {
 /** @internal */
 const AllocationItem: FC<AllocationItemProps> = ({ service, amount }) => {
   return (
-    <div className="flex items-center justify-between dark:bg-mono-140 rounded-lg px-3 py-2">
+    <div className="flex items-center justify-between bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2">
       <Chip color={getChipColorByServiceType(service)}>{service}</Chip>
 
       <Typography variant="body2" fw="semibold" className="dark:text-mono-0">

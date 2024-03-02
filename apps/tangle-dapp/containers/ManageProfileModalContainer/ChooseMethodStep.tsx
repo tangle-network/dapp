@@ -79,14 +79,14 @@ const OptionCard: FC<OptionCardProps> = ({
   const isSelected = selectedProfileType === profileType;
 
   const isSelectedClassName = isSelected
-    ? 'dark:border-mono-140'
+    ? 'border-mono-60 dark:border-mono-140'
     : 'border-transparent cursor-pointer';
 
   return (
     <Card
       onClick={() => setSelected(profileType)}
       className={twMerge(
-        'flex justify-center items-center gap-1 space-y-0 border-[3px]  rounded-2xl dark:bg-mono-160',
+        'flex justify-center items-center gap-1 space-y-0 border-[3px] rounded-2xl bg-mono-20 dark:bg-mono-160',
         isSelectedClassName
       )}
     >
