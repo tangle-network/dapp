@@ -12,6 +12,7 @@ import {
   Input,
   InputWrapper,
   Label,
+  SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactElement, useCallback, useState } from 'react';
@@ -19,9 +20,11 @@ import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
+import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
-import convertNumberToChainUnits from '../../utils/convertNumberToChainUnits';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 
 export type AllocationInputProps = {
   amount: BN | null;
@@ -52,27 +55,17 @@ export function getRoleChipColor(
   }
 }
 
-const VALIDATION_SCHEMA = z
+const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
+
+const STATIC_VALIDATION_SCHEMA = z
   .string()
   .regex(
-    /^\d*(\.\d+)?$/,
+    DECIMAL_REGEX,
     'Only digits or numbers with a decimal point are allowed'
-  )
-  .refine(
-    (value) => {
-      // Check if the value is not just zeros after removing the decimal point
-      return (
-        value === '' ||
-        value.replace('.', '') !== '0'.repeat(value.replace('.', '').length)
-      );
-    },
-    {
-      message: 'Value must be greater than zero',
-    }
   );
 
 const AllocationInput: FC<AllocationInputProps> = ({
-  isLocked = true,
+  isLocked = false,
   lockTooltip,
   amount = null,
   hasDeleteButton = false,
@@ -87,15 +80,22 @@ const AllocationInput: FC<AllocationInputProps> = ({
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
+  const { data: minRestakingBond } = usePolkadotApiRx(
+    useCallback((api) => api.query.roles.minRestakingBond(), [])
+  );
+
   const handleAmountChange = useCallback(
     (newValue: string) => {
-      // Do nothing if the input is invalid.
-      if (onChange === undefined || newValue === '' || newValue.includes('.')) {
+      // Do nothing if the input is invalid or empty.
+      if (
+        onChange === undefined ||
+        newValue === '' ||
+        !DECIMAL_REGEX.test(newValue)
+      ) {
         return;
       }
 
-      const newValueAsNumber = Number(newValue);
-      const newAmountInChainUnits = convertNumberToChainUnits(newValueAsNumber);
+      const newAmountInChainUnits = convertAmountStringToChainUnits(newValue);
 
       onChange(newAmountInChainUnits);
     },
@@ -117,7 +117,17 @@ const AllocationInput: FC<AllocationInputProps> = ({
   const amountAsString =
     amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
 
-  const validationResult = VALIDATION_SCHEMA.safeParse(amountAsString);
+  // TODO: Also validate that the amount is below the remaining allocation balance. Accept a prop for the remaining balance.
+  const validationResult = STATIC_VALIDATION_SCHEMA.refine(
+    () =>
+      amount === null ||
+      minRestakingBond === null ||
+      amount.gte(minRestakingBond),
+    {
+      message:
+        'Amount must be greater than or equal to the minimum restaking bond.',
+    }
+  ).safeParse(amountAsString);
 
   const errorMessage = !validationResult.success
     ? // Pick the first error message, since the input component does
@@ -142,15 +152,17 @@ const AllocationInput: FC<AllocationInputProps> = ({
             id={id}
             inputClassName="placeholder:text-md"
             value={amountAsString}
-            type="number"
+            type="text"
             inputMode="numeric"
             onChange={handleAmountChange}
             placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
             size="sm"
             autoComplete="off"
             isInvalid={!validationResult.success}
-            isDisabled={isDisabled}
-            min={0}
+            isReadOnly={isDisabled}
+            // The absolute maximum length for a token amount of 18
+            // decimals is 28 characters.
+            maxLength={28}
           />
         </div>
 
@@ -203,9 +215,13 @@ const AllocationInput: FC<AllocationInputProps> = ({
                 >
                   <Chip color={getRoleChipColor(role)}>{role}</Chip>
 
-                  <Chip color="grey" className="dark:bg-mono-140">
-                    ≥ 50 {TANGLE_TOKEN_UNIT}
-                  </Chip>
+                  {minRestakingBond !== null ? (
+                    <Chip color="grey" className="dark:bg-mono-140">
+                      {`≥ ${formatTokenBalance(minRestakingBond)}`}
+                    </Chip>
+                  ) : (
+                    <SkeletonLoader />
+                  )}
                 </div>
               ))}
           </div>
@@ -246,12 +262,6 @@ const Action: FC<ActionProps> = ({
           )}
         />
       }
-      overrideTooltipProps={{
-        className: 'z-50',
-      }}
-      overrideTooltipBodyProps={{
-        className: 'z-50',
-      }}
       content={<>{tooltip}</>}
     />
   );

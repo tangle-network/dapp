@@ -6,6 +6,7 @@ import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
+import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -116,28 +117,14 @@ function useSubstrateTx<T extends ISubmittableResult>(
 
           setHash(status.txHash.toHex());
 
-          const didSucceed =
-            !status.isError &&
-            !status.isWarning &&
-            status.dispatchError === undefined;
+          const error = extractErrorFromTxStatus(status);
 
-          setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
+          setStatus(error === null ? TxStatus.Complete : TxStatus.Error);
+          setError(error);
 
-          if (!didSucceed) {
-            let error: Error;
-
-            if (status.dispatchError !== undefined) {
-              error = new Error(
-                `Dispatch error occurred at the runtime execution level. Error code: ${status.dispatchError.asModule.error.toHuman()}, index: ${
-                  status.dispatchError.asModule.index
-                }`
-              );
-            } else {
-              error = ensureError(status.internalError);
-            }
-
-            console.error('Transaction failed', error);
-            setError(error);
+          // Useful for debugging.
+          if (error !== null) {
+            console.debug('Transaction failed', error, status);
           }
         }
       );

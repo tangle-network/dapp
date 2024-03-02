@@ -1,11 +1,10 @@
 import { BN } from '@polkadot/util';
-import assert from 'assert';
 
 import { TANGLE_TOKEN_DECIMALS } from '../constants';
 
 /**
- * Converts a numeric amount to blockchain format based on the
- * specified decimals.
+ * Converts a numeric amount in string form to blockchain format
+ * based on the number of decimal places used in Tangle.
  *
  * This handles the conversion of a floating-point number into a
  * Big Number (BN), which is required for blockchain transactions.
@@ -23,8 +22,8 @@ import { TANGLE_TOKEN_DECIMALS } from '../constants';
  * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
  * ```
  */
-const convertNumberToChainUnits = (amount: number): BN => {
-  assert(amount >= 0, 'Amount should be 0 or positive');
+const convertAmountStringToChainUnits = (amount: string): BN => {
+  // TODO: Use zod for validation, and convert this function to support input amount strings, as it is currently only used with strings & for user inputs.
 
   // Convert the amount to a string to avoid floating point inaccuracies.
   const amountStr = amount.toString();
@@ -39,4 +38,4 @@ const convertNumberToChainUnits = (amount: number): BN => {
   return new BN(fullAmountStr);
 };
 
-export default convertNumberToChainUnits;
+export default convertAmountStringToChainUnits;
