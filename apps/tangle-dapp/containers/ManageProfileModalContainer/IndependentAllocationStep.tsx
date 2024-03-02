@@ -1,5 +1,9 @@
 import { BN } from '@polkadot/util';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
@@ -193,7 +197,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   return (
     <div className="flex gap-5 items-start justify-center">
-      <div className="flex flex-col gap-4 items-end justify-start min-w-max">
+      <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
           {cleanAllocations(allocations).map(([service, amount]) => (
             <AllocationInput
@@ -223,29 +227,38 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           )}
         </div>
 
-        <div className="flex gap-2">
-          {restakedAmount.gtn(0) && (
-            <Button
-              size="sm"
-              variant="utility"
-              className="uppercase"
-              onClick={handleClearAllocations}
-            >
-              Clear All
-            </Button>
-          )}
+        <div className="w-full flex items-center justify-between gap-2">
+          <Typography variant="body1" className="dark:text-mono-0">
+            Remaining:{' '}
+            {amountRemaining !== null
+              ? formatTokenBalance(amountRemaining)
+              : '—'}
+          </Typography>
 
-          {availableRoles.length > 0 && (
-            <Button
-              size="sm"
-              variant="utility"
-              className="uppercase"
-              onClick={handleNewAllocation}
-              isDisabled={!isNewAllocationAmountValid}
-            >
-              Add Allocation
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {restakedAmount.gtn(0) && (
+              <Button
+                size="sm"
+                variant="utility"
+                className="uppercase"
+                onClick={handleClearAllocations}
+              >
+                Clear All
+              </Button>
+            )}
+
+            {availableRoles.length > 0 && (
+              <Button
+                size="sm"
+                variant="utility"
+                className="uppercase"
+                onClick={handleNewAllocation}
+                isDisabled={!isNewAllocationAmountValid}
+              >
+                Add Role
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

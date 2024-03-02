@@ -27,7 +27,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   const cleanedAllocations = cleanAllocations(allocations);
 
   return (
-    <div className="flex flex-row gap-2 w-full">
+    <div className="flex flex-row items-start gap-2 w-full">
       <div className="flex flex-col gap-2 dark:bg-mono-160 rounded-lg w-full p-4">
         <div className="flex justify-between">
           <Typography variant="body2" fw="semibold">
