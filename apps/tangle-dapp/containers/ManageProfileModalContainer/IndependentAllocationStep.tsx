@@ -217,6 +217,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               setService={setNewAllocationRole}
               hasDeleteButton
               onDelete={handleDeallocation}
+              availableBalance={amountRemaining}
             />
           ))}
 
@@ -229,6 +230,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
               onChange={setNewAllocationAmount}
+              availableBalance={amountRemaining}
             />
           )}
         </div>

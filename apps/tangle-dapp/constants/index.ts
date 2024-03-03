@@ -59,8 +59,10 @@ export const serviceTypeToChipColor = {
 } as const satisfies Record<ServiceType, ChipColors>;
 
 export enum StaticAssetPath {
-  RestakingMethodIndependent = '/static/assets/restaking-method-independent.svg',
-  RestakingMethodShared = '/static/assets/restaking-method-shared.svg',
+  RestakingMethodIndependentDark = '/static/assets/restaking/method-independent-dark.svg',
+  RestakingMethodSharedDark = '/static/assets/restaking/method-shared-dark.svg',
+  RestakingMethodIndependentLight = '/static/assets/restaking/method-independent-light.svg',
+  RestakingMethodSharedLight = '/static/assets/restaking/method-shared-light.svg',
 }
 
 export const SUBSTRATE_ROLE_TYPE_MAPPING = {

@@ -1,5 +1,6 @@
 import { Card, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -15,6 +16,9 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
   profileType,
   setProfileType,
 }) => {
+  const themeProps = useTheme();
+  const isDarkMode = themeProps.theme === 'dark';
+
   return (
     <div className="flex flex-col sm:flex-row gap-5">
       <OptionCard
@@ -23,7 +27,11 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
         setSelected={setProfileType}
       >
         <Image
-          src={StaticAssetPath.RestakingMethodIndependent}
+          src={
+            isDarkMode
+              ? StaticAssetPath.RestakingMethodIndependentDark
+              : StaticAssetPath.RestakingMethodIndependentLight
+          }
           alt="Independent restaking method illustration"
           width={120}
           height={120}
@@ -44,7 +52,11 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
         setSelected={setProfileType}
       >
         <Image
-          src={StaticAssetPath.RestakingMethodShared}
+          src={
+            isDarkMode
+              ? StaticAssetPath.RestakingMethodSharedDark
+              : StaticAssetPath.RestakingMethodSharedLight
+          }
           alt="Shared restaking method illustration"
           width={120}
           height={120}

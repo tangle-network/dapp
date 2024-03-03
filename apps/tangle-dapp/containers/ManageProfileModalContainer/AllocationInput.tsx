@@ -29,6 +29,7 @@ import { formatTokenBalance } from '../../utils/polkadot/tokens';
 export type AllocationInputProps = {
   amount: BN | null;
   availableServices: ServiceType[];
+  availableBalance: BN | null;
   service: ServiceType | null;
   title: string;
   id: string;
@@ -68,6 +69,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   isLocked = false,
   lockTooltip,
   amount = null,
+  availableBalance,
   hasDeleteButton = false,
   isDisabled = false,
   availableServices,
@@ -114,10 +116,14 @@ const AllocationInput: FC<AllocationInputProps> = ({
     }
   };
 
+  const handleSetService = (service: ServiceType) => {
+    setService(service);
+    setIsDropdownVisible(false);
+  };
+
   const amountAsString =
     amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
 
-  // TODO: Also validate that the amount is below the remaining allocation balance. Accept a prop for the remaining balance.
   const validationResult = STATIC_VALIDATION_SCHEMA.refine(
     () =>
       amount === null ||
@@ -127,7 +133,17 @@ const AllocationInput: FC<AllocationInputProps> = ({
       message:
         'Amount must be greater than or equal to the minimum restaking bond.',
     }
-  ).safeParse(amountAsString);
+  )
+    .refine(
+      () =>
+        availableBalance === null ||
+        amount === null ||
+        amount.lte(availableBalance),
+      {
+        message: 'Not enough available balance',
+      }
+    )
+    .safeParse(amountAsString);
 
   const errorMessage = !validationResult.success
     ? // Pick the first error message, since the input component does
@@ -140,9 +156,9 @@ const AllocationInput: FC<AllocationInputProps> = ({
       <InputWrapper
         className={twMerge(
           'flex gap-2 cursor-default relative !w-full !max-w-[400px]',
-          'border border-mono-20 dark:border-mono-160',
           'bg-mono-20 dark:bg-mono-160',
-          !validationResult.success && 'border-red-50'
+          'border border-mono-20 dark:border-mono-160',
+          !validationResult.success && 'border-red-50 dark:border-red-50'
         )}
       >
         <div className="flex flex-col gap-1 mr-auto">
@@ -164,7 +180,8 @@ const AllocationInput: FC<AllocationInputProps> = ({
             size="sm"
             autoComplete="off"
             isInvalid={!validationResult.success}
-            isReadOnly={isDisabled}
+            // Disable input if the available balance is not yet loaded.
+            isReadOnly={isDisabled || availableBalance === null}
           />
         </div>
 
@@ -179,7 +196,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
             onClick={toggleDropdown}
             color={service === null ? 'grey' : getRoleChipColor(service)}
             className={twMerge(
-              'uppercase text-mono-0 bg-mono-100 dark:bg-mono-140 whitespace-nowrap',
+              'uppercase text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140 whitespace-nowrap',
               !isDisabled && 'cursor-pointer'
             )}
           >
@@ -206,21 +223,21 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
         {/* Dropdown body */}
         {isDropdownVisible && (
-          <div className="absolute z-50 top-[100%] left-0 mt-1 w-full bg-mono-0 border border-mono-40 dark:border-mono-140 dark:bg-mono-160 shadow-md rounded-lg overflow-hidden">
+          <div className="absolute z-50 top-[100%] left-0 mt-1 w-full bg-mono-0 border border-mono-40 dark:border-mono-140 dark:bg-mono-170 shadow-md rounded-lg overflow-hidden">
             {availableServices
               .filter((availableRole) => availableRole !== service)
-              .map((role) => (
+              .map((service) => (
                 <div
-                  key={role}
-                  onClick={() => setService(role)}
-                  className="flex justify-between p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-140"
+                  key={service}
+                  onClick={() => handleSetService(service)}
+                  className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
                 >
-                  <Chip color={getRoleChipColor(role)}>{role}</Chip>
+                  <Chip color={getRoleChipColor(service)}>{service}</Chip>
 
                   {minRestakingBond !== null ? (
                     <Chip
                       color="grey"
-                      className="text-mono-0 bg-mono-100 dark:bg-mono-140"
+                      className="text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140"
                     >
                       {`≥ ${formatTokenBalance(minRestakingBond)}`}
                     </Chip>
