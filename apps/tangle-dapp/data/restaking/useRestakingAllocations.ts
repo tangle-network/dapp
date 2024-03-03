@@ -27,6 +27,8 @@ function convertRecordToAllocation(
   } else if (record.role.isTss) {
     // TODO: There are many more Tss roles displayed in the Polkadot/Substrate Portal. Is this truly all to be supported for now?
     serviceType = ServiceType.DKG_TSS_CGGMP;
+  } else if (record.role.isLightClientRelaying) {
+    serviceType = ServiceType.TX_RELAY;
   }
 
   if (serviceType === null) {

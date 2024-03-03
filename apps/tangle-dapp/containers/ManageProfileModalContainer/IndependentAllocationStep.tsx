@@ -218,6 +218,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               hasDeleteButton
               onDelete={handleDeallocation}
               availableBalance={amountRemaining}
+              validateAmountAgainstRemaining={false}
             />
           ))}
 
@@ -231,6 +232,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               amount={newAllocationAmount}
               onChange={setNewAllocationAmount}
               availableBalance={amountRemaining}
+              validateAmountAgainstRemaining
             />
           )}
         </div>

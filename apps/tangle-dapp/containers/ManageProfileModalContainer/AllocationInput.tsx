@@ -31,6 +31,7 @@ export type AllocationInputProps = {
   availableServices: ServiceType[];
   availableBalance: BN | null;
   service: ServiceType | null;
+  validateAmountAgainstRemaining: boolean;
   title: string;
   id: string;
   isDisabled?: boolean;
@@ -72,6 +73,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   availableBalance,
   hasDeleteButton = false,
   isDisabled = false,
+  validateAmountAgainstRemaining,
   availableServices,
   title,
   id,
@@ -131,11 +133,12 @@ const AllocationInput: FC<AllocationInputProps> = ({
       amount.gte(minRestakingBond),
     {
       message:
-        'Amount must be greater than or equal to the minimum restaking bond.',
+        'Amount must be greater than or equal to the minimum restaking bond',
     }
   )
     .refine(
       () =>
+        !validateAmountAgainstRemaining ||
         availableBalance === null ||
         amount === null ||
         amount.lte(availableBalance),
@@ -196,7 +199,9 @@ const AllocationInput: FC<AllocationInputProps> = ({
             onClick={toggleDropdown}
             color={service === null ? 'grey' : getRoleChipColor(service)}
             className={twMerge(
-              'uppercase text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140 whitespace-nowrap',
+              'uppercase whitespace-nowrap',
+              service === null &&
+                'text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140',
               !isDisabled && 'cursor-pointer'
             )}
           >
