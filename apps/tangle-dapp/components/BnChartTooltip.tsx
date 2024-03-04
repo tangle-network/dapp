@@ -1,5 +1,5 @@
+import { BN } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import BN from 'bn.js';
 import { TooltipProps } from 'recharts';
 
 import { ServiceType } from '../types';

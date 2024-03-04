@@ -6,6 +6,17 @@ import { RestakingAllocationMap } from '../../containers/ManageProfileModalConta
 import { ServiceType } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
+/**
+ * Given a roles profile record (a tuple originating from chain,
+ * consisting of a role and its restaked amount), convert it to
+ * a tuple that this application can work with, which includes
+ * the role type as an enum, and the amount restaked in that role.
+ *
+ * The main reason why this is needed is because the role types provided
+ * by Polkadot JS are in a tedious format, which is a consequence of
+ * Rust's sum type enums, which are not straightforward to map to
+ * JavaScript/TypeScript.
+ */
 function convertRecordToAllocation(
   record: PalletRolesProfileRecord
 ): [ServiceType, BN] {
@@ -43,6 +54,20 @@ function convertRecordToAllocation(
   return [serviceType, record.amount.unwrap()];
 }
 
+/**
+ * Obtain the roles and their allocation amounts of the
+ * active account from chain, for either independent or
+ * shared profile.
+ *
+ * These roles help identify what kind of jobs the active
+ * account performs. The amounts corresponding to each job
+ * represent their staked amount for that role ('restaking'
+ * amount). Higher amounts provide higher crypto economic security
+ * because that means higher amounts can be slashed.
+ *
+ * If the active account does not have a profile setup,
+ * `null` will be returned for the value.
+ */
 const useRestakingAllocations = (profileType: RestakingProfileType) => {
   const ledgerResult = useRestakingRoleLedger();
   const ledgerOpt = ledgerResult.data;

@@ -106,17 +106,17 @@ const AllocationInput: FC<AllocationInputProps> = ({
     [onChange]
   );
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (onDelete !== undefined && service !== null) {
       onDelete(service);
     }
-  };
+  }, [onDelete, service]);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = useCallback(() => {
     if (!isDisabled) {
       setIsDropdownVisible((isVisible) => !isVisible);
     }
-  };
+  }, [isDisabled]);
 
   const handleSetService = (service: ServiceType) => {
     setService(service);

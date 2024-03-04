@@ -1,7 +1,10 @@
 import { BN } from '@polkadot/util';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Typography,
+  useNextDarkMode,
+} from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { useTheme } from 'next-themes';
 import {
   Dispatch,
   FC,
@@ -99,10 +102,11 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   // See: https://github.com/webb-tools/tangle/blob/8be20aa02a764422e1fd0ba30bc70b99d5f66887/runtime/mainnet/src/lib.rs#L1137
   const maxRestakingAmount = stakedBalance?.divn(2) ?? null;
 
-  const themeProps = useTheme();
+  const [isDarkMode] = useNextDarkMode();
 
-  const themeCellColor: ChartColor =
-    themeProps.theme === 'dark' ? ChartColor.DarkGray : ChartColor.Gray;
+  const themeCellColor: ChartColor = isDarkMode
+    ? ChartColor.DarkGray
+    : ChartColor.Gray;
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
