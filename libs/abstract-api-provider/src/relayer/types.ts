@@ -18,9 +18,9 @@ export type RelayedChainConfig<BaseOn extends RelayerCMDBase> = {
   account: string;
   beneficiary?: string;
   enabled?: boolean;
-  contracts: BaseOn extends 'evm' ? Contract[] : never;
-  pallets: BaseOn extends 'substrate' ? Pallet[] : never;
-  relayerFeeConfig: BaseOn extends 'evm'
+  contracts?: BaseOn extends 'evm' ? Contract[] : never;
+  pallets?: BaseOn extends 'substrate' ? Pallet[] : never;
+  relayerFeeConfig?: BaseOn extends 'evm'
     ?
         | {
             relayerProfitPercent: number;
