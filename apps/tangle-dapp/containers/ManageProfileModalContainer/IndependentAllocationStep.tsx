@@ -115,7 +115,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   const [newAllocationRole, setNewAllocationRole] =
     useState<ServiceType | null>(null);
 
-  // TODO: Need to load initial restaked amount from Polkadot API. For now, it's hardcoded to 0. Will likely need a `useEffect` hook for this, since it requires an active account. Base it off the `allocations` prop, so in reality the parent should be the one fetching the initial restaking allocations on load from the Polkadot API.
   const restakedAmount = useMemo(() => {
     let amount = new BN(0);
 
