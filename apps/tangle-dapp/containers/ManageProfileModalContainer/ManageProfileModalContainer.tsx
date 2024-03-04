@@ -16,6 +16,7 @@ import { ServiceType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
 import IndependentAllocationStep from './IndependentAllocationStep';
+import SharedAllocationStep from './SharedAllocationStep';
 import {
   ManageProfileModalContainerProps,
   RestakingAllocationMap,
@@ -88,12 +89,17 @@ function getStepPreviousButtonLabel(step: Step): string {
   }
 }
 
-function getStepDescription(step: Step): string | null {
+function getStepDescription(
+  step: Step,
+  profileType: RestakingProfileType
+): string | null {
   switch (step) {
     case Step.ChooseMethod:
       return 'To participate in MPC services, allocate your staked TNT tokens using one of the available restaking methods. Your choice determines your risk allocation strategy. Would you like to restake as independent or shared?';
     case Step.Allocation:
-      return 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.';
+      return profileType === RestakingProfileType.Independent
+        ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
+        : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.';
     case Step.ConfirmAllocations:
       return null;
   }
@@ -138,12 +144,18 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
       break;
     case Step.Allocation:
-      stepContents = (
-        <IndependentAllocationStep
-          allocations={allocations}
-          setAllocations={setAllocations}
-        />
-      );
+      stepContents =
+        profileType === RestakingProfileType.Independent ? (
+          <IndependentAllocationStep
+            allocations={allocations}
+            setAllocations={setAllocations}
+          />
+        ) : (
+          <SharedAllocationStep
+            allocations={allocations}
+            setAllocations={setAllocations}
+          />
+        );
 
       break;
     case Step.ConfirmAllocations:
@@ -216,7 +228,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     return () => clearTimeout(timeoutHandle);
   }, [isModalOpen, isMountedRef]);
 
-  const stepDescription = getStepDescription(step);
+  const stepDescription = getStepDescription(step, profileType);
   const previousStep = getStepDiff(step, false);
 
   return (

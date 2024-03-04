@@ -241,8 +241,8 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
                   {minRestakingBond !== null ? (
                     <Chip
-                      color="grey"
-                      className="text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140"
+                      color="dark-grey"
+                      className="text-mono-0 dark:text-mono-0"
                     >
                       {`≥ ${formatTokenBalance(minRestakingBond)}`}
                     </Chip>

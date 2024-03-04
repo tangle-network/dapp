@@ -2,20 +2,13 @@ import { BN } from '@polkadot/util';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 import { z } from 'zod';
 
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
-import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
+import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import AllocationInput from './AllocationInput';
@@ -46,7 +39,7 @@ function getPercentageOfTotal(amount: BN, total: BN): number {
   return amount.mul(new BN(100)).div(total).toNumber() / 100;
 }
 
-function getServiceChartColor(service: ServiceType): ChartColor {
+export function getServiceChartColor(service: ServiceType): ChartColor {
   switch (service) {
     case ServiceType.ZK_SAAS_MARLIN:
     case ServiceType.ZK_SAAS_GROTH16:
@@ -88,17 +81,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const { data: stakedBalance } = useStakingLedgerRx(
-    useCallback((ledger) => ledger.total.toBn(), [])
-  );
-
-  // Max restaking amount = 50% of the total staked balance, which
-  // is equivalent to dividing the staked balance by 2. This is taken
-  // from Tangle's source code, as it seems that it is not obtainable
-  // from the Polkadot API.
-  // See: https://github.com/webb-tools/tangle/blob/8be20aa02a764422e1fd0ba30bc70b99d5f66887/runtime/mainnet/src/lib.rs#L1137
-  const maxRestakingAmount = stakedBalance?.divn(2) ?? null;
-
+  const maxRestakingAmount = useMaxRestakingAmount();
   const themeProps = useTheme();
 
   const themeCellColor: ChartColor =
