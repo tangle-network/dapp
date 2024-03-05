@@ -127,27 +127,32 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     return amount;
   }, [allocations]);
 
-  const remainingDataEntry: AllocationDataEntry = {
-    name: 'Remaining',
-    value:
-      maxRestakingAmount === null
-        ? 1
-        : 1 - getPercentageOfTotal(restakedAmount, maxRestakingAmount),
-  };
+  const remainingDataEntry: AllocationDataEntry = useMemo(
+    () => ({
+      name: 'Remaining',
+      value:
+        maxRestakingAmount === null
+          ? 1
+          : 1 - getPercentageOfTotal(restakedAmount, maxRestakingAmount),
+    }),
+    [maxRestakingAmount, restakedAmount]
+  );
 
-  const allocationDataEntries: AllocationDataEntry[] = cleanAllocations(
-    allocations
-  ).map(([service, amount]) => ({
-    name: service,
-    value:
-      maxRestakingAmount === null
-        ? 0
-        : getPercentageOfTotal(amount, maxRestakingAmount),
-  }));
+  const allocationDataEntries: AllocationDataEntry[] = useMemo(
+    () =>
+      cleanAllocations(allocations).map(([service, amount]) => ({
+        name: service,
+        value:
+          maxRestakingAmount === null
+            ? 0
+            : getPercentageOfTotal(amount, maxRestakingAmount),
+      })),
+    [allocations, maxRestakingAmount]
+  );
 
   const data = [remainingDataEntry].concat(allocationDataEntries);
 
-  const handleNewAllocation = () => {
+  const handleNewAllocation = useCallback(() => {
     if (newAllocationRole === null || newAllocationAmount === null) {
       return;
     }
@@ -159,16 +164,16 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
     setNewAllocationRole(null);
     setNewAllocationAmount(null);
-  };
+  }, [newAllocationAmount, newAllocationRole, setAllocations]);
 
-  const handleClearAllocations = () => {
+  const handleClearAllocations = useCallback(() => {
     setAllocations({
       [ServiceType.DKG_TSS_CGGMP]: null,
       [ServiceType.TX_RELAY]: null,
       [ServiceType.ZK_SAAS_GROTH16]: null,
       [ServiceType.ZK_SAAS_MARLIN]: null,
     });
-  };
+  }, [setAllocations]);
 
   const handleDeallocation = (service: ServiceType) => {
     const deallocatedAmount = allocations[service];
@@ -200,9 +205,13 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     return newAllocationAmount.lte(amountRemaining);
   })();
 
-  const availableRoles = Object.entries(allocations)
-    .filter((entry) => entry[1] === null)
-    .map(([service]) => z.nativeEnum(ServiceType).parse(service));
+  const availableRoles = useMemo(
+    () =>
+      Object.entries(allocations)
+        .filter((entry) => entry[1] === null)
+        .map(([service]) => z.nativeEnum(ServiceType).parse(service)),
+    [allocations]
+  );
 
   return (
     <div className="flex flex-col-reverse sm:flex-row gap-5 items-center sm:items-start justify-center">
