@@ -15,7 +15,7 @@ import {
   SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, ReactElement, useCallback, useState } from 'react';
+import { FC, ReactElement, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
 
@@ -106,47 +106,59 @@ const AllocationInput: FC<AllocationInputProps> = ({
     [onChange]
   );
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (onDelete !== undefined && service !== null) {
       onDelete(service);
     }
-  };
+  }, [onDelete, service]);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = useCallback(() => {
     if (!isDisabled) {
       setIsDropdownVisible((isVisible) => !isVisible);
     }
-  };
+  }, [isDisabled]);
 
   const handleSetService = (service: ServiceType) => {
     setService(service);
     setIsDropdownVisible(false);
   };
 
-  const amountAsString =
-    amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
+  const amountAsString = useMemo(
+    () => (amount !== null ? convertChainUnitsToNumber(amount).toString() : ''),
+    [amount]
+  );
 
-  const validationResult = STATIC_VALIDATION_SCHEMA.refine(
+  const validationResult = useMemo(
     () =>
-      amount === null ||
-      minRestakingBond === null ||
-      amount.gte(minRestakingBond),
-    {
-      message:
-        'Amount must be greater than or equal to the minimum restaking bond',
-    }
-  )
-    .refine(
-      () =>
-        !validateAmountAgainstRemaining ||
-        availableBalance === null ||
-        amount === null ||
-        amount.lte(availableBalance),
-      {
-        message: 'Not enough available balance',
-      }
-    )
-    .safeParse(amountAsString);
+      STATIC_VALIDATION_SCHEMA.refine(
+        () =>
+          amount === null ||
+          minRestakingBond === null ||
+          amount.gte(minRestakingBond),
+        {
+          message:
+            'Amount must be greater than or equal to the minimum restaking bond',
+        }
+      )
+        .refine(
+          () =>
+            !validateAmountAgainstRemaining ||
+            availableBalance === null ||
+            amount === null ||
+            amount.lte(availableBalance),
+          {
+            message: 'Not enough available balance',
+          }
+        )
+        .safeParse(amountAsString),
+    [
+      amount,
+      amountAsString,
+      availableBalance,
+      minRestakingBond,
+      validateAmountAgainstRemaining,
+    ]
+  );
 
   const errorMessage = !validationResult.success
     ? // Pick the first error message, since the input component does

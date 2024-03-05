@@ -1,6 +1,9 @@
-import { Card, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  Typography,
+  useNextDarkMode,
+} from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
-import { useTheme } from 'next-themes';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -16,8 +19,7 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
   profileType,
   setProfileType,
 }) => {
-  const themeProps = useTheme();
-  const isDarkMode = themeProps.theme === 'dark';
+  const [isDarkMode] = useNextDarkMode();
 
   return (
     <div className="flex flex-col sm:flex-row gap-5">
