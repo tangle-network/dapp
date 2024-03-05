@@ -5,18 +5,8 @@ import {
   Close,
   LockUnlockLineIcon,
 } from '@webb-tools/icons';
-import { IconBase, IconSize } from '@webb-tools/icons/types';
-import {
-  Chip,
-  IconWithTooltip,
-  Input,
-  InputWrapper,
-  Label,
-  SkeletonLoader,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import { FC, ReactElement, useCallback, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
@@ -26,6 +16,8 @@ import { getChipColorByServiceType } from '../../utils';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
+import BaseInput from './BaseInput';
+import InputAction from './InputAction';
 
 export type AllocationInputProps = {
   amount: BN | null;
@@ -69,6 +61,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   setService,
   onDelete,
 }) => {
+  // TODO: Handle `BaseInput` dropdown visibility from parent (here).
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const { data: minRestakingBond } = usePolkadotApiRx(
@@ -98,12 +91,6 @@ const AllocationInput: FC<AllocationInputProps> = ({
       onDelete(service);
     }
   }, [onDelete, service]);
-
-  const toggleDropdown = useCallback(() => {
-    if (!isDisabled) {
-      setIsDropdownVisible((isVisible) => !isVisible);
-    }
-  }, [isDisabled]);
 
   const handleSetService = (service: ServiceType) => {
     setService(service);
@@ -153,148 +140,73 @@ const AllocationInput: FC<AllocationInputProps> = ({
       validationResult.error.issues[0].message
     : undefined;
 
-  return (
-    <div className="flex flex-col items-end gap-1">
-      <InputWrapper
-        className={twMerge(
-          'flex gap-2 cursor-default relative !w-full !max-w-[400px]',
-          'bg-mono-20 dark:bg-mono-160',
-          'border border-mono-20 dark:border-mono-160',
-          !validationResult.success && 'border-red-50 dark:border-red-50'
-        )}
+  const dropdownBody = availableServices
+    .filter((availableRole) => availableRole !== service)
+    .map((service) => (
+      <div
+        key={service}
+        onClick={() => handleSetService(service)}
+        className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
       >
-        <div className="flex flex-col gap-1 mr-auto">
-          <Label
-            className="text-mono-100 dark:text-mono-80 font-bold"
-            htmlFor={id}
-          >
-            {title}
-          </Label>
+        <Chip color={getChipColorByServiceType(service)}>{service}</Chip>
 
-          <Input
-            id={id}
-            inputClassName="placeholder:text-md"
-            value={amountAsString}
-            type="number"
-            inputMode="numeric"
-            onChange={handleAmountChange}
-            placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
-            size="sm"
-            autoComplete="off"
-            isInvalid={!validationResult.success}
-            // Disable input if the available balance is not yet loaded.
-            isReadOnly={isDisabled || availableBalance === null}
-          />
-        </div>
-
-        {/* Actions */}
-        <div
-          className={twMerge(
-            'flex items-center justify-center gap-1',
-            !isDisabled && 'cursor-pointer'
-          )}
-        >
-          <Chip
-            onClick={toggleDropdown}
-            color={
-              service === null ? 'grey' : getChipColorByServiceType(service)
-            }
-            className={twMerge(
-              'uppercase whitespace-nowrap',
-              service === null &&
-                'text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140',
-              !isDisabled && 'cursor-pointer'
-            )}
-          >
-            {service ?? 'Select role'}
+        {minRestakingBond !== null ? (
+          <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
+            {`≥ ${formatTokenBalance(minRestakingBond)}`}
           </Chip>
-
-          {isLocked && (
-            <Action
-              tooltip={lockTooltip}
-              Icon={LockUnlockLineIcon}
-              iconSize="md"
-            />
-          )}
-
-          {hasDeleteButton ? (
-            <Action Icon={Close} onClick={handleDelete} tooltip="Remove role" />
-          ) : (
-            <Action
-              Icon={isDropdownVisible ? ChevronUp : ChevronDown}
-              onClick={toggleDropdown}
-            />
-          )}
-        </div>
-
-        {/* Dropdown body */}
-        {isDropdownVisible && (
-          <div className="absolute z-50 top-[100%] left-0 mt-1 w-full bg-mono-0 border border-mono-40 dark:border-mono-140 dark:bg-mono-170 shadow-md rounded-lg overflow-hidden">
-            {availableServices
-              .filter((availableRole) => availableRole !== service)
-              .map((service) => (
-                <div
-                  key={service}
-                  onClick={() => handleSetService(service)}
-                  className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
-                >
-                  <Chip color={getChipColorByServiceType(service)}>
-                    {service}
-                  </Chip>
-
-                  {minRestakingBond !== null ? (
-                    <Chip
-                      color="dark-grey"
-                      className="text-mono-0 dark:text-mono-0"
-                    >
-                      {`≥ ${formatTokenBalance(minRestakingBond)}`}
-                    </Chip>
-                  ) : (
-                    <SkeletonLoader />
-                  )}
-                </div>
-              ))}
-          </div>
+        ) : (
+          <SkeletonLoader />
         )}
-      </InputWrapper>
+      </div>
+    ));
 
-      {errorMessage !== undefined && (
-        <Typography className="dark:text-mono-100" variant="body1" fw="normal">
-          *{errorMessage}
-        </Typography>
+  const actions = (
+    <>
+      {isLocked && (
+        <InputAction
+          tooltip={lockTooltip}
+          Icon={LockUnlockLineIcon}
+          iconSize="md"
+        />
       )}
-    </div>
-  );
-};
 
-type ActionProps = {
-  Icon: (props: IconBase) => ReactElement;
-  tooltip?: string;
-  iconSize?: IconSize;
-  onClick?: () => void;
-};
-
-const Action: FC<ActionProps> = ({
-  tooltip,
-  iconSize = 'lg',
-  Icon,
-  onClick,
-}) => {
-  const icon = (
-    <Icon
-      onClick={onClick}
-      size={iconSize}
-      className={twMerge(
-        'dark:fill-mono-0',
-        onClick !== undefined && 'cursor-pointer'
+      {hasDeleteButton && (
+        <InputAction
+          Icon={Close}
+          onClick={handleDelete}
+          tooltip="Remove role"
+        />
       )}
-    />
+    </>
   );
 
-  return tooltip === undefined ? (
-    icon
-  ) : (
-    <IconWithTooltip content={<>{tooltip}</>} icon={icon} />
+  return (
+    <BaseInput
+      title={title}
+      id={id}
+      actions={actions}
+      dropdownBody={!hasDeleteButton ? dropdownBody : undefined}
+      errorMessage={errorMessage}
+      chipText={service ?? 'Select role'}
+      chipColor={
+        service !== null ? getChipColorByServiceType(service) : undefined
+      }
+    >
+      <Input
+        id={id}
+        inputClassName="placeholder:text-md"
+        value={amountAsString}
+        type="number"
+        inputMode="numeric"
+        onChange={handleAmountChange}
+        placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
+        size="sm"
+        autoComplete="off"
+        isInvalid={!validationResult.success}
+        // Disable input if the available balance is not yet loaded.
+        isReadOnly={isDisabled || availableBalance === null}
+      />
+    </BaseInput>
   );
 };
 

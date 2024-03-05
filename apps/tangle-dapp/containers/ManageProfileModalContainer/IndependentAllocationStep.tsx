@@ -12,10 +12,12 @@ import {
 import { z } from 'zod';
 
 import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
+import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
-import AllocationChart, { AllocationChartVariant } from './AllocationChart';
+import { AllocationChartVariant } from './AllocationChart';
 import AllocationInput from './AllocationInput';
+import AllocationStepContents from './AllocationStepContents';
 import { RestakingAllocationMap } from './types';
 
 export type IndependentAllocationStepProps = {
@@ -23,14 +25,21 @@ export type IndependentAllocationStepProps = {
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
-export function cleanAllocations(
+export function filterAllocations(
   allocations: RestakingAllocationMap
 ): [ServiceType, BN][] {
-  return Object.entries(allocations).map(([serviceString, amount]) => {
-    const service = z.nativeEnum(ServiceType).parse(serviceString);
+  return Object.entries(allocations)
+    .filter(([, amount]) => amount !== null)
+    .map(([serviceString, amount]) => {
+      assert(
+        amount !== null,
+        'Entries with null amounts should have been filtered out'
+      );
 
-    return [service, amount];
-  });
+      const service = z.nativeEnum(ServiceType).parse(serviceString);
+
+      return [service, amount];
+    });
 }
 
 const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
@@ -41,6 +50,13 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
+  );
+
+  const { value: maxRolesPerAccount } = usePolkadotApi(
+    useCallback(
+      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
+      []
+    )
   );
 
   const [newAllocationRole, setNewAllocationRole] =
@@ -112,11 +128,22 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations]
   );
 
+  const allocationsSet = filterAllocations(allocations);
+
+  const canAddNewAllocation =
+    availableRoles.length > 0 &&
+    maxRolesPerAccount !== null &&
+    maxRolesPerAccount.gtn(allocationsSet.length);
+
   return (
-    <div className="flex flex-col-reverse sm:flex-row gap-5 items-center sm:items-start justify-center">
+    <AllocationStepContents
+      allocatedAmount={restakedAmount}
+      allocations={allocations}
+      variant={AllocationChartVariant.INDEPENDENT}
+    >
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
-          {cleanAllocations(allocations).map(([service, amount]) => (
+          {allocationsSet.map(([service, amount]) => (
             <AllocationInput
               amount={amount}
               isDisabled
@@ -133,7 +160,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
             />
           ))}
 
-          {availableRoles.length > 0 && (
+          {canAddNewAllocation && (
             <AllocationInput
               title="Total Restake"
               id="manage-profile-new-allocation"
@@ -182,13 +209,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           </div>
         </div>
       </div>
-
-      <AllocationChart
-        allocatedAmount={restakedAmount}
-        allocations={allocations}
-        variant={AllocationChartVariant.INDEPENDENT}
-      />
-    </div>
+    </AllocationStepContents>
   );
 };
 

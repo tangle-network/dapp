@@ -3,7 +3,7 @@ import assert from 'assert';
 import { useCallback, useRef } from 'react';
 
 import { SUBSTRATE_ROLE_TYPE_MAPPING } from '../../constants';
-import { cleanAllocations } from '../../containers/ManageProfileModalContainer/IndependentAllocationStep';
+import { filterAllocations } from '../../containers/ManageProfileModalContainer/IndependentAllocationStep';
 import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
@@ -75,7 +75,7 @@ const useUpdateRestakingProfileTx = (
         return;
       }
 
-      recordsRef.current = cleanAllocations(allocations).map(
+      recordsRef.current = filterAllocations(allocations).map(
         ([service, allocation]) => ({
           role: SUBSTRATE_ROLE_TYPE_MAPPING[service],
           amount: allocation,

@@ -10,7 +10,7 @@ import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
 import { ServiceType } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { cleanAllocations } from './IndependentAllocationStep';
+import { filterAllocations } from './IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export enum AllocationChartVariant {
@@ -66,7 +66,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
 
   const allocationDataEntries: AllocationDataEntry[] = useMemo(
     () =>
-      cleanAllocations(allocations).map(([service, amount]) => ({
+      filterAllocations(allocations).map(([service, amount]) => ({
         name: service,
         value:
           maxRestakingAmount === null
@@ -90,7 +90,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
   const data = [remainingDataEntry].concat(allocationDataEntries);
 
   return (
-    <div className="relative flex items-center justify-center w-full">
+    <div className="relative flex items-center justify-center">
       <PieChart width={190} height={190}>
         <Pie
           data={data}

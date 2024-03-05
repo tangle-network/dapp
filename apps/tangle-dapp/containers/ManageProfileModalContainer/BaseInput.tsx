@@ -15,7 +15,7 @@ export type BaseInputProps = {
   title: string;
   id: string;
   children: ReactNode;
-  actions?: ReactNode[];
+  actions?: ReactNode;
   isValid?: boolean;
   errorMessage?: string;
   dropdownBody?: ReactNode;
@@ -54,7 +54,7 @@ const BaseInput: FC<BaseInputProps> = ({
     <>
       <InputWrapper
         className={twMerge(
-          'flex gap-2 cursor-default relative !w-full !max-w-[400px]',
+          'flex gap-2 cursor-default relative w-[356px] max-w-[356px] lg:max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
           !isValid && 'border-red-50 dark:border-red-50',
@@ -73,21 +73,13 @@ const BaseInput: FC<BaseInputProps> = ({
         </div>
 
         {/* Actions */}
-        <div
-          className={twMerge(
-            'flex items-center justify-center gap-1',
-            !isDropdownDisabled && 'cursor-pointer'
-          )}
-        >
-          {actions}
-
+        <div className={twMerge('flex items-center justify-center gap-1')}>
           {chipText !== undefined && (
             <Chip
               onClick={toggleDropdown}
-              color={chipColor}
+              color={chipColor ?? 'dark-grey'}
               className={twMerge(
                 'uppercase whitespace-nowrap',
-                'text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140',
                 !isDropdownDisabled &&
                   dropdownBody !== undefined &&
                   'cursor-pointer'
@@ -96,6 +88,8 @@ const BaseInput: FC<BaseInputProps> = ({
               {chipText}
             </Chip>
           )}
+
+          {actions}
 
           {/* If the input has a dropdown body, add a dropdown toggle button. */}
           {dropdownBody !== undefined && (

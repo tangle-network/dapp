@@ -6,7 +6,9 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
+import { twMerge } from 'tailwind-merge';
 
+import usePolkadotApi from '../../hooks/usePolkadotApi';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
 import {
@@ -35,17 +37,37 @@ const RolesInput: FC<RolesInputProps> = ({
     useCallback((api) => api.query.roles.minRestakingBond(), [])
   );
 
+  const { value: maxRolesPerAccount } = usePolkadotApi(
+    useCallback(
+      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
+      []
+    )
+  );
+
+  const canSelectMoreRoles =
+    maxRolesPerAccount !== null && maxRolesPerAccount.gtn(selectedRoles.length);
+
   const dropdownBody = roles.map((role) => (
     <div
       key={role}
-      onClick={() => onToggleRole(role)}
-      className="flex items-center justify-between p-2 cursor-pointer"
+      onClick={() => {
+        if (canSelectMoreRoles || selectedRoles.includes(role)) {
+          onToggleRole(role);
+        }
+      }}
+      className={twMerge(
+        'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
+        canSelectMoreRoles || selectedRoles.includes(role)
+          ? 'cursor-pointer'
+          : 'cursor-not-allowed'
+      )}
     >
       <div className="flex items-center justify-center gap-2">
         <CheckBox
           inputProps={{
             readOnly: true,
           }}
+          isDisabled={!canSelectMoreRoles && !selectedRoles.includes(role)}
           isChecked={selectedRoles.includes(role)}
         />
 

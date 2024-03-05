@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { ServiceType } from '../../types';
 import getChipColorByServiceType from '../../utils/getChipColorByServiceType';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { cleanAllocations } from './IndependentAllocationStep';
+import { filterAllocations } from './IndependentAllocationStep';
 import { RestakingProfileType } from './ManageProfileModalContainer';
 import { RestakingAllocationMap } from './types';
 
@@ -20,12 +20,12 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   profileType,
   allocations,
 }) => {
-  const restakedAmount = cleanAllocations(allocations).reduce(
+  const restakedAmount = filterAllocations(allocations).reduce(
     (acc, [, amount]) => acc.add(amount),
     new BN(0)
   );
 
-  const cleanedAllocations = cleanAllocations(allocations);
+  const cleanedAllocations = filterAllocations(allocations);
 
   const cardBaseClassName =
     'flex flex-col gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg w-full p-4 border border-mono-40 dark:border-mono-140';
