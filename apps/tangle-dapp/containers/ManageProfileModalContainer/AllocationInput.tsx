@@ -57,7 +57,7 @@ export function getRoleChipColor(
   }
 }
 
-const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
+export const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
 
 const STATIC_VALIDATION_SCHEMA = z
   .string()

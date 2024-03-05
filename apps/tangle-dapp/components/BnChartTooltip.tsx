@@ -2,11 +2,12 @@ import { BN } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { TooltipProps } from 'recharts';
 
+import { RestakingAllocationMap } from '../containers/ManageProfileModalContainer/types';
 import { ServiceType } from '../types';
 import { formatTokenBalance } from '../utils/polkadot/tokens';
 
 const BnChartTooltip = (
-  allocations: Record<ServiceType, BN | null>,
+  allocations: RestakingAllocationMap,
   maxAmount: BN,
   allocatedAmount: BN
 ) => {

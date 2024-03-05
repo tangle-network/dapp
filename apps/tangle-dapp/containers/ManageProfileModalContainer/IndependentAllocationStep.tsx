@@ -14,7 +14,7 @@ import { z } from 'zod';
 import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
-import AllocationChart, { AllocationDataEntry } from './AllocationChart';
+import AllocationChart, { AllocationChartVariant } from './AllocationChart';
 import AllocationInput from './AllocationInput';
 import { RestakingAllocationMap } from './types';
 
@@ -23,34 +23,14 @@ export type IndependentAllocationStepProps = {
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
-function getPercentageOfTotal(amount: BN, total: BN): number {
-  // Avoid division by zero.
-  if (total.isZero()) {
-    throw new Error('Total should not be zero');
-  }
-
-  assert(amount.lte(total), 'Amount should be less than or equal to total');
-
-  // It's safe to convert to a number here, since the
-  // value will always be fraction between 0 and 1.
-  return amount.mul(new BN(100)).div(total).toNumber() / 100;
-}
-
 export function cleanAllocations(
   allocations: RestakingAllocationMap
 ): [ServiceType, BN][] {
-  return Object.entries(allocations)
-    .filter(([_service, amount]) => amount !== null)
-    .map(([serviceString, amount]) => {
-      const service = z.nativeEnum(ServiceType).parse(serviceString);
+  return Object.entries(allocations).map(([serviceString, amount]) => {
+    const service = z.nativeEnum(ServiceType).parse(serviceString);
 
-      assert(
-        amount !== null,
-        'Entries without amounts should have been filtered out'
-      );
-
-      return [service, amount];
-    });
+    return [service, amount];
+  });
 }
 
 const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
@@ -78,31 +58,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     return amount;
   }, [allocations]);
 
-  const remainingDataEntry: AllocationDataEntry = useMemo(
-    () => ({
-      name: 'Remaining',
-      value:
-        maxRestakingAmount === null
-          ? 1
-          : 1 - getPercentageOfTotal(restakedAmount, maxRestakingAmount),
-    }),
-    [maxRestakingAmount, restakedAmount]
-  );
-
-  const allocationDataEntries: AllocationDataEntry[] = useMemo(
-    () =>
-      cleanAllocations(allocations).map(([service, amount]) => ({
-        name: service,
-        value:
-          maxRestakingAmount === null
-            ? 0
-            : getPercentageOfTotal(amount, maxRestakingAmount),
-      })),
-    [allocations, maxRestakingAmount]
-  );
-
-  const data = [remainingDataEntry].concat(allocationDataEntries);
-
   const handleNewAllocation = useCallback(() => {
     if (newAllocationRole === null || newAllocationAmount === null) {
       return;
@@ -118,12 +73,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   }, [newAllocationAmount, newAllocationRole, setAllocations]);
 
   const handleClearAllocations = useCallback(() => {
-    setAllocations({
-      [ServiceType.DKG_TSS_CGGMP]: null,
-      [ServiceType.TX_RELAY]: null,
-      [ServiceType.ZK_SAAS_GROTH16]: null,
-      [ServiceType.ZK_SAAS_MARLIN]: null,
-    });
+    setAllocations({});
   }, [setAllocations]);
 
   const handleDeallocation = (service: ServiceType) => {
@@ -158,9 +108,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const availableRoles = useMemo(
     () =>
-      Object.entries(allocations)
-        .filter((entry) => entry[1] === null)
-        .map(([service]) => z.nativeEnum(ServiceType).parse(service)),
+      Object.values(ServiceType).filter((service) => !(service in allocations)),
     [allocations]
   );
 
@@ -236,9 +184,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       </div>
 
       <AllocationChart
-        data={data}
         allocatedAmount={restakedAmount}
         allocations={allocations}
+        variant={AllocationChartVariant.Independent}
       />
     </div>
   );

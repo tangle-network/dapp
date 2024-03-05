@@ -115,9 +115,10 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   const [step, setStep] = useState(Step.ChooseMethod);
   const isMountedRef = useIsMountedRef();
+  const [allocations, setAllocations] = useState<RestakingAllocationMap>({});
   let stepContents: ReactNode;
 
-  const { value: remoteAllocations, isLoading: isLoadingRemoteAllocations } =
+  const { value: onChainAllocations, isLoading: isLoadingOnChainAllocations } =
     useRestakingAllocations(profileType);
 
   const [hasProcessedRemoteAllocations, setHasProcessedRemoteAllocations] =
@@ -125,13 +126,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   const { execute: executeUpdateProfileTx, status: updateProfileTxStatus } =
     useUpdateRestakingProfileTx(profileType, true, true);
-
-  const [allocations, setAllocations] = useState<RestakingAllocationMap>({
-    [ServiceType.DKG_TSS_CGGMP]: null,
-    [ServiceType.TX_RELAY]: null,
-    [ServiceType.ZK_SAAS_GROTH16]: null,
-    [ServiceType.ZK_SAAS_MARLIN]: null,
-  });
 
   switch (step) {
     case Step.ChooseMethod:
@@ -185,20 +179,20 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     // Wait until the remote allocations have been fetched, and
     // prevent processing them again if they have already been
     // loaded.
-    if (isLoadingRemoteAllocations || hasProcessedRemoteAllocations) {
+    if (isLoadingOnChainAllocations || hasProcessedRemoteAllocations) {
       return;
     }
     // If there were any existing allocations on Substrate, set them
     // in the local state.
-    else if (remoteAllocations !== null) {
-      setAllocations(remoteAllocations);
+    else if (onChainAllocations !== null) {
+      setAllocations(onChainAllocations);
     }
 
     setHasProcessedRemoteAllocations(true);
   }, [
-    remoteAllocations,
+    onChainAllocations,
     hasProcessedRemoteAllocations,
-    isLoadingRemoteAllocations,
+    isLoadingOnChainAllocations,
   ]);
 
   // Close modal when the transaction is complete, and reset the

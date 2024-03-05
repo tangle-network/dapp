@@ -73,12 +73,7 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
   const ledgerOpt = ledgerResult.data;
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
-  const allocations: RestakingAllocationMap = {
-    [ServiceType.ZK_SAAS_GROTH16]: null,
-    [ServiceType.ZK_SAAS_MARLIN]: null,
-    [ServiceType.DKG_TSS_CGGMP]: null,
-    [ServiceType.TX_RELAY]: null,
-  };
+  const allocations: RestakingAllocationMap = {};
 
   if (isLedgerAvailable) {
     const ledger = ledgerOpt.unwrap();

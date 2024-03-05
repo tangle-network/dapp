@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import assert from 'assert';
+import { FC, useMemo } from 'react';
 import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 
 import BnChartTooltip from '../../components/BnChartTooltip';
@@ -8,11 +9,17 @@ import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
 import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
+import { cleanAllocations } from './IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
+export enum AllocationChartVariant {
+  Independent,
+  Shared,
+}
+
 export type AllocationChartProps = {
+  variant: AllocationChartVariant;
   allocations: RestakingAllocationMap;
-  data: AllocationDataEntry[];
   allocatedAmount: BN;
 };
 
@@ -22,6 +29,19 @@ export type AllocationDataEntry = {
   name: EntryName;
   value: number;
 };
+
+function getPercentageOfTotal(amount: BN, total: BN): number {
+  // Avoid division by zero.
+  if (total.isZero()) {
+    throw new Error('Total should not be zero');
+  }
+
+  assert(amount.lte(total), 'Amount should be less than or equal to total');
+
+  // It's safe to convert to a number here, since the
+  // value will always be fraction between 0 and 1.
+  return amount.mul(new BN(100)).div(total).toNumber() / 100;
+}
 
 function getChartColor(entryName: EntryName): ChartColor {
   switch (entryName) {
@@ -45,17 +65,40 @@ export function getServiceChartColor(service: ServiceType): ChartColor {
 }
 
 const AllocationChart: FC<AllocationChartProps> = ({
-  data,
   allocatedAmount,
   allocations,
 }) => {
   const [isDarkMode] = useNextDarkMode();
+  const maxRestakingAmount = useMaxRestakingAmount();
 
   const themeCellColor: ChartColor = isDarkMode
     ? ChartColor.DarkGray
     : ChartColor.Gray;
 
-  const maxRestakingAmount = useMaxRestakingAmount();
+  const allocationDataEntries: AllocationDataEntry[] = useMemo(
+    () =>
+      cleanAllocations(allocations).map(([service, amount]) => ({
+        name: service,
+        value:
+          maxRestakingAmount === null
+            ? 0
+            : getPercentageOfTotal(amount, maxRestakingAmount),
+      })),
+    [allocations, maxRestakingAmount]
+  );
+
+  const remainingDataEntry: AllocationDataEntry = useMemo(
+    () => ({
+      name: 'Remaining',
+      value:
+        maxRestakingAmount === null
+          ? 1
+          : 1 - getPercentageOfTotal(allocatedAmount, maxRestakingAmount),
+    }),
+    [maxRestakingAmount, allocatedAmount]
+  );
+
+  const data = [remainingDataEntry].concat(allocationDataEntries);
 
   return (
     <div className="relative flex items-center justify-center w-full">
