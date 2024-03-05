@@ -7,8 +7,8 @@ import { formatTokenBalance } from '../utils/polkadot/tokens';
 
 const BnChartTooltip = (
   allocations: Record<ServiceType, BN | null>,
-  freeBalance: BN,
-  restakedAmount: BN
+  maxAmount: BN,
+  allocatedAmount: BN
 ) => {
   const composition = ({
     active,
@@ -22,7 +22,7 @@ const BnChartTooltip = (
 
     const remainingItem: [string, BN | null] = [
       'Remaining',
-      freeBalance.sub(restakedAmount),
+      maxAmount.sub(allocatedAmount),
     ];
 
     const amount = allocations[role] ?? remainingItem[1];

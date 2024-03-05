@@ -3,23 +3,15 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useTheme } from 'next-themes';
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react';
-import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 import { z } from 'zod';
 
-import BnChartTooltip from '../../components/BnChartTooltip';
-import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
+import { ChartColor } from '../../constants';
 import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
+import AllocationChart, { AllocationDataEntry } from './AllocationChart';
 import AllocationInput from './AllocationInput';
 import { RestakingAllocationMap } from './types';
-
-type EntryName = 'Remaining' | ServiceType;
-
-type AllocationDataEntry = {
-  name: EntryName;
-  value: number;
-};
 
 export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
@@ -37,27 +29,6 @@ function getPercentageOfTotal(amount: BN, total: BN): number {
   // It's safe to convert to a number here, since the
   // value will always be fraction between 0 and 1.
   return amount.mul(new BN(100)).div(total).toNumber() / 100;
-}
-
-export function getServiceChartColor(service: ServiceType): ChartColor {
-  switch (service) {
-    case ServiceType.ZK_SAAS_MARLIN:
-    case ServiceType.ZK_SAAS_GROTH16:
-      return ChartColor.Blue;
-    case ServiceType.DKG_TSS_CGGMP:
-      return ChartColor.Lavender;
-    case ServiceType.TX_RELAY:
-      return ChartColor.Green;
-  }
-}
-
-function getChartColor(entryName: EntryName): ChartColor {
-  switch (entryName) {
-    case 'Remaining':
-      return ChartColor.DarkGray;
-    default:
-      return getServiceChartColor(entryName);
-  }
 }
 
 export function cleanAllocations(
@@ -255,55 +226,11 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
         </div>
       </div>
 
-      <div className="relative flex items-center justify-center w-full">
-        <PieChart width={190} height={190}>
-          <Pie
-            data={data}
-            innerRadius={65}
-            outerRadius={95}
-            stroke="none"
-            dataKey="value"
-            paddingAngle={5}
-            animationDuration={200}
-          >
-            <Cell key="Remaining" fill={themeCellColor} />
-
-            {allocationDataEntries.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={getChartColor(entry.name)} />
-            ))}
-          </Pie>
-
-          <RechartsTooltip
-            content={BnChartTooltip(
-              allocations,
-              maxRestakingAmount ?? new BN(0),
-              restakedAmount
-            )}
-          />
-        </PieChart>
-
-        <div className="absolute center flex flex-col justify-center items-center z-[-1]">
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="dark:text-mono-120"
-          >
-            Restaked
-          </Typography>
-
-          <Typography
-            variant="h5"
-            fw="bold"
-            className="dark:text-mono-0 text-center"
-          >
-            {formatTokenBalance(restakedAmount, false)}
-          </Typography>
-
-          <Typography variant="body2" className="dark:text-mono-120">
-            {TANGLE_TOKEN_UNIT}
-          </Typography>
-        </div>
-      </div>
+      <AllocationChart
+        data={data}
+        allocatedAmount={restakedAmount}
+        allocations={allocations}
+      />
     </div>
   );
 };
