@@ -17,8 +17,9 @@ import {
 import { FC } from 'react';
 
 import { HeaderCell, StringCell } from '../../../components/tableCells';
-import { serviceTypeToChipColor, TANGLE_TOKEN_UNIT } from '../../../constants';
+import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import { JobType } from '../../../types';
+import { getChipColorByServiceType } from '../../../utils';
 
 const columnHelper = createColumnHelper<JobType>();
 
@@ -38,7 +39,7 @@ const columns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={serviceTypeToChipColor[props.getValue()]}>
+      <Chip color={getChipColorByServiceType(props.getValue())}>
         {props.getValue()}
       </Chip>
     ),

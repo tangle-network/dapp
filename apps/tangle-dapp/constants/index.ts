@@ -1,4 +1,8 @@
-import type { ChipColors } from '@webb-tools/webb-ui-components/components/Chip';
+import {
+  TanglePrimitivesRolesRoleType,
+  TanglePrimitivesRolesTssThresholdSignatureRoleType,
+  TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
+} from '@polkadot/types/lookup';
 
 import { ServiceType } from '../types';
 
@@ -51,13 +55,6 @@ export enum SwrBaseKey {
   ACTIVE_VALIDATORS_PAGINATED = 'active-validator-paginated',
 }
 
-export const serviceTypeToChipColor = {
-  [ServiceType.DKG_TSS_CGGMP]: 'purple',
-  [ServiceType.TX_RELAY]: 'green',
-  [ServiceType.ZK_SAAS_GROTH16]: 'blue',
-  [ServiceType.ZK_SAAS_MARLIN]: 'yellow',
-} as const satisfies Record<ServiceType, ChipColors>;
-
 export enum StaticAssetPath {
   RESTAKING_METHOD_INDEPENDENT_DARK = '/static/assets/restaking/method-independent-dark.svg',
   RESTAKING_METHOD_SHARED_DARK = '/static/assets/restaking/method-shared-dark.svg',
@@ -65,13 +62,38 @@ export enum StaticAssetPath {
   RESTAKING_METHOD_SHARED_LIGHT = '/static/assets/restaking/method-shared-light.svg',
 }
 
+type TangleRoleMapping = {
+  // By using `Extract`, the name is linked to the Substrate types,
+  // so that if the name changes in the future, it will cause a static
+  // type error here, and we can update the mapping accordingly.
+  [key in ServiceType]:
+    | Extract<TanglePrimitivesRolesRoleType['type'], 'LightClientRelaying'>
+    | {
+        Tss: TanglePrimitivesRolesTssThresholdSignatureRoleType['type'];
+      }
+    | {
+        ZkSaaS: TanglePrimitivesRolesZksaasZeroKnowledgeRoleType['type'];
+      };
+};
+
+/**
+ * The values are based off [Tangle's `RoleType` enum](https://github.com/webb-tools/tangle/blob/2a60f0382db2a1234c490766381872d2c7243f5e/primitives/src/roles/mod.rs#L40).
+ */
 export const SUBSTRATE_ROLE_TYPE_MAPPING = {
+  [ServiceType.LIGHT_CLIENT_RELAYING]: 'LightClientRelaying',
   [ServiceType.ZK_SAAS_GROTH16]: { ZkSaaS: 'ZkSaaSGroth16' },
   [ServiceType.ZK_SAAS_MARLIN]: { ZkSaaS: 'ZkSaaSMarlin' },
-  [ServiceType.TX_RELAY]: 'LightClientRelaying',
-  // TODO: The current implementation of the `ServiceType` enum is a dummy only used to test UI. Awaiting the actual implementation of the `ServiceType` enum before properly implementing this case. For now, default to `ZkSaaSMarlin`.
-  [ServiceType.DKG_TSS_CGGMP]: { ZkSaaS: 'ZkSaaSGroth16' },
-} as const satisfies { [key in ServiceType]: string | Record<string, string> };
+  [ServiceType.TSS_ZENGOGG20SECP256K1]: { Tss: 'ZengoGG20Secp256k1' },
+  [ServiceType.TSS_DFNS_CGGMP21SECP256K1]: { Tss: 'DfnsCGGMP21Secp256k1' },
+  [ServiceType.TSS_DFNS_CGGMP21SECP256R1]: { Tss: 'DfnsCGGMP21Secp256r1' },
+  [ServiceType.TSS_DFNS_CGGMP21STARK]: { Tss: 'DfnsCGGMP21Stark' },
+  [ServiceType.TSS_ZCASH_FROST_P256]: { Tss: 'ZcashFrostP256' },
+  [ServiceType.TSS_ZCASH_FROST_P384]: { Tss: 'ZcashFrostP384' },
+  [ServiceType.TSS_ZCASH_FROST_SECP256K1]: { Tss: 'ZcashFrostSecp256k1' },
+  [ServiceType.TSS_ZCASH_FROST_RISTRETTO255]: { Tss: 'ZcashFrostRistretto255' },
+  [ServiceType.TSS_ZCASH_FROST_ED25519]: { Tss: 'ZcashFrostEd25519' },
+  [ServiceType.TSS_GENNARO_DKG_BLS381]: { Tss: 'GennaroDKGBls381' },
+} as const satisfies TangleRoleMapping;
 
 export enum ChartColor {
   BLUE = '#B8D6FF',

@@ -8,6 +8,7 @@ import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
 import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
 import { ServiceType } from '../../types';
+import { getChartDataAreaColorByServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { cleanAllocations } from './IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
@@ -48,19 +49,7 @@ function getChartColor(entryName: EntryName): ChartColor {
     case 'Remaining':
       return ChartColor.DARK_GRAY;
     default:
-      return getServiceChartColor(entryName);
-  }
-}
-
-export function getServiceChartColor(service: ServiceType): ChartColor {
-  switch (service) {
-    case ServiceType.ZK_SAAS_MARLIN:
-    case ServiceType.ZK_SAAS_GROTH16:
-      return ChartColor.BLUE;
-    case ServiceType.DKG_TSS_CGGMP:
-      return ChartColor.LAVENDER;
-    case ServiceType.TX_RELAY:
-      return ChartColor.GREEN;
+      return getChartDataAreaColorByServiceType(entryName);
   }
 }
 

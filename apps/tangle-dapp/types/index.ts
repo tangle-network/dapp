@@ -1,7 +1,6 @@
 // Note that this import is necessary to fix a strange type error
 // in Polkadot API's `api.tx.staking.bond` method, which complains
 // about requiring three arguments instead of two.
-
 import '@webb-tools/tangle-substrate-types';
 
 export enum PagePath {
@@ -134,11 +133,26 @@ export type InternalPath =
   | PagePath
   | (typeof StaticSearchQueryPath)[keyof typeof StaticSearchQueryPath];
 
+/**
+ * Also referred to as a `role` in Substrate.
+ *
+ * The values represent the user-facing UI display names
+ * of the roles.
+ */
 export enum ServiceType {
   ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
   ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
-  TX_RELAY = 'Tx Relay',
-  DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
+  LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
+  TSS_ZENGOGG20SECP256K1 = 'TSS ZengoGG20Secp256k1',
+  TSS_DFNS_CGGMP21SECP256K1 = 'TSS DfnsCGGMP21Secp256k1',
+  TSS_DFNS_CGGMP21SECP256R1 = 'TSS DfnsCGGMP21Secp256r1',
+  TSS_DFNS_CGGMP21STARK = 'TSS DfnsCGGMP21Stark',
+  TSS_ZCASH_FROST_P256 = 'TSS ZcashFrostP256',
+  TSS_ZCASH_FROST_P384 = 'TSS ZcashFrostP384',
+  TSS_ZCASH_FROST_SECP256K1 = 'TSS ZcashFrostSecp256k1',
+  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS ZcashFrostRistretto255',
+  TSS_ZCASH_FROST_ED25519 = 'TSS ZcashFrostEd25519',
+  TSS_GENNARO_DKG_BLS381 = 'TSS GennaroDKGBls381',
 }
 
 export type Service = {

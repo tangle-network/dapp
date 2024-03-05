@@ -14,11 +14,7 @@ export type SharedAllocationStepProps = {
 
 const SharedAllocationStep: FC<SharedAllocationStepProps> = () => {
   const [restakeAmount, setRestakeAmount] = useState<BN | null>(null);
-
-  const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>([
-    ServiceType.TX_RELAY,
-    ServiceType.ZK_SAAS_GROTH16,
-  ]);
+  const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>([]);
 
   const handleToggleRole = (role: ServiceType) => {
     const isSelected = selectedRoles.includes(role);

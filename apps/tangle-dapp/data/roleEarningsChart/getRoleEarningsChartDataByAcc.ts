@@ -13,8 +13,8 @@ export default async function getRoleEarningsChartDataByAcc(
     (monthAndYear) => {
       return {
         [ServiceType.ZK_SAAS_GROTH16]: randNum(),
-        [ServiceType.TX_RELAY]: randNum(),
-        [ServiceType.DKG_TSS_CGGMP]: randNum(),
+        [ServiceType.LIGHT_CLIENT_RELAYING]: randNum(),
+        [ServiceType.TSS_ZENGOGG20SECP256K1]: randNum(),
         ...monthAndYear,
       };
     }

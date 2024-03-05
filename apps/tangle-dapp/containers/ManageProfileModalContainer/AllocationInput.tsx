@@ -22,6 +22,7 @@ import { z } from 'zod';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
+import { getChipColorByServiceType } from '../../utils';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
@@ -42,20 +43,6 @@ export type AllocationInputProps = {
   onChange?: (newAmountInChainUnits: BN) => void;
   setService: (service: ServiceType) => void;
 };
-
-export function getRoleChipColor(
-  role: ServiceType
-): 'green' | 'blue' | 'purple' {
-  switch (role) {
-    case ServiceType.ZK_SAAS_GROTH16:
-    case ServiceType.ZK_SAAS_MARLIN:
-      return 'blue';
-    case ServiceType.TX_RELAY:
-      return 'green';
-    case ServiceType.DKG_TSS_CGGMP:
-      return 'purple';
-  }
-}
 
 export const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
 
@@ -209,7 +196,9 @@ const AllocationInput: FC<AllocationInputProps> = ({
         >
           <Chip
             onClick={toggleDropdown}
-            color={service === null ? 'grey' : getRoleChipColor(service)}
+            color={
+              service === null ? 'grey' : getChipColorByServiceType(service)
+            }
             className={twMerge(
               'uppercase whitespace-nowrap',
               service === null &&
@@ -249,7 +238,9 @@ const AllocationInput: FC<AllocationInputProps> = ({
                   onClick={() => handleSetService(service)}
                   className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
                 >
-                  <Chip color={getRoleChipColor(service)}>{service}</Chip>
+                  <Chip color={getChipColorByServiceType(service)}>
+                    {service}
+                  </Chip>
 
                   {minRestakingBond !== null ? (
                     <Chip

@@ -9,9 +9,11 @@ import { FC, useCallback } from 'react';
 
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
-import { getChipColorByServiceType } from '../../utils';
+import {
+  getChartDataAreaColorByServiceType,
+  getChipColorByServiceType,
+} from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
-import { getServiceChartColor } from './AllocationChart';
 import BaseInput from './BaseInput';
 
 export type RolesInputProps = {
@@ -96,7 +98,7 @@ type DotProps = {
 
 /** @internal */
 const Dot: FC<DotProps> = ({ role }) => {
-  const color = getServiceChartColor(role);
+  const color = getChartDataAreaColorByServiceType(role);
 
   return (
     <div
