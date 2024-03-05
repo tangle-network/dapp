@@ -63,7 +63,7 @@ const useVestingInfo = (): VestingInfo => {
   );
 
   const { amount: vestingLockAmount } = useBalancesLock(
-    SubstrateLockId.Vesting
+    SubstrateLockId.VESTING
   );
 
   const totalVestingAmount = useMemo(() => {

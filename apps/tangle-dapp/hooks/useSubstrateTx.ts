@@ -14,11 +14,11 @@ import useIsMountedRef from './useIsMountedRef';
 import useSubstrateAddress from './useSubstrateAddress';
 
 export enum TxStatus {
-  NotYetInitiated,
-  Processing,
-  Error,
-  Complete,
-  TimedOut,
+  NOT_YET_INITIATED,
+  PROCESSING,
+  ERROR,
+  COMPLETE,
+  TIMED_OUT,
 }
 
 export type TxFactory<T extends ISubmittableResult> = (
@@ -31,7 +31,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
   notifyStatusUpdates = false,
   timeoutDelay = 60_000
 ) {
-  const [status, setStatus] = useState(TxStatus.NotYetInitiated);
+  const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [hash, setHash] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const { notificationApi } = useWebbUI();
@@ -58,7 +58,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
     // while it's still processing. Also wait for the Substrate
     // address to be set.
     if (
-      status === TxStatus.Processing ||
+      status === TxStatus.PROCESSING ||
       activeSubstrateAddress === null ||
       isEvmAccount === null
     ) {
@@ -82,7 +82,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
       tx = await factory(api, activeSubstrateAddress);
     } catch (possibleError: unknown) {
       setError(ensureError(possibleError));
-      setStatus(TxStatus.Error);
+      setStatus(TxStatus.ERROR);
 
       return;
     }
@@ -101,7 +101,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
     // Reset the status and error, and begin the transaction.
     setError(null);
     setHash(null);
-    setStatus(TxStatus.Processing);
+    setStatus(TxStatus.PROCESSING);
 
     try {
       await tx.signAndSend(
@@ -119,7 +119,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
 
           const error = extractErrorFromTxStatus(status);
 
-          setStatus(error === null ? TxStatus.Complete : TxStatus.Error);
+          setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
           setError(error);
 
           // Useful for debugging.
@@ -129,7 +129,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
         }
       );
     } catch (possibleError: unknown) {
-      setStatus(TxStatus.Error);
+      setStatus(TxStatus.ERROR);
       setError(ensureError(possibleError));
     }
   }, [activeSubstrateAddress, factory, isEvmAccount, isMountedRef, status]);
@@ -141,9 +141,9 @@ function useSubstrateTx<T extends ISubmittableResult>(
   // if they want.
   useEffect(() => {
     const timeoutHandle =
-      status === TxStatus.Processing
+      status === TxStatus.PROCESSING
         ? setTimeout(() => {
-            setStatus(TxStatus.TimedOut);
+            setStatus(TxStatus.TIMED_OUT);
           }, timeoutDelay)
         : null;
 

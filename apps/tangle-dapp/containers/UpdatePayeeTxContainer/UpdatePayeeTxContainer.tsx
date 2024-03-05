@@ -35,7 +35,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.Staked
+    PaymentDestination.STAKED
   );
   const [
     isUpdatePaymentDestinationTxLoading,
@@ -69,7 +69,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const closeModal = useCallback(() => {
     setIsUpdatePaymentDestinationTxLoading(false);
     setIsModalOpen(false);
-    setPaymentDestination(PaymentDestination.Staked);
+    setPaymentDestination(PaymentDestination.STAKED);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {

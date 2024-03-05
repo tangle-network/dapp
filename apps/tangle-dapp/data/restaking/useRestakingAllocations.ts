@@ -79,7 +79,7 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
     const ledger = ledgerOpt.unwrap();
 
     const profile =
-      profileType === RestakingProfileType.Independent
+      profileType === RestakingProfileType.INDEPENDENT
         ? ledger.profile.isIndependent
           ? ledger.profile.asIndependent
           : null

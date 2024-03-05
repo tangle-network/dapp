@@ -7,12 +7,12 @@ export default function getChartDataAreaColorByServiceType(
 ): ChartColor {
   switch (serviceType) {
     case ServiceType.ZK_SAAS_GROTH16:
-      return ChartColor.Green;
+      return ChartColor.GREEN;
     case ServiceType.ZK_SAAS_MARLIN:
-      return ChartColor.Blue;
+      return ChartColor.BLUE;
     case ServiceType.DKG_TSS_CGGMP:
-      return ChartColor.Yellow;
+      return ChartColor.YELLOW;
     case ServiceType.TX_RELAY:
-      return ChartColor.Lavender;
+      return ChartColor.LAVENDER;
   }
 }

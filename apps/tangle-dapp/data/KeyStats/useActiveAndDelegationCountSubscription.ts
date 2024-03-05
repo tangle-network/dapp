@@ -19,7 +19,7 @@ export default function useActiveAndDelegationCountSubscription(
   const [error, setError] = useState<Error | null>(null);
 
   const { value: cachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.ActiveAndDelegationCount,
+    LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
     true
   );
 

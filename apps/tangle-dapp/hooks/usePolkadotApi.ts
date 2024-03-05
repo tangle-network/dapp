@@ -9,16 +9,16 @@ import usePromise from './usePromise';
 export type PolkadotApiFetcher<T> = (api: ApiPromise) => Promise<T>;
 
 export enum PolkadotApiSwrKey {
-  Era = 'era',
-  StakingRewards = 'staking-rewards',
+  ERA = 'era',
+  STAKING_REWARDS = 'staking-rewards',
 }
 
 function getRefreshInterval(swrKey: PolkadotApiSwrKey): number {
   switch (swrKey) {
-    case PolkadotApiSwrKey.Era:
+    case PolkadotApiSwrKey.ERA:
       // 1 hour.
       return 60 * 1000 * 60;
-    case PolkadotApiSwrKey.StakingRewards:
+    case PolkadotApiSwrKey.STAKING_REWARDS:
       // 3 minutes.
       return 3 * 1000 * 60;
   }

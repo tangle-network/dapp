@@ -54,7 +54,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = () => {
       <AllocationChart
         allocatedAmount={restakeAmount ?? new BN(0)}
         allocations={{}}
-        variant={AllocationChartVariant.Shared}
+        variant={AllocationChartVariant.SHARED}
       />
     </div>
   );

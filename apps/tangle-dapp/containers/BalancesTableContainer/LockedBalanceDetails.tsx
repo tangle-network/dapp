@@ -59,7 +59,7 @@ const LockedBalanceDetails: FC = () => {
   const { data: currentEra } = useCurrentEra();
 
   const { amount: stakingLockedBalance } = useBalancesLock(
-    SubstrateLockId.Staking
+    SubstrateLockId.STAKING
   );
 
   const { data: unbondingEntries } = useUnbonding();
@@ -198,7 +198,7 @@ const LockedBalanceDetails: FC = () => {
   const evmStakingAction = (
     <BalanceAction
       Icon={ArrowRightUp}
-      internalHref={PagePath.Nomination}
+      internalHref={PagePath.NOMINATION}
       tooltip={
         <>
           View more information on the <strong>EVM Staking</strong> page.

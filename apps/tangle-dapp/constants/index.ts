@@ -23,13 +23,13 @@ export const TANGLE_TOKEN_DECIMALS = 18;
  * `vesting ` with a trailing space).
  */
 export enum SubstrateLockId {
-  Vesting = 'vesting ',
-  Staking = 'staking ',
-  ElectionsPhragmen = 'phrelect',
-  Democracy = 'democrac',
+  VESTING = 'vesting ',
+  STAKING = 'staking ',
+  ELECTIONS_PHRAGMEN = 'phrelect',
+  DEMOCRACY = 'democrac',
 
   // TODO: Need to account for the other lock types.
-  Other = '?other',
+  OTHER = '?other',
 }
 
 /**
@@ -46,9 +46,9 @@ export enum SubstrateLockId {
  * [Learn more about SWR](https://swr.vercel.app/)
  */
 export enum SwrBaseKey {
-  ActiveValidators = 'active-validators',
-  WaitingValidators = 'waiting-validators',
-  ActiveValidatorsPaginated = 'active-validator-paginated',
+  ACTIVE_VALIDATORS = 'active-validators',
+  WAITING_VALIDATORS = 'waiting-validators',
+  ACTIVE_VALIDATORS_PAGINATED = 'active-validator-paginated',
 }
 
 export const serviceTypeToChipColor = {
@@ -59,10 +59,10 @@ export const serviceTypeToChipColor = {
 } as const satisfies Record<ServiceType, ChipColors>;
 
 export enum StaticAssetPath {
-  RestakingMethodIndependentDark = '/static/assets/restaking/method-independent-dark.svg',
-  RestakingMethodSharedDark = '/static/assets/restaking/method-shared-dark.svg',
-  RestakingMethodIndependentLight = '/static/assets/restaking/method-independent-light.svg',
-  RestakingMethodSharedLight = '/static/assets/restaking/method-shared-light.svg',
+  RESTAKING_METHOD_INDEPENDENT_DARK = '/static/assets/restaking/method-independent-dark.svg',
+  RESTAKING_METHOD_SHARED_DARK = '/static/assets/restaking/method-shared-dark.svg',
+  RESTAKING_METHOD_INDEPENDENT_LIGHT = '/static/assets/restaking/method-independent-light.svg',
+  RESTAKING_METHOD_SHARED_LIGHT = '/static/assets/restaking/method-shared-light.svg',
 }
 
 export const SUBSTRATE_ROLE_TYPE_MAPPING = {
@@ -74,10 +74,10 @@ export const SUBSTRATE_ROLE_TYPE_MAPPING = {
 } as const satisfies { [key in ServiceType]: string | Record<string, string> };
 
 export enum ChartColor {
-  Blue = '#B8D6FF',
-  Green = '#85DC8E',
-  Gray = '#D3D8E2',
-  DarkGray = '#3A3E53',
-  Yellow = '#FFEAA6',
-  Lavender = '#E7E2FF',
+  BLUE = '#B8D6FF',
+  GREEN = '#85DC8E',
+  GRAY = '#D3D8E2',
+  DARK_GRAY = '#3A3E53',
+  YELLOW = '#FFEAA6',
+  LAVENDER = '#E7E2FF',
 }

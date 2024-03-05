@@ -28,7 +28,7 @@ const BalancesTableContainer: FC = () => {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const { value: isDetailsCollapsedCached, set: setIsDetailsCollapsedCached } =
-    useLocalStorage(LocalStorageKey.IsBalancesTableDetailsCollapsed, false);
+    useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
 
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(
     isDetailsCollapsedCached ?? false

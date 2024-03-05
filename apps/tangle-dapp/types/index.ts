@@ -5,30 +5,30 @@
 import '@webb-tools/tangle-substrate-types';
 
 export enum PagePath {
-  Nomination = '/',
-  ClaimAirdrop = '/claim',
-  Account = '/account',
-  ServicesOverview = '/services',
-  ServicesRestake = '/restake',
+  NOMINATION = '/',
+  CLAIM_AIRDROP = '/claim',
+  ACCOUNT = '/account',
+  SERVICES_OVERVIEW = '/services',
+  SERVICES_RESTAKE = '/restake',
 }
 
 export enum QueryParamKey {
-  DelegationsAndPayoutsTab = 'tab',
+  DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
 }
 
 export type QueryParamKeyOf<Page extends PagePath> =
-  Page extends PagePath.Nomination
-    ? QueryParamKey.DelegationsAndPayoutsTab
+  Page extends PagePath.NOMINATION
+    ? QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
     : never;
 
 export type QueryParamValueOf<Key extends QueryParamKey> =
-  Key extends QueryParamKey.DelegationsAndPayoutsTab
+  Key extends QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
     ? DelegationsAndPayoutsTab
     : never;
 
 export enum DelegationsAndPayoutsTab {
-  Nominations = 'Nominations',
-  Payouts = 'Payouts',
+  NOMINATIONS = 'Nominations',
+  PAYOUTS = 'Payouts',
 }
 
 export type Validator = {
@@ -63,9 +63,9 @@ export type NodeSpecification = {
 };
 
 export enum PaymentDestination {
-  Staked = 'Staked (increase the amount at stake)',
-  Stash = 'Stash (do not increase the amount at stake)',
-  Controller = 'Controller Account',
+  STAKED = 'Staked (increase the amount at stake)',
+  STASH = 'Stash (do not increase the amount at stake)',
+  CONTROLLER = 'Controller Account',
 }
 
 export type AddressWithIdentity = {
@@ -116,18 +116,18 @@ type SearchQueryPathOf<
  */
 export const StaticSearchQueryPath: {
   NominationsTable: SearchQueryPathOf<
-    PagePath.Nomination,
-    QueryParamKey.DelegationsAndPayoutsTab,
-    DelegationsAndPayoutsTab.Nominations
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.NOMINATIONS
   >;
   PayoutsTable: SearchQueryPathOf<
-    PagePath.Nomination,
-    QueryParamKey.DelegationsAndPayoutsTab,
-    DelegationsAndPayoutsTab.Payouts
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.PAYOUTS
   >;
 } = {
-  NominationsTable: `${PagePath.Nomination}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Nominations}`,
-  PayoutsTable: `${PagePath.Nomination}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Payouts}`,
+  NominationsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
+  PayoutsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
 } as const;
 
 export type InternalPath =

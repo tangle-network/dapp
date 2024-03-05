@@ -59,7 +59,7 @@ const useUpdateRestakingProfileTx = (
 
         // TODO: This has type any. Investigate why type definitions seem to be missing for this function/transaction call.
         return callee(
-          profileType === RestakingProfileType.Independent
+          profileType === RestakingProfileType.INDEPENDENT
             ? { Independent: { records: recordsRef.current } }
             : { Shared: { records: recordsRef.current } }
         );

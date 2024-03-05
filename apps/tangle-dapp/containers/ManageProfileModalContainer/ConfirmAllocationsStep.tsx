@@ -39,7 +39,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
           </Typography>
 
           <Chip color="dark-grey">
-            {profileType === RestakingProfileType.Independent
+            {profileType === RestakingProfileType.INDEPENDENT
               ? 'Independent'
               : 'Shared'}
           </Chip>

@@ -62,7 +62,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
   // Reset state when the transaction is complete.
   useEffect(() => {
-    if (status === TxStatus.Complete) {
+    if (status === TxStatus.COMPLETE) {
       reset();
     }
   }, [reset, status]);
@@ -75,7 +75,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setAmount(formattedTransferrableBalance);
   }, [formattedTransferrableBalance]);
 
-  const isReady = status !== TxStatus.Processing;
+  const isReady = status !== TxStatus.PROCESSING;
   const isDataValid = amount !== '' && recipientAddress !== '';
   const canInitiateTx = isReady && isDataValid;
 

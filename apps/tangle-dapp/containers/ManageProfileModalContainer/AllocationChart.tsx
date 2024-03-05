@@ -13,8 +13,8 @@ import { cleanAllocations } from './IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export enum AllocationChartVariant {
-  Independent,
-  Shared,
+  INDEPENDENT,
+  SHARED,
 }
 
 export type AllocationChartProps = {
@@ -46,7 +46,7 @@ function getPercentageOfTotal(amount: BN, total: BN): number {
 function getChartColor(entryName: EntryName): ChartColor {
   switch (entryName) {
     case 'Remaining':
-      return ChartColor.DarkGray;
+      return ChartColor.DARK_GRAY;
     default:
       return getServiceChartColor(entryName);
   }
@@ -56,11 +56,11 @@ export function getServiceChartColor(service: ServiceType): ChartColor {
   switch (service) {
     case ServiceType.ZK_SAAS_MARLIN:
     case ServiceType.ZK_SAAS_GROTH16:
-      return ChartColor.Blue;
+      return ChartColor.BLUE;
     case ServiceType.DKG_TSS_CGGMP:
-      return ChartColor.Lavender;
+      return ChartColor.LAVENDER;
     case ServiceType.TX_RELAY:
-      return ChartColor.Green;
+      return ChartColor.GREEN;
   }
 }
 
@@ -72,8 +72,8 @@ const AllocationChart: FC<AllocationChartProps> = ({
   const maxRestakingAmount = useMaxRestakingAmount();
 
   const themeCellColor: ChartColor = isDarkMode
-    ? ChartColor.DarkGray
-    : ChartColor.Gray;
+    ? ChartColor.DARK_GRAY
+    : ChartColor.GRAY;
 
   const allocationDataEntries: AllocationDataEntry[] = useMemo(
     () =>

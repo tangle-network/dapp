@@ -90,7 +90,7 @@ const fetchPendingRewards: StakingLedgerFetcher<BN> = async (ledger, api) => {
 const useStakingPendingRewards = () => {
   const { value: pendingRewards } = useStakingLedger(
     useCallback(async (ledger, api) => fetchPendingRewards(ledger, api), []),
-    PolkadotApiSwrKey.StakingRewards
+    PolkadotApiSwrKey.STAKING_REWARDS
   );
 
   return pendingRewards;

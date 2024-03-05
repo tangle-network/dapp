@@ -186,7 +186,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       <AllocationChart
         allocatedAmount={restakedAmount}
         allocations={allocations}
-        variant={AllocationChartVariant.Independent}
+        variant={AllocationChartVariant.INDEPENDENT}
       />
     </div>
   );
