@@ -334,7 +334,7 @@ export class WebbRelayer {
     relayerChainCfg: RelayedChainConfig<'evm'>,
     anchorId: string
   ): boolean {
-    const supportAnchor = relayerChainCfg.contracts.find(
+    const supportAnchor = relayerChainCfg.contracts?.find(
       (contract) => BigInt(contract.address) === BigInt(anchorId) // Use BigInt to prevent case-sensitive comparison
     );
 
@@ -345,7 +345,7 @@ export class WebbRelayer {
     relayerChainCfg: RelayedChainConfig<'substrate'>,
     anchorId: string
   ): boolean {
-    const supportAnchor = relayerChainCfg.pallets.find(
+    const supportAnchor = relayerChainCfg.pallets?.find(
       (pallet) => BigInt(pallet.pallet) === BigInt(anchorId) // Use BigInt to prevent case-sensitive comparison
     );
 
