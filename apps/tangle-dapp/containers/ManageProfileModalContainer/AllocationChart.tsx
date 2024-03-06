@@ -2,7 +2,15 @@ import { BN } from '@polkadot/util';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useMemo } from 'react';
-import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
+import {
+  Cell,
+  Pie,
+  PieChart,
+  PieProps,
+  RadialBar,
+  RadialBarChart,
+  Tooltip as RechartsTooltip,
+} from 'recharts';
 
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
@@ -31,20 +39,42 @@ export type AllocationDataEntry = {
   value: number;
 };
 
+/**
+ * Given an amount, calculate its percentage of a total amount.
+ *
+ * The resulting percentage will be a Number with 2 decimal places,
+ * ex. `0.67`, ranging from 0 to 1.
+ *
+ * This is useful for integrating BN numbers into visual representation,
+ * such as when working with Recharts to chart BN amount allocations,
+ * since Recharts does not natively support BNs as data inputs.
+ *
+ * Because of the possible loss in precision, this utility function is
+ * only suitable for use in the UI.
+ */
 function getPercentageOfTotal(amount: BN, total: BN): number {
-  // Avoid division by zero.
-  if (total.isZero()) {
-    throw new Error('Total should not be zero');
-  }
+  assert(
+    !total.isZero(),
+    'Total should not be zero, otherwise division by zero would occur'
+  );
 
   assert(amount.lte(total), 'Amount should be less than or equal to total');
 
-  // It's safe to convert to a number here, since the
-  // value will always be fraction between 0 and 1.
-  return amount.mul(new BN(100)).div(total).toNumber() / 100;
+  const scaledAmount = amount.mul(new BN(100));
+  const percentageString = scaledAmount.div(total).toString();
+
+  // Converting the string to a number ensures that the conversion to
+  // number never fails, but it may result in a loss of precision for
+  // extremely large values.
+  const percentage = Number(percentageString) / 100;
+
+  // Round the percentage to 2 decimal places. It's suitable to use
+  // 2 decimal places since the purpose of this function is to provide
+  // a visual representation of the percentage in the UI.
+  return Math.round(percentage * 100) / 100;
 }
 
-function getChartColor(entryName: EntryName): ChartColor {
+function getChartColorOfEntryName(entryName: EntryName): ChartColor {
   switch (entryName) {
     case 'Remaining':
       return ChartColor.DARK_GRAY;
@@ -53,9 +83,12 @@ function getChartColor(entryName: EntryName): ChartColor {
   }
 }
 
+const CHART_SIZE = 190;
+
 const AllocationChart: FC<AllocationChartProps> = ({
   allocatedAmount,
   allocations,
+  variant,
 }) => {
   const [isDarkMode] = useNextDarkMode();
   const maxRestakingAmount = useMaxRestakingAmount();
@@ -63,6 +96,17 @@ const AllocationChart: FC<AllocationChartProps> = ({
   const themeCellColor: ChartColor = isDarkMode
     ? ChartColor.DARK_GRAY
     : ChartColor.GRAY;
+
+  const remainingDataEntry: AllocationDataEntry = useMemo(
+    () => ({
+      name: 'Remaining',
+      value:
+        maxRestakingAmount === null
+          ? 1
+          : 1 - getPercentageOfTotal(allocatedAmount, maxRestakingAmount),
+    }),
+    [maxRestakingAmount, allocatedAmount]
+  );
 
   const allocationDataEntries: AllocationDataEntry[] = useMemo(
     () =>
@@ -76,46 +120,78 @@ const AllocationChart: FC<AllocationChartProps> = ({
     [allocations, maxRestakingAmount]
   );
 
-  const remainingDataEntry: AllocationDataEntry = useMemo(
-    () => ({
-      name: 'Remaining',
-      value:
-        maxRestakingAmount === null
-          ? 1
-          : 1 - getPercentageOfTotal(allocatedAmount, maxRestakingAmount),
-    }),
-    [maxRestakingAmount, allocatedAmount]
+  // For the independent variant, use both the remaining data
+  // entry, and the allocations. For the shared variant, use
+  // either: If no allocations, show the remaining balance,
+  // otherwise use the allocations as data entries.
+  const data: AllocationDataEntry[] =
+    variant === AllocationChartVariant.INDEPENDENT
+      ? [remainingDataEntry].concat(allocationDataEntries)
+      : allocationDataEntries.length === 0
+      ? [remainingDataEntry]
+      : allocationDataEntries.map(({ name }) => ({
+          name,
+          // Use a value of `1` so that Recharts shows the bar.
+          // This value doesn't matter much, since shared profiles
+          // do not set their amounts per-role, but rather as a whole.
+          value: 1,
+        }));
+
+  const tooltip = (
+    <RechartsTooltip
+      content={BnChartTooltip(
+        allocations,
+        maxRestakingAmount ?? new BN(0),
+        allocatedAmount
+      )}
+    />
   );
 
-  const data = [remainingDataEntry].concat(allocationDataEntries);
+  const cells = (
+    <>
+      {(variant === AllocationChartVariant.INDEPENDENT ||
+        allocationDataEntries.length === 0) && (
+        <Cell key="Remaining" fill={themeCellColor} />
+      )}
+
+      {allocationDataEntries.map((entry) => (
+        <Cell key={entry.name} fill={getChartColorOfEntryName(entry.name)} />
+      ))}
+    </>
+  );
+
+  const sharedChartProps = {
+    data,
+    innerRadius: 65,
+    outerRadius: 95,
+    stroke: 'none',
+    dataKey: 'value',
+  } satisfies PieProps;
 
   return (
     <div className="relative flex items-center justify-center">
-      <PieChart width={190} height={190}>
-        <Pie
+      {variant === AllocationChartVariant.INDEPENDENT ? (
+        <PieChart width={CHART_SIZE} height={CHART_SIZE}>
+          <Pie {...sharedChartProps} paddingAngle={5} animationDuration={200}>
+            {cells}
+          </Pie>
+
+          {tooltip}
+        </PieChart>
+      ) : (
+        <RadialBarChart
+          width={CHART_SIZE}
+          height={CHART_SIZE}
+          {...sharedChartProps}
           data={data}
-          innerRadius={65}
-          outerRadius={95}
-          stroke="none"
-          dataKey="value"
-          paddingAngle={5}
-          animationDuration={200}
         >
-          <Cell key="Remaining" fill={themeCellColor} />
+          <RadialBar dataKey="value" animationDuration={200}>
+            {cells}
+          </RadialBar>
 
-          {allocationDataEntries.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={getChartColor(entry.name)} />
-          ))}
-        </Pie>
-
-        <RechartsTooltip
-          content={BnChartTooltip(
-            allocations,
-            maxRestakingAmount ?? new BN(0),
-            allocatedAmount
-          )}
-        />
-      </PieChart>
+          {tooltip}
+        </RadialBarChart>
+      )}
 
       <div className="absolute center flex flex-col justify-center items-center z-[-1]">
         <Typography variant="body2" fw="normal" className="dark:text-mono-120">

@@ -14,21 +14,31 @@ import { RestakingAllocationMap } from './types';
 export type ConfirmAllocationsStepProps = {
   profileType: RestakingProfileType;
   allocations: RestakingAllocationMap;
+  sharedRestakedAmount?: BN;
 };
 
 const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   profileType,
   allocations,
+  sharedRestakedAmount,
 }) => {
   const restakedAmount = filterAllocations(allocations).reduce(
     (acc, [, amount]) => acc.add(amount),
     new BN(0)
   );
 
-  const cleanedAllocations = filterAllocations(allocations);
+  const filteredAllocations = filterAllocations(allocations);
 
   const cardBaseClassName =
     'flex flex-col gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg w-full p-4 border border-mono-40 dark:border-mono-140';
+
+  // Give priority to the shared restaked amount, if provided.
+  // This is because the shared restake amount is not automatically
+  // calculated from the allocations, since shared roles profiles
+  // do not allocate amounts per-role, but rather as a whole.
+  const totalRestakedAmount = formatTokenBalance(
+    sharedRestakedAmount !== undefined ? sharedRestakedAmount : restakedAmount
+  );
 
   return (
     <div className="flex flex-col sm:flex-row items-start gap-2 w-full">
@@ -46,11 +56,11 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
         </div>
 
         <div className="flex flex-col gap-2 mb-auto">
-          {cleanedAllocations.map(([service, amount]) => (
+          {filteredAllocations.map(([service, amount]) => (
             <AllocationItem key={service} service={service} amount={amount} />
           ))}
 
-          {cleanedAllocations.length === 0 && (
+          {filteredAllocations.length === 0 && (
             <Typography
               variant="body2"
               fw="normal"
@@ -71,7 +81,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             fw="semibold"
             className="dark:text-mono-0"
           >
-            {formatTokenBalance(restakedAmount)}
+            {totalRestakedAmount}
           </Typography>
         </div>
       </div>

@@ -21,7 +21,7 @@ const BnChartTooltip = (
       return null;
     }
 
-    const remainingItem: [string, BN | null] = [
+    const remainingItem: [string, BN] = [
       'Remaining',
       maxAmount.sub(allocatedAmount),
     ];
@@ -34,7 +34,7 @@ const BnChartTooltip = (
         className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80 text-center"
       >
         <Typography variant="body2" fw="semibold">
-          {payload[0].name}: {formatTokenBalance(amount as BN)}
+          {payload[0].name}: {formatTokenBalance(amount)}
         </Typography>
       </div>
     );

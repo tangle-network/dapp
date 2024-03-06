@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 
 import { ServiceType } from '../../types';
 import { AllocationChartVariant } from './AllocationChart';
@@ -13,7 +13,10 @@ export type SharedAllocationStepProps = {
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
-const SharedAllocationStep: FC<SharedAllocationStepProps> = () => {
+const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
+  allocations,
+  setAllocations,
+}) => {
   const [restakeAmount, setRestakeAmount] = useState<BN | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>([]);
 
@@ -29,11 +32,23 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = () => {
     }
   };
 
+  // Update allocations when the selected roles changes.
+  useEffect(() => {
+    const nextAllocations: RestakingAllocationMap = {};
+
+    // Shared roles profile allocations have their amounts
+    // set to `null`.
+    for (const selectedRole of selectedRoles) {
+      nextAllocations[selectedRole] = null;
+    }
+
+    setAllocations(nextAllocations);
+  }, [selectedRoles, setAllocations]);
+
   return (
     <AllocationStepContents
       allocatedAmount={restakeAmount ?? new BN(0)}
-      // TODO: Handle shared allocations.
-      allocations={{}}
+      allocations={allocations}
       variant={AllocationChartVariant.SHARED}
     >
       <AmountInput

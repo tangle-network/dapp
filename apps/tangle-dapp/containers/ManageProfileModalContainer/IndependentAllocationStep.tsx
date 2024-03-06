@@ -28,18 +28,11 @@ export type IndependentAllocationStepProps = {
 export function filterAllocations(
   allocations: RestakingAllocationMap
 ): [ServiceType, BN][] {
-  return Object.entries(allocations)
-    .filter(([, amount]) => amount !== null)
-    .map(([serviceString, amount]) => {
-      assert(
-        amount !== null,
-        'Entries with null amounts should have been filtered out'
-      );
+  return Object.entries(allocations).map(([serviceString, amount]) => {
+    const service = z.nativeEnum(ServiceType).parse(serviceString);
 
-      const service = z.nativeEnum(ServiceType).parse(serviceString);
-
-      return [service, amount];
-    });
+    return [service, amount ?? new BN(0)];
+  });
 }
 
 const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
@@ -128,12 +121,12 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations]
   );
 
-  const allocationsSet = filterAllocations(allocations);
+  const filteredAllocations = filterAllocations(allocations);
 
   const canAddNewAllocation =
     availableRoles.length > 0 &&
     maxRolesPerAccount !== null &&
-    maxRolesPerAccount.gtn(allocationsSet.length);
+    maxRolesPerAccount.gtn(filteredAllocations.length);
 
   return (
     <AllocationStepContents
@@ -143,7 +136,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     >
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
-          {allocationsSet.map(([service, amount]) => (
+          {filteredAllocations.map(([service, amount]) => (
             <AllocationInput
               amount={amount}
               isDisabled
