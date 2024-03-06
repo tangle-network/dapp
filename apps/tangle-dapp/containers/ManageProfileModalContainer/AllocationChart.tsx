@@ -14,7 +14,7 @@ import {
 
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
-import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -91,7 +91,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
   variant,
 }) => {
   const [isDarkMode] = useNextDarkMode();
-  const maxRestakingAmount = useMaxRestakingAmount();
+  const { maxRestakingAmount } = useRestakingLimits();
 
   const themeCellColor: ChartColor = isDarkMode
     ? ChartColor.DARK_GRAY

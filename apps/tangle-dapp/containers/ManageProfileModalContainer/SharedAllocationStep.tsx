@@ -1,7 +1,10 @@
 import { BN } from '@polkadot/util';
+import { Typography } from '@webb-tools/webb-ui-components';
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { AllocationChartVariant } from './AllocationChart';
 import AllocationStepContents from './AllocationStepContents';
 import AmountInput from './AmountInput';
@@ -21,6 +24,11 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   restakeAmount,
   setRestakeAmount,
 }) => {
+  const { maxRestakingAmount } = useRestakingLimits();
+
+  const remainingAmount =
+    maxRestakingAmount?.sub(restakeAmount ?? new BN(0)) ?? null;
+
   const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>([]);
 
   const handleToggleRole = (role: ServiceType) => {
@@ -68,6 +76,11 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
         selectedRoles={selectedRoles}
         onToggleRole={handleToggleRole}
       />
+
+      <Typography variant="body1" fw="normal" className="self-start">
+        Remaining:{' '}
+        {remainingAmount !== null ? formatTokenBalance(remainingAmount) : '—'}
+      </Typography>
     </AllocationStepContents>
   );
 };

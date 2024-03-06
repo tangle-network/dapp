@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { z } from 'zod';
 
-import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -39,7 +39,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const maxRestakingAmount = useMaxRestakingAmount();
+  const { maxRestakingAmount } = useRestakingLimits();
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
@@ -152,7 +152,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               hasDeleteButton
               onDelete={handleDeallocation}
               availableBalance={amountRemaining}
-              validateAmountAgainstRemaining={false}
+              validate={false}
             />
           ))}
 
@@ -166,7 +166,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               amount={newAllocationAmount}
               onChange={setNewAllocationAmount}
               availableBalance={amountRemaining}
-              validateAmountAgainstRemaining
+              validate
             />
           )}
         </div>

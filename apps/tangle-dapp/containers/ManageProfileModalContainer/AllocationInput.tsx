@@ -5,12 +5,13 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
+import { DECIMAL_REGEX } from './AmountInput';
 import BaseInput from './BaseInput';
 import InputAction from './InputAction';
 
@@ -19,7 +20,7 @@ export type AllocationInputProps = {
   availableServices: ServiceType[];
   availableBalance: BN | null;
   service: ServiceType | null;
-  validateAmountAgainstRemaining: boolean;
+  validate: boolean;
   title: string;
   id: string;
   isDisabled?: boolean;
@@ -30,8 +31,6 @@ export type AllocationInputProps = {
   onChange?: (newAmountInChainUnits: BN) => void;
   setService: (service: ServiceType) => void;
 };
-
-export const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
 
 const STATIC_VALIDATION_SCHEMA = z
   .string()
@@ -47,7 +46,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   availableBalance,
   hasDeleteButton = false,
   isDisabled = false,
-  validateAmountAgainstRemaining,
+  validate,
   availableServices,
   title,
   id,
@@ -57,10 +56,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   onDelete,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
-  const { data: minRestakingBond } = usePolkadotApiRx(
-    useCallback((api) => api.query.roles.minRestakingBond(), [])
-  );
+  const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
 
   const handleAmountChange = useCallback(
     (newValue: string) => {
@@ -68,16 +64,21 @@ const AllocationInput: FC<AllocationInputProps> = ({
       if (
         onChange === undefined ||
         newValue === '' ||
-        !DECIMAL_REGEX.test(newValue)
+        !DECIMAL_REGEX.test(newValue) ||
+        maxRestakingAmount === null ||
+        minRestakingBond === null
       ) {
         return;
       }
 
-      const newAmountInChainUnits = convertAmountStringToChainUnits(newValue);
+      const newAmount = BN.max(
+        BN.min(convertAmountStringToChainUnits(newValue), maxRestakingAmount),
+        minRestakingBond
+      );
 
-      onChange(newAmountInChainUnits);
+      onChange(newAmount);
     },
-    [onChange]
+    [maxRestakingAmount, minRestakingBond, onChange]
   );
 
   const handleDelete = useCallback(() => {
@@ -110,7 +111,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
       )
         .refine(
           () =>
-            !validateAmountAgainstRemaining ||
+            !validate ||
             availableBalance === null ||
             amount === null ||
             amount.lte(availableBalance),
@@ -119,13 +120,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
           }
         )
         .safeParse(amountAsString),
-    [
-      amount,
-      amountAsString,
-      availableBalance,
-      minRestakingBond,
-      validateAmountAgainstRemaining,
-    ]
+    [amount, amountAsString, availableBalance, minRestakingBond, validate]
   );
 
   const errorMessage = !validationResult.success

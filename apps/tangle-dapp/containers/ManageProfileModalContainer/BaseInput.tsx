@@ -16,7 +16,6 @@ export type BaseInputProps = {
   id: string;
   children: ReactNode;
   actions?: ReactNode;
-  isValid?: boolean;
   errorMessage?: string;
   dropdownBody?: ReactNode;
   chipText?: string;
@@ -32,7 +31,6 @@ export type BaseInputProps = {
 const BaseInput: FC<BaseInputProps> = ({
   id,
   title,
-  isValid = true,
   children,
   actions = [],
   errorMessage,
@@ -59,7 +57,7 @@ const BaseInput: FC<BaseInputProps> = ({
           'flex gap-2 cursor-default relative w-[356px] max-w-[356px] lg:max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
-          !isValid && 'border-red-50 dark:border-red-50',
+          errorMessage !== undefined && 'border-red-50 dark:border-red-50',
           wrapperClassName
         )}
       >

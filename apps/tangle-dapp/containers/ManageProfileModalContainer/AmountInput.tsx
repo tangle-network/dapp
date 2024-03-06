@@ -2,12 +2,12 @@ import { BN } from '@polkadot/util';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { Dispatch, FC, SetStateAction, useCallback } from 'react';
+import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useMaxRestakingAmount from '../../data/restaking/useMaxRestakingAmount';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
-import { DECIMAL_REGEX } from './AllocationInput';
 import BaseInput from './BaseInput';
 
 export type AmountInputProps = {
@@ -17,13 +17,34 @@ export type AmountInputProps = {
   setAmount: Dispatch<SetStateAction<BN | null>>;
 };
 
+export const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
+
+export function createAmountSchema(
+  amount: BN | null,
+  min: BN | null,
+  max: BN | null
+) {
+  return z
+    .string()
+    .regex(
+      DECIMAL_REGEX,
+      'Only digits or numbers with a decimal point are allowed'
+    )
+    .refine(() => amount === null || min === null || amount.gte(min), {
+      message: `Must be at least the minimum restaking bond`,
+    })
+    .refine(() => amount === null || max === null || amount.lte(max), {
+      message: 'Not enough available balance',
+    });
+}
+
 const AmountInput: FC<AmountInputProps> = ({
   id,
   title,
   amount,
   setAmount,
 }) => {
-  const maxRestakingAmount = useMaxRestakingAmount();
+  const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
 
   const amountAsString =
     amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
@@ -53,19 +74,46 @@ const AmountInput: FC<AmountInputProps> = ({
   const handleChange = useCallback(
     (newValue: string) => {
       // Do nothing if the input is invalid or empty.
-      if (newValue === '' || !DECIMAL_REGEX.test(newValue)) {
+      if (
+        newValue === '' ||
+        !DECIMAL_REGEX.test(newValue) ||
+        maxRestakingAmount === null
+      ) {
         return;
       }
 
       const newAmountInChainUnits = convertAmountStringToChainUnits(newValue);
 
+      // Do nothing if the input amount is more than the max
+      // permitted amount.
+      if (newAmountInChainUnits.gt(maxRestakingAmount)) {
+        return;
+      }
+
       setAmount(newAmountInChainUnits);
     },
-    [setAmount]
+    [maxRestakingAmount, setAmount]
   );
 
+  const validationResult = createAmountSchema(
+    amount,
+    minRestakingBond,
+    maxRestakingAmount
+  ).safeParse(amountAsString);
+
+  // Pick the first error message, since the input component does
+  // not support displaying a list of error messages.
+  const errorMessage = !validationResult.success
+    ? validationResult.error.issues[0].message
+    : undefined;
+
   return (
-    <BaseInput id={id} title={title} actions={actions}>
+    <BaseInput
+      id={id}
+      title={title}
+      actions={actions}
+      errorMessage={errorMessage}
+    >
       <Input
         id={id}
         inputClassName="placeholder:text-md"

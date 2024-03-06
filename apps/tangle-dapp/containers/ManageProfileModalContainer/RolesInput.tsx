@@ -8,8 +8,8 @@ import {
 import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
 import {
   getChartDataAreaColorByServiceType,
@@ -34,10 +34,7 @@ const RolesInput: FC<RolesInputProps> = ({
   onToggleRole,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
-  const { data: minRestakingBond } = usePolkadotApiRx(
-    useCallback((api) => api.query.roles.minRestakingBond(), [])
-  );
+  const { minRestakingBond } = useRestakingLimits();
 
   const { value: maxRolesPerAccount } = usePolkadotApi(
     useCallback(
