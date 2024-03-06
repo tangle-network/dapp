@@ -1,11 +1,12 @@
 import { BN } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { ServiceType } from '../../types';
-import getChipColorByServiceType from '../../utils/getChipColorByServiceType';
+import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { filterAllocations } from './IndependentAllocationStep';
 import { RestakingProfileType } from './ManageProfileModalContainer';
@@ -14,14 +15,23 @@ import { RestakingAllocationMap } from './types';
 export type ConfirmAllocationsStepProps = {
   profileType: RestakingProfileType;
   allocations: RestakingAllocationMap;
-  sharedRestakedAmount?: BN;
+  sharedRestakeAmount?: BN;
 };
 
 const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   profileType,
   allocations,
-  sharedRestakedAmount,
+  sharedRestakeAmount,
 }) => {
+  const isSharedVariant = profileType === RestakingProfileType.SHARED;
+
+  if (isSharedVariant) {
+    assert(
+      sharedRestakeAmount !== undefined,
+      'Shared restake amount should be defined for the shared profile type (did you forget to pass the shared restake amount prop?)'
+    );
+  }
+
   const restakedAmount = filterAllocations(allocations).reduce(
     (acc, [, amount]) => acc.add(amount),
     new BN(0)
@@ -37,7 +47,9 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   // calculated from the allocations, since shared roles profiles
   // do not allocate amounts per-role, but rather as a whole.
   const totalRestakedAmount = formatTokenBalance(
-    sharedRestakedAmount !== undefined ? sharedRestakedAmount : restakedAmount
+    isSharedVariant && sharedRestakeAmount !== undefined
+      ? sharedRestakeAmount
+      : restakedAmount
   );
 
   return (
@@ -56,9 +68,21 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
         </div>
 
         <div className="flex flex-col gap-2 mb-auto">
-          {filteredAllocations.map(([service, amount]) => (
-            <AllocationItem key={service} service={service} amount={amount} />
-          ))}
+          {isSharedVariant
+            ? filteredAllocations.length > 0 && (
+                <AllocationItem
+                  services={Object.values(filteredAllocations).map(
+                    ([service]) => service
+                  )}
+                />
+              )
+            : filteredAllocations.map(([service, amount]) => (
+                <AllocationItem
+                  key={service}
+                  services={[service]}
+                  amount={amount}
+                />
+              ))}
 
           {filteredAllocations.length === 0 && (
             <Typography
@@ -151,19 +175,35 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 };
 
 type AllocationItemProps = {
-  service: ServiceType;
-  amount: BN;
+  services: ServiceType[];
+  amount?: BN;
 };
 
 /** @internal */
-const AllocationItem: FC<AllocationItemProps> = ({ service, amount }) => {
+const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
   return (
     <div className="flex items-center justify-between bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2">
-      <Chip color={getChipColorByServiceType(service)}>{service}</Chip>
+      <div className="flex gap-1 flex-wrap">
+        {services.map((service) => (
+          <Chip
+            key={service}
+            color={getChipColorOfServiceType(service)}
+            className="text-center whitespace-nowrap"
+          >
+            {service}
+          </Chip>
+        ))}
+      </div>
 
-      <Typography variant="body2" fw="semibold" className="dark:text-mono-0">
-        {formatTokenBalance(amount)}
-      </Typography>
+      {amount !== undefined && (
+        <Typography
+          variant="body2"
+          fw="semibold"
+          className="dark:text-mono-0 text-right"
+        >
+          {formatTokenBalance(amount)}
+        </Typography>
+      )}
     </div>
   );
 };

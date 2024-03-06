@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
 import assert from 'assert';
 import { useCallback, useRef } from 'react';
+import { z } from 'zod';
 
 import { SUBSTRATE_ROLE_TYPE_MAPPING } from '../../constants';
-import { filterAllocations } from '../../containers/ManageProfileModalContainer/IndependentAllocationStep';
 import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
@@ -12,7 +12,7 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
   role: (typeof SUBSTRATE_ROLE_TYPE_MAPPING)[ServiceType];
-  amount: BN;
+  amount: BN | null;
 };
 
 /**
@@ -35,8 +35,9 @@ const useUpdateRestakingProfileTx = (
   // function needs the records to be available when it is called, and
   // since `useState` is asynchronous, the records would not be available
   // in the same render cycle.
-  const recordsRef = useRef<ProfileRecord[] | null>(null);
+  const allocationsRef = useRef<RestakingAllocationMap | null>(null);
 
+  const sharedRestakeAmountRef = useRef<BN | null>(null);
   const { data: roleLedger } = useRestakingRoleLedger();
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
@@ -49,7 +50,7 @@ const useUpdateRestakingProfileTx = (
         }
 
         assert(
-          recordsRef.current !== null,
+          allocationsRef.current !== null,
           'Records should be set before calling execute'
         );
 
@@ -57,11 +58,34 @@ const useUpdateRestakingProfileTx = (
           ? api.tx.roles.updateProfile
           : api.tx.roles.createProfile;
 
-        // TODO: This has type any. Investigate why type definitions seem to be missing for this function/transaction call.
+        if (profileType === RestakingProfileType.SHARED) {
+          assert(
+            sharedRestakeAmountRef.current !== null,
+            'Shared restake amount should be set if the profile type is shared'
+          );
+        }
+
+        const records: ProfileRecord[] = Object.entries(
+          allocationsRef.current
+        ).map(([serviceString, amount]) => {
+          const service = z.nativeEnum(ServiceType).parse(serviceString);
+
+          return {
+            role: SUBSTRATE_ROLE_TYPE_MAPPING[service],
+            amount,
+          };
+        });
+
+        // TODO: These objects have type `any`. Investigate why type definitions seem to be missing for this function/transaction call.
         return callee(
           profileType === RestakingProfileType.INDEPENDENT
-            ? { Independent: { records: recordsRef.current } }
-            : { Shared: { records: recordsRef.current } }
+            ? { Independent: { records } }
+            : {
+                Shared: {
+                  records,
+                  amount: sharedRestakeAmountRef.current,
+                },
+              }
         );
       },
       [createIfMissing, hasExistingProfile, profileType]
@@ -69,25 +93,34 @@ const useUpdateRestakingProfileTx = (
     notifyTxStatusUpdates
   );
 
-  const executeOverride = useCallback(
+  const executeForIndependentProfile = useCallback(
     (allocations: RestakingAllocationMap) => {
       if (execute === null) {
         return;
       }
 
-      recordsRef.current = filterAllocations(allocations).map(
-        ([service, allocation]) => ({
-          role: SUBSTRATE_ROLE_TYPE_MAPPING[service],
-          amount: allocation,
-        })
-      );
+      allocationsRef.current = allocations;
 
       return execute();
     },
     [execute]
   );
 
-  return { execute: executeOverride, ...other };
+  const executeForSharedProfile = useCallback(
+    (allocations: RestakingAllocationMap, restakeAmount: BN) => {
+      if (execute === null) {
+        return;
+      }
+
+      sharedRestakeAmountRef.current = restakeAmount;
+      allocationsRef.current = allocations;
+
+      return execute();
+    },
+    [execute]
+  );
+
+  return { executeForIndependentProfile, executeForSharedProfile, ...other };
 };
 
 export default useUpdateRestakingProfileTx;

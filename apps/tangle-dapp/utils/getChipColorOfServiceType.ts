@@ -3,7 +3,7 @@ import type { ChipColors } from '@webb-tools/webb-ui-components';
 import { ServiceType } from '../types';
 
 // TODO: Update this to match the actual service types.
-function getChipColorByServiceType(serviceType: ServiceType): ChipColors {
+function getChipColorOfServiceType(serviceType: ServiceType): ChipColors {
   switch (serviceType) {
     case ServiceType.ZK_SAAS_GROTH16:
     case ServiceType.ZK_SAAS_MARLIN:
@@ -24,4 +24,4 @@ function getChipColorByServiceType(serviceType: ServiceType): ChipColors {
   }
 }
 
-export default getChipColorByServiceType;
+export default getChipColorOfServiceType;

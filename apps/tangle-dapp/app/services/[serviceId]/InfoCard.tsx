@@ -8,7 +8,7 @@ import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenStrin
 import { twMerge } from 'tailwind-merge';
 
 import { getServiceDetailsInfo } from '../../../data/ServiceDetails';
-import { getChipColorByServiceType } from '../../../utils';
+import { getChipColorOfServiceType } from '../../../utils';
 
 interface InfoCardProps {
   serviceId: string;
@@ -42,7 +42,7 @@ async function InfoCard({ serviceId, className }: InfoCardProps) {
             >
               Phase 1 ID: {serviceId}
             </Typography>
-            <Chip color={getChipColorByServiceType(serviceType)}>
+            <Chip color={getChipColorOfServiceType(serviceType)}>
               {serviceType}
             </Chip>
             {thresholds && (

@@ -128,7 +128,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
     variant === AllocationChartVariant.INDEPENDENT
       ? [remainingDataEntry].concat(allocationDataEntries)
       : allocationDataEntries.length === 0
-      ? [remainingDataEntry]
+      ? [{ name: 'Remaining', value: 1 }]
       : allocationDataEntries.map(({ name }) => ({
           name,
           // Use a value of `1` so that Recharts shows the bar.
@@ -151,7 +151,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
     <>
       {(variant === AllocationChartVariant.INDEPENDENT ||
         allocationDataEntries.length === 0) && (
-        <Cell key="Remaining" fill={themeCellColor} />
+        <Cell key="remaining" fill={themeCellColor} />
       )}
 
       {allocationDataEntries.map((entry) => (

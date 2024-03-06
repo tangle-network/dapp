@@ -89,14 +89,17 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     const deallocatedAmount = allocations[service];
 
     assert(
-      deallocatedAmount !== null,
-      'Deallocated amount should not be null because that would imply that during its allocation, it had no amount set'
+      deallocatedAmount !== undefined,
+      'Allocations should have an entry for the service being deallocated'
     );
 
-    setAllocations((prev) => ({
-      ...prev,
-      [service]: null,
-    }));
+    setAllocations((prev) => {
+      const nextAllocations = Object.assign({}, prev);
+
+      delete nextAllocations[service];
+
+      return nextAllocations;
+    });
   };
 
   const amountRemaining = maxRestakingAmount?.sub(restakedAmount) ?? null;

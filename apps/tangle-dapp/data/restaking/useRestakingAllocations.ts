@@ -19,12 +19,7 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
  */
 function convertRecordToAllocation(
   record: PalletRolesProfileRecord
-): [ServiceType, BN] {
-  // TODO: Need to investigate under what conditions the amount can be `None`. What would `None` mean in this context? A good idea would be to check the Rust code & logic to see how the `updateProfile` call is implemented & handled for records with no amount.
-  if (record.amount.isNone) {
-    throw new Error('Records with no amount are not supported');
-  }
-
+): [ServiceType, BN | null] {
   let serviceType: ServiceType | null = null;
 
   if (record.role.isZkSaaS) {
@@ -51,7 +46,8 @@ function convertRecordToAllocation(
     );
   }
 
-  return [serviceType, record.amount.unwrap()];
+  // TODO: Need to investigate under what conditions the amount can be `None`. What would `None` mean in this context? A good idea would be to check the Rust code & logic to see how the `updateProfile` call is implemented & handled for records with no amount.
+  return [serviceType, record.amount.unwrapOr(null)];
 }
 
 /**

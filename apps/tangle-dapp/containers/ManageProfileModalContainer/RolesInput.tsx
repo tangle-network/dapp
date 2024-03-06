@@ -5,7 +5,7 @@ import {
   SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
@@ -13,7 +13,7 @@ import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
 import {
   getChartDataAreaColorByServiceType,
-  getChipColorByServiceType,
+  getChipColorOfServiceType,
 } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import BaseInput from './BaseInput';
@@ -33,6 +33,8 @@ const RolesInput: FC<RolesInputProps> = ({
   roles,
   onToggleRole,
 }) => {
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
   const { data: minRestakingBond } = usePolkadotApiRx(
     useCallback((api) => api.query.roles.minRestakingBond(), [])
   );
@@ -93,13 +95,15 @@ const RolesInput: FC<RolesInputProps> = ({
       title={title}
       id={id}
       dropdownBody={dropdownBody}
+      isDropdownVisible={isDropdownVisible}
+      setIsDropdownVisible={setIsDropdownVisible}
       bodyClassName="flex flex-wrap gap-1"
     >
       {selectedRoles.map((role) => (
         <Chip
           key={role}
-          color={getChipColorByServiceType(role)}
-          className="cursor-pointer"
+          color={getChipColorOfServiceType(role)}
+          className="cursor-pointer flex items-center justify-center gap-0"
           onClick={() => onToggleRole(role)}
         >
           {role}

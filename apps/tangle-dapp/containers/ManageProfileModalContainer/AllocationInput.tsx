@@ -1,10 +1,5 @@
 import { BN } from '@polkadot/util';
-import {
-  ChevronDown,
-  ChevronUp,
-  Close,
-  LockUnlockLineIcon,
-} from '@webb-tools/icons';
+import { Close, LockUnlockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { z } from 'zod';
@@ -12,7 +7,7 @@ import { z } from 'zod';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { ServiceType } from '../../types';
-import { getChipColorByServiceType } from '../../utils';
+import { getChipColorOfServiceType } from '../../utils';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
@@ -61,7 +56,6 @@ const AllocationInput: FC<AllocationInputProps> = ({
   setService,
   onDelete,
 }) => {
-  // TODO: Handle `BaseInput` dropdown visibility from parent (here).
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const { data: minRestakingBond } = usePolkadotApiRx(
@@ -148,7 +142,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
         onClick={() => handleSetService(service)}
         className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
       >
-        <Chip color={getChipColorByServiceType(service)}>{service}</Chip>
+        <Chip color={getChipColorOfServiceType(service)}>{service}</Chip>
 
         {minRestakingBond !== null ? (
           <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
@@ -182,6 +176,8 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
   return (
     <BaseInput
+      isDropdownVisible={isDropdownVisible}
+      setIsDropdownVisible={setIsDropdownVisible}
       title={title}
       id={id}
       actions={actions}
@@ -189,7 +185,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
       errorMessage={errorMessage}
       chipText={service ?? 'Select role'}
       chipColor={
-        service !== null ? getChipColorByServiceType(service) : undefined
+        service !== null ? getChipColorOfServiceType(service) : undefined
       }
     >
       <Input

@@ -6,7 +6,7 @@ import {
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, ReactNode, useState } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import InputAction from './InputAction';
@@ -22,6 +22,8 @@ export type BaseInputProps = {
   chipText?: string;
   chipColor?: ChipColors;
   isDropdownDisabled?: boolean;
+  isDropdownVisible?: boolean;
+  setIsDropdownVisible?: Dispatch<SetStateAction<boolean>>;
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
@@ -35,6 +37,8 @@ const BaseInput: FC<BaseInputProps> = ({
   actions = [],
   errorMessage,
   dropdownBody,
+  isDropdownVisible,
+  setIsDropdownVisible,
   chipColor,
   chipText,
   isDropdownDisabled = false,
@@ -42,10 +46,8 @@ const BaseInput: FC<BaseInputProps> = ({
   bodyClassName,
   dropdownBodyClassName,
 }) => {
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
   const toggleDropdown = () => {
-    if (dropdownBody !== undefined) {
+    if (dropdownBody !== undefined && setIsDropdownVisible !== undefined) {
       setIsDropdownVisible((isVisible) => !isVisible);
     }
   };

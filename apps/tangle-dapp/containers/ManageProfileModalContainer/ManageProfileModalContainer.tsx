@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import {
   Button,
   Modal,
@@ -6,7 +7,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
@@ -112,6 +113,10 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     RestakingProfileType.INDEPENDENT
   );
 
+  const [sharedRestakeAmount, setSharedRestakeAmount] = useState<BN | null>(
+    null
+  );
+
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({});
@@ -123,8 +128,11 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const [hasProcessedRemoteAllocations, setHasProcessedRemoteAllocations] =
     useState(false);
 
-  const { execute: executeUpdateProfileTx, status: updateProfileTxStatus } =
-    useUpdateRestakingProfileTx(profileType, true, true);
+  const {
+    executeForIndependentProfile: executeUpdateIndependentProfileTx,
+    executeForSharedProfile: executeUpdateSharedProfileTx,
+    status: updateProfileTxStatus,
+  } = useUpdateRestakingProfileTx(profileType, true, true);
 
   switch (step) {
     case Step.CHOOSE_METHOD:
@@ -145,6 +153,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           />
         ) : (
           <SharedAllocationStep
+            restakeAmount={sharedRestakeAmount}
+            setRestakeAmount={setSharedRestakeAmount}
             allocations={allocations}
             setAllocations={setAllocations}
           />
@@ -156,20 +166,41 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         <ConfirmAllocationsStep
           profileType={profileType}
           allocations={allocations}
+          sharedRestakeAmount={sharedRestakeAmount ?? new BN(0)}
         />
       );
   }
 
-  const handleNextStep = () => {
+  const handlePreviousStep = useCallback(() => {
+    const previousStep = getStepDiff(step, false);
+
+    setStep(previousStep ?? Step.CHOOSE_METHOD);
+  }, [step]);
+
+  const handleNextStep = useCallback(() => {
     const nextStep = getStepDiff(step, true);
 
-    // Have reached the end; submit the transaction.
-    if (nextStep === null) {
-      executeUpdateProfileTx(allocations);
-    } else {
+    if (nextStep !== null) {
       setStep(nextStep);
+
+      return;
     }
-  };
+
+    // Have reached the end; submit the transaction.
+    profileType === RestakingProfileType.INDEPENDENT
+      ? executeUpdateIndependentProfileTx(allocations)
+      : executeUpdateSharedProfileTx(
+          allocations,
+          sharedRestakeAmount ?? new BN(0)
+        );
+  }, [
+    allocations,
+    executeUpdateIndependentProfileTx,
+    executeUpdateSharedProfileTx,
+    profileType,
+    sharedRestakeAmount,
+    step,
+  ]);
 
   // Set the local allocations state when existing allocations
   // are fetched from the Polkadot API. Only do this once when
@@ -216,13 +247,12 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         setProfileType(RestakingProfileType.INDEPENDENT);
         setStep(Step.CHOOSE_METHOD);
       }
-    }, 500);
+    }, 700);
 
     return () => clearTimeout(timeoutHandle);
   }, [isModalOpen, isMountedRef]);
 
   const stepDescription = getStepDescription(step, profileType);
-  const previousStep = getStepDiff(step, false);
 
   return (
     <Modal open>
@@ -255,7 +285,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             variant="secondary"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => setStep(previousStep ?? Step.CHOOSE_METHOD)}
+            onClick={handlePreviousStep}
           >
             {getStepPreviousButtonLabel(step)}
           </Button>

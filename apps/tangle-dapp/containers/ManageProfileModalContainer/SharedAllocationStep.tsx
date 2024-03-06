@@ -9,6 +9,8 @@ import RolesInput from './RolesInput';
 import { RestakingAllocationMap } from './types';
 
 export type SharedAllocationStepProps = {
+  restakeAmount: BN | null;
+  setRestakeAmount: Dispatch<SetStateAction<BN | null>>;
   allocations: RestakingAllocationMap;
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
@@ -16,8 +18,9 @@ export type SharedAllocationStepProps = {
 const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   allocations,
   setAllocations,
+  restakeAmount,
+  setRestakeAmount,
 }) => {
-  const [restakeAmount, setRestakeAmount] = useState<BN | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>([]);
 
   const handleToggleRole = (role: ServiceType) => {
