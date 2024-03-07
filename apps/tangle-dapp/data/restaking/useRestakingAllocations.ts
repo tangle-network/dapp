@@ -1,5 +1,6 @@
 import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
+import { useMemo } from 'react';
 
 import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
@@ -69,9 +70,11 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
   const ledgerOpt = ledgerResult.data;
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
-  const allocations: RestakingAllocationMap = {};
+  const allocations: RestakingAllocationMap = useMemo(() => {
+    if (!isLedgerAvailable) {
+      return {};
+    }
 
-  if (isLedgerAvailable) {
     const ledger = ledgerOpt.unwrap();
 
     const profile =
@@ -83,14 +86,18 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
         ? ledger.profile.asShared
         : null;
 
+    const newAllocations: RestakingAllocationMap = {};
+
     if (profile !== null) {
       for (const record of profile.records) {
         const [service, amount] = convertRecordToAllocation(record);
 
-        allocations[service] = amount;
+        newAllocations[service] = amount;
       }
     }
-  }
+
+    return newAllocations;
+  }, [isLedgerAvailable, ledgerOpt, profileType]);
 
   return {
     ...ledgerResult,

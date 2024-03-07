@@ -138,11 +138,6 @@ const AllocationChart: FC<AllocationChartProps> = ({
 
   const tooltip = (
     <RechartsTooltip
-      wrapperStyle={{
-        position: 'absolute',
-        zIndex: 9999,
-        pointerEvents: 'none',
-      }}
       content={BnChartTooltip(
         allocations,
         maxRestakingAmount ?? new BN(0),

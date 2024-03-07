@@ -7,9 +7,10 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
-import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
+import useSharedRestakeAmountState from '../../data/restaking/useSharedRestakeAmountState';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -17,10 +18,8 @@ import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
 import IndependentAllocationStep from './IndependentAllocationStep';
 import SharedAllocationStep from './SharedAllocationStep';
-import {
-  ManageProfileModalContainerProps,
-  RestakingAllocationMap,
-} from './types';
+import { ManageProfileModalContainerProps } from './types';
+import useAllocationsState from './useAllocationsState';
 
 export enum RestakingProfileType {
   INDEPENDENT,
@@ -113,20 +112,24 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     RestakingProfileType.INDEPENDENT
   );
 
-  const [sharedRestakeAmount, setSharedRestakeAmount] = useState<BN | null>(
-    null
-  );
+  const {
+    sharedRestakeAmount,
+    setSharedRestakeAmount,
+    isLoading: isLoadingSharedRestakeAmount,
+    reset: resetSharedRestakeAmount,
+  } = useSharedRestakeAmountState();
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
-  const [allocations, setAllocations] = useState<RestakingAllocationMap>({});
   let stepContents: ReactNode;
 
-  const { value: onChainAllocations, isLoading: isLoadingOnChainAllocations } =
-    useRestakingAllocations(profileType);
-
-  const [hasProcessedRemoteAllocations, setHasProcessedRemoteAllocations] =
-    useState(false);
+  const {
+    allocations,
+    setAllocations,
+    setAllocationsDispatch,
+    isLoading: isLoadingAllocations,
+    reset: resetAllocations,
+  } = useAllocationsState(profileType);
 
   const {
     executeForIndependentProfile: executeUpdateIndependentProfileTx,
@@ -149,7 +152,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         profileType === RestakingProfileType.INDEPENDENT ? (
           <IndependentAllocationStep
             allocations={allocations}
-            setAllocations={setAllocations}
+            setAllocations={setAllocationsDispatch}
           />
         ) : (
           <SharedAllocationStep
@@ -172,10 +175,15 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   }
 
   const handlePreviousStep = useCallback(() => {
-    const previousStep = getStepDiff(step, false);
+    const diff = getStepDiff(step, false);
+    const previousStep = diff ?? Step.CHOOSE_METHOD;
 
-    setStep(previousStep ?? Step.CHOOSE_METHOD);
-  }, [step]);
+    if (previousStep === Step.CHOOSE_METHOD) {
+      resetAllocations();
+    }
+
+    setStep(previousStep);
+  }, [resetAllocations, step]);
 
   const handleNextStep = useCallback(() => {
     const nextStep = getStepDiff(step, true);
@@ -202,31 +210,12 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     step,
   ]);
 
-  // Set the local allocations state when existing allocations
-  // are fetched from the Polkadot API. Only do this once when
-  // the component is mounted.
-  useEffect(() => {
-    // Wait until the remote allocations have been fetched, and
-    // prevent processing them again if they have already been
-    // loaded.
-    if (isLoadingOnChainAllocations || hasProcessedRemoteAllocations) {
-      return;
-    }
-    // If there were any existing allocations on Substrate, set them
-    // in the local state.
-    else if (onChainAllocations !== null) {
-      setAllocations(onChainAllocations);
-    }
+  const resetAllocationState = useCallback(() => {
+    resetAllocations();
+    resetSharedRestakeAmount();
+  }, [resetAllocations, resetSharedRestakeAmount]);
 
-    setHasProcessedRemoteAllocations(true);
-  }, [
-    onChainAllocations,
-    hasProcessedRemoteAllocations,
-    isLoadingOnChainAllocations,
-  ]);
-
-  // Close modal when the transaction is complete, and reset the
-  // transaction to be ready for the next time the modal is opened.
+  // Close modal when the transaction is complete.
   useEffect(() => {
     if (updateProfileTxStatus === TxStatus.COMPLETE) {
       setIsModalOpen(false);
@@ -246,14 +235,19 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       if (isMountedRef.current) {
         setProfileType(RestakingProfileType.INDEPENDENT);
         setStep(Step.CHOOSE_METHOD);
-        setAllocations(onChainAllocations ?? {});
+        resetAllocationState();
       }
     }, 500);
 
     return () => clearTimeout(timeoutHandle);
-  }, [isModalOpen, isMountedRef, onChainAllocations]);
+  }, [isModalOpen, isMountedRef, resetAllocations, resetAllocationState]);
 
   const stepDescription = getStepDescription(step, profileType);
+
+  const isLoading =
+    isLoadingSharedRestakeAmount ||
+    isLoadingAllocations ||
+    updateProfileTxStatus === TxStatus.PROCESSING;
 
   return (
     <Modal open>
@@ -299,14 +293,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             className="!mt-0"
             // Prevent the user from continuing or making changes while
             // the existing allocations are being fetched.
-            isDisabled={
-              !hasProcessedRemoteAllocations ||
-              updateProfileTxStatus === TxStatus.PROCESSING
-            }
-            isLoading={
-              !hasProcessedRemoteAllocations ||
-              updateProfileTxStatus === TxStatus.PROCESSING
-            }
+            isDisabled={isLoading}
+            isLoading={isLoading}
           >
             {getStepNextButtonLabel(step)}
           </Button>

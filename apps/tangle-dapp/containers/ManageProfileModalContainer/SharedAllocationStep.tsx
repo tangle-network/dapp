@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
@@ -15,7 +15,7 @@ export type SharedAllocationStepProps = {
   restakeAmount: BN | null;
   setRestakeAmount: (newAmount: BN | null) => void;
   allocations: RestakingAllocationMap;
-  setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
+  setAllocations: (newAllocations: RestakingAllocationMap) => void;
 };
 
 const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
@@ -29,19 +29,24 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   const remainingAmount =
     maxRestakingAmount?.sub(restakeAmount ?? new BN(0)) ?? null;
 
-  const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>(
+    Object.keys(allocations) as ServiceType[]
+  );
 
-  const handleToggleRole = (role: ServiceType) => {
-    const isSelected = selectedRoles.includes(role);
+  const handleToggleRole = useCallback(
+    (role: ServiceType) => {
+      const isSelected = selectedRoles.includes(role);
 
-    if (isSelected) {
-      setSelectedRoles((roles) =>
-        roles.filter((selectedRole) => selectedRole !== role)
-      );
-    } else {
-      setSelectedRoles((roles) => [...roles, role]);
-    }
-  };
+      if (isSelected) {
+        setSelectedRoles((roles) =>
+          roles.filter((selectedRole) => selectedRole !== role)
+        );
+      } else {
+        setSelectedRoles((roles) => [...roles, role]);
+      }
+    },
+    [selectedRoles]
+  );
 
   // Update allocations when the selected roles changes.
   useEffect(() => {
