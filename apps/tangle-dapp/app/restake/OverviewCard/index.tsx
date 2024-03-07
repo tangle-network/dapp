@@ -17,6 +17,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
             isBoldText
             prefix={TANGLE_TOKEN_UNIT}
           />
+
           <StatsItem
             title="Available for Restake"
             value={null}
@@ -25,6 +26,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
           />
 
           <StatsItem title="Earnings" value={null} prefix={TANGLE_TOKEN_UNIT} />
+
           <StatsItem title="APY" value={null} prefix="%" />
 
           <ActionButton />
@@ -38,7 +40,7 @@ OverviewCard.displayName = 'OverviewCard';
 
 export default OverviewCard;
 
-type StatsItemProsp = {
+type StatsItemProps = {
   title: string;
   titleTooltip?: string;
   value: number | null;
@@ -47,7 +49,7 @@ type StatsItemProsp = {
   prefix?: string;
 };
 
-const StatsItem: FC<StatsItemProsp> = ({
+const StatsItem: FC<StatsItemProps> = ({
   title,
   titleTooltip,
   value,
