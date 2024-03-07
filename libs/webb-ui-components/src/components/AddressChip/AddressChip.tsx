@@ -31,7 +31,8 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
           component="span"
           className="inline-block uppercase text-mono-120 dark:text-mono-60"
         >
-          {isHex(address) ? shortenHex(address, 2) : shortenString(address, 2)}
+          {/* Hex: 0xXX...XX; Other cases: XXX...XXX */}
+          {isHex(address) ? shortenHex(address, 2) : shortenString(address, 3)}
         </Typography>
       </Chip>
     );

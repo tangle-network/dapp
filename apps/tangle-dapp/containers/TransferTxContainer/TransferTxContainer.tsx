@@ -1,3 +1,5 @@
+import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
   AmountInput,
   BridgeInputGroup,
@@ -7,14 +9,16 @@ import {
   ModalFooter,
   ModalHeader,
   RecipientInput,
+  TxConfirmationRing,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertToChainUnits from '../../utils/convertToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
@@ -25,8 +29,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
+  const accAddress = useActiveAccountAddress();
   const [amount, setAmount] = useState('');
-  const [recipientAddress, setRecipientAddress] = useState('');
+  const [receiverAddress, setReceiverAddress] = useState('');
   const { transferrable: transferrableBalance } = useBalances();
 
   const formattedTransferrableBalance =
@@ -48,9 +53,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         // of decimals.
         const amountInChainUnits = convertToChainUnits(amountAsNumber);
 
-        return api.tx.balances.transfer(recipientAddress, amountInChainUnits);
+        return api.tx.balances.transfer(receiverAddress, amountInChainUnits);
       },
-      [amount, recipientAddress]
+      [amount, receiverAddress]
     ),
     true
   );
@@ -59,7 +64,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const reset = useCallback(() => {
     setIsModalOpen(false);
     setAmount('');
-    setRecipientAddress('');
+    setReceiverAddress('');
   }, [setIsModalOpen]);
 
   // Reset state when the transaction is complete.
@@ -77,9 +82,18 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setAmount(formattedTransferrableBalance);
   }, [formattedTransferrableBalance]);
 
-  const isReady = status !== TxStatus.Processing;
-  const isDataValid = amount !== '' && recipientAddress !== '';
-  const canInitiateTx = isReady && isDataValid;
+  const isReady = useMemo(() => status !== TxStatus.Processing, [status]);
+  const isDataValid = useMemo(
+    () => amount !== '' && receiverAddress !== '',
+    [amount, receiverAddress]
+  );
+  const canInitiateTx = useMemo(
+    () => isReady && isDataValid,
+    [isReady, isDataValid]
+  );
+  const isValidReceiverAddress = useMemo(() => {
+    return isAddress(receiverAddress) || isEthereumAddress(receiverAddress);
+  }, [receiverAddress]);
 
   return (
     <Modal>
@@ -94,25 +108,43 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
         <div className="p-9 flex flex-col gap-4">
           <Typography variant="body1" fw="normal">
-            Quickly transfer your {TANGLE_TOKEN_UNIT} tokens to a recipient on
+            Quickly transfer your {TANGLE_TOKEN_UNIT} tokens to a receiver on
             the Tangle Network. You can choose to send to either an EVM or a
             Substrate address.
           </Typography>
 
-          <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
-            <RecipientInput
-              className="bg-mono-20 dark:bg-mono-160"
-              onChange={(nextRecipientAddress) =>
-                setRecipientAddress(nextRecipientAddress)
-              }
-            />
+          <TxConfirmationRing
+            source={{
+              address: accAddress ?? '',
+              typedChainId: isEthereumAddress(accAddress ?? '')
+                ? PresetTypedChainId.TangleTestnetEVM
+                : PresetTypedChainId.TangleTestnetNative,
+            }}
+            dest={{
+              address: isValidReceiverAddress ? receiverAddress : '',
+              typedChainId: isEthereumAddress(receiverAddress)
+                ? PresetTypedChainId.TangleTestnetEVM
+                : PresetTypedChainId.TangleTestnetNative,
+            }}
+            title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
+            isInNextApp={true}
+          />
 
+          <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
             <AmountInput
               onMaxBtnClick={setMaxAmount}
               isDisabled={!isReady}
               amount={amount}
               onAmountChange={(nextAmount) => setAmount(nextAmount)}
               className="bg-mono-20 dark:bg-mono-160"
+            />
+            <RecipientInput
+              className="bg-mono-20 dark:bg-mono-160"
+              onChange={(nextReceiverAddress) =>
+                setReceiverAddress(nextReceiverAddress)
+              }
+              title="Receiver Address"
+              placeholder="EVM or Substrate"
             />
           </BridgeInputGroup>
 
@@ -122,24 +154,36 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               {txError.message}
             </Typography>
           )}
+
+          {!isValidReceiverAddress && receiverAddress !== '' && (
+            <Typography variant="body1" fw="normal" className="!text-red-50">
+              Invalid receiver address
+            </Typography>
+          )}
         </div>
 
-        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          <Button
-            isFullWidth
-            isDisabled={!canInitiateTx || executeTransferTx === null}
-            isLoading={!isReady}
-            loadingText={getTxStatusText(status)}
-            onClick={executeTransferTx !== null ? executeTransferTx : undefined}
-          >
-            Send
-          </Button>
-
-          <Link href={TANGLE_DOCS_URL} target="_blank">
-            <Button isFullWidth variant="secondary">
-              Learn More
+        <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
+          <div className="flex-1">
+            <Button
+              isFullWidth
+              isDisabled={!canInitiateTx || executeTransferTx === null}
+              isLoading={!isReady}
+              loadingText={getTxStatusText(status)}
+              onClick={
+                executeTransferTx !== null ? executeTransferTx : undefined
+              }
+            >
+              Send
             </Button>
-          </Link>
+          </div>
+
+          <div className="flex-1">
+            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
+          </div>
         </ModalFooter>
       </ModalContent>
     </Modal>

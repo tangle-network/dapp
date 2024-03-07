@@ -1,14 +1,22 @@
-import { forwardRef, useCallback } from 'react';
+import { forwardRef, useCallback, useMemo } from 'react';
 import cx from 'classnames';
 import { ChainIcon } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
-import { useDarkMode } from '../../hooks/useDarkMode';
+import {
+  useDarkMode as useNormalDarkMode,
+  useNextDarkMode,
+} from '../../hooks/useDarkMode';
 import type { ChainsRingProps, ChainRingItemType } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
-  ({ circleContent, additionalSvgContent, chainItems }, ref) => {
+  ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
+    const useDarkMode = useMemo(
+      () => (isInNextApp ? useNextDarkMode : useNormalDarkMode),
+      [isInNextApp]
+    );
+
     const [isDarkMode] = useDarkMode();
 
     const getStrokeColor = useCallback(

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import cx from 'classnames';
 import { isHex } from 'viem';
 import { ExternalLinkLine } from '@webb-tools/icons';
@@ -7,7 +7,10 @@ import ChainsRing from '../ChainsRing';
 import { TxConfirmationRingProps } from './types';
 import { Typography } from '../../typography';
 import AddressChip from '../AddressChip';
-import { useDarkMode } from '../../hooks/useDarkMode';
+import {
+  useDarkMode as useNormalDarkMode,
+  useNextDarkMode,
+} from '../../hooks/useDarkMode';
 import { shortenHex } from '../../utils';
 
 const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
@@ -15,14 +18,20 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
     {
       source,
       dest,
-      poolName,
-      poolAddress,
-      poolExplorerUrl,
+      title,
+      subtitle,
+      externalLink,
       className,
+      isInNextApp = false,
       ...props
     },
     ref
   ) => {
+    const useDarkMode = useMemo(
+      () => (isInNextApp ? useNextDarkMode : useNormalDarkMode),
+      [isInNextApp]
+    );
+
     const [isDarkMode] = useDarkMode();
 
     return (
@@ -53,24 +62,25 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                 ta="center"
                 className="text-mono-140 dark:text-mono-80"
               >
-                {poolName}
+                {title}
               </Typography>
-              {isHex(poolAddress) && (
-                <div className="flex justify-center items-center gap-1">
+
+              <div className="flex justify-center items-center gap-1">
+                {subtitle && (
                   <Typography variant="body4">
-                    {shortenHex(poolAddress)}
+                    {isHex(subtitle) ? shortenHex(subtitle) : subtitle}
                   </Typography>
-                  {poolExplorerUrl && (
-                    <a
-                      href={poolExplorerUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <ExternalLinkLine className="fill-mono-140 dark:fill-mono-80" />
-                    </a>
-                  )}
-                </div>
-              )}
+                )}
+                {externalLink && (
+                  <a
+                    href={externalLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLinkLine className="fill-mono-140 dark:fill-mono-80" />
+                  </a>
+                )}
+              </div>
             </div>
           }
           additionalSvgContent={
@@ -81,7 +91,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                   <AddressChip
                     address={source.address}
                     isNoteAccount={source.isNoteAccount}
-                    className="absolute top-1/2 translate-y-[-50%] px-[6.25px]"
+                    className="absolute top-1/2 translate-y-[-50%] px-[6.25px] min-w-[87.5px]"
                   />
                 </foreignObject>
 
@@ -90,7 +100,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                   <AddressChip
                     address={dest.address}
                     isNoteAccount={dest.isNoteAccount}
-                    className="absolute top-1/2 translate-y-[-50%] right-0 px-[6.25px]"
+                    className="absolute top-1/2 translate-y-[-50%] right-0 px-[6.25px] min-w-[87.5px]"
                   />
                 </foreignObject>
                 <circle
@@ -121,6 +131,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
               </g>
             </>
           }
+          isInNextApp={isInNextApp}
         />
       </div>
     );

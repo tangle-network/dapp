@@ -119,9 +119,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               typedChainId: destTypedChainId,
               isNoteAccount: true,
             }}
-            poolAddress={poolAddress}
-            poolName={fungibleTokenSymbol}
-            poolExplorerUrl={poolExplorerUrl}
+            title={fungibleTokenSymbol}
+            subtitle={poolAddress}
+            externalLink={poolExplorerUrl}
           />
 
           {/** Spend Note info */}
