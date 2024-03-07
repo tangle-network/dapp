@@ -61,20 +61,23 @@ const RolesInput: FC<RolesInputProps> = ({
           : 'cursor-not-allowed'
       )}
     >
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-3">
         <CheckBox
           inputProps={{
             readOnly: true,
           }}
           isDisabled={!canSelectMoreRoles && !selectedRoles.includes(role)}
           isChecked={selectedRoles.includes(role)}
+          wrapperClassName="flex justify-center items-center min-h-auto"
         />
 
-        <Dot role={role} />
+        <div className="flex gap-1 items-center justify-center">
+          <Dot role={role} />
 
-        <Typography variant="body2" fw="normal" className="dark:text-mono-0">
-          {role}
-        </Typography>
+          <Typography variant="body2" fw="normal" className="dark:text-mono-0">
+            {role}
+          </Typography>
+        </div>
       </div>
 
       {minRestakingBond !== null ? (
@@ -109,7 +112,13 @@ const RolesInput: FC<RolesInputProps> = ({
       ))}
 
       {selectedRoles.length === 0 && (
-        <Chip color="dark-grey">Select Role(s)</Chip>
+        <Chip
+          onClick={() => setIsDropdownVisible(true)}
+          color="dark-grey"
+          className="cursor-pointer"
+        >
+          Select Role(s)
+        </Chip>
       )}
     </BaseInput>
   );

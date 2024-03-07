@@ -253,11 +253,12 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       if (isMountedRef.current) {
         setProfileType(RestakingProfileType.INDEPENDENT);
         setStep(Step.CHOOSE_METHOD);
+        setAllocations(onChainAllocations ?? {});
       }
     }, 500);
 
     return () => clearTimeout(timeoutHandle);
-  }, [isModalOpen, isMountedRef]);
+  }, [isModalOpen, isMountedRef, onChainAllocations]);
 
   const stepDescription = getStepDescription(step, profileType);
 
