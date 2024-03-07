@@ -8,7 +8,6 @@ import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
-import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import { DECIMAL_REGEX } from './AmountInput';
@@ -28,7 +27,7 @@ export type AllocationInputProps = {
   isLocked?: boolean;
   lockTooltip?: string;
   onDelete?: (service: ServiceType) => void;
-  onChange?: (newAmountInChainUnits: BN) => void;
+  onChange?: (newValue: string) => void;
   setService: (service: ServiceType) => void;
 };
 
@@ -56,30 +55,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   onDelete,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
-
-  const handleAmountChange = useCallback(
-    (newValue: string) => {
-      // Do nothing if the input is invalid or empty.
-      if (
-        onChange === undefined ||
-        newValue === '' ||
-        !DECIMAL_REGEX.test(newValue) ||
-        maxRestakingAmount === null ||
-        minRestakingBond === null
-      ) {
-        return;
-      }
-
-      const newAmount = BN.max(
-        BN.min(convertAmountStringToChainUnits(newValue), maxRestakingAmount),
-        minRestakingBond
-      );
-
-      onChange(newAmount);
-    },
-    [maxRestakingAmount, minRestakingBond, onChange]
-  );
+  const { minRestakingBond } = useRestakingLimits();
 
   const handleDelete = useCallback(() => {
     if (onDelete !== undefined && service !== null) {
@@ -189,7 +165,8 @@ const AllocationInput: FC<AllocationInputProps> = ({
         value={amountAsString}
         type="number"
         inputMode="numeric"
-        onChange={handleAmountChange}
+        onChange={onChange}
+        isControlled
         placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
         size="sm"
         autoComplete="off"

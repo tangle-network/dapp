@@ -1,12 +1,11 @@
 import { BN } from '@polkadot/util';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { Dispatch, FC, SetStateAction, useCallback } from 'react';
+import { FC, useCallback, useRef } from 'react';
 import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import BaseInput from './BaseInput';
 
@@ -14,12 +13,13 @@ export type AmountInputProps = {
   id: string;
   title: string;
   amount: BN | null;
-  setAmount: Dispatch<SetStateAction<BN | null>>;
+  setAmount: (newAmount: BN) => void;
+  onChange: (newValue: string) => void;
 };
 
 export const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
 
-export function createAmountSchema(
+export function createAmountZodSchema(
   amount: BN | null,
   min: BN | null,
   max: BN | null
@@ -43,8 +43,10 @@ const AmountInput: FC<AmountInputProps> = ({
   title,
   amount,
   setAmount,
+  onChange,
 }) => {
   const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const amountAsString =
     amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
@@ -56,6 +58,11 @@ const AmountInput: FC<AmountInputProps> = ({
     );
 
     setAmount(maxRestakingAmount);
+
+    // Focus after setting the max value.
+    if (inputRef.current !== null) {
+      inputRef.current.focus();
+    }
   }, [maxRestakingAmount, setAmount]);
 
   const actions = [
@@ -71,31 +78,7 @@ const AmountInput: FC<AmountInputProps> = ({
     </Button>,
   ];
 
-  const handleChange = useCallback(
-    (newValue: string) => {
-      // Do nothing if the input is invalid or empty.
-      if (
-        newValue === '' ||
-        !DECIMAL_REGEX.test(newValue) ||
-        maxRestakingAmount === null
-      ) {
-        return;
-      }
-
-      const newAmountInChainUnits = convertAmountStringToChainUnits(newValue);
-
-      // Do nothing if the input amount is more than the max
-      // permitted amount.
-      if (newAmountInChainUnits.gt(maxRestakingAmount)) {
-        return;
-      }
-
-      setAmount(newAmountInChainUnits);
-    },
-    [maxRestakingAmount, setAmount]
-  );
-
-  const validationResult = createAmountSchema(
+  const validationResult = createAmountZodSchema(
     amount,
     minRestakingBond,
     maxRestakingAmount
@@ -116,6 +99,7 @@ const AmountInput: FC<AmountInputProps> = ({
     >
       <Input
         id={id}
+        inputRef={inputRef}
         inputClassName="placeholder:text-md"
         type="number"
         inputMode="numeric"
@@ -123,7 +107,8 @@ const AmountInput: FC<AmountInputProps> = ({
         size="sm"
         autoComplete="off"
         value={amountAsString}
-        onChange={handleChange}
+        onChange={onChange}
+        isControlled
       />
     </BaseInput>
   );

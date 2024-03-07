@@ -10,6 +10,7 @@ import {
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -21,6 +22,7 @@ import {
   ManageProfileModalContainerProps,
   RestakingAllocationMap,
 } from './types';
+import useInputAmount from './useInputAmount';
 
 export enum RestakingProfileType {
   INDEPENDENT,
@@ -113,9 +115,13 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     RestakingProfileType.INDEPENDENT
   );
 
-  const [sharedRestakeAmount, setSharedRestakeAmount] = useState<BN | null>(
-    null
-  );
+  const { minRestakingBond, maxRestakingAmount } = useRestakingLimits();
+
+  const {
+    amount: sharedRestakeAmount,
+    setAmount: setSharedRestakeAmount,
+    handleChange: handleSharedRestakeAmountChange,
+  } = useInputAmount(minRestakingBond, maxRestakingAmount);
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
@@ -155,6 +161,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           <SharedAllocationStep
             restakeAmount={sharedRestakeAmount}
             setRestakeAmount={setSharedRestakeAmount}
+            onRestakeAmountChange={handleSharedRestakeAmountChange}
             allocations={allocations}
             setAllocations={setAllocations}
           />
@@ -247,7 +254,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         setProfileType(RestakingProfileType.INDEPENDENT);
         setStep(Step.CHOOSE_METHOD);
       }
-    }, 700);
+    }, 500);
 
     return () => clearTimeout(timeoutHandle);
   }, [isModalOpen, isMountedRef]);

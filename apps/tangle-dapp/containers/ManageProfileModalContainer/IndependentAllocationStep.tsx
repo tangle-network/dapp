@@ -19,6 +19,7 @@ import { AllocationChartVariant } from './AllocationChart';
 import AllocationInput from './AllocationInput';
 import AllocationStepContents from './AllocationStepContents';
 import { RestakingAllocationMap } from './types';
+import useInputAmount from './useInputAmount';
 
 export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
@@ -39,21 +40,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const { maxRestakingAmount } = useRestakingLimits();
-
-  const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
-    null
-  );
-
-  const { value: maxRolesPerAccount } = usePolkadotApi(
-    useCallback(
-      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
-      []
-    )
-  );
-
-  const [newAllocationRole, setNewAllocationRole] =
-    useState<ServiceType | null>(null);
+  const { minRestakingBond, maxRestakingAmount } = useRestakingLimits();
 
   const restakedAmount = useMemo(() => {
     let amount = new BN(0);
@@ -67,6 +54,22 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     return amount;
   }, [allocations]);
 
+  const {
+    amount: newAllocationAmount,
+    setAmount: setNewAllocationAmount,
+    handleChange: onNewAllocationAmountChange,
+  } = useInputAmount(minRestakingBond, maxRestakingAmount, restakedAmount);
+
+  const { value: maxRolesPerAccount } = usePolkadotApi(
+    useCallback(
+      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
+      []
+    )
+  );
+
+  const [newAllocationRole, setNewAllocationRole] =
+    useState<ServiceType | null>(null);
+
   const handleNewAllocation = useCallback(() => {
     if (newAllocationRole === null || newAllocationAmount === null) {
       return;
@@ -79,7 +82,12 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
     setNewAllocationRole(null);
     setNewAllocationAmount(null);
-  }, [newAllocationAmount, newAllocationRole, setAllocations]);
+  }, [
+    newAllocationAmount,
+    newAllocationRole,
+    setAllocations,
+    setNewAllocationAmount,
+  ]);
 
   const handleClearAllocations = useCallback(() => {
     setAllocations({});
@@ -164,7 +172,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               service={newAllocationRole}
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
-              onChange={setNewAllocationAmount}
+              onChange={onNewAllocationAmountChange}
               availableBalance={amountRemaining}
               validate
             />
