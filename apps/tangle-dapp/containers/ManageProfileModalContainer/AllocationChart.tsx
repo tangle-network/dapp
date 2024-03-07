@@ -9,6 +9,7 @@ import {
   PieProps,
   RadialBar,
   RadialBarChart,
+  ResponsiveContainer,
   Tooltip as RechartsTooltip,
 } from 'recharts';
 
@@ -32,7 +33,7 @@ export type AllocationChartProps = {
   allocatedAmount: BN;
 };
 
-type EntryName = 'Remaining' | ServiceType;
+export type EntryName = 'Remaining' | ServiceType;
 
 export type AllocationDataEntry = {
   name: EntryName;
@@ -83,8 +84,6 @@ function getChartColorOfEntryName(entryName: EntryName): ChartColor {
   }
 }
 
-const CHART_SIZE = 190;
-
 const AllocationChart: FC<AllocationChartProps> = ({
   allocatedAmount,
   allocations,
@@ -115,7 +114,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
         value:
           maxRestakingAmount === null
             ? 0
-            : getPercentageOfTotal(amount, maxRestakingAmount),
+            : getPercentageOfTotal(amount ?? new BN(0), maxRestakingAmount),
       })),
     [allocations, maxRestakingAmount]
   );
@@ -139,10 +138,16 @@ const AllocationChart: FC<AllocationChartProps> = ({
 
   const tooltip = (
     <RechartsTooltip
+      wrapperStyle={{
+        position: 'absolute',
+        zIndex: 9999,
+        pointerEvents: 'none',
+      }}
       content={BnChartTooltip(
         allocations,
         maxRestakingAmount ?? new BN(0),
-        allocatedAmount
+        allocatedAmount,
+        variant === AllocationChartVariant.INDEPENDENT
       )}
     />
   );
@@ -162,42 +167,49 @@ const AllocationChart: FC<AllocationChartProps> = ({
 
   const sharedChartProps = {
     data,
-    innerRadius: 65,
-    outerRadius: 95,
     stroke: 'none',
     dataKey: 'value',
   } satisfies PieProps;
 
   return (
     <div className="relative flex items-center justify-center">
-      {variant === AllocationChartVariant.INDEPENDENT ? (
-        <PieChart width={CHART_SIZE} height={CHART_SIZE}>
-          <Pie {...sharedChartProps} paddingAngle={5} animationDuration={200}>
-            {cells}
-          </Pie>
+      <div className="w-full h-[220px]">
+        <ResponsiveContainer>
+          {variant === AllocationChartVariant.INDEPENDENT ? (
+            <PieChart>
+              <Pie
+                innerRadius="70%"
+                outerRadius="100%"
+                paddingAngle={5}
+                animationDuration={200}
+                cornerRadius={8}
+                {...sharedChartProps}
+              >
+                {cells}
+              </Pie>
 
-          {tooltip}
-        </PieChart>
-      ) : (
-        <RadialBarChart
-          width={CHART_SIZE}
-          height={CHART_SIZE}
-          {...sharedChartProps}
-          data={data}
-        >
-          <RadialBar dataKey="value" animationDuration={200}>
-            {cells}
-          </RadialBar>
+              {tooltip}
+            </PieChart>
+          ) : (
+            <RadialBarChart
+              innerRadius="75%"
+              outerRadius="100%"
+              {...sharedChartProps}
+            >
+              <RadialBar dataKey="value" animationDuration={200}>
+                {cells}
+              </RadialBar>
 
-          {tooltip}
-        </RadialBarChart>
-      )}
+              {tooltip}
+            </RadialBarChart>
+          )}
+        </ResponsiveContainer>
+      </div>
 
       <div className="absolute center flex flex-col justify-center items-center z-[-1]">
         <Typography variant="body2" fw="normal" className="dark:text-mono-120">
           Restaked
         </Typography>
-
         <Typography
           variant="h5"
           fw="bold"
@@ -205,7 +217,6 @@ const AllocationChart: FC<AllocationChartProps> = ({
         >
           {formatTokenBalance(allocatedAmount, false)}
         </Typography>
-
         <Typography variant="body2" className="dark:text-mono-120">
           {TANGLE_TOKEN_UNIT}
         </Typography>

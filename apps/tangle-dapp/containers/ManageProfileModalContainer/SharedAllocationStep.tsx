@@ -14,7 +14,6 @@ import { RestakingAllocationMap } from './types';
 export type SharedAllocationStepProps = {
   restakeAmount: BN | null;
   setRestakeAmount: (newAmount: BN | null) => void;
-  onRestakeAmountChange: (newValue: string) => void;
   allocations: RestakingAllocationMap;
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
@@ -24,7 +23,6 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   setAllocations,
   restakeAmount,
   setRestakeAmount,
-  onRestakeAmountChange,
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
 
@@ -69,7 +67,6 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
         title="Total Restake"
         amount={restakeAmount}
         setAmount={setRestakeAmount}
-        onChange={onRestakeAmountChange}
       />
 
       <RolesInput

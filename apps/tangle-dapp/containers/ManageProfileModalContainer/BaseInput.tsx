@@ -6,7 +6,7 @@ import {
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { Dispatch, FC, ReactNode, SetStateAction } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import InputAction from './InputAction';
@@ -44,14 +44,14 @@ const BaseInput: FC<BaseInputProps> = ({
   bodyClassName,
   dropdownBodyClassName,
 }) => {
-  const toggleDropdown = () => {
+  const toggleDropdown = useCallback(() => {
     if (dropdownBody !== undefined && setIsDropdownVisible !== undefined) {
       setIsDropdownVisible((isVisible) => !isVisible);
     }
-  };
+  }, [dropdownBody, setIsDropdownVisible]);
 
   return (
-    <>
+    <div className="flex flex-col gap-1 max-w-[356px]">
       <InputWrapper
         className={twMerge(
           'flex gap-2 cursor-default relative w-[356px] max-w-[356px] lg:max-w-[356px]',
@@ -79,7 +79,7 @@ const BaseInput: FC<BaseInputProps> = ({
               onClick={toggleDropdown}
               color={chipColor ?? 'dark-grey'}
               className={twMerge(
-                'uppercase whitespace-nowrap',
+                'inline-block uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]',
                 !isDropdownDisabled &&
                   dropdownBody !== undefined &&
                   'cursor-pointer'
@@ -118,7 +118,7 @@ const BaseInput: FC<BaseInputProps> = ({
           *{errorMessage}
         </Typography>
       )}
-    </>
+    </div>
   );
 };
 

@@ -2,54 +2,35 @@ import { BN } from '@polkadot/util';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useRef } from 'react';
-import { z } from 'zod';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
 import BaseInput from './BaseInput';
+import useInputAmount from './useInputAmount';
 
 export type AmountInputProps = {
   id: string;
   title: string;
   amount: BN | null;
-  setAmount: (newAmount: BN) => void;
-  onChange: (newValue: string) => void;
+  setAmount: (newAmount: BN | null) => void;
 };
-
-export const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
-
-export function createAmountZodSchema(
-  amount: BN | null,
-  min: BN | null,
-  max: BN | null
-) {
-  return z
-    .string()
-    .regex(
-      DECIMAL_REGEX,
-      'Only digits or numbers with a decimal point are allowed'
-    )
-    .refine(() => amount === null || min === null || amount.gte(min), {
-      message: `Must be at least the minimum restaking bond`,
-    })
-    .refine(() => amount === null || max === null || amount.lte(max), {
-      message: 'Not enough available balance',
-    });
-}
 
 const AmountInput: FC<AmountInputProps> = ({
   id,
   title,
   amount,
   setAmount,
-  onChange,
 }) => {
   const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  const amountAsString =
-    amount !== null ? convertChainUnitsToNumber(amount).toString() : '';
+  const { amountString, errorMessage, handleChange } = useInputAmount(
+    amount,
+    minRestakingBond,
+    maxRestakingAmount,
+    setAmount
+  );
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const setMaxRestakingAmount = useCallback(() => {
     assert(
@@ -78,36 +59,24 @@ const AmountInput: FC<AmountInputProps> = ({
     </Button>,
   ];
 
-  const validationResult = createAmountZodSchema(
-    amount,
-    minRestakingBond,
-    maxRestakingAmount
-  ).safeParse(amountAsString);
-
-  // Pick the first error message, since the input component does
-  // not support displaying a list of error messages.
-  const errorMessage = !validationResult.success
-    ? validationResult.error.issues[0].message
-    : undefined;
-
   return (
     <BaseInput
       id={id}
       title={title}
       actions={actions}
-      errorMessage={errorMessage}
+      errorMessage={errorMessage ?? undefined}
     >
       <Input
         id={id}
         inputRef={inputRef}
         inputClassName="placeholder:text-md"
-        type="number"
-        inputMode="numeric"
+        type="text"
         placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
         size="sm"
         autoComplete="off"
-        value={amountAsString}
-        onChange={onChange}
+        value={amountString}
+        onChange={handleChange}
+        isInvalid={errorMessage !== null}
         isControlled
       />
     </BaseInput>

@@ -33,7 +33,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   }
 
   const restakedAmount = filterAllocations(allocations).reduce(
-    (acc, [, amount]) => acc.add(amount),
+    (acc, [, amount]) => acc.add(amount ?? new BN(0)),
     new BN(0)
   );
 
@@ -176,7 +176,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 
 type AllocationItemProps = {
   services: ServiceType[];
-  amount?: BN;
+  amount?: BN | null;
 };
 
 /** @internal */
@@ -201,7 +201,7 @@ const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
           fw="semibold"
           className="dark:text-mono-0 text-right"
         >
-          {formatTokenBalance(amount)}
+          {formatTokenBalance(amount ?? new BN(0))}
         </Typography>
       )}
     </div>

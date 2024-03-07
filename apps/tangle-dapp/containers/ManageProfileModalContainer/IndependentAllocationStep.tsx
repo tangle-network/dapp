@@ -19,7 +19,6 @@ import { AllocationChartVariant } from './AllocationChart';
 import AllocationInput from './AllocationInput';
 import AllocationStepContents from './AllocationStepContents';
 import { RestakingAllocationMap } from './types';
-import useInputAmount from './useInputAmount';
 
 export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
@@ -28,11 +27,11 @@ export type IndependentAllocationStepProps = {
 
 export function filterAllocations(
   allocations: RestakingAllocationMap
-): [ServiceType, BN][] {
+): [ServiceType, BN | null][] {
   return Object.entries(allocations).map(([serviceString, amount]) => {
     const service = z.nativeEnum(ServiceType).parse(serviceString);
 
-    return [service, amount ?? new BN(0)];
+    return [service, amount];
   });
 }
 
@@ -40,7 +39,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const { minRestakingBond, maxRestakingAmount } = useRestakingLimits();
+  const { maxRestakingAmount } = useRestakingLimits();
 
   const restakedAmount = useMemo(() => {
     let amount = new BN(0);
@@ -54,11 +53,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     return amount;
   }, [allocations]);
 
-  const {
-    amount: newAllocationAmount,
-    setAmount: setNewAllocationAmount,
-    handleChange: onNewAllocationAmountChange,
-  } = useInputAmount(minRestakingBond, maxRestakingAmount, restakedAmount);
+  const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
+    null
+  );
 
   const { value: maxRolesPerAccount } = usePolkadotApi(
     useCallback(
@@ -89,28 +86,30 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     setNewAllocationAmount,
   ]);
 
-  const handleClearAllocations = useCallback(() => {
-    setAllocations({});
-  }, [setAllocations]);
+  const handleDeallocation = useCallback(
+    (service: ServiceType) => {
+      const deallocatedAmount = allocations[service];
 
-  const handleDeallocation = (service: ServiceType) => {
-    const deallocatedAmount = allocations[service];
+      assert(
+        deallocatedAmount !== undefined,
+        'Allocations should have an entry for the service being deallocated'
+      );
 
-    assert(
-      deallocatedAmount !== undefined,
-      'Allocations should have an entry for the service being deallocated'
-    );
+      setAllocations((prev) => {
+        const nextAllocations = Object.assign({}, prev);
 
-    setAllocations((prev) => {
-      const nextAllocations = Object.assign({}, prev);
+        delete nextAllocations[service];
 
-      delete nextAllocations[service];
+        return nextAllocations;
+      });
+    },
+    [allocations, setAllocations]
+  );
 
-      return nextAllocations;
-    });
-  };
-
-  const amountRemaining = maxRestakingAmount?.sub(restakedAmount) ?? null;
+  const amountRemaining = useMemo(
+    () => maxRestakingAmount?.sub(restakedAmount) ?? null,
+    [maxRestakingAmount, restakedAmount]
+  );
 
   const isNewAllocationAmountValid = (() => {
     if (
@@ -132,7 +131,10 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations]
   );
 
-  const filteredAllocations = filterAllocations(allocations);
+  const filteredAllocations = useMemo(
+    () => filterAllocations(allocations),
+    [allocations]
+  );
 
   const canAddNewAllocation =
     availableRoles.length > 0 &&
@@ -172,7 +174,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               service={newAllocationRole}
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
-              onChange={onNewAllocationAmountChange}
+              setAmount={setNewAllocationAmount}
               availableBalance={amountRemaining}
               validate
             />
@@ -188,17 +190,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           </Typography>
 
           <div className="flex items-center gap-2">
-            {restakedAmount.gtn(0) && (
-              <Button
-                size="sm"
-                variant="utility"
-                className="uppercase"
-                onClick={handleClearAllocations}
-              >
-                Clear All
-              </Button>
-            )}
-
             {availableRoles.length > 0 && (
               <Button
                 size="sm"
