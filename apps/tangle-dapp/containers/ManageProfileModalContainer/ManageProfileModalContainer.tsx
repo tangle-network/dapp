@@ -7,7 +7,6 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import useSharedRestakeAmountState from '../../data/restaking/useSharedRestakeAmountState';
