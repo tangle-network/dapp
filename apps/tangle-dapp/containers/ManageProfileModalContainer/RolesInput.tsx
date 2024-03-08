@@ -5,7 +5,7 @@ import {
   SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
@@ -46,49 +46,63 @@ const RolesInput: FC<RolesInputProps> = ({
   const canSelectMoreRoles =
     maxRolesPerAccount !== null && maxRolesPerAccount.gtn(selectedRoles.length);
 
-  const dropdownBody = roles.map((role) => (
-    <div
-      key={role}
-      onClick={() => {
-        if (canSelectMoreRoles || selectedRoles.includes(role)) {
-          onToggleRole(role);
-        }
-      }}
-      className={twMerge(
-        'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
-        canSelectMoreRoles || selectedRoles.includes(role)
-          ? 'cursor-pointer'
-          : 'cursor-not-allowed'
-      )}
-    >
-      <div className="flex items-center justify-center gap-3">
-        <CheckBox
-          inputProps={{
-            readOnly: true,
-          }}
-          isDisabled={!canSelectMoreRoles && !selectedRoles.includes(role)}
-          isChecked={selectedRoles.includes(role)}
-          wrapperClassName="flex justify-center items-center min-h-auto"
-        />
+  const dropdownBody = useMemo(
+    () =>
+      roles
+        // Sort roles in ascending order, by their display
+        // values (strings).
+        .toSorted((a, b) => a.localeCompare(b))
+        .map((role) => (
+          <div
+            key={role}
+            onClick={() => {
+              if (canSelectMoreRoles || selectedRoles.includes(role)) {
+                onToggleRole(role);
+              }
+            }}
+            className={twMerge(
+              'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
+              canSelectMoreRoles || selectedRoles.includes(role)
+                ? 'cursor-pointer'
+                : 'cursor-not-allowed'
+            )}
+          >
+            <div className="flex items-center justify-center gap-3">
+              <CheckBox
+                inputProps={{
+                  readOnly: true,
+                }}
+                isDisabled={
+                  !canSelectMoreRoles && !selectedRoles.includes(role)
+                }
+                isChecked={selectedRoles.includes(role)}
+                wrapperClassName="flex justify-center items-center min-h-auto"
+              />
 
-        <div className="flex gap-1 items-center justify-center">
-          <Dot role={role} />
+              <div className="flex gap-1 items-center justify-center">
+                <Dot role={role} />
 
-          <Typography variant="body2" fw="normal" className="dark:text-mono-0">
-            {role}
-          </Typography>
-        </div>
-      </div>
+                <Typography
+                  variant="body2"
+                  fw="normal"
+                  className="dark:text-mono-0"
+                >
+                  {role}
+                </Typography>
+              </div>
+            </div>
 
-      {minRestakingBond !== null ? (
-        <Chip color="dark-grey">{`≥ ${formatTokenBalance(
-          minRestakingBond
-        )}`}</Chip>
-      ) : (
-        <SkeletonLoader />
-      )}
-    </div>
-  ));
+            {minRestakingBond !== null ? (
+              <Chip color="dark-grey">{`≥ ${formatTokenBalance(
+                minRestakingBond
+              )}`}</Chip>
+            ) : (
+              <SkeletonLoader />
+            )}
+          </div>
+        )),
+    [canSelectMoreRoles, minRestakingBond, onToggleRole, roles, selectedRoles]
+  );
 
   return (
     <BaseInput
