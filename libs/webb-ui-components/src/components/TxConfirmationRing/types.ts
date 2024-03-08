@@ -11,5 +11,5 @@ export interface TxConfirmationRingProps {
 }
 
 interface SourceOrDestination extends Omit<AddressChipProps, 'className'> {
-  typedChainId: number;
+  typedChainId?: number;
 }

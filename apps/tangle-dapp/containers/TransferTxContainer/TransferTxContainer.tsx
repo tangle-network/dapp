@@ -1,4 +1,4 @@
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
   AmountInput,
@@ -15,6 +15,7 @@ import {
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { isHex } from 'viem';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
@@ -86,7 +87,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isDataValid = amount !== '' && receiverAddress !== '';
   const canInitiateTx = isReady && isDataValid;
   const isValidReceiverAddress =
-    isAddress(receiverAddress) || isEthereumAddress(receiverAddress);
+    isAddress(receiverAddress) || isHex(receiverAddress);
 
   return (
     <Modal>
@@ -186,9 +187,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 export default TransferTxContainer;
 
 /** @internal */
-function getTypedChainIdFromAddr(addr?: string | null): number {
-  if (!addr) return NaN;
-  if (isEthereumAddress(addr)) return PresetTypedChainId.TangleTestnetEVM;
+function getTypedChainIdFromAddr(addr?: string | null): number | undefined {
+  if (!addr) return undefined;
+  if (isHex(addr)) return PresetTypedChainId.TangleTestnetEVM;
   if (isAddress(addr)) return PresetTypedChainId.TangleTestnetNative;
-  return NaN;
+  return undefined;
 }

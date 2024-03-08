@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useMemo } from 'react';
+import { forwardRef, useCallback } from 'react';
 import cx from 'classnames';
 import { ChainIcon } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
@@ -12,10 +12,7 @@ import type { ChainsRingProps, ChainRingItemType } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
-    const useDarkMode = useMemo(
-      () => (isInNextApp ? useNextDarkMode : useNormalDarkMode),
-      [isInNextApp]
-    );
+    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
 
     const [isDarkMode] = useDarkMode();
 
@@ -32,8 +29,8 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         {chainItems.map((chainItem, idx) => {
           if (chainItem === undefined) return null;
           const { typedChainId, onClick } = chainItem;
-          const chaiName = chainsConfig[typedChainId]?.name;
-          if (!chaiName) return null;
+          if (typedChainId === undefined) return null;
+          const chaiName = chainsConfig[typedChainId].name;
           return (
             <Tooltip>
               <TooltipTrigger className="cursor-pointer" asChild>

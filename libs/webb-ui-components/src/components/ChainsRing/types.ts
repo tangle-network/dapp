@@ -8,7 +8,7 @@ export interface ChainsRingProps extends PropsOf<'div'> {
 }
 
 export type ChainRingItemType = {
-  typedChainId: number;
+  typedChainId?: number;
   onClick?: () => void;
   isActive?: boolean;
 };
