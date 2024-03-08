@@ -11,8 +11,13 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 
-const ActionButton = () => {
+type Props = {
+  hasProfile?: boolean;
+};
+
+const ActionButton: FC<Props> = ({ hasProfile }) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
 
@@ -34,8 +39,8 @@ const ActionButton = () => {
     );
   }
 
-  if (activeAccount && activeWallet) {
-    return <Button>Manage Profile</Button>;
+  if (activeAccount && activeWallet && typeof hasProfile === 'boolean') {
+    return <Button>{hasProfile ? 'Manage Profile' : 'Create Profile'}</Button>;
   }
 
   return (

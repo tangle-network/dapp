@@ -1,33 +1,72 @@
+import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
+import {
+  type ComponentProps,
+  type ElementRef,
+  FC,
+  forwardRef,
+  useMemo,
+} from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
 import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import ActionButton from './ActionButton';
 
-const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
-  (props, ref) => {
+type OverviewCardProps = ComponentProps<'div'> & {
+  isLoading?: boolean;
+  totalRestaked?: number | null;
+  availableForRestake?: number | null;
+  earnings?: number | null;
+  apy?: number | null;
+};
+
+const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
+  (
+    {
+      isLoading,
+      totalRestaked = null,
+      availableForRestake = null,
+      earnings = null,
+      apy = null,
+      ...props
+    },
+    ref
+  ) => {
+    const hasProfile = useMemo(
+      () =>
+        typeof totalRestaked === 'number' ||
+        typeof availableForRestake === 'number',
+      [availableForRestake, totalRestaked]
+    );
+
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
         <div className="grid content-between w-full h-full grid-cols-2">
           <StatsItem
+            isLoading={isLoading}
             title="Total Restaked"
-            value={null}
+            value={totalRestaked}
             isBoldText
             prefix={TANGLE_TOKEN_UNIT}
           />
           <StatsItem
+            isLoading={isLoading}
             title="Available for Restake"
-            value={null}
+            value={availableForRestake}
             isBoldText
             prefix={TANGLE_TOKEN_UNIT}
           />
 
-          <StatsItem title="Earnings" value={null} prefix={TANGLE_TOKEN_UNIT} />
-          <StatsItem title="APY" value={null} prefix="%" />
+          <StatsItem
+            isLoading={isLoading}
+            title="Earnings"
+            value={hasProfile ? earnings : null}
+            prefix={TANGLE_TOKEN_UNIT}
+          />
+          <StatsItem isLoading={isLoading} title="APY" value={apy} prefix="%" />
 
-          <ActionButton />
+          <ActionButton hasProfile={hasProfile} />
         </div>
       </TangleCard>
     );
@@ -45,6 +84,7 @@ type StatsItemProsp = {
   valueTooltip?: string;
   isBoldText?: boolean;
   prefix?: string;
+  isLoading?: boolean;
 };
 
 const StatsItem: FC<StatsItemProsp> = ({
@@ -54,6 +94,7 @@ const StatsItem: FC<StatsItemProsp> = ({
   valueTooltip,
   isBoldText,
   prefix = '',
+  isLoading,
 }) => {
   return (
     <div className="gap-3">
@@ -70,17 +111,23 @@ const StatsItem: FC<StatsItemProsp> = ({
       </div>
 
       <div className="flex items-center gap-1">
-        <Typography
-          variant="h4"
-          fw={isBoldText ? 'bold' : 'normal'}
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {`${
-            typeof value === 'number' ? value.toLocaleString() : '--'
-          } ${prefix}`.trim()}
-        </Typography>
+        {isLoading ? (
+          <SkeletonLoader className="w-20 h-9" />
+        ) : (
+          <>
+            <Typography
+              variant="h4"
+              fw={isBoldText ? 'bold' : 'normal'}
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {`${
+                typeof value === 'number' ? value.toLocaleString() : '--'
+              } ${prefix}`.trim()}
+            </Typography>
 
-        {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}
+            {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}
+          </>
+        )}
       </div>
     </div>
   );
