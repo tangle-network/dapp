@@ -31,11 +31,12 @@ export type AllocationChartProps = {
   variant: AllocationChartVariant;
   allocations: RestakingAllocationMap;
   allocatedAmount: BN;
+  previewAmount?: BN;
 };
 
-export type EntryName = 'Remaining' | ServiceType;
+export type EntryName = 'Remaining' | 'New Allocation' | ServiceType;
 
-export type AllocationDataEntry = {
+export type AllocationChartEntry = {
   name: EntryName;
   value: number;
 };
@@ -79,6 +80,8 @@ function getChartColorOfEntryName(entryName: EntryName): ChartColor {
   switch (entryName) {
     case 'Remaining':
       return ChartColor.DARK_GRAY;
+    case 'New Allocation':
+      return ChartColor.LAVENDER;
     default:
       return getChartDataAreaColorByServiceType(entryName);
   }
@@ -88,6 +91,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
   allocatedAmount,
   allocations,
   variant,
+  previewAmount,
 }) => {
   const [isDarkMode] = useNextDarkMode();
   const { maxRestakingAmount } = useRestakingLimits();
@@ -96,18 +100,31 @@ const AllocationChart: FC<AllocationChartProps> = ({
     ? ChartColor.DARK_GRAY
     : ChartColor.GRAY;
 
-  const remainingDataEntry: AllocationDataEntry = useMemo(
+  const previewEntry: AllocationChartEntry = useMemo(
+    () => ({
+      name: 'New Allocation',
+      value: getPercentageOfTotal(
+        previewAmount ?? new BN(0),
+        maxRestakingAmount ?? new BN(1)
+      ),
+    }),
+    [maxRestakingAmount, previewAmount]
+  );
+
+  const remainingEntry: AllocationChartEntry = useMemo(
     () => ({
       name: 'Remaining',
       value:
         maxRestakingAmount === null
           ? 1
-          : 1 - getPercentageOfTotal(allocatedAmount, maxRestakingAmount),
+          : 1 -
+            getPercentageOfTotal(allocatedAmount, maxRestakingAmount) -
+            (previewEntry?.value ?? 0),
     }),
-    [maxRestakingAmount, allocatedAmount]
+    [maxRestakingAmount, allocatedAmount, previewEntry?.value]
   );
 
-  const allocationDataEntries: AllocationDataEntry[] = useMemo(
+  const allocationEntries: AllocationChartEntry[] = useMemo(
     () =>
       filterAllocations(allocations).map(([service, amount]) => ({
         name: service,
@@ -123,18 +140,29 @@ const AllocationChart: FC<AllocationChartProps> = ({
   // entry, and the allocations. For the shared variant, use
   // either: If no allocations, show the remaining balance,
   // otherwise use the allocations as data entries.
-  const data: AllocationDataEntry[] =
-    variant === AllocationChartVariant.INDEPENDENT
-      ? [remainingDataEntry].concat(allocationDataEntries)
-      : allocationDataEntries.length === 0
-      ? [{ name: 'Remaining', value: 1 }]
-      : allocationDataEntries.map(({ name }) => ({
-          name,
-          // Use a value of `1` so that Recharts shows the bar.
-          // This value doesn't matter much, since shared profiles
-          // do not set their amounts per-role, but rather as a whole.
-          value: 1,
-        }));
+  const entries: AllocationChartEntry[] = useMemo(() => {
+    if (variant === AllocationChartVariant.INDEPENDENT) {
+      // Do not include the preview as an entry if its value
+      // is 0, otherwise it will take up some 'ghost' space in
+      // because of the separation between chart sections.
+      const pre =
+        previewEntry.value === 0
+          ? [remainingEntry]
+          : [remainingEntry, previewEntry];
+
+      return pre.concat(allocationEntries);
+    } else if (allocationEntries.length === 0) {
+      return [remainingEntry];
+    } else {
+      return allocationEntries.map(({ name }) => ({
+        name,
+        // Use a value of `1` so that Recharts shows the bar.
+        // This value doesn't matter much, since shared profiles
+        // do not set their amounts per-role, but rather as a whole.
+        value: 1,
+      }));
+    }
+  }, [allocationEntries, previewEntry, remainingEntry, variant]);
 
   const tooltip = (
     <RechartsTooltip
@@ -142,26 +170,31 @@ const AllocationChart: FC<AllocationChartProps> = ({
         allocations,
         maxRestakingAmount ?? new BN(0),
         allocatedAmount,
+        previewAmount ?? new BN(0),
         variant === AllocationChartVariant.INDEPENDENT
       )}
     />
   );
 
-  const cells = (
+  const cellColors = (
     <>
       {(variant === AllocationChartVariant.INDEPENDENT ||
-        allocationDataEntries.length === 0) && (
+        allocationEntries.length === 0) && (
         <Cell key="remaining" fill={themeCellColor} />
       )}
 
-      {allocationDataEntries.map((entry) => (
+      {variant === AllocationChartVariant.INDEPENDENT && (
+        <Cell key="new-allocation" fill={ChartColor.YELLOW} />
+      )}
+
+      {allocationEntries.map((entry) => (
         <Cell key={entry.name} fill={getChartColorOfEntryName(entry.name)} />
       ))}
     </>
   );
 
   const sharedChartProps = {
-    data,
+    data: entries,
     stroke: 'none',
     dataKey: 'value',
   } satisfies PieProps;
@@ -180,7 +213,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
                 cornerRadius={8}
                 {...sharedChartProps}
               >
-                {cells}
+                {cellColors}
               </Pie>
 
               {tooltip}
@@ -192,7 +225,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
               {...sharedChartProps}
             >
               <RadialBar dataKey="value" animationDuration={200}>
-                {cells}
+                {cellColors}
               </RadialBar>
 
               {tooltip}

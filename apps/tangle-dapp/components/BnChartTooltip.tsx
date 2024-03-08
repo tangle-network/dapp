@@ -12,6 +12,7 @@ const BnChartTooltip = (
   allocations: RestakingAllocationMap,
   maxAmount: BN,
   allocatedAmount: BN,
+  previewAmount: BN,
   displayAmount: boolean
 ) => {
   const composition = ({ active, payload }: TooltipProps<number, string>) => {
@@ -24,17 +25,19 @@ const BnChartTooltip = (
     const entryName: EntryName = z
       .union([
         z.literal('Remaining' satisfies EntryName),
+        z.literal('New Allocation' satisfies EntryName),
         z.nativeEnum(ServiceType),
       ])
       .parse(payload[0].payload.name);
 
-    const remainingAmount = maxAmount.sub(allocatedAmount);
+    const remainingAmount = maxAmount.sub(allocatedAmount).sub(previewAmount);
 
-    const allocationAmount =
-      entryName === 'Remaining' ? remainingAmount : allocations[entryName];
-
-    const finalAmount =
-      allocationAmount !== undefined ? allocationAmount : remainingAmount;
+    const amount =
+      entryName === 'Remaining'
+        ? remainingAmount
+        : entryName === 'New Allocation'
+        ? previewAmount
+        : allocations[entryName];
 
     return (
       <div
@@ -44,7 +47,7 @@ const BnChartTooltip = (
         <Typography variant="body2" fw="semibold">
           {entryName}
 
-          {displayAmount && `: ${formatTokenBalance(finalAmount ?? new BN(0))}`}
+          {displayAmount && `: ${formatTokenBalance(amount ?? new BN(0))}`}
         </Typography>
       </div>
     );
