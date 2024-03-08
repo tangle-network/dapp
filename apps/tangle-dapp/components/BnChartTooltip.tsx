@@ -3,8 +3,8 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { TooltipProps } from 'recharts';
 import { z } from 'zod';
 
-import { EntryName } from '../containers/ManageProfileModalContainer/AllocationChart';
 import { RestakingAllocationMap } from '../containers/ManageProfileModalContainer/types';
+import { AllocationChartEntryName } from '../containers/ManageProfileModalContainer/useAllocationChartEntries';
 import { ServiceType } from '../types';
 import { formatTokenBalance } from '../utils/polkadot/tokens';
 
@@ -22,10 +22,10 @@ const BnChartTooltip = (
 
     // Validate the label, since for some reason it has
     // type `any` in the payload object.
-    const entryName: EntryName = z
+    const entryName: AllocationChartEntryName = z
       .union([
-        z.literal('Remaining' satisfies EntryName),
-        z.literal('New Allocation' satisfies EntryName),
+        z.literal('Remaining' satisfies AllocationChartEntryName),
+        z.literal('New Allocation' satisfies AllocationChartEntryName),
         z.nativeEnum(ServiceType),
       ])
       .parse(payload[0].payload.name);

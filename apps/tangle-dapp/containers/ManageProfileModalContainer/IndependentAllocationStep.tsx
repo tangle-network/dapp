@@ -147,6 +147,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       allocations={allocations}
       variant={AllocationChartVariant.INDEPENDENT}
       previewAmount={newAllocationAmount ?? undefined}
+      previewRole={newAllocationRole ?? undefined}
     >
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">

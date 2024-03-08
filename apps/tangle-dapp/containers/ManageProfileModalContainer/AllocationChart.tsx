@@ -1,7 +1,6 @@
 import { BN } from '@polkadot/util';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import {
   Cell,
   Pie,
@@ -19,8 +18,10 @@ import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { filterAllocations } from './IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
+import useAllocationChartEntries, {
+  AllocationChartEntryName,
+} from './useAllocationChartEntries';
 
 export enum AllocationChartVariant {
   INDEPENDENT,
@@ -32,51 +33,12 @@ export type AllocationChartProps = {
   allocations: RestakingAllocationMap;
   allocatedAmount: BN;
   previewAmount?: BN;
+  previewRole?: ServiceType;
 };
 
-export type EntryName = 'Remaining' | 'New Allocation' | ServiceType;
-
-export type AllocationChartEntry = {
-  name: EntryName;
-  value: number;
-};
-
-/**
- * Given an amount, calculate its percentage of a total amount.
- *
- * The resulting percentage will be a Number with 2 decimal places,
- * ex. `0.67`, ranging from 0 to 1.
- *
- * This is useful for integrating BN numbers into visual representation,
- * such as when working with Recharts to chart BN amount allocations,
- * since Recharts does not natively support BNs as data inputs.
- *
- * Because of the possible loss in precision, this utility function is
- * only suitable for use in the UI.
- */
-function getPercentageOfTotal(amount: BN, total: BN): number {
-  assert(
-    !total.isZero(),
-    'Total should not be zero, otherwise division by zero would occur'
-  );
-
-  assert(amount.lte(total), 'Amount should be less than or equal to total');
-
-  const scaledAmount = amount.mul(new BN(100));
-  const percentageString = scaledAmount.div(total).toString();
-
-  // Converting the string to a number ensures that the conversion to
-  // number never fails, but it may result in a loss of precision for
-  // extremely large values.
-  const percentage = Number(percentageString) / 100;
-
-  // Round the percentage to 2 decimal places. It's suitable to use
-  // 2 decimal places since the purpose of this function is to provide
-  // a visual representation of the percentage in the UI.
-  return Math.round(percentage * 100) / 100;
-}
-
-function getChartColorOfEntryName(entryName: EntryName): ChartColor {
+function getChartColorOfEntryName(
+  entryName: AllocationChartEntryName
+): ChartColor {
   switch (entryName) {
     case 'Remaining':
       return ChartColor.DARK_GRAY;
@@ -92,77 +54,21 @@ const AllocationChart: FC<AllocationChartProps> = ({
   allocations,
   variant,
   previewAmount,
+  previewRole,
 }) => {
   const [isDarkMode] = useNextDarkMode();
   const { maxRestakingAmount } = useRestakingLimits();
 
+  const { allocationEntries, entries } = useAllocationChartEntries(
+    allocations,
+    allocatedAmount,
+    variant,
+    previewAmount
+  );
+
   const themeCellColor: ChartColor = isDarkMode
     ? ChartColor.DARK_GRAY
     : ChartColor.GRAY;
-
-  const previewEntry: AllocationChartEntry = useMemo(
-    () => ({
-      name: 'New Allocation',
-      value: getPercentageOfTotal(
-        previewAmount ?? new BN(0),
-        maxRestakingAmount ?? new BN(1)
-      ),
-    }),
-    [maxRestakingAmount, previewAmount]
-  );
-
-  const remainingEntry: AllocationChartEntry = useMemo(
-    () => ({
-      name: 'Remaining',
-      value:
-        maxRestakingAmount === null
-          ? 1
-          : 1 -
-            getPercentageOfTotal(allocatedAmount, maxRestakingAmount) -
-            (previewEntry?.value ?? 0),
-    }),
-    [maxRestakingAmount, allocatedAmount, previewEntry?.value]
-  );
-
-  const allocationEntries: AllocationChartEntry[] = useMemo(
-    () =>
-      filterAllocations(allocations).map(([service, amount]) => ({
-        name: service,
-        value:
-          maxRestakingAmount === null
-            ? 0
-            : getPercentageOfTotal(amount ?? new BN(0), maxRestakingAmount),
-      })),
-    [allocations, maxRestakingAmount]
-  );
-
-  // For the independent variant, use both the remaining data
-  // entry, and the allocations. For the shared variant, use
-  // either: If no allocations, show the remaining balance,
-  // otherwise use the allocations as data entries.
-  const entries: AllocationChartEntry[] = useMemo(() => {
-    if (variant === AllocationChartVariant.INDEPENDENT) {
-      // Do not include the preview as an entry if its value
-      // is 0, otherwise it will take up some 'ghost' space in
-      // because of the separation between chart sections.
-      const pre =
-        previewEntry.value === 0
-          ? [remainingEntry]
-          : [remainingEntry, previewEntry];
-
-      return pre.concat(allocationEntries);
-    } else if (allocationEntries.length === 0) {
-      return [remainingEntry];
-    } else {
-      return allocationEntries.map(({ name }) => ({
-        name,
-        // Use a value of `1` so that Recharts shows the bar.
-        // This value doesn't matter much, since shared profiles
-        // do not set their amounts per-role, but rather as a whole.
-        value: 1,
-      }));
-    }
-  }, [allocationEntries, previewEntry, remainingEntry, variant]);
 
   const tooltip = (
     <RechartsTooltip
@@ -183,9 +89,20 @@ const AllocationChart: FC<AllocationChartProps> = ({
         <Cell key="remaining" fill={themeCellColor} />
       )}
 
-      {variant === AllocationChartVariant.INDEPENDENT && (
-        <Cell key="new-allocation" fill={ChartColor.YELLOW} />
-      )}
+      {variant === AllocationChartVariant.INDEPENDENT &&
+        previewAmount !== undefined &&
+        !previewAmount.isZero() && (
+          <Cell
+            key="new-allocation"
+            fill={
+              // The preview amount could be defined, but no role yet
+              // selected for it.
+              previewRole !== undefined
+                ? getChartColorOfEntryName(previewRole)
+                : ChartColor.GREEN
+            }
+          />
+        )}
 
       {allocationEntries.map((entry) => (
         <Cell key={entry.name} fill={getChartColorOfEntryName(entry.name)} />
