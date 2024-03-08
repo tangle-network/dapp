@@ -50,6 +50,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
             isBoldText
             prefix={TANGLE_TOKEN_UNIT}
           />
+
           <StatsItem
             isLoading={isLoading}
             title="Available for Restake"
@@ -77,7 +78,7 @@ OverviewCard.displayName = 'OverviewCard';
 
 export default OverviewCard;
 
-type StatsItemProsp = {
+type StatsItemProps = {
   title: string;
   titleTooltip?: string;
   value: number | null;
@@ -87,7 +88,7 @@ type StatsItemProsp = {
   isLoading?: boolean;
 };
 
-const StatsItem: FC<StatsItemProsp> = ({
+const StatsItem: FC<StatsItemProps> = ({
   title,
   titleTooltip,
   value,

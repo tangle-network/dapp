@@ -11,7 +11,9 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+
+import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
 
 type Props = {
   hasProfile?: boolean;
@@ -21,8 +23,10 @@ const ActionButton: FC<Props> = ({ hasProfile }) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
 
-  const { toggleModal } = useConnectWallet();
+  const [isManageProfileModalOpen, setIsManageProfileModalOpen] =
+    useState(false);
 
+  const { toggleModal } = useConnectWallet();
   const { isMobile } = useCheckMobile();
 
   if (isMobile) {
@@ -30,6 +34,7 @@ const ActionButton: FC<Props> = ({ hasProfile }) => {
       <ConnectWalletMobileButton>
         <div className="flex flex-col items-center justify-center gap-4 py-9">
           <ComputerIcon size="xl" className="mx-auto" />
+
           <Typography variant="body1" className="text-center">
             For the best staking experience, we recommend using our desktop
             interface for full-feature interface and enhanced controls.
@@ -40,9 +45,22 @@ const ActionButton: FC<Props> = ({ hasProfile }) => {
   }
 
   if (activeAccount && activeWallet && typeof hasProfile === 'boolean') {
-    return <Button>{hasProfile ? 'Manage Profile' : 'Create Profile'}</Button>;
+    return (
+      <>
+        <Button onClick={() => setIsManageProfileModalOpen(true)}>
+          {hasProfile ? 'Manage Profile' : 'Create Profile'}
+        </Button>
+
+        <ManageProfileModalContainer
+          isModalOpen={isManageProfileModalOpen}
+          setIsModalOpen={setIsManageProfileModalOpen}
+        />
+      </>
+    );
   }
 
+  // Default to the connect wallet button if no active account
+  // or wallet is found.
   return (
     <Button
       isDisabled={loading || isConnecting}

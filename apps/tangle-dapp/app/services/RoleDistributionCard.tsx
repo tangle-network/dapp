@@ -23,19 +23,21 @@ const RoleDistributionCard = async ({
   const data = await getRoleDistributionChartData();
 
   return (
-    <GlassCard className={twMerge('justify-between', className)}>
+    <GlassCard className={twMerge('justify-between flex flex-col', className)}>
       <Typography variant="h5" fw="bold">
         Role Distribution
       </Typography>
 
-      <div className="min-h-[200px]">
-        <div className="h-full flex items-center justify-center">
-          <ProportionPieChart
-            data={data}
-            title="Total:"
-            showTotal
-            unit={TANGLE_TOKEN_UNIT}
-          />
+      <div className="flex-1 flex items-center justify-center">
+        <div className="min-h-[200px]">
+          <div className="h-full flex items-center justify-center">
+            <ProportionPieChart
+              data={data}
+              title="Total:"
+              showTotal
+              unit={TANGLE_TOKEN_UNIT}
+            />
+          </div>
         </div>
       </div>
     </GlassCard>
