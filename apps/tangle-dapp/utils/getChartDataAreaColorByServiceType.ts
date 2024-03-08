@@ -22,6 +22,7 @@ export default function getChartDataAreaColorByServiceType(
     case ServiceType.TSS_ZCASH_FROST_RISTRETTO255:
     case ServiceType.TSS_ZCASH_FROST_SECP256K1:
     case ServiceType.TSS_ZCASH_FROST_P384:
+    case ServiceType.TSS_ZCASH_FROST_ED448:
       return ChartColor.YELLOW;
   }
 }

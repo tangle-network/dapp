@@ -2,6 +2,7 @@ import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
+import { TANGLE_TO_SERVICE_TYPE_TSS_MAP } from '../../constants';
 import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import { ServiceType } from '../../types';
@@ -32,22 +33,22 @@ function convertRecordToAllocation(
       serviceType = ServiceType.ZK_SAAS_MARLIN;
     }
   } else if (record.role.isTss) {
-    // TODO: There are many more Tss roles displayed in the Polkadot/Substrate Portal. Is this truly all to be supported for now?
-    serviceType = ServiceType.TSS_ZENGOGG20SECP256K1;
+    serviceType = TANGLE_TO_SERVICE_TYPE_TSS_MAP[record.role.asTss.type];
   } else if (record.role.isLightClientRelaying) {
     serviceType = ServiceType.LIGHT_CLIENT_RELAYING;
   }
 
+  // Because of the structure of the provided types (not being an enum),
+  // an error needs to be thrown in case no service mapping was found.
+  // This is not ideal compared to using a switch statement which would
+  // provide exhaustive static type checking.
   if (serviceType === null) {
-    // Because of the structure of the provided types (not being an enum),
-    // an error needs to be thrown. This is not ideal compared to using a
-    // switch statement which would provide exhaustive static type checking.
     throw new Error(
       'Unknown role type (was a new role added? if so, update this function)'
     );
   }
 
-  // TODO: Need to investigate under what conditions the amount can be `None`. What would `None` mean in this context? A good idea would be to check the Rust code & logic to see how the `updateProfile` call is implemented & handled for records with no amount.
+  // TODO: Need to investigate under what conditions the amount can be `None`. What would `None` mean in this context? A good idea would be to check the Rust code & logic to see how the `updateProfile` call is implemented & handled for records with no amount. If on the Rust code it defaults to zero, default to zero here as well instead of returning `null`.
   return [serviceType, record.amount.unwrapOr(null)];
 }
 

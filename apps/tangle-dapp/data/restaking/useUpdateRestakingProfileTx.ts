@@ -3,7 +3,7 @@ import assert from 'assert';
 import { useCallback, useRef } from 'react';
 import { z } from 'zod';
 
-import { SUBSTRATE_ROLE_TYPE_MAPPING } from '../../constants';
+import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
 import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
@@ -11,7 +11,7 @@ import { ServiceType } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
-  role: (typeof SUBSTRATE_ROLE_TYPE_MAPPING)[ServiceType];
+  role: (typeof SERVICE_TYPE_TO_TANGLE_MAP)[ServiceType];
   amount: BN | null;
 };
 
@@ -54,10 +54,6 @@ const useUpdateRestakingProfileTx = (
           'Records should be set before calling execute'
         );
 
-        const callee = hasExistingProfile
-          ? api.tx.roles.updateProfile
-          : api.tx.roles.createProfile;
-
         if (profileType === RestakingProfileType.SHARED) {
           assert(
             sharedRestakeAmountRef.current !== null,
@@ -71,13 +67,12 @@ const useUpdateRestakingProfileTx = (
           const service = z.nativeEnum(ServiceType).parse(serviceString);
 
           return {
-            role: SUBSTRATE_ROLE_TYPE_MAPPING[service],
+            role: SERVICE_TYPE_TO_TANGLE_MAP[service],
             amount,
           };
         });
 
-        // TODO: These objects have type `any`. Investigate why type definitions seem to be missing for this function/transaction call.
-        return callee(
+        const profile =
           profileType === RestakingProfileType.INDEPENDENT
             ? { Independent: { records } }
             : {
@@ -85,8 +80,12 @@ const useUpdateRestakingProfileTx = (
                   records,
                   amount: sharedRestakeAmountRef.current,
                 },
-              }
-        );
+              };
+
+        // TODO: These functions accept profile object with type `any`. Investigate why type definitions seem to be missing for this function/transaction call.
+        return hasExistingProfile
+          ? api.tx.roles.updateProfile(profile)
+          : api.tx.roles.createProfile(profile, null);
       },
       [createIfMissing, hasExistingProfile, profileType]
     ),
