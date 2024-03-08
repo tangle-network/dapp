@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 import cx from 'classnames';
 import { isHex } from 'viem';
 import { ExternalLinkLine } from '@webb-tools/icons';
