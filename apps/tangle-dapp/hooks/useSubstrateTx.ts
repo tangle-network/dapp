@@ -6,6 +6,7 @@ import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
+import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -107,18 +108,23 @@ function useSubstrateTx<T extends ISubmittableResult>(
         activeSubstrateAddress,
         { signer: injector.signer },
         (status) => {
-          if (!isMountedRef.current) {
+          // If the component is unmounted, or the transaction
+          // has not yet been included in a block, ignore the
+          // status update.
+          if (!isMountedRef.current || !status.isInBlock) {
             return;
           }
 
           setHash(status.txHash.toHex());
 
-          const didSucceed = !status.isError && !status.isWarning;
+          const error = extractErrorFromTxStatus(status);
 
-          setStatus(didSucceed ? TxStatus.Complete : TxStatus.Error);
+          setStatus(error === null ? TxStatus.Complete : TxStatus.Error);
+          setError(error);
 
-          if (!didSucceed) {
-            setError(ensureError(status.internalError));
+          // Useful for debugging.
+          if (error !== null) {
+            console.debug('Transaction failed', error, status);
           }
         }
       );
