@@ -155,6 +155,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
         <Typography variant="body2" fw="normal" className="dark:text-mono-120">
           Restaked
         </Typography>
+
         <Typography
           variant="h5"
           fw="bold"
@@ -162,6 +163,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
         >
           {formatTokenBalance(allocatedAmount, false)}
         </Typography>
+
         <Typography variant="body2" className="dark:text-mono-120">
           {TANGLE_TOKEN_UNIT}
         </Typography>
