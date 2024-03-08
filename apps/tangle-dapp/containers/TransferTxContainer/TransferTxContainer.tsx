@@ -108,16 +108,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
           <TxConfirmationRing
             source={{
-              address: accAddress ?? '',
-              typedChainId: isEthereumAddress(accAddress ?? '')
-                ? PresetTypedChainId.TangleTestnetEVM
-                : PresetTypedChainId.TangleTestnetNative,
+              address: accAddress,
+              typedChainId: getTypedChainIdFromAddr(accAddress),
             }}
             dest={{
-              address: isValidReceiverAddress ? receiverAddress : '',
-              typedChainId: isEthereumAddress(receiverAddress)
-                ? PresetTypedChainId.TangleTestnetEVM
-                : PresetTypedChainId.TangleTestnetNative,
+              address: receiverAddress,
+              typedChainId: getTypedChainIdFromAddr(receiverAddress),
             }}
             title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
             isInNextApp
@@ -159,7 +155,11 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           <div className="flex-1">
             <Button
               isFullWidth
-              isDisabled={!canInitiateTx || executeTransferTx === null}
+              isDisabled={
+                !canInitiateTx ||
+                executeTransferTx === null ||
+                !isValidReceiverAddress
+              }
               isLoading={!isReady}
               loadingText={getTxStatusText(status)}
               onClick={
@@ -184,3 +184,11 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 };
 
 export default TransferTxContainer;
+
+/** @internal */
+function getTypedChainIdFromAddr(addr?: string | null): number {
+  if (!addr) return NaN;
+  if (isEthereumAddress(addr)) return PresetTypedChainId.TangleTestnetEVM;
+  if (isAddress(addr)) return PresetTypedChainId.TangleTestnetNative;
+  return NaN;
+}

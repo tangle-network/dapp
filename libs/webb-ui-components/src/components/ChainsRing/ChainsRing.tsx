@@ -32,7 +32,8 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         {chainItems.map((chainItem, idx) => {
           if (chainItem === undefined) return null;
           const { typedChainId, onClick } = chainItem;
-          const chaiName = chainsConfig[typedChainId].name;
+          const chaiName = chainsConfig[typedChainId]?.name;
+          if (!chaiName) return null;
           return (
             <Tooltip>
               <TooltipTrigger className="cursor-pointer" asChild>
@@ -179,6 +180,22 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             width="24"
             height="24"
             transform="rotate(135 160.191 167.25)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="105.5"
+            y="92.277"
+            width="24"
+            height="24"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="285.5"
+            y="92.277"
+            width="24"
+            height="24"
             fill="#F7F8F7"
             fillOpacity="0.1"
           />
