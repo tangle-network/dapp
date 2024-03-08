@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
@@ -82,18 +82,11 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setAmount(formattedTransferrableBalance);
   }, [formattedTransferrableBalance]);
 
-  const isReady = useMemo(() => status !== TxStatus.Processing, [status]);
-  const isDataValid = useMemo(
-    () => amount !== '' && receiverAddress !== '',
-    [amount, receiverAddress]
-  );
-  const canInitiateTx = useMemo(
-    () => isReady && isDataValid,
-    [isReady, isDataValid]
-  );
-  const isValidReceiverAddress = useMemo(() => {
-    return isAddress(receiverAddress) || isEthereumAddress(receiverAddress);
-  }, [receiverAddress]);
+  const isReady = status !== TxStatus.Processing;
+  const isDataValid = amount !== '' && receiverAddress !== '';
+  const canInitiateTx = isReady && isDataValid;
+  const isValidReceiverAddress =
+    isAddress(receiverAddress) || isEthereumAddress(receiverAddress);
 
   return (
     <Modal>
@@ -127,7 +120,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
                 : PresetTypedChainId.TangleTestnetNative,
             }}
             title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
-            isInNextApp={true}
+            isInNextApp
           />
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">

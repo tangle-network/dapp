@@ -27,10 +27,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
     },
     ref
   ) => {
-    const useDarkMode = useMemo(
-      () => (isInNextApp ? useNextDarkMode : useNormalDarkMode),
-      [isInNextApp]
-    );
+    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
 
     const [isDarkMode] = useDarkMode();
 
