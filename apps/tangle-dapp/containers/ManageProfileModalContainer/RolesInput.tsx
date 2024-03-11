@@ -93,9 +93,10 @@ const RolesInput: FC<RolesInputProps> = ({
             </div>
 
             {minRestakingBond !== null ? (
-              <Chip color="dark-grey">{`≥ ${formatTokenBalance(
-                minRestakingBond
-              )}`}</Chip>
+              <Chip
+                className="text-center whitespace-nowrap"
+                color="dark-grey"
+              >{`≥ ${formatTokenBalance(minRestakingBond, false)}`}</Chip>
             ) : (
               <SkeletonLoader />
             )}
