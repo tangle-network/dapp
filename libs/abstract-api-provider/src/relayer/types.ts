@@ -18,9 +18,11 @@ export type RelayedChainConfig<BaseOn extends RelayerCMDBase> = {
   account: string;
   beneficiary?: string;
   enabled?: boolean;
-  contracts?: BaseOn extends 'evm' ? Contract[] : never;
-  pallets?: BaseOn extends 'substrate' ? Pallet[] : never;
-  relayerFeeConfig?: BaseOn extends 'evm'
+  // TODO: Check if contracts, pallets and relayerFeeConfig can be optional or not in this PR: https://github.com/webb-tools/webb-dapp/pull/2076
+  // Make them compulsory for now to avoid errors in CI
+  contracts: BaseOn extends 'evm' ? Contract[] : never;
+  pallets: BaseOn extends 'substrate' ? Pallet[] : never;
+  relayerFeeConfig: BaseOn extends 'evm'
     ?
         | {
             relayerProfitPercent: number;

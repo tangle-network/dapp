@@ -141,6 +141,11 @@ export enum ServiceType {
   DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
 }
 
+export enum ProfileType {
+  INDEPENDENT = 'Independent',
+  SHARED = 'Shared',
+}
+
 export type Service = {
   id: number;
   serviceType: ServiceType;
