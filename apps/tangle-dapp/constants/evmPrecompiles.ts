@@ -54,9 +54,9 @@ type InputOutput = {
 
 // See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
 export enum PrecompileAddress {
-  Staking = '0x0000000000000000000000000000000000000800',
-  Vesting = '0x0000000000000000000000000000000000000801',
-  Batch = '0x0000000000000000000000000000000000000808',
+  STAKING = '0x0000000000000000000000000000000000000800',
+  VESTING = '0x0000000000000000000000000000000000000801',
+  BATCH = '0x0000000000000000000000000000000000000808',
 }
 
 export type PrecompileAbiFunction<T extends Precompile> = {
@@ -494,11 +494,11 @@ export function getAddressOfPrecompile(
 ): PrecompileAddress {
   switch (precompile) {
     case 'staking':
-      return PrecompileAddress.Staking;
+      return PrecompileAddress.STAKING;
     case 'vesting':
-      return PrecompileAddress.Vesting;
+      return PrecompileAddress.VESTING;
     case 'batch':
-      return PrecompileAddress.Batch;
+      return PrecompileAddress.BATCH;
   }
 }
 

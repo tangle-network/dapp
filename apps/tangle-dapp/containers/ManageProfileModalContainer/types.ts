@@ -7,4 +7,4 @@ export type ManageProfileModalContainerProps = {
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
 
-export type RestakingAllocationMap = Record<ServiceType, BN | null>;
+export type RestakingAllocationMap = Partial<Record<ServiceType, BN | null>>;

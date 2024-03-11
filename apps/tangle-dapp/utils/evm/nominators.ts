@@ -18,7 +18,7 @@ export const nominateValidators = async (
   });
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'nominate',
     args: [targets],
@@ -36,7 +36,7 @@ export const stopNomination = async (
   nominatorAddress: string
 ): Promise<AddressType> => {
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'chill',
     args: [],

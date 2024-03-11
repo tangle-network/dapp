@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 
 import { ServiceType } from '../../types';
-import getChartAreaColorByServiceType from '../../utils/getChartAreaColorByServiceType';
+import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 import type { RoleEarningsChartProps } from './types';
 
 const SERVICES = Object.values(ServiceType);

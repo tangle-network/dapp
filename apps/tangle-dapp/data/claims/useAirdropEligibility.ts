@@ -19,7 +19,7 @@ const useAirdropEligibility = () => {
   useDebugValue(isEligible);
 
   const { value: eligibilityCache, setWithPreviousValue: setEligibilityCache } =
-    useLocalStorage(LocalStorageKey.AirdropEligibilityCache, true);
+    useLocalStorage(LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE, true);
 
   const activeAccountAddress = useActiveAccountAddress();
 

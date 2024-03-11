@@ -17,7 +17,7 @@ export const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
   new BN(TANGLE_TOKEN_DECIMALS)
 );
 
-function convertChainUnitsToNumber(chainAmount: BN) {
+function convertChainUnitsToNumber(chainAmount: BN): string {
   const bnAmount = new BN(chainAmount);
   const divisor = CHAIN_UNIT_CONVERSION_FACTOR;
   const divided = bnAmount.div(divisor);

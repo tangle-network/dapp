@@ -42,7 +42,7 @@ const useDemocracy = () => {
     );
   });
 
-  const { amount: lockedBalance } = useBalancesLock(SubstrateLockId.Democracy);
+  const { amount: lockedBalance } = useBalancesLock(SubstrateLockId.DEMOCRACY);
 
   return {
     lockedBalance,

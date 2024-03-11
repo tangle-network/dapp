@@ -30,9 +30,9 @@ import { getPolkadotApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
 
 enum Step {
-  InputAddress,
-  Sign,
-  SendingTx,
+  INPUT_ADDRESS,
+  SIGN,
+  SENDING_TX,
 }
 
 type Props = {
@@ -53,7 +53,7 @@ const EligibleSection: FC<Props> = ({
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
-  const [step, setStep] = useState(Step.InputAddress);
+  const [step, setStep] = useState(Step.INPUT_ADDRESS);
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
@@ -84,7 +84,7 @@ const EligibleSection: FC<Props> = ({
     }
 
     try {
-      setStep(Step.Sign);
+      setStep(Step.SIGN);
 
       const api = await getPolkadotApiPromise();
       const accountId = activeAccount.address;
@@ -108,7 +108,7 @@ const EligibleSection: FC<Props> = ({
 
       const signature = await activeApi.sign(payload);
 
-      setStep(Step.SendingTx);
+      setStep(Step.SENDING_TX);
 
       const tx = api.tx.claims.claimAttest(
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
@@ -138,7 +138,7 @@ const EligibleSection: FC<Props> = ({
         secondaryMessage: error instanceof Error ? undefined : String(error),
       });
 
-      setStep(Step.InputAddress);
+      setStep(Step.INPUT_ADDRESS);
     }
   };
 
@@ -151,12 +151,12 @@ const EligibleSection: FC<Props> = ({
       <div className="space-y-8">
         <div className="space-y-4">
           <ClaimingAccountInput
-            isDisabled={step !== Step.InputAddress}
+            isDisabled={step !== Step.INPUT_ADDRESS}
             activeAccountAddress={activeAccount.address}
           />
 
           <ClaimRecipientInput
-            isDisabled={step !== Step.InputAddress}
+            isDisabled={step !== Step.INPUT_ADDRESS}
             error={recipientErrorMsg}
             recipient={recipient}
             setRecipient={setRecipient}
@@ -190,7 +190,7 @@ const EligibleSection: FC<Props> = ({
         <Button
           isFullWidth
           loadingText={getLoadingText(step)}
-          isLoading={step !== Step.InputAddress}
+          isLoading={step !== Step.INPUT_ADDRESS}
           isDisabled={!recipient || !!recipientErrorMsg}
           onClick={handleClaimClick}
         >
@@ -298,9 +298,9 @@ function sendTransaction(
 
 function getLoadingText(step: Step) {
   switch (step) {
-    case Step.Sign:
+    case Step.SIGN:
       return 'Signing...';
-    case Step.SendingTx:
+    case Step.SENDING_TX:
       return 'Sending transaction...';
     default:
       return '';

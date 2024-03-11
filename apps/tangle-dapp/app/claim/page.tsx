@@ -41,7 +41,7 @@ export default function Page() {
   const [checkingEligibility, setCheckingEligibility] = useState(false);
 
   const { setWithPreviousValue: setEligibilityCache } = useLocalStorage(
-    LocalStorageKey.AirdropEligibilityCache,
+    LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE,
     true
   );
 

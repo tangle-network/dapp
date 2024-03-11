@@ -65,15 +65,20 @@ const usePagedValidators = (
 
   const localStorageKey =
     status === 'Active'
-      ? LocalStorageKey.ActiveValidatorCache
-      : LocalStorageKey.WaitingValidatorCache;
+      ? LocalStorageKey.ACTIVE_VALIDATOR_CACHE
+      : LocalStorageKey.WAITING_VALIDATOR_CACHE;
 
   // Note that the page index does not matter much here, since
   // the validator list is not sorted in any particular order,
   // thus it's okay to show an initial arbitrary set of validators.
   const result = useSwrWithLocalStorage({
     localStorageKey,
-    swrKey: [SwrBaseKey.ActiveValidatorsPaginated, status, pageIndex, pageSize],
+    swrKey: [
+      SwrBaseKey.ACTIVE_VALIDATORS_PAGINATED,
+      status,
+      pageIndex,
+      pageSize,
+    ],
     fetcher: batchPromise,
     swrConfig: {
       // 3 minute polling interval.

@@ -50,7 +50,7 @@ function useAgnosticTx<
 
   const agnosticStatus =
     isEvmAccount === null
-      ? TxStatus.NotYetInitiated
+      ? TxStatus.NOT_YET_INITIATED
       : isEvmAccount
       ? evmTxStatus
       : substrateTxStatus;
@@ -62,7 +62,7 @@ function useAgnosticTx<
   useEffect(() => {
     if (
       isEvmAccount === null ||
-      agnosticStatus === TxStatus.NotYetInitiated ||
+      agnosticStatus === TxStatus.NOT_YET_INITIATED ||
       !notifyStatusUpdates
     ) {
       return;

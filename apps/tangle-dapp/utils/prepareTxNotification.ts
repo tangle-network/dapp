@@ -11,18 +11,18 @@ const prepareTxNotification = (
   let variant: 'error' | 'success' | 'warning' | 'default' | 'info' = 'default';
 
   switch (status) {
-    case TxStatus.Complete:
+    case TxStatus.COMPLETE:
       primaryMessage = 'Transaction completed successfully.';
       variant = 'success';
 
       break;
-    case TxStatus.TimedOut:
+    case TxStatus.TIMED_OUT:
       primaryMessage =
         'The transaction is taking too long. It is unknown if it succeeded or not.';
       variant = 'warning';
 
       break;
-    case TxStatus.Error:
+    case TxStatus.ERROR:
       primaryMessage = 'An error occurred during the transaction.';
       secondaryMessage = error?.message || null;
       variant = 'error';

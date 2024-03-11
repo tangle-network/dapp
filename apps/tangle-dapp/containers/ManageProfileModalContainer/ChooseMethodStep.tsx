@@ -24,15 +24,15 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
   return (
     <div className="flex flex-col sm:flex-row gap-5">
       <OptionCard
-        profileType={RestakingProfileType.Independent}
+        profileType={RestakingProfileType.INDEPENDENT}
         selectedProfileType={profileType}
         setSelected={setProfileType}
       >
         <Image
           src={
             isDarkMode
-              ? StaticAssetPath.RestakingMethodIndependentDark
-              : StaticAssetPath.RestakingMethodIndependentLight
+              ? StaticAssetPath.RESTAKING_METHOD_INDEPENDENT_DARK
+              : StaticAssetPath.RESTAKING_METHOD_INDEPENDENT_LIGHT
           }
           alt="Independent restaking method illustration"
           width={120}
@@ -49,15 +49,15 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
       </OptionCard>
 
       <OptionCard
-        profileType={RestakingProfileType.Shared}
+        profileType={RestakingProfileType.SHARED}
         selectedProfileType={profileType}
         setSelected={setProfileType}
       >
         <Image
           src={
             isDarkMode
-              ? StaticAssetPath.RestakingMethodSharedDark
-              : StaticAssetPath.RestakingMethodSharedLight
+              ? StaticAssetPath.RESTAKING_METHOD_SHARED_DARK
+              : StaticAssetPath.RESTAKING_METHOD_SHARED_LIGHT
           }
           alt="Shared restaking method illustration"
           width={120}

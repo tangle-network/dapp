@@ -18,7 +18,7 @@ export default async function getActiveServicesByValidator(): Promise<
     },
     {
       id: 124,
-      serviceType: ServiceType.DKG_TSS_CGGMP,
+      serviceType: ServiceType.TSS_ZENGOGG20SECP256K1,
       participants: participationArr,
       phase2Executions: 5,
       earnings: 10,
@@ -26,7 +26,7 @@ export default async function getActiveServicesByValidator(): Promise<
     },
     {
       id: 125,
-      serviceType: ServiceType.TX_RELAY,
+      serviceType: ServiceType.LIGHT_CLIENT_RELAYING,
       participants: participationArr,
       expirationBlock: 456,
     },

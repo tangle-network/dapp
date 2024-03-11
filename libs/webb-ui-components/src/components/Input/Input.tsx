@@ -60,6 +60,7 @@ export const Input: React.FC<InputProps> = (props) => {
     value: initialValue = '',
     inputRef,
     inputClassName,
+    isControlled = false,
     ...restProps
   } = props;
   const [value, setValue] = useState(initialValue);
@@ -199,7 +200,11 @@ export const Input: React.FC<InputProps> = (props) => {
           required={isRequired}
           className={mergedInputClsx}
           value={value}
-          onChange={(eve) => setValue(eve.target.value)}
+          onChange={(eve) =>
+            isControlled && onChange !== undefined
+              ? onChange(eve.target.value)
+              : setValue(eve.target.value)
+          }
           {...restProps}
         />
 

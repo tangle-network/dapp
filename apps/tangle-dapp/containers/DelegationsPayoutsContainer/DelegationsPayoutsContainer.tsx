@@ -45,7 +45,7 @@ function assertTab(tab: string): DelegationsAndPayoutsTab {
 
 const DelegationsPayoutsContainer: FC = () => {
   const { value: queryParamsTab } = useQueryParamKey(
-    QueryParamKey.DelegationsAndPayoutsTab
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
   );
 
   const tableRef = useRef<HTMLDivElement>(null);
@@ -55,7 +55,7 @@ const DelegationsPayoutsContainer: FC = () => {
   // Default to the nominations tab if no matching browser URL
   // hash is present.
   const [activeTab, setActiveTab] = useState(
-    queryParamsTab ?? DelegationsAndPayoutsTab.Nominations
+    queryParamsTab ?? DelegationsAndPayoutsTab.NOMINATIONS
   );
 
   const [payouts, setPayouts] = useState<Payout[]>([]);
@@ -144,7 +144,7 @@ const DelegationsPayoutsContainer: FC = () => {
         headerClassName="w-full overflow-x-auto"
         filterComponent={
           activeAccount?.address && !isFirstTimeNominator ? (
-            activeTab === DelegationsAndPayoutsTab.Nominations ? (
+            activeTab === DelegationsAndPayoutsTab.NOMINATIONS ? (
               <ManageButtonContainer
                 onUpdateNominations={() =>
                   setIsUpdateNominationsModalOpen(true)
@@ -169,7 +169,7 @@ const DelegationsPayoutsContainer: FC = () => {
         }
       >
         {/* Delegations Table */}
-        <TabContent value={DelegationsAndPayoutsTab.Nominations}>
+        <TabContent value={DelegationsAndPayoutsTab.NOMINATIONS}>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -206,7 +206,7 @@ const DelegationsPayoutsContainer: FC = () => {
         </TabContent>
 
         {/* Payouts Table */}
-        <TabContent value={DelegationsAndPayoutsTab.Payouts} aria-disabled>
+        <TabContent value={DelegationsAndPayoutsTab.PAYOUTS} aria-disabled>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
