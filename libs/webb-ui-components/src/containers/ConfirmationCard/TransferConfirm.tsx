@@ -124,9 +124,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               typedChainId: destTypedChainId,
               isNoteAccount: true,
             }}
-            poolAddress={poolAddress}
-            poolName={token1Symbol}
-            poolExplorerUrl={poolExplorerUrl}
+            title={token1Symbol}
+            subtitle={poolAddress}
+            externalLink={poolExplorerUrl}
           />
 
           {/** Change Note info */}

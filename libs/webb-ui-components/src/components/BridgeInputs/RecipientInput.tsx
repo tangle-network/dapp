@@ -40,6 +40,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
       title,
       validate,
       value,
+      placeholder,
       ...props
     },
     ref
@@ -111,7 +112,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
               />
             </Label>
             <Input
-              placeholder="Enter recipient wallet address"
+              placeholder={placeholder ?? 'Enter recipient wallet address'}
               id={id}
               size="sm"
               value={address}
