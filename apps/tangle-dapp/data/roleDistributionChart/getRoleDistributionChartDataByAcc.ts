@@ -2,6 +2,7 @@ import { rand } from '@ngneat/falso';
 
 import type { PieChartItem } from '../../components/charts/types';
 import { ProfileType, ServiceType } from '../../types';
+import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 
 export type RoleDistributionChartDataType = {
   profileType: ProfileType;
