@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
+} from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, notificationApi, SkeletonLoader } from '..';

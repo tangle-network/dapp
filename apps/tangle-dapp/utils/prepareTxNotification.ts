@@ -23,7 +23,7 @@ const prepareTxNotification = (
 
       break;
     case TxStatus.Error:
-      primaryMessage = 'An error occurred during the transaction';
+      primaryMessage = 'An error occurred during the transaction.';
       secondaryMessage = error?.message || null;
       variant = 'error';
 

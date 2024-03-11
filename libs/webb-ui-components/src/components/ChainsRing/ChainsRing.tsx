@@ -4,11 +4,16 @@ import { ChainIcon } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
-import { useDarkMode } from '../../hooks/useDarkMode';
+import {
+  useDarkMode as useNormalDarkMode,
+  useNextDarkMode,
+} from '../../hooks/useDarkMode';
 import type { ChainsRingProps, ChainRingItemType } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
-  ({ circleContent, additionalSvgContent, chainItems }, ref) => {
+  ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
+    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
+
     const [isDarkMode] = useDarkMode();
 
     const getStrokeColor = useCallback(
@@ -24,6 +29,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         {chainItems.map((chainItem, idx) => {
           if (chainItem === undefined) return null;
           const { typedChainId, onClick } = chainItem;
+          if (typedChainId === undefined) return null;
           const chaiName = chainsConfig[typedChainId].name;
           return (
             <Tooltip>
@@ -171,6 +177,22 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             width="24"
             height="24"
             transform="rotate(135 160.191 167.25)"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="105.5"
+            y="92.277"
+            width="24"
+            height="24"
+            fill="#F7F8F7"
+            fillOpacity="0.1"
+          />
+          <rect
+            x="285.5"
+            y="92.277"
+            width="24"
+            height="24"
             fill="#F7F8F7"
             fillOpacity="0.1"
           />
