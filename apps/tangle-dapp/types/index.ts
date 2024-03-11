@@ -156,6 +156,11 @@ export enum ServiceType {
   TSS_ZCASH_FROST_ED448 = 'TSS ZcashFrostEd448',
 }
 
+export enum ProfileType {
+  INDEPENDENT = 'Independent',
+  SHARED = 'Shared',
+}
+
 export type Service = {
   id: number;
   serviceType: ServiceType;

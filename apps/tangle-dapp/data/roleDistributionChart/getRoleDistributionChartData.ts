@@ -1,9 +1,9 @@
-import type { ProportionPieChartItem } from '../../components/charts/types';
+import type { PieChartItem } from '../../components/charts/types';
 import { ServiceType } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 
 export default async function getRoleDistributionChartData(): Promise<
-  ProportionPieChartItem[]
+  PieChartItem[]
 > {
   const data = [
     { name: ServiceType.ZK_SAAS_GROTH16, value: 4400 },
