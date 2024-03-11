@@ -128,9 +128,9 @@ export const WithdrawConfirm = forwardRef<
               typedChainId: destTypedChainId,
               isNoteAccount: false,
             }}
-            poolAddress={poolAddress}
-            poolName={token1Symbol}
-            poolExplorerUrl={poolExplorerUrl}
+            title={token1Symbol}
+            subtitle={poolAddress}
+            externalLink={poolExplorerUrl}
           />
 
           {/** Change Note info */}
