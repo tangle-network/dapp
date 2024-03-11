@@ -100,7 +100,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
         <div className="p-9 flex flex-col gap-4">
           <Typography variant="body1" fw="normal">
-            Quickly transfer your {TANGLE_TOKEN_UNIT} tokens to a receiver on
+            Quickly transfer your {TANGLE_TOKEN_UNIT} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
             Substrate address.
           </Typography>
