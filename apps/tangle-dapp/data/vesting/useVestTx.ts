@@ -9,13 +9,13 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
  * Vesting schedules that have not yet started (i.e. have not reached their
  * "cliff") will be omitted.
  */
-const useVestTx = (notifyVestTxStatusUpdates?: boolean) => {
+const useVestTx = (notifyTxStatusUpdates?: boolean) => {
   return useAgnosticTx(
     'vesting',
     'vest',
     [],
     (api) => Promise.resolve(api.tx.vesting.vest()),
-    notifyVestTxStatusUpdates
+    notifyTxStatusUpdates
   );
 };
 

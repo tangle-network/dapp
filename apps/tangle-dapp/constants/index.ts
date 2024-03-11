@@ -57,3 +57,27 @@ export const serviceTypeToChipColor = {
   [ServiceType.ZK_SAAS_GROTH16]: 'blue',
   [ServiceType.ZK_SAAS_MARLIN]: 'yellow',
 } as const satisfies Record<ServiceType, ChipColors>;
+
+export enum StaticAssetPath {
+  RestakingMethodIndependentDark = '/static/assets/restaking/method-independent-dark.svg',
+  RestakingMethodSharedDark = '/static/assets/restaking/method-shared-dark.svg',
+  RestakingMethodIndependentLight = '/static/assets/restaking/method-independent-light.svg',
+  RestakingMethodSharedLight = '/static/assets/restaking/method-shared-light.svg',
+}
+
+export const SUBSTRATE_ROLE_TYPE_MAPPING = {
+  [ServiceType.ZK_SAAS_GROTH16]: { ZkSaaS: 'ZkSaaSGroth16' },
+  [ServiceType.ZK_SAAS_MARLIN]: { ZkSaaS: 'ZkSaaSMarlin' },
+  [ServiceType.TX_RELAY]: 'LightClientRelaying',
+  // TODO: The current implementation of the `ServiceType` enum is a dummy only used to test UI. Awaiting the actual implementation of the `ServiceType` enum before properly implementing this case. For now, default to `ZkSaaSMarlin`.
+  [ServiceType.DKG_TSS_CGGMP]: { ZkSaaS: 'ZkSaaSGroth16' },
+} as const satisfies { [key in ServiceType]: string | Record<string, string> };
+
+export enum ChartColor {
+  Blue = '#B8D6FF',
+  Green = '#85DC8E',
+  Gray = '#D3D8E2',
+  DarkGray = '#3A3E53',
+  Yellow = '#FFEAA6',
+  Lavender = '#E7E2FF',
+}

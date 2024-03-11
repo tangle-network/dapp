@@ -3,15 +3,19 @@
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 
-import { ProportionPieChart } from '../../../components/charts';
-import type { ProportionPieChartItem } from '../../../components/charts/types';
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
-import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributionChart';
+import {
+  IndependentRoleDistributionChart,
+  SharedRoleDistributionChart,
+} from '../../../components/charts';
+import getRoleDistributionChartDataByAcc, {
+  RoleDistributionChartDataType,
+} from '../../../data/roleDistributionChart/getRoleDistributionChartDataByAcc';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import { ProfileType } from '../../../types';
 
 const IndependentChart = () => {
   const accAddress = useActiveAccountAddress();
-  const [data, setData] = useState<ProportionPieChartItem[]>([]);
+  const [data, setData] = useState<RoleDistributionChartDataType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -20,7 +24,7 @@ const IndependentChart = () => {
       try {
         const data = accAddress
           ? await getRoleDistributionChartDataByAcc(accAddress)
-          : [];
+          : null;
         setData(data);
       } catch (error) {
         setError(
@@ -37,16 +41,15 @@ const IndependentChart = () => {
 
   if (isLoading) return null;
 
-  if (error) return <div>Error fetching data</div>;
+  if (error || !data) return <div>Error fetching data</div>;
 
   return (
     <div className="flex items-center justify-center">
-      <ProportionPieChart
-        data={data}
-        title="Restaked"
-        showTotal
-        unit={TANGLE_TOKEN_UNIT}
-      />
+      {data.profileType === ProfileType.SHARED ? (
+        <SharedRoleDistributionChart data={data.distribution} />
+      ) : (
+        <IndependentRoleDistributionChart data={data.distribution} />
+      )}
     </div>
   );
 };

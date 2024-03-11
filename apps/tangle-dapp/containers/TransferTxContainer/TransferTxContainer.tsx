@@ -16,7 +16,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
-import convertToChainUnits from '../../utils/convertToChainUnits';
+import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
 import getTxStatusText from '../../utils/getTxStatusText';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import { TransferTxContainerProps } from './types';
@@ -41,12 +41,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   } = useSubstrateTx(
     useCallback(
       async (api) => {
-        const amountAsNumber = Number(amount);
-
         // The amount is in the smallest unit of the token,
         // so it needs to be converted to the appropriate amount
         // of decimals.
-        const amountInChainUnits = convertToChainUnits(amountAsNumber);
+        const amountInChainUnits = convertAmountStringToChainUnits(amount);
 
         return api.tx.balances.transfer(recipientAddress, amountInChainUnits);
       },
