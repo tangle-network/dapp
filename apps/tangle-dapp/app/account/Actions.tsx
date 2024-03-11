@@ -80,7 +80,7 @@ const Actions: FC = () => {
             internalHref={PagePath.CLAIM_AIRDROP}
             tooltip={
               <>
-                Congratulations, you are eligible for Airdrop! Click here to
+                Congratulations, you are eligible for the Tangle Network Airdrop! Click here to
                 visit the <strong>Claim Airdrop</strong> page.
               </>
             }
