@@ -48,7 +48,11 @@ function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
   return null;
 }
 
-function getStepTitle(step: Step, profileType: RestakingProfileType): string {
+function getStepTitle(
+  step: Step,
+  profileType: RestakingProfileType,
+  isCreatingProfile: boolean
+): string {
   switch (step) {
     case Step.CHOOSE_METHOD:
       return 'Choose Your Restaking Method';
@@ -58,7 +62,9 @@ function getStepTitle(step: Step, profileType: RestakingProfileType): string {
           ? 'Independent'
           : 'Shared';
 
-      return `Manage ${profileKindString} Profile`;
+      const actionPrefix = isCreatingProfile ? 'Create' : 'Manage';
+
+      return `${actionPrefix} ${profileKindString} Profile`;
     }
     case Step.CONFIRM_ALLOCATIONS:
       return 'Review and Confirm Your Allocations:';
@@ -117,6 +123,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     isLoading: isLoadingSharedRestakeAmount,
     reset: resetSharedRestakeAmount,
   } = useSharedRestakeAmountState();
+
+  // TODO: Determine this on whether a profile exists or not, when the modal opens.
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
@@ -260,7 +269,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           onClose={() => setIsModalOpen(false)}
           className="p-9 pb-4"
         >
-          {getStepTitle(step, profileType)}
+          {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>
 
         <div className="flex flex-col gap-4 px-9 py-3">

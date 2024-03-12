@@ -37,7 +37,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   availableBalance,
   hasDeleteButton = false,
   isDisabled = false,
-  availableServices,
+  availableServices: availableRoles,
   validate,
   title,
   id,
@@ -71,8 +71,12 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
   const dropdownBody = useMemo(
     () =>
-      availableServices
+      availableRoles
         .filter((availableRole) => availableRole !== service)
+        // Sort roles in ascending order, by their display
+        // values (strings). This is done with the intent to
+        // give priority to the TSS roles.
+        .toSorted((a, b) => a.localeCompare(b))
         .map((service) => (
           <div
             key={service}
@@ -83,14 +87,14 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
             {minRestakingBond !== null ? (
               <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
-                {`≥ ${formatTokenBalance(minRestakingBond)}`}
+                {`≥ ${formatTokenBalance(minRestakingBond, false)}`}
               </Chip>
             ) : (
               <SkeletonLoader />
             )}
           </div>
         )),
-    [availableServices, handleSetService, minRestakingBond, service]
+    [availableRoles, handleSetService, minRestakingBond, service]
   );
 
   const actions = (
