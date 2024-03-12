@@ -15,7 +15,7 @@ export default function useValidatorCountSubscription(
   }
 ) {
   const { value: cachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.ValidatorCounts,
+    LocalStorageKey.VALIDATOR_COUNTS,
     true
   );
 

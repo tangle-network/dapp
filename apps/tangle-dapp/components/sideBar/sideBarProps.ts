@@ -21,11 +21,12 @@ import {
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
-// TODO: Use `PagePath` instead of hard-coding the paths.
+import { PagePath } from '../../types';
+
 const sideBarItems: SideBarItemProps[] = [
   {
     name: 'Account',
-    href: '/account',
+    href: PagePath.ACCOUNT,
     isInternal: true,
     isNext: true,
     Icon: UserLineIcon,
@@ -40,13 +41,13 @@ const sideBarItems: SideBarItemProps[] = [
     subItems: [
       {
         name: 'Overview',
-        href: '/services',
+        href: PagePath.SERVICES_OVERVIEW,
         isInternal: true,
         isNext: true,
       },
       {
         name: 'Restake',
-        href: '/restake',
+        href: PagePath.SERVICES_RESTAKE,
         isInternal: true,
         isNext: true,
       },
@@ -54,7 +55,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'Nomination',
-    href: '/',
+    href: PagePath.NOMINATION,
     isInternal: true,
     isNext: true,
     Icon: FundsLine,
@@ -62,7 +63,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'Claim Airdrop',
-    href: '/claim',
+    href: PagePath.CLAIM_AIRDROP,
     isInternal: true,
     isNext: true,
     Icon: GiftLineIcon,

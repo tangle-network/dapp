@@ -39,7 +39,7 @@ export const getValidatorIdentity = async (
   // If the identity is set, get the custom display name
   // and use that as the name instead of the address.
   if (identityOption.isSome) {
-    const { info } = identityOption.unwrap();
+    const { info } = identityOption.unwrap()[0];
     const displayNameInfo = info.display.toString();
 
     const displayNameObject: { raw?: `0x${string}` } =

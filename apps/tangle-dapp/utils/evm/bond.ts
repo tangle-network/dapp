@@ -25,14 +25,14 @@ export const bondTokens = async (
 ): Promise<AddressType> => {
   const value = parseEther(numberOfTokens.toString());
   const payee =
-    paymentDestination === PaymentDestination.Staked
+    paymentDestination === PaymentDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === PaymentDestination.Stash
+      : paymentDestination === PaymentDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'bond',
     args: [value, payee],
@@ -53,7 +53,7 @@ export const bondExtraTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'bondExtra',
     args: [value],
@@ -72,14 +72,14 @@ export const updatePaymentDestination = async (
   paymentDestination: string
 ): Promise<AddressType> => {
   const payee =
-    paymentDestination === PaymentDestination.Staked
+    paymentDestination === PaymentDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === PaymentDestination.Stash
+      : paymentDestination === PaymentDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'setPayee',
     args: [payee],
@@ -100,7 +100,7 @@ export const unBondTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'unbond',
     args: [value],
@@ -121,7 +121,7 @@ export const rebondTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'rebond',
     args: [value],
@@ -140,7 +140,7 @@ export const withdrawUnbondedTokens = async (
   slashingSpans: number
 ): Promise<AddressType> => {
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'withdrawUnbonded',
     args: [slashingSpans],

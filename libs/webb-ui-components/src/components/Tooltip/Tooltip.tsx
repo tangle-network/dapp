@@ -35,11 +35,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
         'radix-side-left:animate-slide-right-fade',
         'inline-flex items-center break-all rounded p-2',
         'bg-mono-20 dark:bg-mono-160',
-        'webb-shadow-sm',
-        // Give the tooltip a higher z-index than modal, so
-        // that it can be displayed on top of modals without
-        // being cut off.
-        'z-50'
+        'webb-shadow-sm z-[9999]'
       )}
       {...props}
     >

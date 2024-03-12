@@ -6,17 +6,15 @@ export type PirChartTooltipContentProps = {
   suffix?: string;
 };
 
-export type ProportionPieChartItem = {
+export type PieChartItem = {
   name: string;
   value: number;
   color: string;
 };
 
-export interface ProportionPieChartProps {
-  data: ProportionPieChartItem[];
+export interface PieChartProps {
+  data: PieChartItem[];
   title?: string;
-  showTotal?: boolean;
-  unit?: string;
 }
 
 type EarningsByServiceType = Partial<Record<ServiceType, number>>;

@@ -77,11 +77,12 @@ const Actions: FC = () => {
             label="Claim Airdrop"
             hasNotificationDot
             Icon={GiftLineIcon}
-            internalHref={PagePath.ClaimAirdrop}
+            internalHref={PagePath.CLAIM_AIRDROP}
             tooltip={
               <>
-                Congratulations, you are eligible for Airdrop! Click here to
-                visit the <strong>Claim Airdrop</strong> page.
+                Congratulations, you are eligible for the Tangle Network
+                Airdrop! Click here to visit the <strong>Claim Airdrop</strong>{' '}
+                page.
               </>
             }
           />
@@ -95,7 +96,7 @@ const Actions: FC = () => {
             onClick={executeVestTx !== null ? executeVestTx : undefined}
             hasNotificationDot={hasClaimableVestingTokens}
             isDisabled={
-              vestTxStatus === TxStatus.Processing ||
+              vestTxStatus === TxStatus.PROCESSING ||
               !hasClaimableVestingTokens ||
               executeVestTx === null
             }
@@ -118,7 +119,7 @@ const Actions: FC = () => {
       </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}
-      <div className="fixed">
+      <div className="!m-0">
         <TransferTxContainer
           isModalOpen={isTransferModalOpen}
           setIsModalOpen={setIsTransferModalOpen}

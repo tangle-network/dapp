@@ -9,14 +9,12 @@ import { FC } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
-import PieChartTooltipContent from './PieChartTooltipContent';
-import type { ProportionPieChartProps } from './types';
+import { TANGLE_TOKEN_UNIT } from '../../constants';
+import type { PieChartProps } from './types';
 
-const ProportionPieChart: FC<ProportionPieChartProps> = ({
+const IndependentRoleDistributionChart: FC<PieChartProps> = ({
   data,
-  title,
-  showTotal = false,
-  unit,
+  title = 'Independent',
 }) => {
   const [isDarkMode] = useNextDarkMode();
 
@@ -32,9 +30,9 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
         <Pie
           data={dataOrDefault}
           innerRadius={60}
-          outerRadius={80}
           fill="#8884d8"
           paddingAngle={hasData ? 5 : 0}
+          outerRadius={100}
           dataKey="value"
         >
           {dataOrDefault.map((item, index) => (
@@ -46,10 +44,9 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
               return (
-                <PieChartTooltipContent
+                <TooltipContent
                   name={payload[0].payload.name}
                   value={payload[0].payload.value}
-                  suffix={unit}
                 />
               );
             }
@@ -64,22 +61,38 @@ const ProportionPieChart: FC<ProportionPieChartProps> = ({
           'flex flex-col items-center gap-1'
         )}
       >
-        {title && <Typography variant="body2">{title}</Typography>}
-        {showTotal && (
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {getRoundedAmountString(
-              data.reduce((acc, item) => acc + item.value, 0)
-            )}{' '}
-            {unit}
-          </Typography>
-        )}
+        <Typography variant="body2">{title}</Typography>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {getRoundedAmountString(
+            data.reduce((acc, item) => acc + item.value, 0)
+          )}{' '}
+          {TANGLE_TOKEN_UNIT}
+        </Typography>
       </div>
     </div>
   );
 };
 
-export default ProportionPieChart;
+export default IndependentRoleDistributionChart;
+
+/** @internal */
+const TooltipContent: FC<{
+  name: string;
+  value: number;
+}> = ({ name, value }) => {
+  return (
+    <div className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80">
+      <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
+        {name}:{' '}
+        {typeof value === 'number' && value >= 10000
+          ? getRoundedAmountString(value)
+          : value}{' '}
+        {TANGLE_TOKEN_UNIT}
+      </Typography>
+    </div>
+  );
+};

@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
 import assert from 'assert';
 import { useCallback, useRef } from 'react';
+import { z } from 'zod';
 
-import { SUBSTRATE_ROLE_TYPE_MAPPING } from '../../constants';
-import { cleanAllocations } from '../../containers/ManageProfileModalContainer/IndependentAllocationStep';
+import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
 import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
@@ -11,8 +11,8 @@ import { ServiceType } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
-  role: (typeof SUBSTRATE_ROLE_TYPE_MAPPING)[ServiceType];
-  amount: BN;
+  role: (typeof SERVICE_TYPE_TO_TANGLE_MAP)[ServiceType];
+  amount: BN | null;
 };
 
 /**
@@ -35,8 +35,9 @@ const useUpdateRestakingProfileTx = (
   // function needs the records to be available when it is called, and
   // since `useState` is asynchronous, the records would not be available
   // in the same render cycle.
-  const recordsRef = useRef<ProfileRecord[] | null>(null);
+  const allocationsRef = useRef<RestakingAllocationMap | null>(null);
 
+  const sharedRestakeAmountRef = useRef<BN | null>(null);
   const { data: roleLedger } = useRestakingRoleLedger();
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
@@ -49,45 +50,76 @@ const useUpdateRestakingProfileTx = (
         }
 
         assert(
-          recordsRef.current !== null,
+          allocationsRef.current !== null,
           'Records should be set before calling execute'
         );
 
-        const callee = hasExistingProfile
-          ? api.tx.roles.updateProfile
-          : api.tx.roles.createProfile;
+        if (profileType === RestakingProfileType.SHARED) {
+          assert(
+            sharedRestakeAmountRef.current !== null,
+            'Shared restake amount should be set if the profile type is shared'
+          );
+        }
 
-        // TODO: This has type any. Investigate why type definitions seem to be missing for this function/transaction call.
-        return callee(
-          profileType === RestakingProfileType.Independent
-            ? { Independent: { records: recordsRef.current } }
-            : { Shared: { records: recordsRef.current } }
-        );
+        const records: ProfileRecord[] = Object.entries(
+          allocationsRef.current
+        ).map(([serviceString, amount]) => {
+          const service = z.nativeEnum(ServiceType).parse(serviceString);
+
+          return {
+            role: SERVICE_TYPE_TO_TANGLE_MAP[service],
+            amount,
+          };
+        });
+
+        const profile =
+          profileType === RestakingProfileType.INDEPENDENT
+            ? { Independent: { records } }
+            : {
+                Shared: {
+                  records,
+                  amount: sharedRestakeAmountRef.current,
+                },
+              };
+
+        // TODO: These functions accept profile object with type `any`. Investigate why type definitions seem to be missing for this function/transaction call.
+        return hasExistingProfile
+          ? api.tx.roles.updateProfile(profile)
+          : api.tx.roles.createProfile(profile, null);
       },
       [createIfMissing, hasExistingProfile, profileType]
     ),
     notifyTxStatusUpdates
   );
 
-  const executeOverride = useCallback(
+  const executeForIndependentProfile = useCallback(
     (allocations: RestakingAllocationMap) => {
       if (execute === null) {
         return;
       }
 
-      recordsRef.current = cleanAllocations(allocations).map(
-        ([service, allocation]) => ({
-          role: SUBSTRATE_ROLE_TYPE_MAPPING[service],
-          amount: allocation,
-        })
-      );
+      allocationsRef.current = allocations;
 
       return execute();
     },
     [execute]
   );
 
-  return { execute: executeOverride, ...other };
+  const executeForSharedProfile = useCallback(
+    (allocations: RestakingAllocationMap, restakeAmount: BN) => {
+      if (execute === null) {
+        return;
+      }
+
+      sharedRestakeAmountRef.current = restakeAmount;
+      allocationsRef.current = allocations;
+
+      return execute();
+    },
+    [execute]
+  );
+
+  return { executeForIndependentProfile, executeForSharedProfile, ...other };
 };
 
 export default useUpdateRestakingProfileTx;

@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { TwitterApi } from 'twitter-api-v2';
 
-import handleTwitterApiError from '../../../..//utils/handleTwitterApiError';
-import parseTwitterRefreshTokensBody from '../../../..//utils/parseTwitterRefreshTokensBody';
 import serverConfig from '../../../../config/server';
+import handleTwitterApiError from '../../../../utils/handleTwitterApiError';
+import parseTwitterRefreshTokensBody from '../../../../utils/parseTwitterRefreshTokensBody';
 
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   return new Promise((resolve) => {

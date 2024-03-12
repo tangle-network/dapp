@@ -249,6 +249,11 @@ export interface RecipientInputProps
    * If `true`, the patse button will be hidden
    */
   isHiddenPasteBtn?: boolean;
+
+  /**
+   * Override default place holder
+   */
+  placeholder?: string;
 }
 
 export interface ShieldedAssetInputProps extends InputWrapperProps {

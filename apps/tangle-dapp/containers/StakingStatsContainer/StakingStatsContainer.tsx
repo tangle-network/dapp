@@ -16,7 +16,7 @@ const StakingStatsContainer: FC = () => {
         api.query.staking.currentEra().then((eraOpt) => eraOpt.toString()),
       []
     ),
-    PolkadotApiSwrKey.Era
+    PolkadotApiSwrKey.ERA
   );
 
   const pendingRewards = useStakingPendingRewards();
