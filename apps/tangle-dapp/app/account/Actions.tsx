@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   ArrowLeftRightLineIcon,
@@ -7,26 +7,26 @@ import {
   GiftLineIcon,
   ShieldKeyholeLineIcon,
   StatusIndicator,
-} from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
+} from "@webb-tools/icons";
+import { IconBase } from "@webb-tools/icons/types";
 import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import Link from 'next/link';
-import { FC, ReactElement, useCallback, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
+} from "@webb-tools/webb-ui-components";
+import Link from "next/link";
+import { FC, ReactElement, useCallback, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
-import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
-import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
-import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
-import useVestingInfo from '../../data/vesting/useVestingInfo';
-import useVestTx from '../../data/vesting/useVestTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
-import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
+import TransferTxContainer from "../../containers/TransferTxContainer/TransferTxContainer";
+import useAirdropEligibility from "../../data/claims/useAirdropEligibility";
+import usePayoutsAvailability from "../../data/Payouts/usePayoutsAvailability";
+import useVestingInfo from "../../data/vesting/useVestingInfo";
+import useVestTx from "../../data/vesting/useVestTx";
+import { TxStatus } from "../../hooks/useSubstrateTx";
+import { InternalPath, PagePath, StaticSearchQueryPath } from "../../types";
+import { formatTokenBalance } from "../../utils/polkadot";
 
 const Actions: FC = () => {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
@@ -80,8 +80,9 @@ const Actions: FC = () => {
             internalHref={PagePath.CLAIM_AIRDROP}
             tooltip={
               <>
-                Congratulations, you are eligible for the Tangle Network Airdrop! Click here to
-                visit the <strong>Claim Airdrop</strong> page.
+                Congratulations, you are eligible for the Tangle Network
+                Airdrop! Click here to visit the <strong>Claim Airdrop</strong>{" "}
+                page.
               </>
             }
           />
@@ -102,7 +103,7 @@ const Actions: FC = () => {
             tooltip={
               hasClaimableVestingTokens ? (
                 <>
-                  You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
+                  You have <strong>{formattedClaimableTokenAmount}</strong>{" "}
                   vested tokens that are ready to be claimed. Use this action to
                   release them.
                 </>
@@ -148,8 +149,8 @@ const ActionItem = (props: {
     hasNotificationDot = false,
   } = props;
 
-  const cursorClass = isDisabled ? '!cursor-not-allowed' : 'cursor-pointer';
-  const isDisabledClass = isDisabled ? 'opacity-50' : '';
+  const cursorClass = isDisabled ? "!cursor-not-allowed" : "cursor-pointer";
+  const isDisabledClass = isDisabled ? "opacity-50" : "";
 
   const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
@@ -162,7 +163,7 @@ const ActionItem = (props: {
   const content = (
     <div
       className={twMerge(
-        'inline-flex flex-col justify-center items-center gap-2',
+        "inline-flex flex-col justify-center items-center gap-2",
         isDisabledClass,
         cursorClass
       )}
@@ -170,7 +171,7 @@ const ActionItem = (props: {
       <div
         onClick={handleClick}
         className={twMerge(
-          'inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0',
+          "inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0",
           cursorClass
         )}
       >

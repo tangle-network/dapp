@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import type { Option, u128 } from '@polkadot/types';
-import type { PalletAirdropClaimsStatementKind } from '@polkadot/types/lookup';
-import { formatBalance } from '@polkadot/util';
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import type { Account } from '@webb-tools/abstract-api-provider';
-import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { Spinner } from '@webb-tools/icons';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { Option, u128 } from "@polkadot/types";
+import type { PalletAirdropClaimsStatementKind } from "@polkadot/types/lookup";
+import { formatBalance } from "@polkadot/util";
+import { isEthereumAddress } from "@polkadot/util-crypto";
+import type { Account } from "@webb-tools/abstract-api-provider";
+import { useConnectWallet } from "@webb-tools/api-provider-environment/ConnectWallet";
+import { useWebContext } from "@webb-tools/api-provider-environment/webb-context";
+import { PresetTypedChainId } from "@webb-tools/dapp-types/ChainId";
+import { WebbError, WebbErrorCodes } from "@webb-tools/dapp-types/WebbError";
+import { Spinner } from "@webb-tools/icons";
+import Button from "@webb-tools/webb-ui-components/components/buttons/Button";
+import { AppTemplate } from "@webb-tools/webb-ui-components/containers/AppTemplate";
+import { useWebbUI } from "@webb-tools/webb-ui-components/hooks/useWebbUI";
+import { Typography } from "@webb-tools/webb-ui-components/typography/Typography";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { TANGLE_TOKEN_UNIT } from '../../constants/index';
-import { LocalStorageKey } from '../../hooks/useLocalStorage';
-import useLocalStorage from '../../hooks/useLocalStorage';
-import { getPolkadotApiPromise } from '../../utils/polkadot';
-import EligibleSection from './EligibleSection';
-import NotEligibleSection from './NotEligibleSection';
-import type { ClaimInfoType } from './types';
+import { TANGLE_TOKEN_UNIT } from "../../constants/index";
+import { LocalStorageKey } from "../../hooks/useLocalStorage";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import { getPolkadotApiPromise } from "../../utils/polkadot";
+import EligibleSection from "./EligibleSection";
+import NotEligibleSection from "./NotEligibleSection";
+import type { ClaimInfoType } from "./types";
 
 const eligibilityCache = new Map<string, ClaimInfoType>();
 
@@ -80,20 +80,20 @@ export default function Page() {
     if (claimInfo === null) {
       return {
         title: `Claim your $${TANGLE_TOKEN_UNIT} Airdrop`,
-        subTitle: 'CLAIM AIRDROP',
+        subTitle: "CLAIM AIRDROP",
       };
     }
 
     if (claimInfo === false) {
       return {
         title: `You are not eligible for $${TANGLE_TOKEN_UNIT} Airdrop`,
-        subTitle: 'OOPS!',
+        subTitle: "OOPS!",
       };
     }
 
     return {
       title: `You have unclaimed $${TANGLE_TOKEN_UNIT} Airdrop!`,
-      subTitle: 'GREAT NEWS!',
+      subTitle: "GREAT NEWS!",
     };
   }, [claimInfo]);
 
@@ -118,7 +118,7 @@ export default function Page() {
       } catch (error) {
         // Check if the error is due to abort
         const isAbortError =
-          error instanceof DOMException && error.name === 'AbortError';
+          error instanceof DOMException && error.name === "AbortError";
 
         // Only show error if it is not due to abort
         // and the abort signal is not aborted
@@ -126,12 +126,12 @@ export default function Page() {
           console.log(error);
           notificationApi({
             message:
-              typeof error === 'string'
+              typeof error === "string"
                 ? `Error: ${error}`
                 : error instanceof Error
                 ? error.message
-                : 'Failed to check eligibility',
-            variant: 'error',
+                : "Failed to check eligibility",
+            variant: "error",
           });
         }
       } finally {
@@ -159,7 +159,7 @@ export default function Page() {
         title={title}
         subTitle={subTitle}
         overrideSubTitleProps={{
-          className: 'text-blue-70 dark:text-blue-50',
+          className: "text-blue-70 dark:text-blue-50",
         }}
       />
 
@@ -172,19 +172,20 @@ export default function Page() {
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
               distributing 5 million {TANGLE_TOKEN_UNIT} tokens to the
-              community. Check eligibility below to see if you qualify for{' '}
+              community. Check eligibility below to see if you qualify for{" "}
               {TANGLE_TOKEN_UNIT} Airdrop!
             </>
           ) : claimInfo ? (
             <>
-              You are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View
-              your tokens below, and start the claiming process.
+              You are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View your
+              tokens below, and start the claiming process.
             </>
           ) : (
             <>
-              You are not eligible for ${TANGLE_TOKEN_UNIT} airdrop.
-              You can still participate in the Tangle Network by acquiring $
-              {TANGLE_TOKEN_UNIT} or you can try again with a different account by disconnecting your current wallet.
+              You are not eligible for ${TANGLE_TOKEN_UNIT} airdrop. You can
+              still participate in the Tangle Network by acquiring $
+              {TANGLE_TOKEN_UNIT} or you can try again with a different account
+              by disconnecting your current wallet.
             </>
           )}
         </AppTemplate.Description>
@@ -253,7 +254,7 @@ const getClaimsInfo = async (
 
   const api = await getPolkadotApiPromise();
 
-  if (!('claims' in api.query)) {
+  if (!("claims" in api.query)) {
     throw WebbError.from(WebbErrorCodes.NoClaimsPalletFound);
   }
 
