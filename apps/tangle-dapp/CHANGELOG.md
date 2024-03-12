@@ -65,3 +65,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Client side data fetching for Header Chips, Key Stats and Nominator Stats containers to address timeout issue when fetching data - https://github.com/webb-tools/webb-dapp/pull/1849
+
+## [0.0.3] - 2024-03-12
+
+### Added
+
+- Manage balances table for the Account page - https://github.com/webb-tools/webb-dapp/pull/2016
+- Transaction confirmation cards - https://github.com/webb-tools/webb-dapp/pull/2028
+- Validator overview card UI - https://github.com/webb-tools/webb-dapp/pull/2030
+- Service table and key metrics on Services Dashboard page - https://github.com/webb-tools/webb-dapp/pull/2032
+- Participants table on Service Details page - https://github.com/webb-tools/webb-dapp/pull/2038
+- Payouts notification in accounts page - https://github.com/webb-tools/webb-dapp/pull/2033
+- Restaking page's layout & UI - https://github.com/webb-tools/webb-dapp/pull/2042
+- Jobs list table on Service Details page - https://github.com/webb-tools/webb-dapp/pull/2044
+- Signing rules on Service Details page - https://github.com/webb-tools/webb-dapp/pull/2046
+- Service details card - https://github.com/webb-tools/webb-dapp/pull/2051
+- Role distribution chart for independent profiles on Services Dashboard page - https://github.com/webb-tools/webb-dapp/pull/2052
+- Role distribution chart for shared profiles on Services Dashboard page - https://github.com/webb-tools/webb-dapp/pull/2080
+- Protocol earnings table on Services Dashboard page - https://github.com/webb-tools/webb-dapp/pull/2056
+- 'What is Restaking' card on Services Dashboard page - https://github.com/webb-tools/webb-dapp/pull/2061
+- Restaking profile creation modal for independent profiles - https://github.com/webb-tools/webb-dapp/pull/2053
+- Restaking profile creation modal for shared profiles - https://github.com/webb-tools/webb-dapp/pull/2081
+
+### Changed
+
+- Validator table on Nominations page is now lazily loaded for improved perceived performance - https://github.com/webb-tools/webb-dapp/pull/2029
+- Claim Airdrop page's FAQ content was adjusted for correctness - https://github.com/webb-tools/webb-dapp/pull/2034, https://github.com/webb-tools/webb-dapp/pull/2087
+- Optimized key stats container and initial load time in Nomination page - https://github.com/webb-tools/webb-dapp/pull/2048
+- Updated balance transfer modal's design - https://github.com/webb-tools/webb-dapp/pull/2083
+
+### Fixed
+
+- Styling issues and UI audit for Account page - https://github.com/webb-tools/webb-dapp/pull/2035
+- Styling issues and UI audit for Claim Airdrop page - https://github.com/webb-tools/webb-dapp/pull/2049
