@@ -15,11 +15,12 @@ import {
   Table,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
+import Link from 'next/link';
 import { FC } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import type { Service } from '../../types';
-import { getChipColorByRoleType } from '../../utils';
+import { getChipColorOfServiceType } from '../../utils';
 import { HeaderCell, StringCell } from '../tableCells';
 import type { ServiceTableProps } from './types';
 
@@ -29,12 +30,12 @@ const columns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={getChipColorByRoleType(props.row.original.roleType)}>
+      <Chip color={getChipColorOfServiceType(props.getValue())}>
         {props.getValue()}
       </Chip>
     ),
   }),
-  columnHelper.accessor('initialJobId', {
+  columnHelper.accessor('id', {
     header: () => (
       <HeaderCell title="Initial Job Id" className="justify-start" />
     ),
@@ -46,9 +47,9 @@ const columns = [
       const participants = props.getValue();
       return (
         <AvatarGroup>
-          {participants.map((participantAddr, idx) => (
+          {participants.map((participantAddr) => (
             <Avatar
-              key={idx}
+              key={participantAddr}
               sourceVariant="address"
               value={participantAddr}
               theme="substrate"
@@ -66,9 +67,7 @@ const columns = [
     },
   }),
   columnHelper.accessor('phase2Executions', {
-    header: () => (
-      <HeaderCell title="Phase 2 executions" className="justify-start" />
-    ),
+    header: () => <HeaderCell title="# of Jobs" className="justify-start" />,
     cell: (props) => {
       const phase2Executions = props.getValue();
       return phase2Executions ? (
@@ -103,13 +102,15 @@ const columns = [
       <StringCell value={`${props.getValue()}`} className="text-center" />
     ),
   }),
-  columnHelper.accessor('initialJobId', {
+  columnHelper.accessor('id', {
+    id: 'details',
     header: () => null,
-    cell: () => (
-      // TODO: handle click
-      <Button variant="link" size="sm" className="mx-auto">
-        DETAILS
-      </Button>
+    cell: (props) => (
+      <Link href={`/services/${props.row.original.id}`}>
+        <Button variant="link" size="sm" className="mx-auto">
+          DETAILS
+        </Button>
+      </Link>
     ),
   }),
 ];
@@ -143,7 +144,6 @@ const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
       )}
     >
       <Table
-        tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit lg:table lg:max-w-none"
         thClassName="!bg-inherit !px-3 border-t-0 bg-mono-0 whitespace-nowrap"
         trClassName="!bg-inherit cursor-pointer"
         tdClassName="!bg-inherit !px-3 whitespace-nowrap !border-t-0"

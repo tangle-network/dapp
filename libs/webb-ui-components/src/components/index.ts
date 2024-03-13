@@ -19,6 +19,7 @@ export * from './ChartContainer';
 export * from './CheckBox';
 export * from './CheckBoxMenu';
 export * from './Chip';
+export { default as CodeFile } from './CodeFile';
 export * from './Collapsible';
 export * from './ConnectWalletMobileButton';
 export * from './CopyWithTooltip';

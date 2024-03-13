@@ -1,11 +1,13 @@
 'use client';
 
+import { formatNumber } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
-import { firstValueFrom, type Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -13,10 +15,20 @@ export default function useActiveAndDelegationCountSubscription(
     value2: null,
   }
 ) {
-  const [value1, setValue1] = useState(defaultValue.value1);
-  const [value2, setValue2] = useState(defaultValue.value2);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
+  const { value: cachedValue, set: setCache } = useLocalStorage(
+    LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
+    true
+  );
+
+  const [value1, setValue1] = useState(
+    cachedValue?.value1 ?? defaultValue.value1
+  );
+  const [value2, setValue2] = useState(
+    cachedValue?.value2 ?? defaultValue.value2
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -25,48 +37,47 @@ export default function useActiveAndDelegationCountSubscription(
     const subscribeData = async () => {
       try {
         const api = await getPolkadotApiRx();
+        const apiPromise = await getPolkadotApiPromise();
 
-        sub = api.query.session.validators().subscribe(async (validators) => {
-          try {
-            const [totalNominator, activeEraRes] = await Promise.all([
-              firstValueFrom(api.query.staking.counterForNominators()),
-              firstValueFrom(api.query.staking.activeEra()),
-            ]);
+        const currentEra = await apiPromise.query.staking.currentEra();
+        const eraIndex = currentEra.unwrap();
 
-            const activeEra = activeEraRes.unwrapOr(null);
-            if (activeEra == null) {
-              throw new Error('activeEra is null');
-            }
+        sub = api.query.staking
+          .counterForNominators()
+          .subscribe(async (value) => {
+            try {
+              const counterForNominators = formatNumber(value);
+              const exposures =
+                await apiPromise.query.staking.erasStakers.entries(eraIndex);
 
-            const currentEra = activeEra.index;
-            const activeNominators = new Set<string>();
+              const nominatorsSet = new Set<string>();
 
-            for (const validator of validators) {
-              const exposure = await firstValueFrom(
-                api.query.staking.erasStakers(currentEra, validator)
-              );
-
-              exposure.others.forEach((nominator) => {
-                activeNominators.add(nominator.who.toString());
+              exposures.forEach(([_, exposure]) => {
+                exposure.others.forEach(({ who }) => {
+                  nominatorsSet.add(who.toString());
+                });
               });
-            }
 
-            if (isMounted) {
-              setValue1(activeNominators.size);
-              setValue2(totalNominator.toNumber());
-              setIsLoading(false);
+              const newValue1 = nominatorsSet.size;
+              const newValue2 = Number(counterForNominators);
+
+              if (isMounted && (newValue1 !== value1 || newValue2 !== value2)) {
+                setValue1(newValue1);
+                setValue2(newValue2);
+                setCache({ value1: newValue1, value2: newValue2 });
+                setIsLoading(false);
+              }
+            } catch (error) {
+              if (isMounted) {
+                setError(
+                  error instanceof Error
+                    ? error
+                    : WebbError.from(WebbErrorCodes.UnknownError)
+                );
+                setIsLoading(false);
+              }
             }
-          } catch (error) {
-            if (isMounted) {
-              setError(
-                error instanceof Error
-                  ? error
-                  : WebbError.from(WebbErrorCodes.UnknownError)
-              );
-              setIsLoading(false);
-            }
-          }
-        });
+          });
       } catch (error) {
         if (isMounted) {
           setError(
@@ -85,7 +96,7 @@ export default function useActiveAndDelegationCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, []);
+  }, [setCache, value1, value2]);
 
   return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
 }

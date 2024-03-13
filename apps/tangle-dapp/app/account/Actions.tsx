@@ -2,100 +2,106 @@
 
 import {
   ArrowLeftRightLineIcon,
-  CoinIcon,
   CoinsLineIcon,
+  CoinsStackedLineIcon,
   GiftLineIcon,
   ShieldKeyholeLineIcon,
+  StatusIndicator,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
-  IconButton,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { useRouter } from 'next/navigation';
-import { FC, ReactElement, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
+import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
+import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
+import useVestingInfo from '../../data/vesting/useVestingInfo';
+import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import useVesting from '../../hooks/useVesting';
-import { AnchorLinkId, InternalPath, InternalPathString } from '../../types';
-
-type ActionItemDef = {
-  label: string;
-  path: InternalPathString;
-  icon: ReactElement<IconBase>;
-};
-
-/** @internal */
-const staticActionItems: ActionItemDef[] = [
-  {
-    label: 'Nominate',
-    path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
-    icon: <CoinIcon size="lg" />,
-  },
-  {
-    label: 'Payouts',
-    path: `${InternalPath.EvmStaking}/#${AnchorLinkId.NominationAndPayouts}`,
-    icon: <CoinsLineIcon size="lg" />,
-  },
-  {
-    label: 'Claim Airdrop',
-    path: InternalPath.ClaimAirdrop,
-    icon: <GiftLineIcon size="lg" />,
-  },
-] as const;
+import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {
-  const router = useRouter();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const {
     isVesting,
-    executeVestTx,
-    vestTxStatus,
     hasClaimableTokens: hasClaimableVestingTokens,
     claimableTokenAmount,
-  } = useVesting(true);
+  } = useVestingInfo();
+
+  const { execute: executeVestTx, status: vestTxStatus } = useVestTx(true);
 
   const formattedClaimableTokenAmount =
-    useFormattedBalance(claimableTokenAmount);
+    claimableTokenAmount !== null
+      ? formatTokenBalance(claimableTokenAmount)
+      : null;
 
-  // Prefetch static actions that take the user
-  // to another internal page. Only do so on the
-  // first render, or when the router changes.
-  useEffect(() => {
-    for (const staticActionItem of staticActionItems) {
-      router.prefetch(staticActionItem.path);
-    }
-  }, [router]);
+  const { isAirdropEligible } = useAirdropEligibility();
+  const isPayoutsAvailable = usePayoutsAvailability();
 
   return (
     <>
       <div className="flex items-center justify-start gap-6 overflow-x-auto">
         <ActionItem
-          icon={<ArrowLeftRightLineIcon size="lg" />}
           label="Transfer"
+          Icon={ArrowLeftRightLineIcon}
           onClick={() => setIsTransferModalOpen(true)}
         />
 
-        {staticActionItems.map(({ path, ...restItem }, index) => (
+        <ActionItem
+          label="Nominate"
+          internalHref={StaticSearchQueryPath.NominationsTable}
+          Icon={CoinsStackedLineIcon}
+        />
+
+        {isPayoutsAvailable && (
           <ActionItem
-            key={index}
-            {...restItem}
-            onClick={() => router.push(path)}
+            hasNotificationDot
+            label="Payouts"
+            Icon={CoinsLineIcon}
+            internalHref={StaticSearchQueryPath.PayoutsTable}
+            tooltip="You have payouts available. Click here to visit the Payouts page."
           />
-        ))}
+        )}
+
+        {isAirdropEligible && (
+          <ActionItem
+            label="Claim Airdrop"
+            hasNotificationDot
+            Icon={GiftLineIcon}
+            internalHref={PagePath.CLAIM_AIRDROP}
+            tooltip={
+              <>
+                Congratulations, you are eligible for the Tangle Network
+                Airdrop! Click here to visit the <strong>Claim Airdrop</strong>{' '}
+                page.
+              </>
+            }
+          />
+        )}
 
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
-          <Tooltip>
-            <TooltipBody className="break-normal max-w-[250px] text-center">
-              {hasClaimableVestingTokens ? (
+          <ActionItem
+            Icon={ShieldKeyholeLineIcon}
+            label="Vest"
+            onClick={executeVestTx !== null ? executeVestTx : undefined}
+            hasNotificationDot={hasClaimableVestingTokens}
+            isDisabled={
+              vestTxStatus === TxStatus.PROCESSING ||
+              !hasClaimableVestingTokens ||
+              executeVestTx === null
+            }
+            tooltip={
+              hasClaimableVestingTokens ? (
                 <>
                   You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
                   vested tokens that are ready to be claimed. Use this action to
@@ -106,27 +112,14 @@ const Actions: FC = () => {
                   You have vesting schedules in your account, but there are no
                   tokens available to claim yet.
                 </>
-              )}
-            </TooltipBody>
-
-            <TooltipTrigger>
-              <ActionItem
-                icon={<ShieldKeyholeLineIcon size="lg" />}
-                label="Vest"
-                isDisabled={
-                  vestTxStatus === TxStatus.Processing ||
-                  !hasClaimableVestingTokens
-                }
-                onClick={executeVestTx}
-                isImportant={hasClaimableVestingTokens}
-              />
-            </TooltipTrigger>
-          </Tooltip>
+              )
+            }
+          />
         )}
       </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}
-      <div className="absolute">
+      <div className="!m-0">
         <TransferTxContainer
           isModalOpen={isTransferModalOpen}
           setIsModalOpen={setIsTransferModalOpen}
@@ -138,44 +131,61 @@ const Actions: FC = () => {
 
 /** @internal */
 const ActionItem = (props: {
-  icon: ReactElement<IconBase>;
+  Icon: (props: IconBase) => ReactElement;
   label: string;
   onClick?: () => void;
   isDisabled?: boolean;
-  isImportant?: boolean;
+  hasNotificationDot?: boolean;
+  internalHref?: InternalPath;
+  tooltip?: ReactElement | string;
 }) => {
   const {
-    icon,
+    Icon,
     label,
     onClick,
+    internalHref,
+    tooltip,
     isDisabled = false,
-    isImportant = false,
+    hasNotificationDot = false,
   } = props;
 
-  const cursorClass = isDisabled ? '!cursor-not-allowed' : '';
+  const cursorClass = isDisabled ? '!cursor-not-allowed' : 'cursor-pointer';
   const isDisabledClass = isDisabled ? 'opacity-50' : '';
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
       return;
     }
 
     onClick();
-  };
+  }, [isDisabled, onClick]);
 
-  return (
-    <p className={twMerge('space-y-2', isDisabledClass, cursorClass)}>
-      <IconButton
-        className={twMerge('block mx-auto relative', cursorClass)}
+  const content = (
+    <div
+      className={twMerge(
+        'inline-flex flex-col justify-center items-center gap-2',
+        isDisabledClass,
+        cursorClass
+      )}
+    >
+      <div
         onClick={handleClick}
+        className={twMerge(
+          'inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0',
+          cursorClass
+        )}
       >
         {/* Notification dot */}
-        {isImportant && (
-          <div className="absolute right-1 top-1 rounded-full w-3 h-3 bg-red-40"></div>
+        {hasNotificationDot && (
+          <StatusIndicator
+            variant="success"
+            size={12}
+            className="absolute right-0 top-0"
+          />
         )}
 
-        {icon}
-      </IconButton>
+        <Icon size="lg" />
+      </div>
 
       <Typography
         component="span"
@@ -184,7 +194,26 @@ const ActionItem = (props: {
       >
         {label}
       </Typography>
-    </p>
+    </div>
+  );
+
+  const withLink =
+    internalHref !== undefined ? (
+      <Link href={internalHref}>{content}</Link>
+    ) : (
+      content
+    );
+
+  return tooltip !== undefined ? (
+    <Tooltip>
+      <TooltipBody className="break-normal max-w-[250px] text-center">
+        {tooltip}
+      </TooltipBody>
+
+      <TooltipTrigger asChild>{withLink}</TooltipTrigger>
+    </Tooltip>
+  ) : (
+    withLink
   );
 };
 

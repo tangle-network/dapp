@@ -1,4 +1,5 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { TANGLE_TESTNET_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
@@ -16,6 +17,7 @@ const RecentTxContainer: FC = () => {
           variant="utility"
           color="primary"
           className="uppercase"
+          href={TANGLE_TESTNET_EXPLORER_URL}
         >
           View Explorer
         </Button>

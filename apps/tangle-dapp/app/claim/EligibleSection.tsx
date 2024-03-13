@@ -1,7 +1,5 @@
 'use client';
 
-import '@webb-tools/tangle-substrate-types';
-
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import { hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
@@ -32,24 +30,30 @@ import { getPolkadotApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
 
 enum Step {
-  InputAddress,
-  Sign,
-  SendingTx,
+  INPUT_ADDRESS,
+  SIGN,
+  SENDING_TX,
 }
 
-const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
+type Props = {
+  claimInfo: ClaimInfoType;
+  onClaimCompleted: (accountAddress: string) => void;
+};
+
+const EligibleSection: FC<Props> = ({
+  claimInfo: { amount, isRegularStatement },
+  onClaimCompleted,
+}) => {
   const { activeAccount, activeApi, activeWallet } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
-
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
-
-  const [step, setStep] = useState(Step.InputAddress);
+  const [step, setStep] = useState(Step.INPUT_ADDRESS);
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
@@ -80,7 +84,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
     }
 
     try {
-      setStep(Step.Sign);
+      setStep(Step.SIGN);
 
       const api = await getPolkadotApiPromise();
       const accountId = activeAccount.address;
@@ -104,19 +108,21 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
 
       const signature = await activeApi.sign(payload);
 
-      setStep(Step.SendingTx);
+      setStep(Step.SENDING_TX);
 
       const tx = api.tx.claims.claimAttest(
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
         isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer
-        isEvmSigner ? { EVM: signature } : { Native: signature }, // signataure
+        isEvmSigner ? { EVM: signature } : { Native: signature }, // signature
         statementSentence
       );
 
       const hash = await sendTransaction(tx);
-
       const newSearchParams = new URLSearchParams(searchParams.toString());
+
       newSearchParams.set('h', hash);
+      onClaimCompleted(accountId);
+
       router.push(`claim/success?${newSearchParams.toString()}`, {
         scroll: true,
       });
@@ -132,7 +138,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
         secondaryMessage: error instanceof Error ? undefined : String(error),
       });
 
-      setStep(Step.InputAddress);
+      setStep(Step.INPUT_ADDRESS);
     }
   };
 
@@ -145,25 +151,19 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
       <div className="space-y-8">
         <div className="space-y-4">
           <ClaimingAccountInput
-            isDisabled={step !== Step.InputAddress}
+            isDisabled={step !== Step.INPUT_ADDRESS}
             activeAccountAddress={activeAccount.address}
           />
 
           <ClaimRecipientInput
-            isDisabled={step !== Step.InputAddress}
+            isDisabled={step !== Step.INPUT_ADDRESS}
             error={recipientErrorMsg}
             recipient={recipient}
             setRecipient={setRecipient}
           />
         </div>
 
-        <div
-          className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)]"
-          style={{
-            backgroundColor:
-              'linear-gradient(180deg,rgba(255, 255, 255, 0.8) 0.18%,rgba(255, 255, 255, 0) 146.88%)',
-          }}
-        >
+        <div className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
             You will receive...
           </Typography>
@@ -190,7 +190,7 @@ const EligibleSection: FC<ClaimInfoType> = ({ amount, isRegularStatement }) => {
         <Button
           isFullWidth
           loadingText={getLoadingText(step)}
-          isLoading={step !== Step.InputAddress}
+          isLoading={step !== Step.INPUT_ADDRESS}
           isDisabled={!recipient || !!recipientErrorMsg}
           onClick={handleClaimClick}
         >
@@ -298,9 +298,9 @@ function sendTransaction(
 
 function getLoadingText(step: Step) {
   switch (step) {
-    case Step.Sign:
+    case Step.SIGN:
       return 'Signing...';
-    case Step.SendingTx:
+    case Step.SENDING_TX:
       return 'Sending transaction...';
     default:
       return '';

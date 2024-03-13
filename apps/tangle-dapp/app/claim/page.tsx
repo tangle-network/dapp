@@ -8,7 +8,6 @@ import type { Account } from '@webb-tools/abstract-api-provider';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import type { Nullable } from '@webb-tools/dapp-types/utils/types';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { Spinner } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
@@ -17,10 +16,15 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { TANGLE_TOKEN_UNIT } from '../../constants/index';
+import { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
+
+const eligibilityCache = new Map<string, ClaimInfoType>();
 
 export default function Page() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
@@ -29,28 +33,66 @@ export default function Page() {
 
   // Default to null to indicate that we are still checking
   // If false, then we know that the user is not eligible
-  // Otherwise, the state will be the claim info
-  const [claimInfo, setClaimInfo] =
-    useState<Nullable<ClaimInfoType | false>>(null);
+  // Otherwise, the state will be the claim info.
+  const [claimInfo, setClaimInfo] = useState<ClaimInfoType | false | null>(
+    null
+  );
+
   const [checkingEligibility, setCheckingEligibility] = useState(false);
+
+  const { setWithPreviousValue: setEligibilityCache } = useLocalStorage(
+    LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE,
+    true
+  );
+
+  // Update the eligibility cache in local storage once it
+  // is known whether the user is eligible or not for the airdrop.
+  // This is reused in the account page, to avoid checking eligibility
+  // multiple times.
+  useEffect(() => {
+    if (activeAccount !== null && claimInfo !== null) {
+      setEligibilityCache((previous) => ({
+        ...previous,
+        [activeAccount.address]: claimInfo !== false,
+      }));
+    }
+  }, [activeAccount, claimInfo, setEligibilityCache]);
+
+  // After the user has claimed the airdrop, we can remove the
+  // eligibility from the cache, to avoid showing incorrect information
+  // when navigating back to the claim page.
+  const handleClaimCompletion = useCallback(
+    (accountAddress: string) => {
+      eligibilityCache.delete(accountAddress);
+      setClaimInfo(null);
+
+      // Mark active account address as no longer eligible in the
+      // local storage after claiming the airdrop.
+      setEligibilityCache((previous) => ({
+        ...previous,
+        [accountAddress]: false,
+      }));
+    },
+    [setEligibilityCache]
+  );
 
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: 'Claim your $TNT Aidrop',
+        title: `Claim your $${TANGLE_TOKEN_UNIT} Airdrop`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo === false) {
       return {
-        title: 'You are not eligible for $TNT Airdrop',
+        title: `You are not eligible for $${TANGLE_TOKEN_UNIT} Airdrop`,
         subTitle: 'OOPS!',
       };
     }
 
     return {
-      title: 'You have unclaimed $TNT Airdrop!',
+      title: `You have unclaimed $${TANGLE_TOKEN_UNIT} Airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
   }, [claimInfo]);
@@ -63,11 +105,7 @@ export default function Page() {
     ) => {
       try {
         abortSignal?.throwIfAborted();
-
-        setClaimInfo(null);
         setCheckingEligibility(true);
-
-        abortSignal?.throwIfAborted();
 
         const claimInfo = await getClaimsInfo(activeAccount.address, {
           force,
@@ -133,19 +171,21 @@ export default function Page() {
           {claimInfo === null ? (
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 5,000,000 TNT tokens to the community. Check
-              eligibility below to see if you qualify for TNT Airdrop!
+              distributing 5 million {TANGLE_TOKEN_UNIT} tokens to the
+              community. Check eligibility below to see if you qualify for{' '}
+              {TANGLE_TOKEN_UNIT} Airdrop!
             </>
           ) : claimInfo ? (
             <>
-              Looks like you are eligible for $TNT airdrop! View your tokens
-              below, and start the claiming process.
+              You are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View your
+              tokens below, and start the claiming process.
             </>
           ) : (
             <>
-              Looks like you are not eligible for $TNT airdrop. You can still
-              participate in the Tangle Network by purchasing $TNT or try again
-              with a different account.
+              You are not eligible for ${TANGLE_TOKEN_UNIT} airdrop. You can
+              still participate in the Tangle Network by acquiring $
+              {TANGLE_TOKEN_UNIT} or you can try again with a different account
+              by disconnecting your current wallet.
             </>
           )}
         </AppTemplate.Description>
@@ -168,6 +208,7 @@ export default function Page() {
               >
                 Connect EVM Wallet
               </Button>
+
               <Button
                 variant="secondary"
                 isDisabled={loading || isConnecting}
@@ -181,9 +222,12 @@ export default function Page() {
             </div>
           </>
         ) : claimInfo ? (
-          <EligibleSection {...claimInfo} />
+          <EligibleSection
+            claimInfo={claimInfo}
+            onClaimCompleted={handleClaimCompletion}
+          />
         ) : claimInfo === false ? (
-          <NotEligibleSection checkEligibility={checkEligibility} />
+          <NotEligibleSection />
         ) : checkingEligibility ? (
           <>
             <Typography variant="mkt-body2" ta="center" fw="bold">
@@ -197,8 +241,6 @@ export default function Page() {
     </AppTemplate.Content>
   );
 }
-
-const eligibilityCache = new Map<string, ClaimInfoType>();
 
 const getClaimsInfo = async (
   accountAddress: string,

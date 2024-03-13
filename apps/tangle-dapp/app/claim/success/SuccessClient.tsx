@@ -11,6 +11,8 @@ import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTempla
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type FC, useMemo } from 'react';
 
+import { TANGLE_TOKEN_UNIT } from '../../../constants';
+
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   const { apiConfig } = useWebContext();
 
@@ -29,7 +31,7 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   return (
     <AppTemplate.Content>
       <AppTemplate.Title
-        title="You have successfully claimed $TNT Airdrop!"
+        title={`You have successfully claimed $${TANGLE_TOKEN_UNIT} Airdrop!`}
         subTitle="CONGRATULATIONS!"
         overrideSubTitleProps={{
           className: 'text-blue-70 dark:text-blue-50',
@@ -45,9 +47,9 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
           />
 
           <Typography variant="body1" ta="center">
-            You have successfully claimed $TNT Airdrop! Your transaction has
-            been confirmed on the Tangle Network. You can view your transaction
-            on the explorer below.
+            You have successfully claimed ${TANGLE_TOKEN_UNIT} Airdrop! Your
+            transaction has been confirmed on the Tangle Network. You can view
+            your transaction on the explorer below.
           </Typography>
 
           {txExplorerUrl ? (

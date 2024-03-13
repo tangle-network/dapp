@@ -1,132 +1,113 @@
+'use client';
+
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { FileCopyLine, LoopRightFillIcon } from '@webb-tools/icons';
+import { LoopRightFillIcon } from '@webb-tools/icons';
 import {
+  CopyWithTooltip,
   shortenHex,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  Typography,
   useHiddenValue,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
-import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
-import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import type { ComponentProps, ElementRef } from 'react';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { convertToSubstrateAddress } from '../utils';
 
-type Props = {
+export type IdentityProps = {
   address: string;
   iconTooltipContent: string;
-  label?: string;
-  fontWeight?: ComponentProps<typeof KeyValueWithButton>['valueFontWeight'];
+  className?: string;
 };
 
-const Identity = forwardRef<ElementRef<'div'>, PropsOf<'div'> & Props>(
-  (props, ref) => {
-    const {
-      address,
-      label,
-      iconTooltipContent,
-      className,
-      fontWeight,
-      ...divProps
-    } = props;
+const Identity: FC<IdentityProps> = ({
+  address,
+  iconTooltipContent,
+  className,
+}) => {
+  const [isHiddenValue] = useHiddenValue();
+  const isEvmAccountAddress = isEthereumAddress(address);
 
-    const [isHiddenValue] = useHiddenValue();
-    const copyableResult = useCopyable();
-    const isEvmAccountAddress = isEthereumAddress(address);
-    const { notificationApi } = useWebbUI();
+  const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
+    useState(isEvmAccountAddress);
 
-    const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
-      useState(isEvmAccountAddress);
+  const [displayAddress, setDisplayAddress] = useState(address);
 
-    const [displayAddress, setDisplayAddress] = useState(address);
+  const shortenFn = isHiddenValue
+    ? shortenString
+    : isDisplayingEvmAddress
+    ? shortenHex
+    : shortenString;
 
-    useEffect(() => {
+  const finalDisplayAddress = isHiddenValue
+    ? Array.from({ length: 130 })
+        .map(() => '*')
+        .join('')
+    : displayAddress;
+
+  // Switch between EVM & Substrate addresses.
+  const handleAddressTypeToggle = useCallback(() => {
+    setIsDisplayingEvmAddress((previous) => !previous);
+
+    if (!isDisplayingEvmAddress && isEvmAccountAddress) {
       setDisplayAddress(address);
-    }, [address]);
+    } else if (isEvmAccountAddress) {
+      setDisplayAddress(convertToSubstrateAddress(address));
+    }
+  }, [address, isDisplayingEvmAddress, isEvmAccountAddress]);
 
-    const shortenFn = isHiddenValue
-      ? shortenString
-      : isDisplayingEvmAddress
-      ? shortenHex
-      : shortenString;
+  const prefix = isDisplayingEvmAddress ? 'EVM' : 'Substrate';
+  const oppositePrefix = isDisplayingEvmAddress ? 'Substrate' : 'EVM';
+  const iconFillColorClassName = 'dark:!fill-mono-80 !fill-mono-160';
 
-    const finalDisplayAddress = isHiddenValue
-      ? Array.from({ length: 130 })
-          .map(() => '*')
-          .join('')
-      : displayAddress;
+  return (
+    <div className={twMerge('flex items-center gap-1', className)}>
+      <IconWithTooltip
+        icon={<Avatar value={address} theme="ethereum" />}
+        content={iconTooltipContent}
+      />
 
-    const handleAddressTypeToggle = useCallback(() => {
-      setIsDisplayingEvmAddress((previous) => !previous);
+      <Typography variant="body1" fw="normal">
+        Address:
+      </Typography>
 
-      if (!isDisplayingEvmAddress && isEvmAccountAddress) {
-        setDisplayAddress(address);
-      } else if (isEvmAccountAddress) {
-        setDisplayAddress(convertToSubstrateAddress(address) ?? '');
-      }
-    }, [address, isDisplayingEvmAddress, isEvmAccountAddress]);
+      <Tooltip>
+        <TooltipTrigger className="cursor-default">
+          <Typography variant="body1" fw="normal" className="text-mono-160">
+            {shortenFn(finalDisplayAddress, 5)}
+          </Typography>
+        </TooltipTrigger>
 
-    const handleCopy = useCallback(() => {
-      copyableResult.copy(finalDisplayAddress);
+        <TooltipBody className="max-w-full">{displayAddress}</TooltipBody>
+      </Tooltip>
 
-      notificationApi({
-        variant: 'success',
-        message: 'Address copied to clipboard',
-      });
-    }, [copyableResult, finalDisplayAddress, notificationApi]);
+      <CopyWithTooltip
+        className="!bg-transparent !p-0"
+        iconClassName={iconFillColorClassName}
+        copyLabel={`Copy ${prefix} address`}
+        textToCopy={finalDisplayAddress}
+      />
 
-    const prefix = isDisplayingEvmAddress ? 'EVM' : 'Substrate';
-    const oppositePrefix = isDisplayingEvmAddress ? 'Substrate' : 'EVM';
-
-    return (
-      <div
-        {...divProps}
-        className={twMerge(className, 'flex items-center gap-2')}
-        ref={ref}
-      >
-        <IconWithTooltip
-          icon={<Avatar value={address} theme="ethereum" />}
-          content={iconTooltipContent}
-        />
-
-        <span>Address: </span>
-
-        <Tooltip>
-          <TooltipTrigger>{shortenFn(finalDisplayAddress, 5)}</TooltipTrigger>
-
-          <TooltipBody>{displayAddress}</TooltipBody>
-        </Tooltip>
-
+      {isEvmAccountAddress && (
         <Tooltip>
           <TooltipTrigger>
-            <FileCopyLine onClick={handleCopy} />
+            <LoopRightFillIcon
+              className={iconFillColorClassName}
+              onClick={handleAddressTypeToggle}
+            />
           </TooltipTrigger>
 
-          <TooltipBody>Copy {prefix} address</TooltipBody>
+          <TooltipBody>Switch to {oppositePrefix} address</TooltipBody>
         </Tooltip>
-
-        {isEvmAccountAddress && (
-          <Tooltip>
-            <TooltipTrigger>
-              <LoopRightFillIcon onClick={handleAddressTypeToggle} />
-            </TooltipTrigger>
-
-            <TooltipBody>Switch to {oppositePrefix} address</TooltipBody>
-          </Tooltip>
-        )}
-      </div>
-    );
-  }
-);
-
-Identity.displayName = Identity.name;
+      )}
+    </div>
+  );
+};
 
 export default Identity;

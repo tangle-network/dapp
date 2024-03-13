@@ -27,7 +27,6 @@ const ClaimingAccountInput: FC<Props> = ({
   isDisabled,
 }) => {
   const { activeApi, accounts, setActiveAccount } = useWebContext();
-
   const { notificationApi } = useWebbUI();
 
   const handleEvmSwitch = async (
@@ -51,6 +50,7 @@ const ClaimingAccountInput: FC<Props> = ({
       <Typography variant="body1" fw="bold">
         Claiming Account (EVM or Substrate)
       </Typography>
+
       {activeApi instanceof WebbWeb3Provider ? (
         <button
           disabled={isDisabled}
@@ -65,12 +65,12 @@ const ClaimingAccountInput: FC<Props> = ({
             'disabled:opacity-80'
           )}
         >
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 w-full max-w-full overflow-x-hidden">
             <Avatar theme="ethereum" value={activeAccountAddress} />
-            <span className={twMerge('text-inherit', 'body1')}>
-              {activeAccountAddress}
-            </span>
+
+            <span className="text-inherit body1">{activeAccountAddress}</span>
           </div>
+
           <ChevronDown />
         </button>
       ) : (

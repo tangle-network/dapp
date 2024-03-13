@@ -1,4 +1,3 @@
-import type { Account } from '@webb-tools/abstract-api-provider';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
@@ -7,14 +6,9 @@ import type { FC } from 'react';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 
-type Props = {
-  checkEligibility: (activeAccount: Account, force?: boolean) => Promise<void>;
-};
-
-const NotEligibleSection: FC<Props> = ({ checkEligibility }) => {
+const NotEligibleSection: FC = () => {
   const { activeAccount, activeWallet } = useWebContext();
   const { toggleModal } = useConnectWallet();
-
   const isActiveWalletEvm = activeWallet?.platform === 'EVM';
 
   if (!activeAccount) {
@@ -26,11 +20,8 @@ const NotEligibleSection: FC<Props> = ({ checkEligibility }) => {
       <ClaimingAccountInput activeAccountAddress={activeAccount.address} />
 
       <div className="space-y-2">
-        <Button
-          isFullWidth
-          onClick={() => checkEligibility(activeAccount, true)}
-        >
-          Try Again
+        <Button isFullWidth onClick={() => toggleModal()}>
+          Try Another Account
         </Button>
 
         <Button

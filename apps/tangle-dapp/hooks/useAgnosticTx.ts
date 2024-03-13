@@ -1,4 +1,5 @@
 import { ISubmittableResult } from '@polkadot/types/types';
+import { assert } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
@@ -49,7 +50,7 @@ function useAgnosticTx<
 
   const agnosticStatus =
     isEvmAccount === null
-      ? TxStatus.NotYetInitiated
+      ? TxStatus.NOT_YET_INITIATED
       : isEvmAccount
       ? evmTxStatus
       : substrateTxStatus;
@@ -61,7 +62,7 @@ function useAgnosticTx<
   useEffect(() => {
     if (
       isEvmAccount === null ||
-      agnosticStatus === TxStatus.NotYetInitiated ||
+      agnosticStatus === TxStatus.NOT_YET_INITIATED ||
       !notifyStatusUpdates
     ) {
       return;
@@ -88,20 +89,31 @@ function useAgnosticTx<
   ]);
 
   const execute = useCallback(async () => {
-    if (activeAccountAddress === null || isEvmAccount === null) {
-      return;
+    if (executeEvmPrecompileAbiCall !== null) {
+      return executeEvmPrecompileAbiCall();
+    } else if (executeSubstrateTx !== null) {
+      return executeSubstrateTx();
     }
 
-    return isEvmAccount ? executeEvmPrecompileAbiCall() : executeSubstrateTx();
-  }, [
-    activeAccountAddress,
-    isEvmAccount,
-    executeEvmPrecompileAbiCall,
-    executeSubstrateTx,
-  ]);
+    // By this point, at least one of the executors should be defined,
+    // otherwise it constitutes a logic error.
+    assert(
+      executeSubstrateTx !== null,
+      'Substrate transaction executor should be defined if EVM transaction executor is not'
+    );
+  }, [executeEvmPrecompileAbiCall, executeSubstrateTx]);
 
   return {
-    execute: () => void execute(),
+    execute:
+      // Only provide the executor when all its requirements are met.
+      // This is useful, for example, to force the consumer of this hook
+      // to disable the button that triggers the transaction until its
+      // requirements are met.
+      activeAccountAddress === null ||
+      isEvmAccount === null ||
+      (executeSubstrateTx === null && executeEvmPrecompileAbiCall === null)
+        ? null
+        : execute,
     status: agnosticStatus,
   };
 }

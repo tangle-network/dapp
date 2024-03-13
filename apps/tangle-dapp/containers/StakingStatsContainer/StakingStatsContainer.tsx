@@ -1,41 +1,46 @@
 'use client';
 
 import { ListCheckIcon, TimerLine } from '@webb-tools/icons';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import PillCard from '../../app/account/PillCard';
-import { SWR_ERA } from '../../constants';
-import usePendingStakingRewards from '../../data/StakingStats/useStakingRewards';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import useStakingPendingRewards from '../../data/staking/useStakingPendingRewards';
+import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 
-const StakingStats: FC = () => {
-  const { value: currentEra } = usePolkadotApi(SWR_ERA, (api) =>
-    api.query.staking.currentEra().then((era) => era.toString())
+const StakingStatsContainer: FC = () => {
+  const { value: currentEra } = usePolkadotApi<string | null>(
+    useCallback(
+      // TODO: Find out under what conditions can `eraOpt` be `None` and handle it. Will need to search in the Substrate codebase for this. Make sure to write a comment explaining the conditions under which `eraOpt` can be `None` here, once it's found.
+      (api) =>
+        api.query.staking.currentEra().then((eraOpt) => eraOpt.toString()),
+      []
+    ),
+    PolkadotApiSwrKey.ERA
   );
 
-  const pendingRewards = usePendingStakingRewards();
-  const formattedPendingRewards = useFormattedBalance(pendingRewards);
+  const pendingRewards = useStakingPendingRewards();
+
+  const formattedPendingRewards =
+    pendingRewards !== null ? formatTokenBalance(pendingRewards) : null;
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row">
-        <PillCard
-          isFirst
-          title="Current Era"
-          value={currentEra}
-          Icon={TimerLine}
-        />
+    <div className="flex flex-col md:flex-row">
+      <PillCard
+        isFirst
+        title="Current Era"
+        value={currentEra}
+        Icon={TimerLine}
+      />
 
-        <PillCard
-          isLast
-          title="Pending Staking Rewards"
-          value={formattedPendingRewards}
-          Icon={ListCheckIcon}
-        />
-      </div>
-    </>
+      <PillCard
+        isLast
+        title="Pending Staking Rewards"
+        value={formattedPendingRewards}
+        Icon={ListCheckIcon}
+      />
+    </div>
   );
 };
 
-export default StakingStats;
+export default StakingStatsContainer;

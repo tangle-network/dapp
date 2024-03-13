@@ -18,6 +18,7 @@ import {
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import {
   PAYMENT_DESTINATION_OPTIONS,
   TANGLE_TOKEN_UNIT,
@@ -59,6 +60,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
 
+  const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
+    useState(false);
+  const [txStatus, setTxnStatus] = useState<{
+    status: 'success' | 'error';
+    hash: string;
+  }>({
+    status: 'error',
+    hash: '',
+  });
+
   const executeTx = useExecuteTxWithNotification();
 
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
@@ -66,7 +77,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   );
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.Staked
+    PaymentDestination.STAKED
   );
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
@@ -98,7 +109,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
@@ -164,62 +175,31 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(0);
-    setPaymentDestination(PaymentDestination.Staked);
+    setPaymentDestination(PaymentDestination.STAKED);
     setSelectedValidators([]);
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
   const executeDelegate: () => Promise<void> = useCallback(async () => {
-    if (isFirstTimeNominator) {
-      await executeTx(
-        () =>
-          bondTokensEvm(walletAddress, amountToBond, PaymentDestination.Stash),
-        () =>
-          bondTokensSubstrate(
-            walletAddress,
-            amountToBond,
-            PaymentDestination.Stash
-          ),
-        `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
-        'Failed to bond tokens!'
-      );
-
-      await executeTx(
-        () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
-        () =>
-          updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
-        `Successfully updated payment destination to ${paymentDestination}.`,
-        'Failed to update payment destination!'
-      );
-
-      await executeTx(
-        () => nominateValidatorsEvm(walletAddress, selectedValidators),
-        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
-        `Successfully nominated ${selectedValidators.length} validators.`,
-        'Failed to nominate validators!'
-      );
-    } else {
-      if (amountToBond > 0) {
+    try {
+      if (isFirstTimeNominator) {
         await executeTx(
-          () => bondExtraTokensEvm(walletAddress, amountToBond),
-          () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+          () =>
+            bondTokensEvm(
+              walletAddress,
+              amountToBond,
+              PaymentDestination.STASH
+            ),
+          () =>
+            bondTokensSubstrate(
+              walletAddress,
+              amountToBond,
+              PaymentDestination.STASH
+            ),
           `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
           'Failed to bond tokens!'
         );
-      }
 
-      if (currentPaymentDestinationError)
-        notificationApi({
-          variant: 'error',
-          message: currentPaymentDestinationError.message,
-        });
-
-      const currPaymentDestination =
-        currentPaymentDestination?.value1 === 'Staked'
-          ? PaymentDestination.Staked
-          : PaymentDestination.Stash;
-
-      if (currPaymentDestination !== paymentDestination) {
         await executeTx(
           () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
           () =>
@@ -230,14 +210,65 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           `Successfully updated payment destination to ${paymentDestination}.`,
           'Failed to update payment destination!'
         );
+
+        const hash = await executeTx(
+          () => nominateValidatorsEvm(walletAddress, selectedValidators),
+          () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+          `Successfully nominated ${selectedValidators.length} validators.`,
+          'Failed to nominate validators!'
+        );
+
+        setTxnStatus({ status: 'success', hash });
+      } else {
+        if (amountToBond > 0) {
+          await executeTx(
+            () => bondExtraTokensEvm(walletAddress, amountToBond),
+            () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+            `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
+            'Failed to bond tokens!'
+          );
+        }
+
+        if (currentPaymentDestinationError)
+          notificationApi({
+            variant: 'error',
+            message: currentPaymentDestinationError.message,
+          });
+
+        const currPaymentDestination =
+          currentPaymentDestination?.value1 === 'Staked'
+            ? PaymentDestination.STAKED
+            : PaymentDestination.STASH;
+
+        if (currPaymentDestination !== paymentDestination) {
+          await executeTx(
+            () =>
+              updatePaymentDestinationEvm(walletAddress, paymentDestination),
+            () =>
+              updatePaymentDestinationSubstrate(
+                walletAddress,
+                paymentDestination
+              ),
+            `Successfully updated payment destination to ${paymentDestination}.`,
+            'Failed to update payment destination!'
+          );
+        }
+
+        const hash = await executeTx(
+          () => nominateValidatorsEvm(walletAddress, selectedValidators),
+          () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+          `Successfully nominated ${selectedValidators.length} validators.`,
+          'Failed to nominate validators!'
+        );
+
+        setTxnStatus({ status: 'success', hash });
       }
 
-      await executeTx(
-        () => nominateValidatorsEvm(walletAddress, selectedValidators),
-        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
-        `Successfully nominated ${selectedValidators.length} validators.`,
-        'Failed to nominate validators!'
-      );
+      setTxnConfirmationModalIsOpen(true);
+    } catch (e) {
+      setTxnStatus({ status: 'error', hash: '' });
+
+      setTxnConfirmationModalIsOpen(true);
     }
   }, [
     amountToBond,
@@ -272,118 +303,130 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }
 
   return (
-    <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
-      >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Setup Nominator {currentStep}
-        </ModalHeader>
+    <>
+      <Modal open>
+        <ModalContent
+          isCenter
+          isOpen={isModalOpen}
+          className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        >
+          <ModalHeader titleVariant="h4" onClose={closeModal}>
+            Setup Nominator {currentStep}
+          </ModalHeader>
 
-        <div className="px-8 py-6">
-          {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
-            <BondTokens
-              isFirstTimeNominator={isFirstTimeNominator}
-              nominatorAddress={walletAddress}
-              amountToBond={amountToBond}
-              setAmountToBond={setAmountToBond}
-              amountToBondError={amountToBondError}
-              amountWalletBalance={
-                walletBalance && walletBalance.value1 ? walletBalance.value1 : 0
-              }
-              paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
-              paymentDestination={paymentDestination}
-              setPaymentDestination={setPaymentDestination}
-            />
-          ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
-            <SelectDelegates
-              validators={allValidators}
-              selectedValidators={selectedValidators}
-              setSelectedValidators={setSelectedValidators}
-            />
-          ) : delegateTxStep === DelegateTxSteps.AUTHORIZE_TX ? (
-            <AuthorizeTx
-              nominatorAddress={walletAddress}
-              contractFunc={CONTRACT_FUNC}
-              contractLink={STAKING_PRECOMPILE_LINK}
-            />
-          ) : null}
-
-          {isExceedingMaxNominationQuota && (
-            <Alert
-              type="error"
-              className="mt-4"
-              description={`You can only nominate up to ${maxNominationQuota} validators.`}
-            />
-          )}
-        </div>
-
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-          {delegateTxStep !== DelegateTxSteps.AUTHORIZE_TX ? (
-            <Button
-              isFullWidth
-              isDisabled={
-                (delegateTxStep === DelegateTxSteps.BOND_TOKENS &&
-                  !continueToSelectDelegatesStep) ||
-                (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES &&
-                  !continueToAuthorizeTxStep)
-              }
-              onClick={() => {
-                if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
-                  setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
-                } else if (
-                  delegateTxStep === DelegateTxSteps.SELECT_DELEGATES
-                ) {
-                  setDelegateTxStep(DelegateTxSteps.AUTHORIZE_TX);
+          <div className="px-8 py-6">
+            {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
+              <BondTokens
+                isFirstTimeNominator={isFirstTimeNominator}
+                nominatorAddress={walletAddress}
+                amountToBond={amountToBond}
+                setAmountToBond={setAmountToBond}
+                amountToBondError={amountToBondError}
+                amountWalletBalance={
+                  walletBalance && walletBalance.value1
+                    ? walletBalance.value1
+                    : 0
                 }
-              }}
-            >
-              {delegateTxStep === DelegateTxSteps.BOND_TOKENS
-                ? 'Next'
-                : amountToBond > 0
-                ? 'Stake & Nominate'
-                : 'Nominate'}
-            </Button>
-          ) : (
-            <Button
-              isFullWidth
-              isDisabled={
-                delegateTxStep === DelegateTxSteps.AUTHORIZE_TX &&
-                !continueToSignAndSubmitTx
-              }
-              isLoading={isSubmitAndSignTxLoading}
-              onClick={submitAndSignTx}
-            >
-              Confirm
-            </Button>
-          )}
+                paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
+                paymentDestination={paymentDestination}
+                setPaymentDestination={setPaymentDestination}
+              />
+            ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
+              <SelectDelegates
+                validators={allValidators}
+                selectedValidators={selectedValidators}
+                setSelectedValidators={setSelectedValidators}
+              />
+            ) : delegateTxStep === DelegateTxSteps.AUTHORIZE_TX ? (
+              <AuthorizeTx
+                nominatorAddress={walletAddress}
+                contractFunc={CONTRACT_FUNC}
+                contractLink={STAKING_PRECOMPILE_LINK}
+              />
+            ) : null}
 
-          {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
-            <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-              <Button isFullWidth variant="secondary">
-                Learn More
+            {isExceedingMaxNominationQuota && (
+              <Alert
+                type="error"
+                className="mt-4"
+                description={`You can only nominate up to ${maxNominationQuota} validators.`}
+              />
+            )}
+          </div>
+
+          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+            {delegateTxStep !== DelegateTxSteps.AUTHORIZE_TX ? (
+              <Button
+                isFullWidth
+                isDisabled={
+                  (delegateTxStep === DelegateTxSteps.BOND_TOKENS &&
+                    !continueToSelectDelegatesStep) ||
+                  (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES &&
+                    !continueToAuthorizeTxStep)
+                }
+                onClick={() => {
+                  if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
+                    setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
+                  } else if (
+                    delegateTxStep === DelegateTxSteps.SELECT_DELEGATES
+                  ) {
+                    setDelegateTxStep(DelegateTxSteps.AUTHORIZE_TX);
+                  }
+                }}
+              >
+                {delegateTxStep === DelegateTxSteps.BOND_TOKENS
+                  ? 'Next'
+                  : amountToBond > 0
+                  ? 'Stake & Nominate'
+                  : 'Nominate'}
               </Button>
-            </Link>
-          ) : (
-            <Button
-              isFullWidth
-              variant="secondary"
-              onClick={() => {
-                if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
-                  setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
-                } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
-                  setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
+            ) : (
+              <Button
+                isFullWidth
+                isDisabled={
+                  delegateTxStep === DelegateTxSteps.AUTHORIZE_TX &&
+                  !continueToSignAndSubmitTx
                 }
-              }}
-            >
-              Go Back
-            </Button>
-          )}
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+                isLoading={isSubmitAndSignTxLoading}
+                onClick={submitAndSignTx}
+              >
+                Confirm
+              </Button>
+            )}
+
+            {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
+              <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+                <Button isFullWidth variant="secondary">
+                  Learn More
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                isFullWidth
+                variant="secondary"
+                onClick={() => {
+                  if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
+                    setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
+                  } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
+                    setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
+                  }
+                }}
+              >
+                Go Back
+              </Button>
+            )}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <TxConfirmationModal
+        isModalOpen={txConfirmationModalIsOpen}
+        setIsModalOpen={setTxnConfirmationModalIsOpen}
+        txStatus={txStatus.status}
+        txHash={txStatus.hash}
+        txType={isSubstrateAddress(walletAddress) ? 'substrate' : 'evm'}
+      />
+    </>
   );
 };
 

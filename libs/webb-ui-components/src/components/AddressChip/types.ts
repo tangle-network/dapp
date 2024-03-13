@@ -1,5 +1,5 @@
 export interface AddressChipProps {
-  address: string;
+  address?: string | null;
   isNoteAccount?: boolean;
   className?: string;
 }

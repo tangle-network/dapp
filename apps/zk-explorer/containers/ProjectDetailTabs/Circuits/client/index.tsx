@@ -1,11 +1,10 @@
 'use client';
 
-import { SkeletonLoader } from '@webb-tools/webb-ui-components';
+import { CodeFile, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { FileTree } from '../../../../server/projectDetails';
-import CodeFile from './CodeFile';
 import Header from './Header';
 import NavSideBar from './NavSideBar';
 
@@ -77,8 +76,17 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ fileTree }) => {
 
           <Panel className="!overflow-auto">
             <CodeFile
-              fetchUrl={activeFileData?.fetchUrl}
+              getCodeFileFnc={async () => {
+                if (!activeFileData?.fetchUrl) throw new Error('No fetchUrl');
+                const res = await fetch(activeFileData.fetchUrl);
+                if (res.ok) {
+                  const code = await res.text();
+                  return code;
+                }
+                throw new Error('Cannot load file');
+              }}
               language={activeFileData?.language}
+              isInNextProject
             />
           </Panel>
         </PanelGroup>

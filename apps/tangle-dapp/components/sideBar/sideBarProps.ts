@@ -4,6 +4,7 @@ import {
   FundsLine,
   GiftLineIcon,
   GlobalLine,
+  GridFillIcon,
   UserLineIcon,
 } from '@webb-tools/icons';
 import {
@@ -20,20 +21,41 @@ import {
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
-import { InternalPath } from '../../types';
+import { PagePath } from '../../types';
 
 const sideBarItems: SideBarItemProps[] = [
   {
     name: 'Account',
-    href: InternalPath.Account,
+    href: PagePath.ACCOUNT,
     isInternal: true,
     isNext: true,
     Icon: UserLineIcon,
     subItems: [],
   },
   {
-    name: 'EVM Staking',
-    href: InternalPath.EvmStaking,
+    name: 'Services',
+    href: '',
+    isInternal: true,
+    isNext: true,
+    Icon: GridFillIcon,
+    subItems: [
+      {
+        name: 'Overview',
+        href: PagePath.SERVICES_OVERVIEW,
+        isInternal: true,
+        isNext: true,
+      },
+      {
+        name: 'Restake',
+        href: PagePath.SERVICES_RESTAKE,
+        isInternal: true,
+        isNext: true,
+      },
+    ],
+  },
+  {
+    name: 'Nomination',
+    href: PagePath.NOMINATION,
     isInternal: true,
     isNext: true,
     Icon: FundsLine,
@@ -41,7 +63,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
   {
     name: 'Claim Airdrop',
-    href: InternalPath.ClaimAirdrop,
+    href: PagePath.CLAIM_AIRDROP,
     isInternal: true,
     isNext: true,
     Icon: GiftLineIcon,

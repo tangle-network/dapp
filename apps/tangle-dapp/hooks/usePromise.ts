@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import ensureError from '../utils/ensureError';
+import useIsMountedRef from './useIsMountedRef';
 
 /**
  * An utility hook that simplifies working with Promise objects
@@ -12,7 +13,7 @@ import ensureError from '../utils/ensureError';
  * hooks because it doesn't focus around data fetching, but rather around
  * general Promise execution.
  *
- * @param action The Promise to execute.
+ * @param factory The Promise to execute.
  *
  * @param fallbackValue The value to use while the Promise is executing.
  *
@@ -37,43 +38,42 @@ import ensureError from '../utils/ensureError';
  *  }, null);
  * ```
  */
-function usePromise<T>(action: () => Promise<T>, fallbackValue: T) {
+function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
   const [result, setResult] = useState<T>(fallbackValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const isMounted = useIsMountedRef();
 
   useEffect(() => {
-    let isMounted = true;
+    if (!isMounted.current) {
+      return;
+    }
 
     setIsLoading(true);
 
-    action()
+    factory()
       .then((newResult) => {
-        if (!isMounted) {
+        if (!isMounted.current) {
           return;
         }
 
         setResult(newResult);
       })
       .catch((possibleError: unknown) => {
-        if (!isMounted) {
+        if (!isMounted.current) {
           return;
         }
 
         setError(ensureError(possibleError));
       })
       .finally(() => {
-        if (!isMounted) {
+        if (!isMounted.current) {
           return;
         }
 
         setIsLoading(false);
       });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [action]);
+  }, [factory, isMounted]);
 
   return { result, isLoading, error };
 }

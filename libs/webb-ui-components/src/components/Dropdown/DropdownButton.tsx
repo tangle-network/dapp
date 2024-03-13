@@ -37,7 +37,7 @@ export const DropdownButton = forwardRef<
         )}
         ref={ref}
       >
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1 max-w-full overflow-x-hidden">
           {icon && <span className="text-inherit">{icon}</span>}
           <span
             className={cx('text-inherit', size === 'md' ? 'body1' : 'body2')}

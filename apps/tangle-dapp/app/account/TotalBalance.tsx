@@ -7,13 +7,15 @@ import {
 import { FC } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useAccountBalances from '../../hooks/useAccountBalances';
-import useFormattedBalance from '../../hooks/useFormattedBalance';
+import { TANGLE_TOKEN_UNIT } from '../../constants/index';
+import useBalances from '../../data/balances/useBalances';
+import { formatTokenBalance } from '../../utils/polkadot';
 
 const TotalBalance: FC = () => {
-  const { total } = useAccountBalances();
-  const formattedTotal = useFormattedBalance(total, false);
+  const { total } = useBalances();
+
+  const formattedTotal =
+    total !== null ? formatTokenBalance(total, false) : null;
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -30,11 +32,11 @@ const TotalBalance: FC = () => {
 
           <InfoIconWithTooltip
             content={
-              <span className="block text-center">
+              <>
                 The total balance is defined as:{' '}
                 <strong>Transferrable + locked</strong> balances. This includes
                 tokens locked in staking, vesting, and more.
-              </span>
+              </>
             }
           />
         </div>

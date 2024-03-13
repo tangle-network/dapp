@@ -45,17 +45,17 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
   functionName: AbiFunctionName<T>,
   args: unknown[]
 ) {
-  const [status, setStatus] = useState(TxStatus.NotYetInitiated);
+  const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const activeEvmAddress = useEvmAddress();
 
   const execute = useCallback(async () => {
-    if (activeEvmAddress === null || status === TxStatus.Processing) {
+    if (activeEvmAddress === null || status === TxStatus.PROCESSING) {
       return;
     }
 
     setError(null);
-    setStatus(TxStatus.Processing);
+    setStatus(TxStatus.PROCESSING);
 
     try {
       const { request } = await evmPublicClient.simulateContract({
@@ -78,19 +78,21 @@ function useEvmPrecompileAbiCall<T extends Precompile>(
       console.debug('txReceipt', txReceipt);
 
       setStatus(
-        txReceipt.status === 'success' ? TxStatus.Complete : TxStatus.Error
+        txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
       );
     } catch (possibleError) {
       const error = ensureError(possibleError);
 
-      setStatus(TxStatus.Error);
+      setStatus(TxStatus.ERROR);
       setError(error);
     }
 
     // TODO: Return clean up.
   }, [activeEvmAddress, args, precompile, status, functionName]);
 
-  return { execute, status, error };
+  // Prevent the consumer from executing the call if the active
+  // account is not an EVM account.
+  return { execute: activeEvmAddress !== null ? execute : null, status, error };
 }
 
 export default useEvmPrecompileAbiCall;

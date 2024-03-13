@@ -13,13 +13,14 @@ import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';
+import { twMerge } from 'tailwind-merge';
 
 import { BadgeEnum } from '../../types';
 import BadgesCell from './BadgesCell';
 import fetchLeaderboardData from './fetchLeaderboardData';
 import HeaderCell from './HeaderCell';
 import IdentityCell from './IdentityCell';
-import ParseReponseErrorView from './ParseReponseErrorView';
+import ParseResponseErrorView from './ParseResponseErrorView';
 import SessionsCell from './SessionsCell';
 import SocialLinksCell from './SocialLinksCell';
 import type {
@@ -89,7 +90,9 @@ const getColumns = (pageIndex: number, pageSize: number) => [
   }),
 ];
 
-type Props = LeaderboardSuccessResponseType['data'];
+type Props = LeaderboardSuccessResponseType['data'] & {
+  className?: string;
+};
 
 const participantToRankingItem = (participant: ParticipantType, idx: number) =>
   ({
@@ -112,6 +115,7 @@ const RankingTableView: FC<Props> = ({
   limit: defaultLimit,
   skip: defaultSkip,
   total: defaultTotal,
+  className,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -187,15 +191,15 @@ const RankingTableView: FC<Props> = ({
       'Error when parsing the response',
       data.error.issues.map((issue) => issue.message).join('\n')
     );
-    return <ParseReponseErrorView />;
+    return <ParseResponseErrorView />;
   }
 
   if (!isLoading && data && data.success && !data.data.success) {
-    return <ParseReponseErrorView errorMessage={data.data.error} />;
+    return <ParseResponseErrorView errorMessage={data.data.error} />;
   }
 
   return (
-    <div className="space-y-4">
+    <div className={twMerge('flex flex-col gap-4 h-full', className)}>
       <div className="flex items-center justify-between">
         <Typography variant="mkt-body2" fw="black">
           Latest ranking:
@@ -215,6 +219,7 @@ const RankingTableView: FC<Props> = ({
           />
         </div>
       </div>
+
       <div className="relative overflow-scroll border rounded-lg border-mono-60">
         <table className="w-full">
           <thead className="border-b border-mono-60">

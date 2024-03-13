@@ -76,3 +76,23 @@ export function getFlexBasic(size: IconSize = 'md') {
     }
   }
 }
+
+export function getMinSizeClassName(size: IconSize) {
+  switch (size) {
+    case 'md': {
+      return 'min-w-4 min-h-4' as const;
+    }
+
+    case 'lg': {
+      return 'min-w-6 min-h-6' as const;
+    }
+
+    case 'xl': {
+      return 'min-w-12 min-h-12' as const;
+    }
+
+    default: {
+      throw new Error('Unknown icon size');
+    }
+  }
+}

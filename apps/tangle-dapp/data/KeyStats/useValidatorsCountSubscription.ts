@@ -2,9 +2,10 @@
 
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
-import { firstValueFrom, type Subscription } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useValidatorCountSubscription(
@@ -13,8 +14,18 @@ export default function useValidatorCountSubscription(
     value2: null,
   }
 ) {
-  const [value1, setValue1] = useState(defaultValue.value1);
-  const [value2, setValue2] = useState(defaultValue.value2);
+  const { value: cachedValue, set: setCache } = useLocalStorage(
+    LocalStorageKey.VALIDATOR_COUNTS,
+    true
+  );
+
+  const [value1, setValue1] = useState(
+    cachedValue?.value1 ?? defaultValue.value1
+  );
+  const [value2, setValue2] = useState(
+    cachedValue?.value2 ?? defaultValue.value2
+  );
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -33,9 +44,17 @@ export default function useValidatorCountSubscription(
             );
             const totalValidatorsCount = overview.validatorCount;
 
-            if (isMounted) {
+            if (
+              isMounted &&
+              (validators.length !== value1 ||
+                totalValidatorsCount.toNumber() !== value2)
+            ) {
               setValue1(validators.length);
               setValue2(totalValidatorsCount.toNumber());
+              setCache({
+                value1: validators.length,
+                value2: totalValidatorsCount.toNumber(),
+              });
               setIsLoading(false);
             }
           } catch (error) {
@@ -67,7 +86,7 @@ export default function useValidatorCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, []);
+  }, [value1, value2, setCache]);
 
   return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
 }

@@ -1,4 +1,34 @@
+// Note that this import is necessary to fix a strange type error
+// in Polkadot API's `api.tx.staking.bond` method, which complains
+// about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
+
+export enum PagePath {
+  NOMINATION = '/',
+  CLAIM_AIRDROP = '/claim',
+  ACCOUNT = '/account',
+  SERVICES_OVERVIEW = '/services',
+  SERVICES_RESTAKE = '/restake',
+}
+
+export enum QueryParamKey {
+  DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
+}
+
+export type QueryParamKeyOf<Page extends PagePath> =
+  Page extends PagePath.NOMINATION
+    ? QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
+    : never;
+
+export type QueryParamValueOf<Key extends QueryParamKey> =
+  Key extends QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
+    ? DelegationsAndPayoutsTab
+    : never;
+
+export enum DelegationsAndPayoutsTab {
+  NOMINATIONS = 'Nominations',
+  PAYOUTS = 'Payouts',
+}
 
 export type Validator = {
   address: string;
@@ -32,9 +62,9 @@ export type NodeSpecification = {
 };
 
 export enum PaymentDestination {
-  Staked = 'Staked (increase the amount at stake)',
-  Stash = 'Stash (do not increase the amount at stake)',
-  Controller = 'Controller Account',
+  STAKED = 'Staked (increase the amount at stake)',
+  STASH = 'Stash (do not increase the amount at stake)',
+  CONTROLLER = 'Controller Account',
 }
 
 export type AddressWithIdentity = {
@@ -51,27 +81,115 @@ export type Payout = {
   nominatorTotalReward: string;
   status: 'claimed' | 'unclaimed';
 };
-export enum InternalPath {
-  EvmStaking = '/',
-  ClaimAirdrop = '/claim',
-  Account = '/account',
+
+/**
+ * Utility type to remove trailing slash from a string.
+ *
+ * This is useful for constructing query param paths, as the
+ * root path (`/`) should not have a trailing slash, but all
+ * other paths should.
+ */
+type RemoveTrailingSlash<T extends string> = T extends `${infer U}/` ? U : T;
+
+/**
+ * Utility type to construct a query param path from a page path
+ * and query param key/value in a strongly statically typed way.
+ */
+type SearchQueryPathOf<
+  Page extends PagePath,
+  Key extends QueryParamKeyOf<Page>,
+  Value extends QueryParamValueOf<Key>
+> = `${RemoveTrailingSlash<Page>}/?${Key}=${Value}`;
+
+/**
+ * Enum-like constant object containing the different paths
+ * static search query key & value paths that can be linked to
+ * directly.
+ *
+ * All paths are constructed using the {@link SearchQueryPathOf} utility
+ * type, which ensures that the query param key and value are
+ * statically typed and match the query param key and value types
+ * for the given page.
+ *
+ * For example, `/account?tab=overview`.
+ */
+export const StaticSearchQueryPath: {
+  NominationsTable: SearchQueryPathOf<
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.NOMINATIONS
+  >;
+  PayoutsTable: SearchQueryPathOf<
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.PAYOUTS
+  >;
+} = {
+  NominationsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
+  PayoutsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
+} as const;
+
+export type InternalPath =
+  | PagePath
+  | (typeof StaticSearchQueryPath)[keyof typeof StaticSearchQueryPath];
+
+/**
+ * Also referred to as a `role` in Substrate.
+ *
+ * The values represent the user-facing UI display names
+ * of the roles.
+ */
+export enum ServiceType {
+  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
+  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
+  LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
+  TSS_ZENGOGG20SECP256K1 = 'TSS ZengoGG20Secp256k1',
+  TSS_DFNS_CGGMP21SECP256K1 = 'TSS DfnsCGGMP21Secp256k1',
+  TSS_DFNS_CGGMP21SECP256R1 = 'TSS DfnsCGGMP21Secp256r1',
+  TSS_DFNS_CGGMP21STARK = 'TSS DfnsCGGMP21Stark',
+  TSS_ZCASH_FROST_P256 = 'TSS ZcashFrostP256',
+  TSS_ZCASH_FROST_P384 = 'TSS ZcashFrostP384',
+  TSS_ZCASH_FROST_SECP256K1 = 'TSS ZcashFrostSecp256k1',
+  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS ZcashFrostRistretto255',
+  TSS_ZCASH_FROST_ED25519 = 'TSS ZcashFrostEd25519',
+  TSS_GENNARO_DKG_BLS381 = 'TSS GennaroDKGBls381',
+  TSS_ZCASH_FROST_ED448 = 'TSS ZcashFrostEd448',
 }
 
-export type InternalPathString = InternalPath | `${InternalPath}/${string}`;
-
-export enum AnchorLinkId {
-  NominationAndPayouts = 'nomination-and-payouts',
+export enum ProfileType {
+  INDEPENDENT = 'Independent',
+  SHARED = 'Shared',
 }
-
-export type RoleType = 'Tss' | 'ZkSaaS' | 'TxRelay';
 
 export type Service = {
-  serviceType: string;
-  roleType: RoleType;
-  initialJobId: number;
+  id: number;
+  serviceType: ServiceType;
   participants: string[];
   thresholds?: number;
   phase2Executions?: number;
   earnings?: number;
   expirationBlock: number;
+};
+
+export type ServiceJob = {
+  id: string;
+  txHash: string;
+  timestamp: Date;
+};
+
+export type JobType = {
+  id?: number;
+  serviceType: ServiceType;
+  thresholds?: number;
+  earnings?: number;
+  expiration: number;
+};
+
+export type ServiceParticipant = {
+  address: string;
+  identity?: string;
+  twitter?: string;
+  discord?: string;
+  email?: string;
+  web?: string;
 };

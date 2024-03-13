@@ -1,6 +1,3 @@
-import { ReactNode } from 'react';
+import { ComponentProps } from 'react';
 
-export type GlassCardProps = {
-  children: ReactNode;
-  className?: string;
-};
+export type GlassCardProps = ComponentProps<'div'>;

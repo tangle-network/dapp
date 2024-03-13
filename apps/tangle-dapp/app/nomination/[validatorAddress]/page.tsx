@@ -1,12 +1,12 @@
 import { isAddress } from '@polkadot/util-crypto';
 import { notFound } from 'next/navigation';
 
-import {
-  NodeSpecificationsTableContainer,
-  ServiceTablesContainer,
-} from '../../../containers';
+import NodeSpecificationsTable from './NodeSpecificationsTable';
+import RoleDistributionCard from './RoleDistributionCard';
+import ServiceTableTabs from './ServiceTableTabs';
+import ValidatorOverviewCard from './ValidatorOverviewCard';
 
-export default function Index({
+export default function ValidatorDetails({
   params,
 }: {
   params: { validatorAddress: string };
@@ -19,9 +19,20 @@ export default function Index({
 
   return (
     <div className="my-5 space-y-10">
-      <NodeSpecificationsTableContainer validatorAddress={validatorAddress} />
+      <div className="flex flex-col lg:flex-row gap-5 items-stretch">
+        <ValidatorOverviewCard
+          validatorAddress={validatorAddress}
+          className="flex-1"
+        />
+        <RoleDistributionCard
+          validatorAddress={validatorAddress}
+          className="flex-1"
+        />
+      </div>
 
-      <ServiceTablesContainer validatorAddress={validatorAddress} />
+      <NodeSpecificationsTable validatorAddress={validatorAddress} />
+
+      <ServiceTableTabs validatorAddress={validatorAddress} />
     </div>
   );
 }
