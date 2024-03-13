@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import Optional from '../../utils/Optional';
@@ -8,10 +9,10 @@ const useSharedRestakeAmount = () => {
   const ledgerOpt = ledgerResult.data;
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
-  const sharedRestakeAmount = useMemo(() => {
+  const sharedRestakeAmount = useMemo<Optional<BN> | null>(() => {
     // If the ledger is loading or not available, return early.
     if (ledgerResult.isLoading || !isLedgerAvailable) {
-      return;
+      return null;
     }
 
     // At this point, we know that the ledger is available;

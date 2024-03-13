@@ -9,6 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
+import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import useSharedRestakeAmountState from '../../data/restaking/useSharedRestakeAmountState';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
@@ -95,13 +96,18 @@ function getStepPreviousButtonLabel(step: Step): string {
 
 function getStepDescription(
   step: Step,
-  profileType: RestakingProfileType
+  profileType: RestakingProfileType,
+  isCreatingProfile: boolean
 ): string | null {
   switch (step) {
     case Step.CHOOSE_METHOD:
       return 'To participate in MPC services, allocate your staked TNT tokens using one of the available restaking methods. Your choice determines your risk allocation strategy. Would you like to restake as independent or shared?';
     case Step.ALLOCATION:
-      return profileType === RestakingProfileType.INDEPENDENT
+      return isCreatingProfile
+        ? profileType === RestakingProfileType.INDEPENDENT
+          ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
+          : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.'
+        : profileType === RestakingProfileType.INDEPENDENT
         ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
         : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.';
     case Step.CONFIRM_ALLOCATIONS:
@@ -124,8 +130,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     reset: resetSharedRestakeAmount,
   } = useSharedRestakeAmountState();
 
-  // TODO: Determine this on whether a profile exists or not, when the modal opens.
-  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
+  const { hasExistingProfile, profileType: substrateProfileType } =
+    useRestakingProfile();
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
@@ -250,12 +256,21 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     return () => clearTimeout(timeoutHandle);
   }, [isModalOpen, isMountedRef, resetAllocations, resetAllocationState]);
 
-  const stepDescription = getStepDescription(step, profileType);
+  // TODO: This will be `false` if it's still loading. It'll default to `true`, but hat's fine for now since it's used to show text/copy in the UI. Ideally would want a loading state to show the user, before showing everything else in this component.
+  const isCreatingProfile =
+    hasExistingProfile === false || substrateProfileType?.value !== profileType;
+
+  const stepDescription = getStepDescription(
+    step,
+    profileType,
+    isCreatingProfile
+  );
 
   const isLoading =
     isLoadingSharedRestakeAmount ||
     isLoadingAllocations ||
-    updateProfileTxStatus === TxStatus.PROCESSING;
+    updateProfileTxStatus === TxStatus.PROCESSING ||
+    hasExistingProfile === null;
 
   return (
     <Modal open>

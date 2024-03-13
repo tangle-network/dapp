@@ -28,7 +28,7 @@
  * }
  * ```
  */
-class Optional<T> {
+class Optional<T extends NonNullable<unknown>> {
   readonly value: T | null;
 
   constructor(value?: T) {

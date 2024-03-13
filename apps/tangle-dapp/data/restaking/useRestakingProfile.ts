@@ -7,8 +7,9 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
 const useRestakingProfile = () => {
   const { data: ledgerOpt, isLoading } = useRestakingRoleLedger();
 
-  const hasExistingProfile =
-    !isLoading && ledgerOpt !== null && ledgerOpt.isSome;
+  const hasExistingProfile = isLoading
+    ? null
+    : ledgerOpt !== null && !ledgerOpt.isNone;
 
   const profileType: Optional<RestakingProfileType> | null = useMemo(() => {
     if (ledgerOpt === null) {

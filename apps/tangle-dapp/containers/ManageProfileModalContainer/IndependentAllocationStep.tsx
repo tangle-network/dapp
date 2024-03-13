@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { z } from 'zod';
 
+import useRestakingJobs from '../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { ServiceType } from '../../types';
@@ -40,6 +41,8 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   setAllocations,
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
+  const { rolesWithJobs } = useRestakingJobs();
+  const { minRestakingBond } = useRestakingLimits();
 
   const restakedAmount = useMemo(() => {
     let amount = new BN(0);
@@ -151,22 +154,34 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     >
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
-          {filteredAllocations.map(([service, amount]) => (
-            <AllocationInput
-              amount={amount}
-              isDisabled
-              key={service}
-              title="Total Restake"
-              id={`manage-profile-allocation-${service}`}
-              availableServices={availableRoles}
-              service={service}
-              setService={setNewAllocationRole}
-              hasDeleteButton
-              onDelete={handleDeallocation}
-              availableBalance={amountRemaining}
-              validate={false}
-            />
-          ))}
+          {filteredAllocations.map(([service, amount]) => {
+            const hasActiveJob = rolesWithJobs?.includes(service) ?? false;
+            const min = hasActiveJob ? amount : minRestakingBond;
+
+            return (
+              <AllocationInput
+                key={service}
+                amount={amount}
+                min={min}
+                title="Total Restake"
+                id={`manage-profile-allocation-${service}`}
+                availableServices={availableRoles}
+                service={service}
+                setService={setNewAllocationRole}
+                // Users can remove roles only if there are no active services
+                // linked to those roles.
+                hasDeleteButton={!hasActiveJob}
+                onDelete={handleDeallocation}
+                availableBalance={amountRemaining}
+                validate
+                lockTooltip={
+                  hasActiveJob
+                    ? 'Active service(s) in progress; can only have restake amount increased.'
+                    : undefined
+                }
+              />
+            );
+          })}
 
           {canAddNewAllocation && (
             <AllocationInput
@@ -176,6 +191,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               service={newAllocationRole}
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
+              min={minRestakingBond}
               setAmount={setNewAllocationAmount}
               availableBalance={amountRemaining}
               validate

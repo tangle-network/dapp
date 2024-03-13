@@ -1,14 +1,13 @@
 import { BN } from '@polkadot/util';
 import { useCallback, useRef, useState } from 'react';
 
-import Optional from '../../utils/Optional';
 import useSharedRestakeAmount from './useSharedRestakeAmount';
 
 const useSharedRestakeAmountState = () => {
-  const { sharedRestakeAmount } = useSharedRestakeAmount();
+  const { sharedRestakeAmount, isLoading } = useSharedRestakeAmount();
 
   const [sharedRestakeAmountState, setSharedRestakeAmount] =
-    useState<Optional<BN> | null>(null);
+    useState<BN | null>(null);
 
   const lock = useRef(false);
 
@@ -17,14 +16,14 @@ const useSharedRestakeAmountState = () => {
     // before.
     if (!lock.current) {
       lock.current = true;
-      setSharedRestakeAmount(sharedRestakeAmount);
+      setSharedRestakeAmount(sharedRestakeAmount?.value ?? null);
     }
-  }, [isLedgerAvailable, ledgerOpt]);
+  }, [sharedRestakeAmount]);
 
   return {
     sharedRestakeAmount: sharedRestakeAmountState,
     setSharedRestakeAmount,
-    isLoading: ledgerResult.isLoading,
+    isLoading,
     reset,
   };
 };

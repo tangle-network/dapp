@@ -5,20 +5,20 @@ import { RestakingProfileType } from './ManageProfileModalContainer';
 import { RestakingAllocationMap } from './types';
 
 const useAllocationsState = (profileType: RestakingProfileType) => {
-  const { value: remoteAllocations, isLoading } =
+  const { value: substrateAllocations, isLoading } =
     useRestakingAllocations(profileType);
 
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({});
 
   useEffect(() => {
-    if (remoteAllocations !== null) {
-      setAllocations(remoteAllocations);
+    if (substrateAllocations !== null) {
+      setAllocations(substrateAllocations);
     }
-  }, [remoteAllocations, isLoading, profileType]);
+  }, [substrateAllocations, isLoading, profileType]);
 
   const reset = useCallback(() => {
-    setAllocations(remoteAllocations ?? {});
-  }, [remoteAllocations]);
+    setAllocations(substrateAllocations ?? {});
+  }, [substrateAllocations]);
 
   const setAllocationsOverride = useCallback(
     (newAllocations: RestakingAllocationMap) => {
