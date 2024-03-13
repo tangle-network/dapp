@@ -171,20 +171,21 @@ export default function Page() {
           {claimInfo === null ? (
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 4 million {TANGLE_TOKEN_UNIT} tokens to the
+              distributing 5 million {TANGLE_TOKEN_UNIT} tokens to the
               community. Check eligibility below to see if you qualify for{' '}
               {TANGLE_TOKEN_UNIT} Airdrop!
             </>
           ) : claimInfo ? (
             <>
-              Looks like you are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View
-              your tokens below, and start the claiming process.
+              You are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View your
+              tokens below, and start the claiming process.
             </>
           ) : (
             <>
-              Looks like you are not eligible for ${TANGLE_TOKEN_UNIT} airdrop.
-              You can still participate in the Tangle Network by purchasing $
-              {TANGLE_TOKEN_UNIT} or try again with a different account.
+              You are not eligible for ${TANGLE_TOKEN_UNIT} airdrop. You can
+              still participate in the Tangle Network by acquiring $
+              {TANGLE_TOKEN_UNIT} or you can try again with a different account
+              by disconnecting your current wallet.
             </>
           )}
         </AppTemplate.Description>
