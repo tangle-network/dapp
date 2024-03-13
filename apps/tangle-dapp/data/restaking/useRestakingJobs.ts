@@ -18,7 +18,7 @@ const useRestakingJobs = () => {
   const hasActiveJobs =
     jobRoleIdPairsOpt === null ? null : jobRoleIdPairsOpt.isSome;
 
-  const rolesWithJobs = useMemo(() => {
+  const servicesWithJobs = useMemo(() => {
     if (jobRoleIdPairsOpt === null) {
       return null;
     } else if (jobRoleIdPairsOpt.isNone) {
@@ -32,7 +32,7 @@ const useRestakingJobs = () => {
     );
   }, [jobRoleIdPairsOpt]);
 
-  return { hasActiveJobs, rolesWithJobs };
+  return { hasActiveJobs, servicesWithJobs };
 };
 
 export default useRestakingJobs;

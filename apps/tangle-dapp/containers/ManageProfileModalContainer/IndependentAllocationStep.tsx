@@ -26,6 +26,8 @@ export type IndependentAllocationStepProps = {
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
+const ERROR_MIN_RESTAKING_BOND = 'Must be at least the minimum restaking bond';
+
 export function filterAllocations(
   allocations: RestakingAllocationMap
 ): [ServiceType, BN | null][] {
@@ -41,7 +43,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   setAllocations,
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
-  const { rolesWithJobs } = useRestakingJobs();
+  const { servicesWithJobs } = useRestakingJobs();
   const { minRestakingBond } = useRestakingLimits();
 
   const restakedAmount = useMemo(() => {
@@ -109,6 +111,16 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations, setAllocations]
   );
 
+  const handleAllocationChange = (
+    service: ServiceType,
+    newAmount: BN | null
+  ) => {
+    setAllocations((prev) => ({
+      ...prev,
+      [service]: newAmount,
+    }));
+  };
+
   const amountRemaining = useMemo(
     () => maxRestakingAmount?.sub(restakedAmount) ?? null,
     [maxRestakingAmount, restakedAmount]
@@ -155,19 +167,27 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
           {filteredAllocations.map(([service, amount]) => {
-            const hasActiveJob = rolesWithJobs?.includes(service) ?? false;
+            const hasActiveJob = servicesWithJobs?.includes(service) ?? false;
             const min = hasActiveJob ? amount : minRestakingBond;
+
+            const minErrorMessage = hasActiveJob
+              ? 'Cannot decrease restake for active role'
+              : ERROR_MIN_RESTAKING_BOND;
 
             return (
               <AllocationInput
                 key={service}
                 amount={amount}
                 min={min}
+                minErrorMessage={minErrorMessage}
                 title="Total Restake"
                 id={`manage-profile-allocation-${service}`}
                 availableServices={availableRoles}
                 service={service}
                 setService={setNewAllocationRole}
+                setAmount={(newAmount) =>
+                  handleAllocationChange(service, newAmount)
+                }
                 // Users can remove roles only if there are no active services
                 // linked to those roles.
                 hasDeleteButton={!hasActiveJob}
@@ -188,6 +208,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               title="Total Restake"
               id="manage-profile-new-allocation"
               availableServices={availableRoles}
+              minErrorMessage={ERROR_MIN_RESTAKING_BOND}
               service={newAllocationRole}
               setService={setNewAllocationRole}
               amount={newAllocationAmount}

@@ -14,7 +14,7 @@ import useInputAmount from './useInputAmount';
 export type AllocationInputProps = {
   amount: BN | null;
   min: BN | null;
-  setAmount?: (newAmount: BN | null) => void;
+  setAmount: (newAmount: BN | null) => void;
   availableServices: ServiceType[];
   availableBalance: BN | null;
   service: ServiceType | null;
@@ -24,6 +24,7 @@ export type AllocationInputProps = {
   hasDeleteButton?: boolean;
   lockTooltip?: string;
   validate: boolean;
+  minErrorMessage: string;
   onDelete?: (service: ServiceType) => void;
   setService: (service: ServiceType) => void;
 };
@@ -40,6 +41,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   validate,
   title,
   id,
+  minErrorMessage,
   service,
   setService,
   onDelete,
@@ -50,6 +52,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
     amount,
     min,
     availableBalance,
+    minErrorMessage,
     setAmount
   );
 
@@ -120,7 +123,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
       title={title}
       id={id}
       actions={actions}
-      dropdownBody={!hasDeleteButton ? dropdownBody : undefined}
+      dropdownBody={!hasDeleteButton && !isLocked ? dropdownBody : undefined}
       errorMessage={validate ? errorMessage ?? undefined : undefined}
       chipText={service ?? 'Select role'}
       chipColor={

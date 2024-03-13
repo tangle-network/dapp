@@ -27,6 +27,7 @@ const AmountInput: FC<AmountInputProps> = ({
     amount,
     minRestakingBond,
     maxRestakingAmount,
+    'Must be at least the minimum restaking bond',
     setAmount
   );
 

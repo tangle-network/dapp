@@ -15,7 +15,8 @@ const VALUE_REGEX = /^\d*(\.\d*)?$/;
 function validateInputAmount(
   amountString: string,
   min: BN | null,
-  max: BN | null
+  max: BN | null,
+  minErrorMessage: string
 ): string | null {
   const schema = z
     .string()
@@ -24,7 +25,7 @@ function validateInputAmount(
       value === null ? null : convertAmountStringToChainUnits(value)
     )
     .refine((amount) => amount === null || min === null || amount.gte(min), {
-      message: 'Must be at least the minimum restaking bond',
+      message: minErrorMessage,
     })
     .refine((amount) => amount === null || max === null || amount.lte(max), {
       message: 'Not enough available balance',
@@ -41,6 +42,7 @@ const useInputAmount = (
   amount: BN | null,
   min: BN | null,
   max: BN | null,
+  minErrorMessage: string,
   setAmount?: (newAmount: BN | null) => void
 ) => {
   const [amountString, setAmountString] = useState(
@@ -72,7 +74,12 @@ const useInputAmount = (
 
       setAmountString(newAmountString);
 
-      const errorMessage = validateInputAmount(newAmountString, min, max);
+      const errorMessage = validateInputAmount(
+        newAmountString,
+        min,
+        max,
+        minErrorMessage
+      );
 
       setErrorMessage(errorMessage);
 
@@ -91,7 +98,7 @@ const useInputAmount = (
         setAmount(newAmount);
       }
     },
-    [max, min, setAmount]
+    [max, min, minErrorMessage, setAmount]
   );
 
   return { amountString, setAmountString, errorMessage, handleChange };
