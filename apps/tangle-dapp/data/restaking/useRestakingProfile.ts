@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
+import { RestakingProfileType } from '../../types';
 import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
@@ -11,7 +11,7 @@ const useRestakingProfile = () => {
     ? null
     : ledgerOpt !== null && !ledgerOpt.isNone;
 
-  const profileType: Optional<RestakingProfileType> | null = useMemo(() => {
+  const profileTypeOpt: Optional<RestakingProfileType> | null = useMemo(() => {
     if (ledgerOpt === null) {
       return null;
     } else if (ledgerOpt.isNone) {
@@ -29,7 +29,7 @@ const useRestakingProfile = () => {
 
   return {
     hasExistingProfile,
-    profileType,
+    profileTypeOpt,
     ledgerOpt,
   };
 };

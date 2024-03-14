@@ -14,17 +14,13 @@ import useSharedRestakeAmountState from '../../data/restaking/useSharedRestakeAm
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
+import { RestakingProfileType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
 import IndependentAllocationStep from './IndependentAllocationStep';
 import SharedAllocationStep from './SharedAllocationStep';
 import { ManageProfileModalContainerProps } from './types';
 import useAllocationsState from './useAllocationsState';
-
-export enum RestakingProfileType {
-  INDEPENDENT,
-  SHARED,
-}
 
 /**
  * The steps in the manage profile modal.
@@ -130,7 +126,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     reset: resetSharedRestakeAmount,
   } = useSharedRestakeAmountState();
 
-  const { hasExistingProfile, profileType: substrateProfileType } =
+  const { hasExistingProfile, profileTypeOpt: substrateProfileTypeOpt } =
     useRestakingProfile();
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
@@ -233,6 +229,15 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     resetSharedRestakeAmount();
   }, [resetAllocations, resetSharedRestakeAmount]);
 
+  // Reset allocations when the selected profile type changes.
+  // This is necessary because the allocations are specific to
+  // the profile type, and if the user switches between the
+  // independent and shared profile types, the allocations
+  // should be reset to an empty object.
+  useEffect(() => {
+    resetAllocationState();
+  }, [profileType, resetAllocationState]);
+
   // Close modal when the transaction is complete.
   useEffect(() => {
     if (updateProfileTxStatus === TxStatus.COMPLETE) {
@@ -262,7 +267,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   // TODO: This will be `false` if it's still loading. It'll default to `true`, but hat's fine for now since it's used to show text/copy in the UI. Ideally would want a loading state to show the user, before showing everything else in this component.
   const isCreatingProfile =
-    hasExistingProfile === false || substrateProfileType?.value !== profileType;
+    hasExistingProfile === false ||
+    substrateProfileTypeOpt?.value !== profileType;
 
   const stepDescription = getStepDescription(
     step,

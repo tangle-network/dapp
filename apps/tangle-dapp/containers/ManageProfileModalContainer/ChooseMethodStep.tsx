@@ -8,7 +8,7 @@ import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StaticAssetPath } from '../../constants/index';
-import { RestakingProfileType } from './ManageProfileModalContainer';
+import { RestakingProfileType } from '../../types';
 
 export type ChooseMethodStepProps = {
   profileType: RestakingProfileType;

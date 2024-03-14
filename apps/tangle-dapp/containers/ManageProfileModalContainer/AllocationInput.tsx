@@ -4,6 +4,7 @@ import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
 import useRestakingJobs from '../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
@@ -48,10 +49,28 @@ const AllocationInput: FC<AllocationInputProps> = ({
   const { servicesWithJobs } = useRestakingJobs();
   const { minRestakingBond } = useRestakingLimits();
 
+  // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading.
   const hasActiveJob =
     service !== null ? servicesWithJobs?.includes(service) ?? false : false;
 
-  const min = hasActiveJob ? amount : minRestakingBond;
+  const { value: substrateAllocationsOpt } = useRestakingAllocations();
+
+  const substrateAllocationAmount = useMemo(() => {
+    if (
+      service === null ||
+      substrateAllocationsOpt === null ||
+      substrateAllocationsOpt.value === null
+    ) {
+      return null;
+    }
+
+    return substrateAllocationsOpt.value[service] ?? null;
+  }, [service, substrateAllocationsOpt]);
+
+  const min = hasActiveJob
+    ? substrateAllocationAmount ?? minRestakingBond
+    : minRestakingBond;
+
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const minErrorMessage = hasActiveJob

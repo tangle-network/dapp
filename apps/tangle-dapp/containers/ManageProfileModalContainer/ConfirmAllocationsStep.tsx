@@ -5,11 +5,10 @@ import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ServiceType } from '../../types';
+import { RestakingProfileType, ServiceType } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { filterAllocations } from './IndependentAllocationStep';
-import { RestakingProfileType } from './ManageProfileModalContainer';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {

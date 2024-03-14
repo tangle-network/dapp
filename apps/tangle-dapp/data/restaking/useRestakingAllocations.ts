@@ -2,10 +2,11 @@ import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
-import { ServiceType } from '../../types';
+import { RestakingProfileType, ServiceType } from '../../types';
+import Optional from '../../utils/Optional';
 import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
+import useRestakingProfile from './useRestakingProfile';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 /**
@@ -42,26 +43,29 @@ function convertRecordToAllocation(
  * If the active account does not have a profile setup,
  * `null` will be returned for the value.
  */
-const useRestakingAllocations = (profileType: RestakingProfileType) => {
+const useRestakingAllocations = () => {
   const ledgerResult = useRestakingRoleLedger();
-  const ledgerOpt = ledgerResult.data;
+  const { hasExistingProfile, profileTypeOpt, ledgerOpt } =
+    useRestakingProfile();
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
-  const allocations: RestakingAllocationMap = useMemo(() => {
-    if (!isLedgerAvailable) {
-      return {};
+  const allocations: Optional<RestakingAllocationMap> | null = useMemo(() => {
+    if (hasExistingProfile === false) {
+      return new Optional();
+    } else if (
+      !isLedgerAvailable ||
+      profileTypeOpt === null ||
+      profileTypeOpt.value === null
+    ) {
+      return null;
     }
 
     const ledger = ledgerOpt.unwrap();
 
     const profile =
-      profileType === RestakingProfileType.INDEPENDENT
-        ? ledger.profile.isIndependent
-          ? ledger.profile.asIndependent
-          : null
-        : ledger.profile.isShared
-        ? ledger.profile.asShared
-        : null;
+      profileTypeOpt.value === RestakingProfileType.INDEPENDENT
+        ? ledger.profile.asIndependent
+        : ledger.profile.asShared;
 
     const newAllocations: RestakingAllocationMap = {};
 
@@ -73,8 +77,8 @@ const useRestakingAllocations = (profileType: RestakingProfileType) => {
       }
     }
 
-    return newAllocations;
-  }, [isLedgerAvailable, ledgerOpt, profileType]);
+    return new Optional(newAllocations);
+  }, [hasExistingProfile, isLedgerAvailable, ledgerOpt, profileTypeOpt]);
 
   return {
     ...ledgerResult,

@@ -4,10 +4,9 @@ import { useCallback, useRef } from 'react';
 import { z } from 'zod';
 
 import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
-import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
-import { ServiceType } from '../../types';
+import { RestakingProfileType, ServiceType } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
