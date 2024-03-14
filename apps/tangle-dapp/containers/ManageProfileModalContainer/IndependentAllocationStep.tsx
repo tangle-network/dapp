@@ -41,17 +41,14 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
 
-  const restakedAmount = useMemo(() => {
-    let amount = new BN(0);
-
-    for (const [_service, serviceAmount] of Object.entries(allocations)) {
-      if (serviceAmount !== null) {
-        amount = amount.add(serviceAmount);
-      }
-    }
-
-    return amount;
-  }, [allocations]);
+  const restakedAmount = useMemo(
+    () =>
+      Object.entries(allocations).reduce(
+        (acc, [_key, amount]) => acc.add(amount),
+        new BN(0)
+      ),
+    [allocations]
+  );
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
@@ -106,20 +103,21 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations, setAllocations]
   );
 
-  const handleAllocationChange = (
-    service: ServiceType,
-    newAmount: BN | null
-  ) => {
-    // Do not update the amount if it has no value.
-    if (newAmount === null) {
-      return;
-    }
+  const handleAllocationChange = useCallback(
+    (service: ServiceType, newAmount: BN | null) => {
+      // Do not update the amount if it has no value,
+      // or if the new amount is the same as the current amount.
+      if (newAmount === null || allocations[service]?.eq(newAmount)) {
+        return;
+      }
 
-    setAllocations((prev) => ({
-      ...prev,
-      [service]: newAmount,
-    }));
-  };
+      setAllocations((prev) => ({
+        ...prev,
+        [service]: newAmount,
+      }));
+    },
+    [allocations, setAllocations]
+  );
 
   const amountRemaining = useMemo(
     () => maxRestakingAmount?.sub(restakedAmount) ?? null,

@@ -32,7 +32,10 @@ const useRestakingJobs = () => {
     );
   }, [jobRoleIdPairsOpt]);
 
-  return { hasActiveJobs, servicesWithJobs };
+  return {
+    hasActiveJobs,
+    servicesWithJobs,
+  };
 };
 
 export default useRestakingJobs;

@@ -86,7 +86,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
     <>
       {(variant === AllocationChartVariant.INDEPENDENT ||
         allocationEntries.length === 0) && (
-        <Cell key="remaining" fill={themeCellColor} />
+        <Cell key="remaining-independent" fill={themeCellColor} />
       )}
 
       {variant === AllocationChartVariant.INDEPENDENT &&
@@ -111,6 +111,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
   );
 
   const sharedChartProps = {
+    // TODO: Something's causing a duplicate key prop error within the Pie component. Need to investigate what it is (`sector-333-333`).
     data: entries,
     stroke: 'none',
     dataKey: 'value',

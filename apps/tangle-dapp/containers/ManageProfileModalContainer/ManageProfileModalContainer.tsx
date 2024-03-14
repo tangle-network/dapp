@@ -7,10 +7,16 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
-import useSharedRestakeAmountState from '../../data/restaking/useSharedRestakeAmountState';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -21,6 +27,7 @@ import IndependentAllocationStep from './IndependentAllocationStep';
 import SharedAllocationStep from './SharedAllocationStep';
 import { ManageProfileModalContainerProps } from './types';
 import useAllocationsState from './useAllocationsState';
+import useSharedRestakeAmountState from './useSharedRestakeAmountState';
 
 /**
  * The steps in the manage profile modal.
@@ -123,7 +130,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     sharedRestakeAmount,
     setSharedRestakeAmount,
     isLoading: isLoadingSharedRestakeAmount,
-    reset: resetSharedRestakeAmount,
+    resetToSubstrateAmount: resetSharedRestakeAmount,
   } = useSharedRestakeAmountState();
 
   const { hasExistingProfile, profileTypeOpt: substrateProfileTypeOpt } =
@@ -131,7 +138,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
-  let stepContents: ReactNode;
 
   const {
     allocations,
@@ -141,25 +147,17 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     reset: resetAllocations,
   } = useAllocationsState(profileType);
 
-  const {
-    executeForIndependentProfile: executeUpdateIndependentProfileTx,
-    executeForSharedProfile: executeUpdateSharedProfileTx,
-    status: updateProfileTxStatus,
-  } = useUpdateRestakingProfileTx(profileType, true, true);
-
-  switch (step) {
-    case Step.CHOOSE_METHOD:
-      stepContents = (
-        <ChooseMethodStep
-          profileType={profileType}
-          setProfileType={setProfileType}
-        />
-      );
-
-      break;
-    case Step.ALLOCATION:
-      stepContents =
-        profileType === RestakingProfileType.INDEPENDENT ? (
+  const stepContents = useMemo<ReactNode>(() => {
+    switch (step) {
+      case Step.CHOOSE_METHOD:
+        return (
+          <ChooseMethodStep
+            profileType={profileType}
+            setProfileType={setProfileType}
+          />
+        );
+      case Step.ALLOCATION:
+        return profileType === RestakingProfileType.INDEPENDENT ? (
           <IndependentAllocationStep
             allocations={allocations}
             setAllocations={setAllocationsDispatch}
@@ -172,17 +170,30 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             setAllocations={setAllocations}
           />
         );
+      case Step.CONFIRM_ALLOCATIONS:
+        return (
+          <ConfirmAllocationsStep
+            profileType={profileType}
+            allocations={allocations}
+            sharedRestakeAmount={sharedRestakeAmount ?? undefined}
+          />
+        );
+    }
+  }, [
+    allocations,
+    profileType,
+    setAllocations,
+    setAllocationsDispatch,
+    setSharedRestakeAmount,
+    sharedRestakeAmount,
+    step,
+  ]);
 
-      break;
-    case Step.CONFIRM_ALLOCATIONS:
-      stepContents = (
-        <ConfirmAllocationsStep
-          profileType={profileType}
-          allocations={allocations}
-          sharedRestakeAmount={sharedRestakeAmount ?? undefined}
-        />
-      );
-  }
+  const {
+    executeForIndependentProfile: executeUpdateIndependentProfileTx,
+    executeForSharedProfile: executeUpdateSharedProfileTx,
+    status: updateProfileTxStatus,
+  } = useUpdateRestakingProfileTx(profileType, true, true);
 
   const handlePreviousStep = useCallback(() => {
     const diff = getStepDiff(step, false);

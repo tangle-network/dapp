@@ -31,7 +31,6 @@ const useAllocationsState = (intendedProfileType: RestakingProfileType) => {
   }, [
     substrateAllocationsOpt,
     isLoading,
-    intendedProfileType,
     areSubstrateAllocationsOfIntendedProfileType,
   ]);
 
@@ -47,10 +46,7 @@ const useAllocationsState = (intendedProfileType: RestakingProfileType) => {
     else {
       setAllocations({});
     }
-  }, [
-    areSubstrateAllocationsOfIntendedProfileType,
-    substrateAllocationsOpt?.value,
-  ]);
+  }, [areSubstrateAllocationsOfIntendedProfileType, substrateAllocationsOpt]);
 
   const setAllocationsOverride = useCallback(
     (newAllocations: RestakingAllocationMap) => {
