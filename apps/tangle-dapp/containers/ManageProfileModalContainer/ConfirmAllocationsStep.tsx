@@ -33,7 +33,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   }
 
   const restakedAmount = filterAllocations(allocations).reduce(
-    (acc, [, amount]) => acc.add(amount ?? new BN(0)),
+    (acc, [, amount]) => acc.add(amount),
     new BN(0)
   );
 

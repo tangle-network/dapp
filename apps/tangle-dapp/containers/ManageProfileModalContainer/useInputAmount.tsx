@@ -48,7 +48,7 @@ const useInputAmount = (
   max: BN | null,
   minErrorMessage: string,
   errorOnEmptyValue: boolean,
-  setAmount?: (newAmount: BN) => void
+  setAmount?: (newAmount: BN | null) => void
 ) => {
   const [amountString, setAmountString] = useState(
     amount !== null ? convertChainUnitsToNumber(amount) : ''
@@ -96,7 +96,13 @@ const useInputAmount = (
         setAmount !== undefined &&
         !newAmountString.endsWith('.')
       ) {
-        setAmount(convertAmountStringToChainUnits(newAmountString));
+        // Allow the amount string to be removed, by setting its value
+        // to null.
+        setAmount(
+          newAmountString === ''
+            ? null
+            : convertAmountStringToChainUnits(newAmountString)
+        );
       }
     },
     [errorOnEmptyValue, max, min, minErrorMessage, setAmount]

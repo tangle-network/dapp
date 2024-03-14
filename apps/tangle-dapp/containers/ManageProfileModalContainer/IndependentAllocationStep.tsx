@@ -106,7 +106,15 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations, setAllocations]
   );
 
-  const handleAllocationChange = (service: ServiceType, newAmount: BN) => {
+  const handleAllocationChange = (
+    service: ServiceType,
+    newAmount: BN | null
+  ) => {
+    // Do not update the amount if it has no value.
+    if (newAmount === null) {
+      return;
+    }
+
     setAllocations((prev) => ({
       ...prev,
       [service]: newAmount,

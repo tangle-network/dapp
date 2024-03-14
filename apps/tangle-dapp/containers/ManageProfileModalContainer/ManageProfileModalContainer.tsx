@@ -1,4 +1,3 @@
-import { BN } from '@polkadot/util';
 import {
   Button,
   Modal,
@@ -7,6 +6,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
@@ -209,12 +209,16 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     }
 
     // Have reached the end; submit the transaction.
-    profileType === RestakingProfileType.INDEPENDENT
-      ? executeUpdateIndependentProfileTx(allocations)
-      : executeUpdateSharedProfileTx(
-          allocations,
-          sharedRestakeAmount ?? new BN(0)
-        );
+    if (profileType === RestakingProfileType.INDEPENDENT) {
+      executeUpdateIndependentProfileTx(allocations);
+    } else {
+      assert(
+        sharedRestakeAmount !== null,
+        'Shared restake amount should be set if updating shared profile'
+      );
+
+      executeUpdateSharedProfileTx(allocations, sharedRestakeAmount);
+    }
   }, [
     allocations,
     executeUpdateIndependentProfileTx,

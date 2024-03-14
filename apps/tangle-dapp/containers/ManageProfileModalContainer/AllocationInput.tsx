@@ -15,7 +15,7 @@ import useInputAmount from './useInputAmount';
 
 export type AllocationInputProps = {
   amount: BN | null;
-  setAmount: (newAmount: BN) => void;
+  setAmount: (newAmount: BN | null) => void;
   availableServices: ServiceType[];
   availableBalance: BN | null;
   service: ServiceType | null;
@@ -26,7 +26,8 @@ export type AllocationInputProps = {
   setService?: (service: ServiceType) => void;
 };
 
-const ERROR_MIN_RESTAKING_BOND = 'Must be at least the minimum restaking bond';
+export const ERROR_MIN_RESTAKING_BOND =
+  'Must be at least the minimum restaking bond';
 
 /**
  * A specialized input used to allocate roles for creating or
@@ -51,7 +52,6 @@ const AllocationInput: FC<AllocationInputProps> = ({
     service !== null ? servicesWithJobs?.includes(service) ?? false : false;
 
   const min = hasActiveJob ? amount : minRestakingBond;
-
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const minErrorMessage = hasActiveJob
@@ -113,6 +113,10 @@ const AllocationInput: FC<AllocationInputProps> = ({
     [availableServices, handleSetService, min, service]
   );
 
+  // Users can remove roles only if there are no active services
+  // linked to those roles.
+  const canBeDeleted = !hasActiveJob && onDelete !== undefined;
+
   const actions = (
     <>
       {hasActiveJob && (
@@ -125,9 +129,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
         />
       )}
 
-      {!hasActiveJob && (
-        // Users can remove roles only if there are no active services
-        // linked to those roles.
+      {canBeDeleted && (
         <InputAction
           Icon={Close}
           onClick={handleDelete}
