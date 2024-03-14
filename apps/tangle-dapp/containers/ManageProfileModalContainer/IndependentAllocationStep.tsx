@@ -11,7 +11,6 @@ import {
 } from 'react';
 import { z } from 'zod';
 
-import useRestakingJobs from '../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { ServiceType } from '../../types';
@@ -26,11 +25,9 @@ export type IndependentAllocationStepProps = {
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
-const ERROR_MIN_RESTAKING_BOND = 'Must be at least the minimum restaking bond';
-
 export function filterAllocations(
   allocations: RestakingAllocationMap
-): [ServiceType, BN | null][] {
+): [ServiceType, BN][] {
   return Object.entries(allocations).map(([serviceString, amount]) => {
     const service = z.nativeEnum(ServiceType).parse(serviceString);
 
@@ -43,8 +40,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   setAllocations,
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
-  const { servicesWithJobs } = useRestakingJobs();
-  const { minRestakingBond } = useRestakingLimits();
 
   const restakedAmount = useMemo(() => {
     let amount = new BN(0);
@@ -111,10 +106,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations, setAllocations]
   );
 
-  const handleAllocationChange = (
-    service: ServiceType,
-    newAmount: BN | null
-  ) => {
+  const handleAllocationChange = (service: ServiceType, newAmount: BN) => {
     setAllocations((prev) => ({
       ...prev,
       [service]: newAmount,
@@ -166,56 +158,32 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     >
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
-          {filteredAllocations.map(([service, amount]) => {
-            const hasActiveJob = servicesWithJobs?.includes(service) ?? false;
-            const min = hasActiveJob ? amount : minRestakingBond;
-
-            const minErrorMessage = hasActiveJob
-              ? 'Cannot decrease restake for active role'
-              : ERROR_MIN_RESTAKING_BOND;
-
-            return (
-              <AllocationInput
-                key={service}
-                amount={amount}
-                min={min}
-                minErrorMessage={minErrorMessage}
-                title="Total Restake"
-                id={`manage-profile-allocation-${service}`}
-                availableServices={availableRoles}
-                service={service}
-                setService={setNewAllocationRole}
-                setAmount={(newAmount) =>
-                  handleAllocationChange(service, newAmount)
-                }
-                // Users can remove roles only if there are no active services
-                // linked to those roles.
-                hasDeleteButton={!hasActiveJob}
-                onDelete={handleDeallocation}
-                availableBalance={amountRemaining}
-                validate
-                lockTooltip={
-                  hasActiveJob
-                    ? 'Active service(s) in progress; can only have restake amount increased.'
-                    : undefined
-                }
-              />
-            );
-          })}
+          {filteredAllocations.map(([service, amount]) => (
+            <AllocationInput
+              key={service}
+              amount={amount}
+              id={`manage-profile-allocation-${service}`}
+              availableServices={availableRoles}
+              service={service}
+              setAmount={(newAmount) =>
+                handleAllocationChange(service, newAmount)
+              }
+              onDelete={handleDeallocation}
+              availableBalance={amountRemaining}
+              errorOnEmptyValue
+            />
+          ))}
 
           {canAddNewAllocation && (
             <AllocationInput
-              title="Total Restake"
               id="manage-profile-new-allocation"
               availableServices={availableRoles}
-              minErrorMessage={ERROR_MIN_RESTAKING_BOND}
               service={newAllocationRole}
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
-              min={minRestakingBond}
               setAmount={setNewAllocationAmount}
               availableBalance={amountRemaining}
-              validate
+              errorOnEmptyValue={false}
             />
           )}
         </div>

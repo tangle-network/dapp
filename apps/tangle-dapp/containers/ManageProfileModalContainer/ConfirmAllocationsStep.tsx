@@ -176,7 +176,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 
 type AllocationItemProps = {
   services: ServiceType[];
-  amount?: BN | null;
+  amount?: BN;
 };
 
 /** @internal */
@@ -201,7 +201,7 @@ const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
           fw="semibold"
           className="dark:text-mono-0 text-right"
         >
-          {formatTokenBalance(amount ?? new BN(0))}
+          {formatTokenBalance(amount)}
         </Typography>
       )}
     </div>

@@ -8,13 +8,12 @@ const useCurrentEra = () => {
     // Memoize factory to prevent infinite loops.
     useCallback(
       (api) =>
-        api.query.staking
-          .currentEra()
-          .pipe(
-            map((currentEra) =>
-              currentEra.isNone ? null : currentEra.unwrap()
-            )
-          ),
+        api.query.staking.currentEra().pipe(
+          map((currentEra) =>
+            // It's safe to convert `u32` to JavaScript's Number.
+            currentEra.isNone ? null : currentEra.unwrap().toNumber()
+          )
+        ),
       []
     )
   );

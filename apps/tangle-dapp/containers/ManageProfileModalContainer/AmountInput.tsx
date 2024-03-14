@@ -11,8 +11,8 @@ import useInputAmount from './useInputAmount';
 export type AmountInputProps = {
   id: string;
   title: string;
-  amount: BN | null;
-  setAmount: (newAmount: BN | null) => void;
+  amount: BN;
+  setAmount: (newAmount: BN) => void;
 };
 
 const AmountInput: FC<AmountInputProps> = ({
@@ -28,6 +28,7 @@ const AmountInput: FC<AmountInputProps> = ({
     minRestakingBond,
     maxRestakingAmount,
     'Must be at least the minimum restaking bond',
+    true,
     setAmount
   );
 

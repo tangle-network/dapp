@@ -16,7 +16,8 @@ function validateInputAmount(
   amountString: string,
   min: BN | null,
   max: BN | null,
-  minErrorMessage: string
+  minErrorMessage: string,
+  errorOnEmptyValue: boolean
 ): string | null {
   const schema = z
     .string()
@@ -24,6 +25,9 @@ function validateInputAmount(
     .transform((value) =>
       value === null ? null : convertAmountStringToChainUnits(value)
     )
+    .refine((amount) => !errorOnEmptyValue || amount !== null, {
+      message: 'No amount given',
+    })
     .refine((amount) => amount === null || min === null || amount.gte(min), {
       message: minErrorMessage,
     })
@@ -43,7 +47,8 @@ const useInputAmount = (
   min: BN | null,
   max: BN | null,
   minErrorMessage: string,
-  setAmount?: (newAmount: BN | null) => void
+  errorOnEmptyValue: boolean,
+  setAmount?: (newAmount: BN) => void
 ) => {
   const [amountString, setAmountString] = useState(
     amount !== null ? convertChainUnitsToNumber(amount) : ''
@@ -78,7 +83,8 @@ const useInputAmount = (
         newAmountString,
         min,
         max,
-        minErrorMessage
+        minErrorMessage,
+        errorOnEmptyValue
       );
 
       setErrorMessage(errorMessage);
@@ -90,15 +96,10 @@ const useInputAmount = (
         setAmount !== undefined &&
         !newAmountString.endsWith('.')
       ) {
-        const newAmount =
-          newAmountString === ''
-            ? null
-            : convertAmountStringToChainUnits(newAmountString);
-
-        setAmount(newAmount);
+        setAmount(convertAmountStringToChainUnits(newAmountString));
       }
     },
-    [max, min, minErrorMessage, setAmount]
+    [errorOnEmptyValue, max, min, minErrorMessage, setAmount]
   );
 
   return { amountString, setAmountString, errorMessage, handleChange };

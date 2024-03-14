@@ -53,9 +53,9 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
     const nextAllocations: RestakingAllocationMap = {};
 
     // Shared roles profile allocations have their amounts
-    // set to `null`.
+    // set to zero.
     for (const selectedRole of selectedRoles) {
-      nextAllocations[selectedRole] = null;
+      nextAllocations[selectedRole] = new BN(0);
     }
 
     setAllocations(nextAllocations);
@@ -70,7 +70,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
       <AmountInput
         id="shared-allocation-amount"
         title="Total Restake"
-        amount={restakeAmount}
+        amount={restakeAmount ?? new BN(0)}
         setAmount={setRestakeAmount}
       />
 

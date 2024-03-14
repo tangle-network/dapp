@@ -4,6 +4,8 @@ import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useRestakingJobs from '../../data/restaking/useRestakingJobs';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
@@ -13,46 +15,55 @@ import useInputAmount from './useInputAmount';
 
 export type AllocationInputProps = {
   amount: BN | null;
-  min: BN | null;
-  setAmount: (newAmount: BN | null) => void;
+  setAmount: (newAmount: BN) => void;
   availableServices: ServiceType[];
   availableBalance: BN | null;
   service: ServiceType | null;
-  title: string;
   id: string;
-  isDisabled?: boolean;
-  hasDeleteButton?: boolean;
-  lockTooltip?: string;
-  validate: boolean;
-  minErrorMessage: string;
+  validate?: boolean;
+  errorOnEmptyValue?: boolean;
   onDelete?: (service: ServiceType) => void;
-  setService: (service: ServiceType) => void;
+  setService?: (service: ServiceType) => void;
 };
 
+const ERROR_MIN_RESTAKING_BOND = 'Must be at least the minimum restaking bond';
+
+/**
+ * A specialized input used to allocate roles for creating or
+ * updating job profiles in Substrate.
+ */
 const AllocationInput: FC<AllocationInputProps> = ({
-  lockTooltip,
   amount = null,
-  min,
   setAmount,
   availableBalance,
-  hasDeleteButton = false,
-  isDisabled = false,
   availableServices,
-  validate,
-  title,
+  validate = true,
   id,
-  minErrorMessage,
   service,
   setService,
   onDelete,
+  errorOnEmptyValue = true,
 }) => {
+  const { servicesWithJobs } = useRestakingJobs();
+  const { minRestakingBond } = useRestakingLimits();
+
+  const hasActiveJob =
+    service !== null ? servicesWithJobs?.includes(service) ?? false : false;
+
+  const min = hasActiveJob ? amount : minRestakingBond;
+
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  const minErrorMessage = hasActiveJob
+    ? 'Cannot decrease restake for active role'
+    : ERROR_MIN_RESTAKING_BOND;
 
   const { amountString, errorMessage, handleChange } = useInputAmount(
     amount,
     min,
     availableBalance,
     minErrorMessage,
+    errorOnEmptyValue,
     setAmount
   );
 
@@ -64,6 +75,10 @@ const AllocationInput: FC<AllocationInputProps> = ({
 
   const handleSetService = useCallback(
     (service: ServiceType) => {
+      if (setService === undefined) {
+        return;
+      }
+
       setService(service);
       setIsDropdownVisible(false);
     },
@@ -98,15 +113,21 @@ const AllocationInput: FC<AllocationInputProps> = ({
     [availableServices, handleSetService, min, service]
   );
 
-  const isLocked = lockTooltip !== undefined;
-
   const actions = (
     <>
-      {isLocked && (
-        <InputAction tooltip={lockTooltip} Icon={LockLineIcon} iconSize="md" />
+      {hasActiveJob && (
+        <InputAction
+          tooltip={
+            'Active service(s) in progress; can only have restake amount increased.'
+          }
+          Icon={LockLineIcon}
+          iconSize="md"
+        />
       )}
 
-      {hasDeleteButton && (
+      {!hasActiveJob && (
+        // Users can remove roles only if there are no active services
+        // linked to those roles.
         <InputAction
           Icon={Close}
           onClick={handleDelete}
@@ -116,14 +137,16 @@ const AllocationInput: FC<AllocationInputProps> = ({
     </>
   );
 
+  const hasDropdownBody = !hasActiveJob && setService !== undefined;
+
   return (
     <BaseInput
+      id={id}
       isDropdownVisible={isDropdownVisible}
       setIsDropdownVisible={setIsDropdownVisible}
-      title={title}
-      id={id}
+      title="Total Restake"
       actions={actions}
-      dropdownBody={!hasDeleteButton && !isLocked ? dropdownBody : undefined}
+      dropdownBody={hasDropdownBody ? dropdownBody : undefined}
       errorMessage={validate ? errorMessage ?? undefined : undefined}
       chipText={service ?? 'Select role'}
       chipColor={
@@ -141,7 +164,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
         autoComplete="off"
         isInvalid={errorMessage !== undefined}
         // Disable input if the available balance is not yet loaded.
-        isReadOnly={isDisabled || availableBalance === null}
+        isReadOnly={availableBalance === null}
         isControlled
       />
     </BaseInput>
