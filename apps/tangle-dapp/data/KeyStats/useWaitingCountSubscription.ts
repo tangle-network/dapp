@@ -15,7 +15,7 @@ export default function useWaitingCountSubscription(
   }
 ) {
   const { value: cachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.WaitingCount,
+    LocalStorageKey.WAITING_COUNT,
     true
   );
 

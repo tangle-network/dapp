@@ -1,9 +1,5 @@
 import { BN } from '@polkadot/util';
-import {
-  Button,
-  Typography,
-  useNextDarkMode,
-} from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import {
   Dispatch,
@@ -13,144 +9,60 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { Cell, Pie, PieChart, Tooltip as RechartsTooltip } from 'recharts';
 import { z } from 'zod';
 
-import BnChartTooltip from '../../components/BnChartTooltip';
-import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
-import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
+import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { ServiceType } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
+import { AllocationChartVariant } from './AllocationChart';
 import AllocationInput from './AllocationInput';
+import AllocationStepContents from './AllocationStepContents';
 import { RestakingAllocationMap } from './types';
-
-type EntryName = 'Remaining' | ServiceType;
-
-type AllocationDataEntry = {
-  name: EntryName;
-  value: number;
-};
 
 export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
 
-function getPercentageOfTotal(amount: BN, total: BN): number {
-  // Avoid division by zero.
-  if (total.isZero()) {
-    throw new Error('Total should not be zero');
-  }
-
-  assert(amount.lte(total), 'Amount should be less than or equal to total');
-
-  // It's safe to convert to a number here, since the
-  // value will always be fraction between 0 and 1.
-  return amount.mul(new BN(100)).div(total).toNumber() / 100;
-}
-
-function getServiceChartColor(service: ServiceType): ChartColor {
-  switch (service) {
-    case ServiceType.ZK_SAAS_MARLIN:
-    case ServiceType.ZK_SAAS_GROTH16:
-      return ChartColor.Blue;
-    case ServiceType.DKG_TSS_CGGMP:
-      return ChartColor.Lavender;
-    case ServiceType.TX_RELAY:
-      return ChartColor.Green;
-  }
-}
-
-function getChartColor(entryName: EntryName): ChartColor {
-  switch (entryName) {
-    case 'Remaining':
-      return ChartColor.DarkGray;
-    default:
-      return getServiceChartColor(entryName);
-  }
-}
-
-export function cleanAllocations(
+export function filterAllocations(
   allocations: RestakingAllocationMap
 ): [ServiceType, BN][] {
-  return Object.entries(allocations)
-    .filter(([_service, amount]) => amount !== null)
-    .map(([serviceString, amount]) => {
-      const service = z.nativeEnum(ServiceType).parse(serviceString);
+  return Object.entries(allocations).map(([serviceString, amount]) => {
+    const service = z.nativeEnum(ServiceType).parse(serviceString);
 
-      assert(
-        amount !== null,
-        'Entries without amounts should have been filtered out'
-      );
-
-      return [service, amount];
-    });
+    return [service, amount];
+  });
 }
 
 const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const { data: stakedBalance } = useStakingLedgerRx(
-    useCallback((ledger) => ledger.total.toBn(), [])
+  const { maxRestakingAmount } = useRestakingLimits();
+
+  const restakedAmount = useMemo(
+    () =>
+      Object.entries(allocations).reduce(
+        (acc, [_key, amount]) => acc.add(amount),
+        new BN(0)
+      ),
+    [allocations]
   );
-
-  // Max restaking amount = 50% of the total staked balance, which
-  // is equivalent to dividing the staked balance by 2. This is taken
-  // from Tangle's source code, as it seems that it is not obtainable
-  // from the Polkadot API.
-  // See: https://github.com/webb-tools/tangle/blob/8be20aa02a764422e1fd0ba30bc70b99d5f66887/runtime/mainnet/src/lib.rs#L1137
-  const maxRestakingAmount = stakedBalance?.divn(2) ?? null;
-
-  const [isDarkMode] = useNextDarkMode();
-
-  const themeCellColor: ChartColor = isDarkMode
-    ? ChartColor.DarkGray
-    : ChartColor.Gray;
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
   );
 
+  const { value: maxRolesPerAccount } = usePolkadotApi(
+    useCallback(
+      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
+      []
+    )
+  );
+
   const [newAllocationRole, setNewAllocationRole] =
     useState<ServiceType | null>(null);
-
-  const restakedAmount = useMemo(() => {
-    let amount = new BN(0);
-
-    for (const [_service, serviceAmount] of Object.entries(allocations)) {
-      if (serviceAmount !== null) {
-        amount = amount.add(serviceAmount);
-      }
-    }
-
-    return amount;
-  }, [allocations]);
-
-  const remainingDataEntry: AllocationDataEntry = useMemo(
-    () => ({
-      name: 'Remaining',
-      value:
-        maxRestakingAmount === null
-          ? 1
-          : 1 - getPercentageOfTotal(restakedAmount, maxRestakingAmount),
-    }),
-    [maxRestakingAmount, restakedAmount]
-  );
-
-  const allocationDataEntries: AllocationDataEntry[] = useMemo(
-    () =>
-      cleanAllocations(allocations).map(([service, amount]) => ({
-        name: service,
-        value:
-          maxRestakingAmount === null
-            ? 0
-            : getPercentageOfTotal(amount, maxRestakingAmount),
-      })),
-    [allocations, maxRestakingAmount]
-  );
-
-  const data = [remainingDataEntry].concat(allocationDataEntries);
 
   const handleNewAllocation = useCallback(() => {
     if (newAllocationRole === null || newAllocationAmount === null) {
@@ -164,32 +76,53 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
     setNewAllocationRole(null);
     setNewAllocationAmount(null);
-  }, [newAllocationAmount, newAllocationRole, setAllocations]);
+  }, [
+    newAllocationAmount,
+    newAllocationRole,
+    setAllocations,
+    setNewAllocationAmount,
+  ]);
 
-  const handleClearAllocations = useCallback(() => {
-    setAllocations({
-      [ServiceType.DKG_TSS_CGGMP]: null,
-      [ServiceType.TX_RELAY]: null,
-      [ServiceType.ZK_SAAS_GROTH16]: null,
-      [ServiceType.ZK_SAAS_MARLIN]: null,
-    });
-  }, [setAllocations]);
+  const handleDeallocation = useCallback(
+    (service: ServiceType) => {
+      const deallocatedAmount = allocations[service];
 
-  const handleDeallocation = (service: ServiceType) => {
-    const deallocatedAmount = allocations[service];
+      assert(
+        deallocatedAmount !== undefined,
+        'Allocations should have an entry for the service being deallocated'
+      );
 
-    assert(
-      deallocatedAmount !== null,
-      'Deallocated amount should not be null because that would imply that during its allocation, it had no amount set'
-    );
+      setAllocations((prev) => {
+        const nextAllocations = Object.assign({}, prev);
 
-    setAllocations((prev) => ({
-      ...prev,
-      [service]: null,
-    }));
-  };
+        delete nextAllocations[service];
 
-  const amountRemaining = maxRestakingAmount?.sub(restakedAmount) ?? null;
+        return nextAllocations;
+      });
+    },
+    [allocations, setAllocations]
+  );
+
+  const handleAllocationChange = useCallback(
+    (service: ServiceType, newAmount: BN | null) => {
+      // Do not update the amount if it has no value,
+      // or if the new amount is the same as the current amount.
+      if (newAmount === null || allocations[service]?.eq(newAmount)) {
+        return;
+      }
+
+      setAllocations((prev) => ({
+        ...prev,
+        [service]: newAmount,
+      }));
+    },
+    [allocations, setAllocations]
+  );
+
+  const amountRemaining = useMemo(
+    () => maxRestakingAmount?.sub(restakedAmount) ?? null,
+    [maxRestakingAmount, restakedAmount]
+  );
 
   const isNewAllocationAmountValid = (() => {
     if (
@@ -207,44 +140,56 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const availableRoles = useMemo(
     () =>
-      Object.entries(allocations)
-        .filter((entry) => entry[1] === null)
-        .map(([service]) => z.nativeEnum(ServiceType).parse(service)),
+      Object.values(ServiceType).filter((service) => !(service in allocations)),
     [allocations]
   );
 
+  const filteredAllocations = useMemo(
+    () => filterAllocations(allocations),
+    [allocations]
+  );
+
+  const canAddNewAllocation =
+    availableRoles.length > 0 &&
+    maxRolesPerAccount !== null &&
+    maxRolesPerAccount.gtn(filteredAllocations.length);
+
   return (
-    <div className="flex flex-col-reverse sm:flex-row gap-5 items-center sm:items-start justify-center">
+    <AllocationStepContents
+      allocatedAmount={restakedAmount}
+      allocations={allocations}
+      variant={AllocationChartVariant.INDEPENDENT}
+      previewAmount={newAllocationAmount ?? undefined}
+      previewRole={newAllocationRole ?? undefined}
+    >
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
-          {cleanAllocations(allocations).map(([service, amount]) => (
+          {filteredAllocations.map(([service, amount]) => (
             <AllocationInput
-              amount={amount}
-              isDisabled
               key={service}
-              title="Total Restake"
+              amount={amount}
               id={`manage-profile-allocation-${service}`}
               availableServices={availableRoles}
               service={service}
-              setService={setNewAllocationRole}
-              hasDeleteButton
+              setAmount={(newAmount) =>
+                handleAllocationChange(service, newAmount)
+              }
               onDelete={handleDeallocation}
               availableBalance={amountRemaining}
-              validateAmountAgainstRemaining={false}
+              errorOnEmptyValue
             />
           ))}
 
-          {availableRoles.length > 0 && (
+          {canAddNewAllocation && (
             <AllocationInput
-              title="Total Restake"
               id="manage-profile-new-allocation"
               availableServices={availableRoles}
               service={newAllocationRole}
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
-              onChange={setNewAllocationAmount}
+              setAmount={setNewAllocationAmount}
               availableBalance={amountRemaining}
-              validateAmountAgainstRemaining
+              errorOnEmptyValue={false}
             />
           )}
         </div>
@@ -258,17 +203,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           </Typography>
 
           <div className="flex items-center gap-2">
-            {restakedAmount.gtn(0) && (
-              <Button
-                size="sm"
-                variant="utility"
-                className="uppercase"
-                onClick={handleClearAllocations}
-              >
-                Clear All
-              </Button>
-            )}
-
             {availableRoles.length > 0 && (
               <Button
                 size="sm"
@@ -283,57 +217,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           </div>
         </div>
       </div>
-
-      <div className="relative flex items-center justify-center w-full">
-        <PieChart width={190} height={190}>
-          <Pie
-            data={data}
-            innerRadius={65}
-            outerRadius={95}
-            stroke="none"
-            dataKey="value"
-            paddingAngle={5}
-            animationDuration={200}
-          >
-            <Cell key="Remaining" fill={themeCellColor} />
-
-            {allocationDataEntries.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={getChartColor(entry.name)} />
-            ))}
-          </Pie>
-
-          <RechartsTooltip
-            content={BnChartTooltip(
-              allocations,
-              maxRestakingAmount ?? new BN(0),
-              restakedAmount
-            )}
-          />
-        </PieChart>
-
-        <div className="absolute center flex flex-col justify-center items-center z-[-1]">
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="dark:text-mono-120"
-          >
-            Restaked
-          </Typography>
-
-          <Typography
-            variant="h5"
-            fw="bold"
-            className="dark:text-mono-0 text-center"
-          >
-            {formatTokenBalance(restakedAmount, false)}
-          </Typography>
-
-          <Typography variant="body2" className="dark:text-mono-120">
-            {TANGLE_TOKEN_UNIT}
-          </Typography>
-        </div>
-      </div>
-    </div>
+    </AllocationStepContents>
   );
 };
 

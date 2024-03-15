@@ -77,7 +77,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   );
   const [amountToBond, setAmountToBond] = useState<number>(0);
   const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.Staked
+    PaymentDestination.STAKED
   );
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
@@ -175,7 +175,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(0);
-    setPaymentDestination(PaymentDestination.Staked);
+    setPaymentDestination(PaymentDestination.STAKED);
     setSelectedValidators([]);
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
@@ -188,13 +188,13 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             bondTokensEvm(
               walletAddress,
               amountToBond,
-              PaymentDestination.Stash
+              PaymentDestination.STASH
             ),
           () =>
             bondTokensSubstrate(
               walletAddress,
               amountToBond,
-              PaymentDestination.Stash
+              PaymentDestination.STASH
             ),
           `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
           'Failed to bond tokens!'
@@ -237,8 +237,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
         const currPaymentDestination =
           currentPaymentDestination?.value1 === 'Staked'
-            ? PaymentDestination.Staked
-            : PaymentDestination.Stash;
+            ? PaymentDestination.STAKED
+            : PaymentDestination.STASH;
 
         if (currPaymentDestination !== paymentDestination) {
           await executeTx(

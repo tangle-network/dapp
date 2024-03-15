@@ -23,7 +23,7 @@ function validateQueryParam(
   }
 
   switch (key) {
-    case QueryParamKey.DelegationsAndPayoutsTab:
+    case QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB:
       return z.nativeEnum(DelegationsAndPayoutsTab).safeParse(value).success;
   }
 }

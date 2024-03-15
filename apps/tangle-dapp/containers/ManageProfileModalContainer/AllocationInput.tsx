@@ -1,109 +1,89 @@
 import { BN } from '@polkadot/util';
-import {
-  ChevronDown,
-  ChevronUp,
-  Close,
-  LockUnlockLineIcon,
-} from '@webb-tools/icons';
-import { IconBase, IconSize } from '@webb-tools/icons/types';
-import {
-  Chip,
-  IconWithTooltip,
-  Input,
-  InputWrapper,
-  Label,
-  SkeletonLoader,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import { FC, ReactElement, useCallback, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-import { z } from 'zod';
+import { Close, LockLineIcon } from '@webb-tools/icons';
+import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
+import useRestakingJobs from '../../data/restaking/useRestakingJobs';
+import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { ServiceType } from '../../types';
-import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
+import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
+import BaseInput from './BaseInput';
+import InputAction from './InputAction';
+import useInputAmount from './useInputAmount';
 
 export type AllocationInputProps = {
   amount: BN | null;
+  setAmount: (newAmount: BN | null) => void;
   availableServices: ServiceType[];
   availableBalance: BN | null;
   service: ServiceType | null;
-  validateAmountAgainstRemaining: boolean;
-  title: string;
   id: string;
-  isDisabled?: boolean;
-  hasDeleteButton?: boolean;
-  isLocked?: boolean;
-  lockTooltip?: string;
+  validate?: boolean;
+  errorOnEmptyValue?: boolean;
   onDelete?: (service: ServiceType) => void;
-  onChange?: (newAmountInChainUnits: BN) => void;
-  setService: (service: ServiceType) => void;
+  setService?: (service: ServiceType) => void;
 };
 
-export function getRoleChipColor(
-  role: ServiceType
-): 'green' | 'blue' | 'purple' {
-  switch (role) {
-    case ServiceType.ZK_SAAS_GROTH16:
-    case ServiceType.ZK_SAAS_MARLIN:
-      return 'blue';
-    case ServiceType.TX_RELAY:
-      return 'green';
-    case ServiceType.DKG_TSS_CGGMP:
-      return 'purple';
-  }
-}
+export const ERROR_MIN_RESTAKING_BOND =
+  'Must be at least the minimum restaking bond';
 
-const DECIMAL_REGEX = /^\d*(\.\d+)?$/;
-
-const STATIC_VALIDATION_SCHEMA = z
-  .string()
-  .regex(
-    DECIMAL_REGEX,
-    'Only digits or numbers with a decimal point are allowed'
-  );
-
+/**
+ * A specialized input used to allocate roles for creating or
+ * updating job profiles in Substrate.
+ */
 const AllocationInput: FC<AllocationInputProps> = ({
-  isLocked = false,
-  lockTooltip,
   amount = null,
+  setAmount,
   availableBalance,
-  hasDeleteButton = false,
-  isDisabled = false,
-  validateAmountAgainstRemaining,
   availableServices,
-  title,
+  validate = true,
   id,
   service,
-  onChange,
   setService,
   onDelete,
+  errorOnEmptyValue = true,
 }) => {
+  const { servicesWithJobs } = useRestakingJobs();
+  const { minRestakingBond } = useRestakingLimits();
+
+  // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading.
+  const hasActiveJob =
+    service !== null ? servicesWithJobs?.includes(service) ?? false : false;
+
+  const { value: substrateAllocationsOpt } = useRestakingAllocations();
+
+  const substrateAllocationAmount = useMemo(() => {
+    if (
+      service === null ||
+      substrateAllocationsOpt === null ||
+      substrateAllocationsOpt.value === null
+    ) {
+      return null;
+    }
+
+    return substrateAllocationsOpt.value[service] ?? null;
+  }, [service, substrateAllocationsOpt]);
+
+  const min = hasActiveJob
+    ? substrateAllocationAmount ?? minRestakingBond
+    : minRestakingBond;
+
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-  const { data: minRestakingBond } = usePolkadotApiRx(
-    useCallback((api) => api.query.roles.minRestakingBond(), [])
-  );
+  const minErrorMessage = hasActiveJob
+    ? 'Cannot decrease restake for active role'
+    : ERROR_MIN_RESTAKING_BOND;
 
-  const handleAmountChange = useCallback(
-    (newValue: string) => {
-      // Do nothing if the input is invalid or empty.
-      if (
-        onChange === undefined ||
-        newValue === '' ||
-        !DECIMAL_REGEX.test(newValue)
-      ) {
-        return;
-      }
-
-      const newAmountInChainUnits = convertAmountStringToChainUnits(newValue);
-
-      onChange(newAmountInChainUnits);
-    },
-    [onChange]
+  const { amountString, errorMessage, handleChange } = useInputAmount(
+    amount,
+    min,
+    availableBalance,
+    minErrorMessage,
+    errorOnEmptyValue,
+    setAmount
   );
 
   const handleDelete = useCallback(() => {
@@ -112,198 +92,103 @@ const AllocationInput: FC<AllocationInputProps> = ({
     }
   }, [onDelete, service]);
 
-  const toggleDropdown = useCallback(() => {
-    if (!isDisabled) {
-      setIsDropdownVisible((isVisible) => !isVisible);
-    }
-  }, [isDisabled]);
+  const handleSetService = useCallback(
+    (service: ServiceType) => {
+      if (setService === undefined) {
+        return;
+      }
 
-  const handleSetService = (service: ServiceType) => {
-    setService(service);
-    setIsDropdownVisible(false);
-  };
-
-  const amountAsString = useMemo(
-    () => (amount !== null ? convertChainUnitsToNumber(amount).toString() : ''),
-    [amount]
+      setService(service);
+      setIsDropdownVisible(false);
+    },
+    [setService]
   );
 
-  const validationResult = useMemo(
+  const dropdownBody = useMemo(
     () =>
-      STATIC_VALIDATION_SCHEMA.refine(
-        () =>
-          amount === null ||
-          minRestakingBond === null ||
-          amount.gte(minRestakingBond),
-        {
-          message:
-            'Amount must be greater than or equal to the minimum restaking bond',
-        }
-      )
-        .refine(
-          () =>
-            !validateAmountAgainstRemaining ||
-            availableBalance === null ||
-            amount === null ||
-            amount.lte(availableBalance),
-          {
-            message: 'Not enough available balance',
-          }
-        )
-        .safeParse(amountAsString),
-    [
-      amount,
-      amountAsString,
-      availableBalance,
-      minRestakingBond,
-      validateAmountAgainstRemaining,
-    ]
+      availableServices
+        .filter((availableRole) => availableRole !== service)
+        // Sort roles in ascending order, by their display
+        // values (strings). This is done with the intent to
+        // give priority to the TSS roles.
+        .toSorted((a, b) => a.localeCompare(b))
+        .map((service) => (
+          <div
+            key={service}
+            onClick={() => handleSetService(service)}
+            className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
+          >
+            <Chip color={getChipColorOfServiceType(service)}>{service}</Chip>
+
+            {min !== null ? (
+              <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
+                {`≥ ${formatTokenBalance(min, false)}`}
+              </Chip>
+            ) : (
+              <SkeletonLoader />
+            )}
+          </div>
+        )),
+    [availableServices, handleSetService, min, service]
   );
 
-  const errorMessage = !validationResult.success
-    ? // Pick the first error message, since the input component does
-      // not support displaying a list of error messages.
-      validationResult.error.issues[0].message
-    : undefined;
+  // Users can remove roles only if there are no active services
+  // linked to those roles.
+  const canBeDeleted = !hasActiveJob && onDelete !== undefined;
+
+  const actions = (
+    <>
+      {hasActiveJob && (
+        <InputAction
+          tooltip={
+            'Active service(s) in progress; can only have restake amount increased.'
+          }
+          Icon={LockLineIcon}
+          iconSize="md"
+        />
+      )}
+
+      {canBeDeleted && (
+        <InputAction
+          Icon={Close}
+          onClick={handleDelete}
+          tooltip="Remove role"
+        />
+      )}
+    </>
+  );
+
+  const hasDropdownBody = !hasActiveJob && setService !== undefined;
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <InputWrapper
-        className={twMerge(
-          'flex gap-2 cursor-default relative !w-full !max-w-[400px]',
-          'bg-mono-20 dark:bg-mono-160',
-          'border border-mono-20 dark:border-mono-160',
-          !validationResult.success && 'border-red-50 dark:border-red-50'
-        )}
-      >
-        <div className="flex flex-col gap-1 mr-auto">
-          <Label
-            className="text-mono-100 dark:text-mono-80 font-bold"
-            htmlFor={id}
-          >
-            {title}
-          </Label>
-
-          <Input
-            id={id}
-            inputClassName="placeholder:text-md"
-            value={amountAsString}
-            type="number"
-            inputMode="numeric"
-            onChange={handleAmountChange}
-            placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
-            size="sm"
-            autoComplete="off"
-            isInvalid={!validationResult.success}
-            // Disable input if the available balance is not yet loaded.
-            isReadOnly={isDisabled || availableBalance === null}
-          />
-        </div>
-
-        {/* Actions */}
-        <div
-          className={twMerge(
-            'flex items-center justify-center gap-1',
-            !isDisabled && 'cursor-pointer'
-          )}
-        >
-          <Chip
-            onClick={toggleDropdown}
-            color={service === null ? 'grey' : getRoleChipColor(service)}
-            className={twMerge(
-              'uppercase whitespace-nowrap',
-              service === null &&
-                'text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140',
-              !isDisabled && 'cursor-pointer'
-            )}
-          >
-            {service ?? 'Select role'}
-          </Chip>
-
-          {isLocked && (
-            <Action
-              tooltip={lockTooltip}
-              Icon={LockUnlockLineIcon}
-              iconSize="md"
-            />
-          )}
-
-          {hasDeleteButton ? (
-            <Action Icon={Close} onClick={handleDelete} tooltip="Remove role" />
-          ) : (
-            <Action
-              Icon={isDropdownVisible ? ChevronUp : ChevronDown}
-              onClick={toggleDropdown}
-            />
-          )}
-        </div>
-
-        {/* Dropdown body */}
-        {isDropdownVisible && (
-          <div className="absolute z-50 top-[100%] left-0 mt-1 w-full bg-mono-0 border border-mono-40 dark:border-mono-140 dark:bg-mono-170 shadow-md rounded-lg overflow-hidden">
-            {availableServices
-              .filter((availableRole) => availableRole !== service)
-              .map((service) => (
-                <div
-                  key={service}
-                  onClick={() => handleSetService(service)}
-                  className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
-                >
-                  <Chip color={getRoleChipColor(service)}>{service}</Chip>
-
-                  {minRestakingBond !== null ? (
-                    <Chip
-                      color="grey"
-                      className="text-mono-0 dark:text-mono-0 bg-mono-100 dark:bg-mono-140"
-                    >
-                      {`≥ ${formatTokenBalance(minRestakingBond)}`}
-                    </Chip>
-                  ) : (
-                    <SkeletonLoader />
-                  )}
-                </div>
-              ))}
-          </div>
-        )}
-      </InputWrapper>
-
-      {errorMessage !== undefined && (
-        <Typography className="dark:text-mono-100" variant="body1" fw="normal">
-          *{errorMessage}
-        </Typography>
-      )}
-    </div>
-  );
-};
-
-type ActionProps = {
-  Icon: (props: IconBase) => ReactElement;
-  tooltip?: string;
-  iconSize?: IconSize;
-  onClick?: () => void;
-};
-
-const Action: FC<ActionProps> = ({
-  tooltip,
-  iconSize = 'lg',
-  Icon,
-  onClick,
-}) => {
-  const icon = (
-    <Icon
-      onClick={onClick}
-      size={iconSize}
-      className={twMerge(
-        'dark:fill-mono-0',
-        onClick !== undefined && 'cursor-pointer'
-      )}
-    />
-  );
-
-  return tooltip === undefined ? (
-    icon
-  ) : (
-    <IconWithTooltip content={<>{tooltip}</>} icon={icon} />
+    <BaseInput
+      id={id}
+      isDropdownVisible={isDropdownVisible}
+      setIsDropdownVisible={setIsDropdownVisible}
+      title="Total Restake"
+      actions={actions}
+      dropdownBody={hasDropdownBody ? dropdownBody : undefined}
+      errorMessage={validate ? errorMessage ?? undefined : undefined}
+      chipText={service ?? 'Select role'}
+      chipColor={
+        service !== null ? getChipColorOfServiceType(service) : undefined
+      }
+    >
+      <Input
+        id={id}
+        inputClassName="placeholder:text-md"
+        value={amountString}
+        onChange={handleChange}
+        type="text"
+        placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
+        size="sm"
+        autoComplete="off"
+        isInvalid={errorMessage !== undefined}
+        // Disable input if the available balance is not yet loaded.
+        isReadOnly={availableBalance === null}
+        isControlled
+      />
+    </BaseInput>
   );
 };
 

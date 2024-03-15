@@ -19,7 +19,7 @@ export const payoutStakers = async (
   const validator = u8aToHex(decodeAddress(validatorAddress));
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Staking,
+    address: PrecompileAddress.STAKING,
     abi: STAKING_PRECOMPILE_ABI,
     functionName: 'payoutStakers',
     args: [validator, era],
@@ -42,7 +42,7 @@ export const batchPayoutStakers = async (
   const batchCalls = validatorEraPairs.map(({ validatorAddress, era }) => {
     const validator = u8aToHex(decodeAddress(validatorAddress));
     return {
-      to: PrecompileAddress.Staking as AddressType,
+      to: PrecompileAddress.STAKING as AddressType,
       value: 0,
       callData: stakingInterface.encodeFunctionData('payoutStakers', [
         validator,
@@ -53,7 +53,7 @@ export const batchPayoutStakers = async (
   });
 
   const { request } = await evmPublicClient.simulateContract({
-    address: PrecompileAddress.Batch as AddressType,
+    address: PrecompileAddress.BATCH as AddressType,
     abi: BATCH_PRECOMPILE_ABI,
     functionName: 'batchAll',
     args: [

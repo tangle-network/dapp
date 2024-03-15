@@ -8,10 +8,10 @@ import { useEffect, useRef } from 'react';
 const useIsMountedRef = () => {
   const isMounted = useRef(false);
 
-  useEffect((): (() => void) => {
+  useEffect(() => {
     isMounted.current = true;
 
-    return (): void => {
+    return () => {
       isMounted.current = false;
     };
   }, []);
