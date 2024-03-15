@@ -1,25 +1,25 @@
 import { TanglePrimitivesRolesRoleType } from '@polkadot/types/lookup';
 
 import { TANGLE_TO_SERVICE_TYPE_TSS_MAP } from '../constants';
-import { ServiceType } from '../types';
+import { RestakingService } from '../types';
 
 function substrateRoleToServiceType(
   role: TanglePrimitivesRolesRoleType
-): ServiceType {
-  let serviceType: ServiceType | null = null;
+): RestakingService {
+  let serviceType: RestakingService | null = null;
 
   if (role.isZkSaaS) {
     const zksassRole = role.asZkSaaS;
 
     if (zksassRole.isZkSaaSGroth16) {
-      serviceType = ServiceType.ZK_SAAS_GROTH16;
+      serviceType = RestakingService.ZK_SAAS_GROTH16;
     } else if (zksassRole.isZkSaaSMarlin) {
-      serviceType = ServiceType.ZK_SAAS_MARLIN;
+      serviceType = RestakingService.ZK_SAAS_MARLIN;
     }
   } else if (role.isTss) {
     serviceType = TANGLE_TO_SERVICE_TYPE_TSS_MAP[role.asTss.type];
   } else if (role.isLightClientRelaying) {
-    serviceType = ServiceType.LIGHT_CLIENT_RELAYING;
+    serviceType = RestakingService.LIGHT_CLIENT_RELAYING;
   }
 
   // Because of the structure of the provided types (not being an enum),

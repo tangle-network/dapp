@@ -5,10 +5,10 @@ import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { RestakingProfileType, ServiceType } from '../../types';
+import { RestakingProfileType, RestakingService } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { filterAllocations } from './IndependentAllocationStep';
+import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {
@@ -174,7 +174,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 };
 
 type AllocationItemProps = {
-  services: ServiceType[];
+  services: RestakingService[];
   amount?: BN;
 };
 

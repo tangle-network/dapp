@@ -6,11 +6,11 @@ import { z } from 'zod';
 import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
-import { RestakingProfileType, ServiceType } from '../../types';
+import { RestakingProfileType, RestakingService } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
-  role: (typeof SERVICE_TYPE_TO_TANGLE_MAP)[ServiceType];
+  role: (typeof SERVICE_TYPE_TO_TANGLE_MAP)[RestakingService];
   amount: BN;
 };
 
@@ -64,7 +64,7 @@ const useUpdateRestakingProfileTx = (
         const records: ProfileRecord[] = Object.entries(
           allocationsRef.current
         ).map(([serviceString, amount]) => {
-          const service = z.nativeEnum(ServiceType).parse(serviceString);
+          const service = z.nativeEnum(RestakingService).parse(serviceString);
 
           return {
             role: SERVICE_TYPE_TO_TANGLE_MAP[service],

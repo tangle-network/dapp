@@ -3,7 +3,7 @@ import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
-import { RestakingProfileType, ServiceType } from '../../types';
+import { RestakingProfileType, RestakingService } from '../../types';
 import Optional from '../../utils/Optional';
 import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
 import useRestakingProfile from './useRestakingProfile';
@@ -22,7 +22,7 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
  */
 function convertRecordToAllocation(
   record: PalletRolesProfileRecord
-): [ServiceType, BN] {
+): [RestakingService, BN] {
   const serviceType = substrateRoleToServiceType(record.role);
 
   // The amount being `None` simply means that it is zero.

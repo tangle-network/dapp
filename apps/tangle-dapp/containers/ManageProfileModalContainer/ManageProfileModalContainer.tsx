@@ -23,11 +23,11 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import { RestakingProfileType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
-import IndependentAllocationStep from './IndependentAllocationStep';
-import SharedAllocationStep from './SharedAllocationStep';
+import IndependentAllocationStep from './Independent/IndependentAllocationStep';
+import SharedAllocationStep from './Shared/SharedAllocationStep';
 import { ManageProfileModalContainerProps } from './types';
 import useAllocationsState from './useAllocationsState';
-import useSharedRestakeAmountState from './useSharedRestakeAmountState';
+import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';
 
 /**
  * The steps in the manage profile modal.

@@ -139,7 +139,7 @@ export type InternalPath =
  * The values represent the user-facing UI display names
  * of the roles.
  */
-export enum ServiceType {
+export enum RestakingService {
   ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
   ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
   LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
@@ -163,7 +163,7 @@ export enum RestakingProfileType {
 
 export type Service = {
   id: number;
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   participants: string[];
   thresholds?: number;
   phase2Executions?: number;
@@ -179,7 +179,7 @@ export type ServiceJob = {
 
 export type JobType = {
   id?: number;
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   thresholds?: number;
   earnings?: number;
   expiration: number;

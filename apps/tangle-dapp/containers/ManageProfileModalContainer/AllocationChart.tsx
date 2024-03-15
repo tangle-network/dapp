@@ -15,7 +15,7 @@ import {
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import { ServiceType } from '../../types';
+import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { RestakingAllocationMap } from './types';
@@ -33,7 +33,7 @@ export type AllocationChartProps = {
   allocations: RestakingAllocationMap;
   allocatedAmount: BN;
   previewAmount?: BN;
-  previewRole?: ServiceType;
+  previewRole?: RestakingService;
 };
 
 function getChartColorOfEntryName(

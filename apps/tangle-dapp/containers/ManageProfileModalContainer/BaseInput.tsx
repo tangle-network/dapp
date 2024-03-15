@@ -51,7 +51,7 @@ const BaseInput: FC<BaseInputProps> = ({
   }, [dropdownBody, setIsDropdownVisible]);
 
   return (
-    <div className="flex flex-col gap-1 max-w-[356px]">
+    <div className="flex flex-col gap-1 w-full max-w-[356px]">
       <InputWrapper
         className={twMerge(
           'flex gap-2 cursor-default relative w-[356px] max-w-[356px] lg:max-w-[356px]',

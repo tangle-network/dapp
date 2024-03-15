@@ -1,34 +1,27 @@
 import { Close, LockLineIcon } from '@webb-tools/icons';
-import {
-  CheckBox,
-  Chip,
-  SkeletonLoader,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { CheckBox, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useRestakingJobs from '../../data/restaking/useRestakingJobs';
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
-import { ServiceType } from '../../types';
+import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
+import usePolkadotApi from '../../../hooks/usePolkadotApi';
+import { RestakingService } from '../../../types';
 import {
   getChartDataAreaColorByServiceType,
   getChipColorOfServiceType,
-} from '../../utils';
-import { formatTokenBalance } from '../../utils/polkadot/tokens';
-import BaseInput from './BaseInput';
-import InputAction from './InputAction';
+} from '../../../utils';
+import BaseInput from '../BaseInput';
+import InputAction from '../InputAction';
 
-export type RolesInputProps = {
+export type SharedRolesInputProps = {
   title: string;
   id: string;
-  selectedServices: ServiceType[];
-  services: ServiceType[];
-  onToggleRole: (role: ServiceType) => void;
+  selectedServices: RestakingService[];
+  services: RestakingService[];
+  onToggleRole: (role: RestakingService) => void;
 };
 
-const RolesInput: FC<RolesInputProps> = ({
+const SharedRolesInput: FC<SharedRolesInputProps> = ({
   title,
   id,
   selectedServices,
@@ -36,7 +29,6 @@ const RolesInput: FC<RolesInputProps> = ({
   onToggleRole,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const { minRestakingBond } = useRestakingLimits();
   const { servicesWithJobs } = useRestakingJobs();
 
   const { value: maxRolesPerAccount } = usePolkadotApi(
@@ -51,7 +43,7 @@ const RolesInput: FC<RolesInputProps> = ({
     maxRolesPerAccount.gtn(selectedServices.length);
 
   const handleDeselectService = useCallback(
-    (service: ServiceType) => {
+    (service: RestakingService) => {
       // Ignore the request if it is not known which services
       // have active jobs, or if the requested service has an
       // active job.
@@ -65,7 +57,7 @@ const RolesInput: FC<RolesInputProps> = ({
   );
 
   const handleSelectService = useCallback(
-    (service: ServiceType) => {
+    (service: RestakingService) => {
       if (!canSelectMoreRoles || selectedServices.includes(service)) {
         return;
       }
@@ -76,7 +68,7 @@ const RolesInput: FC<RolesInputProps> = ({
   );
 
   const determineIfLocked = useCallback(
-    (service: ServiceType): boolean =>
+    (service: RestakingService): boolean =>
       (!canSelectMoreRoles && !selectedServices.includes(service)) ||
       // Mark all services as locked by default, until the services
       // with active jobs array loads to prevent the user from somehow
@@ -109,7 +101,7 @@ const RolesInput: FC<RolesInputProps> = ({
               }}
               className={twMerge(
                 'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
-                isLocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                !isLocked ? 'cursor-pointer' : 'cursor-not-allowed'
               )}
             >
               <div className="flex items-center justify-center gap-3">
@@ -134,15 +126,6 @@ const RolesInput: FC<RolesInputProps> = ({
                   </Typography>
                 </div>
               </div>
-
-              {minRestakingBond !== null ? (
-                <Chip
-                  className="text-center whitespace-nowrap"
-                  color="dark-grey"
-                >{`≥ ${formatTokenBalance(minRestakingBond, false)}`}</Chip>
-              ) : (
-                <SkeletonLoader />
-              )}
             </div>
           );
         }),
@@ -150,7 +133,6 @@ const RolesInput: FC<RolesInputProps> = ({
       services,
       determineIfLocked,
       selectedServices,
-      minRestakingBond,
       handleDeselectService,
       handleSelectService,
     ]
@@ -211,7 +193,7 @@ const RolesInput: FC<RolesInputProps> = ({
 };
 
 type DotProps = {
-  role: ServiceType;
+  role: RestakingService;
 };
 
 /** @internal */
@@ -226,4 +208,4 @@ const Dot: FC<DotProps> = ({ role }) => {
   );
 };
 
-export default RolesInput;
+export default SharedRolesInput;
