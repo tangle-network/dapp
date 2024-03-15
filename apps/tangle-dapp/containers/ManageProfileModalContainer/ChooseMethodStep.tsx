@@ -8,12 +8,14 @@ import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StaticAssetPath } from '../../constants/index';
-import { RestakingProfileType } from './ManageProfileModalContainer';
+import { RestakingProfileType } from '../../types';
 
 export type ChooseMethodStepProps = {
   profileType: RestakingProfileType;
   setProfileType: (profileType: RestakingProfileType) => void;
 };
+
+const IMAGE_SIZE = 120;
 
 const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
   profileType,
@@ -35,8 +37,8 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
               : StaticAssetPath.RESTAKING_METHOD_INDEPENDENT_LIGHT
           }
           alt="Independent restaking method illustration"
-          width={120}
-          height={120}
+          width={IMAGE_SIZE}
+          height={IMAGE_SIZE}
         />
 
         <Typography variant="h5" fw="bold">
@@ -60,8 +62,8 @@ const ChooseMethodStep: FC<ChooseMethodStepProps> = ({
               : StaticAssetPath.RESTAKING_METHOD_SHARED_LIGHT
           }
           alt="Shared restaking method illustration"
-          width={120}
-          height={120}
+          width={IMAGE_SIZE}
+          height={IMAGE_SIZE}
         />
 
         <Typography variant="h5" fw="bold">

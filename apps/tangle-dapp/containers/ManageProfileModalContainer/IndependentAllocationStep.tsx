@@ -27,7 +27,7 @@ export type IndependentAllocationStepProps = {
 
 export function filterAllocations(
   allocations: RestakingAllocationMap
-): [ServiceType, BN | null][] {
+): [ServiceType, BN][] {
   return Object.entries(allocations).map(([serviceString, amount]) => {
     const service = z.nativeEnum(ServiceType).parse(serviceString);
 
@@ -41,17 +41,14 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
 
-  const restakedAmount = useMemo(() => {
-    let amount = new BN(0);
-
-    for (const [_service, serviceAmount] of Object.entries(allocations)) {
-      if (serviceAmount !== null) {
-        amount = amount.add(serviceAmount);
-      }
-    }
-
-    return amount;
-  }, [allocations]);
+  const restakedAmount = useMemo(
+    () =>
+      Object.entries(allocations).reduce(
+        (acc, [_key, amount]) => acc.add(amount),
+        new BN(0)
+      ),
+    [allocations]
+  );
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
@@ -106,6 +103,22 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations, setAllocations]
   );
 
+  const handleAllocationChange = useCallback(
+    (service: ServiceType, newAmount: BN | null) => {
+      // Do not update the amount if it has no value,
+      // or if the new amount is the same as the current amount.
+      if (newAmount === null || allocations[service]?.eq(newAmount)) {
+        return;
+      }
+
+      setAllocations((prev) => ({
+        ...prev,
+        [service]: newAmount,
+      }));
+    },
+    [allocations, setAllocations]
+  );
+
   const amountRemaining = useMemo(
     () => maxRestakingAmount?.sub(restakedAmount) ?? null,
     [maxRestakingAmount, restakedAmount]
@@ -153,24 +166,22 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
         <div className="flex flex-col gap-4">
           {filteredAllocations.map(([service, amount]) => (
             <AllocationInput
-              amount={amount}
-              isDisabled
               key={service}
-              title="Total Restake"
+              amount={amount}
               id={`manage-profile-allocation-${service}`}
               availableServices={availableRoles}
               service={service}
-              setService={setNewAllocationRole}
-              hasDeleteButton
+              setAmount={(newAmount) =>
+                handleAllocationChange(service, newAmount)
+              }
               onDelete={handleDeallocation}
               availableBalance={amountRemaining}
-              validate={false}
+              errorOnEmptyValue
             />
           ))}
 
           {canAddNewAllocation && (
             <AllocationInput
-              title="Total Restake"
               id="manage-profile-new-allocation"
               availableServices={availableRoles}
               service={newAllocationRole}
@@ -178,7 +189,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               amount={newAllocationAmount}
               setAmount={setNewAllocationAmount}
               availableBalance={amountRemaining}
-              validate
+              errorOnEmptyValue={false}
             />
           )}
         </div>

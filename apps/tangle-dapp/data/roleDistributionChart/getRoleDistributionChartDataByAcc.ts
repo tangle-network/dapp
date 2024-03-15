@@ -1,11 +1,11 @@
 import { rand } from '@ngneat/falso';
 
 import type { PieChartItem } from '../../components/charts/types';
-import { ProfileType, ServiceType } from '../../types';
+import { RestakingProfileType, ServiceType } from '../../types';
 import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 
 export type RoleDistributionChartDataType = {
-  profileType: ProfileType;
+  profileType: RestakingProfileType;
   distribution: PieChartItem[];
 };
 
@@ -27,10 +27,13 @@ const mockSharedData = [
 export default async function getRoleDistributionChartDataByAcc(
   _: string
 ): Promise<RoleDistributionChartDataType> {
-  const profileType = rand([ProfileType.INDEPENDENT, ProfileType.SHARED]);
+  const profileType = rand([
+    RestakingProfileType.INDEPENDENT,
+    RestakingProfileType.SHARED,
+  ]);
 
   const data =
-    profileType === ProfileType.INDEPENDENT
+    profileType === RestakingProfileType.INDEPENDENT
       ? mockIndependentData
       : mockSharedData;
 

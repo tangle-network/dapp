@@ -5,13 +5,14 @@ import { FC, useCallback, useRef } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
+import { ERROR_MIN_RESTAKING_BOND } from './AllocationInput';
 import BaseInput from './BaseInput';
 import useInputAmount from './useInputAmount';
 
 export type AmountInputProps = {
   id: string;
   title: string;
-  amount: BN | null;
+  amount: BN;
   setAmount: (newAmount: BN | null) => void;
 };
 
@@ -27,6 +28,8 @@ const AmountInput: FC<AmountInputProps> = ({
     amount,
     minRestakingBond,
     maxRestakingAmount,
+    ERROR_MIN_RESTAKING_BOND,
+    true,
     setAmount
   );
 

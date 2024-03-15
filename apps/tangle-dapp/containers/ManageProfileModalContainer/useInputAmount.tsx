@@ -15,7 +15,9 @@ const VALUE_REGEX = /^\d*(\.\d*)?$/;
 function validateInputAmount(
   amountString: string,
   min: BN | null,
-  max: BN | null
+  max: BN | null,
+  minErrorMessage: string,
+  errorOnEmptyValue: boolean
 ): string | null {
   const schema = z
     .string()
@@ -23,8 +25,11 @@ function validateInputAmount(
     .transform((value) =>
       value === null ? null : convertAmountStringToChainUnits(value)
     )
+    .refine((amount) => !errorOnEmptyValue || amount !== null, {
+      message: 'No amount given',
+    })
     .refine((amount) => amount === null || min === null || amount.gte(min), {
-      message: 'Must be at least the minimum restaking bond',
+      message: minErrorMessage,
     })
     .refine((amount) => amount === null || max === null || amount.lte(max), {
       message: 'Not enough available balance',
@@ -41,6 +46,8 @@ const useInputAmount = (
   amount: BN | null,
   min: BN | null,
   max: BN | null,
+  minErrorMessage: string,
+  errorOnEmptyValue: boolean,
   setAmount?: (newAmount: BN | null) => void
 ) => {
   const [amountString, setAmountString] = useState(
@@ -72,7 +79,13 @@ const useInputAmount = (
 
       setAmountString(newAmountString);
 
-      const errorMessage = validateInputAmount(newAmountString, min, max);
+      const errorMessage = validateInputAmount(
+        newAmountString,
+        min,
+        max,
+        minErrorMessage,
+        errorOnEmptyValue
+      );
 
       setErrorMessage(errorMessage);
 
@@ -83,15 +96,16 @@ const useInputAmount = (
         setAmount !== undefined &&
         !newAmountString.endsWith('.')
       ) {
-        const newAmount =
+        // Allow the amount string to be removed, by setting its value
+        // to null.
+        setAmount(
           newAmountString === ''
             ? null
-            : convertAmountStringToChainUnits(newAmountString);
-
-        setAmount(newAmount);
+            : convertAmountStringToChainUnits(newAmountString)
+        );
       }
     },
-    [max, min, setAmount]
+    [errorOnEmptyValue, max, min, minErrorMessage, setAmount]
   );
 
   return { amountString, setAmountString, errorMessage, handleChange };
