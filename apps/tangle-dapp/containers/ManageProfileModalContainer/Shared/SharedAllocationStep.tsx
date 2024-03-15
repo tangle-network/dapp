@@ -6,7 +6,7 @@ import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../../types';
 import { formatTokenBalance } from '../../../utils/polkadot';
 import { AllocationChartVariant } from '../AllocationChart';
-import AllocationStepContents from '../AllocationStepContents';
+import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';
 import SharedAmountInput from './SharedAmountInput';
 import SharedRolesInput from './SharedRolesInput';
@@ -62,7 +62,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   }, [selectedRoles, setAllocations]);
 
   return (
-    <AllocationStepContents
+    <AllocationStepContainer
       allocatedAmount={restakeAmount ?? new BN(0)}
       allocations={allocations}
       variant={AllocationChartVariant.SHARED}
@@ -86,7 +86,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
         Remaining:{' '}
         {remainingAmount !== null ? formatTokenBalance(remainingAmount) : '—'}
       </Typography>
-    </AllocationStepContents>
+    </AllocationStepContainer>
   );
 };
 

@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
-import { RestakingService } from '../../types';
 
 const useRestakingJobs = () => {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -34,8 +33,8 @@ const useRestakingJobs = () => {
   }, [jobRoleIdPairsOpt]);
 
   return {
-    hasActiveJobs: true,
-    servicesWithJobs: [RestakingService.LIGHT_CLIENT_RELAYING],
+    hasActiveJobs,
+    servicesWithJobs,
   };
 };
 

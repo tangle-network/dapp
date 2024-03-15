@@ -7,27 +7,18 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
+import { useErrorCountContext } from '../../context/ErrorsContext';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { RestakingProfileType } from '../../types';
-import ChooseMethodStep from './ChooseMethodStep';
-import ConfirmAllocationsStep from './ConfirmAllocationsStep';
-import IndependentAllocationStep from './Independent/IndependentAllocationStep';
-import SharedAllocationStep from './Shared/SharedAllocationStep';
+import AllocationStep from './AllocationStep';
+import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';
 import { ManageProfileModalContainerProps } from './types';
 import useAllocationsState from './useAllocationsState';
-import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';
 
 /**
  * The steps in the manage profile modal.
@@ -36,16 +27,19 @@ import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';
  * The order of the steps is important, as it determines
  * the flow of the modal.
  */
-enum Step {
+export enum ManageProfileStep {
   CHOOSE_METHOD,
   ALLOCATION,
   CONFIRM_ALLOCATIONS,
 }
 
-function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
+function getStepDiff(
+  currentStep: ManageProfileStep,
+  isNext: boolean
+): ManageProfileStep | null {
   const difference = isNext ? 1 : -1;
 
-  if (Object.values(Step).includes(currentStep + difference)) {
+  if (Object.values(ManageProfileStep).includes(currentStep + difference)) {
     return currentStep + difference;
   }
 
@@ -53,14 +47,14 @@ function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
 }
 
 function getStepTitle(
-  step: Step,
+  step: ManageProfileStep,
   profileType: RestakingProfileType,
   isCreatingProfile: boolean
 ): string {
   switch (step) {
-    case Step.CHOOSE_METHOD:
+    case ManageProfileStep.CHOOSE_METHOD:
       return 'Choose Your Restaking Method';
-    case Step.ALLOCATION: {
+    case ManageProfileStep.ALLOCATION: {
       const profileKindString =
         profileType === RestakingProfileType.INDEPENDENT
           ? 'Independent'
@@ -70,42 +64,42 @@ function getStepTitle(
 
       return `${actionPrefix} ${profileKindString} Profile`;
     }
-    case Step.CONFIRM_ALLOCATIONS:
+    case ManageProfileStep.CONFIRM_ALLOCATIONS:
       return 'Review and Confirm Your Allocations:';
   }
 }
 
-function getStepNextButtonLabel(step: Step): string {
+function getStepNextButtonLabel(step: ManageProfileStep): string {
   switch (step) {
-    case Step.CHOOSE_METHOD:
+    case ManageProfileStep.CHOOSE_METHOD:
       return 'Next';
-    case Step.ALLOCATION:
+    case ManageProfileStep.ALLOCATION:
       return 'Review Changes';
-    case Step.CONFIRM_ALLOCATIONS:
+    case ManageProfileStep.CONFIRM_ALLOCATIONS:
       return 'Confirm';
   }
 }
 
-function getStepPreviousButtonLabel(step: Step): string {
+function getStepPreviousButtonLabel(step: ManageProfileStep): string {
   switch (step) {
-    case Step.CHOOSE_METHOD:
+    case ManageProfileStep.CHOOSE_METHOD:
       return "What's the Difference?";
-    case Step.ALLOCATION:
+    case ManageProfileStep.ALLOCATION:
       return 'Back';
-    case Step.CONFIRM_ALLOCATIONS:
+    case ManageProfileStep.CONFIRM_ALLOCATIONS:
       return 'Go Back and Edit';
   }
 }
 
 function getStepDescription(
-  step: Step,
+  step: ManageProfileStep,
   profileType: RestakingProfileType,
   isCreatingProfile: boolean
 ): string | null {
   switch (step) {
-    case Step.CHOOSE_METHOD:
+    case ManageProfileStep.CHOOSE_METHOD:
       return 'To participate in MPC services, allocate your staked TNT tokens using one of the available restaking methods. Your choice determines your risk allocation strategy. Would you like to restake as independent or shared?';
-    case Step.ALLOCATION:
+    case ManageProfileStep.ALLOCATION:
       return isCreatingProfile
         ? profileType === RestakingProfileType.INDEPENDENT
           ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
@@ -113,7 +107,7 @@ function getStepDescription(
         : profileType === RestakingProfileType.INDEPENDENT
         ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
         : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.';
-    case Step.CONFIRM_ALLOCATIONS:
+    case ManageProfileStep.CONFIRM_ALLOCATIONS:
       return null;
   }
 }
@@ -136,7 +130,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const { hasExistingProfile, profileTypeOpt: substrateProfileTypeOpt } =
     useRestakingProfile();
 
-  const [step, setStep] = useState(Step.CHOOSE_METHOD);
+  const [step, setStep] = useState(ManageProfileStep.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
 
   const {
@@ -147,48 +141,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     reset: resetAllocations,
   } = useAllocationsState(profileType);
 
-  const stepContents = useMemo<ReactNode>(() => {
-    switch (step) {
-      case Step.CHOOSE_METHOD:
-        return (
-          <ChooseMethodStep
-            profileType={profileType}
-            setProfileType={setProfileType}
-          />
-        );
-      case Step.ALLOCATION:
-        return profileType === RestakingProfileType.INDEPENDENT ? (
-          <IndependentAllocationStep
-            allocations={allocations}
-            setAllocations={setAllocationsDispatch}
-          />
-        ) : (
-          <SharedAllocationStep
-            restakeAmount={sharedRestakeAmount}
-            setRestakeAmount={setSharedRestakeAmount}
-            allocations={allocations}
-            setAllocations={setAllocations}
-          />
-        );
-      case Step.CONFIRM_ALLOCATIONS:
-        return (
-          <ConfirmAllocationsStep
-            profileType={profileType}
-            allocations={allocations}
-            sharedRestakeAmount={sharedRestakeAmount ?? undefined}
-          />
-        );
-    }
-  }, [
-    allocations,
-    profileType,
-    setAllocations,
-    setAllocationsDispatch,
-    setSharedRestakeAmount,
-    sharedRestakeAmount,
-    step,
-  ]);
-
   const {
     executeForIndependentProfile: executeUpdateIndependentProfileTx,
     executeForSharedProfile: executeUpdateSharedProfileTx,
@@ -197,9 +149,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   const handlePreviousStep = useCallback(() => {
     const diff = getStepDiff(step, false);
-    const previousStep = diff ?? Step.CHOOSE_METHOD;
+    const previousStep = diff ?? ManageProfileStep.CHOOSE_METHOD;
 
-    if (previousStep === Step.CHOOSE_METHOD) {
+    if (previousStep === ManageProfileStep.CHOOSE_METHOD) {
       resetAllocations();
     }
 
@@ -240,6 +192,8 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     resetSharedRestakeAmount();
   }, [resetAllocations, resetSharedRestakeAmount]);
 
+  const { errors, clearErrors } = useErrorCountContext();
+
   // Reset allocations when the selected profile type changes.
   // This is necessary because the allocations are specific to
   // the profile type, and if the user switches between the
@@ -256,6 +210,15 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     }
   }, [updateProfileTxStatus, setIsModalOpen]);
 
+  // Clear errors when the user changes the step
+  // to the "choose method" step, which essentially
+  // resets the state of the modal.
+  useEffect(() => {
+    if (step === ManageProfileStep.CHOOSE_METHOD) {
+      clearErrors();
+    }
+  }, [clearErrors, step]);
+
   // Reset state when modal is closed.
   useEffect(() => {
     if (isModalOpen) {
@@ -268,7 +231,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     const timeoutHandle = setTimeout(() => {
       if (isMountedRef.current) {
         setProfileType(RestakingProfileType.INDEPENDENT);
-        setStep(Step.CHOOSE_METHOD);
+        setStep(ManageProfileStep.CHOOSE_METHOD);
         resetAllocationState();
       }
     }, 500);
@@ -293,6 +256,10 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     updateProfileTxStatus === TxStatus.PROCESSING ||
     hasExistingProfile === null;
 
+  const canContinue =
+    step === ManageProfileStep.CHOOSE_METHOD ||
+    (!isLoading && errors.size === 0);
+
   return (
     <Modal open>
       <ModalContent
@@ -315,7 +282,16 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             </Typography>
           )}
 
-          {stepContents}
+          <AllocationStep
+            step={step}
+            profileType={profileType}
+            setProfileType={setProfileType}
+            allocations={allocations}
+            sharedRestakeAmount={sharedRestakeAmount}
+            setSharedRestakeAmount={setSharedRestakeAmount}
+            setAllocations={setAllocations}
+            setAllocationsDispatch={setAllocationsDispatch}
+          />
         </div>
 
         <ModalFooter className="flex flex-col-reverse sm:flex-row gap-2">
@@ -336,8 +312,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             rel="noopener noreferrer"
             className="!mt-0"
             // Prevent the user from continuing or making changes while
-            // the existing allocations are being fetched.
-            isDisabled={isLoading}
+            // the existing allocations are being fetched, while transactions
+            // are being processed, or if there are input errors.
+            isDisabled={!canContinue}
             isLoading={isLoading}
           >
             {getStepNextButtonLabel(step)}

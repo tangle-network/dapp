@@ -6,9 +6,17 @@ import {
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback } from 'react';
+import {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { useErrorCountContext } from '../../context/ErrorsContext';
 import InputAction from './InputAction';
 
 export type BaseInputProps = {
@@ -49,6 +57,16 @@ const BaseInput: FC<BaseInputProps> = ({
       setIsDropdownVisible((isVisible) => !isVisible);
     }
   }, [dropdownBody, setIsDropdownVisible]);
+
+  const { addError, removeError } = useErrorCountContext();
+
+  useEffect(() => {
+    if (errorMessage !== undefined) {
+      addError(id);
+    } else {
+      removeError(id);
+    }
+  }, [addError, errorMessage, id, removeError]);
 
   return (
     <div className="flex flex-col gap-1 w-full max-w-[356px]">

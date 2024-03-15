@@ -1,12 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 import AllocationChart, { AllocationChartProps } from './AllocationChart';
 
-export interface AllocationStepContentsProps extends AllocationChartProps {
-  children: React.ReactNode;
+export interface AllocationStepContainerProps extends AllocationChartProps {
+  children: ReactNode;
 }
 
-const AllocationStepContents: FC<AllocationStepContentsProps> = ({
+const AllocationStepContainer: FC<AllocationStepContainerProps> = ({
   children,
   ...allocationChartProps
 }) => {
@@ -23,4 +23,4 @@ const AllocationStepContents: FC<AllocationStepContentsProps> = ({
   );
 };
 
-export default AllocationStepContents;
+export default AllocationStepContainer;

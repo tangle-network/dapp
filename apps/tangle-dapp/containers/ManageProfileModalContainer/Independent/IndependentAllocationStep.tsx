@@ -16,7 +16,7 @@ import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { RestakingService } from '../../../types';
 import { formatTokenBalance } from '../../../utils/polkadot';
 import { AllocationChartVariant } from '../AllocationChart';
-import AllocationStepContents from '../AllocationStepContents';
+import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';
 import IndependentAllocationInput from './IndependentAllocationInput';
 
@@ -157,7 +157,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     maxRolesPerAccount.gtn(filteredAllocations.length);
 
   return (
-    <AllocationStepContents
+    <AllocationStepContainer
       allocatedAmount={restakedAmount}
       allocations={allocations}
       variant={AllocationChartVariant.INDEPENDENT}
@@ -219,7 +219,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           </div>
         </div>
       </div>
-    </AllocationStepContents>
+    </AllocationStepContainer>
   );
 };
 

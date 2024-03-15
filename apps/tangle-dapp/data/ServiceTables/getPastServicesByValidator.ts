@@ -1,4 +1,4 @@
-import { type Service, RestakingService } from '../../types';
+import { RestakingService, type Service } from '../../types';
 
 const participationArr = new Array(5).fill(
   '5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy'
