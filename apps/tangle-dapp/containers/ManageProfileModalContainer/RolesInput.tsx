@@ -1,4 +1,4 @@
-import { Close } from '@webb-tools/icons';
+import { Close, LockLineIcon } from '@webb-tools/icons';
 import {
   CheckBox,
   Chip,
@@ -8,6 +8,7 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import useRestakingJobs from '../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { ServiceType } from '../../types';
@@ -17,24 +18,26 @@ import {
 } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import BaseInput from './BaseInput';
+import InputAction from './InputAction';
 
 export type RolesInputProps = {
   title: string;
   id: string;
-  selectedRoles: ServiceType[];
-  roles: ServiceType[];
+  selectedServices: ServiceType[];
+  services: ServiceType[];
   onToggleRole: (role: ServiceType) => void;
 };
 
 const RolesInput: FC<RolesInputProps> = ({
   title,
   id,
-  selectedRoles,
-  roles,
+  selectedServices,
+  services,
   onToggleRole,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { minRestakingBond } = useRestakingLimits();
+  const { servicesWithJobs } = useRestakingJobs();
 
   const { value: maxRolesPerAccount } = usePolkadotApi(
     useCallback(
@@ -44,90 +47,157 @@ const RolesInput: FC<RolesInputProps> = ({
   );
 
   const canSelectMoreRoles =
-    maxRolesPerAccount !== null && maxRolesPerAccount.gtn(selectedRoles.length);
+    maxRolesPerAccount !== null &&
+    maxRolesPerAccount.gtn(selectedServices.length);
+
+  const handleDeselectService = useCallback(
+    (service: ServiceType) => {
+      // Ignore the request if it is not known which services
+      // have active jobs, or if the requested service has an
+      // active job.
+      if (servicesWithJobs === null || servicesWithJobs.includes(service)) {
+        return;
+      }
+
+      onToggleRole(service);
+    },
+    [onToggleRole, servicesWithJobs]
+  );
+
+  const handleSelectService = useCallback(
+    (service: ServiceType) => {
+      if (!canSelectMoreRoles || selectedServices.includes(service)) {
+        return;
+      }
+
+      onToggleRole(service);
+    },
+    [canSelectMoreRoles, onToggleRole, selectedServices]
+  );
+
+  const determineIfLocked = useCallback(
+    (service: ServiceType): boolean =>
+      (!canSelectMoreRoles && !selectedServices.includes(service)) ||
+      // Mark all services as locked by default, until the services
+      // with active jobs array loads to prevent the user from somehow
+      // modifying them.
+      servicesWithJobs === null ||
+      // Cannot remove roles with active jobs.
+      servicesWithJobs.includes(service),
+    [canSelectMoreRoles, selectedServices, servicesWithJobs]
+  );
 
   const dropdownBody = useMemo(
     () =>
-      roles
+      services
         // Sort roles in ascending order, by their display
         // values (strings). This is done with the intent to
         // give priority to the TSS roles.
         .toSorted((a, b) => a.localeCompare(b))
-        .map((role) => (
-          <div
-            key={role}
-            onClick={() => {
-              if (canSelectMoreRoles || selectedRoles.includes(role)) {
-                onToggleRole(role);
-              }
-            }}
-            className={twMerge(
-              'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
-              canSelectMoreRoles || selectedRoles.includes(role)
-                ? 'cursor-pointer'
-                : 'cursor-not-allowed'
-            )}
-          >
-            <div className="flex items-center justify-center gap-3">
-              <CheckBox
-                inputProps={{
-                  readOnly: true,
-                }}
-                isDisabled={
-                  !canSelectMoreRoles && !selectedRoles.includes(role)
+        .map((service) => {
+          const isLocked = determineIfLocked(service);
+
+          return (
+            <div
+              key={service}
+              onClick={() => {
+                if (selectedServices.includes(service)) {
+                  handleDeselectService(service);
+                } else {
+                  handleSelectService(service);
                 }
-                isChecked={selectedRoles.includes(role)}
-                wrapperClassName="flex justify-center items-center min-h-auto"
-              />
+              }}
+              className={twMerge(
+                'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
+                isLocked ? 'cursor-pointer' : 'cursor-not-allowed'
+              )}
+            >
+              <div className="flex items-center justify-center gap-3">
+                <CheckBox
+                  wrapperClassName="flex justify-center items-center min-h-auto"
+                  isChecked={selectedServices.includes(service)}
+                  isDisabled={isLocked}
+                  inputProps={{
+                    readOnly: true,
+                  }}
+                />
 
-              <div className="flex gap-1 items-center justify-center">
-                <Dot role={role} />
+                <div className="flex gap-1 items-center justify-center">
+                  <Dot role={service} />
 
-                <Typography
-                  variant="body2"
-                  fw="normal"
-                  className="dark:text-mono-0"
-                >
-                  {role}
-                </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="normal"
+                    className="dark:text-mono-0"
+                  >
+                    {service}
+                  </Typography>
+                </div>
               </div>
-            </div>
 
-            {minRestakingBond !== null ? (
-              <Chip
-                className="text-center whitespace-nowrap"
-                color="dark-grey"
-              >{`≥ ${formatTokenBalance(minRestakingBond, false)}`}</Chip>
-            ) : (
-              <SkeletonLoader />
-            )}
-          </div>
-        )),
-    [canSelectMoreRoles, minRestakingBond, onToggleRole, roles, selectedRoles]
+              {minRestakingBond !== null ? (
+                <Chip
+                  className="text-center whitespace-nowrap"
+                  color="dark-grey"
+                >{`≥ ${formatTokenBalance(minRestakingBond, false)}`}</Chip>
+              ) : (
+                <SkeletonLoader />
+              )}
+            </div>
+          );
+        }),
+    [
+      services,
+      determineIfLocked,
+      selectedServices,
+      minRestakingBond,
+      handleDeselectService,
+      handleSelectService,
+    ]
   );
+
+  // Display a notice if there are services with active
+  // jobs, that cannot be removed.
+  const lockedServicesNoticeInputAction =
+    servicesWithJobs !== null && servicesWithJobs.length > 0 ? (
+      <InputAction
+        tooltip="Some roles cannot be removed because there are active jobs for them."
+        Icon={LockLineIcon}
+        iconSize="md"
+      />
+    ) : undefined;
 
   return (
     <BaseInput
       title={title}
       id={id}
+      actions={lockedServicesNoticeInputAction}
       dropdownBody={dropdownBody}
       isDropdownVisible={isDropdownVisible}
       setIsDropdownVisible={setIsDropdownVisible}
       bodyClassName="flex flex-wrap gap-1"
     >
-      {selectedRoles.map((role) => (
-        <Chip
-          key={role}
-          color={getChipColorOfServiceType(role)}
-          className="cursor-pointer flex items-center justify-center gap-0"
-          onClick={() => onToggleRole(role)}
-        >
-          {role}
-          <Close />
-        </Chip>
-      ))}
+      {selectedServices.map((service) => {
+        const isLocked = determineIfLocked(service);
 
-      {selectedRoles.length === 0 && (
+        return (
+          <Chip
+            key={service}
+            color={getChipColorOfServiceType(service)}
+            className={twMerge(
+              'flex items-center justify-center gap-0 cursor-pointer',
+              isLocked && 'cursor-not-allowed'
+            )}
+            onClick={() => handleDeselectService(service)}
+          >
+            {service}
+
+            {!isLocked && <Close />}
+          </Chip>
+        );
+      })}
+
+      {selectedServices.length === 0 && (
         <Chip
           onClick={() => setIsDropdownVisible(true)}
           color="dark-grey"

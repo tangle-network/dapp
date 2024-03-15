@@ -77,8 +77,8 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
       <RolesInput
         id="shared-allocation-roles-opt-in"
         title="Roles Opt-in"
-        roles={Object.values(ServiceType)}
-        selectedRoles={selectedRoles}
+        services={Object.values(ServiceType)}
+        selectedServices={selectedRoles}
         onToggleRole={handleToggleRole}
       />
 
