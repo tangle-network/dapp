@@ -3,28 +3,29 @@ import { Close, LockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
-import useRestakingJobs from '../../data/restaking/useRestakingJobs';
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import { ServiceType } from '../../types';
-import { getChipColorOfServiceType } from '../../utils';
-import { formatTokenBalance } from '../../utils/polkadot/tokens';
-import BaseInput from './BaseInput';
-import InputAction from './InputAction';
-import useInputAmount from './useInputAmount';
+import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
+import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
+import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
+import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import { RestakingProfileType, RestakingService } from '../../../types';
+import { getChipColorOfServiceType } from '../../../utils';
+import { formatTokenBalance } from '../../../utils/polkadot/tokens';
+import BaseInput from '../BaseInput';
+import InputAction from '../InputAction';
+import useInputAmount from '../useInputAmount';
 
-export type AllocationInputProps = {
+export type IndependentAllocationInputProps = {
   amount: BN | null;
   setAmount: (newAmount: BN | null) => void;
-  availableServices: ServiceType[];
+  availableServices: RestakingService[];
   availableBalance: BN | null;
-  service: ServiceType | null;
+  service: RestakingService | null;
   id: string;
   validate?: boolean;
   errorOnEmptyValue?: boolean;
-  onDelete?: (service: ServiceType) => void;
-  setService?: (service: ServiceType) => void;
+  onDelete?: (service: RestakingService) => void;
+  setService?: (service: RestakingService) => void;
 };
 
 export const ERROR_MIN_RESTAKING_BOND =
@@ -34,7 +35,7 @@ export const ERROR_MIN_RESTAKING_BOND =
  * A specialized input used to allocate roles for creating or
  * updating job profiles in Substrate.
  */
-const AllocationInput: FC<AllocationInputProps> = ({
+const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
   amount = null,
   setAmount,
   availableBalance,
@@ -47,11 +48,24 @@ const AllocationInput: FC<AllocationInputProps> = ({
   errorOnEmptyValue = true,
 }) => {
   const { servicesWithJobs } = useRestakingJobs();
+  const { profileTypeOpt } = useRestakingProfile();
   const { minRestakingBond } = useRestakingLimits();
 
-  // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading.
-  const hasActiveJob =
-    service !== null ? servicesWithJobs?.includes(service) ?? false : false;
+  // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading. It needs to default to `null` and have its loading state handled appropriately.
+  const hasActiveJob = (() => {
+    if (
+      service === null ||
+      profileTypeOpt === null ||
+      servicesWithJobs === null
+    ) {
+      return false;
+    }
+
+    return (
+      servicesWithJobs.includes(service) &&
+      profileTypeOpt.value === RestakingProfileType.INDEPENDENT
+    );
+  })();
 
   const { value: substrateAllocationsOpt } = useRestakingAllocations();
 
@@ -74,7 +88,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const minErrorMessage = hasActiveJob
-    ? 'Cannot decrease restake for active role'
+    ? 'Cannot decrease restake amount for an active role'
     : ERROR_MIN_RESTAKING_BOND;
 
   const { amountString, errorMessage, handleChange } = useInputAmount(
@@ -93,7 +107,7 @@ const AllocationInput: FC<AllocationInputProps> = ({
   }, [onDelete, service]);
 
   const handleSetService = useCallback(
-    (service: ServiceType) => {
+    (service: RestakingService) => {
       if (setService === undefined) {
         return;
       }
@@ -192,4 +206,4 @@ const AllocationInput: FC<AllocationInputProps> = ({
   );
 };
 
-export default AllocationInput;
+export default IndependentAllocationInput;

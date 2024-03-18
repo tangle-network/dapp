@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { RestakingAllocationMap } from '../containers/ManageProfileModalContainer/types';
 import { AllocationChartEntryName } from '../containers/ManageProfileModalContainer/useAllocationChartEntries';
-import { ServiceType } from '../types';
+import { RestakingService } from '../types';
 import { formatTokenBalance } from '../utils/polkadot/tokens';
 
 const BnChartTooltip = (
@@ -26,7 +26,7 @@ const BnChartTooltip = (
       .union([
         z.literal('Remaining' satisfies AllocationChartEntryName),
         z.literal('New Allocation' satisfies AllocationChartEntryName),
-        z.nativeEnum(ServiceType),
+        z.nativeEnum(RestakingService),
       ])
       .parse(payload[0].payload.name);
 

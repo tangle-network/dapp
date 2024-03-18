@@ -3,15 +3,15 @@ import assert from 'assert';
 import { useMemo } from 'react';
 
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import { ServiceType } from '../../types';
+import { RestakingService } from '../../types';
 import { AllocationChartVariant } from './AllocationChart';
-import { filterAllocations } from './IndependentAllocationStep';
+import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export type AllocationChartEntryName =
   | 'Remaining'
   | 'New Allocation'
-  | ServiceType;
+  | RestakingService;
 
 export type AllocationChartEntry = {
   name: AllocationChartEntryName;
