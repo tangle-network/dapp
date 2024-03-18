@@ -17,6 +17,7 @@ const RecentTxContainer: FC = () => {
           variant="utility"
           color="primary"
           className="uppercase"
+          target="_blank"
           href={TANGLE_TESTNET_EXPLORER_URL}
         >
           View Explorer
@@ -24,17 +25,11 @@ const RecentTxContainer: FC = () => {
       </div>
 
       <div className="flex flex-col gap-3 justify-center items-center h-full text-center">
-        <Typography variant="h4" fw="bold" className="capitalize">
-          ✨ Upcoming Feature
-        </Typography>
-
         <Typography variant="body1" className="text-center max-w-lg">
           Soon, you&apos;ll be able to conveniently glance at your recent
           transactions, like Transfers, Vesting, Airdrop claims, and Staking
           Rewards. Stay tuned!
         </Typography>
-
-        <Button>View Network</Button>
       </div>
     </GlassCard>
   );
