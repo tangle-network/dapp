@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { formatTokenBalance, getPolkadotApiRx } from '../../utils/polkadot';
 
@@ -15,6 +16,7 @@ export default function useTotalStakedAmountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -22,7 +24,7 @@ export default function useTotalStakedAmountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx();
+        const api = await getPolkadotApiRx(rpcEndpoint);
 
         if (!address) {
           setValue1(null);
@@ -35,13 +37,14 @@ export default function useTotalStakedAmountSubscription(
           .subscribe(async (ledgerData) => {
             if (isMounted) {
               const ledger = ledgerData.unwrapOrDefault();
+
               const totalStaked = new u128(
                 api.registry,
                 ledger.total.toString()
               );
-              const availableTokenBalance = await formatTokenBalance(
-                totalStaked
-              );
+
+              const availableTokenBalance = formatTokenBalance(totalStaked);
+
               setValue1(availableTokenBalance ?? null);
               setIsLoading(false);
             }
@@ -64,7 +67,7 @@ export default function useTotalStakedAmountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }

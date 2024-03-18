@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { map, Observable } from 'rxjs';
 
 import { SwrBaseKey } from '../../constants';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSwrWithLocalStorage from '../../hooks/useSwrWithLocalStorage';
@@ -37,6 +38,8 @@ const usePagedValidators = (
     useCallback(fetcher, [fetcher])
   );
 
+  const { rpcEndpoint } = useRpcEndpointStore();
+
   const pagedValidatorAddresses = useMemo(
     () =>
       validators === null
@@ -52,7 +55,7 @@ const usePagedValidators = (
 
     return Promise.all(
       pagedValidatorAddresses.map(async (address) =>
-        getValidatorDetails(address, status)
+        getValidatorDetails(rpcEndpoint, address, status)
       )
     ).then((validators) => {
       console.debug(
@@ -61,7 +64,7 @@ const usePagedValidators = (
 
       return validators;
     });
-  }, [currentEra, pagedValidatorAddresses, status]);
+  }, [currentEra, pagedValidatorAddresses, rpcEndpoint, status]);
 
   const localStorageKey =
     status === 'Active'

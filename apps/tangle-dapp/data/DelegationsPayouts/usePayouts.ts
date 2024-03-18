@@ -181,6 +181,7 @@ export default function usePayouts(
 
                               const validatorCommissionPercentage =
                                 await getValidatorCommission(
+                                  rpcEndpoint,
                                   validator.toString()
                                 );
 
@@ -204,12 +205,16 @@ export default function usePayouts(
                                 );
 
                               const validatorIdentity =
-                                await getValidatorIdentity(validator);
+                                await getValidatorIdentity(
+                                  rpcEndpoint,
+                                  validator
+                                );
 
                               const validatorNominators = await Promise.all(
                                 eraStaker.others.map(async (nominator) => {
                                   const nominatorIdentity =
                                     await getValidatorIdentity(
+                                      rpcEndpoint,
                                       nominator.who.toString()
                                     );
 
@@ -283,7 +288,7 @@ export default function usePayouts(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint]);
 
   return useFormatReturnType({
     isLoading,

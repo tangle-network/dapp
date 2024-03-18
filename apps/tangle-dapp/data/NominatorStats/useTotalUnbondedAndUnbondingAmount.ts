@@ -27,7 +27,9 @@ export default function useTotalUnbondedAndUnbondingAmount(
   } = useUnbondingRemainingErasSubscription(address);
 
   const unbondingRemainingEras = useMemo(() => {
-    if (!unbondingRemainingErasData?.value1) return [];
+    if (!unbondingRemainingErasData?.value1) {
+      return [];
+    }
 
     return unbondingRemainingErasData.value1;
   }, [unbondingRemainingErasData?.value1]);
@@ -36,12 +38,14 @@ export default function useTotalUnbondedAndUnbondingAmount(
     if (unbondingRemainingErasError) {
       setError(unbondingRemainingErasError);
       setIsLoading(false);
+
       return;
     }
 
     if (unbondingRemainingEras.length === 0) {
       setValue1({ unbonded: 0, unbonding: 0 });
       setIsLoading(false);
+
       return;
     }
 

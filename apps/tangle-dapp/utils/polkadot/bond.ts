@@ -10,11 +10,12 @@ const PAYEE_STASH = 'Stash';
 const PAYEE_CONTROLLER = 'Controller';
 
 export const bondTokens = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   amount: number,
   paymentDestination: string
 ): Promise<HexString> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
 
   const payee =
     paymentDestination === PaymentDestination.STAKED
@@ -30,10 +31,11 @@ export const bondTokens = async (
 };
 
 export const bondExtraTokens = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   amount: number
 ): Promise<HexString> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const value = parseEther(amount.toString());
   const tx = api.tx.staking.bondExtra(value);
 
@@ -41,10 +43,11 @@ export const bondExtraTokens = async (
 };
 
 export const unbondTokens = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   amount: number
 ) => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const value = parseEther(amount.toString());
   const tx = api.tx.staking.unbond(value);
 
@@ -52,31 +55,34 @@ export const unbondTokens = async (
 };
 
 export const rebondTokens = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   amount: number
 ) => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const value = parseEther(amount.toString());
-
   const tx = api.tx.staking.rebond(value);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
 export const withdrawUnbondedTokens = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   slashingSpans: number
 ) => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const tx = api.tx.staking.withdrawUnbonded(slashingSpans);
 
   return getTxPromise(nominatorAddress, tx);
 };
 
 export const updatePaymentDestination = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   paymentDestination: string
 ): Promise<HexString> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
 
   const payee =
     paymentDestination === PaymentDestination.STAKED
@@ -91,9 +97,10 @@ export const updatePaymentDestination = async (
 };
 
 export const getSlashingSpans = async (
+  rpcEndpoint: string,
   address: string
 ): Promise<string | undefined> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const slashingSpans = await api.query.staking.slashingSpans(address);
 
   return slashingSpans.toString();

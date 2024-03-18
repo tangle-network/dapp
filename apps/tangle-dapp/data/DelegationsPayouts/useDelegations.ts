@@ -57,12 +57,16 @@ export default function useDelegations(
                 const ledger = await apiPromise.query.staking.ledger(
                   target.toString()
                 );
+
+                // TODO: Ledger may not always be available. This isn't the best way to handle this.
                 const ledgerData = ledger.unwrapOrDefault();
+
                 const selfStaked = new u128(
                   apiPromise.registry,
                   ledgerData.total.toString()
                 );
-                const selfStakedBalance = await formatTokenBalance(selfStaked);
+
+                const selfStakedBalance = formatTokenBalance(selfStaked);
 
                 const isActive = await apiPromise.query.session
                   .validators()
@@ -72,15 +76,21 @@ export default function useDelegations(
                     )
                   );
 
-                const identity = await getValidatorIdentity(target.toString());
+                const identity = await getValidatorIdentity(
+                  rpcEndpoint,
+                  target.toString()
+                );
 
                 const commission = await getValidatorCommission(
+                  rpcEndpoint,
                   target.toString()
                 );
 
                 const delegationsValue = await getTotalNumberOfNominators(
+                  rpcEndpoint,
                   target.toString()
                 );
+
                 const delegations = delegationsValue?.toString();
 
                 const currentEra = await apiPromise.query.staking.currentEra();
@@ -126,7 +136,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint]);
 
   return useFormatReturnType({
     isLoading,

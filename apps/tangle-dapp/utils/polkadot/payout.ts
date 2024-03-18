@@ -4,21 +4,23 @@ import { getPolkadotApiPromise } from './api';
 import { getTxPromise } from './utils';
 
 export const payoutStakers = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   validatorAddress: string,
   era: number
 ): Promise<AddressType> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const tx = api.tx.staking.payoutStakers(validatorAddress, era);
 
   return getTxPromise(nominatorAddress, tx);
 };
 
 export const batchPayoutStakers = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   validatorEraPairs: { validatorAddress: string; era: string }[]
 ): Promise<AddressType> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
 
   const tx = api.tx.utility.batch(
     validatorEraPairs.map(({ validatorAddress, era }) =>

@@ -23,6 +23,7 @@ import {
   PAYMENT_DESTINATION_OPTIONS,
   TANGLE_TOKEN_UNIT,
 } from '../../constants';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
@@ -180,6 +181,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
+  const { rpcEndpoint } = useRpcEndpointStore();
+
   const executeDelegate: () => Promise<void> = useCallback(async () => {
     try {
       if (isFirstTimeNominator) {
@@ -192,6 +195,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             ),
           () =>
             bondTokensSubstrate(
+              rpcEndpoint,
               walletAddress,
               amountToBond,
               PaymentDestination.STASH
@@ -204,6 +208,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
           () =>
             updatePaymentDestinationSubstrate(
+              rpcEndpoint,
               walletAddress,
               paymentDestination
             ),
@@ -213,7 +218,12 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
         const hash = await executeTx(
           () => nominateValidatorsEvm(walletAddress, selectedValidators),
-          () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+          () =>
+            nominateValidatorsSubstrate(
+              rpcEndpoint,
+              walletAddress,
+              selectedValidators
+            ),
           `Successfully nominated ${selectedValidators.length} validators.`,
           'Failed to nominate validators!'
         );
@@ -223,7 +233,12 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         if (amountToBond > 0) {
           await executeTx(
             () => bondExtraTokensEvm(walletAddress, amountToBond),
-            () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+            () =>
+              bondExtraTokensSubstrate(
+                rpcEndpoint,
+                walletAddress,
+                amountToBond
+              ),
             `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
             'Failed to bond tokens!'
           );
@@ -246,6 +261,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               updatePaymentDestinationEvm(walletAddress, paymentDestination),
             () =>
               updatePaymentDestinationSubstrate(
+                rpcEndpoint,
                 walletAddress,
                 paymentDestination
               ),
@@ -256,7 +272,12 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
         const hash = await executeTx(
           () => nominateValidatorsEvm(walletAddress, selectedValidators),
-          () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+          () =>
+            nominateValidatorsSubstrate(
+              rpcEndpoint,
+              walletAddress,
+              selectedValidators
+            ),
           `Successfully nominated ${selectedValidators.length} validators.`,
           'Failed to nominate validators!'
         );
@@ -265,9 +286,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       }
 
       setTxnConfirmationModalIsOpen(true);
-    } catch (e) {
+    } catch {
       setTxnStatus({ status: 'error', hash: '' });
-
       setTxnConfirmationModalIsOpen(true);
     }
   }, [
@@ -278,6 +298,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     isFirstTimeNominator,
     notificationApi,
     paymentDestination,
+    rpcEndpoint,
     selectedValidators,
     walletAddress,
   ]);

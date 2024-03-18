@@ -13,6 +13,7 @@ import {
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useAllValidatorsData from '../../hooks/useAllValidatorsData';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -28,11 +29,10 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-
   const { setTxConfirmationState } = useTxConfirmationModal();
-
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   const [selectedValidators, setSelectedValidators] =
     useState<string[]>(currentNominations);
@@ -83,7 +83,12 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     try {
       const hash = await executeTx(
         () => nominateValidatorsEvm(walletAddress, selectedValidators),
-        () => nominateValidatorsSubstrate(walletAddress, selectedValidators),
+        () =>
+          nominateValidatorsSubstrate(
+            rpcEndpoint,
+            walletAddress,
+            selectedValidators
+          ),
         `Successfully updated nominations!`,
         'Failed to update nominations!'
       );
@@ -110,6 +115,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     setTxConfirmationState,
     walletAddress,
     selectedValidators,
+    rpcEndpoint,
     closeModal,
   ]);
 

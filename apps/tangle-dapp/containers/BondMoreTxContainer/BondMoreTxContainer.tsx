@@ -16,6 +16,7 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
@@ -31,13 +32,16 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-
   const [amountToBond, setAmountToBond] = useState<number>(0);
+  const { rpcEndpoint } = useRpcEndpointStore();
+
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
     useState<boolean>(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
@@ -82,7 +86,8 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     try {
       const hash = await executeTx(
         () => bondExtraTokensEvm(walletAddress, amountToBond),
-        () => bondExtraTokensSubstrate(walletAddress, amountToBond),
+        () =>
+          bondExtraTokensSubstrate(rpcEndpoint, walletAddress, amountToBond),
         `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to bond extra tokens!'
       );
@@ -107,6 +112,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     amountToBond,
     closeModal,
     executeTx,
+    rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
   ]);
