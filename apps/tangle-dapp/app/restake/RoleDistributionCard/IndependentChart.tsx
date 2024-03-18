@@ -11,7 +11,7 @@ import getRoleDistributionChartDataByAcc, {
   RoleDistributionChartDataType,
 } from '../../../data/roleDistributionChart/getRoleDistributionChartDataByAcc';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { ProfileType } from '../../../types';
+import { RestakingProfileType } from '../../../types';
 
 const IndependentChart = () => {
   const accAddress = useActiveAccountAddress();
@@ -45,7 +45,7 @@ const IndependentChart = () => {
 
   return (
     <div className="flex items-center justify-center">
-      {data.profileType === ProfileType.SHARED ? (
+      {data.profileType === RestakingProfileType.SHARED ? (
         <SharedRoleDistributionChart data={data.distribution} />
       ) : (
         <IndependentRoleDistributionChart data={data.distribution} />

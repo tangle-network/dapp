@@ -4,15 +4,14 @@ import { useCallback, useRef } from 'react';
 import { z } from 'zod';
 
 import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
-import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
-import { ServiceType } from '../../types';
+import { RestakingProfileType, ServiceType } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 type ProfileRecord = {
   role: (typeof SERVICE_TYPE_TO_TANGLE_MAP)[ServiceType];
-  amount: BN | null;
+  amount: BN;
 };
 
 /**
@@ -38,6 +37,7 @@ const useUpdateRestakingProfileTx = (
   const allocationsRef = useRef<RestakingAllocationMap | null>(null);
 
   const sharedRestakeAmountRef = useRef<BN | null>(null);
+  const maxActiveServicesRef = useRef<number | null>(null);
   const { data: roleLedger } = useRestakingRoleLedger();
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
@@ -72,11 +72,28 @@ const useUpdateRestakingProfileTx = (
           };
         });
 
+        // Sanity check to help catch possible logic bugs.
+        if (profileType === RestakingProfileType.SHARED) {
+          const containsRecordWithNonZeroAmount = records.some(
+            (record) => !record.amount.isZero()
+          );
+
+          if (containsRecordWithNonZeroAmount) {
+            console.warn(
+              'Encountered a record with a non-zero amount for shared profile; note that amounts are ignored for shared profile creation/updates'
+            );
+          }
+        }
+
         const profile =
           profileType === RestakingProfileType.INDEPENDENT
             ? { Independent: { records } }
             : {
                 Shared: {
+                  // Note that role allocation amounts are completely
+                  // ignored by Tangle for shared profiles. No transformation
+                  // or further processing is needed for those amounts; only
+                  // the roles are relevant.
                   records,
                   amount: sharedRestakeAmountRef.current,
                 },
@@ -93,12 +110,13 @@ const useUpdateRestakingProfileTx = (
   );
 
   const executeForIndependentProfile = useCallback(
-    (allocations: RestakingAllocationMap) => {
+    (allocations: RestakingAllocationMap, maxActiveServices?: number) => {
       if (execute === null) {
         return;
       }
 
       allocationsRef.current = allocations;
+      maxActiveServicesRef.current = maxActiveServices ?? null;
 
       return execute();
     },
@@ -106,13 +124,19 @@ const useUpdateRestakingProfileTx = (
   );
 
   const executeForSharedProfile = useCallback(
-    (allocations: RestakingAllocationMap, restakeAmount: BN) => {
+    (
+      allocations: RestakingAllocationMap,
+      restakeAmount: BN,
+      maxActiveServices?: number
+    ) => {
       if (execute === null) {
         return;
       }
 
+      // TODO: This method of providing information to the execute function works fine, but is a bit hacky/unclear. Consider improving this in the future.
       sharedRestakeAmountRef.current = restakeAmount;
       allocationsRef.current = allocations;
+      maxActiveServicesRef.current = maxActiveServices ?? null;
 
       return execute();
     },

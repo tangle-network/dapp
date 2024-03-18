@@ -50,7 +50,8 @@ const RolesInput: FC<RolesInputProps> = ({
     () =>
       roles
         // Sort roles in ascending order, by their display
-        // values (strings).
+        // values (strings). This is done with the intent to
+        // give priority to the TSS roles.
         .toSorted((a, b) => a.localeCompare(b))
         .map((role) => (
           <div

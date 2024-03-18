@@ -156,7 +156,7 @@ export enum ServiceType {
   TSS_ZCASH_FROST_ED448 = 'TSS ZcashFrostEd448',
 }
 
-export enum ProfileType {
+export enum RestakingProfileType {
   INDEPENDENT = 'Independent',
   SHARED = 'Shared',
 }

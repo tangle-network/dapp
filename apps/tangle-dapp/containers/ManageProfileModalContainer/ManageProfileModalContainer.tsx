@@ -1,4 +1,3 @@
-import { BN } from '@polkadot/util';
 import {
   Button,
   Modal,
@@ -7,23 +6,28 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import assert from 'assert';
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
-import useSharedRestakeAmountState from '../../data/restaking/useSharedRestakeAmountState';
+import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
+import { RestakingProfileType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
 import IndependentAllocationStep from './IndependentAllocationStep';
 import SharedAllocationStep from './SharedAllocationStep';
 import { ManageProfileModalContainerProps } from './types';
 import useAllocationsState from './useAllocationsState';
-
-export enum RestakingProfileType {
-  INDEPENDENT,
-  SHARED,
-}
+import useSharedRestakeAmountState from './useSharedRestakeAmountState';
 
 /**
  * The steps in the manage profile modal.
@@ -48,7 +52,11 @@ function getStepDiff(currentStep: Step, isNext: boolean): Step | null {
   return null;
 }
 
-function getStepTitle(step: Step, profileType: RestakingProfileType): string {
+function getStepTitle(
+  step: Step,
+  profileType: RestakingProfileType,
+  isCreatingProfile: boolean
+): string {
   switch (step) {
     case Step.CHOOSE_METHOD:
       return 'Choose Your Restaking Method';
@@ -58,7 +66,9 @@ function getStepTitle(step: Step, profileType: RestakingProfileType): string {
           ? 'Independent'
           : 'Shared';
 
-      return `Manage ${profileKindString} Profile`;
+      const actionPrefix = isCreatingProfile ? 'Create' : 'Manage';
+
+      return `${actionPrefix} ${profileKindString} Profile`;
     }
     case Step.CONFIRM_ALLOCATIONS:
       return 'Review and Confirm Your Allocations:';
@@ -89,13 +99,18 @@ function getStepPreviousButtonLabel(step: Step): string {
 
 function getStepDescription(
   step: Step,
-  profileType: RestakingProfileType
+  profileType: RestakingProfileType,
+  isCreatingProfile: boolean
 ): string | null {
   switch (step) {
     case Step.CHOOSE_METHOD:
       return 'To participate in MPC services, allocate your staked TNT tokens using one of the available restaking methods. Your choice determines your risk allocation strategy. Would you like to restake as independent or shared?';
     case Step.ALLOCATION:
-      return profileType === RestakingProfileType.INDEPENDENT
+      return isCreatingProfile
+        ? profileType === RestakingProfileType.INDEPENDENT
+          ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
+          : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.'
+        : profileType === RestakingProfileType.INDEPENDENT
         ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
         : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.';
     case Step.CONFIRM_ALLOCATIONS:
@@ -115,12 +130,14 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     sharedRestakeAmount,
     setSharedRestakeAmount,
     isLoading: isLoadingSharedRestakeAmount,
-    reset: resetSharedRestakeAmount,
+    resetToSubstrateAmount: resetSharedRestakeAmount,
   } = useSharedRestakeAmountState();
+
+  const { hasExistingProfile, profileTypeOpt: substrateProfileTypeOpt } =
+    useRestakingProfile();
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
-  let stepContents: ReactNode;
 
   const {
     allocations,
@@ -130,25 +147,17 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     reset: resetAllocations,
   } = useAllocationsState(profileType);
 
-  const {
-    executeForIndependentProfile: executeUpdateIndependentProfileTx,
-    executeForSharedProfile: executeUpdateSharedProfileTx,
-    status: updateProfileTxStatus,
-  } = useUpdateRestakingProfileTx(profileType, true, true);
-
-  switch (step) {
-    case Step.CHOOSE_METHOD:
-      stepContents = (
-        <ChooseMethodStep
-          profileType={profileType}
-          setProfileType={setProfileType}
-        />
-      );
-
-      break;
-    case Step.ALLOCATION:
-      stepContents =
-        profileType === RestakingProfileType.INDEPENDENT ? (
+  const stepContents = useMemo<ReactNode>(() => {
+    switch (step) {
+      case Step.CHOOSE_METHOD:
+        return (
+          <ChooseMethodStep
+            profileType={profileType}
+            setProfileType={setProfileType}
+          />
+        );
+      case Step.ALLOCATION:
+        return profileType === RestakingProfileType.INDEPENDENT ? (
           <IndependentAllocationStep
             allocations={allocations}
             setAllocations={setAllocationsDispatch}
@@ -161,17 +170,30 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             setAllocations={setAllocations}
           />
         );
+      case Step.CONFIRM_ALLOCATIONS:
+        return (
+          <ConfirmAllocationsStep
+            profileType={profileType}
+            allocations={allocations}
+            sharedRestakeAmount={sharedRestakeAmount ?? undefined}
+          />
+        );
+    }
+  }, [
+    allocations,
+    profileType,
+    setAllocations,
+    setAllocationsDispatch,
+    setSharedRestakeAmount,
+    sharedRestakeAmount,
+    step,
+  ]);
 
-      break;
-    case Step.CONFIRM_ALLOCATIONS:
-      stepContents = (
-        <ConfirmAllocationsStep
-          profileType={profileType}
-          allocations={allocations}
-          sharedRestakeAmount={sharedRestakeAmount ?? undefined}
-        />
-      );
-  }
+  const {
+    executeForIndependentProfile: executeUpdateIndependentProfileTx,
+    executeForSharedProfile: executeUpdateSharedProfileTx,
+    status: updateProfileTxStatus,
+  } = useUpdateRestakingProfileTx(profileType, true, true);
 
   const handlePreviousStep = useCallback(() => {
     const diff = getStepDiff(step, false);
@@ -194,12 +216,16 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     }
 
     // Have reached the end; submit the transaction.
-    profileType === RestakingProfileType.INDEPENDENT
-      ? executeUpdateIndependentProfileTx(allocations)
-      : executeUpdateSharedProfileTx(
-          allocations,
-          sharedRestakeAmount ?? new BN(0)
-        );
+    if (profileType === RestakingProfileType.INDEPENDENT) {
+      executeUpdateIndependentProfileTx(allocations);
+    } else {
+      assert(
+        sharedRestakeAmount !== null,
+        'Shared restake amount should be set if updating shared profile'
+      );
+
+      executeUpdateSharedProfileTx(allocations, sharedRestakeAmount);
+    }
   }, [
     allocations,
     executeUpdateIndependentProfileTx,
@@ -213,6 +239,15 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     resetAllocations();
     resetSharedRestakeAmount();
   }, [resetAllocations, resetSharedRestakeAmount]);
+
+  // Reset allocations when the selected profile type changes.
+  // This is necessary because the allocations are specific to
+  // the profile type, and if the user switches between the
+  // independent and shared profile types, the allocations
+  // should be reset to an empty object.
+  useEffect(() => {
+    resetAllocationState();
+  }, [profileType, resetAllocationState]);
 
   // Close modal when the transaction is complete.
   useEffect(() => {
@@ -241,12 +276,22 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     return () => clearTimeout(timeoutHandle);
   }, [isModalOpen, isMountedRef, resetAllocations, resetAllocationState]);
 
-  const stepDescription = getStepDescription(step, profileType);
+  // TODO: This will be `false` if it's still loading. It'll default to `true`, but hat's fine for now since it's used to show text/copy in the UI. Ideally would want a loading state to show the user, before showing everything else in this component.
+  const isCreatingProfile =
+    hasExistingProfile === false ||
+    substrateProfileTypeOpt?.value !== profileType;
+
+  const stepDescription = getStepDescription(
+    step,
+    profileType,
+    isCreatingProfile
+  );
 
   const isLoading =
     isLoadingSharedRestakeAmount ||
     isLoadingAllocations ||
-    updateProfileTxStatus === TxStatus.PROCESSING;
+    updateProfileTxStatus === TxStatus.PROCESSING ||
+    hasExistingProfile === null;
 
   return (
     <Modal open>
@@ -260,7 +305,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           onClose={() => setIsModalOpen(false)}
           className="p-9 pb-4"
         >
-          {getStepTitle(step, profileType)}
+          {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>
 
         <div className="flex flex-col gap-4 px-9 py-3">
