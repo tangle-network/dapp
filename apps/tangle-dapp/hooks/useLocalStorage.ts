@@ -13,6 +13,8 @@ export enum LocalStorageKey {
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
   VALIDATOR_COUNTS = 'validatorCounts',
   WAITING_COUNT = 'waitingCount',
+  CUSTOM_SUBQUERY_ENDPOINT = 'customSubqueryEndpoint',
+  CUSTOM_POLKADOT_ENDPOINT = 'customPolkadotEndpoint',
 }
 
 export type AirdropEligibilityCache = {
@@ -28,7 +30,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? AirdropEligibilityCache
     : T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
-    : T extends LocalStorageKey.ACTIVE_VALIDATOR_CACHE
+    : T extends
+        | LocalStorageKey.ACTIVE_VALIDATOR_CACHE
+        | LocalStorageKey.WAITING_VALIDATOR_CACHE
     ? Validator[]
     : T extends LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT
     ? { value1: number | null; value2: number | null }
@@ -38,6 +42,10 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.WAITING_COUNT
     ? { value1: number | null }
+    : T extends
+        | LocalStorageKey.CUSTOM_SUBQUERY_ENDPOINT
+        | LocalStorageKey.CUSTOM_POLKADOT_ENDPOINT
+    ? string
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
