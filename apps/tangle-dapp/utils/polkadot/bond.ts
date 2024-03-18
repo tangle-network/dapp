@@ -15,9 +15,6 @@ export const bondTokens = async (
   paymentDestination: string
 ): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
 
   const payee =
     paymentDestination === PaymentDestination.STAKED
@@ -25,9 +22,10 @@ export const bondTokens = async (
       : paymentDestination === PaymentDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
-  const value = parseEther(amount.toString());
 
+  const value = parseEther(amount.toString());
   const tx = api.tx.staking.bond(value, payee);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
@@ -36,13 +34,9 @@ export const bondExtraTokens = async (
   amount: number
 ): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
-
   const value = parseEther(amount.toString());
-
   const tx = api.tx.staking.bondExtra(value);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
@@ -51,13 +45,9 @@ export const unbondTokens = async (
   amount: number
 ) => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
-
   const value = parseEther(amount.toString());
-
   const tx = api.tx.staking.unbond(value);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
@@ -66,10 +56,6 @@ export const rebondTokens = async (
   amount: number
 ) => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
-
   const value = parseEther(amount.toString());
 
   const tx = api.tx.staking.rebond(value);
@@ -81,11 +67,8 @@ export const withdrawUnbondedTokens = async (
   slashingSpans: number
 ) => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
-
   const tx = api.tx.staking.withdrawUnbonded(slashingSpans);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
@@ -94,9 +77,6 @@ export const updatePaymentDestination = async (
   paymentDestination: string
 ): Promise<HexString> => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
 
   const payee =
     paymentDestination === PaymentDestination.STAKED
@@ -106,6 +86,7 @@ export const updatePaymentDestination = async (
       : PAYEE_CONTROLLER;
 
   const tx = api.tx.staking.setPayee(payee);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
@@ -113,9 +94,6 @@ export const getSlashingSpans = async (
   address: string
 ): Promise<string | undefined> => {
   const api = await getPolkadotApiPromise();
-
-  if (!api) return '';
-
   const slashingSpans = await api.query.staking.slashingSpans(address);
 
   return slashingSpans.toString();

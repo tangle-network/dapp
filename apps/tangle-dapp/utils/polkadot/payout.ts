@@ -9,11 +9,8 @@ export const payoutStakers = async (
   era: number
 ): Promise<AddressType> => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
-
   const tx = api.tx.staking.payoutStakers(validatorAddress, era);
+
   return getTxPromise(nominatorAddress, tx);
 };
 
@@ -22,14 +19,12 @@ export const batchPayoutStakers = async (
   validatorEraPairs: { validatorAddress: string; era: string }[]
 ): Promise<AddressType> => {
   const api = await getPolkadotApiPromise();
-  if (!api) {
-    throw new Error('Failed to get Polkadot API');
-  }
 
   const tx = api.tx.utility.batch(
     validatorEraPairs.map(({ validatorAddress, era }) =>
       api.tx.staking.payoutStakers(validatorAddress, Number(era))
     )
   );
+
   return getTxPromise(nominatorAddress, tx);
 };

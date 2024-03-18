@@ -5,6 +5,7 @@ import {
   NetworkType,
   webbNetworks,
 } from '@webb-tools/webb-ui-components/constants';
+import assert from 'assert';
 import { FC, useState } from 'react';
 
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
@@ -29,11 +30,14 @@ const DevNetworkConfig: FC<DevNetworkConfigProps> = ({
   const { value: cachedSubqueryEndpoint, remove: removeSubqueryEndpoint } =
     useLocalStorage(LocalStorageKey.CUSTOM_SUBQUERY_ENDPOINT);
 
+  const { value: cachedPolkadotEndpoint, remove: removePolkadotEndpoint } =
+    useLocalStorage(LocalStorageKey.CUSTOM_SUBQUERY_ENDPOINT);
+
   const [savedEndpoints, setSavedEndpoints] = useState({
-    subqueryEndpoint:
-      localStorage.getItem(LocalStorageKey.CUSTOM_SUBQUERY_ENDPOINT) ?? '',
-    polkadotEndpoint:
-      localStorage.getItem(LocalStorageKey.CUSTOM_POLKADOT_ENDPOINT) ?? '',
+    // Use the cached values from local storage, if available.
+    // Otherwise, default to an empty string.
+    subqueryEndpoint: cachedSubqueryEndpoint ?? '',
+    polkadotEndpoint: cachedPolkadotEndpoint ?? '',
   });
 
   const [subqueryEndpoint, setSubqueryEndpoint] = useState(
@@ -60,7 +64,19 @@ const DevNetworkConfig: FC<DevNetworkConfigProps> = ({
       (network) => network.networkType === 'testnet'
     );
 
-    setUserSelectedNetwork(defaultNetworkType[0].networks[0]);
+    assert(
+      defaultNetworkType !== undefined,
+      'Testnet network type entry should exist'
+    );
+
+    const defaultNetwork = defaultNetworkType.networks.at(0);
+
+    assert(
+      defaultNetwork !== undefined,
+      'There should be at least a single network entry for testnet'
+    );
+
+    setUserSelectedNetwork(defaultNetwork);
     setSelectedNetworkType('testnet');
   };
 

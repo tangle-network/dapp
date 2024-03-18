@@ -22,9 +22,42 @@ import useBalances from '../../data/balances/useBalances';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import getTxStatusText from '../../utils/getTxStatusText';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import { TransferTxContainerProps } from './types';
+
+function getTxStatusText(status: TxStatus): string {
+  switch (status) {
+    case TxStatus.NOT_YET_INITIATED:
+      return 'Not initiated';
+    case TxStatus.PROCESSING:
+      return 'Processing';
+    case TxStatus.ERROR:
+      return 'Error';
+    case TxStatus.COMPLETE:
+      return 'Complete';
+    case TxStatus.TIMED_OUT:
+      return 'Timed out';
+  }
+}
+
+function getTypedChainIdFromAddr(address: string | null): number | undefined {
+  // Default to undefined if the address is null, which
+  // means that the address is not yet known/available.
+  if (address === null) {
+    return undefined;
+  }
+  // If the address is a valid hex string (begins with 0x),
+  // it's an EVM address.
+  else if (isHex(address)) {
+    return PresetTypedChainId.TangleTestnetEVM;
+  }
+  // Otherwise, check if the address is a valid Substrate address.
+  else if (isAddress(address)) {
+    return PresetTypedChainId.TangleTestnetNative;
+  }
+
+  return undefined;
+}
 
 const TransferTxContainer: FC<TransferTxContainerProps> = ({
   isModalOpen,
@@ -126,6 +159,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               onAmountChange={(nextAmount) => setAmount(nextAmount)}
               className="bg-mono-20 dark:bg-mono-160"
             />
+
             <RecipientInput
               className="bg-mono-20 dark:bg-mono-160"
               onChange={(nextReceiverAddress) =>
@@ -183,11 +217,3 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 };
 
 export default TransferTxContainer;
-
-/** @internal */
-function getTypedChainIdFromAddr(addr?: string | null): number | undefined {
-  if (!addr) return undefined;
-  if (isHex(addr)) return PresetTypedChainId.TangleTestnetEVM;
-  if (isAddress(addr)) return PresetTypedChainId.TangleTestnetNative;
-  return undefined;
-}

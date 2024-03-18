@@ -24,6 +24,7 @@ export const bondTokens = async (
   paymentDestination: string
 ): Promise<AddressType> => {
   const value = parseEther(numberOfTokens.toString());
+
   const payee =
     paymentDestination === PaymentDestination.STAKED
       ? PAYEE_STAKED
@@ -40,7 +41,6 @@ export const bondTokens = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -61,7 +61,6 @@ export const bondExtraTokens = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -87,7 +86,6 @@ export const updatePaymentDestination = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -108,7 +106,6 @@ export const unBondTokens = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -129,7 +126,6 @@ export const rebondTokens = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -148,7 +144,6 @@ export const withdrawUnbondedTokens = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
