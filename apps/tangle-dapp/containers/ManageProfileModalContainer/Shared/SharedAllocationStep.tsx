@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
@@ -27,7 +27,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   const { maxRestakingAmount } = useRestakingLimits();
 
   const remainingAmount =
-    maxRestakingAmount?.sub(restakeAmount ?? new BN(0)) ?? null;
+    maxRestakingAmount?.sub(restakeAmount ?? BN_ZERO) ?? null;
 
   const [selectedRoles, setSelectedRoles] = useState<RestakingService[]>(
     Object.keys(allocations) as RestakingService[]
@@ -55,7 +55,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
     // Shared roles profile allocations have their amounts
     // set to zero.
     for (const selectedRole of selectedRoles) {
-      nextAllocations[selectedRole] = new BN(0);
+      nextAllocations[selectedRole] = BN_ZERO;
     }
 
     setAllocations(nextAllocations);
@@ -63,14 +63,14 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
 
   return (
     <AllocationStepContainer
-      allocatedAmount={restakeAmount ?? new BN(0)}
+      allocatedAmount={restakeAmount ?? BN_ZERO}
       allocations={allocations}
       variant={AllocationChartVariant.SHARED}
     >
       <SharedAmountInput
         id="shared-allocation-amount"
         title="Total Restake"
-        amount={restakeAmount ?? new BN(0)}
+        amount={restakeAmount ?? BN_ZERO}
         setAmount={setRestakeAmount}
       />
 

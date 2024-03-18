@@ -19,11 +19,12 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import getStatement from '../../utils/getStatement';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
@@ -49,11 +50,10 @@ const EligibleSection: FC<Props> = ({
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
   const router = useRouter();
-
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
-
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
   const [step, setStep] = useState(Step.INPUT_ADDRESS);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
@@ -70,7 +70,7 @@ const EligibleSection: FC<Props> = ({
 
   const isActiveWalletEvm = activeWallet?.platform === 'EVM';
 
-  const handleClaimClick = async () => {
+  const handleClaimClick = useCallback(async () => {
     if (!activeAccount || !activeApi) {
       const message = !activeApi
         ? WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady).message
@@ -86,11 +86,10 @@ const EligibleSection: FC<Props> = ({
     try {
       setStep(Step.SIGN);
 
-      const api = await getPolkadotApiPromise();
+      const api = await getPolkadotApiPromise(rpcEndpoint);
       const accountId = activeAccount.address;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);
-
       const systemChain = await api.rpc.system.chain();
 
       const statementSentence =
@@ -140,7 +139,17 @@ const EligibleSection: FC<Props> = ({
 
       setStep(Step.INPUT_ADDRESS);
     }
-  };
+  }, [
+    activeAccount,
+    activeApi,
+    rpcEndpoint,
+    isRegularStatement,
+    notificationApi,
+    onClaimCompleted,
+    recipient,
+    router,
+    searchParams,
+  ]);
 
   if (!activeAccount) {
     return null;

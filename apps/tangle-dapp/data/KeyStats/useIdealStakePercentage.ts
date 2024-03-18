@@ -4,6 +4,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { calculateInflation } from '../../utils';
@@ -20,13 +21,15 @@ export default function useIdealStakedPercentage(
   const [value1, setValue1] = useState(
     cachedValue?.value1 ?? defaultValue.value1
   );
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const api = await getPolkadotApiPromise();
+        const api = await getPolkadotApiPromise(rpcEndpoint);
         const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
         const idealStakePercentage = inflation.idealStake * 100;
 
@@ -44,7 +47,7 @@ export default function useIdealStakedPercentage(
     };
 
     fetchData();
-  }, [value1, setCache]);
+  }, [value1, setCache, rpcEndpoint]);
 
   return useFormatReturnType({
     isLoading,

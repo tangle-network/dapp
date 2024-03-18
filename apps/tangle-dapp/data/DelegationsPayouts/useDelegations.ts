@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { Delegator } from '../../types';
 import {
@@ -25,6 +26,7 @@ export default function useDelegations(
   const [delegators, setDelegators] = useState(defaultValue.delegators);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -40,8 +42,8 @@ export default function useDelegations(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
+        const apiSub = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
         setIsLoading(true);
 

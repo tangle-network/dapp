@@ -1,10 +1,7 @@
 import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
-import { TANGLE_RPC_ENDPOINT as TESTNET_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { firstValueFrom } from 'rxjs';
 
-const DEFAULT_RPC_ENDPOINT = process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT']
-  ? 'ws://127.0.0.1:9944'
-  : TESTNET_RPC_ENDPOINT;
+import { INITIAL_RPC_ENDPOINT } from '../../context/useRpcEndpointStore';
 
 async function getOrCacheApiVariant<T>(
   endpoint: string,
@@ -30,7 +27,7 @@ const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 
 export const getPolkadotApiPromise: (
   endpoint?: string
-) => Promise<ApiPromise> = async (endpoint: string = DEFAULT_RPC_ENDPOINT) => {
+) => Promise<ApiPromise> = async (endpoint: string = INITIAL_RPC_ENDPOINT) => {
   return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
     const wsProvider = new WsProvider(endpoint);
 
@@ -44,7 +41,7 @@ export const getPolkadotApiPromise: (
 const apiRxCache = new Map<string, Promise<ApiRx>>();
 
 export const getPolkadotApiRx = async (
-  endpoint: string = DEFAULT_RPC_ENDPOINT
+  endpoint: string = INITIAL_RPC_ENDPOINT
 ): Promise<ApiRx> => {
   return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
     const provider = new WsProvider(endpoint);

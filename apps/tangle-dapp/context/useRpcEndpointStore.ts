@@ -2,15 +2,35 @@ import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { z } from 'zod';
 import { create } from 'zustand';
 
+import {
+  extractFromLocalStorage,
+  LocalStorageKey,
+} from '../hooks/useLocalStorage';
+
 const DEFAULT_RPC_ENDPOINT = z
   .boolean()
   .parse(process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT'])
   ? 'ws://127.0.0.1:9944'
   : TANGLE_RPC_ENDPOINT;
 
+const CACHED_RPC_ENDPOINT = extractFromLocalStorage(
+  LocalStorageKey.CUSTOM_POLKADOT_ENDPOINT,
+  true
+);
+
+// Prefer the cached endpoint if it exists,
+// otherwise use the default endpoint.
+export const INITIAL_RPC_ENDPOINT = CACHED_RPC_ENDPOINT ?? DEFAULT_RPC_ENDPOINT;
+
 /**
  * A store for the RPC endpoint to use when creating/using
  * Polkadot API instances.
+ *
+ * If there is a cached endpoint, it will be used as the
+ * default value. Otherwise, the default endpoint will be
+ * used, which is either the value of the
+ * `TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT` environment variable
+ * or the `TANGLE_RPC_ENDPOINT` constant of the testnet.
  *
  * Modifying the endpoint will cause all API instances to be
  * recreated with the new endpoint.
@@ -21,11 +41,11 @@ const DEFAULT_RPC_ENDPOINT = z
  * being able to trigger a recreation of the API
  */
 const useRpcEndpointStore = create<{
-  endpoint: string;
-  setEndpoint: (endpoint: string) => void;
+  rpcEndpoint: string;
+  setRpcEndpoint: (endpoint: string) => void;
 }>((set) => ({
-  endpoint: DEFAULT_RPC_ENDPOINT,
-  setEndpoint: (endpoint) => set({ endpoint }),
+  rpcEndpoint: INITIAL_RPC_ENDPOINT,
+  setRpcEndpoint: (rpcEndpoint) => set({ rpcEndpoint }),
 }));
 
 export default useRpcEndpointStore;

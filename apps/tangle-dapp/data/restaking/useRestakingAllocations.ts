@@ -1,5 +1,5 @@
 import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
@@ -26,7 +26,7 @@ function convertRecordToAllocation(
   const serviceType = substrateRoleToServiceType(record.role);
 
   // The amount being `None` simply means that it is zero.
-  return [serviceType, record.amount.unwrapOr(new BN(0))];
+  return [serviceType, record.amount.unwrapOr(BN_ZERO)];
 }
 
 /**

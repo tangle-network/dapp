@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
@@ -26,9 +27,12 @@ export default function useActiveAndDelegationCountSubscription(
   const [value1, setValue1] = useState(
     cachedValue?.value1 ?? defaultValue.value1
   );
+
   const [value2, setValue2] = useState(
     cachedValue?.value2 ?? defaultValue.value2
   );
+
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -36,9 +40,8 @@ export default function useActiveAndDelegationCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
-
+        const api = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
         const currentEra = await apiPromise.query.staking.currentEra();
         const eraIndex = currentEra.unwrap();
 

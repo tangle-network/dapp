@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import {
@@ -45,7 +45,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     () =>
       Object.entries(allocations).reduce(
         (acc, [_key, amount]) => acc.add(amount),
-        new BN(0)
+        BN_ZERO
       ),
     [allocations]
   );

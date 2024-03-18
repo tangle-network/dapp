@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { Payout } from '../../types';
 import {
@@ -24,6 +25,7 @@ export default function usePayouts(
   const [payouts, setPayouts] = useState(defaultValue.payouts);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -39,8 +41,8 @@ export default function usePayouts(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
+        const apiSub = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
         if (!apiSub || !apiPromise) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
