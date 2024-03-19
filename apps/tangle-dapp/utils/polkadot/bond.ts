@@ -20,9 +20,9 @@ export const bondTokens = async (
   }
 
   const payee =
-    paymentDestination === PaymentDestination.Staked
+    paymentDestination === PaymentDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === PaymentDestination.Stash
+      : paymentDestination === PaymentDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
   const value = parseEther(amount.toString());
@@ -99,9 +99,9 @@ export const updatePaymentDestination = async (
   }
 
   const payee =
-    paymentDestination === PaymentDestination.Staked
+    paymentDestination === PaymentDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === PaymentDestination.Stash
+      : paymentDestination === PaymentDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 

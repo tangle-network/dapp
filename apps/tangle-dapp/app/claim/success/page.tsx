@@ -20,7 +20,7 @@ const Page = async ({
     (await isBlockHashExistOnChain(api, blockHash));
 
   if (!isValidBlockHash) {
-    return redirect(PagePath.ClaimAirdrop);
+    return redirect(PagePath.CLAIM_AIRDROP);
   }
 
   return <SuccessClient blockHash={blockHash} />;

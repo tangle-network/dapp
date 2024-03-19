@@ -1,34 +1,55 @@
 import { BN } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ServiceType } from '../../types';
-import getChipColorByServiceType from '../../utils/getChipColorByServiceType';
+import { RestakingProfileType, RestakingService } from '../../types';
+import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { cleanAllocations } from './IndependentAllocationStep';
-import { RestakingProfileType } from './ManageProfileModalContainer';
+import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {
   profileType: RestakingProfileType;
   allocations: RestakingAllocationMap;
+  sharedRestakeAmount?: BN;
 };
 
 const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   profileType,
   allocations,
+  sharedRestakeAmount,
 }) => {
-  const restakedAmount = cleanAllocations(allocations).reduce(
+  const isSharedVariant = profileType === RestakingProfileType.SHARED;
+
+  if (isSharedVariant) {
+    assert(
+      sharedRestakeAmount !== undefined,
+      'Shared restake amount should be defined for the shared profile type (did you forget to pass the shared restake amount prop?)'
+    );
+  }
+
+  const restakedAmount = filterAllocations(allocations).reduce(
     (acc, [, amount]) => acc.add(amount),
     new BN(0)
   );
 
-  const cleanedAllocations = cleanAllocations(allocations);
+  const filteredAllocations = filterAllocations(allocations);
 
   const cardBaseClassName =
     'flex flex-col gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg w-full p-4 border border-mono-40 dark:border-mono-140';
+
+  // Give priority to the shared restaked amount, if provided.
+  // This is because the shared restake amount is not automatically
+  // calculated from the allocations, since shared roles profiles
+  // do not allocate amounts per-role, but rather as a whole.
+  const totalRestakedAmount = formatTokenBalance(
+    isSharedVariant && sharedRestakeAmount !== undefined
+      ? sharedRestakeAmount
+      : restakedAmount
+  );
 
   return (
     <div className="flex flex-col sm:flex-row items-start gap-2 w-full">
@@ -39,18 +60,30 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
           </Typography>
 
           <Chip color="dark-grey">
-            {profileType === RestakingProfileType.Independent
+            {profileType === RestakingProfileType.INDEPENDENT
               ? 'Independent'
               : 'Shared'}
           </Chip>
         </div>
 
         <div className="flex flex-col gap-2 mb-auto">
-          {cleanedAllocations.map(([service, amount]) => (
-            <AllocationItem key={service} service={service} amount={amount} />
-          ))}
+          {isSharedVariant
+            ? filteredAllocations.length > 0 && (
+                <AllocationItem
+                  services={Object.values(filteredAllocations).map(
+                    ([service]) => service
+                  )}
+                />
+              )
+            : filteredAllocations.map(([service, amount]) => (
+                <AllocationItem
+                  key={service}
+                  services={[service]}
+                  amount={amount}
+                />
+              ))}
 
-          {cleanedAllocations.length === 0 && (
+          {filteredAllocations.length === 0 && (
             <Typography
               variant="body2"
               fw="normal"
@@ -71,7 +104,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             fw="semibold"
             className="dark:text-mono-0"
           >
-            {formatTokenBalance(restakedAmount)}
+            {totalRestakedAmount}
           </Typography>
         </div>
       </div>
@@ -141,19 +174,35 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 };
 
 type AllocationItemProps = {
-  service: ServiceType;
-  amount: BN;
+  services: RestakingService[];
+  amount?: BN;
 };
 
 /** @internal */
-const AllocationItem: FC<AllocationItemProps> = ({ service, amount }) => {
+const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
   return (
     <div className="flex items-center justify-between bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2">
-      <Chip color={getChipColorByServiceType(service)}>{service}</Chip>
+      <div className="flex gap-1 flex-wrap">
+        {services.map((service) => (
+          <Chip
+            key={service}
+            color={getChipColorOfServiceType(service)}
+            className="text-center whitespace-nowrap"
+          >
+            {service}
+          </Chip>
+        ))}
+      </div>
 
-      <Typography variant="body2" fw="semibold" className="dark:text-mono-0">
-        {formatTokenBalance(amount)}
-      </Typography>
+      {amount !== undefined && (
+        <Typography
+          variant="body2"
+          fw="semibold"
+          className="dark:text-mono-0 text-right"
+        >
+          {formatTokenBalance(amount)}
+        </Typography>
+      )}
     </div>
   );
 };

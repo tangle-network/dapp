@@ -77,7 +77,7 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
           label: 'Nomination',
           isLast: true,
           icon: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
-          href: PagePath.Nomination,
+          href: PagePath.NOMINATION,
         },
       ];
     }

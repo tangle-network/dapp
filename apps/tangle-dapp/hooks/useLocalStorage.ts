@@ -5,14 +5,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { Delegator, Payout, Validator } from '../types';
 
 export enum LocalStorageKey {
-  ActiveValidatorCache = 'activeValidatorCache',
-  WaitingValidatorCache = 'waitingValidatorCache',
-  AirdropEligibilityCache = 'airdropEligibilityCache',
-  IsBalancesTableDetailsCollapsed = 'isBalancesTableDetailsCollapsed',
-  ActiveAndDelegationCount = 'activeAndDelegationCount',
-  IdealStakePercentage = 'idealStakePercentage',
-  ValidatorCounts = 'validatorCounts',
-  WaitingCount = 'waitingCount',
+  ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
+  WAITING_VALIDATOR_CACHE = 'waitingValidatorCache',
+  AIRDROP_ELIGIBILITY_CACHE = 'airdropEligibilityCache',
+  IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
+  ACTIVE_AND_DELEGATION_COUNT = 'activeAndDelegationCount',
+  IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
+  VALIDATOR_COUNTS = 'validatorCounts',
+  WAITING_COUNT = 'waitingCount',
   Payouts = 'payouts',
   Nominations = 'nominations',
 }
@@ -34,19 +34,19 @@ export type NominationsCache = {
  * respective value types.
  */
 export type LocalStorageValueOf<T extends LocalStorageKey> =
-  T extends LocalStorageKey.AirdropEligibilityCache
+  T extends LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE
     ? AirdropEligibilityCache
-    : T extends LocalStorageKey.IsBalancesTableDetailsCollapsed
+    : T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
-    : T extends LocalStorageKey.ActiveValidatorCache
+    : T extends LocalStorageKey.ACTIVE_VALIDATOR_CACHE
     ? Validator[]
-    : T extends LocalStorageKey.ActiveAndDelegationCount
+    : T extends LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT
     ? { value1: number | null; value2: number | null }
-    : T extends LocalStorageKey.IdealStakePercentage
+    : T extends LocalStorageKey.IDEAL_STAKE_PERCENTAGE
     ? { value1: number | null }
-    : T extends LocalStorageKey.ValidatorCounts
+    : T extends LocalStorageKey.VALIDATOR_COUNTS
     ? { value1: number | null; value2: number | null }
-    : T extends LocalStorageKey.WaitingCount
+    : T extends LocalStorageKey.WAITING_COUNT
     ? { value1: number | null }
     : T extends LocalStorageKey.Payouts
     ? PayoutsCache

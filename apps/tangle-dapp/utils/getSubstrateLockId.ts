@@ -18,7 +18,7 @@ function getSubstrateLockId(rawLockId: U8aFixed): SubstrateLockId {
     lockIdString as SubstrateLockId
   )
     ? (lockIdString as SubstrateLockId)
-    : SubstrateLockId.Other;
+    : SubstrateLockId.OTHER;
 }
 
 export default getSubstrateLockId;

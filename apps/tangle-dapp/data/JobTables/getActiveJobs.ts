@@ -1,13 +1,8 @@
 import { randNumber } from '@ngneat/falso';
 
-import { type JobType, ServiceType } from '../../types';
+import { type JobType, RestakingService } from '../../types';
 
-const ALL_SERVICES = [
-  ServiceType.DKG_TSS_CGGMP,
-  ServiceType.TX_RELAY,
-  ServiceType.ZK_SAAS_GROTH16,
-  ServiceType.ZK_SAAS_MARLIN,
-];
+const ALL_SERVICES = Object.values(RestakingService);
 
 const randNum = () => randNumber({ min: 30, max: 100, precision: 1 });
 

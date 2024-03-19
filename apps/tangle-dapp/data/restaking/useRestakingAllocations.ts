@@ -1,9 +1,12 @@
 import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
+import { useMemo } from 'react';
 
-import { RestakingProfileType } from '../../containers/ManageProfileModalContainer/ManageProfileModalContainer';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
-import { ServiceType } from '../../types';
+import { RestakingProfileType, RestakingService } from '../../types';
+import Optional from '../../utils/Optional';
+import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
+import useRestakingProfile from './useRestakingProfile';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 /**
@@ -19,39 +22,11 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
  */
 function convertRecordToAllocation(
   record: PalletRolesProfileRecord
-): [ServiceType, BN] {
-  // TODO: Need to investigate under what conditions the amount can be `None`. What would `None` mean in this context? A good idea would be to check the Rust code & logic to see how the `updateProfile` call is implemented & handled for records with no amount.
-  if (record.amount.isNone) {
-    throw new Error('Records with no amount are not supported');
-  }
+): [RestakingService, BN] {
+  const serviceType = substrateRoleToServiceType(record.role);
 
-  let serviceType: ServiceType | null = null;
-
-  if (record.role.isZkSaaS) {
-    const zksassRole = record.role.asZkSaaS;
-
-    if (zksassRole.isZkSaaSGroth16) {
-      serviceType = ServiceType.ZK_SAAS_GROTH16;
-    } else if (zksassRole.isZkSaaSMarlin) {
-      serviceType = ServiceType.ZK_SAAS_MARLIN;
-    }
-  } else if (record.role.isTss) {
-    // TODO: There are many more Tss roles displayed in the Polkadot/Substrate Portal. Is this truly all to be supported for now?
-    serviceType = ServiceType.DKG_TSS_CGGMP;
-  } else if (record.role.isLightClientRelaying) {
-    serviceType = ServiceType.TX_RELAY;
-  }
-
-  if (serviceType === null) {
-    // Because of the structure of the provided types (not being an enum),
-    // an error needs to be thrown. This is not ideal compared to using a
-    // switch statement which would provide exhaustive static type checking.
-    throw new Error(
-      'Unknown role type (was a new role added? if so, update this function)'
-    );
-  }
-
-  return [serviceType, record.amount.unwrap()];
+  // The amount being `None` simply means that it is zero.
+  return [serviceType, record.amount.unwrapOr(new BN(0))];
 }
 
 /**
@@ -68,38 +43,42 @@ function convertRecordToAllocation(
  * If the active account does not have a profile setup,
  * `null` will be returned for the value.
  */
-const useRestakingAllocations = (profileType: RestakingProfileType) => {
+const useRestakingAllocations = () => {
   const ledgerResult = useRestakingRoleLedger();
-  const ledgerOpt = ledgerResult.data;
+  const { hasExistingProfile, profileTypeOpt, ledgerOpt } =
+    useRestakingProfile();
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
-  const allocations: RestakingAllocationMap = {
-    [ServiceType.ZK_SAAS_GROTH16]: null,
-    [ServiceType.ZK_SAAS_MARLIN]: null,
-    [ServiceType.DKG_TSS_CGGMP]: null,
-    [ServiceType.TX_RELAY]: null,
-  };
+  const allocations: Optional<RestakingAllocationMap> | null = useMemo(() => {
+    if (hasExistingProfile === false) {
+      return new Optional();
+    } else if (
+      !isLedgerAvailable ||
+      profileTypeOpt === null ||
+      profileTypeOpt.value === null
+    ) {
+      return null;
+    }
 
-  if (isLedgerAvailable) {
     const ledger = ledgerOpt.unwrap();
 
     const profile =
-      profileType === RestakingProfileType.Independent
-        ? ledger.profile.isIndependent
-          ? ledger.profile.asIndependent
-          : null
-        : ledger.profile.isShared
-        ? ledger.profile.asShared
-        : null;
+      profileTypeOpt.value === RestakingProfileType.INDEPENDENT
+        ? ledger.profile.asIndependent
+        : ledger.profile.asShared;
+
+    const newAllocations: RestakingAllocationMap = {};
 
     if (profile !== null) {
       for (const record of profile.records) {
         const [service, amount] = convertRecordToAllocation(record);
 
-        allocations[service] = amount;
+        newAllocations[service] = amount;
       }
     }
-  }
+
+    return new Optional(newAllocations);
+  }, [hasExistingProfile, isLedgerAvailable, ledgerOpt, profileTypeOpt]);
 
   return {
     ...ledgerResult,

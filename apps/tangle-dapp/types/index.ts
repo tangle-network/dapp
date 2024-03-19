@@ -1,34 +1,33 @@
 // Note that this import is necessary to fix a strange type error
 // in Polkadot API's `api.tx.staking.bond` method, which complains
 // about requiring three arguments instead of two.
-
 import '@webb-tools/tangle-substrate-types';
 
 export enum PagePath {
-  Nomination = '/',
-  ClaimAirdrop = '/claim',
-  Account = '/account',
-  ServicesOverview = '/services',
-  ServicesRestake = '/restake',
+  NOMINATION = '/',
+  CLAIM_AIRDROP = '/claim',
+  ACCOUNT = '/account',
+  SERVICES_OVERVIEW = '/services',
+  SERVICES_RESTAKE = '/restake',
 }
 
 export enum QueryParamKey {
-  DelegationsAndPayoutsTab = 'tab',
+  DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
 }
 
 export type QueryParamKeyOf<Page extends PagePath> =
-  Page extends PagePath.Nomination
-    ? QueryParamKey.DelegationsAndPayoutsTab
+  Page extends PagePath.NOMINATION
+    ? QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
     : never;
 
 export type QueryParamValueOf<Key extends QueryParamKey> =
-  Key extends QueryParamKey.DelegationsAndPayoutsTab
+  Key extends QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
     ? DelegationsAndPayoutsTab
     : never;
 
 export enum DelegationsAndPayoutsTab {
-  Nominations = 'Nominations',
-  Payouts = 'Payouts',
+  NOMINATIONS = 'Nominations',
+  PAYOUTS = 'Payouts',
 }
 
 export type Validator = {
@@ -63,9 +62,9 @@ export type NodeSpecification = {
 };
 
 export enum PaymentDestination {
-  Staked = 'Staked (increase the amount at stake)',
-  Stash = 'Stash (do not increase the amount at stake)',
-  Controller = 'Controller Account',
+  STAKED = 'Staked (increase the amount at stake)',
+  STASH = 'Stash (do not increase the amount at stake)',
+  CONTROLLER = 'Controller Account',
 }
 
 export type AddressWithIdentity = {
@@ -116,39 +115,55 @@ type SearchQueryPathOf<
  */
 export const StaticSearchQueryPath: {
   NominationsTable: SearchQueryPathOf<
-    PagePath.Nomination,
-    QueryParamKey.DelegationsAndPayoutsTab,
-    DelegationsAndPayoutsTab.Nominations
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.NOMINATIONS
   >;
   PayoutsTable: SearchQueryPathOf<
-    PagePath.Nomination,
-    QueryParamKey.DelegationsAndPayoutsTab,
-    DelegationsAndPayoutsTab.Payouts
+    PagePath.NOMINATION,
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
+    DelegationsAndPayoutsTab.PAYOUTS
   >;
 } = {
-  NominationsTable: `${PagePath.Nomination}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Nominations}`,
-  PayoutsTable: `${PagePath.Nomination}?${QueryParamKey.DelegationsAndPayoutsTab}=${DelegationsAndPayoutsTab.Payouts}`,
+  NominationsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
+  PayoutsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
 } as const;
 
 export type InternalPath =
   | PagePath
   | (typeof StaticSearchQueryPath)[keyof typeof StaticSearchQueryPath];
 
-export enum ServiceType {
+/**
+ * Also referred to as a `role` in Substrate.
+ *
+ * The values represent the user-facing UI display names
+ * of the roles.
+ */
+export enum RestakingService {
   ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
   ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
-  TX_RELAY = 'Tx Relay',
-  DKG_TSS_CGGMP = 'DKG/TSS (CGGMP)',
+  LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
+  TSS_ZENGOGG20SECP256K1 = 'TSS ZengoGG20Secp256k1',
+  TSS_DFNS_CGGMP21SECP256K1 = 'TSS DfnsCGGMP21Secp256k1',
+  TSS_DFNS_CGGMP21SECP256R1 = 'TSS DfnsCGGMP21Secp256r1',
+  TSS_DFNS_CGGMP21STARK = 'TSS DfnsCGGMP21Stark',
+  TSS_ZCASH_FROST_P256 = 'TSS ZcashFrostP256',
+  TSS_ZCASH_FROST_P384 = 'TSS ZcashFrostP384',
+  TSS_ZCASH_FROST_SECP256K1 = 'TSS ZcashFrostSecp256k1',
+  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS ZcashFrostRistretto255',
+  TSS_ZCASH_FROST_ED25519 = 'TSS ZcashFrostEd25519',
+  TSS_GENNARO_DKG_BLS381 = 'TSS GennaroDKGBls381',
+  TSS_ZCASH_FROST_ED448 = 'TSS ZcashFrostEd448',
 }
 
-export enum ProfileType {
+export enum RestakingProfileType {
   INDEPENDENT = 'Independent',
   SHARED = 'Shared',
 }
 
 export type Service = {
   id: number;
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   participants: string[];
   thresholds?: number;
   phase2Executions?: number;
@@ -164,7 +179,7 @@ export type ServiceJob = {
 
 export type JobType = {
   id?: number;
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   thresholds?: number;
   earnings?: number;
   expiration: number;

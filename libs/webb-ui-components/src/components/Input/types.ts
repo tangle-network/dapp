@@ -49,6 +49,16 @@ export interface InputProps
   onChange?: (nextValue: string) => void;
 
   /**
+   * Whether to not change the value of the input from user input event.
+   *
+   * By default, the input's value is changed by user input, and not
+   * directly from the `value` prop.
+   *
+   * @default false
+   */
+  isControlled?: boolean;
+
+  /**
    * The error message to be displayed if the input is invalid
    */
   errorMessage?: string;

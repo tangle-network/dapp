@@ -16,11 +16,11 @@ import {
   YAxis,
 } from 'recharts';
 
-import { ServiceType } from '../../types';
-import getChartAreaColorByServiceType from '../../utils/getChartAreaColorByServiceType';
+import { RestakingService } from '../../types';
+import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 import type { RoleEarningsChartProps } from './types';
 
-const SERVICES = Object.values(ServiceType);
+const SERVICES = Object.values(RestakingService);
 
 const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data, unit }) => {
   const [isDarkMode] = useNextDarkMode();
@@ -102,7 +102,7 @@ const TooltipContent = ({
   year: number;
   suffix?: string;
   services: {
-    name: ServiceType;
+    name: RestakingService;
     value?: number;
   }[];
 }) => {

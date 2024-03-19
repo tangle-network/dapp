@@ -14,6 +14,7 @@ import {
 import { useState } from 'react';
 
 import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
+import { ErrorSetContextProvider } from '../../../context/ErrorsContext';
 
 const ActionButton = () => {
   const { loading, isConnecting, activeAccount, activeWallet } =
@@ -47,10 +48,12 @@ const ActionButton = () => {
           Manage Profile
         </Button>
 
-        <ManageProfileModalContainer
-          isModalOpen={isManageProfileModalOpen}
-          setIsModalOpen={setIsManageProfileModalOpen}
-        />
+        <ErrorSetContextProvider>
+          <ManageProfileModalContainer
+            isModalOpen={isManageProfileModalOpen}
+            setIsModalOpen={setIsManageProfileModalOpen}
+          />
+        </ErrorSetContextProvider>
       </>
     );
   }

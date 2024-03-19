@@ -17,25 +17,22 @@ import { TANGLE_TOKEN_DECIMALS } from '../constants';
  *
  * @example
  * ```ts
- * const amount = 123.456;
+ * const amount = '123.456';
  * const convertedAmount = convertToChainUnits(amount);
  * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
  * ```
  */
-const convertAmountStringToChainUnits = (amount: string): BN => {
+const convertAmountStringToChainUnits = (amountString: string): BN => {
   // TODO: Use zod for validation, and convert this function to support input amount strings, as it is currently only used with strings & for user inputs.
 
-  // Convert the amount to a string to avoid floating point inaccuracies.
-  const amountStr = amount.toString();
-
-  const [whole, fraction = ''] = amountStr.split('.');
+  const [whole, fraction = ''] = amountString.split('.');
 
   // Pad the fractional part with zeros to match the decimals length.
   const fractionPadded = fraction.padEnd(TANGLE_TOKEN_DECIMALS, '0');
 
-  const fullAmountStr = whole + fractionPadded;
+  const fullAmountString = whole + fractionPadded;
 
-  return new BN(fullAmountStr);
+  return new BN(fullAmountString);
 };
 
 export default convertAmountStringToChainUnits;

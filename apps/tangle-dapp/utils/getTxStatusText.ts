@@ -2,15 +2,15 @@ import { TxStatus } from '../hooks/useSubstrateTx';
 
 function getTxStatusText(status: TxStatus) {
   switch (status) {
-    case TxStatus.NotYetInitiated:
+    case TxStatus.NOT_YET_INITIATED:
       return 'Not initiated';
-    case TxStatus.Processing:
+    case TxStatus.PROCESSING:
       return 'Processing';
-    case TxStatus.Error:
+    case TxStatus.ERROR:
       return 'Error';
-    case TxStatus.Complete:
+    case TxStatus.COMPLETE:
       return 'Complete';
-    case TxStatus.TimedOut:
+    case TxStatus.TIMED_OUT:
       return 'Timed out';
   }
 }

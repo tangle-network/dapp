@@ -13,7 +13,7 @@ export default function useIdealStakedPercentage(
   defaultValue: { value1: number | null } = { value1: null }
 ) {
   const { value: cachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.IdealStakePercentage,
+    LocalStorageKey.IDEAL_STAKE_PERCENTAGE,
     true
   );
 

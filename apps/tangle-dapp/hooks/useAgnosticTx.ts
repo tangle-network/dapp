@@ -1,12 +1,12 @@
 import { ISubmittableResult } from '@polkadot/types/types';
 import { assert } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect } from 'react';
 
 import { AbiFunctionName, Precompile } from '../constants/evmPrecompiles';
 import prepareTxNotification from '../utils/prepareTxNotification';
+import useActiveAccountAddress from './useActiveAccountAddress';
 import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { TxFactory, TxStatus } from './useSubstrateTx';
 
@@ -27,8 +27,7 @@ function useAgnosticTx<
   substrateTxFactory: TxFactory<SubstrateTxResult>,
   notifyStatusUpdates = false
 ) {
-  const activeAccount = useActiveAccount();
-  const activeAccountAddress = activeAccount[0]?.address ?? null;
+  const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useWebbUI();
 
   const {
@@ -50,7 +49,7 @@ function useAgnosticTx<
 
   const agnosticStatus =
     isEvmAccount === null
-      ? TxStatus.NotYetInitiated
+      ? TxStatus.NOT_YET_INITIATED
       : isEvmAccount
       ? evmTxStatus
       : substrateTxStatus;
@@ -62,7 +61,7 @@ function useAgnosticTx<
   useEffect(() => {
     if (
       isEvmAccount === null ||
-      agnosticStatus === TxStatus.NotYetInitiated ||
+      agnosticStatus === TxStatus.NOT_YET_INITIATED ||
       !notifyStatusUpdates
     ) {
       return;
