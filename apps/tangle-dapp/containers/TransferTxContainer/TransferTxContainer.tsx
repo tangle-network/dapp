@@ -85,7 +85,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         // of decimals.
         const amountInChainUnits = convertAmountStringToChainUnits(amount);
 
-        return api.tx.balances.transfer(receiverAddress, amountInChainUnits);
+        return api.tx.balances.transferAllowDeath(
+          receiverAddress,
+          amountInChainUnits
+        );
       },
       [amount, receiverAddress]
     ),

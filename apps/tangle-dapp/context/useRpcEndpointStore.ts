@@ -19,6 +19,7 @@ const DEFAULT_RPC_ENDPOINT = zodBooleanString.parse(
   ? 'ws://127.0.0.1:9944'
   : TANGLE_RPC_ENDPOINT;
 
+// TODO: This is causing a 'window is not defined' error on the console for some reason. It's strange because this file is marked as 'use client', so it should only be used on the client side, where the window object is defined. Maybe it's related to the fact that local storage is being accessed right when this file is imported (at global scope), and there's some internal Next.js logic that clashes with that?
 const CACHED_RPC_ENDPOINT = extractFromLocalStorage(
   LocalStorageKey.CUSTOM_RPC_ENDPOINT,
   true
