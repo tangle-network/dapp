@@ -12,7 +12,11 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import { FC, useState } from 'react';
 
-import DevNetworkConfig from './DevNetworkConfig';
+import {
+  extractFromLocalStorage,
+  LocalStorageKey,
+} from '../../hooks/useLocalStorage';
+import CustomNetworkConfig from './CustomNetworkConfig';
 import isNetworkTypeDisabled from './isNetworkTypeDisabled';
 
 type NetworkSelectorProps = {
@@ -22,30 +26,23 @@ type NetworkSelectorProps = {
   setSelectedNetworkType: (networkType: NetworkType) => void;
 };
 
-const NETWORK_TYPES: NetworkType[] = ['dev', 'live', 'testnet'];
+const NETWORK_TYPES: NetworkType[] = ['live', 'testnet', 'dev'];
 
 // TODO: Ideally, consider merging this with the `stats-dapp`'s usage, into a single component from the Webb UI library, and then re-use it in both places.
 export const NetworkSelector: FC<NetworkSelectorProps> = ({
-  selectedNetwork,
   setUserSelectedNetwork,
   selectedNetworkType,
   setSelectedNetworkType,
 }) => {
   const { notificationApi } = useWebbUI();
 
-  const [savedEndpoints, setSavedEndpoints] = useState({
-    customSubqueryEndpoint:
-      localStorage.getItem('customSubqueryEndpoint') ?? '',
-    customPolkadotEndpoint:
-      localStorage.getItem('customPolkadotEndpoint') ?? '',
+  const [savedEndpoint, setSavedEndpoint] = useState({
+    rpcEndpoint:
+      extractFromLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT, true) ?? '',
   });
 
-  const [customSubqueryEndpoint, setCustomSubqueryEndpoint] = useState(
-    savedEndpoints.customSubqueryEndpoint ?? ''
-  );
-
-  const [customPolkadotEndpoint, setCustomPolkadotEndpoint] = useState(
-    savedEndpoints.customPolkadotEndpoint ?? ''
+  const [rpcEndpoint, setRpcEndpoint] = useState(
+    savedEndpoint.rpcEndpoint ?? ''
   );
 
   const filteredNetworkType = webbNetworks.filter(
@@ -53,25 +50,22 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
   );
 
   const setCustomEndpointsAsUserSelected = () => {
-    if (
-      localStorage.getItem('customSubqueryEndpoint') &&
-      localStorage.getItem('customPolkadotEndpoint')
-    ) {
-      const customNetwork = {
+    if (localStorage.getItem('customPolkadotEndpoint')) {
+      const customNetwork: Network = {
         name: 'Custom Network',
         networkType: 'dev',
         networkNodeType: 'standalone',
-        subqueryEndpoint: customSubqueryEndpoint,
-        polkadotEndpoint: customPolkadotEndpoint,
-        polkadotExplorer: `https://polkadot.js.org/apps/?rpc=${customPolkadotEndpoint}#/explorer`,
+        subqueryEndpoint: '',
+        polkadotEndpoint: rpcEndpoint,
+        polkadotExplorer: `https://polkadot.js.org/apps/?rpc=${rpcEndpoint}#/explorer`,
         avatar: '',
       };
 
-      setUserSelectedNetwork(customNetwork as Network);
+      setUserSelectedNetwork(customNetwork);
     } else {
       notificationApi({
         variant: 'warning',
-        message: 'Please enter valid endpoints',
+        message: 'Please enter a valid endpoint URL',
       });
     }
   };
@@ -79,6 +73,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
   const handleNetworkChange = (networkName: string) => {
     if (networkName === 'Custom Network') {
       setCustomEndpointsAsUserSelected();
+
       return;
     }
 
@@ -115,12 +110,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
           ))}
 
           {selectedNetworkType === 'dev' && (
-            <DevNetworkConfig
-              selectedNetwork={selectedNetwork}
-              selectedNetworkType={selectedNetworkType}
-              setUserSelectedNetwork={setUserSelectedNetwork}
-              setSelectedNetworkType={setSelectedNetworkType}
-            />
+            <CustomNetworkConfig selectedNetworkType={selectedNetworkType} />
           )}
         </div>
       </RadioGroup>

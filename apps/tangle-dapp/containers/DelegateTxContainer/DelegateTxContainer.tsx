@@ -57,12 +57,12 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-
   const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidatorsData();
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
+
   const [txStatus, setTxnStatus] = useState<{
     status: 'success' | 'error';
     hash: string;
@@ -76,13 +76,17 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
     DelegateTxSteps.BOND_TOKENS
   );
-  const [amountToBond, setAmountToBond] = useState<number>(0);
+
+  const [amountToBond, setAmountToBond] = useState(0);
+
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.STAKED
   );
+
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
+
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
-    useState<boolean>(false);
+    useState(false);
 
   const isExceedingMaxNominationQuota = useMemo(() => {
     return selectedValidators.length > maxNominationQuota;

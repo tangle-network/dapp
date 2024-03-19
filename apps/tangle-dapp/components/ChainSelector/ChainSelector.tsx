@@ -14,82 +14,39 @@ import {
   NetworkType,
   webbNetworks,
 } from '@webb-tools/webb-ui-components/constants';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import isValidSubqueryEndpoint from '../NetworkSelector/isValidSubqueryEndpoint';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import { NetworkSelector } from '../NetworkSelector/NetworkSelector';
 
 const ChainSelector = () => {
   const { notificationApi } = useWebbUI();
   const { activeChain, activeAccount } = useWebContext();
-
-  const chain = useMemo(() => {
-    if (activeChain) {
-      return activeChain;
-    }
-  }, [activeChain]);
+  const chain = activeChain ?? undefined;
 
   const defaultNetworkType = webbNetworks.filter(
     (network) => network.networkType === 'testnet'
   );
 
-  const [selectedNetwork, setSelectedNetwork] = useState((): Network => {
-    const storedSelectedNetwork = localStorage.getItem('selectedNetwork');
-
-    if (storedSelectedNetwork) {
-      return JSON.parse(storedSelectedNetwork);
-    }
-
-    return defaultNetworkType[0].networks[0];
-  });
+  const { rpcEndpoint: activeRpcEndpoint } = useRpcEndpointStore();
 
   const [selectedNetworkType, setSelectedNetworkType] =
     useState<NetworkType>('testnet');
 
   const setUserSelectedNetwork = async (network: Network) => {
-    const handleSuccess = () => {
+    const notifyConnected = () => {
       notificationApi({
         variant: 'success',
         message: `Connected to ${network.name}`,
       });
-      localStorage.setItem('selectedNetwork', JSON.stringify(network));
-      setSelectedNetwork(network);
     };
 
-    const handleClose = () => {
+    const notifyConnectionFailed = () => {
       notificationApi({
         variant: 'error',
-        message: `Please make sure you have a running node at the selected network.`,
+        message: `Unable to connect to the requested network: ${network.name}`,
       });
-      localStorage.setItem(
-        'selectedNetwork',
-        JSON.stringify(defaultNetworkType[0].networks[0])
-      );
-      setSelectedNetwork(defaultNetworkType[0].networks[0]);
     };
-
-    try {
-      if (await isValidSubqueryEndpoint(network.subqueryEndpoint)) {
-        const ws = new WebSocket(network.polkadotEndpoint);
-
-        const handleOpen = () => {
-          handleSuccess();
-          ws.removeEventListener('open', handleOpen);
-        };
-
-        const handleCloseEvent = () => {
-          handleClose();
-          ws.removeEventListener('close', handleCloseEvent);
-        };
-
-        ws.addEventListener('open', handleOpen);
-        ws.addEventListener('close', handleCloseEvent);
-      } else {
-        handleClose();
-      }
-    } catch (error) {
-      handleClose();
-    }
   };
 
   const status: StatusVariant =
@@ -112,9 +69,8 @@ const ChainSelector = () => {
           />
         </DropdownBasicButton>
 
-        <DropdownBody className="mt-1">
+        <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
           <NetworkSelector
-            selectedNetwork={selectedNetwork}
             setUserSelectedNetwork={setUserSelectedNetwork}
             selectedNetworkType={selectedNetworkType}
             setSelectedNetworkType={setSelectedNetworkType}

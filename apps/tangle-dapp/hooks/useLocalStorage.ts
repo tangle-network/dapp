@@ -13,8 +13,8 @@ export enum LocalStorageKey {
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
   VALIDATOR_COUNTS = 'validatorCounts',
   WAITING_COUNT = 'waitingCount',
-  CUSTOM_SUBQUERY_ENDPOINT = 'customSubqueryEndpoint',
-  CUSTOM_POLKADOT_ENDPOINT = 'customPolkadotEndpoint',
+  CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
+  NETWORK_TYPE = 'networkType',
 }
 
 export type AirdropEligibilityCache = {
@@ -43,8 +43,8 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     : T extends LocalStorageKey.WAITING_COUNT
     ? { value1: number | null }
     : T extends
-        | LocalStorageKey.CUSTOM_SUBQUERY_ENDPOINT
-        | LocalStorageKey.CUSTOM_POLKADOT_ENDPOINT
+        | LocalStorageKey.CUSTOM_RPC_ENDPOINT
+        | LocalStorageKey.NETWORK_TYPE
     ? string
     : never;
 

@@ -33,7 +33,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
   const { rpcEndpoint } = useRpcEndpointStore();
-  const [isPayoutTxLoading, setIsPayoutTxLoading] = useState<boolean>(false);
+  const [isPayoutTxLoading, setIsPayoutTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {

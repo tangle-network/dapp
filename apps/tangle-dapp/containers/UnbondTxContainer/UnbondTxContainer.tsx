@@ -37,8 +37,8 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-  const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
-  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
+  const [amountToUnbond, setAmountToUnbond] = useState(0);
+  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
   const { rpcEndpoint } = useRpcEndpointStore();
 
   const walletAddress = useMemo(() => {

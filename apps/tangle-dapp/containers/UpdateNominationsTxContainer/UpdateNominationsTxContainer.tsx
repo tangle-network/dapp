@@ -36,8 +36,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
   const [selectedValidators, setSelectedValidators] =
     useState<string[]>(currentNominations);
+
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
-    useState<boolean>(false);
+    useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';

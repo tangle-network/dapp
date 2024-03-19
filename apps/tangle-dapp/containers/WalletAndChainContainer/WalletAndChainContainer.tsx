@@ -18,8 +18,8 @@ import { ChainSelector, WalletDropdown } from '../../components';
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
-  const { toggleModal } = useConnectWallet();
 
+  const { toggleModal } = useConnectWallet();
   const { isMobile } = useCheckMobile();
 
   return (
@@ -32,6 +32,7 @@ const WalletAndChainContainer: FC = () => {
             <ConnectWalletMobileButton>
               <div className="flex flex-col items-center justify-center gap-4 py-9">
                 <ComputerIcon size="xl" className="mx-auto" />
+
                 <Typography variant="body1" className="text-center">
                   For the best staking experience, we recommend using our
                   desktop interface for full-feature interface and enhanced

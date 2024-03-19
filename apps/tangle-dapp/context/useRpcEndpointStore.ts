@@ -1,3 +1,5 @@
+'use client';
+
 import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { z } from 'zod';
 import { create } from 'zustand';
@@ -7,14 +9,18 @@ import {
   LocalStorageKey,
 } from '../hooks/useLocalStorage';
 
-const DEFAULT_RPC_ENDPOINT = z
-  .boolean()
-  .parse(process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT'])
+const zodBooleanString = z
+  .union([z.literal('true'), z.literal('false')])
+  .transform((string) => string === 'true');
+
+const DEFAULT_RPC_ENDPOINT = zodBooleanString.parse(
+  process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT']
+)
   ? 'ws://127.0.0.1:9944'
   : TANGLE_RPC_ENDPOINT;
 
 const CACHED_RPC_ENDPOINT = extractFromLocalStorage(
-  LocalStorageKey.CUSTOM_POLKADOT_ENDPOINT,
+  LocalStorageKey.CUSTOM_RPC_ENDPOINT,
   true
 );
 

@@ -32,11 +32,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-  const [amountToBond, setAmountToBond] = useState<number>(0);
+  const [amountToBond, setAmountToBond] = useState(0);
   const { rpcEndpoint } = useRpcEndpointStore();
-
-  const [isBondMoreTxLoading, setIsBondMoreTxLoading] =
-    useState<boolean>(false);
+  const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
