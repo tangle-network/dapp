@@ -10,7 +10,7 @@ import {
   NetworkType,
   webbNetworks,
 } from '@webb-tools/webb-ui-components/constants';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
@@ -38,8 +38,14 @@ assert(DEFAULT_NETWORK !== undefined, 'Default network should exist');
 
 const CUSTOM_NETWORK_VALUE = 'Custom Network';
 
+export type NetworkSelectorProps = {
+  setNetworkName: (networkName: string) => void;
+};
+
 // TODO: Ideally, consider merging this with the `stats-dapp`'s usage, into a single component from the Webb UI library, and then re-use it in both places.
-export const NetworkSelector: FC = () => {
+export const NetworkSelector: FC<NetworkSelectorProps> = ({
+  setNetworkName,
+}) => {
   const [network, setNetwork] = useState<Network>(DEFAULT_NETWORK);
   const { notificationApi } = useWebbUI();
   const { rpcEndpoint, setRpcEndpoint } = useRpcEndpointStore();
@@ -169,6 +175,12 @@ export const NetworkSelector: FC = () => {
     ),
     [trySetCustomNetwork]
   );
+
+  // Update the parent's network name when the network
+  // changes.
+  useEffect(() => {
+    setNetworkName(network.name);
+  }, [network.name, setNetworkName]);
 
   return (
     <div className="p-4">

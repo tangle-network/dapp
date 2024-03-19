@@ -13,7 +13,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { ChainSelector, WalletDropdown } from '../../components';
+import { WalletDropdown } from '../../components';
+import NetworkSelectionButton from '../../components/NetworkSelector/NetworkSelectionButton';
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
@@ -24,7 +25,7 @@ const WalletAndChainContainer: FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <ChainSelector />
+      <NetworkSelectionButton />
 
       <div>
         {isConnecting || loading || !activeWallet || !activeAccount ? (
