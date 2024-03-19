@@ -136,7 +136,14 @@ const useLocalStorage = <Key extends LocalStorageKey>(
     [refresh, set]
   );
 
-  return { value, set, setWithPreviousValue, remove, refresh };
+  return {
+    value,
+    set,
+    setWithPreviousValue,
+    remove,
+    refresh,
+    isSet: value !== null,
+  };
 };
 
 export default useLocalStorage;

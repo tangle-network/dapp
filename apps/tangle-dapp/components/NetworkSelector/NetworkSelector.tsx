@@ -10,74 +10,82 @@ import {
   NetworkType,
   webbNetworks,
 } from '@webb-tools/webb-ui-components/constants';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 
-import {
-  extractFromLocalStorage,
-  LocalStorageKey,
-} from '../../hooks/useLocalStorage';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import CustomNetworkConfig from './CustomNetworkConfig';
 import isNetworkTypeDisabled from './isNetworkTypeDisabled';
-
-type NetworkSelectorProps = {
-  selectedNetwork: Network;
-  selectedNetworkType: NetworkType;
-  setUserSelectedNetwork: (network: Network) => void;
-  setSelectedNetworkType: (networkType: NetworkType) => void;
-};
+import testRpcEndpointConnection from './testRpcEndpointConnection';
 
 const NETWORK_TYPES: NetworkType[] = ['live', 'testnet', 'dev'];
 
+const DEFAULT_NETWORK_DEF = webbNetworks.find(
+  (network) => network.networkType === 'testnet'
+);
+
+assert(
+  DEFAULT_NETWORK_DEF !== undefined,
+  'Default network definition should exist'
+);
+
+const DEFAULT_NETWORK = DEFAULT_NETWORK_DEF.networks.at(0);
+
+assert(DEFAULT_NETWORK !== undefined, 'Default network should exist');
+
 // TODO: Ideally, consider merging this with the `stats-dapp`'s usage, into a single component from the Webb UI library, and then re-use it in both places.
-export const NetworkSelector: FC<NetworkSelectorProps> = ({
-  setUserSelectedNetwork,
-  selectedNetworkType,
-  setSelectedNetworkType,
-}) => {
+export const NetworkSelector: FC = () => {
+  const [network, setNetwork] = useState<Network>(DEFAULT_NETWORK);
   const { notificationApi } = useWebbUI();
+  const { rpcEndpoint } = useRpcEndpointStore();
 
-  const [savedEndpoint, setSavedEndpoint] = useState({
-    rpcEndpoint:
-      extractFromLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT, true) ?? '',
-  });
-
-  const [rpcEndpoint, setRpcEndpoint] = useState(
-    savedEndpoint.rpcEndpoint ?? ''
+  const [networkType, setNetworkType] = useState<NetworkType>(
+    DEFAULT_NETWORK_DEF.networkType
   );
 
-  const filteredNetworkType = webbNetworks.filter(
-    (network) => network.networkType === selectedNetworkType
-  );
+  const [selectedNetworkType, setSelectedNetworkType] =
+    useState<NetworkType>('testnet');
 
-  const setCustomEndpointsAsUserSelected = () => {
-    if (localStorage.getItem('customPolkadotEndpoint')) {
-      const customNetwork: Network = {
-        name: 'Custom Network',
-        networkType: 'dev',
-        networkNodeType: 'standalone',
-        subqueryEndpoint: '',
-        polkadotEndpoint: rpcEndpoint,
-        polkadotExplorer: `https://polkadot.js.org/apps/?rpc=${rpcEndpoint}#/explorer`,
-        avatar: '',
-      };
-
-      setUserSelectedNetwork(customNetwork);
-    } else {
+  const setCustomNetwork = async () => {
+    if (!(await testRpcEndpointConnection(rpcEndpoint))) {
       notificationApi({
-        variant: 'warning',
-        message: 'Please enter a valid endpoint URL',
+        variant: 'error',
+        message: `Unable to connect to the requested network: ${rpcEndpoint}`,
       });
-    }
-  };
-
-  const handleNetworkChange = (networkName: string) => {
-    if (networkName === 'Custom Network') {
-      setCustomEndpointsAsUserSelected();
 
       return;
     }
 
-    const network = filteredNetworkType[0].networks.find(
+    const customNetwork: Network = {
+      name: 'Custom Network',
+      networkType: 'dev',
+      networkNodeType: 'standalone',
+      subqueryEndpoint: '',
+      polkadotEndpoint: rpcEndpoint,
+      polkadotExplorer: `https://polkadot.js.org/apps/?rpc=${rpcEndpoint}#/explorer`,
+      avatar: '',
+    };
+
+    notificationApi({
+      variant: 'success',
+      message: `Connected to ${rpcEndpoint}`,
+    });
+
+    setNetwork(customNetwork);
+  };
+
+  const networksMatchingType = useMemo(
+    () => webbNetworks.filter((network) => network.networkType === networkType),
+    [networkType]
+  );
+
+  const handleNetworkChange = (networkName: string) => {
+    if (networkName === 'Custom Network') {
+      setCustomNetwork();
+
+      return;
+    }
+
+    const network = networksMatchingType[0].networks.find(
       (network) => network.name === networkName
     );
 
@@ -86,7 +94,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
       'There should an entry for all network names'
     );
 
-    setUserSelectedNetwork(network);
+    setNetwork(network);
   };
 
   return (
@@ -94,32 +102,32 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
       {/* Options & configuration */}
       <RadioGroup
         className="pb-4"
-        defaultValue={selectedNetwork.name}
-        value={selectedNetwork.name}
+        defaultValue={network.name}
+        value={network.name}
         onValueChange={handleNetworkChange}
       >
         <div className="flex flex-col space-y-4">
-          {filteredNetworkType[0].networks.map((network) => (
+          {networksMatchingType[0].networks.map((network) => (
             <div key={network.name} className="flex items-center gap-2">
               <RadioItem id={network.name} value={network.name}>
                 {network.name}
               </RadioItem>
 
-              {selectedNetworkType !== 'dev' && <TangleIcon size="lg" />}
+              {networkType !== 'dev' && <TangleIcon size="lg" />}
             </div>
           ))}
 
-          {selectedNetworkType === 'dev' && (
-            <CustomNetworkConfig selectedNetworkType={selectedNetworkType} />
+          {networkType === 'dev' && (
+            <CustomNetworkConfig setCustomNetwork={setCustomNetwork} />
           )}
         </div>
       </RadioGroup>
 
       {/* Network type listing */}
       <RadioGroup
-        defaultValue={selectedNetworkType}
-        value={selectedNetworkType}
-        onValueChange={(val) => setSelectedNetworkType(val as NetworkType)}
+        defaultValue={networkType}
+        value={networkType}
+        onValueChange={(val) => setNetworkType(val as NetworkType)}
         className="pb-2 border-t border-mono-40 dark:border-mono-140"
       >
         <div className="mt-4 flex items-center justify-between">

@@ -1,33 +1,17 @@
 import { TangleIcon } from '@webb-tools/icons';
 import { RadioItem } from '@webb-tools/webb-ui-components';
-import { NetworkType } from '@webb-tools/webb-ui-components/constants';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 import EndpointInput from './EndpointInput';
 
 export type CustomNetworkConfigProps = {
-  selectedNetworkType: NetworkType;
+  setCustomNetwork: () => void;
 };
 
 const CustomNetworkConfig: FC<CustomNetworkConfigProps> = ({
-  selectedNetworkType,
+  setCustomNetwork,
 }) => {
-  const { value: cachedRpcEndpoint } = useLocalStorage(
-    LocalStorageKey.CUSTOM_RPC_ENDPOINT
-  );
-
-  const [savedEndpoints, setSavedEndpoints] = useState({
-    // Use the cached values from local storage, if available.
-    // Otherwise, default to an empty string.
-    polkadotEndpoint: cachedRpcEndpoint ?? '',
-  });
-
-  const [polkadotEndpoint, setRpcEndpoint] = useState(
-    savedEndpoints.polkadotEndpoint ?? ''
-  );
-
   return (
     <>
       <div className="flex items-center gap-4">
@@ -49,16 +33,14 @@ const CustomNetworkConfig: FC<CustomNetworkConfigProps> = ({
           />
         </div>
 
-        {selectedNetworkType !== 'dev' && <TangleIcon size="lg" />}
+        <TangleIcon size="lg" />
       </div>
 
       <div className="flex flex-col space-y-2.5">
         <EndpointInput
           id="custom-rpc-endpoint"
           placeholder="RPC endpoint URL"
-          value={polkadotEndpoint}
-          isSaved={savedEndpoints.polkadotEndpoint !== ''}
-          setValue={setRpcEndpoint}
+          setCustomNetwork={setCustomNetwork}
         />
       </div>
     </>

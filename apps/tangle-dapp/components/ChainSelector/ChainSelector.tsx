@@ -6,48 +6,14 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import ChainButtonCmp from '@webb-tools/webb-ui-components/components/buttons/ChainButton';
-import {
-  Network,
-  NetworkType,
-  webbNetworks,
-} from '@webb-tools/webb-ui-components/constants';
-import { useState } from 'react';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import { NetworkSelector } from '../NetworkSelector/NetworkSelector';
 
 const ChainSelector = () => {
-  const { notificationApi } = useWebbUI();
   const { activeChain, activeAccount } = useWebContext();
   const chain = activeChain ?? undefined;
-
-  const defaultNetworkType = webbNetworks.filter(
-    (network) => network.networkType === 'testnet'
-  );
-
-  const { rpcEndpoint: activeRpcEndpoint } = useRpcEndpointStore();
-
-  const [selectedNetworkType, setSelectedNetworkType] =
-    useState<NetworkType>('testnet');
-
-  const setUserSelectedNetwork = async (network: Network) => {
-    const notifyConnected = () => {
-      notificationApi({
-        variant: 'success',
-        message: `Connected to ${network.name}`,
-      });
-    };
-
-    const notifyConnectionFailed = () => {
-      notificationApi({
-        variant: 'error',
-        message: `Unable to connect to the requested network: ${network.name}`,
-      });
-    };
-  };
 
   const status: StatusVariant =
     activeChain === null
@@ -70,11 +36,7 @@ const ChainSelector = () => {
         </DropdownBasicButton>
 
         <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
-          <NetworkSelector
-            setUserSelectedNetwork={setUserSelectedNetwork}
-            selectedNetworkType={selectedNetworkType}
-            setSelectedNetworkType={setSelectedNetworkType}
-          />
+          <NetworkSelector />
         </DropdownBody>
       </Dropdown>
     )

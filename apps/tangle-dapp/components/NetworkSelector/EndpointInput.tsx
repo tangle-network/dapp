@@ -1,7 +1,5 @@
 import { DeleteBinWithBg, Save, SaveWithBg } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
-import { webbNetworks } from '@webb-tools/webb-ui-components/constants';
-import assert from 'assert';
 import { FC, useCallback, useState } from 'react';
 
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
@@ -11,52 +9,25 @@ import isValidPolkadotEndpoint from './isValidPolkadotEndpoint';
 export type EndpointInputProps = {
   id: string;
   placeholder: string;
-  value?: string;
-  isSaved: boolean;
-  setValue: (newValue: string) => void;
+  setCustomNetwork: () => void;
 };
 
 const EndpointInput: FC<EndpointInputProps> = ({
   id,
   placeholder,
-  value,
-  isSaved,
-  setValue,
+  setCustomNetwork,
 }) => {
+  const { rpcEndpoint } = useRpcEndpointStore();
+  const [value, setValue] = useState(rpcEndpoint);
   const [isValid, setIsValid] = useState(true);
   const { setRpcEndpoint: setActiveRpcEndpoint } = useRpcEndpointStore();
   const [rpcEndpointInput, setRpcEndpointInput] = useState('');
 
-  const { remove: removeCachedRpcEndpoint, set: setCachedRpcEndpoint } =
-    useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
-
-  const setDefaultEndpointsAsUserSelected = () => {
-    if (
-      selectedNetwork.name !== 'Custom Network' ||
-      localStorage.getItem(LocalStorageKey.CUSTOM_RPC_ENDPOINT) === null
-    ) {
-      return;
-    }
-
-    const defaultNetworkType = webbNetworks.find(
-      (network) => network.networkType === 'testnet'
-    );
-
-    assert(
-      defaultNetworkType !== undefined,
-      'Testnet network type entry should exist'
-    );
-
-    const defaultNetwork = defaultNetworkType.networks.at(0);
-
-    assert(
-      defaultNetwork !== undefined,
-      'There should be at least a single network entry for testnet'
-    );
-
-    setUserSelectedNetwork(defaultNetwork);
-    setSelectedNetworkType('testnet');
-  };
+  const {
+    remove: removeCachedRpcEndpoint,
+    set: setCachedRpcEndpoint,
+    isSet: isCached,
+  } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
   const handleSave = useCallback(async () => {
     if (!(await isValidPolkadotEndpoint(rpcEndpointInput))) {
@@ -71,10 +42,10 @@ const EndpointInput: FC<EndpointInputProps> = ({
   }, [rpcEndpointInput, setActiveRpcEndpoint, setCachedRpcEndpoint]);
 
   const handleDelete = useCallback(() => {
-    setDefaultEndpointsAsUserSelected();
+    setCustomNetwork();
     removeCachedRpcEndpoint();
     setRpcEndpointInput('');
-  }, [removeCachedRpcEndpoint]);
+  }, [removeCachedRpcEndpoint, setCustomNetwork]);
 
   return (
     <Input
@@ -88,7 +59,7 @@ const EndpointInput: FC<EndpointInputProps> = ({
       // to give them a chance to correct the value.
       onFocus={() => setIsValid(true)}
       rightIcon={
-        isSaved ? (
+        isCached ? (
           <DeleteBinWithBg className="cursor-pointer" onClick={handleDelete} />
         ) : value !== undefined ? (
           <SaveWithBg className="cursor-pointer" onClick={handleSave} />
