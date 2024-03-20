@@ -67,7 +67,7 @@ export default function useInflationPercentage(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, []);
+  }, [rpcEndpoint]);
 
   return useFormatReturnType({
     isLoading,

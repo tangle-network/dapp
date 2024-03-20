@@ -18,21 +18,25 @@ export default function useActiveAndDelegationCountSubscription(
 ) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [value1, setValue1] = useState(defaultValue.value1);
+  const [value2, setValue2] = useState(defaultValue.value2);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
-  const { value: cachedValue, set: setCache } = useLocalStorage(
+  const { get: getCachedValue, set: setCache } = useLocalStorage(
     LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
     true
   );
 
-  const [value1, setValue1] = useState(
-    cachedValue?.value1 ?? defaultValue.value1
-  );
+  // After mount, try to get the cached value and set it.
+  useEffect(() => {
+    const cachedValue = getCachedValue();
 
-  const [value2, setValue2] = useState(
-    cachedValue?.value2 ?? defaultValue.value2
-  );
-
-  const { rpcEndpoint } = useRpcEndpointStore();
+    if (cachedValue !== null) {
+      setValue1(cachedValue.value1);
+      setValue2(cachedValue.value2);
+      setIsLoading(false);
+    }
+  }, [getCachedValue]);
 
   useEffect(() => {
     let isMounted = true;
@@ -99,7 +103,7 @@ export default function useActiveAndDelegationCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [setCache, value1, value2]);
+  }, [rpcEndpoint, setCache, value1, value2]);
 
   return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
 }

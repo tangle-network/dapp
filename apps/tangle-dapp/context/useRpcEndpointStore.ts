@@ -4,30 +4,16 @@ import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
 import { z } from 'zod';
 import { create } from 'zustand';
 
-import {
-  extractFromLocalStorage,
-  LocalStorageKey,
-} from '../hooks/useLocalStorage';
-
 const zodBooleanString = z
   .union([z.literal('true'), z.literal('false')])
   .transform((string) => string === 'true');
 
+// TODO: Can remove this .env key since it's not needed anymore, since the user can switch networks in the UI directly.
 const DEFAULT_RPC_ENDPOINT = zodBooleanString.parse(
   process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT']
 )
   ? 'ws://127.0.0.1:9944'
   : TANGLE_RPC_ENDPOINT;
-
-// TODO: This is causing a 'window is not defined' error on the console for some reason. It's strange because this file is marked as 'use client', so it should only be used on the client side, where the window object is defined. Maybe it's related to the fact that local storage is being accessed right when this file is imported (at global scope), and there's some internal Next.js logic that clashes with that?
-const CACHED_RPC_ENDPOINT = extractFromLocalStorage(
-  LocalStorageKey.CUSTOM_RPC_ENDPOINT,
-  true
-);
-
-// Prefer the cached endpoint if it exists,
-// otherwise use the default endpoint.
-export const INITIAL_RPC_ENDPOINT = CACHED_RPC_ENDPOINT ?? DEFAULT_RPC_ENDPOINT;
 
 /**
  * A store for the RPC endpoint to use when creating/using
@@ -51,7 +37,7 @@ const useRpcEndpointStore = create<{
   rpcEndpoint: string;
   setRpcEndpoint: (endpoint: string) => void;
 }>((set) => ({
-  rpcEndpoint: INITIAL_RPC_ENDPOINT,
+  rpcEndpoint: DEFAULT_RPC_ENDPOINT,
   setRpcEndpoint: (rpcEndpoint) => set({ rpcEndpoint }),
 }));
 

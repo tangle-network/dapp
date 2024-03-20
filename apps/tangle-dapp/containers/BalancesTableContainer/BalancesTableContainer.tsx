@@ -27,17 +27,24 @@ const BalancesTableContainer: FC = () => {
   const { transferrable, locked } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
-  const { value: isDetailsCollapsedCached, set: setIsDetailsCollapsedCached } =
+  const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
     useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
 
-  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(
-    isDetailsCollapsedCached ?? false
-  );
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+
+  // Load the cached collapsed state from local storage on mount.
+  useEffect(() => {
+    const cachedIsDetailsCollapsed = getCachedIsDetailsCollapsed();
+
+    if (cachedIsDetailsCollapsed !== null) {
+      setIsDetailsCollapsed(cachedIsDetailsCollapsed);
+    }
+  }, [getCachedIsDetailsCollapsed]);
 
   // Cache the collapsed state to local storage when it changes.
   useEffect(() => {
-    setIsDetailsCollapsedCached(isDetailsCollapsed);
-  }, [isDetailsCollapsed, setIsDetailsCollapsedCached]);
+    setCachedIsDetailsCollapsed(isDetailsCollapsed);
+  }, [isDetailsCollapsed, setCachedIsDetailsCollapsed]);
 
   const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
     api.query.balances.locks(activeSubstrateAddress)

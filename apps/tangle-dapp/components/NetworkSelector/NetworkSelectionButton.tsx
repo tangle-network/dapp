@@ -6,26 +6,61 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
+  Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { NetworkSelector } from './NetworkSelector';
+import createCustomNetwork from './createCustomNetwork';
+import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
+import testRpcEndpointConnection from './testRpcEndpointConnection';
+import useNetworkState from './useNetworkState';
+
+// TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
+export const TANGLE_TESTNET_NATIVE_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
   const { activeChain, activeAccount } = useWebContext();
-  const [networkName, setNetworkName] = useState('Tangle Mainnet');
+  const { notificationApi } = useWebbUI();
+  const { network, setNetwork, isCustom } = useNetworkState();
+
+  const trySetCustomNetwork = useCallback(
+    async (customRpcEndpoint: string) => {
+      if (!(await testRpcEndpointConnection(customRpcEndpoint))) {
+        notificationApi({
+          variant: 'error',
+          message: `Unable to connect to the requested network: ${customRpcEndpoint}`,
+        });
+
+        return;
+      }
+
+      notificationApi({
+        variant: 'success',
+        message: `Connected to ${customRpcEndpoint}`,
+      });
+
+      setNetwork(createCustomNetwork(customRpcEndpoint), true);
+    },
+    [notificationApi, setNetwork]
+  );
 
   return (
     activeAccount &&
     activeChain && (
       <Dropdown>
         <DropdownBasicButton>
-          <TriggerButton networkName={networkName} />
+          <TriggerButton networkName={network?.name ?? 'Loading'} />
         </DropdownBasicButton>
 
         <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
-          <NetworkSelector setNetworkName={setNetworkName} />
+          <NetworkSelectorDropdown
+            isCustomEndpointSelected={isCustom}
+            selectedNetwork={network}
+            onSetCustomNetwork={trySetCustomNetwork}
+            onNetworkChange={(newNetwork) => setNetwork(newNetwork, false)}
+          />
         </DropdownBody>
       </Dropdown>
     )
@@ -49,12 +84,13 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
         status="success"
         size="lg"
         className="shrink-0 grow-0"
-        // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
-        name="Tangle Testnet Native"
+        name={TANGLE_TESTNET_NATIVE_CHAIN_NAME}
       />
 
       <div className="flex items-center gap-0">
-        <p className="font-bold">{networkName}</p>
+        <Typography variant="body1" fw="bold" className="dark:text-mono-0">
+          {networkName}
+        </Typography>
 
         <ChevronDown size="lg" className="shrink-0 grow-0" />
       </div>

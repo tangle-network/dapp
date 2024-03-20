@@ -1,8 +1,6 @@
 import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
 import { firstValueFrom } from 'rxjs';
 
-import { INITIAL_RPC_ENDPOINT } from '../../context/useRpcEndpointStore';
-
 async function getOrCacheApiVariant<T>(
   endpoint: string,
   cache: Map<string, Promise<T>>,
@@ -26,8 +24,8 @@ async function getOrCacheApiVariant<T>(
 const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 
 export const getPolkadotApiPromise: (
-  endpoint?: string
-) => Promise<ApiPromise> = async (endpoint: string = INITIAL_RPC_ENDPOINT) => {
+  endpoint: string
+) => Promise<ApiPromise> = async (endpoint: string) => {
   return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
     const wsProvider = new WsProvider(endpoint);
 
@@ -40,9 +38,7 @@ export const getPolkadotApiPromise: (
 
 const apiRxCache = new Map<string, Promise<ApiRx>>();
 
-export const getPolkadotApiRx = async (
-  endpoint: string = INITIAL_RPC_ENDPOINT
-): Promise<ApiRx> => {
+export const getPolkadotApiRx = async (endpoint: string): Promise<ApiRx> => {
   return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
     const provider = new WsProvider(endpoint);
     const api = new ApiRx({ provider, noInitWarn: true });

@@ -142,7 +142,7 @@ export default function Page() {
         setCheckingEligibility(false);
       }
     },
-    [notificationApi]
+    [notificationApi, rpcEndpoint]
   );
 
   useEffect(() => {

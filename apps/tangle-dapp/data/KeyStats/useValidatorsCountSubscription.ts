@@ -15,22 +15,27 @@ export default function useValidatorCountSubscription(
     value2: null,
   }
 ) {
-  const { value: cachedValue, set: setCache } = useLocalStorage(
+  const { get: getCachedValue, set: setCache } = useLocalStorage(
     LocalStorageKey.VALIDATOR_COUNTS,
     true
   );
 
-  const [value1, setValue1] = useState(
-    cachedValue?.value1 ?? defaultValue.value1
-  );
-
-  const [value2, setValue2] = useState(
-    cachedValue?.value2 ?? defaultValue.value2
-  );
-
+  const [value1, setValue1] = useState(defaultValue.value1);
+  const [value2, setValue2] = useState(defaultValue.value2);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint } = useRpcEndpointStore();
+
+  // After mount, try to get the cached value and set it.
+  useEffect(() => {
+    const cachedValue = getCachedValue();
+
+    if (cachedValue !== null) {
+      setValue1(cachedValue.value1);
+      setValue2(cachedValue.value2);
+      setIsLoading(false);
+    }
+  }, [getCachedValue]);
 
   useEffect(() => {
     let isMounted = true;

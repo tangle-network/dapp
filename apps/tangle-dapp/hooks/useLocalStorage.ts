@@ -14,7 +14,7 @@ export enum LocalStorageKey {
   VALIDATOR_COUNTS = 'validatorCounts',
   WAITING_COUNT = 'waitingCount',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
-  NETWORK_TYPE = 'networkType',
+  WEBB_NETWORK_NAME = 'webbNetworkName',
 }
 
 export type AirdropEligibilityCache = {
@@ -44,7 +44,7 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null }
     : T extends
         | LocalStorageKey.CUSTOM_RPC_ENDPOINT
-        | LocalStorageKey.NETWORK_TYPE
+        | LocalStorageKey.WEBB_NETWORK_NAME
     ? string
     : never;
 
@@ -54,7 +54,7 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
 ): LocalStorageValueOf<Key> | null => {
   type Value = LocalStorageValueOf<Key>;
 
-  const jsonString = window.localStorage.getItem(key);
+  const jsonString = localStorage.getItem(key);
 
   // Item was not present in local storage.
   if (jsonString === null) {
@@ -70,7 +70,7 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
     value = JSON.parse(jsonString) as Value;
   } catch {
     if (canClearIfInvalid) {
-      window.localStorage.removeItem(key);
+      localStorage.removeItem(key);
     }
   }
 
@@ -78,71 +78,90 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
 };
 
 // TODO: During development cycles, changing local storage value types will lead to any users depending on that value to possibly break (because they may be stuck with an older type schema). Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
+/**
+ * Custom hook for interacting with local storage.
+ *
+ * Note that the returned value will be `null` initially, until the
+ * component is mounted and the value is extracted from local storage.
+ *
+ * For that reason, if depending on this hook for initial, default states,
+ * it's recommended to instead use a `useEffect` and manually retrieve the
+ * value from local storage on mount, using the `get` method.
+ */
 const useLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
   isUsedAsCache = false
 ) => {
   type Value = LocalStorageValueOf<Key>;
 
-  // Use lazy state initialization to avoid reading from
-  // local storage on every render.
-  const [value, setValue] = useState<Value | null>(null);
+  // Initially, the value is `null` until the component is mounted
+  // and the value is extracted from local storage. The explicit
+  // name of the state variable indicates that.
+  const [valueAfterMount, setLateValue] = useState<Value | null>(null);
 
-  const refresh = useCallback(() => {
+  const get = useCallback(() => {
     const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
 
-    setValue(freshValue);
+    setLateValue(freshValue);
 
     return freshValue;
   }, [isUsedAsCache, key]);
 
   // Extract the value from local storage on mount.
   useEffect(() => {
-    refresh();
-  }, [isUsedAsCache, key, refresh]);
+    get();
+  }, [get]);
 
   // Listen for changes to local storage. This is useful in case
   // that other logic changes the local storage value.
   useEffect(() => {
     const handleStorageChange = () => {
-      setValue(refresh());
+      setLateValue(get());
     };
 
     window.addEventListener('storage', handleStorageChange);
 
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [key, refresh]);
+  }, [key, get]);
 
   const set = useCallback(
     (value: Value) => {
-      setValue(value);
+      setLateValue(value);
       localStorage.setItem(key, JSON.stringify(value));
+      console.debug('Set local storage value:', key, value);
     },
     [key]
   );
 
+  const isSet = useCallback(() => localStorage.getItem(key) !== null, [key]);
+
   const remove = useCallback(() => {
-    setValue(null);
+    if (!isSet()) {
+      return;
+    }
+
+    setLateValue(null);
     localStorage.removeItem(key);
-  }, [key]);
+    console.debug('Removed local storage key:', key);
+  }, [isSet, key]);
 
   const setWithPreviousValue = useCallback(
     (updater: (previousValue: Value | null) => Value) => {
-      const previousValue = refresh();
+      const previousValue = get();
       const nextValue = updater(previousValue);
 
       set(nextValue);
     },
-    [refresh, set]
+    [get, set]
   );
 
   return {
-    value,
+    valueAfterMount,
     set,
     setWithPreviousValue,
     remove,
-    refresh,
-    isSet: value !== null,
+    get,
+    isSet,
   };
 };
 

@@ -120,6 +120,7 @@ const EligibleSection: FC<Props> = ({
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
       newSearchParams.set('h', hash);
+      newSearchParams.set('rpcEndpoint', rpcEndpoint);
       onClaimCompleted(accountId);
 
       router.push(`claim/success?${newSearchParams.toString()}`, {

@@ -24,7 +24,13 @@ const Page = async ({
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   const blockHash = searchParams['h'];
-  const api = await getPolkadotApiPromise();
+  const rpcEndpoint = searchParams['rpcEndpoint'];
+
+  if (!rpcEndpoint || typeof rpcEndpoint !== 'string') {
+    return redirect(PagePath.CLAIM_AIRDROP);
+  }
+
+  const api = await getPolkadotApiPromise(rpcEndpoint);
 
   const isValidBlockHash =
     typeof blockHash === 'string' &&
