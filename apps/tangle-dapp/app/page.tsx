@@ -1,31 +1,26 @@
 import { Typography } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 
-import {
-  DelegationsPayoutsContainer,
-  HeaderChipsContainer,
-  KeyStatsContainer,
-  NominatorStatsContainer,
-  ValidatorTablesContainer,
-} from '../containers';
+import AccountSummaryCard from '../components/account/AccountSummaryCard';
+import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
+import RecentTxContainer from '../containers/RecentTxContainer/RecentTxContainer';
 
-export default async function Index() {
+const AccountPage: FC = () => {
   return (
-    <div className="space-y-12">
-      <div className="flex items-center justify-between">
-        <Typography variant="h4" fw="bold">
-          Overview
-        </Typography>
+    <div className="flex flex-col gap-5">
+      <div className="flex gap-6 flex-col xl:flex-row">
+        <AccountSummaryCard className="md:max-w-full xl:max-w-[556px]" />
 
-        <HeaderChipsContainer />
+        <RecentTxContainer />
       </div>
 
-      <KeyStatsContainer />
+      <Typography variant="h4" fw="bold">
+        Manage Balances
+      </Typography>
 
-      <NominatorStatsContainer />
-
-      <DelegationsPayoutsContainer />
-
-      <ValidatorTablesContainer />
+      <BalancesTableContainer />
     </div>
   );
-}
+};
+
+export default AccountPage;

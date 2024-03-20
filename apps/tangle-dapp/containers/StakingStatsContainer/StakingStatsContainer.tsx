@@ -3,7 +3,7 @@
 import { ListCheckIcon, TimerLine } from '@webb-tools/icons';
 import { FC, useCallback } from 'react';
 
-import PillCard from '../../app/account/PillCard';
+import PillCard from '../../components/account/PillCard';
 import useStakingPendingRewards from '../../data/staking/useStakingPendingRewards';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';

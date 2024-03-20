@@ -5,9 +5,9 @@ import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import type { ElementRef } from 'react';
 import { forwardRef } from 'react';
 
-import Identity from '../../components/Identity';
-import TangleCard from '../../components/TangleCard';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import Identity from '../Identity';
+import TangleCard from '../TangleCard';
 import Actions from './Actions';
 import TotalBalance from './TotalBalance';
 
