@@ -18,13 +18,13 @@ type TxReceipt = {
   transactionIndex: number;
   blockHash: AddressType;
   from: AddressType;
-  to: AddressType;
+  to: AddressType | null;
   blockNumber: bigint;
   cumulativeGasUsed: bigint;
   gasUsed: bigint;
   logs: unknown[];
   logsBloom: string;
-  status: 'success' | 'failure';
+  status: 'success' | 'reverted';
   type: string;
   contractAddress: unknown | null;
 };

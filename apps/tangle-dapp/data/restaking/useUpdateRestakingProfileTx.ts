@@ -102,7 +102,7 @@ const useUpdateRestakingProfileTx = (
         // TODO: These functions accept profile object with type `any`. Investigate why type definitions seem to be missing for this function/transaction call.
         return hasExistingProfile
           ? api.tx.roles.updateProfile(profile)
-          : api.tx.roles.createProfile(profile, null);
+          : api.tx.roles.createProfile(profile);
       },
       [createIfMissing, hasExistingProfile, profileType]
     ),
