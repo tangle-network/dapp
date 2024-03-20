@@ -5,7 +5,6 @@ import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
-import useValidatorIdentityNames from '../../data/ValidatorTables/useValidatorIdentityNames';
 import usePromise from '../../hooks/usePromise';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
@@ -21,7 +20,6 @@ function formatBytes(bytes: number): string {
 }
 
 const ApiDevStats: FC = () => {
-  const _identities = useValidatorIdentityNames();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const { rpcEndpoint } = useRpcEndpointStore();
 

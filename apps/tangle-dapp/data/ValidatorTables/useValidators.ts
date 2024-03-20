@@ -1,5 +1,5 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
-import { assert, BN } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
@@ -54,22 +54,8 @@ export const useValidators = (
         exposure[0].args[1].eq(address)
       )?.[1];
 
-      if (exposure === undefined) {
-        return {
-          address: address.toString(),
-          identityName: name,
-          selfStaked: formatTokenBalance(new BN(0)),
-          effectiveAmountStaked: formatTokenBalance(new BN(0)),
-          effectiveAmountStakedRaw: '0',
-          // TODO: This shouldn't be a string. No reason for it.
-          delegations: '10',
-          commission: '0',
-          status,
-        };
-      }
-
-      const selfStakedAmount = exposure.own.unwrap();
-      const totalStakeAmount = exposure.total.unwrap();
+      const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
+      const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
 
       const nominators = nominations.filter(([, nominatorData]) => {
         if (nominatorData.isNone) {

@@ -21,13 +21,13 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
   return newInstance;
 }
 
-const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
+export const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 
 export const getPolkadotApiPromise: (
   endpoint: string
 ) => Promise<ApiPromise> = async (endpoint: string) => {
   return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
-    const wsProvider = new WsProvider(endpoint, false);
+    const wsProvider = new WsProvider(endpoint);
 
     return ApiPromise.create({
       provider: wsProvider,
@@ -36,29 +36,19 @@ export const getPolkadotApiPromise: (
   });
 };
 
-const apiRxCache = new Map<string, Promise<ApiRx>>();
+export const apiRxCache = new Map<string, Promise<ApiRx>>();
 
 export const getPolkadotApiRx = async (endpoint: string): Promise<ApiRx> => {
   return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
-    const provider = new WsProvider(endpoint, 1000, undefined);
-    const api = new ApiRx({ provider, noInitWarn: true });
+    const provider = new WsProvider(endpoint);
+
+    const api = new ApiRx({
+      provider,
+      noInitWarn: true,
+    });
 
     return firstValueFrom(api.isReady);
   });
-};
-
-export const clearCaches = () => {
-  for (const promise of apiPromiseCache.values()) {
-    promise.then((api) => api.disconnect());
-  }
-
-  apiPromiseCache.clear();
-
-  for (const promise of apiRxCache.values()) {
-    promise.then((api) => api.disconnect());
-  }
-
-  apiRxCache.clear();
 };
 
 export const getInjector = async (address: string) => {
