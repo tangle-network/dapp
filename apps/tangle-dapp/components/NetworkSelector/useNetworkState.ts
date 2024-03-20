@@ -60,11 +60,15 @@ const useNetworkState = () => {
       return DEFAULT_NETWORK;
     };
 
-    setNetwork(getCachedInitialNetwork());
+    const initialNetwork = getCachedInitialNetwork();
+
+    setRpcEndpoint(initialNetwork.polkadotEndpoint);
+    setNetwork(initialNetwork);
   }, [
     getCachedCustomRpcEndpoint,
     getCachedNetworkName,
     removeCachedNetworkName,
+    setRpcEndpoint,
   ]);
 
   // Set global RPC endpoint when the network changes,
