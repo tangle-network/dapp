@@ -15,6 +15,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { payoutStakers as payoutStakersEvm } from '../../utils/evm';
 import { payoutStakers as payoutStakersSubstrate } from '../../utils/polkadot';
@@ -31,18 +32,18 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { validatorAddress, era } = payoutTxProps;
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-
-  const [isPayoutTxLoading, setIsPayoutTxLoading] = useState<boolean>(false);
+  const { rpcEndpoint } = useRpcEndpointStore();
+  const [isPayoutTxLoading, setIsPayoutTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return walletAddress && validatorAddress && era;
-  }, [era, validatorAddress, walletAddress]);
+  const continueToSignAndSubmitTx = walletAddress && validatorAddress && era;
 
   const closeModal = useCallback(() => {
     setIsPayoutTxLoading(false);
@@ -56,7 +57,12 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       const hash = await executeTx(
         () => payoutStakersEvm(walletAddress, validatorAddress, Number(era)),
         () =>
-          payoutStakersSubstrate(walletAddress, validatorAddress, Number(era)),
+          payoutStakersSubstrate(
+            rpcEndpoint,
+            walletAddress,
+            validatorAddress,
+            Number(era)
+          ),
         `Successfully claimed rewards for Era ${era}.`,
         'Failed to payout stakers!'
       );
@@ -92,6 +98,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     era,
     executeTx,
     payouts,
+    rpcEndpoint,
     setTxConfirmationState,
     updatePayouts,
     validatorAddress,

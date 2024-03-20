@@ -16,6 +16,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -35,19 +36,23 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-
   const { setTxConfirmationState } = useTxConfirmationModal();
-  const [amountToRebond, setAmountToRebond] = useState<number>(0);
-  const [isRebondTxLoading, setIsRebondTxLoading] = useState<boolean>(false);
+  const [amountToRebond, setAmountToRebond] = useState(0);
+  const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
+    if (!activeAccount?.address) {
+      return '';
+    }
 
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
@@ -104,7 +109,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     try {
       const hash = await executeTx(
         () => rebondTokensEvm(walletAddress, amountToRebond),
-        () => rebondTokensSubstrate(walletAddress, amountToRebond),
+        () => rebondTokensSubstrate(rpcEndpoint, walletAddress, amountToRebond),
         `Successfully rebonded ${amountToRebond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to rebond tokens!'
       );
@@ -129,6 +134,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     amountToRebond,
     closeModal,
     executeTx,
+    rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
   ]);

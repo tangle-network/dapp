@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Payout } from '../../types';
@@ -29,6 +30,7 @@ export default function usePayouts(
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -44,8 +46,8 @@ export default function usePayouts(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
+        const apiSub = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
         if (!apiSub || !apiPromise) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
@@ -184,6 +186,7 @@ export default function usePayouts(
 
                               const validatorCommissionPercentage =
                                 await getValidatorCommission(
+                                  rpcEndpoint,
                                   validator.toString()
                                 );
 
@@ -207,12 +210,16 @@ export default function usePayouts(
                                 );
 
                               const validatorIdentity =
-                                await getValidatorIdentity(validator);
+                                await getValidatorIdentity(
+                                  rpcEndpoint,
+                                  validator
+                                );
 
                               const validatorNominators = await Promise.all(
                                 eraStaker.others.map(async (nominator) => {
                                   const nominatorIdentity =
                                     await getValidatorIdentity(
+                                      rpcEndpoint,
                                       nominator.who.toString()
                                     );
 
@@ -290,7 +297,7 @@ export default function usePayouts(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, setCachedPayouts]);
+  }, [address, rpcEndpoint, setCachedPayouts]);
 
   return useFormatReturnType({
     isLoading,

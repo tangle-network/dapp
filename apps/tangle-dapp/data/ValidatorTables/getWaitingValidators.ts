@@ -2,10 +2,12 @@ import { Validator } from '../../types';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 import { getValidatorDetails } from './getValidatorDetails';
 
-export const getWaitingValidators = async (): Promise<Validator[]> => {
+export const getWaitingValidators = async (
+  rpcEndpoint: string
+): Promise<Validator[]> => {
   console.debug('Fetching WAITING validator data (this may stall the UI)');
 
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
 
   try {
     const waitingValidatorsInfo = await api.derive.staking.waitingInfo();
@@ -17,11 +19,11 @@ export const getWaitingValidators = async (): Promise<Validator[]> => {
     return Promise.all(
       waitingValidatorAddresses.map(
         async (validator): Promise<Validator> =>
-          getValidatorDetails(validator, 'Waiting')
+          getValidatorDetails(rpcEndpoint, validator, 'Waiting')
       )
     );
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
 
     return [];
   }

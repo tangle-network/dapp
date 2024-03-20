@@ -1,6 +1,6 @@
 import { Option, Vec } from '@polkadot/types';
 import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants/index';
@@ -134,7 +134,7 @@ const useVestingInfo = (): VestingInfo => {
     }
     // If there's no vesting schedule(s), there's nothing to claim.
     else if (totalVestingAmount.isZero()) {
-      return new BN(0);
+      return BN_ZERO;
     }
     // Nothing locked in vesting, which means that everything is
     // ready to be claimed.

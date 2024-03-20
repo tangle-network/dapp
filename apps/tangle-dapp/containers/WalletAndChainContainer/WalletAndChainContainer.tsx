@@ -13,18 +13,19 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { ChainSelector, WalletDropdown } from '../../components';
+import { WalletDropdown } from '../../components';
+import NetworkSelectionButton from '../../components/NetworkSelector/NetworkSelectionButton';
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
-  const { toggleModal } = useConnectWallet();
 
+  const { toggleModal } = useConnectWallet();
   const { isMobile } = useCheckMobile();
 
   return (
     <div className="flex items-center gap-2">
-      <ChainSelector />
+      <NetworkSelectionButton />
 
       <div>
         {isConnecting || loading || !activeWallet || !activeAccount ? (
@@ -32,6 +33,7 @@ const WalletAndChainContainer: FC = () => {
             <ConnectWalletMobileButton>
               <div className="flex flex-col items-center justify-center gap-4 py-9">
                 <ComputerIcon size="xl" className="mx-auto" />
+
                 <Typography variant="body1" className="text-center">
                   For the best staking experience, we recommend using our
                   desktop interface for full-feature interface and enhanced

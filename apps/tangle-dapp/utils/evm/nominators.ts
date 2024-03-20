@@ -26,7 +26,6 @@ export const nominateValidators = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -44,7 +43,6 @@ export const stopNomination = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
