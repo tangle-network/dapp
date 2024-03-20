@@ -25,7 +25,7 @@ export default function useDelegations(
   }
 ) {
   const {
-    value: cachedNominations,
+    valueAfterMount: cachedNominations,
     setWithPreviousValue: setCachedNominations,
   } = useLocalStorage(LocalStorageKey.Nominations, true);
   const [delegators, setDelegators] = useState(

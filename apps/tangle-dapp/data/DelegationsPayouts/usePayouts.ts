@@ -23,7 +23,7 @@ export default function usePayouts(
     payouts: [],
   }
 ) {
-  const { value: cachedPayouts, setWithPreviousValue: setCachedPayouts } =
+  const { valueAfterMount: cachedPayouts, setWithPreviousValue: setCachedPayouts } =
     useLocalStorage(LocalStorageKey.Payouts, true);
   const [payouts, setPayouts] = useState(
     (cachedPayouts && cachedPayouts[address]) ?? defaultValue.payouts
