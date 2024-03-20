@@ -8,7 +8,7 @@ import {
   TangleIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
@@ -41,14 +41,19 @@ const BalancesTableContainer: FC = () => {
     }
   }, [getCachedIsDetailsCollapsed]);
 
-  // Cache the collapsed state to local storage when it changes.
-  useEffect(() => {
-    setCachedIsDetailsCollapsed(isDetailsCollapsed);
-  }, [isDetailsCollapsed, setCachedIsDetailsCollapsed]);
-
   const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
     api.query.balances.locks(activeSubstrateAddress)
   );
+
+  const handleToggleDetails = useCallback(() => {
+    setIsDetailsCollapsed((prev) => {
+      const newValue = !prev;
+
+      setCachedIsDetailsCollapsed(newValue);
+
+      return newValue;
+    });
+  }, [setCachedIsDetailsCollapsed]);
 
   const hasLocks = locks !== null && locks.length > 0;
 
@@ -104,9 +109,7 @@ const BalancesTableContainer: FC = () => {
                 <div className="p-3">
                   <BalanceAction
                     Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
-                    onClick={() =>
-                      setIsDetailsCollapsed((previous) => !previous)
-                    }
+                    onClick={handleToggleDetails}
                     tooltip={`${
                       isDetailsCollapsed ? 'Show' : 'Collapse'
                     } Details`}
