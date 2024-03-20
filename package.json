@@ -108,7 +108,7 @@
     "bn.js": "^5.2.1",
     "chai": "4.3.10",
     "chart.js": "^4.3.0",
-    "chromatic": "10.9.4",
+    "chromatic": "^6.14.0",
     "circomlibjs": "0.1.7",
     "cookies-next": "^4.0.0",
     "country-flag-icons": "^1.5.5",
@@ -158,8 +158,7 @@
     "use-query-params": "^2.2.1",
     "viem": "^2.0.10",
     "wagmi": "^1.4.10",
-    "zod": "^3.22.4",
-    "zustand": "^4.5.2"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/cli": "7.21.5",
