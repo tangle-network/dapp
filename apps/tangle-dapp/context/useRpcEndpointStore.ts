@@ -1,19 +1,13 @@
 'use client';
 
 import { TANGLE_RPC_ENDPOINT } from '@webb-tools/webb-ui-components/constants';
-import { z } from 'zod';
 import { create } from 'zustand';
 
-const zodBooleanString = z
-  .union([z.literal('true'), z.literal('false')])
-  .transform((string) => string === 'true');
-
 // TODO: Can remove this .env key since it's not needed anymore, since the user can switch networks in the UI directly.
-const DEFAULT_RPC_ENDPOINT = zodBooleanString.parse(
-  process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT']
-)
-  ? 'ws://127.0.0.1:9944'
-  : TANGLE_RPC_ENDPOINT;
+const DEFAULT_RPC_ENDPOINT =
+  process.env['TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT'] !== ''
+    ? 'ws://127.0.0.1:9944'
+    : TANGLE_RPC_ENDPOINT;
 
 /**
  * A store for the RPC endpoint to use when creating/using
