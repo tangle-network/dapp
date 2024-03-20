@@ -5,7 +5,7 @@ import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
-  WEBB_FAUCET_URL,
+  WEBB_DISCORD_CHANNEL_URL,
   WEBB_TANGLE_DOCS_STAKING_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
@@ -73,7 +73,7 @@ const NominatorStatsContainer: FC = () => {
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="flex items-center gap-2 flex-wrap">
-            <Link href={WEBB_FAUCET_URL} target="_blank">
+            <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
               <Button variant="utility" className="!min-w-[100px]">
                 {`Get ${TANGLE_TOKEN_UNIT}`}
               </Button>
@@ -113,69 +113,65 @@ const NominatorStatsContainer: FC = () => {
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center gap-2 flex-wrap">
-              {!isFirstTimeNominator ? (
-                <>
+            {!isFirstTimeNominator ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button
+                  variant="utility"
+                  className="!min-w-[100px]"
+                  isDisabled={!activeAccount}
+                  onClick={() => setIsBondMoreModalOpen(true)}
+                >
+                  Add Stake
+                </Button>
+
+                <Button
+                  variant="utility"
+                  className="!min-w-[100px]"
+                  isDisabled={!activeAccount}
+                  onClick={() => setIsUnbondModalOpen(true)}
+                >
+                  Unbond
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+                  <Button variant="utility" className="!min-w-[150px]">
+                    Learn More
+                  </Button>
+                </Link>
+
+                <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
+                  <Button variant="utility" className="!min-w-[150px]">
+                    Join Community
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {isFirstTimeNominator === false &&
+              !isFirstTimeNominatorLoading &&
+              !isFirstTimeNominatorError && (
+                <div className="flex items-center gap-2 flex-wrap">
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
                     isDisabled={!activeAccount}
-                    onClick={() => setIsBondMoreModalOpen(true)}
+                    onClick={() => setIsRebondModalOpen(true)}
                   >
-                    Add Stake
+                    Rebond
                   </Button>
 
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
                     isDisabled={!activeAccount}
-                    onClick={() => setIsUnbondModalOpen(true)}
+                    onClick={() => setIsWithdrawUnbondedModalOpen(true)}
                   >
-                    Unbond
+                    Withdraw
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-                    <Button variant="utility" className="!min-w-[150px]">
-                      Learn More
-                    </Button>
-                  </Link>
-
-                  <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
-                    <Button variant="utility" className="!min-w-[150px]">
-                      Join Community
-                    </Button>
-                  </Link>
-                </>
+                </div>
               )}
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap">
-              {isFirstTimeNominator === false &&
-                !isFirstTimeNominatorLoading &&
-                !isFirstTimeNominatorError && (
-                  <>
-                    <Button
-                      variant="utility"
-                      className="!min-w-[100px]"
-                      isDisabled={!activeAccount}
-                      onClick={() => setIsRebondModalOpen(true)}
-                    >
-                      Rebond
-                    </Button>
-
-                    <Button
-                      variant="utility"
-                      className="!min-w-[100px]"
-                      isDisabled={!activeAccount}
-                      onClick={() => setIsWithdrawUnbondedModalOpen(true)}
-                    >
-                      Withdraw
-                    </Button>
-                  </>
-                )}
-            </div>
           </div>
         </div>
       </div>

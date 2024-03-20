@@ -23,8 +23,10 @@ export default function useDelegations(
     delegators: [],
   }
 ) {
-  const { value: cachedNominations, set: setCachedNominations } =
-    useLocalStorage(LocalStorageKey.Nominations, true);
+  const {
+    value: cachedNominations,
+    setWithPreviousValue: setCachedNominations,
+  } = useLocalStorage(LocalStorageKey.Nominations, true);
   const [delegators, setDelegators] = useState(
     (cachedNominations && cachedNominations[address]) ?? defaultValue.delegators
   );
@@ -110,10 +112,10 @@ export default function useDelegations(
 
             if (isMounted) {
               setDelegators(delegators);
-              setCachedNominations({
-                ...cachedNominations,
+              setCachedNominations((previous) => ({
+                ...previous,
                 [address]: delegators,
-              });
+              }));
               setIsLoading(false);
             }
           });
@@ -133,7 +135,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, cachedNominations, setCachedNominations]);
+  }, [address, setCachedNominations]);
 
   return useFormatReturnType({
     isLoading,

@@ -13,7 +13,7 @@ export default async function Index() {
     <div className="space-y-12">
       <div className="flex items-center justify-between">
         <Typography variant="h4" fw="bold">
-          Staking Overview
+          Overview
         </Typography>
 
         <HeaderChipsContainer />

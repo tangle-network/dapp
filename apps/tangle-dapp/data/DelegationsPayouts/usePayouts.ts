@@ -22,10 +22,8 @@ export default function usePayouts(
     payouts: [],
   }
 ) {
-  const { value: cachedPayouts, set: setCachedPayouts } = useLocalStorage(
-    LocalStorageKey.Payouts,
-    true
-  );
+  const { value: cachedPayouts, setWithPreviousValue: setCachedPayouts } =
+    useLocalStorage(LocalStorageKey.Payouts, true);
   const [payouts, setPayouts] = useState(
     (cachedPayouts && cachedPayouts[address]) ?? defaultValue.payouts
   );
@@ -267,10 +265,10 @@ export default function usePayouts(
                   .sort((a, b) => Number(a.era) - Number(b.era));
 
                 setPayouts(payoutsData);
-                setCachedPayouts({
-                  ...cachedPayouts,
+                setCachedPayouts((previous) => ({
+                  ...previous,
                   [address]: payoutsData,
-                });
+                }));
                 setIsLoading(false);
               }
             }
@@ -292,7 +290,7 @@ export default function usePayouts(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, cachedPayouts, setCachedPayouts]);
+  }, [address, setCachedPayouts]);
 
   return useFormatReturnType({
     isLoading,
