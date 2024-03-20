@@ -14,7 +14,7 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
-import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { nominateValidators as nominateValidatorsEvm } from '../../utils/evm';
@@ -31,7 +31,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
   const maxNominationQuota = useMaxNominationQuota();
-  const allValidators = useAllValidatorsData();
+  const allValidators = useAllValidators();
   const { rpcEndpoint } = useRpcEndpointStore();
 
   const [selectedValidators, setSelectedValidators] =

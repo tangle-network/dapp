@@ -26,7 +26,7 @@ import {
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
-import useAllValidatorsData from '../../hooks/useAllValidatorsData';
+import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -58,7 +58,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const maxNominationQuota = useMaxNominationQuota();
-  const allValidators = useAllValidatorsData();
+  const allValidators = useAllValidators();
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);

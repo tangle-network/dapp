@@ -41,7 +41,7 @@ export async function getValidatorDetails(
 
   return {
     address: addressAsString,
-    identity,
+    identityName: identity,
     selfStaked: selfStakedBalance,
     effectiveAmountStaked,
     effectiveAmountStakedRaw: totalStakeAmount.toString(),
