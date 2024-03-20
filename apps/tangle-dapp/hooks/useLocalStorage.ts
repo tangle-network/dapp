@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Validator } from '../types';
+import { Delegator, Payout, Validator } from '../types';
 
 export enum LocalStorageKey {
   ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
@@ -13,12 +13,22 @@ export enum LocalStorageKey {
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
   VALIDATOR_COUNTS = 'validatorCounts',
   WAITING_COUNT = 'waitingCount',
+  Payouts = 'payouts',
+  Nominations = 'nominations',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   WEBB_NETWORK_NAME = 'webbNetworkName',
 }
 
 export type AirdropEligibilityCache = {
   [address: string]: boolean;
+};
+
+export type PayoutsCache = {
+  [address: string]: Payout[];
+};
+
+export type NominationsCache = {
+  [address: string]: Delegator[];
 };
 
 /**
@@ -42,6 +52,10 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.WAITING_COUNT
     ? { value1: number | null }
+    : T extends LocalStorageKey.Payouts
+    ? PayoutsCache
+    : T extends LocalStorageKey.Nominations
+    ? NominationsCache
     : T extends
         | LocalStorageKey.CUSTOM_RPC_ENDPOINT
         | LocalStorageKey.WEBB_NETWORK_NAME

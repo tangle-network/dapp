@@ -6,6 +6,7 @@ import {
   TelegramFill,
   TwitterFill,
   YouTubeFill,
+  TangleIcon,
 } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
 import type {
@@ -62,7 +63,7 @@ export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
-  'https://docs.webb.tools/docs/tangle-network/learn/incentives/#staking';
+  'https://docs.tangle.tools/docs/use/staking-intro/';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
@@ -79,6 +80,8 @@ export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
 export const WEBB_DAPP_NEW_ISSUE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new/choose';
 export const WEBB_FAUCET_URL = 'https://faucet.tangle.tools';
+export const WEBB_DISCORD_CHANNEL_URL =
+  'https://discord.com/channels/833784453251596298/1183826417625075753';
 
 export const GITHUB_REQUEST_FEATURE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=';
@@ -192,6 +195,7 @@ export const WEBB_AVAILABLE_SOCIALS = [
   'twitter',
   'github',
   'youTube',
+  'community',
 ] as const;
 
 export const SOCIAL_URLS_RECORD = {
@@ -202,6 +206,7 @@ export const SOCIAL_URLS_RECORD = {
   twitter: 'https://twitter.com/webbprotocol',
   github: 'https://github.com/webb-tools',
   youTube: 'https://www.youtube.com/channel/UCDro1mNK9yHGQNDvFuucwVw',
+  community: 'https://www.tangle.tools/community',
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
 };
@@ -214,6 +219,7 @@ export const SOCIAL_ICONS_RECORD = {
   twitter: TwitterFill,
   github: GithubFill,
   youTube: YouTubeFill,
+  community: TangleIcon,
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: (
     props: IconBase
