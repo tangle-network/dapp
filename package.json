@@ -158,7 +158,8 @@
     "use-query-params": "^2.2.1",
     "viem": "^2.0.10",
     "wagmi": "^1.4.10",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@babel/cli": "7.21.5",
