@@ -1,3 +1,4 @@
+import { notificationApi } from '@webb-tools/webb-ui-components';
 import { Network } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -5,6 +6,7 @@ import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../../constants/networks';
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import createCustomNetwork from './createCustomNetwork';
+import testRpcEndpointConnection from './testRpcEndpointConnection';
 
 const useNetworkState = () => {
   const { setRpcEndpoint } = useRpcEndpointStore();
@@ -58,17 +60,30 @@ const useNetworkState = () => {
       return DEFAULT_NETWORK;
     };
 
-    setNetwork(getCachedInitialNetwork());
+    const initialNetwork = getCachedInitialNetwork();
+
+    setRpcEndpoint(initialNetwork.polkadotEndpoint);
+    setNetwork(initialNetwork);
   }, [
     getCachedCustomRpcEndpoint,
     getCachedNetworkName,
     removeCachedNetworkName,
+    setRpcEndpoint,
   ]);
 
   // Set global RPC endpoint when the network changes,
   // and also changes to local storage for future use.
   const setNetworkOverride = useCallback(
-    (newNetwork: Network, isCustom: boolean) => {
+    async (newNetwork: Network, isCustom: boolean) => {
+      if (!(await testRpcEndpointConnection(newNetwork.polkadotEndpoint))) {
+        notificationApi({
+          variant: 'error',
+          message: `Unable to connect to the requested network: ${newNetwork.polkadotEndpoint}`,
+        });
+
+        return;
+      }
+
       console.debug(
         `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
           newNetwork.name

@@ -7,14 +7,12 @@ import {
   DropdownBasicButton,
   DropdownBody,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import createCustomNetwork from './createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
-import testRpcEndpointConnection from './testRpcEndpointConnection';
 import useNetworkState from './useNetworkState';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
@@ -22,28 +20,12 @@ export const TANGLE_TESTNET_NATIVE_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
   const { activeChain, activeAccount } = useWebContext();
-  const { notificationApi } = useWebbUI();
   const { network, setNetwork, isCustom } = useNetworkState();
 
-  const trySetCustomNetwork = useCallback(
-    async (customRpcEndpoint: string) => {
-      if (!(await testRpcEndpointConnection(customRpcEndpoint))) {
-        notificationApi({
-          variant: 'error',
-          message: `Unable to connect to the requested network: ${customRpcEndpoint}`,
-        });
-
-        return;
-      }
-
-      notificationApi({
-        variant: 'success',
-        message: `Connected to ${customRpcEndpoint}`,
-      });
-
-      setNetwork(createCustomNetwork(customRpcEndpoint), true);
-    },
-    [notificationApi, setNetwork]
+  const switchToCustomNetwork = useCallback(
+    async (customRpcEndpoint: string) =>
+      setNetwork(createCustomNetwork(customRpcEndpoint), true),
+    [setNetwork]
   );
 
   return (
@@ -58,7 +40,7 @@ const NetworkSelectionButton: FC = () => {
           <NetworkSelectorDropdown
             isCustomEndpointSelected={isCustom}
             selectedNetwork={network}
-            onSetCustomNetwork={trySetCustomNetwork}
+            onSetCustomNetwork={switchToCustomNetwork}
             onNetworkChange={(newNetwork) => setNetwork(newNetwork, false)}
           />
         </DropdownBody>
