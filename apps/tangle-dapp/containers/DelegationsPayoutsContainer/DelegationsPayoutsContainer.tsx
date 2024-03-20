@@ -92,12 +92,12 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const { data: payoutsData } = usePayouts(substrateAddress);
 
-  const { value: cachedPayouts } = useLocalStorage(
+  const { valueAfterMount: cachedPayouts } = useLocalStorage(
     LocalStorageKey.Payouts,
     true
   );
 
-  const { value: cachedNominations } = useLocalStorage(
+  const { valueAfterMount: cachedNominations } = useLocalStorage(
     LocalStorageKey.Nominations,
     true
   );
