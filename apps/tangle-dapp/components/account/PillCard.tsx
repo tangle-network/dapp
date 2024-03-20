@@ -3,7 +3,7 @@ import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../components/GlassCard/GlassCard';
+import GlassCard from '../GlassCard/GlassCard';
 
 export type PillCardProps = {
   isFirst?: boolean;

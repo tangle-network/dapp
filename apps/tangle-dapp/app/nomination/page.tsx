@@ -1,5 +1,31 @@
-import { redirect } from 'next/navigation';
+import { Typography } from '@webb-tools/webb-ui-components';
 
-export default async function Nomination() {
-  redirect('/');
+import {
+  DelegationsPayoutsContainer,
+  HeaderChipsContainer,
+  KeyStatsContainer,
+  NominatorStatsContainer,
+  ValidatorTablesContainer,
+} from '../../containers';
+
+export default async function Index() {
+  return (
+    <div className="space-y-12">
+      <div className="flex items-center justify-between">
+        <Typography variant="h4" fw="bold">
+          Staking Overview
+        </Typography>
+
+        <HeaderChipsContainer />
+      </div>
+
+      <KeyStatsContainer />
+
+      <NominatorStatsContainer />
+
+      <DelegationsPayoutsContainer />
+
+      <ValidatorTablesContainer />
+    </div>
+  );
 }
