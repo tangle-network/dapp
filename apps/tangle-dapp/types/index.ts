@@ -4,9 +4,9 @@
 import '@webb-tools/tangle-substrate-types';
 
 export enum PagePath {
-  NOMINATION = '/',
+  NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
-  ACCOUNT = '/account',
+  ACCOUNT = '/',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
 }
@@ -125,8 +125,8 @@ export const StaticSearchQueryPath: {
     DelegationsAndPayoutsTab.PAYOUTS
   >;
 } = {
-  NominationsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
-  PayoutsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
+  NominationsTable: `${PagePath.NOMINATION}/?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
+  PayoutsTable: `${PagePath.NOMINATION}/?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
 } as const;
 
 export type InternalPath =
