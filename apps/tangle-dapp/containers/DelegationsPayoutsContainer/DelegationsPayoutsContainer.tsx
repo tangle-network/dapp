@@ -14,10 +14,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ContainerSkeleton, TableStatus } from '../../components';
+import { TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
 import { convertToSubstrateAddress } from '../../utils';
@@ -78,11 +79,7 @@ const DelegationsPayoutsContainer: FC = () => {
     return convertToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  const {
-    data: delegatorsData,
-    isLoading: delegatorsIsLoading,
-    error: delegatorsError,
-  } = useDelegations(substrateAddress);
+  const { data: delegatorsData } = useDelegations(substrateAddress);
 
   const { isFirstTimeNominator } =
     useIsFirstTimeNominatorSubscription(substrateAddress);
@@ -93,8 +90,33 @@ const DelegationsPayoutsContainer: FC = () => {
     return delegatorsData.delegators.map((delegator) => delegator.address);
   }, [delegatorsData?.delegators]);
 
-  const { data: payoutsData, isLoading: payoutsIsLoading } =
-    usePayouts(substrateAddress);
+  const { data: payoutsData } = usePayouts(substrateAddress);
+
+  const { valueAfterMount: cachedPayouts } = useLocalStorage(
+    LocalStorageKey.Payouts,
+    true
+  );
+
+  const { valueAfterMount: cachedNominations } = useLocalStorage(
+    LocalStorageKey.Nominations,
+    true
+  );
+
+  const fetchedPayouts = useMemo(() => {
+    if (payoutsData && payoutsData.payouts.length > 0) {
+      return payoutsData.payouts;
+    } else if (cachedPayouts) {
+      return cachedPayouts[substrateAddress] ?? [];
+    }
+  }, [cachedPayouts, payoutsData, substrateAddress]);
+
+  const fetchedNominations = useMemo(() => {
+    if (delegatorsData && delegatorsData.delegators.length > 0) {
+      return delegatorsData.delegators;
+    } else if (cachedNominations) {
+      return cachedNominations[substrateAddress] ?? [];
+    }
+  }, [cachedNominations, delegatorsData, substrateAddress]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -183,11 +205,7 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
-          ) : delegatorsIsLoading ? (
-            <ContainerSkeleton />
-          ) : !delegatorsError &&
-            delegatorsData &&
-            delegatorsData.delegators.length === 0 ? (
+          ) : fetchedNominations && fetchedNominations.length === 0 ? (
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
@@ -197,12 +215,16 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔍"
             />
-          ) : !delegatorsError && delegatorsData ? (
+          ) : (
             <DelegatorTableContainer
-              value={delegatorsData.delegators}
+              value={
+                fetchedNominations && fetchedNominations.length > 0
+                  ? fetchedNominations
+                  : []
+              }
               pageSize={PAGE_SIZE}
             />
-          ) : null}
+          )}
         </TabContent>
 
         {/* Payouts Table */}
@@ -220,9 +242,7 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
-          ) : payoutsIsLoading ? (
-            <ContainerSkeleton />
-          ) : !payoutsData || payouts.length === 0 ? (
+          ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
               title="Ready to Get Rewarded?"
               description="It looks like you haven't nominated any tokens yet. Start by choosing a validator to support and earn rewards!"
@@ -234,7 +254,11 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : (
             <PayoutTableContainer
-              value={payouts}
+              value={
+                fetchedPayouts && fetchedPayouts.length > 0
+                  ? fetchedPayouts
+                  : []
+              }
               pageSize={PAGE_SIZE}
               updateValue={setUpdatedPayouts}
             />

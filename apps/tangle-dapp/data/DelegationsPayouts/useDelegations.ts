@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 
 import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Delegator } from '../../types';
 import {
   formatTokenBalance,
@@ -23,7 +24,13 @@ export default function useDelegations(
     delegators: [],
   }
 ) {
-  const [delegators, setDelegators] = useState(defaultValue.delegators);
+  const {
+    valueAfterMount: cachedNominations,
+    setWithPreviousValue: setCachedNominations,
+  } = useLocalStorage(LocalStorageKey.Nominations, true);
+  const [delegators, setDelegators] = useState(
+    (cachedNominations && cachedNominations[address]) ?? defaultValue.delegators
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint } = useRpcEndpointStore();
@@ -117,6 +124,10 @@ export default function useDelegations(
 
             if (isMounted) {
               setDelegators(delegators);
+              setCachedNominations((previous) => ({
+                ...previous,
+                [address]: delegators,
+              }));
               setIsLoading(false);
             }
           });
@@ -136,7 +147,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint]);
+  }, [address, rpcEndpoint, setCachedNominations]);
 
   return useFormatReturnType({
     isLoading,
