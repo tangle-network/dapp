@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 import { formatEther } from 'viem';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { evmPublicClient } from '../../utils/evm';
 import { getPolkadotApiRx } from '../../utils/polkadot';
@@ -18,6 +19,7 @@ export default function useTokenWalletBalance(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -42,17 +44,20 @@ export default function useTokenWalletBalance(
           setValue1(Number(walletBalance));
           setIsLoading(false);
           return;
-        } catch (e) {
+        } catch (error) {
           setError(
-            e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
+            error instanceof Error
+              ? error
+              : WebbError.from(WebbErrorCodes.UnknownError)
           );
+
           setIsLoading(false);
         }
       }
 
       // Substrate Wallet case
       try {
-        const api = await getPolkadotApiRx();
+        const api = await getPolkadotApiRx(rpcEndpoint);
         if (!api) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
@@ -87,7 +92,7 @@ export default function useTokenWalletBalance(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }

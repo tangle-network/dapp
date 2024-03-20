@@ -12,17 +12,18 @@ import {
 export type ValidatorStatus = 'Active' | 'Waiting';
 
 export async function getValidatorDetails(
+  rpcEndpoint: string,
   address: AccountId,
   status: ValidatorStatus
 ): Promise<Validator> {
   console.debug("Fetching a single validator's details");
 
   const addressAsString = address.toString();
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const currentEra = (await api.query.staking.currentEra()).unwrap();
-  const identity = await getValidatorIdentity(addressAsString);
+  const identity = await getValidatorIdentity(rpcEndpoint, addressAsString);
   const exposure = await api.query.staking.erasStakers(currentEra, address);
-  const commission = await getValidatorCommission(addressAsString);
+  const commission = await getValidatorCommission(rpcEndpoint, addressAsString);
 
   // Self-staked amount.
   const selfStakedAmount = exposure.own.unwrap();
@@ -33,7 +34,10 @@ export async function getValidatorDetails(
   const effectiveAmountStaked = formatTokenBalance(totalStakeAmount);
 
   // Delegations = total # of nominators.
-  const delegationCount = await getTotalNumberOfNominators(addressAsString);
+  const delegationCount = await getTotalNumberOfNominators(
+    rpcEndpoint,
+    addressAsString
+  );
 
   return {
     address: addressAsString,

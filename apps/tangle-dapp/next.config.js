@@ -16,7 +16,8 @@ const nextConfig = {
   env: {
     BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID:
       process.env.BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID ?? '',
-    USING_LOCAL_TANGLE: process.env.USING_LOCAL_TANGLE ?? '',
+    TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT:
+      process.env.TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT ?? '',
     OFAC_REGIONS: process.env.OFAC_REGIONS ?? '',
     OFAC_COUNTRY_CODES: process.env.OFAC_COUNTRY_CODES ?? '',
   },

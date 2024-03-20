@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs/operators';
@@ -34,8 +34,8 @@ const useBalances = (): AccountBalances => {
             // Note that without the null/undefined check, an error
             // reports that `num` is undefined for some reason. Might be
             // a gap in the type definitions of Polkadot JS.
-            .add(accountInfo.data.miscFrozen || new BN(0))
-            .add(accountInfo.data.feeFrozen || new BN(0));
+            .add(accountInfo.data.miscFrozen || BN_ZERO)
+            .add(accountInfo.data.feeFrozen || BN_ZERO);
 
           // Seems like Substrate has an interesting definition of what
           // "free" means. It's not the same as "transferrable", which

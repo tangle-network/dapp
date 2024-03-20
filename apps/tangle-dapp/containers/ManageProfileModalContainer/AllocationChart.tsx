@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import {
@@ -74,9 +74,9 @@ const AllocationChart: FC<AllocationChartProps> = ({
     <RechartsTooltip
       content={BnChartTooltip(
         allocations,
-        maxRestakingAmount ?? new BN(0),
+        maxRestakingAmount ?? BN_ZERO,
         allocatedAmount,
-        previewAmount ?? new BN(0),
+        previewAmount ?? BN_ZERO,
         variant === AllocationChartVariant.INDEPENDENT
       )}
     />

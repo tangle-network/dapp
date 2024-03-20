@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -33,7 +33,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 
   const restakedAmount = filterAllocations(allocations).reduce(
     (acc, [, amount]) => acc.add(amount),
-    new BN(0)
+    BN_ZERO
   );
 
   const filteredAllocations = filterAllocations(allocations);

@@ -4,9 +4,10 @@ import { getPolkadotApiPromise } from './api';
 import { getTxPromise } from './utils';
 
 export const getTotalNumberOfNominators = async (
+  rpcEndpoint: string,
   validatorAddress: string
 ): Promise<number> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const nominators = await api.query.staking.nominators.entries();
 
   const totalNominators = nominators.filter(([, nominatorData]) => {
@@ -28,9 +29,10 @@ export const getTotalNumberOfNominators = async (
 };
 
 export const getValidatorIdentity = async (
+  rpcEndpoint: string,
   validatorAddress: string
 ): Promise<string> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const identityOption = await api.query.identity.identityOf(validatorAddress);
 
   // Default the name to be the validator's address.
@@ -56,9 +58,10 @@ export const getValidatorIdentity = async (
 };
 
 export const getValidatorCommission = async (
+  rpcEndpoint: string,
   validatorAddress: string
 ): Promise<string> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const validatorPrefs = await api.query.staking.validators(validatorAddress);
   const commissionRate = validatorPrefs.commission.unwrap().toNumber();
   const commission = commissionRate / 10_000_000;
@@ -66,25 +69,31 @@ export const getValidatorCommission = async (
   return commission.toString();
 };
 
-export const getMaxNominationQuota = async (): Promise<number | undefined> => {
-  const api = await getPolkadotApiPromise();
+export const getMaxNominationQuota = async (
+  rpcEndpoint: string
+): Promise<number | undefined> => {
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const maxNominations = api.query.staking.maxNominatorsCount;
 
   return parseInt(maxNominations.toString());
 };
 
 export const nominateValidators = async (
+  rpcEndpoint: string,
   nominatorAddress: string,
   validatorAddresses: string[]
 ): Promise<HexString> => {
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const tx = api.tx.staking.nominate(validatorAddresses);
 
   return getTxPromise(nominatorAddress, tx);
 };
 
-export const stopNomination = async (nominatorAddress: string) => {
-  const api = await getPolkadotApiPromise();
+export const stopNomination = async (
+  rpcEndpoint: string,
+  nominatorAddress: string
+) => {
+  const api = await getPolkadotApiPromise(rpcEndpoint);
   const tx = api.tx.staking.chill();
 
   return getTxPromise(nominatorAddress, tx);
