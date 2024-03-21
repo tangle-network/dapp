@@ -1,8 +1,11 @@
 import { BN } from '@polkadot/util';
 
-import { ServiceType } from '../../types';
+import { RestakingProfileType, ServiceType } from '../../types';
+import Optional from '../../utils/Optional';
 
 export type ManageProfileModalContainerProps = {
+  hasExistingProfile: boolean | null;
+  profileTypeOpt: Optional<RestakingProfileType> | null;
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
 };

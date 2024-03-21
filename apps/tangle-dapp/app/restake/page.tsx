@@ -9,6 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { formatUnits } from 'viem';
 
 import { TANGLE_TOKEN_DECIMALS } from '../../constants';
+import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import JobsCard from './JobsCard';
@@ -17,6 +18,9 @@ import RoleDistributionCard from './RoleDistributionCard';
 import RolesEarningsCard from './RolesEarningsCard';
 
 const RestakePage = () => {
+  const { hasExistingProfile, profileTypeOpt: substrateProfileTypeOpt } =
+    useRestakingProfile();
+
   const accountAddress = useActiveAccountAddress();
 
   const { value, isApiLoading } = usePolkadotApi(
@@ -103,6 +107,8 @@ const RestakePage = () => {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">
       <OverviewCard
+        hasExistingProfile={hasExistingProfile}
+        profileTypeOpt={substrateProfileTypeOpt}
         isLoading={isApiLoading || isEarningsLoading}
         totalRestaked={totalRestaked}
         availableForRestake={availableForRestake}

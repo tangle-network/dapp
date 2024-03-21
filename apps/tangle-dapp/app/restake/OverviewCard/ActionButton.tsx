@@ -14,12 +14,15 @@ import {
 import { FC, useState } from 'react';
 
 import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
+import { RestakingProfileType } from '../../../types';
+import Optional from '../../../utils/Optional';
 
 type Props = {
-  hasProfile?: boolean;
+  hasExistingProfile: boolean | null;
+  profileTypeOpt: Optional<RestakingProfileType> | null;
 };
 
-const ActionButton: FC<Props> = ({ hasProfile }) => {
+const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
 
@@ -44,16 +47,18 @@ const ActionButton: FC<Props> = ({ hasProfile }) => {
     );
   }
 
-  if (activeAccount && activeWallet && typeof hasProfile === 'boolean') {
+  if (activeAccount && activeWallet) {
     return (
       <>
         <Button onClick={() => setIsManageProfileModalOpen(true)}>
-          {hasProfile ? 'Manage Profile' : 'Create Profile'}
+          {hasExistingProfile ? 'Manage Profile' : 'Create Profile'}
         </Button>
 
         <ManageProfileModalContainer
           isModalOpen={isManageProfileModalOpen}
           setIsModalOpen={setIsManageProfileModalOpen}
+          hasExistingProfile={hasExistingProfile}
+          profileTypeOpt={profileTypeOpt}
         />
       </>
     );

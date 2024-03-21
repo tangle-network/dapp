@@ -1,19 +1,17 @@
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import {
-  type ComponentProps,
-  type ElementRef,
-  FC,
-  forwardRef,
-  useMemo,
-} from 'react';
+import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
 import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import { RestakingProfileType } from '../../../types';
+import Optional from '../../../utils/Optional';
 import ActionButton from './ActionButton';
 
 type OverviewCardProps = ComponentProps<'div'> & {
+  hasExistingProfile: boolean | null;
+  profileTypeOpt: Optional<RestakingProfileType> | null;
   isLoading?: boolean;
   totalRestaked?: number | null;
   availableForRestake?: number | null;
@@ -29,17 +27,12 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
       availableForRestake = null,
       earnings = null,
       apy = null,
+      hasExistingProfile,
+      profileTypeOpt,
       ...props
     },
     ref
   ) => {
-    const hasProfile = useMemo(
-      () =>
-        typeof totalRestaked === 'number' ||
-        typeof availableForRestake === 'number',
-      [availableForRestake, totalRestaked]
-    );
-
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
         <div className="grid content-between w-full h-full grid-cols-2">
@@ -62,12 +55,15 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
           <StatsItem
             isLoading={isLoading}
             title="Earnings"
-            value={hasProfile ? earnings : null}
+            value={hasExistingProfile ? earnings : null}
             prefix={TANGLE_TOKEN_UNIT}
           />
           <StatsItem isLoading={isLoading} title="APY" value={apy} prefix="%" />
 
-          <ActionButton hasProfile={hasProfile} />
+          <ActionButton
+            hasExistingProfile={hasExistingProfile}
+            profileTypeOpt={profileTypeOpt}
+          />
         </div>
       </TangleCard>
     );

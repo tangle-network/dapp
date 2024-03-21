@@ -16,7 +16,6 @@ import {
   useState,
 } from 'react';
 
-import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -119,7 +118,9 @@ function getStepDescription(
 }
 
 const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
+  hasExistingProfile,
   isModalOpen,
+  profileTypeOpt,
   setIsModalOpen,
 }) => {
   const [profileType, setProfileType] = useState(
@@ -132,9 +133,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     isLoading: isLoadingSharedRestakeAmount,
     resetToSubstrateAmount: resetSharedRestakeAmount,
   } = useSharedRestakeAmountState();
-
-  const { hasExistingProfile, profileTypeOpt: substrateProfileTypeOpt } =
-    useRestakingProfile();
 
   const [step, setStep] = useState(Step.CHOOSE_METHOD);
   const isMountedRef = useIsMountedRef();
@@ -278,8 +276,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   // TODO: This will be `false` if it's still loading. It'll default to `true`, but hat's fine for now since it's used to show text/copy in the UI. Ideally would want a loading state to show the user, before showing everything else in this component.
   const isCreatingProfile =
-    hasExistingProfile === false ||
-    substrateProfileTypeOpt?.value !== profileType;
+    hasExistingProfile === false || profileTypeOpt?.value !== profileType;
 
   const stepDescription = getStepDescription(
     step,
@@ -303,12 +300,12 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
         <ModalHeader
           titleVariant="h4"
           onClose={() => setIsModalOpen(false)}
-          className="p-9 pb-4"
+          className="pb-4 p-9"
         >
           {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 px-9 py-3">
+        <div className="flex flex-col gap-4 py-3 px-9">
           {stepDescription !== null && (
             <Typography variant="body2" fw="normal">
               {stepDescription}
@@ -318,7 +315,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
           {stepContents}
         </div>
 
-        <ModalFooter className="flex flex-col-reverse sm:flex-row gap-2">
+        <ModalFooter className="flex flex-col-reverse gap-2 sm:flex-row">
           <Button
             isFullWidth
             variant="secondary"
