@@ -54,7 +54,7 @@ export const ValidatorList = ({
 
   const filteredValidators = sortedValidators.filter(
     (validator) =>
-      validator.identity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      validator.identityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       validator.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -86,8 +86,8 @@ export const ValidatorList = ({
           />
           <Avatar value={validator.address} theme="substrate" />
           <Typography variant="h5" fw="bold">
-            {validator.identity !== ''
-              ? shortenString(validator.identity, 8)
+            {validator.identityName !== ''
+              ? shortenString(validator.identityName, 8)
               : shortenString(validator.address, 8)}
           </Typography>
         </div>

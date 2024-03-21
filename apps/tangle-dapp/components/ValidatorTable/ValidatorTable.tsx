@@ -6,8 +6,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  OnChangeFn,
-  PaginationState,
   Row,
   useReactTable,
 } from '@tanstack/react-table';
@@ -33,7 +31,7 @@ const columns = [
     header: () => <HeaderCell title="Identity" className="justify-start" />,
     cell: (props) => {
       const address = props.getValue();
-      const identity = props.row.original.identity;
+      const identity = props.row.original.identityName;
 
       return (
         <div className="flex space-x-1 items-center">
@@ -85,13 +83,7 @@ const columns = [
   }),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({
-  data,
-  pageSize,
-  pageIndex,
-  totalRecordCount,
-  setPageIndex,
-}) => {
+const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
   const router = useRouter();
 
   const onRowClick = useCallback(
@@ -101,36 +93,12 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
     [router]
   );
 
-  const handlePaginationChange = useCallback<OnChangeFn<PaginationState>>(
-    (updaterOrState) => {
-      const newPaginationState =
-        typeof updaterOrState === 'function'
-          ? updaterOrState({ pageIndex, pageSize })
-          : { ...updaterOrState, pageSize };
-
-      setPageIndex(newPaginationState.pageIndex);
-
-      return newPaginationState;
-    },
-    [pageIndex, pageSize, setPageIndex]
-  );
-
   const table = useReactTable({
     data,
     columns,
-    initialState: { pagination: { pageIndex, pageSize } },
-    manualPagination: true,
-    onPaginationChange: handlePaginationChange,
-    state: {
-      pagination: {
-        pageIndex,
-        pageSize,
-      },
-    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
-    pageCount: Math.ceil(totalRecordCount / pageSize),
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
