@@ -3,6 +3,7 @@ import type { IconBase } from '@webb-tools/icons/types';
 import type { FilterFn } from '@tanstack/react-table';
 import type { Nullable, Maybe } from '@webb-tools/dapp-types/utils/types';
 import type React from 'react';
+import { WEBB_AVAILABLE_SOCIALS } from '../constants';
 
 /******************
  * DECLARE GLOBAL *
@@ -104,7 +105,7 @@ export interface SocialConfigsType extends Omit<ExternalLink, 'name'> {
   /**
    * Platform name
    */
-  name: string;
+  name: (typeof WEBB_AVAILABLE_SOCIALS)[number];
   /**
    * Platform icon
    */

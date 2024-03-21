@@ -1,4 +1,12 @@
 import { Footer } from '@webb-tools/webb-ui-components';
+import {
+  bottomLinks,
+  TANGLE_GITHUB_URL,
+  TANGLE_PRIVACY_POLICY_URL,
+  TANGLE_TERMS_OF_SERVICE_URL,
+  TANGLE_TWITTER_URL,
+  WEBB_AVAILABLE_SOCIALS,
+} from '@webb-tools/webb-ui-components/constants';
 import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 import React, { type FC, type PropsWithChildren } from 'react';
 
@@ -7,6 +15,22 @@ import { TxConfirmationModalContainer } from '../../containers';
 import ApiDevStatsContainer from '../ApiDevStatsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
+
+// Some specific overrides for the social links for use in the
+// footer in Tangle Dapp, since it defaults to the Webb socials.
+const SOCIAL_LINK_OVERRIDES: Partial<
+  Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
+> = {
+  twitter: TANGLE_TWITTER_URL,
+  github: TANGLE_GITHUB_URL,
+};
+
+const BOTTOM_LINK_OVERRIDES: Partial<
+  Record<(typeof bottomLinks)[number]['name'], string>
+> = {
+  'Terms of Service': TANGLE_TERMS_OF_SERVICE_URL,
+  'Privacy Policy': TANGLE_PRIVACY_POLICY_URL,
+};
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
@@ -35,7 +59,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           <WalletModalContainer />
         </div>
 
-        <Footer isMinimal className="py-8" />
+        <Footer
+          socialsLinkOverrides={SOCIAL_LINK_OVERRIDES}
+          bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
+          isMinimal
+          className="py-8"
+        />
       </main>
 
       <TxConfirmationModalContainer />
