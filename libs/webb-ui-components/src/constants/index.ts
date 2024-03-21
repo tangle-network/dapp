@@ -344,7 +344,7 @@ export const footerNavs: FooterNavsType = {
   ],
 };
 
-export const bottomLinks: ExternalLink[] = [
+export const bottomLinks = [
   {
     name: 'Terms of Service',
     href: 'https://webb.tools/terms-and-conditions',
@@ -355,18 +355,19 @@ export const bottomLinks: ExternalLink[] = [
     href: 'https://webb.tools/privacy-policy',
     ...commonExternalProps,
   },
-];
+] as const;
 
-export const defaultSocialConfigs = WEBB_AVAILABLE_SOCIALS.map(
-  (name) =>
-    ({
-      name,
-      href: SOCIAL_URLS_RECORD[name],
-      Icon: SOCIAL_ICONS_RECORD[name],
-      target: '_blank',
-      rel: 'noopener noreferrer',
-    } as const satisfies SocialConfigsType)
-);
+export const defaultSocialConfigs: SocialConfigsType[] =
+  WEBB_AVAILABLE_SOCIALS.map(
+    (name) =>
+      ({
+        name,
+        href: SOCIAL_URLS_RECORD[name],
+        Icon: SOCIAL_ICONS_RECORD[name],
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      } as const satisfies SocialConfigsType)
+  );
 
 /**
  * The key for the sidebar open state in the cookie and localStorage
