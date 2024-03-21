@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FC, forwardRef } from 'react';
+import { FC, forwardRef, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import * as constants from '../../constants';
@@ -15,7 +15,37 @@ import { FooterProps } from './types';
  * The statistic `Footer` for `Layout` container
  */
 export const Footer = forwardRef<HTMLElement, FooterProps>(
-  ({ className, isNext, isMinimal, logoType, ...props }, ref) => {
+  (
+    {
+      className,
+      isNext,
+      isMinimal,
+      logoType,
+      socialsLinkOverrides,
+      bottomLinkOverrides,
+      ...props
+    },
+    ref
+  ) => {
+    const resolvedBottomLinks = useMemo(() => {
+      if (bottomLinkOverrides === undefined) {
+        return constants.bottomLinks;
+      }
+
+      return constants.bottomLinks.map((link) => {
+        const linkOverride = bottomLinkOverrides[link.name];
+
+        if (linkOverride !== undefined) {
+          return {
+            ...link,
+            href: linkOverride,
+          };
+        }
+
+        return link;
+      });
+    }, [bottomLinkOverrides]);
+
     return (
       <footer
         {...props}
@@ -28,14 +58,17 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
             <Socials
               iconPlacement="end"
               iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+              linkOverrides={socialsLinkOverrides}
             />
 
             <div className="flex flex-col md:flex-row items-end gap-3 justify-between">
               <Typography variant="body2" className="!text-mono-100">
-                © 2023 Webb Technologies, Inc. All rights reserved.
+                © {new Date().getFullYear()} Webb Technologies, Inc. All rights
+                reserved.
               </Typography>
+
               <div className="flex flex-[1] align-items justify-end gap-6">
-                {constants.bottomLinks.map(({ name, ...link }) => (
+                {resolvedBottomLinks.map(({ name, ...link }) => (
                   <a key={name} {...link} className="group">
                     <Typography
                       variant="body2"
@@ -93,6 +126,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
             <Socials
               iconPlacement="end"
               iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40 pt-4 px-2 mb-6"
+              linkOverrides={socialsLinkOverrides}
             />
 
             <div className="flex justify-between px-2">
@@ -101,7 +135,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               </Typography>
 
               <div className="flex items-center space-x-12">
-                {constants.bottomLinks.map(({ name, ...link }) => (
+                {resolvedBottomLinks.map(({ name, ...link }) => (
                   <a key={name} {...link} className="group">
                     <Typography
                       variant="body2"
