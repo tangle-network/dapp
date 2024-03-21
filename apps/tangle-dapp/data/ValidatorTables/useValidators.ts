@@ -1,4 +1,8 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
+import {
+  PalletStakingValidatorPrefs,
+  SpStakingExposure,
+} from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
@@ -6,6 +10,7 @@ import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { Validator } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import useCurrentEra from '../staking/useCurrentEra';
+import useValidatorsPrefs from '../staking/useValidatorsPrefs';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
 
 export const useValidators = (
@@ -16,6 +21,8 @@ export const useValidators = (
 
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
+
+  const validatorPrefs = useValidatorsPrefs();
 
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
@@ -36,24 +43,38 @@ export const useValidators = (
       addresses === null ||
       identityNames === null ||
       exposures === null ||
-      nominations === null
+      nominations === null ||
+      validatorPrefs.value === null
     ) {
       return [];
     }
 
+    const mappedIdentityNames = new Map<string, string | null>();
+    const mappedExposures = new Map<string, SpStakingExposure>();
+    const mappedValidatorPrefs = new Map<string, PalletStakingValidatorPrefs>();
+
+    identityNames.forEach(([storageKey, name]) => {
+      const accountId = storageKey.args[0].toString();
+      mappedIdentityNames.set(accountId, name);
+    });
+
+    exposures.forEach(([storageKey, exposure]) => {
+      const accountId = storageKey.args[1].toString();
+      mappedExposures.set(accountId, exposure);
+    });
+
+    validatorPrefs.value.forEach((validatorPref) => {
+      mappedValidatorPrefs.set(
+        validatorPref[0].args[0].toString(),
+        validatorPref[1]
+      );
+    });
+
     return addresses.map((address) => {
-      // Default to the address if no identity name is registered.
       const name =
-        identityNames.find((identity) => identity[0] === address)?.[1] ??
-        address.toString();
+        mappedIdentityNames.get(address.toString()) ?? address.toString();
 
-      // Match the exposure entry for the current validator
-      // by comparing the address in the exposure entry with the
-      // current validator's address.
-      const exposure = exposures.find((exposure) =>
-        exposure[0].args[1].eq(address)
-      )?.[1];
-
+      const exposure = mappedExposures.get(address.toString());
       const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
 
@@ -70,18 +91,27 @@ export const useValidators = (
         );
       });
 
+      const validatorPref = mappedValidatorPrefs.get(address.toString());
+      const commissionRate = validatorPref?.commission.unwrap().toNumber() ?? 0;
+      const commission = commissionRate / 10_000_000;
+
       return {
         address: address.toString(),
         identityName: name,
         selfStaked: formatTokenBalance(selfStakedAmount),
         effectiveAmountStaked: formatTokenBalance(totalStakeAmount),
         effectiveAmountStakedRaw: totalStakeAmount.toString(),
-        // TODO: This shouldn't be a string. No reason for it.
         delegations: nominators.length.toString(),
-        // TODO: This shouldn't be a string?
-        commission: '0',
+        commission: commission.toString(),
         status,
       };
     });
-  }, [addresses, exposures, identityNames, nominations, status]);
+  }, [
+    addresses,
+    exposures,
+    identityNames,
+    nominations,
+    status,
+    validatorPrefs,
+  ]);
 };
