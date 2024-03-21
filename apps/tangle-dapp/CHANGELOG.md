@@ -98,3 +98,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Styling issues and UI audit for Account page - https://github.com/webb-tools/webb-dapp/pull/2035
 - Styling issues and UI audit for Claim Airdrop page - https://github.com/webb-tools/webb-dapp/pull/2049
+
+## [0.0.4] - 2024-03-21
+
+### Added
+
+- Restaking: Updating Independent profile now has validating, such as not exceeding max restake amount, not decreasing existing restake amount, and more - https://github.com/webb-tools/webb-dapp/pull/2091
+- Restaking: Updating Shared profile now has validating, such as not exceeding max restake amount, not decreasing existing restake amount, and more - https://github.com/webb-tools/webb-dapp/pull/2097
+- Network switcher: Ability for users to quickly and easily change networks - https://github.com/webb-tools/webb-dapp/pull/2102
+- Using caching for faster loading times in nominations & payouts - https://github.com/webb-tools/webb-dapp/pull/2067
+
+### Changed
+
+- Simplified styling of the `RecentTxContainer` component in the account page - https://github.com/webb-tools/webb-dapp/pull/2098
+- The accounts page is now the homepage - https://github.com/webb-tools/webb-dapp/pull/2106
+- Footer links (twitter, github, etc.) were updated to link to Tangle-specific socials - https://github.com/webb-tools/webb-dapp/pull/2108
+
+### Fixed
+- Addressed major performance issues on nominations page by batching requests - https://github.com/webb-tools/webb-dapp/pull/2107
