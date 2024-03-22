@@ -37,13 +37,10 @@ const useBalances = (): AccountBalances => {
             .add(accountInfo.data.miscFrozen || BN_ZERO)
             .add(accountInfo.data.feeFrozen || BN_ZERO);
 
-          // Seems like Substrate has an interesting definition of what
-          // "free" means. It's not the same as "transferrable", which
-          // is what we want. See more here: https://docs.subsocial.network/rust-docs/latest/pallet_balances/struct.AccountData.html#structfield.free
-          const transferrable = accountInfo.data.free.sub(locked);
+          const transferrable = accountInfo.data.free;
 
           return {
-            total: transferrable.add(locked),
+            total: transferrable,
             transferrable,
             locked,
           };
