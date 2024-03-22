@@ -45,9 +45,9 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
           />
 
           <Typography variant="body1" ta="center">
-            You have successfully claimed TNT Airdrop! Your
-            transaction has been confirmed on the Tangle Network. You can view
-            your transaction on the explorer below.
+            You have successfully claimed TNT Airdrop! Your transaction has been
+            confirmed on the Tangle Network. You can view your transaction on
+            the explorer below.
           </Typography>
 
           {txExplorerUrl ? (
