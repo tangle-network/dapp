@@ -311,7 +311,8 @@ const DownloadWallet: FC<
         fw="bold"
         className="text-mono-100 dark:text-mono-40"
       >
-        Don't have a wallet?
+        Don't have{' '}
+        {connectingWallet?.title ?? failedWallet?.title ?? 'the wallet'}?
       </Typography>
       {downloadWalletURL ? (
         <Button
@@ -320,7 +321,7 @@ const DownloadWallet: FC<
           target="_blank"
           href={downloadWalletURL.toString()}
         >
-          Download {connectingWallet?.name ?? failedWallet?.name ?? 'Wallet'}
+          Download
         </Button>
       ) : getHelpURL ? (
         <Button

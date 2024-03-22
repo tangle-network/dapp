@@ -62,21 +62,18 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       }
     }, [getCurrentWallet, platformId]);
 
-    const handleTryAgainBtnClick = useCallback(
-      async () => {
-        if (!selectedWallet) {
-          notificationApi.addToQueue({
-            variant: 'warning',
-            message: 'Failed to switch wallet',
-            secondaryMessage: 'No wallet selected. Please try again.',
-          });
-          return;
-        }
+    const handleTryAgainBtnClick = useCallback(async () => {
+      if (!selectedWallet) {
+        notificationApi.addToQueue({
+          variant: 'warning',
+          message: 'Failed to switch wallet',
+          secondaryMessage: 'No wallet selected. Please try again.',
+        });
+        return;
+      }
 
-        await connectWallet(selectedWallet);
-      },
-      [connectWallet, notificationApi, selectedWallet]
-    );
+      await connectWallet(selectedWallet);
+    }, [connectWallet, notificationApi, selectedWallet]);
 
     return (
       <div ref={ref} {...props}>
