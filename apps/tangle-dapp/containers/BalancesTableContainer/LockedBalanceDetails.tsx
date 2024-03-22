@@ -201,7 +201,7 @@ const LockedBalanceDetails: FC = () => {
       internalHref={PagePath.NOMINATION}
       tooltip={
         <>
-          View more information on the <strong>EVM Staking</strong> page.
+          View more information on the <strong>Nomination</strong> page.
         </>
       }
     />
