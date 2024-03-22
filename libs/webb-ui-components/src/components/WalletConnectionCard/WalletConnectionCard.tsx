@@ -286,7 +286,7 @@ const WalletList: FC<
               <div className="flex items-center gap-2">
                 {wallet.Logo}
 
-                <Typography variant="body1" fw="bold" className="capitalize">
+                <Typography variant="body1" fw="bold">
                   {wallet.title}
                 </Typography>
               </div>
