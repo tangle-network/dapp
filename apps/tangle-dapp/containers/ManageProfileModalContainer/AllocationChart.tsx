@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import {
@@ -15,7 +15,7 @@ import {
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import { ServiceType } from '../../types';
+import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { RestakingAllocationMap } from './types';
@@ -33,7 +33,7 @@ export type AllocationChartProps = {
   allocations: RestakingAllocationMap;
   allocatedAmount: BN;
   previewAmount?: BN;
-  previewRole?: ServiceType;
+  previewRole?: RestakingService;
 };
 
 function getChartColorOfEntryName(
@@ -74,9 +74,9 @@ const AllocationChart: FC<AllocationChartProps> = ({
     <RechartsTooltip
       content={BnChartTooltip(
         allocations,
-        maxRestakingAmount ?? new BN(0),
+        maxRestakingAmount ?? BN_ZERO,
         allocatedAmount,
-        previewAmount ?? new BN(0),
+        previewAmount ?? BN_ZERO,
         variant === AllocationChartVariant.INDEPENDENT
       )}
     />
@@ -86,7 +86,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
     <>
       {(variant === AllocationChartVariant.INDEPENDENT ||
         allocationEntries.length === 0) && (
-        <Cell key="remaining" fill={themeCellColor} />
+        <Cell key="remaining-independent" fill={themeCellColor} />
       )}
 
       {variant === AllocationChartVariant.INDEPENDENT &&
@@ -111,6 +111,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
   );
 
   const sharedChartProps = {
+    // TODO: Something's causing a duplicate key prop error within the Pie component. Need to investigate what it is (`sector-333-333`).
     data: entries,
     stroke: 'none',
     dataKey: 'value',

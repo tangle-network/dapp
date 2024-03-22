@@ -1,15 +1,14 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ServiceType } from '../../types';
+import { RestakingProfileType, RestakingService } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { filterAllocations } from './IndependentAllocationStep';
-import { RestakingProfileType } from './ManageProfileModalContainer';
+import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {
@@ -33,8 +32,8 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   }
 
   const restakedAmount = filterAllocations(allocations).reduce(
-    (acc, [, amount]) => acc.add(amount ?? new BN(0)),
-    new BN(0)
+    (acc, [, amount]) => acc.add(amount),
+    BN_ZERO
   );
 
   const filteredAllocations = filterAllocations(allocations);
@@ -175,8 +174,8 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 };
 
 type AllocationItemProps = {
-  services: ServiceType[];
-  amount?: BN | null;
+  services: RestakingService[];
+  amount?: BN;
 };
 
 /** @internal */
@@ -201,7 +200,7 @@ const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
           fw="semibold"
           className="dark:text-mono-0 text-right"
         >
-          {formatTokenBalance(amount ?? new BN(0))}
+          {formatTokenBalance(amount)}
         </Typography>
       )}
     </div>

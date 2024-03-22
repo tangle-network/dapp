@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../../components/GlassCard/GlassCard';
 import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributionChart';
-import { ProfileType } from '../../../types';
+import { RestakingProfileType } from '../../../types';
 
 const IndependentRoleDistributionChart = dynamic(
   () => import('../../../components/charts/IndependentRoleDistributionChart'),
@@ -42,7 +42,7 @@ const RoleDistributionCard = async ({
       <div className="flex-1 flex items-center justify-center">
         <div className="min-h-[200px]">
           <div className="h-full flex items-center justify-center">
-            {profileType === ProfileType.SHARED ? (
+            {profileType === RestakingProfileType.SHARED ? (
               <SharedRoleDistributionChart data={distribution} />
             ) : (
               <IndependentRoleDistributionChart data={distribution} />

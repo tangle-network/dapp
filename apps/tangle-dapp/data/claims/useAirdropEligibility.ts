@@ -1,13 +1,7 @@
 import { Option, u128 } from '@polkadot/types';
 import { PalletAirdropClaimsStatementKind } from '@polkadot/types/lookup';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import {
-  useCallback,
-  useDebugValue,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
@@ -15,13 +9,12 @@ import usePolkadotApi from '../../hooks/usePolkadotApi';
 
 const useAirdropEligibility = () => {
   const [isEligible, setIsEligible] = useState<boolean | null>(null);
-
-  useDebugValue(isEligible);
-
-  const { value: eligibilityCache, setWithPreviousValue: setEligibilityCache } =
-    useLocalStorage(LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE, true);
-
   const activeAccountAddress = useActiveAccountAddress();
+
+  const {
+    valueAfterMount: eligibilityCache,
+    setWithPreviousValue: setEligibilityCache,
+  } = useLocalStorage(LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE, true);
 
   const { value: claimInfo } = usePolkadotApi(
     useCallback(
@@ -47,9 +40,6 @@ const useAirdropEligibility = () => {
     )
   );
 
-  const claimAmountOpt = claimInfo?.[0] || null;
-  const claimStatementOpt = claimInfo?.[1] || null;
-
   const isAirdropEligibleByCache = useMemo(() => {
     if (activeAccountAddress === null) {
       return null;
@@ -60,7 +50,8 @@ const useAirdropEligibility = () => {
       : null;
   }, [activeAccountAddress, eligibilityCache]);
 
-  useDebugValue(isAirdropEligibleByCache);
+  const claimAmountOpt = claimInfo?.[0] || null;
+  const claimStatementOpt = claimInfo?.[1] || null;
 
   // Update the eligibility when the claim amount and statement
   // are known/fetched.

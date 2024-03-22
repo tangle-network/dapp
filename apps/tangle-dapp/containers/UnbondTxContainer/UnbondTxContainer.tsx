@@ -16,6 +16,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -36,21 +37,24 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-
-  const [amountToUnbond, setAmountToUnbond] = useState<number>(0);
-  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState<boolean>(false);
+  const [amountToUnbond, setAmountToUnbond] = useState(0);
+  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
-
-    if (isSubstrateAddress(activeAccount?.address))
+    if (!activeAccount?.address) {
+      return '';
+    } else if (isSubstrateAddress(activeAccount?.address)) {
       return activeAccount.address;
+    }
 
     return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
@@ -69,7 +73,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       });
     }
 
-    if (!totalStakedBalanceData?.value1) return 0;
+    if (!totalStakedBalanceData?.value1) {
+      return 0;
+    }
 
     const { value: value_ } = splitTokenValueAndSymbol(
       String(totalStakedBalanceData.value1)
@@ -130,7 +136,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     try {
       const hash = await executeTx(
         () => unbondTokensEvm(walletAddress, amountToUnbond),
-        () => unbondTokensSubstrate(walletAddress, amountToUnbond),
+        () => unbondTokensSubstrate(rpcEndpoint, walletAddress, amountToUnbond),
         `Successfully unbonded ${amountToUnbond} ${TANGLE_TOKEN_UNIT}.`,
         'Failed to unbond tokens!'
       );
@@ -155,6 +161,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     amountToUnbond,
     closeModal,
     executeTx,
+    rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
   ]);

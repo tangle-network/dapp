@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { formatDistance } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 
@@ -19,7 +19,7 @@ function calculateTimeRemaining(
   // remaining is always 0 when the current block number is greater than
   // the ending block number.
   const difference = currentBlockNumber.gt(endingBlockNumber)
-    ? new BN(0)
+    ? BN_ZERO
     : endingBlockNumber.sub(currentBlockNumber);
 
   const timeRemainingInMs = babeExpectedBlockTime.mul(difference).toNumber();

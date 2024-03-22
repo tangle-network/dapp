@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { StakingLedger } from '@polkadot/types/interfaces';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 import assert from 'assert';
 import { useCallback } from 'react';
 
@@ -20,7 +20,7 @@ const sumStakerRewardsInClaimedEraRange = async (
 
   // If the staker has never claimed rewards, there is nothing to do.
   if (ledger.claimedRewards.length === 0) {
-    return new BN(0);
+    return BN_ZERO;
   }
 
   let rewardSum = new BN(0);
@@ -42,10 +42,10 @@ const sumStakerRewardsInClaimedEraRange = async (
     // Get the total points and the staker's points for the era.
     const pointsForEra = await api.query.staking.erasRewardPoints(eraIndex);
     const totalPoints = pointsForEra.total.toBn();
-    const stashPoints = pointsForEra.individual.get(ledger.stash) || new BN(0);
+    const stashPoints = pointsForEra.individual.get(ledger.stash) || BN_ZERO;
 
     // Avoid division by zero.
-    const safeTotalPoints = totalPoints.isZero() ? new BN(1) : totalPoints;
+    const safeTotalPoints = totalPoints.isZero() ? BN_ONE : totalPoints;
 
     // Calculate the staker's share of the rewards for the era:
     // stakerShareForEra = totalRewardsForEra * stakerPoints / totalPoints
@@ -72,7 +72,7 @@ const fetchPendingRewards: StakingLedgerFetcher<BN> = async (ledger, api) => {
   // Either way, there should be no rewards under those
   // circumstances.
   if (currentEraIndexOpt.isNone) {
-    return new BN(0);
+    return BN_ZERO;
   }
 
   const currentEraIndex = currentEraIndexOpt.unwrap().toNumber();

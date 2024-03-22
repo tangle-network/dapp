@@ -30,7 +30,13 @@ const InputAction: FC<InputActionProps> = ({
   return tooltip === undefined ? (
     icon
   ) : (
-    <IconWithTooltip content={<>{tooltip}</>} icon={icon} />
+    <IconWithTooltip
+      overrideTooltipBodyProps={{
+        className: 'break-normal text-center max-w-[200px]',
+      }}
+      content={<>{tooltip}</>}
+      icon={icon}
+    />
   );
 };
 

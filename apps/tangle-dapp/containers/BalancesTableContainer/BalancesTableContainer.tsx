@@ -8,7 +8,7 @@ import {
   TangleIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
@@ -27,21 +27,33 @@ const BalancesTableContainer: FC = () => {
   const { transferrable, locked } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
-  const { value: isDetailsCollapsedCached, set: setIsDetailsCollapsedCached } =
+  const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
     useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
 
-  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(
-    isDetailsCollapsedCached ?? false
-  );
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
 
-  // Cache the collapsed state to local storage when it changes.
+  // Load the cached collapsed state from local storage on mount.
   useEffect(() => {
-    setIsDetailsCollapsedCached(isDetailsCollapsed);
-  }, [isDetailsCollapsed, setIsDetailsCollapsedCached]);
+    const cachedIsDetailsCollapsed = getCachedIsDetailsCollapsed();
+
+    if (cachedIsDetailsCollapsed !== null) {
+      setIsDetailsCollapsed(cachedIsDetailsCollapsed);
+    }
+  }, [getCachedIsDetailsCollapsed]);
 
   const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
     api.query.balances.locks(activeSubstrateAddress)
   );
+
+  const handleToggleDetails = useCallback(() => {
+    setIsDetailsCollapsed((prev) => {
+      const newValue = !prev;
+
+      setCachedIsDetailsCollapsed(newValue);
+
+      return newValue;
+    });
+  }, [setCachedIsDetailsCollapsed]);
 
   const hasLocks = locks !== null && locks.length > 0;
 
@@ -97,9 +109,7 @@ const BalancesTableContainer: FC = () => {
                 <div className="p-3">
                   <BalanceAction
                     Icon={isDetailsCollapsed ? ChevronDown : ChevronUp}
-                    onClick={() =>
-                      setIsDetailsCollapsed((previous) => !previous)
-                    }
+                    onClick={handleToggleDetails}
                     tooltip={`${
                       isDetailsCollapsed ? 'Show' : 'Collapse'
                     } Details`}

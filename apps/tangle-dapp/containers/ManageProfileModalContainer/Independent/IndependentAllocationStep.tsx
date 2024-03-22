@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import {
@@ -11,14 +11,14 @@ import {
 } from 'react';
 import { z } from 'zod';
 
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
-import { ServiceType } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
-import { AllocationChartVariant } from './AllocationChart';
-import AllocationInput from './AllocationInput';
-import AllocationStepContents from './AllocationStepContents';
-import { RestakingAllocationMap } from './types';
+import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
+import usePolkadotApi from '../../../hooks/usePolkadotApi';
+import { RestakingService } from '../../../types';
+import { formatTokenBalance } from '../../../utils/polkadot';
+import { AllocationChartVariant } from '../AllocationChart';
+import AllocationStepContainer from '../AllocationStepContainer';
+import { RestakingAllocationMap } from '../types';
+import IndependentAllocationInput from './IndependentAllocationInput';
 
 export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
@@ -27,9 +27,9 @@ export type IndependentAllocationStepProps = {
 
 export function filterAllocations(
   allocations: RestakingAllocationMap
-): [ServiceType, BN | null][] {
+): [RestakingService, BN][] {
   return Object.entries(allocations).map(([serviceString, amount]) => {
-    const service = z.nativeEnum(ServiceType).parse(serviceString);
+    const service = z.nativeEnum(RestakingService).parse(serviceString);
 
     return [service, amount];
   });
@@ -41,17 +41,14 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
 
-  const restakedAmount = useMemo(() => {
-    let amount = new BN(0);
-
-    for (const [_service, serviceAmount] of Object.entries(allocations)) {
-      if (serviceAmount !== null) {
-        amount = amount.add(serviceAmount);
-      }
-    }
-
-    return amount;
-  }, [allocations]);
+  const restakedAmount = useMemo(
+    () =>
+      Object.entries(allocations).reduce(
+        (acc, [_key, amount]) => acc.add(amount),
+        BN_ZERO
+      ),
+    [allocations]
+  );
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null
@@ -65,7 +62,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   );
 
   const [newAllocationRole, setNewAllocationRole] =
-    useState<ServiceType | null>(null);
+    useState<RestakingService | null>(null);
 
   const handleNewAllocation = useCallback(() => {
     if (newAllocationRole === null || newAllocationAmount === null) {
@@ -87,7 +84,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   ]);
 
   const handleDeallocation = useCallback(
-    (service: ServiceType) => {
+    (service: RestakingService) => {
       const deallocatedAmount = allocations[service];
 
       assert(
@@ -102,6 +99,22 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
         return nextAllocations;
       });
+    },
+    [allocations, setAllocations]
+  );
+
+  const handleAllocationChange = useCallback(
+    (service: RestakingService, newAmount: BN | null) => {
+      // Do not update the amount if it has no value,
+      // or if the new amount is the same as the current amount.
+      if (newAmount === null || allocations[service]?.eq(newAmount)) {
+        return;
+      }
+
+      setAllocations((prev) => ({
+        ...prev,
+        [service]: newAmount,
+      }));
     },
     [allocations, setAllocations]
   );
@@ -127,7 +140,9 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const availableRoles = useMemo(
     () =>
-      Object.values(ServiceType).filter((service) => !(service in allocations)),
+      Object.values(RestakingService).filter(
+        (service) => !(service in allocations)
+      ),
     [allocations]
   );
 
@@ -142,7 +157,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     maxRolesPerAccount.gtn(filteredAllocations.length);
 
   return (
-    <AllocationStepContents
+    <AllocationStepContainer
       allocatedAmount={restakedAmount}
       allocations={allocations}
       variant={AllocationChartVariant.INDEPENDENT}
@@ -152,25 +167,23 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       <div className="flex flex-col gap-4 items-start justify-start min-w-max">
         <div className="flex flex-col gap-4">
           {filteredAllocations.map(([service, amount]) => (
-            <AllocationInput
-              amount={amount}
-              isDisabled
+            <IndependentAllocationInput
               key={service}
-              title="Total Restake"
+              amount={amount}
               id={`manage-profile-allocation-${service}`}
               availableServices={availableRoles}
               service={service}
-              setService={setNewAllocationRole}
-              hasDeleteButton
+              setAmount={(newAmount) =>
+                handleAllocationChange(service, newAmount)
+              }
               onDelete={handleDeallocation}
               availableBalance={amountRemaining}
-              validate={false}
+              errorOnEmptyValue
             />
           ))}
 
           {canAddNewAllocation && (
-            <AllocationInput
-              title="Total Restake"
+            <IndependentAllocationInput
               id="manage-profile-new-allocation"
               availableServices={availableRoles}
               service={newAllocationRole}
@@ -178,7 +191,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               amount={newAllocationAmount}
               setAmount={setNewAllocationAmount}
               availableBalance={amountRemaining}
-              validate
+              errorOnEmptyValue={false}
             />
           )}
         </div>
@@ -206,7 +219,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           </div>
         </div>
       </div>
-    </AllocationStepContents>
+    </AllocationStepContainer>
   );
 };
 

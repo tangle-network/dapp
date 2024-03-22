@@ -1,11 +1,11 @@
-import { BN } from '@polkadot/util';
+import { assert, BN } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { TooltipProps } from 'recharts';
 import { z } from 'zod';
 
 import { RestakingAllocationMap } from '../containers/ManageProfileModalContainer/types';
 import { AllocationChartEntryName } from '../containers/ManageProfileModalContainer/useAllocationChartEntries';
-import { ServiceType } from '../types';
+import { RestakingService } from '../types';
 import { formatTokenBalance } from '../utils/polkadot/tokens';
 
 const BnChartTooltip = (
@@ -26,7 +26,7 @@ const BnChartTooltip = (
       .union([
         z.literal('Remaining' satisfies AllocationChartEntryName),
         z.literal('New Allocation' satisfies AllocationChartEntryName),
-        z.nativeEnum(ServiceType),
+        z.nativeEnum(RestakingService),
       ])
       .parse(payload[0].payload.name);
 
@@ -39,6 +39,11 @@ const BnChartTooltip = (
         ? previewAmount
         : allocations[entryName];
 
+    assert(
+      amount !== undefined,
+      'Service type should have an allocated amount in the allocation map'
+    );
+
     return (
       <div
         key={entryName}
@@ -47,7 +52,7 @@ const BnChartTooltip = (
         <Typography variant="body2" fw="semibold">
           {entryName}
 
-          {displayAmount && `: ${formatTokenBalance(amount ?? new BN(0))}`}
+          {displayAmount && `: ${formatTokenBalance(amount)}`}
         </Typography>
       </div>
     );

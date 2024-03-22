@@ -3,15 +3,15 @@ import assert from 'assert';
 import { useMemo } from 'react';
 
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import { ServiceType } from '../../types';
+import { RestakingService } from '../../types';
 import { AllocationChartVariant } from './AllocationChart';
-import { filterAllocations } from './IndependentAllocationStep';
+import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
 export type AllocationChartEntryName =
   | 'Remaining'
   | 'New Allocation'
-  | ServiceType;
+  | RestakingService;
 
 export type AllocationChartEntry = {
   name: AllocationChartEntryName;
@@ -61,16 +61,19 @@ const useAllocationChartEntries = (
 ) => {
   const { maxRestakingAmount } = useRestakingLimits();
 
-  const previewEntry: AllocationChartEntry = useMemo(
-    () => ({
+  const previewEntry: AllocationChartEntry = useMemo(() => {
+    // Set value to 0 if the preview amount is not provided
+    // or if the max restaking amount is still loading.
+    const value =
+      previewAmount === undefined || maxRestakingAmount === null
+        ? 0
+        : getPercentageOfTotal(previewAmount, maxRestakingAmount);
+
+    return {
       name: 'New Allocation',
-      value: getPercentageOfTotal(
-        previewAmount ?? new BN(0),
-        maxRestakingAmount ?? new BN(1)
-      ),
-    }),
-    [maxRestakingAmount, previewAmount]
-  );
+      value,
+    };
+  }, [maxRestakingAmount, previewAmount]);
 
   const remainingEntry: AllocationChartEntry = useMemo(() => {
     if (maxRestakingAmount === null) {
@@ -99,7 +102,7 @@ const useAllocationChartEntries = (
         value:
           maxRestakingAmount === null
             ? 0
-            : getPercentageOfTotal(amount ?? new BN(0), maxRestakingAmount),
+            : getPercentageOfTotal(amount, maxRestakingAmount),
       })),
     [allocations, maxRestakingAmount]
   );

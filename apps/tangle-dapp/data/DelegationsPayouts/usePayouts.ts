@@ -5,7 +5,9 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Payout } from '../../types';
 import {
   formatTokenBalance,
@@ -21,9 +23,16 @@ export default function usePayouts(
     payouts: [],
   }
 ) {
-  const [payouts, setPayouts] = useState(defaultValue.payouts);
+  const {
+    valueAfterMount: cachedPayouts,
+    setWithPreviousValue: setCachedPayouts,
+  } = useLocalStorage(LocalStorageKey.Payouts, true);
+  const [payouts, setPayouts] = useState(
+    (cachedPayouts && cachedPayouts[address]) ?? defaultValue.payouts
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -39,8 +48,8 @@ export default function usePayouts(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
+        const apiSub = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
         if (!apiSub || !apiPromise) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
@@ -179,6 +188,7 @@ export default function usePayouts(
 
                               const validatorCommissionPercentage =
                                 await getValidatorCommission(
+                                  rpcEndpoint,
                                   validator.toString()
                                 );
 
@@ -202,12 +212,16 @@ export default function usePayouts(
                                 );
 
                               const validatorIdentity =
-                                await getValidatorIdentity(validator);
+                                await getValidatorIdentity(
+                                  rpcEndpoint,
+                                  validator
+                                );
 
                               const validatorNominators = await Promise.all(
                                 eraStaker.others.map(async (nominator) => {
                                   const nominatorIdentity =
                                     await getValidatorIdentity(
+                                      rpcEndpoint,
                                       nominator.who.toString()
                                     );
 
@@ -255,11 +269,15 @@ export default function usePayouts(
                   validatorPayoutsPromises
                 );
 
-                setPayouts(
-                  validatorPayouts
-                    .filter((payout) => payout !== undefined)
-                    .sort((a, b) => Number(a.era) - Number(b.era))
-                );
+                const payoutsData = validatorPayouts
+                  .filter((payout) => payout !== undefined)
+                  .sort((a, b) => Number(a.era) - Number(b.era));
+
+                setPayouts(payoutsData);
+                setCachedPayouts((previous) => ({
+                  ...previous,
+                  [address]: payoutsData,
+                }));
                 setIsLoading(false);
               }
             }
@@ -281,7 +299,7 @@ export default function usePayouts(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint, setCachedPayouts]);
 
   return useFormatReturnType({
     isLoading,

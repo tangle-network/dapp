@@ -1,15 +1,15 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import { ServiceType } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
-import { AllocationChartVariant } from './AllocationChart';
-import AllocationStepContents from './AllocationStepContents';
-import AmountInput from './AmountInput';
-import RolesInput from './RolesInput';
-import { RestakingAllocationMap } from './types';
+import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
+import { RestakingService } from '../../../types';
+import { formatTokenBalance } from '../../../utils/polkadot';
+import { AllocationChartVariant } from '../AllocationChart';
+import AllocationStepContainer from '../AllocationStepContainer';
+import { RestakingAllocationMap } from '../types';
+import SharedAmountInput from './SharedAmountInput';
+import SharedRolesInput from './SharedRolesInput';
 
 export type SharedAllocationStepProps = {
   restakeAmount: BN | null;
@@ -27,14 +27,14 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   const { maxRestakingAmount } = useRestakingLimits();
 
   const remainingAmount =
-    maxRestakingAmount?.sub(restakeAmount ?? new BN(0)) ?? null;
+    maxRestakingAmount?.sub(restakeAmount ?? BN_ZERO) ?? null;
 
-  const [selectedRoles, setSelectedRoles] = useState<ServiceType[]>(
-    Object.keys(allocations) as ServiceType[]
+  const [selectedRoles, setSelectedRoles] = useState<RestakingService[]>(
+    Object.keys(allocations) as RestakingService[]
   );
 
   const handleToggleRole = useCallback(
-    (role: ServiceType) => {
+    (role: RestakingService) => {
       const isSelected = selectedRoles.includes(role);
 
       if (isSelected) {
@@ -53,32 +53,32 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
     const nextAllocations: RestakingAllocationMap = {};
 
     // Shared roles profile allocations have their amounts
-    // set to `null`.
+    // set to zero.
     for (const selectedRole of selectedRoles) {
-      nextAllocations[selectedRole] = null;
+      nextAllocations[selectedRole] = BN_ZERO;
     }
 
     setAllocations(nextAllocations);
   }, [selectedRoles, setAllocations]);
 
   return (
-    <AllocationStepContents
-      allocatedAmount={restakeAmount ?? new BN(0)}
+    <AllocationStepContainer
+      allocatedAmount={restakeAmount ?? BN_ZERO}
       allocations={allocations}
       variant={AllocationChartVariant.SHARED}
     >
-      <AmountInput
+      <SharedAmountInput
         id="shared-allocation-amount"
         title="Total Restake"
-        amount={restakeAmount}
+        amount={restakeAmount ?? BN_ZERO}
         setAmount={setRestakeAmount}
       />
 
-      <RolesInput
+      <SharedRolesInput
         id="shared-allocation-roles-opt-in"
         title="Roles Opt-in"
-        roles={Object.values(ServiceType)}
-        selectedRoles={selectedRoles}
+        services={Object.values(RestakingService)}
+        selectedServices={selectedRoles}
         onToggleRole={handleToggleRole}
       />
 
@@ -86,7 +86,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
         Remaining:{' '}
         {remainingAmount !== null ? formatTokenBalance(remainingAmount) : '—'}
       </Typography>
-    </AllocationStepContents>
+    </AllocationStepContainer>
   );
 };
 

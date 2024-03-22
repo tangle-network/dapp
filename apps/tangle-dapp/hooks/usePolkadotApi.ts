@@ -2,6 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 
+import useRpcEndpointStore from '../context/useRpcEndpointStore';
 import ensureError from '../utils/ensureError';
 import { getPolkadotApiPromise } from '../utils/polkadot';
 import usePromise from './usePromise';
@@ -73,11 +74,16 @@ function usePolkadotApi<T>(
   fetcher: PolkadotApiFetcher<T>,
   swrKey?: PolkadotApiSwrKey
 ) {
+  const { rpcEndpoint } = useRpcEndpointStore();
+
   const {
     result: polkadotApi,
     isLoading: isApiLoading,
     error: apiError,
-  } = usePromise<ApiPromise | null>(getPolkadotApiPromise, null);
+  } = usePromise<ApiPromise | null>(
+    useCallback(() => getPolkadotApiPromise(rpcEndpoint), [rpcEndpoint]),
+    null
+  );
 
   const [error, setError] = useState<Error | null>(apiError);
 

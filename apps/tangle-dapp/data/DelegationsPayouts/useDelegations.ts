@@ -5,7 +5,9 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useRpcEndpointStore from '../../context/useRpcEndpointStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Delegator } from '../../types';
 import {
   formatTokenBalance,
@@ -22,9 +24,16 @@ export default function useDelegations(
     delegators: [],
   }
 ) {
-  const [delegators, setDelegators] = useState(defaultValue.delegators);
+  const {
+    valueAfterMount: cachedNominations,
+    setWithPreviousValue: setCachedNominations,
+  } = useLocalStorage(LocalStorageKey.Nominations, true);
+  const [delegators, setDelegators] = useState(
+    (cachedNominations && cachedNominations[address]) ?? defaultValue.delegators
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -40,8 +49,8 @@ export default function useDelegations(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
+        const apiSub = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
         setIsLoading(true);
 
@@ -55,12 +64,16 @@ export default function useDelegations(
                 const ledger = await apiPromise.query.staking.ledger(
                   target.toString()
                 );
+
+                // TODO: Ledger may not always be available. This isn't the best way to handle this.
                 const ledgerData = ledger.unwrapOrDefault();
+
                 const selfStaked = new u128(
                   apiPromise.registry,
                   ledgerData.total.toString()
                 );
-                const selfStakedBalance = await formatTokenBalance(selfStaked);
+
+                const selfStakedBalance = formatTokenBalance(selfStaked);
 
                 const isActive = await apiPromise.query.session
                   .validators()
@@ -70,15 +83,21 @@ export default function useDelegations(
                     )
                   );
 
-                const identity = await getValidatorIdentity(target.toString());
+                const identity = await getValidatorIdentity(
+                  rpcEndpoint,
+                  target.toString()
+                );
 
                 const commission = await getValidatorCommission(
+                  rpcEndpoint,
                   target.toString()
                 );
 
                 const delegationsValue = await getTotalNumberOfNominators(
+                  rpcEndpoint,
                   target.toString()
                 );
+
                 const delegations = delegationsValue?.toString();
 
                 const currentEra = await apiPromise.query.staking.currentEra();
@@ -105,6 +124,10 @@ export default function useDelegations(
 
             if (isMounted) {
               setDelegators(delegators);
+              setCachedNominations((previous) => ({
+                ...previous,
+                [address]: delegators,
+              }));
               setIsLoading(false);
             }
           });
@@ -124,7 +147,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint, setCachedNominations]);
 
   return useFormatReturnType({
     isLoading,
