@@ -22,6 +22,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       supportedWallets,
       platformId,
       targetTypedChainIds,
+      contentDefaultText,
       ...props
     },
     ref
@@ -36,16 +37,6 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       return apiConfig.wallets[walletId];
     }, [apiConfig.wallets, connectingWalletId, failedWalletId]);
 
-    const isNotInstalledError = useMemo(() => {
-      if (!connectError) {
-        return false;
-      }
-
-      return (
-        connectError instanceof WalletNotInstalledError && connectError.walletId
-      );
-    }, [connectError]);
-
     const errorMessage = useMemo(() => {
       if (!connectError) {
         return;
@@ -53,22 +44,6 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
 
       return connectError.message;
     }, [connectError]);
-
-    // If the error about not installed wallet is shown,
-    // we should show download button text
-    const errorBtnText = useMemo(() => {
-      if (!connectError || !isNotInstalledError) {
-        return;
-      }
-
-      const wallet = getCurrentWallet();
-      if (!wallet) {
-        return;
-      }
-
-      const walletName = wallet?.name ?? 'Wallet';
-      return `Download ${walletName}`;
-    }, [connectError, getCurrentWallet, isNotInstalledError]);
 
     const handleOpenChange = useCallback(
       (isOpen: boolean) => {
@@ -98,15 +73,9 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
           return;
         }
 
-        if (isNotInstalledError) {
-          window.open(downloadURL, '_blank');
-          return;
-        }
-
         await connectWallet(selectedWallet);
       },
-      // prettier-ignore
-      [connectWallet, downloadURL, isNotInstalledError, notificationApi, selectedWallet]
+      [connectWallet, notificationApi, selectedWallet]
     );
 
     return (
@@ -124,11 +93,11 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
               }
               onClose={() => toggleModal(false)}
               connectingWalletId={connectingWalletId}
-              errorBtnText={errorBtnText}
               errorMessage={errorMessage}
               failedWalletId={failedWalletId}
               onTryAgainBtnClick={handleTryAgainBtnClick}
               downloadWalletURL={downloadURL}
+              contentDefaultText={contentDefaultText}
             />
           </ModalContent>
         </Modal>

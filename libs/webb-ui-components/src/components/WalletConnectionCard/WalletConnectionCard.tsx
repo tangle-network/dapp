@@ -25,6 +25,7 @@ export const WalletConnectionCard = forwardRef<
       getHelpURL,
       onTryAgainBtnClick,
       wallets,
+      contentDefaultText,
       ...props
     },
     ref
@@ -82,6 +83,7 @@ export const WalletConnectionCard = forwardRef<
                 errorBtnText={errorBtnText}
                 errorMessage={errorMessage}
                 onTryAgainBtnClick={onTryAgainBtnClick}
+                contentDefaultText={contentDefaultText}
               />
             </div>
 
@@ -128,6 +130,7 @@ export const WalletConnectionCard = forwardRef<
                 errorBtnText={errorBtnText}
                 errorMessage={errorMessage}
                 onTryAgainBtnClick={onTryAgainBtnClick}
+                contentDefaultText={contentDefaultText}
               />
             </div>
           )}
@@ -148,7 +151,11 @@ export const WalletConnectionCard = forwardRef<
  * Internal components *
  ***********************/
 
-type PickedKeys = 'onTryAgainBtnClick' | 'errorBtnText' | 'errorMessage';
+type PickedKeys =
+  | 'onTryAgainBtnClick'
+  | 'errorBtnText'
+  | 'errorMessage'
+  | 'contentDefaultText';
 
 const WalletContent = forwardRef<
   HTMLDivElement,
@@ -165,6 +172,7 @@ const WalletContent = forwardRef<
       errorBtnText,
       errorMessage,
       failedWallet,
+      contentDefaultText,
       onTryAgainBtnClick,
       ...props
     },
@@ -235,15 +243,16 @@ const WalletContent = forwardRef<
               Connect wallet
             </Typography>
 
-            <Typography
-              variant="body2"
-              fw="semibold"
-              ta="center"
-              className="text-mono-120 dark:text-mono-60"
-            >
-              Connect your wallet to start bridging your tokens privately across
-              chains
-            </Typography>
+            {contentDefaultText && (
+              <Typography
+                variant="body2"
+                fw="semibold"
+                ta="center"
+                className="text-mono-120 dark:text-mono-60"
+              >
+                {contentDefaultText}
+              </Typography>
+            )}
           </>
         )}
       </div>

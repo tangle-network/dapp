@@ -36,6 +36,7 @@ export const WalletModalContainer = () => {
       supportedWallets={supportedWallets}
       notificationApi={notificationApi}
       apiConfig={apiConfig}
+      contentDefaultText="Connect your wallet to start bridging your tokens privately across chains"
     />
   );
 };

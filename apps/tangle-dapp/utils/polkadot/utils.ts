@@ -20,7 +20,7 @@ export const getTxPromise = async (
       {
         signer: injector.signer,
         // when sending multiple transactions in quick succession (see batching above), there may be transactions in the pool that has the same nonce
-        // override the nonce, following the PolkadotJS doc: https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-take-the-pending-tx-pool-into-account-in-my-nonce
+        // override the nonce, following the Polkadot{.js} doc: https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-take-the-pending-tx-pool-into-account-in-my-nonce
         nonce: -1,
       },
       ({ status, dispatchError, events }) => {
