@@ -1,6 +1,5 @@
 'use client';
 
-import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Modal, ModalContent } from '../Modal';
 import { WalletConnectionCard } from '../WalletConnectionCard';
