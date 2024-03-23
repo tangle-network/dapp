@@ -62,4 +62,9 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
    * This button only displays on the failed state
    */
   onTryAgainBtnClick?: PropsOf<'button'>['onClick'];
+
+  /**
+   * The default text to display when there's no connection and error yet
+   */
+  contentDefaultText?: string;
 }

@@ -33,8 +33,8 @@ export enum WebbErrorCodes {
   NoClaimsPalletFound,
   /* Failed to parse deposit note */
   NoteParsingFailure,
-  /* PolkaDot extension not installed */
-  PolkaDotExtensionNotInstalled,
+  /* Polkadot{.js} extension not installed */
+  PolkadotJSExtensionNotInstalled,
   /* Talisman extension not installed */
   TalismanExtensionNotInstalled,
   /* SubWallet extension not installed */
@@ -191,34 +191,34 @@ export class WebbError extends Error {
           message: 'Failed to parse deposit note',
         };
 
-      case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+      case WebbErrorCodes.PolkadotJSExtensionNotInstalled:
         return {
           code,
-          message: 'PolkaDot extension no installed',
+          message: 'PolkadotJS extension not installed',
         };
 
       case WebbErrorCodes.TalismanExtensionNotInstalled:
         return {
           code,
-          message: 'Talisman extension no installed',
+          message: 'Talisman extension not installed',
         };
 
       case WebbErrorCodes.SubWalletExtensionNotInstalled:
         return {
           code: WebbErrorCodes.SubWalletExtensionNotInstalled,
-          message: 'SubWallet extension no installed',
+          message: 'SubWallet extension not installed',
         };
 
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         return {
           code,
-          message: 'MetaMask extension no installed',
+          message: 'MetaMask extension not installed',
         };
 
       case WebbErrorCodes.RainbowExtensionNotInstalled:
         return {
           code,
-          message: 'Rainbow extension no installed',
+          message: 'Rainbow extension not installed',
         };
 
       case WebbErrorCodes.UnknownWallet:

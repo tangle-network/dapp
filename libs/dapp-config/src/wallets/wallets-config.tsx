@@ -132,7 +132,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     id: WalletId.Polkadot,
     Logo: <PolkadotJsIcon />,
     name: 'polkadot-js',
-    title: `PolkadotJS Extension`,
+    title: `Polkadot{.js}`,
     platform: 'Substrate',
     enabled: true,
     async detect() {

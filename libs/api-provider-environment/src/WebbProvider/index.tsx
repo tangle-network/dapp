@@ -276,7 +276,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           break;
         case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         case WebbErrorCodes.RainbowExtensionNotInstalled:
-        case WebbErrorCodes.PolkaDotExtensionNotInstalled:
+        case WebbErrorCodes.PolkadotJSExtensionNotInstalled:
         case WebbErrorCodes.TalismanExtensionNotInstalled:
         case WebbErrorCodes.SubWalletExtensionNotInstalled:
           {

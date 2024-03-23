@@ -43,6 +43,7 @@ export const WalletModalContainer = () => {
         evm: PresetTypedChainId.TangleTestnetEVM,
         substrate: PresetTypedChainId.TangleTestnetNative,
       }}
+      contentDefaultText="Connect your EVM or Substrate wallet to interact on the Tangle Network"
     />
   );
 };

@@ -81,4 +81,9 @@ export interface WalletModalProps extends PropsOf<'div'> {
     evm?: number;
     substrate?: number;
   };
+
+  /**
+   * The default text to display when there's no connection and error yet
+   */
+  contentDefaultText?: string;
 }
