@@ -4,7 +4,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { firstValueFrom, Subscription } from 'rxjs';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiRx } from '../../utils/polkadot';
@@ -24,7 +24,7 @@ export default function useValidatorCountSubscription(
   const [value2, setValue2] = useState(defaultValue.value2);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   // After mount, try to get the cached value and set it.
   useEffect(() => {

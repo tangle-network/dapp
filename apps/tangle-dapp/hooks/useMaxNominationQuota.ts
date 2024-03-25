@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import { getMaxNominationQuota } from '../utils/polkadot';
 
 const useMaxNominationQuota = () => {
   const [maxNominationQuota, setMaxNominationQuota] = useState(0);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     async function fetchMaxNominationQuota() {

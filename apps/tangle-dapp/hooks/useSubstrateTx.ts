@@ -5,7 +5,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
@@ -39,7 +39,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     if (!notifyStatusUpdates) {

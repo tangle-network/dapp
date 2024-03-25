@@ -3,12 +3,12 @@ import { Network } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useEffect, useState } from 'react';
 
 import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../constants/networks';
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 const useNetworkState = () => {
-  const { setRpcEndpoint } = useRpcEndpointStore();
+  const { network, setNetwork } = useNetworkStore();
   const [isCustom, setIsCustom] = useState(false);
 
   const {
@@ -22,8 +22,6 @@ const useNetworkState = () => {
     get: getCachedNetworkName,
     remove: removeCachedNetworkName,
   } = useLocalStorage(LocalStorageKey.WEBB_NETWORK_NAME);
-
-  const [network, setNetwork] = useState<Network | null>(null);
 
   // Load the initial network from local storage.
   useEffect(() => {
@@ -61,13 +59,12 @@ const useNetworkState = () => {
 
     const initialNetwork = getCachedInitialNetwork();
 
-    setRpcEndpoint(initialNetwork.polkadotEndpoint);
     setNetwork(initialNetwork);
   }, [
     getCachedCustomRpcEndpoint,
     getCachedNetworkName,
     removeCachedNetworkName,
-    setRpcEndpoint,
+    setNetwork,
   ]);
 
   // Set global RPC endpoint when the network changes,
@@ -91,10 +88,6 @@ const useNetworkState = () => {
         }) with RPC endpoint: ${newNetwork.polkadotEndpoint}`
       );
 
-      // This should trigger a re-render of all places that use the
-      // RPC endpoint, leading them to re-connect to the new endpoint.
-      setRpcEndpoint(newNetwork.polkadotEndpoint);
-
       if (isCustom) {
         removeCachedNetworkName();
         setCachedCustomRpcEndpoint(newNetwork.polkadotEndpoint);
@@ -111,7 +104,7 @@ const useNetworkState = () => {
       removeCachedNetworkName,
       setCachedCustomRpcEndpoint,
       setCachedNetworkName,
-      setRpcEndpoint,
+      setNetwork,
     ]
   );
 

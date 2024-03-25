@@ -5,7 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
@@ -20,7 +20,7 @@ export default function useActiveAndDelegationCountSubscription(
   const [error, setError] = useState<Error | null>(null);
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const { get: getCachedValue, set: setCache } = useLocalStorage(
     LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,

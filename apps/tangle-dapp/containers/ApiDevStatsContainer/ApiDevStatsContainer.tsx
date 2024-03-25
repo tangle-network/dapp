@@ -4,7 +4,7 @@ import { Expand } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import usePromise from '../../hooks/usePromise';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
@@ -21,7 +21,7 @@ function formatBytes(bytes: number): string {
 
 const ApiDevStats: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const { result: api } = usePromise(
     useCallback(() => getPolkadotApiPromise(rpcEndpoint), [rpcEndpoint]),

@@ -4,7 +4,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import useFormatReturnType from '../hooks/useFormatReturnType';
 import { getPolkadotApiRx } from '../utils/polkadot';
 
@@ -12,7 +12,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
   const [session, setSession] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;

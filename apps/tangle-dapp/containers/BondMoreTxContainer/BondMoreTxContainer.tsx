@@ -16,7 +16,7 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
@@ -33,7 +33,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToBond, setAmountToBond] = useState(0);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {

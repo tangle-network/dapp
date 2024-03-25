@@ -23,7 +23,7 @@ import {
   PAYMENT_DESTINATION_OPTIONS,
   TANGLE_TOKEN_UNIT,
 } from '../../constants';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
@@ -185,7 +185,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const executeDelegate: () => Promise<void> = useCallback(async () => {
     try {

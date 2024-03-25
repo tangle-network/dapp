@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
-import { TANGLE_TESTNET_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_TESTNET_EVM_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useMemo } from 'react';
 
 import { TxConfirmationModalProps } from './types';
@@ -31,7 +31,7 @@ export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
     if (!txHash) return null;
 
     if (txType === 'evm') {
-      return `${TANGLE_TESTNET_EXPLORER_URL}/tx/${txHash}`;
+      return `${TANGLE_TESTNET_EVM_EXPLORER_URL}/tx/${txHash}`;
     } else {
       const explorer =
         apiConfig.chains[PresetTypedChainId.TangleTestnetNative]?.blockExplorers

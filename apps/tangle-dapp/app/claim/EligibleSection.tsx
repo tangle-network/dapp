@@ -24,7 +24,7 @@ import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import getStatement from '../../utils/getStatement';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
@@ -53,7 +53,7 @@ const EligibleSection: FC<Props> = ({
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
   const [step, setStep] = useState(Step.INPUT_ADDRESS);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
