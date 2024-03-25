@@ -40,6 +40,7 @@ export type Network = {
   subqueryEndpoint: string;
   polkadotEndpoint: string;
   polkadotExplorer: string;
+  evmExplorer?: string;
   avatar: string;
 };
 
@@ -71,7 +72,7 @@ export const TANGLE_WHITEPAPER_URL =
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
-export const TANGLE_TESTNET_EXPLORER_URL =
+export const TANGLE_TESTNET_EVM_EXPLORER_URL =
   'https://testnet-explorer.tangle.tools';
 
 export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
@@ -246,6 +247,7 @@ export const webbNetworks: webbNetworksType[] = [
         subqueryEndpoint: SUBQUERY_ENDPOINT,
         polkadotEndpoint: TANGLE_RPC_ENDPOINT,
         polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+        evmExplorer: TANGLE_TESTNET_EVM_EXPLORER_URL,
         avatar: '',
       },
     ],
@@ -299,7 +301,7 @@ export const footerNavs: FooterNavsType = {
   network: [
     {
       name: 'Block Explorer',
-      href: TANGLE_TESTNET_EXPLORER_URL,
+      href: TANGLE_TESTNET_EVM_EXPLORER_URL,
       ...commonExternalProps,
     },
     {

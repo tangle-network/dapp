@@ -2,11 +2,10 @@ import { notificationApi } from '@webb-tools/webb-ui-components';
 import { Network } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useEffect, useState } from 'react';
 
-import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../../constants/networks';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import createCustomNetwork from './createCustomNetwork';
-import testRpcEndpointConnection from './testRpcEndpointConnection';
+import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../constants/networks';
+import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import createCustomNetwork from '../utils/createCustomNetwork';
+import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 const useNetworkState = () => {
   const { setRpcEndpoint } = useRpcEndpointStore();
@@ -124,3 +123,27 @@ const useNetworkState = () => {
 };
 
 export default useNetworkState;
+
+function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      const ws = new WebSocket(rpcEndpoint);
+
+      const handleOpen = () => {
+        ws.removeEventListener('open', handleOpen);
+        ws.close();
+        resolve(true);
+      };
+
+      const handleCloseEvent = () => {
+        ws.removeEventListener('close', handleCloseEvent);
+        resolve(false);
+      };
+
+      ws.addEventListener('open', handleOpen);
+      ws.addEventListener('close', handleCloseEvent);
+    } catch {
+      resolve(false);
+    }
+  });
+}

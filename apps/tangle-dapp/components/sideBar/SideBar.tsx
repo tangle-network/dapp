@@ -5,7 +5,8 @@ import { setSideBarCookieOnToggle } from '@webb-tools/webb-ui-components/next-ut
 import { usePathname } from 'next/navigation';
 import { type FC } from 'react';
 
-import sideBarProps from './sideBarProps';
+import useNetworkState from '../../hooks/useNetworkState';
+import getSideBarProps from './sideBarProps';
 
 interface SideBarProps {
   isExpandedAtDefault?: boolean;
@@ -13,6 +14,13 @@ interface SideBarProps {
 
 const SideBar: FC<SideBarProps> = ({ isExpandedAtDefault }) => {
   const pathname = usePathname();
+  const { network } = useNetworkState();
+  console.log('network :', network);
+
+  const sideBarProps = getSideBarProps(
+    network?.polkadotExplorer,
+    network?.evmExplorer
+  );
 
   return (
     <SideBarCmp
