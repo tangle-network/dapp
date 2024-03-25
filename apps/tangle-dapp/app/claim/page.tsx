@@ -16,7 +16,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
@@ -30,7 +30,7 @@ export default function Page() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
   const { activeAccount, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   // Default to null to indicate that we are still checking
   // If false, then we know that the user is not eligible

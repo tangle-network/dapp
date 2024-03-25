@@ -3,7 +3,7 @@ import { notificationApi } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import { getPolkadotApiRx } from '../utils/polkadot';
 
 export default function useIsFirstTimeNominatorSubscription(address: string) {
@@ -12,7 +12,7 @@ export default function useIsFirstTimeNominatorSubscription(address: string) {
   const [isLoadingBonded, setIsLoadingBonded] = useState(true);
   const [isLoadingNominators, setIsLoadingNominators] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
   const isFirstTimeNominatorLoading = isLoadingBonded || isLoadingNominators;
 
   const isFirstTimeNominator = useMemo(() => {

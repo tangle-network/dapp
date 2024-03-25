@@ -16,7 +16,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -39,7 +39,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToRebond, setAmountToRebond] = useState(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {

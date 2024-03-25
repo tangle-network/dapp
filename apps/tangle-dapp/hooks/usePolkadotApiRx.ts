@@ -2,7 +2,7 @@ import { ApiRx } from '@polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import { getPolkadotApiRx } from '../utils/polkadot';
 import usePromise from './usePromise';
@@ -51,7 +51,7 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const activeSubstrateAddress = useSubstrateAddress();
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
 
   const { result: polkadotApiRx } = usePromise(

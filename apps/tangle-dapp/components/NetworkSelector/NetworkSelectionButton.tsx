@@ -11,9 +11,9 @@ import {
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import createCustomNetwork from './createCustomNetwork';
+import useNetworkState from '../../hooks/useNetworkState';
+import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
-import useNetworkState from './useNetworkState';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
 export const TANGLE_TESTNET_NATIVE_CHAIN_NAME = 'Tangle Testnet Native';

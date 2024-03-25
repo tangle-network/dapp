@@ -17,13 +17,11 @@ import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/componen
 import {
   TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
-  TANGLE_TESTNET_EXPLORER_URL,
-  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 import { PagePath } from '../../types';
 
-const sideBarItems: SideBarItemProps[] = [
+const sideBarStaticItems: SideBarItemProps[] = [
   {
     name: 'Account',
     href: PagePath.ACCOUNT,
@@ -69,20 +67,6 @@ const sideBarItems: SideBarItemProps[] = [
     Icon: GiftLineIcon,
     subItems: [],
   },
-  {
-    Icon: AppsLine,
-    href: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-    isInternal: false,
-    name: 'Substrate Portal',
-    subItems: [],
-  },
-  {
-    Icon: GlobalLine,
-    href: TANGLE_TESTNET_EXPLORER_URL,
-    isInternal: false,
-    name: 'EVM Explorer',
-    subItems: [],
-  },
 ];
 
 const sideBarFooter: SideBarFooterType = {
@@ -93,12 +77,41 @@ const sideBarFooter: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-const sideBarProps: SidebarProps = {
-  ClosedLogo: SidebarTangleClosedIcon,
-  Logo: TangleLogo,
-  footer: sideBarFooter,
-  items: sideBarItems,
-  logoLink: TANGLE_MKT_URL,
-};
+export default function getSideBarProps(
+  substratePortalHref?: string,
+  evmExplorerHref?: string
+): SidebarProps {
+  const sideBarItems: SideBarItemProps[] = [
+    ...sideBarStaticItems,
+    ...(substratePortalHref
+      ? [
+          {
+            Icon: AppsLine,
+            href: substratePortalHref,
+            isInternal: false,
+            name: 'Substrate Portal',
+            subItems: [],
+          },
+        ]
+      : []),
+    ...(evmExplorerHref
+      ? [
+          {
+            Icon: GlobalLine,
+            href: evmExplorerHref,
+            isInternal: false,
+            name: 'EVM Explorer',
+            subItems: [],
+          },
+        ]
+      : []),
+  ];
 
-export default sideBarProps;
+  return {
+    ClosedLogo: SidebarTangleClosedIcon,
+    Logo: TangleLogo,
+    footer: sideBarFooter,
+    items: sideBarItems,
+    logoLink: TANGLE_MKT_URL,
+  } satisfies SidebarProps;
+}
