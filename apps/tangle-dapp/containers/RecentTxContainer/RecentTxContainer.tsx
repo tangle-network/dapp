@@ -27,8 +27,8 @@ const RecentTxContainer: FC = () => {
       <div className="flex flex-col gap-3 justify-center items-center h-full text-center">
         <Typography variant="body1" className="text-center max-w-lg">
           Soon, you&apos;ll be able to conveniently glance at your recent
-          transactions, like Transfers, Vesting, Airdrop claims, and Staking
-          Rewards. Stay tuned!
+          transactions, like transfers, vesting, airdrop claims, and staking
+          rewards. Stay tuned!
         </Typography>
       </div>
     </GlassCard>

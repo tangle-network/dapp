@@ -6,9 +6,9 @@ import type { ElementRef } from 'react';
 import { forwardRef } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import Identity from '../Identity';
 import TangleCard from '../TangleCard';
 import Actions from './Actions';
+import Identity from './Identity';
 import TotalBalance from './TotalBalance';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(

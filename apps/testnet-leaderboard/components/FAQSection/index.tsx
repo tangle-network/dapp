@@ -1,4 +1,3 @@
-import { Typography } from '@webb-tools/webb-ui-components';
 import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
 import FAQContainer from '@webb-tools/webb-ui-components/containers/FAQSection';
 import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
@@ -33,7 +32,7 @@ const faqItems = [
   {
     question: 'What rewards can I expect by participating?',
     answer:
-      'Leaderboard participants will recieve a portion of genesis tokens via the Tangle Network Token Airdrop.',
+      'Leaderboard participants will receive a portion of genesis tokens via the Tangle Network Token airdrop.',
   },
 ];
 

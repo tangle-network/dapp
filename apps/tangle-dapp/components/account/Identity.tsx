@@ -18,7 +18,7 @@ import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { convertToSubstrateAddress } from '../utils';
+import { convertToSubstrateAddress } from '../../utils';
 
 export type IdentityProps = {
   address: string;

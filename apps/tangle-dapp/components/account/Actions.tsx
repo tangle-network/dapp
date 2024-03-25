@@ -81,7 +81,7 @@ const Actions: FC = () => {
             tooltip={
               <>
                 Congratulations, you are eligible for the Tangle Network
-                Airdrop! Click here to visit the <strong>Claim Airdrop</strong>{' '}
+                airdrop! Click here to visit the <strong>Claim Airdrop</strong>{' '}
                 page.
               </>
             }

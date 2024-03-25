@@ -80,20 +80,20 @@ export default function Page() {
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: `Claim your $TNT Airdrop`,
+        title: `Claim your $TNT airdrop`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo === false) {
       return {
-        title: `You are not eligible for $TNT Airdrop`,
+        title: `You are not eligible for $TNT airdrop`,
         subTitle: 'OOPS!',
       };
     }
 
     return {
-      title: `You have unclaimed $TNT Airdrop!`,
+      title: `You have unclaimed $TNT airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
   }, [claimInfo]);
@@ -175,7 +175,7 @@ export default function Page() {
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
               distributing 5 million TNT tokens to the community. Check
-              eligibility below to see if you qualify for TNT Airdrop!
+              eligibility below to see if you qualify for TNT airdrop!
             </>
           ) : claimInfo ? (
             <>
