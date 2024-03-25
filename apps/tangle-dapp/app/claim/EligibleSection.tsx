@@ -175,7 +175,7 @@ const EligibleSection: FC<Props> = ({
 
         <div className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
-            You will receive...
+            You will receive the liquid balance of...
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
@@ -187,6 +187,9 @@ const EligibleSection: FC<Props> = ({
                     : shortenString(recipient)
                 }`
               : ''}
+          </Typography>
+          <Typography variant="body1" fw="bold" ta="center">
+            any additional balance will be vesting in your account.
           </Typography>
         </div>
 
