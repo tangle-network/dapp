@@ -40,31 +40,33 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     <div className="flex bg-body h-screen">
       <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
 
-      <main className="flex flex-col justify-between flex-1 h-full max-w-[1448px] m-auto lg:px-12 md:px-8 px-4 overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col justify-between space-y-5">
-          <div className="flex items-center justify-between py-6">
-            <div className="flex items-center space-x-4 lg:space-x-0">
-              <SideBarMenu />
+      <main className="flex-1 h-full lg:px-12 md:px-8 px-4 overflow-y-auto scrollbar-hide">
+        <div className="max-w-[1448px] m-auto flex flex-col justify-between">
+          <div className="flex flex-col justify-between space-y-5">
+            <div className="flex items-center justify-between py-6">
+              <div className="flex items-center space-x-4 lg:space-x-0">
+                <SideBarMenu />
 
-              <Breadcrumbs className="hidden md:block" />
+                <Breadcrumbs className="hidden md:block" />
+              </div>
+
+              <WalletAndChainContainer />
             </div>
 
-            <WalletAndChainContainer />
+            <Breadcrumbs className="md:hidden !mt-0" />
+
+            {children}
+
+            <WalletModalContainer />
           </div>
 
-          <Breadcrumbs className="md:hidden !mt-0" />
-
-          {children}
-
-          <WalletModalContainer />
+          <Footer
+            socialsLinkOverrides={SOCIAL_LINK_OVERRIDES}
+            bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
+            isMinimal
+            className="py-8"
+          />
         </div>
-
-        <Footer
-          socialsLinkOverrides={SOCIAL_LINK_OVERRIDES}
-          bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
-          isMinimal
-          className="py-8"
-        />
       </main>
 
       <TxConfirmationModalContainer />
