@@ -149,9 +149,6 @@ const ActionItem = (props: {
     hasNotificationDot = false,
   } = props;
 
-  const cursorClass = isDisabled ? '!cursor-not-allowed' : 'cursor-pointer';
-  const isDisabledClass = isDisabled ? 'opacity-50' : '';
-
   const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
       return;
@@ -164,15 +161,14 @@ const ActionItem = (props: {
     <div
       className={twMerge(
         'inline-flex flex-col justify-center items-center gap-2',
-        isDisabledClass,
-        cursorClass
+        isDisabled && 'opacity-50'
       )}
     >
       <div
         onClick={handleClick}
         className={twMerge(
           'inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0',
-          cursorClass
+          isDisabled ? '!cursor-not-allowed' : 'cursor-pointer'
         )}
       >
         {/* Notification dot */}
