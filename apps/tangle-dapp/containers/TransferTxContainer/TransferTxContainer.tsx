@@ -66,12 +66,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const accAddress = useActiveAccountAddress();
   const [amount, setAmount] = useState('');
   const [receiverAddress, setReceiverAddress] = useState('');
-  const { transferrable: transferrableBalance } = useBalances();
+  const { free: freeBalance } = useBalances();
 
-  const formattedTransferrableBalance =
-    transferrableBalance !== null
-      ? formatTokenBalance(transferrableBalance, false)
-      : null;
+  const formattedFreeBalance =
+    freeBalance !== null ? formatTokenBalance(freeBalance, false) : null;
 
   const {
     execute: executeTransferTx,
@@ -110,16 +108,17 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   }, [reset, status]);
 
   const setMaxAmount = useCallback(() => {
-    if (formattedTransferrableBalance === null) {
+    if (formattedFreeBalance === null) {
       return;
     }
 
-    setAmount(formattedTransferrableBalance);
-  }, [formattedTransferrableBalance]);
+    setAmount(formattedFreeBalance);
+  }, [formattedFreeBalance]);
 
   const isReady = status !== TxStatus.PROCESSING;
   const isDataValid = amount !== '' && receiverAddress !== '';
   const canInitiateTx = isReady && isDataValid;
+
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
@@ -142,6 +141,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           </Typography>
 
           <TxConfirmationRing
+            title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
+            isInNextApp
             source={{
               address: accAddress,
               typedChainId: getTypedChainIdFromAddr(accAddress),
@@ -150,8 +151,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               address: receiverAddress,
               typedChainId: getTypedChainIdFromAddr(receiverAddress),
             }}
-            title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
-            isInNextApp
           />
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
@@ -165,11 +164,11 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
             <RecipientInput
               className="bg-mono-20 dark:bg-mono-160"
+              title="Receiver Address"
+              placeholder="EVM or Substrate"
               onChange={(nextReceiverAddress) =>
                 setReceiverAddress(nextReceiverAddress)
               }
-              title="Receiver Address"
-              placeholder="EVM or Substrate"
             />
           </BridgeInputGroup>
 
@@ -191,15 +190,15 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           <div className="flex-1">
             <Button
               isFullWidth
-              isDisabled={
-                !canInitiateTx ||
-                executeTransferTx === null ||
-                !isValidReceiverAddress
-              }
               isLoading={!isReady}
               loadingText={getTxStatusText(status)}
               onClick={
                 executeTransferTx !== null ? executeTransferTx : undefined
+              }
+              isDisabled={
+                !canInitiateTx ||
+                executeTransferTx === null ||
+                !isValidReceiverAddress
               }
             >
               Send

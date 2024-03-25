@@ -7,8 +7,8 @@ import { forwardRef } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import TangleCard from '../TangleCard';
+import AccountAddress from './AccountAddress';
 import Actions from './Actions';
-import Identity from './Identity';
 import TotalBalance from './TotalBalance';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
@@ -20,10 +20,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         <div className="w-full space-y-5">
           <header>
             {activeAccountAddress !== null ? (
-              <Identity
-                address={activeAccountAddress}
-                iconTooltipContent="Account public key"
-              />
+              <AccountAddress activeAddress={activeAccountAddress} />
             ) : (
               <SkeletonLoader size="lg" />
             )}

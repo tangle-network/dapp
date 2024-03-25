@@ -8,17 +8,8 @@ import usePolkadotApiRx, {
 } from '../../hooks/usePolkadotApiRx';
 
 export type AccountBalances = {
-  /**
-   * The total amount of tokens in the account, including locked and
-   * transferrable tokens.
-   */
   total: BN | null;
-
-  /**
-   * Represents the amount of tokens that can be transferred.
-   */
-  transferrable: BN | null;
-
+  free: BN | null;
   locked: BN | null;
 };
 
@@ -33,15 +24,13 @@ const useBalances = (): AccountBalances => {
           const locked = accountInfo.data.frozen
             // Note that without the null/undefined check, an error
             // reports that `num` is undefined for some reason. Might be
-            // a gap in the type definitions of Polkadot JS.
+            // a gap in the type definitions of PolkadotJS.
             .add(accountInfo.data.miscFrozen || BN_ZERO)
             .add(accountInfo.data.feeFrozen || BN_ZERO);
 
-          const transferrable = accountInfo.data.free;
-
           return {
-            total: transferrable,
-            transferrable,
+            total: accountInfo.data.free.toBn(),
+            free: accountInfo.data.free.toBn(),
             locked,
           };
         })
@@ -67,7 +56,7 @@ const useBalances = (): AccountBalances => {
 
   return {
     total: balances?.total ?? null,
-    transferrable: balances?.transferrable ?? null,
+    free: balances?.free ?? null,
     locked: balances?.locked ?? null,
   };
 };

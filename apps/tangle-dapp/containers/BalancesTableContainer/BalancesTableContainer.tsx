@@ -24,7 +24,7 @@ import HeaderCell from './HeaderCell';
 import LockedBalanceDetails from './LockedBalanceDetails';
 
 const BalancesTableContainer: FC = () => {
-  const { transferrable, locked } = useBalances();
+  const { free, locked } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
@@ -66,7 +66,7 @@ const BalancesTableContainer: FC = () => {
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Transferrable Balance"
+              title="Free Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
@@ -80,22 +80,22 @@ const BalancesTableContainer: FC = () => {
           <div className="flex flex-col w-full">
             <HeaderCell title="Balance" />
 
-            {/* Transferrable balance */}
+            {/* Free balance */}
             <div className="flex flex-row justify-between">
-              <BalanceCell amount={transferrable} />
+              <BalanceCell amount={free} />
 
               <div className="flex flex-row gap-1 items-center p-3">
                 <BalanceAction
                   Icon={SendPlanLineIcon}
                   tooltip="Send"
-                  isDisabled={transferrable === null || transferrable.eqn(0)}
+                  isDisabled={free === null || free.eqn(0)}
                   onClick={() => setIsTransferModalOpen(true)}
                 />
 
                 <BalanceAction
                   Icon={CoinsStackedLineIcon}
                   tooltip="Nominate"
-                  isDisabled={transferrable === null || transferrable.eqn(0)}
+                  isDisabled={free === null || free.eqn(0)}
                   internalHref={StaticSearchQueryPath.NominationsTable}
                 />
               </div>
