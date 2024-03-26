@@ -21,7 +21,7 @@ import { twMerge } from 'tailwind-merge';
 import { convertToSubstrateAddress } from '../../utils';
 
 export type AccountAddressProps = {
-  activeAddress: string;
+  activeAddress: string | null;
   className?: string;
 };
 
@@ -31,7 +31,9 @@ const AccountAddress: FC<AccountAddressProps> = ({
 }) => {
   const [isHiddenValue] = useHiddenValue();
   const [displayAddress, setDisplayAddress] = useState(activeAddress);
-  const isEvmAccountAddress = isEthereumAddress(activeAddress);
+
+  const isEvmAccountAddress =
+    activeAddress === null ? null : isEthereumAddress(activeAddress);
 
   const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
     useState(isEvmAccountAddress);
@@ -54,6 +56,12 @@ const AccountAddress: FC<AccountAddressProps> = ({
 
   const updateAddress = useCallback(
     (isDisplayingEvmAddress: boolean) => {
+      if (activeAddress === null) {
+        setDisplayAddress(null);
+
+        return;
+      }
+
       const nextDisplayAddress = isDisplayingEvmAddress
         ? activeAddress
         : convertToSubstrateAddress(activeAddress);
@@ -71,7 +79,9 @@ const AccountAddress: FC<AccountAddressProps> = ({
 
   // Update the address when the active address prop changes.
   useEffect(() => {
-    updateAddress(isDisplayingEvmAddress);
+    if (isDisplayingEvmAddress !== null) {
+      updateAddress(isDisplayingEvmAddress);
+    }
   }, [isDisplayingEvmAddress, updateAddress, activeAddress]);
 
   const iconFillColorClass = 'dark:!fill-mono-80 !fill-mono-160';
@@ -79,7 +89,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
   return (
     <div className={twMerge('flex items-center gap-1', className)}>
       <IconWithTooltip
-        icon={<Avatar value={activeAddress} theme="ethereum" />}
+        icon={<Avatar value={activeAddress ?? '0x0'} theme="ethereum" />}
         content="Account public key"
       />
 
@@ -90,21 +100,25 @@ const AccountAddress: FC<AccountAddressProps> = ({
       <Tooltip>
         <TooltipTrigger className="cursor-default">
           <Typography variant="body1" fw="normal" className="text-mono-160">
-            {shortenFn(possiblyHiddenAddress, 5)}
+            {possiblyHiddenAddress !== null
+              ? shortenFn(possiblyHiddenAddress, 5)
+              : '--'}
           </Typography>
         </TooltipTrigger>
 
         <TooltipBody className="max-w-full">{displayAddress}</TooltipBody>
       </Tooltip>
 
-      <CopyWithTooltip
-        className="!bg-transparent !p-0"
-        iconClassName={iconFillColorClass}
-        copyLabel={`Copy ${
-          isDisplayingEvmAddress ? 'EVM' : 'Substrate'
-        } address`}
-        textToCopy={displayAddress}
-      />
+      {displayAddress !== null && (
+        <CopyWithTooltip
+          className="!bg-transparent !p-0"
+          iconClassName={iconFillColorClass}
+          copyLabel={`Copy ${
+            isDisplayingEvmAddress ? 'EVM' : 'Substrate'
+          } address`}
+          textToCopy={displayAddress}
+        />
+      )}
 
       {isEvmAccountAddress && (
         <Tooltip>

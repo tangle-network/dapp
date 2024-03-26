@@ -1,7 +1,6 @@
 import {
   HiddenValue,
   HiddenValueEye,
-  SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -42,23 +41,15 @@ const TotalBalance: FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {formattedTotal !== null ? (
-            <div className="flex gap-2 items-end py-2">
-              <Typography variant="h2" fw="bold" className="!leading-none">
-                <HiddenValue>{formattedTotal}</HiddenValue>
-              </Typography>
+          <div className="flex gap-2 items-end py-2">
+            <Typography variant="h2" fw="bold" className="!leading-none">
+              <HiddenValue>{formattedTotal ?? '--'}</HiddenValue>
+            </Typography>
 
-              <Typography
-                variant="h4"
-                fw="normal"
-                className="!leading-none pb-1"
-              >
-                {TANGLE_TOKEN_UNIT}
-              </Typography>
-            </div>
-          ) : (
-            <SkeletonLoader size="xl" />
-          )}
+            <Typography variant="h4" fw="normal" className="!leading-none pb-1">
+              {TANGLE_TOKEN_UNIT}
+            </Typography>
+          </div>
         </div>
       </div>
     </div>

@@ -44,7 +44,7 @@ const Actions: FC = () => {
       ? formatTokenBalance(claimableTokenAmount)
       : null;
 
-  const { isAirdropEligible } = useAirdropEligibility();
+  const { isEligible: isAirdropEligible } = useAirdropEligibility();
   const isPayoutsAvailable = usePayoutsAvailability();
 
   return (

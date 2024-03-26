@@ -7,7 +7,6 @@ import { Delegator, Payout, Validator } from '../types';
 export enum LocalStorageKey {
   ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
   WAITING_VALIDATOR_CACHE = 'waitingValidatorCache',
-  AIRDROP_ELIGIBILITY_CACHE = 'airdropEligibilityCache',
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
   ACTIVE_AND_DELEGATION_COUNT = 'activeAndDelegationCount',
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
@@ -36,9 +35,7 @@ export type NominationsCache = {
  * respective value types.
  */
 export type LocalStorageValueOf<T extends LocalStorageKey> =
-  T extends LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE
-    ? AirdropEligibilityCache
-    : T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
+  T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
     : T extends
         | LocalStorageKey.ACTIVE_VALIDATOR_CACHE

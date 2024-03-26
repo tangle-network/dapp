@@ -1,6 +1,5 @@
 'use client';
 
-import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import type { ElementRef } from 'react';
 import { forwardRef } from 'react';
@@ -19,11 +18,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
       <TangleCard {...props} ref={ref}>
         <div className="w-full space-y-5">
           <header>
-            {activeAccountAddress !== null ? (
-              <AccountAddress activeAddress={activeAccountAddress} />
-            ) : (
-              <SkeletonLoader size="lg" />
-            )}
+            <AccountAddress activeAddress={activeAccountAddress} />
           </header>
 
           <TotalBalance />
