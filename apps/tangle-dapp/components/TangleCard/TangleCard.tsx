@@ -20,7 +20,7 @@ const TangleCard = forwardRef<ElementRef<'div'>, TangleCardProps>(
       >
         {children}
 
-        <TangleBigLogo className="absolute top-[50%] translate-y-[-50%] right-0 translate-x-[30%] rounded-br-2xl" />
+        <TangleBigLogo className="absolute top-[50%] translate-y-[-50%] right-0 rounded-br-2xl" />
       </Card>
     );
   }

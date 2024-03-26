@@ -17,7 +17,7 @@ import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainCo
 import { WalletModalContainer } from '../WalletModalContainer';
 
 // Some specific overrides for the social links for use in the
-// footer in Tangle Dapp, since it defaults to the Webb socials.
+// footer in Tangle dApp, since it defaults to the Webb socials.
 const SOCIAL_LINK_OVERRIDES: Partial<
   Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
 > = {
