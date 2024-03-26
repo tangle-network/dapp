@@ -5,13 +5,11 @@ import { useEffect, useState } from 'react';
 
 import { RoleEarningsChart } from '../../../components/charts';
 import type { RoleEarningsChartItem } from '../../../components/charts/types';
-import useNetworkStore from '../../../context/useNetworkStore';
 import { getRoleEarningsChartDataByAcc } from '../../../data/roleEarningsChart';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 
 const EarningsChart = () => {
   const accAddress = useActiveAccountAddress();
-  const { nativeTokenSymbol } = useNetworkStore();
   const [data, setData] = useState<RoleEarningsChartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
