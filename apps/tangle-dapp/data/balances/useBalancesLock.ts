@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants';
@@ -21,7 +21,7 @@ const useBalancesLock = (lockId: SubstrateLockId) => {
 
     return {
       // If there are no tokens locked, default to 0.
-      amount: targetLock?.amount.toBn() ?? new BN(0),
+      amount: targetLock?.amount.toBn() ?? BN_ZERO,
       reasons: targetLock?.reasons ?? null,
     };
   }, [lockId, locks]);

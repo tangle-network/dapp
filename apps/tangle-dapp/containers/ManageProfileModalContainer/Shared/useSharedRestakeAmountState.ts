@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useCallback, useState } from 'react';
 
-import useSharedRestakeAmount from '../../data/restaking/useSharedRestakeAmount';
+import useSharedRestakeAmount from '../../../data/restaking/useSharedRestakeAmount';
 
 const useSharedRestakeAmountState = () => {
   const { sharedRestakeAmount: substrateSharedRestakeAmount, isLoading } =

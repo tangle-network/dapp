@@ -9,12 +9,12 @@ import {
   http,
 } from 'viem';
 
-const tangleTestnetConfig = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
+const TANGLE_TESTNET_CONFIG = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
 
-const tangleTestnet = defineChain(tangleTestnetConfig);
+const TANGLE_TESTNET = defineChain(TANGLE_TESTNET_CONFIG);
 
 export const evmPublicClient = createPublicClient({
-  chain: tangleTestnet,
+  chain: TANGLE_TESTNET,
   transport: http(),
 });
 
@@ -27,7 +27,7 @@ export const createEvmWalletClient = (accountAddress: string) => {
   }
 
   return createWalletClient({
-    chain: tangleTestnet,
+    chain: TANGLE_TESTNET,
     account: ensureHex(accountAddress),
     transport: custom(window.ethereum),
   });

@@ -15,6 +15,7 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useNetworkStore from '../../context/useNetworkStore';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
 import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
@@ -29,29 +30,29 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-
+  const { rpcEndpoint } = useNetworkStore();
   const { setTxConfirmationState } = useTxConfirmationModal();
-
-  const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] =
-    useState<boolean>(false);
+  const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return validatorsAndEras.length > 0;
-  }, [validatorsAndEras]);
+  const continueToSignAndSubmitTx = validatorsAndEras.length > 0;
 
-  const payoutValidatorsAndEras = useMemo(() => {
-    return validatorsAndEras.slice(0, 10);
-  }, [validatorsAndEras]);
+  const payoutValidatorsAndEras = useMemo(
+    () => validatorsAndEras.slice(0, 10),
+    [validatorsAndEras]
+  );
 
-  const allValidators = useMemo(() => {
-    return [...new Set(payoutValidatorsAndEras.map((v) => v.validatorAddress))];
-  }, [payoutValidatorsAndEras]);
+  const allValidators = useMemo(
+    () => [...new Set(payoutValidatorsAndEras.map((v) => v.validatorAddress))],
+    [payoutValidatorsAndEras]
+  );
 
   const eraRange = useMemo(() => {
     const eras = [...new Set(payoutValidatorsAndEras.map((v) => v.era))];
@@ -71,7 +72,11 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       const hash = await executeTx(
         () => batchPayoutStakersEvm(walletAddress, payoutValidatorsAndEras),
         () =>
-          batchPayoutStakersSubstrate(walletAddress, payoutValidatorsAndEras),
+          batchPayoutStakersSubstrate(
+            rpcEndpoint,
+            walletAddress,
+            payoutValidatorsAndEras
+          ),
         `Successfully claimed rewards for all stakers!`,
         'Failed to payout all stakers!'
       );
@@ -110,6 +115,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     setTxConfirmationState,
     walletAddress,
     payoutValidatorsAndEras,
+    rpcEndpoint,
     closeModal,
   ]);
 

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { defaultSocialConfigs } from '../../constants';
@@ -17,10 +17,30 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
       iconClassName = 'text-mono-180 dark:text-mono-0 hover:text-mono-140 dark:hover:text-mono-100',
       iconPlacement = 'start',
       socialConfigs = defaultSocialConfigs,
+      linkOverrides,
       ...props
     },
     ref
   ) => {
+    const resolvedSocialConfigs = useMemo(() => {
+      if (linkOverrides === undefined) {
+        return socialConfigs;
+      }
+
+      return socialConfigs.map((config) => {
+        const hrefOverride = linkOverrides[config.name];
+
+        if (hrefOverride !== undefined) {
+          return {
+            ...config,
+            href: hrefOverride,
+          };
+        }
+
+        return config;
+      });
+    }, [linkOverrides, socialConfigs]);
+
     return (
       <div
         {...props}
@@ -31,7 +51,7 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
           className
         )}
       >
-        {socialConfigs.map(({ Icon, name, ...linkProps }) => (
+        {resolvedSocialConfigs.map(({ Icon, name, ...linkProps }) => (
           <a key={name} {...linkProps} className={iconClassName}>
             <Icon className="w-8 h-8 !fill-current" />
           </a>

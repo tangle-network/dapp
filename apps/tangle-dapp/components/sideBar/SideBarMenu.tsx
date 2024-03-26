@@ -4,10 +4,17 @@ import { SideBarMenu as SideBarMenuCmp } from '@webb-tools/webb-ui-components';
 import { usePathname } from 'next/navigation';
 import { FC } from 'react';
 
-import sideBarProps from './sideBarProps';
+import useNetworkState from '../../hooks/useNetworkState';
+import getSideBarProps from './sideBarProps';
 
 const SideBarMenu: FC = () => {
   const pathname = usePathname();
+  const { network } = useNetworkState();
+
+  const sideBarProps = getSideBarProps(
+    network?.polkadotExplorer,
+    network?.evmExplorer
+  );
 
   return (
     <SideBarMenuCmp

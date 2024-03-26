@@ -1,5 +1,5 @@
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import useSWR, { SWRConfiguration } from 'swr';
 
 import { SwrBaseKey } from '../constants';
@@ -29,39 +29,46 @@ const useSwrWithLocalStorage = <T extends LocalStorageKey>(
 ) => {
   // TODO: Add a logic-error catching method to prevent the use of the same hook with the same local storage key more than once at a given time.
 
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const isInitialLoadRef = useRef(true);
 
-  const { value: localStorageCachedValue, set } = useLocalStorage(
+  const { set: setCachedValue, get: getCachedValue } = useLocalStorage(
     options.localStorageKey,
     true
   );
 
-  const response = useSWR(options.swrKey, options.fetcher, options.swrConfig);
+  const { mutate, data, ...other } = useSWR(
+    options.swrKey,
+    options.fetcher,
+    options.swrConfig
+  );
 
   // Maintain the local storage value updated as the SWR
   // response changes.
   useEffect(() => {
-    if (response.data !== undefined && response.data !== null) {
-      set(response.data);
+    if (data !== undefined && data !== null) {
+      setCachedValue(data);
     }
-  }, [response.data, set]);
+  }, [data, setCachedValue]);
 
   // Set initial value from local storage. This is only done once,
   // and helps to improve user-perceived initial load time.
   useEffect(() => {
-    const noResponseDataYet =
-      response.data === undefined || response.data === null;
-
-    const mutate =
-      localStorageCachedValue !== null && noResponseDataYet && isInitialLoad;
-
-    if (mutate) {
-      response.mutate(localStorageCachedValue, false);
-      setIsInitialLoad(false);
+    if (!isInitialLoadRef.current) {
+      return;
     }
-  }, [isInitialLoad, localStorageCachedValue, response]);
 
-  return response;
+    const cachedValue = getCachedValue();
+    const noResponseDataYet = data === undefined || data === null;
+    const doMutate = cachedValue !== null && noResponseDataYet;
+
+    if (doMutate) {
+      mutate(cachedValue, false);
+    }
+
+    isInitialLoadRef.current = false;
+  }, [data, getCachedValue, mutate]);
+
+  return { data, mutate, ...other };
 };
 
 export default useSwrWithLocalStorage;

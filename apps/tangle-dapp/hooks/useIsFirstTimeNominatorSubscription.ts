@@ -3,6 +3,7 @@ import { notificationApi } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
+import useNetworkStore from '../context/useNetworkStore';
 import { getPolkadotApiRx } from '../utils/polkadot';
 
 export default function useIsFirstTimeNominatorSubscription(address: string) {
@@ -11,15 +12,14 @@ export default function useIsFirstTimeNominatorSubscription(address: string) {
   const [isLoadingBonded, setIsLoadingBonded] = useState(true);
   const [isLoadingNominators, setIsLoadingNominators] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  const isFirstTimeNominatorLoading = useMemo(
-    () => isLoadingBonded || isLoadingNominators,
-    [isLoadingBonded, isLoadingNominators]
-  );
+  const { rpcEndpoint } = useNetworkStore();
+  const isFirstTimeNominatorLoading = isLoadingBonded || isLoadingNominators;
 
   const isFirstTimeNominator = useMemo(() => {
-    if (isAlreadyBonded === null || hasNominatedValidators === null)
+    if (isAlreadyBonded === null || hasNominatedValidators === null) {
       return null;
+    }
+
     return !isAlreadyBonded && !hasNominatedValidators;
   }, [isAlreadyBonded, hasNominatedValidators]);
 
@@ -30,10 +30,7 @@ export default function useIsFirstTimeNominatorSubscription(address: string) {
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx();
-        if (!api) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
+        const api = await getPolkadotApiRx(rpcEndpoint);
 
         subIsAlreadyBonded = api.query.staking
           .bonded(address)
@@ -59,6 +56,7 @@ export default function useIsFirstTimeNominatorSubscription(address: string) {
               ? error
               : WebbError.from(WebbErrorCodes.UnknownError)
           );
+
           setIsLoadingBonded(false);
           setIsLoadingNominators(false);
         }
@@ -72,7 +70,7 @@ export default function useIsFirstTimeNominatorSubscription(address: string) {
       subIsAlreadyBonded?.unsubscribe();
       subHasNominatedValidators?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint]);
 
   useEffect(() => {
     if (error) {

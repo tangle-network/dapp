@@ -16,6 +16,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
@@ -32,27 +33,34 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-
+  const { rpcEndpoint } = useNetworkStore();
   const { setTxConfirmationState } = useTxConfirmationModal();
+
   const [paymentDestination, setPaymentDestination] = useState<string>(
     PaymentDestination.STAKED
   );
+
   const [
     isUpdatePaymentDestinationTxLoading,
     setIsUpdatePaymentDestinationTxLoading,
-  ] = useState<boolean>(false);
+  ] = useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
+    if (!activeAccount?.address) {
+      return '';
+    }
 
-    if (isSubstrateAddress(activeAccount?.address))
+    if (isSubstrateAddress(activeAccount?.address)) {
       return activeAccount.address;
+    }
 
     return convertToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
@@ -62,9 +70,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     error: currentPaymentDestinationError,
   } = usePaymentDestinationSubscription(substrateAddress);
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return paymentDestination;
-  }, [paymentDestination]);
+  const continueToSignAndSubmitTx = paymentDestination;
 
   const closeModal = useCallback(() => {
     setIsUpdatePaymentDestinationTxLoading(false);
@@ -79,7 +85,11 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       const hash = await executeTx(
         () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
         () =>
-          updatePaymentDestinationSubstrate(walletAddress, paymentDestination),
+          updatePaymentDestinationSubstrate(
+            rpcEndpoint,
+            walletAddress,
+            paymentDestination
+          ),
         `Successfully updated payment destination to ${paymentDestination}.`,
         'Failed to update payment destination!'
       );
@@ -104,6 +114,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     closeModal,
     executeTx,
     paymentDestination,
+    rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
   ]);

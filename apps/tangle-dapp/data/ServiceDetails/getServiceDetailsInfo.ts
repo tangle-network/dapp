@@ -4,10 +4,10 @@ import {
   randSoonDate,
 } from '@ngneat/falso';
 
-import { ServiceType } from '../../types';
+import { RestakingService } from '../../types';
 
 type ServiceDetailsInfo = {
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   thresholds?: number;
   key?: string;
   startTimestamp: Date;
@@ -18,7 +18,7 @@ export default async function getServiceDetailsInfo(
   _: string
 ): Promise<ServiceDetailsInfo> {
   return {
-    serviceType: ServiceType.ZK_SAAS_GROTH16,
+    serviceType: RestakingService.ZK_SAAS_GROTH16,
     thresholds: 3,
     key: randEthereumAddress(),
     startTimestamp: randRecentDate({ days: 10 }),

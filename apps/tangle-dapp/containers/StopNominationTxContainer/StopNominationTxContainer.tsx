@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useNetworkStore from '../../context/useNetworkStore';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -29,20 +30,24 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-
   const { setTxConfirmationState } = useTxConfirmationModal();
+  const { rpcEndpoint } = useNetworkStore();
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
-    useState<boolean>(false);
+    useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
+    if (!activeAccount?.address) {
+      return '';
+    }
 
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
@@ -67,7 +72,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     try {
       const hash = await executeTx(
         () => stopNominationEvm(walletAddress),
-        () => stopNominationSubstrate(walletAddress),
+        () => stopNominationSubstrate(rpcEndpoint, walletAddress),
         `Successfully stopped nomination!`,
         'Failed to stop nomination!'
       );
@@ -88,7 +93,13 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     } finally {
       closeModal();
     }
-  }, [closeModal, executeTx, setTxConfirmationState, walletAddress]);
+  }, [
+    closeModal,
+    executeTx,
+    rpcEndpoint,
+    setTxConfirmationState,
+    walletAddress,
+  ]);
 
   return (
     <Modal open>

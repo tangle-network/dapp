@@ -4,9 +4,9 @@
 import '@webb-tools/tangle-substrate-types';
 
 export enum PagePath {
-  NOMINATION = '/',
+  NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
-  ACCOUNT = '/account',
+  ACCOUNT = '/',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
 }
@@ -32,7 +32,7 @@ export enum DelegationsAndPayoutsTab {
 
 export type Validator = {
   address: string;
-  identity: string;
+  identityName: string;
   selfStaked: string;
   effectiveAmountStaked: string;
   effectiveAmountStakedRaw: string;
@@ -125,8 +125,8 @@ export const StaticSearchQueryPath: {
     DelegationsAndPayoutsTab.PAYOUTS
   >;
 } = {
-  NominationsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
-  PayoutsTable: `${PagePath.NOMINATION}?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
+  NominationsTable: `${PagePath.NOMINATION}/?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.NOMINATIONS}`,
+  PayoutsTable: `${PagePath.NOMINATION}/?${QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB}=${DelegationsAndPayoutsTab.PAYOUTS}`,
 } as const;
 
 export type InternalPath =
@@ -139,7 +139,7 @@ export type InternalPath =
  * The values represent the user-facing UI display names
  * of the roles.
  */
-export enum ServiceType {
+export enum RestakingService {
   ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
   ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
   LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
@@ -163,7 +163,7 @@ export enum RestakingProfileType {
 
 export type Service = {
   id: number;
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   participants: string[];
   thresholds?: number;
   phase2Executions?: number;
@@ -179,7 +179,7 @@ export type ServiceJob = {
 
 export type JobType = {
   id?: number;
-  serviceType: ServiceType;
+  serviceType: RestakingService;
   thresholds?: number;
   earnings?: number;
   expiration: number;

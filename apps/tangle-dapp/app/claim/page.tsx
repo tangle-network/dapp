@@ -16,7 +16,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants/index';
+import useNetworkStore from '../../context/useNetworkStore';
 import { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
@@ -30,6 +30,7 @@ export default function Page() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
   const { activeAccount, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
+  const { rpcEndpoint } = useNetworkStore();
 
   // Default to null to indicate that we are still checking
   // If false, then we know that the user is not eligible
@@ -79,20 +80,20 @@ export default function Page() {
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: `Claim your $${TANGLE_TOKEN_UNIT} Airdrop`,
+        title: `Claim your $TNT Airdrop`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo === false) {
       return {
-        title: `You are not eligible for $${TANGLE_TOKEN_UNIT} Airdrop`,
+        title: `You are not eligible for $TNT Airdrop`,
         subTitle: 'OOPS!',
       };
     }
 
     return {
-      title: `You have unclaimed $${TANGLE_TOKEN_UNIT} Airdrop!`,
+      title: `You have unclaimed $TNT Airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
   }, [claimInfo]);
@@ -107,9 +108,11 @@ export default function Page() {
         abortSignal?.throwIfAborted();
         setCheckingEligibility(true);
 
-        const claimInfo = await getClaimsInfo(activeAccount.address, {
-          force,
-        });
+        const claimInfo = await getClaimsInfo(
+          rpcEndpoint,
+          activeAccount.address,
+          { force }
+        );
 
         abortSignal?.throwIfAborted();
 
@@ -138,7 +141,7 @@ export default function Page() {
         setCheckingEligibility(false);
       }
     },
-    [notificationApi]
+    [notificationApi, rpcEndpoint]
   );
 
   useEffect(() => {
@@ -171,21 +174,19 @@ export default function Page() {
           {claimInfo === null ? (
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 5 million {TANGLE_TOKEN_UNIT} tokens to the
-              community. Check eligibility below to see if you qualify for{' '}
-              {TANGLE_TOKEN_UNIT} Airdrop!
+              distributing 5 million TNT tokens to the community. Check
+              eligibility below to see if you qualify for TNT Airdrop!
             </>
           ) : claimInfo ? (
             <>
-              You are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View your
-              tokens below, and start the claiming process.
+              You are eligible for $TNT airdrop! View your tokens below, and
+              start the claiming process.
             </>
           ) : (
             <>
-              You are not eligible for ${TANGLE_TOKEN_UNIT} airdrop. You can
-              still participate in the Tangle Network by acquiring $
-              {TANGLE_TOKEN_UNIT} or you can try again with a different account
-              by disconnecting your current wallet.
+              You are not eligible for $TNT airdrop. You can still participate
+              in the Tangle Network by acquiring $ TNT or you can try again with
+              a different account by disconnecting your current wallet.
             </>
           )}
         </AppTemplate.Description>
@@ -243,16 +244,19 @@ export default function Page() {
 }
 
 const getClaimsInfo = async (
+  rpcEndpoint: string,
   accountAddress: string,
   options?: { force?: boolean }
 ): Promise<ClaimInfoType | null> => {
-  // Check cache
-  const cached = eligibilityCache.get(accountAddress);
-  if (cached && !options?.force) {
+  const cacheKey = rpcEndpoint + accountAddress;
+  const cached = eligibilityCache.get(cacheKey);
+
+  // Check cache first.
+  if (cached !== undefined && !options?.force) {
     return cached;
   }
 
-  const api = await getPolkadotApiPromise();
+  const api = await getPolkadotApiPromise(rpcEndpoint);
 
   if (!('claims' in api.query)) {
     throw WebbError.from(WebbErrorCodes.NoClaimsPalletFound);
@@ -276,16 +280,16 @@ const getClaimsInfo = async (
     return null;
   }
 
-  const result = {
+  const result: ClaimInfoType = {
+    isRegularStatement: statement.unwrap().isRegular,
     amount: formatBalance(claimAmount.unwrap(), {
       decimals,
       withUnit: tokenSymbol,
     }),
-    isRegularStatement: statement.unwrap().isRegular,
-  } satisfies ClaimInfoType;
+  };
 
-  // Cache result
-  eligibilityCache.set(accountAddress, result);
+  // Cache result for future use.
+  eligibilityCache.set(cacheKey, result);
 
   return result;
 };

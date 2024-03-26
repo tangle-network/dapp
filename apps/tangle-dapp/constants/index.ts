@@ -4,7 +4,7 @@ import {
   TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
 } from '@polkadot/types/lookup';
 
-import { ServiceType } from '../types';
+import { RestakingService } from '../types';
 
 export const PAYMENT_DESTINATION_OPTIONS = [
   'Staked (increase the amount at stake)',
@@ -66,7 +66,7 @@ type TangleRoleMapping = {
   // By using `Extract`, the name is linked to the Substrate types,
   // so that if the name changes in the future, it will cause a static
   // type error here, and we can update the mapping accordingly.
-  [key in ServiceType]:
+  [key in RestakingService]:
     | Extract<TanglePrimitivesRolesRoleType['type'], 'LightClientRelaying'>
     | {
         Tss: TanglePrimitivesRolesTssThresholdSignatureRoleType['type'];
@@ -80,36 +80,38 @@ type TangleRoleMapping = {
  * The values are based off [Tangle's `RoleType` enum](https://github.com/webb-tools/tangle/blob/2a60f0382db2a1234c490766381872d2c7243f5e/primitives/src/roles/mod.rs#L40).
  */
 export const SERVICE_TYPE_TO_TANGLE_MAP = {
-  [ServiceType.LIGHT_CLIENT_RELAYING]: 'LightClientRelaying',
-  [ServiceType.ZK_SAAS_GROTH16]: { ZkSaaS: 'ZkSaaSGroth16' },
-  [ServiceType.ZK_SAAS_MARLIN]: { ZkSaaS: 'ZkSaaSMarlin' },
-  [ServiceType.TSS_ZENGOGG20SECP256K1]: { Tss: 'ZengoGG20Secp256k1' },
-  [ServiceType.TSS_DFNS_CGGMP21SECP256K1]: { Tss: 'DfnsCGGMP21Secp256k1' },
-  [ServiceType.TSS_DFNS_CGGMP21SECP256R1]: { Tss: 'DfnsCGGMP21Secp256r1' },
-  [ServiceType.TSS_DFNS_CGGMP21STARK]: { Tss: 'DfnsCGGMP21Stark' },
-  [ServiceType.TSS_ZCASH_FROST_P256]: { Tss: 'ZcashFrostP256' },
-  [ServiceType.TSS_ZCASH_FROST_P384]: { Tss: 'ZcashFrostP384' },
-  [ServiceType.TSS_ZCASH_FROST_SECP256K1]: { Tss: 'ZcashFrostSecp256k1' },
-  [ServiceType.TSS_ZCASH_FROST_RISTRETTO255]: { Tss: 'ZcashFrostRistretto255' },
-  [ServiceType.TSS_ZCASH_FROST_ED25519]: { Tss: 'ZcashFrostEd25519' },
-  [ServiceType.TSS_GENNARO_DKG_BLS381]: { Tss: 'GennaroDKGBls381' },
-  [ServiceType.TSS_ZCASH_FROST_ED448]: { Tss: 'ZcashFrostEd448' },
+  [RestakingService.LIGHT_CLIENT_RELAYING]: 'LightClientRelaying',
+  [RestakingService.ZK_SAAS_GROTH16]: { ZkSaaS: 'ZkSaaSGroth16' },
+  [RestakingService.ZK_SAAS_MARLIN]: { ZkSaaS: 'ZkSaaSMarlin' },
+  [RestakingService.TSS_ZENGOGG20SECP256K1]: { Tss: 'ZengoGG20Secp256k1' },
+  [RestakingService.TSS_DFNS_CGGMP21SECP256K1]: { Tss: 'DfnsCGGMP21Secp256k1' },
+  [RestakingService.TSS_DFNS_CGGMP21SECP256R1]: { Tss: 'DfnsCGGMP21Secp256r1' },
+  [RestakingService.TSS_DFNS_CGGMP21STARK]: { Tss: 'DfnsCGGMP21Stark' },
+  [RestakingService.TSS_ZCASH_FROST_P256]: { Tss: 'ZcashFrostP256' },
+  [RestakingService.TSS_ZCASH_FROST_P384]: { Tss: 'ZcashFrostP384' },
+  [RestakingService.TSS_ZCASH_FROST_SECP256K1]: { Tss: 'ZcashFrostSecp256k1' },
+  [RestakingService.TSS_ZCASH_FROST_RISTRETTO255]: {
+    Tss: 'ZcashFrostRistretto255',
+  },
+  [RestakingService.TSS_ZCASH_FROST_ED25519]: { Tss: 'ZcashFrostEd25519' },
+  [RestakingService.TSS_GENNARO_DKG_BLS381]: { Tss: 'GennaroDKGBls381' },
+  [RestakingService.TSS_ZCASH_FROST_ED448]: { Tss: 'ZcashFrostEd448' },
 } as const satisfies TangleRoleMapping;
 
 export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
-  [Key in TanglePrimitivesRolesTssThresholdSignatureRoleType['type']]: ServiceType;
+  [Key in TanglePrimitivesRolesTssThresholdSignatureRoleType['type']]: RestakingService;
 } = {
-  DfnsCGGMP21Secp256k1: ServiceType.TSS_DFNS_CGGMP21SECP256K1,
-  DfnsCGGMP21Secp256r1: ServiceType.TSS_DFNS_CGGMP21SECP256R1,
-  DfnsCGGMP21Stark: ServiceType.TSS_DFNS_CGGMP21STARK,
-  GennaroDKGBls381: ServiceType.TSS_GENNARO_DKG_BLS381,
-  ZengoGG20Secp256k1: ServiceType.TSS_ZENGOGG20SECP256K1,
-  ZcashFrostEd25519: ServiceType.TSS_ZCASH_FROST_ED25519,
-  ZcashFrostP256: ServiceType.TSS_ZCASH_FROST_P256,
-  ZcashFrostP384: ServiceType.TSS_ZCASH_FROST_P384,
-  ZcashFrostRistretto255: ServiceType.TSS_ZCASH_FROST_RISTRETTO255,
-  ZcashFrostSecp256k1: ServiceType.TSS_ZCASH_FROST_SECP256K1,
-  ZcashFrostEd448: ServiceType.TSS_ZCASH_FROST_ED448,
+  DfnsCGGMP21Secp256k1: RestakingService.TSS_DFNS_CGGMP21SECP256K1,
+  DfnsCGGMP21Secp256r1: RestakingService.TSS_DFNS_CGGMP21SECP256R1,
+  DfnsCGGMP21Stark: RestakingService.TSS_DFNS_CGGMP21STARK,
+  GennaroDKGBls381: RestakingService.TSS_GENNARO_DKG_BLS381,
+  ZengoGG20Secp256k1: RestakingService.TSS_ZENGOGG20SECP256K1,
+  ZcashFrostEd25519: RestakingService.TSS_ZCASH_FROST_ED25519,
+  ZcashFrostP256: RestakingService.TSS_ZCASH_FROST_P256,
+  ZcashFrostP384: RestakingService.TSS_ZCASH_FROST_P384,
+  ZcashFrostRistretto255: RestakingService.TSS_ZCASH_FROST_RISTRETTO255,
+  ZcashFrostSecp256k1: RestakingService.TSS_ZCASH_FROST_SECP256K1,
+  ZcashFrostEd448: RestakingService.TSS_ZCASH_FROST_ED448,
 };
 
 export enum ChartColor {

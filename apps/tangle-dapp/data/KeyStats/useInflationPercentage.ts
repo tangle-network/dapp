@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
@@ -18,6 +19,7 @@ export default function useInflationPercentage(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -25,8 +27,8 @@ export default function useInflationPercentage(
 
     const fetchData = async () => {
       try {
-        const apiRx = await getPolkadotApiRx();
-        const apiPromise = await getPolkadotApiPromise();
+        const apiRx = await getPolkadotApiRx(rpcEndpoint);
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
         setIsLoading(true);
 
@@ -65,7 +67,7 @@ export default function useInflationPercentage(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, []);
+  }, [rpcEndpoint]);
 
   return useFormatReturnType({
     isLoading,

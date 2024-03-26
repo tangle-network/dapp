@@ -1,7 +1,7 @@
 import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
 import BN from 'bn.js';
 
-import { ServiceType } from '../types';
+import { RestakingService } from '../types';
 import substrateRoleToServiceType from './substrateRoleToServiceType';
 
 /**
@@ -17,7 +17,7 @@ import substrateRoleToServiceType from './substrateRoleToServiceType';
  */
 function convertRecordToAllocation(
   record: PalletRolesProfileRecord
-): [ServiceType, BN] {
+): [RestakingService, BN] {
   const serviceType = substrateRoleToServiceType(record.role);
 
   // The amount being `None` simply means that it is zero.

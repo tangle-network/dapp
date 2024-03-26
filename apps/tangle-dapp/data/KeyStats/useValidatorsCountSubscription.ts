@@ -4,6 +4,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { firstValueFrom, Subscription } from 'rxjs';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiRx } from '../../utils/polkadot';
@@ -14,20 +15,27 @@ export default function useValidatorCountSubscription(
     value2: null,
   }
 ) {
-  const { value: cachedValue, set: setCache } = useLocalStorage(
+  const { get: getCachedValue, set: setCache } = useLocalStorage(
     LocalStorageKey.VALIDATOR_COUNTS,
     true
   );
 
-  const [value1, setValue1] = useState(
-    cachedValue?.value1 ?? defaultValue.value1
-  );
-  const [value2, setValue2] = useState(
-    cachedValue?.value2 ?? defaultValue.value2
-  );
-
+  const [value1, setValue1] = useState(defaultValue.value1);
+  const [value2, setValue2] = useState(defaultValue.value2);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useNetworkStore();
+
+  // After mount, try to get the cached value and set it.
+  useEffect(() => {
+    const cachedValue = getCachedValue();
+
+    if (cachedValue !== null) {
+      setValue1(cachedValue.value1);
+      setValue2(cachedValue.value2);
+      setIsLoading(false);
+    }
+  }, [getCachedValue]);
 
   useEffect(() => {
     let isMounted = true;
@@ -35,7 +43,7 @@ export default function useValidatorCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx();
+        const api = await getPolkadotApiRx(rpcEndpoint);
 
         sub = api.query.session.validators().subscribe(async (validators) => {
           try {
@@ -86,7 +94,7 @@ export default function useValidatorCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [value1, value2, setCache]);
+  }, [value1, value2, setCache, rpcEndpoint]);
 
   return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
 }

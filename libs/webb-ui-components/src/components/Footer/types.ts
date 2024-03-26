@@ -1,4 +1,6 @@
+import { WEBB_AVAILABLE_SOCIALS } from '../../constants';
 import { PropsOf } from '../../types';
+import { bottomLinks } from '../../constants/index';
 
 export interface FooterProps extends PropsOf<'footer'> {
   /**
@@ -7,4 +9,12 @@ export interface FooterProps extends PropsOf<'footer'> {
   isNext?: boolean;
   isMinimal?: boolean;
   logoType?: 'webb' | 'tangle';
+
+  socialsLinkOverrides?: Partial<
+    Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
+  >;
+
+  bottomLinkOverrides?: Partial<
+    Record<(typeof bottomLinks)[number]['name'], string>
+  >;
 }

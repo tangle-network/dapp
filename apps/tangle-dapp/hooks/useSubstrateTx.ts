@@ -5,6 +5,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 
+import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
@@ -38,6 +39,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     if (!notifyStatusUpdates) {
@@ -72,7 +74,7 @@ function useSubstrateTx<T extends ISubmittableResult>(
     );
 
     const injector = await getInjector(activeSubstrateAddress);
-    const api = await getPolkadotApiPromise();
+    const api = await getPolkadotApiPromise(rpcEndpoint);
     let tx: SubmittableExtrinsic<'promise', T> | null;
 
     // The transaction factory may throw an error if it encounters
@@ -132,7 +134,14 @@ function useSubstrateTx<T extends ISubmittableResult>(
       setStatus(TxStatus.ERROR);
       setError(ensureError(possibleError));
     }
-  }, [activeSubstrateAddress, factory, isEvmAccount, isMountedRef, status]);
+  }, [
+    activeSubstrateAddress,
+    factory,
+    isEvmAccount,
+    isMountedRef,
+    rpcEndpoint,
+    status,
+  ]);
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something

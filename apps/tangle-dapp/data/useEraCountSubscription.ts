@@ -4,6 +4,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
+import useNetworkStore from '../context/useNetworkStore';
 import useFormatReturnType from '../hooks/useFormatReturnType';
 import { getPolkadotApiRx } from '../utils/polkadot';
 
@@ -13,6 +14,7 @@ export default function useEraCountSubscription(
   const [era, setEra] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -20,7 +22,7 @@ export default function useEraCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx();
+        const api = await getPolkadotApiRx(rpcEndpoint);
 
         sub = api.query.staking.activeEra().subscribe((nextEra) => {
           const activeEra = nextEra.unwrapOr(null);
@@ -53,7 +55,7 @@ export default function useEraCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, []);
+  }, [rpcEndpoint]);
 
   return useFormatReturnType({ isLoading, error, data: era });
 }

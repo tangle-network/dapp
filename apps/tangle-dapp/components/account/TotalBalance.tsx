@@ -6,10 +6,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { InfoIconWithTooltip } from '../../components';
 import { TANGLE_TOKEN_UNIT } from '../../constants/index';
 import useBalances from '../../data/balances/useBalances';
 import { formatTokenBalance } from '../../utils/polkadot';
+import { InfoIconWithTooltip } from '..';
 
 const TotalBalance: FC = () => {
   const { total } = useBalances();

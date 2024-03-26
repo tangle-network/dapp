@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 
-import { RestakingProfileType, ServiceType } from '../../types';
+import { RestakingProfileType } from '../../types';
+import { RestakingService } from '../../types';
 import Optional from '../../utils/Optional';
 
 export type ManageProfileModalContainerProps = {
@@ -10,4 +11,4 @@ export type ManageProfileModalContainerProps = {
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
 
-export type RestakingAllocationMap = Partial<Record<ServiceType, BN>>;
+export type RestakingAllocationMap = Partial<Record<RestakingService, BN>>;

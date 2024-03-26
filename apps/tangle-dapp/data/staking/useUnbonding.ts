@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
@@ -27,7 +27,7 @@ const useUnbonding = () => {
             return {
               amount: unlockChunk.value.toBn(),
               unlockEra: unlockChunk.era.toBn(),
-              remainingEras: eraDifference.gtn(0) ? eraDifference : new BN(0),
+              remainingEras: eraDifference.gtn(0) ? eraDifference : BN_ZERO,
             };
           }
         );

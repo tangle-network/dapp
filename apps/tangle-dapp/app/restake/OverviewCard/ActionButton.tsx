@@ -14,6 +14,7 @@ import {
 import { FC, useState } from 'react';
 
 import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
+import { ErrorSetContextProvider } from '../../../context/ErrorsContext';
 import { RestakingProfileType } from '../../../types';
 import Optional from '../../../utils/Optional';
 
@@ -54,12 +55,14 @@ const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
           {hasExistingProfile ? 'Manage Profile' : 'Create Profile'}
         </Button>
 
-        <ManageProfileModalContainer
-          isModalOpen={isManageProfileModalOpen}
-          setIsModalOpen={setIsManageProfileModalOpen}
-          hasExistingProfile={hasExistingProfile}
-          profileTypeOpt={profileTypeOpt}
-        />
+        <ErrorSetContextProvider>
+          <ManageProfileModalContainer
+            isModalOpen={isManageProfileModalOpen}
+            setIsModalOpen={setIsManageProfileModalOpen}
+            hasExistingProfile={hasExistingProfile}
+            profileTypeOpt={profileTypeOpt}
+          />
+        </ErrorSetContextProvider>
       </>
     );
   }

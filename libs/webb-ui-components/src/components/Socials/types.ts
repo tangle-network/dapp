@@ -1,3 +1,4 @@
+import { WEBB_AVAILABLE_SOCIALS } from '../../constants';
 import { PropsOf, SocialConfigsType } from '../../types';
 
 export type IconPlacement = 'start' | 'end' | 'center';
@@ -16,4 +17,8 @@ export interface SocialsProps extends PropsOf<'div'> {
    * The list of all social configs to render
    */
   socialConfigs?: Array<SocialConfigsType>;
+
+  linkOverrides?: Partial<
+    Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
+  >;
 }

@@ -27,7 +27,6 @@ export const payoutStakers = async (
   });
 
   const evmWalletClient = createEvmWalletClient(nominatorAddress);
-
   const txHash = await evmWalletClient.writeContract(request);
 
   return txHash;
@@ -41,6 +40,7 @@ export const batchPayoutStakers = async (
 ): Promise<AddressType> => {
   const batchCalls = validatorEraPairs.map(({ validatorAddress, era }) => {
     const validator = u8aToHex(decodeAddress(validatorAddress));
+
     return {
       to: PrecompileAddress.STAKING as AddressType,
       value: 0,

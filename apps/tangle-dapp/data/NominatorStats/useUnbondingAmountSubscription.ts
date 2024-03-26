@@ -5,6 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { formatTokenBalance, getPolkadotApiRx } from '../../utils/polkadot';
 
@@ -17,6 +18,7 @@ export default function useUnbondingAmountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -24,7 +26,7 @@ export default function useUnbondingAmountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx();
+        const api = await getPolkadotApiRx(rpcEndpoint);
 
         if (!address) {
           setValue1(null);
@@ -75,7 +77,7 @@ export default function useUnbondingAmountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address]);
+  }, [address, rpcEndpoint]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }

@@ -13,6 +13,7 @@ import {
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { convertToSubstrateAddress } from '../../utils';
@@ -30,16 +31,17 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-
   const { setTxConfirmationState } = useTxConfirmationModal();
-
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
+  const { rpcEndpoint } = useNetworkStore();
 
   const [isWithdrawUnbondedTxLoading, setIsWithdrawUnbondedTxLoading] =
-    useState<boolean>(false);
+    useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
@@ -94,15 +96,24 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     try {
       const hash = await executeTx(
         async () => {
-          const slashingSpans = await getSlashingSpans(substrateAddress);
+          const slashingSpans = await getSlashingSpans(
+            rpcEndpoint,
+            substrateAddress
+          );
+
           return withdrawUnbondedTokensEvm(
             walletAddress,
             Number(slashingSpans)
           );
         },
         async () => {
-          const slashingSpans = await getSlashingSpans(substrateAddress);
+          const slashingSpans = await getSlashingSpans(
+            rpcEndpoint,
+            substrateAddress
+          );
+
           return withdrawUnbondedTokensSubstrate(
+            rpcEndpoint,
             walletAddress,
             Number(slashingSpans)
           );
@@ -130,6 +141,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   }, [
     closeModal,
     executeTx,
+    rpcEndpoint,
     setTxConfirmationState,
     substrateAddress,
     walletAddress,
