@@ -9,9 +9,11 @@ const useRestakingEarnings = (substrateAccount: string | null) => {
       (apiRx) => {
         if (!substrateAccount) return null;
 
-        return apiRx.query.roles.erasRestakeRewardPoints
-          .entries()
-          .pipe(map((entries) => {}));
+        return apiRx.query.roles.erasRestakeRewardPoints.entries().pipe(
+          map((entries) => {
+            return entries;
+          })
+        );
       },
       [substrateAccount]
     )
