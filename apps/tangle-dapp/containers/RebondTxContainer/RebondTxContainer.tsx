@@ -20,10 +20,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import {
-  convertToSubstrateAddress,
-  splitTokenValueAndSymbol,
-} from '../../utils';
+import { evmToSubstrateAddress, splitTokenValueAndSymbol } from '../../utils';
 import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
 import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
 import RebondTokens from './RebondTokens';
@@ -57,7 +54,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: unbondingAmountData, error: unbondingAmountError } =

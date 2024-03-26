@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 
 /**
@@ -14,7 +16,7 @@ const useVestTx = (notifyTxStatusUpdates?: boolean) => {
     'vesting',
     'vest',
     [],
-    (api) => Promise.resolve(api.tx.vesting.vest()),
+    useCallback((api) => Promise.resolve(api.tx.vesting.vest()), []),
     notifyTxStatusUpdates
   );
 };

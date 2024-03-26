@@ -31,7 +31,7 @@ import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotificati
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import {
   bondExtraTokens as bondExtraTokensEvm,
   bondTokens as bondTokensEvm,
@@ -114,7 +114,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {

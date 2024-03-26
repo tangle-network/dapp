@@ -18,7 +18,7 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 
 export type AccountAddressProps = {
   activeAddress: string | null;
@@ -64,7 +64,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
 
       const nextDisplayAddress = isDisplayingEvmAddress
         ? activeAddress
-        : convertToSubstrateAddress(activeAddress);
+        : evmToSubstrateAddress(activeAddress);
 
       setDisplayAddress(nextDisplayAddress);
     },

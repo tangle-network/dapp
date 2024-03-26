@@ -20,10 +20,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import {
-  convertToSubstrateAddress,
-  splitTokenValueAndSymbol,
-} from '../../utils';
+import { evmToSubstrateAddress, splitTokenValueAndSymbol } from '../../utils';
 import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
 import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
 import { UnbondTxContainerProps } from './types';
@@ -56,7 +53,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       return activeAccount.address;
     }
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =

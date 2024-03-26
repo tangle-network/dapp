@@ -19,7 +19,7 @@ import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { stopNomination as stopNominationEvm } from '../../utils/evm';
 import { stopNomination as stopNominationSubstrate } from '../../utils/polkadot';
 import { StopNominationTxContainerProps } from './types';
@@ -52,7 +52,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);

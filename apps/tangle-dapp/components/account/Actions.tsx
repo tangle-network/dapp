@@ -34,7 +34,7 @@ const Actions: FC = () => {
   const {
     isVesting,
     hasClaimableTokens: hasClaimableVestingTokens,
-    claimableTokenAmount,
+    claimableAmount: claimableTokenAmount,
   } = useVestingInfo();
 
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx(true);

@@ -21,7 +21,7 @@ import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
-import LockedBalanceDetails from './LockedBalanceDetails';
+import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
 
 const BalancesTableContainer: FC = () => {
   const { free, locked } = useBalances();
@@ -41,8 +41,12 @@ const BalancesTableContainer: FC = () => {
     }
   }, [getCachedIsDetailsCollapsed]);
 
-  const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
-    api.query.balances.locks(activeSubstrateAddress)
+  const { data: locks } = usePolkadotApiRx(
+    useCallback(
+      (api, activeSubstrateAddress) =>
+        api.query.balances.locks(activeSubstrateAddress),
+      []
+    )
   );
 
   const handleToggleDetails = useCallback(() => {
