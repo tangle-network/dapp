@@ -19,7 +19,7 @@ const BondTokens: FC<BondTokensProps> = ({
   paymentDestinationOptions,
   paymentDestination,
   setPaymentDestination,
-  tokenSymbol
+  tokenSymbol,
 }) => {
   return (
     <div className="grid grid-cols-3 gap-9">

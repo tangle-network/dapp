@@ -15,8 +15,7 @@ const TotalBalance: FC = () => {
   const { total } = useBalances();
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const formattedTotal =
-    total !== null ? formatTokenBalance(total, false) : null;
+  const formattedTotal = total !== null ? formatTokenBalance(total) : null;
 
   return (
     <div className="flex flex-col gap-5 w-full">

@@ -137,7 +137,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
 
             {min !== null ? (
               <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
-                {`≥ ${formatTokenBalance(min, false)}`}
+                {`≥ ${formatTokenBalance(min)}`}
               </Chip>
             ) : (
               <SkeletonLoader />

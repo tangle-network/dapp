@@ -164,7 +164,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
           fw="bold"
           className="dark:text-mono-0 text-center"
         >
-          {formatTokenBalance(allocatedAmount, false)}
+          {formatTokenBalance(allocatedAmount)}
         </Typography>
 
         <Typography variant="body2" className="dark:text-mono-120">

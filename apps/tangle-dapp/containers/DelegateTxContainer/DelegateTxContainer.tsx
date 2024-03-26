@@ -301,7 +301,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     rpcEndpoint,
     selectedValidators,
     walletAddress,
-    nativeTokenSymbol
+    nativeTokenSymbol,
   ]);
 
   const submitAndSignTx = useCallback(async () => {

@@ -72,7 +72,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
   const formattedTransferrableBalance =
     transferrableBalance !== null
-      ? formatTokenBalance(transferrableBalance, false)
+      ? formatTokenBalance(transferrableBalance)
       : null;
 
   const {

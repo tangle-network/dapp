@@ -23,7 +23,7 @@ export default function useUnbondingRemainingErasSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -55,8 +55,9 @@ export default function useUnbondingRemainingErasSubscription(
               const unbondingRemainingEras = ledger.unlocking.map(
                 async (unlockChunk) => {
                   const unbondedAmount = unlockChunk.value;
-                  const unbondingFormattedAmount = await formatTokenBalance(
-                    new u128(api.registry, unbondedAmount.toString())
+                  const unbondingFormattedAmount = formatTokenBalance(
+                    new u128(api.registry, unbondedAmount.toString()),
+                    nativeTokenSymbol
                   );
                   const unlockingEra = unlockChunk.era.toNumber();
                   const remainingEras = unlockingEra - currentEra;
@@ -93,7 +94,7 @@ export default function useUnbondingRemainingErasSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint]);
+  }, [address, rpcEndpoint, nativeTokenSymbol]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }
