@@ -13,7 +13,8 @@ import {
 } from 'recharts';
 
 import BnChartTooltip from '../../components/BnChartTooltip';
-import { ChartColor, TANGLE_TOKEN_UNIT } from '../../constants';
+import { ChartColor } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
@@ -58,6 +59,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
 }) => {
   const [isDarkMode] = useNextDarkMode();
   const { maxRestakingAmount } = useRestakingLimits();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const { allocationEntries, entries } = useAllocationChartEntries(
     allocations,
@@ -166,7 +168,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
         </Typography>
 
         <Typography variant="body2" className="dark:text-mono-120">
-          {TANGLE_TOKEN_UNIT}
+          {nativeTokenSymbol}
         </Typography>
       </div>
     </div>

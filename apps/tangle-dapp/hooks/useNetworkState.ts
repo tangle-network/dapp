@@ -5,10 +5,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
+import { getNativeTokenSymbol } from '../utils/polkadot';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 const useNetworkState = () => {
-  const { network, setNetwork } = useNetworkStore();
+  const { network, setNetwork, rpcEndpoint, setNativeTokenSymbol } =
+    useNetworkStore();
   const [isCustom, setIsCustom] = useState(false);
 
   const {
@@ -22,6 +24,25 @@ const useNetworkState = () => {
     get: getCachedNetworkName,
     remove: removeCachedNetworkName,
   } = useLocalStorage(LocalStorageKey.WEBB_NETWORK_NAME);
+
+  const { get: getCachedNativeTokenSymbol, set: setCachedNativeTokenSymbol } =
+    useLocalStorage(LocalStorageKey.NATIVE_TOKEN_SYMBOL);
+
+  const fetchTokenSymbol = useCallback(
+    async (rpcEndpoint: string) => {
+      try {
+        const tokenSymbol = await getNativeTokenSymbol(rpcEndpoint);
+        setNativeTokenSymbol(tokenSymbol);
+        setCachedNativeTokenSymbol(tokenSymbol);
+      } catch {
+        notificationApi({
+          variant: 'error',
+          message: `Unable to fetch token symbol for ${network.name}.`,
+        });
+      }
+    },
+    [network.name, setCachedNativeTokenSymbol, setNativeTokenSymbol]
+  );
 
   // Load the initial network from local storage.
   useEffect(() => {
@@ -67,6 +88,23 @@ const useNetworkState = () => {
     setNetwork,
   ]);
 
+  // Load initial token symbol from local storage.
+  useEffect(() => {
+    const cachedTokenSymbol = getCachedNativeTokenSymbol();
+
+    if (cachedTokenSymbol !== null) {
+      setNativeTokenSymbol(cachedTokenSymbol);
+      return;
+    }
+
+    fetchTokenSymbol(rpcEndpoint);
+  }, [
+    getCachedNativeTokenSymbol,
+    rpcEndpoint,
+    fetchTokenSymbol,
+    setNativeTokenSymbol,
+  ]);
+
   // Set global RPC endpoint when the network changes,
   // and also changes to local storage for future use.
   const setNetworkOverride = useCallback(
@@ -95,6 +133,8 @@ const useNetworkState = () => {
         removeCachedCustomRpcEndpoint();
         setCachedNetworkName(newNetwork.name);
       }
+
+      await getNativeTokenSymbol(newNetwork.polkadotEndpoint);
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);

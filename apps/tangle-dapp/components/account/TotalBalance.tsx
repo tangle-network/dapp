@@ -6,13 +6,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants/index';
+import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { InfoIconWithTooltip } from '..';
 
 const TotalBalance: FC = () => {
   const { total } = useBalances();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedTotal =
     total !== null ? formatTokenBalance(total, false) : null;
@@ -53,7 +54,7 @@ const TotalBalance: FC = () => {
                 fw="normal"
                 className="!leading-none pb-1"
               >
-                {TANGLE_TOKEN_UNIT}
+                {nativeTokenSymbol}
               </Typography>
             </div>
           ) : (

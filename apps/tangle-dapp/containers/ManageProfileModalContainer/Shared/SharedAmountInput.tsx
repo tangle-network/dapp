@@ -3,7 +3,7 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useRef } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
@@ -30,6 +30,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
   const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
   const { hasActiveJobs } = useRestakingJobs();
   const { profileTypeOpt } = useRestakingProfile();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const hasActiveJobsForSharedProfile = (() => {
     // Lock by default until props finish loading to prevent
@@ -101,7 +102,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
         inputRef={inputRef}
         inputClassName="placeholder:text-md"
         type="text"
-        placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
+        placeholder={`0 ${nativeTokenSymbol}`}
         size="sm"
         autoComplete="off"
         value={amountString}

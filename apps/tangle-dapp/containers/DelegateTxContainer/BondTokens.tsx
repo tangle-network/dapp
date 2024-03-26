@@ -7,7 +7,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -20,6 +19,7 @@ const BondTokens: FC<BondTokensProps> = ({
   paymentDestinationOptions,
   paymentDestination,
   setPaymentDestination,
+  tokenSymbol
 }) => {
   return (
     <div className="grid grid-cols-3 gap-9">
@@ -57,7 +57,7 @@ const BondTokens: FC<BondTokensProps> = ({
                   : true
                 : false
             }
-            placeholder={`10 ${TANGLE_TOKEN_UNIT}`}
+            placeholder={`10 ${tokenSymbol}`}
             type="number"
             onChange={(e) => setAmountToBond(Number(e.target.value))}
           />
