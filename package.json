@@ -232,7 +232,7 @@
     "@webb-tools/interfaces": "0.5.47",
     "@webb-tools/sdk-core": "0.1.4-127",
     "@webb-tools/tangle-substrate-types": "^0.5.3",
-    "@webb-tools/test-utils": "0.1.4-127",
+    "@webb-tools/test-utils": "0.1.8",
     "@webb-tools/tokens": "1.0.8",
     "@webb-tools/utils": "1.0.11",
     "@webb-tools/vanchor-client": "0.1.27",
