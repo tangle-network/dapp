@@ -5,7 +5,7 @@ import {
   ChevronUp,
   CoinsStackedLineIcon,
   SendPlanLineIcon,
-  TangleIcon,
+  TokenIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
@@ -141,9 +141,7 @@ const AssetCell: FC<{
   return (
     <div className="flex px-3 py-3 gap-6">
       <div className="flex flex-row items-center gap-1">
-        <div className="bg-mono-40 dark:bg-mono-0 p-1 rounded-full">
-          <TangleIcon />
-        </div>
+        <TokenIcon name={nativeTokenSymbol} size="lg" />
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
           {nativeTokenSymbol}
