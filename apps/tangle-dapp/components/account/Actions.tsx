@@ -101,14 +101,14 @@ const Actions: FC = () => {
             tooltip={
               hasClaimableVestingTokens ? (
                 <>
-                  You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
+                  There are <strong>{formattedClaimableTokenAmount}</strong>{' '}
                   vested tokens that are ready to be claimed. Use this action to
                   release them.
                 </>
               ) : (
                 <>
-                  You have vesting schedules in your account, but there are no
-                  tokens available to claim yet.
+                  There are vesting schedules in your account, but no tokens
+                  have vested yet.
                 </>
               )
             }
