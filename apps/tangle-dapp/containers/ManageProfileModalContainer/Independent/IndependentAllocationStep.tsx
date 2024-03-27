@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { z } from 'zod';
 
+import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { RestakingService } from '../../../types';
@@ -40,6 +41,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   setAllocations,
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const restakedAmount = useMemo(
     () =>
@@ -200,7 +202,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           <Typography variant="body1" className="dark:text-mono-0">
             Remaining:{' '}
             {amountRemaining !== null
-              ? formatTokenBalance(amountRemaining)
+              ? formatTokenBalance(amountRemaining, nativeTokenSymbol)
               : '—'}
           </Typography>
 

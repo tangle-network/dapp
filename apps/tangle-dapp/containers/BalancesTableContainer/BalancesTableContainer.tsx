@@ -12,7 +12,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
@@ -162,6 +162,8 @@ const AssetCell: FC<{
   title: string;
   tooltip?: string;
 }> = ({ title, tooltip }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   return (
     <div className="flex px-3 py-3 gap-6">
       <div className="flex flex-row items-center gap-1">
@@ -170,7 +172,7 @@ const AssetCell: FC<{
         </div>
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
-          {TANGLE_TOKEN_UNIT}
+          {nativeTokenSymbol}
         </Typography>
       </div>
 

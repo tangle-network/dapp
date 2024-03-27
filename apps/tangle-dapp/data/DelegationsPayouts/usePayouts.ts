@@ -32,7 +32,7 @@ export default function usePayouts(
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -147,11 +147,12 @@ export default function usePayouts(
 
                       if (validatorTotalReward > 0) {
                         const validatorTotalRewardFormatted =
-                          await formatTokenBalance(
+                          formatTokenBalance(
                             new u128(
                               apiPromise.registry,
                               BigInt(Math.floor(validatorTotalReward))
-                            )
+                            ),
+                            nativeTokenSymbol
                           );
 
                         const eraStaker =
@@ -162,8 +163,10 @@ export default function usePayouts(
 
                         const validatorTotalStake = eraStaker.total.unwrap();
 
-                        const validatorTotalStakeFormatted =
-                          await formatTokenBalance(validatorTotalStake);
+                        const validatorTotalStakeFormatted = formatTokenBalance(
+                          validatorTotalStake,
+                          nativeTokenSymbol
+                        );
 
                         if (
                           Number(validatorTotalStake.toString()) > 0 &&
@@ -204,11 +207,12 @@ export default function usePayouts(
                                 distributableReward;
 
                               const nominatorTotalRewardFormatted =
-                                await formatTokenBalance(
+                                formatTokenBalance(
                                   new u128(
                                     apiPromise.registry,
                                     BigInt(Math.floor(nominatorTotalReward))
-                                  )
+                                  ),
+                                  nativeTokenSymbol
                                 );
 
                               const validatorIdentity =
@@ -299,7 +303,7 @@ export default function usePayouts(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint, setCachedPayouts]);
+  }, [address, rpcEndpoint, setCachedPayouts, nativeTokenSymbol]);
 
   return useFormatReturnType({
     isLoading,

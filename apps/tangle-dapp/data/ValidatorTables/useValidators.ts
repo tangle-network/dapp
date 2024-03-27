@@ -6,6 +6,7 @@ import {
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { Validator } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -17,6 +18,7 @@ export const useValidators = (
   addresses: AccountId32[] | null,
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
+  const { nativeTokenSymbol } = useNetworkStore();
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
 
@@ -96,8 +98,11 @@ export const useValidators = (
       return {
         address: address.toString(),
         identityName: name,
-        selfStaked: formatTokenBalance(selfStakedAmount),
-        effectiveAmountStaked: formatTokenBalance(totalStakeAmount),
+        selfStaked: formatTokenBalance(selfStakedAmount, nativeTokenSymbol),
+        effectiveAmountStaked: formatTokenBalance(
+          totalStakeAmount,
+          nativeTokenSymbol
+        ),
         effectiveAmountStakedRaw: totalStakeAmount.toString(),
         delegations: nominators.length.toString(),
         commission: commission.toString(),
@@ -111,5 +116,6 @@ export const useValidators = (
     nominations,
     status,
     validatorPrefs,
+    nativeTokenSymbol,
   ]);
 };

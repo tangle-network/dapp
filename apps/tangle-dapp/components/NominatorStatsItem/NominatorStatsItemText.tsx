@@ -5,7 +5,7 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useEffect, useMemo } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import {
   getRoundedDownNumberWith2Decimals,
   splitTokenValueAndSymbol,
@@ -17,6 +17,7 @@ import type { NominatorStatsItemProps } from './types';
 type Props = Pick<NominatorStatsItemProps, 'address' | 'type'>;
 
 const NominatorStatsItemText = ({ address, type }: Props) => {
+  const { nativeTokenSymbol } = useNetworkStore();
   const { isLoading, error, data } = dataHooks[type](address);
 
   const splitData = useMemo(() => {
@@ -67,7 +68,7 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
                 fw="normal"
                 className="text-mono-140 dark:text-mono-40"
               >
-                {splitData?.symbol ? splitData.symbol : TANGLE_TOKEN_UNIT}
+                {splitData?.symbol ? splitData.symbol : nativeTokenSymbol}
               </Typography>
             ) : (
               data.value1 && (

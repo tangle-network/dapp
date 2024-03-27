@@ -9,7 +9,7 @@ export default async function getRoleDistributionChartData(): Promise<
     { name: RestakingService.ZK_SAAS_GROTH16, value: 4400 },
     { name: RestakingService.ZK_SAAS_MARLIN, value: 3200 },
     { name: RestakingService.LIGHT_CLIENT_RELAYING, value: 3000 },
-    { name: RestakingService.TSS_ZENGOGG20SECP256K1, value: 2300 },
+    { name: RestakingService.TSS_SILENT_SHARD_DKLS23SECP256K1, value: 2300 },
   ];
 
   return data.map((role) => {

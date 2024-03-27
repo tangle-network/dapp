@@ -15,6 +15,7 @@ export type BondTokensProps = {
   paymentDestinationOptions: string[];
   paymentDestination: string;
   setPaymentDestination: (paymentDestination: string) => void;
+  tokenSymbol: string;
 };
 
 export type SelectDelegatesProps = {

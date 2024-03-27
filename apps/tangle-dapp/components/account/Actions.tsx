@@ -20,6 +20,7 @@ import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import useNetworkStore from '../../context/useNetworkStore';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -29,6 +30,8 @@ import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
@@ -42,7 +45,7 @@ const Actions: FC = () => {
 
   const formattedClaimableTokenAmount =
     claimableTokenAmount !== null
-      ? formatTokenBalance(claimableTokenAmount)
+      ? formatTokenBalance(claimableTokenAmount, nativeTokenSymbol)
       : null;
 
   return (
