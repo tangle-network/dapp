@@ -30,6 +30,9 @@ import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
+  const { isEligible: isAirdropEligible } = useAirdropEligibility();
+  const isPayoutsAvailable = usePayoutsAvailability();
 
   const {
     isVesting,
@@ -37,15 +40,10 @@ const Actions: FC = () => {
     claimableAmount: claimableTokenAmount,
   } = useVestingInfo();
 
-  const { execute: executeVestTx, status: vestTxStatus } = useVestTx(true);
-
   const formattedClaimableTokenAmount =
     claimableTokenAmount !== null
       ? formatTokenBalance(claimableTokenAmount)
       : null;
-
-  const { isEligible: isAirdropEligible } = useAirdropEligibility();
-  const isPayoutsAvailable = usePayoutsAvailability();
 
   return (
     <>
