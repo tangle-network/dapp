@@ -16,14 +16,16 @@ import {
   YAxis,
 } from 'recharts';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import { RestakingService } from '../../types';
 import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 import type { RoleEarningsChartProps } from './types';
 
 const SERVICES = Object.values(RestakingService);
 
-const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data, unit }) => {
+const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data }) => {
   const [isDarkMode] = useNextDarkMode();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   return (
     <ResponsiveContainer width="100%" height="100%" className="min-h-[200px]">
@@ -54,7 +56,7 @@ const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data, unit }) => {
                 <TooltipContent
                   month={payload[0].payload.month}
                   year={payload[0].payload.year}
-                  suffix={unit}
+                  suffix={nativeTokenSymbol}
                   services={SERVICES.map((service) => ({
                     name: service,
                     value: payload[0].payload[service],

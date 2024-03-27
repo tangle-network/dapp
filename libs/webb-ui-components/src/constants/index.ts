@@ -240,6 +240,16 @@ export const webbNetworks: webbNetworksType[] = [
   {
     networkType: 'testnet',
     networks: [
+      // TANGLE INTERNAL TESTNET
+      // {
+      //   name: 'Tangle Internal Testnet',
+      //   networkType: 'testnet',
+      //   networkNodeType: 'standalone',
+      //   subqueryEndpoint: SUBQUERY_ENDPOINT, // Incorrect but will remove this network later
+      //   polkadotEndpoint: 'wss://internal-testing.tangle.tools',
+      //   polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL, // Incorrect but will remove this network later
+      //   avatar: '',
+      // },
       {
         name: 'Tangle Testnet Native',
         networkType: 'testnet',

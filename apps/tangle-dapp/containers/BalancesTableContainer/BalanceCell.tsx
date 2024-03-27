@@ -10,6 +10,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 
@@ -19,9 +20,10 @@ const BalanceCell: FC<{
 }> = ({ amount, status }) => {
   const activeAccountAddress = useActiveAccountAddress();
   const isAccountActive = activeAccountAddress !== null;
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedBalance =
-    amount !== null ? formatTokenBalance(amount, true) : null;
+    amount !== null ? formatTokenBalance(amount, nativeTokenSymbol) : null;
 
   return (
     <div className="flex flex-row p-3 gap-2">

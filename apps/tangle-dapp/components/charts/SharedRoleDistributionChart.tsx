@@ -8,13 +8,15 @@ import { FC } from 'react';
 import { Cell, RadialBar, RadialBarChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import type { PieChartProps } from './types';
 
 const SharedRoleDistributionChart: FC<PieChartProps> = ({
   data,
   title = 'Shared',
 }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   return (
     <div className="relative">
       <RadialBarChart
@@ -52,7 +54,7 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
           className="text-mono-200 dark:text-mono-0"
         >
           {/* In Shared Profile, all roles share the same value */}
-          {getRoundedAmountString(data[0].value)} {TANGLE_TOKEN_UNIT}
+          {getRoundedAmountString(data[0].value)} {nativeTokenSymbol}
         </Typography>
       </div>
     </div>

@@ -33,7 +33,7 @@ export default function useDelegations(
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -73,7 +73,10 @@ export default function useDelegations(
                   ledgerData.total.toString()
                 );
 
-                const selfStakedBalance = formatTokenBalance(selfStaked);
+                const selfStakedBalance = formatTokenBalance(
+                  selfStaked,
+                  nativeTokenSymbol
+                );
 
                 const isActive = await apiPromise.query.session
                   .validators()
@@ -106,8 +109,9 @@ export default function useDelegations(
                   target.toString()
                 );
                 const totalStakeAmount = exposure.total.unwrap();
-                const effectiveAmountStaked = await formatTokenBalance(
-                  totalStakeAmount
+                const effectiveAmountStaked = formatTokenBalance(
+                  totalStakeAmount,
+                  nativeTokenSymbol
                 );
 
                 return {
@@ -147,7 +151,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint, setCachedNominations]);
+  }, [address, rpcEndpoint, setCachedNominations, nativeTokenSymbol]);
 
   return useFormatReturnType({
     isLoading,

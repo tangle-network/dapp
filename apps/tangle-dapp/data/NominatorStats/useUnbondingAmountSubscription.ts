@@ -18,7 +18,7 @@ export default function useUnbondingAmountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -51,8 +51,9 @@ export default function useUnbondingAmountSubscription(
                 0
               );
 
-              const unbondingFormattedAmount = await formatTokenBalance(
-                new u128(api.registry, totalUnbondingAmount.toString())
+              const unbondingFormattedAmount = formatTokenBalance(
+                new u128(api.registry, totalUnbondingAmount.toString()),
+                nativeTokenSymbol
               );
 
               setValue1(unbondingFormattedAmount ?? null);
@@ -77,7 +78,7 @@ export default function useUnbondingAmountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint]);
+  }, [address, rpcEndpoint, nativeTokenSymbol]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }
