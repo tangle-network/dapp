@@ -47,8 +47,8 @@ const VestingScheduleBalances: FC = () => {
       'No tokens have vested yet.'
     ) : (
       <>
-        <strong>{formatTokenBalance(amountAlreadyVested)}</strong> has already
-        vested, with <strong>{formatTokenBalance(remaining)}</strong> remaining.
+        <strong>{formatTokenBalance(amountAlreadyVested)}</strong> has vested,
+        with <strong>{formatTokenBalance(remaining)}</strong> remaining.
       </>
     );
 
@@ -70,8 +70,9 @@ const VestingScheduleBalances: FC = () => {
           }
           tooltip={
             <>
-              Unlock this balance by performing a <strong>vest</strong>{' '}
-              transaction.
+              Use this action to perform a <strong>vest</strong> transaction.
+              This will release vested tokens from <strong>all</strong> vesting
+              schedules.
             </>
           }
         />

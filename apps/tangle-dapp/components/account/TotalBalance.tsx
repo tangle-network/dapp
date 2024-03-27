@@ -11,10 +11,10 @@ import { formatTokenBalance } from '../../utils/polkadot';
 import { InfoIconWithTooltip } from '..';
 
 const TotalBalance: FC = () => {
-  const { total } = useBalances();
+  const { free: totalBalance } = useBalances();
 
-  const formattedTotal =
-    total !== null ? formatTokenBalance(total, false) : null;
+  const formattedTotalBalance =
+    totalBalance !== null ? formatTokenBalance(totalBalance, false) : null;
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -43,7 +43,7 @@ const TotalBalance: FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex gap-2 items-end py-2">
             <Typography variant="h2" fw="bold" className="!leading-none">
-              <HiddenValue>{formattedTotal ?? '--'}</HiddenValue>
+              <HiddenValue>{formattedTotalBalance ?? '--'}</HiddenValue>
             </Typography>
 
             <Typography variant="h4" fw="normal" className="!leading-none pb-1">

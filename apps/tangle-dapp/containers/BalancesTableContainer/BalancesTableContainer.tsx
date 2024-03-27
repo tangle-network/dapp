@@ -24,13 +24,20 @@ import HeaderCell from './HeaderCell';
 import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
 
 const BalancesTableContainer: FC = () => {
-  const { free, locked } = useBalances();
+  const { locked, transferrable } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
 
   const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
     useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
 
-  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+  const { data: locks } = usePolkadotApiRx(
+    useCallback(
+      (api, activeSubstrateAddress) =>
+        api.query.balances.locks(activeSubstrateAddress),
+      []
+    )
+  );
 
   // Load the cached collapsed state from local storage on mount.
   useEffect(() => {
@@ -40,14 +47,6 @@ const BalancesTableContainer: FC = () => {
       setIsDetailsCollapsed(cachedIsDetailsCollapsed);
     }
   }, [getCachedIsDetailsCollapsed]);
-
-  const { data: locks } = usePolkadotApiRx(
-    useCallback(
-      (api, activeSubstrateAddress) =>
-        api.query.balances.locks(activeSubstrateAddress),
-      []
-    )
-  );
 
   const handleToggleDetails = useCallback(() => {
     setIsDetailsCollapsed((prev) => {
@@ -70,7 +69,7 @@ const BalancesTableContainer: FC = () => {
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Free Balance"
+              title="Transferrable Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
@@ -84,22 +83,22 @@ const BalancesTableContainer: FC = () => {
           <div className="flex flex-col w-full">
             <HeaderCell title="Balance" />
 
-            {/* Free balance */}
+            {/* Transferrable balance */}
             <div className="flex flex-row justify-between">
-              <BalanceCell amount={free} />
+              <BalanceCell amount={transferrable} />
 
               <div className="flex flex-row gap-1 items-center p-3">
                 <BalanceAction
                   Icon={SendPlanLineIcon}
                   tooltip="Send"
-                  isDisabled={free === null || free.eqn(0)}
+                  isDisabled={transferrable === null || transferrable.eqn(0)}
                   onClick={() => setIsTransferModalOpen(true)}
                 />
 
                 <BalanceAction
                   Icon={CoinsStackedLineIcon}
                   tooltip="Nominate"
-                  isDisabled={free === null || free.eqn(0)}
+                  isDisabled={transferrable === null || transferrable.eqn(0)}
                   internalHref={StaticSearchQueryPath.NominationsTable}
                 />
               </div>
