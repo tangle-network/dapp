@@ -134,7 +134,7 @@ const useNetworkState = () => {
         setCachedNetworkName(newNetwork.name);
       }
 
-      await getNativeTokenSymbol(newNetwork.polkadotEndpoint);
+      await fetchTokenSymbol(newNetwork.polkadotEndpoint);
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);
@@ -145,6 +145,7 @@ const useNetworkState = () => {
       setCachedCustomRpcEndpoint,
       setCachedNetworkName,
       setNetwork,
+      fetchTokenSymbol
     ]
   );
 
