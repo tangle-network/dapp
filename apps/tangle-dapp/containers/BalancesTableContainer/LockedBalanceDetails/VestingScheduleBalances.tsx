@@ -1,26 +1,18 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { LockUnlockLineIcon } from '@webb-tools/icons';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
-import useVestTx from '../../../data/vesting/useVestTx';
 import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
 import { formatTokenBalance } from '../../../utils/polkadot';
-import BalanceAction from '../BalanceAction';
 import BalanceCell from '../BalanceCell';
+import VestBalanceAction from '../VestBalanceAction';
 
 const VestingScheduleBalances: FC = () => {
-  const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
+  const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
   const { data: currentBlockNumber } = usePolkadotApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
-
-  const {
-    schedulesOpt: vestingSchedulesOpt,
-    hasClaimableTokens: hasClaimableVestingTokens,
-  } = useVestingInfo();
 
   if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
     return;
@@ -56,26 +48,7 @@ const VestingScheduleBalances: FC = () => {
       <div key={index} className="flex flex-row justify-between items-center">
         <BalanceCell amount={schedule.locked} status={status} />
 
-        <BalanceAction
-          Icon={LockUnlockLineIcon}
-          onClick={executeVestTx !== null ? executeVestTx : undefined}
-          isDisabled={
-            executeVestTx === null ||
-            // Cannot vest tokens if there is a pending vest transaction.
-            vestTxStatus === TxStatus.PROCESSING ||
-            // Prevent the user from attempting to claim tokens when none
-            // have vested yet. Otherwise, it would have no effect and possibly
-            // incur unnecessary transaction fees.
-            !hasClaimableVestingTokens
-          }
-          tooltip={
-            <>
-              Use this action to perform a <strong>vest</strong> transaction.
-              This will release vested tokens from <strong>all</strong> vesting
-              schedules.
-            </>
-          }
-        />
+        <VestBalanceAction />
       </div>
     );
   });

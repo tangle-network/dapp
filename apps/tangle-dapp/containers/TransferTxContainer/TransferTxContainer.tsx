@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { isHex } from 'viem';
 
 import { TANGLE_TOKEN_UNIT } from '../../constants';
@@ -22,6 +22,7 @@ import useBalances from '../../data/balances/useBalances';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
+import { CHAIN_UNIT_CONVERSION_FACTOR } from '../../utils/convertChainUnitsToNumber';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import { TransferTxContainerProps } from './types';
 
@@ -68,11 +69,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const [receiverAddress, setReceiverAddress] = useState('');
   const { transferrable: transferrableBalance } = useBalances();
 
-  const formattedTransferableBalance =
-    transferrableBalance !== null
-      ? formatTokenBalance(transferrableBalance, false)
-      : null;
-
   const {
     execute: executeTransferTx,
     status,
@@ -115,12 +111,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   }, [reset, status]);
 
   const setMaxAmount = useCallback(() => {
-    if (formattedTransferableBalance === null) {
+    if (transferrableBalance === null) {
       return;
     }
 
-    setAmount(formattedTransferableBalance);
-  }, [formattedTransferableBalance]);
+    setAmount(
+      transferrableBalance.div(CHAIN_UNIT_CONVERSION_FACTOR).toString()
+    );
+  }, [transferrableBalance]);
 
   const isReady = status !== TxStatus.PROCESSING;
   const isDataValid = amount !== '' && receiverAddress !== '';
@@ -128,6 +126,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
+
+  const displayAmount = useMemo(
+    () =>
+      formatTokenBalance(
+        convertAmountStringToChainUnits(amount === '' ? '0' : amount)
+      ),
+    [amount]
+  );
 
   return (
     <Modal>
@@ -148,7 +154,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           </Typography>
 
           <TxConfirmationRing
-            title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
+            title={displayAmount}
             isInNextApp
             source={{
               address: activeAccountAddress,

@@ -14,6 +14,7 @@ import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
+import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { StaticSearchQueryPath } from '../../types';
@@ -22,11 +23,15 @@ import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
 import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
+import VestBalanceAction from './VestBalanceAction';
 
 const BalancesTableContainer: FC = () => {
   const { locked, transferrable } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+
+  const { hasClaimableTokens: hasVestedAmount, claimableAmount: vestedAmount } =
+    useVestingInfo();
 
   const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
     useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
@@ -73,6 +78,13 @@ const BalancesTableContainer: FC = () => {
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
+            {hasVestedAmount && (
+              <AssetCell
+                title="Vested Balance"
+                tooltip="The total amount of tokens that has vested from vesting schedules, and is now available to be claimed."
+              />
+            )}
+
             <AssetCell
               title="Locked Balance"
               tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
@@ -103,6 +115,17 @@ const BalancesTableContainer: FC = () => {
                 />
               </div>
             </div>
+
+            {/* Vested balance */}
+            {hasVestedAmount && (
+              <div className="flex flex-row justify-between items-center">
+                <BalanceCell amount={vestedAmount} />
+
+                <div className="p-3">
+                  <VestBalanceAction />
+                </div>
+              </div>
+            )}
 
             {/* Locked balance */}
             <div className="flex flex-row justify-between items-center">
