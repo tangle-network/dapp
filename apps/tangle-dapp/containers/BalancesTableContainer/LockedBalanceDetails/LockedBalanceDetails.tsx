@@ -29,39 +29,7 @@ const LockedBalanceDetails: FC = () => {
     SubstrateLockId.STAKING
   );
 
-  const vestingSchedulesLabels =
-    vestingSchedulesOpt !== null &&
-    !vestingSchedulesOpt.isNone &&
-    vestingSchedulesOpt
-      .unwrap()
-      .map((_schedule, index) => (
-        <LabelChip key={index} title={`Vesting #${index + 1}`} />
-      ));
-
-  const stakingUnlockingAt = stakingLockedBalance !== null && (
-    <TextCell text="—" />
-  );
-
-  const unbondingLabels =
-    unbondingEntries !== null &&
-    unbondingEntries.length > 0 &&
-    unbondingEntries.map((_unbondingInfo, index) => (
-      <LabelChip key={index} title="Unbonding" />
-    ));
-
-  const unbondingUnlockingAt =
-    currentEra !== null &&
-    unbondingEntries !== null &&
-    unbondingEntries.length > 0 &&
-    unbondingEntries.map((entry, index) => (
-      <TextCell
-        key={index}
-        text={`Era #${formatBnWithCommas(entry.unlockEra)}`}
-        status={`${formatBnWithCommas(entry.remainingEras)} era(s) remaining.`}
-      />
-    ));
-
-  const evmStakingAction = (
+  const visitNominationPageAction = (
     <BalanceAction
       Icon={ArrowRightUp}
       internalHref={PagePath.NOMINATION}
@@ -73,25 +41,6 @@ const LockedBalanceDetails: FC = () => {
     />
   );
 
-  const stakingBalance = stakingLockedBalance !== null && (
-    <div className="flex flex-row justify-between items-center">
-      <BalanceCell amount={stakingLockedBalance} />
-
-      {evmStakingAction}
-    </div>
-  );
-
-  const unbondingBalances =
-    unbondingEntries !== null &&
-    unbondingEntries.length > 0 &&
-    unbondingEntries.map((entry, index) => (
-      <div key={index} className="flex flex-row justify-between items-center">
-        <BalanceCell key={index} amount={entry.amount} />
-
-        {evmStakingAction}
-      </div>
-    ));
-
   return (
     <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 pt-6 rounded-lg min-w-[630px]">
       <div className="flex flex-row w-full">
@@ -101,13 +50,23 @@ const LockedBalanceDetails: FC = () => {
             <HeaderCell title="Lock Type" />
           </div>
 
-          {vestingSchedulesLabels}
+          {vestingSchedulesOpt !== null &&
+            !vestingSchedulesOpt.isNone &&
+            vestingSchedulesOpt
+              .unwrap()
+              .map((_schedule, index) => (
+                <LabelChip key={index} title={`Vesting #${index + 1}`} />
+              ))}
 
           {isInDemocracy && <LabelChip title="Democracy" />}
 
           {stakingLockedBalance !== null && <LabelChip title="Nomination" />}
 
-          {unbondingLabels}
+          {unbondingEntries !== null &&
+            unbondingEntries.length > 0 &&
+            unbondingEntries.map((_unbondingInfo, index) => (
+              <LabelChip key={index} title="Unbonding" />
+            ))}
         </div>
 
         {/* Unlocks at */}
@@ -118,9 +77,20 @@ const LockedBalanceDetails: FC = () => {
 
           <DemocracyUnlockingAt />
 
-          {stakingUnlockingAt}
+          {stakingLockedBalance !== null && <TextCell text="—" />}
 
-          {unbondingUnlockingAt}
+          {currentEra !== null &&
+            unbondingEntries !== null &&
+            unbondingEntries.length > 0 &&
+            unbondingEntries.map((entry, index) => (
+              <TextCell
+                key={index}
+                text={`Era #${formatBnWithCommas(entry.unlockEra)}`}
+                status={`${formatBnWithCommas(
+                  entry.remainingEras
+                )} era(s) remaining.`}
+              />
+            ))}
         </div>
       </div>
 
@@ -132,9 +102,26 @@ const LockedBalanceDetails: FC = () => {
 
         <DemocracyBalance />
 
-        {stakingBalance}
+        {stakingLockedBalance !== null && (
+          <div className="flex flex-row justify-between items-center">
+            <BalanceCell amount={stakingLockedBalance} />
 
-        {unbondingBalances}
+            {visitNominationPageAction}
+          </div>
+        )}
+
+        {unbondingEntries !== null &&
+          unbondingEntries.length > 0 &&
+          unbondingEntries.map((entry, index) => (
+            <div
+              key={index}
+              className="flex flex-row justify-between items-center"
+            >
+              <BalanceCell key={index} amount={entry.amount} />
+
+              {visitNominationPageAction}
+            </div>
+          ))}
       </div>
     </div>
   );

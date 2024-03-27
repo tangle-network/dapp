@@ -70,12 +70,16 @@ const AccountAddress: FC<AccountAddressProps> = ({
     ? shortenHex
     : shortenString;
 
+  const avatarIcon =
+    activeAddress === null ? (
+      <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
+    ) : (
+      <Avatar value={activeAddress} theme="ethereum" />
+    );
+
   return (
     <div className={twMerge('flex items-center gap-1', className)}>
-      <IconWithTooltip
-        icon={<Avatar value={activeAddress ?? '0x0'} theme="ethereum" />}
-        content="Account public key"
-      />
+      <IconWithTooltip icon={avatarIcon} content="Account public key" />
 
       <Typography variant="body1" fw="normal">
         Address:
