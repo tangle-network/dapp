@@ -63,13 +63,15 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const accAddress = useActiveAccountAddress();
+  const activeAccountAddress = useActiveAccountAddress();
   const [amount, setAmount] = useState('');
   const [receiverAddress, setReceiverAddress] = useState('');
-  const { free: freeBalance } = useBalances();
+  const { transferrable: transferrableBalance } = useBalances();
 
-  const formattedFreeBalance =
-    freeBalance !== null ? formatTokenBalance(freeBalance, false) : null;
+  const formattedTransferableBalance =
+    transferrableBalance !== null
+      ? formatTokenBalance(transferrableBalance, false)
+      : null;
 
   const {
     execute: executeTransferTx,
@@ -83,6 +85,11 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         // of decimals.
         const amountInChainUnits = convertAmountStringToChainUnits(amount);
 
+        // By 'allow death', it means that the transaction will
+        // go through even if the sender's account balance would
+        // be reduced to an amount that is less than the existential
+        // deposit, essentially causing the account to be 'reaped'
+        // or deleted from the chain.
         return api.tx.balances.transferAllowDeath(
           receiverAddress,
           amountInChainUnits
@@ -108,12 +115,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   }, [reset, status]);
 
   const setMaxAmount = useCallback(() => {
-    if (formattedFreeBalance === null) {
+    if (formattedTransferableBalance === null) {
       return;
     }
 
-    setAmount(formattedFreeBalance);
-  }, [formattedFreeBalance]);
+    setAmount(formattedTransferableBalance);
+  }, [formattedTransferableBalance]);
 
   const isReady = status !== TxStatus.PROCESSING;
   const isDataValid = amount !== '' && receiverAddress !== '';
@@ -144,8 +151,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
             isInNextApp
             source={{
-              address: accAddress,
-              typedChainId: getTypedChainIdFromAddr(accAddress),
+              address: activeAccountAddress,
+              typedChainId: getTypedChainIdFromAddr(activeAccountAddress),
             }}
             dest={{
               address: receiverAddress,

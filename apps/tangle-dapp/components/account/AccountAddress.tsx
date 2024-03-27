@@ -15,7 +15,7 @@ import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { FC } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { evmToSubstrateAddress } from '../../utils';
@@ -30,7 +30,6 @@ const AccountAddress: FC<AccountAddressProps> = ({
   className,
 }) => {
   const [isHiddenValue] = useHiddenValue();
-  const [displayAddress, setDisplayAddress] = useState(activeAddress);
 
   const isEvmAccountAddress =
     activeAddress === null ? null : isEthereumAddress(activeAddress);
@@ -38,11 +37,15 @@ const AccountAddress: FC<AccountAddressProps> = ({
   const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
     useState(isEvmAccountAddress);
 
-  const shortenFn = isHiddenValue
-    ? shortenString
-    : isDisplayingEvmAddress
-    ? shortenHex
-    : shortenString;
+  const displayAddress = useMemo(() => {
+    if (activeAddress === null) {
+      return null;
+    }
+
+    return isDisplayingEvmAddress
+      ? activeAddress
+      : evmToSubstrateAddress(activeAddress);
+  }, [activeAddress, isDisplayingEvmAddress]);
 
   const possiblyHiddenAddress = useMemo(
     () =>
@@ -54,37 +57,18 @@ const AccountAddress: FC<AccountAddressProps> = ({
     [displayAddress, isHiddenValue]
   );
 
-  const updateAddress = useCallback(
-    (isDisplayingEvmAddress: boolean) => {
-      if (activeAddress === null) {
-        setDisplayAddress(null);
-
-        return;
-      }
-
-      const nextDisplayAddress = isDisplayingEvmAddress
-        ? activeAddress
-        : evmToSubstrateAddress(activeAddress);
-
-      setDisplayAddress(nextDisplayAddress);
-    },
-    [activeAddress]
-  );
-
   // Switch between EVM & Substrate addresses.
   const handleAddressTypeToggle = useCallback(() => {
     setIsDisplayingEvmAddress((previous) => !previous);
-    updateAddress(!isDisplayingEvmAddress);
-  }, [isDisplayingEvmAddress, updateAddress]);
-
-  // Update the address when the active address prop changes.
-  useEffect(() => {
-    if (isDisplayingEvmAddress !== null) {
-      updateAddress(isDisplayingEvmAddress);
-    }
-  }, [isDisplayingEvmAddress, updateAddress, activeAddress]);
+  }, []);
 
   const iconFillColorClass = 'dark:!fill-mono-80 !fill-mono-160';
+
+  const shortenFn = isHiddenValue
+    ? shortenString
+    : isDisplayingEvmAddress
+    ? shortenHex
+    : shortenString;
 
   return (
     <div className={twMerge('flex items-center gap-1', className)}>
