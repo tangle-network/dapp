@@ -57,8 +57,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidators();
+  const maxNominationQuota = useMaxNominationQuota();
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
@@ -73,7 +73,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const executeTx = useExecuteTxWithNotification();
 
-  const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
+  const [delegateTxStep, setDelegateTxStep] = useState(
     DelegateTxSteps.BOND_TOKENS
   );
 
@@ -92,7 +92,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     return selectedValidators.length > maxNominationQuota;
   }, [maxNominationQuota, selectedValidators.length]);
 
-  const currentStep = useMemo(() => {
+  const currentStep = (() => {
     if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
       return '(1/3)';
     } else if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
@@ -100,7 +100,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
       return '(3/3)';
     }
-  }, [delegateTxStep]);
+  })();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -125,6 +125,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
+
   const {
     data: currentPaymentDestination,
     error: currentPaymentDestinationError,
