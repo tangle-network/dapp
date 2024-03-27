@@ -145,7 +145,7 @@ const useNetworkState = () => {
       setCachedCustomRpcEndpoint,
       setCachedNetworkName,
       setNetwork,
-      fetchTokenSymbol
+      fetchTokenSymbol,
     ]
   );
 
