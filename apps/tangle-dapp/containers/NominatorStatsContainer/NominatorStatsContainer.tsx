@@ -15,7 +15,7 @@ import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -50,9 +50,9 @@ const NominatorStatsContainer: FC = () => {
 
   const {
     isFirstTimeNominator,
-    isFirstTimeNominatorLoading,
-    isFirstTimeNominatorError,
-  } = useIsFirstTimeNominatorSubscription(substrateAddress);
+    isLoading: isFirstTimeNominatorLoading,
+    isError: isFirstTimeNominatorError,
+  } = useIsFirstTimeNominator();
 
   return (
     <>

@@ -17,8 +17,6 @@ export const useValidators = (
   addresses: AccountId32[] | null,
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
-  console.debug('Fetching validator data (v2)');
-
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
 

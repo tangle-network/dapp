@@ -16,7 +16,7 @@ import {
   WEBB_TANGLE_DOCS_STAKING_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 
 import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import {
@@ -24,14 +24,15 @@ import {
   TANGLE_TOKEN_UNIT,
 } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
-import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
+import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
+import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { PaymentDestination } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
 import {
   bondExtraTokens as bondExtraTokensEvm,
   bondTokens as bondTokensEvm,
@@ -59,9 +60,29 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const allValidators = useAllValidators();
   const maxNominationQuota = useMaxNominationQuota();
+  const [amountToBond, setAmountToBond] = useState(0);
+  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
+  const executeTx = useExecuteTxWithNotification();
+  const activeSubstrateAddress = useSubstrateAddress();
+
+  console.debug('DelegateTxContainer: render');
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
+
+  const [delegateTxStep, setDelegateTxStep] = useState(
+    DelegateTxSteps.BOND_TOKENS
+  );
+
+  const [paymentDestination, setPaymentDestination] = useState<string>(
+    PaymentDestination.STAKED
+  );
+
+  const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
+    useState(false);
+
+  const isExceedingMaxNominationQuota =
+    selectedValidators.length > maxNominationQuota;
 
   const [txStatus, setTxnStatus] = useState<{
     status: 'success' | 'error';
@@ -70,27 +91,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     status: 'error',
     hash: '',
   });
-
-  const executeTx = useExecuteTxWithNotification();
-
-  const [delegateTxStep, setDelegateTxStep] = useState(
-    DelegateTxSteps.BOND_TOKENS
-  );
-
-  const [amountToBond, setAmountToBond] = useState(0);
-
-  const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.STAKED
-  );
-
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
-
-  const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
-    useState(false);
-
-  const isExceedingMaxNominationQuota = useMemo(() => {
-    return selectedValidators.length > maxNominationQuota;
-  }, [maxNominationQuota, selectedValidators.length]);
 
   const currentStep = (() => {
     if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
@@ -102,80 +102,59 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     }
   })();
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+  const walletAddress = (() => {
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
+  })();
 
   const {
     isFirstTimeNominator,
-    isFirstTimeNominatorLoading,
-    isFirstTimeNominatorError,
-  } = useIsFirstTimeNominatorSubscription(substrateAddress);
+    isLoading: isFirstTimeNominatorLoading,
+    isError: isFirstTimeNominatorError,
+  } = useIsFirstTimeNominator();
 
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
 
+  // TODO: Need to change defaulting to empty/dummy strings to instead adhere to the type system. Ex. should be using `| null` instead.
   const {
     data: currentPaymentDestination,
     error: currentPaymentDestinationError,
-  } = usePaymentDestinationSubscription(substrateAddress);
+  } = usePaymentDestination(activeSubstrateAddress ?? '0x0');
 
-  useEffect(() => {
-    if (walletBalanceError) {
-      notificationApi({
-        variant: 'error',
-        message: walletBalanceError.message,
-      });
+  useErrorReporting(null, walletBalanceError);
+
+  const amountToBondError = (() => {
+    if (!walletBalance) {
+      return '';
     }
-  }, [notificationApi, walletBalanceError]);
-
-  const amountToBondError = useMemo(() => {
-    if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
       return `You have zero ${TANGLE_TOKEN_UNIT} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
       return `You don't have enough ${TANGLE_TOKEN_UNIT} in your wallet!`;
     }
-  }, [walletBalance, amountToBond]);
+  })();
 
-  const continueToSelectDelegatesStep = useMemo(() => {
-    return isFirstTimeNominator
-      ? amountToBond > 0
-      : true &&
-        !amountToBondError &&
-        paymentDestination &&
-        walletAddress !== '0x0'
+  const continueToSelectDelegatesStep = isFirstTimeNominator
+    ? amountToBond > 0
+    : true &&
+      !amountToBondError &&
+      paymentDestination &&
+      walletAddress !== '0x0'
+    ? true
+    : false;
+
+  const continueToAuthorizeTxStep =
+    selectedValidators.length > 0 && !isExceedingMaxNominationQuota
       ? true
       : false;
-  }, [
-    amountToBond,
-    amountToBondError,
-    isFirstTimeNominator,
-    paymentDestination,
-    walletAddress,
-  ]);
 
-  const continueToAuthorizeTxStep = useMemo(() => {
-    return selectedValidators.length > 0 && !isExceedingMaxNominationQuota
-      ? true
-      : false;
-  }, [isExceedingMaxNominationQuota, selectedValidators.length]);
-
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return continueToSelectDelegatesStep && continueToAuthorizeTxStep;
-  }, [continueToSelectDelegatesStep, continueToAuthorizeTxStep]);
+  const continueToSignAndSubmitTx =
+    continueToSelectDelegatesStep && continueToAuthorizeTxStep;
 
   const closeModal = useCallback(() => {
     setIsSubmitAndSignTxLoading(false);

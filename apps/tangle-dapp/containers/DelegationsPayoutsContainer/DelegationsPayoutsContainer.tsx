@@ -17,7 +17,7 @@ import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 import { TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
-import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
@@ -80,9 +80,7 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);
-
-  const { isFirstTimeNominator } =
-    useIsFirstTimeNominatorSubscription(substrateAddress);
+  const { isFirstTimeNominator } = useIsFirstTimeNominator();
 
   const currentNominations = useMemo(() => {
     if (!delegatorsData?.delegators) return [];
