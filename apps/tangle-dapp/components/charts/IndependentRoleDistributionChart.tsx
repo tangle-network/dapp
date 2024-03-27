@@ -8,13 +8,15 @@ import { FC } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import type { PieChartProps } from './types';
 
 const IndependentRoleDistributionChart: FC<PieChartProps> = ({
   data,
   title = 'Independent',
 }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   return (
     <div className="relative">
       <PieChart width={200} height={200}>
@@ -37,6 +39,7 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
                 <TooltipContent
                   name={payload[0].payload.name}
                   value={payload[0].payload.value}
+                  tokenSymbol={nativeTokenSymbol}
                 />
               );
             }
@@ -60,7 +63,7 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           {getRoundedAmountString(
             data.reduce((acc, item) => acc + item.value, 0)
           )}{' '}
-          {TANGLE_TOKEN_UNIT}
+          {nativeTokenSymbol}
         </Typography>
       </div>
     </div>
@@ -73,7 +76,8 @@ export default IndependentRoleDistributionChart;
 const TooltipContent: FC<{
   name: string;
   value: number;
-}> = ({ name, value }) => {
+  tokenSymbol: string;
+}> = ({ name, value, tokenSymbol }) => {
   return (
     <div className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80">
       <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
@@ -81,7 +85,7 @@ const TooltipContent: FC<{
         {typeof value === 'number' && value >= 10000
           ? getRoundedAmountString(value)
           : value}{' '}
-        {TANGLE_TOKEN_UNIT}
+        {tokenSymbol}
       </Typography>
     </div>
   );

@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { getProtocolEarningsChartData } from '../../data/roleEarningsChart';
 
 const RoleEarningsChart = dynamic(
@@ -30,7 +29,7 @@ export default async function ProtocolEarningsCard({
 
       <div className="flex-1 flex items-center justify-center">
         <div className="w-full min-h-[200px]">
-          <RoleEarningsChart data={data} unit={TANGLE_TOKEN_UNIT} />
+          <RoleEarningsChart data={data} />
         </div>
       </div>
     </GlassCard>

@@ -1,13 +1,17 @@
+'use client';
+
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import useNetworkStore from '../../../context/useNetworkStore';
 import ActionButton from './ActionButton';
 
 const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
   (props, ref) => {
+    const { nativeTokenSymbol } = useNetworkStore();
+
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
         <div className="grid content-between w-full h-full grid-cols-2">
@@ -15,19 +19,19 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
             title="Total Restaked"
             value={null}
             isBoldText
-            prefix={TANGLE_TOKEN_UNIT}
+            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
             title="Available for Restake"
             value={null}
             isBoldText
-            prefix={TANGLE_TOKEN_UNIT}
+            suffix={nativeTokenSymbol}
           />
 
-          <StatsItem title="Earnings" value={null} prefix={TANGLE_TOKEN_UNIT} />
+          <StatsItem title="Earnings" value={null} suffix={nativeTokenSymbol} />
 
-          <StatsItem title="APY" value={null} prefix="%" />
+          <StatsItem title="APY" value={null} suffix="%" />
 
           <ActionButton />
         </div>
@@ -46,7 +50,7 @@ type StatsItemProps = {
   value: number | null;
   valueTooltip?: string;
   isBoldText?: boolean;
-  prefix?: string;
+  suffix?: string;
 };
 
 const StatsItem: FC<StatsItemProps> = ({
@@ -55,7 +59,7 @@ const StatsItem: FC<StatsItemProps> = ({
   value,
   valueTooltip,
   isBoldText,
-  prefix = '',
+  suffix = '',
 }) => {
   return (
     <div className="gap-3">
@@ -79,7 +83,7 @@ const StatsItem: FC<StatsItemProps> = ({
         >
           {`${
             typeof value === 'number' ? value.toLocaleString() : '--'
-          } ${prefix}`.trim()}
+          } ${suffix}`.trim()}
         </Typography>
 
         {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}

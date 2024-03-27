@@ -16,7 +16,7 @@ export default function useTotalStakedAmountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -43,7 +43,10 @@ export default function useTotalStakedAmountSubscription(
                 ledger.total.toString()
               );
 
-              const availableTokenBalance = formatTokenBalance(totalStaked);
+              const availableTokenBalance = formatTokenBalance(
+                totalStaked,
+                nativeTokenSymbol
+              );
 
               setValue1(availableTokenBalance ?? null);
               setIsLoading(false);
@@ -67,7 +70,7 @@ export default function useTotalStakedAmountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint]);
+  }, [address, rpcEndpoint, nativeTokenSymbol]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }

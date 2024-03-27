@@ -9,8 +9,8 @@ import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenStrin
 import { twMerge } from 'tailwind-merge';
 
 import { SocialChip, TangleBigLogo } from '../../../components';
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import getValidatorOverviewData from '../../../data/getValidatorOverviewData';
+import TotalRestaked from './TotalRestaked';
 
 interface ValidatorOverviewCardProps {
   validatorAddress: string;
@@ -86,9 +86,7 @@ export default async function ValidatorOverviewCard({
               Total Restaked
             </Typography>
             <div className="flex gap-3 items-center">
-              <Typography variant="h4" fw="bold" className="whitespace-nowrap">
-                {totalRestaked} {TANGLE_TOKEN_UNIT}
-              </Typography>
+              <TotalRestaked totalRestaked={totalRestaked} />
               <Chip color="dark-grey">{restakingMethod ?? 'N/A'}</Chip>
             </div>
           </div>

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 import { RoleEarningsChart } from '../../../components/charts';
 import type { RoleEarningsChartItem } from '../../../components/charts/types';
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
 import { getRoleEarningsChartDataByAcc } from '../../../data/roleEarningsChart';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 
@@ -39,7 +38,7 @@ const EarningsChart = () => {
 
   if (error) return <div>Error fetching data</div>;
 
-  return <RoleEarningsChart data={data} unit={TANGLE_TOKEN_UNIT} />;
+  return <RoleEarningsChart data={data} />;
 };
 
 export default EarningsChart;

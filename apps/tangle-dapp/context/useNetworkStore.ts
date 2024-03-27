@@ -12,11 +12,15 @@ const useNetworkStore = create<{
   rpcEndpoint: string;
   network: Network;
   setNetwork: (network: Network) => void;
+  nativeTokenSymbol: string;
+  setNativeTokenSymbol: (nativeTokenSymbol: string) => void;
 }>((set) => ({
   rpcEndpoint: DEFAULT_NETWORK.polkadotEndpoint,
   network: DEFAULT_NETWORK,
   setNetwork: (network) =>
     set({ network, rpcEndpoint: network.polkadotEndpoint }),
+  nativeTokenSymbol: '',
+  setNativeTokenSymbol: (nativeTokenSymbol) => set({ nativeTokenSymbol }),
 }));
 
 export default useNetworkStore;

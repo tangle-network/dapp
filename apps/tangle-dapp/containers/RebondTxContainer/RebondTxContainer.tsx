@@ -14,7 +14,6 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
@@ -39,7 +38,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToRebond, setAmountToRebond] = useState(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -87,9 +86,9 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (remainingUnbondedTokensToRebond === 0) {
       return 'You have no unbonded tokens to rebond!';
     } else if (amountToRebond > remainingUnbondedTokensToRebond) {
-      return `You can only rebond ${remainingUnbondedTokensToRebond} ${TANGLE_TOKEN_UNIT}!`;
+      return `You can only rebond ${remainingUnbondedTokensToRebond} ${nativeTokenSymbol}!`;
     }
-  }, [remainingUnbondedTokensToRebond, amountToRebond]);
+  }, [remainingUnbondedTokensToRebond, amountToRebond, nativeTokenSymbol]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToRebond > 0 && !amountToRebondError && walletAddress !== '0x0'
@@ -110,7 +109,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       const hash = await executeTx(
         () => rebondTokensEvm(walletAddress, amountToRebond),
         () => rebondTokensSubstrate(rpcEndpoint, walletAddress, amountToRebond),
-        `Successfully rebonded ${amountToRebond} ${TANGLE_TOKEN_UNIT}.`,
+        `Successfully rebonded ${amountToRebond} ${nativeTokenSymbol}.`,
         'Failed to rebond tokens!'
       );
 
@@ -137,6 +136,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
+    nativeTokenSymbol,
   ]);
 
   return (

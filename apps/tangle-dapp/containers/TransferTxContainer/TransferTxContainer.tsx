@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
@@ -64,13 +64,15 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const accAddress = useActiveAccountAddress();
+  const { nativeTokenSymbol } = useNetworkStore();
+  const { transferrable: transferrableBalance } = useBalances();
+
   const [amount, setAmount] = useState('');
   const [receiverAddress, setReceiverAddress] = useState('');
-  const { transferrable: transferrableBalance } = useBalances();
 
   const formattedTransferrableBalance =
     transferrableBalance !== null
-      ? formatTokenBalance(transferrableBalance, false)
+      ? formatTokenBalance(transferrableBalance)
       : null;
 
   const {
@@ -131,12 +133,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         className="w-full max-w-[550px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={reset}>
-          Transfer {TANGLE_TOKEN_UNIT} Tokens
+          Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
         <div className="p-9 flex flex-col gap-4">
           <Typography variant="body1" fw="normal">
-            Quickly transfer your {TANGLE_TOKEN_UNIT} tokens to an account on
+            Quickly transfer your {nativeTokenSymbol} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
             Substrate address.
           </Typography>
@@ -150,7 +152,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               address: receiverAddress,
               typedChainId: getTypedChainIdFromAddr(receiverAddress),
             }}
-            title={`${amount ? amount : 0} ${TANGLE_TOKEN_UNIT}`}
+            title={`${amount ? amount : 0} ${nativeTokenSymbol}`}
             isInNextApp
           />
 

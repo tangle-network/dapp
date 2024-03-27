@@ -14,7 +14,7 @@ export default async function getProtocolEarningsChartData(): Promise<
       return {
         [RestakingService.ZK_SAAS_GROTH16]: randNum(),
         [RestakingService.LIGHT_CLIENT_RELAYING]: randNum(),
-        [RestakingService.TSS_ZENGOGG20SECP256K1]: randNum(),
+        [RestakingService.TSS_SILENT_SHARD_DKLS23SECP256K1]: randNum(),
         ...monthAndYear,
       };
     }
