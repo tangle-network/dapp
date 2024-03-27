@@ -43,7 +43,11 @@ const VestingSchedulesUnlockingAt: FC = () => {
     const progressText = isComplete ? (
       <>All of your vested tokens are now available to claim. </>
     ) : (
-      `${timeRemaining} remaining.`
+      `${timeRemaining} remaining. Currently at block #${formatBnWithCommas(
+        currentBlockNumber
+      )}, with ${formatBnWithCommas(
+        endingBlockNumber.sub(currentBlockNumber)
+      )} blocks left until all vested tokens are available to claim.`
     );
 
     return (
