@@ -1,17 +1,22 @@
 import { BN } from '@polkadot/util';
+import StatusIndicator from '@webb-tools/icons/StatusIndicator';
 import {
   HiddenValue,
   SkeletonLoader,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 
 const BalanceCell: FC<{
   amount: BN | null;
-}> = ({ amount }) => {
+  status?: ReactNode;
+}> = ({ amount, status }) => {
   const activeAccountAddress = useActiveAccountAddress();
   const isAccountActive = activeAccountAddress !== null;
 
@@ -19,7 +24,7 @@ const BalanceCell: FC<{
     amount !== null ? formatTokenBalance(amount, true) : null;
 
   return (
-    <div className="flex flex-col justify-center p-3 gap-6 flex-grow">
+    <div className="flex flex-row p-3 gap-2">
       {formattedBalance !== null ? (
         // If the balance is not null, display it.
         <Typography variant="body1" fw="semibold">
@@ -34,6 +39,18 @@ const BalanceCell: FC<{
         <Typography variant="body1" fw="semibold">
           --
         </Typography>
+      )}
+
+      {status !== undefined && (
+        <Tooltip>
+          <TooltipTrigger className="cursor-default">
+            <StatusIndicator size={12} variant="info" />
+          </TooltipTrigger>
+
+          <TooltipBody className="break-normal max-w-[250px] text-center">
+            {status}
+          </TooltipBody>
+        </Tooltip>
       )}
     </div>
   );
