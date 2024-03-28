@@ -1,5 +1,5 @@
-import { Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import { FC, Suspense } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
@@ -9,16 +9,30 @@ const AccountPage: FC = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-6 flex-col xl:flex-row">
-        <AccountSummaryCard className="md:max-w-full xl:max-w-[556px]" />
+        <Suspense
+          fallback={
+            <SkeletonLoader className="rounded-2xl md:max-w-full xl:max-w-[556px] min-h-[274px]" />
+          }
+        >
+          <AccountSummaryCard className="md:max-w-full xl:max-w-[556px]" />
+        </Suspense>
 
-        <RecentTxContainer />
+        <Suspense
+          fallback={
+            <SkeletonLoader className="rounded-2xl min-h-[170px] xl:min-h-[274px]" />
+          }
+        >
+          <RecentTxContainer />
+        </Suspense>
       </div>
 
       <Typography variant="h4" fw="bold">
         Manage Balances
       </Typography>
 
-      <BalancesTableContainer />
+      <Suspense fallback={<SkeletonLoader className="rounded-2xl h-[190px]" />}>
+        <BalancesTableContainer />
+      </Suspense>
     </div>
   );
 };
