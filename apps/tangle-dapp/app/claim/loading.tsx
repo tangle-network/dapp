@@ -20,7 +20,7 @@ export default function Loading() {
         >
           As part of {"Tangle's"} initial launch, the Tangle Network is
           distributing 5 million TNT tokens to the community. Check eligibility
-          below to see if you qualify for TNT Airdrop!
+          below to see if you qualify for TNT airdrop!
         </AppTemplate.Description>
       </AppTemplate.DescriptionContainer>
 
