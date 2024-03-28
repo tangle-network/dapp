@@ -21,8 +21,7 @@ export const useValidators = (
   const { nativeTokenSymbol } = useNetworkStore();
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
-
-  const validatorPrefs = useValidatorsPrefs();
+  const { data: validatorPrefs } = useValidatorsPrefs();
 
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
@@ -44,9 +43,9 @@ export const useValidators = (
       identityNames === null ||
       exposures === null ||
       nominations === null ||
-      validatorPrefs.value === null
+      validatorPrefs === null
     ) {
-      return [];
+      return null;
     }
 
     const mappedIdentityNames = new Map<string, string | null>();
@@ -55,15 +54,17 @@ export const useValidators = (
 
     identityNames.forEach(([storageKey, name]) => {
       const accountId = storageKey.args[0].toString();
+
       mappedIdentityNames.set(accountId, name);
     });
 
     exposures.forEach(([storageKey, exposure]) => {
       const accountId = storageKey.args[1].toString();
+
       mappedExposures.set(accountId, exposure);
     });
 
-    validatorPrefs.value.forEach((validatorPref) => {
+    validatorPrefs.forEach((validatorPref) => {
       mappedValidatorPrefs.set(
         validatorPref[0].args[0].toString(),
         validatorPref[1]

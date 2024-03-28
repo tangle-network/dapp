@@ -63,8 +63,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const activeSubstrateAddress = useSubstrateAddress();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
-  console.debug('DelegateTxContainer: render');
-
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
 
@@ -183,7 +181,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
           'Failed to bond tokens!'
         );
-
         await executeTx(
           () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
           () =>
@@ -195,7 +192,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           `Successfully updated payment destination to ${paymentDestination}.`,
           'Failed to update payment destination!'
         );
-
         const hash = await executeTx(
           () => nominateValidatorsEvm(walletAddress, selectedValidators),
           () =>
@@ -207,7 +203,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           `Successfully nominated ${selectedValidators.length} validators.`,
           'Failed to nominate validators!'
         );
-
         setTxnStatus({ status: 'success', hash });
       } else {
         if (amountToBond > 0) {
@@ -223,18 +218,15 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             'Failed to bond tokens!'
           );
         }
-
         if (currentPaymentDestinationError)
           notificationApi({
             variant: 'error',
             message: currentPaymentDestinationError.message,
           });
-
         const currPaymentDestination =
           currentPaymentDestination?.value1 === 'Staked'
             ? PaymentDestination.STAKED
             : PaymentDestination.STASH;
-
         if (currPaymentDestination !== paymentDestination) {
           await executeTx(
             () =>
@@ -249,7 +241,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             'Failed to update payment destination!'
           );
         }
-
         const hash = await executeTx(
           () => nominateValidatorsEvm(walletAddress, selectedValidators),
           () =>
@@ -261,10 +252,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           `Successfully nominated ${selectedValidators.length} validators.`,
           'Failed to nominate validators!'
         );
-
         setTxnStatus({ status: 'success', hash });
       }
-
       setTxnConfirmationModalIsOpen(true);
     } catch {
       setTxnStatus({ status: 'error', hash: '' });
@@ -276,17 +265,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     currentPaymentDestinationError,
     executeTx,
     isFirstTimeNominator,
+    nativeTokenSymbol,
     notificationApi,
     paymentDestination,
     rpcEndpoint,
     selectedValidators,
     walletAddress,
-    nativeTokenSymbol,
   ]);
 
   const submitAndSignTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
-
     try {
       await executeDelegate();
     } catch {
