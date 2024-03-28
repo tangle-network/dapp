@@ -1,9 +1,9 @@
+import { formatDecimal } from '@polkadot/util';
 import { FC, useCallback } from 'react';
 
 import useDemocracy from '../../../data/democracy/useDemocracy';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
-import { formatBnWithCommas } from '../../../utils';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import TextCell from './TextCell';
 
@@ -47,8 +47,8 @@ const DemocracyUnlockingAt: FC = () => {
       text={
         democracyLockEndBlock === null
           ? 'Referendum ended'
-          : `Referendum ongoing; ends at block #${formatBnWithCommas(
-              democracyLockEndBlock
+          : `Referendum ongoing; ends at block #${formatDecimal(
+              democracyLockEndBlock.toString()
             )}`
       }
     />

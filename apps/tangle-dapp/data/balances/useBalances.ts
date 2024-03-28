@@ -1,6 +1,5 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs/operators';
 
@@ -32,12 +31,6 @@ export type AccountBalances = {
   locked: BN | null;
 };
 
-const maxBn = (...values: BN[]): BN => {
-  assert(values.length > 0, 'At least one value should be provided');
-
-  return values.reduce((max, value) => (value.gt(max) ? value : max), BN_ZERO);
-};
-
 const useBalances = (): AccountBalances => {
   const { activeAccount } = useWebContext();
   const [balances, setBalances] = useState<AccountBalances | null>(null);
@@ -46,23 +39,26 @@ const useBalances = (): AccountBalances => {
     (api, activeAccountAddress) =>
       api.query.system.account(activeAccountAddress).pipe(
         map(({ data }) => {
-          // Locks overlap, and are not additive. The largest lock
-          // amount is the one that should be considered when calculating
-          // the locked balance.
-          const largestLockAmount = maxBn(
-            // Note that without the null/undefined check, an error
-            // reports that `num` is undefined for some reason. Might be
-            // a gap in the type definitions of PolkadotJS.
+          // Note that without the null/undefined check, an error
+          // reports that `num` is undefined for some reason. Might be
+          // a gap in the type definitions of PolkadotJS.
+          const maxFrozen = bnMax(
             data.frozen ?? BN_ZERO,
             data.miscFrozen ?? BN_ZERO,
-            data.feeFrozen ?? BN_ZERO,
-            data.reserved ?? BN_ZERO
+            data.feeFrozen ?? BN_ZERO
+          );
+
+          const transferrable = BN.max(
+            data.free.sub(maxFrozen).sub(data.reserved ?? BN_ZERO),
+            BN_ZERO
           );
 
           return {
             free: data.free.toBn(),
-            transferrable: data.free.sub(largestLockAmount),
-            locked: largestLockAmount,
+            // The transferrable balance is the total free balance minus
+            // the largest lock amount.
+            transferrable,
+            locked: data.free.sub(transferrable),
           };
         })
       ),

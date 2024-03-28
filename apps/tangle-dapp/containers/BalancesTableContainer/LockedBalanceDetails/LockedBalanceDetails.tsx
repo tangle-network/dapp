@@ -1,3 +1,4 @@
+import { formatDecimal } from '@polkadot/util';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -9,7 +10,6 @@ import useCurrentEra from '../../../data/staking/useCurrentEra';
 import useUnbonding from '../../../data/staking/useUnbonding';
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import { PagePath } from '../../../types';
-import { formatBnWithCommas } from '../../../utils';
 import BalanceAction from '../BalanceAction';
 import BalanceCell from '../BalanceCell';
 import HeaderCell from '../HeaderCell';
@@ -85,9 +85,9 @@ const LockedBalanceDetails: FC = () => {
             unbondingEntries.map((entry, index) => (
               <TextCell
                 key={index}
-                text={`Era #${formatBnWithCommas(entry.unlockEra)}`}
-                status={`${formatBnWithCommas(
-                  entry.remainingEras
+                text={`Era #${formatDecimal(entry.unlockEra.toString())}`}
+                status={`${formatDecimal(
+                  entry.remainingEras.toString()
                 )} era(s) remaining.`}
               />
             ))}
