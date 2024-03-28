@@ -116,10 +116,11 @@ const EligibleSection: FC<Props> = ({
         statementSentence
       );
 
-      const hash = await sendTransaction(tx);
+      const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      newSearchParams.set('h', hash);
+      // TODO: Need to centralize these search parameters in an enum, in case they ever change.
+      newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
       onClaimCompleted(accountId);
 

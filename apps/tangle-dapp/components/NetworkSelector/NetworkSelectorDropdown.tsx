@@ -36,7 +36,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
       ))}
 
       {DEV_NETWORKS.length > 0 && (
-        <hr className="w-full border border-mono-120" />
+        <hr className="w-full border border-mono-40 dark:border-mono-120" />
       )}
 
       {DEV_NETWORKS.map((webbNetwork) => (
@@ -90,9 +90,10 @@ const NetworkOption: FC<NetworkOptionProps> = ({
     <div
       onClick={handleClick}
       className={twMerge(
-        'flex gap-2 w-full py-2 px-4 rounded-lg',
-        onClick !== undefined && 'cursor-pointer hover:dark:bg-blue-120',
-        isSelected && 'dark:bg-blue-120 cursor-default'
+        'flex gap-2 w-full py-2 px-4',
+        onClick !== undefined &&
+          'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-140',
+        isSelected && 'bg-mono-20 dark:bg-mono-140 cursor-default'
       )}
     >
       <ChainIcon size="lg" name={TANGLE_TESTNET_NATIVE_CHAIN_NAME} />

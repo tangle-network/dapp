@@ -32,7 +32,7 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
   return (
     <NextThemeProvider>
       <WebbUIProvider hasErrorBoudary isNextApp>
-        <WebbProvider appEvent={appEvent} applicationName="Tangle Dapp">
+        <WebbProvider appEvent={appEvent} applicationName="Tangle dApp">
           <OFACFilterProvider
             isActivated
             blockedRegions={blockedRegions}

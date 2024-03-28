@@ -20,7 +20,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { updatePaymentDestination as updatePaymentDestinationEvm } from '../../utils/evm';
 import { updatePaymentDestination as updatePaymentDestinationSubstrate } from '../../utils/polkadot';
 import { UpdatePayeeTxContainerProps } from './types';
@@ -62,7 +62,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       return activeAccount.address;
     }
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const {

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { convertToSubstrateAddress } from '../utils';
+import { evmToSubstrateAddress } from '../utils';
 import useActiveAccountAddress from './useActiveAccountAddress';
 
 /**
@@ -25,7 +25,7 @@ const useSubstrateAddress = (): string | null => {
     // Note that this handles both EVM and Substrate addresses,
     // so there's no need to check if the address is an EVM address
     // or not.
-    return convertToSubstrateAddress(activeAccountAddress);
+    return evmToSubstrateAddress(activeAccountAddress);
   }, [activeAccountAddress]);
 
   return substrateAddress;
