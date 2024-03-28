@@ -5,7 +5,7 @@ import {
   CoinsLineIcon,
   CoinsStackedLineIcon,
   GiftLineIcon,
-  ShieldKeyholeLineIcon,
+  LockUnlockLineIcon,
   StatusIndicator,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
@@ -92,7 +92,7 @@ const Actions: FC = () => {
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
           <ActionItem
-            Icon={ShieldKeyholeLineIcon}
+            Icon={LockUnlockLineIcon}
             label="Vest"
             onClick={executeVestTx !== null ? executeVestTx : undefined}
             hasNotificationDot={hasClaimableVestingTokens}

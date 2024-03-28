@@ -15,7 +15,7 @@ import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
-import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -26,11 +26,11 @@ import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 const NominatorStatsContainer: FC = () => {
   const { activeAccount } = useWebContext();
   const { nativeTokenSymbol } = useNetworkStore();
-
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
+
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
@@ -51,9 +51,9 @@ const NominatorStatsContainer: FC = () => {
 
   const {
     isFirstTimeNominator,
-    isFirstTimeNominatorLoading,
-    isFirstTimeNominatorError,
-  } = useIsFirstTimeNominatorSubscription(substrateAddress);
+    isLoading: isFirstTimeNominatorLoading,
+    isError: isFirstTimeNominatorError,
+  } = useIsFirstTimeNominator();
 
   return (
     <>
@@ -176,22 +176,29 @@ const NominatorStatsContainer: FC = () => {
           </div>
         </div>
       </div>
-      <DelegateTxContainer
-        isModalOpen={isDelegateModalOpen}
-        setIsModalOpen={setIsDelegateModalOpen}
-      />
+
+      {isDelegateModalOpen && (
+        <DelegateTxContainer
+          isModalOpen={isDelegateModalOpen}
+          setIsModalOpen={setIsDelegateModalOpen}
+        />
+      )}
+
       <BondMoreTxContainer
         isModalOpen={isBondMoreModalOpen}
         setIsModalOpen={setIsBondMoreModalOpen}
       />
+
       <UnbondTxContainer
         isModalOpen={isUnbondModalOpen}
         setIsModalOpen={setIsUnbondModalOpen}
       />
+
       <RebondTxContainer
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
       />
+
       <WithdrawUnbondedTxContainer
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawUnbondedModalOpen}

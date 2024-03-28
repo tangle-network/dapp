@@ -5,7 +5,6 @@ import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
 import { formatTokenBalance } from '../../../utils/polkadot';
 import BalanceCell from '../BalanceCell';
-import VestBalanceAction from '../VestBalanceAction';
 
 const VestingScheduleBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
@@ -45,10 +44,8 @@ const VestingScheduleBalances: FC = () => {
     );
 
     return (
-      <div key={index} className="flex flex-row justify-between items-center">
+      <div key={index} className="flex flex-row justify-start items-center">
         <BalanceCell amount={schedule.locked} status={status} />
-
-        <VestBalanceAction />
       </div>
     );
   });

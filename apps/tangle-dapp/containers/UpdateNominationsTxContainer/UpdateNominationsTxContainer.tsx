@@ -35,24 +35,26 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const { rpcEndpoint } = useNetworkStore();
 
   const [selectedValidators, setSelectedValidators] =
-    useState<string[]>(currentNominations);
+    useState(currentNominations);
 
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
     useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const isExceedingMaxNominationQuota = useMemo(() => {
-    return selectedValidators.length > maxNominationQuota;
-  }, [maxNominationQuota, selectedValidators.length]);
+  const isExceedingMaxNominationQuota =
+    selectedValidators.length > maxNominationQuota;
 
   const isReadyToSubmitAndSignTx = useMemo(() => {
-    if (selectedValidators.length <= 0 || isExceedingMaxNominationQuota)
+    if (selectedValidators.length <= 0 || isExceedingMaxNominationQuota) {
       return false;
+    }
 
     const sortedSelectedValidators = [...selectedValidators].sort();
     const sortedCurrentNominations = [...currentNominations].sort();
@@ -66,6 +68,8 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     return !areArraysEqual;
   }, [currentNominations, isExceedingMaxNominationQuota, selectedValidators]);
 
+  // Update the selected validators when the current
+  // nominations prop changes.
   useEffect(() => {
     setSelectedValidators(currentNominations);
   }, [currentNominations]);
@@ -77,7 +81,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [currentNominations, setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    if (!isReadyToSubmitAndSignTx) return;
+    if (!isReadyToSubmitAndSignTx) {
+      return;
+    }
 
     setIsSubmitAndSignTxLoading(true);
 
@@ -93,7 +99,6 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
         `Successfully updated nominations!`,
         'Failed to update nominations!'
       );
-
       setTxConfirmationState({
         isOpen: true,
         status: 'success',
@@ -111,13 +116,13 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
       closeModal();
     }
   }, [
-    isReadyToSubmitAndSignTx,
+    closeModal,
     executeTx,
+    isReadyToSubmitAndSignTx,
+    rpcEndpoint,
+    selectedValidators,
     setTxConfirmationState,
     walletAddress,
-    selectedValidators,
-    rpcEndpoint,
-    closeModal,
   ]);
 
   return (

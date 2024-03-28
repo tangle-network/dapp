@@ -17,7 +17,11 @@ export const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
   new BN(TANGLE_TOKEN_DECIMALS)
 );
 
-function convertChainUnitsToNumber(chainAmount: BN): string {
+function convertChainUnitsToNumber(
+  chainAmount: BN,
+  includeCommas = false,
+  fractionLength?: number
+): string {
   const bnAmount = new BN(chainAmount);
   const divisor = CHAIN_UNIT_CONVERSION_FACTOR;
   const divided = bnAmount.div(divisor);
@@ -26,19 +30,18 @@ function convertChainUnitsToNumber(chainAmount: BN): string {
   // Convert remainder to a string and pad with zeros if necessary.
   const remainderString = remainder
     .toString(10)
-    .padStart(TANGLE_TOKEN_DECIMALS, '0');
+    .padStart(TANGLE_TOKEN_DECIMALS, '0')
+    .substring(0, fractionLength);
 
-  // Trim trailing zeroes from the remainder string.
-  const trimmedRemainderString = remainderString.replace(/0+$/, '');
+  let integerPart = divided.toString(10);
 
-  // If the remainder becomes empty after trimming, just return the
-  // integer part.
-  if (trimmedRemainderString === '') {
-    return divided.toString(10);
+  // Insert commas in the integer part if requested.
+  if (includeCommas) {
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   // Combine the integer and decimal parts.
-  return `${divided.toString(10)}.${trimmedRemainderString}`;
+  return remainderString ? `${integerPart}.${remainderString}` : integerPart;
 }
 
 export default convertChainUnitsToNumber;

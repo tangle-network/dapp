@@ -8,7 +8,7 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import TangleCard from '../TangleCard';
 import AccountAddress from './AccountAddress';
 import Actions from './Actions';
-import TotalBalance from './TotalBalance';
+import Balance from './Balance';
 
 const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
   (props, ref) => {
@@ -21,7 +21,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
             <AccountAddress activeAddress={activeAccountAddress} />
           </header>
 
-          <TotalBalance />
+          <Balance />
 
           <Actions />
         </div>

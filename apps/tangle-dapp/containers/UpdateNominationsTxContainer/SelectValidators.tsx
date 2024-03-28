@@ -1,7 +1,8 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import { type FC } from 'react';
+import { type FC, useMemo } from 'react';
 
 import { ValidatorList } from '../../components';
+import { SortBy } from '../../components/ValidatorList/types';
 import { SelectValidatorsProps } from './types';
 
 const SelectValidators: FC<SelectValidatorsProps> = ({
@@ -9,18 +10,23 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   selectedValidators,
   setSelectedValidators,
 }) => {
+  const sortBy: SortBy[] = useMemo(
+    () => [
+      { key: 'effectiveAmountStakedRaw', title: 'Total Staked' },
+      { key: 'delegations', title: 'Total Nominations' },
+      { key: 'commission', title: 'Commission' },
+      { key: 'status', title: 'Status' },
+    ],
+    []
+  );
+
   return (
     <div className="flex flex-col gap-4 col-span-2">
       <ValidatorList
         validators={validators}
         selectedValidators={selectedValidators}
         setSelectedValidators={setSelectedValidators}
-        sortBy={[
-          { key: 'effectiveAmountStakedRaw', title: 'Total Staked' },
-          { key: 'delegations', title: 'Total Nominations' },
-          { key: 'commission', title: 'Commission' },
-          { key: 'status', title: 'Status' },
-        ]}
+        sortBy={sortBy}
       />
 
       <Typography

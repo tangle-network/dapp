@@ -4,7 +4,8 @@ import useActiveValidators from './useActiveValidators';
 import useWaitingValidators from './useWaitingValidators';
 
 const useAllValidators = () => {
-  console.debug('useAllValidators.ts: render');
+  console.debug('useAllValidators');
+
   const activeValidators = useActiveValidators();
   const waitingValidators = useWaitingValidators();
 
