@@ -42,15 +42,10 @@ export const getValidatorIdentity = async (
   // and use that as the name instead of the address.
   if (identityOption.isSome) {
     const identity = identityOption.unwrap();
-    if (identity[0]) {
-      const displayName = identity[0].info.display.toString();
-      const displayNameObject: { raw?: `0x${string}` } =
-        JSON.parse(displayName);
-      if (displayNameObject.raw !== undefined) {
-        const hexString = displayNameObject.raw;
-        name = Buffer.from(hexString.slice(2), 'hex').toString('utf8');
-      }
-    }
+    name = Buffer.from(
+      JSON.parse(JSON.stringify(identity, null, 2)).info.display.raw.slice(2),
+      'hex'
+    ).toString('utf8');
   }
 
   return name;
