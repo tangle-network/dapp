@@ -19,10 +19,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TxConfirmationModal } from '../../components/TxConfirmationModal';
-import {
-  PAYMENT_DESTINATION_OPTIONS,
-  TANGLE_TOKEN_UNIT,
-} from '../../constants';
+import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
@@ -31,7 +28,7 @@ import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotificati
 import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { PaymentDestination } from '../../types';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import {
   bondExtraTokens as bondExtraTokensEvm,
   bondTokens as bondTokensEvm,
@@ -57,8 +54,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const maxNominationQuota = useMaxNominationQuota();
   const allValidators = useAllValidators();
+  const maxNominationQuota = useMaxNominationQuota();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
@@ -73,7 +71,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const executeTx = useExecuteTxWithNotification();
 
-  const [delegateTxStep, setDelegateTxStep] = useState<DelegateTxSteps>(
+  const [delegateTxStep, setDelegateTxStep] = useState(
     DelegateTxSteps.BOND_TOKENS
   );
 
@@ -92,7 +90,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     return selectedValidators.length > maxNominationQuota;
   }, [maxNominationQuota, selectedValidators.length]);
 
-  const currentStep = useMemo(() => {
+  const currentStep = (() => {
     if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
       return '(1/3)';
     } else if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
@@ -100,7 +98,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
       return '(3/3)';
     }
-  }, [delegateTxStep]);
+  })();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) return '0x0';
@@ -114,7 +112,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
@@ -125,6 +123,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
+
   const {
     data: currentPaymentDestination,
     error: currentPaymentDestinationError,
@@ -143,11 +142,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
-      return `You have zero ${TANGLE_TOKEN_UNIT} in your wallet!`;
+      return `You have zero ${nativeTokenSymbol} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough ${TANGLE_TOKEN_UNIT} in your wallet!`;
+      return `You don't have enough ${nativeTokenSymbol} in your wallet!`;
     }
-  }, [walletBalance, amountToBond]);
+  }, [walletBalance, amountToBond, nativeTokenSymbol]);
 
   const continueToSelectDelegatesStep = useMemo(() => {
     return isFirstTimeNominator
@@ -185,8 +184,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
-  const { rpcEndpoint } = useNetworkStore();
-
   const executeDelegate: () => Promise<void> = useCallback(async () => {
     try {
       if (isFirstTimeNominator) {
@@ -204,7 +201,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               amountToBond,
               PaymentDestination.STASH
             ),
-          `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
+          `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
           'Failed to bond tokens!'
         );
 
@@ -243,7 +240,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 walletAddress,
                 amountToBond
               ),
-            `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
+            `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
             'Failed to bond tokens!'
           );
         }
@@ -305,6 +302,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     rpcEndpoint,
     selectedValidators,
     walletAddress,
+    nativeTokenSymbol,
   ]);
 
   const submitAndSignTx = useCallback(async () => {
@@ -355,6 +353,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
                 paymentDestination={paymentDestination}
                 setPaymentDestination={setPaymentDestination}
+                tokenSymbol={nativeTokenSymbol}
               />
             ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
               <SelectDelegates

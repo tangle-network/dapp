@@ -60,7 +60,11 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   );
 
   useEffect(() => {
+    // Discard any previous data when the wallet is disconnected,
+    // or when the Polkadot API is not yet ready.
     if (activeSubstrateAddress === null || polkadotApiRx === null) {
+      setData(null);
+
       return;
     }
 

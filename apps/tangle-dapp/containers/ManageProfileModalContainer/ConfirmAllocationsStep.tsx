@@ -5,6 +5,7 @@ import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import { RestakingProfileType, RestakingService } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -22,6 +23,8 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   allocations,
   sharedRestakeAmount,
 }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   const isSharedVariant = profileType === RestakingProfileType.SHARED;
 
   if (isSharedVariant) {
@@ -48,7 +51,8 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   const totalRestakedAmount = formatTokenBalance(
     isSharedVariant && sharedRestakeAmount !== undefined
       ? sharedRestakeAmount
-      : restakedAmount
+      : restakedAmount,
+    nativeTokenSymbol
   );
 
   return (
@@ -73,6 +77,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
                   services={Object.values(filteredAllocations).map(
                     ([service]) => service
                   )}
+                  tokenSymbol={nativeTokenSymbol}
                 />
               )
             : filteredAllocations.map(([service, amount]) => (
@@ -80,6 +85,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
                   key={service}
                   services={[service]}
                   amount={amount}
+                  tokenSymbol={nativeTokenSymbol}
                 />
               ))}
 
@@ -176,10 +182,15 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 type AllocationItemProps = {
   services: RestakingService[];
   amount?: BN;
+  tokenSymbol: string;
 };
 
 /** @internal */
-const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
+const AllocationItem: FC<AllocationItemProps> = ({
+  services,
+  amount,
+  tokenSymbol,
+}) => {
   return (
     <div className="flex items-center justify-between bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2">
       <div className="flex gap-1 flex-wrap">
@@ -200,7 +211,7 @@ const AllocationItem: FC<AllocationItemProps> = ({ services, amount }) => {
           fw="semibold"
           className="dark:text-mono-0 text-right"
         >
-          {formatTokenBalance(amount)}
+          {formatTokenBalance(amount, tokenSymbol)}
         </Typography>
       )}
     </div>

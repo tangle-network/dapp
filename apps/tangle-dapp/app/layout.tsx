@@ -18,20 +18,20 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'Tangle Dapp',
-    template: 'Tangle Dapp | %s',
+    default: 'Tangle dApp',
+    template: 'Tangle dApp | %s',
   },
-  description: 'Welcome to Tangle Dapp!',
+  description: 'Welcome to Tangle dApp!',
   metadataBase: process.env.URL
     ? new URL(process.env.URL)
     : process.env.PORT != null
     ? new URL(`http://localhost:${process.env.PORT}`)
     : null,
   openGraph: {
-    title: 'Tangle Dapp',
-    description: 'Welcome to Tangle Dapp!',
+    title: 'Tangle dApp',
+    description: 'Welcome to Tangle dApp!',
     url: TANGLE_DAPP_URL,
-    siteName: 'Tangle Dapp',
+    siteName: 'Tangle dApp',
     images: [
       {
         alt: 'Optimized Og Image Alt',
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tangle Dapp',
-    description: 'Welcome to Tangle Dapp!',
+    title: 'Tangle dApp',
+    description: 'Welcome to Tangle dApp!',
   },
 };
 

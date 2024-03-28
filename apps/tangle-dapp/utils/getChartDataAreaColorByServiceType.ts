@@ -12,7 +12,7 @@ export default function getChartDataAreaColorByServiceType(
       return ChartColor.BLUE;
     case RestakingService.LIGHT_CLIENT_RELAYING:
       return ChartColor.LAVENDER;
-    case RestakingService.TSS_ZENGOGG20SECP256K1:
+    case RestakingService.TSS_SILENT_SHARD_DKLS23SECP256K1:
     case RestakingService.TSS_DFNS_CGGMP21SECP256K1:
     case RestakingService.TSS_DFNS_CGGMP21SECP256R1:
     case RestakingService.TSS_DFNS_CGGMP21STARK:

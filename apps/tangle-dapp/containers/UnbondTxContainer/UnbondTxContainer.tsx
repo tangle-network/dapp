@@ -14,16 +14,12 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import {
-  convertToSubstrateAddress,
-  splitTokenValueAndSymbol,
-} from '../../utils';
+import { evmToSubstrateAddress, splitTokenValueAndSymbol } from '../../utils';
 import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
 import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
 import { UnbondTxContainerProps } from './types';
@@ -37,9 +33,10 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+
   const [amountToUnbond, setAmountToUnbond] = useState(0);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
-  const { rpcEndpoint } = useNetworkStore();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -56,7 +53,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       return activeAccount.address;
     }
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =
@@ -112,11 +109,11 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 
   const amountToUnbondError = useMemo(() => {
     if (remainingStakedBalanceToUnbond === 0) {
-      return `You have unbonded all your staked ${TANGLE_TOKEN_UNIT}!`;
+      return `You have unbonded all your staked ${nativeTokenSymbol}!`;
     } else if (amountToUnbond > remainingStakedBalanceToUnbond) {
-      return `You can only unbond ${remainingStakedBalanceToUnbond} ${TANGLE_TOKEN_UNIT}!`;
+      return `You can only unbond ${remainingStakedBalanceToUnbond} ${nativeTokenSymbol}!`;
     }
-  }, [remainingStakedBalanceToUnbond, amountToUnbond]);
+  }, [remainingStakedBalanceToUnbond, amountToUnbond, nativeTokenSymbol]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToUnbond > 0 && !amountToUnbondError && walletAddress !== '0x0'
@@ -137,7 +134,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       const hash = await executeTx(
         () => unbondTokensEvm(walletAddress, amountToUnbond),
         () => unbondTokensSubstrate(rpcEndpoint, walletAddress, amountToUnbond),
-        `Successfully unbonded ${amountToUnbond} ${TANGLE_TOKEN_UNIT}.`,
+        `Successfully unbonded ${amountToUnbond} ${nativeTokenSymbol}.`,
         'Failed to unbond tokens!'
       );
 
@@ -164,6 +161,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
+    nativeTokenSymbol,
   ]);
 
   return (

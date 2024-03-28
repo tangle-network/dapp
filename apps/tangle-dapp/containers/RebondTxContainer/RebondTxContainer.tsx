@@ -14,16 +14,12 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import {
-  convertToSubstrateAddress,
-  splitTokenValueAndSymbol,
-} from '../../utils';
+import { evmToSubstrateAddress, splitTokenValueAndSymbol } from '../../utils';
 import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
 import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
 import RebondTokens from './RebondTokens';
@@ -39,7 +35,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToRebond, setAmountToRebond] = useState(0);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -57,7 +53,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: unbondingAmountData, error: unbondingAmountError } =
@@ -87,9 +83,9 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     if (remainingUnbondedTokensToRebond === 0) {
       return 'You have no unbonded tokens to rebond!';
     } else if (amountToRebond > remainingUnbondedTokensToRebond) {
-      return `You can only rebond ${remainingUnbondedTokensToRebond} ${TANGLE_TOKEN_UNIT}!`;
+      return `You can only rebond ${remainingUnbondedTokensToRebond} ${nativeTokenSymbol}!`;
     }
-  }, [remainingUnbondedTokensToRebond, amountToRebond]);
+  }, [remainingUnbondedTokensToRebond, amountToRebond, nativeTokenSymbol]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToRebond > 0 && !amountToRebondError && walletAddress !== '0x0'
@@ -110,7 +106,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       const hash = await executeTx(
         () => rebondTokensEvm(walletAddress, amountToRebond),
         () => rebondTokensSubstrate(rpcEndpoint, walletAddress, amountToRebond),
-        `Successfully rebonded ${amountToRebond} ${TANGLE_TOKEN_UNIT}.`,
+        `Successfully rebonded ${amountToRebond} ${nativeTokenSymbol}.`,
         'Failed to rebond tokens!'
       );
 
@@ -137,6 +133,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
+    nativeTokenSymbol,
   ]);
 
   return (

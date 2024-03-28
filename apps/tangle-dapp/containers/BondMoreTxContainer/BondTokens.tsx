@@ -1,7 +1,7 @@
 import { Button, InputField, Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -10,6 +10,8 @@ const BondTokens: FC<BondTokensProps> = ({
   amountToBondError,
   amountWalletBalance,
 }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   return (
     <div className="flex flex-col gap-4">
       {/* Amount */}
@@ -19,7 +21,7 @@ const BondTokens: FC<BondTokensProps> = ({
           isAddressType={false}
           value={amountToBond.toString()}
           isDisabled={amountWalletBalance > 0 ? false : true}
-          placeholder={`10 ${TANGLE_TOKEN_UNIT}`}
+          placeholder={`10 ${nativeTokenSymbol}`}
           type="number"
           onChange={(e) => setAmountToBond(Number(e.target.value))}
         />

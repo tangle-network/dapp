@@ -17,8 +17,6 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { LocalStorageKey } from '../../hooks/useLocalStorage';
-import useLocalStorage from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
@@ -41,59 +39,31 @@ export default function Page() {
 
   const [checkingEligibility, setCheckingEligibility] = useState(false);
 
-  const { setWithPreviousValue: setEligibilityCache } = useLocalStorage(
-    LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE,
-    true
-  );
-
-  // Update the eligibility cache in local storage once it
-  // is known whether the user is eligible or not for the airdrop.
-  // This is reused in the account page, to avoid checking eligibility
-  // multiple times.
-  useEffect(() => {
-    if (activeAccount !== null && claimInfo !== null) {
-      setEligibilityCache((previous) => ({
-        ...previous,
-        [activeAccount.address]: claimInfo !== false,
-      }));
-    }
-  }, [activeAccount, claimInfo, setEligibilityCache]);
-
   // After the user has claimed the airdrop, we can remove the
   // eligibility from the cache, to avoid showing incorrect information
   // when navigating back to the claim page.
-  const handleClaimCompletion = useCallback(
-    (accountAddress: string) => {
-      eligibilityCache.delete(accountAddress);
-      setClaimInfo(null);
-
-      // Mark active account address as no longer eligible in the
-      // local storage after claiming the airdrop.
-      setEligibilityCache((previous) => ({
-        ...previous,
-        [accountAddress]: false,
-      }));
-    },
-    [setEligibilityCache]
-  );
+  const handleClaimCompletion = useCallback((accountAddress: string) => {
+    eligibilityCache.delete(accountAddress);
+    setClaimInfo(null);
+  }, []);
 
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: `Claim your $TNT Airdrop`,
+        title: `Claim your $TNT airdrop`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo === false) {
       return {
-        title: `You are not eligible for $TNT Airdrop`,
+        title: `You are not eligible for $TNT airdrop`,
         subTitle: 'OOPS!',
       };
     }
 
     return {
-      title: `You have unclaimed $TNT Airdrop!`,
+      title: `You have unclaimed $TNT airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
   }, [claimInfo]);
@@ -175,7 +145,7 @@ export default function Page() {
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
               distributing 5 million TNT tokens to the community. Check
-              eligibility below to see if you qualify for TNT Airdrop!
+              eligibility below to see if you qualify for TNT airdrop!
             </>
           ) : claimInfo ? (
             <>

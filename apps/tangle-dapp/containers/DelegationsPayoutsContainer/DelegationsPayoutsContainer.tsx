@@ -21,7 +21,7 @@ import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNomin
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -76,7 +76,7 @@ const DelegationsPayoutsContainer: FC = () => {
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);

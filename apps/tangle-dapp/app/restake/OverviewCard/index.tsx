@@ -1,10 +1,12 @@
+'use client';
+
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakingProfileType } from '../../../types';
 import Optional from '../../../utils/Optional';
 import ActionButton from './ActionButton';
@@ -33,6 +35,8 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
     },
     ref
   ) => {
+    const { nativeTokenSymbol } = useNetworkStore();
+
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
         <div className="grid content-between w-full h-full grid-cols-2">
@@ -41,7 +45,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
             title="Total Restaked"
             value={totalRestaked}
             isBoldText
-            prefix={TANGLE_TOKEN_UNIT}
+            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
@@ -49,16 +53,17 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
             title="Available for Restake"
             value={availableForRestake}
             isBoldText
-            prefix={TANGLE_TOKEN_UNIT}
+            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
             isLoading={isLoading}
             title="Earnings"
             value={hasExistingProfile ? earnings : null}
-            prefix={TANGLE_TOKEN_UNIT}
+            suffix={nativeTokenSymbol}
           />
-          <StatsItem isLoading={isLoading} title="APY" value={apy} prefix="%" />
+
+          <StatsItem isLoading={isLoading} title="APY" value={apy} suffix="%" />
 
           <ActionButton
             hasExistingProfile={hasExistingProfile}
@@ -80,8 +85,8 @@ type StatsItemProps = {
   value: number | null;
   valueTooltip?: string;
   isBoldText?: boolean;
-  prefix?: string;
   isLoading?: boolean;
+  suffix?: string;
 };
 
 const StatsItem: FC<StatsItemProps> = ({
@@ -90,8 +95,8 @@ const StatsItem: FC<StatsItemProps> = ({
   value,
   valueTooltip,
   isBoldText,
-  prefix = '',
   isLoading,
+  suffix = '',
 }) => {
   return (
     <div className="gap-3">
@@ -119,7 +124,7 @@ const StatsItem: FC<StatsItemProps> = ({
             >
               {`${
                 typeof value === 'number' ? value.toLocaleString() : '--'
-              } ${prefix}`.trim()}
+              } ${suffix}`.trim()}
             </Typography>
 
             {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}

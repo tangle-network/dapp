@@ -16,7 +16,7 @@ export default async function getPastServicesByValidator(): Promise<Service[]> {
     },
     {
       id: 124,
-      serviceType: RestakingService.TSS_ZENGOGG20SECP256K1,
+      serviceType: RestakingService.TSS_SILENT_SHARD_DKLS23SECP256K1,
       participants: participationArr,
       phase2Executions: 5,
       earnings: 10,
