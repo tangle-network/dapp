@@ -43,17 +43,13 @@ const mapIdentitiesToNames = (
   });
 
 const useValidatorIdentities = () => {
-  const a = usePolkadotApiRx(
+  return usePolkadotApiRx(
     useCallback(
       (api) =>
         api.query.identity.identityOf.entries().pipe(map(mapIdentitiesToNames)),
       []
     )
   );
-
-  console.debug(a.data);
-
-  return a;
 };
 
 export default useValidatorIdentities;
