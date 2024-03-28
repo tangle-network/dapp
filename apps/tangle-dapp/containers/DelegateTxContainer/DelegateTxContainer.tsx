@@ -42,9 +42,9 @@ import {
   nominateValidators as nominateValidatorsSubstrate,
   updatePaymentDestination as updatePaymentDestinationSubstrate,
 } from '../../utils/polkadot';
+import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
 import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
-import SelectDelegates from './SelectDelegates';
 import { DelegateTxContainerProps, DelegateTxSteps } from './types';
 
 const CONTRACT_FUNC = 'StakingInterface.sol';
@@ -323,7 +323,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 tokenSymbol={nativeTokenSymbol}
               />
             ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
-              <SelectDelegates
+              <SelectValidators
                 validators={allValidators}
                 selectedValidators={selectedValidators}
                 setSelectedValidators={setSelectedValidators}
