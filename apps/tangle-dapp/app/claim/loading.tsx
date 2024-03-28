@@ -6,7 +6,7 @@ export default function Loading() {
   return (
     <AppTemplate.Content>
       <AppTemplate.Title
-        title="Claim your $TNT Airdrop"
+        title="Claim your $TNT airdrop"
         subTitle="CLAIM AIRDROP"
         overrideSubTitleProps={{
           className: 'text-blue-70 dark:text-blue-50',

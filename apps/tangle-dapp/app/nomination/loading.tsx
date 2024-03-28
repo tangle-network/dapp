@@ -1,8 +1,5 @@
+import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-
-import ContainerSkeleton from '../../components/skeleton/ContainerSkeleton';
-import KeyStatsContainerLoading from '../../containers/KeyStatsContainer/KeyStatsContainerLoading';
-import NominatorStatsContainerLoading from '../../containers/NominatorStatsContainer/NominatorStatsContainerLoading';
 
 export default function Loading() {
   return (
@@ -11,35 +8,35 @@ export default function Loading() {
         Overview
       </Typography>
 
-      <KeyStatsContainerLoading />
+      <SkeletonLoader className="h-[84px]" />
 
-      <NominatorStatsContainerLoading />
-
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Typography variant="h5" fw="bold">
-            Nominations
-          </Typography>
-
-          <Typography variant="h5" fw="bold" className="text-mono-100">
-            Payouts
-          </Typography>
-        </div>
-
-        <ContainerSkeleton />
+      <div className="flex flex-col md:flex-row gap-4 w-full">
+        <SkeletonLoader className="rounded-2xl h-[204px]" />
+        <SkeletonLoader className="rounded-2xl h-[204px]" />
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-4">
+        <div className="flex gap-2 items-center">
+          <Typography variant="h5" fw="bold">
+            Nominations
+          </Typography>
+          <Typography variant="h5" fw="bold" className="!text-mono-100">
+            Payouts
+          </Typography>
+        </div>
+        <SkeletonLoader className="h-[228px]" />
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex gap-2 items-center">
           <Typography variant="h5" fw="bold">
             Active Validators
           </Typography>
-          <Typography variant="h5" fw="bold" className="text-mono-100">
+          <Typography variant="h5" fw="bold" className="!text-mono-100">
             Waiting
           </Typography>
         </div>
-
-        <ContainerSkeleton />
+        <SkeletonLoader className="h-[228px]" />
       </div>
     </div>
   );

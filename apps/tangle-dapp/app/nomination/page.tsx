@@ -8,6 +8,7 @@ import {
   ValidatorTablesContainer,
 } from '../../containers';
 
+// Note: already tried using Suspense here but see no improvement
 export default async function Index() {
   return (
     <div className="space-y-12">
