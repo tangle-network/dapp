@@ -68,7 +68,7 @@ export const WEBB_TANGLE_DOCS_STAKING_URL =
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
-  'https://github.com/webb-tools/tangle/blob/main/Tangle_Network_Whitepaper_V1.pdf';
+  'https://github.com/webb-tools/tangle/blob/main/Tangle_Network_Whitepaper_March282024.pdf';
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
