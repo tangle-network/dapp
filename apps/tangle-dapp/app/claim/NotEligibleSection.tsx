@@ -20,23 +20,8 @@ const NotEligibleSection: FC = () => {
       <ClaimingAccountInput activeAccountAddress={activeAccount.address} />
 
       <div className="space-y-2">
-        <Button isFullWidth onClick={() => toggleModal()}>
+        <Button isFullWidth onClick={() => toggleModal(true)}>
           Try Another Account
-        </Button>
-
-        <Button
-          variant="secondary"
-          isFullWidth
-          onClick={() =>
-            toggleModal(
-              true,
-              isActiveWalletEvm
-                ? PresetTypedChainId.TangleTestnetNative
-                : PresetTypedChainId.TangleTestnetEVM
-            )
-          }
-        >
-          Connect {isActiveWalletEvm ? 'Substrate' : 'EVM'} Wallet
         </Button>
       </div>
     </div>

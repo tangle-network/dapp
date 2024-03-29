@@ -214,16 +214,9 @@ const EligibleSection: FC<Props> = ({
         <Button
           variant="secondary"
           isFullWidth
-          onClick={() =>
-            toggleModal(
-              true,
-              isActiveWalletEvm
-                ? PresetTypedChainId.TangleTestnetNative
-                : PresetTypedChainId.TangleTestnetEVM
-            )
-          }
+          onClick={() => toggleModal(true)}
         >
-          Connect {isActiveWalletEvm ? 'Substrate' : 'EVM'} Wallet
+          Connect Another Wallet
         </Button>
       </div>
     </div>

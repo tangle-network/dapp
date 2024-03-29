@@ -155,7 +155,7 @@ export default function Page() {
           ) : (
             <>
               You are not eligible for $TNT airdrop. You can still participate
-              in the Tangle Network by acquiring $ TNT or you can try again with
+              in the Tangle Network by acquiring $TNT or you can try again with
               a different account by disconnecting your current wallet.
             </>
           )}
