@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import useSubstrateAddress from '../hooks/useSubstrateAddress';
-import usePayouts from './DelegationsPayouts/usePayouts';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import usePayouts from '../DelegationsPayouts/usePayouts';
 
 const usePayoutsAvailability = () => {
   const activeSubstrateAddress = useSubstrateAddress();
