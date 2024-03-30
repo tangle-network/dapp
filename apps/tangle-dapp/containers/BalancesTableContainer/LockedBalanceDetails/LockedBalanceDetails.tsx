@@ -14,8 +14,10 @@ import BalanceAction from '../BalanceAction';
 import BalanceCell from '../BalanceCell';
 import HeaderCell from '../HeaderCell';
 import DemocracyBalance from './DemocracyBalance';
+import DemocracyUnlockAction from './DemocracyUnlockAction';
 import DemocracyUnlockingAt from './DemocracyUnlockingAt';
 import TextCell from './TextCell';
+import VestingRemainingBalances from './VestingRemainingBalances';
 import VestingScheduleBalances from './VestingScheduleBalances';
 import VestingSchedulesUnlockingAt from './VestingSchedulesUnlockingAt';
 
@@ -77,51 +79,78 @@ const LockedBalanceDetails: FC = () => {
 
           <DemocracyUnlockingAt />
 
-          {stakingLockedBalance !== null && <TextCell text="—" />}
+          {stakingLockedBalance !== null && <TextCell text="--" />}
 
           {currentEra !== null &&
             unbondingEntries !== null &&
             unbondingEntries.length > 0 &&
-            unbondingEntries.map((entry, index) => (
-              <TextCell
-                key={index}
-                text={`Era #${formatDecimal(entry.unlockEra.toString())}`}
-                status={`${formatDecimal(
-                  entry.remainingEras.toString()
-                )} era(s) remaining.`}
-              />
-            ))}
+            unbondingEntries.map((entry, index) => {
+              const status = entry.remainingEras.isZero()
+                ? undefined
+                : `${formatDecimal(
+                    entry.remainingEras.toString()
+                  )} era(s) remaining.`;
+
+              const text = entry.remainingEras.isZero()
+                ? 'Ready to withdraw'
+                : `Era #${formatDecimal(entry.unlockEra.toString())}`;
+
+              return <TextCell key={index} text={text} status={status} />;
+            })}
         </div>
       </div>
 
-      {/* Balances */}
-      <div className="flex flex-col w-full">
-        <HeaderCell title="Balance" />
+      <div className="flex flex-row w-full">
+        {/* Balances */}
+        <div className="flex flex-col w-full">
+          <HeaderCell title="Balance" />
 
-        <VestingScheduleBalances />
+          <VestingScheduleBalances />
 
-        <DemocracyBalance />
+          <DemocracyBalance />
 
-        {stakingLockedBalance !== null && (
-          <div className="flex flex-row justify-between items-center">
+          {stakingLockedBalance !== null && (
             <BalanceCell amount={stakingLockedBalance} />
+          )}
 
-            {visitNominationPageAction}
-          </div>
-        )}
-
-        {unbondingEntries !== null &&
-          unbondingEntries.length > 0 &&
-          unbondingEntries.map((entry, index) => (
-            <div
-              key={index}
-              className="flex flex-row justify-between items-center"
-            >
+          {unbondingEntries !== null &&
+            unbondingEntries.length > 0 &&
+            unbondingEntries.map((entry, index) => (
               <BalanceCell key={index} amount={entry.amount} />
+            ))}
+        </div>
+
+        {/* Remaining */}
+        <div className="flex flex-col w-full">
+          <HeaderCell title="Remaining" />
+
+          <VestingRemainingBalances />
+
+          <div className="flex justify-end">
+            <DemocracyUnlockAction />
+          </div>
+
+          {stakingLockedBalance !== null && (
+            <div className="flex flex-row justify-between items-center">
+              <TextCell text="--" />
 
               {visitNominationPageAction}
             </div>
-          ))}
+          )}
+
+          {unbondingEntries !== null &&
+            unbondingEntries.length > 0 &&
+            unbondingEntries.map((_entry, index) => (
+              <div
+                key={index}
+                className="flex flex-row justify-between items-center"
+              >
+                <TextCell text="--" />
+
+                {visitNominationPageAction}
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

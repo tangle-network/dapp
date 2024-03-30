@@ -203,7 +203,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
             Remaining:{' '}
             {amountRemaining !== null
               ? formatTokenBalance(amountRemaining, nativeTokenSymbol)
-              : '—'}
+              : '--'}
           </Typography>
 
           <div className="flex items-center gap-2">
