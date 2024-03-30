@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
