@@ -14,9 +14,9 @@ import { type FC, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
-import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
-import { convertToSubstrateAddress } from '../../utils';
+import useNetworkStore from '../../context/useNetworkStore';
+import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -25,11 +25,12 @@ import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 
 const NominatorStatsContainer: FC = () => {
   const { activeAccount } = useWebContext();
-
+  const { nativeTokenSymbol } = useNetworkStore();
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
+
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
@@ -45,14 +46,14 @@ const NominatorStatsContainer: FC = () => {
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address);
+    return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const {
     isFirstTimeNominator,
-    isFirstTimeNominatorLoading,
-    isFirstTimeNominatorError,
-  } = useIsFirstTimeNominatorSubscription(substrateAddress);
+    isLoading: isFirstTimeNominatorLoading,
+    isError: isFirstTimeNominatorError,
+  } = useIsFirstTimeNominator();
 
   return (
     <>
@@ -65,7 +66,7 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <NominatorStatsItem
-            title={`Available ${TANGLE_TOKEN_UNIT} in Wallet`}
+            title={`Available ${nativeTokenSymbol} in Wallet`}
             type="Wallet Balance"
             address={walletAddress}
           />
@@ -75,7 +76,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
               <Button variant="utility" className="!min-w-[100px]">
-                {`Get ${TANGLE_TOKEN_UNIT}`}
+                {`Get ${nativeTokenSymbol}`}
               </Button>
             </Link>
 
@@ -101,8 +102,8 @@ const NominatorStatsContainer: FC = () => {
         >
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
-              title={`Total Staked ${TANGLE_TOKEN_UNIT}`}
-              tooltip={`Total Staked ${TANGLE_TOKEN_UNIT} (bonded).`}
+              title={`Total Staked ${nativeTokenSymbol}`}
+              tooltip={`Total Staked ${nativeTokenSymbol} (bonded).`}
               type="Total Staked"
               address={substrateAddress}
             />
@@ -175,22 +176,29 @@ const NominatorStatsContainer: FC = () => {
           </div>
         </div>
       </div>
-      <DelegateTxContainer
-        isModalOpen={isDelegateModalOpen}
-        setIsModalOpen={setIsDelegateModalOpen}
-      />
+
+      {isDelegateModalOpen && (
+        <DelegateTxContainer
+          isModalOpen={isDelegateModalOpen}
+          setIsModalOpen={setIsDelegateModalOpen}
+        />
+      )}
+
       <BondMoreTxContainer
         isModalOpen={isBondMoreModalOpen}
         setIsModalOpen={setIsBondMoreModalOpen}
       />
+
       <UnbondTxContainer
         isModalOpen={isUnbondModalOpen}
         setIsModalOpen={setIsUnbondModalOpen}
       />
+
       <RebondTxContainer
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
       />
+
       <WithdrawUnbondedTxContainer
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawUnbondedModalOpen}

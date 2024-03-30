@@ -7,13 +7,13 @@
 
   </div>
 
-# Tangle Dapp - EVM Staking UI
+# Tangle dApp - EVM Staking UI
 
 <p align="left">
     <strong>EVM Staking UI</strong>
     <br />
 </p>
 
-## Run the Tangle Dapp
+## Run the Tangle dApp
 
 TBD

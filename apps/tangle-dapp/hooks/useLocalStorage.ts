@@ -7,7 +7,6 @@ import { Delegator, Payout, Validator } from '../types';
 export enum LocalStorageKey {
   ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
   WAITING_VALIDATOR_CACHE = 'waitingValidatorCache',
-  AIRDROP_ELIGIBILITY_CACHE = 'airdropEligibilityCache',
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
   ACTIVE_AND_DELEGATION_COUNT = 'activeAndDelegationCount',
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
@@ -17,6 +16,7 @@ export enum LocalStorageKey {
   Nominations = 'nominations',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   WEBB_NETWORK_NAME = 'webbNetworkName',
+  NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
 }
 
 export type AirdropEligibilityCache = {
@@ -36,9 +36,7 @@ export type NominationsCache = {
  * respective value types.
  */
 export type LocalStorageValueOf<T extends LocalStorageKey> =
-  T extends LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE
-    ? AirdropEligibilityCache
-    : T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
+  T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
     : T extends
         | LocalStorageKey.ACTIVE_VALIDATOR_CACHE
@@ -59,6 +57,7 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     : T extends
         | LocalStorageKey.CUSTOM_RPC_ENDPOINT
         | LocalStorageKey.WEBB_NETWORK_NAME
+        | LocalStorageKey.NATIVE_TOKEN_SYMBOL
     ? string
     : never;
 

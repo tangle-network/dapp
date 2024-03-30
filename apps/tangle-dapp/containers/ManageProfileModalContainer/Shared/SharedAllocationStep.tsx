@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../../types';
 import { formatTokenBalance } from '../../../utils/polkadot';
@@ -25,6 +26,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   setRestakeAmount,
 }) => {
   const { maxRestakingAmount } = useRestakingLimits();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const remainingAmount =
     maxRestakingAmount?.sub(restakeAmount ?? BN_ZERO) ?? null;
@@ -84,7 +86,9 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
 
       <Typography variant="body1" fw="normal" className="self-start">
         Remaining:{' '}
-        {remainingAmount !== null ? formatTokenBalance(remainingAmount) : '—'}
+        {remainingAmount !== null
+          ? formatTokenBalance(remainingAmount, nativeTokenSymbol)
+          : '--'}
       </Typography>
     </AllocationStepContainer>
   );

@@ -16,9 +16,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import type { Service } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -26,7 +26,9 @@ import type { ServiceTableProps } from './types';
 
 const columnHelper = createColumnHelper<Service>();
 
-const columns = [
+const EARNINGS_COLUMN_IDX = 5;
+
+const staticColumns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
@@ -77,23 +79,6 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('earnings', {
-    header: () => (
-      <HeaderCell
-        title="Earnings"
-        className="justify-start"
-        tooltip="The rewards received by each participant in the service"
-      />
-    ),
-    cell: (props) => {
-      const earnings = props.getValue();
-      return earnings ? (
-        <StringCell value={`${earnings} ${TANGLE_TOKEN_UNIT}`} />
-      ) : (
-        '---'
-      );
-    },
-  }),
   columnHelper.accessor('expirationBlock', {
     header: () => (
       <HeaderCell title="Expiration Block" className="justify-center" />
@@ -116,6 +101,33 @@ const columns = [
 ];
 
 const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
+  const columns = useMemo(
+    () => [
+      ...staticColumns.slice(0, EARNINGS_COLUMN_IDX),
+      columnHelper.accessor('earnings', {
+        header: () => (
+          <HeaderCell
+            title="Earnings"
+            className="justify-start"
+            tooltip="The rewards received by each participant in the service"
+          />
+        ),
+        cell: (props) => {
+          const earnings = props.getValue();
+          return earnings ? (
+            <StringCell value={`${earnings} ${nativeTokenSymbol}`} />
+          ) : (
+            '---'
+          );
+        },
+      }),
+      ...staticColumns.slice(EARNINGS_COLUMN_IDX),
+    ],
+    [nativeTokenSymbol]
+  );
+
   const table = useReactTable({
     data,
     columns,

@@ -40,6 +40,7 @@ export type Network = {
   subqueryEndpoint: string;
   polkadotEndpoint: string;
   polkadotExplorer: string;
+  evmExplorer?: string;
   avatar: string;
 };
 
@@ -67,11 +68,11 @@ export const WEBB_TANGLE_DOCS_STAKING_URL =
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
-  'https://github.com/webb-tools/tangle/blob/main/Tangle_Network_Whitepaper_V1.pdf';
+  'https://github.com/webb-tools/tangle/blob/main/Tangle_Network_Whitepaper_March282024.pdf';
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
-export const TANGLE_TESTNET_EXPLORER_URL =
+export const TANGLE_TESTNET_EVM_EXPLORER_URL =
   'https://testnet-explorer.tangle.tools';
 
 export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
@@ -239,6 +240,16 @@ export const webbNetworks: webbNetworksType[] = [
   {
     networkType: 'testnet',
     networks: [
+      // TANGLE INTERNAL TESTNET
+      // {
+      //   name: 'Tangle Internal Testnet',
+      //   networkType: 'testnet',
+      //   networkNodeType: 'standalone',
+      //   subqueryEndpoint: SUBQUERY_ENDPOINT, // Incorrect but will remove this network later
+      //   polkadotEndpoint: 'wss://internal-testing.tangle.tools',
+      //   polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL, // Incorrect but will remove this network later
+      //   avatar: '',
+      // },
       {
         name: 'Tangle Testnet Native',
         networkType: 'testnet',
@@ -246,6 +257,7 @@ export const webbNetworks: webbNetworksType[] = [
         subqueryEndpoint: SUBQUERY_ENDPOINT,
         polkadotEndpoint: TANGLE_RPC_ENDPOINT,
         polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+        evmExplorer: TANGLE_TESTNET_EVM_EXPLORER_URL,
         avatar: '',
       },
     ],
@@ -299,7 +311,7 @@ export const footerNavs: FooterNavsType = {
   network: [
     {
       name: 'Block Explorer',
-      href: TANGLE_TESTNET_EXPLORER_URL,
+      href: TANGLE_TESTNET_EVM_EXPLORER_URL,
       ...commonExternalProps,
     },
     {

@@ -14,9 +14,8 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
@@ -33,7 +32,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToBond, setAmountToBond] = useState(0);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
@@ -60,11 +59,11 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     if (!walletBalance) return '';
 
     if (Number(walletBalance.value1) === 0) {
-      return `You have zero ${TANGLE_TOKEN_UNIT} in your wallet!`;
+      return `You have zero ${nativeTokenSymbol} in your wallet!`;
     } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough ${TANGLE_TOKEN_UNIT} in your wallet!`;
+      return `You don't have enough ${nativeTokenSymbol} in your wallet!`;
     }
-  }, [walletBalance, amountToBond]);
+  }, [walletBalance, amountToBond, nativeTokenSymbol]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return amountToBond > 0 && !amountToBondError && walletAddress !== '0x0'
@@ -86,7 +85,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         () => bondExtraTokensEvm(walletAddress, amountToBond),
         () =>
           bondExtraTokensSubstrate(rpcEndpoint, walletAddress, amountToBond),
-        `Successfully bonded ${amountToBond} ${TANGLE_TOKEN_UNIT}.`,
+        `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
         'Failed to bond extra tokens!'
       );
 
@@ -113,6 +112,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     rpcEndpoint,
     setTxConfirmationState,
     walletAddress,
+    nativeTokenSymbol,
   ]);
 
   return (

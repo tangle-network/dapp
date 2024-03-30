@@ -13,7 +13,6 @@ import type { ChainsRingProps, ChainRingItemType } from './types';
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
     const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
-
     const [isDarkMode] = useDarkMode();
 
     const getStrokeColor = useCallback(
@@ -27,21 +26,29 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
     return (
       <div className="relative w-fit" ref={ref}>
         {chainItems.map((chainItem, idx) => {
-          if (chainItem === undefined) return null;
+          if (chainItem === undefined) {
+            return null;
+          }
+
           const { typedChainId, onClick } = chainItem;
-          if (typedChainId === undefined) return null;
-          const chaiName = chainsConfig[typedChainId].name;
+
+          if (typedChainId === undefined) {
+            return null;
+          }
+
+          const chainName = chainsConfig[typedChainId].name;
+
           return (
-            <Tooltip>
+            <Tooltip key={typedChainId}>
               <TooltipTrigger className="cursor-pointer" asChild>
                 <div
                   className={getChainIconClassNameByIdx(idx)}
                   onClick={onClick}
                 >
-                  <ChainIcon name={chaiName} size="lg" />
+                  <ChainIcon name={chainName} size="lg" />
                 </div>
               </TooltipTrigger>
-              <TooltipBody className="z-20">{chaiName}</TooltipBody>
+              <TooltipBody className="z-20">{chainName}</TooltipBody>
             </Tooltip>
           );
         })}

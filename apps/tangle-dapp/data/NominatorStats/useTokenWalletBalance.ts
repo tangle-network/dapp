@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 import { formatEther } from 'viem';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { evmPublicClient } from '../../utils/evm';
 import { getPolkadotApiRx } from '../../utils/polkadot';
@@ -19,7 +19,7 @@ export default function useTokenWalletBalance(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;

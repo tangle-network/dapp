@@ -1,7 +1,7 @@
 import { Option, Vec } from '@polkadot/types';
 import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants/index';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
@@ -31,15 +31,13 @@ export type VestingInfo = {
    * **claimable** by the active account, by calling the `vesting.vest`
    * extrinsic.
    */
-  claimableTokenAmount: BN | null;
+  claimableAmount: BN | null;
 
   /**
    * Whether or not the active account has any claimable tokens stemming
    * from vesting schedules.
    */
   hasClaimableTokens: boolean;
-
-  currentBlockNumber: BN | null;
 
   vestingLockAmount: BN | null;
 };
@@ -53,13 +51,16 @@ export type VestingInfo = {
  * Substrate and EVM accounts.
  */
 const useVestingInfo = (): VestingInfo => {
-  const { data: vestingSchedulesOpt } = usePolkadotApiRx(
-    (api, activeSubstrateAddress) =>
-      api.query.vesting.vesting(activeSubstrateAddress)
+  const { data: schedulesOpt } = usePolkadotApiRx(
+    useCallback(
+      (api, activeSubstrateAddress) =>
+        api.query.vesting.vesting(activeSubstrateAddress),
+      []
+    )
   );
 
-  const { data: currentBlockNumber } = usePolkadotApiRx((api) =>
-    api.derive.chain.bestNumber()
+  const { data: currentBlockNumber } = usePolkadotApiRx(
+    useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 
   const { amount: vestingLockAmount } = useBalancesLock(
@@ -67,11 +68,11 @@ const useVestingInfo = (): VestingInfo => {
   );
 
   const totalVestingAmount = useMemo(() => {
-    if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
+    if (schedulesOpt === null || schedulesOpt.isNone) {
       return null;
     }
 
-    const vestingSchedules = vestingSchedulesOpt.unwrap();
+    const vestingSchedules = schedulesOpt.unwrap();
     let total = new BN(0);
 
     for (const vestingSchedule of vestingSchedules) {
@@ -79,14 +80,14 @@ const useVestingInfo = (): VestingInfo => {
     }
 
     return total;
-  }, [vestingSchedulesOpt]);
+  }, [schedulesOpt]);
 
   // The total amount of tokens that has been released by existing
   // vesting schedules so far, including vested/claimed tokens.
   const totalReleasedAmount = useMemo(() => {
     if (
-      vestingSchedulesOpt === null ||
-      vestingSchedulesOpt.isNone ||
+      schedulesOpt === null ||
+      schedulesOpt.isNone ||
       currentBlockNumber === null ||
       totalVestingAmount === null ||
       vestingLockAmount === null
@@ -94,7 +95,7 @@ const useVestingInfo = (): VestingInfo => {
       return null;
     }
 
-    const vestingSchedules = vestingSchedulesOpt.unwrap();
+    const vestingSchedules = schedulesOpt.unwrap();
     let totalReleased = new BN(0);
 
     for (const vestingSchedule of vestingSchedules) {
@@ -117,12 +118,7 @@ const useVestingInfo = (): VestingInfo => {
     // Without this, the total released amount would eventually exceed
     // the total vested amount, displaying incorrect information.
     return BN.min(totalReleased, totalVestingAmount);
-  }, [
-    currentBlockNumber,
-    totalVestingAmount,
-    vestingSchedulesOpt,
-    vestingLockAmount,
-  ]);
+  }, [currentBlockNumber, totalVestingAmount, schedulesOpt, vestingLockAmount]);
 
   const claimableAmount = useMemo(() => {
     if (
@@ -148,10 +144,9 @@ const useVestingInfo = (): VestingInfo => {
 
   return {
     isVesting: totalVestingAmount !== null && !totalVestingAmount.isZero(),
-    schedulesOpt: vestingSchedulesOpt,
-    claimableTokenAmount: claimableAmount,
+    schedulesOpt,
+    claimableAmount,
     hasClaimableTokens: claimableAmount !== null && !claimableAmount.isZero(),
-    currentBlockNumber,
     vestingLockAmount,
   };
 };

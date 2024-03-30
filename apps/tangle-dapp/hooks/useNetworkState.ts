@@ -2,14 +2,15 @@ import { notificationApi } from '@webb-tools/webb-ui-components';
 import { Network } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useEffect, useState } from 'react';
 
-import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../../constants/networks';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import createCustomNetwork from './createCustomNetwork';
-import testRpcEndpointConnection from './testRpcEndpointConnection';
+import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../constants/networks';
+import useNetworkStore from '../context/useNetworkStore';
+import createCustomNetwork from '../utils/createCustomNetwork';
+import { getNativeTokenSymbol } from '../utils/polkadot';
+import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 const useNetworkState = () => {
-  const { setRpcEndpoint } = useRpcEndpointStore();
+  const { network, setNetwork, rpcEndpoint, setNativeTokenSymbol } =
+    useNetworkStore();
   const [isCustom, setIsCustom] = useState(false);
 
   const {
@@ -24,7 +25,24 @@ const useNetworkState = () => {
     remove: removeCachedNetworkName,
   } = useLocalStorage(LocalStorageKey.WEBB_NETWORK_NAME);
 
-  const [network, setNetwork] = useState<Network | null>(null);
+  const { get: getCachedNativeTokenSymbol, set: setCachedNativeTokenSymbol } =
+    useLocalStorage(LocalStorageKey.NATIVE_TOKEN_SYMBOL);
+
+  const fetchTokenSymbol = useCallback(
+    async (rpcEndpoint: string) => {
+      try {
+        const tokenSymbol = await getNativeTokenSymbol(rpcEndpoint);
+        setNativeTokenSymbol(tokenSymbol);
+        setCachedNativeTokenSymbol(tokenSymbol);
+      } catch {
+        notificationApi({
+          variant: 'error',
+          message: `Unable to fetch token symbol for ${network.name}.`,
+        });
+      }
+    },
+    [network.name, setCachedNativeTokenSymbol, setNativeTokenSymbol]
+  );
 
   // Load the initial network from local storage.
   useEffect(() => {
@@ -62,13 +80,29 @@ const useNetworkState = () => {
 
     const initialNetwork = getCachedInitialNetwork();
 
-    setRpcEndpoint(initialNetwork.polkadotEndpoint);
     setNetwork(initialNetwork);
   }, [
     getCachedCustomRpcEndpoint,
     getCachedNetworkName,
     removeCachedNetworkName,
-    setRpcEndpoint,
+    setNetwork,
+  ]);
+
+  // Load initial token symbol from local storage.
+  useEffect(() => {
+    const cachedTokenSymbol = getCachedNativeTokenSymbol();
+
+    if (cachedTokenSymbol !== null) {
+      setNativeTokenSymbol(cachedTokenSymbol);
+      return;
+    }
+
+    fetchTokenSymbol(rpcEndpoint);
+  }, [
+    getCachedNativeTokenSymbol,
+    rpcEndpoint,
+    fetchTokenSymbol,
+    setNativeTokenSymbol,
   ]);
 
   // Set global RPC endpoint when the network changes,
@@ -92,10 +126,6 @@ const useNetworkState = () => {
         }) with RPC endpoint: ${newNetwork.polkadotEndpoint}`
       );
 
-      // This should trigger a re-render of all places that use the
-      // RPC endpoint, leading them to re-connect to the new endpoint.
-      setRpcEndpoint(newNetwork.polkadotEndpoint);
-
       if (isCustom) {
         removeCachedNetworkName();
         setCachedCustomRpcEndpoint(newNetwork.polkadotEndpoint);
@@ -103,6 +133,8 @@ const useNetworkState = () => {
         removeCachedCustomRpcEndpoint();
         setCachedNetworkName(newNetwork.name);
       }
+
+      await fetchTokenSymbol(newNetwork.polkadotEndpoint);
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);
@@ -112,7 +144,8 @@ const useNetworkState = () => {
       removeCachedNetworkName,
       setCachedCustomRpcEndpoint,
       setCachedNetworkName,
-      setRpcEndpoint,
+      setNetwork,
+      fetchTokenSymbol,
     ]
   );
 
@@ -124,3 +157,27 @@ const useNetworkState = () => {
 };
 
 export default useNetworkState;
+
+function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      const ws = new WebSocket(rpcEndpoint);
+
+      const handleOpen = () => {
+        ws.removeEventListener('open', handleOpen);
+        ws.close();
+        resolve(true);
+      };
+
+      const handleCloseEvent = () => {
+        ws.removeEventListener('close', handleCloseEvent);
+        resolve(false);
+      };
+
+      ws.addEventListener('open', handleOpen);
+      ws.addEventListener('close', handleCloseEvent);
+    } catch {
+      resolve(false);
+    }
+  });
+}

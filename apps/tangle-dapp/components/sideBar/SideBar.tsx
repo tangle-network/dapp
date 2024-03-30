@@ -3,9 +3,10 @@
 import { SideBar as SideBarCmp } from '@webb-tools/webb-ui-components';
 import { setSideBarCookieOnToggle } from '@webb-tools/webb-ui-components/next-utils';
 import { usePathname } from 'next/navigation';
-import { type FC } from 'react';
+import { type FC, useMemo } from 'react';
 
-import sideBarProps from './sideBarProps';
+import useNetworkState from '../../hooks/useNetworkState';
+import getSideBarProps from './sideBarProps';
 
 interface SideBarProps {
   isExpandedAtDefault?: boolean;
@@ -13,6 +14,12 @@ interface SideBarProps {
 
 const SideBar: FC<SideBarProps> = ({ isExpandedAtDefault }) => {
   const pathname = usePathname();
+  const { network } = useNetworkState();
+
+  const sideBarProps = useMemo(
+    () => getSideBarProps(network?.polkadotExplorer, network?.evmExplorer),
+    [network]
+  );
 
   return (
     <SideBarCmp

@@ -16,10 +16,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../constants/index';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
-import { LocalStorageKey } from '../../hooks/useLocalStorage';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useNetworkStore from '../../context/useNetworkStore';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
@@ -31,7 +28,7 @@ export default function Page() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
   const { activeAccount, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   // Default to null to indicate that we are still checking
   // If false, then we know that the user is not eligible
@@ -42,59 +39,31 @@ export default function Page() {
 
   const [checkingEligibility, setCheckingEligibility] = useState(false);
 
-  const { setWithPreviousValue: setEligibilityCache } = useLocalStorage(
-    LocalStorageKey.AIRDROP_ELIGIBILITY_CACHE,
-    true
-  );
-
-  // Update the eligibility cache in local storage once it
-  // is known whether the user is eligible or not for the airdrop.
-  // This is reused in the account page, to avoid checking eligibility
-  // multiple times.
-  useEffect(() => {
-    if (activeAccount !== null && claimInfo !== null) {
-      setEligibilityCache((previous) => ({
-        ...previous,
-        [activeAccount.address]: claimInfo !== false,
-      }));
-    }
-  }, [activeAccount, claimInfo, setEligibilityCache]);
-
   // After the user has claimed the airdrop, we can remove the
   // eligibility from the cache, to avoid showing incorrect information
   // when navigating back to the claim page.
-  const handleClaimCompletion = useCallback(
-    (accountAddress: string) => {
-      eligibilityCache.delete(accountAddress);
-      setClaimInfo(null);
-
-      // Mark active account address as no longer eligible in the
-      // local storage after claiming the airdrop.
-      setEligibilityCache((previous) => ({
-        ...previous,
-        [accountAddress]: false,
-      }));
-    },
-    [setEligibilityCache]
-  );
+  const handleClaimCompletion = useCallback((accountAddress: string) => {
+    eligibilityCache.delete(accountAddress);
+    setClaimInfo(null);
+  }, []);
 
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: `Claim your $${TANGLE_TOKEN_UNIT} Airdrop`,
+        title: `Claim your $TNT airdrop`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo === false) {
       return {
-        title: `You are not eligible for $${TANGLE_TOKEN_UNIT} Airdrop`,
+        title: `You are not eligible for $TNT airdrop`,
         subTitle: 'OOPS!',
       };
     }
 
     return {
-      title: `You have unclaimed $${TANGLE_TOKEN_UNIT} Airdrop!`,
+      title: `You have unclaimed $TNT airdrop!`,
       subTitle: 'GREAT NEWS!',
     };
   }, [claimInfo]);
@@ -175,21 +144,19 @@ export default function Page() {
           {claimInfo === null ? (
             <>
               As part of {"Tangle's"} initial launch, the Tangle Network is
-              distributing 5 million {TANGLE_TOKEN_UNIT} tokens to the
-              community. Check eligibility below to see if you qualify for{' '}
-              {TANGLE_TOKEN_UNIT} Airdrop!
+              distributing 5 million TNT tokens to the community. Check
+              eligibility below to see if you qualify for TNT airdrop!
             </>
           ) : claimInfo ? (
             <>
-              You are eligible for ${TANGLE_TOKEN_UNIT} airdrop! View your
-              tokens below, and start the claiming process.
+              You are eligible for $TNT airdrop! View your tokens below, and
+              start the claiming process.
             </>
           ) : (
             <>
-              You are not eligible for ${TANGLE_TOKEN_UNIT} airdrop. You can
-              still participate in the Tangle Network by acquiring $
-              {TANGLE_TOKEN_UNIT} or you can try again with a different account
-              by disconnecting your current wallet.
+              You are not eligible for $TNT airdrop. You can still participate
+              in the Tangle Network by acquiring $ TNT or you can try again with
+              a different account by disconnecting your current wallet.
             </>
           )}
         </AppTemplate.Description>

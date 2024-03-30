@@ -1,27 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
-import { getMaxNominationQuota } from '../utils/polkadot';
+import usePolkadotApiRx from './usePolkadotApiRx';
 
-const useMaxNominationQuota = () => {
-  const [maxNominationQuota, setMaxNominationQuota] = useState(0);
-  const { rpcEndpoint } = useRpcEndpointStore();
+const useMaxNominationQuota = (): number => {
+  const { data: maxNominationQuotaOpt } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.maxNominatorsCount(), [])
+  );
 
-  useEffect(() => {
-    async function fetchMaxNominationQuota() {
-      const quota = await getMaxNominationQuota(rpcEndpoint);
+  const maxNominatorQuota = maxNominationQuotaOpt?.unwrapOr(null) ?? null;
 
-      if (typeof quota === 'number' && !isNaN(quota) && quota > 0) {
-        setMaxNominationQuota(quota);
-      } else {
-        setMaxNominationQuota(16);
-      }
-    }
-
-    fetchMaxNominationQuota();
-  }, [rpcEndpoint]);
-
-  return maxNominationQuota;
+  // Default to 16 if the value is not available. It is
+  // safe to convert to a number here, as the value is
+  // a `u32`, which fits into a JavaScript number.
+  return maxNominatorQuota?.toNumber() ?? 16;
 };
 
 export default useMaxNominationQuota;

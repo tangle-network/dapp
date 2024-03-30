@@ -13,10 +13,10 @@ import {
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { withdrawUnbondedTokens as withdrawUnbondedTokensEvm } from '../../utils/evm';
 import { withdrawUnbondedTokens as withdrawUnbondedTokensSubstrate } from '../../utils/polkadot';
 import { getSlashingSpans } from '../../utils/polkadot';
@@ -33,7 +33,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const [isWithdrawUnbondedTxLoading, setIsWithdrawUnbondedTxLoading] =
     useState(false);
@@ -52,7 +52,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     if (isSubstrateAddress(activeAccount?.address))
       return activeAccount.address;
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const {

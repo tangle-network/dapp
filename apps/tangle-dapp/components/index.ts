@@ -2,7 +2,6 @@ export * from './BondedTokensBalanceInfo';
 export * from './Breadcrumbs';
 export * from './DelegatorTable';
 export * from './HeaderChip';
-export { default as Identity } from './Identity';
 export * from './InfoIconWithTooltip';
 export * from './KeyStatsItem';
 export * from './NominatorStatsItem';

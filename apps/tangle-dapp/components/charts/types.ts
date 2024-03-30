@@ -26,5 +26,4 @@ export type RoleEarningsChartItem = {
 
 export interface RoleEarningsChartProps {
   data: RoleEarningsChartItem[];
-  unit?: string;
 }

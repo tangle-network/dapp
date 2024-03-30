@@ -3,7 +3,7 @@ import { Close, LockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import { TANGLE_TOKEN_UNIT } from '../../../constants';
+import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
@@ -50,6 +50,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
   const { servicesWithJobs } = useRestakingJobs();
   const { profileTypeOpt } = useRestakingProfile();
   const { minRestakingBond } = useRestakingLimits();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading. It needs to default to `null` and have its loading state handled appropriately.
   const hasActiveJob = (() => {
@@ -136,7 +137,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
 
             {min !== null ? (
               <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
-                {`≥ ${formatTokenBalance(min, false)}`}
+                {`≥ ${formatTokenBalance(min)}`}
               </Chip>
             ) : (
               <SkeletonLoader />
@@ -194,7 +195,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
         value={amountString}
         onChange={handleChange}
         type="text"
-        placeholder={`0 ${TANGLE_TOKEN_UNIT}`}
+        placeholder={`0 ${nativeTokenSymbol}`}
         size="sm"
         autoComplete="off"
         isInvalid={errorMessage !== undefined}

@@ -5,7 +5,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Delegator } from '../../types';
@@ -24,16 +24,18 @@ export default function useDelegations(
     delegators: [],
   }
 ) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+
   const {
     valueAfterMount: cachedNominations,
     setWithPreviousValue: setCachedNominations,
   } = useLocalStorage(LocalStorageKey.Nominations, true);
+
   const [delegators, setDelegators] = useState(
     (cachedNominations && cachedNominations[address]) ?? defaultValue.delegators
   );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useRpcEndpointStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -45,6 +47,7 @@ export default function useDelegations(
           setDelegators([]);
           setIsLoading(false);
         }
+
         return;
       }
 
@@ -59,6 +62,7 @@ export default function useDelegations(
           .subscribe(async (nominatorData) => {
             const targets = nominatorData.unwrapOrDefault().targets;
 
+            // TODO: This needs to be optimized. Make a single request to get all the data, then work off that data. Currently, this may make many requests, depending on how many targets there are PER nominator (O(nominators * targets)).
             const delegators: Delegator[] = await Promise.all(
               targets.map(async (target) => {
                 const ledger = await apiPromise.query.staking.ledger(
@@ -73,7 +77,10 @@ export default function useDelegations(
                   ledgerData.total.toString()
                 );
 
-                const selfStakedBalance = formatTokenBalance(selfStaked);
+                const selfStakedBalance = formatTokenBalance(
+                  selfStaked,
+                  nativeTokenSymbol
+                );
 
                 const isActive = await apiPromise.query.session
                   .validators()
@@ -106,8 +113,9 @@ export default function useDelegations(
                   target.toString()
                 );
                 const totalStakeAmount = exposure.total.unwrap();
-                const effectiveAmountStaked = await formatTokenBalance(
-                  totalStakeAmount
+                const effectiveAmountStaked = formatTokenBalance(
+                  totalStakeAmount,
+                  nativeTokenSymbol
                 );
 
                 return {
@@ -147,7 +155,7 @@ export default function useDelegations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint, setCachedNominations]);
+  }, [address, rpcEndpoint, setCachedNominations, nativeTokenSymbol]);
 
   return useFormatReturnType({
     isLoading,

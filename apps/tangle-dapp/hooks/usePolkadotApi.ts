@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 
-import useRpcEndpointStore from '../context/useRpcEndpointStore';
+import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import { getPolkadotApiPromise } from '../utils/polkadot';
 import usePromise from './usePromise';
@@ -74,7 +74,7 @@ function usePolkadotApi<T>(
   fetcher: PolkadotApiFetcher<T>,
   swrKey?: PolkadotApiSwrKey
 ) {
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const {
     result: polkadotApi,

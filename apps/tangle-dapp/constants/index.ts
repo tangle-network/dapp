@@ -11,8 +11,6 @@ export const PAYMENT_DESTINATION_OPTIONS = [
   'Stash (do not increase the amount at stake)',
 ];
 
-export const TANGLE_TOKEN_UNIT = 'tTNT';
-
 // Note that the chain decimal count is usually constant, and set when
 // the blockchain is deployed. It could be technically changed due to
 // governance decisions and subsequent runtime upgrades, but that would
@@ -83,7 +81,9 @@ export const SERVICE_TYPE_TO_TANGLE_MAP = {
   [RestakingService.LIGHT_CLIENT_RELAYING]: 'LightClientRelaying',
   [RestakingService.ZK_SAAS_GROTH16]: { ZkSaaS: 'ZkSaaSGroth16' },
   [RestakingService.ZK_SAAS_MARLIN]: { ZkSaaS: 'ZkSaaSMarlin' },
-  [RestakingService.TSS_ZENGOGG20SECP256K1]: { Tss: 'ZengoGG20Secp256k1' },
+  [RestakingService.TSS_SILENT_SHARD_DKLS23SECP256K1]: {
+    Tss: 'SilentShardDKLS23Secp256k1',
+  },
   [RestakingService.TSS_DFNS_CGGMP21SECP256K1]: { Tss: 'DfnsCGGMP21Secp256k1' },
   [RestakingService.TSS_DFNS_CGGMP21SECP256R1]: { Tss: 'DfnsCGGMP21Secp256r1' },
   [RestakingService.TSS_DFNS_CGGMP21STARK]: { Tss: 'DfnsCGGMP21Stark' },
@@ -105,7 +105,7 @@ export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
   DfnsCGGMP21Secp256r1: RestakingService.TSS_DFNS_CGGMP21SECP256R1,
   DfnsCGGMP21Stark: RestakingService.TSS_DFNS_CGGMP21STARK,
   GennaroDKGBls381: RestakingService.TSS_GENNARO_DKG_BLS381,
-  ZengoGG20Secp256k1: RestakingService.TSS_ZENGOGG20SECP256K1,
+  SilentShardDKLS23Secp256k1: RestakingService.TSS_SILENT_SHARD_DKLS23SECP256K1,
   ZcashFrostEd25519: RestakingService.TSS_ZCASH_FROST_ED25519,
   ZcashFrostP256: RestakingService.TSS_ZCASH_FROST_P256,
   ZcashFrostP384: RestakingService.TSS_ZCASH_FROST_P384,

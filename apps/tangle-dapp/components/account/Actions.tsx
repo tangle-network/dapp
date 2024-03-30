@@ -5,7 +5,7 @@ import {
   CoinsLineIcon,
   CoinsStackedLineIcon,
   GiftLineIcon,
-  ShieldKeyholeLineIcon,
+  LockUnlockLineIcon,
   StatusIndicator,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
@@ -20,8 +20,9 @@ import { FC, ReactElement, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import useNetworkStore from '../../context/useNetworkStore';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
-import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
+import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -29,23 +30,23 @@ import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
+  const { isEligible: isAirdropEligible } = useAirdropEligibility();
+  const isPayoutsAvailable = usePayoutsAvailability();
 
   const {
     isVesting,
     hasClaimableTokens: hasClaimableVestingTokens,
-    claimableTokenAmount,
+    claimableAmount: claimableTokenAmount,
   } = useVestingInfo();
-
-  const { execute: executeVestTx, status: vestTxStatus } = useVestTx(true);
 
   const formattedClaimableTokenAmount =
     claimableTokenAmount !== null
-      ? formatTokenBalance(claimableTokenAmount)
+      ? formatTokenBalance(claimableTokenAmount, nativeTokenSymbol)
       : null;
-
-  const { isAirdropEligible } = useAirdropEligibility();
-  const isPayoutsAvailable = usePayoutsAvailability();
 
   return (
     <>
@@ -81,7 +82,7 @@ const Actions: FC = () => {
             tooltip={
               <>
                 Congratulations, you are eligible for the Tangle Network
-                Airdrop! Click here to visit the <strong>Claim Airdrop</strong>{' '}
+                airdrop! Click here to visit the <strong>Claim Airdrop</strong>{' '}
                 page.
               </>
             }
@@ -91,7 +92,7 @@ const Actions: FC = () => {
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
           <ActionItem
-            Icon={ShieldKeyholeLineIcon}
+            Icon={LockUnlockLineIcon}
             label="Vest"
             onClick={executeVestTx !== null ? executeVestTx : undefined}
             hasNotificationDot={hasClaimableVestingTokens}
@@ -103,14 +104,14 @@ const Actions: FC = () => {
             tooltip={
               hasClaimableVestingTokens ? (
                 <>
-                  You have <strong>{formattedClaimableTokenAmount}</strong>{' '}
+                  There are <strong>{formattedClaimableTokenAmount}</strong>{' '}
                   vested tokens that are ready to be claimed. Use this action to
                   release them.
                 </>
               ) : (
                 <>
-                  You have vesting schedules in your account, but there are no
-                  tokens available to claim yet.
+                  There are vesting schedules in your account, but no tokens
+                  have vested yet.
                 </>
               )
             }
@@ -149,9 +150,6 @@ const ActionItem = (props: {
     hasNotificationDot = false,
   } = props;
 
-  const cursorClass = isDisabled ? '!cursor-not-allowed' : 'cursor-pointer';
-  const isDisabledClass = isDisabled ? 'opacity-50' : '';
-
   const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
       return;
@@ -164,15 +162,14 @@ const ActionItem = (props: {
     <div
       className={twMerge(
         'inline-flex flex-col justify-center items-center gap-2',
-        isDisabledClass,
-        cursorClass
+        isDisabled && 'opacity-50'
       )}
     >
       <div
         onClick={handleClick}
         className={twMerge(
           'inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0',
-          cursorClass
+          isDisabled ? '!cursor-not-allowed' : 'cursor-pointer'
         )}
       >
         {/* Notification dot */}

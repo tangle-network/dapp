@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { RestakingAllocationMap } from '../containers/ManageProfileModalContainer/types';
 import { AllocationChartEntryName } from '../containers/ManageProfileModalContainer/useAllocationChartEntries';
+import useNetworkStore from '../context/useNetworkStore';
 import { RestakingService } from '../types';
 import { formatTokenBalance } from '../utils/polkadot/tokens';
 
@@ -15,6 +16,8 @@ const BnChartTooltip = (
   previewAmount: BN,
   displayAmount: boolean
 ) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   const composition = ({ active, payload }: TooltipProps<number, string>) => {
     if (!active || payload === undefined || payload.length === 0) {
       return null;
@@ -52,7 +55,8 @@ const BnChartTooltip = (
         <Typography variant="body2" fw="semibold">
           {entryName}
 
-          {displayAmount && `: ${formatTokenBalance(amount)}`}
+          {displayAmount &&
+            `: ${formatTokenBalance(amount, nativeTokenSymbol)}`}
         </Typography>
       </div>
     );

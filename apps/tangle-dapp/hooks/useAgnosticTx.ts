@@ -25,7 +25,7 @@ function useAgnosticTx<
   evmTarget: AbiFunctionName<PrecompileT>,
   evmArguments: unknown[],
   substrateTxFactory: TxFactory<SubstrateTxResult>,
-  notifyStatusUpdates = false
+  notifyStatusUpdates = true
 ) {
   const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useWebbUI();

@@ -5,15 +5,16 @@ import {
   ChevronUp,
   CoinsStackedLineIcon,
   SendPlanLineIcon,
-  TangleIcon,
+  TokenIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { TANGLE_TOKEN_UNIT } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
+import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { StaticSearchQueryPath } from '../../types';
@@ -21,16 +22,27 @@ import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
-import LockedBalanceDetails from './LockedBalanceDetails';
+import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
+import VestBalanceAction from './VestBalanceAction';
 
 const BalancesTableContainer: FC = () => {
-  const { transferrable, locked } = useBalances();
+  const { locked, transferrable } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+
+  const { hasClaimableTokens: hasVestedAmount, claimableAmount: vestedAmount } =
+    useVestingInfo();
 
   const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
     useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
 
-  const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+  const { data: locks } = usePolkadotApiRx(
+    useCallback(
+      (api, activeSubstrateAddress) =>
+        api.query.balances.locks(activeSubstrateAddress),
+      []
+    )
+  );
 
   // Load the cached collapsed state from local storage on mount.
   useEffect(() => {
@@ -40,10 +52,6 @@ const BalancesTableContainer: FC = () => {
       setIsDetailsCollapsed(cachedIsDetailsCollapsed);
     }
   }, [getCachedIsDetailsCollapsed]);
-
-  const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
-    api.query.balances.locks(activeSubstrateAddress)
-  );
 
   const handleToggleDetails = useCallback(() => {
     setIsDetailsCollapsed((prev) => {
@@ -66,13 +74,20 @@ const BalancesTableContainer: FC = () => {
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Transferrable Balance"
+              title="Free Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
+            {hasVestedAmount && (
+              <AssetCell
+                title="Claimable Vested Balance"
+                tooltip="The total amount of tokens that has vested from vesting schedules and is now available to be claimed."
+              />
+            )}
+
             <AssetCell
               title="Locked Balance"
-              tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
+              tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting."
             />
           </div>
 
@@ -100,6 +115,17 @@ const BalancesTableContainer: FC = () => {
                 />
               </div>
             </div>
+
+            {/* Vested balance */}
+            {hasVestedAmount && (
+              <div className="flex flex-row justify-between items-center">
+                <BalanceCell amount={vestedAmount} />
+
+                <div className="p-3">
+                  <VestBalanceAction />
+                </div>
+              </div>
+            )}
 
             {/* Locked balance */}
             <div className="flex flex-row justify-between items-center">
@@ -136,15 +162,15 @@ const AssetCell: FC<{
   title: string;
   tooltip?: string;
 }> = ({ title, tooltip }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   return (
     <div className="flex px-3 py-3 gap-6">
       <div className="flex flex-row items-center gap-1">
-        <div className="bg-mono-40 dark:bg-mono-0 p-1 rounded-full">
-          <TangleIcon />
-        </div>
+        <TokenIcon name={nativeTokenSymbol} size="lg" />
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
-          {TANGLE_TOKEN_UNIT}
+          {nativeTokenSymbol}
         </Typography>
       </div>
 

@@ -16,11 +16,11 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { PaymentDestination } from '../../types';
-import { convertToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { updatePaymentDestination as updatePaymentDestinationEvm } from '../../utils/evm';
 import { updatePaymentDestination as updatePaymentDestinationSubstrate } from '../../utils/polkadot';
 import { UpdatePayeeTxContainerProps } from './types';
@@ -33,7 +33,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
   const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [paymentDestination, setPaymentDestination] = useState<string>(
@@ -62,7 +62,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       return activeAccount.address;
     }
 
-    return convertToSubstrateAddress(activeAccount.address) ?? '';
+    return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const {

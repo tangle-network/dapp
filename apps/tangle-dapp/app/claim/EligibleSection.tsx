@@ -24,7 +24,7 @@ import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
-import useRpcEndpointStore from '../../context/useRpcEndpointStore';
+import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import getStatement from '../../utils/getStatement';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
@@ -53,7 +53,7 @@ const EligibleSection: FC<Props> = ({
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
   const [step, setStep] = useState(Step.INPUT_ADDRESS);
-  const { rpcEndpoint } = useRpcEndpointStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
@@ -116,10 +116,11 @@ const EligibleSection: FC<Props> = ({
         statementSentence
       );
 
-      const hash = await sendTransaction(tx);
+      const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      newSearchParams.set('h', hash);
+      // TODO: Need to centralize these search parameters in an enum, in case they ever change.
+      newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
       onClaimCompleted(accountId);
 
@@ -175,7 +176,7 @@ const EligibleSection: FC<Props> = ({
 
         <div className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
-            You will receive...
+            You will receive the liquid balance of...
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
@@ -187,6 +188,9 @@ const EligibleSection: FC<Props> = ({
                     : shortenString(recipient)
                 }`
               : ''}
+          </Typography>
+          <Typography variant="body1" fw="bold" ta="center">
+            any additional balance will be vesting in your account.
           </Typography>
         </div>
 

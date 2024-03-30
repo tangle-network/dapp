@@ -18,7 +18,7 @@ import {
   DKG_STATS_PROPOSALS_URL,
   TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
-  TANGLE_TESTNET_EXPLORER_URL,
+  TANGLE_TESTNET_EVM_EXPLORER_URL,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
@@ -78,7 +78,7 @@ const items: SideBarItemProps[] = [
   },
   {
     Icon: GlobalLine,
-    href: TANGLE_TESTNET_EXPLORER_URL,
+    href: TANGLE_TESTNET_EVM_EXPLORER_URL,
     isInternal: false,
     name: 'EVM Explorer',
     subItems: [],
