@@ -22,7 +22,7 @@ import { twMerge } from 'tailwind-merge';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useNetworkStore from '../../context/useNetworkStore';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
-import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
+import usePayoutsAvailability from '../../data/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
