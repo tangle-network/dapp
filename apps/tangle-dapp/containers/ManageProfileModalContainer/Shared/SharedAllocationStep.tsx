@@ -88,7 +88,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
         Remaining:{' '}
         {remainingAmount !== null
           ? formatTokenBalance(remainingAmount, nativeTokenSymbol)
-          : '—'}
+          : '--'}
       </Typography>
     </AllocationStepContainer>
   );

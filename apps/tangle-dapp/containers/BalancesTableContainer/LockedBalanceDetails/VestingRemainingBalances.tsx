@@ -1,12 +1,11 @@
-import { BN, BN_ZERO, formatDecimal } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
-import { formatTokenBalance } from '../../../utils/polkadot';
 import BalanceCell from '../BalanceCell';
 
-const VestingScheduleBalances: FC = () => {
+const VestingRemainingBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
   const { data: currentBlockNumber } = usePolkadotApiRx(
@@ -30,23 +29,9 @@ const VestingScheduleBalances: FC = () => {
       : BN_ZERO;
 
     const remaining = schedule.locked.sub(amountAlreadyVested);
-    const allVested = remaining.isZero();
 
-    // The unlock column already shows a status message about the
-    // tokens being fully vested, so don't repeat it here.
-    const status = allVested ? undefined : amountAlreadyVested.isZero() ? (
-      `No tokens have vested yet. This vesting schedule will start unlocking at block #${formatDecimal(
-        schedule.startingBlock.toString()
-      )}.`
-    ) : (
-      <>
-        <strong>{formatTokenBalance(amountAlreadyVested)}</strong> has vested,
-        with <strong>{formatTokenBalance(remaining)}</strong> remaining.
-      </>
-    );
-
-    return <BalanceCell key={index} amount={schedule.locked} status={status} />;
+    return <BalanceCell key={index} amount={remaining} />;
   });
 };
 
-export default VestingScheduleBalances;
+export default VestingRemainingBalances;
