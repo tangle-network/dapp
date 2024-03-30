@@ -6,7 +6,8 @@ import { create } from 'zustand';
 import { DEFAULT_NETWORK } from '../constants/networks';
 
 /**
- * A store for Network info to use when creating/using Polkadot API instances.
+ * A store for Network info to use when creating/using
+ * Polkadot API instances.
  */
 const useNetworkStore = create<{
   rpcEndpoint: string;

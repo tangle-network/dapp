@@ -45,6 +45,8 @@ const columns = [
     header: () => <HeaderCell title="Tx Hash" className="justify-start" />,
     cell: (props) => {
       const txHash = props.getValue();
+
+      // TODO: This should be based off the active network, cannot assume it is always the testnet!
       const txExplorerURI = TANGLE_BLOCK_EXPLORER
         ? getExplorerURI(
             TANGLE_BLOCK_EXPLORER,

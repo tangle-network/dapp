@@ -1,10 +1,12 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
-import { TANGLE_TESTNET_EVM_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
+import useNetworkStore from '../../context/useNetworkStore';
 
 const RecentTxContainer: FC = () => {
+  const { network } = useNetworkStore();
+
   return (
     <GlassCard className="space-y-4">
       <div className="flex flex-row justify-between">
@@ -18,9 +20,9 @@ const RecentTxContainer: FC = () => {
           color="primary"
           className="uppercase"
           target="_blank"
-          href={TANGLE_TESTNET_EVM_EXPLORER_URL}
+          href={network.polkadotExplorer}
         >
-          View Explorer
+          Open Explorer
         </Button>
       </div>
 
