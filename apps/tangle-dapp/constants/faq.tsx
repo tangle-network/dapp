@@ -3,7 +3,7 @@ import type { FAQItem } from '@webb-tools/webb-ui-components/containers/FAQSecti
 const EDGEWARE_URL = 'https://www.edgeware.io/';
 const ALLOCATION_DOC = 'https://docs.tangle.tools/docs/tokenomics/allocation/';
 
-const faq = [
+const FAQ = [
   {
     question: 'How can I become qualified for the TNT airdrop?',
     answer: (
@@ -77,4 +77,4 @@ const faq = [
   },
 ] as const satisfies Array<FAQItem>;
 
-export default faq;
+export default FAQ;
