@@ -1,6 +1,11 @@
 import cx from 'classnames';
 
-import { KeyStatsItem } from '../../components/KeyStatsItem';
+import ActiveValidatorsKeyStat from './ActiveValidatorsKeyStat';
+import ActualStakedPercentageKeyStat from './ActualStakedPercentageKeyStat';
+import IdealStakedPercentageKeyStat from './IdealStakedPercentageKeyStat';
+import InflationPercentageKeyStat from './InflationPercentageKeyStat';
+import ValidatorCountKeyStat from './ValidatorCountKeyStat';
+import WaitingValidatorsKeyStat from './WaitingValidatorsKeyStat';
 
 export const KeyStatsContainer = () => {
   return (
@@ -13,7 +18,7 @@ export const KeyStatsContainer = () => {
     >
       <div
         className={cx(
-          'grid lg:gap-1 grid-cols-2 lg:grid-cols-5',
+          'grid lg:gap-1 grid-cols-2 lg:grid-cols-6',
           '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
           '[&>div]:even:border-none',
           'lg:[&>div]:even:border-r',
@@ -22,42 +27,17 @@ export const KeyStatsContainer = () => {
           '[&>div]:nth-last-child(-n+2):border-b-0'
         )}
       >
-        {/* Validators */}
-        <KeyStatsItem
-          title="Validators"
-          tooltip="Current # of active validators out of the total allowed."
-          className="col-span-2 lg:col-span-1 lg:!border-b-0 !border-r-0 lg:!border-r"
-        />
+        <ValidatorCountKeyStat />
 
-        {/* Waiting validators */}
-        <KeyStatsItem
-          title="Waiting"
-          tooltip="Nodes waiting in line to become active validators."
-          className="lg:!border-b-0"
-        />
+        <WaitingValidatorsKeyStat />
 
-        {/* Active validators */}
-        <KeyStatsItem
-          title="Active/Nominators"
-          tooltip="Current active nominators out of the total possible."
-          className="lg:!border-b-0 !border-r-0 lg:!border-r"
-        />
+        <ActiveValidatorsKeyStat />
 
-        {/* Ideal staked percentage */}
-        <KeyStatsItem
-          title="Ideal Staked"
-          tooltip="The ideal % of all network tokens that should be staked."
-          className="!border-b-0"
-          suffix="%"
-        />
+        <ActualStakedPercentageKeyStat />
 
-        {/* Inflation percentage */}
-        <KeyStatsItem
-          title="Inflation"
-          tooltip="The yearly % increase in the network’s total token supply."
-          className="!border-b-0 !border-r-0"
-          suffix="%"
-        />
+        <IdealStakedPercentageKeyStat />
+
+        <InflationPercentageKeyStat />
       </div>
     </div>
   );
