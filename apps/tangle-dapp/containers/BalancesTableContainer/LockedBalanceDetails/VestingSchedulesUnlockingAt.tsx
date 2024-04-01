@@ -41,20 +41,18 @@ const VestingSchedulesUnlockingAt: FC = () => {
     const isComplete = currentBlockNumber.gte(endingBlockNumber);
 
     const progressText = isComplete
-      ? 'All of the tokens in this vesting schedule have vested and are now available to claim.'
+      ? undefined
       : `${timeRemaining} remaining. Currently at block #${formatDecimal(
           currentBlockNumber.toString()
         )}, with ${formatDecimal(
           endingBlockNumber.sub(currentBlockNumber).toString()
         )} blocks left until all vested tokens are available to claim.`;
 
-    return (
-      <TextCell
-        key={index}
-        text={`Block #${formatDecimal(endingBlockNumber.toString())}`}
-        status={progressText}
-      />
-    );
+    const text = isComplete
+      ? 'Fully vested'
+      : `Block #${formatDecimal(endingBlockNumber.toString())}`;
+
+    return <TextCell key={index} text={text} status={progressText} />;
   });
 };
 
