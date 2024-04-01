@@ -1,5 +1,6 @@
 'use client';
 
+import { formatBalance } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
@@ -82,7 +83,7 @@ export default OverviewCard;
 type StatsItemProps = {
   title: string;
   titleTooltip?: string;
-  value: number | null;
+  value: number | null | undefined;
   valueTooltip?: string;
   isBoldText?: boolean;
   isLoading?: boolean;
@@ -122,9 +123,11 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {`${
-                typeof value === 'number' ? value.toLocaleString() : '--'
-              } ${suffix}`.trim()}
+              {typeof value === 'string' || typeof value === 'number'
+                ? formatBalance(value, {
+                    withUnit: suffix,
+                  })
+                : '--'}
             </Typography>
 
             {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}
