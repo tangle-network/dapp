@@ -1,9 +1,9 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import {
-  DelegationsPayoutsContainer,
   HeaderChipsContainer,
   KeyStatsContainer,
+  NominationsPayoutsContainer,
   NominatorStatsContainer,
   ValidatorTablesContainer,
 } from '../../containers';
@@ -24,7 +24,7 @@ export default async function NominationPage() {
 
       <NominatorStatsContainer />
 
-      <DelegationsPayoutsContainer />
+      <NominationsPayoutsContainer />
 
       <ValidatorTablesContainer />
     </div>

@@ -14,9 +14,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { TableStatus } from '../../components';
-import useDelegations from '../../data/DelegationsPayouts/useDelegations';
-import usePayouts from '../../data/DelegationsPayouts/usePayouts';
+import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
+import useNominations from '../../data/NominationsPayouts/useNominations';
+import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
@@ -27,8 +27,6 @@ import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
-import DelegatorTableContainer from './DelegatorTableContainer';
-import PayoutTableContainer from './PayoutTableContainer';
 
 const PAGE_SIZE = 10;
 
@@ -50,8 +48,9 @@ const DelegationsPayoutsContainer: FC = () => {
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
-  const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
+
+  const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
@@ -80,7 +79,7 @@ const DelegationsPayoutsContainer: FC = () => {
     return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  const { data: delegatorsData } = useDelegations(substrateAddress);
+  const { data: delegatorsData } = useNominations(substrateAddress);
   const { isFirstTimeNominator } = useIsFirstTimeNominator();
   const { data: payoutsData } = usePayouts(substrateAddress);
 
@@ -215,8 +214,8 @@ const DelegationsPayoutsContainer: FC = () => {
               icon="🔍"
             />
           ) : (
-            <DelegatorTableContainer
-              value={
+            <DelegatorTable
+              data={
                 fetchedNominations && fetchedNominations.length > 0
                   ? fetchedNominations
                   : []
@@ -252,14 +251,10 @@ const DelegationsPayoutsContainer: FC = () => {
               icon="🔍"
             />
           ) : (
-            <PayoutTableContainer
-              value={
-                fetchedPayouts && fetchedPayouts.length > 0
-                  ? fetchedPayouts
-                  : []
-              }
+            <PayoutTable
+              data={fetchedPayouts ?? []}
               pageSize={PAGE_SIZE}
-              updateValue={setUpdatedPayouts}
+              updateData={setUpdatedPayouts}
             />
           )}
         </TabContent>

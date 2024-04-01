@@ -18,7 +18,7 @@ import {
   getValidatorIdentity,
 } from '../../utils/polkadot';
 
-export default function useDelegations(
+export default function useNominations(
   address: string,
   defaultValue: { delegators: Delegator[] } = {
     delegators: [],
