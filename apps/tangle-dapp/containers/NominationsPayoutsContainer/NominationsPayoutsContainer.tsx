@@ -49,7 +49,6 @@ const DelegationsPayoutsContainer: FC = () => {
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
-
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
   const { value: queryParamsTab } = useQueryParamKey(
@@ -102,7 +101,7 @@ const DelegationsPayoutsContainer: FC = () => {
   );
 
   const fetchedPayouts = useMemo(() => {
-    if (payoutsData && payoutsData.payouts.length > 0) {
+    if (payoutsData !== null) {
       return payoutsData.payouts;
     } else if (cachedPayouts) {
       return cachedPayouts[substrateAddress] ?? [];
@@ -110,7 +109,7 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [cachedPayouts, payoutsData, substrateAddress]);
 
   const fetchedNominations = useMemo(() => {
-    if (delegatorsData && delegatorsData.delegators.length > 0) {
+    if (delegatorsData !== null) {
       return delegatorsData.delegators;
     } else if (cachedNominations) {
       return cachedNominations[substrateAddress] ?? [];
