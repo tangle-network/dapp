@@ -48,15 +48,8 @@ export const useValidators = (
       return null;
     }
 
-    const mappedIdentityNames = new Map<string, string | null>();
     const mappedExposures = new Map<string, SpStakingExposure>();
     const mappedValidatorPrefs = new Map<string, PalletStakingValidatorPrefs>();
-
-    identityNames.forEach(([storageKey, name]) => {
-      const accountId = storageKey.args[0].toString();
-
-      mappedIdentityNames.set(accountId, name);
-    });
 
     exposures.forEach(([storageKey, exposure]) => {
       const accountId = storageKey.args[1].toString();
@@ -72,9 +65,7 @@ export const useValidators = (
     });
 
     return addresses.map((address) => {
-      const name =
-        mappedIdentityNames.get(address.toString()) ?? address.toString();
-
+      const name = identityNames.get(address.toString()) ?? address.toString();
       const exposure = mappedExposures.get(address.toString());
       const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
