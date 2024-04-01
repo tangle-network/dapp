@@ -28,26 +28,30 @@ export const KeyStatsContainer = () => {
           tooltip="Current # of active validators out of the total allowed."
           className="col-span-2 lg:col-span-1 lg:!border-b-0 !border-r-0 lg:!border-r"
         />
-        {/* Waiting */}
+
+        {/* Waiting validators */}
         <KeyStatsItem
           title="Waiting"
           tooltip="Nodes waiting in line to become active validators."
           className="lg:!border-b-0"
         />
-        {/* Active/Nominators */}
+
+        {/* Active validators */}
         <KeyStatsItem
           title="Active/Nominators"
           tooltip="Current active nominators out of the total possible."
           className="lg:!border-b-0 !border-r-0 lg:!border-r"
         />
-        {/* Ideal Staked */}
+
+        {/* Ideal staked percentage */}
         <KeyStatsItem
           title="Ideal Staked"
           tooltip="The ideal % of all network tokens that should be staked."
           className="!border-b-0"
           suffix="%"
         />
-        {/* Inflation */}
+
+        {/* Inflation percentage */}
         <KeyStatsItem
           title="Inflation"
           tooltip="The yearly % increase in the network’s total token supply."

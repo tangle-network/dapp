@@ -3,6 +3,7 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { useEffect } from 'react';
 
 import getRoundedDownNumberWith2Decimals from '../../utils/getRoundedDownNumberWith2Decimals';
 import dataHooks from './dataHooks';
@@ -13,19 +14,23 @@ type Props = Pick<KeyStatsItemProps, 'title' | 'prefix' | 'suffix'>;
 const KeyStatsItemText = ({ title, prefix, suffix }: Props) => {
   const { isLoading, error, data } = dataHooks[title]();
 
-  if (error) {
-    notificationApi({
-      variant: 'error',
-      message: error.message,
-    });
-  }
+  // If present, report errors to the user via a
+  // toast notification.
+  useEffect(() => {
+    if (error !== null) {
+      notificationApi({
+        variant: 'error',
+        message: error.message,
+      });
+    }
+  }, [error]);
 
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
       <div className="flex items-center gap-0.5">
         {isLoading ? (
           <SkeletonLoader className="w-[80px]" size="lg" />
-        ) : error ? (
+        ) : error !== null ? (
           'Error'
         ) : data === null ? null : (
           <>
@@ -35,9 +40,11 @@ const KeyStatsItemText = ({ title, prefix, suffix }: Props) => {
               className="text-mono-140 dark:text-mono-40"
             >
               {typeof data.value1 === 'number' && (prefix ?? '')}
+
               {data.value1 !== null
                 ? getRoundedDownNumberWith2Decimals(data.value1)
                 : ''}
+
               {data.value2 !== null && (
                 <> / {getRoundedDownNumberWith2Decimals(data.value2)}</>
               )}

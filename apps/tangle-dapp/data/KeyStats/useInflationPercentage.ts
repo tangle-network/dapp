@@ -1,13 +1,13 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
+import ensureError from '../../utils/ensureError';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useInflationPercentage(
@@ -36,6 +36,7 @@ export default function useInflationPercentage(
           const totalStaked = await apiPromise.query.staking.erasTotalStake(
             currentEra.unwrapOrDefault()
           );
+
           const totalIssuance = await apiPromise.query.balances.totalIssuance();
 
           const inflation = calculateInflation(
@@ -44,6 +45,7 @@ export default function useInflationPercentage(
             totalIssuance,
             BN_ZERO
           );
+
           const inflationPercentage = inflation.inflation;
 
           if (isMounted) {
@@ -51,11 +53,9 @@ export default function useInflationPercentage(
             setIsLoading(false);
           }
         });
-      } catch (e) {
+      } catch (possibleError) {
         if (isMounted) {
-          setError(
-            e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
-          );
+          setError(ensureError(possibleError));
           setIsLoading(false);
         }
       }
