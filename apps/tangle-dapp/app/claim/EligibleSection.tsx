@@ -10,7 +10,6 @@ import {
 } from '@polkadot/util-crypto';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
@@ -38,14 +37,16 @@ enum Step {
 
 type Props = {
   claimInfo: ClaimInfoType;
-  onClaimCompleted: (accountAddress: string) => void;
+  onClaimStarted: () => void;
+  onClaimCompleted: () => void;
 };
 
 const EligibleSection: FC<Props> = ({
   claimInfo: { amount, isRegularStatement },
   onClaimCompleted,
+  onClaimStarted,
 }) => {
-  const { activeAccount, activeApi, activeWallet } = useWebContext();
+  const { activeAccount, activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
@@ -68,8 +69,6 @@ const EligibleSection: FC<Props> = ({
     return () => clearTimeout(timeout);
   }, [recipient]);
 
-  const isActiveWalletEvm = activeWallet?.platform === 'EVM';
-
   const handleClaimClick = useCallback(async () => {
     if (!activeAccount || !activeApi) {
       const message = !activeApi
@@ -84,6 +83,7 @@ const EligibleSection: FC<Props> = ({
     }
 
     try {
+      onClaimStarted();
       setStep(Step.SIGN);
 
       const api = await getPolkadotApiPromise(rpcEndpoint);
@@ -120,9 +120,9 @@ const EligibleSection: FC<Props> = ({
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
+      onClaimCompleted();
       newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
-      onClaimCompleted(accountId);
 
       router.push(`claim/success?${newSearchParams.toString()}`, {
         scroll: true,
@@ -148,6 +148,7 @@ const EligibleSection: FC<Props> = ({
     isRegularStatement,
     notificationApi,
     onClaimCompleted,
+    onClaimStarted,
     recipient,
     router,
     searchParams,

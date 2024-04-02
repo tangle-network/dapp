@@ -1,34 +1,29 @@
 'use client';
 
-import type { Option, u128 } from '@polkadot/types';
-import type { PalletAirdropClaimsStatementKind } from '@polkadot/types/lookup';
-import { formatBalance } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import type { Account } from '@webb-tools/abstract-api-provider';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { Spinner } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { combineLatest, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { getPolkadotApiPromise } from '../../utils/polkadot';
+import { getPolkadotApiRx } from '../../utils/polkadot';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
 
-const eligibilityCache = new Map<string, ClaimInfoType>();
-
-export default function Page() {
+export default function ClaimPage() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
   const { activeAccount, loading, isConnecting } = useWebContext();
   const { notificationApi } = useWebbUI();
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   // Default to null to indicate that we are still checking
   // If false, then we know that the user is not eligible
@@ -36,16 +31,7 @@ export default function Page() {
   const [claimInfo, setClaimInfo] = useState<ClaimInfoType | false | null>(
     null
   );
-
-  const [checkingEligibility, setCheckingEligibility] = useState(false);
-
-  // After the user has claimed the airdrop, we can remove the
-  // eligibility from the cache, to avoid showing incorrect information
-  // when navigating back to the claim page.
-  const handleClaimCompletion = useCallback((accountAddress: string) => {
-    eligibilityCache.delete(accountAddress);
-    setClaimInfo(null);
-  }, []);
+  const [isClaiming, setIsClaiming] = useState(false);
 
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
@@ -55,48 +41,54 @@ export default function Page() {
       };
     }
 
-    if (claimInfo === false) {
+    if (claimInfo || isClaiming) {
       return {
-        title: `You are not eligible for $TNT airdrop`,
-        subTitle: 'OOPS!',
+        title: `You have unclaimed $TNT airdrop!`,
+        subTitle: 'GREAT NEWS!',
       };
     }
 
     return {
-      title: `You have unclaimed $TNT airdrop!`,
-      subTitle: 'GREAT NEWS!',
+      title: `You are not eligible for $TNT airdrop`,
+      subTitle: 'OOPS!',
     };
-  }, [claimInfo]);
+  }, [claimInfo, isClaiming]);
 
-  const checkEligibility = useCallback(
-    async (
-      activeAccount: Account,
-      force?: boolean,
-      abortSignal?: AbortSignal
-    ) => {
+  useEffect(() => {
+    if (!activeAccount) return;
+
+    let isMounted = true;
+    let sub: Subscription | null = null;
+    const accountAddress = activeAccount.address;
+
+    const fetchClaimData = async () => {
       try {
-        abortSignal?.throwIfAborted();
-        setCheckingEligibility(true);
+        const apiRx = await getPolkadotApiRx(rpcEndpoint);
 
-        const claimInfo = await getClaimsInfo(
-          rpcEndpoint,
-          activeAccount.address,
-          { force }
-        );
+        const params = isEthereumAddress(accountAddress)
+          ? { EVM: accountAddress }
+          : { Native: accountAddress };
 
-        abortSignal?.throwIfAborted();
+        sub = combineLatest([
+          apiRx.query.claims.claims(params),
+          apiRx.query.claims.signing(params),
+        ]).subscribe(([claimAmount, statement]) => {
+          if (claimAmount.isNone || statement.isNone) {
+            setClaimInfo(false);
+            return;
+          }
 
-        // If claimInfo is null, then we know that the user is not eligible
-        setClaimInfo(claimInfo ? claimInfo : false);
+          const result: ClaimInfoType = {
+            isRegularStatement: statement.unwrap().isRegular,
+            amount: formatTokenBalance(claimAmount.unwrap(), nativeTokenSymbol),
+          };
+
+          if (isMounted) {
+            setClaimInfo(result);
+          }
+        });
       } catch (error) {
-        // Check if the error is due to abort
-        const isAbortError =
-          error instanceof DOMException && error.name === 'AbortError';
-
-        // Only show error if it is not due to abort
-        // and the abort signal is not aborted
-        if (!isAbortError && !abortSignal?.aborted) {
-          console.log(error);
+        if (isMounted) {
           notificationApi({
             message:
               typeof error === 'string'
@@ -107,24 +99,28 @@ export default function Page() {
             variant: 'error',
           });
         }
-      } finally {
-        setCheckingEligibility(false);
       }
-    },
-    [notificationApi, rpcEndpoint]
-  );
+    };
 
-  useEffect(() => {
-    if (!activeAccount) return;
-
-    const abortController = new AbortController();
-
-    checkEligibility(activeAccount, undefined, abortController.signal);
+    fetchClaimData();
 
     return () => {
-      abortController.abort();
+      isMounted = false;
+      sub?.unsubscribe();
     };
-  }, [activeAccount, checkEligibility]);
+  }, [activeAccount, rpcEndpoint, nativeTokenSymbol, notificationApi]);
+
+  const handleClaimStart = useCallback(() => {
+    setIsClaiming(true);
+  }, []);
+
+  // After the user has claimed the airdrop, we can remove the
+  // eligibility from the cache, to avoid showing incorrect information
+  // when navigating back to the claim page.
+  const handleClaimCompletion = useCallback(() => {
+    setClaimInfo(false);
+    setIsClaiming(false);
+  }, []);
 
   return (
     <AppTemplate.Content>
@@ -147,7 +143,7 @@ export default function Page() {
               distributing 5 million TNT tokens to the community. Check
               eligibility below to see if you qualify for TNT airdrop!
             </>
-          ) : claimInfo ? (
+          ) : claimInfo || isClaiming ? (
             <>
               You are eligible for $TNT airdrop! View your tokens below, and
               start the claiming process.
@@ -163,7 +159,8 @@ export default function Page() {
       </AppTemplate.DescriptionContainer>
 
       <AppTemplate.Body>
-        {!isWalletConnected ? (
+        {/* Wallet not connected */}
+        {!isWalletConnected && (
           <>
             <Typography variant="mkt-body2" ta="center" fw="bold">
               Connect your EVM or Substrate wallet to check eligibility:
@@ -192,14 +189,11 @@ export default function Page() {
               </Button>
             </div>
           </>
-        ) : claimInfo ? (
-          <EligibleSection
-            claimInfo={claimInfo}
-            onClaimCompleted={handleClaimCompletion}
-          />
-        ) : claimInfo === false ? (
-          <NotEligibleSection />
-        ) : checkingEligibility ? (
+        )}
+
+        {/* Is checkingEligibility */}
+        {/* TODO: can chinh */}
+        {isWalletConnected && claimInfo === null && (
           <>
             <Typography variant="mkt-body2" ta="center" fw="bold">
               Checking eligibility...
@@ -207,59 +201,33 @@ export default function Page() {
 
             <Spinner size="lg" className="mx-auto" />
           </>
-        ) : null}
+        )}
+
+        {/* TODO: can chinh */}
+        {isWalletConnected && isClaiming && (
+          <>
+            <Typography variant="mkt-body2" ta="center" fw="bold">
+              Claiming ...
+            </Typography>
+
+            <Spinner size="lg" className="mx-auto" />
+          </>
+        )}
+
+        {/* Eligible */}
+        {isWalletConnected && !isClaiming && claimInfo && (
+          <EligibleSection
+            claimInfo={claimInfo}
+            onClaimCompleted={handleClaimCompletion}
+            onClaimStarted={handleClaimStart}
+          />
+        )}
+
+        {/* Not Eligible */}
+        {isWalletConnected && !isClaiming && claimInfo === false && (
+          <NotEligibleSection />
+        )}
       </AppTemplate.Body>
     </AppTemplate.Content>
   );
 }
-
-const getClaimsInfo = async (
-  rpcEndpoint: string,
-  accountAddress: string,
-  options?: { force?: boolean }
-): Promise<ClaimInfoType | null> => {
-  const cacheKey = rpcEndpoint + accountAddress;
-  const cached = eligibilityCache.get(cacheKey);
-
-  // Check cache first.
-  if (cached !== undefined && !options?.force) {
-    return cached;
-  }
-
-  const api = await getPolkadotApiPromise(rpcEndpoint);
-
-  if (!('claims' in api.query)) {
-    throw WebbError.from(WebbErrorCodes.NoClaimsPalletFound);
-  }
-
-  const params = isEthereumAddress(accountAddress)
-    ? { EVM: accountAddress }
-    : { Native: accountAddress };
-
-  const decimals = api.registry.chainDecimals[0];
-  const tokenSymbol = api.registry.chainTokens[0];
-
-  const [claimAmount, statement] = await api.queryMulti<
-    [Option<u128>, Option<PalletAirdropClaimsStatementKind>]
-  >([
-    [api.query.claims.claims, params], // Claim amount
-    [api.query.claims.signing, params], // Claim statement
-  ]);
-
-  if (claimAmount.isNone || statement.isNone) {
-    return null;
-  }
-
-  const result: ClaimInfoType = {
-    isRegularStatement: statement.unwrap().isRegular,
-    amount: formatBalance(claimAmount.unwrap(), {
-      decimals,
-      withUnit: tokenSymbol,
-    }),
-  };
-
-  // Cache result for future use.
-  eligibilityCache.set(cacheKey, result);
-
-  return result;
-};

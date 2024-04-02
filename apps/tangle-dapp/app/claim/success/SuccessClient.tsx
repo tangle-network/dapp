@@ -14,6 +14,7 @@ import { type FC, useMemo } from 'react';
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   const { apiConfig } = useWebContext();
 
+  // TODO: fix this
   const txExplorerUrl = useMemo(() => {
     if (!blockHash) return null;
 
