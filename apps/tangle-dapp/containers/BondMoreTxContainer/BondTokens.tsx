@@ -39,7 +39,8 @@ const BondTokens: FC<BondTokensProps> = ({
       </InputField.Root>
 
       <Typography variant="body1" fw="normal">
-        Added stake will be bonded and subject to unbonding period before withdrawal is possible.
+        Added stake will be bonded and subject to unbonding period before
+        withdrawal is possible.
       </Typography>
     </div>
   );
