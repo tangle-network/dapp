@@ -18,7 +18,7 @@ const useRestakingEarnings = (substrateAccount: string | null) =>
   usePolkadotApiRx(
     useCallback(
       (apiRx) => {
-        if (!substrateAccount) return null;
+        if (!substrateAccount) return of(null);
 
         if (!('erasRestakeRewardPoints' in apiRx.query.roles))
           return of<EarningRecord>({});
