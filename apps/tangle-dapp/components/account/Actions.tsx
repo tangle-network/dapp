@@ -5,7 +5,7 @@ import {
   CoinsLineIcon,
   CoinsStackedLineIcon,
   GiftLineIcon,
-  ShieldKeyholeLineIcon,
+  LockUnlockLineIcon,
   StatusIndicator,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
@@ -22,7 +22,7 @@ import { twMerge } from 'tailwind-merge';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useNetworkStore from '../../context/useNetworkStore';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
-import usePayoutsAvailability from '../../data/Payouts/usePayoutsAvailability';
+import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -92,7 +92,7 @@ const Actions: FC = () => {
         {/* This is a special case, so hide it for most users if they're not vesting */}
         {isVesting && (
           <ActionItem
-            Icon={ShieldKeyholeLineIcon}
+            Icon={LockUnlockLineIcon}
             label="Vest"
             onClick={executeVestTx !== null ? executeVestTx : undefined}
             hasNotificationDot={hasClaimableVestingTokens}

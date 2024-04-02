@@ -10,7 +10,7 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import React, { useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { Validator } from '../../types';
 import {
@@ -19,94 +19,78 @@ import {
   ValidatorListProps,
 } from './types';
 
-const sortValidators = (
-  validators: Validator[],
-  sortKey: keyof SortableValidatorKeys
-) => {
-  return validators.sort((a, b) => {
-    const valueA = parseInt(a[sortKey], 10);
-    const valueB = parseInt(b[sortKey], 10);
-    return valueB - valueA;
-  });
-};
-
-export const ValidatorList = ({
+export const ValidatorList: FC<ValidatorListProps> = ({
   validators,
   selectedValidators,
   setSelectedValidators,
   sortBy,
-}: ValidatorListProps) => {
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSort, setSelectedSort] =
+
+  const [selectedSortBy, setSelectedSortBy] =
     useState<keyof SortableValidatorKeys>();
 
-  let sortedValidators = [...validators];
+  const sortedValidators = useMemo(() => {
+    if (selectedSortBy !== undefined) {
+      return validators.toSorted((a, b) => {
+        const valueA = parseInt(a[selectedSortBy], 10);
+        const valueB = parseInt(b[selectedSortBy], 10);
 
-  if (selectedSort) {
-    sortedValidators = sortValidators(sortedValidators, selectedSort);
-  } else {
-    sortedValidators.sort((a, b) => {
-      const aSelected = selectedValidators.includes(a.address);
-      const bSelected = selectedValidators.includes(b.address);
-      return aSelected === bSelected ? 0 : aSelected ? -1 : 1;
-    });
-  }
+        return valueB - valueA;
+      });
+    } else {
+      return validators.toSorted((a, b) => {
+        const aSelected = selectedValidators.includes(a.address);
+        const bSelected = selectedValidators.includes(b.address);
 
-  const filteredValidators = sortedValidators.filter(
-    (validator) =>
-      validator.identityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      validator.address.toLowerCase().includes(searchTerm.toLowerCase())
+        return aSelected === bSelected ? 0 : aSelected ? -1 : 1;
+      });
+    }
+  }, [selectedSortBy, selectedValidators, validators]);
+
+  const filteredValidators = useMemo(
+    () =>
+      sortedValidators.filter(
+        (validator) =>
+          validator.identityName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          validator.address.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [searchTerm, sortedValidators]
   );
 
-  const validatorElements = filteredValidators.map((validator) => {
-    const isSelected = selectedValidators.includes(validator.address);
-    return (
-      <div
-        key={validator.address}
-        className="flex !items-center !justify-between"
-      >
-        <div className="flex !items-center gap-1">
-          <CheckBox
-            isChecked={isSelected}
-            onChange={() => {
-              if (isSelected) {
-                setSelectedValidators(
-                  selectedValidators.filter(
-                    (selectedValidator) =>
-                      selectedValidator !== validator.address
-                  )
-                );
-              } else {
-                setSelectedValidators([
-                  ...selectedValidators,
-                  validator.address,
-                ]);
-              }
-            }}
+  const handleValidatorToggle = useCallback(
+    (address: string, isSelected: boolean) => {
+      if (isSelected) {
+        setSelectedValidators(
+          selectedValidators.filter(
+            (selectedValidator) => selectedValidator !== address
+          )
+        );
+      } else {
+        setSelectedValidators([...selectedValidators, address]);
+      }
+    },
+    [selectedValidators, setSelectedValidators]
+  );
+
+  const validatorElements = useMemo(
+    () =>
+      filteredValidators.map((validator) => {
+        const isSelected = selectedValidators.includes(validator.address);
+
+        return (
+          <ValidatorCell
+            key={validator.address}
+            isSelected={isSelected}
+            onToggleSelection={handleValidatorToggle}
+            {...validator}
           />
-          <Avatar value={validator.address} theme="substrate" />
-          <Typography variant="h5" fw="bold">
-            {validator.identityName !== ''
-              ? shortenString(validator.identityName, 8)
-              : shortenString(validator.address, 8)}
-          </Typography>
-        </div>
-        <div className="flex items-center gap-2">
-          <Chip color="blue">{validator.effectiveAmountStaked}</Chip>
-          <Chip color="blue">{validator.delegations}</Chip>
-          <Chip color="blue">{validator.commission}%</Chip>
-          <Chip color={validator.status === 'Active' ? 'green' : 'yellow'}>
-            {validator.status}
-          </Chip>
-          <CopyWithTooltip
-            textToCopy={validator.address}
-            isButton={false}
-            className="cursor-pointer"
-          />
-        </div>
-      </div>
-    );
-  });
+        );
+      }),
+    [filteredValidators, handleValidatorToggle, selectedValidators]
+  );
 
   return (
     <div>
@@ -133,12 +117,12 @@ export const ValidatorList = ({
             <SortButton
               key={sortButton.key}
               title={sortButton.title}
-              isSelected={selectedSort === sortButton.key}
+              isSelected={selectedSortBy === sortButton.key}
               onClick={() => {
-                if (selectedSort === sortButton.key) {
-                  setSelectedSort(undefined);
+                if (selectedSortBy === sortButton.key) {
+                  setSelectedSortBy(undefined);
                 } else {
-                  setSelectedSort(sortButton.key);
+                  setSelectedSortBy(sortButton.key);
                 }
               }}
             />
@@ -193,5 +177,57 @@ const SortButton = ({
         />
       )}
     </Chip>
+  );
+};
+
+/** @internal */
+const ValidatorCell: FC<
+  Validator & {
+    isSelected: boolean;
+    onToggleSelection: (address: string, isSelected: boolean) => void;
+  }
+> = ({
+  isSelected,
+  address,
+  identityName,
+  delegations,
+  status,
+  commission,
+  effectiveAmountStaked,
+  onToggleSelection,
+}) => {
+  return (
+    <div className="flex !items-center !justify-between">
+      <div className="flex !items-center gap-1">
+        <CheckBox
+          isChecked={isSelected}
+          onChange={() => onToggleSelection(address, isSelected)}
+        />
+
+        <Avatar value={address} theme="substrate" />
+
+        <Typography variant="h5" fw="bold">
+          {identityName !== ''
+            ? shortenString(identityName, 8)
+            : shortenString(address, 8)}
+        </Typography>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Chip color="blue">{effectiveAmountStaked}</Chip>
+
+        <Chip color="blue">{delegations}</Chip>
+
+        <Chip color="blue">{commission}%</Chip>
+
+        <Chip color={status === 'Active' ? 'green' : 'yellow'}>{status}</Chip>
+
+        <CopyWithTooltip
+          textToCopy={address}
+          isButton={false}
+          className="cursor-pointer"
+        />
+      </div>
+    </div>
   );
 };

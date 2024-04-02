@@ -9,7 +9,7 @@ export type SortableValidatorKeys = ExcludeKeys<
   'address' | 'identity' | 'effectiveAmountStaked' | 'selfStaked'
 >;
 
-type SortBy = {
+export type SortBy = {
   key: keyof SortableValidatorKeys;
   title: string;
 };

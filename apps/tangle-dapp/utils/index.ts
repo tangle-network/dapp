@@ -1,6 +1,5 @@
 export * from './calculateInflation';
 export * from './evmToSubstrateAddress';
-export * from './formatBnWithCommas';
 export { default as getChartDataAreaColorByServiceType } from './getChartDataAreaColorByServiceType';
 export { default as getChipColorOfServiceType } from './getChipColorOfServiceType';
 export { default as getMonthlyHistorySinceDate } from './getMonthlyHistorySinceDate';

@@ -74,20 +74,20 @@ const BalancesTableContainer: FC = () => {
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Transferrable Balance"
+              title="Free Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
             {hasVestedAmount && (
               <AssetCell
-                title="Vested Balance"
-                tooltip="The total amount of tokens that has vested from vesting schedules, and is now available to be claimed."
+                title="Claimable Vested Balance"
+                tooltip="The total amount of tokens that has vested from vesting schedules and is now available to be claimed."
               />
             )}
 
             <AssetCell
               title="Locked Balance"
-              tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting. You might not have full access to these tokens at the moment."
+              tooltip="The total tokens subject to limitations, such as those locked in staking, democracy participation, or undergoing vesting."
             />
           </div>
 

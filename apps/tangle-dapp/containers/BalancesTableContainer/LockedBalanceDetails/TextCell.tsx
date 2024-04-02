@@ -1,4 +1,5 @@
 import { StatusIndicator } from '@webb-tools/icons';
+import { StatusVariant } from '@webb-tools/icons/StatusIndicator/types';
 import {
   SkeletonLoader,
   Tooltip,
@@ -11,7 +12,8 @@ import { FC, ReactNode } from 'react';
 const TextCell: FC<{
   text: string | null;
   status?: ReactNode;
-}> = ({ text, status }) => {
+  statusVariant?: StatusVariant;
+}> = ({ text, status, statusVariant = 'info' }) => {
   return (
     <div className="flex flex-row p-3 gap-2">
       {text !== null ? (
@@ -25,7 +27,7 @@ const TextCell: FC<{
       {status !== undefined && (
         <Tooltip>
           <TooltipTrigger className="cursor-default">
-            <StatusIndicator size={12} variant="info" />
+            <StatusIndicator size={12} variant={statusVariant} />
           </TooltipTrigger>
 
           <TooltipBody className="break-normal max-w-[250px] text-center">

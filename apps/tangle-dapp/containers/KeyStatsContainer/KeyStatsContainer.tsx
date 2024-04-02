@@ -13,7 +13,7 @@ export const KeyStatsContainer = () => {
     >
       <div
         className={cx(
-          'grid gap-1 grid-cols-2 lg:grid-cols-5',
+          'grid lg:gap-1 grid-cols-2 lg:grid-cols-5',
           '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
           '[&>div]:even:border-none',
           'lg:[&>div]:even:border-r',
@@ -26,28 +26,32 @@ export const KeyStatsContainer = () => {
         <KeyStatsItem
           title="Validators"
           tooltip="Current # of active validators out of the total allowed."
-          className="col-span-2 lg:col-span-1"
+          className="col-span-2 lg:col-span-1 lg:!border-b-0 !border-r-0 lg:!border-r"
         />
         {/* Waiting */}
         <KeyStatsItem
           title="Waiting"
           tooltip="Nodes waiting in line to become active validators."
+          className="lg:!border-b-0"
         />
         {/* Active/Nominators */}
         <KeyStatsItem
           title="Active/Nominators"
           tooltip="Current active nominators out of the total possible."
+          className="lg:!border-b-0 !border-r-0 lg:!border-r"
         />
         {/* Ideal Staked */}
         <KeyStatsItem
           title="Ideal Staked"
           tooltip="The ideal % of all network tokens that should be staked."
+          className="!border-b-0"
           suffix="%"
         />
         {/* Inflation */}
         <KeyStatsItem
           title="Inflation"
           tooltip="The yearly % increase in the network’s total token supply."
+          className="!border-b-0 !border-r-0"
           suffix="%"
         />
       </div>

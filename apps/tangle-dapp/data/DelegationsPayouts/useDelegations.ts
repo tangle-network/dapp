@@ -24,16 +24,18 @@ export default function useDelegations(
     delegators: [],
   }
 ) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+
   const {
     valueAfterMount: cachedNominations,
     setWithPreviousValue: setCachedNominations,
   } = useLocalStorage(LocalStorageKey.Nominations, true);
+
   const [delegators, setDelegators] = useState(
     (cachedNominations && cachedNominations[address]) ?? defaultValue.delegators
   );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -45,6 +47,7 @@ export default function useDelegations(
           setDelegators([]);
           setIsLoading(false);
         }
+
         return;
       }
 
@@ -59,6 +62,7 @@ export default function useDelegations(
           .subscribe(async (nominatorData) => {
             const targets = nominatorData.unwrapOrDefault().targets;
 
+            // TODO: This needs to be optimized. Make a single request to get all the data, then work off that data. Currently, this may make many requests, depending on how many targets there are PER nominator (O(nominators * targets)).
             const delegators: Delegator[] = await Promise.all(
               targets.map(async (target) => {
                 const ledger = await apiPromise.query.staking.ledger(

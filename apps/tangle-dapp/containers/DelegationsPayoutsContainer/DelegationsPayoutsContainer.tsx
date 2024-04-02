@@ -17,7 +17,7 @@ import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 import { TableStatus } from '../../components';
 import useDelegations from '../../data/DelegationsPayouts/useDelegations';
 import usePayouts from '../../data/DelegationsPayouts/usePayouts';
-import useIsFirstTimeNominatorSubscription from '../../hooks/useIsFirstTimeNominatorSubscription';
+import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
@@ -45,12 +45,17 @@ function assertTab(tab: string): DelegationsAndPayoutsTab {
 }
 
 const DelegationsPayoutsContainer: FC = () => {
+  const tableRef = useRef<HTMLDivElement>(null);
+  const { activeAccount, loading } = useWebContext();
+  const [payouts, setPayouts] = useState<Payout[]>([]);
+  const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
+  const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
+  const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+  const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
+
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
   );
-
-  const tableRef = useRef<HTMLDivElement>(null);
-  const { activeAccount, loading } = useWebContext();
 
   // Allow other pages to link directly to the payouts tab.
   // Default to the nominations tab if no matching browser URL
@@ -59,38 +64,33 @@ const DelegationsPayoutsContainer: FC = () => {
     queryParamsTab ?? DelegationsAndPayoutsTab.NOMINATIONS
   );
 
-  const [payouts, setPayouts] = useState<Payout[]>([]);
-  const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
-
-  const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
     useState(false);
-  const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+
   const [isStopNominationModalOpen, setIsStopNominationModalOpen] =
     useState(false);
-  const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
 
   const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
-
-    if (isSubstrateAddress(activeAccount?.address))
+    if (!activeAccount?.address) {
+      return '';
+    } else if (isSubstrateAddress(activeAccount?.address)) {
       return activeAccount.address;
+    }
 
     return evmToSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useDelegations(substrateAddress);
-
-  const { isFirstTimeNominator } =
-    useIsFirstTimeNominatorSubscription(substrateAddress);
+  const { isFirstTimeNominator } = useIsFirstTimeNominator();
+  const { data: payoutsData } = usePayouts(substrateAddress);
 
   const currentNominations = useMemo(() => {
-    if (!delegatorsData?.delegators) return [];
+    if (!delegatorsData?.delegators) {
+      return [];
+    }
 
     return delegatorsData.delegators.map((delegator) => delegator.address);
   }, [delegatorsData?.delegators]);
-
-  const { data: payoutsData } = usePayouts(substrateAddress);
 
   const { valueAfterMount: cachedPayouts } = useLocalStorage(
     LocalStorageKey.Payouts,
@@ -154,7 +154,6 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [activeAccount?.address]);
 
   const { isMobile } = useCheckMobile();
-
   const { toggleModal } = useConnectWallet();
 
   return (
@@ -266,16 +265,20 @@ const DelegationsPayoutsContainer: FC = () => {
         </TabContent>
       </TableAndChartTabs>
 
-      <DelegateTxContainer
-        isModalOpen={isDelegateModalOpen}
-        setIsModalOpen={setIsDelegateModalOpen}
-      />
+      {isDelegateModalOpen && (
+        <DelegateTxContainer
+          isModalOpen={isDelegateModalOpen}
+          setIsModalOpen={setIsDelegateModalOpen}
+        />
+      )}
 
-      <UpdateNominationsTxContainer
-        isModalOpen={isUpdateNominationsModalOpen}
-        setIsModalOpen={setIsUpdateNominationsModalOpen}
-        currentNominations={currentNominations}
-      />
+      {isUpdateNominationsModalOpen && (
+        <UpdateNominationsTxContainer
+          isModalOpen={isUpdateNominationsModalOpen}
+          setIsModalOpen={setIsUpdateNominationsModalOpen}
+          currentNominations={currentNominations}
+        />
+      )}
 
       <UpdatePayeeTxContainer
         isModalOpen={isUpdatePayeeModalOpen}

@@ -1,9 +1,9 @@
+import { formatDecimal } from '@polkadot/util';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
-import { formatBnWithCommas } from '../../../utils';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import TextCell from './TextCell';
 
@@ -40,23 +40,19 @@ const VestingSchedulesUnlockingAt: FC = () => {
 
     const isComplete = currentBlockNumber.gte(endingBlockNumber);
 
-    const progressText = isComplete ? (
-      <>All of your vested tokens are now available to claim. </>
-    ) : (
-      `${timeRemaining} remaining. Currently at block #${formatBnWithCommas(
-        currentBlockNumber
-      )}, with ${formatBnWithCommas(
-        endingBlockNumber.sub(currentBlockNumber)
-      )} blocks left until all vested tokens are available to claim.`
-    );
+    const progressText = isComplete
+      ? undefined
+      : `${timeRemaining} remaining. Currently at block #${formatDecimal(
+          currentBlockNumber.toString()
+        )}, with ${formatDecimal(
+          endingBlockNumber.sub(currentBlockNumber).toString()
+        )} blocks left until all vested tokens are available to claim.`;
 
-    return (
-      <TextCell
-        key={index}
-        text={`Block #${formatBnWithCommas(endingBlockNumber)}`}
-        status={progressText}
-      />
-    );
+    const text = isComplete
+      ? 'Fully vested'
+      : `Block #${formatDecimal(endingBlockNumber.toString())}`;
+
+    return <TextCell key={index} text={text} status={progressText} />;
   });
 };
 

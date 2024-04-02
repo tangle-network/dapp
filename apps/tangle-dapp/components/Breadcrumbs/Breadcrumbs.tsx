@@ -4,6 +4,7 @@ import { isAddress } from '@polkadot/util-crypto';
 import {
   CheckboxBlankCircleLine,
   CodeFill,
+  FundsLine,
   GiftLineIcon,
   GridFillIcon,
   TokenSwapLineIcon,
@@ -27,6 +28,7 @@ const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
   services: <GridFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
   restake: <TokenSwapLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
+  nomination: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
 };
 
 const BREADCRUMB_LABELS: Record<string, string> = {

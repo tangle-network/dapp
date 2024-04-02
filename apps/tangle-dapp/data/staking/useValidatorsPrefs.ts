@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApi';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
 const useValidatorsPrefs = () => {
   return usePolkadotApiRx(
