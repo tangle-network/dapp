@@ -82,7 +82,10 @@ const RestakePage = () => {
         earnings={earnings}
       />
 
-      <RoleDistributionCard />
+      <RoleDistributionCard
+        profileType={substrateProfileTypeOpt?.value}
+        ledger={ledgerOpt}
+      />
 
       <RolesEarningsCard />
 
