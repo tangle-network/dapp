@@ -7,7 +7,7 @@ import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
  * Type for the restaking earnings record,
  * key is the era number and value is the restaking earnings for that era
  */
-type EarningRecord = Record<number, number>;
+export type EarningRecord = Record<number, number>;
 
 /**
  * Hook to get the restaking earnings for a given account

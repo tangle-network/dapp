@@ -1,19 +1,33 @@
+'use client';
+
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import dynamic from 'next/dynamic';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
+import { RoleEarningsChart } from '../../../components/charts';
 import GlassCard from '../../../components/GlassCard/GlassCard';
+import { EarningRecord } from '../../../data/restaking/useRestakingEarnings';
 
-const EarningsChart = dynamic(() => import('./EarningsChart'), { ssr: false });
+type RolesEarningsCardProps = {
+  earnings?: EarningRecord | null;
+};
 
-const RolesEarningsCard: FC = () => {
+const RolesEarningsCard: FC<RolesEarningsCardProps> = ({ earnings }) => {
+  const data = useMemo(() => {
+    if (!earnings) return [];
+
+    return Object.entries(earnings).map(([era, reward]) => ({
+      era: +era,
+      reward,
+    }));
+  }, [earnings]);
+
   return (
     <GlassCard className="h-[409px] overflow-hidden">
       <Typography variant="h5" fw="bold">
         Roles Earnings
       </Typography>
 
-      <EarningsChart />
+      <RoleEarningsChart data={data} />
     </GlassCard>
   );
 };

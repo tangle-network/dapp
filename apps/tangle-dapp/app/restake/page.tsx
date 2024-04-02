@@ -87,7 +87,7 @@ const RestakePage = () => {
         ledger={ledgerOpt}
       />
 
-      <RolesEarningsCard />
+      <RolesEarningsCard earnings={earningsRecord} />
 
       <JobsCard />
     </div>
