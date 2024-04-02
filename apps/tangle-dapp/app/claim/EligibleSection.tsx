@@ -37,14 +37,14 @@ enum Step {
 
 type Props = {
   claimInfo: ClaimInfoType;
-  onClaimStarted: () => void;
   onClaimCompleted: () => void;
+  setIsClaiming: (isClaiming: boolean) => void;
 };
 
 const EligibleSection: FC<Props> = ({
   claimInfo: { amount, isRegularStatement },
   onClaimCompleted,
-  onClaimStarted,
+  setIsClaiming,
 }) => {
   const { activeAccount, activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
@@ -83,7 +83,7 @@ const EligibleSection: FC<Props> = ({
     }
 
     try {
-      onClaimStarted();
+      setIsClaiming(true);
       setStep(Step.SIGN);
 
       const api = await getPolkadotApiPromise(rpcEndpoint);
@@ -119,6 +119,7 @@ const EligibleSection: FC<Props> = ({
       const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
+      setIsClaiming(false);
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
       onClaimCompleted();
       newSearchParams.set('h', txReceiptHash);
@@ -128,6 +129,7 @@ const EligibleSection: FC<Props> = ({
         scroll: true,
       });
     } catch (error) {
+      setIsClaiming(false);
       notificationApi.addToQueue({
         variant: 'error',
         message:
@@ -148,7 +150,7 @@ const EligibleSection: FC<Props> = ({
     isRegularStatement,
     notificationApi,
     onClaimCompleted,
-    onClaimStarted,
+    setIsClaiming,
     recipient,
     router,
     searchParams,

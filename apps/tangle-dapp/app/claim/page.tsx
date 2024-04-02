@@ -110,16 +110,8 @@ export default function ClaimPage() {
     };
   }, [activeAccount, rpcEndpoint, nativeTokenSymbol, notificationApi]);
 
-  const handleClaimStart = useCallback(() => {
-    setIsClaiming(true);
-  }, []);
-
-  // After the user has claimed the airdrop, we can remove the
-  // eligibility from the cache, to avoid showing incorrect information
-  // when navigating back to the claim page.
   const handleClaimCompletion = useCallback(() => {
     setClaimInfo(false);
-    setIsClaiming(false);
   }, []);
 
   return (
@@ -191,26 +183,23 @@ export default function ClaimPage() {
           </>
         )}
 
-        {/* Is checkingEligibility */}
-        {/* TODO: can chinh */}
         {isWalletConnected && claimInfo === null && (
           <>
-            <Typography variant="mkt-body2" ta="center" fw="bold">
-              Checking eligibility...
+            <Typography variant="h5" ta="center" fw="bold">
+              Checking eligibility
             </Typography>
 
-            <Spinner size="lg" className="mx-auto" />
+            <Spinner size="xl" className="mx-auto" />
           </>
         )}
 
-        {/* TODO: can chinh */}
         {isWalletConnected && isClaiming && (
           <>
-            <Typography variant="mkt-body2" ta="center" fw="bold">
-              Claiming ...
+            <Typography variant="h5" ta="center" fw="bold">
+              Claiming
             </Typography>
 
-            <Spinner size="lg" className="mx-auto" />
+            <Spinner size="xl" className="mx-auto" />
           </>
         )}
 
@@ -219,7 +208,7 @@ export default function ClaimPage() {
           <EligibleSection
             claimInfo={claimInfo}
             onClaimCompleted={handleClaimCompletion}
-            onClaimStarted={handleClaimStart}
+            setIsClaiming={setIsClaiming}
           />
         )}
 
