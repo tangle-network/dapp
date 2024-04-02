@@ -162,7 +162,7 @@ If you need help or you want to additional information please:
 **Follow us at**
 [![Follow Tangle on twitter](https://img.shields.io/twitter/follow/tangle_network.svg?style=social)](https://twitter.com/intent/follow?screen_name=tangle_network)
 [![Follow Webb on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol)
-[![Follow WEbb on LinkedIn](https://img.shields.io/badge/LinkedIn-webbprotocol-blue?style=flat&logo=linkedin&logoColor=b0c0c0&labelColor=363D44)](https://www.linkedin.com/company/webb-protocol/)
+[![Follow Webb on LinkedIn](https://img.shields.io/badge/LinkedIn-webbprotocol-blue?style=flat&logo=linkedin&logoColor=b0c0c0&labelColor=363D44)](https://www.linkedin.com/company/webb-protocol/)
 
 ---
 
