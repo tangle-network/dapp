@@ -74,7 +74,7 @@ const BalancesTableContainer: FC = () => {
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Transferrable Balance"
+              title="Free Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 

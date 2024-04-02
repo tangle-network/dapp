@@ -116,3 +116,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Addressed major performance issues on nominations page by batching requests - https://github.com/webb-tools/webb-dapp/pull/2107
+
+## [0.0.5] - 2024-03-29
+
+### Added
+
+- Intermediate loading page state is now shown when switching between pages; a compromise of Next.js' SSR - https://github.com/webb-tools/webb-dapp/pull/2151
+
+### Changed
+
+- Updated `Connect a Wallet` modal's text content, fixed some typos - https://github.com/webb-tools/webb-dapp/pull/2121
+- Updated airdrop claim page's text content, use $TNT - https://github.com/webb-tools/webb-dapp/pull/2122
+- Token symbol is now loaded from chain instead of being hard-coded - https://github.com/webb-tools/webb-dapp/pull/2141
+- Tangle token icon was updated with new styling - https://github.com/webb-tools/webb-dapp/pull/2147
+- Tangle Network's whitepaper link was updated to a new URL - https://github.com/webb-tools/webb-dapp/pull/2157
+- Account page's balances, text copy, and vesting information was updated to be more accurate and easy to understand - https://github.com/webb-tools/webb-dapp/pull/2145
+
+### Fixed
+
+- Breadcrumbs of homepage from `Nomination` to `Account` pages - https://github.com/webb-tools/webb-dapp/pull/2128
+- Layout should always be scrollable - https://github.com/webb-tools/webb-dapp/pull/2128
+- Sidebar Substrate Portal & EVM Explorer links should change depending on active network - https://github.com/webb-tools/webb-dapp/pull/2129
+- Fixed issue regarding `getValidatorIdentity` not properly returning the identity names of validators - https://github.com/webb-tools/webb-dapp/pull/2154
+- Fixed performance bug in Nomination page, now is back to normal speed - https://github.com/webb-tools/webb-dapp/pull/2150

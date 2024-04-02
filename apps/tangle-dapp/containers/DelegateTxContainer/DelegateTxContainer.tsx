@@ -249,8 +249,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               walletAddress,
               selectedValidators
             ),
-          `Successfully nominated ${selectedValidators.length} validators.`,
-          'Failed to nominate validators!'
+          `Successfully nominated ${selectedValidators.length} validator(s).`,
+          'Failed to nominate validator(s)!'
         );
         setTxnStatus({ status: 'success', hash });
       }
