@@ -2,8 +2,6 @@
 
 import type { HexString } from '@polkadot/util/types';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { ExternalLinkLine, ShieldedCheckLineIcon } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
@@ -11,21 +9,22 @@ import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTempla
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type FC, useMemo } from 'react';
 
+import useNetworkState from '../../../hooks/useNetworkState';
+
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
-  const { apiConfig } = useWebContext();
+  const { network } = useNetworkState();
 
-  // TODO: fix this
   const txExplorerUrl = useMemo(() => {
-    if (!blockHash) return null;
+    // Claim tx are always on Substrate network
+    if (!blockHash || !network?.polkadotExplorer) return null;
 
-    const explorer =
-      apiConfig.chains[PresetTypedChainId.TangleTestnetNative]?.blockExplorers
-        ?.default?.url;
-
-    if (!explorer) return null;
-
-    return getExplorerURI(explorer, blockHash, 'tx', 'polkadot');
-  }, [apiConfig.chains, blockHash]);
+    return getExplorerURI(
+      network.polkadotExplorer,
+      blockHash,
+      'tx',
+      'polkadot'
+    );
+  }, [blockHash, network?.polkadotExplorer]);
 
   return (
     <AppTemplate.Content>
