@@ -3,6 +3,7 @@ import { createIcon } from './create-icon';
 import { IconBase } from './types';
 
 export const TangleIcon = (props: IconBase) => {
+  // TODO: This is causing a warning on the console: "Prop `fill` did not match. Server: "url(#paint0_linear_X)" Client: "url(#paint0_linear_Y)". Likely caused by the fact that a new ID is generated on each render, and the server-rendered HTML is not updated with the new ID. Why not use a static ID such as 'tangle-icon' here?
   // non-unique ids problem with svg: https://stackoverflow.com/a/55846525
   // create id for each svg items in case there are multiple icons appear at the same time in html
   const paintId = randNumber().toString();

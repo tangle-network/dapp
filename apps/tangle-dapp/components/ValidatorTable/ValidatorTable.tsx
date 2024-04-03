@@ -20,7 +20,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 
-import { Validator } from '../../types';
+import { PagePath, Validator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
 import { ValidatorTableProps } from './types';
 
@@ -88,7 +88,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
 
   const onRowClick = useCallback(
     (row: Row<Validator>) => {
-      router.push(`/nomination/${row.original.address}`);
+      router.push(`${PagePath.NOMINATION}/${row.original.address}`);
     },
     [router]
   );

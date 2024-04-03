@@ -9,9 +9,10 @@ import { getNativeTokenSymbol } from '../utils/polkadot';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 const useNetworkState = () => {
+  const [isCustom, setIsCustom] = useState(false);
+
   const { network, setNetwork, rpcEndpoint, setNativeTokenSymbol } =
     useNetworkStore();
-  const [isCustom, setIsCustom] = useState(false);
 
   const {
     get: getCachedCustomRpcEndpoint,
@@ -32,6 +33,7 @@ const useNetworkState = () => {
     async (rpcEndpoint: string) => {
       try {
         const tokenSymbol = await getNativeTokenSymbol(rpcEndpoint);
+
         setNativeTokenSymbol(tokenSymbol);
         setCachedNativeTokenSymbol(tokenSymbol);
       } catch {
@@ -49,6 +51,9 @@ const useNetworkState = () => {
     const getCachedInitialNetwork = () => {
       const cachedNetworkName = getCachedNetworkName();
 
+      // If the cached network name is present, that indicates that
+      // the cached network is a Webb network. Find it in the list of
+      // all Webb networks, and return it.
       if (cachedNetworkName !== null) {
         const network = ALL_WEBB_NETWORKS.find(
           (network) => network.name === cachedNetworkName
@@ -69,18 +74,18 @@ const useNetworkState = () => {
 
       const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
 
+      // If a custom RPC endpoint is cached, return it as a custom network.
       if (cachedCustomRpcEndpoint !== null) {
         setIsCustom(true);
 
         return createCustomNetwork(cachedCustomRpcEndpoint);
       }
 
+      // Otherwise, use the default network.
       return DEFAULT_NETWORK;
     };
 
-    const initialNetwork = getCachedInitialNetwork();
-
-    setNetwork(initialNetwork);
+    setNetwork(getCachedInitialNetwork());
   }, [
     getCachedCustomRpcEndpoint,
     getCachedNetworkName,
@@ -94,6 +99,7 @@ const useNetworkState = () => {
 
     if (cachedTokenSymbol !== null) {
       setNativeTokenSymbol(cachedTokenSymbol);
+
       return;
     }
 

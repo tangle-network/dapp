@@ -16,6 +16,7 @@ export * from './BellIcon';
 export { default as BillFillIcon } from './BillFillIcon';
 export * from './BlockIcon';
 export * from './BookOpenLineIcon';
+export { default as BoxLine } from './BoxLine';
 export { default as BranchesIcon } from './BranchesIcon';
 export * from './ChainIcon';
 export { default as CheckLineIcon } from './CheckLineIcon';

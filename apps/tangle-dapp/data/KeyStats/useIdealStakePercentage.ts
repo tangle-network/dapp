@@ -1,13 +1,13 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { calculateInflation } from '../../utils';
+import ensureError from '../../utils/ensureError';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 
 export default function useIdealStakedPercentage(
@@ -44,11 +44,10 @@ export default function useIdealStakedPercentage(
           setValue1(idealStakePercentage);
           setCache({ value1: idealStakePercentage });
         }
+
         setIsLoading(false);
-      } catch (e) {
-        setError(
-          e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
-        );
+      } catch (possibleError) {
+        setError(ensureError(possibleError));
         setIsLoading(false);
       }
     };

@@ -17,7 +17,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
-import useDelegations from '../../data/DelegationsPayouts/useDelegations';
+import useNominations from '../../data/NominationsPayouts/useNominations';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { evmToSubstrateAddress } from '../../utils';
 import { stopNomination as stopNominationEvm } from '../../utils/evm';
@@ -55,7 +55,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     return evmToSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
-  const { data: delegatorsData } = useDelegations(substrateAddress);
+  const { data: delegatorsData } = useNominations(substrateAddress);
 
   const userHasActiveNominations = useMemo(() => {
     return delegatorsData?.delegators.length === 0 ? false : true;

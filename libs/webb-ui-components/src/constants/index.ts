@@ -232,7 +232,18 @@ export const tangleLogoConfig: Link = {
   path: TANGLE_MKT_URL,
 };
 
-export const webbNetworks: webbNetworksType[] = [
+export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
+  name: 'Tangle Testnet Native',
+  networkType: 'testnet',
+  networkNodeType: 'standalone',
+  subqueryEndpoint: SUBQUERY_ENDPOINT,
+  polkadotEndpoint: TANGLE_RPC_ENDPOINT,
+  polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+  evmExplorer: TANGLE_TESTNET_EVM_EXPLORER_URL,
+  avatar: '',
+};
+
+export const WEBB_NETWORKS: webbNetworksType[] = [
   {
     networkType: 'live',
     networks: [],
@@ -250,16 +261,7 @@ export const webbNetworks: webbNetworksType[] = [
       //   polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL, // Incorrect but will remove this network later
       //   avatar: '',
       // },
-      {
-        name: 'Tangle Testnet Native',
-        networkType: 'testnet',
-        networkNodeType: 'standalone',
-        subqueryEndpoint: SUBQUERY_ENDPOINT,
-        polkadotEndpoint: TANGLE_RPC_ENDPOINT,
-        polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-        evmExplorer: TANGLE_TESTNET_EVM_EXPLORER_URL,
-        avatar: '',
-      },
+      TANGLE_TESTNET_NATIVE_NETWORK,
     ],
   },
   {

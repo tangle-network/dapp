@@ -78,9 +78,7 @@ export const useValidators = (
     }
 
     return addresses.map((address) => {
-      const name =
-        mappedIdentityNames.get(address.toString()) ?? address.toString();
-
+      const name = identityNames.get(address.toString()) ?? address.toString();
       const exposure = mappedExposures.get(address.toString());
       const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;

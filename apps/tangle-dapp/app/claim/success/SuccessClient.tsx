@@ -1,35 +1,23 @@
 'use client';
 
 import type { HexString } from '@polkadot/util/types';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { ExternalLinkLine, ShieldedCheckLineIcon } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type FC, useMemo } from 'react';
+import { type FC } from 'react';
 
-import useNetworkState from '../../../hooks/useNetworkState';
+import useExplorerUrl, { ExplorerType } from '../../../hooks/useExplorerUrl';
 
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
-  const { network } = useNetworkState();
-
-  const txExplorerUrl = useMemo(() => {
-    // Claim tx are always on Substrate network
-    if (!blockHash || !network?.polkadotExplorer) return null;
-
-    return getExplorerURI(
-      network.polkadotExplorer,
-      blockHash,
-      'tx',
-      'polkadot'
-    );
-  }, [blockHash, network?.polkadotExplorer]);
+  const getExplorerUrl = useExplorerUrl();
+  const txExplorerUrl = getExplorerUrl(blockHash, ExplorerType.Substrate);
 
   return (
     <AppTemplate.Content>
       <AppTemplate.Title
-        title={`You have successfully claimed $TNT airdrop!`}
+        title="You have successfully claimed $TNT airdrop!"
         subTitle="CONGRATULATIONS!"
         overrideSubTitleProps={{
           className: 'text-blue-70 dark:text-blue-50',
