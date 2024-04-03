@@ -13,6 +13,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
@@ -25,7 +26,7 @@ import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
-import getStatement from '../../utils/getStatement';
+import getStatement, { Statement } from '../../utils/getStatement';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
 
@@ -51,10 +52,13 @@ const EligibleSection: FC<Props> = ({
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { rpcEndpoint } = useNetworkStore();
+
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
   const [step, setStep] = useState(Step.INPUT_ADDRESS);
-  const { rpcEndpoint } = useNetworkStore();
+  const [statement, setStatement] = useState<null | Statement>(null);
+  const [hasReadStatement, setHasReadStatement] = useState(false);
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
@@ -68,6 +72,33 @@ const EligibleSection: FC<Props> = ({
 
     return () => clearTimeout(timeout);
   }, [recipient]);
+
+  // get statement
+  useEffect(() => {
+    const fetchStatement = async () => {
+      try {
+        const api = await getPolkadotApiPromise(rpcEndpoint);
+        const systemChain = await api.rpc.system.chain();
+        const statement = getStatement(
+          systemChain.toHuman(),
+          isRegularStatement
+        );
+        setStatement(statement);
+      } catch (error) {
+        notificationApi({
+          message:
+            typeof error === 'string'
+              ? `Error: ${error}`
+              : error instanceof Error
+              ? error.message
+              : 'Failed to get statement',
+          variant: 'error',
+        });
+      }
+    };
+
+    fetchStatement();
+  }, [rpcEndpoint, isRegularStatement, notificationApi]);
 
   const handleClaimClick = useCallback(async () => {
     if (!activeAccount || !activeApi) {
@@ -90,10 +121,8 @@ const EligibleSection: FC<Props> = ({
       const accountId = activeAccount.address;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);
-      const systemChain = await api.rpc.system.chain();
 
-      const statementSentence =
-        getStatement(systemChain.toHuman(), isRegularStatement)?.sentence || '';
+      const statementSentence = statement?.sentence || '';
 
       const prefix = api.consts.claims.prefix.toU8a(true);
 
@@ -147,13 +176,13 @@ const EligibleSection: FC<Props> = ({
     activeAccount,
     activeApi,
     rpcEndpoint,
-    isRegularStatement,
     notificationApi,
     onClaimCompleted,
     setIsClaiming,
     recipient,
     router,
     searchParams,
+    statement?.sentence,
   ]);
 
   if (!activeAccount) {
@@ -203,12 +232,35 @@ const EligibleSection: FC<Props> = ({
         </Typography>
       </div>
 
+      {statement !== null && (
+        <div className="flex gap-2">
+          <CheckBox
+            isChecked={hasReadStatement}
+            onChange={() => {
+              setHasReadStatement(!hasReadStatement);
+            }}
+            wrapperClassName="pt-0.5"
+          />
+          <Typography variant="body1">
+            {`I have read and understood the terms and conditions of the statement provided at `}
+            <a
+              href={statement.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-70 dark:text-blue-50 hover:underline"
+            >
+              {statement.url}
+            </a>
+          </Typography>
+        </div>
+      )}
+
       <div className="space-y-2">
         <Button
           isFullWidth
           loadingText={getLoadingText(step)}
           isLoading={step !== Step.INPUT_ADDRESS}
-          isDisabled={!recipient || !!recipientErrorMsg}
+          isDisabled={!recipient || !!recipientErrorMsg || !hasReadStatement}
           onClick={handleClaimClick}
         >
           Claim Now
