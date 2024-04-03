@@ -14,7 +14,6 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
-import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { nominateValidators as nominateValidatorsEvm } from '../../utils/evm';
@@ -31,7 +30,6 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
   const maxNominationQuota = useMaxNominationQuota();
-  const allValidators = useAllValidators();
   const { rpcEndpoint } = useNetworkStore();
 
   const [selectedValidators, setSelectedValidators] =
@@ -138,7 +136,6 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
-            validators={allValidators}
             selectedValidators={selectedValidators}
             setSelectedValidators={setSelectedValidators}
           />
@@ -152,18 +149,19 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+        <ModalFooter className="flex gap-1 items-center">
+          <Button isFullWidth variant="secondary" onClick={closeModal}>
+            Cancel
+          </Button>
+
           <Button
             isFullWidth
             isDisabled={!isReadyToSubmitAndSignTx}
             isLoading={isSubmitAndSignTxLoading}
             onClick={submitAndSignTx}
+            className="!mt-0"
           >
-            Sign & Submit
-          </Button>
-
-          <Button isFullWidth variant="secondary" onClick={closeModal}>
-            Cancel
+            Confirm Nomination
           </Button>
         </ModalFooter>
       </ModalContent>

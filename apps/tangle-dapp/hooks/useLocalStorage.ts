@@ -17,6 +17,7 @@ export enum LocalStorageKey {
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   WEBB_NETWORK_NAME = 'webbNetworkName',
   NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
+  VALIDATORS = 'validators',
 }
 
 export type AirdropEligibilityCache = {
@@ -59,6 +60,8 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
         | LocalStorageKey.WEBB_NETWORK_NAME
         | LocalStorageKey.NATIVE_TOKEN_SYMBOL
     ? string
+    : T extends LocalStorageKey.VALIDATORS
+    ? Validator[]
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
