@@ -10,7 +10,6 @@ import {
 } from '@polkadot/util-crypto';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
@@ -38,14 +37,16 @@ enum Step {
 
 type Props = {
   claimInfo: ClaimInfoType;
-  onClaimCompleted: (accountAddress: string) => void;
+  onClaimCompleted: () => void;
+  setIsClaiming: (isClaiming: boolean) => void;
 };
 
 const EligibleSection: FC<Props> = ({
   claimInfo: { amount, isRegularStatement },
   onClaimCompleted,
+  setIsClaiming,
 }) => {
-  const { activeAccount, activeApi, activeWallet } = useWebContext();
+  const { activeAccount, activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
@@ -68,8 +69,6 @@ const EligibleSection: FC<Props> = ({
     return () => clearTimeout(timeout);
   }, [recipient]);
 
-  const isActiveWalletEvm = activeWallet?.platform === 'EVM';
-
   const handleClaimClick = useCallback(async () => {
     if (!activeAccount || !activeApi) {
       const message = !activeApi
@@ -84,6 +83,7 @@ const EligibleSection: FC<Props> = ({
     }
 
     try {
+      setIsClaiming(true);
       setStep(Step.SIGN);
 
       const api = await getPolkadotApiPromise(rpcEndpoint);
@@ -119,15 +119,17 @@ const EligibleSection: FC<Props> = ({
       const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
+      setIsClaiming(false);
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
+      onClaimCompleted();
       newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
-      onClaimCompleted(accountId);
 
       router.push(`claim/success?${newSearchParams.toString()}`, {
         scroll: true,
       });
     } catch (error) {
+      setIsClaiming(false);
       notificationApi.addToQueue({
         variant: 'error',
         message:
@@ -148,6 +150,7 @@ const EligibleSection: FC<Props> = ({
     isRegularStatement,
     notificationApi,
     onClaimCompleted,
+    setIsClaiming,
     recipient,
     router,
     searchParams,
@@ -214,16 +217,9 @@ const EligibleSection: FC<Props> = ({
         <Button
           variant="secondary"
           isFullWidth
-          onClick={() =>
-            toggleModal(
-              true,
-              isActiveWalletEvm
-                ? PresetTypedChainId.TangleTestnetNative
-                : PresetTypedChainId.TangleTestnetEVM
-            )
-          }
+          onClick={() => toggleModal(true)}
         >
-          Connect {isActiveWalletEvm ? 'Substrate' : 'EVM'} Wallet
+          Connect Another Wallet
         </Button>
       </div>
     </div>
