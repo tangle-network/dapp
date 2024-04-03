@@ -10,6 +10,18 @@ import useActiveAccountAddress from './useActiveAccountAddress';
 import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { TxFactory, TxStatus } from './useSubstrateTx';
 
+export type AgnosticTxOptions<
+  PrecompileT extends Precompile,
+  SubstrateTxResult extends ISubmittableResult
+> = {
+  precompile: PrecompileT;
+  evmTarget: AbiFunctionName<PrecompileT>;
+  // TODO: Add typing for precompile arguments.
+  evmArguments: unknown[];
+  substrateTxFactory: TxFactory<SubstrateTxResult>;
+  notifyStatusUpdates?: boolean;
+};
+
 /**
  * Enables the execution of a transaction that can be either a Substrate
  * transaction or an EVM precompile ABI call.
@@ -20,13 +32,13 @@ import useSubstrateTx, { TxFactory, TxStatus } from './useSubstrateTx';
 function useAgnosticTx<
   PrecompileT extends Precompile,
   SubstrateTxResult extends ISubmittableResult
->(
-  precompile: PrecompileT,
-  evmTarget: AbiFunctionName<PrecompileT>,
-  evmArguments: unknown[],
-  substrateTxFactory: TxFactory<SubstrateTxResult>,
-  notifyStatusUpdates = true
-) {
+>({
+  precompile,
+  evmTarget,
+  evmArguments,
+  substrateTxFactory,
+  notifyStatusUpdates = true,
+}: AgnosticTxOptions<PrecompileT, SubstrateTxResult>) {
   const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useWebbUI();
 
@@ -103,6 +115,9 @@ function useAgnosticTx<
   }, [executeEvmPrecompileAbiCall, executeSubstrateTx]);
 
   return {
+    status: agnosticStatus,
+    error:
+      isEvmAccount === null ? null : isEvmAccount ? evmError : substrateError,
     execute:
       // Only provide the executor when all its requirements are met.
       // This is useful, for example, to force the consumer of this hook
@@ -113,7 +128,6 @@ function useAgnosticTx<
       (executeSubstrateTx === null && executeEvmPrecompileAbiCall === null)
         ? null
         : execute,
-    status: agnosticStatus,
   };
 }
 

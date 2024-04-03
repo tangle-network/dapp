@@ -20,12 +20,18 @@ import AddressInput2, {
   AddressType,
 } from '../../components/AddressInput2/AddressInput2';
 import AmountInput2 from '../../components/AmountInput2/AmountInput2';
+import { Precompile } from '../../constants/evmPrecompiles';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
+import useAgnosticTx from '../../hooks/useAgnosticTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { TransferTxContainerProps } from './types';
+
+export type TransferTxContainerProps = {
+  isModalOpen: boolean;
+  setIsModalOpen: (isModalOpen: boolean) => void;
+};
 
 function getTxStatusText(status: TxStatus): string {
   switch (status) {
@@ -75,24 +81,26 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     execute: executeTransferTx,
     status,
     error: txError,
-  } = useSubstrateTx(
-    useCallback(
+  } = useAgnosticTx({
+    precompile: Precompile.BALANCES_ERC20,
+    evmTarget: 'transfer',
+    evmArguments: [receiverAddress, amount],
+    substrateTxFactory: useCallback(
       async (api) => {
         if (amount === null) {
           return null;
         }
 
-        // By 'allow death', it means that the transaction will
-        // go through even if the sender's account balance would
-        // be reduced to an amount that is less than the existential
-        // deposit, essentially causing the account to be 'reaped'
-        // or deleted from the chain.
-        return api.tx.balances.transferAllowDeath(receiverAddress, amount);
+        // By 'keep alive' it means that the transfer will be
+        // canceled if that transfer would cause the sender's
+        // account to drop below the existential deposit, which
+        // would otherwise essentially cause the account to be
+        // 'reaped', or deleted from the chain.
+        return api.tx.balances.transferKeepAlive(receiverAddress, amount);
       },
       [amount, receiverAddress]
     ),
-    true
-  );
+  });
 
   // TODO: Likely would ideally want to control this from the parent component.
   const reset = useCallback(() => {
