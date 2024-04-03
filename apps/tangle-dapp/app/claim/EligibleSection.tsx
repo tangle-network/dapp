@@ -193,7 +193,7 @@ const EligibleSection: FC<Props> = ({
               : ''}
           </Typography>
           <Typography variant="body1" fw="bold" ta="center">
-            any additional balance will be vesting in your account.
+            95% of this will be vested over 24 months w/ a 1 month cliff.
           </Typography>
         </div>
 
