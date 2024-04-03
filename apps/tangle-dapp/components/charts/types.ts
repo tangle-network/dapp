@@ -1,5 +1,3 @@
-import type { RestakingService } from '../../types';
-
 export type PirChartTooltipContentProps = {
   name: string;
   value: number;
@@ -17,12 +15,10 @@ export interface PieChartProps {
   title?: string;
 }
 
-type EarningsByServiceType = Partial<Record<RestakingService, number>>;
-
 export type RoleEarningsChartItem = {
-  month: string;
-  year: number;
-} & EarningsByServiceType;
+  era: number;
+  reward: number;
+};
 
 export interface RoleEarningsChartProps {
   data: RoleEarningsChartItem[];
