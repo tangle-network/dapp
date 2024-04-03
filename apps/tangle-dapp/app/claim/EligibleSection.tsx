@@ -246,6 +246,7 @@ const EligibleSection: FC<Props> = ({
             <a
               href={statement.url}
               target="_blank"
+              rel="noopener noreferrer"
               className="text-blue-70 dark:text-blue-50 hover:underline"
             >
               {statement.url}
