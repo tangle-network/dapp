@@ -10,6 +10,7 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
 
+// TODO: This is causing performance issues. Needs to be optimized.
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,

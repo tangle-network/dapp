@@ -1,8 +1,5 @@
 'use client';
 
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
   ExternalLinkLine,
   ShieldedCheckLineIcon,
@@ -17,31 +14,24 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
-import { TANGLE_TESTNET_EVM_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
-import { useCallback, useMemo } from 'react';
+import { FC, useCallback } from 'react';
 
+import useExplorerUrl, { ExplorerType } from '../../hooks/useExplorerUrl';
 import { TxConfirmationModalProps } from './types';
 
-export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
-  const { isModalOpen, setIsModalOpen, txStatus, txHash, txType } = props;
+export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
+  isModalOpen,
+  setIsModalOpen,
+  txStatus,
+  txHash,
+  txType,
+}) => {
+  const getExplorerUrl = useExplorerUrl();
 
-  const { apiConfig } = useWebContext();
-
-  const txExplorerUrl = useMemo(() => {
-    if (!txHash) return null;
-
-    if (txType === 'evm') {
-      return `${TANGLE_TESTNET_EVM_EXPLORER_URL}/tx/${txHash}`;
-    } else {
-      const explorer =
-        apiConfig.chains[PresetTypedChainId.TangleTestnetNative]?.blockExplorers
-          ?.default?.url;
-
-      if (!explorer) return null;
-
-      return getExplorerURI(explorer, txHash, 'tx', 'polkadot');
-    }
-  }, [apiConfig.chains, txHash, txType]);
+  const txExplorerUrl = getExplorerUrl(
+    txHash,
+    txType === 'evm' ? ExplorerType.EVM : ExplorerType.Substrate
+  );
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
@@ -89,7 +79,7 @@ export const TxConfirmationModal = (props: TxConfirmationModalProps) => {
             Close
           </Button>
 
-          {txExplorerUrl ? (
+          {txExplorerUrl !== null ? (
             <Button
               variant="secondary"
               isFullWidth

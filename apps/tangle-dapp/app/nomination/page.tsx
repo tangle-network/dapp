@@ -1,15 +1,15 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import {
-  DelegationsPayoutsContainer,
   HeaderChipsContainer,
   KeyStatsContainer,
+  NominationsPayoutsContainer,
   NominatorStatsContainer,
   ValidatorTablesContainer,
 } from '../../containers';
 
 // Note: already tried using Suspense here but see no improvement
-export default async function Index() {
+export default async function NominationPage() {
   return (
     <div className="space-y-12">
       <div className="flex items-center justify-between">
@@ -24,7 +24,7 @@ export default async function Index() {
 
       <NominatorStatsContainer />
 
-      <DelegationsPayoutsContainer />
+      <NominationsPayoutsContainer />
 
       <ValidatorTablesContainer />
     </div>

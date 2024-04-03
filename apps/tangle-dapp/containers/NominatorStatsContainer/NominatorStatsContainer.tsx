@@ -16,6 +16,8 @@ import React from 'react';
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useNetworkFeatures from '../../hooks/useNetworkFeatures';
+import { NetworkFeature } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -30,6 +32,7 @@ const NominatorStatsContainer: FC = () => {
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
+  const networkFeatures = useNetworkFeatures();
 
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
@@ -74,11 +77,13 @@ const NominatorStatsContainer: FC = () => {
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="flex items-center gap-2 flex-wrap">
-            <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
-              <Button variant="utility" className="!min-w-[100px]">
-                {`Get ${nativeTokenSymbol}`}
-              </Button>
-            </Link>
+            {networkFeatures.includes(NetworkFeature.Faucet) && (
+              <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
+                <Button variant="utility" className="!min-w-[100px]">
+                  {`Get ${nativeTokenSymbol}`}
+                </Button>
+              </Link>
+            )}
 
             {isFirstTimeNominator && (
               <Button

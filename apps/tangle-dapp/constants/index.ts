@@ -6,18 +6,6 @@ import {
 
 import { RestakingService } from '../types';
 
-export const PAYMENT_DESTINATION_OPTIONS = [
-  'Staked (increase the amount at stake)',
-  'Stash (do not increase the amount at stake)',
-];
-
-// Note that the chain decimal count is usually constant, and set when
-// the blockchain is deployed. It could be technically changed due to
-// governance decisions and subsequent runtime upgrades, but that would
-// be exceptionally rare, so it is best to assume that it remains constant
-// here. Regardless, it can easily be changed here in the future if need be.
-export const TANGLE_TOKEN_DECIMALS = 18;
-
 /**
  * The lock ids are always 8 characters long, due to their representation
  * as a `U8aFixed` in the Substrate runtime. That is why the enum values
@@ -74,6 +62,27 @@ type TangleRoleMapping = {
       };
 };
 
+export enum ChartColor {
+  BLUE = '#B8D6FF',
+  GREEN = '#85DC8E',
+  GRAY = '#D3D8E2',
+  DARK_GRAY = '#3A3E53',
+  YELLOW = '#FFEAA6',
+  LAVENDER = '#E7E2FF',
+}
+
+export const PAYMENT_DESTINATION_OPTIONS = [
+  'Staked (increase the amount at stake)',
+  'Stash (do not increase the amount at stake)',
+];
+
+// Note that the chain decimal count is usually constant, and set when
+// the blockchain is deployed. It could be technically changed due to
+// governance decisions and subsequent runtime upgrades, but that would
+// be exceptionally rare, so it is best to assume that it remains constant
+// here. Regardless, it can easily be changed here in the future if need be.
+export const TANGLE_TOKEN_DECIMALS = 18;
+
 /**
  * The values are based off [Tangle's `RoleType` enum](https://github.com/webb-tools/tangle/blob/2a60f0382db2a1234c490766381872d2c7243f5e/primitives/src/roles/mod.rs#L40).
  */
@@ -113,12 +122,3 @@ export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
   ZcashFrostSecp256k1: RestakingService.TSS_ZCASH_FROST_SECP256K1,
   ZcashFrostEd448: RestakingService.TSS_ZCASH_FROST_ED448,
 };
-
-export enum ChartColor {
-  BLUE = '#B8D6FF',
-  GREEN = '#85DC8E',
-  GRAY = '#D3D8E2',
-  DARK_GRAY = '#3A3E53',
-  YELLOW = '#FFEAA6',
-  LAVENDER = '#E7E2FF',
-}

@@ -1,10 +1,10 @@
 import {
   NetworkType,
-  webbNetworks,
+  WEBB_NETWORKS,
 } from '@webb-tools/webb-ui-components/constants';
 
 const isNetworkTypeDisabled = (networkType: NetworkType) => {
-  const entry = webbNetworks.find(
+  const entry = WEBB_NETWORKS.find(
     (network) => network.networkType === networkType
   );
 
