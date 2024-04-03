@@ -1,44 +1,12 @@
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Spinner } from '@webb-tools/icons';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 
+// Using Suspense does not improve page performance => need to use loading.tsx
+// Change this to spinner because loading screen on success page is also applied from this file
 export default function Loading() {
   return (
-    <AppTemplate.Content>
-      <AppTemplate.Title
-        title="Claim your $TNT airdrop"
-        subTitle="CLAIM AIRDROP"
-        overrideSubTitleProps={{
-          className: 'text-blue-70 dark:text-blue-50',
-        }}
-      />
-
-      <AppTemplate.DescriptionContainer>
-        <AppTemplate.Description
-          variant="mkt-body2"
-          className="text-mono-140 dark:text-mono-80"
-        >
-          As part of {"Tangle's"} initial launch, the Tangle Network is
-          distributing 5 million TNT tokens to the community. Check eligibility
-          below to see if you qualify for TNT airdrop!
-        </AppTemplate.Description>
-      </AppTemplate.DescriptionContainer>
-
-      <AppTemplate.Body>
-        <Typography variant="mkt-body2" ta="center" fw="bold">
-          Connect your EVM or Substrate wallet to check eligibility:
-        </Typography>
-
-        <div className="space-y-2">
-          <Button isFullWidth isDisabled>
-            Connect EVM Wallet
-          </Button>
-
-          <Button variant="secondary" isDisabled isFullWidth>
-            Connect Substrate Wallet
-          </Button>
-        </div>
-      </AppTemplate.Body>
+    <AppTemplate.Content className="min-h-[432px] flex items-center justify-center">
+      <Spinner size="xl" />
     </AppTemplate.Content>
   );
 }

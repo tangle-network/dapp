@@ -10,11 +10,11 @@
 # Webb Monorepo
 
 <p align="left">
-    <strong>Decentralized interfaces into the Webb protocol</strong>
+    <strong>Decentralized interfaces into the Webb protocol, featuring Tangle Network dApps for MPC-as-a-service restaking infrastructure.</strong>
     <br />
 </p>
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/webb-tools/webb-dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/webb-tools/webb-dapp/actions) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html) [![Twitter](https://img.shields.io/badge/follow-%40webbprotocol-1DA1F2?logo=twitter&style=flat-square)](https://twitter.com/webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/webb-tools/webb-dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/webb-tools/webb-dapp/actions) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html) [![Follow Tangle on twitter](https://img.shields.io/twitter/follow/tangle_network.svg?style=social)](https://twitter.com/intent/follow?screen_name=tangle_network) [![Follow Webb on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
 
 <!-- TABLE OF CONTENTS -->
 <h2 id="table-of-contents" style=border:0!important> Table of Contents </h2>
@@ -34,7 +34,9 @@
 
 <h2 id="start"> Getting Started </h2>
 
-This is a monorepo for decentralized interfaces in the Webb protocol. It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` directory contains the protocol's interfaces while `libs` contains the necessary code and logic.
+This monorepo is the cornerstone for decentralized interfaces within the Webb protocol, incorporating a suite of dApps, including the revolutionary [Tangle Network](https://tangle.tools) applications. These applications are geared towards kickstarting advanced cryptographic developments and innovations in blockchain technology, leveraging multi-party computation (MPC) services and cross-chain capabilities. 
+
+It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` directory contains the protocol's interfaces while `libs` contains the necessary code and logic.
 
 ### Prerequisites
 
@@ -50,6 +52,7 @@ Great! Now your **Node** environment is ready!
 
 <h2 id="apps"> Applications </h2>
 
+- [tangle-dapp](./apps/tangle-dapp/README.md): the central hub to managing Tangle Network assets and MPC (Multi-Party Computation) services.
 - [bridge-dapp](./apps/bridge-dapp/README.md): an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
 - [faucet](./apps/faucet/README.md): an interface for requesting cryptocurrencies (assets) on the Webb Protocol System.
 - [hubble-stats](./apps/hubble-stats/README.md): an interface for displaying statistical data of the Cross-chain Bridging System.
@@ -150,16 +153,16 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 If you need help or you want to additional information please:
 
-- Refer to the [Webb Official Documentation](https://docs.webb.tools/).
-- If you have feedback on how to improve the Webb Dapp interface or you have a specific question? Check out the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback).
+- Refer to the [Tangle Network Official Documentation](https://docs.tangle.tools/) or [Webb Official Documentation](https://docs.webb.tools/).
+- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/tangle-dapp) or [Webb dApp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback). 
 - If you found a bug please [open an issue](https://github.com/webb-tools/webb-dapp/issues/new/choose) or [join our Discord](https://discord.gg/jUDeFpggrR) server to report it.
 
 ---
 
 **Follow us at**
-
-[![Follow us on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol)
-[![Follow us on LinkedIn](https://img.shields.io/badge/LinkedIn-webbprotocol-blue?style=flat&logo=linkedin&logoColor=b0c0c0&labelColor=363D44)](https://www.linkedin.com/company/webb-protocol/)
+[![Follow Tangle on twitter](https://img.shields.io/twitter/follow/tangle_network.svg?style=social)](https://twitter.com/intent/follow?screen_name=tangle_network)
+[![Follow Webb on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol)
+[![Follow Webb on LinkedIn](https://img.shields.io/badge/LinkedIn-webbprotocol-blue?style=flat&logo=linkedin&logoColor=b0c0c0&labelColor=363D44)](https://www.linkedin.com/company/webb-protocol/)
 
 ---
 

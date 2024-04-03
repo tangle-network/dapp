@@ -74,7 +74,10 @@ const AccountAddress: FC<AccountAddressProps> = ({
     activeAddress === null ? (
       <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
     ) : (
-      <Avatar value={activeAddress} theme="ethereum" />
+      <Avatar
+        value={displayAddress}
+        theme={isDisplayingEvmAddress ? 'ethereum' : 'substrate'}
+      />
     );
 
   return (
