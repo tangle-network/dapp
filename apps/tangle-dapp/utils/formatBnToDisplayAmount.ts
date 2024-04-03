@@ -17,31 +17,46 @@ export const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
   new BN(TANGLE_TOKEN_DECIMALS)
 );
 
-function convertChainUnitsToNumber(
-  chainAmount: BN,
-  includeCommas = false,
-  fractionLength?: number
+export type FormatOptions = {
+  includeCommas: boolean;
+  fractionLength?: number;
+  padZerosInFraction: boolean;
+};
+
+const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
+  includeCommas: false,
+  padZerosInFraction: false,
+};
+
+function formatBnToDisplayAmount(
+  amount: BN,
+  options?: Partial<FormatOptions>
 ): string {
-  const bnAmount = new BN(chainAmount);
+  const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
   const divisor = CHAIN_UNIT_CONVERSION_FACTOR;
-  const divided = bnAmount.div(divisor);
-  const remainder = bnAmount.mod(divisor);
+  const divided = amount.div(divisor);
+  const remainder = amount.mod(divisor);
 
   // Convert remainder to a string and pad with zeros if necessary.
-  const remainderString = remainder
-    .toString(10)
-    .padStart(TANGLE_TOKEN_DECIMALS, '0')
-    .substring(0, fractionLength);
+  let remainderString = remainder.toString(10);
+
+  if (finalOptions.padZerosInFraction) {
+    remainderString = remainderString.padStart(TANGLE_TOKEN_DECIMALS, '0');
+  }
+
+  remainderString = remainderString.substring(0, finalOptions.fractionLength);
 
   let integerPart = divided.toString(10);
 
   // Insert commas in the integer part if requested.
-  if (includeCommas) {
+  if (finalOptions.includeCommas) {
+    // TODO: Avoid using regex, it's confusing.
     integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
+  // TODO: Make the condition explicit. Is it checking for an empty string?
   // Combine the integer and decimal parts.
   return remainderString ? `${integerPart}.${remainderString}` : integerPart;
 }
 
-export default convertChainUnitsToNumber;
+export default formatBnToDisplayAmount;

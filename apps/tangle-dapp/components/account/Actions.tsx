@@ -25,17 +25,18 @@ import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
-
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
   const isPayoutsAvailable = usePayoutsAvailability();
+  const activeSubstrateAddress = useSubstrateAddress();
 
   const {
     isVesting,
@@ -55,6 +56,8 @@ const Actions: FC = () => {
           label="Transfer"
           Icon={ArrowLeftRightLineIcon}
           onClick={() => setIsTransferModalOpen(true)}
+          // Disable while no account is connected.
+          isDisabled={activeSubstrateAddress === null}
         />
 
         <ActionItem
@@ -130,8 +133,7 @@ const Actions: FC = () => {
   );
 };
 
-/** @internal */
-const ActionItem = (props: {
+type ActionItemProps = {
   Icon: (props: IconBase) => ReactElement;
   label: string;
   onClick?: () => void;
@@ -139,17 +141,18 @@ const ActionItem = (props: {
   hasNotificationDot?: boolean;
   internalHref?: InternalPath;
   tooltip?: ReactElement | string;
-}) => {
-  const {
-    Icon,
-    label,
-    onClick,
-    internalHref,
-    tooltip,
-    isDisabled = false,
-    hasNotificationDot = false,
-  } = props;
+};
 
+/** @internal */
+const ActionItem: FC<ActionItemProps> = ({
+  Icon,
+  label,
+  onClick,
+  internalHref,
+  tooltip,
+  isDisabled = false,
+  hasNotificationDot = false,
+}) => {
   const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
       return;

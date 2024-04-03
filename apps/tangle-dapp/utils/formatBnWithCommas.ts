@@ -9,6 +9,8 @@ import { BN } from '@polkadot/util';
  * ```
  */
 export const formatBnWithCommas = (bn: BN): string => {
+  // TODO: Incorporate this into the logic of `formatBnToDisplayAmount` to consolidate balance formatting logic.
+
   const valueAsString = bn.toString();
   let result = '';
   let count = 0;
