@@ -3,6 +3,7 @@
 import {
   getRoundedAmountString,
   Typography,
+  useNextDarkMode,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
@@ -15,19 +16,28 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
   data,
   title = 'Independent',
 }) => {
+  const [isDarkMode] = useNextDarkMode();
+
+  const hasData = data.length > 0;
+
+  const dataOrDefault = hasData
+    ? data
+    : [{ value: 1, color: isDarkMode ? '#3A3E53' : '#D3D8E2' }];
+
   const { nativeTokenSymbol } = useNetworkStore();
 
   return (
     <div className="relative">
       <PieChart width={200} height={200}>
         <Pie
-          data={data}
+          data={dataOrDefault}
           innerRadius={60}
+          fill="#8884d8"
+          paddingAngle={hasData ? 5 : 0}
           outerRadius={100}
-          paddingAngle={5}
           dataKey="value"
         >
-          {data.map((item, index) => (
+          {dataOrDefault.map((item, index) => (
             <Cell key={`cell-${index}`} fill={item.color} stroke="none" />
           ))}
         </Pie>
