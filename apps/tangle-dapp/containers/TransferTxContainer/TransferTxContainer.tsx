@@ -20,11 +20,10 @@ import AddressInput2, {
   AddressType,
 } from '../../components/AddressInput2/AddressInput2';
 import AmountInput2 from '../../components/AmountInput2/AmountInput2';
-import { Precompile } from '../../constants/evmPrecompiles';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
+import useTransferTx from '../../data/balances/useTransferTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { formatTokenBalance } from '../../utils/polkadot';
 
@@ -81,26 +80,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     execute: executeTransferTx,
     status,
     error: txError,
-  } = useAgnosticTx({
-    precompile: Precompile.BALANCES_ERC20,
-    evmTarget: 'transfer',
-    evmArguments: [receiverAddress, amount],
-    substrateTxFactory: useCallback(
-      async (api) => {
-        if (amount === null) {
-          return null;
-        }
-
-        // By 'keep alive' it means that the transfer will be
-        // canceled if that transfer would cause the sender's
-        // account to drop below the existential deposit, which
-        // would otherwise essentially cause the account to be
-        // 'reaped', or deleted from the chain.
-        return api.tx.balances.transferKeepAlive(receiverAddress, amount);
-      },
-      [amount, receiverAddress]
-    ),
-  });
+  } = useTransferTx();
 
   // TODO: Likely would ideally want to control this from the parent component.
   const reset = useCallback(() => {
@@ -115,6 +95,16 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
       reset();
     }
   }, [reset, status]);
+
+  const handleSend = useCallback(() => {
+    // TODO: Check that the address is valid, or return.
+    // Transaction not yet ready, or data is invalid.
+    if (executeTransferTx === null || amount === null) {
+      return;
+    }
+
+    executeTransferTx({ receiverAddress, amount });
+  }, [amount, executeTransferTx, receiverAddress]);
 
   const isReady = status !== TxStatus.PROCESSING;
   const isDataValid = amount !== null && receiverAddress !== '';
@@ -191,9 +181,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isFullWidth
               isLoading={!isReady}
               loadingText={getTxStatusText(status)}
-              onClick={
-                executeTransferTx !== null ? executeTransferTx : undefined
-              }
+              onClick={handleSend}
               isDisabled={
                 !canInitiateTx ||
                 executeTransferTx === null ||

@@ -29,6 +29,16 @@ type TxReceipt = {
   contractAddress: unknown | null;
 };
 
+export type EvmAbiCallData<PrecompileT extends Precompile> = {
+  functionName: AbiFunctionName<PrecompileT>;
+  // TODO: Use argument types from the ABI.
+  arguments: unknown[];
+};
+
+export type EvmTxFactory<PrecompileT extends Precompile, Context> = (
+  context: Context
+) => EvmAbiCallData<PrecompileT> | null;
+
 /**
  * Obtain a function that can be used to execute a precompile contract call.
  *
@@ -40,55 +50,68 @@ type TxReceipt = {
  * This is used for performing actions from EVM accounts. Substrate accounts
  * should use `useSubstrateTx` for transactions instead, or `usePolkadotApi` for queries.
  */
-function useEvmPrecompileAbiCall<T extends Precompile>(
-  precompile: T,
-  functionName: AbiFunctionName<T>,
-  args: unknown[]
+function useEvmPrecompileAbiCall<
+  PrecompileT extends Precompile,
+  Context = void
+>(
+  precompile: PrecompileT,
+  factory: EvmTxFactory<PrecompileT, Context> | EvmAbiCallData<PrecompileT>
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const activeEvmAddress = useEvmAddress();
 
-  const execute = useCallback(async () => {
-    if (activeEvmAddress === null || status === TxStatus.PROCESSING) {
-      return;
-    }
+  const execute = useCallback(
+    async (context: Context) => {
+      if (activeEvmAddress === null || status === TxStatus.PROCESSING) {
+        return;
+      }
 
-    setError(null);
-    setStatus(TxStatus.PROCESSING);
+      const factoryResult =
+        factory instanceof Function ? factory(context) : factory;
 
-    try {
-      const { request } = await evmPublicClient.simulateContract({
-        address: getAddressOfPrecompile(precompile),
-        abi: getAbiForPrecompile(precompile),
-        functionName: functionName,
-        args,
-        account: activeEvmAddress,
-      });
+      // Factory isn't ready yet.
+      if (factoryResult === null) {
+        return;
+      }
 
-      const evmWalletClient = createEvmWalletClient(activeEvmAddress);
-      const txHash = await evmWalletClient.writeContract(request);
+      setError(null);
+      setStatus(TxStatus.PROCESSING);
 
-      const txReceipt: TxReceipt =
-        await evmPublicClient.waitForTransactionReceipt({
-          hash: txHash,
-          // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+      try {
+        const { request } = await evmPublicClient.simulateContract({
+          address: getAddressOfPrecompile(precompile),
+          abi: getAbiForPrecompile(precompile),
+          functionName: factoryResult.functionName,
+          args: factoryResult.arguments,
+          account: activeEvmAddress,
         });
 
-      console.debug('txReceipt', txReceipt);
+        const evmWalletClient = createEvmWalletClient(activeEvmAddress);
+        const txHash = await evmWalletClient.writeContract(request);
 
-      setStatus(
-        txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
-      );
-    } catch (possibleError) {
-      const error = ensureError(possibleError);
+        const txReceipt: TxReceipt =
+          await evmPublicClient.waitForTransactionReceipt({
+            hash: txHash,
+            // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+          });
 
-      setStatus(TxStatus.ERROR);
-      setError(error);
-    }
+        console.debug('txReceipt', txReceipt);
 
-    // TODO: Return clean up.
-  }, [activeEvmAddress, args, precompile, status, functionName]);
+        setStatus(
+          txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
+        );
+      } catch (possibleError) {
+        const error = ensureError(possibleError);
+
+        setStatus(TxStatus.ERROR);
+        setError(error);
+      }
+
+      // TODO: Return clean up.
+    },
+    [activeEvmAddress, factory, precompile, status]
+  );
 
   // Prevent the consumer from executing the call if the active
   // account is not an EVM account.

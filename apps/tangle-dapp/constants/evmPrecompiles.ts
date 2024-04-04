@@ -1,3 +1,6 @@
+import { BN } from '@polkadot/util';
+import { AddressType } from '@webb-tools/dapp-config/types';
+
 export enum Precompile {
   STAKING,
   VESTING,
@@ -5,39 +8,37 @@ export enum Precompile {
   BALANCES_ERC20,
 }
 
-type StakingAbiFunctionName =
-  | 'bond'
-  | 'bondExtra'
-  | 'chill'
-  | 'currentEra'
-  | 'erasTotalStake'
-  | 'isNominator'
-  | 'isValidator'
-  | 'maxNominatorCount'
-  | 'maxValidatorCount'
-  | 'minActiveStake'
-  | 'minNominatorBond'
-  | 'minValidatorBond'
-  | 'nominate'
-  | 'payoutStakers'
-  | 'rebond'
-  | 'setController'
-  | 'setPayee'
-  | 'unbond'
-  | 'validatorCount'
-  | 'withdrawUnbonded';
-
 export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
-  ? StakingAbiFunctionName
+  ?
+      | 'bond'
+      | 'bondExtra'
+      | 'chill'
+      | 'currentEra'
+      | 'erasTotalStake'
+      | 'isNominator'
+      | 'isValidator'
+      | 'maxNominatorCount'
+      | 'maxValidatorCount'
+      | 'minActiveStake'
+      | 'minNominatorBond'
+      | 'minValidatorBond'
+      | 'nominate'
+      | 'payoutStakers'
+      | 'rebond'
+      | 'setController'
+      | 'setPayee'
+      | 'unbond'
+      | 'validatorCount'
+      | 'withdrawUnbonded'
   : T extends Precompile.VESTING
-  ? 'vest' | 'vestOther' | 'vestedTransfer'
+  ? 'vest'
   : T extends Precompile.BATCH
   ? 'batchAll' | 'batchSome' | 'batchSomeUntilFailure'
   : T extends Precompile.BALANCES_ERC20
-  ? 'allowance' | 'transfer' | 'approve' | 'transferFrom' | 'balanceOf'
+  ? 'transfer'
   : never;
 
-type InputType =
+type AbiType =
   | 'uint256'
   | 'bytes32'
   | 'uint32'
@@ -47,12 +48,62 @@ type InputType =
   | 'bytes'
   | 'uint64';
 
-type InputTypeSuper = InputType | `${InputType}[]`;
+type AbiTypeSuper = AbiType | `${AbiType}[]`;
 
-type InputOutput = {
-  internalType: InputTypeSuper;
+type InputOutputDef = {
+  internalType: AbiTypeSuper;
   name: string;
-  type: InputTypeSuper;
+  type: AbiTypeSuper;
+};
+
+export type AbiFunction<T extends Precompile> = {
+  inputs: InputOutputDef[];
+  name: AbiFunctionName<T>;
+  outputs: InputOutputDef[];
+  stateMutability: 'nonpayable' | 'view';
+  type: 'function';
+};
+
+/**
+ * Argument type definitions for each EVM precompile function.
+ */
+export type AbiFunctionArgs = {
+  [Precompile.STAKING]: {
+    bond: [BN, AddressType];
+    bondExtra: [BN];
+    chill: [];
+    currentEra: [];
+    erasTotalStake: [BN];
+    isNominator: [AddressType];
+    isValidator: [AddressType];
+    maxNominatorCount: [];
+    maxValidatorCount: [];
+    minActiveStake: [];
+    minNominatorBond: [];
+    minValidatorBond: [];
+    nominate: [AddressType[]];
+    payoutStakers: [AddressType, BN];
+    rebond: [BN];
+    setController: [];
+    setPayee: [BN];
+    unbond: [BN];
+    validatorCount: [];
+    withdrawUnbonded: [BN];
+  };
+
+  [Precompile.VESTING]: {
+    vest: [];
+  };
+
+  [Precompile.BATCH]: {
+    batchAll: [AddressType[], BN[], string[], BN[]];
+    batchSome: [AddressType[], BN[], string[], BN[]];
+    batchSomeUntilFailure: [AddressType[], BN[], string[], BN[]];
+  };
+
+  [Precompile.BALANCES_ERC20]: {
+    transfer: [AddressType, BN];
+  };
 };
 
 // See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
@@ -63,352 +114,299 @@ export enum PrecompileAddress {
   BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
 }
 
-export type PrecompileAbiFunction<T extends Precompile> = {
-  inputs: InputOutput[];
-  name: AbiFunctionName<T>;
-  outputs: InputOutput[];
-  stateMutability: 'nonpayable' | 'view';
-  type: 'function';
-};
-
-export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<Precompile.STAKING>[] =
-  [
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'value',
-          type: 'uint256',
-        },
-        {
-          internalType: 'bytes32',
-          name: 'payee',
-          type: 'bytes32',
-        },
-      ],
-      name: 'bond',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'maxAdditional',
-          type: 'uint256',
-        },
-      ],
-      name: 'bondExtra',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'chill',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'currentEra',
-      outputs: [
-        {
-          internalType: 'uint32',
-          name: '',
-          type: 'uint32',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint32',
-          name: 'eraIndex',
-          type: 'uint32',
-        },
-      ],
-      name: 'erasTotalStake',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'stash',
-          type: 'address',
-        },
-      ],
-      name: 'isNominator',
-      outputs: [
-        {
-          internalType: 'bool',
-          name: '',
-          type: 'bool',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'stash',
-          type: 'address',
-        },
-      ],
-      name: 'isValidator',
-      outputs: [
-        {
-          internalType: 'bool',
-          name: '',
-          type: 'bool',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'maxNominatorCount',
-      outputs: [
-        {
-          internalType: 'uint32',
-          name: '',
-          type: 'uint32',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'maxValidatorCount',
-      outputs: [
-        {
-          internalType: 'uint32',
-          name: '',
-          type: 'uint32',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'minActiveStake',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'minNominatorBond',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'minValidatorBond',
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32[]',
-          name: 'targets',
-          type: 'bytes32[]',
-        },
-      ],
-      name: 'nominate',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'validatorStash',
-          type: 'bytes32',
-        },
-        {
-          internalType: 'uint32',
-          name: 'era',
-          type: 'uint32',
-        },
-      ],
-      name: 'payoutStakers',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'value',
-          type: 'uint256',
-        },
-      ],
-      name: 'rebond',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'setController',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint8',
-          name: 'payee',
-          type: 'uint8',
-        },
-      ],
-      name: 'setPayee',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint256',
-          name: 'value',
-          type: 'uint256',
-        },
-      ],
-      name: 'unbond',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'validatorCount',
-      outputs: [
-        {
-          internalType: 'uint32',
-          name: '',
-          type: 'uint32',
-        },
-      ],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'uint32',
-          name: 'numSlashingSpans',
-          type: 'uint32',
-        },
-      ],
-      name: 'withdrawUnbonded',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-  ] as const;
+export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
+  {
+    name: 'bond',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'payee',
+        type: 'bytes32',
+      },
+    ],
+  },
+  {
+    name: 'bondExtra',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'maxAdditional',
+        type: 'uint256',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'chill',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    outputs: [],
+  },
+  {
+    name: 'currentEra',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint32',
+        name: '',
+        type: 'uint32',
+      },
+    ],
+  },
+  {
+    name: 'erasTotalStake',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint32',
+        name: 'eraIndex',
+        type: 'uint32',
+      },
+    ],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+  },
+  {
+    name: 'isNominator',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'stash',
+        type: 'address',
+      },
+    ],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+  },
+  {
+    name: 'isValidator',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'stash',
+        type: 'address',
+      },
+    ],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+  },
+  {
+    name: 'maxNominatorCount',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint32',
+        name: '',
+        type: 'uint32',
+      },
+    ],
+  },
+  {
+    name: 'maxValidatorCount',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint32',
+        name: '',
+        type: 'uint32',
+      },
+    ],
+  },
+  {
+    name: 'minActiveStake',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+  },
+  {
+    name: 'minNominatorBond',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+  },
+  {
+    name: 'minValidatorBond',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+  },
+  {
+    name: 'nominate',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      {
+        internalType: 'bytes32[]',
+        name: 'targets',
+        type: 'bytes32[]',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'payoutStakers',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'validatorStash',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint32',
+        name: 'era',
+        type: 'uint32',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'rebond',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'setController',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    outputs: [],
+  },
+  {
+    name: 'setPayee',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: 'payee',
+        type: 'uint8',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'unbond',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'validatorCount',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint32',
+        name: '',
+        type: 'uint32',
+      },
+    ],
+  },
+  {
+    name: 'withdrawUnbonded',
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'uint32',
+        name: 'numSlashingSpans',
+        type: 'uint32',
+      },
+    ],
+    outputs: [],
+  },
+] as const;
 
 // See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
 // Be careful with the input/outputs, as they can lead to a lot of trouble
 // if not properly specified.
-export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<Precompile.VESTING>[] =
-  [
-    {
-      inputs: [],
-      name: 'vest',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'target',
-          type: 'bytes32',
-        },
-        {
-          internalType: 'uint8',
-          name: 'index',
-          type: 'uint8',
-        },
-      ],
-      name: 'vestedTransfer',
-      outputs: [
-        {
-          internalType: 'uint8',
-          name: '',
-          type: 'uint8',
-        },
-      ],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: 'target',
-          type: 'bytes32',
-        },
-      ],
-      name: 'vestOther',
-      outputs: [
-        {
-          internalType: 'uint8',
-          name: '',
-          type: 'uint8',
-        },
-      ],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-  ] as const;
+export const VESTING_PRECOMPILE_ABI: AbiFunction<Precompile.VESTING>[] = [
+  {
+    name: 'vest',
+    type: 'function',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+] as const;
 
-export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<Precompile.BATCH>[] = [
+export const BATCH_PRECOMPILE_ABI: AbiFunction<Precompile.BATCH>[] = [
   {
     name: 'batchAll',
     outputs: [],
@@ -495,109 +493,13 @@ export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<Precompile.BATCH>[] = [
   },
 ] as const;
 
-export const BALANCES_ERC20_PRECOMPILE_ABI: PrecompileAbiFunction<Precompile.BALANCES_ERC20>[] =
+export const BALANCES_ERC20_PRECOMPILE_ABI: AbiFunction<Precompile.BALANCES_ERC20>[] =
   [
-    {
-      name: 'allowance',
-      stateMutability: 'view',
-      type: 'function',
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'owner',
-          type: 'address',
-        },
-        {
-          internalType: 'address',
-          name: 'spender',
-          type: 'address',
-        },
-      ],
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-    },
-    {
-      name: 'approve',
-      stateMutability: 'nonpayable',
-      type: 'function',
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'spender',
-          type: 'address',
-        },
-        {
-          internalType: 'uint256',
-          name: 'value',
-          type: 'uint256',
-        },
-      ],
-      outputs: [
-        {
-          internalType: 'bool',
-          name: '',
-          type: 'bool',
-        },
-      ],
-    },
-    {
-      name: 'balanceOf',
-      stateMutability: 'view',
-      type: 'function',
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'owner',
-          type: 'address',
-        },
-      ],
-      outputs: [
-        {
-          internalType: 'uint256',
-          name: '',
-          type: 'uint256',
-        },
-      ],
-    },
     {
       name: 'transfer',
       stateMutability: 'nonpayable',
       type: 'function',
       inputs: [
-        {
-          internalType: 'address',
-          name: 'to',
-          type: 'address',
-        },
-        {
-          internalType: 'uint256',
-          name: 'value',
-          type: 'uint256',
-        },
-      ],
-      outputs: [
-        {
-          internalType: 'bool',
-          name: '',
-          type: 'bool',
-        },
-      ],
-    },
-    {
-      name: 'transferFrom',
-      stateMutability: 'nonpayable',
-      type: 'function',
-      inputs: [
-        {
-          internalType: 'address',
-          name: 'from',
-          type: 'address',
-        },
         {
           internalType: 'address',
           name: 'to',
@@ -636,7 +538,7 @@ export function getAddressOfPrecompile(
 
 export function getAbiForPrecompile(
   precompile: Precompile
-): PrecompileAbiFunction<Precompile>[] {
+): AbiFunction<Precompile>[] {
   switch (precompile) {
     case Precompile.STAKING:
       return STAKING_PRECOMPILE_ABI;

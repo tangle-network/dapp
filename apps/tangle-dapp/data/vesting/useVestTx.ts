@@ -15,9 +15,8 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 const useVestTx = (notifyStatusUpdates?: boolean) => {
   return useAgnosticTx({
     precompile: Precompile.VESTING,
-    evmTarget: 'vest',
-    evmArguments: [],
     notifyStatusUpdates,
+    evmTxFactory: { functionName: 'vest', arguments: [] },
     substrateTxFactory: useCallback(
       (api) => Promise.resolve(api.tx.vesting.vest()),
       []

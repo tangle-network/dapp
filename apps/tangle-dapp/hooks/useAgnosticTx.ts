@@ -1,24 +1,23 @@
-import { ISubmittableResult } from '@polkadot/types/types';
 import { assert } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect } from 'react';
 
-import { AbiFunctionName, Precompile } from '../constants/evmPrecompiles';
+import { Precompile } from '../constants/evmPrecompiles';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useActiveAccountAddress from './useActiveAccountAddress';
-import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
-import useSubstrateTx, { TxFactory, TxStatus } from './useSubstrateTx';
+import useEvmPrecompileAbiCall, {
+  EvmAbiCallData,
+  EvmTxFactory,
+} from './useEvmPrecompileAbiCall';
+import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 
-export type AgnosticTxOptions<
-  PrecompileT extends Precompile,
-  SubstrateTxResult extends ISubmittableResult
-> = {
+export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
-  evmTarget: AbiFunctionName<PrecompileT>;
-  // TODO: Add typing for precompile arguments.
-  evmArguments: unknown[];
-  substrateTxFactory: TxFactory<SubstrateTxResult>;
+  evmTxFactory:
+    | EvmTxFactory<PrecompileT, Context>
+    | EvmAbiCallData<PrecompileT>;
+  substrateTxFactory: SubstrateTxFactory<Context>;
   notifyStatusUpdates?: boolean;
 };
 
@@ -29,16 +28,12 @@ export type AgnosticTxOptions<
  * This effectively abstracts away the handling of actions of Substrate
  * and EVM accounts.
  */
-function useAgnosticTx<
-  PrecompileT extends Precompile,
-  SubstrateTxResult extends ISubmittableResult
->({
+function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
   precompile,
-  evmTarget,
-  evmArguments,
+  evmTxFactory,
   substrateTxFactory,
   notifyStatusUpdates = true,
-}: AgnosticTxOptions<PrecompileT, SubstrateTxResult>) {
+}: AgnosticTxOptions<PrecompileT, Context>) {
   const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useWebbUI();
 
@@ -52,7 +47,7 @@ function useAgnosticTx<
     execute: executeEvmPrecompileAbiCall,
     status: evmTxStatus,
     error: evmError,
-  } = useEvmPrecompileAbiCall(precompile, evmTarget, evmArguments);
+  } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
 
   const isEvmAccount =
     activeAccountAddress === null
@@ -99,20 +94,23 @@ function useAgnosticTx<
     agnosticError,
   ]);
 
-  const execute = useCallback(async () => {
-    if (executeEvmPrecompileAbiCall !== null) {
-      return executeEvmPrecompileAbiCall();
-    } else if (executeSubstrateTx !== null) {
-      return executeSubstrateTx();
-    }
+  const execute = useCallback(
+    async (context: Context) => {
+      if (executeEvmPrecompileAbiCall !== null) {
+        return executeEvmPrecompileAbiCall(context);
+      } else if (executeSubstrateTx !== null) {
+        return executeSubstrateTx(context);
+      }
 
-    // By this point, at least one of the executors should be defined,
-    // otherwise it constitutes a logic error.
-    assert(
-      executeSubstrateTx !== null,
-      'Substrate transaction executor should be defined if EVM transaction executor is not'
-    );
-  }, [executeEvmPrecompileAbiCall, executeSubstrateTx]);
+      // By this point, at least one of the executors should be defined,
+      // otherwise it constitutes a logic error.
+      assert(
+        executeSubstrateTx !== null,
+        'Substrate transaction executor should be defined if EVM transaction executor is not'
+      );
+    },
+    [executeEvmPrecompileAbiCall, executeSubstrateTx]
+  );
 
   return {
     status: agnosticStatus,
