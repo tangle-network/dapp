@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import usePolkadotApiRx, {
   ObservableFactory,
 } from '../../hooks/usePolkadotApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 export type AccountBalances = {
   /**
@@ -33,11 +34,13 @@ export type AccountBalances = {
 
 const useBalances = (): AccountBalances => {
   const { activeAccount } = useWebContext();
+  const activeSubstrateAddress = useSubstrateAddress();
   const [balances, setBalances] = useState<AccountBalances | null>(null);
 
   const balancesFetcher = useCallback<ObservableFactory<AccountBalances>>(
-    (api, activeAccountAddress) =>
-      api.query.system.account(activeAccountAddress).pipe(
+    (api) => {
+      if (!activeSubstrateAddress) return null;
+      return api.query.system.account(activeSubstrateAddress).pipe(
         map(({ data }) => {
           // Note that without the null/undefined check, an error
           // reports that `num` is undefined for some reason. Might be
@@ -61,8 +64,9 @@ const useBalances = (): AccountBalances => {
             locked: data.free.sub(transferrable),
           };
         })
-      ),
-    []
+      );
+    },
+    [activeSubstrateAddress]
   );
 
   const { data, isLoading } = usePolkadotApiRx(balancesFetcher);
