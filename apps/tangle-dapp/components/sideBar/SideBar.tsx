@@ -17,7 +17,8 @@ const SideBar: FC<SideBarProps> = ({ isExpandedAtDefault }) => {
   const { network } = useNetworkState();
 
   const sideBarProps = useMemo(
-    () => getSideBarProps(network?.polkadotExplorer, network?.evmExplorer),
+    () =>
+      getSideBarProps(network?.polkadotExplorerUrl, network?.evmExplorerUrl),
     [network]
   );
 

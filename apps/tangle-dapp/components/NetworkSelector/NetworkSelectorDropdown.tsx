@@ -32,7 +32,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
       {/* Mainnet network */}
       {HAS_TANGLE_MAINNET_LAUNCHED && (
         <NetworkOption
-          key={TANGLE_MAINNET_NETWORK.polkadotEndpoint}
+          key={TANGLE_MAINNET_NETWORK.rpcEndpoint}
           isSelected={selectedNetwork?.name === TANGLE_MAINNET_NETWORK.name}
           name={TANGLE_MAINNET_NETWORK.name}
           onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
@@ -41,7 +41,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       {/* Testnet network */}
       <NetworkOption
-        key={TANGLE_LOCAL_DEV_NETWORK.polkadotEndpoint}
+        key={TANGLE_LOCAL_DEV_NETWORK.rpcEndpoint}
         isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
@@ -51,7 +51,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       {/* Local dev network */}
       <NetworkOption
-        key={TANGLE_LOCAL_DEV_NETWORK.polkadotEndpoint}
+        key={TANGLE_LOCAL_DEV_NETWORK.rpcEndpoint}
         isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}

@@ -37,37 +37,47 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-async function switchNetworkInWeb3(network: Network): Promise<void> {
-  if (window.ethereum === undefined) {
+async function switchNetworkInEvmWallet(network: Network): Promise<void> {
+  // Cannot switch networks on EVM wallets if the network
+  // doesn't have a defined chain id or if there is no
+  // EVM wallet extension present.
+  if (window.ethereum === undefined || network.chainId === undefined) {
     return;
   }
 
+  // Request to switch to the network (if it's already configured in the wallet).
   try {
-    // Request to switch to the network (if it's already configured in the wallet)
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: network }],
+      params: [{ chainId: network.chainId.toString() }],
     });
   } catch (error) {
-    if (error.code === 4902) {
-      try {
-        // The network is not added to the wallet, request to add it
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId,
-              rpcUrls: [rpcUrl],
-              chainName,
-              // Add other network parameters if needed
-            },
-          ],
-        });
-      } catch (addError) {
-        console.error('Error adding network:', addError);
-      }
-    } else {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code !== 4902
+    ) {
       console.error('Error switching network:', error);
+
+      return;
+    }
+
+    // The network is not added to the wallet, request to add it.
+    try {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: network.chainId.toString(),
+            rpcUrls: [network.rpcEndpoint],
+            chainName: network.name,
+            // TODO: Any other network params?
+          },
+        ],
+      });
+    } catch (addError) {
+      console.error('Error adding network:', addError);
     }
   }
 }
@@ -124,7 +134,11 @@ const useNetworkState = () => {
           .safeParse(cachedNetworkName);
 
         if (parsedNetworkId.success) {
-          return NETWORK_MAP[parsedNetworkId.data];
+          const knownNetwork = NETWORK_MAP[parsedNetworkId.data];
+
+          if (knownNetwork !== undefined) {
+            return knownNetwork;
+          }
         }
 
         console.warn(
@@ -178,12 +192,15 @@ const useNetworkState = () => {
 
   // Set global RPC endpoint when the network changes,
   // and also changes to local storage for future use.
-  const setNetworkOverride = useCallback(
+  const switchNetwork = useCallback(
     async (newNetwork: Network, isCustom: boolean) => {
-      if (!(await testRpcEndpointConnection(newNetwork.polkadotEndpoint))) {
+      // Already on the requested network.
+      if (network.id === newNetwork.id) {
+        return;
+      } else if (!(await testRpcEndpointConnection(newNetwork.rpcEndpoint))) {
         notificationApi({
           variant: 'error',
-          message: `Unable to connect to the requested network: ${newNetwork.polkadotEndpoint}`,
+          message: `Unable to connect to the requested network: ${newNetwork.rpcEndpoint}`,
         });
 
         return;
@@ -192,37 +209,37 @@ const useNetworkState = () => {
       console.debug(
         `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
           newNetwork.name
-        } (${newNetwork.nodeType}) with RPC endpoint: ${
-          newNetwork.polkadotEndpoint
-        }`
+        } (${newNetwork.nodeType}) with RPC endpoint: ${newNetwork.rpcEndpoint}`
       );
 
       if (isCustom) {
         removeCachedNetworkId();
-        setCachedCustomRpcEndpoint(newNetwork.polkadotEndpoint);
+        setCachedCustomRpcEndpoint(newNetwork.rpcEndpoint);
       } else {
         removeCachedCustomRpcEndpoint();
         setCachedNetworkId(newNetwork.id);
       }
 
-      await fetchTokenSymbol(newNetwork.polkadotEndpoint);
+      await fetchTokenSymbol(newNetwork.rpcEndpoint);
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);
+      switchNetworkInEvmWallet(newNetwork);
     },
     [
-      removeCachedCustomRpcEndpoint,
+      network.id,
+      fetchTokenSymbol,
+      setNetwork,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
+      removeCachedCustomRpcEndpoint,
       setCachedNetworkId,
-      setNetwork,
-      fetchTokenSymbol,
     ]
   );
 
   return {
     network,
-    setNetwork: setNetworkOverride,
+    setNetwork: switchNetwork,
     isCustom,
   };
 };

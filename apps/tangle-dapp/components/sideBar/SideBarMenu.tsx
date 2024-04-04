@@ -12,8 +12,8 @@ const SideBarMenu: FC = () => {
   const { network } = useNetworkState();
 
   const sideBarProps = getSideBarProps(
-    network?.polkadotExplorer,
-    network?.evmExplorer
+    network?.polkadotExplorerUrl,
+    network?.evmExplorerUrl
   );
 
   return (
