@@ -11,10 +11,11 @@ import {
 
 const TANGLE_TESTNET_CONFIG = chainsConfig[PresetTypedChainId.TangleTestnetEVM];
 
-const TANGLE_TESTNET = defineChain(TANGLE_TESTNET_CONFIG);
+const TANGLE_TESTNET_CHAIN = defineChain(TANGLE_TESTNET_CONFIG);
 
+// TODO: This should not be hardcoded to the testnet, it should be using the network that the user is currently connected to.
 export const evmPublicClient = createPublicClient({
-  chain: TANGLE_TESTNET,
+  chain: TANGLE_TESTNET_CHAIN,
   transport: http(),
 });
 
@@ -27,7 +28,7 @@ export const createEvmWalletClient = (accountAddress: string) => {
   }
 
   return createWalletClient({
-    chain: TANGLE_TESTNET,
+    chain: TANGLE_TESTNET_CHAIN,
     account: ensureHex(accountAddress),
     transport: custom(window.ethereum),
   });

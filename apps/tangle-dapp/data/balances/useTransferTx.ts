@@ -5,7 +5,7 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { substrateToEvmAddress } from '../../utils';
+import { evmToSubstrateAddress, substrateToEvmAddress } from '../../utils';
 
 type TransferTxContext = {
   receiverAddress: string;
@@ -20,6 +20,8 @@ const useTransferTx = () => {
     (context) => ({
       functionName: 'transfer',
       arguments: [
+        // Convert the Substrate address to an EVM address, in case
+        // that it was provided as a Substrate address.
         substrateToEvmAddress(context.receiverAddress),
         context.amount,
       ],
@@ -35,7 +37,9 @@ const useTransferTx = () => {
       // would otherwise essentially cause the account to be
       // 'reaped', or deleted from the chain.
       api.tx.balances.transferKeepAlive(
-        context.receiverAddress,
+        // Convert the EVM address to a Substrate address, in case
+        // that it was provided as an EVM address.
+        evmToSubstrateAddress(context.receiverAddress),
         context.amount
       ),
     []
