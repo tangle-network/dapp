@@ -33,6 +33,7 @@ export const KeyStatsContainer = () => {
 
         <ActiveValidatorsKeyStat />
 
+        {/* TODO: check this */}
         <ActualStakedPercentageKeyStat />
 
         <IdealStakedPercentageKeyStat />

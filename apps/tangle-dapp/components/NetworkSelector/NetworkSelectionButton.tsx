@@ -19,7 +19,7 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_NATIVE_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
-  const { activeChain, activeAccount } = useWebContext();
+  const { activeChain } = useWebContext();
   const { network, setNetwork, isCustom } = useNetworkState();
 
   const switchToCustomNetwork = useCallback(
@@ -29,7 +29,6 @@ const NetworkSelectionButton: FC = () => {
   );
 
   return (
-    activeAccount &&
     activeChain && (
       <Dropdown>
         <DropdownBasicButton>
