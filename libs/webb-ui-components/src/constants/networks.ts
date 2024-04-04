@@ -44,6 +44,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
 
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   id: NetworkId.TANGLE_TESTNET,
+  chainId: 3799,
   name: 'Tangle Testnet Native',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
@@ -57,6 +58,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
  */
 export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   id: NetworkId.TANGLE_LOCAL_DEV,
+  chainId: 3799,
   name: 'Local endpoint (127.0.0.1)',
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',

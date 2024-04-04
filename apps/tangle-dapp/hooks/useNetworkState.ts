@@ -11,6 +11,7 @@ import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
 import { getNativeTokenSymbol } from '../utils/polkadot';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
@@ -38,6 +39,8 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
 }
 
 async function switchNetworkInEvmWallet(network: Network): Promise<void> {
+  // TODO: This is failing with: "Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received: "3799". Perhaps the chainId should be in hex format?
+
   // Cannot switch networks on EVM wallets if the network
   // doesn't have a defined chain id or if there is no
   // EVM wallet extension present.
@@ -83,6 +86,7 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
 }
 
 const useNetworkState = () => {
+  const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
   const { network, setNetwork, rpcEndpoint, setNativeTokenSymbol } =
@@ -224,12 +228,16 @@ const useNetworkState = () => {
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);
-      switchNetworkInEvmWallet(newNetwork);
+
+      if (isEvm !== null && isEvm) {
+        switchNetworkInEvmWallet(newNetwork);
+      }
     },
     [
       network.id,
       fetchTokenSymbol,
       setNetwork,
+      isEvm,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,
