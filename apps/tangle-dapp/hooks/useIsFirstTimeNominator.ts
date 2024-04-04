@@ -2,17 +2,22 @@ import { useCallback } from 'react';
 
 import useErrorReporting from './useErrorReporting';
 import usePolkadotApiRx from './usePolkadotApiRx';
+import useSubstrateAddress from './useSubstrateAddress';
 
 const useIsFirstTimeNominator = () => {
+  const activeSubstrateAddress = useSubstrateAddress();
+
   const {
     data: nominators,
     isLoading: isLoadingNominators,
     error: nominatorsError,
   } = usePolkadotApiRx(
     useCallback(
-      (api, activeSubstrateAddress) =>
-        api.query.staking.nominators(activeSubstrateAddress),
-      []
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.staking.nominators(activeSubstrateAddress);
+      },
+      [activeSubstrateAddress]
     )
   );
 
@@ -30,9 +35,11 @@ const useIsFirstTimeNominator = () => {
     error: bondedInfoError,
   } = usePolkadotApiRx(
     useCallback(
-      (api, activeSubstrateAddress) =>
-        api.query.staking.bonded(activeSubstrateAddress),
-      []
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.staking.bonded(activeSubstrateAddress);
+      },
+      [activeSubstrateAddress]
     )
   );
 

@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants/index';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useBalancesLock from '../balances/useBalancesLock';
 
 export type VestingInfo = {
@@ -51,11 +52,15 @@ export type VestingInfo = {
  * Substrate and EVM accounts.
  */
 const useVestingInfo = (): VestingInfo => {
+  const activeSubstrateAddress = useSubstrateAddress();
+
   const { data: schedulesOpt } = usePolkadotApiRx(
     useCallback(
-      (api, activeSubstrateAddress) =>
-        api.query.vesting.vesting(activeSubstrateAddress),
-      []
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.vesting.vesting(activeSubstrateAddress);
+      },
+      [activeSubstrateAddress]
     )
   );
 

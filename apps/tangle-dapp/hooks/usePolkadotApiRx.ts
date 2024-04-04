@@ -6,12 +6,8 @@ import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import { getPolkadotApiRx } from '../utils/polkadot';
 import usePromise from './usePromise';
-import useSubstrateAddress from './useSubstrateAddress';
 
-export type ObservableFactory<T> = (
-  api: ApiRx,
-  activeSubstrateAddress: string
-) => Observable<T> | null;
+export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
 
 /**
  * Fetch data from the Polkadot API, using RxJS. This is especially useful
@@ -27,30 +23,22 @@ export type ObservableFactory<T> = (
  *
  * @example
  * ```ts
- * const { data: vestingSchedulesOpt } = usePolkadotApiRx(
- *   (api, activeSubstrateAddress) =>
- *     api.query.vesting.vesting(activeSubstrateAddress)
+ * const { data: currentBlockNumber } = usePolkadotApiRx(
+ *  useCallback((api) => api.derive.chain.bestNumber(), [])
  * );
  * ```
  *
  * @example
  * ```
- * const { data: currentBlockNumber } = usePolkadotApiRx((api) =>
- *   api.derive.chain.bestNumber()
- * );
- * ```
- *
- * @example
- * ```ts
- * const { data: locks } = usePolkadotApiRx((api, activeSubstrateAddress) =>
- *   api.query.balances.locks(activeSubstrateAddress)
+ * const { value: babeExpectedBlockTime } = usePolkadotApi(
+ *  useCallback((api) => Promise.resolve(api.consts.babe.expectedBlockTime), [])
  * );
  * ```
  */
+
 function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
-  const activeSubstrateAddress = useSubstrateAddress();
   const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
 
@@ -62,13 +50,13 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   useEffect(() => {
     // Discard any previous data when the wallet is disconnected,
     // or when the Polkadot API is not yet ready.
-    if (activeSubstrateAddress === null || polkadotApiRx === null) {
+    if (polkadotApiRx === null) {
       setData(null);
 
       return;
     }
 
-    const observable = factory(polkadotApiRx, activeSubstrateAddress);
+    const observable = factory(polkadotApiRx);
 
     // The factory is not yet ready to produce an observable.
     if (observable === null) {
@@ -94,7 +82,7 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
       });
 
     return () => subscription.unsubscribe();
-  }, [activeSubstrateAddress, factory, polkadotApiRx]);
+  }, [factory, polkadotApiRx]);
 
   return { data, isLoading, error };
 }
