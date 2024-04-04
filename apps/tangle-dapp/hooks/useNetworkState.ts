@@ -2,11 +2,81 @@ import { notificationApi } from '@webb-tools/webb-ui-components';
 import { Network } from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useEffect, useState } from 'react';
 
-import { ALL_WEBB_NETWORKS, DEFAULT_NETWORK } from '../constants/networks';
+import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
 import { getNativeTokenSymbol } from '../utils/polkadot';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
+
+interface EthereumProvider {
+  isMetaMask?: boolean;
+  request: (options: { method: string; params?: Array<any> }) => Promise<any>;
+}
+
+declare global {
+  interface Window {
+    ethereum: EthereumProvider;
+  }
+}
+
+function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      const ws = new WebSocket(rpcEndpoint);
+
+      const handleOpen = () => {
+        ws.removeEventListener('open', handleOpen);
+        ws.close();
+        resolve(true);
+      };
+
+      const handleCloseEvent = () => {
+        ws.removeEventListener('close', handleCloseEvent);
+        resolve(false);
+      };
+
+      ws.addEventListener('open', handleOpen);
+      ws.addEventListener('close', handleCloseEvent);
+    } catch {
+      resolve(false);
+    }
+  });
+}
+
+async function switchNetworkInWeb3(network: Network) {
+  if (window.ethereum === undefined) {
+    return;
+  }
+
+  try {
+    // Request to switch to the network (if it's already configured in the wallet)
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: network }],
+    });
+  } catch (error) {
+    if (error.code === 4902) {
+      try {
+        // The network is not added to the wallet, request to add it
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId,
+              rpcUrls: [rpcUrl],
+              chainName,
+              // Add other network parameters if needed
+            },
+          ],
+        });
+      } catch (addError) {
+        console.error('Error adding network:', addError);
+      }
+    } else {
+      console.error('Error switching network:', error);
+    }
+  }
+}
 
 const useNetworkState = () => {
   const [isCustom, setIsCustom] = useState(false);
@@ -85,6 +155,7 @@ const useNetworkState = () => {
       return DEFAULT_NETWORK;
     };
 
+    // TODO: Test connection to the initial cached network, if it fails, use the default network instead. If the initial cached network IS the default network already and the connection is failing... it's a bit more complicated.
     setNetwork(getCachedInitialNetwork());
   }, [
     getCachedCustomRpcEndpoint,
@@ -127,9 +198,9 @@ const useNetworkState = () => {
       console.debug(
         `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
           newNetwork.name
-        } (${newNetwork.networkType}, ${
-          newNetwork.networkNodeType
-        }) with RPC endpoint: ${newNetwork.polkadotEndpoint}`
+        } (${newNetwork.type}, ${newNetwork.nodeType}) with RPC endpoint: ${
+          newNetwork.polkadotEndpoint
+        }`
       );
 
       if (isCustom) {
@@ -163,27 +234,3 @@ const useNetworkState = () => {
 };
 
 export default useNetworkState;
-
-function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    try {
-      const ws = new WebSocket(rpcEndpoint);
-
-      const handleOpen = () => {
-        ws.removeEventListener('open', handleOpen);
-        ws.close();
-        resolve(true);
-      };
-
-      const handleCloseEvent = () => {
-        ws.removeEventListener('close', handleCloseEvent);
-        resolve(false);
-      };
-
-      ws.addEventListener('open', handleOpen);
-      ws.addEventListener('close', handleCloseEvent);
-    } catch {
-      resolve(false);
-    }
-  });
-}

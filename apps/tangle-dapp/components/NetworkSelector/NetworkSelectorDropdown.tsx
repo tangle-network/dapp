@@ -1,10 +1,14 @@
 import { ChainIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { Network } from '@webb-tools/webb-ui-components/constants';
+import {
+  HAS_TANGLE_MAINNET_LAUNCHED,
+  Network,
+  TANGLE_LOCAL_DEV_NETWORK,
+  TANGLE_MAINNET_NETWORK,
+} from '@webb-tools/webb-ui-components/constants';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { DEV_NETWORKS, LIVE_AND_TEST_NETWORKS } from '../../constants/networks';
 import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
 import { TANGLE_TESTNET_NATIVE_CHAIN_NAME } from './NetworkSelectionButton';
@@ -25,29 +29,35 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-between gap-2 py-1">
-      {/* List all networks from the constant network definitions */}
-      {LIVE_AND_TEST_NETWORKS.map((webbNetwork) => (
+      {/* Mainnet network */}
+      {HAS_TANGLE_MAINNET_LAUNCHED && (
         <NetworkOption
-          key={webbNetwork.polkadotEndpoint}
-          isSelected={selectedNetwork?.name === webbNetwork.name}
-          name={webbNetwork.name}
-          onClick={() => onNetworkChange(webbNetwork)}
+          key={TANGLE_MAINNET_NETWORK.polkadotEndpoint}
+          isSelected={selectedNetwork?.name === TANGLE_MAINNET_NETWORK.name}
+          name={TANGLE_MAINNET_NETWORK.name}
+          onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
         />
-      ))}
-
-      {DEV_NETWORKS.length > 0 && (
-        <hr className="w-full border border-mono-40 dark:border-mono-120" />
       )}
 
-      {DEV_NETWORKS.map((webbNetwork) => (
-        <NetworkOption
-          key={webbNetwork.polkadotEndpoint}
-          isSelected={selectedNetwork?.name === webbNetwork.name}
-          name={webbNetwork.name}
-          onClick={() => onNetworkChange(webbNetwork)}
-        />
-      ))}
+      {/* Testnet network */}
+      <NetworkOption
+        key={TANGLE_LOCAL_DEV_NETWORK.polkadotEndpoint}
+        isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
+        name={TANGLE_LOCAL_DEV_NETWORK.name}
+        onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
+      />
 
+      <hr className="w-full border border-mono-40 dark:border-mono-120" />
+
+      {/* Local dev network */}
+      <NetworkOption
+        key={TANGLE_LOCAL_DEV_NETWORK.polkadotEndpoint}
+        isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
+        name={TANGLE_LOCAL_DEV_NETWORK.name}
+        onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
+      />
+
+      {/* Custom network */}
       <NetworkOption
         isSelected={isCustomEndpointSelected}
         name="Custom endpoint"

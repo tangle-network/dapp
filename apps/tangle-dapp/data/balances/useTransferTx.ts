@@ -5,6 +5,7 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import { substrateToEvmAddress } from '../../utils';
 
 type TransferTxContext = {
   receiverAddress: string;
@@ -18,7 +19,10 @@ const useTransferTx = () => {
   > = useCallback(
     (context) => ({
       functionName: 'transfer',
-      arguments: [context.receiverAddress, context.amount],
+      arguments: [
+        substrateToEvmAddress(context.receiverAddress),
+        context.amount,
+      ],
     }),
     []
   );

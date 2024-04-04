@@ -34,6 +34,7 @@ const useUpdateRestakingProfileTx = (
   const { data: roleLedger } = useRestakingRoleLedger();
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
+  // TODO: Break this into two separate hooks for independent and shared profiles.
   const { execute, ...other } = useSubstrateTx<{
     allocations: RestakingAllocationMap;
     maxActiveServices?: number;

@@ -1,5 +1,6 @@
 import { addressToEvm, isAddress } from '@polkadot/util-crypto';
 import { AddressType } from '@webb-tools/dapp-config/types';
+import { toHex } from '@webb-tools/utils';
 import assert from 'assert';
 
 import { isEvmAddress } from './isEvmAddress';
@@ -28,7 +29,10 @@ export const substrateToEvmAddress = (address: string): AddressType => {
     return address;
   }
 
-  const conversionResult = addressToEvm(address).toString();
+  // EVM addresses are 20 bytes long.
+  const conversionResult = toHex(addressToEvm(address), 20);
+
+  console.debug(conversionResult);
 
   assert(
     isEvmAddress(conversionResult),
