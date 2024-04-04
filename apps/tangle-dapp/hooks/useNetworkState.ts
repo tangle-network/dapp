@@ -3,7 +3,7 @@ import {
   Network,
   NETWORK_MAP,
   NetworkId,
-} from '@webb-tools/webb-ui-components/constants';
+} from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useEffect, useState } from 'react';
 import z from 'zod';
 

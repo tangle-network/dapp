@@ -1,6 +1,6 @@
 'use client';
 
-import { Network } from '@webb-tools/webb-ui-components/constants';
+import { Network } from '@webb-tools/webb-ui-components/constants/networks';
 import { create } from 'zustand';
 
 import { DEFAULT_NETWORK } from '../constants/networks';

@@ -1,4 +1,4 @@
-import { TANGLE_TESTNET_NATIVE_NETWORK } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_TESTNET_NATIVE_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { NetworkFeature } from '../types';
 

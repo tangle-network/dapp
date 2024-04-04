@@ -1,4 +1,7 @@
-import { Network, NetworkId } from '@webb-tools/webb-ui-components/constants';
+import {
+  Network,
+  NetworkId,
+} from '@webb-tools/webb-ui-components/constants/networks';
 
 const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   id: NetworkId.CUSTOM,

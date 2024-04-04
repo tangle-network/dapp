@@ -5,7 +5,8 @@ import {
   Network,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
-} from '@webb-tools/webb-ui-components/constants';
+  TANGLE_TESTNET_NATIVE_NETWORK,
+} from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -32,7 +33,6 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
       {/* Mainnet network */}
       {HAS_TANGLE_MAINNET_LAUNCHED && (
         <NetworkOption
-          key={TANGLE_MAINNET_NETWORK.rpcEndpoint}
           isSelected={selectedNetwork?.name === TANGLE_MAINNET_NETWORK.name}
           name={TANGLE_MAINNET_NETWORK.name}
           onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
@@ -41,17 +41,17 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       {/* Testnet network */}
       <NetworkOption
-        key={TANGLE_LOCAL_DEV_NETWORK.rpcEndpoint}
-        isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
-        name={TANGLE_LOCAL_DEV_NETWORK.name}
-        onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
+        isSelected={
+          selectedNetwork?.name === TANGLE_TESTNET_NATIVE_NETWORK.name
+        }
+        name={TANGLE_TESTNET_NATIVE_NETWORK.name}
+        onClick={() => onNetworkChange(TANGLE_TESTNET_NATIVE_NETWORK)}
       />
 
       <hr className="w-full border border-mono-40 dark:border-mono-120" />
 
       {/* Local dev network */}
       <NetworkOption
-        key={TANGLE_LOCAL_DEV_NETWORK.rpcEndpoint}
         isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
