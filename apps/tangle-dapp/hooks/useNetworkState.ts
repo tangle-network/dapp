@@ -1,23 +1,17 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
-import { Network } from '@webb-tools/webb-ui-components/constants';
+import {
+  Network,
+  NETWORK_MAP,
+  NetworkId,
+} from '@webb-tools/webb-ui-components/constants';
 import { useCallback, useEffect, useState } from 'react';
+import z from 'zod';
 
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
 import { getNativeTokenSymbol } from '../utils/polkadot';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
-
-interface EthereumProvider {
-  isMetaMask?: boolean;
-  request: (options: { method: string; params?: Array<any> }) => Promise<any>;
-}
-
-declare global {
-  interface Window {
-    ethereum: EthereumProvider;
-  }
-}
 
 function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   return new Promise((resolve) => {
@@ -43,7 +37,7 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-async function switchNetworkInWeb3(network: Network) {
+async function switchNetworkInWeb3(network: Network): Promise<void> {
   if (window.ethereum === undefined) {
     return;
   }
@@ -84,6 +78,9 @@ const useNetworkState = () => {
   const { network, setNetwork, rpcEndpoint, setNativeTokenSymbol } =
     useNetworkStore();
 
+  const { get: getCachedNativeTokenSymbol, set: setCachedNativeTokenSymbol } =
+    useLocalStorage(LocalStorageKey.NATIVE_TOKEN_SYMBOL);
+
   const {
     get: getCachedCustomRpcEndpoint,
     set: setCachedCustomRpcEndpoint,
@@ -91,13 +88,10 @@ const useNetworkState = () => {
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
   const {
-    set: setCachedNetworkName,
-    get: getCachedNetworkName,
-    remove: removeCachedNetworkName,
-  } = useLocalStorage(LocalStorageKey.WEBB_NETWORK_NAME);
-
-  const { get: getCachedNativeTokenSymbol, set: setCachedNativeTokenSymbol } =
-    useLocalStorage(LocalStorageKey.NATIVE_TOKEN_SYMBOL);
+    set: setCachedNetworkId,
+    get: getCachedNetworkId,
+    remove: removeCachedNetworkId,
+  } = useLocalStorage(LocalStorageKey.KNOWN_NETWORK_ID);
 
   const fetchTokenSymbol = useCallback(
     async (rpcEndpoint: string) => {
@@ -119,25 +113,25 @@ const useNetworkState = () => {
   // Load the initial network from local storage.
   useEffect(() => {
     const getCachedInitialNetwork = () => {
-      const cachedNetworkName = getCachedNetworkName();
+      const cachedNetworkName = getCachedNetworkId();
 
       // If the cached network name is present, that indicates that
       // the cached network is a Webb network. Find it in the list of
       // all Webb networks, and return it.
       if (cachedNetworkName !== null) {
-        const network = ALL_WEBB_NETWORKS.find(
-          (network) => network.name === cachedNetworkName
-        );
+        const parsedNetworkId = z
+          .nativeEnum(NetworkId)
+          .safeParse(cachedNetworkName);
 
-        if (network !== undefined) {
-          return network;
+        if (parsedNetworkId.success) {
+          return NETWORK_MAP[parsedNetworkId.data];
         }
 
         console.warn(
-          `Could not find an associated network for cached network name: ${cachedNetworkName}, deleting from local storage`
+          `Could not find an associated network for cached network id: ${cachedNetworkName}, deleting from local storage`
         );
 
-        removeCachedNetworkName();
+        removeCachedNetworkId();
 
         return DEFAULT_NETWORK;
       }
@@ -159,8 +153,8 @@ const useNetworkState = () => {
     setNetwork(getCachedInitialNetwork());
   }, [
     getCachedCustomRpcEndpoint,
-    getCachedNetworkName,
-    removeCachedNetworkName,
+    getCachedNetworkId,
+    removeCachedNetworkId,
     setNetwork,
   ]);
 
@@ -198,17 +192,17 @@ const useNetworkState = () => {
       console.debug(
         `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
           newNetwork.name
-        } (${newNetwork.type}, ${newNetwork.nodeType}) with RPC endpoint: ${
+        } (${newNetwork.nodeType}) with RPC endpoint: ${
           newNetwork.polkadotEndpoint
         }`
       );
 
       if (isCustom) {
-        removeCachedNetworkName();
+        removeCachedNetworkId();
         setCachedCustomRpcEndpoint(newNetwork.polkadotEndpoint);
       } else {
         removeCachedCustomRpcEndpoint();
-        setCachedNetworkName(newNetwork.name);
+        setCachedNetworkId(newNetwork.id);
       }
 
       await fetchTokenSymbol(newNetwork.polkadotEndpoint);
@@ -218,9 +212,9 @@ const useNetworkState = () => {
     },
     [
       removeCachedCustomRpcEndpoint,
-      removeCachedNetworkName,
+      removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
-      setCachedNetworkName,
+      setCachedNetworkId,
       setNetwork,
       fetchTokenSymbol,
     ]

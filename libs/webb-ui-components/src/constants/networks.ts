@@ -5,11 +5,6 @@ import {
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '.';
 
-/**
- * The network type (use to categorize the network)
- */
-export type NetworkType = 'mainnet' | 'testnet' | 'dev';
-
 export type NetworkNodeType = 'parachain' | 'standalone';
 
 export enum NetworkId {
@@ -20,8 +15,8 @@ export enum NetworkId {
 
 export type Network = {
   id: NetworkId;
+  chainId?: number;
   name: string;
-  type: NetworkType;
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
   polkadotEndpoint: string;
@@ -41,7 +36,6 @@ const TANGLE_MAINNET_RPC_ENDPOINT = 'wss://internal-testing.tangle.tools';
 export const TANGLE_MAINNET_NETWORK: Network = {
   id: NetworkId.TANGLE_MAINNET,
   name: 'Tangle Mainnet',
-  type: 'mainnet',
   nodeType: 'standalone',
   polkadotEndpoint: TANGLE_MAINNET_RPC_ENDPOINT,
   polkadotExplorer: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_RPC_ENDPOINT}#/explorer`,
@@ -50,7 +44,6 @@ export const TANGLE_MAINNET_NETWORK: Network = {
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   id: NetworkId.TANGLE_TESTNET,
   name: 'Tangle Testnet Native',
-  type: 'testnet',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
   polkadotEndpoint: TANGLE_RPC_ENDPOINT,
@@ -64,10 +57,15 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
 export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   id: NetworkId.TANGLE_LOCAL_DEV,
   name: 'Local endpoint (127.0.0.1)',
-  type: 'dev',
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',
   polkadotEndpoint: 'ws://127.0.0.1:9944',
   polkadotExplorer:
     'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
+};
+
+export const NETWORK_MAP: Record<NetworkId, Network> = {
+  [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
+  [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
+  [NetworkId.TANGLE_LOCAL_DEV]: TANGLE_LOCAL_DEV_NETWORK,
 };
