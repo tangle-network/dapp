@@ -11,10 +11,15 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
+import dynamic from 'next/dynamic';
 import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
-import NetworkSelectionButton from '../../components/NetworkSelector/NetworkSelectionButton';
+
+const NetworkSelectionButton = dynamic(
+  () => import('../../components/NetworkSelector/NetworkSelectionButton'),
+  { ssr: false }
+);
 
 const WalletAndChainContainer: FC = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
