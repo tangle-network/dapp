@@ -1,6 +1,5 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/webb-context';
 import { ChainIcon, ChevronDown } from '@webb-tools/icons';
 import {
   Dropdown,
@@ -19,7 +18,6 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_NATIVE_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
-  const { activeChain } = useWebContext();
   const { network, setNetwork, isCustom } = useNetworkState();
 
   const switchToCustomNetwork = useCallback(
@@ -29,22 +27,20 @@ const NetworkSelectionButton: FC = () => {
   );
 
   return (
-    activeChain && (
-      <Dropdown>
-        <DropdownBasicButton>
-          <TriggerButton networkName={network?.name ?? 'Loading'} />
-        </DropdownBasicButton>
+    <Dropdown>
+      <DropdownBasicButton>
+        <TriggerButton networkName={network?.name ?? 'Loading'} />
+      </DropdownBasicButton>
 
-        <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
-          <NetworkSelectorDropdown
-            isCustomEndpointSelected={isCustom}
-            selectedNetwork={network}
-            onSetCustomNetwork={switchToCustomNetwork}
-            onNetworkChange={(newNetwork) => setNetwork(newNetwork, false)}
-          />
-        </DropdownBody>
-      </Dropdown>
-    )
+      <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
+        <NetworkSelectorDropdown
+          isCustomEndpointSelected={isCustom}
+          selectedNetwork={network}
+          onSetCustomNetwork={switchToCustomNetwork}
+          onNetworkChange={(newNetwork) => setNetwork(newNetwork, false)}
+        />
+      </DropdownBody>
+    </Dropdown>
   );
 };
 

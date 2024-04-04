@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { map } from 'rxjs';
 
 import usePolkadotApiRx from './usePolkadotApiRx';
+import useSubstrateAddress from './useSubstrateAddress';
 
 /**
  * A function provided by the consumer of the {@link useStakingLedgerRx}
@@ -15,17 +16,19 @@ export type StakingLedgerFetcherRx<T> = (
 ) => T;
 
 function useStakingLedgerRx<T>(fetcher: StakingLedgerFetcherRx<T>) {
+  const activeSubstrateAddress = useSubstrateAddress();
+
   return usePolkadotApiRx(
     useCallback(
-      (api, activeSubstrateAddress) => {
+      (api) => {
         return (
           api.query.staking
-            .ledger(activeSubstrateAddress)
+            .ledger(activeSubstrateAddress ?? '')
             // TODO: Error handling. Under what circumstances would the ledger be `None`?
             .pipe(map((ledgerOpt) => fetcher(ledgerOpt.unwrap(), api)))
         );
       },
-      [fetcher]
+      [fetcher, activeSubstrateAddress]
     )
   );
 }
