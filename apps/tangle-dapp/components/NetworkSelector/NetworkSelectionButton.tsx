@@ -49,7 +49,7 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
     <button
       type="button"
       className={twMerge(
-        'rounded-lg border-2 p-2 pl-4',
+        'rounded-lg border-2 p-2',
         'bg-mono-0/10 border-mono-60',
         'hover:bg-mono-0/30',
         'dark:bg-mono-0/5 dark:border-mono-140',

@@ -11,7 +11,10 @@ const useDemocracy = () => {
 
   const { data: votes } = usePolkadotApiRx(
     useCallback(
-      (api) => api.query.democracy.votingOf(activeSubstrateAddress ?? ''),
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.democracy.votingOf(activeSubstrateAddress);
+      },
       [activeSubstrateAddress]
     )
   );

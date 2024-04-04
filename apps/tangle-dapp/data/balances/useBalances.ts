@@ -38,8 +38,9 @@ const useBalances = (): AccountBalances => {
   const [balances, setBalances] = useState<AccountBalances | null>(null);
 
   const balancesFetcher = useCallback<ObservableFactory<AccountBalances>>(
-    (api) =>
-      api.query.system.account(activeSubstrateAddress ?? '').pipe(
+    (api) => {
+      if (!activeSubstrateAddress) return null;
+      return api.query.system.account(activeSubstrateAddress).pipe(
         map(({ data }) => {
           // Note that without the null/undefined check, an error
           // reports that `num` is undefined for some reason. Might be
@@ -63,7 +64,8 @@ const useBalances = (): AccountBalances => {
             locked: data.free.sub(transferrable),
           };
         })
-      ),
+      );
+    },
     [activeSubstrateAddress]
   );
 

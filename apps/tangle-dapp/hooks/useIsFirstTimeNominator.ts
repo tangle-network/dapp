@@ -13,7 +13,10 @@ const useIsFirstTimeNominator = () => {
     error: nominatorsError,
   } = usePolkadotApiRx(
     useCallback(
-      (api) => api.query.staking.nominators(activeSubstrateAddress ?? ''),
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.staking.nominators(activeSubstrateAddress);
+      },
       [activeSubstrateAddress]
     )
   );
@@ -32,7 +35,10 @@ const useIsFirstTimeNominator = () => {
     error: bondedInfoError,
   } = usePolkadotApiRx(
     useCallback(
-      (api) => api.query.staking.bonded(activeSubstrateAddress ?? ''),
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.staking.bonded(activeSubstrateAddress);
+      },
       [activeSubstrateAddress]
     )
   );

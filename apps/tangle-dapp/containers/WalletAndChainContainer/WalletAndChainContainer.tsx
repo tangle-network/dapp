@@ -15,7 +15,6 @@ import dynamic from 'next/dynamic';
 import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
-// import NetworkSelectionButton from '../../components/NetworkSelector/NetworkSelectionButton';
 
 const NetworkSelectionButton = dynamic(
   () => import('../../components/NetworkSelector/NetworkSelectionButton'),

@@ -11,7 +11,10 @@ const useBalancesLock = (lockId: SubstrateLockId) => {
 
   const { data: locks } = usePolkadotApiRx(
     useCallback(
-      (api) => api.query.balances.locks(activeSubstrateAddress ?? ''),
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.balances.locks(activeSubstrateAddress);
+      },
       [activeSubstrateAddress]
     )
   );

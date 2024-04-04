@@ -56,7 +56,10 @@ const useVestingInfo = (): VestingInfo => {
 
   const { data: schedulesOpt } = usePolkadotApiRx(
     useCallback(
-      (api) => api.query.vesting.vesting(activeSubstrateAddress ?? ''),
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.vesting.vesting(activeSubstrateAddress);
+      },
       [activeSubstrateAddress]
     )
   );

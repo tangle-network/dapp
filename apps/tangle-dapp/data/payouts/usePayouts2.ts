@@ -35,7 +35,10 @@ const usePayouts2 = () => {
 
   const { data: nominators } = usePolkadotApiRx(
     useCallback(
-      (api) => api.query.staking.nominators(activeSubstrateAddress ?? ''),
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.staking.nominators(activeSubstrateAddress);
+      },
       [activeSubstrateAddress]
     )
   );

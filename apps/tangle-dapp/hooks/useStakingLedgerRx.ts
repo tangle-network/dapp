@@ -21,9 +21,10 @@ function useStakingLedgerRx<T>(fetcher: StakingLedgerFetcherRx<T>) {
   return usePolkadotApiRx(
     useCallback(
       (api) => {
+        if (!activeSubstrateAddress) return null;
         return (
           api.query.staking
-            .ledger(activeSubstrateAddress ?? '')
+            .ledger(activeSubstrateAddress)
             // TODO: Error handling. Under what circumstances would the ledger be `None`?
             .pipe(map((ledgerOpt) => fetcher(ledgerOpt.unwrap(), api)))
         );
