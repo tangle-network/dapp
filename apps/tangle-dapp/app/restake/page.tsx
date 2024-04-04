@@ -1,12 +1,12 @@
 'use client';
 
+import { BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 
-import { TANGLE_TOKEN_DECIMALS } from '../../constants';
 import useRestakingEarnings from '../../data/restaking/useRestakingEarnings';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
+import useRestakingTotalRewards from '../../data/restaking/useRestakingTotalRewards';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import JobsCard from './JobsCard';
 import OverviewCard from './OverviewCard';
@@ -27,37 +27,18 @@ const RestakePage = () => {
   const { data: earningsRecord, isLoading: isEarningsLoading } =
     useRestakingEarnings(accountAddress);
 
-  const earnings = useMemo(() => {
-    if (isEarningsLoading || !earningsRecord) return null;
-
-    return Object.values(earningsRecord).reduce((prev, curr) => prev + curr, 0);
-  }, [earningsRecord, isEarningsLoading]);
+  const { data: rewards, isLoading: isRewardsLoading } =
+    useRestakingTotalRewards();
 
   const { availableForRestake, totalRestaked } = useMemo(() => {
     const totalRestaked = ledgerOpt?.isSome
-      ? // Dummy check to whether format the total restaked amount
-        // or not, as the local testnet is in wei but the live one is in unit
-        ledgerOpt.unwrap().total.toString().length > 10
-        ? +formatUnits(
-            ledgerOpt.unwrap().total.toBigInt(),
-            TANGLE_TOKEN_DECIMALS
-          )
-        : ledgerOpt.unwrap().total.toNumber()
+      ? ledgerOpt.unwrap().total.toBn()
       : null;
 
-    const fmtMaxRestakingAmount =
-      maxRestakingAmount !== null
-        ? +formatUnits(
-            BigInt(maxRestakingAmount.toString()),
-            TANGLE_TOKEN_DECIMALS
-          )
-        : null;
-
-    if (fmtMaxRestakingAmount !== null && totalRestaked !== null) {
-      const availableForRestake =
-        fmtMaxRestakingAmount > totalRestaked
-          ? fmtMaxRestakingAmount - totalRestaked
-          : 0;
+    if (maxRestakingAmount !== null && totalRestaked !== null) {
+      const availableForRestake = maxRestakingAmount.gt(totalRestaked)
+        ? maxRestakingAmount.sub(totalRestaked)
+        : BN_ZERO;
 
       return {
         totalRestaked,
@@ -67,7 +48,7 @@ const RestakePage = () => {
 
     return {
       totalRestaked,
-      availableForRestake: fmtMaxRestakingAmount,
+      availableForRestake: maxRestakingAmount,
     };
   }, [ledgerOpt, maxRestakingAmount]);
 
@@ -76,10 +57,10 @@ const RestakePage = () => {
       <OverviewCard
         hasExistingProfile={hasExistingProfile}
         profileTypeOpt={substrateProfileTypeOpt}
-        isLoading={isEarningsLoading}
+        isLoading={isEarningsLoading || isRewardsLoading}
         totalRestaked={totalRestaked}
         availableForRestake={availableForRestake}
-        earnings={earnings}
+        rewards={rewards}
       />
 
       <RoleDistributionCard

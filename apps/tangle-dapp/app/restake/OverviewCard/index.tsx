@@ -1,24 +1,25 @@
 'use client';
 
-import { formatBalance } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
+import { TANGLE_TOKEN_DECIMALS } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakingProfileType } from '../../../types';
-import Optional from '../../../utils/Optional';
+import type Optional from '../../../utils/Optional';
 import ActionButton from './ActionButton';
 
 type OverviewCardProps = ComponentProps<'div'> & {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
   isLoading?: boolean;
-  totalRestaked?: number | null;
-  availableForRestake?: number | null;
-  earnings?: number | null;
+  totalRestaked?: BN | null;
+  availableForRestake?: BN | null;
+  rewards?: BN | null;
   apy?: number | null;
 };
 
@@ -28,7 +29,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
       isLoading,
       totalRestaked = null,
       availableForRestake = null,
-      earnings = null,
+      rewards = null,
       apy = null,
       hasExistingProfile,
       profileTypeOpt,
@@ -60,7 +61,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
           <StatsItem
             isLoading={isLoading}
             title="Earnings"
-            value={hasExistingProfile ? earnings : null}
+            value={rewards}
             suffix={nativeTokenSymbol}
           />
 
@@ -83,7 +84,7 @@ export default OverviewCard;
 type StatsItemProps = {
   title: string;
   titleTooltip?: string;
-  value: number | null | undefined;
+  value: BN | number | null;
   valueTooltip?: string;
   isBoldText?: boolean;
   isLoading?: boolean;
@@ -99,6 +100,8 @@ const StatsItem: FC<StatsItemProps> = ({
   isLoading,
   suffix = '',
 }) => {
+  const isValueBN = BN.isBN(value);
+
   return (
     <div className="gap-3">
       <div className="flex items-center gap-1">
@@ -123,8 +126,9 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {typeof value === 'string' || typeof value === 'number'
+              {typeof value === 'number' || isValueBN
                 ? formatBalance(value, {
+                    decimals: isValueBN ? TANGLE_TOKEN_DECIMALS : undefined,
                     withUnit: suffix,
                   })
                 : '--'}
