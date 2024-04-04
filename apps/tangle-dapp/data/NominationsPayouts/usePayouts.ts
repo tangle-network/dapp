@@ -133,11 +133,13 @@ export default function usePayouts(
                     validator
                   );
 
-                  const claimedEras = validatorLedger
-                    .unwrap()
-                    .claimedRewards.map((era) =>
-                      Number(era.toString().replace(/,/g, ''))
-                    );
+                  // TODO: For some reason, this can be `undefined`. Might be caused to the Substrate types being out of date? For now, default to an empty array.
+                  const claimedRewards =
+                    validatorLedger.unwrap().claimedRewards ?? [];
+
+                  const claimedEras = claimedRewards.map((era) =>
+                    Number(era.toString().replace(/,/g, ''))
+                  );
 
                   if (claimedEras.includes(era)) {
                     return;
