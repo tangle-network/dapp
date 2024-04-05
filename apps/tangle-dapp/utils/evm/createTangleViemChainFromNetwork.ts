@@ -31,9 +31,7 @@ const createTangleViemChainFromNetwork = (
     blockExplorers: {
       default: {
         name: blockExplorerName,
-        // TODO: Need to ensure that this will work as expected and not cause issues? Is it fine to default to the Polkadot explorer for a Viem chain?
-        // Default to the Polkadot explorer if the EVM explorer URL is not set.
-        url: network.evmExplorerUrl ?? network.polkadotExplorerUrl,
+        url: network.evmExplorerUrl,
       },
     },
     rpcUrls: {

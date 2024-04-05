@@ -21,7 +21,7 @@ export type Network = {
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
   polkadotExplorerUrl: string;
-  evmExplorerUrl?: string;
+  evmExplorerUrl: string;
   avatar?: string;
 
   /**
@@ -84,6 +84,8 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   httpRpcEndpoint: 'http://127.0.0.1:9944',
   polkadotExplorerUrl:
     'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
+  // TODO: Use a generic EVM block explorer that supports passing in an RPC url. For now, this isn't a priority since this is the case only for the local development network, and this URL is only used for convinience.
+  evmExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_WS_RPC_ENDPOINT}#/explorer`,
 };
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
