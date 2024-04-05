@@ -210,7 +210,7 @@ const EligibleSection: FC<Props> = ({
 
         <div className="space-y-6 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
-            You will receive the total liquid balance of...
+            You will receive the total balance of...
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
@@ -236,10 +236,11 @@ const EligibleSection: FC<Props> = ({
                 will be available immediately as free balance.
               </Typography>
 
-              {/* Vesting */}
+              {/* Vesting: based on Tangle Genesis Allocations */}
+              {/* https://docs.tangle.tools/docs/tokenomics/allocation/ */}
               <Typography variant="body1" fw="bold" ta="center">
                 {`${formatTokenBalance(vestingAmount, nativeTokenSymbol)}`} will
-                be vested over 24 months w/ a 1 month cliff.
+                be vested over 24 months with a 1 month cliff.
               </Typography>
             </div>
           )}
