@@ -8,9 +8,10 @@ import {
   Precompile,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
-import { createEvmWalletClient, evmPublicClient } from '../utils/evm';
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
+import useViemPublicClient from './useViemPublicClient';
+import useViemWalletClient from './useViemWalletClient';
 
 // TODO: For some reason, Viem returns `any` for the tx receipt. Perhaps it is because it has no knowledge of the network, and thus no knowledge of its produced tx receipts. As a temporary workaround, use this custom type.
 type TxReceipt = {
@@ -60,10 +61,17 @@ function useEvmPrecompileAbiCall<
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const activeEvmAddress = useEvmAddress();
+  const viemPublicClient = useViemPublicClient();
+  const viemWalletClient = useViemWalletClient();
 
   const execute = useCallback(
     async (context: Context) => {
-      if (activeEvmAddress === null || status === TxStatus.PROCESSING) {
+      if (
+        activeEvmAddress === null ||
+        status === TxStatus.PROCESSING ||
+        viemWalletClient === null ||
+        viemPublicClient === null
+      ) {
         return;
       }
 
@@ -79,7 +87,7 @@ function useEvmPrecompileAbiCall<
       setStatus(TxStatus.PROCESSING);
 
       try {
-        const { request } = await evmPublicClient.simulateContract({
+        const { request } = await viemPublicClient.simulateContract({
           address: getAddressOfPrecompile(precompile),
           abi: getAbiForPrecompile(precompile),
           functionName: factoryResult.functionName,
@@ -87,16 +95,15 @@ function useEvmPrecompileAbiCall<
           account: activeEvmAddress,
         });
 
-        const evmWalletClient = createEvmWalletClient(activeEvmAddress);
-        const txHash = await evmWalletClient.writeContract(request);
+        const txHash = await viemWalletClient.writeContract(request);
 
         const txReceipt: TxReceipt =
-          await evmPublicClient.waitForTransactionReceipt({
+          await viemPublicClient.waitForTransactionReceipt({
             hash: txHash,
             // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
           });
 
-        console.debug('txReceipt', txReceipt);
+        console.debug('EVM transaction receipt:', txReceipt);
 
         setStatus(
           txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
@@ -110,7 +117,14 @@ function useEvmPrecompileAbiCall<
 
       // TODO: Return clean up.
     },
-    [activeEvmAddress, factory, precompile, status]
+    [
+      activeEvmAddress,
+      factory,
+      precompile,
+      status,
+      viemPublicClient,
+      viemWalletClient,
+    ]
   );
 
   // Prevent the consumer from executing the call if the active

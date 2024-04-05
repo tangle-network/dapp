@@ -5,7 +5,7 @@ import {
 import { Chain } from 'viem';
 
 const createTangleViemChainFromNetwork = (
-  network: Network & { chainId: number }
+  network: Network & { chainId: number; httpRpcEndpoint: string }
 ): Chain => {
   const currencyName =
     network.id === NetworkId.TANGLE_MAINNET
@@ -38,10 +38,10 @@ const createTangleViemChainFromNetwork = (
     },
     rpcUrls: {
       default: {
-        http: [network.rpcEndpoint],
+        http: [network.httpRpcEndpoint],
       },
       public: {
-        http: [network.rpcEndpoint],
+        http: [network.httpRpcEndpoint],
       },
     },
   };

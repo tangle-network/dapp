@@ -20,10 +20,24 @@ export type Network = {
   name: string;
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
-  rpcEndpoint: string;
   polkadotExplorerUrl: string;
   evmExplorerUrl?: string;
   avatar?: string;
+
+  /**
+   * The Web Socket RPC endpoint of the network.
+   *
+   * Usually used for Substrate-based connections.
+   */
+  wsRpcEndpoint: string;
+
+  /**
+   * The HTTP RPC endpoint of the network.
+   *
+   * Usually used for EVM-based actions, such as Viem wallet
+   * client requests.
+   */
+  httpRpcEndpoint?: string;
 };
 
 /**
@@ -38,7 +52,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
   id: NetworkId.TANGLE_MAINNET,
   name: 'Tangle Mainnet',
   nodeType: 'standalone',
-  rpcEndpoint: TANGLE_MAINNET_RPC_ENDPOINT,
+  wsRpcEndpoint: TANGLE_MAINNET_RPC_ENDPOINT,
   polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_RPC_ENDPOINT}#/explorer`,
 };
 
@@ -48,7 +62,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   name: 'Tangle Testnet Native',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
-  rpcEndpoint: TANGLE_RPC_ENDPOINT,
+  wsRpcEndpoint: TANGLE_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
 };
@@ -62,7 +76,8 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   name: 'Local endpoint (127.0.0.1)',
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',
-  rpcEndpoint: 'ws://127.0.0.1:9944',
+  wsRpcEndpoint: 'ws://127.0.0.1:9944',
+  httpRpcEndpoint: 'http://127.0.0.1:9944',
   polkadotExplorerUrl:
     'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
 };

@@ -44,7 +44,11 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
   // Cannot switch networks on EVM wallets if the network
   // doesn't have a defined chain id or if there is no
   // EVM wallet extension present.
-  if (window.ethereum === undefined || network.chainId === undefined) {
+  if (
+    window.ethereum === undefined ||
+    network.chainId === undefined ||
+    network.httpRpcEndpoint === undefined
+  ) {
     return;
   }
 
@@ -73,7 +77,7 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
         params: [
           {
             chainId: network.chainId.toString(),
-            rpcUrls: [network.rpcEndpoint],
+            rpcUrls: [network.httpRpcEndpoint],
             chainName: network.name,
             // TODO: Any other network params?
           },
@@ -201,10 +205,10 @@ const useNetworkState = () => {
       // Already on the requested network.
       if (network.id === newNetwork.id) {
         return;
-      } else if (!(await testRpcEndpointConnection(newNetwork.rpcEndpoint))) {
+      } else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
         notificationApi({
           variant: 'error',
-          message: `Unable to connect to the requested network: ${newNetwork.rpcEndpoint}`,
+          message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoint}`,
         });
 
         return;
@@ -213,18 +217,20 @@ const useNetworkState = () => {
       console.debug(
         `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
           newNetwork.name
-        } (${newNetwork.nodeType}) with RPC endpoint: ${newNetwork.rpcEndpoint}`
+        } (${newNetwork.nodeType}) with RPC endpoint: ${
+          newNetwork.wsRpcEndpoint
+        }`
       );
 
       if (isCustom) {
         removeCachedNetworkId();
-        setCachedCustomRpcEndpoint(newNetwork.rpcEndpoint);
+        setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
       } else {
         removeCachedCustomRpcEndpoint();
         setCachedNetworkId(newNetwork.id);
       }
 
-      await fetchTokenSymbol(newNetwork.rpcEndpoint);
+      await fetchTokenSymbol(newNetwork.wsRpcEndpoint);
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);

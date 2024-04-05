@@ -7,7 +7,7 @@ const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   id: NetworkId.CUSTOM,
   name: 'Custom network',
   nodeType: 'standalone',
-  rpcEndpoint: customRpcEndpoint,
+  wsRpcEndpoint: customRpcEndpoint,
   polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${customRpcEndpoint}#/explorer`,
 });
 

@@ -16,9 +16,9 @@ const useNetworkStore = create<{
   nativeTokenSymbol: string;
   setNativeTokenSymbol: (nativeTokenSymbol: string) => void;
 }>((set) => ({
-  rpcEndpoint: DEFAULT_NETWORK.rpcEndpoint,
+  rpcEndpoint: DEFAULT_NETWORK.wsRpcEndpoint,
   network: DEFAULT_NETWORK,
-  setNetwork: (network) => set({ network, rpcEndpoint: network.rpcEndpoint }),
+  setNetwork: (network) => set({ network, rpcEndpoint: network.wsRpcEndpoint }),
   nativeTokenSymbol: '',
   setNativeTokenSymbol: (nativeTokenSymbol) => set({ nativeTokenSymbol }),
 }));
