@@ -21,6 +21,7 @@ import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useNetworkStore from '../../context/useNetworkStore';
+import useBalances from '../../data/balances/useBalances';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -37,6 +38,7 @@ const Actions: FC = () => {
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
   const isPayoutsAvailable = usePayoutsAvailability();
   const activeSubstrateAddress = useSubstrateAddress();
+  const { transferrable: transferrableBalance } = useBalances();
 
   const {
     isVesting,
@@ -56,8 +58,13 @@ const Actions: FC = () => {
           label="Transfer"
           Icon={ArrowLeftRightLineIcon}
           onClick={() => setIsTransferModalOpen(true)}
-          // Disable while no account is connected.
-          isDisabled={activeSubstrateAddress === null}
+          // Disable while no account is connected, or when the active
+          // account has no funds.
+          isDisabled={
+            activeSubstrateAddress === null ||
+            transferrableBalance === null ||
+            transferrableBalance.isZero()
+          }
         />
 
         <ActionItem

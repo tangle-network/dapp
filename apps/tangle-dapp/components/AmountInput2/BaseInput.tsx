@@ -34,6 +34,7 @@ export type BaseInputProps = {
   bodyClassName?: string;
   dropdownBodyClassName?: string;
   isFullWidth?: boolean;
+  isDisabled?: boolean;
 };
 
 const BaseInput: FC<BaseInputProps> = ({
@@ -52,6 +53,7 @@ const BaseInput: FC<BaseInputProps> = ({
   bodyClassName,
   dropdownBodyClassName,
   isFullWidth = false,
+  isDisabled = false,
 }) => {
   const { addError, removeError } = useErrorCountContext();
 
@@ -61,6 +63,7 @@ const BaseInput: FC<BaseInputProps> = ({
     }
   }, [dropdownBody, setIsDropdownVisible]);
 
+  // TODO: Do not set error (or remove it if already set) if the input is disabled.
   useEffect(() => {
     if (errorMessage !== undefined) {
       addError(id);
@@ -68,6 +71,9 @@ const BaseInput: FC<BaseInputProps> = ({
       removeError(id);
     }
   }, [addError, errorMessage, id, removeError]);
+
+  // Do not consider the input as having an error if it's disabled.
+  const hasError = errorMessage !== undefined && !isDisabled;
 
   return (
     <div
@@ -84,7 +90,7 @@ const BaseInput: FC<BaseInputProps> = ({
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
-          errorMessage !== undefined && 'border-red-50 dark:border-red-50',
+          hasError && 'border-red-50 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName
         )}
@@ -141,7 +147,7 @@ const BaseInput: FC<BaseInputProps> = ({
         )}
       </div>
 
-      {errorMessage !== undefined && (
+      {hasError && (
         <Typography className="dark:text-mono-100" variant="body1" fw="normal">
           *{errorMessage}
         </Typography>

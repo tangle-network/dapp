@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef } from 'react';
 
-import { useErrorCountContext } from '../../context/ErrorsContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import BaseInput, { BaseInputProps } from './BaseInput';
 import useInputAmount from './useInputAmount';
@@ -16,9 +15,11 @@ export type AmountInput2Props = {
   maxErrorMessage?: string;
   showMaxAction?: boolean;
   amount: BN | null;
-  setAmount: (newAmount: BN | null) => void;
   isDisabled?: boolean;
   baseInputOverrides?: Partial<BaseInputProps>;
+  errorOnEmptyValue?: boolean;
+  setAmount: (newAmount: BN | null) => void;
+  setErrorMessage?: (error: string | null) => void;
 };
 
 const AmountInput2: FC<AmountInput2Props> = ({
@@ -33,34 +34,29 @@ const AmountInput2: FC<AmountInput2Props> = ({
   showMaxAction = true,
   isDisabled = false,
   baseInputOverrides,
+  errorOnEmptyValue = false,
+  setErrorMessage,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
-  const { addError, removeError } = useErrorCountContext();
-
-  // Add error if there is an error message, or remove
-  // it if there is none. This helps parent components
-  // to easily track whether there are any errors in their
-  // children, and allows them to determine whether to enable
-  // the submit or continue button.
-  useEffect(() => {
-    if (errorMessage !== null) {
-      addError(id);
-    } else {
-      removeError(id);
-    }
-  });
 
   const { displayAmount, refreshDisplayAmount, errorMessage, handleChange } =
     useInputAmount(
       amount,
       min ?? null,
       max ?? null,
-      true,
+      errorOnEmptyValue,
       setAmount,
       minErrorMessage,
       maxErrorMessage
     );
+
+  // Set the error message in the parent component.
+  useEffect(() => {
+    if (setErrorMessage !== undefined) {
+      setErrorMessage(errorMessage);
+    }
+  }, [errorMessage, setErrorMessage]);
 
   const setMaxAmount = useCallback(() => {
     if (max !== undefined) {
@@ -94,6 +90,7 @@ const AmountInput2: FC<AmountInput2Props> = ({
       id={id}
       title={title}
       errorMessage={errorMessage ?? undefined}
+      isDisabled={isDisabled}
       {...baseInputOverrides}
       actions={actions}
     >
