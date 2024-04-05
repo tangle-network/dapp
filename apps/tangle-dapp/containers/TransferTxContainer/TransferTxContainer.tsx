@@ -75,9 +75,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const { transferrable: transferrableBalance } = useBalances();
   const [amount, setAmount] = useState<BN | null>(null);
   const [receiverAddress, setReceiverAddress] = useState('');
-  const [amountErrorMessage, setAmountErrorMessage] = useState<string | null>(
-    null
-  );
+  const [hasErrors, setHasErrors] = useState(false);
 
   const {
     execute: executeTransferTx,
@@ -109,13 +107,20 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     executeTransferTx({ receiverAddress, amount });
   }, [amount, executeTransferTx, receiverAddress]);
 
+  const handleSetErrorMessage = useCallback(
+    (error: string | null) => {
+      setHasErrors(error !== null);
+    },
+    [setHasErrors]
+  );
+
   const isReady = status !== TxStatus.PROCESSING;
 
   const isDataValid =
     amount !== null &&
     amount.gt(BN_ZERO) &&
     receiverAddress !== '' &&
-    amountErrorMessage === null;
+    !hasErrors;
 
   const canInitiateTx = isReady && isDataValid;
 
@@ -163,7 +168,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               setAmount={setAmount}
               baseInputOverrides={{ isFullWidth: true }}
               maxErrorMessage="Not enough available balance"
-              setErrorMessage={setAmountErrorMessage}
+              setErrorMessage={handleSetErrorMessage}
             />
 
             <AddressInput2
@@ -175,6 +180,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               value={receiverAddress}
               setValue={setReceiverAddress}
               isDisabled={!isReady}
+              setErrorMessage={handleSetErrorMessage}
             />
           </BridgeInputGroup>
 

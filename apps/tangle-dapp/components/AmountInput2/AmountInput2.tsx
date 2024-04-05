@@ -70,7 +70,9 @@ const AmountInput2: FC<AmountInput2Props> = ({
     <>
       {max !== undefined && showMaxAction && (
         <Button
-          isDisabled={amount === null || amount.eq(max) || isDisabled}
+          isDisabled={
+            max === null || (amount !== null && amount.eq(max)) || isDisabled
+          }
           key="max"
           size="sm"
           variant="utility"

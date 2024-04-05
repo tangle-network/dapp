@@ -4,7 +4,6 @@ import { isAddress } from '@polkadot/util-crypto';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
-import { useErrorCountContext } from '../../context/ErrorsContext';
 import { isEvmAddress } from '../../utils/isEvmAddress';
 import BaseInput, { BaseInputProps } from '../AmountInput2/BaseInput';
 
@@ -21,9 +20,10 @@ export type AddressInput2Props = {
   type: AddressType;
   showPasteButton?: boolean;
   value: string;
-  setValue: (newValue: string) => void;
   isDisabled?: boolean;
   baseInputOverrides?: Partial<BaseInputProps>;
+  setValue: (newValue: string) => void;
+  setErrorMessage?: (error: string | null) => void;
 };
 
 const AddressInput2: FC<AddressInput2Props> = ({
@@ -36,23 +36,10 @@ const AddressInput2: FC<AddressInput2Props> = ({
   showPasteButton = true,
   isDisabled = false,
   baseInputOverrides,
+  setErrorMessage: setErrorMessageOnParent,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { addError, removeError } = useErrorCountContext();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Add error if there is an error message, or remove
-  // it if there is none. This helps parent components
-  // to easily track whether there are any errors in their
-  // children, and allows them to determine whether to enable
-  // the submit or continue button.
-  useEffect(() => {
-    if (errorMessage !== null) {
-      addError(id);
-    } else {
-      removeError(id);
-    }
-  });
 
   const handlePasteAction = useCallback(() => {
     navigator.clipboard.readText().then((text) => {
@@ -97,12 +84,21 @@ const AddressInput2: FC<AddressInput2Props> = ({
         setErrorMessage('Invalid EVM address');
       } else if (type === AddressType.Substrate && !isSubstrate) {
         setErrorMessage('Invalid Substrate address');
+      } else {
+        setErrorMessage(null);
       }
 
       setValue(newValue);
     },
     [setValue, type]
   );
+
+  // Set the error message in the parent component.
+  useEffect(() => {
+    if (setErrorMessageOnParent !== undefined) {
+      setErrorMessageOnParent(errorMessage);
+    }
+  }, [errorMessage, setErrorMessageOnParent]);
 
   return (
     <BaseInput

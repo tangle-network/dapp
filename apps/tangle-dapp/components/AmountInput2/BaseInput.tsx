@@ -95,7 +95,7 @@ const BaseInput: FC<BaseInputProps> = ({
           wrapperClassName
         )}
       >
-        <div className="flex flex-col gap-1 mr-auto">
+        <div className="flex flex-col gap-1 w-full mr-auto">
           <Label
             className="text-mono-100 dark:text-mono-80 font-bold"
             htmlFor={id}
