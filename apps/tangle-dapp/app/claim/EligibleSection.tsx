@@ -224,6 +224,7 @@ const EligibleSection: FC<Props> = ({
               : ''}
           </Typography>
 
+          {/* Only show this when there's vesting amount */}
           {vestingAmount.gt(BN_ZERO) && (
             <div>
               {/* Free Balance */}
