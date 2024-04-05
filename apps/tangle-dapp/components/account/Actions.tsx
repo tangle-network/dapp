@@ -26,7 +26,7 @@ import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -37,7 +37,7 @@ const Actions: FC = () => {
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
   const isPayoutsAvailable = usePayoutsAvailability();
-  const activeSubstrateAddress = useSubstrateAddress();
+  const activeAccountAddress = useActiveAccountAddress();
   const { transferrable: transferrableBalance } = useBalances();
 
   const {
@@ -61,7 +61,7 @@ const Actions: FC = () => {
           // Disable while no account is connected, or when the active
           // account has no funds.
           isDisabled={
-            activeSubstrateAddress === null ||
+            activeAccountAddress === null ||
             transferrableBalance === null ||
             transferrableBalance.isZero()
           }
