@@ -16,10 +16,10 @@ import Link from 'next/link';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
-import AddressInput2, {
+import AddressInput, {
   AddressType,
-} from '../../components/AddressInput2/AddressInput2';
-import AmountInput2 from '../../components/AmountInput2/AmountInput2';
+} from '../../components/AddressInput/AddressInput';
+import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useTransferTx from '../../data/balances/useTransferTx';
@@ -159,7 +159,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           />
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
-            <AmountInput2
+            <AmountInput
               id="transfer-tx-amount-input"
               title="Amount"
               max={transferrableBalance ?? undefined}
@@ -171,7 +171,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               setErrorMessage={handleSetErrorMessage}
             />
 
-            <AddressInput2
+            <AddressInput
               id="transfer-tx-receiver-input"
               type={AddressType.Both}
               title="Receiver Address"

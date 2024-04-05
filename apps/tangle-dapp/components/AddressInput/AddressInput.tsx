@@ -5,7 +5,7 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { isEvmAddress } from '../../utils/isEvmAddress';
-import BaseInput, { BaseInputProps } from '../AmountInput2/BaseInput';
+import BaseInput, { BaseInputProps } from '../AmountInput/BaseInput';
 
 export enum AddressType {
   EVM,
@@ -13,7 +13,7 @@ export enum AddressType {
   Both,
 }
 
-export type AddressInput2Props = {
+export type AddressInputProps = {
   id: string;
   title: string;
   placeholder?: string;
@@ -26,7 +26,7 @@ export type AddressInput2Props = {
   setErrorMessage?: (error: string | null) => void;
 };
 
-const AddressInput2: FC<AddressInput2Props> = ({
+const AddressInput: FC<AddressInputProps> = ({
   id,
   title,
   placeholder,
@@ -126,4 +126,4 @@ const AddressInput2: FC<AddressInput2Props> = ({
   );
 };
 
-export default AddressInput2;
+export default AddressInput;

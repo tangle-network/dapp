@@ -3,8 +3,8 @@ import { Close, LockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import BaseInput from '../../../components/AmountInput2/BaseInput';
-import useInputAmount from '../../../components/AmountInput2/useInputAmount';
+import BaseInput from '../../../components/AmountInput/BaseInput';
+import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';

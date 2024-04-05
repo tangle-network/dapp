@@ -3,8 +3,8 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useRef } from 'react';
 
-import BaseInput from '../../../components/AmountInput2/BaseInput';
-import useInputAmount from '../../../components/AmountInput2/useInputAmount';
+import BaseInput from '../../../components/AmountInput/BaseInput';
+import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';

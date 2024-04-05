@@ -3,7 +3,7 @@ import { CheckBox, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import BaseInput from '../../../components/AmountInput2/BaseInput';
+import BaseInput from '../../../components/AmountInput/BaseInput';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { RestakingService } from '../../../types';

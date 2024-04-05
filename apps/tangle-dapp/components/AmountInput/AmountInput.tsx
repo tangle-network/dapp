@@ -6,7 +6,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import BaseInput, { BaseInputProps } from './BaseInput';
 import useInputAmount from './useInputAmount';
 
-export type AmountInput2Props = {
+export type AmountInputProps = {
   id: string;
   title: string;
   min?: BN;
@@ -22,7 +22,7 @@ export type AmountInput2Props = {
   setErrorMessage?: (error: string | null) => void;
 };
 
-const AmountInput2: FC<AmountInput2Props> = ({
+const AmountInput: FC<AmountInputProps> = ({
   id,
   title,
   amount,
@@ -114,4 +114,4 @@ const AmountInput2: FC<AmountInput2Props> = ({
   );
 };
 
-export default AmountInput2;
+export default AmountInput;
