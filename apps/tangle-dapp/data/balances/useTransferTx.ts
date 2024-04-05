@@ -31,12 +31,12 @@ const useTransferTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<TransferTxContext> = useCallback(
     async (api, _activeSubstrateAddress, context) =>
-      // By 'keep alive' it means that the transfer will be
-      // canceled if that transfer would cause the sender's
+      // By 'allow death' it means that the transfer will not
+      // be canceled if that transfer would cause the sender's
       // account to drop below the existential deposit, which
-      // would otherwise essentially cause the account to be
-      // 'reaped', or deleted from the chain.
-      api.tx.balances.transferKeepAlive(
+      // would essentially cause the account to be 'reaped', or
+      // deleted from the chain.
+      api.tx.balances.transferAllowDeath(
         // Convert the EVM address to a Substrate address, in case
         // that it was provided as an EVM address.
         evmToSubstrateAddress(context.receiverAddress),

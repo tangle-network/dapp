@@ -129,7 +129,7 @@ function useSubstrateTx<Context = void>(
 
             // Useful for debugging.
             if (error !== null) {
-              console.debug('Transaction failed', error, status);
+              console.debug('Substrate transaction failed', error, status);
             }
           }
         );
