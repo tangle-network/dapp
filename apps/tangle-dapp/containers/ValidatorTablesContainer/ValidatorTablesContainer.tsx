@@ -35,7 +35,7 @@ const ValidatorTablesContainer = () => {
             icon="⏳"
           />
         ) : isActiveValidatorsLoading ? (
-          <ContainerSkeleton numOfRows={5} />
+          <ContainerSkeleton />
         ) : (
           <ValidatorTableContainer data={activeValidatorsData} />
         )}
