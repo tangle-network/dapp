@@ -9,6 +9,8 @@ const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   nodeType: 'standalone',
   wsRpcEndpoint: customRpcEndpoint,
   polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${customRpcEndpoint}#/explorer`,
+  // TODO: Use a generic EVM block explorer that supports passing in an RPC url. For now, this isn't a priority since this is the case only for the local development network, and this URL is only used for convenience.
+  evmExplorerUrl: `https://polkadot.js.org/apps/?rpc=${customRpcEndpoint}#/explorer`,
 });
 
 export default createCustomNetwork;
