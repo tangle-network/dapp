@@ -10,7 +10,7 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -53,10 +53,6 @@ export default function ClaimPage() {
       subTitle: 'OOPS!',
     };
   }, [claimInfo, isClaiming]);
-
-  const handleClaimCompletion = useCallback(() => {
-    setClaimInfo(false);
-  }, []);
 
   useEffect(() => {
     if (!activeAccount) return;
@@ -217,7 +213,6 @@ export default function ClaimPage() {
         {isWalletConnected && !isClaiming && claimInfo && (
           <EligibleSection
             claimInfo={claimInfo}
-            onClaimCompleted={handleClaimCompletion}
             setIsClaiming={setIsClaiming}
           />
         )}

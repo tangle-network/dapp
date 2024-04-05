@@ -40,13 +40,11 @@ enum Step {
 
 type Props = {
   claimInfo: ClaimInfoType;
-  onClaimCompleted: () => void;
   setIsClaiming: (isClaiming: boolean) => void;
 };
 
 const EligibleSection: FC<Props> = ({
   claimInfo: { totalAmount, vestingAmount, isRegularStatement },
-  onClaimCompleted,
   setIsClaiming,
 }) => {
   assert(
@@ -155,9 +153,7 @@ const EligibleSection: FC<Props> = ({
       const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      setIsClaiming(false);
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
-      onClaimCompleted();
       newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
 
@@ -184,7 +180,6 @@ const EligibleSection: FC<Props> = ({
     activeApi,
     rpcEndpoint,
     notificationApi,
-    onClaimCompleted,
     setIsClaiming,
     recipient,
     router,
