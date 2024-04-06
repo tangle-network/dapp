@@ -17,7 +17,7 @@ import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
-import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
@@ -79,7 +79,7 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [activeAccount?.address]);
 
   const { data: delegatorsData } = useNominations(substrateAddress);
-  const { isFirstTimeNominator } = useIsFirstTimeNominator();
+  const { isBondedOrNominating } = useIsBondedOrNominating();
   const { data: payoutsData } = usePayouts(substrateAddress);
 
   const currentNominations = useMemo(() => {
@@ -162,7 +162,7 @@ const DelegationsPayoutsContainer: FC = () => {
         tabs={[...Object.values(DelegationsAndPayoutsTab)]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={
-          activeAccount?.address && !isFirstTimeNominator ? (
+          activeAccount?.address && isBondedOrNominating ? (
             activeTab === DelegationsAndPayoutsTab.NOMINATIONS ? (
               <ManageButtonContainer
                 onUpdateNominations={() =>

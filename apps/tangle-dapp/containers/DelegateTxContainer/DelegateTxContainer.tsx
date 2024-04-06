@@ -31,7 +31,7 @@ import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StakingPayee } from '../../types';
@@ -91,12 +91,13 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   });
 
   const currentStep = (() => {
-    if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
-      return '(1/3)';
-    } else if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
-      return '(2/3)';
-    } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
-      return '(3/3)';
+    switch (delegateTxStep) {
+      case DelegateTxSteps.BOND_TOKENS:
+        return '(1/3)';
+      case DelegateTxSteps.SELECT_DELEGATES:
+        return '(2/3)';
+      case DelegateTxSteps.AUTHORIZE_TX:
+        return '(3/3)';
     }
   })();
 
@@ -109,10 +110,10 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   })();
 
   const {
-    isFirstTimeNominator,
-    isLoading: isFirstTimeNominatorLoading,
-    isError: isFirstTimeNominatorError,
-  } = useIsFirstTimeNominator();
+    isBondedOrNominating,
+    isLoading: isBondedOrNominatingLoading,
+    isError: isBondedOrNominatingError,
+  } = useIsBondedOrNominating();
 
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletBalance(walletAddress);
@@ -137,19 +138,19 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     }
   })();
 
-  const continueToSelectDelegatesStep = isFirstTimeNominator
+  const canContinueToSelectDelegatesStep = !isBondedOrNominating
     ? amountToBond > 0
     : true && !amountToBondError && payee && walletAddress !== '0x0'
     ? true
     : false;
 
-  const continueToAuthorizeTxStep =
+  const canContinueToAuthorizeTxStep =
     selectedValidators.length > 0 && !isExceedingMaxNominationQuota
       ? true
       : false;
 
-  const continueToSignAndSubmitTx =
-    continueToSelectDelegatesStep && continueToAuthorizeTxStep;
+  const canContinueToSignAndSubmitTx =
+    canContinueToSelectDelegatesStep && canContinueToAuthorizeTxStep;
 
   const closeModal = useCallback(() => {
     setIsSubmitAndSignTxLoading(false);
@@ -162,7 +163,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const executeDelegate: () => Promise<void> = useCallback(async () => {
     try {
-      if (isFirstTimeNominator) {
+      if (isBondedOrNominating) {
         await executeTx(
           () => bondTokensEvm(walletAddress, amountToBond, StakingPayee.STASH),
           () =>
@@ -257,7 +258,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     currentPaymentDestination?.value1,
     currentPaymentDestinationError,
     executeTx,
-    isFirstTimeNominator,
+    isBondedOrNominating,
     nativeTokenSymbol,
     notificationApi,
     payee,
@@ -278,14 +279,14 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       executeSetPayeeTx === null ||
       executeNominateTx === null ||
       executeBondExtraTx === null ||
-      isFirstTimeNominator === null
+      isBondedOrNominating === null
     ) {
       return;
     }
 
     const amount = new BN(amountToBond);
 
-    if (isFirstTimeNominator) {
+    if (!isBondedOrNominating) {
       await executeBondTx({ amount, payee });
       await executeSetPayeeTx({ payee });
       await executeNominateTx({ validatorAddresses: selectedValidators });
@@ -312,7 +313,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     executeBondTx,
     executeNominateTx,
     executeSetPayeeTx,
-    isFirstTimeNominator,
+    isBondedOrNominating,
     payee,
     selectedValidators,
   ]);
@@ -330,9 +331,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [closeModal, executeDelegate2]);
 
   if (
-    isFirstTimeNominator == null ||
-    isFirstTimeNominatorLoading ||
-    isFirstTimeNominatorError
+    isBondedOrNominating == null ||
+    isBondedOrNominatingLoading ||
+    isBondedOrNominatingError
   ) {
     return null;
   }
@@ -352,7 +353,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           <div className="px-8 py-6">
             {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
               <BondTokens
-                isFirstTimeNominator={isFirstTimeNominator}
+                isBondedOrNominating={isBondedOrNominating}
                 nominatorAddress={walletAddress}
                 amountToBond={amountToBond}
                 setAmountToBond={setAmountToBond}
@@ -396,9 +397,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 isFullWidth
                 isDisabled={
                   (delegateTxStep === DelegateTxSteps.BOND_TOKENS &&
-                    !continueToSelectDelegatesStep) ||
+                    !canContinueToSelectDelegatesStep) ||
                   (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES &&
-                    !continueToAuthorizeTxStep)
+                    !canContinueToAuthorizeTxStep)
                 }
                 onClick={() => {
                   if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
@@ -421,7 +422,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 isFullWidth
                 isDisabled={
                   delegateTxStep === DelegateTxSteps.AUTHORIZE_TX &&
-                  !continueToSignAndSubmitTx
+                  !canContinueToSignAndSubmitTx
                 }
                 isLoading={isSubmitAndSignTxLoading}
                 onClick={submitAndSignTx}

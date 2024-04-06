@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
@@ -9,16 +8,15 @@ import {
   WEBB_TANGLE_DOCS_STAKING_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
-import Link from 'next/link';
 import { type FC, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
-import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { NetworkFeature } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -34,29 +32,25 @@ const NominatorStatsContainer: FC = () => {
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const networkFeatures = useNetworkFeatures();
 
+  // TODO: Do not default to an empty string; must handle the case where there is no active account explicitly.
+  const activeSubstrateAddress = useSubstrateAddress() ?? '';
+
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
   const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
+    if (!activeAccount?.address) {
+      return '0x0';
+    }
 
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
-
   const {
-    isFirstTimeNominator,
-    isLoading: isFirstTimeNominatorLoading,
-    isError: isFirstTimeNominatorError,
-  } = useIsFirstTimeNominator();
+    isBondedOrNominating,
+    isLoading: isBondedOrNominatingLoading,
+    isError: isBondedOrNominatingError,
+  } = useIsBondedOrNominating();
 
   return (
     <>
@@ -78,14 +72,15 @@ const NominatorStatsContainer: FC = () => {
 
           <div className="flex items-center gap-2 flex-wrap">
             {networkFeatures.includes(NetworkFeature.Faucet) && (
-              <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
+              <a href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
                 <Button variant="utility" className="!min-w-[100px]">
                   {`Get ${nativeTokenSymbol}`}
                 </Button>
-              </Link>
+              </a>
             )}
 
-            {isFirstTimeNominator && (
+            {/* Only allow nominator setup if not already nominating or bonded */}
+            {isBondedOrNominating === false && (
               <Button
                 variant="utility"
                 className="!min-w-[100px]"
@@ -110,16 +105,16 @@ const NominatorStatsContainer: FC = () => {
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip={`Total Staked ${nativeTokenSymbol} (bonded).`}
               type="Total Staked"
-              address={substrateAddress}
+              address={activeSubstrateAddress}
             />
 
-            <UnbondingStatsItem address={substrateAddress} />
+            <UnbondingStatsItem address={activeSubstrateAddress} />
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="grid grid-cols-2 gap-2">
-            {!isFirstTimeNominator ? (
+            {isBondedOrNominating === true ? (
               <div className="flex items-center gap-2 flex-wrap">
                 <Button
                   variant="utility"
@@ -141,23 +136,23 @@ const NominatorStatsContainer: FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+                <a href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
                   <Button variant="utility" className="!min-w-[150px]">
                     Learn More
                   </Button>
-                </Link>
+                </a>
 
-                <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
+                <a href={SOCIAL_URLS_RECORD.discord} target="_blank">
                   <Button variant="utility" className="!min-w-[150px]">
                     Join Community
                   </Button>
-                </Link>
+                </a>
               </div>
             )}
 
-            {isFirstTimeNominator === false &&
-              !isFirstTimeNominatorLoading &&
-              !isFirstTimeNominatorError && (
+            {isBondedOrNominating === true &&
+              !isBondedOrNominatingLoading &&
+              !isBondedOrNominatingError && (
                 <div className="flex items-center gap-2 flex-wrap">
                   <Button
                     variant="utility"

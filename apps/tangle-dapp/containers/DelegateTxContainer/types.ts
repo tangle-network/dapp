@@ -6,7 +6,7 @@ export type DelegateTxContainerProps = {
 };
 
 export type BondTokensProps = {
-  isFirstTimeNominator: boolean;
+  isBondedOrNominating: boolean;
   nominatorAddress: string;
   amountToBond: number;
   setAmountToBond: (amount: number) => void;

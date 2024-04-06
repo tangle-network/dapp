@@ -32,7 +32,7 @@ export type SubstrateTxFactory<Context = void> = (
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
   notifyStatusUpdates = false,
-  timeoutDelay = 60_000
+  timeoutDelay = 120_000
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [hash, setHash] = useState<string | null>(null);

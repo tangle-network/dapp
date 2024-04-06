@@ -12,7 +12,7 @@ import { StakingPayee } from '../../types';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
-  isFirstTimeNominator,
+  isBondedOrNominating,
   nominatorAddress,
   amountToBond,
   setAmountToBond,
@@ -58,11 +58,11 @@ const BondTokens: FC<BondTokensProps> = ({
         {/* Amount */}
         <InputField.Root error={amountToBondError}>
           <InputField.Input
-            title={isFirstTimeNominator ? 'Amount' : 'Amount (optional)'}
+            title={!isBondedOrNominating ? 'Amount' : 'Amount (optional)'}
             isAddressType={false}
             value={amountToBond.toString()}
             isDisabled={
-              isFirstTimeNominator
+              !isBondedOrNominating
                 ? amountWalletBalance > 0
                   ? false
                   : true

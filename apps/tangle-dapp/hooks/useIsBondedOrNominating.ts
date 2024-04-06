@@ -4,7 +4,7 @@ import useErrorReporting from './useErrorReporting';
 import usePolkadotApiRx from './usePolkadotApiRx';
 import useSubstrateAddress from './useSubstrateAddress';
 
-const useIsFirstTimeNominator = () => {
+const useIsBondedOrNominating = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
   const {
@@ -14,7 +14,7 @@ const useIsFirstTimeNominator = () => {
   } = usePolkadotApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) {
+        if (activeSubstrateAddress === null) {
           return null;
         }
 
@@ -31,7 +31,7 @@ const useIsFirstTimeNominator = () => {
   } = usePolkadotApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) {
+        if (activeSubstrateAddress === null) {
           return null;
         }
 
@@ -47,22 +47,23 @@ const useIsFirstTimeNominator = () => {
     bondedInfoError
   );
 
-  const isFirstTimeNominator = (() => {
+  const isBondedOrNominating = (() => {
     if (bondedInfo === null || nominators === null) {
       return null;
     }
 
     const hasNominatedValidators = nominators.isSome;
-    const isAlreadyBonded = bondedInfo.isSome;
+    const isBonded = bondedInfo.isSome;
 
-    return !isAlreadyBonded && !hasNominatedValidators;
+    // TODO: Invert condition.
+    return isBonded || hasNominatedValidators;
   })();
 
   return {
-    isFirstTimeNominator,
+    isBondedOrNominating,
     isLoading: isLoadingBondedInfo || isLoadingNominators,
     isError: nominatorsError !== null || bondedInfoError !== null,
   };
 };
 
-export default useIsFirstTimeNominator;
+export default useIsBondedOrNominating;
