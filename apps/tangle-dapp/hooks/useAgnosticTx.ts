@@ -98,8 +98,6 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     async (context: Context) => {
       if (executeEvmPrecompileAbiCall !== null) {
         return executeEvmPrecompileAbiCall(context);
-      } else if (executeSubstrateTx !== null) {
-        return executeSubstrateTx(context);
       }
 
       // By this point, at least one of the executors should be defined,
@@ -108,6 +106,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
         executeSubstrateTx !== null,
         'Substrate transaction executor should be defined if EVM transaction executor is not'
       );
+
+      return executeSubstrateTx(context);
     },
     [executeEvmPrecompileAbiCall, executeSubstrateTx]
   );

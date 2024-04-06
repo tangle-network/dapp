@@ -72,7 +72,7 @@ function useEvmPrecompileAbiCall<
         viemWalletClient === null ||
         viemPublicClient === null
       ) {
-        return;
+        return false;
       }
 
       const factoryResult =
@@ -80,7 +80,7 @@ function useEvmPrecompileAbiCall<
 
       // Factory isn't ready yet.
       if (factoryResult === null) {
-        return;
+        return false;
       }
 
       setError(null);
@@ -113,9 +113,11 @@ function useEvmPrecompileAbiCall<
 
         setStatus(TxStatus.ERROR);
         setError(error);
+
+        return false;
       }
 
-      // TODO: Return clean up.
+      return true;
     },
     [
       activeEvmAddress,

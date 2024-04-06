@@ -287,21 +287,31 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     const amount = new BN(amountToBond);
 
     if (!isBondedOrNominating) {
-      await executeBondTx({ amount, payee });
-      await executeSetPayeeTx({ payee });
-      await executeNominateTx({ validatorAddresses: selectedValidators });
+      (await executeBondTx({ amount, payee })) &&
+        (await executeSetPayeeTx({ payee })) &&
+        (await executeNominateTx({ validatorAddresses: selectedValidators }));
     } else {
       if (!amount.isZero()) {
-        await executeBondExtraTx({ amount });
+        const bondingExtraSucceeded = await executeBondExtraTx({ amount });
+
+        // Stop early; something went wrong.
+        if (!bondingExtraSucceeded) {
+          return;
+        }
       }
 
-      const currPaymentDestination =
+      const currentPayee =
         currentPaymentDestination?.value1 === 'Staked'
           ? StakingPayee.STAKED
           : StakingPayee.STASH;
 
-      if (payee !== currPaymentDestination) {
-        await executeSetPayeeTx({ payee: payee });
+      // Update the payee if it has changed.
+      if (payee !== currentPayee) {
+        const setPayeeSucceeded = await executeSetPayeeTx({ payee });
+
+        if (!setPayeeSucceeded) {
+          return;
+        }
       }
 
       await executeNominateTx({ validatorAddresses: selectedValidators });

@@ -67,7 +67,7 @@ function useSubstrateTx<Context = void>(
         activeSubstrateAddress === null ||
         isEvmAccount === null
       ) {
-        return;
+        return false;
       }
 
       // Catch logic errors.
@@ -89,17 +89,17 @@ function useSubstrateTx<Context = void>(
         setError(ensureError(possibleError));
         setStatus(TxStatus.ERROR);
 
-        return;
+        return false;
       }
 
       // Factory is not yet ready to produce the transaction.
       // This is usually because the user hasn't yet connected their wallet.
       if (tx === null) {
-        return;
+        return false;
       }
       // Wait until the injector is ready.
       else if (injector === null) {
-        return;
+        return false;
       }
 
       // At this point, the transaction is ready to be sent.
@@ -108,35 +108,42 @@ function useSubstrateTx<Context = void>(
       setHash(null);
       setStatus(TxStatus.PROCESSING);
 
+      // TODO: Return this function when this status update completes.
+      const handleStatusUpdate = (status: ISubmittableResult) => {
+        // If the component is unmounted, or the transaction
+        // has not yet been included in a block, ignore the
+        // status update.
+        if (!isMountedRef.current || !status.isInBlock) {
+          return;
+        }
+
+        setHash(status.txHash.toHex());
+
+        const error = extractErrorFromTxStatus(status);
+
+        setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
+        setError(error);
+
+        // Useful for debugging.
+        if (error !== null) {
+          console.debug('Substrate transaction failed', error, status);
+        }
+      };
+
       try {
         await tx.signAndSend(
           activeSubstrateAddress,
           { signer: injector.signer },
-          (status) => {
-            // If the component is unmounted, or the transaction
-            // has not yet been included in a block, ignore the
-            // status update.
-            if (!isMountedRef.current || !status.isInBlock) {
-              return;
-            }
-
-            setHash(status.txHash.toHex());
-
-            const error = extractErrorFromTxStatus(status);
-
-            setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
-            setError(error);
-
-            // Useful for debugging.
-            if (error !== null) {
-              console.debug('Substrate transaction failed', error, status);
-            }
-          }
+          handleStatusUpdate
         );
       } catch (possibleError: unknown) {
         setStatus(TxStatus.ERROR);
         setError(ensureError(possibleError));
+
+        return false;
       }
+
+      return true;
     },
     [
       activeSubstrateAddress,
