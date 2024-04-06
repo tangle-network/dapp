@@ -36,7 +36,7 @@ export type EvmAbiCallData<PrecompileT extends Precompile> = {
   arguments: unknown[];
 };
 
-export type EvmTxFactory<PrecompileT extends Precompile, Context> = (
+export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
   context: Context
 ) => EvmAbiCallData<PrecompileT> | null;
 

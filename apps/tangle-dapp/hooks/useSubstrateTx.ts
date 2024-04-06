@@ -23,7 +23,7 @@ export enum TxStatus {
   TIMED_OUT,
 }
 
-export type SubstrateTxFactory<Context> = (
+export type SubstrateTxFactory<Context = void> = (
   api: ApiPromise,
   activeSubstrateAddress: string,
   context: Context
