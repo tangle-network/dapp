@@ -1,5 +1,6 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
@@ -19,17 +20,21 @@ import Link from 'next/link';
 import { type FC, useCallback, useState } from 'react';
 
 import { TxConfirmationModal } from '../../components/TxConfirmationModal';
-import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
+import { PAYMENT_DESTINATION_OPTIONS as PAYEE_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useBondExtraTx from '../../data/staking/useBondExtraTx';
+import useBondTx from '../../data/staking/useBondTx';
+import useNominateTx from '../../data/staking/useNominateTx';
+import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { PaymentDestination } from '../../types';
+import { StakingPayee } from '../../types';
 import {
   bondExtraTokens as bondExtraTokensEvm,
   bondTokens as bondTokensEvm,
@@ -62,16 +67,13 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const executeTx = useExecuteTxWithNotification();
   const activeSubstrateAddress = useSubstrateAddress();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const [payee, setPayee] = useState(StakingPayee.STAKED);
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
 
   const [delegateTxStep, setDelegateTxStep] = useState(
     DelegateTxSteps.BOND_TOKENS
-  );
-
-  const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.STAKED
   );
 
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
@@ -137,10 +139,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const continueToSelectDelegatesStep = isFirstTimeNominator
     ? amountToBond > 0
-    : true &&
-      !amountToBondError &&
-      paymentDestination &&
-      walletAddress !== '0x0'
+    : true && !amountToBondError && payee && walletAddress !== '0x0'
     ? true
     : false;
 
@@ -156,7 +155,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(0);
-    setPaymentDestination(PaymentDestination.STAKED);
+    setPayee(StakingPayee.STAKED);
     setSelectedValidators([]);
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
@@ -165,31 +164,26 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     try {
       if (isFirstTimeNominator) {
         await executeTx(
-          () =>
-            bondTokensEvm(
-              walletAddress,
-              amountToBond,
-              PaymentDestination.STASH
-            ),
+          () => bondTokensEvm(walletAddress, amountToBond, StakingPayee.STASH),
           () =>
             bondTokensSubstrate(
               rpcEndpoint,
               walletAddress,
               amountToBond,
-              PaymentDestination.STASH
+              StakingPayee.STASH
             ),
           `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
           'Failed to bond tokens!'
         );
         await executeTx(
-          () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+          () => updatePaymentDestinationEvm(walletAddress, payee),
           () =>
             updatePaymentDestinationSubstrate(
               rpcEndpoint,
               walletAddress,
-              paymentDestination
+              payee
             ),
-          `Successfully updated payment destination to ${paymentDestination}.`,
+          `Successfully updated payment destination to ${payee}.`,
           'Failed to update payment destination!'
         );
         const hash = await executeTx(
@@ -225,19 +219,18 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           });
         const currPaymentDestination =
           currentPaymentDestination?.value1 === 'Staked'
-            ? PaymentDestination.STAKED
-            : PaymentDestination.STASH;
-        if (currPaymentDestination !== paymentDestination) {
+            ? StakingPayee.STAKED
+            : StakingPayee.STASH;
+        if (currPaymentDestination !== payee) {
           await executeTx(
-            () =>
-              updatePaymentDestinationEvm(walletAddress, paymentDestination),
+            () => updatePaymentDestinationEvm(walletAddress, payee),
             () =>
               updatePaymentDestinationSubstrate(
                 rpcEndpoint,
                 walletAddress,
-                paymentDestination
+                payee
               ),
-            `Successfully updated payment destination to ${paymentDestination}.`,
+            `Successfully updated payment destination to ${payee}.`,
             'Failed to update payment destination!'
           );
         }
@@ -267,22 +260,74 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     isFirstTimeNominator,
     nativeTokenSymbol,
     notificationApi,
-    paymentDestination,
+    payee,
     rpcEndpoint,
     selectedValidators,
     walletAddress,
   ]);
 
+  const { execute: executeBondTx } = useBondTx();
+  const { execute: executeSetPayeeTx } = useSetPayeeTx();
+  const { execute: executeNominateTx } = useNominateTx();
+  const { execute: executeBondExtraTx } = useBondExtraTx();
+
+  const executeDelegate2 = useCallback(async () => {
+    // Not yet ready.
+    if (
+      executeBondTx === null ||
+      executeSetPayeeTx === null ||
+      executeNominateTx === null ||
+      executeBondExtraTx === null ||
+      isFirstTimeNominator === null
+    ) {
+      return;
+    }
+
+    const amount = new BN(amountToBond);
+
+    if (isFirstTimeNominator) {
+      await executeBondTx({ amount, payee });
+      await executeSetPayeeTx({ payee });
+      await executeNominateTx({ validatorAddresses: selectedValidators });
+    } else {
+      if (!amount.isZero()) {
+        await executeBondExtraTx({ amount });
+      }
+
+      const currPaymentDestination =
+        currentPaymentDestination?.value1 === 'Staked'
+          ? StakingPayee.STAKED
+          : StakingPayee.STASH;
+
+      if (payee !== currPaymentDestination) {
+        await executeSetPayeeTx({ payee: payee });
+      }
+
+      await executeNominateTx({ validatorAddresses: selectedValidators });
+    }
+  }, [
+    amountToBond,
+    currentPaymentDestination?.value1,
+    executeBondExtraTx,
+    executeBondTx,
+    executeNominateTx,
+    executeSetPayeeTx,
+    isFirstTimeNominator,
+    payee,
+    selectedValidators,
+  ]);
+
   const submitAndSignTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
+
     try {
-      await executeDelegate();
+      await executeDelegate2();
     } catch {
       // notification is already handled in executeTx
     } finally {
       closeModal();
     }
-  }, [closeModal, executeDelegate]);
+  }, [closeModal, executeDelegate2]);
 
   if (
     isFirstTimeNominator == null ||
@@ -317,9 +362,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                     ? walletBalance.value1
                     : 0
                 }
-                paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
-                paymentDestination={paymentDestination}
-                setPaymentDestination={setPaymentDestination}
+                payeeOptions={PAYEE_OPTIONS}
+                payee={payee}
+                setPayee={setPayee}
                 tokenSymbol={nativeTokenSymbol}
               />
             ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (

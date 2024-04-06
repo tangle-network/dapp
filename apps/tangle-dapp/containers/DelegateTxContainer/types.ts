@@ -1,4 +1,4 @@
-import { Validator } from '../../types';
+import { StakingPayee, Validator } from '../../types';
 
 export type DelegateTxContainerProps = {
   isModalOpen: boolean;
@@ -12,10 +12,10 @@ export type BondTokensProps = {
   setAmountToBond: (amount: number) => void;
   amountToBondError?: string;
   amountWalletBalance: number;
-  paymentDestinationOptions: string[];
-  paymentDestination: string;
-  setPaymentDestination: (paymentDestination: string) => void;
+  payeeOptions: StakingPayee[];
+  payee: string;
   tokenSymbol: string;
+  setPayee: (payee: StakingPayee) => void;
 };
 
 export type SelectDelegatesProps = {

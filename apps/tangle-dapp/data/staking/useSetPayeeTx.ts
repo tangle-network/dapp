@@ -4,20 +4,17 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { PaymentDestination } from '../../types';
-import { getPaymentDestinationPayee } from './useBondTx';
+import { StakingPayee } from '../../types';
+import { getPayeeValue } from './useBondTx';
 
 type SetPayeeTxContext = {
-  paymentDestination: PaymentDestination;
+  payee: StakingPayee;
 };
 
 const useSetPayeeTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, SetPayeeTxContext> =
     useCallback((context) => {
-      const payee = getPaymentDestinationPayee(
-        context.paymentDestination,
-        true
-      );
+      const payee = getPayeeValue(context.payee, true);
 
       return {
         functionName: 'setPayee',
@@ -27,10 +24,7 @@ const useSetPayeeTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<SetPayeeTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) => {
-      const payee = getPaymentDestinationPayee(
-        context.paymentDestination,
-        false
-      );
+      const payee = getPayeeValue(context.payee, false);
 
       return api.tx.staking.setPayee(payee);
     },

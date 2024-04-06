@@ -14,20 +14,15 @@ const useIsFirstTimeNominator = () => {
   } = usePolkadotApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (!activeSubstrateAddress) {
+          return null;
+        }
+
         return api.query.staking.nominators(activeSubstrateAddress);
       },
       [activeSubstrateAddress]
     )
   );
-
-  const hasNominatedValidators = (() => {
-    if (nominators === null) {
-      return null;
-    }
-
-    return nominators.isSome;
-  })();
 
   const {
     data: bondedInfo,
@@ -36,21 +31,29 @@ const useIsFirstTimeNominator = () => {
   } = usePolkadotApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (!activeSubstrateAddress) {
+          return null;
+        }
+
         return api.query.staking.bonded(activeSubstrateAddress);
       },
       [activeSubstrateAddress]
     )
   );
 
-  useErrorReporting('Failed', nominatorsError, bondedInfoError);
+  useErrorReporting(
+    'Failed to determine whether the account is a first time nominator',
+    nominatorsError,
+    bondedInfoError
+  );
 
   const isFirstTimeNominator = (() => {
-    const isAlreadyBonded = bondedInfo?.isSome ?? false;
-
-    if (isAlreadyBonded === null || hasNominatedValidators === null) {
+    if (bondedInfo === null || nominators === null) {
       return null;
     }
+
+    const hasNominatedValidators = nominators.isSome;
+    const isAlreadyBonded = bondedInfo.isSome;
 
     return !isAlreadyBonded && !hasNominatedValidators;
   })();

@@ -4,7 +4,7 @@ import {
   TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
 } from '@polkadot/types/lookup';
 
-import { RestakingService } from '../types';
+import { RestakingService, StakingPayee } from '../types';
 
 /**
  * The lock ids are always 8 characters long, due to their representation
@@ -71,9 +71,9 @@ export enum ChartColor {
   LAVENDER = '#E7E2FF',
 }
 
-export const PAYMENT_DESTINATION_OPTIONS = [
-  'Staked (increase the amount at stake)',
-  'Stash (do not increase the amount at stake)',
+export const PAYMENT_DESTINATION_OPTIONS: StakingPayee[] = [
+  StakingPayee.STAKED,
+  StakingPayee.STASH,
 ];
 
 // Note that the chain decimal count is usually constant, and set when

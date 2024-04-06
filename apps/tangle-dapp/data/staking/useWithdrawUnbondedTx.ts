@@ -7,7 +7,16 @@ import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import useSlashingSpans from './useSlashingSpans';
 
 const useWithdrawUnbondedTx = () => {
-  const { data: slashingSpans } = useSlashingSpans();
+  const { data: slashingSpansOpt } = useSlashingSpans();
+
+  // TODO: Need to verify whether defaulting to 0 here is the correct behavior.
+  const slashingSpans =
+    slashingSpansOpt === null
+      ? null
+      : slashingSpansOpt.isNone
+      ? 0
+      : // TODO: Need to verify that the span index is what is wanted by the extrinsics.
+        slashingSpansOpt.unwrap().spanIndex.toNumber();
 
   const evmTxFactory: EvmTxFactory<Precompile.STAKING> = useCallback(() => {
     if (slashingSpans === null) {

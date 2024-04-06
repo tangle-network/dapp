@@ -5,8 +5,10 @@ import {
   InputField,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { type FC } from 'react';
+import { type FC, useCallback } from 'react';
+import z from 'zod';
 
+import { StakingPayee } from '../../types';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -16,11 +18,20 @@ const BondTokens: FC<BondTokensProps> = ({
   setAmountToBond,
   amountToBondError,
   amountWalletBalance,
-  paymentDestinationOptions,
-  paymentDestination,
-  setPaymentDestination,
+  payeeOptions,
+  payee,
   tokenSymbol,
+  setPayee,
 }) => {
+  const handleSetPayee = useCallback(
+    (newPayeeString: string) => {
+      const payee = z.nativeEnum(StakingPayee).parse(newPayeeString);
+
+      setPayee(payee);
+    },
+    [setPayee]
+  );
+
   return (
     <div className="grid grid-cols-3 gap-9">
       <div className="flex flex-col gap-9 col-span-2">
@@ -78,9 +89,9 @@ const BondTokens: FC<BondTokensProps> = ({
         {amountToBond > 0 && (
           <DropdownField
             title="Payment Destination"
-            items={paymentDestinationOptions}
-            selectedItem={paymentDestination}
-            setSelectedItem={setPaymentDestination}
+            items={payeeOptions}
+            selectedItem={payee}
+            setSelectedItem={handleSetPayee}
           />
         )}
       </div>

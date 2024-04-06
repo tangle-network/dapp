@@ -19,7 +19,7 @@ import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { PaymentDestination } from '../../types';
+import { StakingPayee } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
 import { updatePaymentDestination as updatePaymentDestinationEvm } from '../../utils/evm';
 import { updatePaymentDestination as updatePaymentDestinationSubstrate } from '../../utils/polkadot';
@@ -37,7 +37,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [paymentDestination, setPaymentDestination] = useState<string>(
-    PaymentDestination.STAKED
+    StakingPayee.STAKED
   );
 
   const [
@@ -75,7 +75,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const closeModal = useCallback(() => {
     setIsUpdatePaymentDestinationTxLoading(false);
     setIsModalOpen(false);
-    setPaymentDestination(PaymentDestination.STAKED);
+    setPaymentDestination(StakingPayee.STAKED);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {

@@ -5,34 +5,34 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { PaymentDestination } from '../../types';
+import { StakingPayee } from '../../types';
 
 type BondTxContext = {
   amount: BN;
-  paymentDestination: PaymentDestination;
+  payee: StakingPayee;
 };
 
-export function getPaymentDestinationPayee(
-  paymentDestination: PaymentDestination,
+export function getPayeeValue(
+  paymentDestination: StakingPayee,
   isEvm: boolean
 ) {
   if (isEvm) {
     switch (paymentDestination) {
-      case PaymentDestination.CONTROLLER:
+      case StakingPayee.CONTROLLER:
         return '0x0000000000000000000000000000000000000000000000000000000000000002';
-      case PaymentDestination.STAKED:
+      case StakingPayee.STAKED:
         return '0x0000000000000000000000000000000000000000000000000000000000000000';
-      case PaymentDestination.STASH:
+      case StakingPayee.STASH:
         return '0x0000000000000000000000000000000000000000000000000000000000000001';
     }
   }
 
   switch (paymentDestination) {
-    case PaymentDestination.CONTROLLER:
+    case StakingPayee.CONTROLLER:
       return 'Controller';
-    case PaymentDestination.STAKED:
+    case StakingPayee.STAKED:
       return 'Staked';
-    case PaymentDestination.STASH:
+    case StakingPayee.STASH:
       return 'Stash';
   }
 }
@@ -40,20 +40,14 @@ export function getPaymentDestinationPayee(
 const useBondTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, BondTxContext> =
     useCallback((context) => {
-      const payee = getPaymentDestinationPayee(
-        context.paymentDestination,
-        true
-      );
+      const payee = getPayeeValue(context.payee, true);
 
       return { functionName: 'bond', arguments: [context.amount, payee] };
     }, []);
 
   const substrateTxFactory: SubstrateTxFactory<BondTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) => {
-      const payee = getPaymentDestinationPayee(
-        context.paymentDestination,
-        false
-      );
+      const payee = getPayeeValue(context.payee, false);
 
       return api.tx.staking.bond(context.amount, payee);
     },
