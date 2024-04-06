@@ -236,7 +236,8 @@ const useNetworkState = () => {
       setNetwork(newNetwork);
 
       if (isEvm !== null && isEvm) {
-        switchNetworkInEvmWallet(newNetwork);
+        // TODO: Awaiting testing of this feature before enabling it.
+        // switchNetworkInEvmWallet(newNetwork);
       }
     },
     [
