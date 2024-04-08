@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { SIDEBAR_OPEN_KEY } from '../constants';
 
-export const setSideBarCookieOnToggle = () => {
+export const setSidebarCookieOnToggle = () => {
   const sideBarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
 
   if (sideBarStateFromCookie?.value === 'false') {
@@ -13,12 +13,12 @@ export const setSideBarCookieOnToggle = () => {
   }
 };
 
-export const getSideBarStateFromCookie = () => {
-  const sideBarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
+export const getSidebarStateFromCookie = () => {
+  const sidebarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
 
-  return sideBarStateFromCookie === undefined
+  return sidebarStateFromCookie === undefined
     ? undefined
-    : sideBarStateFromCookie.value === 'true'
+    : sidebarStateFromCookie.value === 'true'
     ? true
     : false;
 };

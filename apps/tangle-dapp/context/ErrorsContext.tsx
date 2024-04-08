@@ -52,7 +52,9 @@ export const useErrorCountContext = () => {
     (error: string) => {
       setErrors((prevErrors) => {
         const newErrors = new Set(prevErrors);
+
         newErrors.delete(error);
+
         return newErrors;
       });
     },

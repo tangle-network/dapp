@@ -9,7 +9,7 @@ import useSubstrateTx from '../../hooks/useSubstrateTx';
  */
 const useDemocracyUnlockTx = (notifyTxStatusUpdates?: boolean) => {
   return useSubstrateTx(
-    async (api, activeSubstrateAddress) =>
+    (api, activeSubstrateAddress) =>
       api.tx.democracy.unlock(activeSubstrateAddress),
     notifyTxStatusUpdates
   );

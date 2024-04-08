@@ -3,6 +3,8 @@ import { Close, LockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
+import BaseInput from '../../../components/AmountInput/BaseInput';
+import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
@@ -11,9 +13,7 @@ import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
 import { formatTokenBalance } from '../../../utils/polkadot/tokens';
-import BaseInput from '../BaseInput';
 import InputAction from '../InputAction';
-import useInputAmount from '../useInputAmount';
 
 export type IndependentAllocationInputProps = {
   amount: BN | null;
@@ -30,6 +30,8 @@ export type IndependentAllocationInputProps = {
 
 export const ERROR_MIN_RESTAKING_BOND =
   'Must be at least the minimum restaking bond';
+
+export const ERROR_NOT_ENOUGH_BALANCE = 'Not enough available balance';
 
 /**
  * A specialized input used to allocate roles for creating or
@@ -92,13 +94,18 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
     ? 'Cannot decrease restake amount for an active role'
     : ERROR_MIN_RESTAKING_BOND;
 
-  const { amountString, errorMessage, handleChange } = useInputAmount(
+  const {
+    displayAmount: amountString,
+    errorMessage,
+    handleChange,
+  } = useInputAmount(
     amount,
     min,
     availableBalance,
-    minErrorMessage,
     errorOnEmptyValue,
-    setAmount
+    setAmount,
+    minErrorMessage,
+    ERROR_NOT_ENOUGH_BALANCE
   );
 
   const handleDelete = useCallback(() => {

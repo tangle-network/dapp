@@ -1,40 +1,44 @@
-export type Precompile = 'staking' | 'vesting' | 'batch';
+import { BN } from '@polkadot/util';
+import { AddressType } from '@webb-tools/dapp-config/types';
 
-type StakingAbiFunctionName =
-  | 'bond'
-  | 'bondExtra'
-  | 'chill'
-  | 'currentEra'
-  | 'erasTotalStake'
-  | 'isNominator'
-  | 'isValidator'
-  | 'maxNominatorCount'
-  | 'maxValidatorCount'
-  | 'minActiveStake'
-  | 'minNominatorBond'
-  | 'minValidatorBond'
-  | 'nominate'
-  | 'payoutStakers'
-  | 'rebond'
-  | 'setController'
-  | 'setPayee'
-  | 'unbond'
-  | 'validatorCount'
-  | 'withdrawUnbonded';
+export enum Precompile {
+  STAKING,
+  VESTING,
+  BATCH,
+  BALANCES_ERC20,
+}
 
-type VestingAbiFunctionName = 'vest' | 'vestOther' | 'vestedTransfer';
-
-type BatchAbiFunctionName = 'batchAll' | 'batchSome' | 'batchSomeUntilFailure';
-
-export type AbiFunctionName<T extends Precompile> = T extends 'staking'
-  ? StakingAbiFunctionName
-  : T extends 'vesting'
-  ? VestingAbiFunctionName
-  : T extends 'batch'
-  ? BatchAbiFunctionName
+export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
+  ?
+      | 'bond'
+      | 'bondExtra'
+      | 'chill'
+      | 'currentEra'
+      | 'erasTotalStake'
+      | 'isNominator'
+      | 'isValidator'
+      | 'maxNominatorCount'
+      | 'maxValidatorCount'
+      | 'minActiveStake'
+      | 'minNominatorBond'
+      | 'minValidatorBond'
+      | 'nominate'
+      | 'payoutStakers'
+      | 'rebond'
+      | 'setController'
+      | 'setPayee'
+      | 'unbond'
+      | 'validatorCount'
+      | 'withdrawUnbonded'
+  : T extends Precompile.VESTING
+  ? 'vest'
+  : T extends Precompile.BATCH
+  ? 'batchAll' | 'batchSome' | 'batchSomeUntilFailure'
+  : T extends Precompile.BALANCES_ERC20
+  ? 'transfer'
   : never;
 
-type InputType =
+type AbiType =
   | 'uint256'
   | 'bytes32'
   | 'uint32'
@@ -44,12 +48,62 @@ type InputType =
   | 'bytes'
   | 'uint64';
 
-type InputTypeSuper = InputType | `${InputType}[]`;
+type AbiTypeSuper = AbiType | `${AbiType}[]`;
 
-type InputOutput = {
-  internalType: InputTypeSuper;
+type InputOutputDef = {
+  internalType: AbiTypeSuper;
   name: string;
-  type: InputTypeSuper;
+  type: AbiTypeSuper;
+};
+
+export type AbiFunction<T extends Precompile> = {
+  inputs: InputOutputDef[];
+  name: AbiFunctionName<T>;
+  outputs: InputOutputDef[];
+  stateMutability: 'nonpayable' | 'view';
+  type: 'function';
+};
+
+/**
+ * Argument type definitions for each EVM precompile function.
+ */
+export type AbiFunctionArgs = {
+  [Precompile.STAKING]: {
+    bond: [BN, AddressType];
+    bondExtra: [BN];
+    chill: [];
+    currentEra: [];
+    erasTotalStake: [BN];
+    isNominator: [AddressType];
+    isValidator: [AddressType];
+    maxNominatorCount: [];
+    maxValidatorCount: [];
+    minActiveStake: [];
+    minNominatorBond: [];
+    minValidatorBond: [];
+    nominate: [AddressType[]];
+    payoutStakers: [AddressType, BN];
+    rebond: [BN];
+    setController: [];
+    setPayee: [BN];
+    unbond: [BN];
+    validatorCount: [];
+    withdrawUnbonded: [BN];
+  };
+
+  [Precompile.VESTING]: {
+    vest: [];
+  };
+
+  [Precompile.BATCH]: {
+    batchAll: [AddressType[], BN[], string[], BN[]];
+    batchSome: [AddressType[], BN[], string[], BN[]];
+    batchSomeUntilFailure: [AddressType[], BN[], string[], BN[]];
+  };
+
+  [Precompile.BALANCES_ERC20]: {
+    transfer: [AddressType, BN];
+  };
 };
 
 // See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
@@ -57,18 +111,15 @@ export enum PrecompileAddress {
   STAKING = '0x0000000000000000000000000000000000000800',
   VESTING = '0x0000000000000000000000000000000000000801',
   BATCH = '0x0000000000000000000000000000000000000808',
+  BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
 }
 
-export type PrecompileAbiFunction<T extends Precompile> = {
-  inputs: InputOutput[];
-  name: AbiFunctionName<T>;
-  outputs: InputOutput[];
-  stateMutability: 'nonpayable' | 'view';
-  type: 'function';
-};
-
-export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
+export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
   {
+    name: 'bond',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint256',
@@ -81,12 +132,11 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'bytes32',
       },
     ],
-    name: 'bond',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
+    name: 'bondExtra',
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint256',
@@ -94,21 +144,20 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint256',
       },
     ],
-    name: 'bondExtra',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
-    inputs: [],
     name: 'chill',
-    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
+    inputs: [],
+    outputs: [],
   },
   {
-    inputs: [],
     name: 'currentEra',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     outputs: [
       {
         internalType: 'uint32',
@@ -116,10 +165,11 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
+    name: 'erasTotalStake',
+    stateMutability: 'view',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint32',
@@ -127,7 +177,6 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    name: 'erasTotalStake',
     outputs: [
       {
         internalType: 'uint256',
@@ -135,29 +184,11 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint256',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'stash',
-        type: 'address',
-      },
-    ],
     name: 'isNominator',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
     stateMutability: 'view',
     type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'address',
@@ -165,7 +196,6 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'address',
       },
     ],
-    name: 'isValidator',
     outputs: [
       {
         internalType: 'bool',
@@ -173,12 +203,31 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'bool',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [],
+    name: 'isValidator',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'stash',
+        type: 'address',
+      },
+    ],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+  },
+  {
     name: 'maxNominatorCount',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     outputs: [
       {
         internalType: 'uint32',
@@ -186,12 +235,12 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [],
     name: 'maxValidatorCount',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     outputs: [
       {
         internalType: 'uint32',
@@ -199,12 +248,12 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [],
     name: 'minActiveStake',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     outputs: [
       {
         internalType: 'uint256',
@@ -212,25 +261,12 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint256',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [],
     name: 'minNominatorBond',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
     stateMutability: 'view',
     type: 'function',
-  },
-  {
     inputs: [],
-    name: 'minValidatorBond',
     outputs: [
       {
         internalType: 'uint256',
@@ -238,10 +274,24 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint256',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
+    name: 'minValidatorBond',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+  },
+  {
+    name: 'nominate',
+    type: 'function',
+    stateMutability: 'nonpayable',
     inputs: [
       {
         internalType: 'bytes32[]',
@@ -249,12 +299,12 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'bytes32[]',
       },
     ],
-    name: 'nominate',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
+    name: 'payoutStakers',
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'bytes32',
@@ -267,12 +317,12 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    name: 'payoutStakers',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
+    name: 'rebond',
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint256',
@@ -280,19 +330,19 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint256',
       },
     ],
-    name: 'rebond',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
-    inputs: [],
     name: 'setController',
-    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
+    inputs: [],
+    outputs: [],
   },
   {
+    name: 'setPayee',
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint8',
@@ -300,12 +350,12 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint8',
       },
     ],
-    name: 'setPayee',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
+    name: 'unbond',
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint256',
@@ -313,14 +363,13 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint256',
       },
     ],
-    name: 'unbond',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
-    inputs: [],
     name: 'validatorCount',
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     outputs: [
       {
         internalType: 'uint32',
@@ -328,10 +377,11 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
   {
+    name: 'withdrawUnbonded',
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       {
         internalType: 'uint32',
@@ -339,99 +389,29 @@ export const STAKING_PRECOMPILE_ABI: PrecompileAbiFunction<'staking'>[] = [
         type: 'uint32',
       },
     ],
-    name: 'withdrawUnbonded',
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
 ] as const;
 
 // See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
 // Be careful with the input/outputs, as they can lead to a lot of trouble
 // if not properly specified.
-export const VESTING_PRECOMPILE_ABI: PrecompileAbiFunction<'vesting'>[] = [
+export const VESTING_PRECOMPILE_ABI: AbiFunction<Precompile.VESTING>[] = [
   {
-    inputs: [],
     name: 'vest',
+    type: 'function',
+    inputs: [],
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'target',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint8',
-        name: 'index',
-        type: 'uint8',
-      },
-    ],
-    name: 'vestedTransfer',
-    outputs: [
-      {
-        internalType: 'uint8',
-        name: '',
-        type: 'uint8',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'target',
-        type: 'bytes32',
-      },
-    ],
-    name: 'vestOther',
-    outputs: [
-      {
-        internalType: 'uint8',
-        name: '',
-        type: 'uint8',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
 ] as const;
 
-export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<'batch'>[] = [
+export const BATCH_PRECOMPILE_ABI: AbiFunction<Precompile.BATCH>[] = [
   {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: 'to',
-        type: 'address[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'value',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'bytes[]',
-        name: 'callData',
-        type: 'bytes[]',
-      },
-      {
-        internalType: 'uint64[]',
-        name: 'gasLimit',
-        type: 'uint64[]',
-      },
-    ],
     name: 'batchAll',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'address[]',
@@ -454,12 +434,12 @@ export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<'batch'>[] = [
         type: 'uint64[]',
       },
     ],
+  },
+  {
     name: 'batchSome',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'address[]',
@@ -482,35 +462,91 @@ export const BATCH_PRECOMPILE_ABI: PrecompileAbiFunction<'batch'>[] = [
         type: 'uint64[]',
       },
     ],
+  },
+  {
     name: 'batchSomeUntilFailure',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'to',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'value',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'callData',
+        type: 'bytes[]',
+      },
+      {
+        internalType: 'uint64[]',
+        name: 'gasLimit',
+        type: 'uint64[]',
+      },
+    ],
   },
 ] as const;
+
+export const BALANCES_ERC20_PRECOMPILE_ABI: AbiFunction<Precompile.BALANCES_ERC20>[] =
+  [
+    {
+      name: 'transfer',
+      stateMutability: 'nonpayable',
+      type: 'function',
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'to',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'value',
+          type: 'uint256',
+        },
+      ],
+      outputs: [
+        {
+          internalType: 'bool',
+          name: '',
+          type: 'bool',
+        },
+      ],
+    },
+  ];
 
 export function getAddressOfPrecompile(
   precompile: Precompile
 ): PrecompileAddress {
   switch (precompile) {
-    case 'staking':
+    case Precompile.STAKING:
       return PrecompileAddress.STAKING;
-    case 'vesting':
+    case Precompile.VESTING:
       return PrecompileAddress.VESTING;
-    case 'batch':
+    case Precompile.BATCH:
       return PrecompileAddress.BATCH;
+    case Precompile.BALANCES_ERC20:
+      return PrecompileAddress.BALANCES_ERC20;
   }
 }
 
 export function getAbiForPrecompile(
   precompile: Precompile
-): PrecompileAbiFunction<Precompile>[] {
+): AbiFunction<Precompile>[] {
   switch (precompile) {
-    case 'staking':
+    case Precompile.STAKING:
       return STAKING_PRECOMPILE_ABI;
-    case 'vesting':
+    case Precompile.VESTING:
       return VESTING_PRECOMPILE_ABI;
-    case 'batch':
+    case Precompile.BATCH:
       return BATCH_PRECOMPILE_ABI;
+    case Precompile.BALANCES_ERC20:
+      return BALANCES_ERC20_PRECOMPILE_ABI;
   }
 }
