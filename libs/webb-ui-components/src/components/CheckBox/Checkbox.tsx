@@ -48,11 +48,8 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const inputClsx =
     'form-checkbox peer transition-none bg-mono-0 w-[18px] h-[18px] rounded border border-mono-100 outline-none dark:bg-mono-180';
 
-  const inputHoverClsx = cx(
-    'enabled:hover:bg-blue-10 enabled:hover:border-blue-40',
-    'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none',
-    'enabled:dark:hover:bg-blue-120 enabled:dark:hover:border-blue-90'
-  );
+  const inputHoverClsx =
+    'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none';
 
   const inputCheckedClsx = 'checked:bg-blue-70 dark:checked:bg-blue-50';
 

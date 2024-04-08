@@ -1,4 +1,7 @@
+import { BN } from '@polkadot/util';
+
 export type ClaimInfoType = {
-  amount: string;
+  totalAmount: BN;
+  vestingAmount: BN;
   isRegularStatement: boolean;
 };
