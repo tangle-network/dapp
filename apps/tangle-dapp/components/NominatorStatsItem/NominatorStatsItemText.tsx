@@ -3,13 +3,9 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import {
-  getRoundedDownNumberWith2Decimals,
-  splitTokenValueAndSymbol,
-} from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import dataHooks from './dataHooks';
 import type { NominatorStatsItemProps } from './types';

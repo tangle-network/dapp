@@ -83,10 +83,12 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
-    if (!amountToBond || hasErrors) return;
     setIsBondMoreTxLoading(true);
 
     try {
+      if (amountToBond === null) {
+        throw new Error('Amount to bond more is required.');
+      }
       const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       const hash = await executeTx(
         () => bondExtraTokensEvm(walletAddress, bondingAmount),
@@ -120,7 +122,6 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setTxConfirmationState,
     walletAddress,
     nativeTokenSymbol,
-    hasErrors,
   ]);
 
   return (

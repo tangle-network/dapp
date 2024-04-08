@@ -163,7 +163,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const executeDelegate: () => Promise<void> = useCallback(async () => {
     try {
       if (amountToBond === null) {
-        throw new Error('There is no amount to bond.');
+        throw new Error('Amount to bond is required.');
       }
       const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       if (isFirstTimeNominator) {
