@@ -63,7 +63,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
 
             <div className="flex flex-col md:flex-row items-end gap-3 justify-between">
               <Typography variant="body2" className="!text-mono-100">
-                © {new Date().getFullYear()} Webb Technologies, Inc. All rights
+                © {new Date().getFullYear()} Tangle Foundation. All rights
                 reserved.
               </Typography>
 
