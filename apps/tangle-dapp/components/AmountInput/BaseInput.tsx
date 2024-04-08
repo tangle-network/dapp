@@ -148,7 +148,11 @@ const BaseInput: FC<BaseInputProps> = ({
       </div>
 
       {hasError && (
-        <Typography className="dark:text-mono-100" variant="body1" fw="normal">
+        <Typography
+          className="text-red-70 dark:text-red-50"
+          variant="body1"
+          fw="normal"
+        >
           *{errorMessage}
         </Typography>
       )}

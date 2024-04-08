@@ -1,3 +1,5 @@
+import { BN } from '@polkadot/util';
+
 import { Validator } from '../../types';
 
 export type DelegateTxContainerProps = {
@@ -8,14 +10,14 @@ export type DelegateTxContainerProps = {
 export type BondTokensProps = {
   isFirstTimeNominator: boolean;
   nominatorAddress: string;
-  amountToBond: number;
-  setAmountToBond: (amount: number) => void;
-  amountToBondError?: string;
-  amountWalletBalance: number;
+  amountToBond: BN | null;
+  setAmountToBond: (amount: BN | null) => void;
   paymentDestinationOptions: string[];
   paymentDestination: string;
   setPaymentDestination: (paymentDestination: string) => void;
   tokenSymbol: string;
+  walletBalance: BN | null;
+  handleAmountToBondError: (error: string | null) => void;
 };
 
 export type SelectDelegatesProps = {

@@ -1,5 +1,5 @@
+import { BN_ZERO } from '@polkadot/util';
 import {
-  Button,
   CopyWithTooltip,
   DropdownField,
   InputField,
@@ -7,6 +7,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
+import AmountInput from '../../components/AmountInput/AmountInput';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -14,12 +15,11 @@ const BondTokens: FC<BondTokensProps> = ({
   nominatorAddress,
   amountToBond,
   setAmountToBond,
-  amountToBondError,
-  amountWalletBalance,
   paymentDestinationOptions,
   paymentDestination,
   setPaymentDestination,
-  tokenSymbol,
+  walletBalance,
+  handleAmountToBondError,
 }) => {
   return (
     <div className="grid grid-cols-3 gap-9">
@@ -44,39 +44,21 @@ const BondTokens: FC<BondTokensProps> = ({
           </InputField.Slot>
         </InputField.Root>
 
-        {/* Amount */}
-        {/* TODO: handle amount here */}
-        <InputField.Root error={amountToBondError}>
-          <InputField.Input
+        <div>
+          <AmountInput
+            id="nominate-bond-token"
             title={isFirstTimeNominator ? 'Amount' : 'Amount (optional)'}
-            isAddressType={false}
-            value={amountToBond.toString()}
-            isDisabled={
-              isFirstTimeNominator
-                ? amountWalletBalance > 0
-                  ? false
-                  : true
-                : false
-            }
-            placeholder={`10 ${tokenSymbol}`}
-            type="number"
-            onChange={(e) => setAmountToBond(Number(e.target.value))}
+            max={walletBalance ?? undefined}
+            amount={amountToBond}
+            setAmount={setAmountToBond}
+            baseInputOverrides={{ isFullWidth: true }}
+            maxErrorMessage="Not enough available balance"
+            setErrorMessage={handleAmountToBondError}
           />
-
-          <InputField.Slot>
-            <Button
-              variant="utility"
-              size="sm"
-              isDisabled={amountWalletBalance > 0 ? false : true}
-              onClick={() => setAmountToBond(amountWalletBalance)}
-            >
-              MAX
-            </Button>
-          </InputField.Slot>
-        </InputField.Root>
+        </div>
 
         {/* Payment Destination */}
-        {amountToBond > 0 && (
+        {amountToBond && amountToBond.gt(BN_ZERO) && (
           <DropdownField
             title="Payment Destination"
             items={paymentDestinationOptions}
@@ -97,7 +79,7 @@ const BondTokens: FC<BondTokensProps> = ({
           for at least the bonding duration.
         </Typography>
 
-        {amountToBond > 0 && (
+        {amountToBond && amountToBond.gt(BN_ZERO) && (
           <Typography variant="body1" fw="normal">
             Rewards (once paid) can be deposited to your account, unless
             otherwise configured.
