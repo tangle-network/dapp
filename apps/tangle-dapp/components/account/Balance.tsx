@@ -7,7 +7,7 @@ import { FC, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { InfoIconWithTooltip } from '..';
 
@@ -27,8 +27,12 @@ const Balance: FC = () => {
       return null;
     }
 
-    // Show up to 4 decimal places.
-    const amount = convertChainUnitsToNumber(balance, true, 4);
+    const amount = formatBnToDisplayAmount(balance, {
+      // Show up to 4 decimal places.
+      fractionLength: 4,
+      includeCommas: true,
+      padZerosInFraction: true,
+    });
 
     return `${amount} ${nativeTokenSymbol}`;
   }, [balance, nativeTokenSymbol]);

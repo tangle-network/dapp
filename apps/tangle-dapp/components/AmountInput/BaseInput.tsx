@@ -2,7 +2,6 @@ import { ChevronDown, ChevronUp } from '@webb-tools/icons';
 import {
   Chip,
   ChipColors,
-  InputWrapper,
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -16,8 +15,8 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import InputAction from '../../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../../context/ErrorsContext';
-import InputAction from './InputAction';
 
 export type BaseInputProps = {
   title: string;
@@ -34,6 +33,8 @@ export type BaseInputProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
+  isFullWidth?: boolean;
+  isDisabled?: boolean;
 };
 
 const BaseInput: FC<BaseInputProps> = ({
@@ -51,15 +52,18 @@ const BaseInput: FC<BaseInputProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
+  isFullWidth = false,
+  isDisabled = false,
 }) => {
+  const { addError, removeError } = useErrorCountContext();
+
   const toggleDropdown = useCallback(() => {
     if (dropdownBody !== undefined && setIsDropdownVisible !== undefined) {
       setIsDropdownVisible((isVisible) => !isVisible);
     }
   }, [dropdownBody, setIsDropdownVisible]);
 
-  const { addError, removeError } = useErrorCountContext();
-
+  // TODO: Do not set error (or remove it if already set) if the input is disabled.
   useEffect(() => {
     if (errorMessage !== undefined) {
       addError(id);
@@ -68,18 +72,30 @@ const BaseInput: FC<BaseInputProps> = ({
     }
   }, [addError, errorMessage, id, removeError]);
 
+  // Do not consider the input as having an error if it's disabled.
+  const hasError = errorMessage !== undefined && !isDisabled;
+
   return (
-    <div className="flex flex-col gap-1 w-full max-w-[356px]">
-      <InputWrapper
+    <div
+      className={twMerge(
+        'flex flex-col gap-1 w-full max-w-[356px]',
+        isFullWidth && 'max-w-full'
+      )}
+    >
+      <div
         className={twMerge(
-          'flex gap-2 cursor-default relative w-[356px] max-w-[356px] lg:max-w-[356px]',
+          'relative rounded-lg',
+          'px-2.5 lg:px-4 py-2',
+          'flex items-center justify-between gap-2',
+          'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
-          errorMessage !== undefined && 'border-red-50 dark:border-red-50',
+          hasError && 'border-red-50 dark:border-red-50',
+          isFullWidth && 'w-full max-w-full',
           wrapperClassName
         )}
       >
-        <div className="flex flex-col gap-1 mr-auto">
+        <div className="flex flex-col gap-1 w-full mr-auto">
           <Label
             className="text-mono-100 dark:text-mono-80 font-bold"
             htmlFor={id}
@@ -91,7 +107,7 @@ const BaseInput: FC<BaseInputProps> = ({
         </div>
 
         {/* Actions */}
-        <div className={twMerge('flex items-center justify-center gap-1')}>
+        <div className="flex items-center justify-center gap-1">
           {chipText !== undefined && (
             <Chip
               onClick={toggleDropdown}
@@ -129,9 +145,9 @@ const BaseInput: FC<BaseInputProps> = ({
             {dropdownBody}
           </div>
         )}
-      </InputWrapper>
+      </div>
 
-      {errorMessage !== undefined && (
+      {hasError && (
         <Typography className="dark:text-mono-100" variant="body1" fw="normal">
           *{errorMessage}
         </Typography>

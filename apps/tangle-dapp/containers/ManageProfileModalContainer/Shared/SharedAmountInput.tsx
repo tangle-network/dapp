@@ -3,15 +3,18 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useRef } from 'react';
 
+import BaseInput from '../../../components/AmountInput/BaseInput';
+import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import useSharedRestakeAmount from '../../../data/restaking/useSharedRestakeAmount';
 import { RestakingProfileType } from '../../../types';
-import BaseInput from '../BaseInput';
-import { ERROR_MIN_RESTAKING_BOND } from '../Independent/IndependentAllocationInput';
-import useInputAmount from '../useInputAmount';
+import {
+  ERROR_MIN_RESTAKING_BOND,
+  ERROR_NOT_ENOUGH_BALANCE,
+} from '../Independent/IndependentAllocationInput';
 
 export type SharedAmountInputProps = {
   id: string;
@@ -52,13 +55,18 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
     ? 'Cannot decrease shared restake amount when there are active jobs'
     : ERROR_MIN_RESTAKING_BOND;
 
-  const { amountString, errorMessage, handleChange } = useInputAmount(
+  const {
+    displayAmount: amountString,
+    errorMessage,
+    handleChange,
+  } = useInputAmount(
     amount,
     min,
     maxRestakingAmount,
-    minErrorMessage,
     true,
-    setAmount
+    setAmount,
+    minErrorMessage,
+    ERROR_NOT_ENOUGH_BALANCE
   );
 
   const inputRef = useRef<HTMLInputElement>(null);

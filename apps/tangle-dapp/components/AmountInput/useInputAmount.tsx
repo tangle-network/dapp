@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import convertChainUnitsToNumber from '../../utils/convertChainUnitsToNumber';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 
 /**
  * Regular expression to validate the input amount.
@@ -16,8 +16,9 @@ function validateInputAmount(
   amountString: string,
   min: BN | null,
   max: BN | null,
-  minErrorMessage: string,
-  errorOnEmptyValue: boolean
+  errorOnEmptyValue: boolean,
+  minErrorMessage?: string,
+  maxErrorMessage?: string
 ): string | null {
   const schema = z
     .string()
@@ -28,11 +29,14 @@ function validateInputAmount(
     .refine((amount) => !errorOnEmptyValue || amount !== null, {
       message: 'No amount given',
     })
+
     .refine((amount) => amount === null || min === null || amount.gte(min), {
-      message: minErrorMessage,
+      // TODO: Show what the min value is.
+      message: minErrorMessage ?? 'Amount is below minimum',
     })
     .refine((amount) => amount === null || max === null || amount.lte(max), {
-      message: 'Not enough available balance',
+      // TODO: Show what the max value is.
+      message: maxErrorMessage ?? 'Amount is above maximum',
     });
 
   const result = schema.safeParse(amountString);
@@ -46,20 +50,16 @@ const useInputAmount = (
   amount: BN | null,
   min: BN | null,
   max: BN | null,
-  minErrorMessage: string,
   errorOnEmptyValue: boolean,
-  setAmount?: (newAmount: BN | null) => void
+  setAmount?: (newAmount: BN | null) => void,
+  minErrorMessage?: string,
+  maxErrorMessage?: string
 ) => {
-  const [amountString, setAmountString] = useState(
-    amount !== null ? convertChainUnitsToNumber(amount) : ''
-  );
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Update the amount string when the amount changes.
-  useEffect(() => {
-    setAmountString(amount === null ? '' : convertChainUnitsToNumber(amount));
-  }, [amount]);
+  const [displayAmount, setDisplayAmount] = useState(
+    amount !== null ? formatBnToDisplayAmount(amount) : ''
+  );
 
   const handleChange = useCallback(
     (newAmountString: string) => {
@@ -77,14 +77,15 @@ const useInputAmount = (
         return;
       }
 
-      setAmountString(newAmountString);
+      setDisplayAmount(newAmountString);
 
       const errorMessage = validateInputAmount(
         newAmountString,
         min,
         max,
+        errorOnEmptyValue,
         minErrorMessage,
-        errorOnEmptyValue
+        maxErrorMessage
       );
 
       setErrorMessage(errorMessage);
@@ -105,10 +106,19 @@ const useInputAmount = (
         );
       }
     },
-    [errorOnEmptyValue, max, min, minErrorMessage, setAmount]
+    [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount]
   );
 
-  return { amountString, setAmountString, errorMessage, handleChange };
+  const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
+    setDisplayAmount(formatBnToDisplayAmount(newDisplayAmount));
+  }, []);
+
+  return {
+    displayAmount,
+    refreshDisplayAmount,
+    errorMessage,
+    handleChange,
+  };
 };
 
 export default useInputAmount;

@@ -30,29 +30,21 @@ const useUpdateRestakingProfileTx = (
   createIfMissing = false,
   notifyTxStatusUpdates?: boolean
 ) => {
-  // A ref must be used here instead of state, because the execute
-  // function needs the records to be available when it is called, and
-  // since `useState` is asynchronous, the records would not be available
-  // in the same render cycle.
-  const allocationsRef = useRef<RestakingAllocationMap | null>(null);
-
   const sharedRestakeAmountRef = useRef<BN | null>(null);
-  const maxActiveServicesRef = useRef<number | null>(null);
   const { data: roleLedger } = useRestakingRoleLedger();
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
-  const { execute, ...other } = useSubstrateTx(
+  // TODO: Break this into two separate hooks for independent and shared profiles.
+  const { execute, ...other } = useSubstrateTx<{
+    allocations: RestakingAllocationMap;
+    maxActiveServices?: number;
+  }>(
     useCallback(
-      async (api) => {
+      (api, _activeSubstrateAddress, context) => {
         // Cannot update a profile that does not exist.
         if (!hasExistingProfile && !createIfMissing) {
           return null;
         }
-
-        assert(
-          allocationsRef.current !== null,
-          'Records should be set before calling execute'
-        );
 
         if (profileType === RestakingProfileType.SHARED) {
           assert(
@@ -62,7 +54,7 @@ const useUpdateRestakingProfileTx = (
         }
 
         const records: ProfileRecord[] = Object.entries(
-          allocationsRef.current
+          context.allocations
         ).map(([serviceString, amount]) => {
           const service = z.nativeEnum(RestakingService).parse(serviceString);
 
@@ -115,30 +107,21 @@ const useUpdateRestakingProfileTx = (
         return;
       }
 
-      allocationsRef.current = allocations;
-      maxActiveServicesRef.current = maxActiveServices ?? null;
-
-      return execute();
+      return execute({ allocations, maxActiveServices });
     },
     [execute]
   );
 
   const executeForSharedProfile = useCallback(
-    (
-      allocations: RestakingAllocationMap,
-      restakeAmount: BN,
-      maxActiveServices?: number
-    ) => {
+    (allocations: RestakingAllocationMap, restakeAmount: BN) => {
       if (execute === null) {
         return;
       }
 
       // TODO: This method of providing information to the execute function works fine, but is a bit hacky/unclear. Consider improving this in the future.
       sharedRestakeAmountRef.current = restakeAmount;
-      allocationsRef.current = allocations;
-      maxActiveServicesRef.current = maxActiveServices ?? null;
 
-      return execute();
+      return execute({ allocations });
     },
     [execute]
   );

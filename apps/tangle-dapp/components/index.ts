@@ -8,7 +8,7 @@ export * from './NominatorStatsItem';
 export * from './PayoutTable';
 export * from './ServicesKeyMetricItem';
 export * from './ServiceTable';
-export * from './sideBar';
+export * from './Sidebar';
 export * from './skeleton';
 export { default as SocialChip } from './SocialChip';
 export * from './TableStatus';

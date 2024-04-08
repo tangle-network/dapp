@@ -21,21 +21,24 @@ import { twMerge } from 'tailwind-merge';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useNetworkStore from '../../context/useNetworkStore';
+import useBalances from '../../data/balances/useBalances';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { InternalPath, PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
-
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
   const { isEligible: isAirdropEligible } = useAirdropEligibility();
   const isPayoutsAvailable = usePayoutsAvailability();
+  const activeAccountAddress = useActiveAccountAddress();
+  const { transferrable: transferrableBalance } = useBalances();
 
   const {
     isVesting,
@@ -55,6 +58,13 @@ const Actions: FC = () => {
           label="Transfer"
           Icon={ArrowLeftRightLineIcon}
           onClick={() => setIsTransferModalOpen(true)}
+          // Disable while no account is connected, or when the active
+          // account has no funds.
+          isDisabled={
+            activeAccountAddress === null ||
+            transferrableBalance === null ||
+            transferrableBalance.isZero()
+          }
         />
 
         <ActionItem
@@ -130,8 +140,7 @@ const Actions: FC = () => {
   );
 };
 
-/** @internal */
-const ActionItem = (props: {
+type ActionItemProps = {
   Icon: (props: IconBase) => ReactElement;
   label: string;
   onClick?: () => void;
@@ -139,17 +148,18 @@ const ActionItem = (props: {
   hasNotificationDot?: boolean;
   internalHref?: InternalPath;
   tooltip?: ReactElement | string;
-}) => {
-  const {
-    Icon,
-    label,
-    onClick,
-    internalHref,
-    tooltip,
-    isDisabled = false,
-    hasNotificationDot = false,
-  } = props;
+};
 
+/** @internal */
+const ActionItem: FC<ActionItemProps> = ({
+  Icon,
+  label,
+  onClick,
+  internalHref,
+  tooltip,
+  isDisabled = false,
+  hasNotificationDot = false,
+}) => {
   const handleClick = useCallback(() => {
     if (isDisabled || onClick === undefined) {
       return;

@@ -18,7 +18,7 @@ const RecentTxContainer: FC = () => {
           color="primary"
           className="uppercase"
           target="_blank"
-          href={network.polkadotExplorer}
+          href={network.polkadotExplorerUrl}
         >
           Open Explorer
         </Button>

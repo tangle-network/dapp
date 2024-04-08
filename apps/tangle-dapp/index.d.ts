@@ -5,6 +5,17 @@ declare module '*.svg' {
   export default content;
 }
 
-interface Window {
-  ethereum: any;
+interface EthereumProvider {
+  isMetaMask?: boolean;
+
+  request: (options: {
+    method: string;
+    params?: Array<unknown>;
+  }) => Promise<unknown>;
+}
+
+declare global {
+  interface Window {
+    ethereum: EthereumProvider;
+  }
 }

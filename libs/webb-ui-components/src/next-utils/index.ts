@@ -1,1 +1,1 @@
-export * from './sideBarState';
+export * from './sidebarState';

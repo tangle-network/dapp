@@ -1,12 +1,12 @@
 import React, { type PropsWithChildren, type FC } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
-import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
+import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 
 import Header from './Header';
 import { SideBar } from '../../components';
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
-  const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
+  const isSideBarInitiallyExpanded = getSidebarStateFromCookie();
 
   return (
     <>
