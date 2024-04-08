@@ -3,11 +3,11 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 
+import useRestakingAPY from '../../data/restaking/useRestakingAPY';
 import useRestakingEarnings from '../../data/restaking/useRestakingEarnings';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import useRestakingTotalRewards from '../../data/restaking/useRestakingTotalRewards';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import JobsCard from './JobsCard';
 import OverviewCard from './OverviewCard';
 import RoleDistributionCard from './RoleDistributionCard';
@@ -22,13 +22,13 @@ const RestakePage = () => {
 
   const { maxRestakingAmount } = useRestakingLimits();
 
-  const accountAddress = useActiveAccountAddress();
-
   const { data: earningsRecord, isLoading: isEarningsLoading } =
-    useRestakingEarnings(accountAddress);
+    useRestakingEarnings();
 
   const { data: rewards, isLoading: isRewardsLoading } =
     useRestakingTotalRewards();
+
+  const apy = useRestakingAPY();
 
   const { availableForRestake, totalRestaked } = useMemo(() => {
     const totalRestaked = ledgerOpt?.isSome
@@ -60,6 +60,7 @@ const RestakePage = () => {
         isLoading={isEarningsLoading || isRewardsLoading}
         totalRestaked={totalRestaked}
         availableForRestake={availableForRestake}
+        apy={apy}
         rewards={rewards}
       />
 
