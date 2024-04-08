@@ -45,6 +45,7 @@ const BondTokens: FC<BondTokensProps> = ({
         </InputField.Root>
 
         {/* Amount */}
+        {/* TODO: handle amount here */}
         <InputField.Root error={amountToBondError}>
           <InputField.Input
             title={isFirstTimeNominator ? 'Amount' : 'Amount (optional)'}

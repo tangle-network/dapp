@@ -1,17 +1,18 @@
 'use client';
 
 import { u128 } from '@polkadot/types';
+import { BN } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { formatTokenBalance, getPolkadotApiRx } from '../../utils/polkadot';
+import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useTotalStakedAmountSubscription(
   address: string,
-  defaultValue: { value1: number | string | null } = { value1: null }
+  defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,12 +44,7 @@ export default function useTotalStakedAmountSubscription(
                 ledger.total.toString()
               );
 
-              const availableTokenBalance = formatTokenBalance(
-                totalStaked,
-                nativeTokenSymbol
-              );
-
-              setValue1(availableTokenBalance ?? null);
+              setValue1(totalStaked);
               setIsLoading(false);
             }
           });

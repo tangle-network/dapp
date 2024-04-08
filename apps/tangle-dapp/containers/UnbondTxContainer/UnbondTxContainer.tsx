@@ -62,6 +62,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { data: unbondingAmountData, error: unbondingAmountError } =
     useUnbondingAmountSubscription(substrateAddress);
 
+  // TODO: handle formatting
   const totalStakedBalance = useMemo(() => {
     if (totalStakedBalanceError) {
       notificationApi({
@@ -176,6 +177,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         </ModalHeader>
 
         <div className="p-9">
+          {/* TODO: handle amount input */}
           <UnbondTokens
             amountToUnbond={amountToUnbond}
             setAmountToUnbond={setAmountToUnbond}
