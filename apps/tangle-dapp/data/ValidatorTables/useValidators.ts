@@ -36,16 +36,6 @@ export const useValidators = (
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
 
-  // Mapping Identity Names
-  const mappedIdentityNames = useMemo(() => {
-    const map = new Map<string, string | null>();
-    identityNames?.forEach(([storageKey, name]) => {
-      const accountId = storageKey.args[0].toString();
-      map.set(accountId, name);
-    });
-    return map;
-  }, [identityNames]);
-
   // Mapping Exposures
   const mappedExposures = useMemo(() => {
     const map = new Map<string, SpStakingExposure>();
@@ -120,7 +110,6 @@ export const useValidators = (
     exposures,
     nominations,
     validatorPrefs,
-    mappedIdentityNames,
     mappedExposures,
     mappedValidatorPrefs,
     nativeTokenSymbol,

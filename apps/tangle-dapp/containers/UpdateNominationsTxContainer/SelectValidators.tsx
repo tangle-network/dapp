@@ -1,9 +1,8 @@
 import { Alert, Typography } from '@webb-tools/webb-ui-components';
-import { type FC, useEffect } from 'react';
+import { type FC } from 'react';
 
 import { ValidatorListTable } from '../../components';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { SelectValidatorsProps } from './types';
 
 const SelectValidators: FC<SelectValidatorsProps> = ({
@@ -12,23 +11,10 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
 }) => {
   const validators = useAllValidators();
 
-  const { valueAfterMount: cachedValidators, set: setCachedValidators } =
-    useLocalStorage(LocalStorageKey.VALIDATORS, true);
-
-  useEffect(() => {
-    if (validators.length > 0) {
-      setCachedValidators(validators);
-    }
-  }, [validators, setCachedValidators]);
-
   return (
     <div className="flex flex-col gap-2 col-span-2">
       <ValidatorListTable
-        data={
-          cachedValidators && cachedValidators.length > 0
-            ? cachedValidators
-            : validators
-        }
+        data={validators}
         selectedValidators={selectedValidators}
         setSelectedValidators={setSelectedValidators}
       />
@@ -38,8 +24,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
         fw="normal"
         className="text-mono-200 dark:text-mono-0"
       >
-        Selected: {selectedValidators.length}/
-        {cachedValidators?.length ?? validators.length}
+        Selected: {selectedValidators.length}/{validators.length}
       </Typography>
 
       <Alert
