@@ -18,7 +18,7 @@ const DropdownField = ({
     (selectedItem: string) => {
       setSelectedItem(selectedItem);
     },
-    [selectedItem]
+    [setSelectedItem]
   );
 
   return (
@@ -56,7 +56,7 @@ const DropdownField = ({
           </div>
         </DropdownBasicButton>
 
-        <DropdownBody className="w-[612px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4">
+        <DropdownBody className="w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4">
           <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
             {items.map((item, i) => (
               <RadioItem key={`${item}-${i}`} value={item} asChild>

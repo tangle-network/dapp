@@ -1,30 +1,36 @@
+import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
-  AmountInput,
   BridgeInputGroup,
   Button,
   Modal,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  RecipientInput,
   TxConfirmationRing,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
+import AddressInput, {
+  AddressType,
+} from '../../components/AddressInput/AddressInput';
+import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
+import useTransferTx from '../../data/balances/useTransferTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useSubstrateTx, { TxStatus } from '../../hooks/useSubstrateTx';
-import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import { CHAIN_UNIT_CONVERSION_FACTOR } from '../../utils/convertChainUnitsToNumber';
-import { formatTokenBalance } from '../../utils/polkadot/tokens';
-import { TransferTxContainerProps } from './types';
+import { TxStatus } from '../../hooks/useSubstrateTx';
+import { formatTokenBalance } from '../../utils/polkadot';
+
+export type TransferTxContainerProps = {
+  isModalOpen: boolean;
+  setIsModalOpen: (isModalOpen: boolean) => void;
+};
 
 function getTxStatusText(status: TxStatus): string {
   switch (status) {
@@ -67,40 +73,20 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
   const { transferrable: transferrableBalance } = useBalances();
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState<BN | null>(null);
   const [receiverAddress, setReceiverAddress] = useState('');
+  const [hasErrors, setHasErrors] = useState(false);
 
   const {
     execute: executeTransferTx,
     status,
     error: txError,
-  } = useSubstrateTx(
-    useCallback(
-      async (api) => {
-        // The amount is in the smallest unit of the token,
-        // so it needs to be converted to the appropriate amount
-        // of decimals.
-        const amountInChainUnits = convertAmountStringToChainUnits(amount);
-
-        // By 'allow death', it means that the transaction will
-        // go through even if the sender's account balance would
-        // be reduced to an amount that is less than the existential
-        // deposit, essentially causing the account to be 'reaped'
-        // or deleted from the chain.
-        return api.tx.balances.transferAllowDeath(
-          receiverAddress,
-          amountInChainUnits
-        );
-      },
-      [amount, receiverAddress]
-    ),
-    true
-  );
+  } = useTransferTx();
 
   // TODO: Likely would ideally want to control this from the parent component.
   const reset = useCallback(() => {
     setIsModalOpen(false);
-    setAmount('');
+    setAmount(null);
     setReceiverAddress('');
   }, [setIsModalOpen]);
 
@@ -111,30 +97,35 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     }
   }, [reset, status]);
 
-  const setMaxAmount = useCallback(() => {
-    if (transferrableBalance === null) {
+  const handleSend = useCallback(() => {
+    // TODO: Check that the address is valid, or return.
+    // Transaction not yet ready, or data is invalid.
+    if (executeTransferTx === null || amount === null) {
       return;
     }
 
-    setAmount(
-      transferrableBalance.div(CHAIN_UNIT_CONVERSION_FACTOR).toString()
-    );
-  }, [transferrableBalance]);
+    executeTransferTx({ receiverAddress, amount });
+  }, [amount, executeTransferTx, receiverAddress]);
+
+  const handleSetErrorMessage = useCallback(
+    (error: string | null) => {
+      setHasErrors(error !== null);
+    },
+    [setHasErrors]
+  );
 
   const isReady = status !== TxStatus.PROCESSING;
-  const isDataValid = amount !== '' && receiverAddress !== '';
+
+  const isDataValid =
+    amount !== null &&
+    amount.gt(BN_ZERO) &&
+    receiverAddress !== '' &&
+    !hasErrors;
+
   const canInitiateTx = isReady && isDataValid;
 
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
-
-  const displayAmount = useMemo(
-    () =>
-      formatTokenBalance(
-        convertAmountStringToChainUnits(amount === '' ? '0' : amount)
-      ),
-    [amount]
-  );
 
   return (
     <Modal>
@@ -155,7 +146,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           </Typography>
 
           <TxConfirmationRing
-            title={displayAmount}
+            title={formatTokenBalance(amount ?? BN_ZERO, nativeTokenSymbol)}
             isInNextApp
             source={{
               address: activeAccountAddress,
@@ -169,20 +160,27 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
           <BridgeInputGroup className="space-y-4 p-0 !bg-transparent">
             <AmountInput
-              onMaxBtnClick={setMaxAmount}
+              id="transfer-tx-amount-input"
+              title="Amount"
+              max={transferrableBalance ?? undefined}
               isDisabled={!isReady}
               amount={amount}
-              onAmountChange={(nextAmount) => setAmount(nextAmount)}
-              className="bg-mono-20 dark:bg-mono-160"
+              setAmount={setAmount}
+              baseInputOverrides={{ isFullWidth: true }}
+              maxErrorMessage="Not enough available balance"
+              setErrorMessage={handleSetErrorMessage}
             />
 
-            <RecipientInput
-              className="bg-mono-20 dark:bg-mono-160"
+            <AddressInput
+              id="transfer-tx-receiver-input"
+              type={AddressType.Both}
               title="Receiver Address"
               placeholder="EVM or Substrate"
-              onChange={(nextReceiverAddress) =>
-                setReceiverAddress(nextReceiverAddress)
-              }
+              baseInputOverrides={{ isFullWidth: true }}
+              value={receiverAddress}
+              setValue={setReceiverAddress}
+              isDisabled={!isReady}
+              setErrorMessage={handleSetErrorMessage}
             />
           </BridgeInputGroup>
 
@@ -190,12 +188,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           {txError !== null && (
             <Typography variant="body1" color="red" fw="normal">
               {txError.message}
-            </Typography>
-          )}
-
-          {!isValidReceiverAddress && receiverAddress !== '' && (
-            <Typography variant="body1" fw="normal" className="!text-red-50">
-              Invalid receiver address
             </Typography>
           )}
         </div>
@@ -206,9 +198,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isFullWidth
               isLoading={!isReady}
               loadingText={getTxStatusText(status)}
-              onClick={
-                executeTransferTx !== null ? executeTransferTx : undefined
-              }
+              onClick={handleSend}
               isDisabled={
                 !canInitiateTx ||
                 executeTransferTx === null ||

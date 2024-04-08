@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 
 /**
@@ -11,14 +12,16 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
  * Vesting schedules that have not yet started (i.e. have not reached their
  * "cliff") will be omitted.
  */
-const useVestTx = (notifyTxStatusUpdates?: boolean) => {
-  return useAgnosticTx(
-    'vesting',
-    'vest',
-    [],
-    useCallback((api) => Promise.resolve(api.tx.vesting.vest()), []),
-    notifyTxStatusUpdates
-  );
+const useVestTx = (notifyStatusUpdates?: boolean) => {
+  return useAgnosticTx({
+    precompile: Precompile.VESTING,
+    notifyStatusUpdates,
+    evmTxFactory: { functionName: 'vest', arguments: [] },
+    substrateTxFactory: useCallback(
+      (api) => Promise.resolve(api.tx.vesting.vest()),
+      []
+    ),
+  });
 };
 
 export default useVestTx;

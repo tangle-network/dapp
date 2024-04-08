@@ -7,10 +7,10 @@ import {
   TANGLE_TWITTER_URL,
   WEBB_AVAILABLE_SOCIALS,
 } from '@webb-tools/webb-ui-components/constants';
-import { getSideBarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
+import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 import React, { type FC, type PropsWithChildren } from 'react';
 
-import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+import { Breadcrumbs, Sidebar, SidebarMenu } from '../../components';
 import { TxConfirmationModalContainer } from '../../containers';
 import ApiDevStatsContainer from '../ApiDevStatsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
@@ -34,12 +34,12 @@ const BOTTOM_LINK_OVERRIDES: Partial<
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
-  const isSideBarInitiallyExpanded = getSideBarStateFromCookie();
+  const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
     <div className="flex bg-body h-screen">
-      <SideBar isExpandedAtDefault={isSideBarInitiallyExpanded} />
+      <Sidebar isExpandedAtDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
         <FeedbackBanner />
@@ -47,7 +47,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           <div className="flex flex-col justify-between space-y-5">
             <div className="flex items-center justify-between py-6">
               <div className="flex items-center space-x-4 lg:space-x-0">
-                <SideBarMenu />
+                <SidebarMenu />
 
                 <Breadcrumbs className="hidden md:block" />
               </div>

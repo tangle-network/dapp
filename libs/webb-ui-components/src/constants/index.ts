@@ -26,29 +26,6 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-/**
- * The network type (use to categorize the network)
- */
-export type NetworkType = 'live' | 'testnet' | 'dev';
-
-export type NetworkNodeType = 'parachain' | 'standalone';
-
-export type Network = {
-  name: string;
-  networkType: NetworkType;
-  networkNodeType: NetworkNodeType;
-  subqueryEndpoint: string;
-  polkadotEndpoint: string;
-  polkadotExplorer: string;
-  evmExplorer?: string;
-  avatar: string;
-};
-
-export type webbNetworksType = {
-  networkType: NetworkType;
-  networks: Network[];
-};
-
 export const BRIDGE_URL = 'https://app.webb.tools';
 export const DKG_STATS_URL = 'https://stats.tangle.tools';
 export const HUBBLE_STATS_URL = 'https://hubble-stats.webb.tools/';
@@ -64,7 +41,7 @@ export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
-  'https://docs.tangle.tools/docs/use/staking-intro/';
+  'https://docs.tangle.tools/docs/staking-intro/';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
@@ -231,55 +208,6 @@ export const tangleLogoConfig: Link = {
   name: 'Tangle Logo',
   path: TANGLE_MKT_URL,
 };
-
-export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
-  name: 'Tangle Testnet Native',
-  networkType: 'testnet',
-  networkNodeType: 'standalone',
-  subqueryEndpoint: SUBQUERY_ENDPOINT,
-  polkadotEndpoint: TANGLE_RPC_ENDPOINT,
-  polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-  evmExplorer: TANGLE_TESTNET_EVM_EXPLORER_URL,
-  avatar: '',
-};
-
-export const WEBB_NETWORKS: webbNetworksType[] = [
-  {
-    networkType: 'live',
-    networks: [],
-  },
-  {
-    networkType: 'testnet',
-    networks: [
-      // TANGLE INTERNAL TESTNET
-      // {
-      //   name: 'Tangle Internal Testnet',
-      //   networkType: 'testnet',
-      //   networkNodeType: 'standalone',
-      //   subqueryEndpoint: SUBQUERY_ENDPOINT, // Incorrect but will remove this network later
-      //   polkadotEndpoint: 'wss://internal-testing.tangle.tools',
-      //   polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL, // Incorrect but will remove this network later
-      //   avatar: '',
-      // },
-      TANGLE_TESTNET_NATIVE_NETWORK,
-    ],
-  },
-  {
-    networkType: 'dev',
-    networks: [
-      {
-        name: 'Local endpoint (127.0.0.1)',
-        networkType: 'dev',
-        networkNodeType: 'standalone',
-        subqueryEndpoint: 'http://localhost:4000/graphql',
-        polkadotEndpoint: 'ws://127.0.0.1:9944',
-        polkadotExplorer:
-          'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
-        avatar: '',
-      },
-    ],
-  },
-];
 
 export const webbAppConfig: ExternalLink = {
   name: 'Hubble Bridge',

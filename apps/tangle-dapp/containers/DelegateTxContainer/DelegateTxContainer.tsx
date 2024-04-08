@@ -11,11 +11,7 @@ import {
   ModalHeader,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import {
-  STAKING_PRECOMPILE_LINK,
-  WEBB_TANGLE_DOCS_STAKING_URL,
-} from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
+import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useState } from 'react';
 
 import { TxConfirmationModal } from '../../components/TxConfirmationModal';
@@ -23,7 +19,6 @@ import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
-import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
@@ -43,11 +38,8 @@ import {
   updatePaymentDestination as updatePaymentDestinationSubstrate,
 } from '../../utils/polkadot';
 import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
-import AuthorizeTx from './AuthorizeTx';
 import BondTokens from './BondTokens';
 import { DelegateTxContainerProps, DelegateTxSteps } from './types';
-
-const CONTRACT_FUNC = 'StakingInterface.sol';
 
 const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   isModalOpen,
@@ -55,7 +47,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const allValidators = useAllValidators();
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState(0);
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
@@ -90,11 +81,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const currentStep = (() => {
     if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
-      return '(1/3)';
+      return '(1/2)';
     } else if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
-      return '(2/3)';
-    } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
-      return '(3/3)';
+      return '(2/2)';
     }
   })();
 
@@ -298,10 +287,10 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         <ModalContent
           isCenter
           isOpen={isModalOpen}
-          className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+          className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
         >
           <ModalHeader titleVariant="h4" onClose={closeModal}>
-            Setup Nominator {currentStep}
+            Setup Nomination {currentStep}
           </ModalHeader>
 
           <div className="px-8 py-6">
@@ -324,15 +313,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               />
             ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
               <SelectValidators
-                validators={allValidators}
                 selectedValidators={selectedValidators}
                 setSelectedValidators={setSelectedValidators}
-              />
-            ) : delegateTxStep === DelegateTxSteps.AUTHORIZE_TX ? (
-              <AuthorizeTx
-                nominatorAddress={walletAddress}
-                contractFunc={CONTRACT_FUNC}
-                contractLink={STAKING_PRECOMPILE_LINK}
               />
             ) : null}
 
@@ -345,65 +327,56 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             )}
           </div>
 
-          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-            {delegateTxStep !== DelegateTxSteps.AUTHORIZE_TX ? (
+          <ModalFooter className="flex gap-1 items-center">
+            {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
               <Button
                 isFullWidth
-                isDisabled={
-                  (delegateTxStep === DelegateTxSteps.BOND_TOKENS &&
-                    !continueToSelectDelegatesStep) ||
-                  (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES &&
-                    !continueToAuthorizeTxStep)
-                }
-                onClick={() => {
-                  if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
-                    setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
-                  } else if (
-                    delegateTxStep === DelegateTxSteps.SELECT_DELEGATES
-                  ) {
-                    setDelegateTxStep(DelegateTxSteps.AUTHORIZE_TX);
-                  }
-                }}
+                variant="secondary"
+                target="_blank"
+                href={WEBB_TANGLE_DOCS_STAKING_URL}
               >
-                {delegateTxStep === DelegateTxSteps.BOND_TOKENS
-                  ? 'Next'
-                  : amountToBond > 0
-                  ? 'Stake & Nominate'
-                  : 'Nominate'}
+                Learn More
               </Button>
             ) : (
               <Button
                 isFullWidth
+                variant="secondary"
+                onClick={() => setDelegateTxStep(DelegateTxSteps.BOND_TOKENS)}
+              >
+                Back
+              </Button>
+            )}
+
+            {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
+              <Button
+                variant="primary"
+                isFullWidth
+                className="!mt-0"
                 isDisabled={
-                  delegateTxStep === DelegateTxSteps.AUTHORIZE_TX &&
+                  delegateTxStep === DelegateTxSteps.BOND_TOKENS &&
+                  !continueToSelectDelegatesStep
+                }
+                onClick={() => {
+                  if (delegateTxStep === DelegateTxSteps.BOND_TOKENS) {
+                    setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
+                  }
+                }}
+              >
+                Next
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                isFullWidth
+                className="!mt-0"
+                isDisabled={
+                  delegateTxStep === DelegateTxSteps.SELECT_DELEGATES &&
                   !continueToSignAndSubmitTx
                 }
                 isLoading={isSubmitAndSignTxLoading}
                 onClick={submitAndSignTx}
               >
                 Confirm
-              </Button>
-            )}
-
-            {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
-              <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-                <Button isFullWidth variant="secondary">
-                  Learn More
-                </Button>
-              </Link>
-            ) : (
-              <Button
-                isFullWidth
-                variant="secondary"
-                onClick={() => {
-                  if (delegateTxStep === DelegateTxSteps.SELECT_DELEGATES) {
-                    setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
-                  } else if (delegateTxStep === DelegateTxSteps.AUTHORIZE_TX) {
-                    setDelegateTxStep(DelegateTxSteps.SELECT_DELEGATES);
-                  }
-                }}
-              >
-                Go Back
               </Button>
             )}
           </ModalFooter>

@@ -7,6 +7,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -19,11 +20,12 @@ const BondTokens: FC<BondTokensProps> = ({
   paymentDestinationOptions,
   paymentDestination,
   setPaymentDestination,
-  tokenSymbol,
 }) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   return (
-    <div className="grid grid-cols-3 gap-9">
-      <div className="flex flex-col gap-9 col-span-2">
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-2 gap-9 items-center">
         {/* Account */}
         <InputField.Root>
           <InputField.Input
@@ -44,6 +46,13 @@ const BondTokens: FC<BondTokensProps> = ({
           </InputField.Slot>
         </InputField.Root>
 
+        <Typography variant="body1" fw="normal" className="!max-w-[365px]">
+          By staking tokens and nominating validators, you are bonding your
+          tokens to secure the network.
+        </Typography>
+      </div>
+
+      <div className="grid grid-cols-2 gap-9 items-center">
         {/* Amount */}
         <InputField.Root error={amountToBondError}>
           <InputField.Input
@@ -57,7 +66,7 @@ const BondTokens: FC<BondTokensProps> = ({
                   : true
                 : false
             }
-            placeholder={`10 ${tokenSymbol}`}
+            placeholder={`10 ${nativeTokenSymbol}`}
             type="number"
             onChange={(e) => setAmountToBond(Number(e.target.value))}
           />
@@ -74,33 +83,28 @@ const BondTokens: FC<BondTokensProps> = ({
           </InputField.Slot>
         </InputField.Root>
 
-        {/* Payment Destination */}
-        {amountToBond > 0 && (
-          <DropdownField
-            title="Payment Destination"
-            items={paymentDestinationOptions}
-            selectedItem={paymentDestination}
-            setSelectedItem={setPaymentDestination}
-          />
-        )}
+        <Typography variant="body1" fw="normal" className="!max-w-[365px]">
+          To unbond staked tokens, a duration of 28 eras (apprx. 28 days) where
+          they remain inactive and will not earn rewards.
+        </Typography>
       </div>
 
-      <div className="flex flex-col gap-9 col-span-1">
-        <Typography variant="body1" fw="normal">
-          The amount placed at-stake should not be your full available amount to
-          allow for transaction fees.
-        </Typography>
-
-        <Typography variant="body1" fw="normal">
-          Once bonded, it will need to be unlocked/withdrawn and will be locked
-          for at least the bonding duration.
-        </Typography>
-
+      <div className="grid grid-cols-2 gap-9 items-center">
+        {/* Payment Destination */}
         {amountToBond > 0 && (
-          <Typography variant="body1" fw="normal">
-            Rewards (once paid) can be deposited to your account, unless
-            otherwise configured.
-          </Typography>
+          <>
+            <DropdownField
+              title="Payment Destination"
+              items={paymentDestinationOptions}
+              selectedItem={paymentDestination}
+              setSelectedItem={setPaymentDestination}
+            />
+
+            <Typography variant="body1" fw="normal" className="!max-w-[365px]">
+              {`By selecting 'Increase the amount at stake', your rewards will be
+              automatically reinvested to maximize compounding.`}
+            </Typography>
+          </>
         )}
       </div>
     </div>

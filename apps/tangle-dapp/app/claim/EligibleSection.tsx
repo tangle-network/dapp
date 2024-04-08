@@ -2,7 +2,7 @@
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import { hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
+import { BN_ZERO, hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
 import {
   decodeAddress,
   isEthereumAddress,
@@ -18,6 +18,7 @@ import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import assert from 'assert';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
@@ -28,6 +29,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import getStatement, { Statement } from '../../utils/getStatement';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import type { ClaimInfoType } from './types';
 
 enum Step {
@@ -38,21 +40,24 @@ enum Step {
 
 type Props = {
   claimInfo: ClaimInfoType;
-  onClaimCompleted: () => void;
   setIsClaiming: (isClaiming: boolean) => void;
 };
 
 const EligibleSection: FC<Props> = ({
-  claimInfo: { amount, isRegularStatement },
-  onClaimCompleted,
+  claimInfo: { totalAmount, vestingAmount, isRegularStatement },
   setIsClaiming,
 }) => {
+  assert(
+    totalAmount.gte(vestingAmount),
+    "Total amount can't be less than vesting amount"
+  );
+
   const { activeAccount, activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { rpcEndpoint } = useNetworkStore();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
@@ -148,9 +153,7 @@ const EligibleSection: FC<Props> = ({
       const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      setIsClaiming(false);
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
-      onClaimCompleted();
       newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
 
@@ -177,7 +180,6 @@ const EligibleSection: FC<Props> = ({
     activeApi,
     rpcEndpoint,
     notificationApi,
-    onClaimCompleted,
     setIsClaiming,
     recipient,
     router,
@@ -206,13 +208,13 @@ const EligibleSection: FC<Props> = ({
           />
         </div>
 
-        <div className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
+        <div className="space-y-6 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
-            You will receive the liquid balance of...
+            You will receive the total balance of...
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
-            {`${amount} `}
+            {`${formatTokenBalance(totalAmount, nativeTokenSymbol)} `}
             {isValidAddress(recipient)
               ? `to ${
                   isHex(recipient)
@@ -221,9 +223,27 @@ const EligibleSection: FC<Props> = ({
                 }`
               : ''}
           </Typography>
-          <Typography variant="body1" fw="bold" ta="center">
-            95% of this will be vested over 24 months w/ a 1 month cliff.
-          </Typography>
+
+          {/* Only show this when there's vesting amount */}
+          {vestingAmount.gt(BN_ZERO) && (
+            <div>
+              {/* Free Balance */}
+              <Typography variant="body1" fw="bold" ta="center">
+                {`${formatTokenBalance(
+                  totalAmount.sub(vestingAmount),
+                  nativeTokenSymbol
+                )}`}{' '}
+                will be available immediately as free balance.
+              </Typography>
+
+              {/* Vesting: based on Tangle Genesis Allocations */}
+              {/* https://docs.tangle.tools/docs/tokenomics/allocation/ */}
+              <Typography variant="body1" fw="bold" ta="center">
+                {`${formatTokenBalance(vestingAmount, nativeTokenSymbol)}`} will
+                be vested over 24 months with a 1 month cliff.
+              </Typography>
+            </div>
+          )}
         </div>
 
         <Typography className="px-4" variant="h5" ta="center">
@@ -260,7 +280,11 @@ const EligibleSection: FC<Props> = ({
           isFullWidth
           loadingText={getLoadingText(step)}
           isLoading={step !== Step.INPUT_ADDRESS}
-          isDisabled={!recipient || !!recipientErrorMsg || !hasReadStatement}
+          isDisabled={
+            !recipient ||
+            !!recipientErrorMsg ||
+            (statement !== null && !hasReadStatement)
+          }
           onClick={handleClaimClick}
         >
           Claim Now

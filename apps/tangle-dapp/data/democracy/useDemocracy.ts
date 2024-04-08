@@ -3,14 +3,19 @@ import { map } from 'rxjs';
 
 import { SubstrateLockId } from '../../constants';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useBalancesLock from '../balances/useBalancesLock';
 
 const useDemocracy = () => {
+  const activeSubstrateAddress = useSubstrateAddress();
+
   const { data: votes } = usePolkadotApiRx(
     useCallback(
-      (api, activeSubstrateAddress) =>
-        api.query.democracy.votingOf(activeSubstrateAddress),
-      []
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.democracy.votingOf(activeSubstrateAddress);
+      },
+      [activeSubstrateAddress]
     )
   );
 

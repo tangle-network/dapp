@@ -21,7 +21,7 @@ import {
 
 import { PagePath } from '../../types';
 
-const sideBarStaticItems: SideBarItemProps[] = [
+const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
     name: 'Account',
     href: PagePath.ACCOUNT,
@@ -29,27 +29,6 @@ const sideBarStaticItems: SideBarItemProps[] = [
     isNext: true,
     Icon: UserLineIcon,
     subItems: [],
-  },
-  {
-    name: 'Services',
-    href: '',
-    isInternal: true,
-    isNext: true,
-    Icon: GridFillIcon,
-    subItems: [
-      {
-        name: 'Overview',
-        href: PagePath.SERVICES_OVERVIEW,
-        isInternal: true,
-        isNext: true,
-      },
-      {
-        name: 'Restake',
-        href: PagePath.SERVICES_RESTAKE,
-        isInternal: true,
-        isNext: true,
-      },
-    ],
   },
   {
     name: 'Nomination',
@@ -69,7 +48,7 @@ const sideBarStaticItems: SideBarItemProps[] = [
   },
 ];
 
-const sideBarFooter: SideBarFooterType = {
+const SIDEBAR_FOOTER: SideBarFooterType = {
   Icon: DocumentationIcon,
   href: TANGLE_DOCS_URL,
   isInternal: false,
@@ -77,12 +56,41 @@ const sideBarFooter: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-export default function getSideBarProps(
+export default function getSidebarProps(
+  isDevelopment: boolean,
   substratePortalHref?: string,
   evmExplorerHref?: string
 ): SidebarProps {
+  const staticItems = [...SIDEBAR_STATIC_ITEMS];
+
+  // TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
+  // Only show the services dropdown if on development mode.
+  if (isDevelopment) {
+    staticItems.splice(1, 0, {
+      name: 'Services',
+      href: '',
+      isInternal: true,
+      isNext: true,
+      Icon: GridFillIcon,
+      subItems: [
+        {
+          name: 'Overview',
+          href: PagePath.SERVICES_OVERVIEW,
+          isInternal: true,
+          isNext: true,
+        },
+        {
+          name: 'Restake',
+          href: PagePath.SERVICES_RESTAKE,
+          isInternal: true,
+          isNext: true,
+        },
+      ],
+    });
+  }
+
   const sideBarItems: SideBarItemProps[] = [
-    ...sideBarStaticItems,
+    ...staticItems,
     ...(substratePortalHref
       ? [
           {
@@ -110,7 +118,7 @@ export default function getSideBarProps(
   return {
     ClosedLogo: SidebarTangleClosedIcon,
     Logo: TangleLogo,
-    footer: sideBarFooter,
+    footer: SIDEBAR_FOOTER,
     items: sideBarItems,
     logoLink: TANGLE_MKT_URL,
   } satisfies SidebarProps;

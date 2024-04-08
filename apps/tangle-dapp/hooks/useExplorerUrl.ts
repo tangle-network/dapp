@@ -15,8 +15,8 @@ const useExplorerUrl = () => {
     (transactionOrBlockHash: string, type: ExplorerType): URL | null => {
       const explorerUrl =
         type === ExplorerType.Substrate
-          ? network.polkadotExplorer
-          : network.evmExplorer;
+          ? network.polkadotExplorerUrl
+          : network.evmExplorerUrl;
 
       if (explorerUrl === undefined) {
         return null;
@@ -24,7 +24,7 @@ const useExplorerUrl = () => {
 
       return getExplorerURI(explorerUrl, transactionOrBlockHash, 'tx', type);
     },
-    [network.evmExplorer, network.polkadotExplorer]
+    [network.evmExplorerUrl, network.polkadotExplorerUrl]
   );
 };
 
