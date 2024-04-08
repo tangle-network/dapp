@@ -34,7 +34,7 @@ const columns = [
       const identity = props.row.original.identityName;
 
       return (
-        <div className="flex space-x-1 items-center">
+        <div className="flex items-center space-x-1">
           <Avatar sourceVariant="address" value={address} theme="substrate">
             hello
           </Avatar>
@@ -88,6 +88,10 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
 
   const onRowClick = useCallback(
     (row: Row<Validator>) => {
+      if (process.env.NODE_ENV === 'production') {
+        return;
+      }
+
       router.push(`${PagePath.NOMINATION}/${row.original.address}`);
     },
     [router]
@@ -110,7 +114,9 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
         thClassName="border-t-0 bg-mono-0"
-        trClassName="cursor-pointer"
+        trClassName={
+          process.env.NODE_ENV === 'production' ? '' : 'cursor-pointer'
+        }
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
