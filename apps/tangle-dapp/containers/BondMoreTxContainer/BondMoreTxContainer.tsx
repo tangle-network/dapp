@@ -22,6 +22,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { bondExtraTokens as bondExtraTokensSubstrate } from '../../utils/polkadot';
 import { BondMoreTxContainerProps } from './types';
 
@@ -78,6 +79,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setIsBondMoreTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(null);
+    setHasErrors(false);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
@@ -85,7 +87,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setIsBondMoreTxLoading(true);
 
     try {
-      const bondingAmount = amountToBond.toNumber();
+      const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       const hash = await executeTx(
         () => bondExtraTokensEvm(walletAddress, bondingAmount),
         () =>
