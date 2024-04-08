@@ -19,10 +19,10 @@ export const useValidators = (
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
   const { nativeTokenSymbol } = useNetworkStore();
+
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
-
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
       (api) =>
@@ -32,10 +32,29 @@ export const useValidators = (
       [currentEra]
     )
   );
-
   const { data: nominations } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
+
+  // Mapping Exposures
+  const mappedExposures = useMemo(() => {
+    const map = new Map<string, SpStakingExposure>();
+    exposures?.forEach(([storageKey, exposure]) => {
+      const accountId = storageKey.args[1].toString();
+      map.set(accountId, exposure);
+    });
+    return map;
+  }, [exposures]);
+
+  // Mapping Validator Preferences
+  const mappedValidatorPrefs = useMemo(() => {
+    const map = new Map<string, PalletStakingValidatorPrefs>();
+    validatorPrefs?.forEach(([storageKey, prefs]) => {
+      const accountId = storageKey.args[0].toString();
+      map.set(accountId, prefs);
+    });
+    return map;
+  }, [validatorPrefs]);
 
   return useMemo(() => {
     if (
@@ -47,22 +66,6 @@ export const useValidators = (
     ) {
       return null;
     }
-
-    const mappedExposures = new Map<string, SpStakingExposure>();
-    const mappedValidatorPrefs = new Map<string, PalletStakingValidatorPrefs>();
-
-    exposures.forEach(([storageKey, exposure]) => {
-      const accountId = storageKey.args[1].toString();
-
-      mappedExposures.set(accountId, exposure);
-    });
-
-    validatorPrefs.forEach((validatorPref) => {
-      mappedValidatorPrefs.set(
-        validatorPref[0].args[0].toString(),
-        validatorPref[1]
-      );
-    });
 
     return addresses.map((address) => {
       const name = identityNames.get(address.toString()) ?? address.toString();
@@ -103,11 +106,13 @@ export const useValidators = (
     });
   }, [
     addresses,
-    exposures,
     identityNames,
+    exposures,
     nominations,
-    status,
     validatorPrefs,
+    mappedExposures,
+    mappedValidatorPrefs,
     nativeTokenSymbol,
+    status,
   ]);
 };

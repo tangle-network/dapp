@@ -44,7 +44,7 @@ export const Alert: React.FC<AlertProps> = ({
   const className = useMemo(() => {
     return twMerge(
       _className,
-      'flex w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
+      'flex items-center w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
       getClassNamesByType(type)
     );
   }, [_className, type]);
