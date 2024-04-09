@@ -90,7 +90,7 @@ const BaseInput: FC<BaseInputProps> = ({
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
-          hasError && 'border-red-50 dark:border-red-50',
+          hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName
         )}

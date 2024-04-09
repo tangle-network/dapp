@@ -30,7 +30,7 @@ const NominatorStatsItemText = ({ address, type }: Props) => {
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
       <div className="flex items-center gap-0.5">
         {isLoading ? (
-          <SkeletonLoader className="w-[100px]" />
+          <SkeletonLoader className="w-[100px]" size="lg" />
         ) : error ? (
           'Error'
         ) : data === null ? null : (
