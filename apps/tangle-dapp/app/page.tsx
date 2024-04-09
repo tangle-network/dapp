@@ -9,6 +9,7 @@ import createPageMetadata from '../utils/createPageMetadata';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Account',
+  isHomepage: true,
 });
 
 const AccountPage: FC = () => {

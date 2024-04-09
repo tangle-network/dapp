@@ -8,7 +8,7 @@ export enum OpenGraphPageImageUrl {
   ClaimAirdrop = `${OPENGRAPH_IMAGES_BASE_URL}/claim-airdrop.png`,
 }
 
-export const APP_TITLE = 'Tangle dApp';
+export const APP_NAME = 'Tangle dApp';
 
 export const APP_SUBTITLE = 'Kickstarting Blockchain Innovation with MPC';
 
@@ -17,8 +17,8 @@ export const APP_DESCRIPTION =
 
 export const DEFAULT_OPENGRAPH_METADATA = {
   title: {
-    default: APP_TITLE,
-    template: `${APP_TITLE} | %s`,
+    default: APP_NAME,
+    template: `${APP_NAME} | %s`,
   },
   description: APP_DESCRIPTION,
   metadataBase: process.env.URL
@@ -27,10 +27,10 @@ export const DEFAULT_OPENGRAPH_METADATA = {
     ? new URL(`http://localhost:${process.env.PORT}`)
     : null,
   openGraph: {
-    title: `${APP_TITLE} | ${APP_SUBTITLE}`,
+    title: `${APP_NAME} | ${APP_SUBTITLE}`,
     description: APP_DESCRIPTION,
     url: TANGLE_DAPP_URL,
-    siteName: APP_TITLE,
+    siteName: APP_NAME,
     locale: 'en_US',
     type: 'website',
     images: [
@@ -46,7 +46,7 @@ export const DEFAULT_OPENGRAPH_METADATA = {
     icon: '/favicon.png',
   },
   twitter: {
-    title: `${APP_TITLE} | ${APP_SUBTITLE}`,
+    title: `${APP_NAME} | ${APP_SUBTITLE}`,
     card: 'summary_large_image',
     description: APP_DESCRIPTION,
   },
