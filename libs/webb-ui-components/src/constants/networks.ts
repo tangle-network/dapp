@@ -16,7 +16,7 @@ export enum NetworkId {
 
 export type Network = {
   id: NetworkId;
-  chainId: number;
+  chainId?: number;
   name: string;
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
@@ -37,7 +37,7 @@ export type Network = {
    * Usually used for EVM-based actions, such as Viem wallet
    * client requests.
    */
-  httpRpcEndpoint: string;
+  httpRpcEndpoint?: string;
 };
 
 const TANGLE_MAINNET_WS_RPC_ENDPOINT = 'wss://rpc.tangle.tools';
