@@ -26,10 +26,13 @@ const WithdrawEVMBalanceAction: FC<WithdrawEVMBalanceActionProps> = ({
 
   const handleWithdraw = useCallback(() => execute?.(), [execute]);
 
+  const formattedBalance = formatTokenBalance(balance, nativeTokenSymbol);
+
   useEffect(() => {
     if (status === TxStatus.COMPLETE) {
       notificationApi({
         message: 'Withdraw successful',
+        secondaryMessage: `You have successfully withdrawn ${formattedBalance}`,
         variant: 'success',
       });
     }
@@ -41,7 +44,7 @@ const WithdrawEVMBalanceAction: FC<WithdrawEVMBalanceActionProps> = ({
         variant: 'error',
       });
     }
-  }, [error?.message, notificationApi, status]);
+  }, [error?.message, notificationApi, status, formattedBalance]);
 
   // If withdraw is successful, don't show the action item
   if (status === TxStatus.COMPLETE) {
@@ -62,10 +65,7 @@ const WithdrawEVMBalanceAction: FC<WithdrawEVMBalanceActionProps> = ({
         status === TxStatus.ERROR ? (
           <>Oops, something went wrong. Please try again.</>
         ) : (
-          <>
-            You have {formatTokenBalance(balance, nativeTokenSymbol)} to
-            withdraw, click to withdraw.
-          </>
+          <>You have {formattedBalance} to withdraw, click to withdraw.</>
         )
       }
       isDisabled={status === TxStatus.PROCESSING}
