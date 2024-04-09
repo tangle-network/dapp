@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
+import { DelegatorTable, TableStatus } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
@@ -90,23 +90,23 @@ const DelegationsPayoutsContainer: FC = () => {
     return delegatorsData.delegators.map((delegator) => delegator.address);
   }, [delegatorsData?.delegators]);
 
-  const { valueAfterMount: cachedPayouts } = useLocalStorage(
-    LocalStorageKey.Payouts,
-    true
-  );
+  // const { valueAfterMount: cachedPayouts } = useLocalStorage(
+  //   LocalStorageKey.Payouts,
+  //   true
+  // );
 
   const { valueAfterMount: cachedNominations } = useLocalStorage(
     LocalStorageKey.Nominations,
     true
   );
 
-  const fetchedPayouts = useMemo(() => {
-    if (payoutsData !== null) {
-      return payoutsData.payouts;
-    } else if (cachedPayouts) {
-      return cachedPayouts[substrateAddress] ?? [];
-    }
-  }, [cachedPayouts, payoutsData, substrateAddress]);
+  // const fetchedPayouts = useMemo(() => {
+  //   if (payoutsData !== null) {
+  //     return payoutsData.payouts;
+  //   } else if (cachedPayouts) {
+  //     return cachedPayouts[substrateAddress] ?? [];
+  //   }
+  // }, [cachedPayouts, payoutsData, substrateAddress]);
 
   const fetchedNominations = useMemo(() => {
     if (delegatorsData !== null) {
@@ -226,7 +226,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
         {/* Payouts Table */}
         <TabContent value={DelegationsAndPayoutsTab.PAYOUTS} aria-disabled>
-          {!activeAccount ? (
+          {/* {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
               description="Connect your wallet to view and manage your staking details."
@@ -255,7 +255,18 @@ const DelegationsPayoutsContainer: FC = () => {
               pageSize={PAGE_SIZE}
               updateData={setUpdatedPayouts}
             />
-          )}
+          )} */}
+
+          <TableStatus
+            title="Payouts Coming Soon"
+            description="Payouts are currently in development and will be available soon. Check back to see your updated payout status after nominating.
+            "
+            buttonText="Nominate"
+            buttonProps={{
+              onClick: () => setIsDelegateModalOpen(true),
+            }}
+            icon="🚧"
+          />
         </TabContent>
       </TableAndChartTabs>
 
