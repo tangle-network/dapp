@@ -1,17 +1,17 @@
 'use client';
 
-import { u128 } from '@polkadot/types';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { formatTokenBalance, getPolkadotApiRx } from '../../utils/polkadot';
+import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useUnbondingAmountSubscription(
   address: string,
-  defaultValue: { value1: string | number | null } = {
+  defaultValue: { value1: BN | null } = {
     value1: null,
   }
 ) {
@@ -40,23 +40,13 @@ export default function useUnbondingAmountSubscription(
             if (isMounted) {
               const ledger = ledgerData.unwrapOrDefault();
 
-              const unbondingAmount = ledger.unlocking.map((unlockChunk) => {
-                return unlockChunk.value.toString();
-              });
-
-              const totalUnbondingAmount = unbondingAmount.reduce(
-                (accumulator, currentValue) => {
-                  return accumulator + Number(currentValue);
-                },
-                0
+              const totalUnbondingAmout = ledger.unlocking.reduce(
+                (acc, curr) =>
+                  acc.add(new BN(curr.value.toBigInt().toString())),
+                BN_ZERO
               );
 
-              const unbondingFormattedAmount = formatTokenBalance(
-                new u128(api.registry, totalUnbondingAmount.toString()),
-                nativeTokenSymbol
-              );
-
-              setValue1(unbondingFormattedAmount ?? null);
+              setValue1(totalUnbondingAmout);
               setIsLoading(false);
             }
           });

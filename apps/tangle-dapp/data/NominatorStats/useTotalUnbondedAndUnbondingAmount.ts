@@ -1,14 +1,14 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useEffect, useMemo, useState } from 'react';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { splitTokenValueAndSymbol } from '../../utils/splitTokenValueAndSymbol';
 import useUnbondingRemainingErasSubscription from './useUnbondingRemainingErasSubscription';
 
 type UnbondedAndUnbondingAmount = {
-  unbonded: number;
-  unbonding: number;
+  unbonded: BN;
+  unbonding: BN;
 };
 
 export default function useTotalUnbondedAndUnbondingAmount(
@@ -43,22 +43,20 @@ export default function useTotalUnbondedAndUnbondingAmount(
     }
 
     if (unbondingRemainingEras.length === 0) {
-      setValue1({ unbonded: 0, unbonding: 0 });
+      setValue1({ unbonded: BN_ZERO, unbonding: BN_ZERO });
       setIsLoading(false);
 
       return;
     }
 
-    let unbondedAmount = 0;
-    let unbondingAmount = 0;
+    let unbondedAmount = BN_ZERO;
+    let unbondingAmount = BN_ZERO;
 
     unbondingRemainingEras.forEach((era) => {
-      const { value: amount } = splitTokenValueAndSymbol(era.amount);
-
       if (era.remainingEras <= 0) {
-        unbondedAmount += Number(amount);
+        unbondedAmount = unbondedAmount.add(era.amount);
       } else if (era.remainingEras > 0) {
-        unbondingAmount += Number(amount);
+        unbondingAmount = unbondingAmount.add(era.amount);
       }
     });
 

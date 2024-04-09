@@ -1,11 +1,11 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
-import { formatEther } from 'viem';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
@@ -14,7 +14,7 @@ import { getPolkadotApiRx } from '../../utils/polkadot';
 
 export default function useTokenWalletBalance(
   address: string,
-  defaultValue: { value1: number | null } = { value1: null }
+  defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,9 +39,7 @@ export default function useTokenWalletBalance(
             address: ensureHex(address),
           });
 
-          const walletBalance = formatEther(balance);
-
-          setValue1(Number(walletBalance));
+          setValue1(new BN(balance.toString()));
           setIsLoading(false);
           return;
         } catch (error) {
@@ -64,13 +62,8 @@ export default function useTokenWalletBalance(
 
         sub = api.query.system.account(address).subscribe(async (accData) => {
           if (isMounted) {
-            const freeBalance = accData.data.free.toBigInt();
-            const reservedBalance = accData.data.reserved.toBigInt();
-            const frozenBalance = accData.data.frozen.toBigInt();
-            // total balance = free balance + reserved balance - frozenBalance
-            setValue1(
-              Number(formatEther(freeBalance + reservedBalance - frozenBalance))
-            );
+            const freeBalance = accData.data.free;
+            setValue1(freeBalance);
             setIsLoading(false);
           }
         });
