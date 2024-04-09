@@ -4,7 +4,7 @@ import { TANGLE_TOKEN_DECIMALS } from '../../constants';
 import { getPolkadotApiPromise } from './api';
 
 export const formatTokenBalance = (
-  balance: BN,
+  balance: BN | bigint,
   tokenSymbol?: string
 ): string => {
   return formatBalance(balance, {

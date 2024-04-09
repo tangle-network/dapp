@@ -88,6 +88,7 @@ export * from './KeyIcon';
 export * from './Link';
 export * from './LinkedInFill';
 export { default as ListCheckIcon } from './ListCheckIcon';
+export * from './LockLineIcon';
 export * from './LockUnlockLineIcon';
 export * from './LoginBoxLineIcon';
 export { default as LoopRightFillIcon } from './LoopRightFillIcon';
@@ -99,6 +100,7 @@ export * from './ProhibitedLineIcon';
 export * from './QRCode';
 export { default as QRScanLineIcon } from './QRScanLineIcon';
 export { default as RefreshLineIcon } from './RefreshLineIcon';
+export { default as RefundLineIcon } from './RefundLineIcon';
 export * from './Save';
 export * from './SaveWithBg';
 export { default as ScalesIcon } from './ScalesIcon';
@@ -138,7 +140,6 @@ export { default as WalletLineIcon } from './WalletLineIcon';
 export { default as WalletPayIcon } from './WalletPayIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
-export * from './LockLineIcon';
 
 // Wallet icons
 export * from './wallets';
