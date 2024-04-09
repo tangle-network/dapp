@@ -40,12 +40,6 @@ export type Network = {
   httpRpcEndpoint?: string;
 };
 
-/**
- * Easy toggle to show/hide the mainnet network option
- * on the network selector.
- */
-export const HAS_TANGLE_MAINNET_LAUNCHED = false;
-
 const TANGLE_MAINNET_WS_RPC_ENDPOINT = 'wss://rpc.tangle.tools';
 
 export const TANGLE_MAINNET_NETWORK: Network = {
