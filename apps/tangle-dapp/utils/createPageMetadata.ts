@@ -21,8 +21,6 @@ const createPageMetadata = ({
   imageHeight,
   isHomepage = false,
 }: Partial<PageMetadataOptions>): Metadata => {
-  const titleWithAppName = title ? `${APP_NAME} | ${title}` : undefined;
-
   const images =
     imageUrl !== undefined
       ? [
@@ -35,6 +33,7 @@ const createPageMetadata = ({
         ]
       : DEFAULT_OPENGRAPH_METADATA.openGraph.images;
 
+  const titleWithAppName = title ? `${APP_NAME} | ${title}` : undefined;
   let pageTitle: string | undefined = undefined;
 
   // Homepage needs a special exception, since it is overriding
