@@ -1,7 +1,6 @@
 import { ChainIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import {
-  HAS_TANGLE_MAINNET_LAUNCHED,
   Network,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
@@ -31,13 +30,11 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
   return (
     <div className="flex flex-col items-center justify-between gap-2 py-1">
       {/* Mainnet network */}
-      {HAS_TANGLE_MAINNET_LAUNCHED && (
-        <NetworkOption
-          isSelected={selectedNetwork?.name === TANGLE_MAINNET_NETWORK.name}
-          name={TANGLE_MAINNET_NETWORK.name}
-          onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
-        />
-      )}
+      <NetworkOption
+        isSelected={selectedNetwork?.name === TANGLE_MAINNET_NETWORK.name}
+        name={TANGLE_MAINNET_NETWORK.name}
+        onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
+      />
 
       {/* Testnet network */}
       <NetworkOption
