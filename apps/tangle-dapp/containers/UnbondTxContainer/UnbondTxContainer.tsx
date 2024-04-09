@@ -189,7 +189,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             amount={amountToUnbond}
             setAmount={setAmountToUnbond}
             baseInputOverrides={{ isFullWidth: true }}
-            maxErrorMessage="Not enough available balance"
+            maxErrorMessage="Not enough staked balance"
             setErrorMessage={handleSetErrorMessage}
           />
           <Typography variant="body1" fw="normal">

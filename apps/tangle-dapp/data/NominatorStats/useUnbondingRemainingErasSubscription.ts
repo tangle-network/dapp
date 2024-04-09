@@ -1,16 +1,16 @@
 'use client';
 
-import { u128 } from '@polkadot/types';
+import { BN } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
 import { firstValueFrom, type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { formatTokenBalance, getPolkadotApiRx } from '../../utils/polkadot';
+import { getPolkadotApiRx } from '../../utils/polkadot';
 
 type UnbondingRemainingEras = {
-  amount: string;
+  amount: BN;
   remainingEras: number;
 };
 
@@ -54,15 +54,13 @@ export default function useUnbondingRemainingErasSubscription(
 
               const unbondingRemainingEras = ledger.unlocking.map(
                 async (unlockChunk) => {
-                  const unbondedAmount = unlockChunk.value;
-                  const unbondingFormattedAmount = formatTokenBalance(
-                    new u128(api.registry, unbondedAmount.toString()),
-                    nativeTokenSymbol
+                  const unbondedAmount = new BN(
+                    unlockChunk.value.toBigInt().toString()
                   );
                   const unlockingEra = unlockChunk.era.toNumber();
                   const remainingEras = unlockingEra - currentEra;
                   return {
-                    amount: unbondingFormattedAmount ?? '',
+                    amount: unbondedAmount,
                     remainingEras,
                   };
                 }

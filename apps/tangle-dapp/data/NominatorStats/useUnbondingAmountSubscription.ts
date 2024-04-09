@@ -1,6 +1,5 @@
 'use client';
 
-import { u128 } from '@polkadot/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
