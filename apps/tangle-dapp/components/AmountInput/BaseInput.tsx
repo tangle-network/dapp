@@ -90,7 +90,7 @@ const BaseInput: FC<BaseInputProps> = ({
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
-          hasError && 'border-red-50 dark:border-red-50',
+          hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName
         )}
@@ -148,7 +148,11 @@ const BaseInput: FC<BaseInputProps> = ({
       </div>
 
       {hasError && (
-        <Typography className="dark:text-mono-100" variant="body1" fw="normal">
+        <Typography
+          className="text-red-70 dark:text-red-50"
+          variant="body1"
+          fw="normal"
+        >
           *{errorMessage}
         </Typography>
       )}

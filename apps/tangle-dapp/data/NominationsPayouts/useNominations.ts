@@ -65,23 +65,6 @@ export default function useNominations(
             // TODO: This needs to be optimized. Make a single request to get all the data, then work off that data. Currently, this may make many requests, depending on how many targets there are PER nominator (O(nominators * targets)).
             const delegators: Delegator[] = await Promise.all(
               targets.map(async (target) => {
-                const ledger = await apiPromise.query.staking.ledger(
-                  target.toString()
-                );
-
-                // TODO: Ledger may not always be available. This isn't the best way to handle this.
-                const ledgerData = ledger.unwrapOrDefault();
-
-                const selfStaked = new u128(
-                  apiPromise.registry,
-                  ledgerData.total.toString()
-                );
-
-                const selfStakedBalance = formatTokenBalance(
-                  selfStaked,
-                  nativeTokenSymbol
-                );
-
                 const isActive = await apiPromise.query.session
                   .validators()
                   .then((activeValidators) =>
@@ -112,6 +95,17 @@ export default function useNominations(
                   currentEra.unwrap(),
                   target.toString()
                 );
+
+                const selfStaked = new u128(
+                  apiPromise.registry,
+                  exposure.own.toString()
+                );
+
+                const selfStakedBalance = formatTokenBalance(
+                  selfStaked,
+                  nativeTokenSymbol
+                );
+
                 const totalStakeAmount = exposure.total.unwrap();
                 const effectiveAmountStaked = formatTokenBalance(
                   totalStakeAmount,

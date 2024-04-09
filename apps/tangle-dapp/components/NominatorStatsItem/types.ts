@@ -1,10 +1,6 @@
 import React from 'react';
 
-export type StatsType =
-  | 'Wallet Balance'
-  | 'Total Staked'
-  | 'Payment Destination'
-  | 'Unbonding Amount';
+export type StatsType = 'Wallet Balance' | 'Total Staked' | 'Unbonding Amount';
 
 export interface NominatorStatsItemProps {
   title: string;

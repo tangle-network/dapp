@@ -9,6 +9,7 @@ export const formatTokenBalance = (
 ): string => {
   return formatBalance(balance, {
     decimals: TANGLE_TOKEN_DECIMALS,
+    withZero: false,
     withUnit: tokenSymbol ?? false,
   });
 };

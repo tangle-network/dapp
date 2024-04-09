@@ -1,5 +1,6 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
@@ -31,6 +32,7 @@ import {
   nominateValidators as nominateValidatorsEvm,
   updatePaymentDestination as updatePaymentDestinationEvm,
 } from '../../utils/evm';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import {
   bondExtraTokens as bondExtraTokensSubstrate,
   bondTokens as bondTokensSubstrate,
@@ -48,11 +50,12 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const maxNominationQuota = useMaxNominationQuota();
-  const [amountToBond, setAmountToBond] = useState(0);
+  const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
   const executeTx = useExecuteTxWithNotification();
   const activeSubstrateAddress = useSubstrateAddress();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const [hasAmountToBondError, setHasAmountToBondError] = useState(false);
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
@@ -112,22 +115,17 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   useErrorReporting(null, walletBalanceError);
 
-  const amountToBondError = (() => {
-    if (!walletBalance) {
-      return '';
-    }
-
-    if (Number(walletBalance.value1) === 0) {
-      return `You have zero ${nativeTokenSymbol} in your wallet!`;
-    } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough ${nativeTokenSymbol} in your wallet!`;
-    }
-  })();
+  const handleAmountToBondError = useCallback(
+    (error: string | null) => {
+      setHasAmountToBondError(error !== null);
+    },
+    [setHasAmountToBondError]
+  );
 
   const continueToSelectDelegatesStep = isFirstTimeNominator
-    ? amountToBond > 0
+    ? amountToBond !== null && amountToBond.gt(BN_ZERO)
     : true &&
-      !amountToBondError &&
+      !hasAmountToBondError &&
       paymentDestination &&
       walletAddress !== '0x0'
     ? true
@@ -144,7 +142,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const closeModal = useCallback(() => {
     setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
-    setAmountToBond(0);
+    setAmountToBond(null);
+    setHasAmountToBondError(false);
     setPaymentDestination(PaymentDestination.STAKED);
     setSelectedValidators([]);
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
@@ -152,22 +151,26 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
   const executeDelegate: () => Promise<void> = useCallback(async () => {
     try {
+      if (amountToBond === null) {
+        throw new Error('Amount to bond is required.');
+      }
+      const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       if (isFirstTimeNominator) {
         await executeTx(
           () =>
             bondTokensEvm(
               walletAddress,
-              amountToBond,
+              bondingAmount,
               PaymentDestination.STASH
             ),
           () =>
             bondTokensSubstrate(
               rpcEndpoint,
               walletAddress,
-              amountToBond,
+              bondingAmount,
               PaymentDestination.STASH
             ),
-          `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
+          `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
           'Failed to bond tokens!'
         );
         await executeTx(
@@ -194,16 +197,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         );
         setTxnStatus({ status: 'success', hash });
       } else {
-        if (amountToBond > 0) {
+        if (bondingAmount > 0) {
           await executeTx(
-            () => bondExtraTokensEvm(walletAddress, amountToBond),
+            () => bondExtraTokensEvm(walletAddress, bondingAmount),
             () =>
               bondExtraTokensSubstrate(
                 rpcEndpoint,
                 walletAddress,
-                amountToBond
+                bondingAmount
               ),
-            `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
+            `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
             'Failed to bond tokens!'
           );
         }
@@ -300,16 +303,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 nominatorAddress={walletAddress}
                 amountToBond={amountToBond}
                 setAmountToBond={setAmountToBond}
-                amountToBondError={amountToBondError}
-                amountWalletBalance={
+                walletBalance={
                   walletBalance && walletBalance.value1
                     ? walletBalance.value1
-                    : 0
+                    : BN_ZERO
                 }
                 paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
                 paymentDestination={paymentDestination}
                 setPaymentDestination={setPaymentDestination}
                 tokenSymbol={nativeTokenSymbol}
+                handleAmountToBondError={handleAmountToBondError}
               />
             ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
               <SelectValidators

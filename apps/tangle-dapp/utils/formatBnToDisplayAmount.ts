@@ -46,6 +46,11 @@ function formatBnToDisplayAmount(
 
   remainderString = remainderString.substring(0, finalOptions.fractionLength);
 
+  // remove trailing 0s
+  while (remainderString.endsWith('0')) {
+    remainderString = remainderString.substring(0, remainderString.length - 1);
+  }
+
   let integerPart = divided.toString(10);
 
   // Insert commas in the integer part if requested.
