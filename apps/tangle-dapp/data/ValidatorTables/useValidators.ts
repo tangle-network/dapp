@@ -1,6 +1,5 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
 import {
-  PalletStakingStakingLedger,
   PalletStakingValidatorPrefs,
   SpStakingExposure,
 } from '@polkadot/types/lookup';
@@ -36,9 +35,6 @@ export const useValidators = (
   const { data: nominations } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
-  const { data: ledgers } = usePolkadotApiRx(
-    useCallback((api) => api.query.staking.ledger.entries(), [])
-  );
 
   // Mapping Exposures
   const mappedExposures = useMemo(() => {
@@ -60,16 +56,6 @@ export const useValidators = (
     return map;
   }, [validatorPrefs]);
 
-  // Mapping Ledger
-  const mappedLedgers = useMemo(() => {
-    const map = new Map<string, PalletStakingStakingLedger>();
-    ledgers?.forEach(([storageKey, ledger]) => {
-      const accountId = storageKey.args[0].toString();
-      map.set(accountId, ledger.unwrapOrDefault());
-    });
-    return map;
-  }, [ledgers]);
-
   return useMemo(() => {
     if (
       addresses === null ||
@@ -85,9 +71,8 @@ export const useValidators = (
       const name = identityNames.get(address.toString()) ?? address.toString();
       const exposure = mappedExposures.get(address.toString());
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
-      const ledger = mappedLedgers.get(address.toString());
 
-      const selfStakedAmount = ledger?.total.toBn() ?? BN_ZERO;
+      const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
       const selfStakedBalance = formatTokenBalance(
         selfStakedAmount,
         nativeTokenSymbol
@@ -133,7 +118,6 @@ export const useValidators = (
     nominations,
     validatorPrefs,
     mappedExposures,
-    mappedLedgers,
     mappedValidatorPrefs,
     nativeTokenSymbol,
     status,
