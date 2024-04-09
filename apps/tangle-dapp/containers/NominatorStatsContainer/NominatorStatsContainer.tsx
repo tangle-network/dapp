@@ -69,7 +69,7 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <NominatorStatsItem
-            title={`Available ${nativeTokenSymbol} in Wallet`}
+            title={`Free Balance`}
             type="Wallet Balance"
             address={walletAddress}
           />
@@ -109,7 +109,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
-              tooltip={`Total Staked ${nativeTokenSymbol} (bonded).`}
+              tooltip={`The total amount of tokens you have bonded for nominating.`}
               type="Total Staked"
               address={substrateAddress}
             />
@@ -173,15 +173,11 @@ const NominatorStatsContainer: FC = () => {
             ) : (
               <div className="flex items-center gap-2">
                 <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-                  <Button variant="utility" className="!min-w-[150px]">
-                    Learn More
-                  </Button>
+                  <Button variant="utility">Learn More</Button>
                 </Link>
 
                 <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
-                  <Button variant="utility" className="!min-w-[150px]">
-                    Join Community
-                  </Button>
+                  <Button variant="utility">Join Community</Button>
                 </Link>
               </div>
             )}

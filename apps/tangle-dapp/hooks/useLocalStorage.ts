@@ -17,6 +17,7 @@ export enum LocalStorageKey {
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
   NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
+  VALIDATORS = 'validators',
 }
 
 export type AirdropEligibilityCache = {

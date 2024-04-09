@@ -35,5 +35,4 @@ export type AuthorizeTxProps = {
 export enum DelegateTxSteps {
   BOND_TOKENS = 'BOND_TOKENS',
   SELECT_DELEGATES = 'SELECT_DELEGATES',
-  AUTHORIZE_TX = 'AUTHORIZE_TX',
 }

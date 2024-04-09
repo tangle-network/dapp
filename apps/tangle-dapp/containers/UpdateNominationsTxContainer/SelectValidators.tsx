@@ -1,32 +1,22 @@
-import { Typography } from '@webb-tools/webb-ui-components';
-import { type FC, useMemo } from 'react';
+import { Alert, Typography } from '@webb-tools/webb-ui-components';
+import { type FC } from 'react';
 
-import { ValidatorList } from '../../components';
-import { SortBy } from '../../components/ValidatorList/types';
+import { ValidatorListTable } from '../../components';
+import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 import { SelectValidatorsProps } from './types';
 
 const SelectValidators: FC<SelectValidatorsProps> = ({
-  validators,
   selectedValidators,
   setSelectedValidators,
 }) => {
-  const sortBy: SortBy[] = useMemo(
-    () => [
-      { key: 'effectiveAmountStakedRaw', title: 'Total Staked' },
-      { key: 'delegations', title: 'Total Nominations' },
-      { key: 'commission', title: 'Commission' },
-      { key: 'status', title: 'Status' },
-    ],
-    []
-  );
+  const validators = useAllValidators();
 
   return (
-    <div className="flex flex-col gap-4 col-span-2">
-      <ValidatorList
-        validators={validators}
+    <div className="flex flex-col gap-2 col-span-2">
+      <ValidatorListTable
+        data={validators}
         selectedValidators={selectedValidators}
         setSelectedValidators={setSelectedValidators}
-        sortBy={sortBy}
       />
 
       <Typography
@@ -36,6 +26,11 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
       >
         Selected: {selectedValidators.length}/{validators.length}
       </Typography>
+
+      <Alert
+        description="Submitting a new nomination will overwrite any existing nomination."
+        type="info"
+      />
     </div>
   );
 };

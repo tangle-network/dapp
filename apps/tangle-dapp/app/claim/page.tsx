@@ -1,5 +1,6 @@
 'use client';
 
+import { BN_ZERO } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
@@ -9,12 +10,11 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import { getPolkadotApiRx } from '../../utils/polkadot';
-import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
@@ -72,19 +72,29 @@ export default function ClaimPage() {
         sub = combineLatest([
           apiRx.query.claims.claims(params),
           apiRx.query.claims.signing(params),
-        ]).subscribe(([claimAmount, statement]) => {
+          apiRx.query.claims.vesting(params),
+        ]).subscribe(([claimAmount, statement, vestingInfo]) => {
           if (claimAmount.isNone || statement.isNone) {
             setClaimInfo(false);
             return;
           }
 
-          const result: ClaimInfoType = {
-            isRegularStatement: statement.unwrap().isRegular,
-            amount: formatTokenBalance(claimAmount.unwrap(), nativeTokenSymbol),
-          };
-
           if (isMounted) {
-            setClaimInfo(result);
+            const totalClaim = claimAmount.unwrap();
+            let vestingAmount = BN_ZERO;
+
+            if (vestingInfo.isSome) {
+              vestingAmount = vestingInfo
+                .unwrap()
+                .reduce((acc, item) => acc.add(item[0]), BN_ZERO);
+            }
+
+            const claimResult: ClaimInfoType = {
+              isRegularStatement: statement.unwrap().isRegular,
+              totalAmount: totalClaim,
+              vestingAmount,
+            };
+            setClaimInfo(claimResult);
           }
         });
       } catch (error) {
@@ -109,10 +119,6 @@ export default function ClaimPage() {
       sub?.unsubscribe();
     };
   }, [activeAccount, rpcEndpoint, nativeTokenSymbol, notificationApi]);
-
-  const handleClaimCompletion = useCallback(() => {
-    setClaimInfo(false);
-  }, []);
 
   return (
     <AppTemplate.Content>
@@ -207,7 +213,6 @@ export default function ClaimPage() {
         {isWalletConnected && !isClaiming && claimInfo && (
           <EligibleSection
             claimInfo={claimInfo}
-            onClaimCompleted={handleClaimCompletion}
             setIsClaiming={setIsClaiming}
           />
         )}
