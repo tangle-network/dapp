@@ -191,6 +191,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough staked balance"
             setErrorMessage={handleSetErrorMessage}
+            isDisabled={isUnbondTxLoading}
           />
           <Typography variant="body1" fw="normal">
             Once unbonding, you must wait certain number of eras for your funds

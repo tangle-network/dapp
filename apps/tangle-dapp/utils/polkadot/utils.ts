@@ -21,7 +21,7 @@ export const getTxPromise = async (
         {
           signer: injector.signer,
           // Uncomment and understand the nonce when you need to deal with nonce manually
-          // nonce: -1,
+          nonce: -1,
         },
         ({ status, dispatchError, events }) => {
           if (status.isInBlock || status.isFinalized) {
@@ -52,7 +52,6 @@ export const getTxPromise = async (
               }
             }
           }
-          reject('Transaction not in block');
         }
       ).catch((error) => {
         reject(
@@ -60,6 +59,7 @@ export const getTxPromise = async (
         );
       });
     } catch (error: any) {
+      console.log('error :', error);
       reject(
         typeof error === 'string'
           ? `Error: ${error}`

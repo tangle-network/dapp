@@ -169,6 +169,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough unbonding balance"
             setErrorMessage={handleSetErrorMessage}
+            isDisabled={isRebondTxLoading}
           />
 
           <div className="space-y-2">

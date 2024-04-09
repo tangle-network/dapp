@@ -145,6 +145,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough available balance"
             setErrorMessage={handleSetErrorMessage}
+            isDisabled={isBondMoreTxLoading}
           />
           <Typography variant="body1" fw="normal">
             Added stake will be bonded and subject to unbonding period before
