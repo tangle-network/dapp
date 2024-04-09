@@ -1,5 +1,6 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
 import {
+  PalletStakingStakingLedger,
   PalletStakingValidatorPrefs,
   SpStakingExposure,
 } from '@polkadot/types/lookup';
@@ -35,6 +36,9 @@ export const useValidators = (
   const { data: nominations } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
+  const { data: ledgers } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.ledger.entries(), [])
+  );
 
   // Mapping Exposures
   const mappedExposures = useMemo(() => {
@@ -56,6 +60,16 @@ export const useValidators = (
     return map;
   }, [validatorPrefs]);
 
+  // Mapping Ledger
+  const mappedLedgers = useMemo(() => {
+    const map = new Map<string, PalletStakingStakingLedger>();
+    ledgers?.forEach(([storageKey, ledger]) => {
+      const accountId = storageKey.args[0].toString();
+      map.set(accountId, ledger.unwrapOrDefault());
+    });
+    return map;
+  }, [ledgers]);
+
   return useMemo(() => {
     if (
       addresses === null ||
@@ -70,8 +84,14 @@ export const useValidators = (
     return addresses.map((address) => {
       const name = identityNames.get(address.toString()) ?? address.toString();
       const exposure = mappedExposures.get(address.toString());
-      const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
+      const ledger = mappedLedgers.get(address.toString());
+
+      const selfStakedAmount = ledger?.total.toBn() ?? BN_ZERO;
+      const selfStakedBalance = formatTokenBalance(
+        selfStakedAmount,
+        nativeTokenSymbol
+      );
 
       const nominators = nominations.filter(([, nominatorData]) => {
         if (nominatorData.isNone) {
@@ -82,7 +102,9 @@ export const useValidators = (
 
         return (
           nominations.targets &&
-          nominations.targets.some((target) => target.eq(address))
+          nominations.targets.some(
+            (target) => target.toString() === address.toString()
+          )
         );
       });
 
@@ -93,7 +115,7 @@ export const useValidators = (
       return {
         address: address.toString(),
         identityName: name,
-        selfStaked: formatTokenBalance(selfStakedAmount, nativeTokenSymbol),
+        selfStaked: selfStakedBalance,
         effectiveAmountStaked: formatTokenBalance(
           totalStakeAmount,
           nativeTokenSymbol
@@ -111,6 +133,7 @@ export const useValidators = (
     nominations,
     validatorPrefs,
     mappedExposures,
+    mappedLedgers,
     mappedValidatorPrefs,
     nativeTokenSymbol,
     status,
