@@ -1,9 +1,17 @@
 import { Divider } from '@webb-tools/webb-ui-components/components/Divider';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
+import { Metadata } from 'next';
 import type { FC, PropsWithChildren } from 'react';
 
 import faqItems from '../../constants/faq';
+import { OpenGraphPageImageUrl } from '../../constants/openGraph';
+import createPageMetadata from '../../utils/createPageMetadata';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Claim Airdrop',
+  imageUrl: OpenGraphPageImageUrl.ClaimAirdrop,
+});
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (

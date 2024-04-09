@@ -1,5 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
+import { Metadata } from 'next';
 
+import { OpenGraphPageImageUrl } from '../../constants/openGraph';
 import {
   HeaderChipsContainer,
   KeyStatsContainer,
@@ -7,6 +9,12 @@ import {
   NominatorStatsContainer,
   ValidatorTablesContainer,
 } from '../../containers';
+import createPageMetadata from '../../utils/createPageMetadata';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Nomination',
+  imageUrl: OpenGraphPageImageUrl.Nomination,
+});
 
 // Note: already tried using Suspense here but see no improvement
 export default async function NominationPage() {
