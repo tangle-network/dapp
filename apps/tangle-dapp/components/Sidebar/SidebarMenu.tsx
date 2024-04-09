@@ -13,11 +13,7 @@ const SidebarMenu: FC = () => {
 
   const sidebarProps = useMemo(
     () =>
-      getSidebarProps(
-        process.env.NODE_ENV === 'development',
-        network?.polkadotExplorerUrl,
-        network?.evmExplorerUrl
-      ),
+      getSidebarProps(network?.polkadotExplorerUrl, network?.evmExplorerUrl),
     [network?.evmExplorerUrl, network?.polkadotExplorerUrl]
   );
 

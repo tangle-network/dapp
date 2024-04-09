@@ -1,7 +1,8 @@
-import type { IconBase } from '@webb-tools/icons/types';
-import type { LogoProps } from '../Logo/types';
+import type { AppEnvironment } from '@webb-tools/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
+import type { IconBase } from '@webb-tools/icons/types';
 import { MouseEventHandler } from 'react';
+import type { LogoProps } from '../Logo/types';
 
 export type SideBarFooterType = {
   name: string;
@@ -43,16 +44,22 @@ export interface SideBarItemsProps {
 export type SideBarItemProps = {
   /** The item name */
   name: string;
+
   /** Indicate the item is next.js link */
   isNext?: boolean;
+
   /** If `true`, the item will be disabled */
   isDisabled?: boolean;
+
   /** Indicate the item is app internal link */
   isInternal: boolean;
+
   /** The item link */
   href: string;
+
   /** The item icon */
   Icon: (props: IconBase) => JSX.Element;
+
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
 
@@ -63,6 +70,12 @@ export type SideBarItemProps = {
 
   /** The item sub items */
   subItems: SideBarSubItemProps[];
+
+  /**
+   * The environments the item is available in
+   * If not provided, the item is available in all environments
+   */
+  environments?: AppEnvironment[];
 };
 
 export type SideBarExtraItemProps = {
@@ -74,14 +87,19 @@ export type SideBarExtraItemProps = {
 export type SideBarSubItemProps = {
   /** Sub item name */
   name: string;
+
   /** Indicate the item is next.js link */
   isNext?: boolean;
+
   /** If `true`, the item will be disabled */
   isDisabled?: boolean;
+
   /** Indicate the item is app internal link */
   isInternal: boolean;
+
   /** The item link */
   href: string;
+
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
 
@@ -89,6 +107,12 @@ export type SideBarSubItemProps = {
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 
   pathnameOrHash?: string;
+
+  /**
+   * The environments the item is available in
+   * If not provided, the item is available in all environments
+   */
+  environments?: AppEnvironment[];
 };
 
 export type SideBarExtraSubItemProps = {

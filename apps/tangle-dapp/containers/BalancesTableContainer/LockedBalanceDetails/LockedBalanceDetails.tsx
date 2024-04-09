@@ -1,4 +1,4 @@
-import { formatDecimal } from '@polkadot/util';
+import { BN_ZERO, formatDecimal } from '@polkadot/util';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -31,6 +31,9 @@ const LockedBalanceDetails: FC = () => {
     SubstrateLockId.STAKING
   );
 
+  const showNomination =
+    stakingLockedBalance !== null && stakingLockedBalance.gt(BN_ZERO);
+
   const visitNominationPageAction = (
     <BalanceAction
       Icon={ArrowRightUp}
@@ -62,7 +65,7 @@ const LockedBalanceDetails: FC = () => {
 
           {isInDemocracy && <LabelChip title="Democracy" />}
 
-          {stakingLockedBalance !== null && <LabelChip title="Nomination" />}
+          {showNomination && <LabelChip title="Nomination" />}
 
           {unbondingEntries !== null &&
             unbondingEntries.length > 0 &&
@@ -79,7 +82,7 @@ const LockedBalanceDetails: FC = () => {
 
           <DemocracyUnlockingAt />
 
-          {stakingLockedBalance !== null && <TextCell text="--" />}
+          {showNomination && <TextCell text="--" />}
 
           {currentEra !== null &&
             unbondingEntries !== null &&
@@ -109,9 +112,7 @@ const LockedBalanceDetails: FC = () => {
 
           <DemocracyBalance />
 
-          {stakingLockedBalance !== null && (
-            <BalanceCell amount={stakingLockedBalance} />
-          )}
+          {showNomination && <BalanceCell amount={stakingLockedBalance} />}
 
           {unbondingEntries !== null &&
             unbondingEntries.length > 0 &&
@@ -130,7 +131,7 @@ const LockedBalanceDetails: FC = () => {
             <DemocracyUnlockAction />
           </div>
 
-          {stakingLockedBalance !== null && (
+          {showNomination && (
             <div className="flex flex-row justify-between items-center">
               <TextCell text="--" />
 

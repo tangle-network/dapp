@@ -33,7 +33,7 @@ const columns = [
       const identity = props.row.original.identity;
 
       return (
-        <div className="flex space-x-1 items-center">
+        <div className="flex items-center space-x-1">
           <Avatar sourceVariant="address" value={address} theme="substrate">
             {address}
           </Avatar>
@@ -116,7 +116,6 @@ const DelegatorTable: FC<DelegatorTableProps> = ({ data = [], pageSize }) => {
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
         thClassName="border-t-0 bg-mono-0"
-        trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
