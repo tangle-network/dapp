@@ -62,10 +62,10 @@ export const WEBB_DISCORD_CHANNEL_URL =
   'https://discord.com/channels/833784453251596298/1183826417625075753';
 
 export const GITHUB_REQUEST_FEATURE_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=';
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=feature+%E2%9E%95&projects=&template=FEATURE_REQUEST.yml&title=%5BFEAT%5D+%3Ctitle%3E';
 
 export const GITHUB_BUG_REPORT_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=bug_report.md&title=%5BBUG%5D+';
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=BUG_REPORT.yml&title=%5BBUG%5D+%3Ctitle%3E';
 
 export const POLKADOT_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer/query';
