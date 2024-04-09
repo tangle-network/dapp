@@ -263,7 +263,10 @@ const DelegationsPayoutsContainer: FC = () => {
             "
             buttonText="Nominate"
             buttonProps={{
-              onClick: () => setIsDelegateModalOpen(true),
+              onClick: () =>
+                isFirstTimeNominator
+                  ? setIsDelegateModalOpen(true)
+                  : setIsUpdateNominationsModalOpen(true),
             }}
             icon="🚧"
           />
