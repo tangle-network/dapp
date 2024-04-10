@@ -15,7 +15,7 @@ import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { FC } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { evmToSubstrateAddress } from '../../utils';
@@ -36,6 +36,11 @@ const AccountAddress: FC<AccountAddressProps> = ({
 
   const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
     useState(isEvmAccountAddress);
+
+  // Make sure the address type is updated when the active address changes.
+  useEffect(() => {
+    setIsDisplayingEvmAddress(isEvmAccountAddress);
+  }, [activeAddress, isEvmAccountAddress]);
 
   const displayAddress = useMemo(() => {
     if (activeAddress === null) {

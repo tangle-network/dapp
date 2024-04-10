@@ -32,3 +32,7 @@ export const Spinner = React.memo<IconBase>((props) => {
     viewBox: '0 0 20 20',
   });
 });
+
+Spinner.displayName = 'Spinner';
+
+export default Spinner;

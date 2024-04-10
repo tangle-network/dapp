@@ -59,7 +59,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   name: 'Tangle Testnet Native',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
-  // TODO: Add the HTTP RPC endpoint for the testnet.
+  httpRpcEndpoint: 'https://testnet-rpc.tangle.tools',
   wsRpcEndpoint: TANGLE_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
