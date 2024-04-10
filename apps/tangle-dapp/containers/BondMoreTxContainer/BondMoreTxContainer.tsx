@@ -19,7 +19,7 @@ import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
-import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
 import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
@@ -48,7 +48,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletBalance(walletAddress);
+    useTokenWalletFreeBalance(walletAddress);
 
   useEffect(() => {
     if (walletBalanceError) {
