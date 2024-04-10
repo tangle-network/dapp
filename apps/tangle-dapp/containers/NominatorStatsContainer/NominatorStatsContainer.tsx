@@ -17,7 +17,7 @@ import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
-import { NetworkFeature } from '../../types';
+import { NetworkFeature, PagePath } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -85,6 +85,16 @@ const NominatorStatsContainer: FC = () => {
                   </Button>
                 </Link>
               )}
+
+            <Link href={PagePath.ACCOUNT}>
+              <Button
+                variant="utility"
+                className="!min-w-[100px]"
+                isDisabled={isActiveAccountLoading}
+              >
+                View Account
+              </Button>
+            </Link>
 
             {isFirstTimeNominator && (
               <Button
