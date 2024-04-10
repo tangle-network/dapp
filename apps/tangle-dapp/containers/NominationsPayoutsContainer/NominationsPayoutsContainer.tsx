@@ -19,6 +19,7 @@ import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useNetworkState from '../../hooks/useNetworkState';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
@@ -50,6 +51,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+
+  const { network } = useNetworkState();
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
@@ -259,14 +262,12 @@ const DelegationsPayoutsContainer: FC = () => {
 
           <TableStatus
             title="Payouts Coming Soon"
-            description="Payouts are currently in development and will be available soon. Check back to see your updated payout status after nominating.
+            description="The payouts feature for EVM and Substrate users is in development for direct access here. Meanwhile, Substrate users can view and manage payouts via Polkadot Apps.
             "
-            buttonText="Nominate"
+            buttonText="Polkadot Apps"
             buttonProps={{
-              onClick: () =>
-                isFirstTimeNominator
-                  ? setIsDelegateModalOpen(true)
-                  : setIsUpdateNominationsModalOpen(true),
+              href: `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking/payout`,
+              target: '_blank',
             }}
             icon="🚧"
           />
