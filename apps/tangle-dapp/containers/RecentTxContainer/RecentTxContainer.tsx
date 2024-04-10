@@ -5,9 +5,11 @@ import { FC } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useNetworkStore from '../../context/useNetworkStore';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 
 const RecentTxContainer: FC = () => {
   const { network } = useNetworkStore();
+  const { isEvm } = useAgnosticAccountInfo();
 
   return (
     <GlassCard className="space-y-4">
@@ -18,7 +20,7 @@ const RecentTxContainer: FC = () => {
           color="primary"
           className="uppercase"
           target="_blank"
-          href={network.polkadotExplorerUrl}
+          href={isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl}
         >
           Open Explorer
         </Button>

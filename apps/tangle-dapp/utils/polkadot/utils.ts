@@ -58,8 +58,7 @@ export const getTxPromise = async (
           `An error occurred during transaction submission: ${error.message}`
         );
       });
-    } catch (error: any) {
-      console.log('error :', error);
+    } catch (error) {
       reject(
         typeof error === 'string'
           ? `Error: ${error}`

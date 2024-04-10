@@ -19,7 +19,7 @@ import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
-import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
@@ -105,7 +105,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   } = useIsFirstTimeNominator();
 
   const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletBalance(walletAddress);
+    useTokenWalletFreeBalance(walletAddress);
 
   // TODO: Need to change defaulting to empty/dummy strings to instead adhere to the type system. Ex. should be using `| null` instead.
   const {
