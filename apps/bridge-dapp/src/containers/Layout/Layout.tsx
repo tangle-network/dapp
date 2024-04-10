@@ -1,4 +1,5 @@
 import { Transition } from '@headlessui/react';
+import { ContrastTwoLine } from '@webb-tools/icons';
 import {
   Banner,
   Footer,
@@ -30,9 +31,8 @@ export const Layout: FC = () => {
         <div className="flex flex-col w-full mx-auto overflow-y-auto">
           <Transition show={showBanner} className="hidden lg:!block">
             <Banner
-              className="py-2"
               onClose={onCloseHandler}
-              dappName="bridge"
+              Icon={ContrastTwoLine}
               buttonText="ACCESS FAUCET"
               bannerText="Explore Hubble Bridge Beta, get test tokens to experience private bridging."
               buttonProps={{

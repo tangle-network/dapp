@@ -1,5 +1,6 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
@@ -8,19 +9,21 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import AmountInput from '../../components/AmountInput/AmountInput';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
-import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { bondExtraTokens as bondExtraTokensSubstrate } from '../../utils/polkadot';
-import BondTokens from './BondTokens';
 import { BondMoreTxContainerProps } from './types';
 
 const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
@@ -31,9 +34,10 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-  const [amountToBond, setAmountToBond] = useState(0);
+  const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
+  const [hasErrors, setHasErrors] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -44,7 +48,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   }, [activeAccount?.address]);
 
   const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletBalance(walletAddress);
+    useTokenWalletFreeBalance(walletAddress);
 
   useEffect(() => {
     if (walletBalanceError) {
@@ -55,37 +59,42 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     }
   }, [notificationApi, walletBalanceError]);
 
-  const amountToBondError = useMemo(() => {
-    if (!walletBalance) return '';
-
-    if (Number(walletBalance.value1) === 0) {
-      return `You have zero ${nativeTokenSymbol} in your wallet!`;
-    } else if (Number(walletBalance.value1) < amountToBond) {
-      return `You don't have enough ${nativeTokenSymbol} in your wallet!`;
-    }
-  }, [walletBalance, amountToBond, nativeTokenSymbol]);
+  const handleSetErrorMessage = useCallback(
+    (error: string | null) => {
+      setHasErrors(error !== null);
+    },
+    [setHasErrors]
+  );
 
   const continueToSignAndSubmitTx = useMemo(() => {
-    return amountToBond > 0 && !amountToBondError && walletAddress !== '0x0'
-      ? true
-      : false;
-  }, [amountToBond, amountToBondError, walletAddress]);
+    return (
+      amountToBond !== null &&
+      amountToBond.gt(BN_ZERO) &&
+      walletAddress !== '0x0' &&
+      !hasErrors
+    );
+  }, [amountToBond, walletAddress, hasErrors]);
 
   const closeModal = useCallback(() => {
     setIsBondMoreTxLoading(false);
     setIsModalOpen(false);
-    setAmountToBond(0);
+    setAmountToBond(null);
+    setHasErrors(false);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
     setIsBondMoreTxLoading(true);
 
     try {
+      if (amountToBond === null) {
+        throw new Error('Amount to bond more is required.');
+      }
+      const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       const hash = await executeTx(
-        () => bondExtraTokensEvm(walletAddress, amountToBond),
+        () => bondExtraTokensEvm(walletAddress, bondingAmount),
         () =>
-          bondExtraTokensSubstrate(rpcEndpoint, walletAddress, amountToBond),
-        `Successfully bonded ${amountToBond} ${nativeTokenSymbol}.`,
+          bondExtraTokensSubstrate(rpcEndpoint, walletAddress, bondingAmount),
+        `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
         'Failed to bond extra tokens!'
       );
 
@@ -126,15 +135,22 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           Add Stake
         </ModalHeader>
 
-        <div className="p-9">
-          <BondTokens
-            amountToBond={amountToBond}
-            setAmountToBond={setAmountToBond}
-            amountToBondError={amountToBondError}
-            amountWalletBalance={
-              walletBalance && walletBalance.value1 ? walletBalance.value1 : 0
-            }
+        <div className="p-9 space-y-4">
+          <AmountInput
+            id="add-stake-input"
+            title="Amount"
+            max={walletBalance?.value1 ?? undefined}
+            amount={amountToBond}
+            setAmount={setAmountToBond}
+            baseInputOverrides={{ isFullWidth: true }}
+            maxErrorMessage="Not enough available balance"
+            setErrorMessage={handleSetErrorMessage}
+            isDisabled={isBondMoreTxLoading}
           />
+          <Typography variant="body1" fw="normal">
+            Added stake will be bonded and subject to unbonding period before
+            withdrawal is possible.
+          </Typography>
         </div>
 
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">

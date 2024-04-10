@@ -1,5 +1,6 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
@@ -8,22 +9,24 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import AmountInput from '../../components/AmountInput/AmountInput';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { evmToSubstrateAddress, splitTokenValueAndSymbol } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
 import { UnbondTxContainerProps } from './types';
-import UnbondTokens from './UnbondTokens';
 
 const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   isModalOpen,
@@ -35,8 +38,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { setTxConfirmationState } = useTxConfirmationModal();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
-  const [amountToUnbond, setAmountToUnbond] = useState(0);
+  const [amountToUnbond, setAmountToUnbond] = useState<BN | null>(null);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
+  const [hasErrors, setHasErrors] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -71,14 +75,10 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     }
 
     if (!totalStakedBalanceData?.value1) {
-      return 0;
+      return BN_ZERO;
     }
 
-    const { value: value_ } = splitTokenValueAndSymbol(
-      String(totalStakedBalanceData.value1)
-    );
-
-    return value_;
+    return totalStakedBalanceData.value1;
   }, [
     notificationApi,
     totalStakedBalanceData?.value1,
@@ -93,13 +93,11 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       });
     }
 
-    if (!unbondingAmountData?.value1) return 0;
+    if (!unbondingAmountData?.value1) {
+      return undefined;
+    }
 
-    const { value: value_ } = splitTokenValueAndSymbol(
-      String(unbondingAmountData?.value1)
-    );
-
-    return totalStakedBalance - value_;
+    return totalStakedBalance.sub(unbondingAmountData.value1);
   }, [
     notificationApi,
     totalStakedBalance,
@@ -107,34 +105,42 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     unbondingAmountError,
   ]);
 
-  const amountToUnbondError = useMemo(() => {
-    if (remainingStakedBalanceToUnbond === 0) {
-      return `You have unbonded all your staked ${nativeTokenSymbol}!`;
-    } else if (amountToUnbond > remainingStakedBalanceToUnbond) {
-      return `You can only unbond ${remainingStakedBalanceToUnbond} ${nativeTokenSymbol}!`;
-    }
-  }, [remainingStakedBalanceToUnbond, amountToUnbond, nativeTokenSymbol]);
-
   const continueToSignAndSubmitTx = useMemo(() => {
-    return amountToUnbond > 0 && !amountToUnbondError && walletAddress !== '0x0'
-      ? true
-      : false;
-  }, [amountToUnbond, amountToUnbondError, walletAddress]);
+    return (
+      amountToUnbond !== null &&
+      amountToUnbond.gt(BN_ZERO) &&
+      walletAddress !== '0x0' &&
+      !hasErrors
+    );
+  }, [amountToUnbond, hasErrors, walletAddress]);
 
   const closeModal = useCallback(() => {
     setIsUnbondTxLoading(false);
     setIsModalOpen(false);
-    setAmountToUnbond(0);
+    setAmountToUnbond(null);
+    setHasErrors(false);
   }, [setIsModalOpen]);
+
+  const handleSetErrorMessage = useCallback(
+    (error: string | null) => {
+      setHasErrors(error !== null);
+    },
+    [setHasErrors]
+  );
 
   const submitAndSignTx = useCallback(async () => {
     setIsUnbondTxLoading(true);
 
     try {
+      if (amountToUnbond === null) {
+        throw new Error('Amount to unbond is required.');
+      }
+      const unbondingAmount = +formatBnToDisplayAmount(amountToUnbond);
       const hash = await executeTx(
-        () => unbondTokensEvm(walletAddress, amountToUnbond),
-        () => unbondTokensSubstrate(rpcEndpoint, walletAddress, amountToUnbond),
-        `Successfully unbonded ${amountToUnbond} ${nativeTokenSymbol}.`,
+        () => unbondTokensEvm(walletAddress, unbondingAmount),
+        () =>
+          unbondTokensSubstrate(rpcEndpoint, walletAddress, unbondingAmount),
+        `Successfully unbonded ${unbondingAmount} ${nativeTokenSymbol}.`,
         'Failed to unbond tokens!'
       );
 
@@ -175,13 +181,27 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
           Unbond Stake
         </ModalHeader>
 
-        <div className="p-9">
-          <UnbondTokens
-            amountToUnbond={amountToUnbond}
-            setAmountToUnbond={setAmountToUnbond}
-            amountToUnbondError={amountToUnbondError}
-            remainingStakedBalanceToUnbond={remainingStakedBalanceToUnbond}
+        <div className="p-9 space-y-4">
+          <AmountInput
+            id="unbond-input"
+            title="Amount"
+            max={remainingStakedBalanceToUnbond}
+            amount={amountToUnbond}
+            setAmount={setAmountToUnbond}
+            baseInputOverrides={{ isFullWidth: true }}
+            maxErrorMessage="Not enough staked balance"
+            setErrorMessage={handleSetErrorMessage}
+            isDisabled={isUnbondTxLoading}
           />
+          <Typography variant="body1" fw="normal">
+            Once unbonding, you must wait certain number of eras for your funds
+            to become available.
+          </Typography>
+
+          <Typography variant="body1" fw="normal">
+            You can check the remaining eras for your funds to become available
+            in the Unbonding {nativeTokenSymbol} tooltip.
+          </Typography>
         </div>
 
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">

@@ -17,6 +17,7 @@ import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';
@@ -27,6 +28,7 @@ import VestBalanceAction from './VestBalanceAction';
 
 const BalancesTableContainer: FC = () => {
   const { locked, transferrable } = useBalances();
+  const activeSubstrateAddress = useSubstrateAddress();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
 
@@ -38,9 +40,11 @@ const BalancesTableContainer: FC = () => {
 
   const { data: locks } = usePolkadotApiRx(
     useCallback(
-      (api, activeSubstrateAddress) =>
-        api.query.balances.locks(activeSubstrateAddress),
-      []
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.balances.locks(activeSubstrateAddress);
+      },
+      [activeSubstrateAddress]
     )
   );
 

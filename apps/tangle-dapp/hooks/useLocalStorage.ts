@@ -15,8 +15,9 @@ export enum LocalStorageKey {
   Payouts = 'payouts',
   Nominations = 'nominations',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
-  WEBB_NETWORK_NAME = 'webbNetworkName',
+  KNOWN_NETWORK_ID = 'knownNetworkId',
   NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
+  VALIDATORS = 'validators',
 }
 
 export type AirdropEligibilityCache = {
@@ -56,9 +57,10 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? NominationsCache
     : T extends
         | LocalStorageKey.CUSTOM_RPC_ENDPOINT
-        | LocalStorageKey.WEBB_NETWORK_NAME
         | LocalStorageKey.NATIVE_TOKEN_SYMBOL
     ? string
+    : T extends LocalStorageKey.KNOWN_NETWORK_ID
+    ? number
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(

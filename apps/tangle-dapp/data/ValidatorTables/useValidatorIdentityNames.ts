@@ -8,6 +8,7 @@ import { ITuple } from '@polkadot/types/types';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
+import useEntryMap from '../../hooks/useEntryMap';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
 const extractNameFromInfo = (
@@ -33,23 +34,31 @@ const mapIdentitiesToNames = (
     StorageKey<[AccountId32]>,
     Option<ITuple<[PalletIdentityRegistration, Option<Bytes>]>>
   ][]
-): [StorageKey<[AccountId32]>, string | null][] =>
+): [string, string | null][] =>
   identities.map(([address, identityOpt]) => {
     const info: PalletIdentityLegacyIdentityInfo | null = identityOpt.isNone
       ? null
       : // TODO: Substrate types are outdated; awaiting fix. Temporarily using `any`.
         (identityOpt.unwrap() as any).info;
 
-    return [address, info !== null ? extractNameFromInfo(info) : null];
+    return [
+      address.args[0].toString(),
+      info !== null ? extractNameFromInfo(info) : null,
+    ];
   });
 
-const useValidatorIdentityNames = () =>
-  usePolkadotApiRx(
+const useValidatorIdentityNames = () => {
+  const { data: identityNames, ...other } = usePolkadotApiRx(
     useCallback(
       (api) =>
         api.query.identity.identityOf.entries().pipe(map(mapIdentitiesToNames)),
       []
     )
   );
+
+  const nameMap = useEntryMap(identityNames, (key) => key);
+
+  return { data: nameMap, ...other };
+};
 
 export default useValidatorIdentityNames;

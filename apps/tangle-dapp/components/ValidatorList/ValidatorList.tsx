@@ -1,63 +1,104 @@
 'use client';
 
-import { CloseCircleLineIcon, Search } from '@webb-tools/icons';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { ArrowDropDownFill, ArrowDropUpFill, Search } from '@webb-tools/icons';
 import {
   Avatar,
   CheckBox,
   Chip,
   CopyWithTooltip,
+  fuzzyFilter,
   Input,
   shortenString,
+  Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
+import { ContainerSkeleton } from '../../components';
 import { Validator } from '../../types';
-import {
-  SortableValidatorKeys,
-  SortButtonProps,
-  ValidatorListProps,
-} from './types';
+import { HeaderCell } from '../tableCells';
+import { SortableKeys, SortBy, ValidatorListTableProps } from './types';
 
-export const ValidatorList: FC<ValidatorListProps> = ({
-  validators,
+const columnHelper = createColumnHelper<Validator>();
+
+export const ValidatorListTable: FC<ValidatorListTableProps> = ({
+  data,
   selectedValidators,
   setSelectedValidators,
-  sortBy,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [totalStakeSortBy, setTotalStakeSortBy] = useState<SortBy>('dsc');
+  const [nominationsSortBy, setNominationsSortBy] = useState<SortBy>('dsc');
+  const [commissionSortBy, setCommissionSortBy] = useState<SortBy>('dsc');
+  const [sortBy, setSortBy] = useState<SortableKeys>('effectiveAmountStaked');
 
-  const [selectedSortBy, setSelectedSortBy] =
-    useState<keyof SortableValidatorKeys>();
+  const sortedData = useMemo(() => {
+    const selectedData = data.filter((validator) =>
+      selectedValidators.includes(validator.address)
+    );
+    const unselectedData = data.filter(
+      (validator) => !selectedValidators.includes(validator.address)
+    );
 
-  const sortedValidators = useMemo(() => {
-    if (selectedSortBy !== undefined) {
-      return validators.toSorted((a, b) => {
-        const valueA = parseInt(a[selectedSortBy], 10);
-        const valueB = parseInt(b[selectedSortBy], 10);
-
-        return valueB - valueA;
+    const sortData = (
+      data: Validator[],
+      sortBy: SortableKeys,
+      sortOrder: SortBy
+    ) => {
+      return [...data].sort((a, b) => {
+        const valueA = sortOrder === 'asc' ? a[sortBy] : b[sortBy];
+        const valueB = sortOrder === 'asc' ? b[sortBy] : a[sortBy];
+        return parseFloat(valueA) - parseFloat(valueB);
       });
-    } else {
-      return validators.toSorted((a, b) => {
-        const aSelected = selectedValidators.includes(a.address);
-        const bSelected = selectedValidators.includes(b.address);
+    };
 
-        return aSelected === bSelected ? 0 : aSelected ? -1 : 1;
-      });
-    }
-  }, [selectedSortBy, selectedValidators, validators]);
+    const sortedSelectedData = sortData(
+      selectedData,
+      sortBy,
+      sortBy === 'effectiveAmountStaked'
+        ? totalStakeSortBy
+        : sortBy === 'delegations'
+        ? nominationsSortBy
+        : commissionSortBy
+    );
 
-  const filteredValidators = useMemo(
+    const sortedUnselectedData = sortData(
+      unselectedData,
+      sortBy,
+      sortBy === 'effectiveAmountStaked'
+        ? totalStakeSortBy
+        : sortBy === 'delegations'
+        ? nominationsSortBy
+        : commissionSortBy
+    );
+
+    return [...sortedSelectedData, ...sortedUnselectedData];
+  }, [
+    data,
+    selectedValidators,
+    sortBy,
+    totalStakeSortBy,
+    nominationsSortBy,
+    commissionSortBy,
+  ]);
+
+  const filteredData = useMemo(
     () =>
-      sortedValidators.filter(
+      sortedData.filter(
         (validator) =>
           validator.identityName
             .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          validator.address.toLowerCase().includes(searchTerm.toLowerCase())
+            .includes(searchValue.toLowerCase()) ||
+          validator.address.toLowerCase().includes(searchValue.toLowerCase())
       ),
-    [searchTerm, sortedValidators]
+    [searchValue, sortedData]
   );
 
   const handleValidatorToggle = useCallback(
@@ -75,159 +116,180 @@ export const ValidatorList: FC<ValidatorListProps> = ({
     [selectedValidators, setSelectedValidators]
   );
 
-  const validatorElements = useMemo(
-    () =>
-      filteredValidators.map((validator) => {
-        const isSelected = selectedValidators.includes(validator.address);
+  const columns = [
+    columnHelper.accessor('address', {
+      header: () => <HeaderCell title="Validator" className="justify-start" />,
+      cell: (props) => {
+        const address = props.getValue();
+        const identity = props.row.original.identityName;
 
         return (
-          <ValidatorCell
-            key={validator.address}
-            isSelected={isSelected}
-            onToggleSelection={handleValidatorToggle}
-            {...validator}
-          />
+          <div className="flex items-center gap-2">
+            <CheckBox
+              wrapperClassName="!block !min-h-auto cursor-pointer"
+              className="cursor-pointer"
+              isChecked={selectedValidators.includes(address)}
+              onChange={() =>
+                handleValidatorToggle(
+                  address,
+                  selectedValidators.includes(address)
+                )
+              }
+            />
+
+            <div className="flex space-x-1 items-center">
+              <Avatar sourceVariant="address" value={address} theme="substrate">
+                hello
+              </Avatar>
+
+              <Typography variant="body1" fw="normal" className="truncate">
+                {identity === address ? shortenString(address, 6) : identity}
+              </Typography>
+
+              <CopyWithTooltip
+                textToCopy={address}
+                isButton={false}
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
         );
-      }),
-    [filteredValidators, handleValidatorToggle, selectedValidators]
-  );
+      },
+    }),
+    columnHelper.accessor('effectiveAmountStaked', {
+      header: () => (
+        <div className="flex items-center justify-center">
+          <HeaderCell title="Total Staked" className="block flex-none" />
+
+          {totalStakeSortBy === 'asc' ? (
+            <ArrowDropDownFill
+              className="cursor-pointer"
+              size="lg"
+              onClick={() => {
+                setTotalStakeSortBy('dsc');
+                setSortBy('effectiveAmountStaked');
+              }}
+            />
+          ) : (
+            <ArrowDropUpFill
+              className="cursor-pointer"
+              size="lg"
+              onClick={() => {
+                setTotalStakeSortBy('asc');
+                setSortBy('effectiveAmountStaked');
+              }}
+            />
+          )}
+        </div>
+      ),
+      cell: (props) => (
+        <div className="flex items-center justify-center">
+          <Chip color="dark-grey">{props.getValue()}</Chip>
+        </div>
+      ),
+    }),
+    columnHelper.accessor('delegations', {
+      header: () => (
+        <div className="flex items-center justify-center">
+          <HeaderCell title="Nominations" className="block flex-none" />
+
+          {nominationsSortBy === 'asc' ? (
+            <ArrowDropDownFill
+              className="cursor-pointer"
+              size="lg"
+              onClick={() => {
+                setNominationsSortBy('dsc');
+                setSortBy('delegations');
+              }}
+            />
+          ) : (
+            <ArrowDropUpFill
+              className="cursor-pointer"
+              size="lg"
+              onClick={() => {
+                setNominationsSortBy('asc');
+                setSortBy('delegations');
+              }}
+            />
+          )}
+        </div>
+      ),
+      cell: (props) => (
+        <div className="flex items-center justify-center">
+          <Chip color="dark-grey">{props.getValue()}</Chip>
+        </div>
+      ),
+    }),
+    columnHelper.accessor('commission', {
+      header: () => (
+        <div className="flex items-center justify-center">
+          <HeaderCell title="Commission" className="block flex-none" />
+
+          {commissionSortBy === 'asc' ? (
+            <ArrowDropDownFill
+              className="cursor-pointer"
+              size="lg"
+              onClick={() => {
+                setCommissionSortBy('dsc');
+                setSortBy('commission');
+              }}
+            />
+          ) : (
+            <ArrowDropUpFill
+              className="cursor-pointer"
+              size="lg"
+              onClick={() => {
+                setCommissionSortBy('asc');
+                setSortBy('commission');
+              }}
+            />
+          )}
+        </div>
+      ),
+      cell: (props) => (
+        <div className="flex items-center justify-center">
+          <Chip color="dark-grey">{Number(props.getValue()).toFixed(2)}%</Chip>
+        </div>
+      ),
+    }),
+  ];
+
+  const table = useReactTable({
+    data: filteredData,
+    columns,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <Input
         id="token"
-        rightIcon={<Search />}
+        rightIcon={<Search className="mr-2" />}
         placeholder="Search validators..."
-        value={searchTerm}
-        onChange={(val) => setSearchTerm(val)}
+        value={searchValue}
+        onChange={(val) => setSearchValue(val)}
         className="mb-1"
       />
 
-      <div className="flex gap-3 items-center my-4">
-        <Typography
-          variant="body1"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          Sort by :
-        </Typography>
-
-        <div className="flex gap-2 items-center">
-          {sortBy.map((sortButton) => (
-            <SortButton
-              key={sortButton.key}
-              title={sortButton.title}
-              isSelected={selectedSortBy === sortButton.key}
-              onClick={() => {
-                if (selectedSortBy === sortButton.key) {
-                  setSelectedSortBy(undefined);
-                } else {
-                  setSelectedSortBy(sortButton.key);
-                }
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="max-h-[348px] overflow-scroll flex flex-col gap-2 p-3 border dark:border-mono-160 col-span-2">
-          {validatorElements}
-        </div>
-
-        <div className="flex flex-col gap-5 col-span-1">
-          <Typography variant="body1" fw="normal">
-            Validators can be nominated from the list of all currently available
-            validators. You should nominate validators you trust. Nominators are
-            slashed when their nominated validators misbehave.
-          </Typography>
-
-          <Typography variant="body1" fw="normal">
-            Once submitted, the new selection will only take effect in 2 eras
-            from the next validator election cycle. Until then, the nominations
-            will appear inactive.
-          </Typography>
-
-          <Typography variant="body1" fw="normal">
-            Submitting a new nomination will overwrite any existing nomination.
-          </Typography>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const SortButton = ({
-  title,
-  isSelected,
-  onClick: setIsSelected,
-}: SortButtonProps) => {
-  return (
-    <Chip
-      onClick={() => setIsSelected()}
-      color={isSelected ? 'blue' : 'grey'}
-      isSelected
-      className="cursor-pointer"
-    >
-      {title}
-      {isSelected && (
-        <CloseCircleLineIcon
-          className="stroke-blue-90 fill-blue-90 dark:fill-blue-30 dark:stroke-blue-30"
-          size="md"
+      {filteredData.length === 0 ? (
+        <ContainerSkeleton className="max-h-[340px] w-full" />
+      ) : (
+        <Table
+          thClassName="border-t-0 py-3 sticky top-0"
+          trClassName="cursor-pointer"
+          tdClassName="py-2 border-t-0"
+          paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
+          tableWrapperClassName="max-h-[340px] overflow-y-scroll"
+          tableProps={table}
+          isPaginated
         />
       )}
-    </Chip>
-  );
-};
-
-/** @internal */
-const ValidatorCell: FC<
-  Validator & {
-    isSelected: boolean;
-    onToggleSelection: (address: string, isSelected: boolean) => void;
-  }
-> = ({
-  isSelected,
-  address,
-  identityName,
-  delegations,
-  status,
-  commission,
-  effectiveAmountStaked,
-  onToggleSelection,
-}) => {
-  return (
-    <div className="flex !items-center !justify-between">
-      <div className="flex !items-center gap-1">
-        <CheckBox
-          isChecked={isSelected}
-          onChange={() => onToggleSelection(address, isSelected)}
-        />
-
-        <Avatar value={address} theme="substrate" />
-
-        <Typography variant="h5" fw="bold">
-          {identityName !== ''
-            ? shortenString(identityName, 8)
-            : shortenString(address, 8)}
-        </Typography>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Chip color="blue">{effectiveAmountStaked}</Chip>
-
-        <Chip color="blue">{delegations}</Chip>
-
-        <Chip color="blue">{commission}%</Chip>
-
-        <Chip color={status === 'Active' ? 'green' : 'yellow'}>{status}</Chip>
-
-        <CopyWithTooltip
-          textToCopy={address}
-          isButton={false}
-          className="cursor-pointer"
-        />
-      </div>
     </div>
   );
 };

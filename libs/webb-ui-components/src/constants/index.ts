@@ -26,29 +26,6 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-/**
- * The network type (use to categorize the network)
- */
-export type NetworkType = 'live' | 'testnet' | 'dev';
-
-export type NetworkNodeType = 'parachain' | 'standalone';
-
-export type Network = {
-  name: string;
-  networkType: NetworkType;
-  networkNodeType: NetworkNodeType;
-  subqueryEndpoint: string;
-  polkadotEndpoint: string;
-  polkadotExplorer: string;
-  evmExplorer?: string;
-  avatar: string;
-};
-
-export type webbNetworksType = {
-  networkType: NetworkType;
-  networks: Network[];
-};
-
 export const BRIDGE_URL = 'https://app.webb.tools';
 export const DKG_STATS_URL = 'https://stats.tangle.tools';
 export const HUBBLE_STATS_URL = 'https://hubble-stats.webb.tools/';
@@ -64,7 +41,7 @@ export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
-  'https://docs.tangle.tools/docs/use/staking-intro/';
+  'https://docs.tangle.tools/docs/staking-intro/';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
@@ -85,10 +62,10 @@ export const WEBB_DISCORD_CHANNEL_URL =
   'https://discord.com/channels/833784453251596298/1183826417625075753';
 
 export const GITHUB_REQUEST_FEATURE_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=';
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=feature+%E2%9E%95&projects=&template=FEATURE_REQUEST.yml&title=%5BFEAT%5D+%3Ctitle%3E';
 
 export const GITHUB_BUG_REPORT_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=bug_report.md&title=%5BBUG%5D+';
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=BUG_REPORT.yml&title=%5BBUG%5D+%3Ctitle%3E';
 
 export const POLKADOT_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer/query';
@@ -231,53 +208,6 @@ export const tangleLogoConfig: Link = {
   name: 'Tangle Logo',
   path: TANGLE_MKT_URL,
 };
-
-export const webbNetworks: webbNetworksType[] = [
-  {
-    networkType: 'live',
-    networks: [],
-  },
-  {
-    networkType: 'testnet',
-    networks: [
-      // TANGLE INTERNAL TESTNET
-      // {
-      //   name: 'Tangle Internal Testnet',
-      //   networkType: 'testnet',
-      //   networkNodeType: 'standalone',
-      //   subqueryEndpoint: SUBQUERY_ENDPOINT, // Incorrect but will remove this network later
-      //   polkadotEndpoint: 'wss://internal-testing.tangle.tools',
-      //   polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL, // Incorrect but will remove this network later
-      //   avatar: '',
-      // },
-      {
-        name: 'Tangle Testnet Native',
-        networkType: 'testnet',
-        networkNodeType: 'standalone',
-        subqueryEndpoint: SUBQUERY_ENDPOINT,
-        polkadotEndpoint: TANGLE_RPC_ENDPOINT,
-        polkadotExplorer: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-        evmExplorer: TANGLE_TESTNET_EVM_EXPLORER_URL,
-        avatar: '',
-      },
-    ],
-  },
-  {
-    networkType: 'dev',
-    networks: [
-      {
-        name: 'Local endpoint (127.0.0.1)',
-        networkType: 'dev',
-        networkNodeType: 'standalone',
-        subqueryEndpoint: 'http://localhost:4000/graphql',
-        polkadotEndpoint: 'ws://127.0.0.1:9944',
-        polkadotExplorer:
-          'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
-        avatar: '',
-      },
-    ],
-  },
-];
 
 export const webbAppConfig: ExternalLink = {
   name: 'Hubble Bridge',

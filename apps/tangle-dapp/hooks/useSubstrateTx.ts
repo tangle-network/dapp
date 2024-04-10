@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
+import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,13 +23,14 @@ export enum TxStatus {
   TIMED_OUT,
 }
 
-export type TxFactory<T extends ISubmittableResult> = (
+export type SubstrateTxFactory<Context> = (
   api: ApiPromise,
-  activeSubstrateAddress: string
-) => Promise<SubmittableExtrinsic<'promise', T> | null>;
+  activeSubstrateAddress: string,
+  context: Context
+) => PromiseOrT<SubmittableExtrinsic<'promise', ISubmittableResult> | null>;
 
-function useSubstrateTx<T extends ISubmittableResult>(
-  factory: TxFactory<T>,
+function useSubstrateTx<Context = void>(
+  factory: SubstrateTxFactory<Context>,
   notifyStatusUpdates = false,
   timeoutDelay = 60_000
 ) {
@@ -55,93 +57,96 @@ function useSubstrateTx<T extends ISubmittableResult>(
     notificationApi(notificationOpts);
   }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
 
-  const execute = useCallback(async () => {
-    // Prevent the consumer from re-triggering the transaction
-    // while it's still processing. Also wait for the Substrate
-    // address to be set.
-    if (
-      status === TxStatus.PROCESSING ||
-      activeSubstrateAddress === null ||
-      isEvmAccount === null
-    ) {
-      return;
-    }
+  const execute = useCallback(
+    async (context: Context) => {
+      // Prevent the consumer from re-triggering the transaction
+      // while it's still processing. Also wait for the Substrate
+      // address to be set.
+      if (
+        status === TxStatus.PROCESSING ||
+        activeSubstrateAddress === null ||
+        isEvmAccount === null
+      ) {
+        return;
+      }
 
-    // Catch logic errors.
-    assert(
-      !isEvmAccount,
-      'Should not be able to execute a Substrate transaction while the active account is an EVM account'
-    );
-
-    const injector = await getInjector(activeSubstrateAddress);
-    const api = await getPolkadotApiPromise(rpcEndpoint);
-    let tx: SubmittableExtrinsic<'promise', T> | null;
-
-    // The transaction factory may throw an error if it encounters
-    // a problem, such as invalid input data. Need to handle that case
-    // gracefully here.
-    try {
-      tx = await factory(api, activeSubstrateAddress);
-    } catch (possibleError: unknown) {
-      setError(ensureError(possibleError));
-      setStatus(TxStatus.ERROR);
-
-      return;
-    }
-
-    // Factory is not yet ready to produce the transaction.
-    // This is usually because the user hasn't yet connected their wallet.
-    if (tx === null) {
-      return;
-    }
-    // Wait until the injector is ready.
-    else if (injector === null) {
-      return;
-    }
-
-    // At this point, the transaction is ready to be sent.
-    // Reset the status and error, and begin the transaction.
-    setError(null);
-    setHash(null);
-    setStatus(TxStatus.PROCESSING);
-
-    try {
-      await tx.signAndSend(
-        activeSubstrateAddress,
-        { signer: injector.signer },
-        (status) => {
-          // If the component is unmounted, or the transaction
-          // has not yet been included in a block, ignore the
-          // status update.
-          if (!isMountedRef.current || !status.isInBlock) {
-            return;
-          }
-
-          setHash(status.txHash.toHex());
-
-          const error = extractErrorFromTxStatus(status);
-
-          setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
-          setError(error);
-
-          // Useful for debugging.
-          if (error !== null) {
-            console.debug('Transaction failed', error, status);
-          }
-        }
+      // Catch logic errors.
+      assert(
+        !isEvmAccount,
+        'Should not be able to execute a Substrate transaction while the active account is an EVM account'
       );
-    } catch (possibleError: unknown) {
-      setStatus(TxStatus.ERROR);
-      setError(ensureError(possibleError));
-    }
-  }, [
-    activeSubstrateAddress,
-    factory,
-    isEvmAccount,
-    isMountedRef,
-    rpcEndpoint,
-    status,
-  ]);
+
+      const injector = await getInjector(activeSubstrateAddress);
+      const api = await getPolkadotApiPromise(rpcEndpoint);
+      let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
+
+      // The transaction factory may throw an error if it encounters
+      // a problem, such as invalid input data. Need to handle that case
+      // gracefully here.
+      try {
+        tx = await factory(api, activeSubstrateAddress, context);
+      } catch (possibleError: unknown) {
+        setError(ensureError(possibleError));
+        setStatus(TxStatus.ERROR);
+
+        return;
+      }
+
+      // Factory is not yet ready to produce the transaction.
+      // This is usually because the user hasn't yet connected their wallet.
+      if (tx === null) {
+        return;
+      }
+      // Wait until the injector is ready.
+      else if (injector === null) {
+        return;
+      }
+
+      // At this point, the transaction is ready to be sent.
+      // Reset the status and error, and begin the transaction.
+      setError(null);
+      setHash(null);
+      setStatus(TxStatus.PROCESSING);
+
+      try {
+        await tx.signAndSend(
+          activeSubstrateAddress,
+          { signer: injector.signer },
+          (status) => {
+            // If the component is unmounted, or the transaction
+            // has not yet been included in a block, ignore the
+            // status update.
+            if (!isMountedRef.current || !status.isInBlock) {
+              return;
+            }
+
+            setHash(status.txHash.toHex());
+
+            const error = extractErrorFromTxStatus(status);
+
+            setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
+            setError(error);
+
+            // Useful for debugging.
+            if (error !== null) {
+              console.debug('Substrate transaction failed', error, status);
+            }
+          }
+        );
+      } catch (possibleError: unknown) {
+        setStatus(TxStatus.ERROR);
+        setError(ensureError(possibleError));
+      }
+    },
+    [
+      activeSubstrateAddress,
+      factory,
+      isEvmAccount,
+      isMountedRef,
+      rpcEndpoint,
+      status,
+    ]
+  );
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something

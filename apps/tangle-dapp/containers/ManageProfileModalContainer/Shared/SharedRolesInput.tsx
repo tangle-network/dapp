@@ -3,6 +3,7 @@ import { CheckBox, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import BaseInput from '../../../components/AmountInput/BaseInput';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { RestakingService } from '../../../types';
@@ -10,7 +11,6 @@ import {
   getChartDataAreaColorByServiceType,
   getChipColorOfServiceType,
 } from '../../../utils';
-import BaseInput from '../BaseInput';
 import InputAction from '../InputAction';
 
 export type SharedRolesInputProps = {

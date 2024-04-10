@@ -1,5 +1,6 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
@@ -8,21 +9,24 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
+import { BondedTokensBalanceInfo } from '../../components';
+import AmountInput from '../../components/AmountInput/AmountInput';
 import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { evmToSubstrateAddress, splitTokenValueAndSymbol } from '../../utils';
+import { evmToSubstrateAddress } from '../../utils';
 import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
-import RebondTokens from './RebondTokens';
 import { RebondTxContainerProps } from './types';
 
 const RebondTxContainer: FC<RebondTxContainerProps> = ({
@@ -33,9 +37,11 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { setTxConfirmationState } = useTxConfirmationModal();
-  const [amountToRebond, setAmountToRebond] = useState(0);
-  const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+
+  const [amountToRebond, setAmountToRebond] = useState<BN | null>(null);
+  const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
+  const [hasErrors, setHasErrors] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -70,43 +76,44 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       });
     }
 
-    if (!unbondingAmountData?.value1) return 0;
-
-    const { value: value_ } = splitTokenValueAndSymbol(
-      String(unbondingAmountData?.value1)
-    );
-
-    return value_;
+    return unbondingAmountData?.value1 ?? undefined;
   }, [notificationApi, unbondingAmountData?.value1, unbondingAmountError]);
 
-  const amountToRebondError = useMemo(() => {
-    if (remainingUnbondedTokensToRebond === 0) {
-      return 'You have no unbonded tokens to rebond!';
-    } else if (amountToRebond > remainingUnbondedTokensToRebond) {
-      return `You can only rebond ${remainingUnbondedTokensToRebond} ${nativeTokenSymbol}!`;
-    }
-  }, [remainingUnbondedTokensToRebond, amountToRebond, nativeTokenSymbol]);
-
   const continueToSignAndSubmitTx = useMemo(() => {
-    return amountToRebond > 0 && !amountToRebondError && walletAddress !== '0x0'
-      ? true
-      : false;
-  }, [amountToRebond, amountToRebondError, walletAddress]);
+    return (
+      amountToRebond !== null &&
+      amountToRebond.gt(BN_ZERO) &&
+      !hasErrors &&
+      walletAddress !== '0x0'
+    );
+  }, [amountToRebond, hasErrors, walletAddress]);
 
   const closeModal = useCallback(() => {
     setIsRebondTxLoading(false);
     setIsModalOpen(false);
-    setAmountToRebond(0);
+    setAmountToRebond(null);
+    setHasErrors(false);
   }, [setIsModalOpen]);
+
+  const handleSetErrorMessage = useCallback(
+    (error: string | null) => {
+      setHasErrors(error !== null);
+    },
+    [setHasErrors]
+  );
 
   const submitAndSignTx = useCallback(async () => {
     setIsRebondTxLoading(true);
 
     try {
+      if (amountToRebond === null || amountToRebond.eq(BN_ZERO)) {
+        throw new Error('There is no amount to rebond.');
+      }
+      const rebondAmount = +formatBnToDisplayAmount(amountToRebond);
       const hash = await executeTx(
-        () => rebondTokensEvm(walletAddress, amountToRebond),
-        () => rebondTokensSubstrate(rpcEndpoint, walletAddress, amountToRebond),
-        `Successfully rebonded ${amountToRebond} ${nativeTokenSymbol}.`,
+        () => rebondTokensEvm(walletAddress, rebondAmount),
+        () => rebondTokensSubstrate(rpcEndpoint, walletAddress, rebondAmount),
+        `Successfully rebonded ${rebondAmount} ${nativeTokenSymbol}.`,
         'Failed to rebond tokens!'
       );
 
@@ -147,19 +154,40 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           Rebond Funds
         </ModalHeader>
 
-        <div className="p-9">
-          <RebondTokens
-            amountToRebond={amountToRebond}
-            setAmountToRebond={setAmountToRebond}
-            amountToRebondError={amountToRebondError}
-            remainingUnbondedTokensToRebond={remainingUnbondedTokensToRebond}
-            unbondedAmount={
-              totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? 0
-            }
-            unbondingAmount={
-              totalUnbondedAndUnbondingAmountData?.value1?.unbonding ?? 0
-            }
+        <div className="p-9 space-y-4">
+          <Typography variant="body1" fw="normal">
+            Rebond to return unbonding or unbonded tokens to staking without
+            withdrawing.
+          </Typography>
+
+          <AmountInput
+            id="rebond-input"
+            title="Amount"
+            max={remainingUnbondedTokensToRebond}
+            amount={amountToRebond}
+            setAmount={setAmountToRebond}
+            baseInputOverrides={{ isFullWidth: true }}
+            maxErrorMessage="Not enough unbonding balance"
+            setErrorMessage={handleSetErrorMessage}
+            isDisabled={isRebondTxLoading}
           />
+
+          <div className="space-y-2">
+            <BondedTokensBalanceInfo
+              type="unbonded"
+              value={
+                totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? BN_ZERO
+              }
+            />
+
+            <BondedTokensBalanceInfo
+              type="unbonding"
+              value={
+                totalUnbondedAndUnbondingAmountData?.value1?.unbonding ??
+                BN_ZERO
+              }
+            />
+          </div>
         </div>
 
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">

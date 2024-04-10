@@ -1,9 +1,16 @@
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import { Metadata } from 'next';
 import { FC, Suspense } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
 import RecentTxContainer from '../containers/RecentTxContainer/RecentTxContainer';
+import createPageMetadata from '../utils/createPageMetadata';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Account',
+  isHomepage: true,
+});
 
 const AccountPage: FC = () => {
   return (

@@ -2,7 +2,7 @@
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import { hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
+import { BN_ZERO, hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
 import {
   decodeAddress,
   isEthereumAddress,
@@ -10,14 +10,15 @@ import {
 } from '@polkadot/util-crypto';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import assert from 'assert';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
@@ -26,8 +27,9 @@ import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
-import getStatement from '../../utils/getStatement';
+import getStatement, { Statement } from '../../utils/getStatement';
 import { getPolkadotApiPromise } from '../../utils/polkadot';
+import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import type { ClaimInfoType } from './types';
 
 enum Step {
@@ -38,22 +40,30 @@ enum Step {
 
 type Props = {
   claimInfo: ClaimInfoType;
-  onClaimCompleted: (accountAddress: string) => void;
+  setIsClaiming: (isClaiming: boolean) => void;
 };
 
 const EligibleSection: FC<Props> = ({
-  claimInfo: { amount, isRegularStatement },
-  onClaimCompleted,
+  claimInfo: { totalAmount, vestingAmount, isRegularStatement },
+  setIsClaiming,
 }) => {
-  const { activeAccount, activeApi, activeWallet } = useWebContext();
+  assert(
+    totalAmount.gte(vestingAmount),
+    "Total amount can't be less than vesting amount"
+  );
+
+  const { activeAccount, activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+
   const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
   const [step, setStep] = useState(Step.INPUT_ADDRESS);
-  const { rpcEndpoint } = useNetworkStore();
+  const [statement, setStatement] = useState<null | Statement>(null);
+  const [hasReadStatement, setHasReadStatement] = useState(false);
 
   // Validate recipient input address after 500 ms
   useEffect(() => {
@@ -68,7 +78,32 @@ const EligibleSection: FC<Props> = ({
     return () => clearTimeout(timeout);
   }, [recipient]);
 
-  const isActiveWalletEvm = activeWallet?.platform === 'EVM';
+  // get statement
+  useEffect(() => {
+    const fetchStatement = async () => {
+      try {
+        const api = await getPolkadotApiPromise(rpcEndpoint);
+        const systemChain = await api.rpc.system.chain();
+        const statement = getStatement(
+          systemChain.toHuman(),
+          isRegularStatement
+        );
+        setStatement(statement);
+      } catch (error) {
+        notificationApi({
+          message:
+            typeof error === 'string'
+              ? `Error: ${error}`
+              : error instanceof Error
+              ? error.message
+              : 'Failed to get statement',
+          variant: 'error',
+        });
+      }
+    };
+
+    fetchStatement();
+  }, [rpcEndpoint, isRegularStatement, notificationApi]);
 
   const handleClaimClick = useCallback(async () => {
     if (!activeAccount || !activeApi) {
@@ -84,16 +119,15 @@ const EligibleSection: FC<Props> = ({
     }
 
     try {
+      setIsClaiming(true);
       setStep(Step.SIGN);
 
       const api = await getPolkadotApiPromise(rpcEndpoint);
       const accountId = activeAccount.address;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);
-      const systemChain = await api.rpc.system.chain();
 
-      const statementSentence =
-        getStatement(systemChain.toHuman(), isRegularStatement)?.sentence || '';
+      const statementSentence = statement?.sentence || '';
 
       const prefix = api.consts.claims.prefix.toU8a(true);
 
@@ -122,12 +156,12 @@ const EligibleSection: FC<Props> = ({
       // TODO: Need to centralize these search parameters in an enum, in case they ever change.
       newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
-      onClaimCompleted(accountId);
 
       router.push(`claim/success?${newSearchParams.toString()}`, {
         scroll: true,
       });
     } catch (error) {
+      setIsClaiming(false);
       notificationApi.addToQueue({
         variant: 'error',
         message:
@@ -145,12 +179,12 @@ const EligibleSection: FC<Props> = ({
     activeAccount,
     activeApi,
     rpcEndpoint,
-    isRegularStatement,
     notificationApi,
-    onClaimCompleted,
+    setIsClaiming,
     recipient,
     router,
     searchParams,
+    statement?.sentence,
   ]);
 
   if (!activeAccount) {
@@ -174,13 +208,13 @@ const EligibleSection: FC<Props> = ({
           />
         </div>
 
-        <div className="flex flex-col gap-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
+        <div className="space-y-6 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
           <Typography variant="body1" fw="bold" ta="center">
-            You will receive the liquid balance of...
+            You will receive the total balance of...
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
-            {`${amount} `}
+            {`${formatTokenBalance(totalAmount, nativeTokenSymbol)} `}
             {isValidAddress(recipient)
               ? `to ${
                   isHex(recipient)
@@ -189,9 +223,27 @@ const EligibleSection: FC<Props> = ({
                 }`
               : ''}
           </Typography>
-          <Typography variant="body1" fw="bold" ta="center">
-            any additional balance will be vesting in your account.
-          </Typography>
+
+          {/* Only show this when there's vesting amount */}
+          {vestingAmount.gt(BN_ZERO) && (
+            <div>
+              {/* Free Balance */}
+              <Typography variant="body1" fw="bold" ta="center">
+                {`${formatTokenBalance(
+                  totalAmount.sub(vestingAmount),
+                  nativeTokenSymbol
+                )}`}{' '}
+                will be available immediately as free balance.
+              </Typography>
+
+              {/* Vesting: based on Tangle Genesis Allocations */}
+              {/* https://docs.tangle.tools/docs/tokenomics/allocation/ */}
+              <Typography variant="body1" fw="bold" ta="center">
+                {`${formatTokenBalance(vestingAmount, nativeTokenSymbol)}`} will
+                be vested over 24 months with a 1 month cliff.
+              </Typography>
+            </div>
+          )}
         </div>
 
         <Typography className="px-4" variant="h5" ta="center">
@@ -200,12 +252,39 @@ const EligibleSection: FC<Props> = ({
         </Typography>
       </div>
 
+      {statement !== null && (
+        <div className="flex gap-2">
+          <CheckBox
+            isChecked={hasReadStatement}
+            onChange={() => {
+              setHasReadStatement(!hasReadStatement);
+            }}
+            wrapperClassName="pt-0.5"
+          />
+          <Typography variant="body1">
+            {`I have read and understood the terms and conditions of the statement provided at `}
+            <a
+              href={statement.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-70 dark:text-blue-50 hover:underline"
+            >
+              {statement.url}
+            </a>
+          </Typography>
+        </div>
+      )}
+
       <div className="space-y-2">
         <Button
           isFullWidth
           loadingText={getLoadingText(step)}
           isLoading={step !== Step.INPUT_ADDRESS}
-          isDisabled={!recipient || !!recipientErrorMsg}
+          isDisabled={
+            !recipient ||
+            !!recipientErrorMsg ||
+            (statement !== null && !hasReadStatement)
+          }
           onClick={handleClaimClick}
         >
           Claim Now
@@ -214,16 +293,9 @@ const EligibleSection: FC<Props> = ({
         <Button
           variant="secondary"
           isFullWidth
-          onClick={() =>
-            toggleModal(
-              true,
-              isActiveWalletEvm
-                ? PresetTypedChainId.TangleTestnetNative
-                : PresetTypedChainId.TangleTestnetEVM
-            )
-          }
+          onClick={() => toggleModal(true)}
         >
-          Connect {isActiveWalletEvm ? 'Substrate' : 'EVM'} Wallet
+          Connect Another Wallet
         </Button>
       </div>
     </div>

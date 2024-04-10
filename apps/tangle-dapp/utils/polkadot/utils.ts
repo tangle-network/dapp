@@ -15,45 +15,57 @@ export const getTxPromise = async (
   }
 
   return new Promise((resolve, reject) => {
-    tx.signAndSend(
-      address,
-      {
-        signer: injector.signer,
-        // when sending multiple transactions in quick succession (see batching above), there may be transactions in the pool that has the same nonce
-        // override the nonce, following the Polkadot{.js} doc: https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-take-the-pending-tx-pool-into-account-in-my-nonce
-        nonce: -1,
-      },
-      ({ status, dispatchError, events }) => {
-        if (status.isInBlock || status.isFinalized) {
-          for (const event of events) {
-            const {
-              event: { method },
-            } = event;
+    try {
+      tx.signAndSend(
+        address,
+        {
+          signer: injector.signer,
+          // Uncomment and understand the nonce when you need to deal with nonce manually
+          nonce: -1,
+        },
+        ({ status, dispatchError, events }) => {
+          if (status.isInBlock || status.isFinalized) {
+            for (const event of events) {
+              const {
+                event: { method },
+              } = event;
 
-            if (dispatchError && method === 'ExtrinsicFailed') {
-              let message: string = dispatchError.type;
+              if (dispatchError && method === 'ExtrinsicFailed') {
+                let message: string = dispatchError.type;
 
-              if (dispatchError.isModule) {
-                try {
-                  const mod = dispatchError.asModule;
-                  const error = dispatchError.registry.findMetaError(mod);
-
-                  message = `${error.section}.${error.name}`;
-                } catch (error) {
-                  console.error(error);
-                  reject(message);
+                if (dispatchError.isModule) {
+                  try {
+                    const mod = dispatchError.asModule;
+                    const error = dispatchError.registry.findMetaError(mod);
+                    message = `${error.section}.${error.name}`;
+                  } catch (error) {
+                    console.error(error);
+                    reject(message);
+                  }
+                } else if (dispatchError.isToken) {
+                  message = `${dispatchError.type}.${dispatchError.asToken.type}`;
                 }
-              } else if (dispatchError.isToken) {
-                message = `${dispatchError.type}.${dispatchError.asToken.type}`;
-              }
 
-              reject(message);
-            } else if (method === 'ExtrinsicSuccess' && status.isFinalized) {
-              resolve(status.asFinalized.toHex());
+                reject(message);
+              } else if (method === 'ExtrinsicSuccess' && status.isFinalized) {
+                resolve(status.asFinalized.toHex());
+              }
             }
           }
         }
-      }
-    );
+      ).catch((error) => {
+        reject(
+          `An error occurred during transaction submission: ${error.message}`
+        );
+      });
+    } catch (error) {
+      reject(
+        typeof error === 'string'
+          ? `Error: ${error}`
+          : error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.'
+      );
+    }
   });
 };

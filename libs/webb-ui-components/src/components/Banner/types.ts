@@ -1,3 +1,4 @@
+import type { IconBase } from '@webb-tools/icons/types';
 import { PropsOf, WebbComponentBase } from '../../types';
 import { ComponentProps } from 'react';
 import { Button } from '../buttons';
@@ -24,7 +25,7 @@ export interface BannerPropsType extends WebbComponentBase {
    */
   buttonClassName?: string;
   /**
-   * The type of dapp that banner is being displayed for
+   * The icon to be displayed on the left side of the banner
    */
-  dappName: 'bridge' | 'stats';
+  Icon: (props: IconBase) => JSX.Element;
 }

@@ -193,3 +193,7 @@ export type ServiceParticipant = {
   email?: string;
   web?: string;
 };
+
+export enum NetworkFeature {
+  Faucet,
+}
