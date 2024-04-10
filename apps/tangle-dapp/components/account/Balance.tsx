@@ -12,7 +12,7 @@ import { formatTokenBalance } from '../../utils/polkadot';
 import { InfoIconWithTooltip } from '..';
 
 const Balance: FC = () => {
-  const { transferrable: balance } = useBalances();
+  const { free: balance } = useBalances();
   const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedBalance =
