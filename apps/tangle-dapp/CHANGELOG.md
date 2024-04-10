@@ -139,3 +139,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar Substrate Portal & EVM Explorer links should change depending on active network - https://github.com/webb-tools/webb-dapp/pull/2129
 - Fixed issue regarding `getValidatorIdentity` not properly returning the identity names of validators - https://github.com/webb-tools/webb-dapp/pull/2154
 - Fixed performance bug in Nomination page, now is back to normal speed - https://github.com/webb-tools/webb-dapp/pull/2150
+
+## [0.0.6] - 2024-04-10
+
+### Added
+
+- Banner for reporting bugs at the top of the page - https://github.com/webb-tools/webb-dapp/pull/2175
+- Vesting information is now shown for the Airdrop Claim - https://github.com/webb-tools/webb-dapp/pull/2187
+- Mainnet network is now shown in the network selector - https://github.com/webb-tools/webb-dapp/pull/2198
+- Pages now have Open Graph meta tags for better sharing on social media - https://github.com/webb-tools/webb-dapp/pull/2204
+
+### Changed
+
+- Updated copy for the Claim Airdrop page - https://github.com/webb-tools/webb-dapp/pull/2177
+- Network selector is now shown even when there is no active connected account - https://github.com/webb-tools/webb-dapp/pull/2181
+- `Recent transactions` block's text copy has been modified temporarily, until the feature is actually implemented - https://github.com/webb-tools/webb-dapp/pull/2184
+- Nomination flow has been updated with a more streamlined design - https://github.com/webb-tools/webb-dapp/pull/2187
+- Some pages that are under development are now hidden on production - https://github.com/webb-tools/webb-dapp/pull/2197
+- Payouts table is no longer available due to a recent runtime upgrade, it has been updated with a corresponding notice - https://github.com/webb-tools/webb-dapp/pull/2203
+
+### Fixed
+
+- Fixed bugs and links on the Nomination page - https://github.com/webb-tools/webb-dapp/pull/2165
+- Significant improvement for the transfer modal's inputs & validation - https://github.com/webb-tools/webb-dapp/pull/2185
+- EVM transfers for EVM -> Substrate now work correctly - https://github.com/webb-tools/webb-dapp/pull/2202
+- Free balance for EVM accounts is now shown correctly - https://github.com/webb-tools/webb-dapp/pull/2205
+- `Open Explorer` link now opens Polkadot/Substrate Explorer or Blockscout, depending on whether the active/connected account is a Substrate or EVM account - https://github.com/webb-tools/webb-dapp/pull/2205
