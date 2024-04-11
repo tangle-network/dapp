@@ -15,7 +15,6 @@ import {
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components/BondedTokensBalanceInfo';
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -33,7 +32,6 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const { rpcEndpoint } = useNetworkStore();
 
@@ -97,7 +95,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     setIsWithdrawUnbondedTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         async () => {
           const slashingSpans = await getSlashingSpans(
             rpcEndpoint,
@@ -125,30 +123,11 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         'Failed to withdraw tokens!'
       );
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsWithdrawUnbondedTxLoading(false);
     }
-  }, [
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    setTxConfirmationState,
-    substrateAddress,
-    walletAddress,
-  ]);
+  }, [closeModal, executeTx, rpcEndpoint, substrateAddress, walletAddress]);
 
   const onRebondClick = () => {
     closeModal();
