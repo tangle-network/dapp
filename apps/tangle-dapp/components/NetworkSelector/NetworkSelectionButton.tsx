@@ -58,7 +58,6 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
       )}
     >
       <ChainIcon
-        status="success"
         size="lg"
         className="shrink-0 grow-0"
         name={TANGLE_TESTNET_NATIVE_CHAIN_NAME}
