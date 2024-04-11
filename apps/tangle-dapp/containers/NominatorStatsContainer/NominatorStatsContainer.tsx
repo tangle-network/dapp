@@ -119,7 +119,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
-              tooltip={`The total amount of tokens you have bonded for nominating.`}
+              tooltip="The total amount of tokens you have bonded for nominating."
               type="Total Staked"
               address={substrateAddress}
             />

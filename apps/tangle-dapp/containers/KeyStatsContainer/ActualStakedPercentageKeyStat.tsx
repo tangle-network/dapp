@@ -11,7 +11,7 @@ const ActualStakedPercentageKeyStat: FC = () => {
   return (
     <KeyStatsItem
       title="Actual Staked"
-      tooltip="The % of all network tokens that have been staked in the current era."
+      tooltip="The actual percentage of all network tokens that have been staked in the current era."
       className="!border-r-0 lg:!border-r  lg:!border-b-0"
       suffix="%"
       isLoading={actualStakedPercentage === null}

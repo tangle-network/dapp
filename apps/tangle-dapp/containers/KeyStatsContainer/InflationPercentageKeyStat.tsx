@@ -11,7 +11,7 @@ const InflationPercentageKeyStat: FC = () => {
   return (
     <KeyStatsItem
       title="Inflation"
-      tooltip="The yearly % increase in the network’s total token supply."
+      tooltip="The yearly percent increase in the network's total token supply."
       className="!border-b-0 !border-r-0"
       suffix="%"
       isLoading={isLoading}

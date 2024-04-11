@@ -28,7 +28,7 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedAtDefault }) => {
       pathnameOrHash={pathname}
       className="hidden lg:block !z-0"
       isExpandedAtDefault={isExpandedAtDefault}
-      onSideBarToggle={() => setSidebarCookieOnToggle()}
+      onSideBarToggle={setSidebarCookieOnToggle}
     />
   );
 };

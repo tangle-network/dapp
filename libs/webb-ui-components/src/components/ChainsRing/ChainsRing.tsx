@@ -39,7 +39,10 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
           const chainName = chainsConfig[typedChainId].name;
 
           return (
-            <Tooltip key={typedChainId}>
+            // NOTE: Would ideally have the key be the chain id, but the edge
+            // case where the same chain is repeated (ex. transferring between
+            // the same chain) would cause issues.
+            <Tooltip key={idx}>
               <TooltipTrigger className="cursor-pointer" asChild>
                 <div
                   className={getChainIconClassNameByIdx(idx)}
@@ -48,6 +51,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
                   <ChainIcon name={chainName} size="lg" />
                 </div>
               </TooltipTrigger>
+
               <TooltipBody className="z-20">{chainName}</TooltipBody>
             </Tooltip>
           );

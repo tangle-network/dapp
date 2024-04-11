@@ -261,6 +261,7 @@ const EligibleSection: FC<Props> = ({
             }}
             wrapperClassName="pt-0.5"
           />
+
           <Typography variant="body1">
             {`I have read and understood the terms and conditions of the statement provided at `}
             <a
