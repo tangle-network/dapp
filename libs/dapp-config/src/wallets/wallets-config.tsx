@@ -17,6 +17,7 @@ import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
+  PresetTypedChainId.TangleMainnetEVM,
 
   // Testnet
   PresetTypedChainId.Goerli,
@@ -39,6 +40,7 @@ const ANY_EVM = [
 ];
 
 const ANY_SUBSTRATE = [
+  PresetTypedChainId.TangleMainnetNative,
   PresetTypedChainId.TangleTestnetNative,
   PresetTypedChainId.Kusama,
   PresetTypedChainId.Polkadot,
