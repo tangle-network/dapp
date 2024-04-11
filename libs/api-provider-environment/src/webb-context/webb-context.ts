@@ -99,6 +99,9 @@ export interface WebbContextState<T = unknown> {
     interactiveFeedback: InteractiveFeedback
   ) => void;
 
+  /** The application's name */
+  appName: string;
+
   /** App event */
   appEvent: TAppEvent;
 
@@ -135,6 +138,7 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
   activeFeedback: null,
   apiConfig: ApiConfig.init({}),
   registerInteractiveFeedback: noop,
+  appName: '',
   appEvent: new AppEvent(),
   txQueue: {
     txQueue: [],

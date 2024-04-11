@@ -14,7 +14,6 @@ import {
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
-  HUBBLE_BRIDGE_DAPP_NAME,
   chainsConfig,
   chainsPopulated,
   parseOnChainData,
@@ -85,7 +84,11 @@ const apiConfig = ApiConfig.init({
 
 const appNetworkStoragePromise = netStorageFactory();
 
-const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
+const WebbProviderInner: FC<WebbProviderProps> = ({
+  children,
+  appEvent,
+  applicationName,
+}) => {
   const [activeWallet, setActiveWallet] = useActiveWallet();
   const [activeChain, setActiveChain] = useActiveChain();
   const [activeAccount, setActiveAccount] = useActiveAccount();
@@ -355,7 +358,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
               }
 
               const webbPolkadot = await WebbPolkadot.init(
-                HUBBLE_BRIDGE_DAPP_NAME,
+                applicationName,
                 Array.from(webSocketUrls),
                 {
                   onError: (feedback: InteractiveFeedback) => {
@@ -602,7 +605,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
+    [activeApi, appEvent, applicationName, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
   );
 
   /// a util will store the network/wallet config before switching
@@ -759,6 +762,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   return (
     <WebbContext.Provider
       value={{
+        appName: applicationName,
         loading,
         wallets: walletsConfig,
         chains: chains,

@@ -8,66 +8,76 @@ import { useEffect, useState } from 'react';
 export const useWallets = () => {
   const [wallets, setWallets] = useState<ManagedWallet[]>([]);
 
-  const { activeApi, activeChain, activeWallet, apiConfig, inactivateApi } =
-    useWebContext();
+  const {
+    activeApi,
+    activeChain,
+    activeWallet,
+    apiConfig,
+    appName,
+    inactivateApi,
+  } = useWebContext();
 
-  useEffect(() => {
-    let isSubscribed = true;
+  useEffect(
+    () => {
+      let isSubscribed = true;
 
-    const configureSelectedWallets = async () => {
-      const walletIds = Object.values(activeChain?.wallets ?? {});
-      const walletsFromActiveChain = walletIds.map(
-        (walletId) => apiConfig.wallets[walletId]
-      );
+      const configureSelectedWallets = async () => {
+        const walletIds = Object.values(activeChain?.wallets ?? {});
+        const walletsFromActiveChain = walletIds.map(
+          (walletId) => apiConfig.wallets[walletId]
+        );
 
-      const wallets = await Promise.all(
-        walletsFromActiveChain.map(
-          async ({ detect, ...walletConfig }): Promise<ManagedWallet> => {
-            const isDetected = Boolean(await detect()) ?? false;
-            const connected =
-              activeWallet?.id === walletConfig.id && !!activeApi;
+        const wallets = await Promise.all(
+          walletsFromActiveChain.map(
+            async ({ detect, ...walletConfig }): Promise<ManagedWallet> => {
+              const isDetected = Boolean(await detect(appName)) ?? false;
+              const connected =
+                activeWallet?.id === walletConfig.id && !!activeApi;
 
-            if (connected) {
+              if (connected) {
+                return {
+                  ...walletConfig,
+                  detect,
+                  enabled: isDetected,
+                  connected,
+                  endSession: async () => {
+                    if (activeApi && activeApi.endSession) {
+                      await Promise.all([
+                        activeApi.endSession(),
+                        await inactivateApi(),
+                      ]);
+                    }
+                  },
+                  canEndSession: Boolean(activeApi?.capabilities?.hasSessions),
+                };
+              }
+
               return {
                 ...walletConfig,
                 detect,
                 enabled: isDetected,
                 connected,
-                endSession: async () => {
-                  if (activeApi && activeApi.endSession) {
-                    await Promise.all([
-                      activeApi.endSession(),
-                      await inactivateApi(),
-                    ]);
-                  }
-                },
-                canEndSession: Boolean(activeApi?.capabilities?.hasSessions),
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                async endSession() {},
+                canEndSession: false,
               };
             }
+          )
+        );
 
-            return {
-              ...walletConfig,
-              detect,
-              enabled: isDetected,
-              connected,
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              async endSession() {},
-              canEndSession: false,
-            };
-          }
-        )
-      );
+        if (isSubscribed) {
+          setWallets(wallets);
+        }
+      };
+      configureSelectedWallets();
 
-      if (isSubscribed) {
-        setWallets(wallets);
-      }
-    };
-    configureSelectedWallets();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [activeChain, activeWallet, activeApi, inactivateApi, apiConfig.wallets]);
+      return () => {
+        isSubscribed = false;
+      };
+    },
+    // prettier-ignore
+    [activeChain, activeWallet, activeApi, inactivateApi, apiConfig.wallets, appName]
+  );
 
   return {
     wallets,
