@@ -11,7 +11,7 @@ import { map } from 'rxjs';
 import useEntryMap from '../../hooks/useEntryMap';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
-const extractNameFromInfo = (
+export const extractNameFromInfo = (
   info: PalletIdentityLegacyIdentityInfo
 ): string | null => {
   const displayNameJson = info.display.toString();

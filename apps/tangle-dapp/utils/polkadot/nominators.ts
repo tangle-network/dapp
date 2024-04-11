@@ -1,5 +1,6 @@
 import type { HexString } from '@polkadot/util/types';
 
+import { extractNameFromInfo } from '../../data/ValidatorTables/useValidatorIdentityNames';
 import { getPolkadotApiPromise } from './api';
 import { getTxPromise } from './utils';
 
@@ -42,10 +43,12 @@ export const getValidatorIdentity = async (
   // and use that as the name instead of the address.
   if (identityOption.isSome) {
     const identity = identityOption.unwrap();
-    name = Buffer.from(
-      JSON.parse(JSON.stringify(identity, null, 2)).info.display.raw.slice(2),
-      'hex'
-    ).toString('utf8');
+    const info = identity[0].info;
+    const extractedName = extractNameFromInfo(info);
+
+    if (extractedName !== null) {
+      name = extractedName;
+    }
   }
 
   return name;
