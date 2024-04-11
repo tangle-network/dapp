@@ -114,10 +114,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const fetchedNominations = useMemo(() => {
     if (delegatorsData !== null) {
       return delegatorsData.delegators;
-    } else if (cachedNominations) {
-      return cachedNominations[substrateAddress] ?? [];
     }
-  }, [cachedNominations, delegatorsData, substrateAddress]);
+  }, [delegatorsData]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -217,11 +215,7 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : (
             <DelegatorTable
-              data={
-                fetchedNominations && fetchedNominations.length > 0
-                  ? fetchedNominations
-                  : []
-              }
+              data={fetchedNominations ?? []}
               pageSize={PAGE_SIZE}
             />
           )}
