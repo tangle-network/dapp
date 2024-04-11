@@ -57,15 +57,6 @@ export const useValidators = (
   }, [validatorPrefs]);
 
   return useMemo(() => {
-    console.debug(
-      'loading validators',
-      addresses === null,
-      identityNames === null,
-      exposures === null,
-      nominations === null,
-      validatorPrefs === null
-    );
-
     if (
       addresses === null ||
       identityNames === null ||

@@ -18,7 +18,6 @@ import { DelegatorTable, TableStatus } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useNetworkState from '../../hooks/useNetworkState';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
@@ -97,11 +96,6 @@ const DelegationsPayoutsContainer: FC = () => {
   //   LocalStorageKey.Payouts,
   //   true
   // );
-
-  const { valueAfterMount: cachedNominations } = useLocalStorage(
-    LocalStorageKey.Nominations,
-    true
-  );
 
   // const fetchedPayouts = useMemo(() => {
   //   if (payoutsData !== null) {
