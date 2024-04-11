@@ -194,6 +194,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
         <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
           <div className="flex-1">
+            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
+          </div>
+
+          <div className="flex-1">
             <Button
               isFullWidth
               isLoading={!isReady}
@@ -207,14 +215,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             >
               Send
             </Button>
-          </div>
-
-          <div className="flex-1">
-            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
-              <Button isFullWidth variant="secondary">
-                Learn More
-              </Button>
-            </Link>
           </div>
         </ModalFooter>
       </ModalContent>
