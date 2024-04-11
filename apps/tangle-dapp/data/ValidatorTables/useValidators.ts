@@ -19,10 +19,14 @@ export const useValidators = (
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
   const { nativeTokenSymbol } = useNetworkStore();
-
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
+
+  const { data: nominations } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.nominators.entries(), [])
+  );
+
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
       (api) =>
@@ -32,11 +36,7 @@ export const useValidators = (
       [currentEra]
     )
   );
-  const { data: nominations } = usePolkadotApiRx(
-    useCallback((api) => api.query.staking.nominators.entries(), [])
-  );
 
-  // Mapping Exposures
   const mappedExposures = useMemo(() => {
     const map = new Map<string, SpStakingExposure>();
     exposures?.forEach(([storageKey, exposure]) => {
