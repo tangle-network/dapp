@@ -183,9 +183,7 @@ const AssetCell: FC<{
           {title}
         </Typography>
 
-        {tooltip !== undefined && (
-          <InfoIconWithTooltip content={<>{tooltip}</>} />
-        )}
+        {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
       </div>
     </div>
   );

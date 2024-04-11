@@ -6,7 +6,7 @@ import {
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
@@ -85,13 +85,13 @@ const NetworkOption: FC<NetworkOptionProps> = ({
   tooltip,
   onClick,
 }) => {
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (isSelected || onClick === undefined) {
       return;
     }
 
     onClick();
-  };
+  }, [isSelected, onClick]);
 
   return (
     <div
@@ -109,12 +109,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
         {name}
       </Typography>
 
-      {tooltip !== undefined && (
-        <InfoIconWithTooltip
-          className="!max-w-[200px]"
-          content={<>{tooltip}</>}
-        />
-      )}
+      {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
     </div>
   );
 };
