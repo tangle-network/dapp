@@ -261,15 +261,15 @@ const DelegationsPayoutsContainer: FC = () => {
           )} */}
 
           <TableStatus
+            icon="🚧"
             title="Payouts Coming Soon"
-            description="The payouts feature for EVM and Substrate users is in development for direct access here. Meanwhile, Substrate users can view and manage payouts via Polkadot Apps.
-            "
-            buttonText="Polkadot Apps"
+            description="The payouts feature for EVM and Substrate users is currently under active development. Meanwhile, Substrate users can view and manage payouts via the Polkadot/Substrate Portal."
+            buttonText="Open Explorer"
             buttonProps={{
+              // TODO: Ideally, get or build this URL straight from the network object instead of hardcoding it here.
               href: `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking/payout`,
               target: '_blank',
             }}
-            icon="🚧"
           />
         </TabContent>
       </TableAndChartTabs>
