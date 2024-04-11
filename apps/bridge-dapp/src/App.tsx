@@ -10,7 +10,7 @@ export const appEvent = new AppEvent();
 const App: FC = () => {
   return (
     <WebbUIProvider hasErrorBoudary>
-      <WebbProvider appEvent={appEvent} applicationName={'Webb DApp'}>
+      <WebbProvider appEvent={appEvent} applicationName={'Hubble Bridge dApp'}>
         <AppRoutes />
       </WebbProvider>
     </WebbUIProvider>

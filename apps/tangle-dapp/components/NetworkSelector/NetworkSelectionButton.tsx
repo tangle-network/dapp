@@ -20,6 +20,7 @@ export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
 const NetworkSelectionButton: FC = () => {
   const { network, setNetwork, isCustom } = useNetworkState();
 
+  // TODO: Handle switching network on EVM wallet here
   const switchToCustomNetwork = useCallback(
     (customRpcEndpoint: string) =>
       setNetwork(createCustomNetwork(customRpcEndpoint), true),
@@ -28,9 +29,7 @@ const NetworkSelectionButton: FC = () => {
 
   return (
     <Dropdown>
-      <DropdownBasicButton>
-        <TriggerButton networkName={network?.name ?? 'Loading'} />
-      </DropdownBasicButton>
+      <TriggerButton networkName={network?.name ?? 'Loading'} />
 
       <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
         <NetworkSelectorDropdown
@@ -46,7 +45,7 @@ const NetworkSelectionButton: FC = () => {
 
 const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
   return (
-    <button
+    <DropdownBasicButton
       type="button"
       className={twMerge(
         'rounded-lg border-2 p-2',
@@ -74,7 +73,7 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
 
         <ChevronDown size="lg" className="shrink-0 grow-0" />
       </div>
-    </button>
+    </DropdownBasicButton>
   );
 };
 

@@ -105,7 +105,7 @@ const useConnectWallet = (options?: {
   const connectError = useObservableState(subjects.connectErrorSubject);
   const typedChainId = useObservableState(subjects.walletTypedChainIdSubject);
 
-  const { appEvent, setActiveAccount, switchChain } = useWebContext();
+  const { appEvent, appName, setActiveAccount, switchChain } = useWebContext();
 
   const [, setActiveWallet] = useActiveWallet();
   const [, setActiveChain] = useActiveChain();
@@ -192,7 +192,7 @@ const useConnectWallet = (options?: {
         subjects.setSelectedWallet(nextWallet);
         subjects.setWalletState(WalletState.CONNECTING);
 
-        const provider = await nextWallet.detect();
+        const provider = await nextWallet.detect(appName);
 
         if (!provider) {
           subjects.setWalletState(WalletState.FAILED);
@@ -251,7 +251,7 @@ const useConnectWallet = (options?: {
       }
     },
     // prettier-ignore
-    [setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId]
+    [appName, setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId]
   );
 
   /**

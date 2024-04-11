@@ -15,6 +15,35 @@ function populateBlockExplorerStub(connString: string): string {
 
 // All substrate chains temporary use in `development` environment now
 export const chainsConfig: Record<number, ChainConfig> = {
+  [PresetTypedChainId.TangleMainnetNative]: {
+    chainType: ChainType.Substrate,
+    group: 'tangle',
+    tag: 'live',
+    id: SubstrateChainId.TangleMainnetNative,
+    name: 'Tangle Mainnet Native',
+    nativeCurrency: {
+      name: 'Tangle Mainnet Token',
+      symbol: 'TNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Explorer',
+        url: populateBlockExplorerStub('wss://rpc.tangle.tools'),
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rpc.tangle.tools'],
+      },
+      public: {
+        http: [],
+        webSocket: ['wss://rpc.tangle.tools'],
+      },
+    },
+  },
+
   [PresetTypedChainId.TangleTestnetNative]: {
     chainType: ChainType.Substrate,
     group: 'tangle',
@@ -50,6 +79,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
+
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
     id: SubstrateChainId.Kusama,
@@ -79,6 +109,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
+
   [PresetTypedChainId.Polkadot]: {
     chainType: ChainType.PolkadotRelayChain,
     id: SubstrateChainId.Polkadot,

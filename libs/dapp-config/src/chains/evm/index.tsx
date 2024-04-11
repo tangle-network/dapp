@@ -181,6 +181,33 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
   }),
 
+  [PresetTypedChainId.TangleMainnetEVM]: {
+    chainType: ChainType.EVM,
+    id: EVMChainId.TangleMainnetEVM,
+    name: 'Tangle Mainnet EVM',
+    group: 'tangle',
+    tag: 'live',
+    nativeCurrency: {
+      name: 'Tangle Network Token',
+      symbol: 'TNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Mainnet EVM Explorer',
+        url: 'https://explorer.tangle.tools/',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.tangle.tools'],
+      },
+      public: {
+        http: ['https://rpc.tangle.tools'],
+      },
+    },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.TangleTestnetEVM]: {
     chainType: ChainType.EVM,
     id: EVMChainId.TangleTestnetEVM,
