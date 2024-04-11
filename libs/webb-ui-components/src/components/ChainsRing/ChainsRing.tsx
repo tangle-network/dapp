@@ -39,7 +39,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
           const chainName = chainsConfig[typedChainId].name;
 
           return (
-            <Tooltip key={typedChainId}>
+            <Tooltip key={`${typedChainId}-${idx}`}>
               <TooltipTrigger className="cursor-pointer" asChild>
                 <div
                   className={getChainIconClassNameByIdx(idx)}

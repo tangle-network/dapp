@@ -60,6 +60,7 @@ function useEvmPrecompileAbiCall<
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
+
   const activeEvmAddress = useEvmAddress();
   const viemPublicClient = useViemPublicClient();
   const viemWalletClient = useViemWalletClient();
@@ -127,9 +128,19 @@ function useEvmPrecompileAbiCall<
     ]
   );
 
+  const reset = useCallback(() => {
+    setStatus(TxStatus.NOT_YET_INITIATED);
+    setError(null);
+  }, []);
+
   // Prevent the consumer from executing the call if the active
   // account is not an EVM account.
-  return { execute: activeEvmAddress !== null ? execute : null, status, error };
+  return {
+    execute: activeEvmAddress !== null ? execute : null,
+    reset,
+    status,
+    error,
+  };
 }
 
 export default useEvmPrecompileAbiCall;
