@@ -1,6 +1,7 @@
 import type { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { notificationApi } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
 import ensureError from '../utils/ensureError';
@@ -10,6 +11,7 @@ import useExplorerUrl, { ExplorerType } from './useExplorerUrl';
 const useExecuteTxWithNotification = () => {
   const { activeWallet } = useWebContext();
   const getExplorerUrl = useExplorerUrl();
+  const { enqueueSnackbar: enqueueNotifications } = useSnackbar();
 
   /**
    * Executes a transaction based on the active wallet's platform.
@@ -49,6 +51,7 @@ const useExecuteTxWithNotification = () => {
           throw new Error(errorMessage);
         }
 
+        // TODO: tx explorer url is incorrect
         const txExplorerUrl = getExplorerUrl(
           txHash,
           activeWallet?.platform === 'EVM'
@@ -56,31 +59,52 @@ const useExecuteTxWithNotification = () => {
             : ExplorerType.Substrate
         );
 
-        notificationApi({
-          variant: 'success',
-          message: successMessage,
-          secondaryMessage: txExplorerUrl ? (
-            <a
-              href={txExplorerUrl.toString()}
-              target="_blank"
-              className="underline"
-            >
-              View Transaction
-            </a>
-          ) : undefined,
-        });
+        // Currently using SnackbarProvider for managing NotificationStacked
+        // For one-off configurations, must use enqueueSnackbar
+        enqueueNotifications(
+          <div className="space-y-2">
+            <Typography variant="h5" fw="bold">
+              {successMessage}
+            </Typography>
+            {txExplorerUrl !== null && (
+              <Button
+                variant="link"
+                size="sm"
+                href={txExplorerUrl.toString()}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View Transaction
+              </Button>
+            )}
+          </div>,
+          {
+            variant: 'success',
+            autoHideDuration: null,
+          }
+        );
 
         return txHash;
       } catch (error) {
-        notificationApi({
-          variant: 'error',
-          message: ensureError(error).message,
-        });
+        enqueueNotifications(
+          <div className="space-y-2">
+            <Typography variant="h5" fw="bold">
+              {errorMessage}
+            </Typography>
+            <Typography variant="body1">
+              {ensureError(error).message}
+            </Typography>
+          </div>,
+          {
+            variant: 'error',
+            autoHideDuration: 5000,
+          }
+        );
 
         throw error;
       }
     },
-    [activeWallet?.platform, getExplorerUrl]
+    [activeWallet?.platform, getExplorerUrl, enqueueNotifications]
   );
 
   return executeTx;

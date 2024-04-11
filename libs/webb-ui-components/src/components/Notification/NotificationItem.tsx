@@ -64,7 +64,7 @@ export const NotificationItem = forwardRef<HTMLDivElement, Props>(
         )}
       >
         <div className="flex space-x-3">
-          <div>{Icon ?? DefaultIcon}</div>
+          <div className="pt-0.5">{Icon ?? DefaultIcon}</div>
 
           <div className="space-y-1 max-w-[313px] overflow-x-hidden">
             {typeof message === 'string' ? (
