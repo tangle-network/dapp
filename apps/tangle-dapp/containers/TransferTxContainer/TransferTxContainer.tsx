@@ -13,7 +13,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, {
@@ -127,6 +127,17 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
+  const transferrableBalanceTooltip: ReactNode = transferrableBalance !==
+    null && (
+    <span>
+      You have{' '}
+      <strong>
+        {formatTokenBalance(transferrableBalance, nativeTokenSymbol)}
+      </strong>{' '}
+      available to transfer.
+    </span>
+  );
+
   return (
     <Modal>
       <ModalContent
@@ -166,7 +177,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
-              baseInputOverrides={{ isFullWidth: true }}
+              baseInputOverrides={{
+                isFullWidth: true,
+                tooltip: transferrableBalanceTooltip,
+              }}
               maxErrorMessage="Not enough available balance"
               setErrorMessage={handleSetErrorMessage}
             />
