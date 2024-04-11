@@ -4,14 +4,40 @@ import { Transition } from '@headlessui/react';
 import { BoxLine } from '@webb-tools/icons';
 import { Banner } from '@webb-tools/webb-ui-components/components/Banner';
 import { GITHUB_BUG_REPORT_URL } from '@webb-tools/webb-ui-components/constants';
-import { FC, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
+
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 
 const FeedbackBanner: FC = () => {
-  const [showBanner, setShowBanner] = useState(true);
+  // Initially, the banner is hidden until the value is
+  // extracted from local storage.
+  const [showBanner, setShowBanner] = useState(false);
 
-  const onCloseHandler = () => {
+  const {
+    isSet: isBannerDismissalCacheSet,
+    get: getCachedWasBannerDismissed,
+    set: setCachedWasBannerDismissed,
+  } = useLocalStorage(LocalStorageKey.WAS_BANNER_DISMISSED);
+
+  // If there is no cache key, show the banner by default.
+  useEffect(() => {
+    if (!isBannerDismissalCacheSet()) {
+      setShowBanner(true);
+    }
+  }, [isBannerDismissalCacheSet, setShowBanner]);
+
+  // If the banner was dismissed, do not show it to prevent
+  // annoying the user.
+  useEffect(() => {
+    if (getCachedWasBannerDismissed() === true) {
+      setShowBanner(false);
+    }
+  }, [getCachedWasBannerDismissed]);
+
+  const onCloseHandler = useCallback(() => {
     setShowBanner(false);
-  };
+    setCachedWasBannerDismissed(true);
+  }, [setCachedWasBannerDismissed]);
 
   return (
     <Transition show={showBanner}>

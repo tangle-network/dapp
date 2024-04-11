@@ -56,7 +56,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   id: NetworkId.TANGLE_TESTNET,
   chainId: 3799,
-  name: 'Tangle Testnet Native',
+  name: 'Tangle Testnet',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
   httpRpcEndpoint: 'https://testnet-rpc.tangle.tools',
@@ -71,7 +71,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
 export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   id: NetworkId.TANGLE_LOCAL_DEV,
   chainId: 3799,
-  name: 'Local endpoint (127.0.0.1)',
+  name: 'Local endpoint',
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',
   wsRpcEndpoint: 'ws://127.0.0.1:9944',

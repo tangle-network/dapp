@@ -48,6 +48,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
                   <ChainIcon name={chainName} size="lg" />
                 </div>
               </TooltipTrigger>
+
               <TooltipBody className="z-20">{chainName}</TooltipBody>
             </Tooltip>
           );

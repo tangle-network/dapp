@@ -34,7 +34,7 @@ const AccountPage: FC = () => {
       </div>
 
       <Typography variant="h4" fw="bold">
-        Manage Balances
+        Balances
       </Typography>
 
       <Suspense fallback={<SkeletonLoader className="rounded-2xl h-[190px]" />}>

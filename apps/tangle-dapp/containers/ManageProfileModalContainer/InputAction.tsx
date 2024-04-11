@@ -31,10 +31,8 @@ const InputAction: FC<InputActionProps> = ({
     icon
   ) : (
     <IconWithTooltip
-      overrideTooltipBodyProps={{
-        className: 'break-normal text-center max-w-[200px]',
-      }}
-      content={<>{tooltip}</>}
+      overrideTooltipBodyProps={{ className: 'max-w-[200px]' }}
+      content={tooltip}
       icon={icon}
     />
   );

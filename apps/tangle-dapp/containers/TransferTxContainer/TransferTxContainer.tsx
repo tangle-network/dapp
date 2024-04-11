@@ -13,7 +13,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, {
@@ -129,6 +129,17 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
+  const transferrableBalanceTooltip: ReactNode = transferrableBalance !==
+    null && (
+    <span>
+      You have{' '}
+      <strong>
+        {formatTokenBalance(transferrableBalance, nativeTokenSymbol)}
+      </strong>{' '}
+      available to transfer.
+    </span>
+  );
+
   return (
     <Modal>
       <ModalContent
@@ -169,7 +180,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
-              baseInputOverrides={{ isFullWidth: true }}
+              baseInputOverrides={{
+                isFullWidth: true,
+                tooltip: transferrableBalanceTooltip,
+              }}
               maxErrorMessage="Not enough available balance"
               setErrorMessage={handleSetErrorMessage}
             />
@@ -197,6 +211,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
         <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
           <div className="flex-1">
+            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
+          </div>
+
+          <div className="flex-1">
             <Button
               isFullWidth
               isLoading={!isReady}
@@ -210,14 +232,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             >
               Send
             </Button>
-          </div>
-
-          <div className="flex-1">
-            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
-              <Button isFullWidth variant="secondary">
-                Learn More
-              </Button>
-            </Link>
           </div>
         </ModalFooter>
       </ModalContent>
