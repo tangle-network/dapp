@@ -18,7 +18,6 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components';
 import AmountInput from '../../components/AmountInput/AmountInput';
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
@@ -36,7 +35,6 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const [amountToRebond, setAmountToRebond] = useState<BN | null>(null);
@@ -110,35 +108,22 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
         throw new Error('There is no amount to rebond.');
       }
       const rebondAmount = +formatBnToDisplayAmount(amountToRebond);
-      const hash = await executeTx(
+      await executeTx(
         () => rebondTokensEvm(walletAddress, rebondAmount),
         () => rebondTokensSubstrate(rpcEndpoint, walletAddress, rebondAmount),
         `Successfully rebonded ${rebondAmount} ${nativeTokenSymbol}.`,
         'Failed to rebond tokens!'
       );
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsRebondTxLoading(false);
     }
   }, [
     amountToRebond,
     closeModal,
     executeTx,
     rpcEndpoint,
-    setTxConfirmationState,
     walletAddress,
     nativeTokenSymbol,
   ]);
