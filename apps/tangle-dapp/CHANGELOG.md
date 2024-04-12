@@ -165,3 +165,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - EVM transfers for EVM -> Substrate now work correctly - https://github.com/webb-tools/webb-dapp/pull/2202
 - Free balance for EVM accounts is now shown correctly - https://github.com/webb-tools/webb-dapp/pull/2205
 - `Open Explorer` link now opens Polkadot/Substrate Explorer or Blockscout, depending on whether the active/connected account is a Substrate or EVM account - https://github.com/webb-tools/webb-dapp/pull/2205
+
+## [0.0.7] - 2024-04-12
+
+### Added
+
+- Added `View Account` button to Nomination page - https://github.com/webb-tools/webb-dapp/pull/2211
+
+### Changed
+
+- Vesting schedules are now sorted by earliest unlock block, in ascending order - https://github.com/webb-tools/webb-dapp/pull/2218
+- UI now gets updated after transaction completes, not before - https://github.com/webb-tools/webb-dapp/pull/2222
+
+### Fixed
+
+- Use proper balance for account summary card (free vs. transferrable) - https://github.com/webb-tools/webb-dapp/pull/2209
+- Validator list was in a perpetual loading state under mainnet network - https://github.com/webb-tools/webb-dapp/pull/2220
+- Visual improvements - https://github.com/webb-tools/webb-dapp/pull/2223
+- Add or switch chain on EVM wallets to the active chain on the Tangle dApp - https://github.com/webb-tools/webb-dapp/pull/2225
+- Significantly improved performance of all transactions in the Nomination page - https://github.com/webb-tools/webb-dapp/pull/2222
+
+### Removed
+
+- Transaction confirmation modal, replaced with a notification that also includes a link to the explorer - https://github.com/webb-tools/webb-dapp/pull/2222

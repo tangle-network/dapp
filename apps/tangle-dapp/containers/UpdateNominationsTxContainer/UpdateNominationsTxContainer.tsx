@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Alert,
   Button,
@@ -12,7 +11,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -28,7 +26,6 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const maxNominationQuota = useMaxNominationQuota();
   const { rpcEndpoint } = useNetworkStore();
 
@@ -86,7 +83,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     setIsSubmitAndSignTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         () => nominateValidatorsEvm(walletAddress, selectedValidators),
         () =>
           nominateValidatorsSubstrate(
@@ -97,21 +94,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
         `Successfully updated nominations!`,
         'Failed to update nominations!'
       );
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsSubmitAndSignTxLoading(false);
     }
   }, [
     closeModal,
@@ -119,7 +104,6 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     isReadyToSubmitAndSignTx,
     rpcEndpoint,
     selectedValidators,
-    setTxConfirmationState,
     walletAddress,
   ]);
 
