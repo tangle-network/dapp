@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useActiveValidators = () => {
-  const { data: activeValidatorAddresses } = usePolkadotApiRx(
+  const { data: activeValidatorAddresses } = useApiRx(
     useCallback((api) => api.query.session.validators(), [])
   );
 

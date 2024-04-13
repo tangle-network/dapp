@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
 
 const useRestakingJobs = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: jobRoleIdPairsOpt } = usePolkadotApiRx(
+  const { data: jobRoleIdPairsOpt } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {

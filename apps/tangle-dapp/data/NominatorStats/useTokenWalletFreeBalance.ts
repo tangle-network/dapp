@@ -8,7 +8,7 @@ import { type Subscription } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { evmToSubstrateAddress } from '../../utils/evmToSubstrateAddress';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useTokenWalletFreeBalance(
   address: string,
@@ -31,7 +31,7 @@ export default function useTokenWalletFreeBalance(
       }
 
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
         if (!api) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }

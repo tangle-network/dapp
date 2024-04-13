@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
-import usePolkadotApi from '../../../hooks/usePolkadotApi';
+import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
 import {
   getChartDataAreaColorByServiceType,
@@ -31,7 +31,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { servicesWithJobs } = useRestakingJobs();
 
-  const { value: maxRolesPerAccount } = usePolkadotApi(
+  const { value: maxRolesPerAccount } = useApi(
     useCallback(
       (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
       []

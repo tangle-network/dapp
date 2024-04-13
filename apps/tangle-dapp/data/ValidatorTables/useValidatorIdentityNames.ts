@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 import { map } from 'rxjs';
 
 import useEntryMap from '../../hooks/useEntryMap';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 export const extractNameFromInfo = (
   info: PalletIdentityLegacyIdentityInfo
@@ -45,7 +45,7 @@ const mapIdentitiesToNames = (
   });
 
 const useValidatorIdentityNames = () => {
-  const { data: identityNames, ...other } = usePolkadotApiRx(
+  const { data: identityNames, ...other } = useApiRx(
     useCallback(
       (api) =>
         api.query.identity.identityOf.entries().pipe(map(mapIdentitiesToNames)),

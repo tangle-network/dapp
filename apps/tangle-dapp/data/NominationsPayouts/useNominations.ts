@@ -11,8 +11,8 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Delegator } from '../../types';
 import {
   formatTokenBalance,
-  getPolkadotApiPromise,
-  getPolkadotApiRx,
+  getApiPromise,
+  getApiRx,
   getTotalNumberOfNominators,
   getValidatorCommission,
   getValidatorIdentity,
@@ -52,8 +52,8 @@ export default function useNominations(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+        const apiSub = await getApiRx(rpcEndpoint);
+        const apiPromise = await getApiPromise(rpcEndpoint);
 
         setIsLoading(true);
 

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
 import useEntryMap from '../../hooks/useEntryMap';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 const useEraTotalRewards = () => {
-  const { data: erasValidatorRewards, ...other } = usePolkadotApiRx(
+  const { data: erasValidatorRewards, ...other } = useApiRx(
     useCallback((api) => api.query.staking.erasValidatorReward.entries(), [])
   );
 

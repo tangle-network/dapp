@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useWaitingValidators = () => {
-  const { data: waitingValidatorAddresses } = usePolkadotApiRx(
+  const { data: waitingValidatorAddresses } = useApiRx(
     useCallback(
       (api) =>
         api.derive.staking.waitingInfo().pipe(map((info) => info.waiting)),

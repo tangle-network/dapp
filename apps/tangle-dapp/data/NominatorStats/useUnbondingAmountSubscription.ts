@@ -7,7 +7,7 @@ import { type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useUnbondingAmountSubscription(
   address: string,
@@ -26,7 +26,7 @@ export default function useUnbondingAmountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         if (!address) {
           setValue1(null);

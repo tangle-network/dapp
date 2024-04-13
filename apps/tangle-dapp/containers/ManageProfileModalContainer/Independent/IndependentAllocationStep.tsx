@@ -13,7 +13,6 @@ import { z } from 'zod';
 
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
-import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { RestakingService } from '../../../types';
 import { formatTokenBalance } from '../../../utils/polkadot';
 import { AllocationChartVariant } from '../AllocationChart';
@@ -56,11 +55,8 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     null
   );
 
-  const { value: maxRolesPerAccount } = usePolkadotApi(
-    useCallback(
-      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
-      []
-    )
+  const { value: maxRolesPerAccount } = useApiOnce(
+    useCallback((api) => api.consts.roles.maxRolesPerAccount, [])
   );
 
   const [newAllocationRole, setNewAllocationRole] =

@@ -2,14 +2,14 @@ import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import getSubstrateLockId from '../../utils/getSubstrateLockId';
 
 const useBalancesLock = (lockId: SubstrateLockId) => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: locks } = usePolkadotApiRx(
+  const { data: locks } = useApiRx(
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;

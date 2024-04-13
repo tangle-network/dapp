@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
+import useApiRx from './useApiRx';
 import useErrorReporting from './useErrorReporting';
-import usePolkadotApiRx from './usePolkadotApiRx';
 import useSubstrateAddress from './useSubstrateAddress';
 
 const useIsBondedOrNominating = () => {
@@ -11,7 +11,7 @@ const useIsBondedOrNominating = () => {
     data: nominators,
     isLoading: isLoadingNominators,
     error: nominatorsError,
-  } = usePolkadotApiRx(
+  } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {
@@ -28,7 +28,7 @@ const useIsBondedOrNominating = () => {
     data: bondedInfo,
     isLoading: isLoadingBondedInfo,
     error: bondedInfoError,
-  } = usePolkadotApiRx(
+  } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {

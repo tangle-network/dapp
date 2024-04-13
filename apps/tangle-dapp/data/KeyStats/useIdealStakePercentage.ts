@@ -8,7 +8,7 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { calculateInflation } from '../../utils';
 import ensureError from '../../utils/ensureError';
-import { getPolkadotApiPromise } from '../../utils/polkadot';
+import { getApiPromise } from '../../utils/polkadot';
 
 export default function useIdealStakedPercentage(
   defaultValue: { value1: number | null } = { value1: null }
@@ -36,7 +36,7 @@ export default function useIdealStakedPercentage(
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const api = await getPolkadotApiPromise(rpcEndpoint);
+        const api = await getApiPromise(rpcEndpoint);
         const inflation = calculateInflation(api, BN_ZERO, BN_ZERO, BN_ZERO);
         const idealStakePercentage = inflation.idealStake * 100;
 

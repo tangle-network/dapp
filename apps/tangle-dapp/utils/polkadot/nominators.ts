@@ -1,14 +1,14 @@
 import type { HexString } from '@polkadot/util/types';
 
 import { extractNameFromInfo } from '../../data/ValidatorTables/useValidatorIdentityNames';
-import { getPolkadotApiPromise } from './api';
+import { getApiPromise } from './api';
 import { getTxPromise } from './utils';
 
 export const getTotalNumberOfNominators = async (
   rpcEndpoint: string,
   validatorAddress: string
 ): Promise<number> => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const nominators = await api.query.staking.nominators.entries();
 
   const totalNominators = nominators.filter(([, nominatorData]) => {
@@ -33,7 +33,7 @@ export const getValidatorIdentity = async (
   rpcEndpoint: string,
   validatorAddress: string
 ): Promise<string> => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const identityOpt = await api.query.identity.identityOf(validatorAddress);
 
   // If the identity is set, get the custom display name
@@ -57,7 +57,7 @@ export const getValidatorCommission = async (
   rpcEndpoint: string,
   validatorAddress: string
 ): Promise<string> => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const validatorPrefs = await api.query.staking.validators(validatorAddress);
   const commissionRate = validatorPrefs.commission.unwrap().toNumber();
   const commission = commissionRate / 10_000_000;
@@ -68,7 +68,7 @@ export const getValidatorCommission = async (
 export const getMaxNominationQuota = async (
   rpcEndpoint: string
 ): Promise<number | undefined> => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const maxNominations = api.query.staking.maxNominatorsCount;
 
   return parseInt(maxNominations.toString());
@@ -79,7 +79,7 @@ export const nominateValidators = async (
   nominatorAddress: string,
   validatorAddresses: string[]
 ): Promise<HexString> => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const tx = api.tx.staking.nominate(validatorAddresses);
 
   return getTxPromise(nominatorAddress, tx);
@@ -89,7 +89,7 @@ export const stopNomination = async (
   rpcEndpoint: string,
   nominatorAddress: string
 ) => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const tx = api.tx.staking.chill();
 
   return getTxPromise(nominatorAddress, tx);

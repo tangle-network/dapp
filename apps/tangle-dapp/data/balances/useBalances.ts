@@ -3,9 +3,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs/operators';
 
-import usePolkadotApiRx, {
-  ObservableFactory,
-} from '../../hooks/usePolkadotApiRx';
+import useApiRx, { ObservableFactory } from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 export type AccountBalances = {
@@ -69,7 +67,7 @@ const useBalances = (): AccountBalances => {
     [activeSubstrateAddress]
   );
 
-  const { data, isLoading } = usePolkadotApiRx(balancesFetcher);
+  const { data, isLoading } = useApiRx(balancesFetcher);
 
   useEffect(() => {
     // If there's data and it's not loading, set the balances.

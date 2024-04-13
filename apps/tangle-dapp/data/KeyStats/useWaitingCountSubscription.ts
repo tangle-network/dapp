@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useWaitingCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -41,7 +41,7 @@ export default function useWaitingCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         sub = api.derive.staking.waitingInfo().subscribe((waitingInfo) => {
           const newWaitingCount = waitingInfo.waiting.length;

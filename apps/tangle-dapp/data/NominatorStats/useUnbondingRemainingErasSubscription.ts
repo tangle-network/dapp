@@ -7,7 +7,7 @@ import { firstValueFrom, type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 type UnbondingRemainingEras = {
   amount: BN;
@@ -31,7 +31,7 @@ export default function useUnbondingRemainingErasSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         if (!address) {
           setValue1(null);

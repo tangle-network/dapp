@@ -16,7 +16,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
@@ -38,7 +38,7 @@ const BalancesTableContainer: FC = () => {
   const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
     useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
 
-  const { data: locks } = usePolkadotApiRx(
+  const { data: locks } = useApiRx(
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;

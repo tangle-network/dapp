@@ -23,9 +23,9 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
 
 export const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 
-export const getPolkadotApiPromise: (
+export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
   endpoint: string
-) => Promise<ApiPromise> = async (endpoint: string) => {
+) => {
   return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
     const wsProvider = new WsProvider(endpoint);
 
@@ -38,7 +38,7 @@ export const getPolkadotApiPromise: (
 
 export const apiRxCache = new Map<string, Promise<ApiRx>>();
 
-export const getPolkadotApiRx = async (endpoint: string): Promise<ApiRx> => {
+export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
   return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
     const provider = new WsProvider(endpoint);
 

@@ -3,7 +3,7 @@ import { BN, BN_ZERO, formatDecimal } from '@polkadot/util';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
-import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
+import useApiRx from '../../../hooks/useApiRx';
 import { formatTokenBalance } from '../../../utils/polkadot';
 import BalanceCell from '../BalanceCell';
 
@@ -25,7 +25,7 @@ export const sortVestingSchedulesAscending = (
 const VestingScheduleBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
-  const { data: currentBlockNumber } = usePolkadotApiRx(
+  const { data: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 

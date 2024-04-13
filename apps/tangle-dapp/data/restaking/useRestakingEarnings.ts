@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 /**
  * Type for the restaking earnings record,
@@ -15,7 +15,7 @@ export type EarningRecord = Record<number, number>;
  * @returns a record of era number to the restaking earnings for that era
  */
 const useRestakingEarnings = (substrateAccount: string | null) =>
-  usePolkadotApiRx(
+  useApiRx(
     useCallback(
       (apiRx) => {
         if (!substrateAccount) return of(null);

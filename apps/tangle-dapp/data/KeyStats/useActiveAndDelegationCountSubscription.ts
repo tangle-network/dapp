@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiPromise, getApiRx } from '../../utils/polkadot';
 
 // TODO: This is causing performance issues. Needs to be optimized.
 export default function useActiveAndDelegationCountSubscription(
@@ -45,8 +45,8 @@ export default function useActiveAndDelegationCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
+        const apiPromise = await getApiPromise(rpcEndpoint);
         const currentEra = await apiPromise.query.staking.currentEra();
         const eraIndex = currentEra.unwrap();
 

@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 const useValidatorsPrefs = () => {
-  return usePolkadotApiRx(
+  return useApiRx(
     // Memoize factory to prevent infinite loops.
     useCallback((api) => api.query.staking.validators.entries(), [])
   );

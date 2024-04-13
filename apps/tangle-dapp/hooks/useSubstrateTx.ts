@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
+import { getApiPromise,getInjector } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
@@ -78,7 +78,7 @@ function useSubstrateTx<Context = void>(
       );
 
       const injector = await getInjector(activeSubstrateAddress);
-      const api = await getPolkadotApiPromise(rpcEndpoint);
+      const api = await getApiPromise(rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
 
       // The transaction factory may throw an error if it encounters

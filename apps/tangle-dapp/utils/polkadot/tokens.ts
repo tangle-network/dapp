@@ -1,7 +1,7 @@
 import { BN, formatBalance } from '@polkadot/util';
 
 import { TANGLE_TOKEN_DECIMALS } from '../../constants';
-import { getPolkadotApiPromise } from './api';
+import { getApiPromise } from './api';
 
 export const formatTokenBalance = (
   balance: BN | bigint,
@@ -15,7 +15,7 @@ export const formatTokenBalance = (
 };
 
 export const getNativeTokenSymbol = async (rpcEndpoint: string) => {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
 
   const nativeTokenSymbol = (await api.rpc.system.properties()).tokenSymbol
     .unwrap()[0]

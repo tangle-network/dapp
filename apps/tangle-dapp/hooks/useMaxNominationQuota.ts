@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
-import usePolkadotApiRx from './usePolkadotApiRx';
+import useApiRx from './useApiRx';
 
 const useMaxNominationQuota = (): number => {
-  const { data: maxNominationQuotaOpt } = usePolkadotApiRx(
+  const { data: maxNominationQuotaOpt } = useApiRx(
     useCallback((api) => api.query.staking.maxNominatorsCount(), [])
   );
 

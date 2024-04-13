@@ -6,16 +6,16 @@ import { catchError, Observable } from 'rxjs';
 
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
-import { getPolkadotApiRx } from '../utils/polkadot';
+import { getApiRx } from '../utils/polkadot';
 import usePromise from './usePromise';
 
 export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
 
 /**
- * Fetch data from the Polkadot API, using RxJS. This is especially useful
+ * Fetch data from the Substrate API, using RxJS. This is especially useful
  * for when real-time updates or data is needed.
  *
- * @param factory Function that takes the Polkadot Rx instance
+ * @param factory Function that takes the Substrate Rx instance
  * and returns a promise that resolves to the data to be streamed.
  *
  * If the consumer of this hook utilizes any returned state, this function
@@ -25,27 +25,19 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  *
  * @example
  * ```ts
- * const { data: currentBlockNumber } = usePolkadotApiRx(
+ * const { data: currentBlockNumber } = useApiRx(
  *  useCallback((api) => api.derive.chain.bestNumber(), [])
  * );
  * ```
- *
- * @example
- * ```
- * const { value: babeExpectedBlockTime } = usePolkadotApi(
- *  useCallback((api) => Promise.resolve(api.consts.babe.expectedBlockTime), [])
- * );
- * ```
  */
-
-function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
+function useApiRx<T>(factory: ObservableFactory<T>) {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
 
   const { result: polkadotApiRx } = usePromise(
-    useCallback(() => getPolkadotApiRx(rpcEndpoint), [rpcEndpoint]),
+    useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
     null
   );
 
@@ -89,4 +81,4 @@ function usePolkadotApiRx<T>(factory: ObservableFactory<T>) {
   return { data, isLoading, error };
 }
 
-export default usePolkadotApiRx;
+export default useApiRx;

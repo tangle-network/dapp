@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
 import useEntryMap from '../../hooks/useEntryMap';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 const useLedgers = () => {
-  const { data: ledgers, ...other } = usePolkadotApiRx(
+  const { data: ledgers, ...other } = useApiRx(
     useCallback((api) => api.query.staking.ledger.entries(), [])
   );
 

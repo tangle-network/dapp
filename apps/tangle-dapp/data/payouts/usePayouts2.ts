@@ -4,12 +4,12 @@ import { SpStakingExposure } from '@polkadot/types/lookup';
 import { useCallback, useEffect, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import {
   formatTokenBalance,
-  getPolkadotApiPromise,
+  getApiPromise,
   getValidatorCommission,
   getValidatorIdentity,
 } from '../../utils/polkadot';
@@ -29,11 +29,11 @@ const usePayouts2 = () => {
   const activeSubstrateAddress = useSubstrateAddress();
   const { data: ledgers } = useLedgers();
 
-  const { data: erasRewardsPoints } = usePolkadotApiRx(
+  const { data: erasRewardsPoints } = useApiRx(
     useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
   );
 
-  const { data: nominators } = usePolkadotApiRx(
+  const { data: nominators } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {
@@ -89,7 +89,7 @@ const usePayouts2 = () => {
 
     const payoutsPromise = Promise.all(
       rewards.map(async (reward) => {
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+        const apiPromise = await getApiPromise(rpcEndpoint);
         const ledgerOpt = ledgers.get(reward.validatorAddress);
 
         // There might not be a ledger for this validator.

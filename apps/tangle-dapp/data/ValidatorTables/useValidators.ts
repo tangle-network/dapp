@@ -7,7 +7,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import { Validator } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import useCurrentEra from '../staking/useCurrentEra';
@@ -23,11 +23,11 @@ export const useValidators = (
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
 
-  const { data: nominations } = usePolkadotApiRx(
+  const { data: nominations } = useApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
 
-  const { data: exposures } = usePolkadotApiRx(
+  const { data: exposures } = useApiRx(
     useCallback(
       (api) =>
         currentEra === null

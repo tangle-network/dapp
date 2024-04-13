@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
 
 const useRestakingLimits = () => {
@@ -9,7 +9,7 @@ const useRestakingLimits = () => {
     useCallback((ledger) => ledger.total.toBn(), [])
   );
 
-  const { data: minRestakingBond } = usePolkadotApiRx(
+  const { data: minRestakingBond } = useApiRx(
     useCallback(
       (api) =>
         api.query.roles

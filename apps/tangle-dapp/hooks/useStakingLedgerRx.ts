@@ -3,7 +3,7 @@ import { StakingLedger } from '@polkadot/types/interfaces';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import usePolkadotApiRx from './usePolkadotApiRx';
+import useApiRx from './useApiRx';
 import useSubstrateAddress from './useSubstrateAddress';
 
 /**
@@ -18,7 +18,7 @@ export type StakingLedgerFetcherRx<T> = (
 function useStakingLedgerRx<T>(fetcher: StakingLedgerFetcherRx<T>) {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  return usePolkadotApiRx(
+  return useApiRx(
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;

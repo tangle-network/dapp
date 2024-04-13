@@ -28,7 +28,7 @@ import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import getStatement, { Statement } from '../../utils/getStatement';
-import { getPolkadotApiPromise } from '../../utils/polkadot';
+import { getApiPromise } from '../../utils/polkadot';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
 import type { ClaimInfoType } from './types';
 
@@ -82,7 +82,7 @@ const EligibleSection: FC<Props> = ({
   useEffect(() => {
     const fetchStatement = async () => {
       try {
-        const api = await getPolkadotApiPromise(rpcEndpoint);
+        const api = await getApiPromise(rpcEndpoint);
         const systemChain = await api.rpc.system.chain();
         const statement = getStatement(
           systemChain.toHuman(),
@@ -122,7 +122,7 @@ const EligibleSection: FC<Props> = ({
       setIsClaiming(true);
       setStep(Step.SIGN);
 
-      const api = await getPolkadotApiPromise(rpcEndpoint);
+      const api = await getApiPromise(rpcEndpoint);
       const accountId = activeAccount.address;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);
