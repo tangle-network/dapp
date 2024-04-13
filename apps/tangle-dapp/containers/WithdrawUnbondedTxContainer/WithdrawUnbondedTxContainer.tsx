@@ -15,13 +15,9 @@ import {
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components/BondedTokensBalanceInfo';
-import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useWithdrawUnbondedTx from '../../data/staking/useWithdrawUnbondedTx';
 import { evmToSubstrateAddress } from '../../utils';
-import { withdrawUnbondedTokens as withdrawUnbondedTokensEvm } from '../../utils/evm';
-import { withdrawUnbondedTokens as withdrawUnbondedTokensSubstrate } from '../../utils/polkadot';
-import { getSlashingSpans } from '../../utils/polkadot';
 import { RebondTxContainer } from '../RebondTxContainer';
 import { WithdrawUnbondedTxContainerProps } from './types';
 
@@ -31,9 +27,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
-  const { rpcEndpoint } = useNetworkStore();
 
   const [isWithdrawUnbondedTxLoading, setIsWithdrawUnbondedTxLoading] =
     useState(false);
@@ -78,61 +72,39 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     totalUnbondedAndUnbondingAmountError,
   ]);
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return totalUnbondedAmountAvailableToWithdraw &&
-      totalUnbondedAmountAvailableToWithdraw.gt(BN_ZERO) &&
-      walletAddress !== '0x0'
-      ? true
-      : false;
-  }, [totalUnbondedAmountAvailableToWithdraw, walletAddress]);
-
-  const closeModal = useCallback(() => {
+  const closeModalAndReset = useCallback(() => {
     setIsWithdrawUnbondedTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
+  const { execute: executeWithdrawUnbondedTx } = useWithdrawUnbondedTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executeWithdrawUnbondedTx === null) {
+      return;
+    }
+
     setIsWithdrawUnbondedTxLoading(true);
 
     try {
-      await executeTx(
-        async () => {
-          const slashingSpans = await getSlashingSpans(
-            rpcEndpoint,
-            substrateAddress
-          );
-
-          return withdrawUnbondedTokensEvm(
-            walletAddress,
-            Number(slashingSpans)
-          );
-        },
-        async () => {
-          const slashingSpans = await getSlashingSpans(
-            rpcEndpoint,
-            substrateAddress
-          );
-
-          return withdrawUnbondedTokensSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            Number(slashingSpans)
-          );
-        },
-        `Successfully withdraw!`,
-        'Failed to withdraw tokens!'
-      );
-
-      closeModal();
+      await executeWithdrawUnbondedTx();
+      closeModalAndReset();
     } catch {
       setIsWithdrawUnbondedTxLoading(false);
     }
-  }, [closeModal, executeTx, rpcEndpoint, substrateAddress, walletAddress]);
+  }, [closeModalAndReset, executeWithdrawUnbondedTx]);
 
-  const onRebondClick = () => {
-    closeModal();
+  const onRebondClick = useCallback(() => {
+    closeModalAndReset();
     setIsRebondModalOpen(true);
-  };
+  }, [closeModalAndReset]);
+
+  const canContinueToSignAndSubmitTx =
+    totalUnbondedAmountAvailableToWithdraw &&
+    totalUnbondedAmountAvailableToWithdraw.gt(BN_ZERO) &&
+    walletAddress !== '0x0'
+      ? true
+      : false;
 
   return (
     <>
@@ -142,7 +114,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
           isOpen={isModalOpen}
           className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
         >
-          <ModalHeader titleVariant="h4" onClose={closeModal}>
+          <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
             Withdraw Funds
           </ModalHeader>
 
@@ -173,7 +145,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
           <ModalFooter className="px-8 py-6 flex flex-col gap-1">
             <Button
               isFullWidth
-              isDisabled={!continueToSignAndSubmitTx}
+              isDisabled={!canContinueToSignAndSubmitTx}
               isLoading={isWithdrawUnbondedTxLoading}
               onClick={submitAndSignTx}
             >
