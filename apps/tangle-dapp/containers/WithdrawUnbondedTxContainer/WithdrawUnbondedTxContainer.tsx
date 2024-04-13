@@ -99,7 +99,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     setIsRebondModalOpen(true);
   }, [closeModalAndReset]);
 
-  const canContinueToSignAndSubmitTx =
+  const canSubmitTx =
     totalUnbondedAmountAvailableToWithdraw &&
     totalUnbondedAmountAvailableToWithdraw.gt(BN_ZERO) &&
     walletAddress !== '0x0'
@@ -145,7 +145,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
           <ModalFooter className="px-8 py-6 flex flex-col gap-1">
             <Button
               isFullWidth
-              isDisabled={!canContinueToSignAndSubmitTx}
+              isDisabled={!canSubmitTx}
               isLoading={isWithdrawUnbondedTxLoading}
               onClick={submitAndSignTx}
             >

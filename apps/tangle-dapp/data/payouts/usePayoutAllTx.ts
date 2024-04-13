@@ -11,14 +11,14 @@ import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { evmToSubstrateAddress } from '../../utils';
 
-export type UsePayoutAllTxContext = {
+export type PayoutAllTxContext = {
   validatorEraPairs: { validatorAddress: string; era: string }[];
 };
 
 const STAKING_INTERFACE = new ethers.utils.Interface(STAKING_PRECOMPILE_ABI);
 
 const usePayoutAllTx = () => {
-  const evmTxFactory: EvmTxFactory<Precompile.BATCH, UsePayoutAllTxContext> =
+  const evmTxFactory: EvmTxFactory<Precompile.BATCH, PayoutAllTxContext> =
     useCallback((context) => {
       const batchCalls = context.validatorEraPairs.map(
         ({ validatorAddress, era }) => {
@@ -47,7 +47,7 @@ const usePayoutAllTx = () => {
       };
     }, []);
 
-  const substrateTxFactory: SubstrateTxFactory<UsePayoutAllTxContext> =
+  const substrateTxFactory: SubstrateTxFactory<PayoutAllTxContext> =
     useCallback((api, _activeSubstrateAddress, context) => {
       const txs = context.validatorEraPairs.map(({ validatorAddress, era }) => {
         const validatorSubstrateAddress =
@@ -59,7 +59,7 @@ const usePayoutAllTx = () => {
       return api.tx.utility.batchAll(txs);
     }, []);
 
-  return useAgnosticTx<Precompile.BATCH, UsePayoutAllTxContext>({
+  return useAgnosticTx<Precompile.BATCH, PayoutAllTxContext>({
     precompile: Precompile.BATCH,
     evmTxFactory,
     substrateTxFactory,

@@ -84,7 +84,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     }
   }, [executeBondExtraTx, amountToBond, closeModalAndReset]);
 
-  const canContinueToSignAndSubmitTx =
+  const canSubmitTx =
     amountToBond !== null &&
     amountToBond.gt(BN_ZERO) &&
     walletAddress !== '0x0' &&
@@ -122,7 +122,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!canContinueToSignAndSubmitTx}
+            isDisabled={!canSubmitTx}
             isLoading={isBondMoreTxLoading}
             onClick={submitAndSignTx}
           >

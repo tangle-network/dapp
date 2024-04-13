@@ -13,10 +13,7 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
-import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
+import usePayoutAllTx from '../../data/payouts/usePayoutAllTx';
 import { PayoutAllTxContainerProps } from './types';
 
 const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
@@ -27,8 +24,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   updatePayouts,
 }) => {
   const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useNetworkStore();
   const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
@@ -60,21 +55,19 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
+  const { execute: executePayoutAllTx } = usePayoutAllTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executePayoutAllTx === null) {
+      return;
+    }
+
     setIsPayoutAllTxLoading(true);
 
     try {
-      await executeTx(
-        () => batchPayoutStakersEvm(walletAddress, payoutValidatorsAndEras),
-        () =>
-          batchPayoutStakersSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            payoutValidatorsAndEras
-          ),
-        `Successfully claimed rewards for all stakers!`,
-        'Failed to payout all stakers!'
-      );
+      await executePayoutAllTx({
+        validatorEraPairs: payoutValidatorsAndEras,
+      });
 
       const updatedPayouts = payouts.filter(
         (payout) =>
@@ -92,16 +85,14 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       closeModalAndReset();
     }
   }, [
-    executeTx,
+    executePayoutAllTx,
+    payoutValidatorsAndEras,
     payouts,
     updatePayouts,
-    walletAddress,
-    payoutValidatorsAndEras,
-    rpcEndpoint,
     closeModalAndReset,
   ]);
 
-  const canContinueToSignAndSubmitTx = validatorsAndEras.length > 0;
+  const canSubmitTx = validatorsAndEras.length > 0;
 
   return (
     <Modal open>
@@ -181,7 +172,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!canContinueToSignAndSubmitTx}
+            isDisabled={!canSubmitTx}
             isLoading={isPayoutAllTxLoading}
             onClick={submitAndSignTx}
           >
