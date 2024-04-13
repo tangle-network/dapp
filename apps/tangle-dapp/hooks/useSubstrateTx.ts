@@ -104,12 +104,10 @@ function useSubstrateTx<Context = void>(
       // This is usually because the user hasn't yet connected their wallet,
       // or the factory's requirements haven't been met.
       if (tx === null) {
-        console.debug('tx not ready..');
         return false;
       }
       // Wait until the injector is ready.
       else if (injector === null) {
-        console.debug('injector not ready');
         return false;
       }
 
@@ -135,8 +133,6 @@ function useSubstrateTx<Context = void>(
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
       };
-
-      console.debug('sending..');
 
       try {
         await tx.signAndSend(

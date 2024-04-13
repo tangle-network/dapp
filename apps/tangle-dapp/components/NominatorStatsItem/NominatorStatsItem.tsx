@@ -20,6 +20,7 @@ export const NominatorStatsItem: FC<NominatorStatsItemProps> = ({
         <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
           {title}
         </Typography>
+
         {tooltip && <InfoIconWithTooltip content={tooltip} />}
       </div>
     </div>
