@@ -1,6 +1,6 @@
 import type { ChipColors } from '@webb-tools/webb-ui-components';
 
-import { RestakingService } from '../types';
+import { RestakingService } from '../../types';
 
 // TODO: Update this to match the actual service types.
 function getChipColorOfServiceType(serviceType: RestakingService): ChipColors {

@@ -61,7 +61,13 @@ export type NodeSpecification = {
   linuxKernel: string;
 };
 
-export enum StakingPayee {
+export enum StakingRewardsDestination {
+  STAKED,
+  STASH,
+  CONTROLLER,
+}
+
+export enum StakingRewardsDestinationDisplayText {
   STAKED = 'Staked (increase the amount at stake)',
   STASH = 'Stash (do not increase the amount at stake)',
   CONTROLLER = 'Controller Account',

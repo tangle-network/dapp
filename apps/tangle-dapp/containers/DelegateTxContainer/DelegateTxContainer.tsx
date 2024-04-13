@@ -18,15 +18,12 @@ import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import { PAYMENT_DESTINATION_OPTIONS as PAYEE_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
-import useBondExtraTx from '../../data/staking/useBondExtraTx';
-import useNominateTx from '../../data/staking/useNominateTx';
-import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';
 import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { StakingPayee } from '../../types';
+import { StakingRewardsDestination } from '../../types';
 import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
 import BondTokens from './BondTokens';
 import { DelegateTxContainerProps, DelegateTxSteps } from './types';
@@ -41,7 +38,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
   const activeSubstrateAddress = useSubstrateAddress();
   const { nativeTokenSymbol } = useNetworkStore();
-  const [payee, setPayee] = useState(StakingPayee.STAKED);
+  const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
   const [hasAmountToBondError, setHasAmountToBondError] = useState(false);
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
@@ -100,28 +97,22 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     [setHasAmountToBondError]
   );
 
-  const closeModal = useCallback(() => {
+  const closeModalAndReset = useCallback(() => {
     setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
-    setPayee(StakingPayee.STAKED);
+    setPayee(StakingRewardsDestination.STAKED);
     setAmountToBond(null);
     setHasAmountToBondError(false);
     setSelectedValidators([]);
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
-  const { execute: executeSetPayeeTx } = useSetPayeeTx();
-  const { execute: executeNominateTx } = useNominateTx();
-  const { execute: executeBondExtraTx } = useBondExtraTx();
   const { execute: executeSetupNominatorTx } = useSetupNominatorTx();
   const { execute: executeUpdateNominatorTx } = useUpdateNominatorTx();
 
   const executeDelegate2 = useCallback(async () => {
     // Not yet ready.
     if (
-      executeSetPayeeTx === null ||
-      executeNominateTx === null ||
-      executeBondExtraTx === null ||
       isBondedOrNominating === null ||
       executeSetupNominatorTx === null ||
       executeUpdateNominatorTx === null ||
@@ -150,13 +141,13 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
       const currentPayee =
         currentPaymentDestination?.value1 === 'Staked'
-          ? StakingPayee.STAKED
-          : StakingPayee.STASH;
+          ? StakingRewardsDestination.STAKED
+          : StakingRewardsDestination.STASH;
 
       // Update the payee if it has changed.
       const newPayee = currentPayee === payee ? undefined : payee;
 
-      executeUpdateNominatorTx({
+      await executeUpdateNominatorTx({
         bondAmount: extraBondingAmount,
         payee: newPayee,
         // TODO: Only update nominees if they have changed. Use `_.isEqual` or similar to compare arrays.
@@ -166,9 +157,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   }, [
     amountToBond,
     currentPaymentDestination?.value1,
-    executeBondExtraTx,
-    executeNominateTx,
-    executeSetPayeeTx,
     executeSetupNominatorTx,
     executeUpdateNominatorTx,
     isBondedOrNominating,
@@ -176,17 +164,19 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     selectedValidators,
   ]);
 
-  const submitAndSignTx = useCallback(async () => {
+  const submitTx = useCallback(async () => {
     setIsSubmitAndSignTxLoading(true);
 
     try {
       await executeDelegate2();
-    } catch {
+    } catch (error) {
+      console.error(error);
+
       // notification is already handled in executeTx
     } finally {
-      closeModal();
+      closeModalAndReset();
     }
-  }, [closeModal, executeDelegate2]);
+  }, [closeModalAndReset, executeDelegate2]);
 
   if (
     isBondedOrNominating == null ||
@@ -218,7 +208,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           isOpen={isModalOpen}
           className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
         >
-          <ModalHeader titleVariant="h4" onClose={closeModal}>
+          <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
             Setup Nomination {currentStep}
           </ModalHeader>
 
@@ -298,7 +288,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                   !canContinueToSignAndSubmitTx
                 }
                 isLoading={isSubmitAndSignTxLoading}
-                onClick={submitAndSignTx}
+                onClick={submitTx}
               >
                 Confirm
               </Button>

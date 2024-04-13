@@ -1,7 +1,7 @@
 import type { HexString } from '@polkadot/util/types';
 import { parseEther } from 'viem';
 
-import { StakingPayee } from '../../types';
+import { StakingRewardsDestination } from '../../types';
 import { getApiPromise } from './api';
 import { getTxPromise } from './utils';
 
@@ -18,9 +18,9 @@ export const bondTokens = async (
   const api = await getApiPromise(rpcEndpoint);
 
   const payee =
-    paymentDestination === StakingPayee.STAKED
+    paymentDestination === StakingRewardsDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === StakingPayee.STASH
+      : paymentDestination === StakingRewardsDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
@@ -80,14 +80,14 @@ export const withdrawUnbondedTokens = async (
 export const updatePaymentDestination = async (
   rpcEndpoint: string,
   nominatorAddress: string,
-  paymentDestination: string
+  rewardsDestination: string
 ): Promise<HexString> => {
   const api = await getApiPromise(rpcEndpoint);
 
   const payee =
-    paymentDestination === StakingPayee.STAKED
+    rewardsDestination === StakingRewardsDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === StakingPayee.STASH
+      : rewardsDestination === StakingRewardsDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 

@@ -1,5 +1,5 @@
-import { ChartColor } from '../constants';
-import { RestakingService } from '../types';
+import { ChartColor } from '../../constants';
+import { RestakingService } from '../../types';
 
 // TODO: Update this to match the actual service types.
 export default function getChartDataAreaColorByServiceType(

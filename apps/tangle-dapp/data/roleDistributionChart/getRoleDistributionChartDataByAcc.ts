@@ -2,7 +2,7 @@ import { rand } from '@ngneat/falso';
 
 import type { PieChartItem } from '../../components/charts/types';
 import { RestakingProfileType, RestakingService } from '../../types';
-import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
+import getChartAreaColorByServiceType from '../../utils/restaking/getChartDataAreaColorByServiceType';
 
 export type RoleDistributionChartDataType = {
   profileType: RestakingProfileType;

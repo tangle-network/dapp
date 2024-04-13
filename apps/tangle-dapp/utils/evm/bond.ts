@@ -6,7 +6,7 @@ import {
   PrecompileAddress,
   STAKING_PRECOMPILE_ABI,
 } from '../../constants/evmPrecompiles';
-import { StakingPayee } from '../../types';
+import { StakingRewardsDestination } from '../../types';
 import { createEvmWalletClient, evmPublicClient } from './client';
 
 const PAYEE_STAKED =
@@ -26,9 +26,9 @@ export const bondTokens = async (
   const value = parseEther(numberOfTokens.toString());
 
   const payee =
-    paymentDestination === StakingPayee.STAKED
+    paymentDestination === StakingRewardsDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === StakingPayee.STASH
+      : paymentDestination === StakingRewardsDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 
@@ -68,12 +68,12 @@ export const bondExtraTokens = async (
 
 export const updatePaymentDestination = async (
   nominatorAddress: string,
-  paymentDestination: string
+  rewardsDestination: string
 ): Promise<AddressType> => {
   const payee =
-    paymentDestination === StakingPayee.STAKED
+    rewardsDestination === StakingRewardsDestination.STAKED
       ? PAYEE_STAKED
-      : paymentDestination === StakingPayee.STASH
+      : rewardsDestination === StakingRewardsDestination.STASH
       ? PAYEE_STASH
       : PAYEE_CONTROLLER;
 

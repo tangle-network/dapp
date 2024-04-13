@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { getApiPromise,getInjector } from '../utils/polkadot';
+import { getApiPromise, getInjector } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
@@ -31,7 +31,7 @@ export type SubstrateTxFactory<Context = void> = (
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
-  notifyStatusUpdates = false,
+  notifyStatusUpdates = true,
   timeoutDelay = 120_000
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
@@ -43,6 +43,13 @@ function useSubstrateTx<Context = void>(
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
   const { rpcEndpoint } = useNetworkStore();
+
+  // Useful for debugging.
+  useEffect(() => {
+    if (error !== null) {
+      console.error(error);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!notifyStatusUpdates) {
@@ -94,12 +101,15 @@ function useSubstrateTx<Context = void>(
       }
 
       // Factory is not yet ready to produce the transaction.
-      // This is usually because the user hasn't yet connected their wallet.
+      // This is usually because the user hasn't yet connected their wallet,
+      // or the factory's requirements haven't been met.
       if (tx === null) {
+        console.debug('tx not ready..');
         return false;
       }
       // Wait until the injector is ready.
       else if (injector === null) {
+        console.debug('injector not ready');
         return false;
       }
 
@@ -124,12 +134,9 @@ function useSubstrateTx<Context = void>(
 
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
-
-        // Useful for debugging.
-        if (error !== null) {
-          console.debug('Substrate transaction failed', error, status);
-        }
       };
+
+      console.debug('sending..');
 
       try {
         await tx.signAndSend(

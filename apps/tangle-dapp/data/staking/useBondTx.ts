@@ -5,49 +5,26 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { StakingPayee } from '../../types';
+import { StakingRewardsDestination } from '../../types';
+import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
+import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 
 type BondTxContext = {
   amount: BN;
-  payee: StakingPayee;
+  payee: StakingRewardsDestination;
 };
-
-export function getPayeeValue(
-  paymentDestination: StakingPayee,
-  isEvm: boolean
-) {
-  if (isEvm) {
-    switch (paymentDestination) {
-      case StakingPayee.CONTROLLER:
-        return '0x0000000000000000000000000000000000000000000000000000000000000002';
-      case StakingPayee.STAKED:
-        return '0x0000000000000000000000000000000000000000000000000000000000000000';
-      case StakingPayee.STASH:
-        return '0x0000000000000000000000000000000000000000000000000000000000000001';
-    }
-  }
-
-  switch (paymentDestination) {
-    case StakingPayee.CONTROLLER:
-      return 'Controller';
-    case StakingPayee.STAKED:
-      return 'Staked';
-    case StakingPayee.STASH:
-      return 'Stash';
-  }
-}
 
 const useBondTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, BondTxContext> =
     useCallback((context) => {
-      const payee = getPayeeValue(context.payee, true);
+      const payee = getEvmPayeeValue(context.payee);
 
       return { functionName: 'bond', arguments: [context.amount, payee] };
     }, []);
 
   const substrateTxFactory: SubstrateTxFactory<BondTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) => {
-      const payee = getPayeeValue(context.payee, false);
+      const payee = getSubstratePayeeValue(context.payee);
 
       return api.tx.staking.bond(context.amount, payee);
     },

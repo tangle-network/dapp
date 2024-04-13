@@ -1,6 +1,10 @@
 import { BN } from '@polkadot/util';
 
-import { StakingPayee, Validator } from '../../types';
+import {
+  StakingRewardsDestination,
+  StakingRewardsDestinationDisplayText,
+  Validator,
+} from '../../types';
 
 export type DelegateTxContainerProps = {
   isModalOpen: boolean;
@@ -11,11 +15,11 @@ export type BondTokensProps = {
   isBondedOrNominating: boolean;
   nominatorAddress: string;
   amountToBondError?: string;
-  payeeOptions: StakingPayee[];
-  payee: string;
+  payeeOptions: StakingRewardsDestinationDisplayText[];
+  payee: StakingRewardsDestination;
   amountToBond: BN | null;
   tokenSymbol: string;
-  setPayee: (payee: StakingPayee) => void;
+  setPayee: (payee: StakingRewardsDestination) => void;
   setAmountToBond: (amount: BN | null) => void;
   handleAmountToBondError: (error: string | null) => void;
 };

@@ -5,12 +5,17 @@ import {
   InputField,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import _ from 'lodash';
 import { type FC, useCallback } from 'react';
 import z from 'zod';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
+import {
+  STAKING_PAYEE_TEXT_TO_VALUE_MAP,
+  STAKING_PAYEE_VALUE_TO_TEXT_MAP,
+} from '../../constants';
 import useBalances from '../../data/balances/useBalances';
-import { StakingPayee } from '../../types';
+import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -27,9 +32,11 @@ const BondTokens: FC<BondTokensProps> = ({
 
   const handleSetPayee = useCallback(
     (newPayeeString: string) => {
-      const payee = z.nativeEnum(StakingPayee).parse(newPayeeString);
+      const payeeDisplayText = z
+        .nativeEnum(StakingRewardsDestinationDisplayText)
+        .parse(newPayeeString);
 
-      setPayee(payee);
+      setPayee(STAKING_PAYEE_TEXT_TO_VALUE_MAP[payeeDisplayText]);
     },
     [setPayee]
   );
@@ -88,7 +95,7 @@ const BondTokens: FC<BondTokensProps> = ({
             <DropdownField
               title="Payment Destination"
               items={payeeOptions}
-              selectedItem={payee}
+              selectedItem={STAKING_PAYEE_VALUE_TO_TEXT_MAP[payee]}
               setSelectedItem={handleSetPayee}
             />
 

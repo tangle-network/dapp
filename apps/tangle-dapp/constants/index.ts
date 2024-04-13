@@ -4,7 +4,11 @@ import {
   TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
 } from '@polkadot/types/lookup';
 
-import { RestakingService, StakingPayee } from '../types';
+import {
+  RestakingService,
+  StakingRewardsDestination,
+  StakingRewardsDestinationDisplayText,
+} from '../types';
 
 /**
  * The lock ids are always 8 characters long, due to their representation
@@ -71,10 +75,33 @@ export enum ChartColor {
   LAVENDER = '#E7E2FF',
 }
 
-export const PAYMENT_DESTINATION_OPTIONS: StakingPayee[] = [
-  StakingPayee.STAKED,
-  StakingPayee.STASH,
-];
+export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
+  [
+    StakingRewardsDestinationDisplayText.STAKED,
+    StakingRewardsDestinationDisplayText.STASH,
+  ];
+
+export const STAKING_PAYEE_TEXT_TO_VALUE_MAP: Record<
+  StakingRewardsDestinationDisplayText,
+  StakingRewardsDestination
+> = {
+  [StakingRewardsDestinationDisplayText.STAKED]:
+    StakingRewardsDestination.STAKED,
+  [StakingRewardsDestinationDisplayText.STASH]: StakingRewardsDestination.STASH,
+  [StakingRewardsDestinationDisplayText.CONTROLLER]:
+    StakingRewardsDestination.CONTROLLER,
+};
+
+export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
+  StakingRewardsDestination,
+  StakingRewardsDestinationDisplayText
+> = {
+  [StakingRewardsDestination.STAKED]:
+    StakingRewardsDestinationDisplayText.STAKED,
+  [StakingRewardsDestination.STASH]: StakingRewardsDestinationDisplayText.STASH,
+  [StakingRewardsDestination.CONTROLLER]:
+    StakingRewardsDestinationDisplayText.CONTROLLER,
+};
 
 // Note that the chain decimal count is usually constant, and set when
 // the blockchain is deployed. It could be technically changed due to

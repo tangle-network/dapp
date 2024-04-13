@@ -18,7 +18,7 @@ import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { StakingPayee } from '../../types';
+import { StakingRewardsDestination } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
 import { updatePaymentDestination as updatePaymentDestinationEvm } from '../../utils/evm';
 import { updatePaymentDestination as updatePaymentDestinationSubstrate } from '../../utils/polkadot';
@@ -29,14 +29,12 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
+  const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
+
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { rpcEndpoint } = useNetworkStore();
-
-  const [paymentDestination, setPaymentDestination] = useState<string>(
-    StakingPayee.STAKED
-  );
 
   const [
     isUpdatePaymentDestinationTxLoading,
@@ -68,12 +66,12 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     error: currentPaymentDestinationError,
   } = usePaymentDestinationSubscription(substrateAddress);
 
-  const continueToSignAndSubmitTx = paymentDestination;
+  const continueToSignAndSubmitTx = payee;
 
-  const closeModal = useCallback(() => {
+  const closeModalAndReset = useCallback(() => {
     setIsUpdatePaymentDestinationTxLoading(false);
     setIsModalOpen(false);
-    setPaymentDestination(StakingPayee.STAKED);
+    setPayee(StakingRewardsDestination.STAKED);
   }, [setIsModalOpen]);
 
   const submitAndSignTx = useCallback(async () => {
@@ -81,22 +79,18 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
     try {
       await executeTx(
-        () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+        () => updatePaymentDestinationEvm(walletAddress, payee),
         () =>
-          updatePaymentDestinationSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            paymentDestination
-          ),
-        `Successfully updated payment destination to ${paymentDestination}.`,
+          updatePaymentDestinationSubstrate(rpcEndpoint, walletAddress, payee),
+        `Successfully updated payment destination to ${payee}.`,
         'Failed to update payment destination!'
       );
 
-      closeModal();
+      closeModalAndReset();
     } catch {
       setIsUpdatePaymentDestinationTxLoading(false);
     }
-  }, [closeModal, executeTx, paymentDestination, rpcEndpoint, walletAddress]);
+  }, [closeModalAndReset, executeTx, payee, rpcEndpoint, walletAddress]);
 
   if (currentPaymentDestinationError) {
     notificationApi({
@@ -112,16 +106,16 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
+        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Change Reward Destination
         </ModalHeader>
 
         <div className="px-8 py-6">
           <UpdatePayee
             currentPayee={currentPaymentDestination?.value1 ?? ''}
-            paymentDestinationOptions={PAYMENT_DESTINATION_OPTIONS}
-            paymentDestination={paymentDestination}
-            setPaymentDestination={setPaymentDestination}
+            payeeOptions={PAYMENT_DESTINATION_OPTIONS}
+            payee={payee}
+            setPayee={setPayee}
           />
         </div>
 

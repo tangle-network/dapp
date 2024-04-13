@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
+import substrateRoleToServiceType from '../../utils/restaking/substrateRoleToServiceType';
 
 const useRestakingJobs = () => {
   const activeSubstrateAddress = useSubstrateAddress();

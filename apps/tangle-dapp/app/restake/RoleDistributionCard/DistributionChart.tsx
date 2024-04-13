@@ -10,7 +10,7 @@ import {
 } from '../../../components/charts';
 import { TANGLE_TOKEN_DECIMALS } from '../../../constants';
 import { RestakingProfileType, RestakingService } from '../../../types';
-import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
+import getChartDataAreaColorByServiceType from '../../../utils/restaking/getChartDataAreaColorByServiceType';
 import { DistributionDataType } from './types';
 
 type DistributionChartProps = {
