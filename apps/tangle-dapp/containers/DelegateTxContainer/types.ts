@@ -11,12 +11,10 @@ export type BondTokensProps = {
   isBondedOrNominating: boolean;
   nominatorAddress: string;
   amountToBondError?: string;
-  amountWalletBalance: number;
   payeeOptions: StakingPayee[];
   payee: string;
   amountToBond: BN | null;
   tokenSymbol: string;
-  walletBalance: BN | null;
   setPayee: (payee: StakingPayee) => void;
   setAmountToBond: (amount: BN | null) => void;
   handleAmountToBondError: (error: string | null) => void;

@@ -9,6 +9,8 @@ import { type FC, useCallback } from 'react';
 import z from 'zod';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
+import useBalances from '../../data/balances/useBalances';
+import { StakingPayee } from '../../types';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
@@ -16,12 +18,13 @@ const BondTokens: FC<BondTokensProps> = ({
   nominatorAddress,
   amountToBond,
   setAmountToBond,
-  paymentDestinationOptions,
-  paymentDestination,
-  setPaymentDestination,
-  walletBalance,
+  payeeOptions,
+  payee,
+  setPayee,
   handleAmountToBondError,
 }) => {
+  const { free: freeBalance } = useBalances();
+
   const handleSetPayee = useCallback(
     (newPayeeString: string) => {
       const payee = z.nativeEnum(StakingPayee).parse(newPayeeString);
@@ -63,8 +66,8 @@ const BondTokens: FC<BondTokensProps> = ({
       <div className="grid grid-cols-2 gap-9 items-center">
         <AmountInput
           id="nominate-bond-token"
-          title={isFirstTimeNominator ? 'Amount' : 'Amount (optional)'}
-          max={walletBalance ?? undefined}
+          title={!isBondedOrNominating ? 'Amount' : 'Amount (optional)'}
+          max={freeBalance ?? undefined}
           amount={amountToBond}
           setAmount={setAmountToBond}
           baseInputOverrides={{ isFullWidth: true }}
@@ -84,9 +87,9 @@ const BondTokens: FC<BondTokensProps> = ({
           <>
             <DropdownField
               title="Payment Destination"
-              items={paymentDestinationOptions}
-              selectedItem={paymentDestination}
-              setSelectedItem={setPaymentDestination}
+              items={payeeOptions}
+              selectedItem={payee}
+              setSelectedItem={handleSetPayee}
             />
 
             <Typography variant="body1" fw="normal" className="!max-w-[365px]">

@@ -19,12 +19,10 @@ import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import { PAYMENT_DESTINATION_OPTIONS as PAYEE_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
-import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useBondExtraTx from '../../data/staking/useBondExtraTx';
 import useBondTx from '../../data/staking/useBondTx';
 import useNominateTx from '../../data/staking/useNominateTx';
 import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
-import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -106,16 +104,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     isError: isBondedOrNominatingError,
   } = useIsBondedOrNominating();
 
-  const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletFreeBalance(walletAddress);
-
   // TODO: Need to change defaulting to empty/dummy strings to instead adhere to the type system. Ex. should be using `| null` instead.
   const {
     data: currentPaymentDestination,
     error: currentPaymentDestinationError,
   } = usePaymentDestination(activeSubstrateAddress ?? '0x0');
-
-  useErrorReporting(null, walletBalanceError);
 
   const handleAmountToBondError = useCallback(
     (error: string | null) => {
@@ -161,7 +154,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             bondTokensSubstrate(
               rpcEndpoint,
               walletAddress,
-              amountToBond,
+              amountToBond.toNumber(),
               StakingPayee.STASH
             ),
           `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
@@ -359,11 +352,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 nominatorAddress={walletAddress}
                 amountToBond={amountToBond}
                 setAmountToBond={setAmountToBond}
-                walletBalance={
-                  walletBalance && walletBalance.value1
-                    ? walletBalance.value1
-                    : BN_ZERO
-                }
                 payeeOptions={PAYEE_OPTIONS}
                 payee={payee}
                 setPayee={setPayee}
