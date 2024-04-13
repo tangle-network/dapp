@@ -24,6 +24,7 @@ import { FC, useMemo } from 'react';
 import { PagePath } from '../../types';
 import { BreadcrumbType } from './types';
 
+// TODO: Need to statically link the breadcrumb labels to the page path for better type safety and to enable fearless refactoring in the future.
 const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
   services: <GridFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
@@ -31,8 +32,10 @@ const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   nomination: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
 };
 
+// TODO: Need to statically link the breadcrumb labels to the page path for better type safety and to enable fearless refactoring in the future.
 const BREADCRUMB_LABELS: Record<string, string> = {
   services: 'Service Overview',
+  claim: 'Claim Airdrop',
 };
 
 const getBreadcrumbLabel = (
@@ -71,6 +74,7 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
   const pathNames = fullPathname.split('/').filter((path) => path);
 
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
+    // Special case for the home page; must specify the breadcrumb manually.
     if (pathNames.length === 0) {
       return [
         {

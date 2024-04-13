@@ -1,3 +1,4 @@
+import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import {
   AppsLine,
   DocumentationIcon,
@@ -21,6 +22,8 @@ import {
 
 import { PagePath } from '../../types';
 
+// TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
+// Only show the services dropdown if on development mode.
 const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
     name: 'Account',
@@ -29,6 +32,28 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     isNext: true,
     Icon: UserLineIcon,
     subItems: [],
+  },
+  {
+    name: 'Services',
+    href: '',
+    isInternal: true,
+    isNext: true,
+    Icon: GridFillIcon,
+    environments: ['development', 'staging', 'test'],
+    subItems: [
+      {
+        name: 'Overview',
+        href: PagePath.SERVICES_OVERVIEW,
+        isInternal: true,
+        isNext: true,
+      },
+      {
+        name: 'Restake',
+        href: PagePath.SERVICES_RESTAKE,
+        isInternal: true,
+        isNext: true,
+      },
+    ],
   },
   {
     name: 'Nomination',
@@ -57,40 +82,15 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 };
 
 export default function getSidebarProps(
-  isDevelopment: boolean,
   substratePortalHref?: string,
   evmExplorerHref?: string
 ): SidebarProps {
-  const staticItems = [...SIDEBAR_STATIC_ITEMS];
-
-  // TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
-  // Only show the services dropdown if on development mode.
-  if (isDevelopment) {
-    staticItems.splice(1, 0, {
-      name: 'Services',
-      href: '',
-      isInternal: true,
-      isNext: true,
-      Icon: GridFillIcon,
-      subItems: [
-        {
-          name: 'Overview',
-          href: PagePath.SERVICES_OVERVIEW,
-          isInternal: true,
-          isNext: true,
-        },
-        {
-          name: 'Restake',
-          href: PagePath.SERVICES_RESTAKE,
-          isInternal: true,
-          isNext: true,
-        },
-      ],
-    });
-  }
+  const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
+    ? process.env.NODE_ENV
+    : 'development';
 
   const sideBarItems: SideBarItemProps[] = [
-    ...staticItems,
+    ...SIDEBAR_STATIC_ITEMS,
     ...(substratePortalHref
       ? [
           {
@@ -115,11 +115,19 @@ export default function getSidebarProps(
       : []),
   ];
 
+  // Filter the sidebar items based on the current environment
+  const items = sideBarItems.filter((item) => {
+    if (!item.environments) {
+      return true;
+    }
+    return item.environments.includes(currentEnv);
+  });
+
   return {
     ClosedLogo: SidebarTangleClosedIcon,
     Logo: TangleLogo,
     footer: SIDEBAR_FOOTER,
-    items: sideBarItems,
+    items,
     logoLink: TANGLE_MKT_URL,
   } satisfies SidebarProps;
 }

@@ -17,6 +17,7 @@ import { twMerge } from 'tailwind-merge';
 
 import InputAction from '../../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../../context/ErrorsContext';
+import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 
 export type BaseInputProps = {
   title: string;
@@ -35,6 +36,7 @@ export type BaseInputProps = {
   dropdownBodyClassName?: string;
   isFullWidth?: boolean;
   isDisabled?: boolean;
+  tooltip?: ReactNode;
 };
 
 const BaseInput: FC<BaseInputProps> = ({
@@ -54,6 +56,7 @@ const BaseInput: FC<BaseInputProps> = ({
   dropdownBodyClassName,
   isFullWidth = false,
   isDisabled = false,
+  tooltip,
 }) => {
   const { addError, removeError } = useErrorCountContext();
 
@@ -90,18 +93,22 @@ const BaseInput: FC<BaseInputProps> = ({
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-160',
           'border border-mono-20 dark:border-mono-160',
-          hasError && 'border-red-50 dark:border-red-50',
+          hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName
         )}
       >
         <div className="flex flex-col gap-1 w-full mr-auto">
-          <Label
-            className="text-mono-100 dark:text-mono-80 font-bold"
-            htmlFor={id}
-          >
-            {title}
-          </Label>
+          <div className="flex gap-1">
+            <Label
+              className="text-mono-100 dark:text-mono-80 font-bold"
+              htmlFor={id}
+            >
+              {title}
+            </Label>
+
+            {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
+          </div>
 
           <div className={bodyClassName}>{children}</div>
         </div>
@@ -148,7 +155,11 @@ const BaseInput: FC<BaseInputProps> = ({
       </div>
 
       {hasError && (
-        <Typography className="dark:text-mono-100" variant="body1" fw="normal">
+        <Typography
+          className="text-red-70 dark:text-red-50"
+          variant="body1"
+          fw="normal"
+        >
           *{errorMessage}
         </Typography>
       )}

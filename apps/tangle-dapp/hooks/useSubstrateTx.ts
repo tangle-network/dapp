@@ -37,6 +37,7 @@ function useSubstrateTx<Context = void>(
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [hash, setHash] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
+
   const { notificationApi } = useWebbUI();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
@@ -155,6 +156,12 @@ function useSubstrateTx<Context = void>(
     ]
   );
 
+  const reset = useCallback(() => {
+    setStatus(TxStatus.NOT_YET_INITIATED);
+    setHash(null);
+    setError(null);
+  }, []);
+
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something
   // may have gone wrong, and also unlock anything waiting for
@@ -177,7 +184,7 @@ function useSubstrateTx<Context = void>(
 
   // Prevent the consumer from executing the transaction if
   // the active account is an EVM account.
-  return { execute: isEvmAccount ? null : execute, status, error, hash };
+  return { execute: isEvmAccount ? null : execute, reset, status, error, hash };
 }
 
 export default useSubstrateTx;

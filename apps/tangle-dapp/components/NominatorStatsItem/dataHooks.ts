@@ -1,12 +1,10 @@
-import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
-import useTokenWalletBalance from '../../data/NominatorStats/useTokenWalletBalance';
+import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
 
 const dataHooks = {
-  'Wallet Balance': useTokenWalletBalance,
+  'Wallet Balance': useTokenWalletFreeBalance,
   'Total Staked': useTotalStakedAmountSubscription,
-  'Payment Destination': usePaymentDestinationSubscription,
   'Unbonding Amount': useUnbondingAmountSubscription,
 } as const;
 

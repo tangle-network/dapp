@@ -38,7 +38,9 @@ export interface WalletConfig {
   /**
    * a function that will tell weather the wallet is installed or reachable
    */
-  detect(): Promise<SupportedConnector | InjectedExtension | undefined>;
+  detect(
+    appName: string
+  ): Promise<SupportedConnector | InjectedExtension | undefined>;
 
   /**
    * a list of supported typed chain ids

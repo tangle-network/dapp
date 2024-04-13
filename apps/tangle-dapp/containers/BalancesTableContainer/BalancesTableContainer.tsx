@@ -78,7 +78,7 @@ const BalancesTableContainer: FC = () => {
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Free Balance"
+              title="Transferrable Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
@@ -183,9 +183,7 @@ const AssetCell: FC<{
           {title}
         </Typography>
 
-        {tooltip !== undefined && (
-          <InfoIconWithTooltip content={<>{tooltip}</>} />
-        )}
+        {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
       </div>
     </div>
   );

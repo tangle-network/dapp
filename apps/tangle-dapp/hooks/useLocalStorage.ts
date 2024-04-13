@@ -17,6 +17,8 @@ export enum LocalStorageKey {
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
   NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
+  VALIDATORS = 'validators',
+  WAS_BANNER_DISMISSED = 'wasBannerDismissed',
 }
 
 export type AirdropEligibilityCache = {
@@ -60,6 +62,8 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? string
     : T extends LocalStorageKey.KNOWN_NETWORK_ID
     ? number
+    : T extends LocalStorageKey.WAS_BANNER_DISMISSED
+    ? boolean
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(

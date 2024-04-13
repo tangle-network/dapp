@@ -25,11 +25,9 @@ export const IconWithTooltip: FC<IconWithTooltipProp> = ({
       </TooltipTrigger>
 
       <TooltipBody {...overrideTooltipBodyProps}>
-        {typeof content === 'string' || typeof content === 'number' ? (
-          <Typography variant="body3">{content}</Typography>
-        ) : (
-          content
-        )}
+        <Typography variant="body3" className="text-center break-normal">
+          {content}
+        </Typography>
       </TooltipBody>
     </Tooltip>
   );

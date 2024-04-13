@@ -41,12 +41,14 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     execute: executeSubstrateTx,
     status: substrateTxStatus,
     error: substrateError,
+    reset: substrateReset,
   } = useSubstrateTx(substrateTxFactory);
 
   const {
     execute: executeEvmPrecompileAbiCall,
     status: evmTxStatus,
     error: evmError,
+    reset: evmReset,
   } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
 
   const isEvmAccount =
@@ -116,6 +118,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     status: agnosticStatus,
     error:
       isEvmAccount === null ? null : isEvmAccount ? evmError : substrateError,
+    reset:
+      isEvmAccount === null ? null : isEvmAccount ? evmReset : substrateReset,
     execute:
       // Only provide the executor when all its requirements are met.
       // This is useful, for example, to force the consumer of this hook

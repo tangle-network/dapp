@@ -15,7 +15,6 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -34,7 +33,6 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { rpcEndpoint } = useNetworkStore();
-  const { setTxConfirmationState } = useTxConfirmationModal();
 
   const [paymentDestination, setPaymentDestination] = useState<string>(
     StakingPayee.STAKED
@@ -82,7 +80,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     setIsUpdatePaymentDestinationTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
         () =>
           updatePaymentDestinationSubstrate(
@@ -94,30 +92,11 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
         'Failed to update payment destination!'
       );
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsUpdatePaymentDestinationTxLoading(false);
     }
-  }, [
-    closeModal,
-    executeTx,
-    paymentDestination,
-    rpcEndpoint,
-    setTxConfirmationState,
-    walletAddress,
-  ]);
+  }, [closeModal, executeTx, paymentDestination, rpcEndpoint, walletAddress]);
 
   if (currentPaymentDestinationError) {
     notificationApi({

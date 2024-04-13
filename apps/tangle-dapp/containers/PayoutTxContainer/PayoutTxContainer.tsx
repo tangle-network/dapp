@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   InputField,
@@ -14,7 +13,6 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { payoutStakers as payoutStakersEvm } from '../../utils/evm';
@@ -31,7 +29,6 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const { validatorAddress, era } = payoutTxProps;
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const { rpcEndpoint } = useNetworkStore();
   const [isPayoutTxLoading, setIsPayoutTxLoading] = useState(false);
 
@@ -54,7 +51,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     setIsPayoutTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         () => payoutStakersEvm(walletAddress, validatorAddress, Number(era)),
         () =>
           payoutStakersSubstrate(
@@ -77,21 +74,11 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
 
       updatePayouts(updatedPayouts);
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(validatorAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+
+      closeModal();
+    } catch {
+      setIsPayoutTxLoading(false);
     }
   }, [
     closeModal,
@@ -99,7 +86,6 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     executeTx,
     payouts,
     rpcEndpoint,
-    setTxConfirmationState,
     updatePayouts,
     validatorAddress,
     walletAddress,

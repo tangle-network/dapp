@@ -18,11 +18,7 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedAtDefault }) => {
 
   const sidebarProps = useMemo(
     () =>
-      getSidebarProps(
-        process.env.NODE_ENV === 'development',
-        network?.polkadotExplorerUrl,
-        network?.evmExplorerUrl
-      ),
+      getSidebarProps(network?.polkadotExplorerUrl, network?.evmExplorerUrl),
     [network]
   );
 
@@ -32,7 +28,7 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedAtDefault }) => {
       pathnameOrHash={pathname}
       className="hidden lg:block !z-0"
       isExpandedAtDefault={isExpandedAtDefault}
-      onSideBarToggle={() => setSidebarCookieOnToggle()}
+      onSideBarToggle={setSidebarCookieOnToggle}
     />
   );
 };

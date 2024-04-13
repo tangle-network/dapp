@@ -5,6 +5,7 @@ import { type FC, Fragment, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
 const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
@@ -34,7 +35,8 @@ const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
         <Fragment key={index}>
           <div className="text-center mb-2">
             <p>
-              {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'} {era.amount}
+              {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'}{' '}
+              {formatTokenBalance(era.amount, nativeTokenSymbol)}
             </p>
             {era.remainingEras > 0 && <p>{era.remainingEras} eras remaining</p>}
           </div>
@@ -43,7 +45,11 @@ const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
     });
 
     return <>{elements}</>;
-  }, [unbondingRemainingErasError, unbondingRemainingErasData?.value1]);
+  }, [
+    unbondingRemainingErasError,
+    unbondingRemainingErasData?.value1,
+    nativeTokenSymbol,
+  ]);
 
   return (
     <NominatorStatsItem

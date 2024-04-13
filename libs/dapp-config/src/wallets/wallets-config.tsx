@@ -12,12 +12,12 @@ import {
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 import { MetaMaskConnector, RainbowConnector } from './injected';
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
-import { HUBBLE_BRIDGE_DAPP_NAME } from '../constants';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
 import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
+  PresetTypedChainId.TangleMainnetEVM,
 
   // Testnet
   PresetTypedChainId.Goerli,
@@ -40,6 +40,7 @@ const ANY_EVM = [
 ];
 
 const ANY_SUBSTRATE = [
+  PresetTypedChainId.TangleMainnetNative,
   PresetTypedChainId.TangleTestnetNative,
   PresetTypedChainId.Kusama,
   PresetTypedChainId.Polkadot,
@@ -135,8 +136,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: `Polkadot{.js}`,
     platform: 'Substrate',
     enabled: true,
-    async detect() {
-      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'polkadot-js');
+    async detect(appName) {
+      return getPolkadotBasedWallet(appName, 'polkadot-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
@@ -154,8 +155,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: 'Talisman',
     platform: 'Substrate',
     enabled: true,
-    detect() {
-      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'talisman');
+    detect(appName) {
+      return getPolkadotBasedWallet(appName, 'talisman');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
@@ -173,8 +174,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     title: 'SubWallet',
     platform: 'Substrate',
     enabled: true,
-    detect() {
-      return getPolkadotBasedWallet(HUBBLE_BRIDGE_DAPP_NAME, 'subwallet-js');
+    detect(appName) {
+      return getPolkadotBasedWallet(appName, 'subwallet-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://www.subwallet.app/',

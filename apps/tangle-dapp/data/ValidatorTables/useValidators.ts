@@ -23,6 +23,10 @@ export const useValidators = (
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
 
+  const { data: nominations } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.nominators.entries(), [])
+  );
+
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
       (api) =>
@@ -33,9 +37,24 @@ export const useValidators = (
     )
   );
 
-  const { data: nominations } = usePolkadotApiRx(
-    useCallback((api) => api.query.staking.nominators.entries(), [])
-  );
+  const mappedExposures = useMemo(() => {
+    const map = new Map<string, SpStakingExposure>();
+    exposures?.forEach(([storageKey, exposure]) => {
+      const accountId = storageKey.args[1].toString();
+      map.set(accountId, exposure);
+    });
+    return map;
+  }, [exposures]);
+
+  // Mapping Validator Preferences
+  const mappedValidatorPrefs = useMemo(() => {
+    const map = new Map<string, PalletStakingValidatorPrefs>();
+    validatorPrefs?.forEach(([storageKey, prefs]) => {
+      const accountId = storageKey.args[0].toString();
+      map.set(accountId, prefs);
+    });
+    return map;
+  }, [validatorPrefs]);
 
   return useMemo(() => {
     if (
@@ -48,27 +67,16 @@ export const useValidators = (
       return null;
     }
 
-    const mappedExposures = new Map<string, SpStakingExposure>();
-    const mappedValidatorPrefs = new Map<string, PalletStakingValidatorPrefs>();
-
-    exposures.forEach(([storageKey, exposure]) => {
-      const accountId = storageKey.args[1].toString();
-
-      mappedExposures.set(accountId, exposure);
-    });
-
-    validatorPrefs.forEach((validatorPref) => {
-      mappedValidatorPrefs.set(
-        validatorPref[0].args[0].toString(),
-        validatorPref[1]
-      );
-    });
-
     return addresses.map((address) => {
       const name = identityNames.get(address.toString()) ?? address.toString();
       const exposure = mappedExposures.get(address.toString());
-      const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
+
+      const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
+      const selfStakedBalance = formatTokenBalance(
+        selfStakedAmount,
+        nativeTokenSymbol
+      );
 
       const nominators = nominations.filter(([, nominatorData]) => {
         if (nominatorData.isNone) {
@@ -79,7 +87,9 @@ export const useValidators = (
 
         return (
           nominations.targets &&
-          nominations.targets.some((target) => target.eq(address))
+          nominations.targets.some(
+            (target) => target.toString() === address.toString()
+          )
         );
       });
 
@@ -90,7 +100,7 @@ export const useValidators = (
       return {
         address: address.toString(),
         identityName: name,
-        selfStaked: formatTokenBalance(selfStakedAmount, nativeTokenSymbol),
+        selfStaked: selfStakedBalance,
         effectiveAmountStaked: formatTokenBalance(
           totalStakeAmount,
           nativeTokenSymbol
@@ -103,11 +113,13 @@ export const useValidators = (
     });
   }, [
     addresses,
-    exposures,
     identityNames,
+    exposures,
     nominations,
-    status,
     validatorPrefs,
+    mappedExposures,
+    mappedValidatorPrefs,
     nativeTokenSymbol,
+    status,
   ]);
 };

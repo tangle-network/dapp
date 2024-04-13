@@ -1,3 +1,5 @@
+import { BN } from '@polkadot/util';
+
 import { StakingPayee, Validator } from '../../types';
 
 export type DelegateTxContainerProps = {
@@ -8,14 +10,16 @@ export type DelegateTxContainerProps = {
 export type BondTokensProps = {
   isBondedOrNominating: boolean;
   nominatorAddress: string;
-  amountToBond: number;
-  setAmountToBond: (amount: number) => void;
   amountToBondError?: string;
   amountWalletBalance: number;
   payeeOptions: StakingPayee[];
   payee: string;
+  amountToBond: BN | null;
   tokenSymbol: string;
+  walletBalance: BN | null;
   setPayee: (payee: StakingPayee) => void;
+  setAmountToBond: (amount: BN | null) => void;
+  handleAmountToBondError: (error: string | null) => void;
 };
 
 export type SelectDelegatesProps = {
@@ -33,5 +37,4 @@ export type AuthorizeTxProps = {
 export enum DelegateTxSteps {
   BOND_TOKENS = 'BOND_TOKENS',
   SELECT_DELEGATES = 'SELECT_DELEGATES',
-  AUTHORIZE_TX = 'AUTHORIZE_TX',
 }

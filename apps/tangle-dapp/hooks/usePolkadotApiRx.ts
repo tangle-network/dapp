@@ -1,3 +1,5 @@
+'use client';
+
 import { ApiRx } from '@polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
