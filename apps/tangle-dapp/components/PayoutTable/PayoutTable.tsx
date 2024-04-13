@@ -34,12 +34,14 @@ const PayoutTable: FC<PayoutTableProps> = ({
   updateData,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [payoutTxProps, setPayoutTxProps] = useState<{
     validatorAddress: string;
-    era: string;
+    era: number;
   }>({
+    // TODO: Should be using `null` for both values. Avoid using empty strings to circumvent TypeScript type checking.
     validatorAddress: '',
-    era: '',
+    era: 0,
   });
 
   const table = useReactTable({
@@ -143,7 +145,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
               onClick={() => {
                 setPayoutTxProps({
                   validatorAddress: rowData.validator.address,
-                  era: rowData.era.toString(),
+                  era: rowData.era,
                 });
                 setIsModalOpen(true);
               }}

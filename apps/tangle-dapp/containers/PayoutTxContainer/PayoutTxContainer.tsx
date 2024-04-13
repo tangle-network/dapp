@@ -13,10 +13,7 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { payoutStakers as payoutStakersEvm } from '../../utils/evm';
-import { payoutStakers as payoutStakersSubstrate } from '../../utils/polkadot';
+import usePayoutStakersTx from '../../data/payouts/usePayoutStakersTx';
 import { PayoutTxContainerProps } from './types';
 
 const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
@@ -28,8 +25,6 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const { validatorAddress, era } = payoutTxProps;
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useNetworkStore();
   const [isPayoutTxLoading, setIsPayoutTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
@@ -47,22 +42,20 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
+  const { execute: executePayoutStakersTx } = usePayoutStakersTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executePayoutStakersTx === null) {
+      return;
+    }
+
     setIsPayoutTxLoading(true);
 
     try {
-      await executeTx(
-        () => payoutStakersEvm(walletAddress, validatorAddress, Number(era)),
-        () =>
-          payoutStakersSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            validatorAddress,
-            Number(era)
-          ),
-        `Successfully claimed rewards for Era ${era}.`,
-        'Failed to payout stakers!'
-      );
+      await executePayoutStakersTx({
+        era,
+        validatorAddress,
+      });
 
       const updatedPayouts = payouts.filter(
         (payout) =>
@@ -73,9 +66,6 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       );
 
       updatePayouts(updatedPayouts);
-
-      closeModal();
-
       closeModal();
     } catch {
       setIsPayoutTxLoading(false);
@@ -83,12 +73,10 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   }, [
     closeModal,
     era,
-    executeTx,
+    executePayoutStakersTx,
     payouts,
-    rpcEndpoint,
     updatePayouts,
     validatorAddress,
-    walletAddress,
   ]);
 
   return (
