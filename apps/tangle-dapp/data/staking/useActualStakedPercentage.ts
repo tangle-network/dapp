@@ -5,13 +5,13 @@ import calculateBnPercentage from '../../utils/calculateBnPercentage';
 import useCurrentEra from './useCurrentEra';
 
 const useActualStakedPercentage = () => {
-  const { data: currentEra } = useCurrentEra();
+  const { result: currentEra } = useCurrentEra();
 
-  const { data: totalIssuance } = useApiRx(
+  const { result: totalIssuance } = useApiRx(
     useCallback((api) => api.query.balances.totalIssuance(), [])
   );
 
-  const { data: totalStaked } = useApiRx(
+  const { result: totalStaked } = useApiRx(
     useCallback(
       (api) => {
         if (currentEra === null) {

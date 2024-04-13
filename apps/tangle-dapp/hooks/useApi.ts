@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
 import { getApiPromise } from '../utils/polkadot';
@@ -15,13 +15,36 @@ import usePromise from './usePromise';
  *
  * @returns Substrate API instance or `null` if still loading.
  */
-function useApi() {
+function useApi<T>(fetcher: (api: ApiPromise) => Promise<T> | T) {
+  const [result, setResult] = useState<T | null>(null);
   const { rpcEndpoint } = useNetworkStore();
 
-  return usePromise<ApiPromise | null>(
+  const { result: api } = usePromise<ApiPromise | null>(
     useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
     null
   );
+
+  const refetch = useCallback(async () => {
+    // Api not yet ready.
+    if (api === null) {
+      return;
+    }
+
+    const newResult = fetcher(api);
+
+    if (newResult instanceof Promise) {
+      newResult.then((data) => setResult(data));
+    } else {
+      setResult(newResult);
+    }
+  }, [api, fetcher]);
+
+  // Refetch when the API changes or when the fetcher changes.
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  return { result, refetch };
 }
 
 export default useApi;

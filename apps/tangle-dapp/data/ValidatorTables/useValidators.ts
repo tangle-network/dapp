@@ -19,15 +19,15 @@ export const useValidators = (
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
   const { nativeTokenSymbol } = useNetworkStore();
-  const { data: currentEra } = useCurrentEra();
+  const { result: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
-  const { data: validatorPrefs } = useValidatorsPrefs();
+  const { result: validatorPrefs } = useValidatorsPrefs();
 
-  const { data: nominations } = useApiRx(
+  const { result: nominations } = useApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
 
-  const { data: exposures } = useApiRx(
+  const { result: exposures } = useApiRx(
     useCallback(
       (api) =>
         currentEra === null

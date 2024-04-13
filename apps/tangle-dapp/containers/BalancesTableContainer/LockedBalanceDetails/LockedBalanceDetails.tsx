@@ -24,8 +24,8 @@ import VestingSchedulesUnlockingAt from './VestingSchedulesUnlockingAt';
 const LockedBalanceDetails: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
   const { isInDemocracy } = useDemocracy();
-  const { data: currentEra } = useCurrentEra();
-  const { data: unbondingEntries } = useUnbonding();
+  const { result: currentEra } = useCurrentEra();
+  const { result: unbondingEntries } = useUnbonding();
 
   const { amount: stakingLockedBalance } = useBalancesLock(
     SubstrateLockId.STAKING

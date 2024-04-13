@@ -31,7 +31,7 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  * ```
  */
 function useApiRx<T>(factory: ObservableFactory<T>) {
-  const [data, setData] = useState<T | null>(null);
+  const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
@@ -45,7 +45,7 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
     // Discard any previous data when the wallet is disconnected,
     // or when the Polkadot API is not yet ready.
     if (polkadotApiRx === null) {
-      setData(null);
+      setResult(null);
 
       return;
     }
@@ -71,14 +71,14 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
         })
       )
       .subscribe((newResult) => {
-        setData(newResult);
+        setResult(newResult);
         setLoading(false);
       });
 
     return () => subscription.unsubscribe();
   }, [factory, polkadotApiRx]);
 
-  return { data, isLoading, error };
+  return { result, isLoading, error };
 }
 
 export default useApiRx;

@@ -7,7 +7,7 @@ import substrateRoleToServiceType from '../../utils/substrateRoleToServiceType';
 const useRestakingJobs = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: jobRoleIdPairsOpt } = useApiRx(
+  const { result: jobRoleIdPairsOpt } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {

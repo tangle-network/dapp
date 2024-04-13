@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import useEntryMap from '../../hooks/useEntryMap';
 import useApiRx from '../../hooks/useApiRx';
+import useEntryMap from '../../hooks/useEntryMap';
 
-const useLedgers = () => {
-  const { data: ledgers, ...other } = useApiRx(
+const useAllLedgers = () => {
+  const { result: ledgers, ...other } = useApiRx(
     useCallback((api) => api.query.staking.ledger.entries(), [])
   );
 
@@ -13,4 +13,4 @@ const useLedgers = () => {
   return { data: ledgerMap, ...other };
 };
 
-export default useLedgers;
+export default useAllLedgers;

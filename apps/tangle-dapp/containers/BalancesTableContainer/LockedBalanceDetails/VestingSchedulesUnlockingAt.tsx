@@ -2,6 +2,7 @@ import { formatDecimal } from '@polkadot/util';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
+import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import TextCell from './TextCell';
@@ -10,11 +11,11 @@ import { sortVestingSchedulesAscending } from './VestingScheduleBalances';
 const VestingSchedulesUnlockingAt: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
-  const { data: currentBlockNumber } = useApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 
-  const { value: babeExpectedBlockTime } = useApiOnce(
+  const { result: babeExpectedBlockTime } = useApi(
     useCallback((api) => api.consts.babe.expectedBlockTime, [])
   );
 

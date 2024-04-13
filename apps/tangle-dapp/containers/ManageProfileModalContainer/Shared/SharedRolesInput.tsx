@@ -31,7 +31,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { servicesWithJobs } = useRestakingJobs();
 
-  const { value: maxRolesPerAccount } = useApi(
+  const { result: maxRolesPerAccount } = useApi(
     useCallback(
       (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
       []

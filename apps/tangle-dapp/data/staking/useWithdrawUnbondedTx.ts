@@ -7,7 +7,7 @@ import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import useSlashingSpans from './useSlashingSpans';
 
 const useWithdrawUnbondedTx = () => {
-  const { data: slashingSpansOpt } = useSlashingSpans();
+  const { result: slashingSpansOpt } = useSlashingSpans();
 
   // TODO: Need to verify whether defaulting to 0 here is the correct behavior.
   const slashingSpans =

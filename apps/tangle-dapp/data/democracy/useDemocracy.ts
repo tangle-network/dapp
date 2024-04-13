@@ -9,7 +9,7 @@ import useBalancesLock from '../balances/useBalancesLock';
 const useDemocracy = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: votes } = useApiRx(
+  const { result: votes } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {
@@ -40,7 +40,7 @@ const useDemocracy = () => {
     return latestDirectVote[0];
   })();
 
-  const { data: latestReferendum } = useApiRx(
+  const { result: latestReferendum } = useApiRx(
     useCallback(
       (api) => {
         if (latestReferendumIndex === null) {

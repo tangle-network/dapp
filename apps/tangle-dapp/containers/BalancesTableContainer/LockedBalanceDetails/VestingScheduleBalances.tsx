@@ -25,7 +25,7 @@ export const sortVestingSchedulesAscending = (
 const VestingScheduleBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
-  const { data: currentBlockNumber } = useApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 

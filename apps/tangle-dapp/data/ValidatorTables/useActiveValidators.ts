@@ -4,7 +4,7 @@ import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useActiveValidators = () => {
-  const { data: activeValidatorAddresses } = useApiRx(
+  const { result: activeValidatorAddresses } = useApiRx(
     useCallback((api) => api.query.session.validators(), [])
   );
 

@@ -24,7 +24,7 @@ const RestakePage = () => {
 
   const accountAddress = useActiveAccountAddress();
 
-  const { data: earningsRecord, isLoading: isEarningsLoading } =
+  const { result: earningsRecord, isLoading: isEarningsLoading } =
     useRestakingEarnings(accountAddress);
 
   const earnings = useMemo(() => {

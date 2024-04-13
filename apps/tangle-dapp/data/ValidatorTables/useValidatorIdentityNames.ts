@@ -8,8 +8,8 @@ import { ITuple } from '@polkadot/types/types';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import useEntryMap from '../../hooks/useEntryMap';
 import useApiRx from '../../hooks/useApiRx';
+import useEntryMap from '../../hooks/useEntryMap';
 
 export const extractNameFromInfo = (
   info: PalletIdentityLegacyIdentityInfo
@@ -45,7 +45,7 @@ const mapIdentitiesToNames = (
   });
 
 const useValidatorIdentityNames = () => {
-  const { data: identityNames, ...other } = useApiRx(
+  const { result: identityNames, ...other } = useApiRx(
     useCallback(
       (api) =>
         api.query.identity.identityOf.entries().pipe(map(mapIdentitiesToNames)),

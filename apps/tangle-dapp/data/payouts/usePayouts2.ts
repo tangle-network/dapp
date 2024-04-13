@@ -14,8 +14,8 @@ import {
   getValidatorIdentity,
 } from '../../utils/polkadot';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
+import useAllLedgers from './useAllLedgers';
 import useEraTotalRewards from './useEraTotalRewards';
-import useLedgers from './useLedgers';
 
 type ValidatorReward = {
   validatorAddress: string;
@@ -27,13 +27,13 @@ type ValidatorReward = {
 const usePayouts2 = () => {
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const activeSubstrateAddress = useSubstrateAddress();
-  const { data: ledgers } = useLedgers();
+  const { data: ledgers } = useAllLedgers();
 
-  const { data: erasRewardsPoints } = useApiRx(
+  const { result: erasRewardsPoints } = useApiRx(
     useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
   );
 
-  const { data: nominators } = useApiRx(
+  const { result: nominators } = useApiRx(
     useCallback(
       (api) => {
         if (activeSubstrateAddress === null) {

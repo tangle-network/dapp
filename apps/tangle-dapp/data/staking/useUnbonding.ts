@@ -11,7 +11,7 @@ export type StakingUnbondingEntry = {
 };
 
 const useUnbonding = () => {
-  const { data: currentEra } = useCurrentEra();
+  const { result: currentEra } = useCurrentEra();
 
   return useStakingLedgerRx(
     useCallback(

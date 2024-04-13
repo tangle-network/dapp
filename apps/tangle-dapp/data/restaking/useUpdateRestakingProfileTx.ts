@@ -31,7 +31,7 @@ const useUpdateRestakingProfileTx = (
   notifyTxStatusUpdates?: boolean
 ) => {
   const sharedRestakeAmountRef = useRef<BN | null>(null);
-  const { data: roleLedger } = useRestakingRoleLedger();
+  const { result: roleLedger } = useRestakingRoleLedger();
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
   // TODO: Break this into two separate hooks for independent and shared profiles.

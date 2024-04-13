@@ -54,7 +54,7 @@ export type VestingInfo = {
 const useVestingInfo = (): VestingInfo => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: schedulesOpt } = useApiRx(
+  const { result: schedulesOpt } = useApiRx(
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;
@@ -64,7 +64,7 @@ const useVestingInfo = (): VestingInfo => {
     )
   );
 
-  const { data: currentBlockNumber } = useApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 

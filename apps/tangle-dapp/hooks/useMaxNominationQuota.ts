@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import useApiRx from './useApiRx';
 
 const useMaxNominationQuota = (): number => {
-  const { data: maxNominationQuotaOpt } = useApiRx(
+  const { result: maxNominationQuotaOpt } = useApiRx(
     useCallback((api) => api.query.staking.maxNominatorsCount(), [])
   );
 

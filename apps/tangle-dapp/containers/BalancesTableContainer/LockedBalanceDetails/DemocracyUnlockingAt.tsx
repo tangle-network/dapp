@@ -2,6 +2,7 @@ import { formatDecimal } from '@polkadot/util';
 import { FC, useCallback } from 'react';
 
 import useDemocracy from '../../../data/democracy/useDemocracy';
+import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import TextCell from './TextCell';
@@ -12,11 +13,11 @@ const DemocracyUnlockingAt: FC = () => {
     latestReferendum: latestDemocracyReferendum,
   } = useDemocracy();
 
-  const { data: currentBlockNumber } = useApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 
-  const { data: babeExpectedBlockTime } = useApiOnce(
+  const { result: babeExpectedBlockTime } = useApi(
     useCallback((api) => api.consts.babe.expectedBlockTime, [])
   );
 

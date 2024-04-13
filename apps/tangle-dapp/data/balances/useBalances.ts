@@ -67,7 +67,7 @@ const useBalances = (): AccountBalances => {
     [activeSubstrateAddress]
   );
 
-  const { data, isLoading } = useApiRx(balancesFetcher);
+  const { result: data, isLoading } = useApiRx(balancesFetcher);
 
   useEffect(() => {
     // If there's data and it's not loading, set the balances.

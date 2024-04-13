@@ -5,11 +5,11 @@ import useApiRx from '../../hooks/useApiRx';
 import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
 
 const useRestakingLimits = () => {
-  const { data: stakedBalance } = useStakingLedgerRx(
+  const { result: stakedBalance } = useStakingLedgerRx(
     useCallback((ledger) => ledger.total.toBn(), [])
   );
 
-  const { data: minRestakingBond } = useApiRx(
+  const { result: minRestakingBond } = useApiRx(
     useCallback(
       (api) =>
         api.query.roles

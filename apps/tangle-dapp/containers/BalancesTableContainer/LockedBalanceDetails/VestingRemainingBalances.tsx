@@ -9,7 +9,7 @@ import { sortVestingSchedulesAscending } from './VestingScheduleBalances';
 const VestingRemainingBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
-  const { data: currentBlockNumber } = useApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 

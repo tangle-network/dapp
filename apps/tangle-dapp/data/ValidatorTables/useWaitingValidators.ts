@@ -5,7 +5,7 @@ import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useWaitingValidators = () => {
-  const { data: waitingValidatorAddresses } = useApiRx(
+  const { result: waitingValidatorAddresses } = useApiRx(
     useCallback(
       (api) =>
         api.derive.staking.waitingInfo().pipe(map((info) => info.waiting)),

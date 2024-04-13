@@ -10,7 +10,7 @@ const useAirdropEligibility = () => {
   const [isEligible, setIsEligible] = useState<boolean | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
 
-  const { data: claimInfo } = useApiRx(
+  const { result: claimInfo } = useApiRx(
     useCallback(
       (api) => {
         if (activeAccountAddress === null) {

@@ -5,7 +5,7 @@ import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 const useRestakingProfile = () => {
-  const { data: ledgerOpt, isLoading } = useRestakingRoleLedger();
+  const { result: ledgerOpt, isLoading } = useRestakingRoleLedger();
 
   const hasExistingProfile = isLoading
     ? null

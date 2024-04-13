@@ -9,7 +9,7 @@ import getSubstrateLockId from '../../utils/getSubstrateLockId';
 const useBalancesLock = (lockId: SubstrateLockId) => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: locks } = useApiRx(
+  const { result: locks } = useApiRx(
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;

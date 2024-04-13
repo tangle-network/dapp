@@ -8,7 +8,7 @@ const useIsBondedOrNominating = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
   const {
-    data: nominators,
+    result: nominators,
     isLoading: isLoadingNominators,
     error: nominatorsError,
   } = useApiRx(
@@ -25,7 +25,7 @@ const useIsBondedOrNominating = () => {
   );
 
   const {
-    data: bondedInfo,
+    result: bondedInfo,
     isLoading: isLoadingBondedInfo,
     error: bondedInfoError,
   } = useApiRx(
