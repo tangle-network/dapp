@@ -1,6 +1,5 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Alert,
   Button,
@@ -11,11 +10,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useNominateTx from '../../data/staking/useNominateTx';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
-import { nominateValidators as nominateValidatorsEvm } from '../../utils/evm';
-import { nominateValidators as nominateValidatorsSubstrate } from '../../utils/polkadot';
 import SelectValidators from './SelectValidators';
 import { UpdateNominationsTxContainerProps } from './types';
 
@@ -24,24 +20,13 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   setIsModalOpen,
   currentNominations,
 }) => {
-  const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
   const maxNominationQuota = useMaxNominationQuota();
-  const { rpcEndpoint } = useNetworkStore();
 
   const [selectedValidators, setSelectedValidators] =
     useState(currentNominations);
 
   const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
     useState(false);
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
 
   const isExceedingMaxNominationQuota =
     selectedValidators.length > maxNominationQuota;
@@ -75,36 +60,29 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     setSelectedValidators(currentNominations);
   }, [currentNominations, setIsModalOpen]);
 
+  const { execute: executeNominateTx } = useNominateTx();
+
   const submitAndSignTx = useCallback(async () => {
-    if (!isReadyToSubmitAndSignTx) {
+    if (!isReadyToSubmitAndSignTx || executeNominateTx === null) {
       return;
     }
 
     setIsSubmitAndSignTxLoading(true);
 
     try {
-      await executeTx(
-        () => nominateValidatorsEvm(walletAddress, selectedValidators),
-        () =>
-          nominateValidatorsSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            selectedValidators
-          ),
-        `Successfully updated nominations!`,
-        'Failed to update nominations!'
-      );
+      await executeNominateTx({
+        validatorAddresses: selectedValidators,
+      });
+
       closeModal();
     } catch {
       setIsSubmitAndSignTxLoading(false);
     }
   }, [
     closeModal,
-    executeTx,
+    executeNominateTx,
     isReadyToSubmitAndSignTx,
-    rpcEndpoint,
     selectedValidators,
-    walletAddress,
   ]);
 
   return (

@@ -18,14 +18,10 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components';
 import AmountInput from '../../components/AmountInput/AmountInput';
-import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useRebondTx from '../../data/staking/useRebondTx';
 import { evmToSubstrateAddress } from '../../utils';
-import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
-import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
 import { RebondTxContainerProps } from './types';
 
 const RebondTxContainer: FC<RebondTxContainerProps> = ({
@@ -34,8 +30,6 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const [amountToRebond, setAmountToRebond] = useState<BN | null>(null);
   const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
@@ -100,33 +94,29 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     [setHasErrors]
   );
 
+  const { execute: executeRebondTx } = useRebondTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (
+      executeRebondTx === null ||
+      amountToRebond === null ||
+      amountToRebond.isZero()
+    ) {
+      return null;
+    }
+
     setIsRebondTxLoading(true);
 
     try {
-      if (amountToRebond === null || amountToRebond.eq(BN_ZERO)) {
-        throw new Error('There is no amount to rebond.');
-      }
-      const rebondAmount = +formatBnToDisplayAmount(amountToRebond);
-      await executeTx(
-        () => rebondTokensEvm(walletAddress, rebondAmount),
-        () => rebondTokensSubstrate(rpcEndpoint, walletAddress, rebondAmount),
-        `Successfully rebonded ${rebondAmount} ${nativeTokenSymbol}.`,
-        'Failed to rebond tokens!'
-      );
+      executeRebondTx({
+        amount: amountToRebond,
+      });
 
       closeModal();
     } catch {
       setIsRebondTxLoading(false);
     }
-  }, [
-    amountToRebond,
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    walletAddress,
-    nativeTokenSymbol,
-  ]);
+  }, [executeRebondTx, amountToRebond, closeModal]);
 
   return (
     <Modal open>

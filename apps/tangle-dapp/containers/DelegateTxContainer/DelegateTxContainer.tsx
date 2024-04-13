@@ -169,12 +169,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 
     try {
       await executeDelegate2();
+      closeModalAndReset();
     } catch (error) {
       console.error(error);
 
       // notification is already handled in executeTx
-    } finally {
-      closeModalAndReset();
     }
   }, [closeModalAndReset, executeDelegate2]);
 

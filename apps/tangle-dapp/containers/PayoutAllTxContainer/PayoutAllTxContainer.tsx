@@ -39,8 +39,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const continueToSignAndSubmitTx = validatorsAndEras.length > 0;
-
   const payoutValidatorsAndEras = useMemo(
     () => validatorsAndEras.slice(0, 10),
     [validatorsAndEras]
@@ -57,7 +55,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     return [eras[0], eras[eras.length - 1]];
   }, [payoutValidatorsAndEras]);
 
-  const closeModal = useCallback(() => {
+  const closeModalAndReset = useCallback(() => {
     setIsPayoutAllTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
@@ -91,7 +89,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     } catch {
       setIsPayoutAllTxLoading(false);
     } finally {
-      closeModal();
+      closeModalAndReset();
     }
   }, [
     executeTx,
@@ -100,8 +98,10 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     walletAddress,
     payoutValidatorsAndEras,
     rpcEndpoint,
-    closeModal,
+    closeModalAndReset,
   ]);
+
+  const canContinueToSignAndSubmitTx = validatorsAndEras.length > 0;
 
   return (
     <Modal open>
@@ -110,7 +110,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
+        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Payout Stakers
         </ModalHeader>
 
@@ -181,7 +181,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
+            isDisabled={!canContinueToSignAndSubmitTx}
             isLoading={isPayoutAllTxLoading}
             onClick={submitAndSignTx}
           >

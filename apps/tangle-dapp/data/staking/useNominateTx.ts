@@ -13,6 +13,10 @@ type NominateTxContext = {
 const useNominateTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, NominateTxContext> =
     useCallback((context) => {
+      if (context.validatorAddresses.length === 0) {
+        return null;
+      }
+
       // Ensure that all addresses are in H160, EVM format.
       const evmAddresses = context.validatorAddresses.map(
         substrateToEvmAddress
@@ -23,6 +27,10 @@ const useNominateTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<NominateTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) => {
+      if (context.validatorAddresses.length === 0) {
+        return null;
+      }
+
       // Ensure that all addresses are in Substrate format.
       const substrateAddresses = context.validatorAddresses.map(
         evmToSubstrateAddress

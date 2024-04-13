@@ -15,12 +15,9 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useNominations from '../../data/NominationsPayouts/useNominations';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useChillTx from '../../data/staking/useChillTx';
 import { evmToSubstrateAddress } from '../../utils';
-import { stopNomination as stopNominationEvm } from '../../utils/evm';
-import { stopNomination as stopNominationSubstrate } from '../../utils/polkadot';
 import { StopNominationTxContainerProps } from './types';
 
 const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
@@ -28,19 +25,9 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useNetworkStore();
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
     useState(false);
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -59,26 +46,27 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     return delegatorsData?.delegators.length === 0 ? false : true;
   }, [delegatorsData?.delegators]);
 
-  const closeModal = useCallback(() => {
+  const closeModalAndReset = useCallback(() => {
     setIsStopNominationTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
+  const { execute: executeChillTx } = useChillTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executeChillTx === null) {
+      return null;
+    }
+
     setIsStopNominationTxLoading(true);
 
     try {
-      await executeTx(
-        () => stopNominationEvm(walletAddress),
-        () => stopNominationSubstrate(rpcEndpoint, walletAddress),
-        `Successfully stopped nomination!`,
-        'Failed to stop nomination!'
-      );
-      closeModal();
+      await executeChillTx();
+      closeModalAndReset();
     } catch {
       setIsStopNominationTxLoading(false);
     }
-  }, [closeModal, executeTx, rpcEndpoint, walletAddress]);
+  }, [closeModalAndReset, executeChillTx]);
 
   return (
     <Modal open>
@@ -87,7 +75,11 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal} className="mb-4">
+        <ModalHeader
+          titleVariant="h4"
+          onClose={closeModalAndReset}
+          className="mb-4"
+        >
           Stop Nominations
         </ModalHeader>
 
