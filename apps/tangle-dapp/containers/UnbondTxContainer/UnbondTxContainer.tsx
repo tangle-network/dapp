@@ -20,25 +20,21 @@ import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useUnbondTx from '../../data/staking/useUnbondTx';
 import { evmToSubstrateAddress } from '../../utils';
-import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
-import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
 import { UnbondTxContainerProps } from './types';
 
 const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
-
-  const [amountToUnbond, setAmountToUnbond] = useState<BN | null>(null);
+  const [amount, setAmount] = useState<BN | null>(null);
   const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
+
+  const { notificationApi } = useWebbUI();
+  const { activeAccount } = useWebContext();
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -105,17 +101,17 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 
   const continueToSignAndSubmitTx = useMemo(() => {
     return (
-      amountToUnbond !== null &&
-      amountToUnbond.gt(BN_ZERO) &&
+      amount !== null &&
+      amount.gt(BN_ZERO) &&
       walletAddress !== '0x0' &&
       !hasErrors
     );
-  }, [amountToUnbond, hasErrors, walletAddress]);
+  }, [amount, hasErrors, walletAddress]);
 
   const closeModal = useCallback(() => {
     setIsUnbondTxLoading(false);
     setIsModalOpen(false);
-    setAmountToUnbond(null);
+    setAmount(null);
     setHasErrors(false);
   }, [setIsModalOpen]);
 
@@ -126,34 +122,25 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     [setHasErrors]
   );
 
+  const { execute: executeUnbondTx } = useUnbondTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executeUnbondTx === null || amount === null) {
+      return;
+    }
+
     setIsUnbondTxLoading(true);
 
     try {
-      if (amountToUnbond === null) {
-        throw new Error('Amount to unbond is required.');
-      }
-      const unbondingAmount = +formatBnToDisplayAmount(amountToUnbond);
-      await executeTx(
-        () => unbondTokensEvm(walletAddress, unbondingAmount),
-        () =>
-          unbondTokensSubstrate(rpcEndpoint, walletAddress, unbondingAmount),
-        `Successfully unbonded ${unbondingAmount} ${nativeTokenSymbol}.`,
-        'Failed to unbond tokens!'
-      );
+      await executeUnbondTx({
+        amount: amount,
+      });
 
       closeModal();
     } catch {
       setIsUnbondTxLoading(false);
     }
-  }, [
-    amountToUnbond,
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    walletAddress,
-    nativeTokenSymbol,
-  ]);
+  }, [executeUnbondTx, amount, closeModal]);
 
   return (
     <Modal open>
@@ -171,8 +158,8 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             id="unbond-input"
             title="Amount"
             max={remainingStakedBalanceToUnbond}
-            amount={amountToUnbond}
-            setAmount={setAmountToUnbond}
+            amount={amount}
+            setAmount={setAmount}
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough staked balance"
             setErrorMessage={handleSetErrorMessage}

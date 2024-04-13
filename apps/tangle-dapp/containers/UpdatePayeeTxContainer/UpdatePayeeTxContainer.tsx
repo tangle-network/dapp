@@ -15,13 +15,10 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
 import { StakingRewardsDestination } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
-import { updatePaymentDestination as updatePaymentDestinationEvm } from '../../utils/evm';
-import { updatePaymentDestination as updatePaymentDestinationSubstrate } from '../../utils/polkadot';
 import { UpdatePayeeTxContainerProps } from './types';
 import UpdatePayee from './UpdatePayee';
 
@@ -33,21 +30,11 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useNetworkStore();
 
   const [
     isUpdatePaymentDestinationTxLoading,
     setIsUpdatePaymentDestinationTxLoading,
   ] = useState(false);
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
 
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -74,23 +61,25 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     setPayee(StakingRewardsDestination.STAKED);
   }, [setIsModalOpen]);
 
+  const { execute: executeSetPayeeTx } = useSetPayeeTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executeSetPayeeTx === null) {
+      return;
+    }
+
     setIsUpdatePaymentDestinationTxLoading(true);
 
     try {
-      await executeTx(
-        () => updatePaymentDestinationEvm(walletAddress, payee),
-        () =>
-          updatePaymentDestinationSubstrate(rpcEndpoint, walletAddress, payee),
-        `Successfully updated payment destination to ${payee}.`,
-        'Failed to update payment destination!'
-      );
+      await executeSetPayeeTx({
+        payee,
+      });
 
       closeModalAndReset();
     } catch {
       setIsUpdatePaymentDestinationTxLoading(false);
     }
-  }, [closeModalAndReset, executeTx, payee, rpcEndpoint, walletAddress]);
+  }, [closeModalAndReset, executeSetPayeeTx, payee]);
 
   if (currentPaymentDestinationError) {
     notificationApi({
