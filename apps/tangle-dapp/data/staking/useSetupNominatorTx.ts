@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import useSubstrateTx from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
+import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 
 export type NominationOptions = {
@@ -18,7 +19,7 @@ const useSetupNominatorTx = () => {
     useCallback((api, _activeSubstrateAddress, context) => {
       const payee = getSubstratePayeeValue(context.payee);
 
-      return api.tx.utility.batch([
+      return optimizeTxBatch(api, [
         api.tx.staking.bond(context.bondAmount, payee),
         api.tx.staking.nominate(context.nominees),
       ]);

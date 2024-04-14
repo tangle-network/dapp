@@ -3,6 +3,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { useCallback } from 'react';
 
 import useSubstrateTx, { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import { NominationOptions } from './useSetupNominatorTx';
 
@@ -41,7 +42,7 @@ const useUpdateNominatorTx = () => {
       return null;
     }
 
-    return api.tx.utility.batch(txs);
+    return optimizeTxBatch(api, txs);
   }, []);
 
   return useSubstrateTx<Partial<NominationOptions>>(substrateTxFactory);

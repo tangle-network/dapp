@@ -10,6 +10,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { evmToSubstrateAddress } from '../../utils';
+import optimizeTxBatch from '../../utils/optimizeTxBatch';
 
 export type PayoutAllTxContext = {
   validatorEraPairs: { validatorAddress: string; era: string }[];
@@ -56,7 +57,7 @@ const usePayoutAllTx = () => {
         return api.tx.staking.payoutStakers(validatorSubstrateAddress, era);
       });
 
-      return api.tx.utility.batchAll(txs);
+      return optimizeTxBatch(api, txs);
     }, []);
 
   return useAgnosticTx<Precompile.BATCH, PayoutAllTxContext>({

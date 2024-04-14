@@ -1,5 +1,6 @@
 import { AddressType } from '@webb-tools/dapp-config/types';
 
+import optimizeTxBatch from '../optimizeTxBatch';
 import { getApiPromise } from './api';
 import { getTxPromise } from './utils';
 
@@ -22,7 +23,8 @@ export const batchPayoutStakers = async (
 ): Promise<AddressType> => {
   const api = await getApiPromise(rpcEndpoint);
 
-  const tx = api.tx.utility.batch(
+  const tx = optimizeTxBatch(
+    api,
     validatorEraPairs.map(({ validatorAddress, era }) =>
       api.tx.staking.payoutStakers(validatorAddress, Number(era))
     )

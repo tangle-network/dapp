@@ -68,11 +68,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
   // Notify the user of the transaction status, if applicable.
   useEffect(() => {
-    if (
-      isEvmAccount === null ||
-      agnosticStatus === TxStatus.NOT_YET_INITIATED ||
-      !notifyStatusUpdates
-    ) {
+    if (agnosticStatus === TxStatus.NOT_YET_INITIATED || !notifyStatusUpdates) {
       return;
     }
 
@@ -86,15 +82,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     }
 
     notificationApi(notificationOpts);
-  }, [
-    substrateTxStatus,
-    evmTxStatus,
-    isEvmAccount,
-    notificationApi,
-    agnosticStatus,
-    notifyStatusUpdates,
-    agnosticError,
-  ]);
+  }, [agnosticError, agnosticStatus, notificationApi, notifyStatusUpdates]);
 
   const execute = useCallback(
     async (context: Context) => {

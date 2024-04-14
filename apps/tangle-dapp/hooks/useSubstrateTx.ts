@@ -63,7 +63,7 @@ function useSubstrateTx<Context = void>(
     }
 
     notificationApi(notificationOpts);
-  }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
+  }, [error, notificationApi, notifyStatusUpdates, status]);
 
   const execute = useCallback(
     async (context: Context) => {
