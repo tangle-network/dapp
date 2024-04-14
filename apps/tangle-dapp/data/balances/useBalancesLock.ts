@@ -1,4 +1,5 @@
-import { BN_ZERO } from '@polkadot/util';
+import { PalletBalancesReasons } from '@polkadot/types/lookup';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants';
@@ -6,13 +7,21 @@ import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import getSubstrateLockId from '../../utils/getSubstrateLockId';
 
-const useBalancesLock = (lockId: SubstrateLockId) => {
+export type BalancesLock = {
+  amount: BN | null;
+  reasons: PalletBalancesReasons | null;
+};
+
+const useBalancesLock = (lockId: SubstrateLockId): BalancesLock => {
   const activeSubstrateAddress = useSubstrateAddress();
 
   const { result: locks } = useApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (activeSubstrateAddress === null) {
+          return null;
+        }
+
         return api.query.balances.locks(activeSubstrateAddress);
       },
       [activeSubstrateAddress]

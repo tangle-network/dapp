@@ -1,5 +1,6 @@
 'use client';
 
+import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
@@ -9,13 +10,14 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { type FC, useState } from 'react';
+import { type FC, useCallback, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
+import useStakingLedger from '../../data/staking/useStakingLedger';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -40,6 +42,21 @@ const NominatorStatsContainer: FC = () => {
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
+  const { result: bondedAmountOpt } = useStakingLedger(
+    useCallback((ledger) => ledger.active.toBn(), [])
+  );
+
+  const bondedAmountBalance = useMemo(() => {
+    if (bondedAmountOpt === null) {
+      return null;
+    }
+
+    return formatTokenBalance(
+      bondedAmountOpt.value ?? BN_ZERO,
+      nativeTokenSymbol
+    );
+  }, [bondedAmountOpt, nativeTokenSymbol]);
+
   return (
     <>
       <div className="flex flex-col md:flex-row gap-4 w-full">
@@ -54,7 +71,9 @@ const NominatorStatsContainer: FC = () => {
             title="Free Balance"
             isError={balancesError !== null}
           >
-            {freeBalance === null ? null : formatTokenBalance(freeBalance)}
+            {freeBalance === null
+              ? null
+              : formatTokenBalance(freeBalance, nativeTokenSymbol)}
           </NominatorStatsItem>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -101,14 +120,14 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <div className="grid grid-cols-2 gap-2">
-            {/* TODO: Implement this. */}
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip="The total amount of tokens you have bonded for nominating."
               isError={false}
             >
-              todo
+              {bondedAmountBalance}
             </NominatorStatsItem>
+
             <UnbondingStatsItem />
           </div>
 
