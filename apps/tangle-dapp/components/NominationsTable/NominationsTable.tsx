@@ -21,8 +21,8 @@ import { type FC } from 'react';
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { HeaderCell, StringCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 
 const columnHelper = createColumnHelper<Validator>();
 
@@ -67,23 +67,13 @@ const columns = [
   }),
   columnHelper.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => (
-      <StringCell
-        value={formatBnToDisplayAmount(props.getValue())}
-        className="text-center"
-      />
-    ),
+    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
   }),
   columnHelper.accessor('totalStakeAmount', {
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
-    cell: (props) => (
-      <StringCell
-        value={formatBnToDisplayAmount(props.getValue())}
-        className="text-center"
-      />
-    ),
+    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
   }),
   columnHelper.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
