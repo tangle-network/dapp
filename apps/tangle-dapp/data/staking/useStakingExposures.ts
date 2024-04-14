@@ -23,7 +23,7 @@ const useStakingExposures = () => {
 
   const exposureMap = useEntryMap(
     exposures,
-    useCallback((key) => key.args[0].toString(), [])
+    useCallback((key) => key.args[1].toString(), [])
   );
 
   return { result: exposureMap, ...other };

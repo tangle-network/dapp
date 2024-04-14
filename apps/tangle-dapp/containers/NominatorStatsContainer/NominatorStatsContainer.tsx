@@ -101,11 +101,14 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <div className="grid grid-cols-2 gap-2">
+            {/* TODO: Implement this. */}
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip="The total amount of tokens you have bonded for nominating."
-            />
-
+              isError={false}
+            >
+              todo
+            </NominatorStatsItem>
             <UnbondingStatsItem />
           </div>
 

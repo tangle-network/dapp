@@ -202,9 +202,9 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
-          ) : nomineesOpt === null || nomineesOpt.value === null ? (
+          ) : nomineesOpt === null ? (
             <ContainerSkeleton />
-          ) : nomineesOpt.value.length === 0 ? (
+          ) : nomineesOpt.value === null || nomineesOpt.value.length === 0 ? (
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
