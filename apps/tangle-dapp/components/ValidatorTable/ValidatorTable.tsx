@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 
 import { PagePath, Validator } from '../../types';
+import calculateCommission from '../../utils/calculateCommission';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { HeaderCell, StringCell } from '../tableCells';
 import { ValidatorTableProps } from './types';
@@ -81,7 +82,7 @@ const columns = [
     header: () => <HeaderCell title="Commission" className="justify-center" />,
     cell: (props) => (
       <StringCell
-        value={Number(props.getValue()).toFixed(2) + '%'}
+        value={calculateCommission(props.getValue()).toFixed(2) + '%'}
         className="text-center"
       />
     ),

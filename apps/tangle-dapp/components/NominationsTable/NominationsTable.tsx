@@ -20,6 +20,7 @@ import {
 import { type FC } from 'react';
 
 import { Validator } from '../../types';
+import calculateCommission from '../../utils/calculateCommission';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { HeaderCell, StringCell } from '../tableCells';
 
@@ -94,7 +95,7 @@ const columns = [
     header: () => <HeaderCell title="Commission" className="justify-center" />,
     cell: (props) => (
       <StringCell
-        value={Number(props.getValue()).toFixed(2) + '%'}
+        value={calculateCommission(props.getValue()).toFixed(2) + '%'}
         className="text-center"
       />
     ),
