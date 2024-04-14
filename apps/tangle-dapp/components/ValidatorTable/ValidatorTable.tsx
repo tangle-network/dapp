@@ -22,7 +22,7 @@ import { FC, useCallback } from 'react';
 
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { HeaderCell, StringCell } from '../tableCells';
 import { ValidatorTableProps } from './types';
 
@@ -56,7 +56,7 @@ const columns = [
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
     cell: (props) => (
       <StringCell
-        value={formatTokenBalance(props.getValue())}
+        value={formatBnToDisplayAmount(props.getValue())}
         className="text-center"
       />
     ),
@@ -67,7 +67,7 @@ const columns = [
     ),
     cell: (props) => (
       <StringCell
-        value={formatTokenBalance(props.getValue())}
+        value={formatBnToDisplayAmount(props.getValue())}
         className="text-center"
       />
     ),

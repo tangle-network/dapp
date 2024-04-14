@@ -134,15 +134,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   ]);
 
   const submitTx = useCallback(async () => {
-    try {
-      console.debug('executing');
-      await executeDelegateTx();
-      closeModalAndReset();
-    } catch (error) {
-      console.error(error);
-
-      // notification is already handled in executeTx
-    }
+    await executeDelegateTx();
+    closeModalAndReset();
   }, [closeModalAndReset, executeDelegateTx]);
 
   if (isBondedOrNominating == null) {

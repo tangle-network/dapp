@@ -24,7 +24,8 @@ export type FormatOptions = {
 };
 
 const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
-  includeCommas: false,
+  fractionLength: 4,
+  includeCommas: true,
   padZerosInFraction: false,
 };
 

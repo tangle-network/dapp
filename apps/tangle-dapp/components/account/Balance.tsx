@@ -28,9 +28,6 @@ const Balance: FC = () => {
     }
 
     const amount = formatBnToDisplayAmount(balance, {
-      // Show up to 4 decimal places.
-      fractionLength: 4,
-      includeCommas: true,
       padZerosInFraction: true,
     });
 
