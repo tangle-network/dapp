@@ -17,6 +17,13 @@ const useSetPayeeTx = () => {
     useCallback((context) => {
       const payee = getEvmPayeeValue(context.payee);
 
+      // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
+      if (payee === null) {
+        throw new Error(
+          "Requested payee doesn't have a corresponding EVM address registered"
+        );
+      }
+
       return {
         functionName: 'setPayee',
         arguments: [payee],

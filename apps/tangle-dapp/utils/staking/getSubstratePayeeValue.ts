@@ -12,6 +12,10 @@ function getSubstratePayeeValue(
       return 'Stash';
     case StakingRewardsDestination.STAKED:
       return 'Staked';
+    case StakingRewardsDestination.ACCOUNT:
+      return 'Account';
+    case StakingRewardsDestination.NONE:
+      return 'None';
   }
 }
 

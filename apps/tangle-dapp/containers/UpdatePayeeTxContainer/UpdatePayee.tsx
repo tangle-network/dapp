@@ -16,8 +16,8 @@ import { UpdatePayeeProps } from './types';
 const UpdatePayee: FC<UpdatePayeeProps> = ({
   currentPayee,
   payeeOptions,
-  payee,
-  setPayee,
+  selectedPayee: payee,
+  setSelectedPayee: setPayee,
 }) => {
   const handleSetPayee = useCallback(
     (newPayeeString: string) => {
@@ -30,6 +30,16 @@ const UpdatePayee: FC<UpdatePayeeProps> = ({
     [setPayee]
   );
 
+  const currentPayeeDisplayText: string = (() => {
+    if (currentPayee === null) {
+      return 'Loading...';
+    } else if (currentPayee.value !== null) {
+      return STAKING_PAYEE_VALUE_TO_TEXT_MAP[currentPayee.value];
+    } else {
+      return 'None';
+    }
+  })();
+
   return (
     <div className="grid grid-cols-3 gap-9">
       <div className="flex flex-col gap-9 col-span-2">
@@ -38,7 +48,7 @@ const UpdatePayee: FC<UpdatePayeeProps> = ({
           <InputField.Input
             title="Current Destination"
             isAddressType={false}
-            value={currentPayee}
+            value={currentPayeeDisplayText}
             type="text"
             readOnly
           />

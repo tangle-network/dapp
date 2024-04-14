@@ -8,7 +8,7 @@ const useIsBondedOrNominating = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
   const {
-    result: nominators,
+    result: nominations,
     isLoading: isLoadingNominators,
     error: nominatorsError,
   } = useApiRx(
@@ -48,14 +48,13 @@ const useIsBondedOrNominating = () => {
   );
 
   const isBondedOrNominating = (() => {
-    if (bondedInfo === null || nominators === null) {
+    if (bondedInfo === null || nominations === null) {
       return null;
     }
 
-    const hasNominatedValidators = nominators.isSome;
+    const hasNominatedValidators = nominations.isSome;
     const isBonded = bondedInfo.isSome;
 
-    // TODO: Invert condition.
     return isBonded || hasNominatedValidators;
   })();
 

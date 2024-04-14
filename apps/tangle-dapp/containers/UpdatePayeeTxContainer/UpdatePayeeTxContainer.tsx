@@ -1,24 +1,21 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
-import usePaymentDestinationSubscription from '../../data/NominatorStats/usePaymentDestinationSubscription';
+import useStakingRewardsDestination from '../../data/NominatorStats/useStakingRewardsDestination';
 import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
 import { UpdatePayeeTxContainerProps } from './types';
 import UpdatePayee from './UpdatePayee';
 
@@ -26,67 +23,31 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
+  const { result: currentPayee } = useStakingRewardsDestination();
 
-  const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
-
-  const [
-    isUpdatePaymentDestinationTxLoading,
-    setIsUpdatePaymentDestinationTxLoading,
-  ] = useState(false);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    }
-
-    if (isSubstrateAddress(activeAccount?.address)) {
-      return activeAccount.address;
-    }
-
-    return evmToSubstrateAddress(activeAccount.address) ?? '';
-  }, [activeAccount?.address]);
-
-  const {
-    data: currentPaymentDestination,
-    error: currentPaymentDestinationError,
-  } = usePaymentDestinationSubscription(substrateAddress);
-
-  const continueToSignAndSubmitTx = payee;
+  const [selectedPayee, setSelectedPayee] = useState(
+    StakingRewardsDestination.STAKED
+  );
 
   const closeModalAndReset = useCallback(() => {
-    setIsUpdatePaymentDestinationTxLoading(false);
     setIsModalOpen(false);
-    setPayee(StakingRewardsDestination.STAKED);
+    setSelectedPayee(StakingRewardsDestination.STAKED);
   }, [setIsModalOpen]);
 
-  const { execute: executeSetPayeeTx } = useSetPayeeTx();
+  const { execute: executeSetPayeeTx, status: setPayeeTxStatus } =
+    useSetPayeeTx();
 
-  const submitAndSignTx = useCallback(async () => {
+  const submitTx = useCallback(async () => {
     if (executeSetPayeeTx === null) {
       return;
     }
 
-    setIsUpdatePaymentDestinationTxLoading(true);
-
-    try {
-      await executeSetPayeeTx({
-        payee,
-      });
-
-      closeModalAndReset();
-    } catch {
-      setIsUpdatePaymentDestinationTxLoading(false);
-    }
-  }, [closeModalAndReset, executeSetPayeeTx, payee]);
-
-  if (currentPaymentDestinationError) {
-    notificationApi({
-      variant: 'error',
-      message: currentPaymentDestinationError.message,
+    await executeSetPayeeTx({
+      payee: selectedPayee,
     });
-  }
+
+    closeModalAndReset();
+  }, [closeModalAndReset, executeSetPayeeTx, selectedPayee]);
 
   return (
     <Modal open>
@@ -101,19 +62,21 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <UpdatePayee
-            currentPayee={currentPaymentDestination?.value1 ?? ''}
+            currentPayee={currentPayee}
             payeeOptions={PAYMENT_DESTINATION_OPTIONS}
-            payee={payee}
-            setPayee={setPayee}
+            selectedPayee={selectedPayee}
+            setSelectedPayee={setSelectedPayee}
           />
         </div>
 
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isUpdatePaymentDestinationTxLoading}
-            onClick={submitAndSignTx}
+            isLoading={setPayeeTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
+            isDisabled={
+              currentPayee !== null && currentPayee.value !== selectedPayee
+            }
           >
             Confirm
           </Button>

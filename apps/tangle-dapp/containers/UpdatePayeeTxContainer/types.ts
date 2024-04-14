@@ -2,6 +2,7 @@ import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,
 } from '../../types';
+import Optional from '../../utils/Optional';
 
 export type UpdatePayeeTxContainerProps = {
   isModalOpen: boolean;
@@ -9,8 +10,8 @@ export type UpdatePayeeTxContainerProps = {
 };
 
 export type UpdatePayeeProps = {
-  currentPayee: string | number;
+  currentPayee: Optional<StakingRewardsDestination> | null;
   payeeOptions: StakingRewardsDestinationDisplayText[];
-  payee: StakingRewardsDestination;
-  setPayee: (newPayee: StakingRewardsDestination) => void;
+  selectedPayee: StakingRewardsDestination;
+  setSelectedPayee: (newPayee: StakingRewardsDestination) => void;
 };

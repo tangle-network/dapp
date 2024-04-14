@@ -15,13 +15,12 @@ import { type FC, useCallback, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS as PAYEE_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
-import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
+import useStakingRewardsDestination from '../../data/NominatorStats/useStakingRewardsDestination';
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
 import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
@@ -35,7 +34,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
-  const activeSubstrateAddress = useSubstrateAddress();
   const { nativeTokenSymbol } = useNetworkStore();
   const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
   const [hasAmountToBondError, setHasAmountToBondError] = useState(false);
@@ -63,10 +61,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     isError: isBondedOrNominatingError,
   } = useIsBondedOrNominating();
 
-  // TODO: Need to change defaulting to empty/dummy strings to instead adhere to the type system. Ex. should be using `| null` instead.
-  const { data: currentPaymentDestination } = usePaymentDestination(
-    activeSubstrateAddress ?? '0x0'
-  );
+  const { result: currentPayeeOpt } = useStakingRewardsDestination();
 
   const handleAmountToBondError = useCallback(
     (error: string | null) => {
@@ -123,13 +118,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           ? undefined
           : amountToBond;
 
-      const currentPayee =
-        currentPaymentDestination?.value1 === 'Staked'
-          ? StakingRewardsDestination.STAKED
-          : StakingRewardsDestination.STASH;
-
       // Update the payee if it has changed.
-      const newPayee = currentPayee === payee ? undefined : payee;
+      const newPayee = currentPayeeOpt?.value === payee ? undefined : payee;
 
       await executeUpdateNominatorTx({
         bondAmount: extraBondingAmount,
@@ -140,7 +130,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     }
   }, [
     amountToBond,
-    currentPaymentDestination?.value1,
+    currentPayeeOpt,
     executeSetupNominatorTx,
     executeUpdateNominatorTx,
     isBondedOrNominating,

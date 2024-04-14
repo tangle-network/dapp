@@ -42,7 +42,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     status: substrateTxStatus,
     error: substrateError,
     reset: substrateReset,
-  } = useSubstrateTx(substrateTxFactory);
+  } = useSubstrateTx(substrateTxFactory, false);
 
   const {
     execute: executeEvmPrecompileAbiCall,

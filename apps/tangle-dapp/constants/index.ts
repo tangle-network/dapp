@@ -1,4 +1,5 @@
 import {
+  PalletStakingRewardDestination,
   TanglePrimitivesRolesRoleType,
   TanglePrimitivesRolesTssThresholdSignatureRoleType,
   TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
@@ -90,6 +91,9 @@ export const STAKING_PAYEE_TEXT_TO_VALUE_MAP: Record<
   [StakingRewardsDestinationDisplayText.STASH]: StakingRewardsDestination.STASH,
   [StakingRewardsDestinationDisplayText.CONTROLLER]:
     StakingRewardsDestination.CONTROLLER,
+  [StakingRewardsDestinationDisplayText.ACCOUNT]:
+    StakingRewardsDestination.ACCOUNT,
+  [StakingRewardsDestinationDisplayText.NONE]: StakingRewardsDestination.NONE,
 };
 
 export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
@@ -101,6 +105,9 @@ export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
   [StakingRewardsDestination.STASH]: StakingRewardsDestinationDisplayText.STASH,
   [StakingRewardsDestination.CONTROLLER]:
     StakingRewardsDestinationDisplayText.CONTROLLER,
+  [StakingRewardsDestination.ACCOUNT]:
+    StakingRewardsDestinationDisplayText.ACCOUNT,
+  [StakingRewardsDestination.NONE]: StakingRewardsDestinationDisplayText.NONE,
 };
 
 // Note that the chain decimal count is usually constant, and set when

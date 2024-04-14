@@ -126,7 +126,7 @@ const NominatorStatsContainer: FC = () => {
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="grid grid-cols-2 gap-2">
-            {isBondedOrNominating ? (
+            {isBondedOrNominating === true ? (
               <>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Button

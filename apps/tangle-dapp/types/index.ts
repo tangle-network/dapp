@@ -65,12 +65,16 @@ export enum StakingRewardsDestination {
   STAKED,
   STASH,
   CONTROLLER,
+  ACCOUNT,
+  NONE,
 }
 
 export enum StakingRewardsDestinationDisplayText {
   STAKED = 'Staked (increase the amount at stake)',
   STASH = 'Stash (do not increase the amount at stake)',
   CONTROLLER = 'Controller Account',
+  ACCOUNT = 'Specific Account',
+  NONE = 'None',
 }
 
 export type AddressWithIdentity = {

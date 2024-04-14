@@ -8,7 +8,7 @@ export enum StakingEvmPayee {
 
 export function getEvmPayeeValue(
   rewardsDestination: StakingRewardsDestination
-): StakingEvmPayee {
+): StakingEvmPayee | null {
   switch (rewardsDestination) {
     case StakingRewardsDestination.CONTROLLER:
       return StakingEvmPayee.CONTROLLER;
@@ -16,6 +16,9 @@ export function getEvmPayeeValue(
       return StakingEvmPayee.STAKED;
     case StakingRewardsDestination.STASH:
       return StakingEvmPayee.STASH;
+    // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
+    default:
+      return null;
   }
 }
 
