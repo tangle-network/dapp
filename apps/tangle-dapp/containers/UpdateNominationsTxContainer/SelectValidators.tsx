@@ -3,7 +3,11 @@ import { type FC } from 'react';
 
 import { ValidatorListTable } from '../../components';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
-import { SelectValidatorsProps } from './types';
+
+export type SelectValidatorsProps = {
+  selectedValidators: string[];
+  setSelectedValidators: (selectedValidators: string[]) => void;
+};
 
 const SelectValidators: FC<SelectValidatorsProps> = ({
   selectedValidators,

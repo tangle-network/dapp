@@ -10,13 +10,14 @@ import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
 
-export type Nominee = {
+export type Validator = {
   address: string;
   isActive: boolean;
   identityName: string;
   commission: BN;
   selfStakeAmount: BN;
   totalStakeAmount: BN;
+  nominatorCount: number;
 };
 
 const useNominations = () => {
@@ -42,7 +43,7 @@ const useNominations = () => {
     )
   );
 
-  const nominees = useMemo<Optional<Nominee[]> | null>(() => {
+  const nominees = useMemo<Optional<Validator[]> | null>(() => {
     if (
       nominationInfoOpt === null ||
       sessionValidators === null ||
@@ -76,6 +77,9 @@ const useNominations = () => {
       const selfStakeAmount = exposure?.own.toBn() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.toBn() ?? BN_ZERO;
 
+      // TODO: Will it ever be unset if the nominee is a validator?
+      const nominatorCount = exposure?.nominatorCount.toNumber() ?? 0;
+
       return {
         address: nomineeAddress,
         isActive,
@@ -83,6 +87,7 @@ const useNominations = () => {
         commission,
         selfStakeAmount,
         totalStakeAmount,
+        nominatorCount,
       };
     });
 

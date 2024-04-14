@@ -106,7 +106,7 @@ const NominatorStatsContainer: FC = () => {
               tooltip="The total amount of tokens you have bonded for nominating."
             />
 
-            <UnbondingStatsItem address={activeSubstrateAddress} />
+            <UnbondingStatsItem />
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />

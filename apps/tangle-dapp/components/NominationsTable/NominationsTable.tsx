@@ -19,18 +19,18 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { Delegator } from '../../types';
+import { Validator } from '../../data/NominationsPayouts/useNominations';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { HeaderCell, StringCell } from '../tableCells';
-import { DelegatorTableProps } from './types';
 
-const columnHelper = createColumnHelper<Delegator>();
+const columnHelper = createColumnHelper<Validator>();
 
 const columns = [
   columnHelper.accessor('address', {
     header: () => <HeaderCell title="Validator" className="justify-start" />,
     cell: (props) => {
       const address = props.getValue();
-      const identity = props.row.original.identity;
+      const identityName = props.row.original.identityName;
 
       return (
         <div className="flex items-center space-x-1">
@@ -39,7 +39,9 @@ const columns = [
           </Avatar>
 
           <Typography variant="body1" fw="normal" className="truncate">
-            {identity === address ? shortenString(address, 6) : identity}
+            {identityName === address
+              ? shortenString(address, 6)
+              : identityName}
           </Typography>
 
           <CopyWithTooltip
@@ -62,24 +64,30 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('selfStaked', {
+  columnHelper.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell
+        value={formatTokenBalance(props.getValue())}
+        className="text-center"
+      />
     ),
   }),
-  columnHelper.accessor('effectiveAmountStaked', {
+  columnHelper.accessor('totalStakeAmount', {
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell
+        value={formatTokenBalance(props.getValue())}
+        className="text-center"
+      />
     ),
   }),
-  columnHelper.accessor('delegations', {
+  columnHelper.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell value={props.getValue().toString()} className="text-center" />
     ),
   }),
   columnHelper.accessor('commission', {
@@ -93,9 +101,17 @@ const columns = [
   }),
 ];
 
-const DelegatorTable: FC<DelegatorTableProps> = ({ data = [], pageSize }) => {
+export type NominationsTableProps = {
+  nominees: Validator[];
+  pageSize: number;
+};
+
+const NominationsTable: FC<NominationsTableProps> = ({
+  nominees,
+  pageSize,
+}) => {
   const table = useReactTable({
-    data,
+    data: nominees,
     columns,
     initialState: {
       pagination: {
@@ -119,10 +135,10 @@ const DelegatorTable: FC<DelegatorTableProps> = ({ data = [], pageSize }) => {
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
-        totalRecords={data.length}
+        totalRecords={nominees.length}
       />
     </div>
   );
 };
 
-export default DelegatorTable;
+export default NominationsTable;

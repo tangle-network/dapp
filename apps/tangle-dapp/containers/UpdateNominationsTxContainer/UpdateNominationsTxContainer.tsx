@@ -8,12 +8,19 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
+import _ from 'lodash';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import useNominateTx from '../../data/staking/useNominateTx';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import SelectValidators from './SelectValidators';
-import { UpdateNominationsTxContainerProps } from './types';
+
+export type UpdateNominationsTxContainerProps = {
+  isModalOpen: boolean;
+  currentNominations: string[] | null;
+  setIsModalOpen: (isModalOpen: boolean) => void;
+};
 
 const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   isModalOpen,
@@ -22,31 +29,16 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 }) => {
   const maxNominationQuota = useMaxNominationQuota();
 
+  const { execute: executeNominateTx, status: nominateTxStatus } =
+    useNominateTx();
+
   const [selectedValidators, setSelectedValidators] =
     useState(currentNominations);
 
-  const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
-    useState(false);
-
+  // Cannot nominate more than a certain number of validators.
   const isExceedingMaxNominationQuota =
+    selectedValidators !== null &&
     selectedValidators.length > maxNominationQuota;
-
-  const isReadyToSubmitAndSignTx = useMemo(() => {
-    if (selectedValidators.length <= 0 || isExceedingMaxNominationQuota) {
-      return false;
-    }
-
-    const sortedSelectedValidators = [...selectedValidators].sort();
-    const sortedCurrentNominations = [...currentNominations].sort();
-
-    const areArraysEqual =
-      sortedSelectedValidators.length === sortedCurrentNominations.length &&
-      sortedSelectedValidators.every(
-        (val, index) => val === sortedCurrentNominations[index]
-      );
-
-    return !areArraysEqual;
-  }, [currentNominations, isExceedingMaxNominationQuota, selectedValidators]);
 
   // Update the selected validators when the current
   // nominations prop changes.
@@ -55,35 +47,35 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [currentNominations]);
 
   const closeModal = useCallback(() => {
-    setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setSelectedValidators(currentNominations);
   }, [currentNominations, setIsModalOpen]);
 
-  const { execute: executeNominateTx } = useNominateTx();
-
-  const submitAndSignTx = useCallback(async () => {
-    if (!isReadyToSubmitAndSignTx || executeNominateTx === null) {
+  const submitTx = useCallback(async () => {
+    if (executeNominateTx === null || selectedValidators === null) {
       return;
     }
 
-    setIsSubmitAndSignTxLoading(true);
+    await executeNominateTx({
+      validatorAddresses: selectedValidators,
+    });
 
-    try {
-      await executeNominateTx({
-        validatorAddresses: selectedValidators,
-      });
+    closeModal();
+  }, [closeModal, executeNominateTx, selectedValidators]);
 
-      closeModal();
-    } catch {
-      setIsSubmitAndSignTxLoading(false);
+  const isReadyToSubmitTx = useMemo(() => {
+    if (
+      selectedValidators === null ||
+      selectedValidators.length === 0 ||
+      isExceedingMaxNominationQuota
+    ) {
+      return false;
     }
-  }, [
-    closeModal,
-    executeNominateTx,
-    isReadyToSubmitAndSignTx,
-    selectedValidators,
-  ]);
+
+    // Can only submit transaction if the selected validators differ
+    // from the current nominations.
+    return !_.isEqual(currentNominations, selectedValidators);
+  }, [currentNominations, isExceedingMaxNominationQuota, selectedValidators]);
 
   return (
     <Modal open>
@@ -98,7 +90,8 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
-            selectedValidators={selectedValidators}
+            // TODO: Pass the `| null` explicitly, and handle the case where it is `null` at the lowest level.
+            selectedValidators={selectedValidators ?? []}
             setSelectedValidators={setSelectedValidators}
           />
 
@@ -118,9 +111,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
           <Button
             isFullWidth
-            isDisabled={!isReadyToSubmitAndSignTx}
-            isLoading={isSubmitAndSignTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!isReadyToSubmitTx}
+            isLoading={nominateTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
             className="!mt-0"
           >
             Confirm Nomination

@@ -1,7 +1,7 @@
 import { BN_ZERO, formatDecimal } from '@polkadot/util';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../../constants';
 import useBalancesLock from '../../../data/balances/useBalancesLock';
@@ -25,11 +25,19 @@ const LockedBalanceDetails: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
   const { isInDemocracy } = useDemocracy();
   const { result: currentEra } = useCurrentEra();
-  const { result: unbondingEntries } = useUnbonding();
+  const { result: unbondingEntriesOpt } = useUnbonding();
 
   const { amount: stakingLockedBalance } = useBalancesLock(
     SubstrateLockId.STAKING
   );
+
+  const unbondingEntries = useMemo(() => {
+    if (unbondingEntriesOpt === null || unbondingEntriesOpt.value === null) {
+      return null;
+    }
+
+    return unbondingEntriesOpt.value;
+  }, [unbondingEntriesOpt]);
 
   const showNomination =
     stakingLockedBalance !== null && stakingLockedBalance.gt(BN_ZERO);
