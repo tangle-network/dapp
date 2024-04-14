@@ -38,7 +38,10 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-async function switchNetworkInEvmWallet(network: Network): Promise<void> {
+// TODO: Awaiting testing of this feature before enabling it.
+export async function switchNetworkInEvmWallet(
+  network: Network
+): Promise<void> {
   // TODO: This is failing with: "Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received: "3799". Perhaps the chainId should be in hex format?
 
   // Cannot switch networks on EVM wallets if the network
