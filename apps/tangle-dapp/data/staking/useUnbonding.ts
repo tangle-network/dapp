@@ -1,7 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback } from 'react';
 
-import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
+import useStakingLedger from '../../hooks/useStakingLedger';
 import useCurrentEra from './useCurrentEra';
 
 export type StakingUnbondingEntry = {
@@ -13,7 +13,7 @@ export type StakingUnbondingEntry = {
 const useUnbonding = () => {
   const { result: currentEra } = useCurrentEra();
 
-  return useStakingLedgerRx(
+  return useStakingLedger(
     useCallback(
       (ledger) => {
         if (currentEra === null) {
@@ -27,6 +27,7 @@ const useUnbonding = () => {
             return {
               amount: unlockChunk.value.toBn(),
               unlockEra: unlockChunk.era.toBn(),
+              // If the era is less than the current era, the unbonding is complete.
               remainingEras: eraDifference.gtn(0) ? eraDifference : BN_ZERO,
             };
           }

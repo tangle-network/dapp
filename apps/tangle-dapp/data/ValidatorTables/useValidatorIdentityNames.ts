@@ -55,7 +55,7 @@ const useValidatorIdentityNames = () => {
 
   const nameMap = useEntryMap(identityNames, (key) => key);
 
-  return { data: nameMap, ...other };
+  return { result: nameMap, ...other };
 };
 
 export default useValidatorIdentityNames;

@@ -1,8 +1,6 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -10,14 +8,14 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components/BondedTokensBalanceInfo';
-import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
+import useUnbondedAmount from '../../data/NominatorStats/useUnbondedAmount';
+import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useWithdrawUnbondedTx from '../../data/staking/useWithdrawUnbondedTx';
-import { evmToSubstrateAddress } from '../../utils';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { RebondTxContainer } from '../RebondTxContainer';
 import { WithdrawUnbondedTxContainerProps } from './types';
 
@@ -25,86 +23,37 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
-  const [isWithdrawUnbondedTxLoading, setIsWithdrawUnbondedTxLoading] =
-    useState(false);
+  const { result: totalUnbondedAmount } = useUnbondedAmount();
+  const { result: totalUnbondingAmount } = useUnbondingAmount();
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address) ?? '';
-  }, [activeAccount?.address]);
-
-  const {
-    data: totalUnbondedAndUnbondingAmountData,
-    error: totalUnbondedAndUnbondingAmountError,
-  } = useTotalUnbondedAndUnbondingAmount(substrateAddress);
-
-  const totalUnbondedAmountAvailableToWithdraw = useMemo(() => {
-    if (totalUnbondedAndUnbondingAmountError) {
-      notificationApi({
-        variant: 'error',
-        message: totalUnbondedAndUnbondingAmountError.message,
-      });
-    }
-
-    if (!totalUnbondedAndUnbondingAmountData?.value1?.unbonded)
-      return undefined;
-
-    return totalUnbondedAndUnbondingAmountData.value1.unbonded;
-  }, [
-    notificationApi,
-    totalUnbondedAndUnbondingAmountData,
-    totalUnbondedAndUnbondingAmountError,
-  ]);
-
-  const closeModalAndReset = useCallback(() => {
-    setIsWithdrawUnbondedTxLoading(false);
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
-  const { execute: executeWithdrawUnbondedTx } = useWithdrawUnbondedTx();
+  const {
+    execute: executeWithdrawUnbondedTx,
+    status: withdrawUnbondedTxStatus,
+  } = useWithdrawUnbondedTx();
 
-  const submitAndSignTx = useCallback(async () => {
+  const submitTx = useCallback(async () => {
     if (executeWithdrawUnbondedTx === null) {
       return;
     }
 
-    setIsWithdrawUnbondedTxLoading(true);
-
-    try {
-      await executeWithdrawUnbondedTx();
-      closeModalAndReset();
-    } catch {
-      setIsWithdrawUnbondedTxLoading(false);
-    }
-  }, [closeModalAndReset, executeWithdrawUnbondedTx]);
+    await executeWithdrawUnbondedTx();
+    closeModal();
+  }, [closeModal, executeWithdrawUnbondedTx]);
 
   const onRebondClick = useCallback(() => {
-    closeModalAndReset();
+    closeModal();
     setIsRebondModalOpen(true);
-  }, [closeModalAndReset]);
+  }, [closeModal]);
 
   const canSubmitTx =
-    totalUnbondedAmountAvailableToWithdraw &&
-    totalUnbondedAmountAvailableToWithdraw.gt(BN_ZERO) &&
-    walletAddress !== '0x0'
-      ? true
-      : false;
+    totalUnbondedAmount?.value?.isZero() === false &&
+    executeWithdrawUnbondedTx !== null;
 
   return (
     <>
@@ -114,7 +63,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
           isOpen={isModalOpen}
           className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
         >
-          <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
+          <ModalHeader titleVariant="h4" onClose={closeModal}>
             Withdraw Funds
           </ModalHeader>
 
@@ -126,18 +75,12 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
             <div className="flex flex-col gap-2">
               <BondedTokensBalanceInfo
                 type="unbonded"
-                value={
-                  totalUnbondedAndUnbondingAmountData?.value1?.unbonded ??
-                  BN_ZERO
-                }
+                value={totalUnbondedAmount?.value ?? BN_ZERO}
               />
 
               <BondedTokensBalanceInfo
                 type="unbonding"
-                value={
-                  totalUnbondedAndUnbondingAmountData?.value1?.unbonding ??
-                  BN_ZERO
-                }
+                value={totalUnbondingAmount?.value ?? BN_ZERO}
               />
             </div>
           </div>
@@ -146,8 +89,8 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
             <Button
               isFullWidth
               isDisabled={!canSubmitTx}
-              isLoading={isWithdrawUnbondedTxLoading}
-              onClick={submitAndSignTx}
+              isLoading={withdrawUnbondedTxStatus === TxStatus.PROCESSING}
+              onClick={submitTx}
             >
               Confirm
             </Button>

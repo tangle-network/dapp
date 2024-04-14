@@ -1,8 +1,6 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -10,78 +8,31 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components';
 import AmountInput from '../../components/AmountInput/AmountInput';
-import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
-import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useUnbondedAmount from '../../data/NominatorStats/useUnbondedAmount';
+import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useRebondTx from '../../data/staking/useRebondTx';
-import { evmToSubstrateAddress } from '../../utils';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { RebondTxContainerProps } from './types';
 
 const RebondTxContainer: FC<RebondTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
-
   const [amountToRebond, setAmountToRebond] = useState<BN | null>(null);
-  const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
+  const { result: totalUnbondingAmount } = useUnbondingAmount();
+  const { result: totalUnbondedAmount } = useUnbondedAmount();
+  const { execute: executeRebondTx, status: rebondTxStatus } = useRebondTx();
 
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    }
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
-
-  const { data: unbondingAmountData, error: unbondingAmountError } =
-    useUnbondingAmountSubscription(substrateAddress);
-
-  const { data: totalUnbondedAndUnbondingAmountData } =
-    useTotalUnbondedAndUnbondingAmount(substrateAddress);
-
-  const remainingUnbondedTokensToRebond = useMemo(() => {
-    if (unbondingAmountError) {
-      notificationApi({
-        variant: 'error',
-        message: unbondingAmountError.message,
-      });
-    }
-
-    return unbondingAmountData?.value1 ?? undefined;
-  }, [notificationApi, unbondingAmountData?.value1, unbondingAmountError]);
-
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return (
-      amountToRebond !== null &&
-      amountToRebond.gt(BN_ZERO) &&
-      !hasErrors &&
-      walletAddress !== '0x0'
-    );
-  }, [amountToRebond, hasErrors, walletAddress]);
-
-  const closeModal = useCallback(() => {
-    setIsRebondTxLoading(false);
+  const closeModalAndReset = useCallback(() => {
     setIsModalOpen(false);
     setAmountToRebond(null);
     setHasErrors(false);
@@ -94,9 +45,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     [setHasErrors]
   );
 
-  const { execute: executeRebondTx } = useRebondTx();
-
-  const submitAndSignTx = useCallback(async () => {
+  const submitTx = useCallback(async () => {
     if (
       executeRebondTx === null ||
       amountToRebond === null ||
@@ -105,18 +54,18 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       return null;
     }
 
-    setIsRebondTxLoading(true);
+    await executeRebondTx({
+      amount: amountToRebond,
+    });
 
-    try {
-      executeRebondTx({
-        amount: amountToRebond,
-      });
+    closeModalAndReset();
+  }, [executeRebondTx, amountToRebond, closeModalAndReset]);
 
-      closeModal();
-    } catch {
-      setIsRebondTxLoading(false);
-    }
-  }, [executeRebondTx, amountToRebond, closeModal]);
+  const canSubmitTx =
+    amountToRebond !== null &&
+    amountToRebond.gt(BN_ZERO) &&
+    !hasErrors &&
+    executeRebondTx !== null;
 
   return (
     <Modal open>
@@ -125,7 +74,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
+        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Rebond Funds
         </ModalHeader>
 
@@ -138,29 +87,24 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           <AmountInput
             id="rebond-input"
             title="Amount"
-            max={remainingUnbondedTokensToRebond}
+            max={totalUnbondedAmount?.value ?? undefined}
             amount={amountToRebond}
             setAmount={setAmountToRebond}
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough unbonding balance"
             setErrorMessage={handleSetErrorMessage}
-            isDisabled={isRebondTxLoading}
+            isDisabled={rebondTxStatus === TxStatus.PROCESSING}
           />
 
           <div className="space-y-2">
             <BondedTokensBalanceInfo
               type="unbonded"
-              value={
-                totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? BN_ZERO
-              }
+              value={totalUnbondedAmount?.value ?? BN_ZERO}
             />
 
             <BondedTokensBalanceInfo
               type="unbonding"
-              value={
-                totalUnbondedAndUnbondingAmountData?.value1?.unbonding ??
-                BN_ZERO
-              }
+              value={totalUnbondingAmount?.value ?? BN_ZERO}
             />
           </div>
         </div>
@@ -168,9 +112,9 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isRebondTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!canSubmitTx}
+            isLoading={rebondTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
           >
             Confirm
           </Button>

@@ -19,8 +19,9 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
-import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbondTx from '../../data/staking/useUnbondTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { evmToSubstrateAddress } from '../../utils';
 import { UnbondTxContainerProps } from './types';
 
@@ -29,20 +30,12 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const [amount, setAmount] = useState<BN | null>(null);
-  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const { nativeTokenSymbol } = useNetworkStore();
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
+  const { execute: executeUnbondTx, status: unbondTxStatus } = useUnbondTx();
 
   const substrateAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -57,8 +50,8 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =
     useTotalStakedAmountSubscription(substrateAddress);
 
-  const { data: unbondingAmountData, error: unbondingAmountError } =
-    useUnbondingAmountSubscription(substrateAddress);
+  const { result: unbondingAmount, error: unbondingAmountError } =
+    useUnbondingAmount();
 
   const totalStakedBalance = useMemo(() => {
     if (totalStakedBalanceError) {
@@ -87,29 +80,25 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       });
     }
 
-    if (!unbondingAmountData?.value1) {
+    if (unbondingAmount === null || unbondingAmount.value === null) {
       return undefined;
     }
 
-    return totalStakedBalance.sub(unbondingAmountData.value1);
+    return totalStakedBalance.sub(unbondingAmount.value);
   }, [
     notificationApi,
     totalStakedBalance,
-    unbondingAmountData?.value1,
+    unbondingAmount,
     unbondingAmountError,
   ]);
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return (
-      amount !== null &&
-      amount.gt(BN_ZERO) &&
-      walletAddress !== '0x0' &&
-      !hasErrors
-    );
-  }, [amount, hasErrors, walletAddress]);
+  const canSubmitTx =
+    amount !== null &&
+    amount.gt(BN_ZERO) &&
+    executeUnbondTx !== null &&
+    !hasErrors;
 
-  const closeModal = useCallback(() => {
-    setIsUnbondTxLoading(false);
+  const closeModalAndReset = useCallback(() => {
     setIsModalOpen(false);
     setAmount(null);
     setHasErrors(false);
@@ -122,25 +111,17 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     [setHasErrors]
   );
 
-  const { execute: executeUnbondTx } = useUnbondTx();
-
-  const submitAndSignTx = useCallback(async () => {
+  const submitTx = useCallback(async () => {
     if (executeUnbondTx === null || amount === null) {
       return;
     }
 
-    setIsUnbondTxLoading(true);
+    await executeUnbondTx({
+      amount: amount,
+    });
 
-    try {
-      await executeUnbondTx({
-        amount: amount,
-      });
-
-      closeModal();
-    } catch {
-      setIsUnbondTxLoading(false);
-    }
-  }, [executeUnbondTx, amount, closeModal]);
+    closeModalAndReset();
+  }, [amount, closeModalAndReset, executeUnbondTx]);
 
   return (
     <Modal open>
@@ -149,7 +130,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
+        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Unbond Stake
         </ModalHeader>
 
@@ -163,7 +144,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough staked balance"
             setErrorMessage={handleSetErrorMessage}
-            isDisabled={isUnbondTxLoading}
+            isDisabled={unbondTxStatus === TxStatus.PROCESSING}
           />
           <Typography variant="body1" fw="normal">
             Once unbonding, you must wait certain number of eras for your funds
@@ -179,9 +160,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isUnbondTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!canSubmitTx}
+            isLoading={unbondTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
           >
             Confirm
           </Button>

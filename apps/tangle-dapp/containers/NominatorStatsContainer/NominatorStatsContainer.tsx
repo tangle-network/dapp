@@ -9,7 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { type FC, useMemo, useState } from 'react';
+import { type FC, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
@@ -39,14 +39,6 @@ const NominatorStatsContainer: FC = () => {
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
   const {
     isBondedOrNominating,
     isLoading: isBondedOrNominatingLoading,
@@ -63,11 +55,7 @@ const NominatorStatsContainer: FC = () => {
             'border-2 border-mono-0 dark:border-mono-160'
           )}
         >
-          <NominatorStatsItem
-            title={`Free Balance`}
-            type="Wallet Balance"
-            address={walletAddress}
-          />
+          <NominatorStatsItem title="Free Balance" />
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
@@ -116,8 +104,6 @@ const NominatorStatsContainer: FC = () => {
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip="The total amount of tokens you have bonded for nominating."
-              type="Total Staked"
-              address={activeSubstrateAddress}
             />
 
             <UnbondingStatsItem address={activeSubstrateAddress} />

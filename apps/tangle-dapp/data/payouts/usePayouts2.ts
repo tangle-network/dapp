@@ -46,7 +46,7 @@ const usePayouts2 = () => {
     )
   );
 
-  const { data: identities } = useValidatorIdentityNames();
+  const { result: identities } = useValidatorIdentityNames();
   const { data: eraTotalRewards } = useEraTotalRewards();
   const [payouts, setPayouts] = useState<Payout[] | null>(null);
   const nominations = nominators?.isSome ? nominators.unwrap().targets : null;

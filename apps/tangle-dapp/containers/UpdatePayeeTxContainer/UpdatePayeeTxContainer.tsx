@@ -29,13 +29,13 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     StakingRewardsDestination.STAKED
   );
 
+  const { execute: executeSetPayeeTx, status: setPayeeTxStatus } =
+    useSetPayeeTx();
+
   const closeModalAndReset = useCallback(() => {
     setIsModalOpen(false);
     setSelectedPayee(StakingRewardsDestination.STAKED);
   }, [setIsModalOpen]);
-
-  const { execute: executeSetPayeeTx, status: setPayeeTxStatus } =
-    useSetPayeeTx();
 
   const submitTx = useCallback(async () => {
     if (executeSetPayeeTx === null) {
@@ -48,6 +48,11 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
     closeModalAndReset();
   }, [closeModalAndReset, executeSetPayeeTx, selectedPayee]);
+
+  const canSubmitTx =
+    currentPayee !== null &&
+    currentPayee.value === selectedPayee &&
+    executeSetPayeeTx !== null;
 
   return (
     <Modal open>
@@ -74,9 +79,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
             isFullWidth
             isLoading={setPayeeTxStatus === TxStatus.PROCESSING}
             onClick={submitTx}
-            isDisabled={
-              currentPayee !== null && currentPayee.value !== selectedPayee
-            }
+            isDisabled={!canSubmitTx}
           >
             Confirm
           </Button>

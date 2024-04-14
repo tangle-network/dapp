@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import useApiRx from './useApiRx';
-import useErrorReporting from './useErrorReporting';
 import useSubstrateAddress from './useSubstrateAddress';
 
 const useIsBondedOrNominating = () => {
@@ -41,19 +40,9 @@ const useIsBondedOrNominating = () => {
     )
   );
 
-  useErrorReporting(
-    'Failed to determine whether the account is a first time nominator',
-    nominatorsError,
-    bondedInfoError
-  );
-
   const isBondedOrNominating = (() => {
-    if (bondedInfo === null || nominations === null) {
-      return null;
-    }
-
-    const hasNominatedValidators = nominations.isSome;
-    const isBonded = bondedInfo.isSome;
+    const hasNominatedValidators = nominations !== null && nominations.isSome;
+    const isBonded = bondedInfo !== null && bondedInfo.isSome;
 
     return isBonded || hasNominatedValidators;
   })();

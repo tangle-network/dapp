@@ -2,10 +2,10 @@ import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import useApiRx from '../../hooks/useApiRx';
-import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
+import useStakingLedger from '../../hooks/useStakingLedger';
 
 const useRestakingLimits = () => {
-  const { result: stakedBalance } = useStakingLedgerRx(
+  const { result: stakedBalance } = useStakingLedger(
     useCallback((ledger) => ledger.total.toBn(), [])
   );
 
@@ -25,7 +25,7 @@ const useRestakingLimits = () => {
   // from the Polkadot API.
   // See: https://github.com/webb-tools/tangle/blob/8be20aa02a764422e1fd0ba30bc70b99d5f66887/runtime/mainnet/src/lib.rs#L1137
   const maxRestakingAmount = useMemo(
-    () => stakedBalance?.divn(2) ?? null,
+    () => stakedBalance?.value?.divn(2) ?? null,
     [stakedBalance]
   );
 
