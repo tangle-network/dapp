@@ -5,19 +5,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { Payout } from '../types';
 
 export enum LocalStorageKey {
-  ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
-  WAITING_VALIDATOR_CACHE = 'waitingValidatorCache',
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
   ACTIVE_AND_DELEGATION_COUNT = 'activeAndDelegationCount',
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
   VALIDATOR_COUNTS = 'validatorCounts',
   WAITING_COUNT = 'waitingCount',
-  Payouts = 'payouts',
-  Nominations = 'nominations',
+  PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
   NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
-  VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
 }
 
@@ -44,7 +40,7 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.WAITING_COUNT
     ? { value1: number | null }
-    : T extends LocalStorageKey.Payouts
+    : T extends LocalStorageKey.PAYOUTS
     ? PayoutsCache
     : T extends
         | LocalStorageKey.CUSTOM_RPC_ENDPOINT

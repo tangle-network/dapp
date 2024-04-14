@@ -21,7 +21,7 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
-import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
+import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useNetworkState from '../../hooks/useNetworkState';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {

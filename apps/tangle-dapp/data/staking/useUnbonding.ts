@@ -1,8 +1,8 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback } from 'react';
 
-import useStakingLedger from '../../hooks/useStakingLedger';
 import useCurrentEra from './useCurrentEra';
+import useStakingLedger from './useStakingLedger';
 
 export type StakingUnbondingEntry = {
   amount: BN;

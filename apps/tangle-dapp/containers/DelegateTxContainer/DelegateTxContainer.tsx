@@ -19,7 +19,7 @@ import useStakingRewardsDestination from '../../data/NominatorStats/useStakingRe
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
+import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';

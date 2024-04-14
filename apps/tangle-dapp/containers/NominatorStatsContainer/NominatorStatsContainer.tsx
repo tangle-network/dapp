@@ -15,7 +15,7 @@ import React from 'react';
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
+import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -35,11 +35,10 @@ const NominatorStatsContainer: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
   const networkFeatures = useNetworkFeatures();
   const { free: freeBalance, error: balancesError } = useBalances();
+  const isBondedOrNominating = useIsBondedOrNominating();
 
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
-
-  const isBondedOrNominating = useIsBondedOrNominating();
 
   return (
     <>

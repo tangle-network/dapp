@@ -1,5 +1,5 @@
+import useIsNominating from '../../hooks/useIsNominating';
 import useIsBonded from './useIsBonded';
-import useIsNominating from './useIsNominating';
 
 const useIsBondedOrNominating = () => {
   const isNominating = useIsNominating();

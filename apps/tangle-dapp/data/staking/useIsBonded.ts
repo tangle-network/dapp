@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import useApiRx from './useApiRx';
-import useSubstrateAddress from './useSubstrateAddress';
+import useApiRx from '../../hooks/useApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 const useIsBonded = () => {
   const activeSubstrateAddress = useSubstrateAddress();

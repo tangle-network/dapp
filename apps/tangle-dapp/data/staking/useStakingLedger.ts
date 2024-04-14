@@ -3,9 +3,9 @@ import { StakingLedger } from '@polkadot/types/interfaces';
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
-import Optional from '../utils/Optional';
-import useApiRx from './useApiRx';
-import useSubstrateAddress from './useSubstrateAddress';
+import useApiRx from '../../hooks/useApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import Optional from '../../utils/Optional';
 
 /**
  * A function provided by the consumer of the {@link useStakingLedger}

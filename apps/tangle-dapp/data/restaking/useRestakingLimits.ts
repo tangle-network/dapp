@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import useApiRx from '../../hooks/useApiRx';
-import useStakingLedger from '../../hooks/useStakingLedger';
+import useStakingLedger from '../staking/useStakingLedger';
 
 const useRestakingLimits = () => {
   const { result: stakedBalance } = useStakingLedger(
