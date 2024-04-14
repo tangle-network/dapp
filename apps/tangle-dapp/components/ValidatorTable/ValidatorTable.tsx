@@ -36,9 +36,7 @@ const columns = [
 
       return (
         <div className="flex items-center space-x-1">
-          <Avatar sourceVariant="address" value={address} theme="substrate">
-            hello
-          </Avatar>
+          <Avatar sourceVariant="address" value={address} theme="substrate" />
 
           <Typography variant="body1" fw="normal" className="truncate">
             {identity === address ? shortenString(address, 6) : identity}

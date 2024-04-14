@@ -1,33 +1,5 @@
-import type { HexString } from '@polkadot/util/types';
-
 import { extractNameFromInfo } from '../../data/ValidatorTables/useValidatorIdentityNames';
 import { getApiPromise } from './api';
-import { getTxPromise } from './utils';
-
-export const getTotalNumberOfNominators = async (
-  rpcEndpoint: string,
-  validatorAddress: string
-): Promise<number> => {
-  const api = await getApiPromise(rpcEndpoint);
-  const nominators = await api.query.staking.nominators.entries();
-
-  const totalNominators = nominators.filter(([, nominatorData]) => {
-    if (nominatorData.isNone) {
-      return false;
-    }
-
-    const nominations = nominatorData.unwrap();
-
-    return (
-      nominations.targets &&
-      nominations.targets.some(
-        (target) => target.toString() === validatorAddress
-      )
-    );
-  });
-
-  return totalNominators.length;
-};
 
 export const getValidatorIdentity = async (
   rpcEndpoint: string,
@@ -63,34 +35,4 @@ export const getValidatorCommission = async (
   const commission = commissionRate / 10_000_000;
 
   return commission.toString();
-};
-
-export const getMaxNominationQuota = async (
-  rpcEndpoint: string
-): Promise<number | undefined> => {
-  const api = await getApiPromise(rpcEndpoint);
-  const maxNominations = api.query.staking.maxNominatorsCount;
-
-  return parseInt(maxNominations.toString());
-};
-
-export const nominateValidators = async (
-  rpcEndpoint: string,
-  nominatorAddress: string,
-  validatorAddresses: string[]
-): Promise<HexString> => {
-  const api = await getApiPromise(rpcEndpoint);
-  const tx = api.tx.staking.nominate(validatorAddresses);
-
-  return getTxPromise(nominatorAddress, tx);
-};
-
-export const stopNomination = async (
-  rpcEndpoint: string,
-  nominatorAddress: string
-) => {
-  const api = await getApiPromise(rpcEndpoint);
-  const tx = api.tx.staking.chill();
-
-  return getTxPromise(nominatorAddress, tx);
 };
