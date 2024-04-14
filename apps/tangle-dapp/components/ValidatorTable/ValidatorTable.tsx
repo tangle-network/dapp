@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 
 import { PagePath, Validator } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { HeaderCell, StringCell } from '../tableCells';
 import { ValidatorTableProps } from './types';
 
@@ -52,24 +53,30 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('selfStaked', {
+  columnHelper.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell
+        value={formatTokenBalance(props.getValue())}
+        className="text-center"
+      />
     ),
   }),
-  columnHelper.accessor('effectiveAmountStaked', {
+  columnHelper.accessor('totalStakeAmount', {
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell
+        value={formatTokenBalance(props.getValue())}
+        className="text-center"
+      />
     ),
   }),
-  columnHelper.accessor('delegations', {
+  columnHelper.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell value={props.getValue().toString()} className="text-center" />
     ),
   }),
   columnHelper.accessor('commission', {

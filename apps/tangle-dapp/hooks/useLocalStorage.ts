@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Delegator, Payout, Validator } from '../types';
+import { Payout } from '../types';
 
 export enum LocalStorageKey {
   ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
@@ -29,10 +29,6 @@ export type PayoutsCache = {
   [address: string]: Payout[];
 };
 
-export type NominationsCache = {
-  [address: string]: Delegator[];
-};
-
 /**
  * Type definition associating local storage keys with their
  * respective value types.
@@ -40,10 +36,6 @@ export type NominationsCache = {
 export type LocalStorageValueOf<T extends LocalStorageKey> =
   T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
-    : T extends
-        | LocalStorageKey.ACTIVE_VALIDATOR_CACHE
-        | LocalStorageKey.WAITING_VALIDATOR_CACHE
-    ? Validator[]
     : T extends LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.IDEAL_STAKE_PERCENTAGE
@@ -54,8 +46,6 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null }
     : T extends LocalStorageKey.Payouts
     ? PayoutsCache
-    : T extends LocalStorageKey.Nominations
-    ? NominationsCache
     : T extends
         | LocalStorageKey.CUSTOM_RPC_ENDPOINT
         | LocalStorageKey.NATIVE_TOKEN_SYMBOL

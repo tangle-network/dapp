@@ -19,7 +19,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { Validator } from '../../data/NominationsPayouts/useNominations';
+import { Validator } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { HeaderCell, StringCell } from '../tableCells';
 

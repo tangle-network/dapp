@@ -13,7 +13,7 @@ const useWaitingValidators = () => {
     )
   );
 
-  return useValidators(waitingValidatorAddresses, 'Waiting');
+  return useValidators(waitingValidatorAddresses, false);
 };
 
 export default useWaitingValidators;

@@ -18,9 +18,9 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   return (
     <div className="flex flex-col gap-2 col-span-2">
       <ValidatorListTable
-        data={validators}
-        selectedValidators={selectedValidators}
-        setSelectedValidators={setSelectedValidators}
+        validators={validators}
+        selectedValidatorAddresses={selectedValidators}
+        setSelectedValidatorAddresses={setSelectedValidators}
       />
 
       <Typography

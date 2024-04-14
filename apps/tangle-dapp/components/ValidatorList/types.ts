@@ -1,14 +1,14 @@
 import { Validator } from '../../types';
 
 export interface ValidatorListTableProps {
-  data: Validator[];
-  selectedValidators: string[];
-  setSelectedValidators: (selectedValidators: string[]) => void;
+  validators: Validator[];
+  selectedValidatorAddresses: string[];
+  setSelectedValidatorAddresses: (selectedValidators: string[]) => void;
 }
 
 export type SortBy = 'asc' | 'dsc';
 
-export type SortableKeys =
-  | 'effectiveAmountStaked'
-  | 'delegations'
-  | 'commission';
+export type SortableKeys = keyof Pick<
+  Validator,
+  'commission' | 'nominatorCount' | 'totalStakeAmount'
+>;

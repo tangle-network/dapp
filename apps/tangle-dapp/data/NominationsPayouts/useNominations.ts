@@ -1,24 +1,15 @@
 'use client';
 
-import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import { Validator } from '../../types/index';
 import Optional from '../../utils/Optional';
+import createValidator from '../../utils/staking/createValidator';
 import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
-
-export type Validator = {
-  address: string;
-  isActive: boolean;
-  identityName: string;
-  commission: BN;
-  selfStakeAmount: BN;
-  totalStakeAmount: BN;
-  nominatorCount: number;
-};
 
 const useNominations = () => {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -65,30 +56,13 @@ const useNominations = () => {
         (validatorAddress) => validatorAddress.toString() === nomineeAddress
       );
 
-      const identityName = identities.get(nomineeAddress) ?? nomineeAddress;
-
-      // TODO: Will it ever be unset if the nominee is a validator?
-      const commission =
-        prefs.get(nomineeAddress)?.commission.toBn() ?? BN_ZERO;
-
-      // TODO: Will it ever be unset if the nominee is a validator?
-      const exposure = exposures.get(nomineeAddress)?.value ?? null;
-
-      const selfStakeAmount = exposure?.own.toBn() ?? BN_ZERO;
-      const totalStakeAmount = exposure?.total.toBn() ?? BN_ZERO;
-
-      // TODO: Will it ever be unset if the nominee is a validator?
-      const nominatorCount = exposure?.nominatorCount.toNumber() ?? 0;
-
-      return {
+      return createValidator({
         address: nomineeAddress,
         isActive,
-        identityName,
-        commission,
-        selfStakeAmount,
-        totalStakeAmount,
-        nominatorCount,
-      };
+        identities,
+        prefs,
+        exposures,
+      });
     });
 
     return new Optional(nominees);

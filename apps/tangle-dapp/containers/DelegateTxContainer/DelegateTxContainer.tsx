@@ -55,12 +55,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     }
   })();
 
-  const {
-    isBondedOrNominating,
-    isLoading: isBondedOrNominatingLoading,
-    isError: isBondedOrNominatingError,
-  } = useIsBondedOrNominating();
-
+  const isBondedOrNominating = useIsBondedOrNominating();
   const { result: currentPayeeOpt } = useStakingRewardsDestination();
 
   const handleAmountToBondError = useCallback(
@@ -150,11 +145,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     }
   }, [closeModalAndReset, executeDelegateTx]);
 
-  if (
-    isBondedOrNominating == null ||
-    isBondedOrNominatingLoading ||
-    isBondedOrNominatingError
-  ) {
+  if (isBondedOrNominating == null) {
     return null;
   }
 

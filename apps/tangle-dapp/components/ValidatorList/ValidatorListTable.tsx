@@ -1,5 +1,6 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -21,68 +22,71 @@ import {
 } from '@webb-tools/webb-ui-components';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
-import { ContainerSkeleton } from '../../components';
 import { Validator } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
+import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import { SortableKeys, SortBy, ValidatorListTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
 export const ValidatorListTable: FC<ValidatorListTableProps> = ({
-  data,
-  selectedValidators,
-  setSelectedValidators,
+  validators,
+  selectedValidatorAddresses,
+  setSelectedValidatorAddresses,
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const [totalStakeSortBy, setTotalStakeSortBy] = useState<SortBy>('dsc');
   const [nominationsSortBy, setNominationsSortBy] = useState<SortBy>('dsc');
   const [commissionSortBy, setCommissionSortBy] = useState<SortBy>('dsc');
-  const [sortBy, setSortBy] = useState<SortableKeys>('effectiveAmountStaked');
+  const [sortBy, setSortBy] = useState<SortableKeys>('totalStakeAmount');
 
   const sortedData = useMemo(() => {
-    const selectedData = data.filter((validator) =>
-      selectedValidators.includes(validator.address)
-    );
-    const unselectedData = data.filter(
-      (validator) => !selectedValidators.includes(validator.address)
+    const selectedValidators = validators.filter((validator) =>
+      selectedValidatorAddresses.includes(validator.address)
     );
 
-    const sortData = (
-      data: Validator[],
+    const unselectedValidators = validators.filter(
+      (validator) => !selectedValidatorAddresses.includes(validator.address)
+    );
+
+    const sortValidators = (
+      validators: Validator[],
       sortBy: SortableKeys,
       sortOrder: SortBy
     ) => {
-      return [...data].sort((a, b) => {
+      return [...validators].sort((a, b) => {
         const valueA = sortOrder === 'asc' ? a[sortBy] : b[sortBy];
         const valueB = sortOrder === 'asc' ? b[sortBy] : a[sortBy];
-        return parseFloat(valueA) - parseFloat(valueB);
+
+        return new BN(valueA).cmp(new BN(valueB));
       });
     };
 
-    const sortedSelectedData = sortData(
-      selectedData,
+    const sortedSelectedValidators = sortValidators(
+      selectedValidators,
       sortBy,
-      sortBy === 'effectiveAmountStaked'
+      sortBy === 'totalStakeAmount'
         ? totalStakeSortBy
-        : sortBy === 'delegations'
+        : sortBy === 'nominatorCount'
         ? nominationsSortBy
         : commissionSortBy
     );
 
-    const sortedUnselectedData = sortData(
-      unselectedData,
+    const sortedUnselectedValidators = sortValidators(
+      unselectedValidators,
       sortBy,
-      sortBy === 'effectiveAmountStaked'
+      sortBy === 'totalStakeAmount'
         ? totalStakeSortBy
-        : sortBy === 'delegations'
+        : sortBy === 'nominatorCount'
         ? nominationsSortBy
         : commissionSortBy
     );
 
-    return [...sortedSelectedData, ...sortedUnselectedData];
+    return [...sortedSelectedValidators, ...sortedUnselectedValidators];
   }, [
-    data,
-    selectedValidators,
+    validators,
+    selectedValidatorAddresses,
     sortBy,
     totalStakeSortBy,
     nominationsSortBy,
@@ -104,16 +108,16 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
   const handleValidatorToggle = useCallback(
     (address: string, isSelected: boolean) => {
       if (isSelected) {
-        setSelectedValidators(
-          selectedValidators.filter(
+        setSelectedValidatorAddresses(
+          selectedValidatorAddresses.filter(
             (selectedValidator) => selectedValidator !== address
           )
         );
       } else {
-        setSelectedValidators([...selectedValidators, address]);
+        setSelectedValidatorAddresses([...selectedValidatorAddresses, address]);
       }
     },
-    [selectedValidators, setSelectedValidators]
+    [selectedValidatorAddresses, setSelectedValidatorAddresses]
   );
 
   const columns = [
@@ -128,11 +132,11 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
             <CheckBox
               wrapperClassName="!block !min-h-auto cursor-pointer"
               className="cursor-pointer"
-              isChecked={selectedValidators.includes(address)}
+              isChecked={selectedValidatorAddresses.includes(address)}
               onChange={() =>
                 handleValidatorToggle(
                   address,
-                  selectedValidators.includes(address)
+                  selectedValidatorAddresses.includes(address)
                 )
               }
             />
@@ -156,7 +160,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
         );
       },
     }),
-    columnHelper.accessor('effectiveAmountStaked', {
+    columnHelper.accessor('totalStakeAmount', {
       header: () => (
         <div className="flex items-center justify-center">
           <HeaderCell title="Total Staked" className="block flex-none" />
@@ -167,7 +171,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
               size="lg"
               onClick={() => {
                 setTotalStakeSortBy('dsc');
-                setSortBy('effectiveAmountStaked');
+                setSortBy('totalStakeAmount');
               }}
             />
           ) : (
@@ -176,7 +180,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
               size="lg"
               onClick={() => {
                 setTotalStakeSortBy('asc');
-                setSortBy('effectiveAmountStaked');
+                setSortBy('totalStakeAmount');
               }}
             />
           )}
@@ -184,11 +188,11 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
       ),
       cell: (props) => (
         <div className="flex items-center justify-center">
-          <Chip color="dark-grey">{props.getValue()}</Chip>
+          <Chip color="dark-grey">{formatTokenBalance(props.getValue())}</Chip>
         </div>
       ),
     }),
-    columnHelper.accessor('delegations', {
+    columnHelper.accessor('nominatorCount', {
       header: () => (
         <div className="flex items-center justify-center">
           <HeaderCell title="Nominations" className="block flex-none" />
@@ -199,7 +203,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
               size="lg"
               onClick={() => {
                 setNominationsSortBy('dsc');
-                setSortBy('delegations');
+                setSortBy('nominatorCount');
               }}
             />
           ) : (
@@ -208,7 +212,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
               size="lg"
               onClick={() => {
                 setNominationsSortBy('asc');
-                setSortBy('delegations');
+                setSortBy('nominatorCount');
               }}
             />
           )}

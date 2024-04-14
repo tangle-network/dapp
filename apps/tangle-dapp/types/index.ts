@@ -3,6 +3,8 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
+import { BN } from '@polkadot/util';
+
 export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
@@ -32,23 +34,12 @@ export enum DelegationsAndPayoutsTab {
 
 export type Validator = {
   address: string;
-  identityName: string;
-  selfStaked: string;
-  effectiveAmountStaked: string;
-  effectiveAmountStakedRaw: string;
-  delegations: string;
-  commission: string;
-  status: string;
-};
-
-export type Delegator = {
-  address: string;
-  identity: string;
-  selfStaked: string;
   isActive: boolean;
-  commission: string;
-  delegations: string;
-  effectiveAmountStaked: string;
+  identityName: string;
+  commission: BN;
+  selfStakeAmount: BN;
+  totalStakeAmount: BN;
+  nominatorCount: number;
 };
 
 export type NodeSpecification = {

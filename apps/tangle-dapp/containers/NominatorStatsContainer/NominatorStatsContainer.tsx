@@ -14,10 +14,11 @@ import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
+import useBalances from '../../data/balances/useBalances';
 import useIsBondedOrNominating from '../../hooks/useIsBondedOrNominating';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { NetworkFeature, PagePath } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -25,25 +26,20 @@ import { UnbondTxContainer } from '../UnbondTxContainer';
 import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 
 const NominatorStatsContainer: FC = () => {
-  const { activeAccount, loading: isActiveAccountLoading } = useWebContext();
-  const { nativeTokenSymbol } = useNetworkStore();
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
-  const networkFeatures = useNetworkFeatures();
 
-  // TODO: Do not default to an empty string; must handle the case where there is no active account explicitly.
-  const activeSubstrateAddress = useSubstrateAddress() ?? '';
+  const { activeAccount, loading: isActiveAccountLoading } = useWebContext();
+  const { nativeTokenSymbol } = useNetworkStore();
+  const networkFeatures = useNetworkFeatures();
+  const { free: freeBalance, error: balancesError } = useBalances();
 
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
-  const {
-    isBondedOrNominating,
-    isLoading: isBondedOrNominatingLoading,
-    isError: isBondedOrNominatingError,
-  } = useIsBondedOrNominating();
+  const isBondedOrNominating = useIsBondedOrNominating();
 
   return (
     <>
@@ -55,7 +51,12 @@ const NominatorStatsContainer: FC = () => {
             'border-2 border-mono-0 dark:border-mono-160'
           )}
         >
-          <NominatorStatsItem title="Free Balance" />
+          <NominatorStatsItem
+            title="Free Balance"
+            isError={balancesError !== null}
+          >
+            {freeBalance === null ? null : formatTokenBalance(freeBalance)}
+          </NominatorStatsItem>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
@@ -138,11 +139,7 @@ const NominatorStatsContainer: FC = () => {
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
-                    isDisabled={
-                      !activeAccount ||
-                      isBondedOrNominatingLoading ||
-                      isBondedOrNominatingError
-                    }
+                    isDisabled={!activeAccount || isBondedOrNominating === null}
                     onClick={() => setIsRebondModalOpen(true)}
                   >
                     Rebond
@@ -151,11 +148,7 @@ const NominatorStatsContainer: FC = () => {
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
-                    isDisabled={
-                      !activeAccount ||
-                      isBondedOrNominatingLoading ||
-                      isBondedOrNominatingError
-                    }
+                    isDisabled={!activeAccount || isBondedOrNominating === null}
                     onClick={() => setIsWithdrawUnbondedModalOpen(true)}
                   >
                     Withdraw

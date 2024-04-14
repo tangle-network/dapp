@@ -89,7 +89,7 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [activeAccount?.address]);
 
   const nomineesOpt = useNominations();
-  const { isBondedOrNominating } = useIsBondedOrNominating();
+  const isBondedOrNominating = useIsBondedOrNominating();
   const { data: payoutsData } = usePayouts(substrateAddress);
 
   const currentNominationAddresses = useMemo(() => {

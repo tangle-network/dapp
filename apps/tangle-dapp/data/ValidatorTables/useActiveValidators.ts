@@ -8,7 +8,7 @@ const useActiveValidators = () => {
     useCallback((api) => api.query.session.validators(), [])
   );
 
-  return useValidators(activeValidatorAddresses, 'Active');
+  return useValidators(activeValidatorAddresses, true);
 };
 
 export default useActiveValidators;
