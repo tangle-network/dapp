@@ -17,10 +17,7 @@ const useVestTx = (notifyStatusUpdates?: boolean) => {
     precompile: Precompile.VESTING,
     notifyStatusUpdates,
     evmTxFactory: { functionName: 'vest', arguments: [] },
-    substrateTxFactory: useCallback(
-      (api) => Promise.resolve(api.tx.vesting.vest()),
-      []
-    ),
+    substrateTxFactory: useCallback((api) => api.tx.vesting.vest(), []),
   });
 };
 
