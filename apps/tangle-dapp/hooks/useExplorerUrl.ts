@@ -8,6 +8,7 @@ export enum ExplorerType {
   EVM = 'web3',
 }
 
+// TODO: change name to useTxExplorerUrl
 const useExplorerUrl = () => {
   const { network } = useNetworkStore();
 

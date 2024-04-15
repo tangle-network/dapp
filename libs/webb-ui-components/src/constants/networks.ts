@@ -1,6 +1,9 @@
 import {
   SUBQUERY_ENDPOINT,
-  TANGLE_RPC_ENDPOINT,
+  TANGLE_MAINNET_RPC_ENDPOINT,
+  TANGLE_MAINNET_EVM_EXPLORER_URL,
+  TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  TANGLE_TESTNET_RPC_ENDPOINT,
   TANGLE_TESTNET_EVM_EXPLORER_URL,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '.';
@@ -40,17 +43,15 @@ export type Network = {
   httpRpcEndpoint?: string;
 };
 
-const TANGLE_MAINNET_WS_RPC_ENDPOINT = 'wss://rpc.tangle.tools';
-
 export const TANGLE_MAINNET_NETWORK: Network = {
   id: NetworkId.TANGLE_MAINNET,
   chainId: 5845,
   name: 'Tangle Mainnet',
   nodeType: 'standalone',
-  wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  wsRpcEndpoint: TANGLE_MAINNET_RPC_ENDPOINT,
   httpRpcEndpoint: 'https://rpc.tangle.tools',
-  polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_WS_RPC_ENDPOINT}#/explorer`,
-  evmExplorerUrl: 'https://explorer.tangle.tools/',
+  polkadotExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
 };
 
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
@@ -60,7 +61,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
   httpRpcEndpoint: 'https://testnet-rpc.tangle.tools',
-  wsRpcEndpoint: TANGLE_RPC_ENDPOINT,
+  wsRpcEndpoint: TANGLE_TESTNET_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
 };
@@ -76,10 +77,11 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   subqueryEndpoint: 'http://localhost:4000/graphql',
   wsRpcEndpoint: 'ws://127.0.0.1:9944',
   httpRpcEndpoint: 'http://127.0.0.1:9944',
+  // TODO: there is no official explorer for the local dev network, using Polkadot.{js} dashboard
   polkadotExplorerUrl:
     'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
   // TODO: Use a generic EVM block explorer that supports passing in an RPC url. For now, this isn't a priority since this is the case only for the local development network, and this URL is only used for convenience.
-  evmExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_WS_RPC_ENDPOINT}#/explorer`,
+  evmExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_RPC_ENDPOINT}#/explorer`,
 };
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {

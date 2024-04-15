@@ -52,8 +52,13 @@ export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 export const TANGLE_TESTNET_EVM_EXPLORER_URL =
   'https://testnet-explorer.tangle.tools';
 
+export const TANGLE_MAINNET_EVM_EXPLORER_URL = 'https://explorer.tangle.tools/';
+
 export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
-  'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer';
+  'https://tangle-testnet.statescan.io/';
+
+export const TANGLE_MAINNET_NATIVE_EXPLORER_URL =
+  'https://tangle.statescan.io/';
 
 export const WEBB_DAPP_NEW_ISSUE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new/choose';
@@ -79,7 +84,9 @@ export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
 export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
 export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 
-export const TANGLE_RPC_ENDPOINT = 'wss://testnet-rpc.tangle.tools';
+export const TANGLE_TESTNET_RPC_ENDPOINT = 'wss://testnet-rpc.tangle.tools';
+export const TANGLE_MAINNET_RPC_ENDPOINT = 'wss://rpc.tangle.tools';
+
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
@@ -11,7 +12,14 @@ import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 
 const RecentTxContainer: FC = () => {
   const { network } = useNetworkStore();
-  const { isEvm } = useAgnosticAccountInfo();
+  const { isEvm, substrateAddress, evmAddress } = useAgnosticAccountInfo();
+
+  const accountExplorerUrl = getExplorerURI(
+    isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl,
+    (isEvm ? evmAddress : substrateAddress) ?? '',
+    'address',
+    isEvm ? 'web3' : 'polkadot'
+  ).toString();
 
   return (
     <GlassCard className="flex flex-col gap-3 sm:gap-0">
@@ -22,7 +30,7 @@ const RecentTxContainer: FC = () => {
           color="primary"
           className="uppercase"
           target="_blank"
-          href={isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl}
+          href={accountExplorerUrl}
         >
           Open Explorer
         </Button>

@@ -46,7 +46,7 @@ const columns = [
     cell: (props) => {
       const txHash = props.getValue();
 
-      // TODO: This should be based off the active network, cannot assume it is always the testnet!
+      // TODO: get the network from store, move this into the component
       const txExplorerURI = TANGLE_BLOCK_EXPLORER
         ? getExplorerURI(
             TANGLE_BLOCK_EXPLORER,
