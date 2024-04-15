@@ -71,7 +71,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         !payoutValidatorsAndEras.find(
           (v) =>
             v.validatorAddress === payout.validator.address &&
-            v.era === payout.era.toString()
+            v.era === payout.era
         )
     );
 

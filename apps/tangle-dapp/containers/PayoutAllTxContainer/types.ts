@@ -2,7 +2,7 @@ import { Payout } from '../../types';
 
 export type PayoutTxProps = {
   validatorAddress: string;
-  era: string;
+  era: number;
 };
 
 export type PayoutAllTxContainerProps = {

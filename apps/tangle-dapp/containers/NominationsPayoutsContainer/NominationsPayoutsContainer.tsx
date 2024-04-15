@@ -137,7 +137,7 @@ const DelegationsPayoutsContainer: FC = () => {
     () =>
       payouts.map((payout) => ({
         validatorAddress: payout.validator.address,
-        era: payout.era.toString(),
+        era: payout.era,
       })),
     [payouts]
   );

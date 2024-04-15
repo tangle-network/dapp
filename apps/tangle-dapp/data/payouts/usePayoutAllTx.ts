@@ -13,7 +13,7 @@ import { evmToSubstrateAddress } from '../../utils';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 
 export type PayoutAllTxContext = {
-  validatorEraPairs: { validatorAddress: string; era: string }[];
+  validatorEraPairs: { validatorAddress: string; era: number }[];
 };
 
 const STAKING_INTERFACE = new ethers.utils.Interface(STAKING_PRECOMPILE_ABI);
@@ -31,7 +31,7 @@ const usePayoutAllTx = () => {
             gasLimit: 0,
             callData: STAKING_INTERFACE.encodeFunctionData('payoutStakers', [
               validatorEvmAddress,
-              Number(era),
+              era,
             ]),
           };
         }
