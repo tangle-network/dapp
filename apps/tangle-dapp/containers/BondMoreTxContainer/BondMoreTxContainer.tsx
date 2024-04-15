@@ -2,7 +2,6 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -17,7 +16,6 @@ import Link from 'next/link';
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -33,7 +31,6 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
@@ -86,11 +83,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setIsBondMoreTxLoading(true);
 
     try {
-      if (amountToBond === null) {
-        throw new Error('Amount to bond more is required.');
-      }
+      if (amountToBond === null) return;
       const bondingAmount = +formatBnToDisplayAmount(amountToBond);
-      const hash = await executeTx(
+      await executeTx(
         () => bondExtraTokensEvm(walletAddress, bondingAmount),
         () =>
           bondExtraTokensSubstrate(rpcEndpoint, walletAddress, bondingAmount),
@@ -98,28 +93,15 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         'Failed to bond extra tokens!'
       );
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash: hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsBondMoreTxLoading(false);
     }
   }, [
     amountToBond,
     closeModal,
     executeTx,
     rpcEndpoint,
-    setTxConfirmationState,
     walletAddress,
     nativeTokenSymbol,
   ]);
