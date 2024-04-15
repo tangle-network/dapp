@@ -8,7 +8,8 @@ import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTempla
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type FC } from 'react';
 
-import useExplorerUrl, { ExplorerType } from '../../../hooks/useExplorerUrl';
+import useExplorerUrl from '../../../hooks/useExplorerUrl';
+import { ExplorerType } from '../../../types';
 
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
   const getExplorerUrl = useExplorerUrl();

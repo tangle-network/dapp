@@ -27,6 +27,7 @@ export const getExplorerURI = (
         variant === 'tx'
           ? `#/extrinsics/${addOrTxHash}`
           : `#/accounts/${
+            // encode address for all available substrate chains
             typeof substrateExplorerAndChainIdMap[explorerUri] === 'number'
               ? encodeAddress(
                   addOrTxHash,

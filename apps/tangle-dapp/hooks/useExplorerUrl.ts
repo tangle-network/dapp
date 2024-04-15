@@ -2,11 +2,7 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 import { useCallback } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
-
-export enum ExplorerType {
-  Substrate = 'polkadot',
-  EVM = 'web3',
-}
+import { ExplorerType } from '../types';
 
 // TODO: change name to useTxExplorerUrl
 const useExplorerUrl = () => {

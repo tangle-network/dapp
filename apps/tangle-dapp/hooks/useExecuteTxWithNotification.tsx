@@ -4,9 +4,10 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
+import { ExplorerType } from '../types';
 import ensureError from '../utils/ensureError';
 import { evmPublicClient } from '../utils/evm';
-import useExplorerUrl, { ExplorerType } from './useExplorerUrl';
+import useExplorerUrl from './useExplorerUrl';
 
 const useExecuteTxWithNotification = () => {
   const { activeWallet } = useWebContext();

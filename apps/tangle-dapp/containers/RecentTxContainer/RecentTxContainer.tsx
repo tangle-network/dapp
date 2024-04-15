@@ -9,6 +9,7 @@ import { FC } from 'react';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useNetworkStore from '../../context/useNetworkStore';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import { ExplorerType } from '../../types';
 
 const RecentTxContainer: FC = () => {
   const { network } = useNetworkStore();
@@ -18,7 +19,7 @@ const RecentTxContainer: FC = () => {
     isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl,
     (isEvm ? evmAddress : substrateAddress) ?? '',
     'address',
-    isEvm ? 'web3' : 'polkadot'
+    isEvm ? ExplorerType.EVM : ExplorerType.Substrate
   ).toString();
 
   return (
