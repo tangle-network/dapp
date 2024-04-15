@@ -23,9 +23,10 @@ import {
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { Validator } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
+import calculateCommission from '../../utils/calculateCommission';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { SortableKeys, SortBy, ValidatorListTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
@@ -188,7 +189,9 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
       ),
       cell: (props) => (
         <div className="flex items-center justify-center">
-          <Chip color="dark-grey">{formatTokenBalance(props.getValue())}</Chip>
+          <Chip color="dark-grey">
+            <TokenAmountCell amount={props.getValue()} />
+          </Chip>
         </div>
       ),
     }),
@@ -252,7 +255,9 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
       ),
       cell: (props) => (
         <div className="flex items-center justify-center">
-          <Chip color="dark-grey">{Number(props.getValue()).toFixed(2)}%</Chip>
+          <Chip color="dark-grey">
+            {calculateCommission(props.getValue()).toFixed(2)}%
+          </Chip>
         </div>
       ),
     }),
