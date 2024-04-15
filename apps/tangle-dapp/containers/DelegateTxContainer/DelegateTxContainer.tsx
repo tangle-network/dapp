@@ -13,7 +13,7 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback, useState } from 'react';
+import { type FC, useCallback, useMemo, useState } from 'react';
 
 import { TxConfirmationModal } from '../../components/TxConfirmationModal';
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
@@ -27,6 +27,7 @@ import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { PaymentDestination } from '../../types';
 import {
+  batchNominateEvm,
   bondExtraTokens as bondExtraTokensEvm,
   bondTokens as bondTokensEvm,
   nominateValidators as nominateValidatorsEvm,
@@ -34,6 +35,7 @@ import {
 } from '../../utils/evm';
 import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import {
+  batchNominateSubstrate,
   bondExtraTokens as bondExtraTokensSubstrate,
   bondTokens as bondTokensSubstrate,
   nominateValidators as nominateValidatorsSubstrate,
@@ -48,7 +50,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
+  const { activeAccount, activeWallet } = useWebContext();
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
@@ -122,6 +124,10 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     [setHasAmountToBondError]
   );
 
+  const walletType = useMemo(() => {
+    return activeWallet?.platform === 'EVM' ? 'EVM' : 'Substrate';
+  }, [activeWallet?.platform]);
+
   const continueToSelectDelegatesStep = isFirstTimeNominator
     ? amountToBond !== null && amountToBond.gt(BN_ZERO)
     : true &&
@@ -156,45 +162,65 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       }
       const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       if (isFirstTimeNominator) {
-        await executeTx(
-          () =>
-            bondTokensEvm(
-              walletAddress,
-              bondingAmount,
-              PaymentDestination.STASH
-            ),
-          () =>
-            bondTokensSubstrate(
-              rpcEndpoint,
-              walletAddress,
-              bondingAmount,
-              PaymentDestination.STASH
-            ),
-          `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
-          'Failed to bond tokens!'
-        );
-        await executeTx(
-          () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
-          () =>
-            updatePaymentDestinationSubstrate(
-              rpcEndpoint,
-              walletAddress,
-              paymentDestination
-            ),
-          `Successfully updated payment destination to ${paymentDestination}.`,
-          'Failed to update payment destination!'
-        );
-        const hash = await executeTx(
-          () => nominateValidatorsEvm(walletAddress, selectedValidators),
-          () =>
-            nominateValidatorsSubstrate(
-              rpcEndpoint,
-              walletAddress,
-              selectedValidators
-            ),
-          `Successfully nominated ${selectedValidators.length} validators.`,
-          'Failed to nominate validators!'
-        );
+        // await executeTx(
+        //   () =>
+        //     bondTokensEvm(
+        //       walletAddress,
+        //       bondingAmount,
+        //       PaymentDestination.STASH
+        //     ),
+        //   () =>
+        //     bondTokensSubstrate(
+        //       rpcEndpoint,
+        //       walletAddress,
+        //       bondingAmount,
+        //       PaymentDestination.STASH
+        //     ),
+        //   `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
+        //   'Failed to bond tokens!'
+        // );
+        // await executeTx(
+        //   () => updatePaymentDestinationEvm(walletAddress, paymentDestination),
+        //   () =>
+        //     updatePaymentDestinationSubstrate(
+        //       rpcEndpoint,
+        //       walletAddress,
+        //       paymentDestination
+        //     ),
+        //   `Successfully updated payment destination to ${paymentDestination}.`,
+        //   'Failed to update payment destination!'
+        // );
+        // const hash = await executeTx(
+        //   () => nominateValidatorsEvm(walletAddress, selectedValidators),
+        //   () =>
+        //     nominateValidatorsSubstrate(
+        //       rpcEndpoint,
+        //       walletAddress,
+        //       selectedValidators
+        //     ),
+        //   `Successfully nominated ${selectedValidators.length} validators.`,
+        //   'Failed to nominate validators!'
+        // );
+
+        let hash = '';
+
+        if (walletType === 'EVM') {
+          console.debug('batchNominateEvm');
+          hash = await batchNominateEvm(
+            walletAddress,
+            bondingAmount,
+            paymentDestination,
+            selectedValidators
+          );
+        } else if (walletType === 'Substrate') {
+          hash = await batchNominateSubstrate(
+            rpcEndpoint,
+            walletAddress,
+            bondingAmount,
+            paymentDestination,
+            selectedValidators
+          );
+        }
         setTxnStatus({ status: 'success', hash });
       } else {
         if (bondingAmount > 0) {
@@ -263,6 +289,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     rpcEndpoint,
     selectedValidators,
     walletAddress,
+    walletType,
   ]);
 
   const submitAndSignTx = useCallback(async () => {
