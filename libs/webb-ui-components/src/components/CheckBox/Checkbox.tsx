@@ -56,7 +56,11 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const inputDisabledClsx =
     'disabled:border-mono-60 disabled:cursor-not-allowed disabled:bg-mono-0 disabled:shadow-none dark:disabled:bg-mono-140 dark:disabled:border-mono-120';
 
+  const inputCursorClsx =
+    'cursor-pointer disabled:cursor-not-allowed peer-disabled:cursor-not-allowed';
+
   const mergedInputClsx = twMerge(
+    inputCursorClsx,
     inputClsx,
     inputHoverClsx,
     inputCheckedClsx,
@@ -70,6 +74,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
     labelVariant,
     spacingClassName
   );
+
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);
 
   return (
@@ -83,6 +88,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
         disabled={isDisabled}
         {...inputProps}
       />
+
       {children && <label className={mergedLabelClsx}>{children}</label>}
 
       {info && (
@@ -92,6 +98,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
               <InformationLine className="!fill-current pointer-events-none" />
             </span>
           </TooltipTrigger>
+
           <TooltipBody
             title={info.title}
             className="max-w-[185px] break-normal"

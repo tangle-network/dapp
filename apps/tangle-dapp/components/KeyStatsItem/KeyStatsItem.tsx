@@ -50,9 +50,17 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
   }, [error]);
 
   return (
-    <div className={twMerge('px-2 py-2 space-y-2 md:px-2 lg:px-4', className)}>
+    <div
+      className={twMerge(
+        'flex flex-col gap-2 justify-center px-2 py-2 md:px-2 lg:px-4',
+        className
+      )}
+    >
       <div className="flex items-center gap-0.5">
-        <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
+        <Typography
+          variant="body1"
+          className="text-mono-140 dark:text-mono-40 break-all xl:whitespace-nowrap"
+        >
           {title}
         </Typography>
 

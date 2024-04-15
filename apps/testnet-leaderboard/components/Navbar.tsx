@@ -1,6 +1,7 @@
 'use client';
 
 import { AccordionTrigger } from '@radix-ui/react-accordion';
+import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
 import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
 import {
   Accordion,
@@ -16,7 +17,6 @@ import {
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import {
   TANGLE_MKT_URL,
-  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   WEBB_BLOG_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';

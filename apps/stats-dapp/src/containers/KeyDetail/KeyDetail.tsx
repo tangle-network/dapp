@@ -28,7 +28,7 @@ import {
   TitleWithInfo,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { POLKADOT_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
+import { POLKADOT_JS_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
@@ -250,7 +250,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       title={status}
                       time={at}
                       blockHash={hash}
-                      externalUrl={POLKADOT_EXPLORER_URL + hash}
+                      externalUrl={POLKADOT_JS_EXPLORER_URL + hash}
                     />
                   );
                 }
@@ -262,7 +262,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       title={status}
                       time={at}
                       blockHash={hash}
-                      externalUrl={POLKADOT_EXPLORER_URL + hash}
+                      externalUrl={POLKADOT_JS_EXPLORER_URL + hash}
                     />
                   );
                 }
@@ -274,7 +274,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       title={status}
                       time={at}
                       blockHash={hash}
-                      externalUrl={POLKADOT_EXPLORER_URL + hash}
+                      externalUrl={POLKADOT_JS_EXPLORER_URL + hash}
                     />
                   );
                 }

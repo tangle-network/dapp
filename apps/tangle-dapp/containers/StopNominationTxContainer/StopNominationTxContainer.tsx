@@ -15,7 +15,6 @@ import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/con
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -30,7 +29,6 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const { rpcEndpoint } = useNetworkStore();
 
   const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
@@ -70,36 +68,17 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
     setIsStopNominationTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         () => stopNominationEvm(walletAddress),
         () => stopNominationSubstrate(rpcEndpoint, walletAddress),
         `Successfully stopped nomination!`,
         'Failed to stop nomination!'
       );
-
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsStopNominationTxLoading(false);
     }
-  }, [
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    setTxConfirmationState,
-    walletAddress,
-  ]);
+  }, [closeModal, executeTx, rpcEndpoint, walletAddress]);
 
   return (
     <Modal open>

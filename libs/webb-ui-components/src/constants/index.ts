@@ -1,4 +1,8 @@
 import {
+  TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  TANGLE_MAINNET_EVM_EXPLORER_URL,
+} from '@webb-tools/dapp-config/constants/tangle';
+import {
   Common2Icon,
   DiscordFill,
   GithubFill,
@@ -49,12 +53,6 @@ export const TANGLE_WHITEPAPER_URL =
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
-export const TANGLE_TESTNET_EVM_EXPLORER_URL =
-  'https://testnet-explorer.tangle.tools';
-
-export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
-  'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer';
-
 export const WEBB_DAPP_NEW_ISSUE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new/choose';
 export const WEBB_FAUCET_URL = 'https://faucet.tangle.tools';
@@ -62,12 +60,13 @@ export const WEBB_DISCORD_CHANNEL_URL =
   'https://discord.com/channels/833784453251596298/1183826417625075753';
 
 export const GITHUB_REQUEST_FEATURE_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=';
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=feature+%E2%9E%95&projects=&template=FEATURE_REQUEST.yml&title=%5BFEAT%5D+%3Ctitle%3E';
 
 export const GITHUB_BUG_REPORT_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=bug_report.md&title=%5BBUG%5D+';
+  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=BUG_REPORT.yml&title=%5BBUG%5D+%3Ctitle%3E';
 
-export const POLKADOT_EXPLORER_URL =
+// TODO: remove this, only use in the old stats dapp
+export const POLKADOT_JS_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/explorer/query';
 
 export const FOLLOW_WEBB_TWITTER_URL =
@@ -79,7 +78,6 @@ export const DKG_STATS_KEYS_URL = `${DKG_STATS_URL}/#/keys`;
 export const DKG_STATS_AUTHORITIES_URL = `${DKG_STATS_URL}/#/authorities`;
 export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 
-export const TANGLE_RPC_ENDPOINT = 'wss://testnet-rpc.tangle.tools';
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 
@@ -240,13 +238,13 @@ export const footerNavs: FooterNavsType = {
   ],
   network: [
     {
-      name: 'Block Explorer',
-      href: TANGLE_TESTNET_EVM_EXPLORER_URL,
+      name: 'Tangle EVM Explorer',
+      href: TANGLE_MAINNET_EVM_EXPLORER_URL,
       ...commonExternalProps,
     },
     {
-      name: 'polkadot explorer',
-      href: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+      name: 'Tangle Native explorer',
+      href: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
       ...commonExternalProps,
     },
   ],

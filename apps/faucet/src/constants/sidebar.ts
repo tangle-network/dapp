@@ -1,4 +1,8 @@
 import {
+  TANGLE_TESTNET_EVM_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+} from '@webb-tools/dapp-config/constants/tangle';
+import {
   AppsLine,
   DocumentationIcon,
   FaucetIcon,
@@ -18,8 +22,6 @@ import {
   DKG_STATS_PROPOSALS_URL,
   TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
-  TANGLE_TESTNET_EVM_EXPLORER_URL,
-  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const items: SideBarItemProps[] = [

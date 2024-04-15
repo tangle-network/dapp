@@ -92,16 +92,16 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
             <div
               className={twMerge(
                 'group select-none rounded-full',
-                isDisabled ? 'pointer-events-none' : '',
+                isDisabled && 'pointer-events-none',
                 !isExpanded ? 'px-3 py-2' : 'flex items-center',
                 isActive && (subItems.length === 0 || !isExpanded)
                   ? 'text-mono-200 dark:text-mono-0'
                   : 'text-mono-100 dark:text-mono-100',
-                isExpanded ? 'hover:bg-mono-20 dark:hover:bg-mono-160' : '',
-                isExpanded ? 'justify-between px-1 py-3' : 'justify-center',
-                isActive && (subItems.length === 0 || !isExpanded)
-                  ? 'bg-mono-20 dark:bg-mono-160'
-                  : ''
+                isExpanded && 'hover:bg-mono-20 dark:hover:bg-mono-160',
+                isExpanded ? 'justify-between px-4 py-3' : 'justify-center',
+                isActive &&
+                  (subItems.length === 0 || !isExpanded) &&
+                  'bg-mono-20 dark:bg-mono-160'
               )}
             >
               <div

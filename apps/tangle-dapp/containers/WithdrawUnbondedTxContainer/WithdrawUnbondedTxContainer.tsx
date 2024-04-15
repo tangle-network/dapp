@@ -1,5 +1,6 @@
 'use client';
 
+import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
@@ -8,11 +9,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
+import { BondedTokensBalanceInfo } from '../../components/BondedTokensBalanceInfo';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -22,7 +24,6 @@ import { withdrawUnbondedTokens as withdrawUnbondedTokensSubstrate } from '../..
 import { getSlashingSpans } from '../../utils/polkadot';
 import { RebondTxContainer } from '../RebondTxContainer';
 import { WithdrawUnbondedTxContainerProps } from './types';
-import WithdrawUnbonded from './WithdrawUnbonded';
 
 const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   isModalOpen,
@@ -31,7 +32,6 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
   const { rpcEndpoint } = useNetworkStore();
 
@@ -68,7 +68,8 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
       });
     }
 
-    if (!totalUnbondedAndUnbondingAmountData?.value1?.unbonded) return NaN;
+    if (!totalUnbondedAndUnbondingAmountData?.value1?.unbonded)
+      return undefined;
 
     return totalUnbondedAndUnbondingAmountData.value1.unbonded;
   }, [
@@ -78,8 +79,8 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   ]);
 
   const continueToSignAndSubmitTx = useMemo(() => {
-    return !isNaN(totalUnbondedAmountAvailableToWithdraw) &&
-      totalUnbondedAmountAvailableToWithdraw > 0 &&
+    return totalUnbondedAmountAvailableToWithdraw &&
+      totalUnbondedAmountAvailableToWithdraw.gt(BN_ZERO) &&
       walletAddress !== '0x0'
       ? true
       : false;
@@ -94,7 +95,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
     setIsWithdrawUnbondedTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         async () => {
           const slashingSpans = await getSlashingSpans(
             rpcEndpoint,
@@ -122,30 +123,11 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         'Failed to withdraw tokens!'
       );
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsWithdrawUnbondedTxLoading(false);
     }
-  }, [
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    setTxConfirmationState,
-    substrateAddress,
-    walletAddress,
-  ]);
+  }, [closeModal, executeTx, rpcEndpoint, substrateAddress, walletAddress]);
 
   const onRebondClick = () => {
     closeModal();
@@ -164,15 +146,28 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
             Withdraw Funds
           </ModalHeader>
 
-          <div className="p-9">
-            <WithdrawUnbonded
-              unbondedAmount={
-                totalUnbondedAndUnbondingAmountData?.value1?.unbonded ?? 0
-              }
-              unbondingAmount={
-                totalUnbondedAndUnbondingAmountData?.value1?.unbonding ?? 0
-              }
-            />
+          <div className="p-9 space-y-6">
+            <Typography variant="body1" fw="normal">
+              {`Upon successful withdrawal, the funds will be moved from the 'unbonded' state to your account's available balance.`}
+            </Typography>
+
+            <div className="flex flex-col gap-2">
+              <BondedTokensBalanceInfo
+                type="unbonded"
+                value={
+                  totalUnbondedAndUnbondingAmountData?.value1?.unbonded ??
+                  BN_ZERO
+                }
+              />
+
+              <BondedTokensBalanceInfo
+                type="unbonding"
+                value={
+                  totalUnbondedAndUnbondingAmountData?.value1?.unbonding ??
+                  BN_ZERO
+                }
+              />
+            </div>
           </div>
 
           <ModalFooter className="px-8 py-6 flex flex-col gap-1">

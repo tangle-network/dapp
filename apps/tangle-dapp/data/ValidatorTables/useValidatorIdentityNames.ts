@@ -11,7 +11,7 @@ import { map } from 'rxjs';
 import useEntryMap from '../../hooks/useEntryMap';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
-const extractNameFromInfo = (
+export const extractNameFromInfo = (
   info: PalletIdentityLegacyIdentityInfo
 ): string | null => {
   const displayNameJson = info.display.toString();
@@ -36,10 +36,7 @@ const mapIdentitiesToNames = (
   ][]
 ): [string, string | null][] =>
   identities.map(([address, identityOpt]) => {
-    const info: PalletIdentityLegacyIdentityInfo | null = identityOpt.isNone
-      ? null
-      : // TODO: Substrate types are outdated; awaiting fix. Temporarily using `any`.
-        (identityOpt.unwrap() as any).info;
+    const info = identityOpt.isNone ? null : identityOpt.unwrap()[0].info;
 
     return [
       address.args[0].toString(),

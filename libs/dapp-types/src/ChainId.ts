@@ -54,6 +54,11 @@ export enum PresetTypedChainId {
     EVMChainId.PolygonTestnet
   ),
 
+  TangleMainnetNative = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.TangleMainnetNative
+  ),
+
   TangleTestnetNative = calculateTypedChainId(
     ChainType.Substrate,
     SubstrateChainId.TangleTestnetNative
@@ -100,6 +105,11 @@ export enum PresetTypedChainId {
   TangleTestnetEVM = calculateTypedChainId(
     ChainType.EVM,
     EVMChainId.TangleTestnetEVM
+  ),
+
+  TangleMainnetEVM = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TangleMainnetEVM
   ),
 }
 

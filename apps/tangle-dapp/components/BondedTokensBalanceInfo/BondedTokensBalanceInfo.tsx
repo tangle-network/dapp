@@ -3,6 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { BondedTokensBalanceInfoProps } from './types';
 
 export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
@@ -22,7 +23,7 @@ export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
       </div>
 
       <Typography variant="body1" fw="normal">
-        {value} {nativeTokenSymbol}
+        {formatTokenBalance(value, nativeTokenSymbol)}
       </Typography>
     </div>
   );

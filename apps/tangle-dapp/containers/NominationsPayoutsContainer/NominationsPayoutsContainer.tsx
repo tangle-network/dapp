@@ -14,11 +14,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
+import { DelegatorTable, TableStatus } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useNetworkState from '../../hooks/useNetworkState';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
 import { evmToSubstrateAddress } from '../../utils';
@@ -50,6 +50,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+
+  const { network } = useNetworkState();
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
@@ -90,31 +92,24 @@ const DelegationsPayoutsContainer: FC = () => {
     return delegatorsData.delegators.map((delegator) => delegator.address);
   }, [delegatorsData?.delegators]);
 
-  const { valueAfterMount: cachedPayouts } = useLocalStorage(
-    LocalStorageKey.Payouts,
-    true
-  );
+  // const { valueAfterMount: cachedPayouts } = useLocalStorage(
+  //   LocalStorageKey.Payouts,
+  //   true
+  // );
 
-  const { valueAfterMount: cachedNominations } = useLocalStorage(
-    LocalStorageKey.Nominations,
-    true
-  );
-
-  const fetchedPayouts = useMemo(() => {
-    if (payoutsData !== null) {
-      return payoutsData.payouts;
-    } else if (cachedPayouts) {
-      return cachedPayouts[substrateAddress] ?? [];
-    }
-  }, [cachedPayouts, payoutsData, substrateAddress]);
+  // const fetchedPayouts = useMemo(() => {
+  //   if (payoutsData !== null) {
+  //     return payoutsData.payouts;
+  //   } else if (cachedPayouts) {
+  //     return cachedPayouts[substrateAddress] ?? [];
+  //   }
+  // }, [cachedPayouts, payoutsData, substrateAddress]);
 
   const fetchedNominations = useMemo(() => {
     if (delegatorsData !== null) {
       return delegatorsData.delegators;
-    } else if (cachedNominations) {
-      return cachedNominations[substrateAddress] ?? [];
     }
-  }, [cachedNominations, delegatorsData, substrateAddress]);
+  }, [delegatorsData]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -177,6 +172,7 @@ const DelegationsPayoutsContainer: FC = () => {
               <div>
                 <Button
                   variant="utility"
+                  size="sm"
                   isDisabled={payouts.length === 0}
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
@@ -214,11 +210,7 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : (
             <DelegatorTable
-              data={
-                fetchedNominations && fetchedNominations.length > 0
-                  ? fetchedNominations
-                  : []
-              }
+              data={fetchedNominations ?? []}
               pageSize={PAGE_SIZE}
             />
           )}
@@ -226,7 +218,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
         {/* Payouts Table */}
         <TabContent value={DelegationsAndPayoutsTab.PAYOUTS} aria-disabled>
-          {!activeAccount ? (
+          {/* {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
               description="Connect your wallet to view and manage your staking details."
@@ -255,7 +247,19 @@ const DelegationsPayoutsContainer: FC = () => {
               pageSize={PAGE_SIZE}
               updateData={setUpdatedPayouts}
             />
-          )}
+          )} */}
+
+          <TableStatus
+            icon="🚧"
+            title="Payouts Coming Soon"
+            description="The payouts feature for EVM and Substrate users is currently under active development. Meanwhile, Substrate users can view and manage payouts via the Polkadot/Substrate Portal."
+            buttonText="Open Explorer"
+            buttonProps={{
+              // TODO: Ideally, get or build this URL straight from the network object instead of hardcoding it here.
+              href: `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking/payout`,
+              target: '_blank',
+            }}
+          />
         </TabContent>
       </TableAndChartTabs>
 

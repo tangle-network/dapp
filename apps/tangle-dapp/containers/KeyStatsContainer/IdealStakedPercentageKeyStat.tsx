@@ -11,7 +11,7 @@ const IdealStakedPercentageKeyStat: FC = () => {
   return (
     <KeyStatsItem
       title="Ideal Staked"
-      tooltip="The ideal % of all network tokens that should be staked."
+      tooltip="Ideal proportion of tokens staked to secure the network and sustain active token trade and usage."
       className="!border-b-0"
       suffix="%"
       isLoading={isLoading}

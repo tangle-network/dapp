@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   InputField,
@@ -14,7 +13,6 @@ import {
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
@@ -31,7 +29,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { rpcEndpoint } = useNetworkStore();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
@@ -69,7 +66,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     setIsPayoutAllTxLoading(true);
 
     try {
-      const hash = await executeTx(
+      await executeTx(
         () => batchPayoutStakersEvm(walletAddress, payoutValidatorsAndEras),
         () =>
           batchPayoutStakersSubstrate(
@@ -91,20 +88,8 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       );
 
       updatePayouts(updatedPayouts);
-
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash: hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
     } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
+      setIsPayoutAllTxLoading(false);
     } finally {
       closeModal();
     }
@@ -112,7 +97,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     executeTx,
     payouts,
     updatePayouts,
-    setTxConfirmationState,
     walletAddress,
     payoutValidatorsAndEras,
     rpcEndpoint,

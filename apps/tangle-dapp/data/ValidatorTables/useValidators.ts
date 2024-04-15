@@ -19,10 +19,14 @@ export const useValidators = (
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
   const { nativeTokenSymbol } = useNetworkStore();
-
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
+
+  const { data: nominations } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.nominators.entries(), [])
+  );
+
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
       (api) =>
@@ -32,11 +36,7 @@ export const useValidators = (
       [currentEra]
     )
   );
-  const { data: nominations } = usePolkadotApiRx(
-    useCallback((api) => api.query.staking.nominators.entries(), [])
-  );
 
-  // Mapping Exposures
   const mappedExposures = useMemo(() => {
     const map = new Map<string, SpStakingExposure>();
     exposures?.forEach(([storageKey, exposure]) => {
@@ -70,8 +70,13 @@ export const useValidators = (
     return addresses.map((address) => {
       const name = identityNames.get(address.toString()) ?? address.toString();
       const exposure = mappedExposures.get(address.toString());
-      const selfStakedAmount = exposure?.own.unwrap() ?? BN_ZERO;
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
+
+      const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
+      const selfStakedBalance = formatTokenBalance(
+        selfStakedAmount,
+        nativeTokenSymbol
+      );
 
       const nominators = nominations.filter(([, nominatorData]) => {
         if (nominatorData.isNone) {
@@ -82,7 +87,9 @@ export const useValidators = (
 
         return (
           nominations.targets &&
-          nominations.targets.some((target) => target.eq(address))
+          nominations.targets.some(
+            (target) => target.toString() === address.toString()
+          )
         );
       });
 
@@ -93,7 +100,7 @@ export const useValidators = (
       return {
         address: address.toString(),
         identityName: name,
-        selfStaked: formatTokenBalance(selfStakedAmount, nativeTokenSymbol),
+        selfStaked: selfStakedBalance,
         effectiveAmountStaked: formatTokenBalance(
           totalStakeAmount,
           nativeTokenSymbol

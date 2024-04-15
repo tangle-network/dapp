@@ -1,5 +1,6 @@
 import type { HexString } from '@polkadot/util/types';
 
+import { extractNameFromInfo } from '../../data/ValidatorTables/useValidatorIdentityNames';
 import { getPolkadotApiPromise } from './api';
 import { getTxPromise } from './utils';
 
@@ -33,22 +34,23 @@ export const getValidatorIdentity = async (
   validatorAddress: string
 ): Promise<string> => {
   const api = await getPolkadotApiPromise(rpcEndpoint);
-  const identityOption = await api.query.identity.identityOf(validatorAddress);
-
-  // Default the name to be the validator's address.
-  let name = validatorAddress;
+  const identityOpt = await api.query.identity.identityOf(validatorAddress);
 
   // If the identity is set, get the custom display name
   // and use that as the name instead of the address.
-  if (identityOption.isSome) {
-    const identity = identityOption.unwrap();
-    name = Buffer.from(
-      JSON.parse(JSON.stringify(identity, null, 2)).info.display.raw.slice(2),
-      'hex'
-    ).toString('utf8');
+  if (identityOpt.isSome) {
+    const identity = identityOpt.unwrap();
+    const info = identity[0].info;
+    const displayName = extractNameFromInfo(info);
+
+    if (displayName !== null) {
+      return displayName;
+    }
   }
 
-  return name;
+  // Default the name to be the validator's address if the
+  // validator has no identity set.
+  return validatorAddress;
 };
 
 export const getValidatorCommission = async (

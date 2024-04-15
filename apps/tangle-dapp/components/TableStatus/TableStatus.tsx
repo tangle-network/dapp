@@ -15,13 +15,14 @@ const TableStatus = ({
     <div
       className={twMerge(
         'rounded-lg border border-mono-40 dark:border-mono-160',
-        'bg-mono-0 dark:bg-mono-180 h-[228px]',
-        'flex flex-col items-center justify-center gap-6 p-8',
+        'bg-mono-0 dark:bg-mono-180',
+        'flex flex-col items-center justify-center gap-6 p-4',
         className
       )}
     >
       <div className="flex flex-col items-center justify-center gap-2 pt-4">
         {icon}
+
         <Typography
           variant="h5"
           fw="bold"
@@ -29,10 +30,11 @@ const TableStatus = ({
         >
           {title}
         </Typography>
+
         <Typography
           variant="body1"
           fw="semibold"
-          className="text-mono-120 dark:text-mono-80 text-center"
+          className="text-mono-120 dark:text-mono-80 text-center max-w-2xl"
         >
           {description}
         </Typography>

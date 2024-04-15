@@ -13,7 +13,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, {
@@ -81,6 +81,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     execute: executeTransferTx,
     status,
     error: txError,
+    reset: resetTransferTx,
   } = useTransferTx();
 
   // TODO: Likely would ideally want to control this from the parent component.
@@ -88,7 +89,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     setIsModalOpen(false);
     setAmount(null);
     setReceiverAddress('');
-  }, [setIsModalOpen]);
+    resetTransferTx?.();
+  }, [resetTransferTx, setIsModalOpen]);
 
   // Reset state when the transaction is complete.
   useEffect(() => {
@@ -127,18 +129,30 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
+  const transferrableBalanceTooltip: ReactNode = transferrableBalance !==
+    null && (
+    <span>
+      You have{' '}
+      <strong>
+        {formatTokenBalance(transferrableBalance, nativeTokenSymbol)}
+      </strong>{' '}
+      available to transfer.
+    </span>
+  );
+
   return (
     <Modal>
       <ModalContent
         isCenter
         isOpen={isModalOpen}
         className="w-full max-w-[550px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        onCloseAutoFocus={reset}
       >
-        <ModalHeader titleVariant="h4" onClose={reset}>
+        <ModalHeader titleVariant="h4" onClose={() => setIsModalOpen(false)}>
           Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
-        <div className="p-9 flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-9">
           <Typography variant="body1" fw="normal">
             Quickly transfer your {nativeTokenSymbol} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
@@ -166,7 +180,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
-              baseInputOverrides={{ isFullWidth: true }}
+              baseInputOverrides={{
+                isFullWidth: true,
+                tooltip: transferrableBalanceTooltip,
+              }}
               maxErrorMessage="Not enough available balance"
               setErrorMessage={handleSetErrorMessage}
             />
@@ -194,6 +211,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
         <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
           <div className="flex-1">
+            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
+              <Button isFullWidth variant="secondary">
+                Learn More
+              </Button>
+            </Link>
+          </div>
+
+          <div className="flex-1">
             <Button
               isFullWidth
               isLoading={!isReady}
@@ -207,14 +232,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             >
               Send
             </Button>
-          </div>
-
-          <div className="flex-1">
-            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
-              <Button isFullWidth variant="secondary">
-                Learn More
-              </Button>
-            </Link>
           </div>
         </ModalFooter>
       </ModalContent>
