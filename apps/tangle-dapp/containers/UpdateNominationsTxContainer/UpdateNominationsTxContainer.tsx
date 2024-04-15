@@ -63,7 +63,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     closeModal();
   }, [closeModal, executeNominateTx, selectedValidators]);
 
-  const isReadyToSubmitTx = useMemo(() => {
+  const canSubmitTx = useMemo(() => {
     if (
       selectedValidators === null ||
       selectedValidators.length === 0 ||
@@ -74,8 +74,16 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
     // Can only submit transaction if the selected validators differ
     // from the current nominations.
-    return !_.isEqual(currentNominations, selectedValidators);
-  }, [currentNominations, isExceedingMaxNominationQuota, selectedValidators]);
+    return (
+      !_.isEqual(currentNominations, selectedValidators) &&
+      executeNominateTx !== null
+    );
+  }, [
+    currentNominations,
+    executeNominateTx,
+    isExceedingMaxNominationQuota,
+    selectedValidators,
+  ]);
 
   return (
     <Modal open>
@@ -111,7 +119,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
           <Button
             isFullWidth
-            isDisabled={!isReadyToSubmitTx}
+            isDisabled={!canSubmitTx}
             isLoading={nominateTxStatus === TxStatus.PROCESSING}
             onClick={submitTx}
             className="!mt-0"

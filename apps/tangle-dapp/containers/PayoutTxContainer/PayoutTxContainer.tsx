@@ -11,21 +11,20 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 
 import usePayoutStakersTx from '../../data/payouts/usePayoutStakersTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutTxContainerProps } from './types';
 
 const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
-  payoutTxProps,
+  payoutTxProps: { validatorAddress, era },
   payouts,
   updatePayouts,
 }) => {
   const { activeAccount } = useWebContext();
-  const { validatorAddress, era } = payoutTxProps;
-  const [isPayoutTxLoading, setIsPayoutTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -35,41 +34,33 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const continueToSignAndSubmitTx = walletAddress && validatorAddress && era;
-
   const closeModal = useCallback(() => {
-    setIsPayoutTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
-  const { execute: executePayoutStakersTx } = usePayoutStakersTx();
+  const { execute: executePayoutStakersTx, status: payoutStakersTxStatus } =
+    usePayoutStakersTx();
 
-  const submitAndSignTx = useCallback(async () => {
+  const submitTx = useCallback(async () => {
     if (executePayoutStakersTx === null) {
       return;
     }
 
-    setIsPayoutTxLoading(true);
+    await executePayoutStakersTx({
+      era,
+      validatorAddress,
+    });
 
-    try {
-      await executePayoutStakersTx({
-        era,
-        validatorAddress,
-      });
+    const updatedPayouts = payouts.filter(
+      (payout) =>
+        !(
+          payout.era === Number(era) &&
+          payout.validator.address === validatorAddress
+        )
+    );
 
-      const updatedPayouts = payouts.filter(
-        (payout) =>
-          !(
-            payout.era === Number(era) &&
-            payout.validator.address === validatorAddress
-          )
-      );
-
-      updatePayouts(updatedPayouts);
-      closeModal();
-    } catch {
-      setIsPayoutTxLoading(false);
-    }
+    updatePayouts(updatedPayouts);
+    closeModal();
   }, [
     closeModal,
     era,
@@ -78,6 +69,10 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
     updatePayouts,
     validatorAddress,
   ]);
+
+  // TODO: This validation doesn't make much sense because the values are never null or undefined, so why are they being used as booleans? In fact, the variable's inferred type is not a boolean.
+  const canSubmitTx =
+    walletAddress && validatorAddress && era && executePayoutStakersTx !== null;
 
   return (
     <Modal open>
@@ -148,9 +143,9 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isPayoutTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!canSubmitTx}
+            isLoading={payoutStakersTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
           >
             Confirm
           </Button>
