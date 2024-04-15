@@ -1,9 +1,19 @@
+import { SubstrateChainId } from '@webb-tools/dapp-types';
 import {
-  SUBQUERY_ENDPOINT,
-  TANGLE_RPC_ENDPOINT,
-  TANGLE_TESTNET_EVM_EXPLORER_URL,
+  TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  TANGLE_MAINNET_EVM_EXPLORER_URL,
+  TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-} from '.';
+  TANGLE_TESTNET_EVM_EXPLORER_URL,
+  TANGLE_LOCAL_WS_RPC_ENDPOINT,
+  TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
+  TANGLE_LOCAL_NATIVE_EXPLORER_URL,
+} from '@webb-tools/dapp-config/constants/tangle';
+
+import { SUBQUERY_ENDPOINT } from '.';
 
 export type NetworkNodeType = 'parachain' | 'standalone';
 
@@ -40,27 +50,25 @@ export type Network = {
   httpRpcEndpoint?: string;
 };
 
-const TANGLE_MAINNET_WS_RPC_ENDPOINT = 'wss://rpc.tangle.tools';
-
 export const TANGLE_MAINNET_NETWORK: Network = {
   id: NetworkId.TANGLE_MAINNET,
-  chainId: 5845,
+  chainId: SubstrateChainId.TangleMainnetNative,
   name: 'Tangle Mainnet',
   nodeType: 'standalone',
   wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
-  httpRpcEndpoint: 'https://rpc.tangle.tools',
-  polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_WS_RPC_ENDPOINT}#/explorer`,
-  evmExplorerUrl: 'https://explorer.tangle.tools/',
+  httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  polkadotExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
 };
 
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   id: NetworkId.TANGLE_TESTNET,
-  chainId: 3799,
+  chainId: SubstrateChainId.TangleTestnetNative,
   name: 'Tangle Testnet',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
-  httpRpcEndpoint: 'https://testnet-rpc.tangle.tools',
-  wsRpcEndpoint: TANGLE_RPC_ENDPOINT,
+  httpRpcEndpoint: TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
+  wsRpcEndpoint: TANGLE_TESTNET_WS_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
 };
@@ -70,16 +78,15 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
  */
 export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   id: NetworkId.TANGLE_LOCAL_DEV,
-  chainId: 3799,
+  chainId: SubstrateChainId.TangleTestnetNative,
   name: 'Local endpoint',
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',
-  wsRpcEndpoint: 'ws://127.0.0.1:9944',
-  httpRpcEndpoint: 'http://127.0.0.1:9944',
-  polkadotExplorerUrl:
-    'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
+  wsRpcEndpoint: TANGLE_LOCAL_WS_RPC_ENDPOINT,
+  httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
+  polkadotExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
   // TODO: Use a generic EVM block explorer that supports passing in an RPC url. For now, this isn't a priority since this is the case only for the local development network, and this URL is only used for convenience.
-  evmExplorerUrl: `https://polkadot.js.org/apps/?rpc=${TANGLE_MAINNET_WS_RPC_ENDPOINT}#/explorer`,
+  evmExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
 };
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {

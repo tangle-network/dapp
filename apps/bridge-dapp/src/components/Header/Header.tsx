@@ -2,6 +2,7 @@ import {
   useWebContext,
   useConnectWallet,
 } from '@webb-tools/api-provider-environment';
+import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
 import { WebbLogoIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
@@ -20,7 +21,6 @@ import {
 import {
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
-  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
