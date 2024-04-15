@@ -8,6 +8,7 @@ import {
   NavigationMenuTrigger,
   Logo,
 } from '@webb-tools/webb-ui-components';
+import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
 import { WebbLogoIcon } from '@webb-tools/icons';
 import { Breadcrumbs, SideBarMenu } from '../../components';
 import {
@@ -16,7 +17,6 @@ import {
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
   TANGLE_MKT_URL,
-  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
 const Header: FC = () => {

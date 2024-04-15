@@ -16,11 +16,12 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SkeletonRow } from '../../../components/skeleton';
 import { HeaderCell, StringCell } from '../../../components/tableCells';
+import useNetworkStore from '../../../context/useNetworkStore';
 import { useServiceJobs } from '../../../data/ServiceDetails';
 import type { ServiceJob } from '../../../types';
 
@@ -36,47 +37,58 @@ const TANGLE_BLOCK_EXPLORER =
 
 const columnHelper = createColumnHelper<ServiceJob>();
 
-const columns = [
-  columnHelper.accessor('id', {
-    header: () => <HeaderCell title="Job ID" className="justify-start" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
-  columnHelper.accessor('txHash', {
-    header: () => <HeaderCell title="Tx Hash" className="justify-start" />,
-    cell: (props) => {
-      const txHash = props.getValue();
+const idColumn = columnHelper.accessor('id', {
+  header: () => <HeaderCell title="Job ID" className="justify-start" />,
+  cell: (props) => <StringCell value={props.getValue()} />,
+});
 
-      // TODO: get the network from store, move this into the component
-      const txExplorerURI = TANGLE_BLOCK_EXPLORER
-        ? getExplorerURI(
-            TANGLE_BLOCK_EXPLORER,
-            txHash,
-            'tx',
-            'polkadot'
-          ).toString()
-        : null;
-      return (
-        <div className="flex gap-1 items-center">
-          <StringCell value={shortenHex(txHash, 5)} />
-          {txExplorerURI && (
-            <a href={txExplorerURI} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkLine />
-            </a>
-          )}
-        </div>
-      );
-    },
-  }),
-  columnHelper.accessor('timestamp', {
-    header: () => <HeaderCell title="Timestamp" className="justify-start" />,
-    cell: (props) => (
-      <StringCell value={formatDate(new Date(props.getValue()))} />
-    ),
-  }),
-];
+const timestampColumn = columnHelper.accessor('timestamp', {
+  header: () => <HeaderCell title="Timestamp" className="justify-start" />,
+  cell: (props) => (
+    <StringCell value={formatDate(new Date(props.getValue()))} />
+  ),
+});
 
 const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
+  const { network } = useNetworkStore();
   const { data, isLoading, error } = useServiceJobs(serviceId);
+
+  const columns = useMemo(
+    () => [
+      idColumn,
+      columnHelper.accessor('txHash', {
+        header: () => <HeaderCell title="Tx Hash" className="justify-start" />,
+        cell: (props) => {
+          const txHash = props.getValue();
+
+          const txExplorerURI = TANGLE_BLOCK_EXPLORER
+            ? getExplorerURI(
+                network.polkadotExplorerUrl,
+                txHash,
+                'tx',
+                'polkadot'
+              ).toString()
+            : null;
+          return (
+            <div className="flex gap-1 items-center">
+              <StringCell value={shortenHex(txHash, 5)} />
+              {txExplorerURI && (
+                <a
+                  href={txExplorerURI}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLinkLine />
+                </a>
+              )}
+            </div>
+          );
+        },
+      }),
+      timestampColumn,
+    ],
+    [network.polkadotExplorerUrl]
+  );
 
   const table = useReactTable({
     data: data ?? [],

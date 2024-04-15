@@ -1,5 +1,12 @@
 import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import {
+  TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+  TANGLE_LOCAL_WS_RPC_ENDPOINT,
+} from '../../constants/tangle';
 import { ChainConfig } from '../chain-config.interface';
 
 // All substrate chains temporary use in `development` environment now
@@ -18,17 +25,17 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Explorer',
-        url: 'https://tangle.statescan.io/',
+        url: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
       },
     },
     rpcUrls: {
       default: {
         http: [],
-        webSocket: ['wss://rpc.tangle.tools'],
+        webSocket: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
       },
       public: {
         http: [],
-        webSocket: ['wss://rpc.tangle.tools'],
+        webSocket: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
       },
     },
   },
@@ -48,22 +55,22 @@ export const chainsConfig: Record<number, ChainConfig> = {
       default: {
         name: 'Tangle Explorer',
         url: process.env['USING_LOCAL_TANGLE']
-          ? 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer'
-          : 'https://tangle-testnet.statescan.io/',
+          ? 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/'
+          : TANGLE_TESTNET_NATIVE_EXPLORER_URL,
       },
     },
     rpcUrls: {
       default: {
         http: [],
         webSocket: process.env['USING_LOCAL_TANGLE']
-          ? ['ws://127.0.0.1:9944']
-          : ['wss://testnet-rpc.tangle.tools'],
+          ? [TANGLE_LOCAL_WS_RPC_ENDPOINT]
+          : [TANGLE_TESTNET_WS_RPC_ENDPOINT],
       },
       public: {
         http: [],
         webSocket: process.env['USING_LOCAL_TANGLE']
-          ? ['ws://127.0.0.1:9944']
-          : ['wss://testnet-rpc.tangle.tools'],
+          ? [TANGLE_LOCAL_WS_RPC_ENDPOINT]
+          : [TANGLE_TESTNET_WS_RPC_ENDPOINT],
       },
     },
     env: ['development'],
@@ -129,4 +136,3 @@ export const chainsConfig: Record<number, ChainConfig> = {
     env: ['development'],
   },
 };
-
