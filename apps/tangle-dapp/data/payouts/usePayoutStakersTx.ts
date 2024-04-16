@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
@@ -37,7 +38,7 @@ const usePayoutStakersTx = () => {
     }, []);
 
   return useAgnosticTx<Precompile.STAKING, PayoutStakersTxContext>({
-    name: 'payout stakers',
+    name: TxName.PAYOUT_STAKERS,
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

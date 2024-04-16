@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
@@ -40,7 +41,7 @@ const useSetPayeeTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, SetPayeeTxContext>({
-    name: 'set payee',
+    name: TxName.SET_PAYEE,
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
@@ -25,7 +26,7 @@ const useBondExtraTx = () => {
     );
 
   return useAgnosticTx<Precompile.STAKING, BondExtraTxContext>({
-    name: 'bond extra',
+    name: TxName.BOND_EXTRA,
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

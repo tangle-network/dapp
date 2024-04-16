@@ -2,6 +2,7 @@ import { assert } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { useCallback } from 'react';
 
+import { TxName } from '../constants';
 import { Precompile } from '../constants/evmPrecompiles';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -23,10 +24,10 @@ export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
    * An identifiable name shown on the toast notification to
    * let users know which transaction status updates refer to.
    *
-   * Should be simple and straightforward, such as `set payee`
-   * or `bond extra`.
+   * Also used to close the notification when the transaction
+   * is successful or fails.
    */
-  name: string;
+  name: TxName;
 };
 
 /**
@@ -44,7 +45,9 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 }: AgnosticTxOptions<PrecompileT, Context>) {
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
-  const { notifySuccess, notifyError } = useTxNotification();
+
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useTxNotification(name);
 
   const {
     execute: executeSubstrateTx,
@@ -62,6 +65,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
   const execute = useCallback(
     async (context: Context) => {
+      notifyProcessing();
+
       let result: HexString | null | Error;
 
       if (executeEvmPrecompileAbiCall !== null) {
@@ -78,16 +83,16 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
       }
 
       if (typeof result === 'string') {
-        notifySuccess(name, result);
+        notifySuccess(result);
       } else if (result instanceof Error) {
-        notifyError(name, result);
+        notifyError(result);
       }
     },
     [
       executeEvmPrecompileAbiCall,
       executeSubstrateTx,
-      name,
       notifyError,
+      notifyProcessing,
       notifySuccess,
     ]
   );

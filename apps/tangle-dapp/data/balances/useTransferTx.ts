@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
@@ -46,7 +47,7 @@ const useTransferTx = () => {
   );
 
   return useAgnosticTx<Precompile.BALANCES_ERC20, TransferTxContext>({
-    name: 'transfer',
+    name: TxName.TRANSFER,
     precompile: Precompile.BALANCES_ERC20,
     evmTxFactory,
     substrateTxFactory,

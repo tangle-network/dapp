@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
@@ -24,7 +25,7 @@ const useRebondTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, RebondTxContext>({
-    name: 'rebond',
+    name: TxName.REBOND,
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

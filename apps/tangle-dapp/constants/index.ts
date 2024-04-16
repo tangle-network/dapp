@@ -75,6 +75,21 @@ export enum ChartColor {
   LAVENDER = '#E7E2FF',
 }
 
+export enum TxName {
+  PAYOUT_ALL = 'payout all',
+  PAYOUT_STAKERS = 'payout stakers',
+  VEST = 'vest',
+  BOND = 'bond',
+  REBOND = 'rebond',
+  UNBOND = 'unbond',
+  BOND_EXTRA = 'bond extra',
+  WITHDRAW_UNBONDED = 'withdraw unbonded',
+  SET_PAYEE = 'set payee',
+  TRANSFER = 'transfer',
+  CHILL = 'chill',
+  NOMINATE = 'nominate',
+}
+
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
   [
     StakingRewardsDestinationDisplayText.STAKED,

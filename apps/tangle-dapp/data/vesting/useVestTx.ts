@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 
@@ -14,7 +15,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
  */
 const useVestTx = () => {
   return useAgnosticTx({
-    name: 'vest',
+    name: TxName.VEST,
     precompile: Precompile.VESTING,
     evmTxFactory: { functionName: 'vest', arguments: [] },
     substrateTxFactory: useCallback((api) => api.tx.vesting.vest(), []),

@@ -3,19 +3,26 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
+import { TxName } from '../constants';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useExplorerUrl, { ExplorerType } from './useExplorerUrl';
 
-const useTxNotification = () => {
-  const { enqueueSnackbar: enqueueNotifications } = useSnackbar();
+const SUCCESS_TIMEOUT = 15_000;
+
+const useTxNotification = (txName: TxName) => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const getExplorerUrl = useExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
+  const processingKey = `${txName}-processing`;
+
   const notifySuccess = useCallback(
-    (message: string, txHash: HexString) => {
+    (txHash: HexString) => {
       if (isEvmActiveAccount === null) {
         return;
       }
+
+      closeSnackbar(processingKey);
 
       // TODO: tx explorer url is incorrect
       const txExplorerUrl = getExplorerUrl(
@@ -24,11 +31,11 @@ const useTxNotification = () => {
       );
 
       // Currently using SnackbarProvider for managing NotificationStacked
-      // For one-off configurations, must use enqueueSnackbar
-      enqueueNotifications(
+      // For one-off configurations, must use enqueueSnackbar.
+      enqueueSnackbar(
         <div className="space-y-2">
           <Typography variant="h5" fw="bold">
-            {message}
+            {txName}
           </Typography>
 
           {txExplorerUrl !== null && (
@@ -44,34 +51,60 @@ const useTxNotification = () => {
           )}
         </div>,
         {
+          key: txName,
           variant: 'success',
-          autoHideDuration: null,
+          autoHideDuration: SUCCESS_TIMEOUT,
         }
       );
     },
-    [enqueueNotifications, getExplorerUrl, isEvmActiveAccount]
+    [
+      closeSnackbar,
+      enqueueSnackbar,
+      getExplorerUrl,
+      isEvmActiveAccount,
+      processingKey,
+      txName,
+    ]
   );
 
   const notifyError = useCallback(
-    (message: string, error: Error) => {
-      enqueueNotifications(
+    (error: Error) => {
+      closeSnackbar(processingKey);
+
+      enqueueSnackbar(
         <div className="space-y-2">
           <Typography variant="h5" fw="bold">
-            {message}
+            {txName}
           </Typography>
 
           <Typography variant="body1">{error.message}</Typography>
         </div>,
         {
           variant: 'error',
-          autoHideDuration: 5000,
+          autoHideDuration: null,
         }
       );
     },
-    [enqueueNotifications]
+    [closeSnackbar, enqueueSnackbar, processingKey, txName]
   );
 
-  return { notifySuccess, notifyError };
+  const notifyProcessing = useCallback(() => {
+    closeSnackbar(processingKey);
+
+    enqueueSnackbar(
+      <div className="space-y-2">
+        <Typography variant="h5" fw="bold">
+          Processing {txName}
+        </Typography>
+      </div>,
+      {
+        key: processingKey,
+        variant: 'warning',
+      }
+    );
+  }, [closeSnackbar, enqueueSnackbar, processingKey, txName]);
+
+  return { notifyProcessing, notifySuccess, notifyError };
 };
 
 export default useTxNotification;

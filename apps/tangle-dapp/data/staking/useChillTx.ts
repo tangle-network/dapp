@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
@@ -20,7 +21,7 @@ const useChillTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING>({
-    name: 'chill',
+    name: TxName.CHILL,
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

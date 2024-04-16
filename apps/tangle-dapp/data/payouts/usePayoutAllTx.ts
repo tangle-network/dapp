@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import {
   Precompile,
   PrecompileAddress,
@@ -61,7 +62,7 @@ const usePayoutAllTx = () => {
     }, []);
 
   return useAgnosticTx<Precompile.BATCH, PayoutAllTxContext>({
-    name: 'payout all',
+    name: TxName.PAYOUT_ALL,
     precompile: Precompile.BATCH,
     evmTxFactory,
     substrateTxFactory,
