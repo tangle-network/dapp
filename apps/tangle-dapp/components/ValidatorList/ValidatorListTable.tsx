@@ -36,7 +36,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
   selectedValidatorAddresses,
   setSelectedValidatorAddresses,
 }) => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [totalStakeSortBy, setTotalStakeSortBy] = useState<SortBy>('dsc');
   const [nominationsSortBy, setNominationsSortBy] = useState<SortBy>('dsc');
   const [commissionSortBy, setCommissionSortBy] = useState<SortBy>('dsc');
@@ -100,10 +100,10 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
         (validator) =>
           validator.identityName
             .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          validator.address.toLowerCase().includes(searchValue.toLowerCase())
+            .includes(searchQuery.toLowerCase()) ||
+          validator.address.toLowerCase().includes(searchQuery.toLowerCase())
       ),
-    [searchValue, sortedData]
+    [searchQuery, sortedData]
   );
 
   const handleValidatorToggle = useCallback(
@@ -143,9 +143,11 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
             />
 
             <div className="flex space-x-1 items-center">
-              <Avatar sourceVariant="address" value={address} theme="substrate">
-                hello
-              </Avatar>
+              <Avatar
+                sourceVariant="address"
+                value={address}
+                theme="substrate"
+              />
 
               <Typography variant="body1" fw="normal" className="truncate">
                 {identity === address ? shortenString(address, 6) : identity}
@@ -190,7 +192,12 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
       cell: (props) => (
         <div className="flex items-center justify-center">
           <Chip color="dark-grey">
-            <TokenAmountCell amount={props.getValue()} />
+            <TokenAmountCell
+              className="text-mono-0"
+              typographyVariant="body4"
+              typographyFontWeight="bold"
+              amount={props.getValue()}
+            />
           </Chip>
         </div>
       ),
@@ -281,8 +288,8 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
         id="token"
         rightIcon={<Search className="mr-2" />}
         placeholder="Search validators..."
-        value={searchValue}
-        onChange={(val) => setSearchValue(val)}
+        value={searchQuery}
+        onChange={(val) => setSearchQuery(val)}
         className="mb-1"
       />
 
