@@ -1,4 +1,5 @@
-import { MapPinLine } from '@webb-tools/icons';
+'use client';
+
 import {
   Avatar,
   Chip,
@@ -6,33 +7,32 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SocialChip, TangleBigLogo } from '../../../components';
-import getValidatorOverviewData from '../../../data/getValidatorOverviewData';
+import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
 import TotalRestaked from './TotalRestaked';
 
-interface ValidatorOverviewCardProps {
+interface ValidatorBasicInfoCardProps {
   validatorAddress: string;
   className?: string;
 }
 
-export default async function ValidatorOverviewCard({
+const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
   validatorAddress,
   className,
-}: ValidatorOverviewCardProps) {
+}: ValidatorBasicInfoCardProps) => {
   const {
-    identity,
+    name,
     isActive,
     totalRestaked,
     restakingMethod,
     nominations,
     twitter,
-    discord,
     email,
     web,
-    location,
-  } = await getValidatorOverviewData(validatorAddress);
+  } = useValidatorBasicInfo(validatorAddress);
 
   return (
     <div
@@ -56,9 +56,9 @@ export default async function ValidatorOverviewCard({
           />
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              {identity && (
+              {name && (
                 <Typography variant="h4" fw="bold">
-                  {identity}
+                  {name}
                 </Typography>
               )}
               <Chip color={isActive ? 'green' : 'yellow'}>
@@ -104,28 +104,16 @@ export default async function ValidatorOverviewCard({
         <div className="flex gap-2">
           <div className="flex-1 flex gap-2 items-center">
             {twitter && <SocialChip type="twitter" href={twitter} />}
-            {discord && <SocialChip type="discord" href={discord} />}
             {email && <SocialChip type="email" href={`mailto:${email}`} />}
             {web && <SocialChip type="web" href={web} />}
           </div>
-          <div className="flex-1">
-            {location && (
-              <Chip color="dark-grey">
-                <MapPinLine className="!fill-mono-0" />
-                <Typography
-                  variant="body4"
-                  fw="bold"
-                  className="!text-mono-0 uppercase"
-                >
-                  {location}
-                </Typography>
-              </Chip>
-            )}
-          </div>
+          {/* TODO: get location later */}
         </div>
       </div>
 
       <TangleBigLogo className="w-48 absolute top-[50%] translate-y-[-50%] right-0" />
     </div>
   );
-}
+};
+
+export default ValidatorBasicInfoCard;
