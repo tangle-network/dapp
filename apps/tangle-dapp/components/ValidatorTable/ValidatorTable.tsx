@@ -88,6 +88,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
 
   const onRowClick = useCallback(
     (row: Row<Validator>) => {
+      // TODO: remove this check when the page is ready
       if (process.env.NODE_ENV === 'production') {
         return;
       }

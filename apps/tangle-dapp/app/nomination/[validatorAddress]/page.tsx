@@ -6,6 +6,8 @@ import RoleDistributionCard from './RoleDistributionCard';
 import ServiceTableTabs from './ServiceTableTabs';
 import ValidatorOverviewCard from './ValidatorOverviewCard';
 
+// TODO: might need to add metadata here
+
 export default function ValidatorDetails({
   params,
 }: {
