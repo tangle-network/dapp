@@ -1,3 +1,4 @@
+import { HexString } from '@polkadot/util/types';
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useState } from 'react';
 
@@ -49,7 +50,7 @@ export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
  * (ex. those using MetaMask).
  *
  * This is used for performing actions from EVM accounts. Substrate accounts
- * should use `useSubstrateTx` for transactions instead, or `usePolkadotApi` for queries.
+ * should use `useSubstrateTx` for transactions instead, or `useApiRx` for queries.
  */
 function useEvmPrecompileAbiCall<
   PrecompileT extends Precompile,
@@ -60,6 +61,7 @@ function useEvmPrecompileAbiCall<
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
+  const [txHash, setTxHash] = useState<HexString | null>(null);
 
   const activeEvmAddress = useEvmAddress();
   const viemPublicClient = useViemPublicClient();
@@ -73,7 +75,7 @@ function useEvmPrecompileAbiCall<
         viemWalletClient === null ||
         viemPublicClient === null
       ) {
-        return false;
+        return null;
       }
 
       const factoryResult =
@@ -81,10 +83,12 @@ function useEvmPrecompileAbiCall<
 
       // Factory isn't ready yet.
       if (factoryResult === null) {
-        return false;
+        return null;
       }
 
+      // Reset state to prepare for a new transaction.
       setError(null);
+      setTxHash(null);
       setStatus(TxStatus.PROCESSING);
 
       try {
@@ -96,11 +100,13 @@ function useEvmPrecompileAbiCall<
           account: activeEvmAddress,
         });
 
-        const txHash = await viemWalletClient.writeContract(request);
+        const newTxHash = await viemWalletClient.writeContract(request);
+
+        setTxHash(newTxHash);
 
         const txReceipt: TxReceipt =
           await viemPublicClient.waitForTransactionReceipt({
-            hash: txHash,
+            hash: newTxHash,
             // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
           });
 
@@ -109,16 +115,16 @@ function useEvmPrecompileAbiCall<
         setStatus(
           txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
         );
+
+        return newTxHash;
       } catch (possibleError) {
         const error = ensureError(possibleError);
 
         setStatus(TxStatus.ERROR);
         setError(error);
 
-        return false;
+        return error;
       }
-
-      return true;
     },
     [
       activeEvmAddress,
@@ -142,6 +148,7 @@ function useEvmPrecompileAbiCall<
     reset,
     status,
     error,
+    txHash,
   };
 }
 

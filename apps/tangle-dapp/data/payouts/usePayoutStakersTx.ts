@@ -37,6 +37,7 @@ const usePayoutStakersTx = () => {
     }, []);
 
   return useAgnosticTx<Precompile.STAKING, PayoutStakersTxContext>({
+    name: 'payout stakers',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

@@ -12,7 +12,7 @@ const useTxNotification = () => {
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const notifySuccess = useCallback(
-    (txHash: HexString, message: string) => {
+    (message: string, txHash: HexString) => {
       if (isEvmActiveAccount === null) {
         return;
       }

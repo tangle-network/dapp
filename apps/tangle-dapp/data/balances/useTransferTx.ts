@@ -46,6 +46,7 @@ const useTransferTx = () => {
   );
 
   return useAgnosticTx<Precompile.BALANCES_ERC20, TransferTxContext>({
+    name: 'transfer',
     precompile: Precompile.BALANCES_ERC20,
     evmTxFactory,
     substrateTxFactory,

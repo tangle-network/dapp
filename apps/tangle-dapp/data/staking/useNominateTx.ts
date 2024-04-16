@@ -42,6 +42,7 @@ const useNominateTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, NominateTxContext>({
+    name: 'nominate',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

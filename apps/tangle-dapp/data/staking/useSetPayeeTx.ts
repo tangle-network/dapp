@@ -40,6 +40,7 @@ const useSetPayeeTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, SetPayeeTxContext>({
+    name: 'set payee',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

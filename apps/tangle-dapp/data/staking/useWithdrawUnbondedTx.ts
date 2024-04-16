@@ -41,6 +41,7 @@ const useWithdrawUnbondedTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING>({
+    name: 'withdraw unbonded',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

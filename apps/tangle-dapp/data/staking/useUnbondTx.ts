@@ -24,6 +24,7 @@ const useUnbondTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, UnbondTxContext>({
+    name: 'unbond',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

@@ -20,6 +20,7 @@ const useChillTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING>({
+    name: 'chill',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

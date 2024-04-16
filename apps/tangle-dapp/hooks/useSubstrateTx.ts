@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
+import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -75,10 +76,9 @@ function useSubstrateTx<Context = void>(
         activeSubstrateAddress === null ||
         isEvmAccount === null
       ) {
-        return false;
+        return null;
       }
 
-      // Catch logic errors.
       assert(
         !isEvmAccount,
         'Should not be able to execute a Substrate transaction while the active account is an EVM account'
@@ -87,6 +87,9 @@ function useSubstrateTx<Context = void>(
       const injector = await getInjector(activeSubstrateAddress);
       const api = await getApiPromise(rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
+      let newTxHash: HexString;
+
+      // TODO: Reset state here, before executing the tx.
 
       // The transaction factory may throw an error if it encounters
       // a problem, such as invalid input data. Need to handle that case
@@ -94,21 +97,24 @@ function useSubstrateTx<Context = void>(
       try {
         tx = await factory(api, activeSubstrateAddress, context);
       } catch (possibleError: unknown) {
-        setError(ensureError(possibleError));
-        setStatus(TxStatus.ERROR);
+        const error = ensureError(possibleError);
 
-        return false;
+        setError(error);
+        setStatus(TxStatus.ERROR);
+        setHash(null);
+
+        return error;
       }
 
       // Factory is not yet ready to produce the transaction.
       // This is usually because the user hasn't yet connected their wallet,
       // or the factory's requirements haven't been met.
       if (tx === null) {
-        return false;
+        return null;
       }
       // Wait until the injector is ready.
       else if (injector === null) {
-        return false;
+        return null;
       }
 
       // At this point, the transaction is ready to be sent.
@@ -126,7 +132,8 @@ function useSubstrateTx<Context = void>(
           return;
         }
 
-        setHash(status.txHash.toHex());
+        newTxHash = status.txHash.toHex();
+        setHash(newTxHash);
 
         const error = extractErrorFromTxStatus(status);
 
@@ -141,13 +148,16 @@ function useSubstrateTx<Context = void>(
           handleStatusUpdate
         );
       } catch (possibleError: unknown) {
-        setStatus(TxStatus.ERROR);
-        setError(ensureError(possibleError));
+        const error = ensureError(possibleError);
 
-        return false;
+        setStatus(TxStatus.ERROR);
+        setError(error);
+        setHash(null);
+
+        return error;
       }
 
-      return true;
+      return '0x' as HexString;
     },
     [
       activeSubstrateAddress,

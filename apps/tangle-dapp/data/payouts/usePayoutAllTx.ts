@@ -61,6 +61,7 @@ const usePayoutAllTx = () => {
     }, []);
 
   return useAgnosticTx<Precompile.BATCH, PayoutAllTxContext>({
+    name: 'payout all',
     precompile: Precompile.BATCH,
     evmTxFactory,
     substrateTxFactory,

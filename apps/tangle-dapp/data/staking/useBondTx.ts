@@ -39,6 +39,7 @@ const useBondTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, BondTxContext>({
+    name: 'bond',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

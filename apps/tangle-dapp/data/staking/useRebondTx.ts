@@ -24,6 +24,7 @@ const useRebondTx = () => {
   );
 
   return useAgnosticTx<Precompile.STAKING, RebondTxContext>({
+    name: 'rebond',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

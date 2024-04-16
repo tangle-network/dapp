@@ -1,16 +1,16 @@
 import { assert } from '@polkadot/util';
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { useCallback, useEffect } from 'react';
+import { HexString } from '@polkadot/util/types';
+import { useCallback } from 'react';
 
 import { Precompile } from '../constants/evmPrecompiles';
-import prepareTxNotification from '../utils/prepareTxNotification';
 import useActiveAccountAddress from './useActiveAccountAddress';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileAbiCall, {
   EvmAbiCallData,
   EvmTxFactory,
 } from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
+import useTxNotification from './useTxNotification';
 
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
@@ -18,7 +18,15 @@ export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
     | EvmTxFactory<PrecompileT, Context>
     | EvmAbiCallData<PrecompileT>;
   substrateTxFactory: SubstrateTxFactory<Context>;
-  notifyStatusUpdates?: boolean;
+
+  /**
+   * An identifiable name shown on the toast notification to
+   * let users know which transaction status updates refer to.
+   *
+   * Should be simple and straightforward, such as `set payee`
+   * or `bond extra`.
+   */
+  name: string;
 };
 
 /**
@@ -32,10 +40,11 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
   precompile,
   evmTxFactory,
   substrateTxFactory,
-  notifyStatusUpdates = true,
+  name,
 }: AgnosticTxOptions<PrecompileT, Context>) {
   const activeAccountAddress = useActiveAccountAddress();
-  const { notificationApi } = useWebbUI();
+  const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
+  const { notifySuccess, notifyError } = useTxNotification();
 
   const {
     execute: executeSubstrateTx,
@@ -51,10 +60,37 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     reset: evmReset,
   } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
 
-  const isEvmAccount =
-    activeAccountAddress === null
-      ? null
-      : isEthereumAddress(activeAccountAddress);
+  const execute = useCallback(
+    async (context: Context) => {
+      let result: HexString | null | Error;
+
+      if (executeEvmPrecompileAbiCall !== null) {
+        result = await executeEvmPrecompileAbiCall(context);
+      } else {
+        // By this point, at least one of the executors should be defined,
+        // otherwise it constitutes a logic error.
+        assert(
+          executeSubstrateTx !== null,
+          'Substrate transaction executor should be defined if EVM transaction executor is not'
+        );
+
+        result = await executeSubstrateTx(context);
+      }
+
+      if (typeof result === 'string') {
+        notifySuccess(name, result);
+      } else if (result instanceof Error) {
+        notifyError(name, result);
+      }
+    },
+    [
+      executeEvmPrecompileAbiCall,
+      executeSubstrateTx,
+      name,
+      notifyError,
+      notifySuccess,
+    ]
+  );
 
   const agnosticStatus =
     isEvmAccount === null
@@ -62,45 +98,6 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
       : isEvmAccount
       ? evmTxStatus
       : substrateTxStatus;
-
-  const agnosticError =
-    isEvmAccount === null ? null : isEvmAccount ? evmError : substrateError;
-
-  // Notify the user of the transaction status, if applicable.
-  useEffect(() => {
-    if (agnosticStatus === TxStatus.NOT_YET_INITIATED || !notifyStatusUpdates) {
-      return;
-    }
-
-    const notificationOpts = prepareTxNotification(
-      agnosticStatus,
-      agnosticError
-    );
-
-    if (notificationOpts === null) {
-      return;
-    }
-
-    notificationApi(notificationOpts);
-  }, [agnosticError, agnosticStatus, notificationApi, notifyStatusUpdates]);
-
-  const execute = useCallback(
-    async (context: Context) => {
-      if (executeEvmPrecompileAbiCall !== null) {
-        return executeEvmPrecompileAbiCall(context);
-      }
-
-      // By this point, at least one of the executors should be defined,
-      // otherwise it constitutes a logic error.
-      assert(
-        executeSubstrateTx !== null,
-        'Substrate transaction executor should be defined if EVM transaction executor is not'
-      );
-
-      return executeSubstrateTx(context);
-    },
-    [executeEvmPrecompileAbiCall, executeSubstrateTx]
-  );
 
   return {
     status: agnosticStatus,

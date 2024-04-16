@@ -25,6 +25,7 @@ const useBondExtraTx = () => {
     );
 
   return useAgnosticTx<Precompile.STAKING, BondExtraTxContext>({
+    name: 'bond extra',
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,

@@ -12,10 +12,10 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
  * Vesting schedules that have not yet started (i.e. have not reached their
  * "cliff") will be omitted.
  */
-const useVestTx = (notifyStatusUpdates?: boolean) => {
+const useVestTx = () => {
   return useAgnosticTx({
+    name: 'vest',
     precompile: Precompile.VESTING,
-    notifyStatusUpdates,
     evmTxFactory: { functionName: 'vest', arguments: [] },
     substrateTxFactory: useCallback((api) => api.tx.vesting.vest(), []),
   });
