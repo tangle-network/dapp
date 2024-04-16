@@ -17,6 +17,7 @@ const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
       )}
     >
       {title}
+
       {tooltip && <InfoIconWithTooltip content={tooltip} />}
     </Typography>
   );

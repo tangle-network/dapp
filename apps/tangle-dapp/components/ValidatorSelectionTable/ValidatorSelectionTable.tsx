@@ -27,11 +27,11 @@ import calculateCommission from '../../utils/calculateCommission';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import { SortableKeys, SortBy, ValidatorListTableProps } from './types';
+import { SortableKeys, SortBy, ValidatorSelectionTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-export const ValidatorListTable: FC<ValidatorListTableProps> = ({
+export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   validators,
   selectedValidatorAddresses,
   setSelectedValidatorAddresses,
@@ -129,7 +129,15 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
         const identity = props.row.original.identityName;
 
         return (
-          <div className="flex items-center gap-2">
+          <div
+            onClick={() =>
+              handleValidatorToggle(
+                address,
+                selectedValidatorAddresses.includes(address)
+              )
+            }
+            className="flex items-center gap-2"
+          >
             <CheckBox
               wrapperClassName="!block !min-h-auto cursor-pointer"
               className="cursor-pointer"
@@ -297,7 +305,8 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
         <ContainerSkeleton className="max-h-[340px] w-full" />
       ) : (
         <Table
-          thClassName="border-t-0 py-3 sticky top-0"
+          // TODO: For some reason, there is a slight pixel gap between the table and the header. For now, solving this issue by using a negative top position.
+          thClassName="border-t-0 py-3 sticky top-[-1px] z-10"
           trClassName="cursor-pointer"
           tdClassName="py-2 border-t-0"
           paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"

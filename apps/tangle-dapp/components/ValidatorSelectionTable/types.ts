@@ -1,6 +1,6 @@
 import { Validator } from '../../types';
 
-export interface ValidatorListTableProps {
+export interface ValidatorSelectionTableProps {
   validators: Validator[];
   selectedValidatorAddresses: string[];
   setSelectedValidatorAddresses: (selectedValidators: string[]) => void;

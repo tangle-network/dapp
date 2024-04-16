@@ -14,6 +14,6 @@ export { default as SocialChip } from './SocialChip';
 export * from './TableStatus';
 export { default as TangleBigLogo } from './TangleBigLogo';
 export * from './UnbondingStatsItem';
-export * from './ValidatorList';
+export * from './ValidatorSelectionTable';
 export * from './ValidatorTable';
 export * from './WalletDropdown';
