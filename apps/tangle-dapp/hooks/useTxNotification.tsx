@@ -4,8 +4,9 @@ import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
 import { TxName } from '../constants';
+import { ExplorerType } from '../types';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useExplorerUrl, { ExplorerType } from './useExplorerUrl';
+import useTxExplorerUrl from './useTxExplorerUrl';
 
 const SUCCESS_TIMEOUT = 10_000;
 
@@ -26,7 +27,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
 
 const useTxNotification = (txName: TxName) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const getExplorerUrl = useExplorerUrl();
+  const getExplorerUrl = useTxExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const processingKey = `${txName}-processing`;
@@ -39,7 +40,6 @@ const useTxNotification = (txName: TxName) => {
 
       closeSnackbar(processingKey);
 
-      // TODO: tx explorer url is incorrect
       const txExplorerUrl = getExplorerUrl(
         txHash,
         isEvmActiveAccount ? ExplorerType.EVM : ExplorerType.Substrate

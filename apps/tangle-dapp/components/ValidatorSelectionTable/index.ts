@@ -1,1 +1,1 @@
-export * from './ValidatorListTable';
+export * from './ValidatorSelectionTable';
