@@ -1,9 +1,11 @@
 'use client';
 
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
   Chip,
   CopyWithTooltip,
+  ExternalLinkIcon,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
@@ -23,7 +25,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
   validatorAddress,
   className,
 }: ValidatorBasicInfoCardProps) => {
-  const { nativeTokenSymbol } = useNetworkStore();
+  const { network, nativeTokenSymbol } = useNetworkStore();
 
   const {
     name,
@@ -72,10 +74,21 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
                 variant="h5"
                 className="!text-mono-100"
               >{`Address: ${shortenString(validatorAddress, 7)}`}</Typography>
+
               <CopyWithTooltip
                 textToCopy={validatorAddress}
                 isButton={false}
                 iconClassName="!fill-mono-100"
+              />
+
+              <ExternalLinkIcon
+                href={getExplorerURI(
+                  network.polkadotExplorerUrl,
+                  validatorAddress,
+                  'address',
+                  'polkadot'
+                ).toString()}
+                className="!fill-mono-100"
               />
             </div>
           </div>
@@ -89,7 +102,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
             </Typography>
             <div className="flex gap-3 items-center">
               <Typography variant="h4" fw="bold" className="whitespace-nowrap">
-                {totalRestaked ?? "--"} {nativeTokenSymbol}
+                {totalRestaked ?? '--'} {nativeTokenSymbol}
               </Typography>
               <Chip color="dark-grey">{restakingMethod?.value ?? 'N/A'}</Chip>
             </div>
