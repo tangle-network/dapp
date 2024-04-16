@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import { ExplorerType } from '../types';
 
+// TODO: This won't work for all cases: Consider the case of the `Success` Airdrop claim page; it will provide a blockHash, not a txHash. When the explorer URL is opened, it shows an empty page! Fix it up.
 const useTxExplorerUrl = () => {
   const { network } = useNetworkStore();
 

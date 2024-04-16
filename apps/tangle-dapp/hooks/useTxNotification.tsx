@@ -27,7 +27,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
 
 const useTxNotification = (txName: TxName) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const getExplorerUrl = useTxExplorerUrl();
+  const getTxExplorerUrl = useTxExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const processingKey = `${txName}-processing`;
@@ -40,7 +40,7 @@ const useTxNotification = (txName: TxName) => {
 
       closeSnackbar(processingKey);
 
-      const txExplorerUrl = getExplorerUrl(
+      const txExplorerUrl = getTxExplorerUrl(
         txHash,
         isEvmActiveAccount ? ExplorerType.EVM : ExplorerType.Substrate
       );
@@ -73,7 +73,7 @@ const useTxNotification = (txName: TxName) => {
     [
       closeSnackbar,
       enqueueSnackbar,
-      getExplorerUrl,
+      getTxExplorerUrl,
       isEvmActiveAccount,
       processingKey,
       txName,
