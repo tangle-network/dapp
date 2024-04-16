@@ -8,54 +8,75 @@ import {
   extractDataFromIdentityInfo,
   IdentityDataType,
 } from '../../utils/polkadot/identity';
-
-type ValidatorOverviewDataType = {
-  identity?: string;
-  isActive: boolean;
-  totalRestaked: number;
-  restakingMethod?: 'independent' | 'shared';
-  nominations: number;
-  twitter?: string;
-  discord?: string;
-  email?: string;
-  web?: string;
-  location?: string;
-};
+import useRestakingProfile from '../restaking/useRestakingProfile';
+import useCurrentEra from '../staking/useCurrentEra';
 
 export default function useValidatorBasicInfo(validatorAddress: string) {
   const { rpcEndpoint } = useNetworkStore();
+  const { data: currentEra } = useCurrentEra();
+  const { profileTypeOpt, totalRestaked } =
+    useRestakingProfile(validatorAddress);
 
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [web, setWeb] = useState<string | null>(null);
   const [twitter, setTwitter] = useState<string | null>(null);
+  const [nominations, setNominations] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const api = await getPolkadotApiPromise(rpcEndpoint);
-      const identityData = await api.query.identity.identityOf(
-        validatorAddress
-      );
+      const fetchNameAndSocials = async () => {
+        const identityData = await api.query.identity.identityOf(
+          validatorAddress
+        );
 
-      if (identityData.isSome) {
-        const identity = identityData.unwrapOrDefault();
-        const info = identity[0].info;
-        setName(extractDataFromIdentityInfo(info, IdentityDataType.NAME));
-        setEmail(extractDataFromIdentityInfo(info, IdentityDataType.EMAIL));
-        setWeb(extractDataFromIdentityInfo(info, IdentityDataType.WEB));
-        setTwitter(extractDataFromIdentityInfo(info, IdentityDataType.TWITTER));
-      }
+        if (identityData.isSome) {
+          const identity = identityData.unwrap();
+          const info = identity[0]?.info;
+          if (info) {
+            setName(extractDataFromIdentityInfo(info, IdentityDataType.NAME));
+            setEmail(extractDataFromIdentityInfo(info, IdentityDataType.EMAIL));
+            setWeb(extractDataFromIdentityInfo(info, IdentityDataType.WEB));
+            setTwitter(
+              extractDataFromIdentityInfo(info, IdentityDataType.TWITTER)
+            );
+          }
+        }
+      };
+
+      const fetchNominations = async () => {
+        if (
+          currentEra !== null &&
+          api.query.staking?.erasStakersOverview !== undefined
+        ) {
+          const erasStakersOverviewData =
+            await api.query.staking.erasStakersOverview(
+              currentEra,
+              validatorAddress
+            );
+          if (erasStakersOverviewData.isSome) {
+            const nominatorCount =
+              erasStakersOverviewData.unwrap().nominatorCount;
+            setNominations(nominatorCount.toNumber());
+          }
+        } else {
+          setNominations(0);
+        }
+      };
+
+      await Promise.all([fetchNameAndSocials(), fetchNominations()]);
     };
 
     fetchData();
-  }, [validatorAddress, rpcEndpoint]);
+  }, [validatorAddress, rpcEndpoint, currentEra]);
 
   return {
     name,
     isActive: true,
-    totalRestaked: 1000,
-    restakingMethod: 'independent',
-    nominations: 155,
+    totalRestaked,
+    restakingMethod: profileTypeOpt,
+    nominations,
     twitter,
     email,
     web,

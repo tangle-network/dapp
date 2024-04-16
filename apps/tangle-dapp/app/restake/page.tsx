@@ -18,6 +18,7 @@ const RestakePage = () => {
     hasExistingProfile,
     profileTypeOpt: substrateProfileTypeOpt,
     ledgerOpt,
+    totalRestaked,
   } = useRestakingProfile();
 
   const { maxRestakingAmount } = useRestakingLimits();
@@ -33,18 +34,7 @@ const RestakePage = () => {
     return Object.values(earningsRecord).reduce((prev, curr) => prev + curr, 0);
   }, [earningsRecord, isEarningsLoading]);
 
-  const { availableForRestake, totalRestaked } = useMemo(() => {
-    const totalRestaked = ledgerOpt?.isSome
-      ? // Dummy check to whether format the total restaked amount
-        // or not, as the local testnet is in wei but the live one is in unit
-        ledgerOpt.unwrap().total.toString().length > 10
-        ? +formatUnits(
-            ledgerOpt.unwrap().total.toBigInt(),
-            TANGLE_TOKEN_DECIMALS
-          )
-        : ledgerOpt.unwrap().total.toNumber()
-      : null;
-
+  const availableForRestake = useMemo(() => {
     const fmtMaxRestakingAmount =
       maxRestakingAmount !== null
         ? +formatUnits(
@@ -59,17 +49,11 @@ const RestakePage = () => {
           ? fmtMaxRestakingAmount - totalRestaked
           : 0;
 
-      return {
-        totalRestaked,
-        availableForRestake,
-      };
+      return availableForRestake;
     }
 
-    return {
-      totalRestaked,
-      availableForRestake: fmtMaxRestakingAmount,
-    };
-  }, [ledgerOpt, maxRestakingAmount]);
+    return fmtMaxRestakingAmount;
+  }, [maxRestakingAmount, totalRestaked]);
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">

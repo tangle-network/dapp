@@ -11,8 +11,8 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SocialChip, TangleBigLogo } from '../../../components';
+import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
-import TotalRestaked from './TotalRestaked';
 
 interface ValidatorBasicInfoCardProps {
   validatorAddress: string;
@@ -23,6 +23,8 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
   validatorAddress,
   className,
 }: ValidatorBasicInfoCardProps) => {
+  const { nativeTokenSymbol } = useNetworkStore();
+
   const {
     name,
     isActive,
@@ -86,8 +88,10 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
               Total Restaked
             </Typography>
             <div className="flex gap-3 items-center">
-              <TotalRestaked totalRestaked={totalRestaked} />
-              <Chip color="dark-grey">{restakingMethod ?? 'N/A'}</Chip>
+              <Typography variant="h4" fw="bold" className="whitespace-nowrap">
+                {totalRestaked ?? "--"} {nativeTokenSymbol}
+              </Typography>
+              <Chip color="dark-grey">{restakingMethod?.value ?? 'N/A'}</Chip>
             </div>
           </div>
           <div className="flex-1 space-y-3">
@@ -95,13 +99,13 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
               Nominations
             </Typography>
             <Typography variant="h4" fw="bold">
-              {nominations}
+              {nominations ?? '--'}
             </Typography>
           </div>
         </div>
 
         {/* Socials & Location */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 min-h-[30px]">
           <div className="flex-1 flex gap-2 items-center">
             {twitter && <SocialChip type="twitter" href={twitter} />}
             {email && <SocialChip type="email" href={`mailto:${email}`} />}
