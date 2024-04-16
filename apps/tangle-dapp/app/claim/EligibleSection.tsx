@@ -143,6 +143,7 @@ const EligibleSection: FC<Props> = ({
 
       setStep(Step.SENDING_TX);
 
+      // TODO: This needs to be changed to use the new hooks.
       const tx = api.tx.claims.claimAttest(
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
         isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer

@@ -7,7 +7,22 @@ import { TxName } from '../constants';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useExplorerUrl, { ExplorerType } from './useExplorerUrl';
 
-const SUCCESS_TIMEOUT = 15_000;
+const SUCCESS_TIMEOUT = 10_000;
+
+const SUCCESS_MESSAGES: Record<TxName, string> = {
+  [TxName.BOND]: 'Bonded tokens into staking',
+  [TxName.BOND_EXTRA]: 'Added more tokens to existing stake',
+  [TxName.UNBOND]: 'Unbonded tokens from staking',
+  [TxName.REBOND]: 'Rebonded tokens into staking',
+  [TxName.WITHDRAW_UNBONDED]: 'Withdrew all unbonded tokens',
+  [TxName.CHILL]: 'Stopped nominating',
+  [TxName.NOMINATE]: 'Nominated validators for staking',
+  [TxName.PAYOUT_STAKERS]: 'Payout was successful',
+  [TxName.SET_PAYEE]: 'Updated staking payout reward destination',
+  [TxName.VEST]: 'Released vested tokens',
+  [TxName.TRANSFER]: 'Transfer successful',
+  [TxName.PAYOUT_ALL]: 'Payout executed for all stakers',
+};
 
 const useTxNotification = (txName: TxName) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -34,9 +49,7 @@ const useTxNotification = (txName: TxName) => {
       // For one-off configurations, must use enqueueSnackbar.
       enqueueSnackbar(
         <div className="space-y-2">
-          <Typography variant="h5" fw="bold">
-            {txName}
-          </Typography>
+          <Typography variant="h5">{SUCCESS_MESSAGES[txName]}</Typography>
 
           {txExplorerUrl !== null && (
             <Button
@@ -72,15 +85,17 @@ const useTxNotification = (txName: TxName) => {
       closeSnackbar(processingKey);
 
       enqueueSnackbar(
-        <div className="space-y-2">
-          <Typography variant="h5" fw="bold">
-            {txName}
-          </Typography>
+        <div>
+          <Typography variant="h5">{txName}</Typography>
 
           <Typography variant="body1">{error.message}</Typography>
         </div>,
         {
           variant: 'error',
+          // Leave the error message open until the user closes it,
+          // that way they can copy the error message if needed, and
+          // in case that they leave the page or not pay attention to
+          // the error message, they can still see it when they return.
           autoHideDuration: null,
         }
       );
@@ -91,17 +106,11 @@ const useTxNotification = (txName: TxName) => {
   const notifyProcessing = useCallback(() => {
     closeSnackbar(processingKey);
 
-    enqueueSnackbar(
-      <div className="space-y-2">
-        <Typography variant="h5" fw="bold">
-          Processing {txName}
-        </Typography>
-      </div>,
-      {
-        key: processingKey,
-        variant: 'warning',
-      }
-    );
+    enqueueSnackbar(<Typography variant="h5">Processing {txName}</Typography>, {
+      key: processingKey,
+      variant: 'info',
+      persist: true,
+    });
   }, [closeSnackbar, enqueueSnackbar, processingKey, txName]);
 
   return { notifyProcessing, notifySuccess, notifyError };
