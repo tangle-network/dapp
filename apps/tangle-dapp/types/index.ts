@@ -198,3 +198,8 @@ export type ServiceParticipant = {
 export enum NetworkFeature {
   Faucet,
 }
+
+export enum ExplorerType {
+  Substrate = 'polkadot',
+  EVM = 'web3',
+}

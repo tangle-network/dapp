@@ -1,3 +1,4 @@
+import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
 import { FaucetIcon, TangleIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
@@ -14,7 +15,6 @@ import {
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
   TANGLE_MKT_URL,
-  TANGLE_TESTNET_NATIVE_EXPLORER_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC } from 'react';

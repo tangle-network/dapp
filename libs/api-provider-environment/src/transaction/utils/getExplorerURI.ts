@@ -1,4 +1,16 @@
+import { encodeAddress } from '@polkadot/util-crypto';
 import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import { chainsConfig as substrateChainsConfig } from '@webb-tools/dapp-config/chains/substrate';
+
+const substrateExplorerAndChainIdMap = Object.keys(
+  substrateChainsConfig
+).reduce((acc, key) => {
+  const url = substrateChainsConfig[Number(key)].blockExplorers?.default.url;
+  if (url) {
+    acc[url] = substrateChainsConfig[Number(key)].id;
+  }
+  return acc;
+}, {} as Record<string, number>);
 
 export const getExplorerURI = (
   explorerUri: string,
@@ -11,7 +23,18 @@ export const getExplorerURI = (
       return new URL(`${variant}/${addOrTxHash}`, explorerUri);
 
     case 'polkadot': {
-      const path = variant === 'tx' ? `#/explorer/query/${addOrTxHash}` : '';
+      const path =
+        variant === 'tx'
+          ? `#/extrinsics/${addOrTxHash}`
+          : `#/accounts/${
+              // encode address for all available substrate chains
+              typeof substrateExplorerAndChainIdMap[explorerUri] === 'number'
+                ? encodeAddress(
+                    addOrTxHash,
+                    substrateExplorerAndChainIdMap[explorerUri]
+                  )
+                : addOrTxHash
+            }`;
       return new URL(`${path}`, explorerUri);
     }
 

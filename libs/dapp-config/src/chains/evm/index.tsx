@@ -17,6 +17,13 @@ import {
   sepolia,
   type Chain,
 } from 'viem/chains';
+import {
+  TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  TANGLE_MAINNET_EVM_EXPLORER_URL,
+  TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
+  TANGLE_TESTNET_EVM_EXPLORER_URL,
+  TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
+} from '../../constants/tangle';
 import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import type { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
@@ -195,15 +202,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Mainnet EVM Explorer',
-        url: 'https://explorer.tangle.tools/',
+        url: TANGLE_MAINNET_EVM_EXPLORER_URL,
       },
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.tangle.tools'],
+        http: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
       },
       public: {
-        http: ['https://rpc.tangle.tools'],
+        http: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
       },
     },
   } satisfies ChainConfig,
@@ -223,20 +230,20 @@ export const chainsConfig: Record<number, ChainConfig> = {
       ? {
           default: {
             name: 'Tangle Testnet EVM Explorer',
-            url: 'https://testnet-explorer.tangle.tools/',
+            url: TANGLE_TESTNET_EVM_EXPLORER_URL,
           },
         }
       : undefined,
     rpcUrls: {
       default: {
         http: process.env['USING_LOCAL_TANGLE']
-          ? ['http://localhost:9944']
-          : ['https://testnet-rpc.tangle.tools'],
+          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
+          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
       },
       public: {
         http: process.env['USING_LOCAL_TANGLE']
-          ? ['http://localhost:9944']
-          : ['https://testnet-rpc.tangle.tools'],
+          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
+          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
       },
     },
   } satisfies ChainConfig,

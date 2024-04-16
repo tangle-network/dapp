@@ -1,5 +1,7 @@
 'use client';
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
@@ -7,11 +9,26 @@ import { FC } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useNetworkStore from '../../context/useNetworkStore';
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import { ExplorerType } from '../../types';
 
 const RecentTxContainer: FC = () => {
   const { network } = useNetworkStore();
-  const { isEvm } = useAgnosticAccountInfo();
+  const activeAccountAddress = useActiveAccountAddress();
+
+  const isEvm =
+    activeAccountAddress === null
+      ? null
+      : isEthereumAddress(activeAccountAddress);
+
+  const accountExplorerUrl = activeAccountAddress
+    ? getExplorerURI(
+        isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl,
+        activeAccountAddress,
+        'address',
+        isEvm ? ExplorerType.EVM : ExplorerType.Substrate
+      ).toString()
+    : undefined;
 
   return (
     <GlassCard className="flex flex-col gap-3 sm:gap-0">
@@ -22,7 +39,8 @@ const RecentTxContainer: FC = () => {
           color="primary"
           className="uppercase"
           target="_blank"
-          href={isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl}
+          href={accountExplorerUrl}
+          isDisabled={!accountExplorerUrl}
         >
           Open Explorer
         </Button>
