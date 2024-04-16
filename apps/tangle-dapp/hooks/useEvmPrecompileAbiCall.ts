@@ -75,7 +75,7 @@ function useEvmPrecompileAbiCall<
         viemWalletClient === null ||
         viemPublicClient === null
       ) {
-        return null;
+        return;
       }
 
       const factoryResult =
@@ -83,7 +83,7 @@ function useEvmPrecompileAbiCall<
 
       // Factory isn't ready yet.
       if (factoryResult === null) {
-        return null;
+        return;
       }
 
       // Reset state to prepare for a new transaction.
@@ -115,15 +115,11 @@ function useEvmPrecompileAbiCall<
         setStatus(
           txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
         );
-
-        return newTxHash;
       } catch (possibleError) {
         const error = ensureError(possibleError);
 
         setStatus(TxStatus.ERROR);
         setError(error);
-
-        return error;
       }
     },
     [

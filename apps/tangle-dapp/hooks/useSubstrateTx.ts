@@ -36,7 +36,7 @@ function useSubstrateTx<Context = void>(
   timeoutDelay = 120_000
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
-  const [hash, setHash] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<HexString | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const { notificationApi } = useWebbUI();
@@ -76,7 +76,7 @@ function useSubstrateTx<Context = void>(
         activeSubstrateAddress === null ||
         isEvmAccount === null
       ) {
-        return null;
+        return;
       }
 
       assert(
@@ -101,29 +101,28 @@ function useSubstrateTx<Context = void>(
 
         setError(error);
         setStatus(TxStatus.ERROR);
-        setHash(null);
+        setTxHash(null);
 
-        return error;
+        return;
       }
 
       // Factory is not yet ready to produce the transaction.
       // This is usually because the user hasn't yet connected their wallet,
       // or the factory's requirements haven't been met.
       if (tx === null) {
-        return null;
+        return;
       }
       // Wait until the injector is ready.
       else if (injector === null) {
-        return null;
+        return;
       }
 
       // At this point, the transaction is ready to be sent.
       // Reset the status and error, and begin the transaction.
       setError(null);
-      setHash(null);
+      setTxHash(null);
       setStatus(TxStatus.PROCESSING);
 
-      // TODO: Return this function when this status update completes.
       const handleStatusUpdate = (status: ISubmittableResult) => {
         // If the component is unmounted, or the transaction
         // has not yet been included in a block, ignore the
@@ -133,7 +132,7 @@ function useSubstrateTx<Context = void>(
         }
 
         newTxHash = status.txHash.toHex();
-        setHash(newTxHash);
+        setTxHash(newTxHash);
 
         const error = extractErrorFromTxStatus(status);
 
@@ -152,12 +151,8 @@ function useSubstrateTx<Context = void>(
 
         setStatus(TxStatus.ERROR);
         setError(error);
-        setHash(null);
-
-        return error;
+        setTxHash(null);
       }
-
-      return '0x' as HexString;
     },
     [
       activeSubstrateAddress,
@@ -171,7 +166,7 @@ function useSubstrateTx<Context = void>(
 
   const reset = useCallback(() => {
     setStatus(TxStatus.NOT_YET_INITIATED);
-    setHash(null);
+    setTxHash(null);
     setError(null);
   }, []);
 
@@ -197,7 +192,13 @@ function useSubstrateTx<Context = void>(
 
   // Prevent the consumer from executing the transaction if
   // the active account is an EVM account.
-  return { execute: isEvmAccount ? null : execute, reset, status, error, hash };
+  return {
+    execute: isEvmAccount ? null : execute,
+    reset,
+    status,
+    error,
+    txHash,
+  };
 }
 
 export default useSubstrateTx;

@@ -1,6 +1,5 @@
 import { assert } from '@polkadot/util';
-import { HexString } from '@polkadot/util/types';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { TxName } from '../constants';
 import { Precompile } from '../constants/evmPrecompiles';
@@ -54,6 +53,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     status: substrateTxStatus,
     error: substrateError,
     reset: substrateReset,
+    txHash: substrateTxHash,
   } = useSubstrateTx(substrateTxFactory, false);
 
   const {
@@ -61,16 +61,15 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     status: evmTxStatus,
     error: evmError,
     reset: evmReset,
+    txHash: evmTxHash,
   } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
 
   const execute = useCallback(
     async (context: Context) => {
       notifyProcessing();
 
-      let result: HexString | null | Error;
-
       if (executeEvmPrecompileAbiCall !== null) {
-        result = await executeEvmPrecompileAbiCall(context);
+        await executeEvmPrecompileAbiCall(context);
       } else {
         // By this point, at least one of the executors should be defined,
         // otherwise it constitutes a logic error.
@@ -79,22 +78,10 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
           'Substrate transaction executor should be defined if EVM transaction executor is not'
         );
 
-        result = await executeSubstrateTx(context);
-      }
-
-      if (typeof result === 'string') {
-        notifySuccess(result);
-      } else if (result instanceof Error) {
-        notifyError(result);
+        await executeSubstrateTx(context);
       }
     },
-    [
-      executeEvmPrecompileAbiCall,
-      executeSubstrateTx,
-      notifyError,
-      notifyProcessing,
-      notifySuccess,
-    ]
+    [executeEvmPrecompileAbiCall, executeSubstrateTx, notifyProcessing]
   );
 
   const agnosticStatus =
@@ -103,6 +90,33 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
       : isEvmAccount
       ? evmTxStatus
       : substrateTxStatus;
+
+  // Notify transaction status updates via a toast notification.
+  useEffect(() => {
+    if (agnosticStatus === TxStatus.PROCESSING) {
+      return;
+    }
+
+    const error = isEvmAccount ? evmError : substrateError;
+    const txHash = isEvmAccount ? evmTxHash : substrateTxHash;
+
+    if (txHash !== null) {
+      notifySuccess(txHash);
+    } else {
+      assert(error !== null, 'Error should be defined if transaction failed');
+
+      notifyError(error);
+    }
+  }, [
+    agnosticStatus,
+    evmError,
+    evmTxHash,
+    isEvmAccount,
+    notifyError,
+    notifySuccess,
+    substrateError,
+    substrateTxHash,
+  ]);
 
   return {
     status: agnosticStatus,

@@ -14,32 +14,30 @@ const substrateExplorerAndChainIdMap = Object.keys(
 
 export const getExplorerURI = (
   explorerUri: string,
-  addOrTxHash: string,
+  pathOrTxHash: string,
   variant: 'tx' | 'address',
   txProviderType: WebbProviderType
 ): URL => {
   switch (txProviderType) {
     case 'web3':
-      return new URL(`${variant}/${addOrTxHash}`, explorerUri);
+      return new URL(`${variant}/${pathOrTxHash}`, explorerUri);
 
     case 'polkadot': {
       const path =
         variant === 'tx'
-          ? `#/extrinsics/${addOrTxHash}`
+          ? `#/extrinsics/${pathOrTxHash}`
           : `#/accounts/${
               // encode address for all available substrate chains
               typeof substrateExplorerAndChainIdMap[explorerUri] === 'number'
                 ? encodeAddress(
-                    addOrTxHash,
+                    pathOrTxHash,
                     substrateExplorerAndChainIdMap[explorerUri]
                   )
-                : addOrTxHash
+                : pathOrTxHash
             }`;
-      return new URL(`${path}`, explorerUri);
-    }
 
-    default:
-      return new URL('');
+      return new URL(path, explorerUri);
+    }
   }
 };
 
