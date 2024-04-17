@@ -76,7 +76,7 @@ export enum ChartColor {
 }
 
 export enum TxName {
-  PAYOUT_ALL = 'payout all',
+  PAYOUT_ALL = 'payout all stakers',
   PAYOUT_STAKERS = 'payout stakers',
   VEST = 'vest',
   BOND = 'bond',

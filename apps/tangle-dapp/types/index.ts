@@ -52,6 +52,7 @@ export type NodeSpecification = {
   linuxKernel: string;
 };
 
+// TODO: As of now, the other reward destinations are disabled in Tangle. Confirm whether they'll be used in the future, otherwise adjust this accordingly.
 export enum StakingRewardsDestination {
   STAKED,
   STASH,

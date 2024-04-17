@@ -51,7 +51,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
   const canSubmitTx =
     currentPayee !== null &&
-    currentPayee.value === selectedPayee &&
+    currentPayee.value !== selectedPayee &&
     executeSetPayeeTx !== null;
 
   return (
