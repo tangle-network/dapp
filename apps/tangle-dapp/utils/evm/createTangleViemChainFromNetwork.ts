@@ -5,7 +5,7 @@ import {
 import { Chain } from 'viem';
 
 const createTangleViemChainFromNetwork = (
-  network: Network & { chainId: number; httpRpcEndpoint: string }
+  network: Network & { evmChainId: number; httpRpcEndpoint: string }
 ): Chain => {
   const currencyName =
     network.id === NetworkId.TANGLE_MAINNET
