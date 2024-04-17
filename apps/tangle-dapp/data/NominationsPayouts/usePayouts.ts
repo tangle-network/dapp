@@ -1,317 +1,272 @@
 'use client';
 
-import { u128 } from '@polkadot/types';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
+import { PalletStakingValidatorPrefs } from '@polkadot/types/lookup';
+import { BN_ZERO } from '@polkadot/util';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import {
   formatTokenBalance,
   getPolkadotApiPromise,
-  getPolkadotApiRx,
-  getValidatorCommission,
   getValidatorIdentity,
 } from '../../utils/polkadot';
+import useEraTotalRewards from '../payouts/useEraTotalRewards';
 
-export default function usePayouts(
-  address: string,
-  defaultValue: { payouts: Payout[] } = {
-    payouts: [],
-  }
-) {
-  const {
-    valueAfterMount: cachedPayouts,
-    setWithPreviousValue: setCachedPayouts,
-  } = useLocalStorage(LocalStorageKey.Payouts, true);
+type ValidatorReward = {
+  validatorAddress: string;
+  era: number;
+  eraTotalRewardPoints: number;
+  validatorRewardPoints: number;
+};
 
-  const [payouts, setPayouts] = useState(
-    (cachedPayouts && cachedPayouts[address]) ?? defaultValue.payouts
-  );
+export default function usePayouts() {
+  const [payouts, setPayouts] = useState<Payout[] | null>(null);
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
+  const activeSubstrateAddress = useSubstrateAddress();
+
+  const { data: erasRewardsPoints } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
+  );
+
+  const { data: nominators } = usePolkadotApiRx(
+    useCallback(
+      (api) => {
+        if (!activeSubstrateAddress) return null;
+        return api.query.staking.nominators(activeSubstrateAddress);
+      },
+      [activeSubstrateAddress]
+    )
+  );
+
+  const myNominations = useMemo(() => {
+    if (!nominators) return [];
+    return nominators.isSome ? nominators.unwrap().targets : [];
+  }, [nominators]);
+
+  const { data: eraTotalRewards } = useEraTotalRewards();
+
+  const { data: validators } = usePolkadotApiRx(
+    useCallback((api) => api.query.staking.validators.entries(), [])
+  );
+
+  const mappedValidatorInfo = useMemo(() => {
+    const map = new Map<string, PalletStakingValidatorPrefs>();
+
+    validators?.forEach(([storageKey, validatorInfo]) => {
+      map.set(storageKey.args[0].toString(), validatorInfo);
+    });
+
+    return map;
+  }, [validators]);
+
   useEffect(() => {
-    let isMounted = true;
-    let sub: Subscription | null = null;
+    if (
+      !erasRewardsPoints ||
+      myNominations.length === 0 ||
+      !eraTotalRewards ||
+      !mappedValidatorInfo ||
+      !activeSubstrateAddress
+    ) {
+      return;
+    }
 
-    const subscribeData = async () => {
-      if (!address) {
-        if (isMounted) {
-          setPayouts([]);
-          setIsLoading(false);
-        }
-        return;
-      }
+    const allRewards: ValidatorReward[] = [];
 
-      try {
-        const apiSub = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
-
-        if (!apiSub || !apiPromise) {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        }
-
-        setIsLoading(true);
-
-        const nominations = await apiPromise.query.staking.nominators(address);
-        const myNominations = nominations.isSome
-          ? nominations.unwrap().targets
-          : [];
-
-        sub = apiSub.query.staking.erasRewardPoints
-          .entries()
-          .subscribe(async (points) => {
-            const allRewards: {
-              era: number;
-              totalRewardPoints: number;
-              validator: string;
-              validatorRewardPoints: number;
-            }[] = [];
-
-            let validatorPayoutsPromises: Promise<Payout>[] = [];
-
-            myNominations.forEach((validator) => {
-              points.forEach((point) => {
-                // regex to remove commas from the era number
-                const era = Number(
-                  point[0].toHuman()?.toString().replace(/,/g, '')
-                );
-
-                if (!era) {
-                  return;
-                }
-
-                const rewards = point[1].toHuman();
-
-                if (!rewards) {
-                  return;
-                }
-
-                let validatorRewardPoints = 0;
-
-                const totalRewardPoints = parseFloat(
-                  rewards.total?.toString().replace(/,/g, '') ?? '0'
-                );
-
-                if (
-                  typeof rewards.individual === 'object' &&
-                  rewards.individual !== null
-                ) {
-                  Object.entries(rewards.individual).forEach(([key, value]) => {
-                    if (key === validator.toString()) {
-                      validatorRewardPoints = Number(value);
-                    }
-                  });
-                }
-
-                if (validatorRewardPoints > 0) {
-                  allRewards.push({
-                    era,
-                    totalRewardPoints,
-                    validator: validator.toString(),
-                    validatorRewardPoints,
-                  });
-                }
-              });
-
-              validatorPayoutsPromises = allRewards
-                .map(async (reward) => {
-                  const {
-                    era,
-                    totalRewardPoints,
-                    validator,
-                    validatorRewardPoints,
-                  } = reward;
-
-                  const validatorLedger = await apiPromise.query.staking.ledger(
-                    validator
-                  );
-
-                  // TODO: For some reason, this can be `undefined`. Might be caused to the Substrate types being out of date? For now, default to an empty array.
-                  const claimedRewards =
-                    validatorLedger.unwrap().claimedRewards ?? [];
-
-                  const claimedEras = claimedRewards.map((era) =>
-                    Number(era.toString().replace(/,/g, ''))
-                  );
-
-                  if (claimedEras.includes(era)) {
-                    return;
-                  }
-
-                  const erasTotalReward =
-                    await apiPromise.query.staking.erasValidatorReward(era);
-
-                  if (erasTotalReward.isNone) {
-                    return;
-                  }
-
-                  const validatorTotalReward =
-                    (validatorRewardPoints *
-                      Number(erasTotalReward.unwrap().toString())) /
-                    totalRewardPoints;
-
-                  if (validatorTotalReward > 0) {
-                    const validatorTotalRewardFormatted = formatTokenBalance(
-                      new u128(
-                        apiPromise.registry,
-                        BigInt(Math.floor(validatorTotalReward))
-                      ),
-                      nativeTokenSymbol
-                    );
-
-                    const eraStaker =
-                      await apiPromise.query.staking.erasStakers(
-                        era,
-                        validator
-                      );
-
-                    const validatorTotalStake = eraStaker.total.unwrap();
-
-                    const validatorTotalStakeFormatted = formatTokenBalance(
-                      validatorTotalStake,
-                      nativeTokenSymbol
-                    );
-
-                    if (
-                      Number(validatorTotalStake.toString()) > 0 &&
-                      eraStaker.others.length > 0
-                    ) {
-                      const nominatorStakeInfo = eraStaker.others.find(
-                        (nominator) => nominator.who.toString() === address
-                      );
-
-                      if (nominatorStakeInfo && !nominatorStakeInfo.isEmpty) {
-                        const nominatorTotalStake =
-                          nominatorStakeInfo.value.unwrap();
-
-                        if (Number(nominatorTotalStake.toString()) > 0) {
-                          const nominatorStakePercentage =
-                            (Number(nominatorTotalStake.toString()) /
-                              Number(validatorTotalStake.toString())) *
-                            100;
-
-                          const validatorCommissionPercentage =
-                            await getValidatorCommission(
-                              rpcEndpoint,
-                              validator.toString()
-                            );
-
-                          const validatorCommission =
-                            validatorTotalReward *
-                            (Number(validatorCommissionPercentage) / 100);
-
-                          const distributableReward =
-                            validatorTotalReward - validatorCommission;
-
-                          const nominatorTotalReward =
-                            (nominatorStakePercentage / 100) *
-                            distributableReward;
-
-                          const nominatorTotalRewardFormatted =
-                            formatTokenBalance(
-                              new u128(
-                                apiPromise.registry,
-                                BigInt(Math.floor(nominatorTotalReward))
-                              ),
-                              nativeTokenSymbol
-                            );
-
-                          const validatorIdentity = await getValidatorIdentity(
-                            rpcEndpoint,
-                            validator
-                          );
-
-                          const validatorNominators = await Promise.all(
-                            eraStaker.others.map(async (nominator) => {
-                              const nominatorIdentity =
-                                await getValidatorIdentity(
-                                  rpcEndpoint,
-                                  nominator.who.toString()
-                                );
-
-                              return {
-                                address: nominator.who.toString(),
-                                identity: nominatorIdentity ?? '',
-                              };
-                            })
-                          );
-
-                          if (
-                            validatorTotalStakeFormatted &&
-                            validatorTotalRewardFormatted &&
-                            nominatorTotalRewardFormatted
-                          ) {
-                            return {
-                              era,
-                              validator: {
-                                address: validator,
-                                identity: validatorIdentity ?? '',
-                              },
-                              validatorTotalStake: validatorTotalStakeFormatted,
-                              nominators: validatorNominators,
-                              validatorTotalReward:
-                                validatorTotalRewardFormatted,
-                              nominatorTotalReward:
-                                nominatorTotalRewardFormatted,
-                              status: 'unclaimed',
-                            };
-                          }
-                        }
-                      }
-                    }
-                  }
-                })
-                .filter(
-                  (payout): payout is Promise<Payout> => payout !== undefined
-                );
-            });
-
-            if (myNominations.length > 0 && isMounted) {
-              const validatorPayouts = await Promise.all(
-                validatorPayoutsPromises
-              );
-
-              const payoutsData = validatorPayouts
-                .filter((payout) => payout !== undefined)
-                .sort((a, b) => Number(a.era) - Number(b.era));
-
-              setPayouts(payoutsData);
-              setCachedPayouts((previous) => ({
-                ...previous,
-                [address]: payoutsData,
-              }));
-              setIsLoading(false);
+    for (const validatorAddress of myNominations) {
+      for (const point of erasRewardsPoints) {
+        const era = point[0].args[0].toNumber();
+        const rewards = point[1].toHuman();
+        let validatorRewardPoints = 0;
+        const totalRewardPoints = parseFloat(
+          rewards.total?.toString().replace(/,/g, '') ?? '0'
+        );
+        if (
+          typeof rewards.individual === 'object' &&
+          rewards.individual !== null
+        ) {
+          Object.entries(rewards.individual).forEach(([key, value]) => {
+            if (key === validatorAddress.toString()) {
+              validatorRewardPoints = Number(value);
             }
           });
-      } catch (e) {
-        if (isMounted) {
-          setPayouts([]);
-          setError(
-            e instanceof Error ? e : WebbError.from(WebbErrorCodes.UnknownError)
-          );
-          setIsLoading(false);
         }
+        allRewards.push({
+          era,
+          eraTotalRewardPoints: totalRewardPoints,
+          validatorAddress: validatorAddress.toString(),
+          validatorRewardPoints,
+        });
       }
-    };
+    }
 
-    subscribeData();
+    const payoutsPromises = Promise.all(
+      allRewards.map(async (reward) => {
+        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
-    return () => {
-      isMounted = false;
-      sub?.unsubscribe();
-    };
-  }, [address, rpcEndpoint, setCachedPayouts, nativeTokenSymbol]);
+        const eraTotalRewardOpt = eraTotalRewards.get(reward.era);
+        if (eraTotalRewardOpt === undefined || eraTotalRewardOpt.isNone) {
+          return;
+        }
 
-  return useFormatReturnType({
-    isLoading,
-    error,
-    data: { payouts },
-  });
+        const eraTotalReward = eraTotalRewardOpt.unwrap();
+
+        const validatorTotalReward = eraTotalReward
+          .muln(reward.validatorRewardPoints)
+          .divn(reward.eraTotalRewardPoints);
+
+        if (validatorTotalReward.isZero()) {
+          return;
+        }
+
+        const erasStakersOverview =
+          await apiPromise.query.staking.erasStakersOverview(
+            reward.era,
+            reward.validatorAddress
+          );
+
+        const validatorTotalStake = !erasStakersOverview.isNone
+          ? erasStakersOverview.unwrap().total.toBn()
+          : BN_ZERO;
+        const validatorNominatorCount = !erasStakersOverview.isNone
+          ? erasStakersOverview.unwrap().nominatorCount.toNumber()
+          : 0;
+
+        if (
+          Number(validatorTotalStake) === 0 ||
+          validatorNominatorCount === 0
+        ) {
+          return;
+        }
+
+        const eraStakerPaged = await apiPromise.query.staking.erasStakersPaged(
+          reward.era,
+          reward.validatorAddress,
+          0
+        );
+
+        if (eraStakerPaged.isNone) {
+          return;
+        }
+
+        const nominatorStakeInfo = eraStakerPaged
+          .unwrap()
+          .others.find(
+            (nominator) => nominator.who.toString() === activeSubstrateAddress
+          );
+
+        if (nominatorStakeInfo === undefined || nominatorStakeInfo.isEmpty) {
+          return;
+        }
+
+        const nominatorTotalStake = nominatorStakeInfo.value.unwrap();
+
+        if (nominatorTotalStake.isZero()) {
+          return;
+        }
+
+        const nominatorStakePercentage =
+          (Number(nominatorTotalStake.toString()) /
+            Number(validatorTotalStake.toString())) *
+          100;
+
+        const validatorInfo = mappedValidatorInfo.get(reward.validatorAddress);
+
+        if (!validatorInfo) {
+          return;
+        }
+
+        const validatorCommissionPercentage =
+          validatorInfo.commission.toNumber();
+
+        const validatorCommission = validatorTotalReward.muln(
+          validatorCommissionPercentage / 100
+        );
+
+        const distributableReward =
+          validatorTotalReward.sub(validatorCommission);
+
+        const nominatorTotalReward = distributableReward.muln(
+          nominatorStakePercentage / 100
+        );
+
+        const nominatorTotalRewardFormatted = formatTokenBalance(
+          nominatorTotalReward,
+          nativeTokenSymbol
+        );
+
+        const validatorIdentityName = await getValidatorIdentity(
+          rpcEndpoint,
+          reward.validatorAddress
+        );
+
+        const validatorNominators = await Promise.all(
+          eraStakerPaged.unwrap().others.map(async (nominator) => {
+            const nominatorIdentity = await getValidatorIdentity(
+              rpcEndpoint,
+              nominator.who.toString()
+            );
+
+            return {
+              address: nominator.who.toString(),
+              identity: nominatorIdentity ?? '',
+            };
+          })
+        );
+
+        const validatorTotalRewardFormatted = formatTokenBalance(
+          validatorTotalReward,
+          nativeTokenSymbol
+        );
+
+        const validatorTotalStakeFormatted = formatTokenBalance(
+          validatorTotalStake,
+          nativeTokenSymbol
+        );
+
+        if (
+          validatorTotalStakeFormatted &&
+          validatorTotalRewardFormatted &&
+          nominatorTotalRewardFormatted
+        ) {
+          const payout: Payout = {
+            era: reward.era,
+            validator: {
+              address: reward.validatorAddress,
+              identity: validatorIdentityName ?? '',
+            },
+            validatorTotalStake: validatorTotalStakeFormatted,
+            nominators: validatorNominators,
+            validatorTotalReward: validatorTotalRewardFormatted,
+            nominatorTotalReward: nominatorTotalRewardFormatted,
+            status: 'unclaimed',
+          };
+
+          return payout;
+        }
+      })
+    );
+
+    payoutsPromises.then((payouts) =>
+      setPayouts(
+        payouts
+          .filter((payout): payout is Payout => payout !== undefined)
+          .sort((a, b) => a.era - b.era)
+      )
+    );
+  }, [
+    activeSubstrateAddress,
+    eraTotalRewards,
+    erasRewardsPoints,
+    mappedValidatorInfo,
+    myNominations,
+    nativeTokenSymbol,
+    rpcEndpoint,
+  ]);
+
+  return payouts;
 }

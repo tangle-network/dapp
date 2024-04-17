@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DelegatorTable, TableStatus } from '../../components';
+import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
@@ -82,7 +82,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const { data: delegatorsData } = useNominations(substrateAddress);
   const { isFirstTimeNominator } = useIsFirstTimeNominator();
-  const { data: payoutsData } = usePayouts(substrateAddress);
+  const payoutsData = usePayouts();
 
   const currentNominations = useMemo(() => {
     if (!delegatorsData?.delegators) {
@@ -97,13 +97,15 @@ const DelegationsPayoutsContainer: FC = () => {
   //   true
   // );
 
-  // const fetchedPayouts = useMemo(() => {
-  //   if (payoutsData !== null) {
-  //     return payoutsData.payouts;
-  //   } else if (cachedPayouts) {
-  //     return cachedPayouts[substrateAddress] ?? [];
-  //   }
-  // }, [cachedPayouts, payoutsData, substrateAddress]);
+  const fetchedPayouts = useMemo(() => {
+    if (payoutsData !== null) {
+      return payoutsData;
+    }
+
+    return [];
+  }, [payoutsData]);
+
+  // console.debug('fetchedPayouts', fetchedPayouts);
 
   const fetchedNominations = useMemo(() => {
     if (delegatorsData !== null) {
@@ -124,8 +126,8 @@ const DelegationsPayoutsContainer: FC = () => {
   useEffect(() => {
     if (updatedPayouts.length > 0) {
       setPayouts(updatedPayouts);
-    } else if (payoutsData && payoutsData.payouts) {
-      setPayouts(payoutsData.payouts);
+    } else if (payoutsData && payoutsData) {
+      setPayouts(payoutsData);
     }
   }, [payoutsData, updatedPayouts]);
 
@@ -218,7 +220,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
         {/* Payouts Table */}
         <TabContent value={DelegationsAndPayoutsTab.PAYOUTS} aria-disabled>
-          {/* {!activeAccount ? (
+          {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
               description="Connect your wallet to view and manage your staking details."
@@ -247,9 +249,9 @@ const DelegationsPayoutsContainer: FC = () => {
               pageSize={PAGE_SIZE}
               updateData={setUpdatedPayouts}
             />
-          )} */}
+          )}
 
-          <TableStatus
+          {/* <TableStatus
             icon="🚧"
             title="Payouts Coming Soon"
             description="The payouts feature for EVM and Substrate users is currently under active development. Meanwhile, Substrate users can view and manage payouts via the Polkadot/Substrate Portal."
@@ -259,7 +261,7 @@ const DelegationsPayoutsContainer: FC = () => {
               href: `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking/payout`,
               target: '_blank',
             }}
-          />
+          /> */}
         </TabContent>
       </TableAndChartTabs>
 

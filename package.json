@@ -43,7 +43,7 @@
     "libs/**"
   ],
   "resolutions": {
-    "@polkadot/api": "^10.11.2",
+    "@polkadot/api": "^10.13.1",
     "@polkadot/api-augment": "^10.11.2",
     "@polkadot/api-base": "^10.11.2",
     "@polkadot/api-contract": "^10.11.2",
@@ -73,7 +73,7 @@
     "@ngneat/falso": "^6.1.0",
     "@notionhq/client": "^2.2.3",
     "@octokit/request": "^9.0.1",
-    "@polkadot/api": "^10.11.2",
+    "@polkadot/api": "^10.13.1",
     "@polkadot/apps-config": "^0.133.1",
     "@polkadot/extension-dapp": "0.46.6",
     "@polkadot/extension-inject": "0.46.6",
@@ -81,7 +81,7 @@
     "@polkadot/networks": "^12.6.2",
     "@polkadot/react-hooks": "^0.39.1",
     "@polkadot/react-identicon": "^3.6.4",
-    "@polkadot/types": "^10.11.2",
+    "@polkadot/types": "^10.13.1",
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",

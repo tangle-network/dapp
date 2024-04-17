@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
 
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import usePayouts from '../NominationsPayouts/usePayouts';
 
 const usePayoutsAvailability = () => {
-  const activeSubstrateAddress = useSubstrateAddress();
-  const { data: payouts } = usePayouts(activeSubstrateAddress ?? '');
+  const payoutsData = usePayouts();
   const [isPayoutsAvailable, setIsPayoutsAvailable] = useState(false);
 
   useEffect(() => {
-    if (payouts !== null) {
-      setIsPayoutsAvailable(!!payouts.payouts.length);
+    if (payoutsData !== null) {
+      setIsPayoutsAvailable(!!payoutsData.length);
     }
-  }, [payouts]);
+  }, [payoutsData]);
 
   return isPayoutsAvailable;
 };
