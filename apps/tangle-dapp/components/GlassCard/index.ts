@@ -1,1 +1,3 @@
-export * from './GlassCard';
+import { default as GlassCard } from './GlassCard';
+
+export default GlassCard;

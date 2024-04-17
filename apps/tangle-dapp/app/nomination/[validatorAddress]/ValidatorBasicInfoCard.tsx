@@ -12,7 +12,7 @@ import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenStrin
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { SocialChip, TangleBigLogo } from '../../../components';
+import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
 
@@ -39,16 +39,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
   } = useValidatorBasicInfo(validatorAddress);
 
   return (
-    <div
-      className={twMerge(
-        'min-h-[300px] relative p-5 rounded-2xl overflow-hidden',
-        'border border-mono-0 dark:border-mono-160',
-        'flex items-center',
-        'bg-[linear-gradient(180deg,#FFF_0%,rgba(255,255,255,0.30)_100%)]',
-        'dark:bg-[linear-gradient(180deg,#2B2F40_0%,rgba(43,47,64,0.50)_100%)]',
-        className
-      )}
-    >
+    <TangleCard className={twMerge('min-h-[300px]', className)}>
       <div className="w-full space-y-9">
         <div className="flex gap-2">
           <Avatar
@@ -127,9 +118,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
           {/* TODO: get location later */}
         </div>
       </div>
-
-      <TangleBigLogo className="w-48 absolute top-[50%] translate-y-[-50%] right-0" />
-    </div>
+    </TangleCard>
   );
 };
 
