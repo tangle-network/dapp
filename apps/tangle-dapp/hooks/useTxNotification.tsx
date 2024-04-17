@@ -23,6 +23,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.VEST]: 'Released vested tokens',
   [TxName.TRANSFER]: 'Transfer successful',
   [TxName.PAYOUT_ALL]: 'Payout executed for all stakers',
+  [TxName.SETUP_NOMINATOR]: 'Nominator setup successful',
 };
 
 const useTxNotification = (txName: TxName) => {

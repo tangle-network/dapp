@@ -22,8 +22,6 @@ import { isEvmAddress } from './isEvmAddress';
  * it will be returned as is.
  */
 export const substrateToEvmAddress = (address: string): AddressType => {
-  // TODO: This isn't actually returning the correct Substrate address type.
-
   assert(
     isEvmAddress(address) || isAddress(address),
     'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)'

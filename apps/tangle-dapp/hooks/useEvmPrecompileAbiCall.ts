@@ -1,12 +1,14 @@
+import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useState } from 'react';
 
 import {
   AbiFunctionName,
-  getAbiForPrecompile,
-  getAddressOfPrecompile,
+  getPrecompileAbi,
+  getPrecompileAddress,
   Precompile,
+  PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
 import useEvmAddress from './useEvmAddress';
@@ -31,15 +33,27 @@ type TxReceipt = {
   contractAddress: unknown | null;
 };
 
-export type EvmAbiCallData<PrecompileT extends Precompile> = {
+export type EvmAbiCallArg = string | number | BN | boolean;
+
+export type EvmBatchCallData = {
+  to: PrecompileAddress;
+  // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
+  value: EvmAbiCallArg | EvmAbiCallArg[];
+  gasLimit: number;
+  callData: string;
+};
+
+export type EvmAbiBatchCallArgs = (EvmAbiCallArg | EvmAbiCallArg[])[][];
+
+export type EvmAbiCall<PrecompileT extends Precompile> = {
   functionName: AbiFunctionName<PrecompileT>;
-  // TODO: Use argument types from the ABI.
-  arguments: unknown[];
+  // TODO: Use argument types from the ABI for the specific function.
+  arguments: EvmAbiCallArg[] | EvmAbiBatchCallArgs;
 };
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
   context: Context
-) => EvmAbiCallData<PrecompileT> | null;
+) => EvmAbiCall<PrecompileT> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.
@@ -57,7 +71,7 @@ function useEvmPrecompileAbiCall<
   Context = void
 >(
   precompile: PrecompileT,
-  factory: EvmTxFactory<PrecompileT, Context> | EvmAbiCallData<PrecompileT>
+  factory: EvmTxFactory<PrecompileT, Context> | EvmAbiCall<PrecompileT>
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
@@ -93,8 +107,8 @@ function useEvmPrecompileAbiCall<
 
       try {
         const { request } = await viemPublicClient.simulateContract({
-          address: getAddressOfPrecompile(precompile),
-          abi: getAbiForPrecompile(precompile),
+          address: getPrecompileAddress(precompile),
+          abi: getPrecompileAbi(precompile),
           functionName: factoryResult.functionName,
           args: factoryResult.arguments,
           account: activeEvmAddress,

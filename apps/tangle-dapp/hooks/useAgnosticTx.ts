@@ -6,7 +6,7 @@ import { Precompile } from '../constants/evmPrecompiles';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileAbiCall, {
-  EvmAbiCallData,
+  EvmAbiCall,
   EvmTxFactory,
 } from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
@@ -14,9 +14,7 @@ import useTxNotification from './useTxNotification';
 
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
-  evmTxFactory:
-    | EvmTxFactory<PrecompileT, Context>
-    | EvmAbiCallData<PrecompileT>;
+  evmTxFactory: EvmTxFactory<PrecompileT, Context> | EvmAbiCall<PrecompileT>;
   substrateTxFactory: SubstrateTxFactory<Context>;
 
   /**
@@ -100,11 +98,12 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     const error = isEvmAccount ? evmError : substrateError;
     const txHash = isEvmAccount ? evmTxHash : substrateTxHash;
 
+    // NOTE: It is totally possible for both to be null, as
+    // React's setState is asynchronous and the state might
+    // not have been updated yet.
     if (txHash !== null) {
       notifySuccess(txHash);
-    } else {
-      assert(error !== null, 'Error should be defined if transaction failed');
-
+    } else if (error !== null) {
       notifyError(error);
     }
   }, [

@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { AddressType } from '@webb-tools/dapp-config/types';
+import { Interface } from 'ethers';
 
 export enum Precompile {
   STAKING,
@@ -56,6 +57,7 @@ type InputOutputDef = {
   type: AbiTypeSuper;
 };
 
+// TODO: Use Viem ABI types instead, as they already handle this + providing argument type inference: https://viem.sh/docs/typescript#utilities
 export type AbiFunction<T extends Precompile> = {
   inputs: InputOutputDef[];
   name: AbiFunctionName<T>;
@@ -393,6 +395,8 @@ export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
   },
 ] as const;
 
+export const STAKING_INTERFACE = new Interface(STAKING_PRECOMPILE_ABI);
+
 // See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
 // Be careful with the input/outputs, as they can lead to a lot of trouble
 // if not properly specified.
@@ -521,7 +525,7 @@ export const BALANCES_ERC20_PRECOMPILE_ABI: AbiFunction<Precompile.BALANCES_ERC2
     },
   ];
 
-export function getAddressOfPrecompile(
+export function getPrecompileAddress(
   precompile: Precompile
 ): PrecompileAddress {
   switch (precompile) {
@@ -536,7 +540,7 @@ export function getAddressOfPrecompile(
   }
 }
 
-export function getAbiForPrecompile(
+export function getPrecompileAbi(
   precompile: Precompile
 ): AbiFunction<Precompile>[] {
   switch (precompile) {

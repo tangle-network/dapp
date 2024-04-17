@@ -50,7 +50,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     return [eras[0], eras[eras.length - 1]];
   }, [payoutValidatorsAndEras]);
 
-  const closeModalAndReset = useCallback(() => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
@@ -76,13 +76,13 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     );
 
     updatePayouts(updatedPayouts);
-    closeModalAndReset();
+    closeModal();
   }, [
     executePayoutAllTx,
     payoutValidatorsAndEras,
     payouts,
     updatePayouts,
-    closeModalAndReset,
+    closeModal,
   ]);
 
   const canSubmitTx =
@@ -95,7 +95,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
+        <ModalHeader titleVariant="h4" onClose={closeModal}>
           Payout Stakers
         </ModalHeader>
 

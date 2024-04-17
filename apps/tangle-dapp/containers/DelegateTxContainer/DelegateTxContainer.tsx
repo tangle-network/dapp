@@ -84,8 +84,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     // Not yet ready.
     if (
       isBondedOrNominating === null ||
-      executeSetupNominatorTx === null ||
-      executeUpdateNominatorTx === null
+      executeSetupNominatorTx === null
+      // executeUpdateNominatorTx === null
     ) {
       return;
     }
@@ -116,18 +116,17 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       // Update the payee if it has changed.
       const newPayee = currentPayeeOpt?.value === payee ? undefined : payee;
 
-      await executeUpdateNominatorTx({
-        bondAmount: extraBondingAmount,
-        payee: newPayee,
-        // TODO: Only update nominees if they have changed. Use `_.isEqual` or similar to compare arrays.
-        nominees: selectedValidators,
-      });
+      // await executeUpdateNominatorTx({
+      //   bondAmount: extraBondingAmount,
+      //   payee: newPayee,
+      //   // TODO: Only update nominees if they have changed. Use `_.isEqual` or similar to compare arrays.
+      //   nominees: selectedValidators,
+      // });
     }
   }, [
     amountToBond,
     currentPayeeOpt,
     executeSetupNominatorTx,
-    executeUpdateNominatorTx,
     isBondedOrNominating,
     payee,
     selectedValidators,

@@ -88,6 +88,7 @@ export enum TxName {
   TRANSFER = 'transfer',
   CHILL = 'chill',
   NOMINATE = 'nominate',
+  SETUP_NOMINATOR = 'setup nominator',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

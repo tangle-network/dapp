@@ -1,51 +1,38 @@
-import { ethers } from 'ethers';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import {
-  Precompile,
-  PrecompileAddress,
-  STAKING_PRECOMPILE_ABI,
-} from '../../constants/evmPrecompiles';
+import { Precompile, STAKING_INTERFACE } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { evmToSubstrateAddress } from '../../utils';
+import { evmToSubstrateAddress, substrateToEvmAddress } from '../../utils';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
+import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
 
 export type PayoutAllTxContext = {
   validatorEraPairs: { validatorAddress: string; era: number }[];
 };
-
-const STAKING_INTERFACE = new ethers.utils.Interface(STAKING_PRECOMPILE_ABI);
 
 const usePayoutAllTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.BATCH, PayoutAllTxContext> =
     useCallback((context) => {
       const batchCalls = context.validatorEraPairs.map(
         ({ validatorAddress, era }) => {
-          const validatorEvmAddress = evmToSubstrateAddress(validatorAddress);
+          const validatorEvmAddress = substrateToEvmAddress(validatorAddress);
 
-          return {
-            to: PrecompileAddress.STAKING,
-            value: 0,
-            gasLimit: 0,
-            callData: STAKING_INTERFACE.encodeFunctionData('payoutStakers', [
-              validatorEvmAddress,
-              era,
-            ]),
-          };
+          return createEvmBatchCallData(
+            Precompile.STAKING,
+            STAKING_INTERFACE,
+            'unbond',
+            [validatorEvmAddress, era]
+          );
         }
       );
 
       return {
         functionName: 'batchAll',
-        arguments: [
-          batchCalls.map((call) => call.to),
-          batchCalls.map((call) => call.value),
-          batchCalls.map((call) => call.callData),
-          batchCalls.map((call) => call.gasLimit),
-        ],
+        arguments: createEvmBatchCallArgs(batchCalls),
       };
     }, []);
 
