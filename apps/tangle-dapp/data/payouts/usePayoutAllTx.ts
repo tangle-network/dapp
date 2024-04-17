@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
+import { padHex } from 'viem';
 
 import { TxName } from '../../constants';
-import { Precompile, STAKING_INTERFACE } from '../../constants/evmPrecompiles';
+import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
@@ -21,12 +22,16 @@ const usePayoutAllTx = () => {
         ({ validatorAddress, era }) => {
           const validatorEvmAddress = substrateToEvmAddress(validatorAddress);
 
-          return createEvmBatchCallData(
-            Precompile.STAKING,
-            STAKING_INTERFACE,
-            'unbond',
-            [validatorEvmAddress, era]
-          );
+          // Pad the address to 32 bytes, since the function expects a 32-byte
+          // address.
+          const validatorEvmAddress32 = padHex(validatorEvmAddress, {
+            size: 32,
+          });
+
+          return createEvmBatchCallData(Precompile.STAKING, 'payoutStakers', [
+            validatorEvmAddress32,
+            era,
+          ]);
         }
       );
 

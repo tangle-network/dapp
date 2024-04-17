@@ -42,7 +42,7 @@ export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   const [commissionSortBy, setCommissionSortBy] = useState<SortBy>('dsc');
   const [sortBy, setSortBy] = useState<SortableKeys>('totalStakeAmount');
 
-  const sortedData = useMemo(() => {
+  const sortedValidators = useMemo(() => {
     const selectedValidators = validators.filter((validator) =>
       selectedValidatorAddresses.includes(validator.address)
     );
@@ -94,16 +94,16 @@ export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
     commissionSortBy,
   ]);
 
-  const filteredData = useMemo(
+  const searchResults = useMemo(
     () =>
-      sortedData.filter(
+      sortedValidators.filter(
         (validator) =>
           validator.identityName
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
           validator.address.toLowerCase().includes(searchQuery.toLowerCase())
       ),
-    [searchQuery, sortedData]
+    [searchQuery, sortedValidators]
   );
 
   const handleValidatorToggle = useCallback(
@@ -126,7 +126,7 @@ export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       header: () => <HeaderCell title="Validator" className="justify-start" />,
       cell: (props) => {
         const address = props.getValue();
-        const identity = props.row.original.identityName;
+        const identityName = props.row.original.identityName;
 
         return (
           <div
@@ -158,7 +158,9 @@ export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
               />
 
               <Typography variant="body1" fw="normal" className="truncate">
-                {identity === address ? shortenString(address, 6) : identity}
+                {identityName === address
+                  ? shortenString(address, 6)
+                  : identityName}
               </Typography>
 
               <CopyWithTooltip
@@ -279,7 +281,7 @@ export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   ];
 
   const table = useReactTable({
-    data: filteredData,
+    data: searchResults,
     columns,
     filterFns: {
       fuzzy: fuzzyFilter,
@@ -301,7 +303,7 @@ export const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         className="mb-1"
       />
 
-      {filteredData.length === 0 ? (
+      {searchResults.length === 0 ? (
         <ContainerSkeleton className="max-h-[340px] w-full" />
       ) : (
         <Table

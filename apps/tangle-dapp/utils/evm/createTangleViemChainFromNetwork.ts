@@ -21,7 +21,7 @@ const createTangleViemChainFromNetwork = (
       : 'Tangle Testnet EVM Explorer';
 
   return {
-    id: network.chainId,
+    id: network.evmChainId,
     name: network.name,
     nativeCurrency: {
       name: currencyName,

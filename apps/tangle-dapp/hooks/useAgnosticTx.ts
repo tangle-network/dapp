@@ -6,7 +6,7 @@ import { Precompile } from '../constants/evmPrecompiles';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileAbiCall, {
-  EvmAbiCall,
+  AbiCall,
   EvmTxFactory,
 } from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
@@ -14,7 +14,7 @@ import useTxNotification from './useTxNotification';
 
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
-  evmTxFactory: EvmTxFactory<PrecompileT, Context> | EvmAbiCall<PrecompileT>;
+  evmTxFactory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>;
   substrateTxFactory: SubstrateTxFactory<Context>;
 
   /**

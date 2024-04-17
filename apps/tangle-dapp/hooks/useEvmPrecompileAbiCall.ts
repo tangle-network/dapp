@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   AbiFunctionName,
@@ -33,27 +33,29 @@ type TxReceipt = {
   contractAddress: unknown | null;
 };
 
-export type EvmAbiCallArg = string | number | BN | boolean;
+export type AbiCallArg = string | number | BN | boolean;
 
-export type EvmBatchCallData = {
+export type AbiEncodeableValue = string | number | boolean | bigint;
+
+export type AbiBatchCallData = {
   to: PrecompileAddress;
   // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
-  value: EvmAbiCallArg | EvmAbiCallArg[];
+  value: AbiEncodeableValue | AbiEncodeableValue[];
   gasLimit: number;
   callData: string;
 };
 
-export type EvmAbiBatchCallArgs = (EvmAbiCallArg | EvmAbiCallArg[])[][];
+export type AbiBatchCallArgs = (AbiEncodeableValue | AbiEncodeableValue[])[][];
 
-export type EvmAbiCall<PrecompileT extends Precompile> = {
+export type AbiCall<PrecompileT extends Precompile> = {
   functionName: AbiFunctionName<PrecompileT>;
   // TODO: Use argument types from the ABI for the specific function.
-  arguments: EvmAbiCallArg[] | EvmAbiBatchCallArgs;
+  arguments: AbiCallArg[] | AbiBatchCallArgs;
 };
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
   context: Context
-) => EvmAbiCall<PrecompileT> | null;
+) => AbiCall<PrecompileT> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.
@@ -71,7 +73,7 @@ function useEvmPrecompileAbiCall<
   Context = void
 >(
   precompile: PrecompileT,
-  factory: EvmTxFactory<PrecompileT, Context> | EvmAbiCall<PrecompileT>
+  factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
@@ -80,6 +82,13 @@ function useEvmPrecompileAbiCall<
   const activeEvmAddress = useEvmAddress();
   const viemPublicClient = useViemPublicClient();
   const viemWalletClient = useViemWalletClient();
+
+  // Useful for debugging.
+  useEffect(() => {
+    if (error !== null) {
+      console.error(error);
+    }
+  }, [error]);
 
   const execute = useCallback(
     async (context: Context) => {

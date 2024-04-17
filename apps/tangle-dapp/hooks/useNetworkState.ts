@@ -49,7 +49,7 @@ export async function switchNetworkInEvmWallet(
   // EVM wallet extension present.
   if (
     window.ethereum === undefined ||
-    network.chainId === undefined ||
+    network.evmChainId === undefined ||
     network.httpRpcEndpoint === undefined
   ) {
     return;
@@ -59,7 +59,7 @@ export async function switchNetworkInEvmWallet(
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: network.chainId.toString() }],
+      params: [{ chainId: network.evmChainId.toString() }],
     });
   } catch (error) {
     if (
@@ -79,7 +79,7 @@ export async function switchNetworkInEvmWallet(
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: network.chainId.toString(),
+            chainId: network.evmChainId.toString(),
             rpcUrls: [network.httpRpcEndpoint],
             chainName: network.name,
             // TODO: Any other network params?

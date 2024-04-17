@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { padHex } from 'viem';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
@@ -19,9 +20,15 @@ const usePayoutStakersTx = () => {
         context.validatorAddress
       );
 
+      // Pad the address to 32 bytes, since the function expects a 32-byte
+      // address.
+      const validatorEvmAddress32 = padHex(validatorEvmAddress, {
+        size: 32,
+      });
+
       return {
         functionName: 'payoutStakers',
-        arguments: [validatorEvmAddress, context.era],
+        arguments: [validatorEvmAddress32, context.era],
       };
     }, []);
 

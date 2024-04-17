@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { Interface } from 'ethers';
 
 export enum Precompile {
   STAKING,
@@ -394,8 +393,6 @@ export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
     outputs: [],
   },
 ] as const;
-
-export const STAKING_INTERFACE = new Interface(STAKING_PRECOMPILE_ABI);
 
 // See: https://github.com/webb-tools/tangle/blob/main/precompiles/vesting/src/lib.rs
 // Be careful with the input/outputs, as they can lead to a lot of trouble

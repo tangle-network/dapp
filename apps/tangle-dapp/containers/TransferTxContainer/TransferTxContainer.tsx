@@ -80,7 +80,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const {
     execute: executeTransferTx,
     status,
-    error: txError,
     reset: resetTransferTx,
   } = useTransferTx();
 
@@ -200,13 +199,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               setErrorMessage={handleSetErrorMessage}
             />
           </BridgeInputGroup>
-
-          {/* TODO: This is temporary, to display the error message if one ocurred during the transaction. */}
-          {txError !== null && (
-            <Typography variant="body1" color="red" fw="normal">
-              {txError.message}
-            </Typography>
-          )}
         </div>
 
         <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">

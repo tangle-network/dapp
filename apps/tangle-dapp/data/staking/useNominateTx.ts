@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { padHex } from 'viem';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
@@ -18,12 +19,13 @@ const useNominateTx = () => {
         return null;
       }
 
-      // Ensure that all addresses are in H160, EVM format.
-      const evmAddresses = context.validatorAddresses.map(
-        substrateToEvmAddress
+      // Ensure that all addresses are expected format.
+      // The nominate precompile function expects 32-byte addresses.
+      const evmAddresses32 = context.validatorAddresses.map((address) =>
+        padHex(substrateToEvmAddress(address), { size: 32 })
       );
 
-      return { functionName: 'nominate', arguments: [evmAddresses] };
+      return { functionName: 'nominate', arguments: [evmAddresses32] };
     }, []);
 
   const substrateTxFactory: SubstrateTxFactory<NominateTxContext> = useCallback(

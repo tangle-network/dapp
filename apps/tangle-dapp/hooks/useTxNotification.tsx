@@ -1,5 +1,6 @@
 import { HexString } from '@polkadot/util/types';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import _ from 'lodash';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
@@ -87,7 +88,7 @@ const useTxNotification = (txName: TxName) => {
 
       enqueueSnackbar(
         <div>
-          <Typography variant="h5">{txName}</Typography>
+          <Typography variant="h5">{_.capitalize(txName)} failed</Typography>
 
           <Typography variant="body1">{error.message}</Typography>
         </div>,

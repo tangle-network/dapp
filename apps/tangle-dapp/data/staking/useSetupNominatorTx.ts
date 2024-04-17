@@ -1,12 +1,14 @@
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
+import { padHex } from 'viem';
 
 import { TxName } from '../../constants';
-import { Precompile, STAKING_INTERFACE } from '../../constants/evmPrecompiles';
+import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
+import { substrateToEvmAddress } from '../../utils';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
@@ -31,18 +33,24 @@ const useSetupNominatorTx = () => {
         );
       }
 
-      const bondCall = createEvmBatchCallData(
-        Precompile.STAKING,
-        STAKING_INTERFACE,
-        'bond',
-        [context.bondAmount, payee]
+      const bondCall = createEvmBatchCallData(Precompile.STAKING, 'bond', [
+        BigInt(context.bondAmount.toString()),
+        payee,
+      ]);
+
+      const evmNomineeAddresses32 = context.nominees.map((address) =>
+        padHex(substrateToEvmAddress(address), { size: 32 })
       );
 
-      // TODO: Nominate call.
+      const nominateCall = createEvmBatchCallData(
+        Precompile.STAKING,
+        'nominate',
+        [evmNomineeAddresses32]
+      );
 
       return {
         functionName: 'batchAll',
-        arguments: createEvmBatchCallArgs([bondCall]),
+        arguments: createEvmBatchCallArgs([bondCall, nominateCall]),
       };
     }, []);
 

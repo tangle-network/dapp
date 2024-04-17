@@ -6,23 +6,30 @@ import {
   getPrecompileAddress,
   Precompile,
 } from '../../constants/evmPrecompiles';
-import { EvmBatchCallData } from '../../hooks/useEvmPrecompileAbiCall';
+import { AbiEncodeableValue } from '../../hooks/useEvmPrecompileAbiCall';
+import {
+  AbiBatchCallArgs,
+  AbiBatchCallData,
+} from '../../hooks/useEvmPrecompileAbiCall';
 
 function createEvmBatchCallData<PrecompileT extends Precompile>(
   precompile: PrecompileT,
   functionName: AbiFunctionName<PrecompileT>,
-  // TODO: Make use of `AbiFunctionArgs`.
-  args: unknown[]
-): EvmBatchCallData {
+  args: AbiEncodeableValue[] | AbiBatchCallArgs
+): AbiBatchCallData {
   const precompileAddress = getPrecompileAddress(precompile);
+
+  // TODO: Add typing for `abi` and `functionNameAsString`
+  const abi: unknown[] = getPrecompileAbi(precompile);
+  const functionNameAsString: string = functionName;
 
   return {
     to: precompileAddress,
     value: 0,
     gasLimit: 0,
     callData: encodeFunctionData({
-      abi: getPrecompileAbi(precompile),
-      functionName,
+      abi,
+      functionName: functionNameAsString,
       args,
     }),
   };

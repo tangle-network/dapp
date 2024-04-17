@@ -52,6 +52,7 @@ function useSubstrateTx<Context = void>(
     }
   }, [error]);
 
+  // TODO: Replace this with `useTxNotification`.
   useEffect(() => {
     if (!notifyStatusUpdates) {
       return;
