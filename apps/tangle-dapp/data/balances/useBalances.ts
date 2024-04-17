@@ -34,7 +34,10 @@ const useBalances = () => {
 
   const balancesFetcher = useCallback<ObservableFactory<AccountBalances>>(
     (api) => {
-      if (!activeSubstrateAddress) return null;
+      if (activeSubstrateAddress === null) {
+        return null;
+      }
+
       return api.query.system.account(activeSubstrateAddress).pipe(
         map(({ data }) => {
           // Note that without the null/undefined check, an error

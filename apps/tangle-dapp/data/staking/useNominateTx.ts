@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { padHex } from 'viem';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { evmToSubstrateAddress, substrateToEvmAddress } from '../../utils';
+import { toSubstrateAddress } from '../../utils';
+import toEvmAddress32 from '../../utils/toEvmAddress32';
 
 type NominateTxContext = {
   validatorAddresses: string[];
@@ -21,9 +21,7 @@ const useNominateTx = () => {
 
       // Ensure that all addresses are expected format.
       // The nominate precompile function expects 32-byte addresses.
-      const evmAddresses32 = context.validatorAddresses.map((address) =>
-        padHex(substrateToEvmAddress(address), { size: 32 })
-      );
+      const evmAddresses32 = context.validatorAddresses.map(toEvmAddress32);
 
       return { functionName: 'nominate', arguments: [evmAddresses32] };
     }, []);
@@ -35,9 +33,8 @@ const useNominateTx = () => {
       }
 
       // Ensure that all addresses are in Substrate format.
-      const substrateAddresses = context.validatorAddresses.map(
-        evmToSubstrateAddress
-      );
+      const substrateAddresses =
+        context.validatorAddresses.map(toSubstrateAddress);
 
       return api.tx.staking.nominate(substrateAddresses);
     },

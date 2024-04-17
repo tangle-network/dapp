@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { padHex } from 'viem';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { evmToSubstrateAddress, substrateToEvmAddress } from '../../utils';
+import { toSubstrateAddress } from '../../utils';
+import toEvmAddress32 from '../../utils/toEvmAddress32';
 
 export type PayoutStakersTxContext = {
   validatorAddress: string;
@@ -16,15 +16,8 @@ export type PayoutStakersTxContext = {
 const usePayoutStakersTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, PayoutStakersTxContext> =
     useCallback((context) => {
-      const validatorEvmAddress = substrateToEvmAddress(
-        context.validatorAddress
-      );
-
-      // Pad the address to 32 bytes, since the function expects a 32-byte
-      // address.
-      const validatorEvmAddress32 = padHex(validatorEvmAddress, {
-        size: 32,
-      });
+      // The payout stakers precompile function expects a 32-byte address.
+      const validatorEvmAddress32 = toEvmAddress32(context.validatorAddress);
 
       return {
         functionName: 'payoutStakers',
@@ -34,7 +27,7 @@ const usePayoutStakersTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<PayoutStakersTxContext> =
     useCallback((api, _activeSubstrateAddress, context) => {
-      const validatorSubstrateAddress = evmToSubstrateAddress(
+      const validatorSubstrateAddress = toSubstrateAddress(
         context.validatorAddress
       );
 

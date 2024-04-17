@@ -29,7 +29,7 @@ import {
   Payout,
   QueryParamKey,
 } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
+import { toSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -85,7 +85,7 @@ const DelegationsPayoutsContainer: FC = () => {
       return activeAccount.address;
     }
 
-    return evmToSubstrateAddress(activeAccount.address);
+    return toSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
   const nomineesOpt = useNominations();

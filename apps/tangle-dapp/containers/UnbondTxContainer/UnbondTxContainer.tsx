@@ -22,7 +22,7 @@ import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotal
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbondTx from '../../data/staking/useUnbondTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { evmToSubstrateAddress } from '../../utils';
+import { toSubstrateAddress } from '../../utils';
 import { UnbondTxContainerProps } from './types';
 
 const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
@@ -44,7 +44,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       return activeAccount.address;
     }
 
-    return evmToSubstrateAddress(activeAccount.address) ?? '';
+    return toSubstrateAddress(activeAccount.address) ?? '';
   }, [activeAccount?.address]);
 
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =

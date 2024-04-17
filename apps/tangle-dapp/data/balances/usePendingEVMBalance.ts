@@ -1,50 +1,55 @@
+import { isAddress } from '@polkadot/util-crypto';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import usePromise from '../../hooks/usePromise';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
-import { substrateToEvmAddress } from '../../utils/substrateToEvmAddress';
+import { toEvmAddress20 } from '../../utils/toEvmAddress20';
 
 export default function usePendingEVMBalance() {
   const activeAccountAddress = useActiveAccountAddress();
 
-  // Only check the evm balance if the active account address is Substrate address.
-  const address = useMemo(() => {
-    if (!isValidAddress(activeAccountAddress)) {
+  // Only check the EVM balance if the active account address
+  // is a Substrate address.
+  const evmAddress20 = useMemo(() => {
+    if (activeAccountAddress === null || !isAddress(activeAccountAddress)) {
       return null;
     }
 
-    return substrateToEvmAddress(activeAccountAddress);
+    return toEvmAddress20(activeAccountAddress);
   }, [activeAccountAddress]);
 
   const evmClient = useViemPublicClient();
 
   const { result: balance } = usePromise(
     useCallback(async () => {
-      if (!evmClient || address === null) {
+      if (!evmClient || evmAddress20 === null) {
         return null;
       }
 
       return evmClient.getBalance({
-        address,
+        address: evmAddress20,
       });
-    }, [address, evmClient]),
+    }, [evmAddress20, evmClient]),
     null
   );
 
   const withdrawTx = useSubstrateTx(
     useCallback(
       (api) => {
-        if (address === null || balance === null || balance === ZERO_BIG_INT) {
+        if (
+          evmAddress20 === null ||
+          balance === null ||
+          balance === ZERO_BIG_INT
+        ) {
           return null;
         }
 
-        return api.tx.evm.withdraw(address, balance);
+        return api.tx.evm.withdraw(evmAddress20, balance);
       },
-      [address, balance]
+      [evmAddress20, balance]
     )
   );
 
@@ -53,7 +58,3 @@ export default function usePendingEVMBalance() {
     ...withdrawTx,
   };
 }
-
-/** @internal */
-const isValidAddress = (address: string | null): address is string =>
-  address !== null && isSubstrateAddress(address);

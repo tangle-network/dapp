@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { isAddress } from '@polkadot/util-crypto';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -6,7 +7,7 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { evmToSubstrateAddress, substrateToEvmAddress } from '../../utils';
+import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
   receiverAddress: string;
@@ -17,18 +18,18 @@ const useTransferTx = () => {
   const evmTxFactory: EvmTxFactory<
     Precompile.BALANCES_ERC20,
     TransferTxContext
-  > = useCallback(
-    (context) => ({
+  > = useCallback((context) => {
+    // Convert the Substrate address to an EVM address, in case
+    // that it was provided as a Substrate address.
+    const recipientEvmAddress = isAddress(context.receiverAddress)
+      ? toEvmAddress20(context.receiverAddress)
+      : context.receiverAddress;
+
+    return {
       functionName: 'transfer',
-      arguments: [
-        // Convert the Substrate address to an EVM address, in case
-        // that it was provided as a Substrate address.
-        substrateToEvmAddress(context.receiverAddress),
-        context.amount,
-      ],
-    }),
-    []
-  );
+      arguments: [recipientEvmAddress, context.amount],
+    };
+  }, []);
 
   const substrateTxFactory: SubstrateTxFactory<TransferTxContext> = useCallback(
     async (api, _activeSubstrateAddress, context) =>
@@ -40,7 +41,7 @@ const useTransferTx = () => {
       api.tx.balances.transferAllowDeath(
         // Convert the EVM address to a Substrate address, in case
         // that it was provided as an EVM address.
-        evmToSubstrateAddress(context.receiverAddress),
+        toSubstrateAddress(context.receiverAddress),
         context.amount
       ),
     []

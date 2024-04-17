@@ -89,6 +89,7 @@ export enum TxName {
   CHILL = 'chill',
   NOMINATE = 'nominate',
   SETUP_NOMINATOR = 'setup nominator',
+  UpdateNominator = 'update nominator',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

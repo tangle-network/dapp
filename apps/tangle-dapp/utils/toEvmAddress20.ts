@@ -6,7 +6,7 @@ import assert from 'assert';
 import { isEvmAddress } from './isEvmAddress';
 
 /**
- * Converts a Substrate address to an EVM address.
+ * Converts a Substrate address to a standard EVM address of 20 bytes.
  *
  * @remarks
  * If the address is neither an Ethereum nor a Substrate address,
@@ -16,24 +16,18 @@ import { isEvmAddress } from './isEvmAddress';
  * and not inverses. This means that if you convert a Substrate address
  * to an EVM address, you cannot convert it back to the **same** Substrate address.
  *
- * @param address - The address to be converted, which can be either a Substrate
+ * @param substrateAddress - The address to be converted, which can be either a Substrate
  * or an EVM address.
  * @returns The converted EVM address. If the address is already an EVM address,
  * it will be returned as is.
  */
-export const substrateToEvmAddress = (address: string): AddressType => {
-  assert(
-    isEvmAddress(address) || isAddress(address),
-    'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)'
-  );
-
-  // Nothing to do if it's already an EVM address.
-  if (isEvmAddress(address)) {
-    return address;
+export const toEvmAddress20 = (substrateAddress: string): AddressType => {
+  if (!isAddress(substrateAddress)) {
+    throw new Error('Provided address is not a Substrate address');
   }
 
   // EVM addresses are 20 bytes long.
-  const conversionResult = toHex(addressToEvm(address), 20);
+  const conversionResult = toHex(addressToEvm(substrateAddress), 20);
 
   assert(
     isEvmAddress(conversionResult),

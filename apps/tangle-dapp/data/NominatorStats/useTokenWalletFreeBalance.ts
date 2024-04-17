@@ -7,8 +7,8 @@ import { type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import { evmToSubstrateAddress } from '../../utils/evmToSubstrateAddress';
 import { getApiRx } from '../../utils/polkadot';
+import { toSubstrateAddress } from '../../utils/toSubstrateAddress';
 
 export default function useTokenWalletFreeBalance(
   address: string,
@@ -36,7 +36,7 @@ export default function useTokenWalletFreeBalance(
           throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
-        const substrateAddress = evmToSubstrateAddress(address);
+        const substrateAddress = toSubstrateAddress(address);
 
         sub = api.query.system
           .account(substrateAddress)
