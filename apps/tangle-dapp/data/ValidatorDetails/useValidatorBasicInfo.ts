@@ -42,16 +42,11 @@ export default function useValidatorBasicInfo(validatorAddress: string) {
               info,
               IdentityDataType.TWITTER
             );
-            if (twitterName === null) {
-              setTwitter(twitterName);
-            } else {
-              // Convert twitter user name to corresponding href
-              // Example: @tangle_network -> https://twitter.com/tangle_network
-              const twitterHref = `https://twitter.com/${twitterName.substring(
-                1
-              )}`;
-              setTwitter(twitterHref);
-            }
+            setTwitter(
+              twitterName === null
+                ? null
+                : `https://twitter.com/${twitterName.substring(1)}`
+            );
           }
         }
       };
