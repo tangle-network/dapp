@@ -211,6 +211,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             <Button
               isFullWidth
               variant="secondary"
+              isDisabled={setupNominatorTxStatus === TxStatus.PROCESSING}
               onClick={() => setDelegateTxStep(DelegateTxSteps.BOND_TOKENS)}
             >
               Back

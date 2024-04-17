@@ -198,6 +198,7 @@ export type ServiceParticipant = {
 
 export enum NetworkFeature {
   Faucet,
+  EraStakersOverview,
 }
 
 export enum ExplorerType {

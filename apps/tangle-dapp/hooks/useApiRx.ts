@@ -36,24 +36,31 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
   const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
 
-  const { result: polkadotApiRx } = usePromise(
+  const { result: apiRx } = usePromise(
     useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
     null
   );
 
+  const resetData = useCallback(() => {
+    setResult(null);
+    setError(null);
+  }, []);
+
   useEffect(() => {
-    // Discard any previous data when the wallet is disconnected,
-    // or when the Polkadot API is not yet ready.
-    if (polkadotApiRx === null) {
-      setResult(null);
+    if (apiRx === null) {
+      // Discard any previous data when the Promise API is not ready.
+      resetData();
 
       return;
     }
 
-    const observable = factory(polkadotApiRx);
+    const observable = factory(apiRx);
 
     // The factory is not yet ready to produce an observable.
+    // Discard any previous data
     if (observable === null) {
+      resetData();
+
       return;
     }
 
@@ -76,7 +83,7 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
       });
 
     return () => subscription.unsubscribe();
-  }, [factory, polkadotApiRx]);
+  }, [factory, apiRx, resetData]);
 
   return { result, isLoading, error };
 }

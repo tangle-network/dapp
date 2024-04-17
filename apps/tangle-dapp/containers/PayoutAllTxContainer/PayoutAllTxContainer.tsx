@@ -40,7 +40,11 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   );
 
   const allValidators = useMemo(
-    () => [...new Set(payoutValidatorsAndEras.map((v) => v.validatorAddress))],
+    () => [
+      ...new Set(
+        payoutValidatorsAndEras.map((v) => v.validatorSubstrateAddress)
+      ),
+    ],
     [payoutValidatorsAndEras]
   );
 
@@ -70,7 +74,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       (payout) =>
         !payoutValidatorsAndEras.find(
           (v) =>
-            v.validatorAddress === payout.validator.address &&
+            v.validatorSubstrateAddress === payout.validator.address &&
             v.era === payout.era
         )
     );
