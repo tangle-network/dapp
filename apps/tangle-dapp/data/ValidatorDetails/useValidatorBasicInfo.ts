@@ -22,6 +22,8 @@ export default function useValidatorBasicInfo(validatorAddress: string) {
   const [web, setWeb] = useState<string | null>(null);
   const [twitter, setTwitter] = useState<string | null>(null);
   const [nominations, setNominations] = useState<number | null>(null);
+  const [isActive, setIsActive] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,26 +54,31 @@ export default function useValidatorBasicInfo(validatorAddress: string) {
       };
 
       const fetchNominations = async () => {
-        if (
-          currentEra !== null &&
-          api.query.staking?.erasStakersOverview !== undefined
-        ) {
-          const erasStakersOverviewData =
-            await api.query.staking.erasStakersOverview(
-              currentEra,
-              validatorAddress
-            );
-          if (erasStakersOverviewData.isSome) {
-            const nominatorCount =
-              erasStakersOverviewData.unwrap().nominatorCount;
-            setNominations(nominatorCount.toNumber());
-          }
-        } else {
-          setNominations(0);
+        if (currentEra === null || !api.query.staking?.erasStakersOverview) {
+          setNominations(null);
+          setIsActive(null);
+          return;
         }
+
+        const erasStakersOverviewData =
+          await api.query.staking.erasStakersOverview(
+            currentEra,
+            validatorAddress
+          );
+        if (erasStakersOverviewData.isSome) {
+          const nominatorCount =
+            erasStakersOverviewData.unwrap().nominatorCount;
+          setNominations(nominatorCount.toNumber());
+          setIsActive(true);
+          return;
+        }
+
+        setNominations(null);
+        setIsActive(false);
       };
 
       await Promise.all([fetchNameAndSocials(), fetchNominations()]);
+      setIsLoading(false);
     };
 
     fetchData();
@@ -79,12 +86,13 @@ export default function useValidatorBasicInfo(validatorAddress: string) {
 
   return {
     name,
-    isActive: true,
+    isActive,
     totalRestaked,
     restakingMethod: profileTypeOpt,
     nominations,
     twitter,
     email,
     web,
+    isLoading,
   };
 }

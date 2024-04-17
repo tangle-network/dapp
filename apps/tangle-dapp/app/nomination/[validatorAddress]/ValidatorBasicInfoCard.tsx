@@ -15,6 +15,7 @@ import { twMerge } from 'tailwind-merge';
 import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
+import ValueSkeleton from './ValueSkeleton';
 
 interface ValidatorBasicInfoCardProps {
   validatorAddress: string;
@@ -36,6 +37,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
     twitter,
     email,
     web,
+    isLoading,
   } = useValidatorBasicInfo(validatorAddress);
 
   return (
@@ -49,17 +51,25 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
             size="lg"
             className="w-9 h-9"
           />
+
+          {/* Name && Active/Waiting */}
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              {name && (
+              {isLoading ? (
+                <ValueSkeleton />
+              ) : (
                 <Typography variant="h4" fw="bold">
-                  {name}
+                  {name ?? shortenString(validatorAddress)}
                 </Typography>
               )}
-              <Chip color={isActive ? 'green' : 'yellow'}>
-                {isActive ? 'Active' : 'Waiting'}
-              </Chip>
+              {isActive !== null && !isLoading && (
+                <Chip color={isActive ? 'green' : 'yellow'}>
+                  {isActive ? 'Active' : 'Waiting'}
+                </Chip>
+              )}
             </div>
+
+            {/* Address */}
             <div className="flex items-center gap-1">
               <Typography
                 variant="h5"
@@ -85,26 +95,42 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
           </div>
         </div>
 
-        {/* Restake & Nomination Info */}
         <div className="flex flex-col md:flex-row gap-3 md:gap-2">
+          {/* Restaked */}
           <div className="flex-1 space-y-3">
             <Typography variant="h5" fw="bold" className="!text-mono-100">
               Total Restaked
             </Typography>
             <div className="flex gap-3 items-center">
-              <Typography variant="h4" fw="bold" className="whitespace-nowrap">
-                {totalRestaked ?? '--'} {nativeTokenSymbol}
-              </Typography>
-              <Chip color="dark-grey">{restakingMethod?.value ?? 'N/A'}</Chip>
+              {isLoading ? (
+                <ValueSkeleton />
+              ) : (
+                <Typography
+                  variant="h4"
+                  fw="bold"
+                  className="whitespace-nowrap"
+                >
+                  {totalRestaked ?? '--'} {nativeTokenSymbol}
+                </Typography>
+              )}
+              {!isLoading && (
+                <Chip color="dark-grey">{restakingMethod?.value ?? 'N/A'}</Chip>
+              )}
             </div>
           </div>
+
+          {/* Nominations */}
           <div className="flex-1 space-y-3">
             <Typography variant="h5" fw="bold" className="!text-mono-100">
               Nominations
             </Typography>
-            <Typography variant="h4" fw="bold">
-              {nominations ?? '--'}
-            </Typography>
+            {isLoading ? (
+              <ValueSkeleton />
+            ) : (
+              <Typography variant="h4" fw="bold">
+                {nominations ?? '--'}
+              </Typography>
+            )}
           </div>
         </div>
 

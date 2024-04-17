@@ -2,6 +2,7 @@ import { Spinner } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 
 import { GlassCard, TangleCard } from '../../../components';
+import ValueSkeleton from './ValueSkeleton';
 
 export default function Loading() {
   return (
@@ -12,10 +13,8 @@ export default function Loading() {
             <div className="flex gap-2">
               <div className="w-9 h-9 rounded-full bg-mono-40 dark:bg-mono-160" />
               <div className="space-y-1 flex-1">
-                <SkeletonLoader size="lg" className="h-8 w-3/5" />
-                <div className="w-full flex items-center gap-1">
-                  <SkeletonLoader size="lg" className="w-4/5" />
-                </div>
+                <ValueSkeleton />
+                <SkeletonLoader size="lg" className="w-4/5" />
               </div>
             </div>
 
@@ -24,13 +23,13 @@ export default function Loading() {
                 <Typography variant="h5" fw="bold" className="!text-mono-100">
                   Total Restaked
                 </Typography>
-                <SkeletonLoader size="lg" className="h-8 w-3/5" />
+                <ValueSkeleton />
               </div>
               <div className="flex-1 space-y-3">
                 <Typography variant="h5" fw="bold" className="!text-mono-100">
                   Nominations
                 </Typography>
-                <SkeletonLoader size="lg" className="h-8 w-3/5" />
+                <ValueSkeleton />
               </div>
             </div>
           </div>
