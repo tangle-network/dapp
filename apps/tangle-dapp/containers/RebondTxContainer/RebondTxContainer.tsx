@@ -87,7 +87,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           <AmountInput
             id="rebond-input"
             title="Amount"
-            max={totalUnbondedAmount?.value ?? undefined}
+            max={totalUnbondingAmount?.value ?? undefined}
             amount={amountToRebond}
             setAmount={setAmountToRebond}
             baseInputOverrides={{ isFullWidth: true }}

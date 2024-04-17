@@ -15,7 +15,7 @@ const useUnbondedAmount = () => {
       entries.reduce((acc, entry) => {
         // Only consider those entries whose remaining eras
         // are less than or equal to 0 (ie. already unbonded).
-        if (entry.remainingEras.gten(0)) {
+        if (entry.remainingEras.lten(0)) {
           return acc.add(entry.amount);
         }
 

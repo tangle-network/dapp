@@ -14,7 +14,11 @@ const useUnbondingAmount = () => {
     }
 
     return unbondingEntriesOpt.map((entries) =>
-      entries.reduce((acc, entry) => acc.add(entry.amount), new BN(0))
+      entries
+        // Only consider the entries that have remaining eras.
+        .filter((entry) => entry.remainingEras.gten(1))
+        // Sum their amounts.
+        .reduce((acc, entry) => acc.add(entry.amount), new BN(0))
     );
   }, [unbondingEntriesOpt]);
 
