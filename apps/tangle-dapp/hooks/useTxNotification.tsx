@@ -38,16 +38,21 @@ const useTxNotification = (txName: TxName) => {
 
   const notifySuccess = useCallback(
     (txHash: HexString) => {
-      if (isEvmActiveAccount === null) {
-        return;
-      }
-
       closeSnackbar(processingKey);
 
-      const txExplorerUrl = getTxExplorerUrl(
-        txHash,
-        isEvmActiveAccount ? ExplorerType.EVM : ExplorerType.Substrate
-      );
+      // In case that the EVM account status is unavailable,
+      // default to not display the transaction explorer URL,
+      // since it is not possible to determine anymore. However,
+      // this allows the user to still see the success message if
+      // for example, they disconnect their account while the
+      // transaction is still processing.
+      const txExplorerUrl =
+        isEvmActiveAccount === null
+          ? null
+          : getTxExplorerUrl(
+              txHash,
+              isEvmActiveAccount ? ExplorerType.EVM : ExplorerType.Substrate
+            );
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.

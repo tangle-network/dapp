@@ -91,7 +91,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
   // Notify transaction status updates via a toast notification.
   useEffect(() => {
-    if (agnosticStatus === TxStatus.PROCESSING) {
+    // TODO: This won't trigger the notification if the
+    if (agnosticStatus === TxStatus.PROCESSING || isEvmAccount === null) {
       return;
     }
 

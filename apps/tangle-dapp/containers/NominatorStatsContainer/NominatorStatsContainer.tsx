@@ -18,6 +18,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useStakingLedger from '../../data/staking/useStakingLedger';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -33,6 +34,7 @@ const NominatorStatsContainer: FC = () => {
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
+  const activeAccountAddress = useActiveAccountAddress();
   const { activeAccount, loading: isActiveAccountLoading } = useWebContext();
   const { nativeTokenSymbol } = useNetworkStore();
   const networkFeatures = useNetworkFeatures();
@@ -71,7 +73,9 @@ const NominatorStatsContainer: FC = () => {
             title="Free Balance"
             isError={balancesError !== null}
           >
-            {freeBalance === null
+            {activeAccountAddress === null
+              ? '--'
+              : freeBalance === null
               ? null
               : formatTokenBalance(freeBalance, nativeTokenSymbol)}
           </NominatorStatsItem>
@@ -125,7 +129,11 @@ const NominatorStatsContainer: FC = () => {
               tooltip="The total amount of tokens you have bonded for nominating."
               isError={false}
             >
-              {bondedAmountBalance}
+              {activeAccountAddress === null
+                ? '--'
+                : bondedAmountBalance === null
+                ? null
+                : bondedAmountBalance}
             </NominatorStatsItem>
 
             <UnbondingStatsItem />
@@ -191,12 +199,10 @@ const NominatorStatsContainer: FC = () => {
         </div>
       </div>
 
-      {isDelegateModalOpen && (
-        <DelegateTxContainer
-          isModalOpen={isDelegateModalOpen}
-          setIsModalOpen={setIsDelegateModalOpen}
-        />
-      )}
+      <DelegateTxContainer
+        isModalOpen={isDelegateModalOpen}
+        setIsModalOpen={setIsDelegateModalOpen}
+      />
 
       <BondMoreTxContainer
         isModalOpen={isBondMoreModalOpen}

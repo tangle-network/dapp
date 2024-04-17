@@ -1,15 +1,18 @@
 'use client';
 
+import { BN_ZERO } from '@polkadot/util';
 import { type FC, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { formatBnWithCommas } from '../../utils/formatBnWithCommas';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
 const UnbondingStatsItem: FC = () => {
+  const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { result: unbondingEntriesOpt, error: unbondingEntriesError } =
@@ -46,15 +49,26 @@ const UnbondingStatsItem: FC = () => {
     return <>{elements}</>;
   }, [unbondingEntriesOpt, nativeTokenSymbol]);
 
+  const balance =
+    // No account is active.
+    activeAccountAddress === null
+      ? '--'
+      : // Amount is still loading.
+      totalUnbondingAmount === null
+      ? null
+      : // Amount is loaded and there is an active account.
+        formatTokenBalance(
+          totalUnbondingAmount.value ?? BN_ZERO,
+          nativeTokenSymbol
+        );
+
   return (
     <NominatorStatsItem
       title={`Unbonding ${nativeTokenSymbol}`}
       tooltip={unbondingRemainingErasTooltip ?? undefined}
       isError={unbondingEntriesError !== null || unbondingAmountError !== null}
     >
-      {totalUnbondingAmount?.value
-        ? formatTokenBalance(totalUnbondingAmount?.value, nativeTokenSymbol)
-        : null}
+      {balance}
     </NominatorStatsItem>
   );
 };

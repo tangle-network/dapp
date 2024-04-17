@@ -269,21 +269,17 @@ const DelegationsPayoutsContainer: FC = () => {
         </TabContent>
       </TableAndChartTabs>
 
-      {isDelegateModalOpen && (
-        <DelegateTxContainer
-          isModalOpen={isDelegateModalOpen}
-          setIsModalOpen={setIsDelegateModalOpen}
-        />
-      )}
+      <DelegateTxContainer
+        isModalOpen={isDelegateModalOpen}
+        setIsModalOpen={setIsDelegateModalOpen}
+      />
 
-      {isUpdateNominationsModalOpen && (
-        <UpdateNominationsTxContainer
-          isModalOpen={isUpdateNominationsModalOpen}
-          setIsModalOpen={setIsUpdateNominationsModalOpen}
-          // TODO: Need to pass down the explicit `Optional<T>` type here, instead of defaulting to `null`, because that will lead to a situation where the lower component things the value is still loading and displays a loading state forever.
-          currentNominations={currentNominationAddresses?.value ?? null}
-        />
-      )}
+      <UpdateNominationsTxContainer
+        isModalOpen={isUpdateNominationsModalOpen}
+        setIsModalOpen={setIsUpdateNominationsModalOpen}
+        // TODO: Need to pass down the explicit `Optional<T>` type here, instead of defaulting to `null`, because that will lead to a situation where the lower component things the value is still loading and displays a loading state forever.
+        currentNominations={currentNominationAddresses?.value ?? null}
+      />
 
       <UpdatePayeeTxContainer
         isModalOpen={isUpdatePayeeModalOpen}
