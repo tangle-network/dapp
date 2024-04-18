@@ -163,7 +163,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 p-9">
+        <div className="flex flex-col gap-4 p-9 overflow-clip">
           <Typography variant="body1" fw="normal">
             Quickly transfer your {nativeTokenSymbol} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
