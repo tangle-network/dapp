@@ -2,12 +2,12 @@ import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useState } from 'react';
 
 import {
-  AbiFunctionName,
   getAbiForPrecompile,
   getAddressOfPrecompile,
   Precompile,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
+import type { EvmAbiCallData, EvmTxFactory } from './types';
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import useViemPublicClient from './useViemPublicClient';
@@ -29,16 +29,6 @@ type TxReceipt = {
   type: string;
   contractAddress: unknown | null;
 };
-
-export type EvmAbiCallData<PrecompileT extends Precompile> = {
-  functionName: AbiFunctionName<PrecompileT>;
-  // TODO: Use argument types from the ABI.
-  arguments: unknown[];
-};
-
-export type EvmTxFactory<PrecompileT extends Precompile, Context> = (
-  context: Context
-) => EvmAbiCallData<PrecompileT> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.
@@ -77,7 +67,7 @@ function useEvmPrecompileAbiCall<
       }
 
       const factoryResult =
-        factory instanceof Function ? factory(context) : factory;
+        factory instanceof Function ? await factory(context) : factory;
 
       // Factory isn't ready yet.
       if (factoryResult === null) {

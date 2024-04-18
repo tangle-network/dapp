@@ -5,11 +5,9 @@ import { useCallback, useEffect } from 'react';
 
 import { Precompile } from '../constants/evmPrecompiles';
 import prepareTxNotification from '../utils/prepareTxNotification';
+import type { EvmAbiCallData, EvmTxFactory } from './types';
 import useActiveAccountAddress from './useActiveAccountAddress';
-import useEvmPrecompileAbiCall, {
-  EvmAbiCallData,
-  EvmTxFactory,
-} from './useEvmPrecompileAbiCall';
+import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createPublicClient, http, PublicClient } from 'viem';
+import { createPublicClient, http, type PublicClient } from 'viem';
 
 import useNetworkStore from '../context/useNetworkStore';
 import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';

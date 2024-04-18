@@ -42,6 +42,13 @@ const createTangleViemChainFromNetwork = (
         http: [network.httpRpcEndpoint],
       },
     },
+    fees: {
+      /**
+       * Follow the default medium priority fee of Metamask
+       * @see https://github.com/MetaMask/core/blob/95d02fae36ab4229069e6dccf0dd9c27b8e60a99/packages/gas-fee-controller/src/fetchGasEstimatesViaEthFeeHistory/calculateGasFeeEstimatesForPriorityLevels.ts#L29
+       */
+      defaultPriorityFee: BigInt(1_500_000_000),
+    },
   };
 };
 
