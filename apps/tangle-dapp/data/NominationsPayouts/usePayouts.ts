@@ -14,7 +14,7 @@ import {
   getPolkadotApiPromise,
   getPolkadotApiRx,
   getValidatorCommission,
-  getValidatorIdentity,
+  getValidatorIdentityName,
 } from '../../utils/polkadot';
 
 export default function usePayouts(
@@ -223,15 +223,16 @@ export default function usePayouts(
                               nativeTokenSymbol
                             );
 
-                          const validatorIdentity = await getValidatorIdentity(
-                            rpcEndpoint,
-                            validator
-                          );
+                          const validatorIdentity =
+                            await getValidatorIdentityName(
+                              rpcEndpoint,
+                              validator
+                            );
 
                           const validatorNominators = await Promise.all(
                             eraStaker.others.map(async (nominator) => {
                               const nominatorIdentity =
-                                await getValidatorIdentity(
+                                await getValidatorIdentityName(
                                   rpcEndpoint,
                                   nominator.who.toString()
                                 );

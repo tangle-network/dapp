@@ -4,17 +4,14 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import {
-  ExternalLinkLine,
-  LoginBoxLineIcon,
-  WalletLineIcon,
-} from '@webb-tools/icons';
+import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
 import { useWallets } from '@webb-tools/react-hooks';
 import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Dropdown,
   DropdownBody,
+  ExternalLinkIcon,
   KeyValueWithButton,
   MenuItem,
   shortenString,
@@ -97,9 +94,7 @@ export const WalletDropdown: FC<{
                   shortenFn={(str) => shortenString(str, 5)}
                 />
 
-                <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
-                  <ExternalLinkLine />
-                </a>
+                <ExternalLinkIcon href={accountExplorerUrl} />
               </div>
             </div>
           </div>

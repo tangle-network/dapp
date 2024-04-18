@@ -9,8 +9,8 @@ import {
 import getExplorerURI from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { ExternalLinkLine } from '@webb-tools/icons';
 import {
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenHex,
   Table,
@@ -72,15 +72,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
           return (
             <div className="flex gap-1 items-center">
               <StringCell value={shortenHex(txHash, 5)} />
-              {txExplorerURI && (
-                <a
-                  href={txExplorerURI}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <ExternalLinkLine />
-                </a>
-              )}
+              {txExplorerURI && <ExternalLinkIcon href={txExplorerURI} />}
             </div>
           );
         },
