@@ -11,7 +11,7 @@ const useViemPublicClient = () => {
   // Update the public client when the network changes.
   useEffect(() => {
     if (
-      network.chainId === undefined ||
+      network.evmChainId === undefined ||
       network.httpRpcEndpoint === undefined
     ) {
       return;
@@ -19,7 +19,7 @@ const useViemPublicClient = () => {
 
     const chain = createTangleViemChainFromNetwork({
       ...network,
-      chainId: network.chainId,
+      chainId: network.evmChainId,
       httpRpcEndpoint: network.httpRpcEndpoint,
     });
 

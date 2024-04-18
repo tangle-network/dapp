@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
-import { formatEther } from 'viem';
 
 import { Precompile } from '../../constants/evmPrecompiles';
 import { EvmAbiCallData, EvmTxFactory } from '../../hooks/types';

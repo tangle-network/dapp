@@ -1,4 +1,4 @@
-import { SubstrateChainId } from '@webb-tools/dapp-types';
+import { EVMChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import {
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
@@ -27,6 +27,7 @@ export enum NetworkId {
 export type Network = {
   id: NetworkId;
   chainId?: number;
+  evmChainId?: number;
   name: string;
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
@@ -53,6 +54,7 @@ export type Network = {
 export const TANGLE_MAINNET_NETWORK: Network = {
   id: NetworkId.TANGLE_MAINNET,
   chainId: SubstrateChainId.TangleMainnetNative,
+  evmChainId: EVMChainId.TangleMainnetEVM,
   name: 'Tangle Mainnet',
   nodeType: 'standalone',
   wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
@@ -64,6 +66,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   id: NetworkId.TANGLE_TESTNET,
   chainId: SubstrateChainId.TangleTestnetNative,
+  evmChainId: EVMChainId.TangleTestnetEVM,
   name: 'Tangle Testnet',
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
@@ -79,6 +82,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
 export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   id: NetworkId.TANGLE_LOCAL_DEV,
   chainId: SubstrateChainId.TangleTestnetNative,
+  evmChainId: EVMChainId.TangleLocalEVM,
   name: 'Local endpoint',
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',

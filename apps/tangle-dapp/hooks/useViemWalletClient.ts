@@ -14,7 +14,7 @@ const useViemWalletClient = () => {
   useEffect(() => {
     if (
       window.ethereum === undefined ||
-      network.chainId === undefined ||
+      network.evmChainId === undefined ||
       network.httpRpcEndpoint === undefined ||
       activeEvmAddress === null
     ) {
@@ -23,7 +23,7 @@ const useViemWalletClient = () => {
 
     const chain = createTangleViemChainFromNetwork({
       ...network,
-      chainId: network.chainId,
+      chainId: network.evmChainId,
       httpRpcEndpoint: network.httpRpcEndpoint,
     });
 
