@@ -22,8 +22,6 @@ const RolesEarningsCard: FC<RolesEarningsCardProps> = ({ earnings }) => {
     }));
   }, [earnings]);
 
-  console.log('data: ', data);
-
   return (
     <GlassCard className="h-[409px] overflow-hidden">
       <Typography variant="h5" fw="bold">
