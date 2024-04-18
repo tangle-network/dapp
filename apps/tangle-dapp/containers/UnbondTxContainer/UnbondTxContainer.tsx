@@ -17,7 +17,6 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
-import { useTxConfirmationModal } from '../../context/TxConfirmationContext';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
@@ -35,7 +34,6 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
-  const { setTxConfirmationState } = useTxConfirmationModal();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const [amountToUnbond, setAmountToUnbond] = useState<BN | null>(null);
@@ -136,7 +134,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         throw new Error('Amount to unbond is required.');
       }
       const unbondingAmount = +formatBnToDisplayAmount(amountToUnbond);
-      const hash = await executeTx(
+      await executeTx(
         () => unbondTokensEvm(walletAddress, unbondingAmount),
         () =>
           unbondTokensSubstrate(rpcEndpoint, walletAddress, unbondingAmount),
@@ -144,28 +142,15 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         'Failed to unbond tokens!'
       );
 
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'success',
-        hash: hash,
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } catch {
-      setTxConfirmationState({
-        isOpen: true,
-        status: 'error',
-        hash: '',
-        txType: isSubstrateAddress(walletAddress) ? 'substrate' : 'evm',
-      });
-    } finally {
       closeModal();
+    } catch {
+      setIsUnbondTxLoading(false);
     }
   }, [
     amountToUnbond,
     closeModal,
     executeTx,
     rpcEndpoint,
-    setTxConfirmationState,
     walletAddress,
     nativeTokenSymbol,
   ]);

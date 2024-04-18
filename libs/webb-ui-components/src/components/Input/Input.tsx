@@ -64,6 +64,7 @@ export const Input: React.FC<InputProps> = (props) => {
     ...restProps
   } = props;
   const [value, setValue] = useState(initialValue);
+  const [cursor, setCursor] = useState<number | null>(null);
 
   useEffect(() => {
     setValue(initialValue);
@@ -76,6 +77,10 @@ export const Input: React.FC<InputProps> = (props) => {
 
     return () => clearTimeout(timeout);
   }, [debounceTime, onChange, value]);
+
+  useEffect(() => {
+    inputRef?.current?.setSelectionRange(cursor, cursor);
+  }, [inputRef, cursor, value]);
 
   // Override the size of left icon prop to 'md'
   const leftIcon = useMemo(() => {
@@ -200,11 +205,12 @@ export const Input: React.FC<InputProps> = (props) => {
           required={isRequired}
           className={mergedInputClsx}
           value={value}
-          onChange={(eve) =>
+          onChange={(e) => {
+            setCursor(e.target.selectionStart);
             isControlled && onChange !== undefined
-              ? onChange(eve.target.value)
-              : setValue(eve.target.value)
-          }
+              ? onChange(e.target.value)
+              : setValue(e.target.value);
+          }}
           {...restProps}
         />
 
