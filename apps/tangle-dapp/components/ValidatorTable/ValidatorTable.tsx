@@ -65,7 +65,7 @@ const staticColumns = [
     cell: (props) => (
       <div className="flex justify-center items-center">
         <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
-          <Button variant="link">Details</Button>
+          <Button variant="link" size="sm">DETAILS</Button>
         </Link>
       </div>
     ),
