@@ -187,7 +187,11 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             <AmountInput
               id="transfer-tx-amount-input"
               title="Amount"
-              max={transferrableBalance ?? undefined}
+              max={
+                status === TxStatus.NOT_YET_INITIATED
+                  ? transferrableBalance
+                  : null
+              }
               min={existentialDeposit}
               isDisabled={!isReady}
               amount={amount}
