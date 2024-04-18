@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
@@ -7,7 +8,7 @@ import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
  * Type for the restaking earnings record,
  * key is the era number and value is the restaking earnings for that era
  */
-export type EarningRecord = Record<number, number>;
+export type EarningRecord = Record<number, BN>;
 
 /**
  * Hook to get the restaking earnings for a given account
@@ -28,7 +29,8 @@ const useRestakingEarnings = (substrateAccount: string | null) =>
             return entries.reduce((prev, [era, eraRewardPoints]) => {
               eraRewardPoints.individual.forEach((reward, accountId32) => {
                 if (accountId32.toString() === substrateAccount) {
-                  prev[era.args[0].toNumber()] = reward.toNumber();
+                  // era is in type u32, which can be converted to number
+                  prev[era.args[0].toNumber()] = reward;
                 }
               });
 
