@@ -1,5 +1,6 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
@@ -31,23 +32,27 @@ const RestakePage = () => {
   const earnings = useMemo(() => {
     if (isEarningsLoading || !earningsRecord) return null;
 
-    return Object.values(earningsRecord).reduce((prev, curr) => prev + curr, 0);
+    return Object.values(earningsRecord).reduce(
+      (total, curr) => total.add(curr),
+      BN_ZERO
+    );
   }, [earningsRecord, isEarningsLoading]);
 
   const availableForRestake = useMemo(() => {
     const fmtMaxRestakingAmount =
       maxRestakingAmount !== null
-        ? +formatUnits(
-            BigInt(maxRestakingAmount.toString()),
-            TANGLE_TOKEN_DECIMALS
+        ? new BN(
+            formatUnits(
+              BigInt(maxRestakingAmount.toString()),
+              TANGLE_TOKEN_DECIMALS
+            )
           )
         : null;
 
     if (fmtMaxRestakingAmount !== null && totalRestaked !== null) {
-      const availableForRestake =
-        fmtMaxRestakingAmount > totalRestaked
-          ? fmtMaxRestakingAmount - totalRestaked
-          : 0;
+      const availableForRestake = fmtMaxRestakingAmount.gt(totalRestaked)
+        ? fmtMaxRestakingAmount.sub(totalRestaked)
+        : BN_ZERO;
 
       return availableForRestake;
     }

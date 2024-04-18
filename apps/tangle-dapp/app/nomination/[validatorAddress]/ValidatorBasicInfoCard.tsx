@@ -15,6 +15,7 @@ import { twMerge } from 'tailwind-merge';
 import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
+import { formatTokenBalance } from '../../../utils/polkadot';
 import ValueSkeleton from './ValueSkeleton';
 
 interface ValidatorBasicInfoCardProps {
@@ -110,7 +111,9 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
                   fw="bold"
                   className="whitespace-nowrap"
                 >
-                  {totalRestaked ?? '--'} {nativeTokenSymbol}
+                  {totalRestaked
+                    ? formatTokenBalance(totalRestaked, nativeTokenSymbol)
+                    : '--'}
                 </Typography>
               )}
               {!isLoading && (

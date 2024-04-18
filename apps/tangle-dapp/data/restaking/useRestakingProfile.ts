@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
@@ -35,11 +36,13 @@ const useRestakingProfile = (address?: string) => {
         ? // Dummy check to whether format the total restaked amount
           // or not, as the local testnet is in wei but the live one is in unit
           ledgerOpt.unwrap().total.toString().length > 10
-          ? +formatUnits(
-              ledgerOpt.unwrap().total.toBigInt(),
-              TANGLE_TOKEN_DECIMALS
+          ? new BN(
+              formatUnits(
+                ledgerOpt.unwrap().total.toBigInt(),
+                TANGLE_TOKEN_DECIMALS
+              )
             )
-          : ledgerOpt.unwrap().total.toNumber()
+          : ledgerOpt.unwrap().total.toBn()
         : null,
     [ledgerOpt]
   );
