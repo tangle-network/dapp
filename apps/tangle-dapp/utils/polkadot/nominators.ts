@@ -1,7 +1,7 @@
 import type { HexString } from '@polkadot/util/types';
 
-import { extractNameFromInfo } from '../../data/ValidatorTables/useValidatorIdentityNames';
 import { getPolkadotApiPromise } from './api';
+import { extractDataFromIdentityInfo, IdentityDataType } from './identity';
 import { getTxPromise } from './utils';
 
 export const getTotalNumberOfNominators = async (
@@ -29,7 +29,7 @@ export const getTotalNumberOfNominators = async (
   return totalNominators.length;
 };
 
-export const getValidatorIdentity = async (
+export const getValidatorIdentityName = async (
   rpcEndpoint: string,
   validatorAddress: string
 ): Promise<string> => {
@@ -41,7 +41,10 @@ export const getValidatorIdentity = async (
   if (identityOpt.isSome) {
     const identity = identityOpt.unwrap();
     const info = identity[0].info;
-    const displayName = extractNameFromInfo(info);
+    const displayName = extractDataFromIdentityInfo(
+      info,
+      IdentityDataType.NAME
+    );
 
     if (displayName !== null) {
       return displayName;

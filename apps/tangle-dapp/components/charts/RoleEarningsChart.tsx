@@ -5,7 +5,7 @@ import {
   Typography,
   useNextDarkMode,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import {
   Bar,
   BarChart,
@@ -24,7 +24,7 @@ const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data }) => {
   const [isDarkMode] = useNextDarkMode();
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const isEmptyData = data.length === 0;
+  const isEmptyData = useMemo(() => data.length === 0, [data]);
 
   return (
     <div className="relative h-full">

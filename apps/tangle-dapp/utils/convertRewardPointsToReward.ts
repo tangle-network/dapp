@@ -1,6 +1,6 @@
-import { u32, u128 } from '@polkadot/types';
-import { Perbill } from '@polkadot/types/interfaces';
-import { BN_MILLION } from '@polkadot/util';
+import type { u32, u128 } from '@polkadot/types';
+import type { Perbill } from '@polkadot/types/interfaces';
+import { type BN, BN_MILLION } from '@polkadot/util';
 
 /**
  * Convert the reward points to reward in token
@@ -18,7 +18,7 @@ export default function convertRewardPointsToReward(
   validatorCommision: Perbill,
   ownStaked: u128,
   totalStaked: u128
-): number {
+): BN {
   // Convert Perbill to a number
   const validatorCommission = validatorCommision.toNumber() / 10_000_000 / 100;
 
@@ -34,5 +34,5 @@ export default function convertRewardPointsToReward(
     validatorExposurePart
   );
 
-  return validatorStakingPayout.add(validatorCommissionPayout).toNumber();
+  return validatorStakingPayout.add(validatorCommissionPayout);
 }

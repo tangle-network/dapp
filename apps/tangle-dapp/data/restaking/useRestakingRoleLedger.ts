@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
-const useRestakingRoleLedger = () => {
+const useRestakingRoleLedger = (address?: string) => {
   const activeSubstrateAccount = useSubstrateAddress();
 
   return usePolkadotApiRx(
@@ -13,9 +13,9 @@ const useRestakingRoleLedger = () => {
           return null;
         }
 
-        return api.query.roles.ledger(activeSubstrateAccount);
+        return api.query.roles.ledger(address ?? activeSubstrateAccount);
       },
-      [activeSubstrateAccount]
+      [address, activeSubstrateAccount]
     )
   );
 };

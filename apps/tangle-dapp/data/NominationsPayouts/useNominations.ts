@@ -15,7 +15,7 @@ import {
   getPolkadotApiRx,
   getTotalNumberOfNominators,
   getValidatorCommission,
-  getValidatorIdentity,
+  getValidatorIdentityName,
 } from '../../utils/polkadot';
 
 export default function useNominations(
@@ -73,7 +73,7 @@ export default function useNominations(
                     )
                   );
 
-                const identity = await getValidatorIdentity(
+                const identity = await getValidatorIdentityName(
                   rpcEndpoint,
                   target.toString()
                 );

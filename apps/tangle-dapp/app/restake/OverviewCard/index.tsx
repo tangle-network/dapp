@@ -126,7 +126,7 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {typeof value === 'number' || isValueBN
+              {value != null
                 ? formatBalance(value, {
                     decimals: isValueBN ? TANGLE_TOKEN_DECIMALS : undefined,
                     withUnit: suffix,

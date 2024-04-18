@@ -18,6 +18,7 @@ const RestakePage = () => {
     hasExistingProfile,
     profileTypeOpt: substrateProfileTypeOpt,
     ledgerOpt,
+    totalRestaked,
   } = useRestakingProfile();
 
   const { maxRestakingAmount } = useRestakingLimits();
@@ -30,27 +31,17 @@ const RestakePage = () => {
 
   const apy = useRestakingAPY();
 
-  const { availableForRestake, totalRestaked } = useMemo(() => {
-    const totalRestaked = ledgerOpt?.isSome
-      ? ledgerOpt.unwrap().total.toBn()
-      : null;
-
+  const availableForRestake = useMemo(() => {
     if (maxRestakingAmount !== null && totalRestaked !== null) {
       const availableForRestake = maxRestakingAmount.gt(totalRestaked)
         ? maxRestakingAmount.sub(totalRestaked)
         : BN_ZERO;
 
-      return {
-        totalRestaked,
-        availableForRestake,
-      };
+      return availableForRestake;
     }
 
-    return {
-      totalRestaked,
-      availableForRestake: maxRestakingAmount,
-    };
-  }, [ledgerOpt, maxRestakingAmount]);
+    return maxRestakingAmount;
+  }, [maxRestakingAmount, totalRestaked]);
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">

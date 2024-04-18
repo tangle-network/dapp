@@ -37,3 +37,5 @@ https://github.com/webb-tools/webb-dapp/releases/tag/v1.0.10
 https://github.com/webb-tools/webb-dapp/releases/tag/v1.0.11
 https://github.com/webb-tools/webb-dapp/releases/tag/v1.0.12
 https://github.com/webb-tools/webb-dapp/releases/tag/v1.0.13
+# Something happened with conventional commits link, temporary disabled to fix the CI
+https://www.conventionalcommits.org/en/v1.0.0/
