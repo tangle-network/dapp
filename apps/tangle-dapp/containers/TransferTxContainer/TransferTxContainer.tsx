@@ -22,6 +22,7 @@ import AddressInput, {
 import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
+import useExistentialDeposit from '../../data/balances/useExistentialDeposit';
 import useTransferTx from '../../data/balances/useTransferTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -73,6 +74,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
   const { transferrable: transferrableBalance } = useBalances();
+  const existentialDeposit = useExistentialDeposit();
+
   const [amount, setAmount] = useState<BN | null>(null);
   const [receiverAddress, setReceiverAddress] = useState('');
   const [hasErrors, setHasErrors] = useState(false);
@@ -102,12 +105,20 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const handleSend = useCallback(() => {
     // TODO: Check that the address is valid, or return.
     // Transaction not yet ready, or data is invalid.
-    if (executeTransferTx === null || amount === null) {
+    if (
+      executeTransferTx === null ||
+      amount === null ||
+      transferrableBalance === null
+    ) {
       return;
     }
 
-    executeTransferTx({ receiverAddress, amount });
-  }, [amount, executeTransferTx, receiverAddress]);
+    executeTransferTx({
+      receiverAddress,
+      amount,
+      maxAmount: transferrableBalance,
+    });
+  }, [amount, executeTransferTx, receiverAddress, transferrableBalance]);
 
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
@@ -152,7 +163,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 p-9">
+        <div className="flex flex-col gap-4 p-9 overflow-clip">
           <Typography variant="body1" fw="normal">
             Quickly transfer your {nativeTokenSymbol} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
@@ -176,7 +187,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             <AmountInput
               id="transfer-tx-amount-input"
               title="Amount"
-              max={transferrableBalance ?? undefined}
+              max={
+                status === TxStatus.NOT_YET_INITIATED
+                  ? transferrableBalance
+                  : null
+              }
+              min={existentialDeposit}
               isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
@@ -185,6 +201,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
                 tooltip: transferrableBalanceTooltip,
               }}
               maxErrorMessage="Not enough available balance"
+              minErrorMessage={`Amount must be at least ${formatTokenBalance(
+                existentialDeposit,
+                nativeTokenSymbol
+              )}`}
               setErrorMessage={handleSetErrorMessage}
             />
 
