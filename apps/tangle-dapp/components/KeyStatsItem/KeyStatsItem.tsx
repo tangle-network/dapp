@@ -59,7 +59,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
       <div className="flex items-center gap-0.5">
         <Typography
           variant="body1"
-          className="text-mono-140 dark:text-mono-40 break-all xl:whitespace-nowrap"
+          className="text-mono-140 dark:text-mono-40 whitespace-nowrap"
         >
           {title}
         </Typography>
@@ -70,7 +70,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
         <div className="flex items-center gap-0.5">
           {isLoading ? (
-            <SkeletonLoader className="w-[80px]" size="lg" />
+            <SkeletonLoader className="w-20 h-8" />
           ) : error !== null ? (
             'Error'
           ) : children === null ? null : (
