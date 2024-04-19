@@ -8,7 +8,7 @@ export default function Loading() {
         Overview
       </Typography>
 
-      <SkeletonLoader className="h-[84px]" />
+      <SkeletonLoader className="h-[157px]" />
 
       <div className="flex flex-col md:flex-row gap-4 w-full">
         <SkeletonLoader className="rounded-2xl h-[204px]" />
