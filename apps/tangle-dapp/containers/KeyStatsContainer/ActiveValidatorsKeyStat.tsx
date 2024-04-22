@@ -13,7 +13,6 @@ const ActiveValidatorsKeyStat: FC = () => {
       title="Active/Nomination"
       tooltip="Current active nominators out of the total possible."
       isLoading={isLoading}
-      className="lg:!border-b-0"
       error={error}
     >
       {data?.value1}/{data?.value2}

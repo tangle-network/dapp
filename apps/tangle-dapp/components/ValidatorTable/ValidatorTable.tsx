@@ -6,20 +6,23 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
   useReactTable,
 } from '@tanstack/react-table';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
+  Button,
   CopyWithTooltip,
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { useRouter } from 'next/navigation';
-import { FC, useCallback } from 'react';
+import Link from 'next/link';
+import { FC, useMemo } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -28,7 +31,7 @@ import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const columns = [
+const staticColumns = [
   columnHelper.accessor('address', {
     header: () => <HeaderCell title="Identity" className="justify-start" />,
     cell: (props) => {
@@ -77,20 +80,70 @@ const columns = [
       />
     ),
   }),
+  columnHelper.accessor('address', {
+    id: 'details',
+    header: () => null,
+    cell: (props) => (
+      <div className="flex justify-center items-center">
+        <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
+          <Button variant="link" size="sm">
+            DETAILS
+          </Button>
+        </Link>
+      </div>
+    ),
+  }),
 ];
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
-  const router = useRouter();
+  const { network } = useNetworkStore();
 
-  const onRowClick = useCallback(
-    (row: Row<Validator>) => {
-      if (process.env.NODE_ENV === 'production') {
-        return;
-      }
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('address', {
+        header: () => <HeaderCell title="Identity" className="justify-start" />,
+        cell: (props) => {
+          const address = props.getValue();
+          const identity = props.row.original.identityName;
+          const accountExplorerLink = getExplorerURI(
+            network.polkadotExplorerUrl,
+            address,
+            'address',
+            'polkadot'
+          ).toString();
 
-      router.push(`${PagePath.NOMINATION}/${row.original.address}`);
-    },
-    [router]
+          return (
+            <div className="flex items-center space-x-1">
+              <Avatar
+                sourceVariant="address"
+                value={address}
+                theme="substrate"
+              />
+
+              <Typography variant="body1" fw="normal" className="truncate">
+                {identity === address
+                  ? shortenString(address, 6)
+                  : formatIdentity(identity)}
+              </Typography>
+
+              <CopyWithTooltip
+                textToCopy={address}
+                isButton={false}
+                className="cursor-pointer"
+                iconClassName="!fill-mono-160 dark:!fill-mono-80"
+              />
+
+              <ExternalLinkIcon
+                href={accountExplorerLink}
+                className="fill-mono-160 dark:fill-mono-80"
+              />
+            </div>
+          );
+        },
+      }),
+      ...staticColumns,
+    ],
+    [network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({
@@ -116,10 +169,18 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
-        onRowClick={onRowClick}
       />
     </div>
   );
 };
 
 export default ValidatorTable;
+
+/* @internal */
+function formatIdentity(inputString: string): string {
+  if (inputString.length > 15) {
+    return `${inputString.slice(0, 12)}...`;
+  } else {
+    return inputString;
+  }
+}

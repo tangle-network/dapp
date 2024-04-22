@@ -4,46 +4,94 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
+import { EvmAbiCallData, EvmTxFactory } from '../../hooks/types';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
+import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
   receiverAddress: string;
   amount: BN;
+  maxAmount: BN;
 };
 
 const useTransferTx = () => {
+  const { fetchEvmPrecompileFees } = useEvmPrecompileFeeFetcher();
+
   const evmTxFactory: EvmTxFactory<
     Precompile.BALANCES_ERC20,
     TransferTxContext
-  > = useCallback((context) => {
-    // Convert the Substrate address to an EVM address, in case
-    // that it was provided as a Substrate address.
-    const recipientEvmAddress = isAddress(context.receiverAddress)
-      ? toEvmAddress20(context.receiverAddress)
-      : context.receiverAddress;
+  > = useCallback(
+    async ({ receiverAddress, amount, maxAmount }) => {
+      const isMaxAmount = amount.eq(maxAmount);
 
-    return {
-      functionName: 'transfer',
-      arguments: [recipientEvmAddress, context.amount],
-    };
-  }, []);
+      const recipientEvmAddress20 = isAddress(receiverAddress)
+        ? toEvmAddress20(receiverAddress)
+        : receiverAddress;
+
+      const sharedAbiCallData: EvmAbiCallData<Precompile.BALANCES_ERC20> = {
+        functionName: 'transfer',
+        arguments: [recipientEvmAddress20, amount],
+      };
+
+      // If the amount to transfer is not the maximum amount
+      // just return the abi call data for the transfer function.
+      if (!isMaxAmount) {
+        return sharedAbiCallData;
+      }
+
+      // Otherwise, fetch the fees for the transfer and subtract them from
+      // the maximum amount to get the actual amount to transfer.
+      const fees = await fetchEvmPrecompileFees(
+        Precompile.BALANCES_ERC20,
+        sharedAbiCallData
+      );
+
+      if (fees === null) {
+        return sharedAbiCallData;
+      }
+
+      const { gas, maxFeePerGas } = fees;
+
+      if (maxFeePerGas === undefined) {
+        return sharedAbiCallData;
+      }
+
+      const txFee = new BN((gas * maxFeePerGas).toString());
+      const amountToTransfer = amount.sub(txFee);
+
+      return {
+        ...sharedAbiCallData,
+        arguments: [recipientEvmAddress20, amountToTransfer],
+      };
+    },
+    [fetchEvmPrecompileFees]
+  );
 
   const substrateTxFactory: SubstrateTxFactory<TransferTxContext> = useCallback(
-    async (api, _activeSubstrateAddress, context) =>
-      // By 'allow death' it means that the transfer will not
-      // be canceled if that transfer would cause the sender's
-      // account to drop below the existential deposit, which
-      // would essentially cause the account to be 'reaped', or
-      // deleted from the chain.
-      api.tx.balances.transferAllowDeath(
-        // Convert the EVM address to a Substrate address, in case
-        // that it was provided as an EVM address.
-        toSubstrateAddress(context.receiverAddress),
-        context.amount
-      ),
+    async (
+      api,
+      _activeSubstrateAddress,
+      { receiverAddress, amount, maxAmount }
+    ) => {
+      // Convert the EVM address to a Substrate address, in case
+      // that it was provided as an EVM address.
+      const recipientSubstrateAddress = toSubstrateAddress(receiverAddress);
+
+      return amount.eq(maxAmount)
+        ? api.tx.balances.transferAll(
+            recipientSubstrateAddress,
+            // No need to keep the current account alive
+            false
+          )
+        : // By 'allow death' it means that the transfer will not
+          // be canceled if that transfer would cause the sender's
+          // account to drop below the existential deposit, which
+          // would essentially cause the account to be 'reaped', or
+          // deleted from the chain.
+          api.tx.balances.transferAllowDeath(recipientSubstrateAddress, amount);
+    },
     []
   );
 

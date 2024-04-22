@@ -16,7 +16,6 @@ const ValidatorCountKeyStat: FC = () => {
     <KeyStatsItem
       title="Validators"
       tooltip="Current number of active validators out of the total allowed."
-      className="lg:!border-b-0"
       error={validatorCountError}
       isLoading={isValidatorCountLoading}
     >

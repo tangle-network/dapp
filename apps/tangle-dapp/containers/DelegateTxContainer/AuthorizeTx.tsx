@@ -1,7 +1,7 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
 import {
   CopyWithTooltip,
+  ExternalLinkIcon,
   InputField,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -33,9 +33,7 @@ const AuthorizeTx: FC<AuthorizeTxProps> = ({
             }
 
             <InputField.Slot>
-              <a href={contractLink} target="_blank" rel="noopener noreferrer">
-                <ExternalLinkLine size="lg" />
-              </a>
+              <ExternalLinkIcon href={contractLink} size="lg" />
             </InputField.Slot>
           </InputField.Root>
         )}

@@ -9,8 +9,8 @@ import useInputAmount from './useInputAmount';
 export type AmountInputProps = {
   id: string;
   title: string;
-  min?: BN;
-  max?: BN;
+  min?: BN | null;
+  max?: BN | null;
   minErrorMessage?: string;
   maxErrorMessage?: string;
   showMaxAction?: boolean;
@@ -27,8 +27,8 @@ const AmountInput: FC<AmountInputProps> = ({
   title,
   amount,
   setAmount,
-  min,
-  max,
+  min = null,
+  max = null,
   minErrorMessage,
   maxErrorMessage,
   showMaxAction = true,
@@ -43,8 +43,8 @@ const AmountInput: FC<AmountInputProps> = ({
   const { displayAmount, refreshDisplayAmount, errorMessage, handleChange } =
     useInputAmount(
       amount,
-      min ?? null,
-      max ?? null,
+      min,
+      max,
       errorOnEmptyValue,
       setAmount,
       minErrorMessage,
@@ -59,7 +59,7 @@ const AmountInput: FC<AmountInputProps> = ({
   }, [errorMessage, setErrorMessage]);
 
   const setMaxAmount = useCallback(() => {
-    if (max !== undefined) {
+    if (max !== null) {
       setAmount(max);
       refreshDisplayAmount(max);
       inputRef.current?.focus();
@@ -68,11 +68,9 @@ const AmountInput: FC<AmountInputProps> = ({
 
   const actions: ReactNode = (
     <>
-      {max !== undefined && showMaxAction && (
+      {max !== null && showMaxAction && (
         <Button
-          isDisabled={
-            max === null || (amount !== null && amount.eq(max)) || isDisabled
-          }
+          isDisabled={(amount !== null && amount.eq(max)) || isDisabled}
           key="max"
           size="sm"
           variant="utility"

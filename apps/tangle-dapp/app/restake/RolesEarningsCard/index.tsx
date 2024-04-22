@@ -17,7 +17,8 @@ const RolesEarningsCard: FC<RolesEarningsCardProps> = ({ earnings }) => {
 
     return Object.entries(earnings).map(([era, reward]) => ({
       era: +era,
-      reward,
+      // Recharts can only handle number, temporarily convert to number
+      reward: reward.toNumber(),
     }));
   }, [earnings]);
 

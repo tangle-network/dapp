@@ -1,6 +1,6 @@
 'use client';
 
-import { formatBalance } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
@@ -16,9 +16,9 @@ type OverviewCardProps = ComponentProps<'div'> & {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
   isLoading?: boolean;
-  totalRestaked?: number | null;
-  availableForRestake?: number | null;
-  earnings?: number | null;
+  totalRestaked?: BN | null;
+  availableForRestake?: BN | null;
+  earnings?: BN | null;
   apy?: number | null;
 };
 
@@ -83,7 +83,7 @@ export default OverviewCard;
 type StatsItemProps = {
   title: string;
   titleTooltip?: string;
-  value: number | null | undefined;
+  value: BN | number | null | undefined;
   valueTooltip?: string;
   isBoldText?: boolean;
   isLoading?: boolean;
@@ -123,7 +123,7 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {typeof value === 'string' || typeof value === 'number'
+              {value != null
                 ? formatBalance(value, {
                     withUnit: suffix,
                   })

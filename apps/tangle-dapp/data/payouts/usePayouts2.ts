@@ -11,7 +11,7 @@ import {
   formatTokenBalance,
   getApiPromise,
   getValidatorCommission,
-  getValidatorIdentity,
+  getValidatorIdentityName,
 } from '../../utils/polkadot';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
 import useAllLedgers from './useAllLedgers';
@@ -185,7 +185,7 @@ const usePayouts2 = () => {
 
         const validatorNominators = await Promise.all(
           eraStakers.others.map(async (nominator) => {
-            const nominatorIdentity = await getValidatorIdentity(
+            const nominatorIdentity = await getValidatorIdentityName(
               rpcEndpoint,
               nominator.who.toString()
             );

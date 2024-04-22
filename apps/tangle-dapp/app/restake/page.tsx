@@ -1,5 +1,6 @@
 'use client';
 
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
@@ -18,6 +19,7 @@ const RestakePage = () => {
     hasExistingProfile,
     profileTypeOpt: substrateProfileTypeOpt,
     ledgerOpt,
+    totalRestaked,
   } = useRestakingProfile();
 
   const { maxRestakingAmount } = useRestakingLimits();
@@ -30,46 +32,33 @@ const RestakePage = () => {
   const earnings = useMemo(() => {
     if (isEarningsLoading || !earningsRecord) return null;
 
-    return Object.values(earningsRecord).reduce((prev, curr) => prev + curr, 0);
+    return Object.values(earningsRecord).reduce(
+      (total, curr) => total.add(curr),
+      BN_ZERO
+    );
   }, [earningsRecord, isEarningsLoading]);
 
-  const { availableForRestake, totalRestaked } = useMemo(() => {
-    const totalRestaked = ledgerOpt?.isSome
-      ? // Dummy check to whether format the total restaked amount
-        // or not, as the local testnet is in wei but the live one is in unit
-        ledgerOpt.unwrap().total.toString().length > 10
-        ? +formatUnits(
-            ledgerOpt.unwrap().total.toBigInt(),
-            TANGLE_TOKEN_DECIMALS
-          )
-        : ledgerOpt.unwrap().total.toNumber()
-      : null;
-
+  const availableForRestake = useMemo(() => {
     const fmtMaxRestakingAmount =
       maxRestakingAmount !== null
-        ? +formatUnits(
-            BigInt(maxRestakingAmount.toString()),
-            TANGLE_TOKEN_DECIMALS
+        ? new BN(
+            formatUnits(
+              BigInt(maxRestakingAmount.toString()),
+              TANGLE_TOKEN_DECIMALS
+            )
           )
         : null;
 
     if (fmtMaxRestakingAmount !== null && totalRestaked !== null) {
-      const availableForRestake =
-        fmtMaxRestakingAmount > totalRestaked
-          ? fmtMaxRestakingAmount - totalRestaked
-          : 0;
+      const availableForRestake = fmtMaxRestakingAmount.gt(totalRestaked)
+        ? fmtMaxRestakingAmount.sub(totalRestaked)
+        : BN_ZERO;
 
-      return {
-        totalRestaked,
-        availableForRestake,
-      };
+      return availableForRestake;
     }
 
-    return {
-      totalRestaked,
-      availableForRestake: fmtMaxRestakingAmount,
-    };
-  }, [ledgerOpt, maxRestakingAmount]);
+    return fmtMaxRestakingAmount;
+  }, [maxRestakingAmount, totalRestaked]);
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">

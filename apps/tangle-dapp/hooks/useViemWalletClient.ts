@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createWalletClient, custom, WalletClient } from 'viem';
+import { createWalletClient, custom, type WalletClient } from 'viem';
 
 import useNetworkStore from '../context/useNetworkStore';
 import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';

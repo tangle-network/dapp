@@ -11,6 +11,7 @@ import {
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
+import type { EvmAbiCallData, EvmTxFactory } from './types';
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import useViemPublicClient from './useViemPublicClient';
@@ -102,7 +103,7 @@ function useEvmPrecompileAbiCall<
       }
 
       const factoryResult =
-        factory instanceof Function ? factory(context) : factory;
+        factory instanceof Function ? await factory(context) : factory;
 
       // Factory isn't ready yet.
       if (factoryResult === null) {

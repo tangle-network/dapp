@@ -5,13 +5,13 @@ import {
   ChevronUp,
   CoinsStackedLineIcon,
   SendPlanLineIcon,
-  TokenIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
+import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -171,7 +171,7 @@ const AssetCell: FC<{
   return (
     <div className="flex px-3 py-3 gap-6">
       <div className="flex flex-row items-center gap-1">
-        <TokenIcon name={nativeTokenSymbol} size="lg" />
+        <TangleTokenIcon size="lg" />
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
           {nativeTokenSymbol}
