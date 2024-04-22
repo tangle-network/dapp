@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
-
-import { TANGLE_TOKEN_DECIMALS } from '../constants';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 
 /**
  * When the user inputs an amount in the UI, say using an Input

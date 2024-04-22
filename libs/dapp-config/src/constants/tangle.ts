@@ -4,6 +4,7 @@ export const TANGLE_MAINNET_HTTP_RPC_ENDPOINT = 'https://rpc.tangle.tools';
 export const TANGLE_MAINNET_NATIVE_EXPLORER_URL =
   'https://tangle.statescan.io/';
 export const TANGLE_MAINNET_EVM_EXPLORER_URL = 'https://explorer.tangle.tools/';
+export const TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL = 'TNT';
 
 // TESTNET
 export const TANGLE_TESTNET_WS_RPC_ENDPOINT = 'wss://testnet-rpc.tangle.tools';
@@ -13,9 +14,17 @@ export const TANGLE_TESTNET_NATIVE_EXPLORER_URL =
   'https://tangle-testnet.statescan.io/';
 export const TANGLE_TESTNET_EVM_EXPLORER_URL =
   'https://testnet-explorer.tangle.tools';
+export const TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL = 'tTNT';
 
 // LOCAL
 export const TANGLE_LOCAL_WS_RPC_ENDPOINT = 'ws://127.0.0.1:9944';
 export const TANGLE_LOCAL_HTTP_RPC_ENDPOINT = 'http://127.0.0.1:9944';
 // Note: there is no official explorer for the local dev network, using Polkadot.{js} dashboard
 export const TANGLE_LOCAL_NATIVE_EXPLORER_URL = `https://polkadot.js.org/apps/?rpc=${TANGLE_TESTNET_WS_RPC_ENDPOINT}#/explorer`;
+
+// Note that the chain decimal count is usually constant, and set when
+// the blockchain is deployed. It could be technically changed due to
+// governance decisions and subsequent runtime upgrades, but that would
+// be exceptionally rare, so it is best to assume that it remains constant
+// here. Regardless, it can easily be changed here in the future if need be.
+export const TANGLE_TOKEN_DECIMALS = 18;
