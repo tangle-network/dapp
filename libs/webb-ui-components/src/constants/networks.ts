@@ -35,7 +35,7 @@ export type Network = {
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
   polkadotExplorerUrl: string;
-  evmExplorerUrl: string;
+  evmExplorerUrl?: string;
   avatar?: string;
 
   /**
@@ -95,8 +95,6 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   wsRpcEndpoint: TANGLE_LOCAL_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
-  // TODO: Use a generic EVM block explorer that supports passing in an RPC url. For now, this isn't a priority since this is the case only for the local development network, and this URL is only used for convenience.
-  evmExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
 };
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
