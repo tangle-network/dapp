@@ -115,3 +115,10 @@ export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
   ZcashFrostSecp256k1: RestakingService.TSS_ZCASH_FROST_SECP256K1,
   ZcashFrostEd448: RestakingService.TSS_ZCASH_FROST_ED448,
 };
+
+export const TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP: {
+  [Key in TanglePrimitivesRolesZksaasZeroKnowledgeRoleType['type']]: RestakingService;
+} = {
+  ZkSaaSGroth16: RestakingService.ZK_SAAS_GROTH16,
+  ZkSaaSMarlin: RestakingService.ZK_SAAS_MARLIN,
+};
