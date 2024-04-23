@@ -163,6 +163,9 @@ export enum RestakingProfileType {
   SHARED = 'Shared',
 }
 
+/**
+ * There are phase 1 jobs in Substrate
+ */
 export type Service = {
   id: string;
   serviceType: RestakingService;
