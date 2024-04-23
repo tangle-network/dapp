@@ -1,8 +1,8 @@
 import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
-import { TANGLE_TOKEN_DECIMALS } from '../../constants';
 import { RestakingProfileType } from '../../types';
 import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';

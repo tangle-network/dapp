@@ -1,5 +1,6 @@
 'use client';
 
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import assert from 'assert';
 import { FC } from 'react';
 import { formatUnits } from 'viem';
@@ -8,7 +9,6 @@ import {
   IndependentRoleDistributionChart,
   SharedRoleDistributionChart,
 } from '../../../components/charts';
-import { TANGLE_TOKEN_DECIMALS } from '../../../constants';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
 import { DistributionDataType } from './types';

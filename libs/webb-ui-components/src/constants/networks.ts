@@ -4,10 +4,12 @@ import {
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
+  TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_TESTNET_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   TANGLE_TESTNET_EVM_EXPLORER_URL,
+  TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   TANGLE_LOCAL_NATIVE_EXPLORER_URL,
@@ -29,10 +31,11 @@ export type Network = {
   chainId?: number;
   evmChainId?: number;
   name: string;
+  nativeTokenSymbol: string;
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
   polkadotExplorerUrl: string;
-  evmExplorerUrl: string;
+  evmExplorerUrl?: string;
   avatar?: string;
 
   /**
@@ -56,6 +59,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
   chainId: SubstrateChainId.TangleMainnetNative,
   evmChainId: EVMChainId.TangleMainnetEVM,
   name: 'Tangle Mainnet',
+  nativeTokenSymbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
@@ -68,6 +72,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   chainId: SubstrateChainId.TangleTestnetNative,
   evmChainId: EVMChainId.TangleTestnetEVM,
   name: 'Tangle Testnet',
+  nativeTokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   subqueryEndpoint: SUBQUERY_ENDPOINT,
   httpRpcEndpoint: TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
@@ -84,13 +89,12 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   chainId: SubstrateChainId.TangleTestnetNative,
   evmChainId: EVMChainId.TangleLocalEVM,
   name: 'Local endpoint',
+  nativeTokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',
   wsRpcEndpoint: TANGLE_LOCAL_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
-  // TODO: Use a generic EVM block explorer that supports passing in an RPC url. For now, this isn't a priority since this is the case only for the local development network, and this URL is only used for convenience.
-  evmExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
 };
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {

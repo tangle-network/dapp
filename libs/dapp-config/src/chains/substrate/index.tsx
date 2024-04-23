@@ -3,9 +3,12 @@ import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_TESTNET_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
+  TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
+  TANGLE_TOKEN_DECIMALS,
 } from '../../constants/tangle';
 import { ChainConfig } from '../chain-config.interface';
 
@@ -19,8 +22,8 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Tangle Mainnet Native',
     nativeCurrency: {
       name: 'Tangle Mainnet Token',
-      symbol: 'TNT',
-      decimals: 18,
+      symbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
+      decimals: TANGLE_TOKEN_DECIMALS,
     },
     blockExplorers: {
       default: {
@@ -48,8 +51,8 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Tangle Testnet Native',
     nativeCurrency: {
       name: 'Tangle',
-      symbol: 'tTNT',
-      decimals: 18,
+      symbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
+      decimals: TANGLE_TOKEN_DECIMALS,
     },
     blockExplorers: {
       default: {

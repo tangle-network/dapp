@@ -1,3 +1,4 @@
+import { TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL } from '@webb-tools/dapp-config/constants/tangle';
 import {
   Network,
   NetworkId,
@@ -6,6 +7,8 @@ import {
 const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   id: NetworkId.CUSTOM,
   name: 'Custom network',
+  // Default to testnet symbol for all custom networks
+  nativeTokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   wsRpcEndpoint: customRpcEndpoint,
   polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${customRpcEndpoint}#/explorer`,
