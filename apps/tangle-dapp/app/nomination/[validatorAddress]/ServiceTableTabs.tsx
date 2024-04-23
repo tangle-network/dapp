@@ -32,8 +32,8 @@ const ServiceTableTabs: FC<ServiceTableTabsProps> = ({ validatorAddress }) => {
           <ContainerSkeleton />
         ) : services.length === 0 ? (
           <TableStatus
-            title="No Active Services Found"
-            description="No ongoing MPC services at the moment. Active services will be listed here."
+            title="No Active Services Found for"
+            description="This Validator is not participating in any ongoing MPC services at the moment."
             icon="⏳"
           />
         ) : (
