@@ -2,17 +2,13 @@
 
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import useSWR from 'swr';
 
 import {
   ContainerSkeleton,
   ServiceTable,
   TableStatus,
 } from '../../../components';
-import {
-  getActiveServicesByValidator,
-  getPastServicesByValidator,
-} from '../../../data/ServiceTables';
+import useActiveServicesByValidator from '../../../data/ServiceTables/useActiveServicesByValidator';
 
 interface ServiceTableTabsProps {
   validatorAddress: string;
@@ -20,51 +16,45 @@ interface ServiceTableTabsProps {
 
 const pageSize = 10;
 const ACTIVE_SERVICES_TAB = 'Active Services';
-const PAST_SERVICES_TAB = 'Past Services';
+// const PAST_SERVICES_TAB = 'Past Services';
 
-const ServiceTableTabs: FC<ServiceTableTabsProps> = () => {
-  const { data: activeServicesData, isLoading: activeServicesDataLoading } =
-    useSWR([getActiveServicesByValidator.name], ([, ...args]) =>
-      getActiveServicesByValidator(...args)
-    );
-
-  const { data: pastServicesData, isLoading: pastServicesDataLoading } = useSWR(
-    [getPastServicesByValidator.name],
-    ([, ...args]) => getPastServicesByValidator(...args)
-  );
+const ServiceTableTabs: FC<ServiceTableTabsProps> = ({ validatorAddress }) => {
+  const { services, isLoading } =
+    useActiveServicesByValidator(validatorAddress);
 
   return (
     <TableAndChartTabs
-      tabs={[ACTIVE_SERVICES_TAB, PAST_SERVICES_TAB]}
+      tabs={[ACTIVE_SERVICES_TAB]}
       headerClassName="w-full overflow-x-auto"
     >
       <TabContent value={ACTIVE_SERVICES_TAB}>
-        {activeServicesData && activeServicesData.length === 0 ? (
+        {isLoading ? (
+          <ContainerSkeleton />
+        ) : services.length === 0 ? (
           <TableStatus
-            title="No Active Services Found"
-            description="No ongoing MPC services at the moment. Active services will be listed here."
+            title="No Active Services Found for"
+            description="This Validator is not participating in any ongoing MPC services at the moment."
             icon="⏳"
           />
-        ) : activeServicesDataLoading || !activeServicesData ? (
-          <ContainerSkeleton />
         ) : (
-          <ServiceTable data={activeServicesData} pageSize={pageSize} />
+          <ServiceTable data={services} pageSize={pageSize} />
         )}
       </TabContent>
 
-      <TabContent value={PAST_SERVICES_TAB}>
-        {pastServicesData && pastServicesData.length === 0 ? (
+      {/* TODO: cannot get past services for now */}
+      {/* <TabContent value={PAST_SERVICES_TAB}>
+        {services && services.length === 0 ? (
           <TableStatus
             title="No Past Services Found"
             description="No ongoing MPC services at the moment. Active services will be listed here."
             icon="⏳"
           />
-        ) : pastServicesDataLoading || !pastServicesData ? (
+        ) : isLoading || !services ? (
           <ContainerSkeleton />
         ) : (
-          <ServiceTable data={pastServicesData} pageSize={pageSize} />
+          <ServiceTable data={services} pageSize={pageSize} />
         )}
-      </TabContent>
+      </TabContent> */}
     </TableAndChartTabs>
   );
 };

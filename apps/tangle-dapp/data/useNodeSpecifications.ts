@@ -12,9 +12,9 @@ const mock: NodeSpecification = {
   linuxKernel: '5.4.0-150-generic',
 };
 
-const useNodeSpecifications = (validatorAddress: string) => {
+const useNodeSpecifications = (_: string) => {
   // TODO: handle validatorAddress
-  console.log('validatorAddress :', validatorAddress);
+  // console.log('validatorAddress :', validatorAddress);
   const [nodeSpecifications] = useState<NodeSpecification[]>([mock]);
   const [isLoading] = useState(false);
   const [error] = useState<Error | null>(null);
