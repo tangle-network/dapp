@@ -3,6 +3,8 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
+import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+
 export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
@@ -198,7 +200,7 @@ export enum NetworkFeature {
   Faucet,
 }
 
-export enum ExplorerType {
-  Substrate = 'polkadot',
-  EVM = 'web3',
-}
+export const ExplorerType = {
+  Substrate: 'polkadot' as WebbProviderType,
+  EVM: 'web3' as WebbProviderType,
+} as const;

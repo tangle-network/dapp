@@ -16,7 +16,7 @@ import {
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { FC, useCallback } from 'react';
 
-import useTxExplorerUrl from '../../hooks/useTxExplorerUrl';
+import useExplorerUrl from '../../hooks/useExplorerUrl';
 import { ExplorerType } from '../../types';
 import { TxConfirmationModalProps } from './types';
 
@@ -27,10 +27,11 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
   txHash,
   txType,
 }) => {
-  const getTxExplorerUrl = useTxExplorerUrl();
+  const getExplorerUrl = useExplorerUrl();
 
-  const txExplorerUrl = getTxExplorerUrl(
+  const txExplorerUrl = getExplorerUrl(
     txHash,
+    'tx',
     txType === 'evm' ? ExplorerType.EVM : ExplorerType.Substrate
   );
 
