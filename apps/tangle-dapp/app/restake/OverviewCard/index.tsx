@@ -1,15 +1,15 @@
 'use client';
 
-import { BN, formatBalance } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
-import { TANGLE_TOKEN_DECIMALS } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakingProfileType } from '../../../types';
+import formatBnToDisplayAmount from '../../../utils/formatBnToDisplayAmount';
 import type Optional from '../../../utils/Optional';
 import ActionButton from './ActionButton';
 
@@ -60,14 +60,24 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
 
           <StatsItem
             isLoading={isLoading}
-            title="Earnings"
+            title="Jobs Rewards"
+            // TODO: Update the tooltip content for more accurate information
+            titleTooltip="The total rewards earned from the jobs fees."
             value={rewards}
             suffix={nativeTokenSymbol}
           />
 
-          <StatsItem isLoading={isLoading} title="APY" value={apy} suffix="%" />
+          <StatsItem
+            isLoading={isLoading}
+            title="APY"
+            // TODO: Update the tooltip content for more accurate information
+            titleTooltip="The annual percentage yield when restaking the staked tokens into the roles system."
+            value={apy}
+            suffix="%"
+          />
 
           <ActionButton
+            availableForRestake={availableForRestake}
             hasExistingProfile={hasExistingProfile}
             profileTypeOpt={profileTypeOpt}
           />
@@ -100,8 +110,6 @@ const StatsItem: FC<StatsItemProps> = ({
   isLoading,
   suffix = '',
 }) => {
-  const isValueBN = BN.isBN(value);
-
   return (
     <div className="gap-3">
       <div className="flex items-center gap-1">
@@ -126,11 +134,15 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {value != null
-                ? formatBalance(value, {
-                    decimals: isValueBN ? TANGLE_TOKEN_DECIMALS : undefined,
-                    withUnit: suffix,
-                  })
+              {value !== null
+                ? `${
+                    BN.isBN(value)
+                      ? formatBnToDisplayAmount(value, {
+                          includeCommas: true,
+                          fractionLength: 4,
+                        })
+                      : value
+                  } ${suffix}`.trim()
                 : '--'}
             </Typography>
 

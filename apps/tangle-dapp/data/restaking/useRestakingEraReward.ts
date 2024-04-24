@@ -1,20 +1,24 @@
-import { Option } from '@polkadot/types';
-import {
-  PalletStakingValidatorPrefs,
-  SpStakingPagedExposureMetadata,
-} from '@polkadot/types/lookup';
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 import { useCallback } from 'react';
-import { firstValueFrom, map, of } from 'rxjs';
+import { map, of } from 'rxjs';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import usePromise from '../../hooks/usePromise';
-import convertRewardPointsToReward from '../../utils/convertRewardPointsToReward';
+
+const createWorker = createWorkerFactory(
+  () => import('./workers/calculateEraRewardPoint')
+);
 
 /**
  * Calculate the total restaking rewrad for the given era
  * @param era the era number
  */
-function useRestakingEraReward(era: number) {
+function useRestakingEraReward(era: number | null = null) {
+  const { rpcEndpoint } = useNetworkStore();
+
+  const worker = useWorker(createWorker);
+
   const {
     data: dataPromise,
     isLoading: rxLoading,
@@ -22,48 +26,29 @@ function useRestakingEraReward(era: number) {
   } = usePolkadotApiRx(
     useCallback(
       (apiRx) => {
-        if (!apiRx.query.roles.erasRestakeRewardPoints) {
+        if (
+          !apiRx.query.roles.erasRestakeRewardPoints ||
+          typeof era !== 'number'
+        ) {
           return of(null);
         }
 
         return apiRx.query.roles.erasRestakeRewardPoints(era).pipe(
-          map(async (rewardPoints) => {
+          map((rewardPoints) => {
             const individuals = rewardPoints.individual.entries();
 
-            let eraReward = 0;
-
-            for (const [accountId, rewardPoints] of individuals) {
-              const [optionalExposure, validatorPrefs] = await firstValueFrom(
-                apiRx.queryMulti<
-                  [
-                    Option<SpStakingPagedExposureMetadata>,
-                    PalletStakingValidatorPrefs
-                  ]
-                >([
-                  [apiRx.query.staking.erasStakersOverview, era, accountId],
-                  [apiRx.query.staking.erasValidatorPrefs, era, accountId],
-                ])
-              );
-
-              if (optionalExposure.isNone || validatorPrefs.isEmpty) {
-                return null;
-              }
-
-              const exposure = optionalExposure.unwrap();
-
-              eraReward += convertRewardPointsToReward(
-                rewardPoints,
-                validatorPrefs.commission.unwrap(),
-                exposure.own.unwrap(),
-                exposure.total.unwrap()
-              );
-            }
-
-            return eraReward;
+            return worker.calculateEraRewardPoints(
+              rpcEndpoint,
+              era,
+              Array.from(individuals).map(([accountId, rewardPoints]) => [
+                accountId.toString(),
+                rewardPoints.toNumber(),
+              ])
+            );
           })
         );
       },
-      [era]
+      [era, rpcEndpoint, worker]
     )
   );
 
@@ -72,7 +57,10 @@ function useRestakingEraReward(era: number) {
     isLoading: promiseLoading,
     error: promiseError,
   } = usePromise(
-    () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
+    useCallback(
+      () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
+      [dataPromise]
+    ),
     null
   );
 

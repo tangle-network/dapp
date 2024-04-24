@@ -11,6 +11,7 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
+import type BN from 'bn.js';
 import { FC, useState } from 'react';
 
 import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
@@ -21,9 +22,14 @@ import Optional from '../../../utils/Optional';
 type Props = {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
+  availableForRestake?: BN | null;
 };
 
-const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
+const ActionButton: FC<Props> = ({
+  availableForRestake = null,
+  hasExistingProfile,
+  profileTypeOpt,
+}) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
 
@@ -51,7 +57,14 @@ const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
   if (activeAccount && activeWallet) {
     return (
       <>
-        <Button onClick={() => setIsManageProfileModalOpen(true)}>
+        <Button
+          isDisabled={
+            !hasExistingProfile
+              ? availableForRestake === null || availableForRestake.isZero()
+              : false
+          }
+          onClick={() => setIsManageProfileModalOpen(true)}
+        >
           {hasExistingProfile ? 'Manage Profile' : 'Create Profile'}
         </Button>
 

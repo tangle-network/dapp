@@ -5,7 +5,7 @@ import { FC, useMemo } from 'react';
 
 import { RoleEarningsChart } from '../../../components/charts';
 import GlassCard from '../../../components/GlassCard/GlassCard';
-import { EarningRecord } from '../../../data/restaking/useRestakingEarnings';
+import type { EarningRecord } from '../../../data/restaking/types';
 
 type RolesEarningsCardProps = {
   earnings?: EarningRecord | null;
@@ -18,7 +18,7 @@ const RolesEarningsCard: FC<RolesEarningsCardProps> = ({ earnings }) => {
     return Object.entries(earnings).map(([era, reward]) => ({
       era: +era,
       // Recharts can only handle number, temporarily convert to number
-      reward: reward.toNumber(),
+      reward: reward,
     }));
   }, [earnings]);
 

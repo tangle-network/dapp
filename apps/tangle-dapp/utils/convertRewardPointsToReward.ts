@@ -1,6 +1,6 @@
-import type { u32, u128 } from '@polkadot/types';
-import type { Perbill } from '@polkadot/types/interfaces';
-import { type BN, BN_MILLION } from '@polkadot/util';
+import { BN_QUINTILL } from '@polkadot/util';
+
+const BIG_INT_QUINTILL = BigInt(BN_QUINTILL.toString());
 
 /**
  * Convert the reward points to reward in token
@@ -14,25 +14,24 @@ import { type BN, BN_MILLION } from '@polkadot/util';
  * @returns the reward in token
  */
 export default function convertRewardPointsToReward(
-  rewardPoints: u32,
-  validatorCommision: Perbill,
-  ownStaked: u128,
-  totalStaked: u128
-): BN {
+  rewardPoints: number,
+  validatorCommision: number,
+  ownStaked: bigint,
+  totalStaked: bigint
+): number {
   // Convert Perbill to a number
-  const validatorCommission = validatorCommision.toNumber() / 10_000_000 / 100;
+  const validatorCommission = validatorCommision / 10_000_000 / 100;
 
-  const validatorCommissionPayout = rewardPoints.muln(validatorCommission);
+  const validatorCommissionPayout = rewardPoints * validatorCommission;
 
-  const validatorLeftoverPayout = rewardPoints.sub(validatorCommissionPayout);
+  const validatorLeftoverPayout = rewardPoints - validatorCommissionPayout;
 
-  const validatorExposurePart =
-    ownStaked.mul(BN_MILLION).div(totalStaked).toNumber() /
-    BN_MILLION.toNumber();
-
-  const validatorStakingPayout = validatorLeftoverPayout.muln(
-    validatorExposurePart
+  const validatorExposurePart = Number(
+    (ownStaked * BIG_INT_QUINTILL) / totalStaked / BIG_INT_QUINTILL
   );
 
-  return validatorStakingPayout.add(validatorCommissionPayout);
+  const validatorStakingPayout =
+    validatorLeftoverPayout * validatorExposurePart;
+
+  return validatorStakingPayout + validatorCommissionPayout;
 }

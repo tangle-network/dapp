@@ -20,12 +20,16 @@ const useRestakingAPY = () => {
   );
 
   const { data: currentEraRewards } = useRestakingEraReward(
-    activeRestakerEra?.isSome ? activeRestakerEra.unwrap().index.toNumber() : 0
+    activeRestakerEra?.unwrapOr(null)?.index.toNumber()
   );
 
   const { data: totalRestakedBN } = usePolkadotApiRx(getTotalRestaked);
 
-  if (currentEraRewards === null || totalRestakedBN === null) {
+  if (
+    currentEraRewards === null ||
+    totalRestakedBN === null ||
+    totalRestakedBN.isZero()
+  ) {
     return null;
   }
 

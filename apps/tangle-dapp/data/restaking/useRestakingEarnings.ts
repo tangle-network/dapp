@@ -1,25 +1,22 @@
-import { Option } from '@polkadot/types';
-import {
-  PalletStakingValidatorPrefs,
-  SpStakingPagedExposureMetadata,
-} from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 import { useCallback } from 'react';
-import { firstValueFrom, map } from 'rxjs';
+import { map } from 'rxjs';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import usePromise from '../../hooks/usePromise';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import convertRewardPointsToReward from '../../utils/convertRewardPointsToReward';
+import type { ErasRestakeRewardPointsEntry } from './types';
 
-/**
- * Type for the restaking earnings record,
- * key is the era number and value is the restaking earnings for that era
- */
-export type EarningRecord = Record<number, BN>;
+const createWorker = createWorkerFactory(
+  () => import('./workers/calculateEarnings')
+);
 
 function useRestakingEarnings() {
+  const { rpcEndpoint } = useNetworkStore();
   const activeAccount = useSubstrateAddress();
+
+  const worker = useWorker(createWorker);
 
   const {
     data: dataPromise,
@@ -32,59 +29,43 @@ function useRestakingEarnings() {
           return null;
         }
 
-        const accountId32 = apiRx.createType('AccountId', activeAccount);
+        if (activeAccount === null || activeAccount.length === 0) {
+          return null;
+        }
 
         return apiRx.query.roles.erasRestakeRewardPoints.entries().pipe(
-          map(async (rewardPointsEntries) => {
-            const rewardsRecord: EarningRecord = {};
+          map((rewardPointsEntries) => {
+            const serializableEntries = rewardPointsEntries
+              .map(
+                ([era, rewardPoints]) =>
+                  [
+                    era.args[0].toNumber(),
+                    {
+                      total: rewardPoints.total.toNumber(),
+                      individual: Object.fromEntries(
+                        Array.from(rewardPoints.individual.entries()).map(
+                          ([accountId, rewardPoints]) => [
+                            accountId.toString(),
+                            rewardPoints.toNumber(),
+                          ]
+                        )
+                      ),
+                    },
+                  ] satisfies ErasRestakeRewardPointsEntry
+              )
+              // Copy and sort the entries by era number
+              .slice()
+              .sort(([a], [b]) => a - b);
 
-            // Following the `do_payout_stakers` logic in the tangle
-            // to convert the reward points to rewards
-            // see https://github.com/webb-tools/tangle/blob/8c1be851059d21fe524ca30808219d5b26c01713/pallets/roles/src/functions.rs#L508-L539
-            await Promise.all(
-              rewardPointsEntries.map(async ([era, rewardPoints]) => {
-                // The total pay
-                const validatorTotalPayout =
-                  rewardPoints.individual.get(accountId32);
-
-                if (!validatorTotalPayout) {
-                  return;
-                }
-
-                const [optionalExposure, validatorPrefs] = await firstValueFrom(
-                  apiRx.queryMulti<
-                    [
-                      Option<SpStakingPagedExposureMetadata>,
-                      PalletStakingValidatorPrefs
-                    ]
-                  >([
-                    [apiRx.query.staking.erasStakersOverview, era, accountId32],
-                    [apiRx.query.staking.erasValidatorPrefs, era, accountId32],
-                  ])
-                );
-
-                if (optionalExposure.isNone || validatorPrefs.isEmpty) {
-                  return;
-                }
-
-                const exposure = optionalExposure.unwrap();
-
-                const eraNum = era.args[0].toNumber();
-
-                rewardsRecord[eraNum] = convertRewardPointsToReward(
-                  validatorTotalPayout,
-                  validatorPrefs.commission.unwrap(),
-                  exposure.own.unwrap(),
-                  exposure.total.unwrap()
-                );
-              })
+            return worker.calculateEarnings(
+              rpcEndpoint,
+              activeAccount,
+              serializableEntries
             );
-
-            return rewardsRecord;
           })
         );
       },
-      [activeAccount]
+      [activeAccount, rpcEndpoint, worker]
     )
   );
 
@@ -93,7 +74,10 @@ function useRestakingEarnings() {
     isLoading: promiseLoading,
     error: promiseError,
   } = usePromise(
-    () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
+    useCallback(
+      () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
+      [dataPromise]
+    ),
     null
   );
 

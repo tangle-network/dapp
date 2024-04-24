@@ -5,7 +5,7 @@ import { map, of } from 'rxjs';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
-const useRestakingTotalRewards = () => {
+const useRestakingTotalRewards = (): ReturnType<typeof usePolkadotApiRx<BN | null>> => {
   const substrateAccount = useSubstrateAddress();
 
   return usePolkadotApiRx<BN | null>(
