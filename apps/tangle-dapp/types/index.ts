@@ -3,6 +3,7 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
+import { BN } from '@polkadot/util';
 import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
@@ -163,14 +164,17 @@ export enum RestakingProfileType {
   SHARED = 'Shared',
 }
 
+/**
+ * There are phase 1 jobs in Substrate
+ */
 export type Service = {
-  id: number;
+  id: string;
   serviceType: RestakingService;
-  participants: string[];
-  thresholds?: number;
-  phase2Executions?: number;
-  earnings?: number;
-  expirationBlock: number;
+  participants: number;
+  threshold?: number;
+  jobsCount?: number;
+  earnings?: BN;
+  expirationBlock: string;
 };
 
 export type ServiceJob = {
