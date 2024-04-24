@@ -1,9 +1,7 @@
 'use client';
 
-import { BN, BN_ZERO } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
-import { useMemo } from 'react';
-import { formatUnits } from 'viem';
+import { BN_ZERO } from '@polkadot/util';
+import { FC, useMemo } from 'react';
 
 import useRestakingEarnings from '../../data/restaking/useRestakingEarnings';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
@@ -14,12 +12,12 @@ import OverviewCard from './OverviewCard';
 import RoleDistributionCard from './RoleDistributionCard';
 import RolesEarningsCard from './RolesEarningsCard';
 
-const RestakePage = () => {
+const RestakePage: FC = () => {
   const {
     hasExistingProfile,
     profileTypeOpt: substrateProfileTypeOpt,
-    ledgerOpt,
     totalRestaked,
+    distribution,
   } = useRestakingProfile();
 
   const { maxRestakingAmount } = useRestakingLimits();
@@ -39,25 +37,13 @@ const RestakePage = () => {
   }, [earningsRecord, isEarningsLoading]);
 
   const availableForRestake = useMemo(() => {
-    const fmtMaxRestakingAmount =
-      maxRestakingAmount !== null
-        ? new BN(
-            formatUnits(
-              BigInt(maxRestakingAmount.toString()),
-              TANGLE_TOKEN_DECIMALS
-            )
-          )
-        : null;
-
-    if (fmtMaxRestakingAmount !== null && totalRestaked !== null) {
-      const availableForRestake = fmtMaxRestakingAmount.gt(totalRestaked)
-        ? fmtMaxRestakingAmount.sub(totalRestaked)
+    if (maxRestakingAmount !== null && totalRestaked !== null) {
+      return maxRestakingAmount.gt(totalRestaked)
+        ? maxRestakingAmount.sub(totalRestaked)
         : BN_ZERO;
-
-      return availableForRestake;
     }
 
-    return fmtMaxRestakingAmount;
+    return maxRestakingAmount;
   }, [maxRestakingAmount, totalRestaked]);
 
   return (
@@ -65,15 +51,15 @@ const RestakePage = () => {
       <OverviewCard
         hasExistingProfile={hasExistingProfile}
         profileTypeOpt={substrateProfileTypeOpt}
-        isLoading={isEarningsLoading}
         totalRestaked={totalRestaked}
         availableForRestake={availableForRestake}
         earnings={earnings}
+        isLoading={isEarningsLoading}
       />
 
       <RoleDistributionCard
         profileType={substrateProfileTypeOpt?.value}
-        ledger={ledgerOpt}
+        distribution={distribution}
       />
 
       <RolesEarningsCard earnings={earningsRecord} />

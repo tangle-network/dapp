@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { RestakingProfileType } from '../../types';
+import { DistributionDataType, RestakingProfileType } from '../../types';
+import convertRecordToAllocation from '../../utils/convertRecordToAllocation';
 import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
@@ -28,20 +29,42 @@ const useRestakingProfile = (address?: string) => {
   }, [ledgerOpt]);
 
   const totalRestaked = useMemo(
-    () =>
-      ledgerOpt?.isSome
-        ? // Dummy check to whether format the total restaked amount
-          // or not, as the local testnet is in wei but the live one is in unit
-          ledgerOpt.unwrap().total.toBn()
-        : null,
+    () => (ledgerOpt?.isSome ? ledgerOpt.unwrap().total.toBn() : null),
     [ledgerOpt]
   );
+
+  const distribution = useMemo(() => {
+    if (!ledgerOpt || ledgerOpt.isNone) {
+      return null;
+    }
+
+    const profile = ledgerOpt.unwrap().profile;
+
+    const records = profile.isIndependent
+      ? profile.asIndependent.records
+      : profile.asShared.records;
+
+    const distribution = {} as DistributionDataType;
+
+    for (const record of records) {
+      const [service, amount] = convertRecordToAllocation(record);
+
+      if (service) {
+        distribution[service] = profile.isShared
+          ? profile.asShared.amount.toBn()
+          : amount;
+      }
+    }
+
+    return distribution;
+  }, [ledgerOpt]);
 
   return {
     hasExistingProfile,
     profileTypeOpt,
     ledgerOpt,
     totalRestaked,
+    distribution,
   };
 };
 

@@ -1,30 +1,31 @@
 'use client';
 
-import {
-  getRoundedAmountString,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { Cell, RadialBar, RadialBarChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkStore from '../../context/useNetworkStore';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import type { PieChartProps } from './types';
+import { formatDataForPieCharts } from './utils';
 
 const SharedRoleDistributionChart: FC<PieChartProps> = ({
   data,
   title = 'Shared',
 }) => {
-  const { nativeTokenSymbol } = useNetworkStore();
+  const formatNativeTokenAmount = useFormatNativeTokenAmount();
+
+  const formattedData = formatDataForPieCharts(data);
 
   return (
     <div className="relative">
       <RadialBarChart
+        // TODO: increase inner radius
         innerRadius={55}
         outerRadius={100}
         width={200}
         height={200}
-        data={data}
+        data={formattedData}
       >
         <RadialBar dataKey="value">
           {data.map((item, index) => (
@@ -54,7 +55,7 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
           className="text-mono-200 dark:text-mono-0"
         >
           {/* In Shared Profile, all roles share the same value */}
-          {getRoundedAmountString(data[0].value)} {nativeTokenSymbol}
+          {formatNativeTokenAmount(data[0].value)}
         </Typography>
       </div>
     </div>
