@@ -9,12 +9,12 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
-import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useRestakingRoleLedger from '../../../data/restaking/useRestakingRoleLedger';
 import useCurrentEra from '../../../data/staking/useCurrentEra';
 import {
   extractDataFromIdentityInfo,
@@ -22,6 +22,10 @@ import {
   IdentityDataType,
 } from '../../../utils/polkadot';
 import { getPolkadotApiPromise } from '../../../utils/polkadot/api';
+import {
+  getProfileTypeFromRestakeRoleLedger,
+  getTotalRestakedFromRestakeRoleLedger,
+} from '../../../utils/polkadot/restake';
 import ValueSkeleton from './ValueSkeleton';
 
 interface ValidatorBasicInfoCardProps {
@@ -161,8 +165,8 @@ export default ValidatorBasicInfoCard;
 
 function useValidatorBasicInfo(rpcEndpoint: string, validatorAddress: string) {
   const { data: currentEra } = useCurrentEra();
-  const { profileTypeOpt, totalRestaked } =
-    useRestakingProfile(validatorAddress);
+  const { data: ledgerOpt, isLoading: isLoadingLedgerOpt } =
+    useRestakingRoleLedger(validatorAddress);
 
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -171,6 +175,16 @@ function useValidatorBasicInfo(rpcEndpoint: string, validatorAddress: string) {
   const [nominations, setNominations] = useState<number | null>(null);
   const [isActive, setIsActive] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const restakingMethod = useMemo(
+    () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
+    [ledgerOpt]
+  );
+
+  const totalRestaked = useMemo(
+    () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
+    [ledgerOpt]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -235,11 +249,11 @@ function useValidatorBasicInfo(rpcEndpoint: string, validatorAddress: string) {
     name,
     isActive,
     totalRestaked,
-    restakingMethod: profileTypeOpt,
+    restakingMethod,
     nominations,
     twitter,
     email,
     web,
-    isLoading,
+    isLoading: isLoading || isLoadingLedgerOpt,
   };
 }
