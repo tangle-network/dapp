@@ -25,6 +25,7 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
         width={200}
         height={200}
         data={formattedData}
+        margin={{ top: -30, right: -30, bottom: -30, left: -30 }}
       >
         <RadialBar dataKey="value">
           {data.map((item, index) => (
