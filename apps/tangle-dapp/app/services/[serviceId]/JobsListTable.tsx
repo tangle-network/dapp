@@ -23,7 +23,7 @@ import { SkeletonRow } from '../../../components/skeleton';
 import { HeaderCell, StringCell } from '../../../components/tableCells';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { useServiceJobs } from '../../../data/ServiceDetails';
-import type { ServiceJob } from '../../../types';
+import { ExplorerType, ServiceJob } from '../../../types';
 
 interface JobsListTableProps {
   serviceId: string;
@@ -66,7 +66,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
                 network.polkadotExplorerUrl,
                 txHash,
                 'tx',
-                'polkadot'
+                ExplorerType.Substrate
               ).toString()
             : null;
           return (

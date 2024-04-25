@@ -7,11 +7,11 @@ import { useCallback } from 'react';
 import { ExplorerType } from '../types';
 import ensureError from '../utils/ensureError';
 import { evmPublicClient } from '../utils/evm';
-import useTxExplorerUrl from './useTxExplorerUrl';
+import useExplorerUrl from './useExplorerUrl';
 
 const useExecuteTxWithNotification = () => {
   const { activeWallet } = useWebContext();
-  const getTxExplorerUrl = useTxExplorerUrl();
+  const getExplorerUrl = useExplorerUrl();
   const { enqueueSnackbar: enqueueNotifications } = useSnackbar();
 
   /**
@@ -52,8 +52,9 @@ const useExecuteTxWithNotification = () => {
           throw new Error(errorMessage);
         }
 
-        const txExplorerUrl = getTxExplorerUrl(
+        const txExplorerUrl = getExplorerUrl(
           txHash,
+          'tx',
           activeWallet?.platform === 'EVM'
             ? ExplorerType.EVM
             : ExplorerType.Substrate
@@ -104,7 +105,7 @@ const useExecuteTxWithNotification = () => {
         throw error;
       }
     },
-    [activeWallet?.platform, getTxExplorerUrl, enqueueNotifications]
+    [activeWallet?.platform, getExplorerUrl, enqueueNotifications]
   );
 
   return executeTx;
