@@ -4,6 +4,7 @@
 import '@webb-tools/tangle-substrate-types';
 
 import { BN } from '@polkadot/util';
+import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -203,7 +204,7 @@ export enum NetworkFeature {
   Faucet,
 }
 
-export enum ExplorerType {
-  Substrate = 'polkadot',
-  EVM = 'web3',
-}
+export const ExplorerType = {
+  Substrate: 'polkadot' as WebbProviderType,
+  EVM: 'web3' as WebbProviderType,
+} as const;

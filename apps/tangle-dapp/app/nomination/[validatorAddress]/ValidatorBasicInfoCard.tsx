@@ -15,6 +15,7 @@ import { twMerge } from 'tailwind-merge';
 import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
+import { ExplorerType } from '../../../types';
 import { formatTokenBalance } from '../../../utils/polkadot';
 import ValueSkeleton from './ValueSkeleton';
 
@@ -88,7 +89,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
                   network.polkadotExplorerUrl,
                   validatorAddress,
                   'address',
-                  'polkadot'
+                  ExplorerType.Substrate
                 ).toString()}
                 className="!fill-mono-100"
               />
