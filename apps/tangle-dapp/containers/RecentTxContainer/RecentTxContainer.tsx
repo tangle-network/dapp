@@ -1,34 +1,36 @@
 'use client';
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { ExplorerType } from '../../types';
 
 const RecentTxContainer: FC = () => {
   const { network } = useNetworkStore();
   const activeAccountAddress = useActiveAccountAddress();
+  const { isEvm } = useAgnosticAccountInfo();
 
-  const isEvm =
-    activeAccountAddress === null
-      ? null
-      : isEthereumAddress(activeAccountAddress);
+  const explorerUrl = useMemo(() => {
+    return isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl;
+  }, [isEvm, network.evmExplorerUrl, network.polkadotExplorerUrl]);
 
-  const accountExplorerUrl = activeAccountAddress
-    ? getExplorerURI(
-        isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl,
-        activeAccountAddress,
-        'address',
-        isEvm ? ExplorerType.EVM : ExplorerType.Substrate
-      ).toString()
-    : undefined;
+  const accountExplorerUrl = useMemo(() => {
+    return activeAccountAddress && explorerUrl
+      ? getExplorerURI(
+          explorerUrl,
+          activeAccountAddress,
+          'address',
+          isEvm ? ExplorerType.EVM : ExplorerType.Substrate
+        ).toString()
+      : undefined;
+  }, [activeAccountAddress, explorerUrl, isEvm]);
 
   return (
     <GlassCard className="flex flex-col gap-3 sm:gap-0">

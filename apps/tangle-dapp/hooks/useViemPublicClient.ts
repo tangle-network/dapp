@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createPublicClient, http, PublicClient } from 'viem';
+import { createPublicClient, http, type PublicClient } from 'viem';
 
 import useNetworkStore from '../context/useNetworkStore';
 import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';
@@ -11,7 +11,7 @@ const useViemPublicClient = () => {
   // Update the public client when the network changes.
   useEffect(() => {
     if (
-      network.chainId === undefined ||
+      network.evmChainId === undefined ||
       network.httpRpcEndpoint === undefined
     ) {
       return;
@@ -19,7 +19,7 @@ const useViemPublicClient = () => {
 
     const chain = createTangleViemChainFromNetwork({
       ...network,
-      chainId: network.chainId,
+      chainId: network.evmChainId,
       httpRpcEndpoint: network.httpRpcEndpoint,
     });
 
