@@ -4,8 +4,8 @@ import { RestakingProfileType } from '../../types';
 import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
-const useRestakingProfile = () => {
-  const { data: ledgerOpt, isLoading } = useRestakingRoleLedger();
+const useRestakingProfile = (address?: string) => {
+  const { data: ledgerOpt, isLoading } = useRestakingRoleLedger(address);
 
   const hasExistingProfile = isLoading
     ? null
