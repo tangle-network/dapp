@@ -12,10 +12,12 @@ const substrateExplorerAndChainIdMap = Object.keys(
   return acc;
 }, {} as Record<string, number>);
 
+export type ExplorerVariant = 'tx' | 'address';
+
 export const getExplorerURI = (
   explorerUri: string,
   addOrTxHash: string,
-  variant: 'tx' | 'address',
+  variant: ExplorerVariant,
   txProviderType: WebbProviderType
 ): URL => {
   switch (txProviderType) {

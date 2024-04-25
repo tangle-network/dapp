@@ -23,7 +23,7 @@ import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { PagePath, Validator } from '../../types';
+import { ExplorerType, PagePath, Validator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
 import { ValidatorTableProps } from './types';
 
@@ -88,7 +88,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
             network.polkadotExplorerUrl,
             address,
             'address',
-            'polkadot'
+            ExplorerType.Substrate
           ).toString();
 
           return (

@@ -28,12 +28,7 @@ const useRestakingProfile = (address?: string) => {
   }, [ledgerOpt]);
 
   const totalRestaked = useMemo(
-    () =>
-      ledgerOpt?.isSome
-        ? // Dummy check to whether format the total restaked amount
-          // or not, as the local testnet is in wei but the live one is in unit
-          ledgerOpt.unwrap().total.toBn()
-        : null,
+    () => (ledgerOpt?.isSome ? ledgerOpt.unwrap().total.toBn() : null),
     [ledgerOpt]
   );
 
