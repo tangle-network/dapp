@@ -1,9 +1,11 @@
+'use client';
+
 import { rand } from '@ngneat/falso';
 import { BN } from '@polkadot/util';
 
-import type { PieChartItem } from '../../components/charts/types';
-import { RestakingProfileType, RestakingService } from '../../types';
-import getChartAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
+import type { PieChartItem } from '../../../../components/charts/types';
+import { RestakingProfileType, RestakingService } from '../../../../types';
+import getChartAreaColorByServiceType from '../../../../utils/getChartDataAreaColorByServiceType';
 
 export type RoleDistributionChartDataType = {
   profileType: RestakingProfileType;
@@ -25,9 +27,7 @@ const mockSharedData = [
   { name: RestakingService.TSS_DFNS_CGGMP21SECP256K1, value: new BN('400') },
 ];
 
-export default async function getRoleDistributionChartDataByAcc(
-  _: string
-): Promise<RoleDistributionChartDataType> {
+export default function useRoleDistributionByValidator(_: string) {
   const profileType = rand([
     RestakingProfileType.INDEPENDENT,
     RestakingProfileType.SHARED,

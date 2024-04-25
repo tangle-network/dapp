@@ -1,37 +1,26 @@
+'use client';
+
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import dynamic from 'next/dynamic';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import IndependentRoleDistributionChart from '../../../components/charts/IndependentRoleDistributionChart';
+import SharedRoleDistributionChart from '../../../components/charts/SharedRoleDistributionChart';
 import GlassCard from '../../../components/GlassCard/GlassCard';
-import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributionChart';
 import { RestakingProfileType } from '../../../types';
-
-const IndependentRoleDistributionChart = dynamic(
-  () => import('../../../components/charts/IndependentRoleDistributionChart'),
-  {
-    ssr: false,
-  }
-);
-
-const SharedRoleDistributionChart = dynamic(
-  () => import('../../../components/charts/SharedRoleDistributionChart'),
-  {
-    ssr: false,
-  }
-);
+import useRoleDistributionByValidator from './hooks/useRoleDistributionByValidator';
 
 interface RoleDistributionCardProps {
   validatorAddress: string;
   className?: string;
 }
 
-const RoleDistributionCard = async ({
+const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
   validatorAddress,
   className,
-}: RoleDistributionCardProps) => {
-  const { profileType, distribution } = await getRoleDistributionChartDataByAcc(
-    validatorAddress
-  );
+}) => {
+  const { profileType, distribution } =
+  useRoleDistributionByValidator(validatorAddress);
 
   return (
     <GlassCard className={twMerge('justify-between flex flex-col', className)}>

@@ -14,7 +14,6 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
   data,
   title = 'Independent',
 }) => {
-  // console.log('data :', data);
   const [isDarkMode] = useNextDarkMode();
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
 

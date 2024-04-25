@@ -1,25 +1,19 @@
+'use client';
+
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import dynamic from 'next/dynamic';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import RoleDistributionChart from '../../components/charts/IndependentRoleDistributionChart';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { getRoleDistributionChartData } from '../../data/roleDistributionChart';
-
-const RoleDistributionChart = dynamic(
-  () => import('../../components/charts/IndependentRoleDistributionChart'),
-  {
-    ssr: false,
-  }
-);
+import useRoleDistribution from './hooks/useRoleDistribution';
 
 interface RoleDistributionCardProps {
   className?: string;
 }
 
-const RoleDistributionCard = async ({
-  className,
-}: RoleDistributionCardProps) => {
-  const data = await getRoleDistributionChartData();
+const RoleDistributionCard: FC<RoleDistributionCardProps> = ({ className }) => {
+  const data = useRoleDistribution();
 
   return (
     <GlassCard className={twMerge('justify-between flex flex-col', className)}>

@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import { getPolkadotApiPromise } from '../../utils/polkadot/api';
+import useNetworkStore from '../../../../context/useNetworkStore';
+import useRestakingProfile from '../../../../data/restaking/useRestakingProfile';
+import useCurrentEra from '../../../../data/staking/useCurrentEra';
+import { getPolkadotApiPromise } from '../../../../utils/polkadot/api';
 import {
   extractDataFromIdentityInfo,
   IdentityDataType,
-} from '../../utils/polkadot/identity';
-import useRestakingProfile from '../restaking/useRestakingProfile';
-import useCurrentEra from '../staking/useCurrentEra';
+} from '../../../../utils/polkadot/identity';
 
 export default function useValidatorBasicInfo(validatorAddress: string) {
   const { rpcEndpoint } = useNetworkStore();

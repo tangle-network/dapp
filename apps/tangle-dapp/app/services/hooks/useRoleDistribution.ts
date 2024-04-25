@@ -1,12 +1,12 @@
+'use client';
+
 import { BN } from '@polkadot/util';
 
-import type { PieChartItem } from '../../components/charts/types';
-import { RestakingService } from '../../types';
-import { getChartDataAreaColorByServiceType } from '../../utils';
+import type { PieChartItem } from '../../../components/charts/types';
+import { RestakingService } from '../../../types';
+import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
 
-export default async function getRoleDistributionChartData(): Promise<
-  PieChartItem[]
-> {
+export default function useRoleDistribution(): PieChartItem[] {
   const data = [
     { name: RestakingService.ZK_SAAS_GROTH16, value: new BN('400') },
     { name: RestakingService.ZK_SAAS_MARLIN, value: new BN('300') },

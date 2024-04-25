@@ -14,8 +14,8 @@ import { twMerge } from 'tailwind-merge';
 
 import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
-import useValidatorBasicInfo from '../../../data/ValidatorDetails/useValidatorBasicInfo';
 import { formatTokenBalance } from '../../../utils/polkadot';
+import useValidatorBasicInfo from './hooks/useValidatorBasicInfo';
 import ValueSkeleton from './ValueSkeleton';
 
 interface ValidatorBasicInfoCardProps {
