@@ -93,7 +93,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
           <ActionButton
             hasExistingProfile={hasExistingProfile}
             profileTypeOpt={profileTypeOpt}
-            dataLoading={isLoading}
+            isDataLoading={isLoading}
           />
         </div>
       </TangleCard>
