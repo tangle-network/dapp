@@ -22,11 +22,9 @@ function useStakingLedgerRx<T>(fetcher: StakingLedgerFetcherRx<T>) {
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;
-        return (
-          api.query.staking
-            .ledger(activeSubstrateAddress)
-            .pipe(map((ledgerOpt) => fetcher(ledgerOpt.unwrapOr(null), api)))
-        );
+        return api.query.staking
+          .ledger(activeSubstrateAddress)
+          .pipe(map((ledgerOpt) => fetcher(ledgerOpt.unwrapOr(null), api)));
       },
       [fetcher, activeSubstrateAddress]
     )

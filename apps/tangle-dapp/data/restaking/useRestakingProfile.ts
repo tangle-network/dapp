@@ -28,10 +28,7 @@ const useRestakingProfile = () => {
   }, [ledgerOpt]);
 
   const totalRestaked = useMemo(
-    () =>
-      ledgerOpt?.isSome
-        ? ledgerOpt.unwrap().total.toBn()
-        : null,
+    () => (ledgerOpt?.isSome ? ledgerOpt.unwrap().total.toBn() : null),
     [ledgerOpt]
   );
 
