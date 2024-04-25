@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
+  Alert,
   BridgeInputGroup,
   Button,
   Modal,
@@ -13,7 +14,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, {
@@ -101,6 +109,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
       reset();
     }
   }, [reset, status]);
+
+  const isMaxAmount = useMemo(
+    () =>
+      transferrableBalance !== null &&
+      amount !== null &&
+      transferrableBalance.eq(amount),
+    [amount, transferrableBalance]
+  );
 
   const handleSend = useCallback(() => {
     // TODO: Check that the address is valid, or return.
@@ -221,11 +237,22 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             />
           </BridgeInputGroup>
 
-          {/* TODO: This is temporary, to display the error message if one ocurred during the transaction. */}
+          {isMaxAmount && (
+            <Alert
+              type="warning"
+              size="sm"
+              title="You are sending the maximum amount"
+              description={`Consider keeping a small amount for transaction fees and future txes.`}
+            />
+          )}
+
           {txError !== null && (
-            <Typography variant="body1" color="red" fw="normal">
-              {txError.message}
-            </Typography>
+            <Alert
+              type="error"
+              size="sm"
+              title={txError.name}
+              description={txError.message}
+            />
           )}
         </div>
 

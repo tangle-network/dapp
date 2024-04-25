@@ -72,7 +72,7 @@ export const Alert: React.FC<AlertProps> = ({
             height={iconSize}
             className="!fill-current"
           />
-        ) : type === 'error' ? (
+        ) : type === 'error' || type === 'warning' ? (
           <AlertFill
             width={iconSize}
             height={iconSize}
