@@ -25,10 +25,9 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
 const useRestakingAllocations = () => {
   const activeSubstrateAccount = useSubstrateAddress();
   const ledgerResult = useRestakingRoleLedger(activeSubstrateAccount);
-  const { hasExistingProfile, profileTypeOpt, ledgerOpt } = useRestakingProfile(
-    activeSubstrateAccount
-  );
-  const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
+  const { hasExistingProfile, profileTypeOpt, ledgerOpt } =
+    useRestakingProfile();
+  const isLedgerAvailable = ledgerOpt?.isSome;
 
   const allocations: Optional<RestakingAllocationMap> | null = useMemo(() => {
     if (hasExistingProfile === false) {

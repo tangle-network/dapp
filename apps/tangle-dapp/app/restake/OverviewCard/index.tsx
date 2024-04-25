@@ -1,42 +1,59 @@
 'use client';
 
-import { BN } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
+import {
+  type ComponentProps,
+  type ElementRef,
+  FC,
+  forwardRef,
+  useMemo,
+} from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
+import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
+import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import useFormatNativeTokenAmount from '../../../hooks/useFormatNativeTokenAmount';
-import { RestakingProfileType } from '../../../types';
-import Optional from '../../../utils/Optional';
+import { getTotalRestakedFromRestakeRoleLedger } from '../../../utils/polkadot/restake';
 import ActionButton from './ActionButton';
 
-type OverviewCardProps = ComponentProps<'div'> & {
-  hasExistingProfile: boolean | null;
-  profileTypeOpt: Optional<RestakingProfileType> | null;
-  totalRestaked: BN | null;
-  availableForRestake: BN | null;
-  earnings: BN | null;
-  apy?: number | null;
-  isLoading?: boolean;
-};
-
-const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
-  (
-    {
-      isLoading,
-      totalRestaked,
-      availableForRestake,
-      earnings,
-      apy,
+const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
+  (props, ref) => {
+    const formatNativeTokenAmount = useFormatNativeTokenAmount();
+    const {
       hasExistingProfile,
       profileTypeOpt,
-      ...props
-    },
-    ref
-  ) => {
-    const formatNativeTokenAmount = useFormatNativeTokenAmount();
+      earningsRecord,
+      ledgerOpt,
+      isLoading,
+    } = useRestakingProfile();
+    const { maxRestakingAmount } = useRestakingLimits();
+
+    const totalRestaked = useMemo(
+      () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
+      [ledgerOpt]
+    );
+
+    const earnings = useMemo(() => {
+      if (isLoading || !earningsRecord) return null;
+
+      return Object.values(earningsRecord).reduce(
+        (total, curr) => total.add(curr),
+        BN_ZERO
+      );
+    }, [earningsRecord, isLoading]);
+
+    const availableForRestake = useMemo(() => {
+      if (maxRestakingAmount !== null && totalRestaked !== null) {
+        return maxRestakingAmount.gt(totalRestaked)
+          ? maxRestakingAmount.sub(totalRestaked)
+          : BN_ZERO;
+      }
+
+      return maxRestakingAmount;
+    }, [maxRestakingAmount, totalRestaked]);
 
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
@@ -71,15 +88,12 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
             }
           />
 
-          <StatsItem
-            isLoading={isLoading}
-            title="APY"
-            value={typeof apy === 'number' ? `${apy}%` : null}
-          />
+          <StatsItem isLoading={isLoading} title="APY" value={null} />
 
           <ActionButton
             hasExistingProfile={hasExistingProfile}
             profileTypeOpt={profileTypeOpt}
+            dataLoading={isLoading}
           />
         </div>
       </TangleCard>

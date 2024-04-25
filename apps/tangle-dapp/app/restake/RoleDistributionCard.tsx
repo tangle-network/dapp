@@ -1,42 +1,39 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import dynamic from 'next/dynamic';
-import { type FC } from 'react';
+'use client';
 
+import { Spinner } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { FC, useMemo } from 'react';
+
+import IndependentRoleDistributionChart from '../../components/charts/IndependentRoleDistributionChart';
+import SharedRoleDistributionChart from '../../components/charts/SharedRoleDistributionChart';
 import GlassCard from '../../components/GlassCard/GlassCard';
-import { DistributionDataType, RestakingProfileType } from '../../types';
+import useRestakingProfile from '../../data/restaking/useRestakingProfile';
+import { RestakingProfileType } from '../../types';
 import assertRestakingService from '../../utils/assertRestakingService';
 import getChartDataAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
+import { getRoleDistributionFromRestakeRoleLedger } from '../../utils/polkadot/restake';
 
-const IndependentRoleDistributionChart = dynamic(
-  () => import('../../components/charts/IndependentRoleDistributionChart'),
-  { ssr: false }
-);
+const RoleDistributionCard: FC = () => {
+  const { ledgerOpt, profileTypeOpt, isLoading } = useRestakingProfile();
 
-const SharedRoleDistributionChart = dynamic(
-  () => import('../../components/charts/SharedRoleDistributionChart'),
-  { ssr: false }
-);
+  const distribution = useMemo(
+    () => getRoleDistributionFromRestakeRoleLedger(ledgerOpt),
+    [ledgerOpt]
+  );
 
-type RoleDistributionCardProps = {
-  distribution: DistributionDataType | null;
-  profileType?: RestakingProfileType | null;
-};
+  const chartData = useMemo(() => {
+    if (!distribution) return [];
 
-const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
-  distribution,
-  profileType,
-}) => {
-  const chartData = !distribution
-    ? []
-    : Object.entries(distribution).map(([name, value]) => {
-        assertRestakingService(name);
+    return Object.entries(distribution).map(([name, value]) => {
+      assertRestakingService(name);
 
-        return {
-          name,
-          value,
-          color: getChartDataAreaColorByServiceType(name),
-        };
-      });
+      return {
+        name,
+        value,
+        color: getChartDataAreaColorByServiceType(name),
+      };
+    });
+  }, [distribution]);
 
   return (
     <GlassCard className="justify-between">
@@ -44,15 +41,18 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
         Role Distribution
       </Typography>
 
-      {/* TODO: handle loading state */}
       <div className="flex items-center justify-center">
-        {profileType === RestakingProfileType.SHARED ? (
+        {isLoading ? (
+          <div className="h-[200px] w-full flex items-center justify-center">
+            <Spinner size="xl" />
+          </div>
+        ) : profileTypeOpt?.value === RestakingProfileType.SHARED ? (
           <SharedRoleDistributionChart data={chartData} />
         ) : (
           // TODO: create empty pie chart
           <IndependentRoleDistributionChart
             data={chartData}
-            title={profileType ? 'Independent' : 'No data'}
+            title={profileTypeOpt ? 'Independent' : 'No data'}
           />
         )}
       </div>

@@ -21,9 +21,10 @@ import Optional from '../../../utils/Optional';
 type Props = {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
+  dataLoading?: boolean;
 };
 
-const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
+const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt, dataLoading }) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
 
@@ -71,8 +72,8 @@ const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
   // or wallet is found.
   return (
     <Button
-      isDisabled={loading || isConnecting}
-      isLoading={loading || isConnecting}
+      isDisabled={loading || isConnecting || dataLoading}
+      isLoading={loading || isConnecting || dataLoading}
       loadingText="Connecting..."
       onClick={() => toggleModal(true)}
     >

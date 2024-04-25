@@ -1,70 +1,31 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
-import { DistributionDataType, RestakingProfileType } from '../../types';
-import convertRecordToAllocation from '../../utils/convertRecordToAllocation';
-import Optional from '../../utils/Optional';
-import useRestakingRoleLedger from './useRestakingRoleLedger';
+import { RestakeContext } from '../../context/RestakeContext';
+import { getProfileTypeFromRestakeRoleLedger } from './../../utils/polkadot/restake';
 
-const useRestakingProfile = (address: string | null) => {
-  const { data: ledgerOpt, isLoading } = useRestakingRoleLedger(address);
+const useRestakingProfile = () => {
+  const {
+    ledger: ledgerOpt,
+    earningsRecord,
+    isLoading,
+  } = useContext(RestakeContext);
 
-  const hasExistingProfile = isLoading
-    ? null
-    : ledgerOpt !== null && !ledgerOpt.isNone;
-
-  const profileTypeOpt: Optional<RestakingProfileType> | null = useMemo(() => {
-    if (ledgerOpt === null) {
-      return null;
-    } else if (ledgerOpt.isNone) {
-      return new Optional();
-    }
-
-    const ledger = ledgerOpt.unwrap();
-
-    return new Optional(
-      ledger.profile.isIndependent
-        ? RestakingProfileType.INDEPENDENT
-        : RestakingProfileType.SHARED
-    );
-  }, [ledgerOpt]);
-
-  const totalRestaked = useMemo(
-    () => (ledgerOpt?.isSome ? ledgerOpt.unwrap().total.toBn() : null),
-    [ledgerOpt]
+  const hasExistingProfile = useMemo(
+    () => (isLoading ? null : ledgerOpt !== null && !ledgerOpt.isNone),
+    [isLoading, ledgerOpt]
   );
 
-  const distribution = useMemo(() => {
-    if (!ledgerOpt || ledgerOpt.isNone) {
-      return null;
-    }
-
-    const profile = ledgerOpt.unwrap().profile;
-
-    const records = profile.isIndependent
-      ? profile.asIndependent.records
-      : profile.asShared.records;
-
-    const distribution = {} as DistributionDataType;
-
-    for (const record of records) {
-      const [service, amount] = convertRecordToAllocation(record);
-
-      if (service) {
-        distribution[service] = profile.isShared
-          ? profile.asShared.amount.toBn()
-          : amount;
-      }
-    }
-
-    return distribution;
-  }, [ledgerOpt]);
+  const profileTypeOpt = useMemo(
+    () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
+    [ledgerOpt]
+  );
 
   return {
     hasExistingProfile,
     profileTypeOpt,
     ledgerOpt,
-    totalRestaked,
-    distribution,
+    earningsRecord,
+    isLoading,
   };
 };
 
