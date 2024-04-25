@@ -1,10 +1,10 @@
 import type { ApiRx } from '@polkadot/api';
 import { type BN, BN_ZERO } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { useCallback } from 'react';
 import { map, type Observable } from 'rxjs';
 import { formatUnits } from 'viem';
 
-import { TANGLE_TOKEN_DECIMALS } from '../../constants';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useRestakingEraReward from './useRestakingEraReward';
 
