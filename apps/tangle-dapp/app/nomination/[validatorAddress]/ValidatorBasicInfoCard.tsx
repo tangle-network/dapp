@@ -16,6 +16,7 @@ import { SocialChip, TangleCard } from '../../../components';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingRoleLedger from '../../../data/restaking/useRestakingRoleLedger';
 import useCurrentEra from '../../../data/staking/useCurrentEra';
+import { ExplorerType } from '../../../types';
 import {
   extractDataFromIdentityInfo,
   formatTokenBalance,
@@ -98,7 +99,7 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
                   network.polkadotExplorerUrl,
                   validatorAddress,
                   'address',
-                  'polkadot'
+                  ExplorerType.Substrate
                 ).toString()}
                 className="!fill-mono-100"
               />
