@@ -58,7 +58,7 @@ const useBalances = (): AccountBalances => {
 
           return {
             free: data.free.toBn(),
-            // The transferrable balance is the total free balance minus
+            // The transferable balance is the total free balance minus
             // the largest lock amount.
             transferable,
             locked: data.free.sub(transferable),

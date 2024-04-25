@@ -81,7 +81,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
-  const { transferable: transferrableBalance } = useBalances();
+  const { transferable: transferableBalance } = useBalances();
   const existentialDeposit = useExistentialDeposit();
 
   const [amount, setAmount] = useState<BN | null>(null);
@@ -112,10 +112,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
   const isMaxAmount = useMemo(
     () =>
-      transferrableBalance !== null &&
+      transferableBalance !== null &&
       amount !== null &&
-      transferrableBalance.eq(amount),
-    [amount, transferrableBalance]
+      transferableBalance.eq(amount),
+    [amount, transferableBalance]
   );
 
   const handleSend = useCallback(() => {
@@ -124,7 +124,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     if (
       executeTransferTx === null ||
       amount === null ||
-      transferrableBalance === null
+      transferableBalance === null
     ) {
       return;
     }
@@ -132,9 +132,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     executeTransferTx({
       receiverAddress,
       amount,
-      maxAmount: transferrableBalance,
+      maxAmount: transferableBalance,
     });
-  }, [amount, executeTransferTx, receiverAddress, transferrableBalance]);
+  }, [amount, executeTransferTx, receiverAddress, transferableBalance]);
 
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
@@ -156,12 +156,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
-  const transferrableBalanceTooltip: ReactNode = transferrableBalance !==
+  const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (
     <span>
       You have{' '}
       <strong>
-        {formatTokenBalance(transferrableBalance, nativeTokenSymbol)}
+        {formatTokenBalance(transferableBalance, nativeTokenSymbol)}
       </strong>{' '}
       available to transfer.
     </span>
@@ -205,7 +205,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               title="Amount"
               max={
                 status === TxStatus.NOT_YET_INITIATED
-                  ? transferrableBalance
+                  ? transferableBalance
                   : null
               }
               min={existentialDeposit}
@@ -214,7 +214,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               setAmount={setAmount}
               baseInputOverrides={{
                 isFullWidth: true,
-                tooltip: transferrableBalanceTooltip,
+                tooltip: transferableBalanceTooltip,
               }}
               maxErrorMessage="Not enough available balance"
               minErrorMessage={`Amount must be at least ${formatTokenBalance(

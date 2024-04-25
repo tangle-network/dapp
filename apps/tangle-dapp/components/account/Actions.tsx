@@ -35,7 +35,7 @@ const Actions: FC = () => {
   const isPayoutsAvailable = usePayoutsAvailability();
   const activeAccountAddress = useActiveAccountAddress();
 
-  const { transferable: transferrableBalance } = useBalances();
+  const { transferable: transferableBalance } = useBalances();
 
   const { balance, ...restPendingEVMBalanceProps } = usePendingEVMBalance();
 
@@ -61,8 +61,8 @@ const Actions: FC = () => {
           // account has no funds.
           isDisabled={
             activeAccountAddress === null ||
-            transferrableBalance === null ||
-            transferrableBalance.isZero()
+            transferableBalance === null ||
+            transferableBalance.isZero()
           }
         />
 
