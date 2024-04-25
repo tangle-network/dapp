@@ -22,7 +22,7 @@ export type AccountBalances = {
    * The amount of tokens that are not locked, and can be sent around
    * to other accounts, or used without restrictions.
    */
-  transferrable: BN | null;
+  transferable: BN | null;
 
   /**
    * The amount of tokens that are locked, and cannot be used for
@@ -51,7 +51,7 @@ const useBalances = (): AccountBalances => {
             data.feeFrozen ?? BN_ZERO
           );
 
-          const transferrable = BN.max(
+          const transferable = BN.max(
             data.free.sub(maxFrozen).sub(data.reserved ?? BN_ZERO),
             BN_ZERO
           );
@@ -60,8 +60,8 @@ const useBalances = (): AccountBalances => {
             free: data.free.toBn(),
             // The transferrable balance is the total free balance minus
             // the largest lock amount.
-            transferrable,
-            locked: data.free.sub(transferrable),
+            transferable,
+            locked: data.free.sub(transferable),
           };
         })
       );
@@ -87,7 +87,7 @@ const useBalances = (): AccountBalances => {
 
   return {
     free: balances?.free ?? null,
-    transferrable: balances?.transferrable ?? null,
+    transferable: balances?.transferable ?? null,
     locked: balances?.locked ?? null,
   };
 };

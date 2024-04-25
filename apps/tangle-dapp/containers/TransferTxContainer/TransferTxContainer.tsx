@@ -73,7 +73,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
-  const { transferrable: transferrableBalance } = useBalances();
+  const { transferable: transferrableBalance } = useBalances();
   const existentialDeposit = useExistentialDeposit();
 
   const [amount, setAmount] = useState<BN | null>(null);

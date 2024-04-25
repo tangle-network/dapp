@@ -27,7 +27,7 @@ import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
 import VestBalanceAction from './VestBalanceAction';
 
 const BalancesTableContainer: FC = () => {
-  const { locked, transferrable } = useBalances();
+  const { locked, transferable: transferrable } = useBalances();
   const activeSubstrateAddress = useSubstrateAddress();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);

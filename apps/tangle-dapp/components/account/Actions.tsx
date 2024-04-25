@@ -35,7 +35,7 @@ const Actions: FC = () => {
   const isPayoutsAvailable = usePayoutsAvailability();
   const activeAccountAddress = useActiveAccountAddress();
 
-  const { transferrable: transferrableBalance } = useBalances();
+  const { transferable: transferrableBalance } = useBalances();
 
   const { balance, ...restPendingEVMBalanceProps } = usePendingEVMBalance();
 
