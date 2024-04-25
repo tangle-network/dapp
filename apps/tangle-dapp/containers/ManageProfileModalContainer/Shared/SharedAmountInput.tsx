@@ -10,6 +10,7 @@ import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import useSharedRestakeAmount from '../../../data/restaking/useSharedRestakeAmount';
+import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { RestakingProfileType } from '../../../types';
 import {
   ERROR_MIN_RESTAKING_BOND,
@@ -29,10 +30,11 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
   amount,
   setAmount,
 }) => {
+  const activeSubstrateAccount = useSubstrateAddress();
   const { sharedRestakeAmount } = useSharedRestakeAmount();
   const { maxRestakingAmount, minRestakingBond } = useRestakingLimits();
   const { hasActiveJobs } = useRestakingJobs();
-  const { profileTypeOpt } = useRestakingProfile();
+  const { profileTypeOpt } = useRestakingProfile(activeSubstrateAccount);
   const { nativeTokenSymbol } = useNetworkStore();
 
   const hasActiveJobsForSharedProfile = (() => {

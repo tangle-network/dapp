@@ -10,6 +10,7 @@ import useRestakingAllocations from '../../../data/restaking/useRestakingAllocat
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
 import { formatTokenBalance } from '../../../utils/polkadot/tokens';
@@ -49,8 +50,9 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
   onDelete,
   errorOnEmptyValue = true,
 }) => {
+  const activeSubstrateAccount = useSubstrateAddress();
   const { servicesWithJobs } = useRestakingJobs();
-  const { profileTypeOpt } = useRestakingProfile();
+  const { profileTypeOpt } = useRestakingProfile(activeSubstrateAccount);
   const { minRestakingBond } = useRestakingLimits();
   const { nativeTokenSymbol } = useNetworkStore();
 

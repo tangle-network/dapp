@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakingProfileType } from '../../types';
 import convertRecordToAllocation from '../../utils/convertRecordToAllocation';
 import Optional from '../../utils/Optional';
@@ -22,9 +23,11 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
  * `null` will be returned for the value.
  */
 const useRestakingAllocations = () => {
-  const ledgerResult = useRestakingRoleLedger();
-  const { hasExistingProfile, profileTypeOpt, ledgerOpt } =
-    useRestakingProfile();
+  const activeSubstrateAccount = useSubstrateAddress();
+  const ledgerResult = useRestakingRoleLedger(activeSubstrateAccount);
+  const { hasExistingProfile, profileTypeOpt, ledgerOpt } = useRestakingProfile(
+    activeSubstrateAccount
+  );
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
   const allocations: Optional<RestakingAllocationMap> | null = useMemo(() => {

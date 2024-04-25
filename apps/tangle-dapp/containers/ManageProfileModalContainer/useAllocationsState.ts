@@ -2,14 +2,16 @@ import { useCallback, useEffect, useState } from 'react';
 
 import useRestakingAllocations from '../../data/restaking/useRestakingAllocations';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakingProfileType } from '../../types';
 import { RestakingAllocationMap } from './types';
 
 const useAllocationsState = (intendedProfileType: RestakingProfileType) => {
+  const activeSubstrateAccount = useSubstrateAddress();
   const { value: substrateAllocationsOpt, isLoading } =
     useRestakingAllocations();
 
-  const { profileTypeOpt } = useRestakingProfile();
+  const { profileTypeOpt } = useRestakingProfile(activeSubstrateAccount);
   const [allocations, setAllocations] = useState<RestakingAllocationMap>({});
 
   // Only change the allocations when the substrate allocations

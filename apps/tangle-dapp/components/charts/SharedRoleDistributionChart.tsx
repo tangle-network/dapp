@@ -20,8 +20,8 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
   return (
     <div className="relative">
       <RadialBarChart
-        innerRadius={60}
-        outerRadius={100}
+        innerRadius="60%"
+        outerRadius="100%"
         width={200}
         height={200}
         data={formattedData}

@@ -5,7 +5,7 @@ import convertRecordToAllocation from '../../utils/convertRecordToAllocation';
 import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
-const useRestakingProfile = (address?: string) => {
+const useRestakingProfile = (address: string | null) => {
   const { data: ledgerOpt, isLoading } = useRestakingRoleLedger(address);
 
   const hasExistingProfile = isLoading

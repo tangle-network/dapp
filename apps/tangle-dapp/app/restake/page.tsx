@@ -6,26 +6,25 @@ import { FC, useMemo } from 'react';
 import useRestakingEarnings from '../../data/restaking/useRestakingEarnings';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import JobsCard from './JobsCard';
 import OverviewCard from './OverviewCard';
 import RoleDistributionCard from './RoleDistributionCard';
 import RolesEarningsCard from './RolesEarningsCard';
 
 const RestakePage: FC = () => {
+  const activeSubstrateAccount = useSubstrateAddress();
   const {
     hasExistingProfile,
     profileTypeOpt: substrateProfileTypeOpt,
     totalRestaked,
     distribution,
-  } = useRestakingProfile();
+  } = useRestakingProfile(activeSubstrateAccount);
 
   const { maxRestakingAmount } = useRestakingLimits();
 
-  const accountAddress = useActiveAccountAddress();
-
   const { data: earningsRecord, isLoading: isEarningsLoading } =
-    useRestakingEarnings(accountAddress);
+    useRestakingEarnings(activeSubstrateAccount);
 
   const earnings = useMemo(() => {
     if (isEarningsLoading || !earningsRecord) return null;
