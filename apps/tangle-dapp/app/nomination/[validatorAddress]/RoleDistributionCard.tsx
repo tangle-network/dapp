@@ -7,8 +7,10 @@ import { twMerge } from 'tailwind-merge';
 import IndependentRoleDistributionChart from '../../../components/charts/IndependentRoleDistributionChart';
 import SharedRoleDistributionChart from '../../../components/charts/SharedRoleDistributionChart';
 import GlassCard from '../../../components/GlassCard/GlassCard';
+import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import { RestakingProfileType } from '../../../types';
-import useRoleDistributionByValidator from './hooks/useRoleDistributionByValidator';
+import assertRestakingService from '../../../utils/assertRestakingService';
+import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
 
 interface RoleDistributionCardProps {
   validatorAddress: string;
@@ -19,8 +21,20 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
   validatorAddress,
   className,
 }) => {
-  const { profileType, distribution } =
-  useRoleDistributionByValidator(validatorAddress);
+  const { profileTypeOpt: profileType, distribution } =
+    useRestakingProfile(validatorAddress);
+
+  const chartData = !distribution
+    ? []
+    : Object.entries(distribution).map(([name, value]) => {
+        assertRestakingService(name);
+
+        return {
+          name,
+          value,
+          color: getChartDataAreaColorByServiceType(name),
+        };
+      });
 
   return (
     <GlassCard className={twMerge('justify-between flex flex-col', className)}>
@@ -31,10 +45,13 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
       <div className="flex-1 flex items-center justify-center">
         <div className="min-h-[200px]">
           <div className="h-full flex items-center justify-center">
-            {profileType === RestakingProfileType.SHARED ? (
-              <SharedRoleDistributionChart data={distribution} />
+            {profileType?.value === RestakingProfileType.SHARED ? (
+              <SharedRoleDistributionChart data={chartData} />
             ) : (
-              <IndependentRoleDistributionChart data={distribution} />
+              <IndependentRoleDistributionChart
+                data={chartData}
+                title={profileType ? 'Independent' : 'No data'}
+              />
             )}
           </div>
         </div>

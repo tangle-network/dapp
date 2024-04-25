@@ -20,8 +20,7 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
   return (
     <div className="relative">
       <RadialBarChart
-        // TODO: increase inner radius
-        innerRadius={55}
+        innerRadius={60}
         outerRadius={100}
         width={200}
         height={200}
@@ -39,6 +38,7 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
             }
           }}
           wrapperStyle={{ zIndex: 100 }}
+          cursor={false}
         />
       </RadialBarChart>
 

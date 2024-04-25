@@ -2,7 +2,7 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
@@ -17,11 +17,13 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
   const [isDarkMode] = useNextDarkMode();
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
-  const hasData = data.length > 0;
+  const hasData = useMemo(() => data.length > 0, [data]);
 
-  const dataOrDefault = hasData
-    ? formatDataForPieCharts(data)
-    : [{ value: 1, color: isDarkMode ? '#3A3E53' : '#D3D8E2' }];
+  const dataOrDefault = useMemo(() => {
+    return hasData
+      ? formatDataForPieCharts(data)
+      : [{ value: 1, color: isDarkMode ? '#3A3E53' : '#D3D8E2' }];
+  }, [hasData, data, isDarkMode]);
 
   return (
     <div className="relative">
@@ -30,7 +32,7 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           data={dataOrDefault}
           innerRadius={60}
           fill="#8884d8"
-          paddingAngle={hasData ? 5 : 0}
+          paddingAngle={data.length > 1 ? 5 : 0}
           outerRadius={100}
           dataKey="value"
         >
@@ -39,19 +41,22 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           ))}
         </Pie>
 
-        <Tooltip
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              return (
-                <TooltipContent
-                  name={payload[0].payload.name}
-                  value={formatNativeTokenAmount(payload[0].payload.value)}
-                />
-              );
-            }
-          }}
-          wrapperStyle={{ zIndex: 100 }}
-        />
+        {hasData && (
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <TooltipContent
+                    name={payload[0].payload.name}
+                    value={formatNativeTokenAmount(payload[0].payload.value)}
+                  />
+                );
+              }
+            }}
+            wrapperStyle={{ zIndex: 100 }}
+            cursor={false}
+          />
+        )}
       </PieChart>
 
       <div

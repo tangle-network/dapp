@@ -1,14 +1,10 @@
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import assert from 'assert';
 import dynamic from 'next/dynamic';
 import { type FC } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
-import {
-  DistributionDataType,
-  RestakingProfileType,
-  RestakingService,
-} from '../../types';
+import { DistributionDataType, RestakingProfileType } from '../../types';
+import assertRestakingService from '../../utils/assertRestakingService';
 import getChartDataAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 
 const IndependentRoleDistributionChart = dynamic(
@@ -53,6 +49,7 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
         {profileType === RestakingProfileType.SHARED ? (
           <SharedRoleDistributionChart data={chartData} />
         ) : (
+          // TODO: create empty pie chart
           <IndependentRoleDistributionChart
             data={chartData}
             title={profileType ? 'Independent' : 'No data'}
@@ -64,12 +61,3 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
 };
 
 export default RoleDistributionCard;
-
-function assertRestakingService(
-  name: string
-): asserts name is RestakingService {
-  assert(
-    Object.values(RestakingService).includes(name as RestakingService),
-    `Invalid RestakingService: ${name}`
-  );
-}
