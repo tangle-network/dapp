@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { Typography } from '../../typography';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -44,7 +45,7 @@ export const Alert: React.FC<AlertProps> = ({
   const className = useMemo(() => {
     return twMerge(
       _className,
-      'flex items-center w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
+      'flex w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
       getClassNamesByType(type)
     );
   }, [_className, type]);
@@ -87,7 +88,7 @@ export const Alert: React.FC<AlertProps> = ({
         )}
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className={cx('flex flex-col', { 'gap-1': title && description })}>
         <Typography variant="body1" className={titleClassName}>
           {title}
         </Typography>

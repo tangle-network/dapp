@@ -241,7 +241,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             <Alert
               type="warning"
               size="sm"
-              title="You are sending the maximum amount"
               description={`Consider keeping a small amount for transaction fees and future txes.`}
             />
           )}
