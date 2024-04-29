@@ -1,70 +1,20 @@
 'use client';
 
-import { BN_ZERO } from '@polkadot/util';
-import { useMemo } from 'react';
-
-import useRestakingAPY from '../../data/restaking/useRestakingAPY';
-import useRestakingEarnings from '../../data/restaking/useRestakingEarnings';
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
-import useRestakingProfile from '../../data/restaking/useRestakingProfile';
-import useRestakingTotalRewards from '../../data/restaking/useRestakingTotalRewards';
 import JobsCard from './JobsCard';
 import OverviewCard from './OverviewCard';
 import RoleDistributionCard from './RoleDistributionCard';
 import RolesEarningsCard from './RolesEarningsCard';
 
-const RestakePage = () => {
-  const {
-    hasExistingProfile,
-    profileTypeOpt: substrateProfileTypeOpt,
-    ledgerOpt,
-    totalRestaked,
-  } = useRestakingProfile();
-
-  const { maxRestakingAmount } = useRestakingLimits();
-
-  const { data: earningsRecord, isLoading: isEarningsLoading } =
-    useRestakingEarnings();
-
-  const { data: rewards, isLoading: isRewardsLoading } =
-    useRestakingTotalRewards();
-
-  const apy = useRestakingAPY();
-
-  const availableForRestake = useMemo(() => {
-    if (maxRestakingAmount !== null && totalRestaked !== null) {
-      const availableForRestake = maxRestakingAmount.gt(totalRestaked)
-        ? maxRestakingAmount.sub(totalRestaked)
-        : BN_ZERO;
-
-      return availableForRestake;
-    }
-
-    return maxRestakingAmount;
-  }, [maxRestakingAmount, totalRestaked]);
-
+export default function RestakePage() {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">
-      <OverviewCard
-        hasExistingProfile={hasExistingProfile}
-        profileTypeOpt={substrateProfileTypeOpt}
-        isLoading={isEarningsLoading || isRewardsLoading}
-        totalRestaked={totalRestaked}
-        availableForRestake={availableForRestake}
-        apy={apy}
-        rewards={rewards}
-      />
+      <OverviewCard />
 
-      <RoleDistributionCard
-        profileType={substrateProfileTypeOpt?.value}
-        ledger={ledgerOpt}
-      />
+      <RoleDistributionCard />
 
-      <RolesEarningsCard earnings={earningsRecord} />
+      <RolesEarningsCard />
 
       <JobsCard />
     </div>
   );
-};
-
-export default RestakePage;
+}

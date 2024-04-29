@@ -1,9 +1,8 @@
 import type { ApiRx } from '@polkadot/api';
 import { type BN, BN_ZERO } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+import fraction from '@webb-tools/webb-ui-components/utils/fraction';
 import { useCallback } from 'react';
 import { map, type Observable } from 'rxjs';
-import { formatUnits } from 'viem';
 
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useRestakingEraReward from './useRestakingEraReward';
@@ -23,22 +22,17 @@ const useRestakingAPY = () => {
     activeRestakerEra?.unwrapOr(null)?.index.toNumber()
   );
 
-  const { data: totalRestakedBN } = usePolkadotApiRx(getTotalRestaked);
+  const { data: totalRestaked } = usePolkadotApiRx(getTotalRestaked);
 
   if (
     currentEraRewards === null ||
-    totalRestakedBN === null ||
-    totalRestakedBN.isZero()
+    totalRestaked === null ||
+    totalRestaked.isZero()
   ) {
     return null;
   }
 
-  const totalRestaked = formatUnits(
-    BigInt(totalRestakedBN.toString()),
-    TANGLE_TOKEN_DECIMALS
-  );
-
-  const rewardRate = currentEraRewards / +totalRestaked;
+  const rewardRate = fraction(currentEraRewards, totalRestaked.toString());
 
   return (1 + rewardRate / 365) ** 365 - 1;
 };

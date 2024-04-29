@@ -3,6 +3,7 @@ import {
   PalletStakingValidatorPrefs,
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 
 import convertRewardPointsToReward from '../../../utils/convertRewardPointsToReward';
 import { getPolkadotApiPromise } from '../../../utils/polkadot';
@@ -11,10 +12,10 @@ export async function calculateEraRewardPoints(
   rpcUrl: string,
   era: number,
   validatorRewards: Array<[string, number]>
-): Promise<number | null> {
+): Promise<bigint | null> {
   const api = await getPolkadotApiPromise(rpcUrl);
 
-  let eraReward = 0;
+  let eraReward = ZERO_BIG_INT;
 
   for (const [accountId, rewardPoints] of validatorRewards) {
     const [optionalExposure, validatorPrefs] = await api.queryMulti<

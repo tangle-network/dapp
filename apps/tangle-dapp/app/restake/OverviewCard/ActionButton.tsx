@@ -1,5 +1,6 @@
 'use client';
 
+import type { BN } from '@polkadot/util';
 import {
   useConnectWallet,
   useWebContext,
@@ -11,7 +12,6 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import type BN from 'bn.js';
 import { FC, useState } from 'react';
 
 import ManageProfileModalContainer from '../../../containers/ManageProfileModalContainer';
@@ -22,6 +22,7 @@ import Optional from '../../../utils/Optional';
 type Props = {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
+  isDataLoading?: boolean;
   availableForRestake?: BN | null;
 };
 
@@ -29,6 +30,7 @@ const ActionButton: FC<Props> = ({
   availableForRestake = null,
   hasExistingProfile,
   profileTypeOpt,
+  isDataLoading,
 }) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
@@ -84,8 +86,8 @@ const ActionButton: FC<Props> = ({
   // or wallet is found.
   return (
     <Button
-      isDisabled={loading || isConnecting}
-      isLoading={loading || isConnecting}
+      isDisabled={loading || isConnecting || isDataLoading}
+      isLoading={loading || isConnecting || isDataLoading}
       loadingText="Connecting..."
       onClick={() => toggleModal(true)}
     >

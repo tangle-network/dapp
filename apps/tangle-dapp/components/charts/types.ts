@@ -1,12 +1,8 @@
-export type PirChartTooltipContentProps = {
-  name: string;
-  value: number;
-  suffix?: string;
-};
+import { BN } from '@polkadot/util';
 
 export type PieChartItem = {
   name: string;
-  value: number;
+  value: BN;
   color: string;
 };
 
@@ -17,6 +13,7 @@ export interface PieChartProps {
 
 export type RoleEarningsChartItem = {
   era: number;
+  // TODO: might need to change from number to BN here
   reward: number;
 };
 

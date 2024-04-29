@@ -5,16 +5,14 @@ import { map } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import usePromise from '../../hooks/usePromise';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import type { ErasRestakeRewardPointsEntry } from './types';
 
 const createWorker = createWorkerFactory(
   () => import('./workers/calculateEarnings')
 );
 
-function useRestakingEarnings() {
+function useRestakingEarnings(accountAddress: string | null) {
   const { rpcEndpoint } = useNetworkStore();
-  const activeAccount = useSubstrateAddress();
 
   const worker = useWorker(createWorker);
 
@@ -29,7 +27,7 @@ function useRestakingEarnings() {
           return null;
         }
 
-        if (activeAccount === null || activeAccount.length === 0) {
+        if (accountAddress === null || accountAddress.length === 0) {
           return null;
         }
 
@@ -59,13 +57,13 @@ function useRestakingEarnings() {
 
             return worker.calculateEarnings(
               rpcEndpoint,
-              activeAccount,
+              accountAddress,
               serializableEntries
             );
           })
         );
       },
-      [activeAccount, rpcEndpoint, worker]
+      [accountAddress, rpcEndpoint, worker]
     )
   );
 

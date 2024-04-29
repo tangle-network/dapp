@@ -2,7 +2,7 @@
  * Type for the restaking earnings record,
  * key is the era number and value is the restaking earnings for that era
  */
-export type EarningRecord = Record<number, number>;
+export type EarningRecord = Record<number, bigint>;
 
 /**
  * Type for the restaking rewards record entries,

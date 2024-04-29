@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import useSWR from 'swr';
 
-import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
+import SkeletonRow from '../../../components/skeleton/SkeletonRow';
 import TableStatus from '../../../components/TableStatus/TableStatus';
 import getActiveJobs from '../../../data/JobTables/getActiveJobs';
 import JobsTableClient from './JobsTableClient';
@@ -15,7 +15,7 @@ const ActiveJobsTable: FC<JobsTableProps> = ({ pageSize }) => {
   );
 
   if (isLoading || !data) {
-    return <ContainerSkeleton className="border-0" />;
+    return <SkeletonRow />;
   }
 
   if (data && data.length === 0) {

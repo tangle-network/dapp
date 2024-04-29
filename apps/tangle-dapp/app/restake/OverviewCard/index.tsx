@@ -1,43 +1,53 @@
 'use client';
 
-import { BN } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
+import {
+  type ComponentProps,
+  type ElementRef,
+  FC,
+  forwardRef,
+  useMemo,
+} from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
-import useNetworkStore from '../../../context/useNetworkStore';
-import { RestakingProfileType } from '../../../types';
-import formatBnToDisplayAmount from '../../../utils/formatBnToDisplayAmount';
-import type Optional from '../../../utils/Optional';
+import useRestakingAPY from '../../../data/restaking/useRestakingAPY';
+import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
+import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useRestakingTotalRewards from '../../../data/restaking/useRestakingTotalRewards';
+import useFormatNativeTokenAmount from '../../../hooks/useFormatNativeTokenAmount';
+import { getTotalRestakedFromRestakeRoleLedger } from '../../../utils/polkadot/restake';
 import ActionButton from './ActionButton';
 
-type OverviewCardProps = ComponentProps<'div'> & {
-  hasExistingProfile: boolean | null;
-  profileTypeOpt: Optional<RestakingProfileType> | null;
-  isLoading?: boolean;
-  totalRestaked?: BN | null;
-  availableForRestake?: BN | null;
-  rewards?: BN | null;
-  apy?: number | null;
-};
+const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
+  (props, ref) => {
+    const formatNativeTokenAmount = useFormatNativeTokenAmount();
+    const { hasExistingProfile, profileTypeOpt, ledgerOpt, isLoading } =
+      useRestakingProfile();
 
-const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
-  (
-    {
-      isLoading,
-      totalRestaked = null,
-      availableForRestake = null,
-      rewards = null,
-      apy = null,
-      hasExistingProfile,
-      profileTypeOpt,
-      ...props
-    },
-    ref
-  ) => {
-    const { nativeTokenSymbol } = useNetworkStore();
+    const { data: totalRewards, isLoading: isTotalRewardLoading } =
+      useRestakingTotalRewards();
+
+    const apy = useRestakingAPY();
+
+    const { maxRestakingAmount } = useRestakingLimits();
+
+    const totalRestaked = useMemo(
+      () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
+      [ledgerOpt]
+    );
+
+    const availableForRestake = useMemo(() => {
+      if (maxRestakingAmount !== null && totalRestaked !== null) {
+        return maxRestakingAmount.gt(totalRestaked)
+          ? maxRestakingAmount.sub(totalRestaked)
+          : BN_ZERO;
+      }
+
+      return maxRestakingAmount;
+    }, [maxRestakingAmount, totalRestaked]);
 
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
@@ -45,26 +55,29 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
           <StatsItem
             isLoading={isLoading}
             title="Total Restaked"
-            value={totalRestaked}
+            value={
+              totalRestaked ? formatNativeTokenAmount(totalRestaked) : null
+            }
             isBoldText
-            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
             isLoading={isLoading}
             title="Available for Restake"
-            value={availableForRestake}
+            value={
+              availableForRestake
+                ? formatNativeTokenAmount(availableForRestake)
+                : null
+            }
             isBoldText
-            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
-            isLoading={isLoading}
+            isLoading={isTotalRewardLoading}
             title="Jobs Rewards"
             // TODO: Update the tooltip content for more accurate information
             titleTooltip="The total rewards earned from the jobs fees."
-            value={rewards}
-            suffix={nativeTokenSymbol}
+            value={totalRewards ? formatNativeTokenAmount(totalRewards) : null}
           />
 
           <StatsItem
@@ -72,14 +85,14 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
             title="APY"
             // TODO: Update the tooltip content for more accurate information
             titleTooltip="The annual percentage yield when restaking the staked tokens into the roles system."
-            value={apy}
-            suffix="%"
+            value={typeof apy === 'number' ? `${apy}%` : null}
           />
 
           <ActionButton
             availableForRestake={availableForRestake}
             hasExistingProfile={hasExistingProfile}
             profileTypeOpt={profileTypeOpt}
+            isDataLoading={isLoading}
           />
         </div>
       </TangleCard>
@@ -94,11 +107,10 @@ export default OverviewCard;
 type StatsItemProps = {
   title: string;
   titleTooltip?: string;
-  value: BN | number | null;
+  value: string | null;
   valueTooltip?: string;
   isBoldText?: boolean;
   isLoading?: boolean;
-  suffix?: string;
 };
 
 const StatsItem: FC<StatsItemProps> = ({
@@ -108,7 +120,6 @@ const StatsItem: FC<StatsItemProps> = ({
   valueTooltip,
   isBoldText,
   isLoading,
-  suffix = '',
 }) => {
   return (
     <div className="gap-3">
@@ -134,16 +145,7 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {value !== null
-                ? `${
-                    BN.isBN(value)
-                      ? formatBnToDisplayAmount(value, {
-                          includeCommas: true,
-                          fractionLength: 4,
-                        })
-                      : value
-                  } ${suffix}`.trim()
-                : '--'}
+              {value ?? '--'}
             </Typography>
 
             {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}

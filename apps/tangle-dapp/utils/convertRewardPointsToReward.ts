@@ -1,4 +1,6 @@
 import { BN_QUINTILL } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+import { parseUnits } from 'viem';
 
 const BIG_INT_QUINTILL = BigInt(BN_QUINTILL.toString());
 
@@ -18,7 +20,7 @@ export default function convertRewardPointsToReward(
   validatorCommision: number,
   ownStaked: bigint,
   totalStaked: bigint
-): number {
+): bigint {
   // Convert Perbill to a number
   const validatorCommission = validatorCommision / 10_000_000 / 100;
 
@@ -33,5 +35,8 @@ export default function convertRewardPointsToReward(
   const validatorStakingPayout =
     validatorLeftoverPayout * validatorExposurePart;
 
-  return validatorStakingPayout + validatorCommissionPayout;
+  const totalPayout = validatorStakingPayout + validatorCommissionPayout;
+
+  // Scale the total payout to `TANGLE_TOKEN_DECIMALS` decimals
+  return parseUnits(totalPayout.toString(), TANGLE_TOKEN_DECIMALS);
 }
