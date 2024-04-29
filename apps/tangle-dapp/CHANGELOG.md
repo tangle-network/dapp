@@ -194,20 +194,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Validator Info Card backend integration + Handle Loading state for Validator Detail page - https://github.com/webb-tools/webb-dapp/pull/2238
-- Allowing to Transfer Max Balance - https://github.com/webb-tools/webb-dapp/pull/2243
-- Active Service Table on Validator page - https://github.com/webb-tools/webb-dapp/pull/2262
-- Role Distribution on Validator page + Fix empty dara on Restaking page - https://github.com/webb-tools/webb-dapp/pull/2266
+- Validator Info Card backend integration + Handle Loading state for Validator Detail page - https://github.com/webb-tools/webb-dapp/pull/2238.
+- Allowing to Transfer Max Balance - https://github.com/webb-tools/webb-dapp/pull/2243.
+- Active Service Table on Validator page - https://github.com/webb-tools/webb-dapp/pull/2262.
+- Role Distribution on Validator page + Fix empty dara on Restaking page - https://github.com/webb-tools/webb-dapp/pull/2266.
 
 ### Changed
 
-- Disable `Wallet Connect` wallet - https://github.com/webb-tools/webb-dapp/pull/2230
-- Update Explorer links on Tangle Dapp + getUrlExplorer + Chains Config - https://github.com/webb-tools/webb-dapp/pull/2233
-- Have the native token symbol be hardcoded instead of dynamic to improve performance - https://github.com/webb-tools/webb-dapp/pull/2257
-- Updating Balances Display - https://github.com/webb-tools/webb-dapp/pull/2269
+- Disable `Wallet Connect` wallet - https://github.com/webb-tools/webb-dapp/pull/2230.
+- Update Explorer links on Tangle Dapp + getUrlExplorer + Chains Config - https://github.com/webb-tools/webb-dapp/pull/2233.
+- Have the native token symbol be hardcoded instead of dynamic to improve performance - https://github.com/webb-tools/webb-dapp/pull/2257.
+- Updating Balances Display - https://github.com/webb-tools/webb-dapp/pull/2269.
 
 ### Fixed
 
-- Fix cursor moves to the end when changing value in input - https://github.com/webb-tools/webb-dapp/pull/2234
-- UI improvements on Tangle Dapp (Key Stats Item + Fix Footer bottom bound + Static Tangle Icon) - https://github.com/webb-tools/webb-dapp/pull/2256
-- Fix account explorer link in wallet dropdown - https://github.com/webb-tools/webb-dapp/pull/2261
+- Fix cursor moves to the end when changing value in input - https://github.com/webb-tools/webb-dapp/pull/2234.
+- UI improvements on Tangle Dapp (Key Stats Item + Fix Footer bottom bound + Static Tangle Icon) - https://github.com/webb-tools/webb-dapp/pull/2256.
+- Fix account explorer link in wallet dropdown - https://github.com/webb-tools/webb-dapp/pull/2261.
