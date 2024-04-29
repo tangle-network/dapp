@@ -12,7 +12,7 @@ import { formatTokenBalance } from '../../utils/polkadot';
 import { InfoIconWithTooltip } from '..';
 
 const Balance: FC = () => {
-  const { free: balance } = useBalances();
+  const { transferable: balance } = useBalances();
   const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedBalance =
@@ -38,21 +38,21 @@ const Balance: FC = () => {
   }, [balance, nativeTokenSymbol]);
 
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div className="flex flex-col w-full gap-5">
       <div>
         <div className="flex items-center gap-2">
           <Typography
             variant="body1"
             className="text-mono-120 dark:text-mono-40"
           >
-            Free Balance
+            Transferable Balance
           </Typography>
 
           <HiddenValueEye />
         </div>
 
         <div className="flex items-center">
-          <div className="flex gap-2 items-end py-2">
+          <div className="flex items-end gap-2 py-2">
             <Typography variant="h2" fw="bold" className="!leading-none">
               <HiddenValue numberOfStars={4}>{prefix}</HiddenValue>
             </Typography>
