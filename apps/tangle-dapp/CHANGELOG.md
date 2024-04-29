@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stop (Staking.chill) nomination flow - https://github.com/webb-tools/webb-dapp/pull/1933
 - Withdraw Unbonded Token Flow - https://github.com/webb-tools/webb-dapp/pull/1944
 - Substrate wallet connection - https://github.com/webb-tools/webb-dapp/pull/1965
-- Payouts Table update & Payout Flow (Payout single and Payout All) supported for both EVM and Substrate wallets  - https://github.com/webb-tools/webb-dapp/pull/1966
+- Payouts Table update & Payout Flow (Payout single and Payout All) supported for both EVM and Substrate wallets - https://github.com/webb-tools/webb-dapp/pull/1966
 - Substrate wallet support for all staking flows (Nominate, Bond More, Unbond, Rebond, Withdraw, Stop Nomination, Update Payee, Update Nominations) - https://github.com/webb-tools/webb-dapp/pull/1997
 - Account page with total, transferrable, and locked balances, token transfer modal, vesting information, EVM & Substrate `vest` functionality, and useful links - https://github.com/webb-tools/webb-dapp/pull/2000
 
@@ -115,6 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Footer links (twitter, github, etc.) were updated to link to Tangle-specific socials - https://github.com/webb-tools/webb-dapp/pull/2108
 
 ### Fixed
+
 - Addressed major performance issues on nominations page by batching requests - https://github.com/webb-tools/webb-dapp/pull/2107
 
 ## [0.0.5] - 2024-03-29
@@ -188,3 +189,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Transaction confirmation modal, replaced with a notification that also includes a link to the explorer - https://github.com/webb-tools/webb-dapp/pull/2222
+
+## [0.0.8] - 2024-04-29
+
+### Added
+
+- Validator Info Card backend integration + Handle Loading state for Validator Detail page - https://github.com/webb-tools/webb-dapp/pull/2238
+- Allowing to Transfer Max Balance - https://github.com/webb-tools/webb-dapp/pull/2243
+- Active Service Table on Validator page - https://github.com/webb-tools/webb-dapp/pull/2262
+- Role Distribution on Validator page + Fix empty dara on Restaking page - https://github.com/webb-tools/webb-dapp/pull/2266
+
+### Changed
+
+- Disable `Wallet Connect` wallet - https://github.com/webb-tools/webb-dapp/pull/2230
+- Update Explorer links on Tangle Dapp + getUrlExplorer + Chains Config - https://github.com/webb-tools/webb-dapp/pull/2233
+- Have the native token symbol be hardcoded instead of dynamic to improve performance - https://github.com/webb-tools/webb-dapp/pull/2257
+- Updating Balances Display - https://github.com/webb-tools/webb-dapp/pull/2269
+
+### Fixed
+
+- Fix cursor moves to the end when changing value in input - https://github.com/webb-tools/webb-dapp/pull/2234
+- UI improvements on Tangle Dapp (Key Stats Item + Fix Footer bottom bound + Static Tangle Icon) - https://github.com/webb-tools/webb-dapp/pull/2256
+- Fix account explorer link in wallet dropdown - https://github.com/webb-tools/webb-dapp/pull/2261
