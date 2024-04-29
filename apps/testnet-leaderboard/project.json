@@ -4,20 +4,6 @@
   "sourceRoot": "apps/testnet-leaderboard",
   "projectType": "application",
   "targets": {
-    "build": {
-      "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/testnet-leaderboard"
-      },
-      "configurations": {
-        "development": {
-          "outputPath": "apps/testnet-leaderboard"
-        },
-        "production": {}
-      }
-    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
@@ -54,13 +40,6 @@
           "ci": true,
           "codeCoverage": true
         }
-      }
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/testnet-leaderboard/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
