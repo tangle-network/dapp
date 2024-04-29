@@ -164,6 +164,8 @@ export enum RestakingProfileType {
   SHARED = 'Shared',
 }
 
+export type DistributionDataType = Record<RestakingService, BN>;
+
 /**
  * There are phase 1 jobs in Substrate
  */

@@ -1,42 +1,59 @@
 'use client';
 
-import { BN, formatBalance } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { type ComponentProps, type ElementRef, FC, forwardRef } from 'react';
+import {
+  type ComponentProps,
+  type ElementRef,
+  FC,
+  forwardRef,
+  useMemo,
+} from 'react';
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
-import useNetworkStore from '../../../context/useNetworkStore';
-import { RestakingProfileType } from '../../../types';
-import Optional from '../../../utils/Optional';
+import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
+import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useFormatNativeTokenAmount from '../../../hooks/useFormatNativeTokenAmount';
+import { getTotalRestakedFromRestakeRoleLedger } from '../../../utils/polkadot/restake';
 import ActionButton from './ActionButton';
 
-type OverviewCardProps = ComponentProps<'div'> & {
-  hasExistingProfile: boolean | null;
-  profileTypeOpt: Optional<RestakingProfileType> | null;
-  isLoading?: boolean;
-  totalRestaked?: BN | null;
-  availableForRestake?: BN | null;
-  earnings?: BN | null;
-  apy?: number | null;
-};
-
-const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
-  (
-    {
-      isLoading,
-      totalRestaked = null,
-      availableForRestake = null,
-      earnings = null,
-      apy = null,
+const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
+  (props, ref) => {
+    const formatNativeTokenAmount = useFormatNativeTokenAmount();
+    const {
       hasExistingProfile,
       profileTypeOpt,
-      ...props
-    },
-    ref
-  ) => {
-    const { nativeTokenSymbol } = useNetworkStore();
+      earningsRecord,
+      ledgerOpt,
+      isLoading,
+    } = useRestakingProfile();
+    const { maxRestakingAmount } = useRestakingLimits();
+
+    const totalRestaked = useMemo(
+      () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
+      [ledgerOpt]
+    );
+
+    const earnings = useMemo(() => {
+      if (isLoading || !earningsRecord) return null;
+
+      return Object.values(earningsRecord).reduce(
+        (total, curr) => total.add(curr),
+        BN_ZERO
+      );
+    }, [earningsRecord, isLoading]);
+
+    const availableForRestake = useMemo(() => {
+      if (maxRestakingAmount !== null && totalRestaked !== null) {
+        return maxRestakingAmount.gt(totalRestaked)
+          ? maxRestakingAmount.sub(totalRestaked)
+          : BN_ZERO;
+      }
+
+      return maxRestakingAmount;
+    }, [maxRestakingAmount, totalRestaked]);
 
     return (
       <TangleCard {...props} className="h-[300px] md:max-w-none" ref={ref}>
@@ -44,31 +61,39 @@ const OverviewCard = forwardRef<ElementRef<'div'>, OverviewCardProps>(
           <StatsItem
             isLoading={isLoading}
             title="Total Restaked"
-            value={totalRestaked}
+            value={
+              totalRestaked ? formatNativeTokenAmount(totalRestaked) : null
+            }
             isBoldText
-            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
             isLoading={isLoading}
             title="Available for Restake"
-            value={availableForRestake}
+            value={
+              availableForRestake
+                ? formatNativeTokenAmount(availableForRestake)
+                : null
+            }
             isBoldText
-            suffix={nativeTokenSymbol}
           />
 
           <StatsItem
             isLoading={isLoading}
             title="Earnings"
-            value={hasExistingProfile ? earnings : null}
-            suffix={nativeTokenSymbol}
+            value={
+              hasExistingProfile && earnings
+                ? formatNativeTokenAmount(earnings)
+                : null
+            }
           />
 
-          <StatsItem isLoading={isLoading} title="APY" value={apy} suffix="%" />
+          <StatsItem isLoading={isLoading} title="APY" value={null} />
 
           <ActionButton
             hasExistingProfile={hasExistingProfile}
             profileTypeOpt={profileTypeOpt}
+            isDataLoading={isLoading}
           />
         </div>
       </TangleCard>
@@ -83,11 +108,10 @@ export default OverviewCard;
 type StatsItemProps = {
   title: string;
   titleTooltip?: string;
-  value: BN | number | null | undefined;
+  value: string | null;
   valueTooltip?: string;
   isBoldText?: boolean;
   isLoading?: boolean;
-  suffix?: string;
 };
 
 const StatsItem: FC<StatsItemProps> = ({
@@ -97,7 +121,6 @@ const StatsItem: FC<StatsItemProps> = ({
   valueTooltip,
   isBoldText,
   isLoading,
-  suffix = '',
 }) => {
   return (
     <div className="gap-3">
@@ -123,11 +146,7 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {value != null
-                ? formatBalance(value, {
-                    withUnit: suffix,
-                  })
-                : '--'}
+              {value ?? '--'}
             </Typography>
 
             {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}
