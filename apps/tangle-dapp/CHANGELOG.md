@@ -194,7 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Validator Info Card backend integration + Handle Loading state for Validator Detail page - https://github.com/webb-tools/webb-dapp/pull/2238.
+- Validator info card backend integration + Handle loading state for Validator Detail page - https://github.com/webb-tools/webb-dapp/pull/2238.
 - Allowing to Transfer Max Balance - https://github.com/webb-tools/webb-dapp/pull/2243.
 - Active Service Table on Validator page - https://github.com/webb-tools/webb-dapp/pull/2262.
 - Role Distribution on Validator page + Fix empty dara on Restaking page - https://github.com/webb-tools/webb-dapp/pull/2266.

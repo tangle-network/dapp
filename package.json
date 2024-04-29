@@ -72,7 +72,7 @@
     "@headlessui/react": "^1.7.3",
     "@ngneat/falso": "^6.1.0",
     "@notionhq/client": "^2.2.3",
-    "@octokit/request": "^9.0.1",
+    "@octokit/request": "^8.1.1",
     "@polkadot/api": "^10.11.2",
     "@polkadot/apps-config": "^0.133.1",
     "@polkadot/extension-dapp": "0.46.6",
