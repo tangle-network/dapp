@@ -4,15 +4,20 @@ import { Option } from '@polkadot/types';
 import { PalletRolesRestakingLedger } from '@polkadot/types/lookup';
 import { createContext, FC, PropsWithChildren } from 'react';
 
-import useRestakingEarnings, {
-  EarningRecord,
-} from '../data/restaking/useRestakingEarnings';
+import type { EarningRecord } from '../data/restaking/types';
+import useRestakingEarnings from '../data/restaking/useRestakingEarnings';
 import useRestakingRoleLedger from '../data/restaking/useRestakingRoleLedger';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 
-export const RestakeContext = createContext({
-  ledger: null as Option<PalletRolesRestakingLedger> | null,
-  earningsRecord: null as EarningRecord | null,
+export type RestakeContextType = {
+  ledger: Option<PalletRolesRestakingLedger> | null;
+  earningsRecord: EarningRecord | null;
+  isLoading: boolean;
+};
+
+export const RestakeContext = createContext<RestakeContextType>({
+  ledger: null,
+  earningsRecord: null,
   isLoading: true,
 });
 

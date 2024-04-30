@@ -9598,6 +9598,11 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.15.0.tgz#461a952c2872dd82c8b2e9b74c4dfaff569123e2"
   integrity sha512-HOil5aFtme37dVQTB6M34G95kPM3MMuqSmIRVCC52eKV+Y/tGSqw9P3rWhlAx6A+mz+MoX+XxsGsNJbaI5qCgQ==
 
+"@remote-ui/rpc@^1.2.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.4.5.tgz#20328970c314374d96fdaae1cf93aca4b47fefee"
+  integrity sha512-Cr+06niG/vmE4A9YsmaKngRuuVSWKMY42NMwtZfy+gctRWGu6Wj9BWuMJg5CEp+JTkRBPToqT5rqnrg1G/Wvow==
+
 "@repeaterjs/repeater@3.0.4":
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.4.tgz#a04d63f4d1bf5540a41b01a921c9a7fddc3bd1ca"
@@ -10066,6 +10071,32 @@
   integrity sha512-cYZy5WNTkWs5GgggGnjfGqC44CWir0pAv4GVVSx0fsup4D4pMKBJPrtub15f9uC+QkUf3vVkqwpBqeFxtmJQTQ==
   dependencies:
     "@sentry/types" "7.99.0"
+
+"@shopify/react-hooks@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@shopify/react-hooks/-/react-hooks-3.1.0.tgz#9e4d5bbd654893e29631d55c115a440f2af06514"
+  integrity sha512-M3FWqis/ADvEg3W7dDtM4dWNZAvFQkVRus7MNWobuXyzO4SMj4hrudyEU+/MHAup4/R7ZcqJq7qoX5saKZwynA==
+
+"@shopify/react-web-worker@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@shopify/react-web-worker/-/react-web-worker-5.0.15.tgz#f654cd0b8bbcf1489816563e6c8018ec7dd2e998"
+  integrity sha512-yyqpjidTzISROXxq5KfBQhlNUfvchr6D+G55PrlpnYgE5Oc+zSvYmKuQf/Bi0ZJllVfFbWjbHRnEanK6baLIcg==
+  dependencies:
+    "@shopify/react-hooks" "^3.1.0"
+    "@shopify/useful-types" "^5.1.2"
+    "@shopify/web-worker" "^6.1.0"
+
+"@shopify/useful-types@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@shopify/useful-types/-/useful-types-5.1.2.tgz#da8f2aaa8b3496705068b21deb76091cc58fcdc4"
+  integrity sha512-EjwIljAYHT1pfIxdMFp6ytJvCUmKXa5NWsvG7zXFX5EnLs7wYp66M/QCuoyJjI0Lq+5ZVyrJXJqqeBiXQVVs0w==
+
+"@shopify/web-worker@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@shopify/web-worker/-/web-worker-6.1.0.tgz#bf9a79378e05d6ef7787ee02f191532c0a67e79c"
+  integrity sha512-YRN41GkZ4FIApsOhIHhTQSbNk0fOPIbVrb1hPP1cV8z86c+saVHN8rONkXZERe0lD/oeJDJKsDeALKWfarbTyw==
+  dependencies:
+    "@remote-ui/rpc" "^1.2.5"
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
