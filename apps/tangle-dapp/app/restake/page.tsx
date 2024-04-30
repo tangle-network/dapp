@@ -1,5 +1,3 @@
-'use client';
-
 import JobsCard from './JobsCard';
 import OverviewCard from './OverviewCard';
 import RoleDistributionCard from './RoleDistributionCard';
