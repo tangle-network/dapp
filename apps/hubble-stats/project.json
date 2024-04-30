@@ -4,26 +4,6 @@
   "sourceRoot": "apps/hubble-stats",
   "projectType": "application",
   "targets": {
-    "build": {
-      "executor": "@nx/next:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/hubble-stats"
-      },
-      "dependsOn": [
-        "fetch-on-chain-config",
-        "^build"
-      ],
-      "configurations": {
-        "development": {
-          "outputPath": "apps/hubble-stats"
-        },
-        "production": {}
-      }
-    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
@@ -31,10 +11,7 @@
         "buildTarget": "hubble-stats:build",
         "dev": true
       },
-      "dependsOn": [
-        "fetch-on-chain-config",
-        "^serve"
-      ],
+      "dependsOn": ["fetch-on-chain-config", "^serve"],
       "configurations": {
         "development": {
           "buildTarget": "hubble-stats:build:development",
@@ -61,9 +38,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/hubble-stats/jest.config.ts",
         "passWithNoTests": true
@@ -73,17 +48,6 @@
           "ci": true,
           "codeCoverage": true
         }
-      }
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
-      "options": {
-        "lintFilePatterns": [
-          "apps/hubble-stats/**/*.{ts,tsx,js,jsx}"
-        ]
       }
     }
   },

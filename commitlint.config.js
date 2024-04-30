@@ -22,4 +22,5 @@ module.exports = {
       ],
     ],
   },
+  ignores: [(message) => message.startsWith('[RELEASE]')],
 };
