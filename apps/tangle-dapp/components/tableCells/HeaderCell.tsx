@@ -11,7 +11,7 @@ const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
       variant="body1"
       fw="bold"
       className={twMerge(
-        'max-w-[150px] text-mono-140 dark:text-mono-40 flex-[1]',
+        'whitespace-nowrap text-mono-140 dark:text-mono-40 flex-[1]',
         'flex items-center gap-0.5',
         className
       )}

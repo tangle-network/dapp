@@ -36,7 +36,7 @@ export enum DelegationsAndPayoutsTab {
 export type Validator = {
   address: string;
   identityName: string;
-  // active Services
+  activeServicesNum: number;
   restaked: string;
   selfStaked: string;
   effectiveAmountStaked: string;

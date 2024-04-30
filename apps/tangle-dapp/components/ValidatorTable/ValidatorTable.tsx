@@ -12,6 +12,7 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 import {
   Avatar,
   Button,
+  Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
   fuzzyFilter,
@@ -30,7 +31,12 @@ import { ValidatorTableProps } from './types';
 const columnHelper = createColumnHelper<Validator>();
 
 const staticColumns = [
-  // TODO: active Services column
+  columnHelper.accessor('activeServicesNum', {
+    header: () => (
+      <HeaderCell title="Active Services" />
+    ),
+    cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+  }),
   columnHelper.accessor('restaked', {
     header: () => <HeaderCell title="Restaked" />,
     cell: (props) => <StringCell value={props.getValue()} />,

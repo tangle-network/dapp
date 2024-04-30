@@ -1,7 +1,9 @@
+import { Option } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import {
   PalletStakingValidatorPrefs,
   SpStakingExposure,
+  TanglePrimitivesJobsJobInfo,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
@@ -31,9 +33,13 @@ export const useValidators = (
     useCallback((api) => api.query.roles.ledger.entries(), [])
   );
 
-  // const { data: activeServices } = usePolkadotApiRx(
-  //   useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
-  // );
+  const { data: jobIdLookups } = usePolkadotApiRx(
+    useCallback((api) => api.query.jobs.validatorJobIdLookup.entries(), [])
+  );
+
+  const { data: activeJobs } = usePolkadotApiRx(
+    useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
+  );
 
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
@@ -71,7 +77,9 @@ export const useValidators = (
       exposures === null ||
       restakingLedgers === null ||
       nominations === null ||
-      validatorPrefs === null
+      validatorPrefs === null ||
+      jobIdLookups === null ||
+      activeJobs === null
     ) {
       return null;
     }
@@ -109,15 +117,38 @@ export const useValidators = (
         const ledger = ledgerData.unwrap();
         return address.toString() === ledger.stash.toString();
       })?.[1];
+
       const totalRestaked =
         ledger && ledger.isSome
           ? getTotalRestakedFromRestakeRoleLedger(ledger)
           : null;
 
+      const idLookupsByAddress = jobIdLookups
+        .filter(([account]) => {
+          return account.args[0].toString() === address.toString();
+        })
+        .map(([, jobIdAndType]) => {
+          return jobIdAndType.unwrap().toArray()[0][1].toString();
+        });
+
+      const activeServices = activeJobs
+        .filter(([jobIdAndType]) => {
+          const jobId = jobIdAndType.args[1];
+          return idLookupsByAddress.includes(jobId.toString());
+        })
+        .filter(([, jobData]) => {
+          // TODO: somehow jobData here has type Codec
+          const jobType = (
+            jobData as Option<TanglePrimitivesJobsJobInfo>
+          ).unwrap().jobType;
+          // services are only phase 1 jobs
+          return jobType?.isDkgtssPhaseOne || jobType?.isZkSaaSPhaseOne;
+        });
+
       return {
         address: address.toString(),
         identityName: name,
-        // active Services
+        activeServicesNum: activeServices.length,
         restaked: totalRestaked ? formatNativeTokenSymbol(totalRestaked) : '0',
         selfStaked: selfStakedBalance,
         effectiveAmountStaked: formatNativeTokenSymbol(totalStakeAmount),
@@ -138,5 +169,7 @@ export const useValidators = (
     formatNativeTokenSymbol,
     status,
     restakingLedgers,
+    jobIdLookups,
+    activeJobs,
   ]);
 };
