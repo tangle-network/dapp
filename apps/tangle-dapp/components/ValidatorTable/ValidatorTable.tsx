@@ -30,33 +30,27 @@ import { ValidatorTableProps } from './types';
 const columnHelper = createColumnHelper<Validator>();
 
 const staticColumns = [
-  columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+  // TODO: active Services column
+  columnHelper.accessor('restaked', {
+    header: () => <HeaderCell title="Restaked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('effectiveAmountStaked', {
-    header: () => (
-      <HeaderCell title="Effective amount staked" className="justify-center" />
-    ),
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+    header: () => <HeaderCell title="Effective amount staked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
+  }),
+  columnHelper.accessor('selfStaked', {
+    header: () => <HeaderCell title="Self-staked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Nominations" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+    header: () => <HeaderCell title="Nominations" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('commission', {
-    header: () => <HeaderCell title="Commission" className="justify-center" />,
+    header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
-      <StringCell
-        value={Number(props.getValue()).toFixed(2) + '%'}
-        className="text-center"
-      />
+      <StringCell value={Number(props.getValue()).toFixed(2) + '%'} />
     ),
   }),
   columnHelper.accessor('address', {

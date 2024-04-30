@@ -6,10 +6,10 @@ import {
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { Validator } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
+import { getTotalRestakedFromRestakeRoleLedger } from '../../utils/polkadot/restake';
 import useCurrentEra from '../staking/useCurrentEra';
 import useValidatorsPrefs from '../staking/useValidatorsPrefs';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
@@ -18,7 +18,7 @@ export const useValidators = (
   addresses: AccountId32[] | null,
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
-  const { nativeTokenSymbol } = useNetworkStore();
+  const formatNativeTokenSymbol = useFormatNativeTokenAmount();
   const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
@@ -26,6 +26,14 @@ export const useValidators = (
   const { data: nominations } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
+
+  const { data: restakingLedgers } = usePolkadotApiRx(
+    useCallback((api) => api.query.roles.ledger.entries(), [])
+  );
+
+  // const { data: activeServices } = usePolkadotApiRx(
+  //   useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
+  // );
 
   const { data: exposures } = usePolkadotApiRx(
     useCallback(
@@ -61,6 +69,7 @@ export const useValidators = (
       addresses === null ||
       identityNames === null ||
       exposures === null ||
+      restakingLedgers === null ||
       nominations === null ||
       validatorPrefs === null
     ) {
@@ -73,10 +82,7 @@ export const useValidators = (
       const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
 
       const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
-      const selfStakedBalance = formatTokenBalance(
-        selfStakedAmount,
-        nativeTokenSymbol
-      );
+      const selfStakedBalance = formatNativeTokenSymbol(selfStakedAmount);
 
       const nominators = nominations.filter(([, nominatorData]) => {
         if (nominatorData.isNone) {
@@ -97,14 +103,24 @@ export const useValidators = (
       const commissionRate = validatorPref?.commission.unwrap().toNumber() ?? 0;
       const commission = commissionRate / 10_000_000;
 
+      const ledger = restakingLedgers.find(([, ledgerData]) => {
+        if (ledgerData.isNone) return false;
+
+        const ledger = ledgerData.unwrap();
+        return address.toString() === ledger.stash.toString();
+      })?.[1];
+      const totalRestaked =
+        ledger && ledger.isSome
+          ? getTotalRestakedFromRestakeRoleLedger(ledger)
+          : null;
+
       return {
         address: address.toString(),
         identityName: name,
+        // active Services
+        restaked: totalRestaked ? formatNativeTokenSymbol(totalRestaked) : '0',
         selfStaked: selfStakedBalance,
-        effectiveAmountStaked: formatTokenBalance(
-          totalStakeAmount,
-          nativeTokenSymbol
-        ),
+        effectiveAmountStaked: formatNativeTokenSymbol(totalStakeAmount),
         effectiveAmountStakedRaw: totalStakeAmount.toString(),
         delegations: nominators.length.toString(),
         commission: commission.toString(),
@@ -119,7 +135,8 @@ export const useValidators = (
     validatorPrefs,
     mappedExposures,
     mappedValidatorPrefs,
-    nativeTokenSymbol,
+    formatNativeTokenSymbol,
     status,
+    restakingLedgers,
   ]);
 };
