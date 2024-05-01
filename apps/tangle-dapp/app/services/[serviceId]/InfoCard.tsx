@@ -1,13 +1,10 @@
-import {
-  Chip,
-  CopyWithTooltip,
-  TimeProgress,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+'use client';
+
+import { Chip, TimeProgress, Typography } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { getServiceDetailsInfo } from '../../../data/ServiceDetails';
+import { useServiceDetailsInfo } from '../../../data/ServiceDetails';
 import { getChipColorOfServiceType } from '../../../utils';
 
 interface InfoCardProps {
@@ -15,9 +12,9 @@ interface InfoCardProps {
   className?: string;
 }
 
-async function InfoCard({ serviceId, className }: InfoCardProps) {
-  const { serviceType, thresholds, key, startTimestamp, endTimestamp } =
-    await getServiceDetailsInfo(serviceId);
+const InfoCard: FC<InfoCardProps> = ({ serviceId, className }) => {
+  const { serviceType, thresholds, startTimestamp, endTimestamp } =
+    useServiceDetailsInfo(serviceId);
 
   return (
     <div
@@ -33,48 +30,21 @@ async function InfoCard({ serviceId, className }: InfoCardProps) {
       </Typography>
 
       <div className="space-y-3">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-          <div className="flex items-center gap-1">
-            <Typography
-              variant="body1"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              Phase 1 ID: {serviceId}
-            </Typography>
-            <Chip color={getChipColorOfServiceType(serviceType)}>
-              {serviceType}
+        <div className="flex items-center gap-1">
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            Phase 1 ID: {serviceId}
+          </Typography>
+          <Chip color={getChipColorOfServiceType(serviceType)}>
+            {serviceType}
+          </Chip>
+          {thresholds && (
+            <Chip color="dark-grey" className="py-1">
+              {thresholds}
             </Chip>
-            {thresholds && (
-              <Chip color="dark-grey" className="py-1">
-                {thresholds}
-              </Chip>
-            )}
-          </div>
-
-          {key && (
-            <div className="flex items-center gap-2">
-              <Typography
-                variant="body1"
-                fw="bold"
-                className="text-mono-200 dark:text-mono-0"
-              >
-                Key:
-              </Typography>
-              <div className="overflow-hidden rounded-lg flex items-stretch">
-                <div
-                  className={twMerge(
-                    'bg-mono-20 dark:bg-mono-160 px-3',
-                    'flex items-center justify-center'
-                  )}
-                >
-                  <Typography variant="body1">
-                    {shortenString(key, 4)}
-                  </Typography>
-                </div>
-                <CopyWithTooltip textToCopy={key} className="rounded-none" />
-              </div>
-            </div>
           )}
         </div>
 
@@ -86,6 +56,6 @@ async function InfoCard({ serviceId, className }: InfoCardProps) {
       </div>
     </div>
   );
-}
+};
 
 export default InfoCard;

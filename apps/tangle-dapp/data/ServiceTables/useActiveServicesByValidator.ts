@@ -48,6 +48,7 @@ export default function useActiveServicesByValidator(validatorAddress: string) {
                 throw new Error('Job info not found');
               } else {
                 const jobInfo = jobInfoData.unwrap();
+                // TODO: cache
                 const jobType = jobInfo.jobType;
                 if (jobType.isNone) {
                   throw new Error('Error fetching data for specific job');

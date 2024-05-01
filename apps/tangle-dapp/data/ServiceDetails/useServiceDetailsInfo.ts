@@ -1,27 +1,27 @@
-import {
-  randEthereumAddress,
-  randRecentDate,
-  randSoonDate,
-} from '@ngneat/falso';
+'use client';
+
+import { randRecentDate, randSoonDate } from '@ngneat/falso';
+import { useContext, useEffect, useState } from 'react';
 
 import { RestakingService } from '../../types';
 
 type ServiceDetailsInfo = {
   serviceType: RestakingService;
   thresholds?: number;
-  key?: string;
   startTimestamp: Date;
   endTimestamp: Date;
 };
 
-export default async function getServiceDetailsInfo(
-  _: string
-): Promise<ServiceDetailsInfo> {
+export default function useServiceDetailsInfo(serviceId: string) {
+  useEffect(() => {
+    // 1. Check cache
+    // 2. No cache, fetch data
+  }, []);
+
   return {
     serviceType: RestakingService.ZK_SAAS_GROTH16,
     thresholds: 3,
-    key: randEthereumAddress(),
     startTimestamp: randRecentDate({ days: 10 }),
     endTimestamp: randSoonDate({ days: 10 }),
-  };
+  } satisfies ServiceDetailsInfo;
 }

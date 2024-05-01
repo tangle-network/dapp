@@ -177,6 +177,7 @@ export type Service = {
   jobsCount?: number;
   earnings?: BN;
   expirationBlock: string;
+  permittedCaller?: string;
 };
 
 export type ServiceJob = {
