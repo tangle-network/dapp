@@ -12,6 +12,7 @@ export type PolkadotApiFetcher<T> = (api: ApiPromise) => Promise<T>;
 export enum PolkadotApiSwrKey {
   ERA = 'era',
   STAKING_REWARDS = 'staking-rewards',
+  SESSION_PROGRESS = 'session-progress',
 }
 
 function getRefreshInterval(swrKey: PolkadotApiSwrKey): number {
@@ -20,8 +21,11 @@ function getRefreshInterval(swrKey: PolkadotApiSwrKey): number {
       // 1 hour.
       return 60 * 1000 * 60;
     case PolkadotApiSwrKey.STAKING_REWARDS:
-      // 3 minutes.
-      return 3 * 1000 * 60;
+      // 1 seconds.
+      return 1000;
+    case PolkadotApiSwrKey.SESSION_PROGRESS:
+      // 1 seconds.
+      return 1000;
   }
 }
 

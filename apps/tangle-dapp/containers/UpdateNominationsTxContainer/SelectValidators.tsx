@@ -17,6 +17,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
         data={validators}
         selectedValidators={selectedValidators}
         setSelectedValidators={setSelectedValidators}
+        pageSize={20}
       />
 
       <Typography

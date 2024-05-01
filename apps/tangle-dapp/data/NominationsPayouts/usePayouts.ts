@@ -1,8 +1,12 @@
 'use client';
 
-import { PalletStakingValidatorPrefs } from '@polkadot/types/lookup';
+import { Option } from '@polkadot/types';
+import {
+  PalletStakingNominations,
+  PalletStakingValidatorPrefs,
+} from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
@@ -23,29 +27,25 @@ type ValidatorReward = {
 };
 
 export default function usePayouts() {
-  const [payouts, setPayouts] = useState<Payout[] | null>(null);
-
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
   const activeSubstrateAddress = useSubstrateAddress();
+
+  const { data: nominators } = usePolkadotApiRx(
+    useCallback(
+      (api) => api.query.staking.nominators(activeSubstrateAddress),
+      [activeSubstrateAddress]
+    )
+  );
 
   const { data: erasRewardsPoints } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
   );
 
-  const { data: nominators } = usePolkadotApiRx(
-    useCallback(
-      (api) => {
-        if (!activeSubstrateAddress) return null;
-        return api.query.staking.nominators(activeSubstrateAddress);
-      },
-      [activeSubstrateAddress]
-    )
-  );
-
   const myNominations = useMemo(() => {
     if (!nominators) return [];
-    return nominators.isSome ? nominators.unwrap().targets : [];
+    const nominatorsData = nominators as Option<PalletStakingNominations>;
+    return nominatorsData.isSome ? nominatorsData.unwrap().targets : [];
   }, [nominators]);
 
   const { data: eraTotalRewards } = useEraTotalRewards();
@@ -64,7 +64,7 @@ export default function usePayouts() {
     return map;
   }, [validators]);
 
-  useEffect(() => {
+  const payoutPromises = useMemo(() => {
     if (
       !erasRewardsPoints ||
       myNominations.length === 0 ||
@@ -104,7 +104,7 @@ export default function usePayouts() {
       }
     }
 
-    const payoutsPromises = Promise.all(
+    return Promise.all(
       allRewards.map(async (reward) => {
         const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
@@ -243,20 +243,12 @@ export default function usePayouts() {
             nominators: validatorNominators,
             validatorTotalReward: validatorTotalRewardFormatted,
             nominatorTotalReward: nominatorTotalRewardFormatted,
-            status: 'unclaimed',
+            nominatorTotalRewardRaw: nominatorTotalReward,
           };
 
           return payout;
         }
       })
-    );
-
-    payoutsPromises.then((payouts) =>
-      setPayouts(
-        payouts
-          .filter((payout): payout is Payout => payout !== undefined)
-          .sort((a, b) => a.era - b.era)
-      )
     );
   }, [
     activeSubstrateAddress,
@@ -268,5 +260,22 @@ export default function usePayouts() {
     rpcEndpoint,
   ]);
 
-  return payouts;
+  const payoutsRef = useRef<Payout[]>([]);
+
+  useEffect(() => {
+    const computePayouts = async () => {
+      if (!payoutPromises) {
+        payoutsRef.current = [];
+      } else {
+        const payouts = await payoutPromises;
+        payoutsRef.current = payouts
+          .filter((payout): payout is Payout => payout !== undefined)
+          .sort((a, b) => a.era - b.era);
+      }
+    };
+
+    computePayouts();
+  }, [payoutPromises]);
+
+  return payoutsRef.current;
 }

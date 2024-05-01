@@ -32,6 +32,7 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
   data,
   selectedValidators,
   setSelectedValidators,
+  pageSize,
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const [totalStakeSortBy, setTotalStakeSortBy] = useState<SortBy>('dsc');
@@ -256,6 +257,11 @@ export const ValidatorListTable: FC<ValidatorListTableProps> = ({
 
   const table = useReactTable({
     data: filteredData,
+    initialState: {
+      pagination: {
+        pageSize,
+      },
+    },
     columns,
     filterFns: {
       fuzzy: fuzzyFilter,

@@ -68,11 +68,19 @@ const NominatorStatsContainer: FC = () => {
             'border-2 border-mono-0 dark:border-mono-160'
           )}
         >
-          <NominatorStatsItem
-            title={`Free Balance`}
-            type="Wallet Balance"
-            address={walletAddress}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <NominatorStatsItem
+              title={`Free Balance`}
+              type="Wallet Balance"
+              address={walletAddress}
+            />
+
+            <NominatorStatsItem
+              title={`Unclaimed Payouts`}
+              type="Total Payout Rewards"
+              address={walletAddress}
+            />
+          </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 

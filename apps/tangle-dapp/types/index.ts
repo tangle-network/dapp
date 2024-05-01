@@ -3,6 +3,8 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
+import { BN } from '@polkadot/util';
+
 export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
@@ -79,7 +81,7 @@ export type Payout = {
   nominators: AddressWithIdentity[];
   validatorTotalReward: string;
   nominatorTotalReward: string;
-  status: 'claimed' | 'unclaimed';
+  nominatorTotalRewardRaw: BN;
 };
 
 /**
