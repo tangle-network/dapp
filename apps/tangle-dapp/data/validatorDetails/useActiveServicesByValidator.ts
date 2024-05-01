@@ -1,26 +1,20 @@
 'use client';
 
-import { BN } from '@polkadot/util';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useEffect, useState } from 'react';
 
-import {
-  TANGLE_TO_SERVICE_TYPE_TSS_MAP,
-  TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP,
-} from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Service } from '../../types';
 import ensureError from '../../utils/ensureError';
-import { getPolkadotApiPromise } from '../../utils/polkadot/api';
+import {
+  extractServiceDetails,
+  getPolkadotApiPromise,
+} from '../../utils/polkadot';
 import useJobIdAndTypeLookupByValidator from '../useJobIdAndTypeLookupByValidator';
 
 export default function useActiveServicesByValidator(validatorAddress: string) {
   const { rpcEndpoint } = useNetworkStore();
   const { notificationApi } = useWebbUI();
-  const { get: getCacheServices, set: setCacheServices } = useLocalStorage(
-    LocalStorageKey.SERVICES_CACHE
-  );
   const {
     data: validatorIdAndTypeLookup,
     isLoading: isLoadingValidatorIdAndTypeLookup,
@@ -48,77 +42,18 @@ export default function useActiveServicesByValidator(validatorAddress: string) {
                 service.type,
                 service.id
               );
-              if (!jobInfoData.isSome) {
-                throw new Error('Job info not found');
-              } else {
-                const jobInfo = jobInfoData.unwrap();
-                // TODO: cache
-                const jobType = jobInfo.jobType;
-                if (jobType.isNone) {
-                  throw new Error('Error fetching data for specific job');
-                }
-                const id = service.id.toString();
-                const expirationBlock = jobInfo.expiry.toString();
-                const fee = jobInfo.fee.toBn();
-
-                if (jobType.isDkgtssPhaseOne) {
-                  const jobDetails = jobType.asDkgtssPhaseOne;
-                  const participantsNum = jobDetails.participants.length;
-                  const permittedCaller = jobDetails.permittedCaller.isSome
-                    ? jobDetails.permittedCaller.unwrap().toString()
-                    : undefined;
-
-                  return {
-                    id,
-                    serviceType:
-                      TANGLE_TO_SERVICE_TYPE_TSS_MAP[jobDetails.roleType.type],
-                    participants: participantsNum,
-                    threshold: jobDetails.threshold.toNumber(),
-                    expirationBlock,
-                    earnings: fee.div(new BN(participantsNum)),
-                    permittedCaller,
-                  };
-                } else if (jobType.isZkSaaSPhaseOne) {
-                  const jobDetails = jobType.asZkSaaSPhaseOne;
-                  const participantsNum = jobDetails.participants.length;
-                  const permittedCaller = jobDetails.permittedCaller.isSome
-                    ? jobDetails.permittedCaller.unwrap().toString()
-                    : undefined;
-                  return {
-                    id,
-                    serviceType:
-                      TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP[
-                        jobDetails.roleType.type
-                      ],
-                    participants: participantsNum,
-                    expirationBlock,
-                    earnings: fee.div(new BN(participantsNum)),
-                    permittedCaller,
-                  };
-                } else {
-                  return null;
-                }
+              const extractedServiceData = extractServiceDetails(
+                service.id.toString(),
+                jobInfoData
+              );
+              if (extractedServiceData === null) {
+                throw new Error('Failed to get service data');
               }
+              return extractedServiceData;
             })
           )
         ).filter((service) => service !== null) as Service[];
         setServices(fetchedServices);
-
-        // Cache the fetched services
-        const newCachedServices = fetchedServices.reduce<
-          Record<string, Service>
-        >((map, curr) => {
-          map[curr.id] = curr;
-          return map;
-        }, {});
-        const currServicesCache = getCacheServices();
-        setCacheServices({
-          ...(currServicesCache ?? {}),
-          [rpcEndpoint]: {
-            ...(currServicesCache?.[rpcEndpoint] ?? {}),
-            ...newCachedServices,
-          },
-        });
       } catch (error) {
         setErrorLoadingServices(ensureError(error));
       } finally {
@@ -127,13 +62,7 @@ export default function useActiveServicesByValidator(validatorAddress: string) {
     };
 
     fetchData();
-  }, [
-    notificationApi,
-    validatorIdAndTypeLookup,
-    rpcEndpoint,
-    getCacheServices,
-    setCacheServices,
-  ]);
+  }, [notificationApi, validatorIdAndTypeLookup, rpcEndpoint]);
 
   useEffect(() => {
     if (validatorIdAndTypeLookupError || errorLoadingServices) {

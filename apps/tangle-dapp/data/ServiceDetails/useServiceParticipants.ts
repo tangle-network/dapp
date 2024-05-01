@@ -14,8 +14,7 @@ const participantsArr = new Array(5).fill({
   web: 'https://tangle.tools/',
 } satisfies ServiceParticipant);
 
-export default function useServiceParticipants(serviceId: string) {
-  console.log('serviceId :', serviceId);
+export default function useServiceParticipants(_: string) {
   const [participants, setParticipants] = useState<ServiceParticipant[] | null>(
     null
   );

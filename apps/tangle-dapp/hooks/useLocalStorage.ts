@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Delegator, Payout, Service, Validator } from '../types';
+import { Delegator, Payout, Validator } from '../types';
 
 export enum LocalStorageKey {
   ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
@@ -31,10 +31,6 @@ export type PayoutsCache = {
 
 export type NominationsCache = {
   [address: string]: Delegator[];
-};
-
-export type ServicesCache = {
-  [rpcEndpoint: string]: Record<string, Service>;
 };
 
 /**
@@ -66,8 +62,6 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? number
     : T extends LocalStorageKey.WAS_BANNER_DISMISSED
     ? boolean
-    : T extends LocalStorageKey.SERVICES_CACHE
-    ? ServicesCache
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
