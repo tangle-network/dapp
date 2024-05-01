@@ -12,7 +12,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import { Service } from '../../types';
 import ensureError from '../../utils/ensureError';
 import { getPolkadotApiPromise } from '../../utils/polkadot/api';
-import useJobIdAndTypeLookupByValidator from './useJobIdAndTypeLookupByValidator';
+import useJobIdAndTypeLookupByValidator from '../useJobIdAndTypeLookupByValidator';
 
 export default function useActiveServicesByValidator(validatorAddress: string) {
   const { rpcEndpoint } = useNetworkStore();

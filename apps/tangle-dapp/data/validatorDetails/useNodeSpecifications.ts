@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { NodeSpecification } from '../types';
+import type { NodeSpecification } from '../../types';
 
 const mock: NodeSpecification = {
   os: 'Linux',
