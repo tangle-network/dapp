@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Delegator, Payout, Validator } from '../types';
+import { Delegator, Payout, Service, Validator } from '../types';
 
 export enum LocalStorageKey {
   ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
@@ -18,6 +18,7 @@ export enum LocalStorageKey {
   KNOWN_NETWORK_ID = 'knownNetworkId',
   VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
+  SERVICES_CACHE = 'servicesCache',
 }
 
 export type AirdropEligibilityCache = {
@@ -30,6 +31,10 @@ export type PayoutsCache = {
 
 export type NominationsCache = {
   [address: string]: Delegator[];
+};
+
+export type ServicesCache = {
+  [rpcEndpoint: string]: Record<string, Service>;
 };
 
 /**
@@ -61,6 +66,8 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? number
     : T extends LocalStorageKey.WAS_BANNER_DISMISSED
     ? boolean
+    : T extends LocalStorageKey.SERVICES_CACHE
+    ? ServicesCache
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
@@ -92,7 +99,9 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   return value;
 };
 
-// TODO: During development cycles, changing local storage value types will lead to any users depending on that value to possibly break (because they may be stuck with an older type schema). Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
+// TODO: During development cycles, changing local storage value types will lead to
+// any users depending on that value to possibly break (because they may be stuck with an older type schema).
+// Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
 /**
  * Custom hook for interacting with local storage.
  *
