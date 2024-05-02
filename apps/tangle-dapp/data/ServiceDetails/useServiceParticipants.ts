@@ -2,35 +2,39 @@
 
 import { useEffect, useState } from 'react';
 
-import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useNetworkStore from '../../context/useNetworkStore';
 import type { ServiceParticipant } from '../../types';
+import { getAccountInfo } from '../../utils/polkadot/identity';
+import useServiceDetails from './useServiceDetails';
 
-const participantsArr = new Array(5).fill({
-  address: '5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy',
-  identity: 'participant_1',
-  twitter: 'https://twitter.com/tangle_network',
-  discord: 'https://discord.com/invite/krp36ZSR8J',
-  email: 'someone@example.com',
-  web: 'https://tangle.tools/',
-} satisfies ServiceParticipant);
+export default function useServiceParticipants() {
+  const { rpcEndpoint } = useNetworkStore();
+  const { serviceDetails, isLoading: isLoadingServiceDetails } =
+    useServiceDetails();
+  const [participants, setParticipants] = useState<ServiceParticipant[]>([]);
+  const [isLoadingParticipants, setIsLoadingParticipants] = useState(true);
 
-export default function useServiceParticipants(_: string) {
-  const [participants, setParticipants] = useState<ServiceParticipant[] | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  // TODO: integrate backend
   useEffect(() => {
-    setIsLoading(false);
-    setError(null);
-    setParticipants(participantsArr);
-  }, []);
+    const fetchParticipantsInfo = async () => {
+      const participantAddresses = serviceDetails?.participants ?? [];
+      const participantsInfo = await Promise.all(
+        participantAddresses.map(async (address) => {
+          const accountInfo = await getAccountInfo(rpcEndpoint, address);
+          return {
+            address,
+            ...(accountInfo ?? {}),
+          } satisfies ServiceParticipant;
+        })
+      );
+      setParticipants(participantsInfo);
+      setIsLoadingParticipants(false);
+    };
 
-  return useFormatReturnType({
-    isLoading,
-    error,
+    fetchParticipantsInfo();
+  }, [rpcEndpoint, serviceDetails?.participants]);
+
+  return {
+    isLoading: isLoadingServiceDetails || isLoadingParticipants,
     data: participants,
-  });
+  };
 }

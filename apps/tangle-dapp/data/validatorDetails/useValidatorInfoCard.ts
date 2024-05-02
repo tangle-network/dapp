@@ -4,11 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import useRestakingRoleLedger from '../../data/restaking/useRestakingRoleLedger';
 import useCurrentEra from '../../data/staking/useCurrentEra';
-import {
-  extractDataFromIdentityInfo,
-  IdentityDataType,
-} from '../../utils/polkadot';
-import { getPolkadotApiPromise } from '../../utils/polkadot/api';
+import { getAccountInfo, getPolkadotApiPromise } from '../../utils/polkadot';
 import {
   getProfileTypeFromRestakeRoleLedger,
   getTotalRestakedFromRestakeRoleLedger,
@@ -42,33 +38,21 @@ export default function useValidatorInfoCard(
 
   useEffect(() => {
     const fetchData = async () => {
-      const api = await getPolkadotApiPromise(rpcEndpoint);
       const fetchNameAndSocials = async () => {
-        const identityData = await api.query.identity.identityOf(
+        const validatorAccountInfo = await getAccountInfo(
+          rpcEndpoint,
           validatorAddress
         );
-
-        if (identityData.isSome) {
-          const identity = identityData.unwrap();
-          const info = identity[0]?.info;
-          if (info) {
-            setName(extractDataFromIdentityInfo(info, IdentityDataType.NAME));
-            setEmail(extractDataFromIdentityInfo(info, IdentityDataType.EMAIL));
-            setWeb(extractDataFromIdentityInfo(info, IdentityDataType.WEB));
-            const twitterName = extractDataFromIdentityInfo(
-              info,
-              IdentityDataType.TWITTER
-            );
-            setTwitter(
-              twitterName === null
-                ? null
-                : `https://twitter.com/${twitterName.substring(1)}`
-            );
-          }
+        if (validatorAccountInfo) {
+          setName(validatorAccountInfo.name);
+          setEmail(validatorAccountInfo.email);
+          setWeb(validatorAccountInfo.web);
+          setTwitter(validatorAccountInfo.twitter);
         }
       };
 
       const fetchNominations = async () => {
+        const api = await getPolkadotApiPromise(rpcEndpoint);
         if (currentEra === null || !api.query.staking?.erasStakersOverview) {
           setNominations(null);
           setIsActive(null);

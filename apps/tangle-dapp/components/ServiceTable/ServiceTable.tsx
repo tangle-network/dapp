@@ -45,7 +45,7 @@ const staticColumns = [
     header: () => (
       <HeaderCell title="# of Participants" className="justify-start" />
     ),
-    cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+    cell: (props) => <Chip color="dark-grey">{props.getValue().length}</Chip>,
   }),
   columnHelper.accessor('threshold', {
     header: () => <HeaderCell title="Threshold" className="justify-start" />,

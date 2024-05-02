@@ -31,7 +31,9 @@ export function extractServiceDetails(
 
     if (jobType.isDkgtssPhaseOne) {
       const jobDetails = jobType.asDkgtssPhaseOne;
-      const participantsNum = jobDetails.participants.length;
+      const participants = jobDetails.participants.map((participant) =>
+        participant.toString()
+      );
       const permittedCaller = jobDetails.permittedCaller.isSome
         ? jobDetails.permittedCaller.unwrap().toString()
         : undefined;
@@ -39,15 +41,17 @@ export function extractServiceDetails(
       return {
         id,
         serviceType: TANGLE_TO_SERVICE_TYPE_TSS_MAP[jobDetails.roleType.type],
-        participants: participantsNum,
+        participants,
         threshold: jobDetails.threshold.toNumber(),
         expirationBlock,
-        earnings: fee.div(new BN(participantsNum)),
+        earnings: fee.div(new BN(participants.length)),
         permittedCaller,
       };
     } else if (jobType.isZkSaaSPhaseOne) {
       const jobDetails = jobType.asZkSaaSPhaseOne;
-      const participantsNum = jobDetails.participants.length;
+      const participants = jobDetails.participants.map((participant) =>
+        participant.toString()
+      );
       const permittedCaller = jobDetails.permittedCaller.isSome
         ? jobDetails.permittedCaller.unwrap().toString()
         : undefined;
@@ -55,9 +59,9 @@ export function extractServiceDetails(
         id,
         serviceType:
           TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP[jobDetails.roleType.type],
-        participants: participantsNum,
+        participants,
         expirationBlock,
-        earnings: fee.div(new BN(participantsNum)),
+        earnings: fee.div(new BN(participants.length)),
         permittedCaller,
       };
     } else {

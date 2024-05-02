@@ -41,6 +41,7 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
     // because restaking system is being updated
     // For local, the data will be updated frequently
     const fetchServiceDetails = async () => {
+      if (!serviceId) return;
       try {
         const api = await getPolkadotApiPromise(rpcEndpoint);
         const jobInfoData = (await api.query.jobs.submittedJobs(

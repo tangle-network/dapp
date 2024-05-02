@@ -5,9 +5,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
   CopyWithTooltip,
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenString,
   Table,
@@ -19,59 +21,78 @@ import { twMerge } from 'tailwind-merge';
 import { SkeletonRow } from '../../../components/skeleton';
 import SocialChip from '../../../components/SocialChip';
 import { HeaderCell } from '../../../components/tableCells';
+import useNetworkStore from '../../../context/useNetworkStore';
 import { useServiceParticipants } from '../../../data/ServiceDetails';
-import type { ServiceParticipant } from '../../../types';
+import { ExplorerType, ServiceParticipant } from '../../../types';
 
 interface ParticipantTableProps {
-  serviceId: string;
   className?: string;
 }
 
 const columnHelper = createColumnHelper<ServiceParticipant>();
 
-const columns = [
-  columnHelper.accessor('identity', {
-    header: () => <HeaderCell title="Identity" className="justify-start" />,
-    cell: (props) => {
-      const address = props.row.original.address;
-      return (
-        <div className="flex items-center gap-1">
-          <Avatar sourceVariant="address" value={address} theme="substrate" />
-          <Typography
-            variant="body2"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {props.getValue() ?? shortenString(address)}
-          </Typography>
-          <CopyWithTooltip textToCopy={address} isButton={false} />
-        </div>
-      );
-    },
-  }),
-  columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Social" className="justify-start" />,
-    cell: (props) => {
-      const { twitter, discord, email, web } = props.row.original;
-      return (
-        <div className="flex gap-2 items-center">
-          {twitter && <SocialChip href={twitter} type="twitter" />}
-          {discord && <SocialChip href={discord} type="discord" />}
-          {email && <SocialChip href={`mailto:${email}`} type="email" />}
-          {web && <SocialChip href={web} type="web" />}
-        </div>
-      );
-    },
-  }),
-];
+const addressColumn = columnHelper.accessor('address', {
+  header: () => <HeaderCell title="Socials" className="justify-start" />,
+  cell: (props) => {
+    const { twitter, discord, email, web } = props.row.original;
+    return (
+      <div className="flex gap-2 items-center">
+        {twitter && <SocialChip href={twitter} type="twitter" />}
+        {discord && <SocialChip href={discord} type="discord" />}
+        {email && <SocialChip href={`mailto:${email}`} type="email" />}
+        {web && <SocialChip href={web} type="web" />}
+        {!twitter && !discord && !email && !web && (
+          <Typography variant="body1">{'--'}</Typography>
+        )}
+      </div>
+    );
+  },
+});
 
-const ParticipantsTable: FC<ParticipantTableProps> = ({
-  serviceId,
-  className,
-}) => {
-  const { data, isLoading, error } = useServiceParticipants(serviceId);
+const ParticipantsTable: FC<ParticipantTableProps> = ({ className }) => {
+  const { network } = useNetworkStore();
+  const { data, isLoading } = useServiceParticipants();
+
+  const columns = [
+    columnHelper.accessor('identity', {
+      header: () => <HeaderCell title="Identity" className="justify-start" />,
+      cell: (props) => {
+        const address = props.row.original.address;
+        const accountExplorerLink = getExplorerURI(
+          network.polkadotExplorerUrl,
+          address,
+          'address',
+          ExplorerType.Substrate
+        ).toString();
+        return (
+          <div className="flex items-center gap-1">
+            <Avatar sourceVariant="address" value={address} theme="substrate" />
+            <Typography
+              variant="body1"
+              // className="text-mono-200 dark:text-mono-0"
+            >
+              {props.getValue() ?? shortenString(address)}
+            </Typography>
+
+            <CopyWithTooltip
+              textToCopy={address}
+              isButton={false}
+              iconClassName="!fill-mono-160 dark:!fill-mono-80"
+            />
+
+            <ExternalLinkIcon
+              href={accountExplorerLink}
+              className="fill-mono-160 dark:fill-mono-80"
+            />
+          </div>
+        );
+      },
+    }),
+    addressColumn,
+  ];
 
   const table = useReactTable({
-    data: data ?? [],
+    data: data,
     columns,
     filterFns: {
       fuzzy: fuzzyFilter,
@@ -92,8 +113,7 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({
           'border border-mono-0 dark:border-mono-160'
         )}
       >
-        {/* Successfully get data */}
-        {data && !isLoading && !error && (
+        {!isLoading ? (
           <Table
             thClassName="!bg-inherit !px-3 border-t-0 bg-mono-0 whitespace-nowrap"
             trClassName="!bg-inherit cursor-pointer"
@@ -103,14 +123,8 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({
             className="h-full flex flex-col"
             tableWrapperClassName="h-full overflow-y-auto"
           />
-        )}
-
-        {/* Loading */}
-        {isLoading && <SkeletonRow />}
-
-        {/* Error */}
-        {!isLoading && !data && error && (
-          <Typography variant="body1">Error</Typography>
+        ) : (
+          <SkeletonRow />
         )}
       </div>
     </div>
