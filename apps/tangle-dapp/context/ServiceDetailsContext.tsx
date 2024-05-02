@@ -37,9 +37,8 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: We can Utilizing caching for Mainnet and possibly Testnet, not implement at the moment
-    // because restaking system is being updated
-    // For local, the data will be updated frequently
+    // TODO: We can utilizing caching for Mainnet and possibly Testnet. For local, the data will be updated frequently
+    // Not implement at the moment because restaking system is being updated
     const fetchServiceDetails = async () => {
       if (!serviceId) return;
       try {
@@ -48,7 +47,7 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
           // no provided type here, only Id
           null,
           new u64(api.registry, BigInt(serviceId))
-        )) as Option<TanglePrimitivesJobsJobInfo>; // Return as Codec type
+        )) as Option<TanglePrimitivesJobsJobInfo>; // Data is returned as Codec type here
         const extractedServiceData = extractServiceDetails(
           serviceId,
           jobInfoData

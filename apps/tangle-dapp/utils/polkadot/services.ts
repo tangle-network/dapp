@@ -20,52 +20,60 @@ export function extractServiceDetails(
 ): Service | null {
   if (!jobInfoData.isSome) {
     return null;
-  } else {
-    const jobInfo = jobInfoData.unwrap();
-    const jobType = jobInfo.jobType;
-    if (jobType.isNone) {
-      return null;
-    }
-    const expirationBlock = jobInfo.expiry.toString();
-    const fee = jobInfo.fee.toBn();
-
-    if (jobType.isDkgtssPhaseOne) {
-      const jobDetails = jobType.asDkgtssPhaseOne;
-      const participants = jobDetails.participants.map((participant) =>
-        participant.toString()
-      );
-      const permittedCaller = jobDetails.permittedCaller.isSome
-        ? jobDetails.permittedCaller.unwrap().toString()
-        : undefined;
-
-      return {
-        id,
-        serviceType: TANGLE_TO_SERVICE_TYPE_TSS_MAP[jobDetails.roleType.type],
-        participants,
-        threshold: jobDetails.threshold.toNumber(),
-        expirationBlock,
-        earnings: fee.div(new BN(participants.length)),
-        permittedCaller,
-      };
-    } else if (jobType.isZkSaaSPhaseOne) {
-      const jobDetails = jobType.asZkSaaSPhaseOne;
-      const participants = jobDetails.participants.map((participant) =>
-        participant.toString()
-      );
-      const permittedCaller = jobDetails.permittedCaller.isSome
-        ? jobDetails.permittedCaller.unwrap().toString()
-        : undefined;
-      return {
-        id,
-        serviceType:
-          TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP[jobDetails.roleType.type],
-        participants,
-        expirationBlock,
-        earnings: fee.div(new BN(participants.length)),
-        permittedCaller,
-      };
-    } else {
-      return null;
-    }
   }
+
+  const jobInfo = jobInfoData.unwrap();
+  console.log('hash: ', jobInfo.createdAtHash?.toString());
+
+  const jobType = jobInfo.jobType;
+
+  if (jobType.isNone) {
+    return null;
+  }
+
+  const expirationBlock = jobInfo.expiry.toString();
+  const fee = jobInfo.fee.toBn();
+
+  // Check for TSS phase 1
+  if (jobType.isDkgtssPhaseOne) {
+    const jobDetails = jobType.asDkgtssPhaseOne;
+    const participants = jobDetails.participants.map((participant) =>
+      participant.toString()
+    );
+    const permittedCaller = jobDetails.permittedCaller.isSome
+      ? jobDetails.permittedCaller.unwrap().toString()
+      : undefined;
+
+    return {
+      id,
+      serviceType: TANGLE_TO_SERVICE_TYPE_TSS_MAP[jobDetails.roleType.type],
+      participants,
+      threshold: jobDetails.threshold.toNumber(),
+      expirationBlock,
+      earnings: fee.div(new BN(participants.length)),
+      permittedCaller,
+    };
+  }
+
+  // Check for Zk-SaaS phase 1
+  if (jobType.isZkSaaSPhaseOne) {
+    const jobDetails = jobType.asZkSaaSPhaseOne;
+    const participants = jobDetails.participants.map((participant) =>
+      participant.toString()
+    );
+    const permittedCaller = jobDetails.permittedCaller.isSome
+      ? jobDetails.permittedCaller.unwrap().toString()
+      : undefined;
+    return {
+      id,
+      serviceType: TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP[jobDetails.roleType.type],
+      participants,
+      expirationBlock,
+      earnings: fee.div(new BN(participants.length)),
+      permittedCaller,
+    };
+  }
+
+  // Not a phase 1 job
+  return null;
 }
