@@ -12,6 +12,7 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 import {
   Avatar,
   Button,
+  Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
   fuzzyFilter,
@@ -22,6 +23,7 @@ import {
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -30,48 +32,55 @@ import { ValidatorTableProps } from './types';
 const columnHelper = createColumnHelper<Validator>();
 
 const staticColumns = [
-  columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
-  }),
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('activeServicesNum', {
+          header: () => <HeaderCell title="Active Services" />,
+          cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+        }),
+        columnHelper.accessor('restaked', {
+          header: () => <HeaderCell title="Restaked" />,
+          cell: (props) => <StringCell value={props.getValue()} />,
+        }),
+      ]),
   columnHelper.accessor('effectiveAmountStaked', {
-    header: () => (
-      <HeaderCell title="Effective amount staked" className="justify-center" />
-    ),
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+    header: () => <HeaderCell title="Effective amount staked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
+  }),
+  columnHelper.accessor('selfStaked', {
+    header: () => <HeaderCell title="Self-staked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Nominations" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+    header: () => <HeaderCell title="Nominations" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('commission', {
-    header: () => <HeaderCell title="Commission" className="justify-center" />,
+    header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
-      <StringCell
-        value={Number(props.getValue()).toFixed(2) + '%'}
-        className="text-center"
-      />
+      <StringCell value={Number(props.getValue()).toFixed(2) + '%'} />
     ),
   }),
-  columnHelper.accessor('address', {
-    id: 'details',
-    header: () => null,
-    cell: (props) => (
-      <div className="flex justify-center items-center">
-        <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
-          <Button variant="link" size="sm">
-            DETAILS
-          </Button>
-        </Link>
-      </div>
-    ),
-  }),
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('address', {
+          id: 'details',
+          header: () => null,
+          cell: (props) => (
+            <div className="flex justify-center items-center">
+              <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
+                <Button variant="link" size="sm">
+                  DETAILS
+                </Button>
+              </Link>
+            </div>
+          ),
+        }),
+      ]),
 ];
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
@@ -142,9 +151,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
         thClassName="border-t-0 bg-mono-0"
-        trClassName={
-          process.env.NODE_ENV === 'production' ? '' : 'cursor-pointer'
-        }
+        trClassName={IS_PRODUCTION_ENV ? '' : 'cursor-pointer'}
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
