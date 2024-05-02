@@ -42,7 +42,12 @@ const addressColumn = columnHelper.accessor('address', {
         {email && <SocialChip href={`mailto:${email}`} type="email" />}
         {web && <SocialChip href={web} type="web" />}
         {!twitter && !discord && !email && !web && (
-          <Typography variant="body1">{'--'}</Typography>
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {'--'}
+          </Typography>
         )}
       </div>
     );
@@ -69,21 +74,14 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({ className }) => {
             <Avatar sourceVariant="address" value={address} theme="substrate" />
             <Typography
               variant="body1"
-              // className="text-mono-200 dark:text-mono-0"
+              className="text-mono-200 dark:text-mono-0"
             >
               {props.getValue() ?? shortenString(address)}
             </Typography>
 
-            <CopyWithTooltip
-              textToCopy={address}
-              isButton={false}
-              iconClassName="!fill-mono-160 dark:!fill-mono-80"
-            />
+            <CopyWithTooltip textToCopy={address} isButton={false} />
 
-            <ExternalLinkIcon
-              href={accountExplorerLink}
-              className="fill-mono-160 dark:fill-mono-80"
-            />
+            <ExternalLinkIcon href={accountExplorerLink} />
           </div>
         );
       },

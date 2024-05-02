@@ -1,10 +1,17 @@
 'use client';
 
-import { Chip, TimeProgress, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Chip,
+  formatDateToUtc,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { useServiceDetailsInfo } from '../../../data/ServiceDetails';
+import useServiceInfoCard from '../../../data/ServiceDetails/useServiceInfoCard';
 import { getChipColorOfServiceType } from '../../../utils';
 
 interface InfoCardProps {
@@ -13,8 +20,7 @@ interface InfoCardProps {
 }
 
 const InfoCard: FC<InfoCardProps> = ({ serviceId, className }) => {
-  const { serviceType, thresholds, startTimestamp, endTimestamp } =
-    useServiceDetailsInfo(serviceId);
+  const { serviceType, threshold, endDate } = useServiceInfoCard();
 
   return (
     <div
@@ -30,29 +36,59 @@ const InfoCard: FC<InfoCardProps> = ({ serviceId, className }) => {
       </Typography>
 
       <div className="space-y-3">
-        <div className="flex items-center gap-1">
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            Phase 1 ID: {serviceId}
-          </Typography>
-          <Chip color={getChipColorOfServiceType(serviceType)}>
-            {serviceType}
-          </Chip>
-          {thresholds && (
-            <Chip color="dark-grey" className="py-1">
-              {thresholds}
-            </Chip>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+          <div className="flex items-center gap-1">
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0 whitespace-nowrap"
+            >
+              Phase 1 ID: {serviceId}
+            </Typography>
+
+            <div className="flex items-center gap-1">
+              {serviceType && (
+                <Chip
+                  color={getChipColorOfServiceType(serviceType)}
+                  className="whitespace-nowrap"
+                >
+                  {serviceType}
+                </Chip>
+              )}
+              {threshold && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Chip color="dark-grey" className="py-1">
+                      {threshold}
+                    </Chip>
+                  </TooltipTrigger>
+                  <TooltipBody>Threshold</TooltipBody>
+                </Tooltip>
+              )}
+            </div>
+          </div>
+
+          {endDate && (
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0 whitespace-nowrap"
+            >
+              {/* Check if the service has ended or not */}
+              {endDate.getTime() > new Date().getTime()
+                ? 'Expect to end at'
+                : 'Ended at'}
+              : {formatDateToUtc(endDate)}
+            </Typography>
           )}
         </div>
 
-        <TimeProgress
+        {/* TODO: cannot get start date with Polkadotjs */}
+        {/* <TimeProgress
           startTime={startTimestamp}
           endTime={endTimestamp}
           labelClassName="text-mono-200 dark:text-mono-0"
-        />
+        /> */}
       </div>
     </div>
   );

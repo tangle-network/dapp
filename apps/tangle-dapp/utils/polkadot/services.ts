@@ -23,7 +23,6 @@ export function extractServiceDetails(
   }
 
   const jobInfo = jobInfoData.unwrap();
-  console.log('hash: ', jobInfo.createdAtHash?.toString());
 
   const jobType = jobInfo.jobType;
 
@@ -31,7 +30,8 @@ export function extractServiceDetails(
     return null;
   }
 
-  const expirationBlock = jobInfo.expiry.toString();
+  const expirationBlock = jobInfo.expiry;
+  const ttlBlock = jobInfo.ttl;
   const fee = jobInfo.fee.toBn();
 
   // Check for TSS phase 1
@@ -50,6 +50,7 @@ export function extractServiceDetails(
       participants,
       threshold: jobDetails.threshold.toNumber(),
       expirationBlock,
+      ttlBlock,
       earnings: fee.div(new BN(participants.length)),
       permittedCaller,
     };
@@ -69,6 +70,7 @@ export function extractServiceDetails(
       serviceType: TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP[jobDetails.roleType.type],
       participants,
       expirationBlock,
+      ttlBlock,
       earnings: fee.div(new BN(participants.length)),
       permittedCaller,
     };

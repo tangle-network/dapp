@@ -176,7 +176,8 @@ export type Service = {
   threshold?: number;
   jobsCount?: number;
   earnings?: BN;
-  expirationBlock: string;
+  expirationBlock: BN;
+  ttlBlock: BN;
   permittedCaller?: string;
 };
 

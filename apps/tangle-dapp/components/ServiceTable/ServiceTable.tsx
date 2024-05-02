@@ -71,7 +71,10 @@ const staticColumns = [
       <HeaderCell title="Expiration Block" className="justify-center" />
     ),
     cell: (props) => (
-      <StringCell value={`${props.getValue()}`} className="text-center" />
+      <StringCell
+        value={`${props.getValue().toString()}`}
+        className="text-center"
+      />
     ),
   }),
   columnHelper.accessor('id', {
