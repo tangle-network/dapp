@@ -11,7 +11,7 @@ import {
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useServiceInfoCard from '../../../data/ServiceDetails/useServiceInfoCard';
+import useServiceInfoCard from '../../../data/serviceDetails/useServiceInfoCard';
 import { getChipColorOfServiceType } from '../../../utils';
 
 interface InfoCardProps {

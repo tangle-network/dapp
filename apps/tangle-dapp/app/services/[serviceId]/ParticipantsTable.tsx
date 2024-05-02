@@ -22,7 +22,7 @@ import { SkeletonRow } from '../../../components/skeleton';
 import SocialChip from '../../../components/SocialChip';
 import { HeaderCell } from '../../../components/tableCells';
 import useNetworkStore from '../../../context/useNetworkStore';
-import { useServiceParticipants } from '../../../data/ServiceDetails';
+import { useServiceParticipants } from '../../../data/serviceDetails';
 import { ExplorerType, ServiceParticipant } from '../../../types';
 
 interface ParticipantTableProps {
