@@ -29,6 +29,7 @@ export * from './Drawer';
 export * from './Dropdown';
 export * from './DropdownMenu';
 export * from './ErrorFallback';
+export { default as ExternalLinkIcon } from './ExternalLinkIcon';
 export { default as FeeDetails } from './FeeDetails';
 export * from './FeeDetails';
 export * from './FileUploads';

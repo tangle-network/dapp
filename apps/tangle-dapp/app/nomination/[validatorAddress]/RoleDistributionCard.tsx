@@ -1,37 +1,54 @@
+'use client';
+
+import { Spinner } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import dynamic from 'next/dynamic';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import IndependentRoleDistributionChart from '../../../components/charts/IndependentRoleDistributionChart';
+import SharedRoleDistributionChart from '../../../components/charts/SharedRoleDistributionChart';
 import GlassCard from '../../../components/GlassCard/GlassCard';
-import { getRoleDistributionChartDataByAcc } from '../../../data/roleDistributionChart';
+import useRestakingRoleLedger from '../../../data/restaking/useRestakingRoleLedger';
 import { RestakingProfileType } from '../../../types';
-
-const IndependentRoleDistributionChart = dynamic(
-  () => import('../../../components/charts/IndependentRoleDistributionChart'),
-  {
-    ssr: false,
-  }
-);
-
-const SharedRoleDistributionChart = dynamic(
-  () => import('../../../components/charts/SharedRoleDistributionChart'),
-  {
-    ssr: false,
-  }
-);
+import assertRestakingService from '../../../utils/assertRestakingService';
+import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
+import {
+  getProfileTypeFromRestakeRoleLedger,
+  getRoleDistributionFromRestakeRoleLedger,
+} from '../../../utils/polkadot/restake';
 
 interface RoleDistributionCardProps {
   validatorAddress: string;
   className?: string;
 }
 
-const RoleDistributionCard = async ({
+const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
   validatorAddress,
   className,
-}: RoleDistributionCardProps) => {
-  const { profileType, distribution } = await getRoleDistributionChartDataByAcc(
-    validatorAddress
+}) => {
+  const { data: ledgerOpt, isLoading } =
+    useRestakingRoleLedger(validatorAddress);
+
+  const profileType = useMemo(
+    () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
+    [ledgerOpt]
   );
+
+  const chartData = useMemo(() => {
+    if (!ledgerOpt) return [];
+    const distribution = getRoleDistributionFromRestakeRoleLedger(ledgerOpt);
+    if (!distribution) return [];
+
+    return Object.entries(distribution).map(([name, value]) => {
+      assertRestakingService(name);
+
+      return {
+        name,
+        value,
+        color: getChartDataAreaColorByServiceType(name),
+      };
+    });
+  }, [ledgerOpt]);
 
   return (
     <GlassCard className={twMerge('justify-between flex flex-col', className)}>
@@ -40,14 +57,17 @@ const RoleDistributionCard = async ({
       </Typography>
 
       <div className="flex-1 flex items-center justify-center">
-        <div className="min-h-[200px]">
-          <div className="h-full flex items-center justify-center">
-            {profileType === RestakingProfileType.SHARED ? (
-              <SharedRoleDistributionChart data={distribution} />
-            ) : (
-              <IndependentRoleDistributionChart data={distribution} />
-            )}
-          </div>
+        <div className="h-[200px] flex items-center justify-center">
+          {isLoading ? (
+            <Spinner size="xl" />
+          ) : profileType?.value === RestakingProfileType.SHARED ? (
+            <SharedRoleDistributionChart data={chartData} />
+          ) : (
+            <IndependentRoleDistributionChart
+              data={chartData}
+              title={profileType ? 'Independent' : 'No data'}
+            />
+          )}
         </div>
       </div>
     </GlassCard>

@@ -1,5 +1,6 @@
 'use client';
 
+import type { BN } from '@polkadot/util';
 import {
   useConnectWallet,
   useWebContext,
@@ -21,9 +22,16 @@ import Optional from '../../../utils/Optional';
 type Props = {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
+  isDataLoading?: boolean;
+  availableForRestake?: BN | null;
 };
 
-const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
+const ActionButton: FC<Props> = ({
+  availableForRestake = null,
+  hasExistingProfile,
+  profileTypeOpt,
+  isDataLoading,
+}) => {
   const { loading, isConnecting, activeAccount, activeWallet } =
     useWebContext();
 
@@ -51,7 +59,14 @@ const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
   if (activeAccount && activeWallet) {
     return (
       <>
-        <Button onClick={() => setIsManageProfileModalOpen(true)}>
+        <Button
+          isDisabled={
+            !hasExistingProfile
+              ? availableForRestake === null || availableForRestake.isZero()
+              : false
+          }
+          onClick={() => setIsManageProfileModalOpen(true)}
+        >
           {hasExistingProfile ? 'Manage Profile' : 'Create Profile'}
         </Button>
 
@@ -71,8 +86,8 @@ const ActionButton: FC<Props> = ({ hasExistingProfile, profileTypeOpt }) => {
   // or wallet is found.
   return (
     <Button
-      isDisabled={loading || isConnecting}
-      isLoading={loading || isConnecting}
+      isDisabled={loading || isConnecting || isDataLoading}
+      isLoading={loading || isConnecting || isDataLoading}
       loadingText="Connecting..."
       onClick={() => toggleModal(true)}
     >

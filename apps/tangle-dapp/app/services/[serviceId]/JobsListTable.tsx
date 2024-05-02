@@ -9,8 +9,8 @@ import {
 import getExplorerURI from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { ExternalLinkLine } from '@webb-tools/icons';
 import {
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenHex,
   Table,
@@ -23,7 +23,7 @@ import { SkeletonRow } from '../../../components/skeleton';
 import { HeaderCell, StringCell } from '../../../components/tableCells';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { useServiceJobs } from '../../../data/ServiceDetails';
-import type { ServiceJob } from '../../../types';
+import { ExplorerType, ServiceJob } from '../../../types';
 
 interface JobsListTableProps {
   serviceId: string;
@@ -66,21 +66,13 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
                 network.polkadotExplorerUrl,
                 txHash,
                 'tx',
-                'polkadot'
+                ExplorerType.Substrate
               ).toString()
             : null;
           return (
             <div className="flex gap-1 items-center">
               <StringCell value={shortenHex(txHash, 5)} />
-              {txExplorerURI && (
-                <a
-                  href={txExplorerURI}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <ExternalLinkLine />
-                </a>
-              )}
+              {txExplorerURI && <ExternalLinkIcon href={txExplorerURI} />}
             </div>
           );
         },

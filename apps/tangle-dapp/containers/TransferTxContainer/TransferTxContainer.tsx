@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
+  Alert,
   BridgeInputGroup,
   Button,
   Modal,
@@ -13,7 +14,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, {
@@ -22,6 +30,7 @@ import AddressInput, {
 import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
+import useExistentialDeposit from '../../data/balances/useExistentialDeposit';
 import useTransferTx from '../../data/balances/useTransferTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -72,7 +81,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
-  const { transferrable: transferrableBalance } = useBalances();
+  const { transferable: transferableBalance } = useBalances();
+  const existentialDeposit = useExistentialDeposit();
+
   const [amount, setAmount] = useState<BN | null>(null);
   const [receiverAddress, setReceiverAddress] = useState('');
   const [hasErrors, setHasErrors] = useState(false);
@@ -99,15 +110,31 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     }
   }, [reset, status]);
 
+  const isMaxAmount = useMemo(
+    () =>
+      transferableBalance !== null &&
+      amount !== null &&
+      transferableBalance.eq(amount),
+    [amount, transferableBalance]
+  );
+
   const handleSend = useCallback(() => {
     // TODO: Check that the address is valid, or return.
     // Transaction not yet ready, or data is invalid.
-    if (executeTransferTx === null || amount === null) {
+    if (
+      executeTransferTx === null ||
+      amount === null ||
+      transferableBalance === null
+    ) {
       return;
     }
 
-    executeTransferTx({ receiverAddress, amount });
-  }, [amount, executeTransferTx, receiverAddress]);
+    executeTransferTx({
+      receiverAddress,
+      amount,
+      maxAmount: transferableBalance,
+    });
+  }, [amount, executeTransferTx, receiverAddress, transferableBalance]);
 
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
@@ -129,12 +156,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
-  const transferrableBalanceTooltip: ReactNode = transferrableBalance !==
+  const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (
     <span>
       You have{' '}
       <strong>
-        {formatTokenBalance(transferrableBalance, nativeTokenSymbol)}
+        {formatTokenBalance(transferableBalance, nativeTokenSymbol)}
       </strong>{' '}
       available to transfer.
     </span>
@@ -152,7 +179,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 p-9">
+        <div className="flex flex-col gap-4 p-9 overflow-clip">
           <Typography variant="body1" fw="normal">
             Quickly transfer your {nativeTokenSymbol} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
@@ -176,15 +203,24 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             <AmountInput
               id="transfer-tx-amount-input"
               title="Amount"
-              max={transferrableBalance ?? undefined}
+              max={
+                status === TxStatus.NOT_YET_INITIATED
+                  ? transferableBalance
+                  : null
+              }
+              min={existentialDeposit}
               isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
               baseInputOverrides={{
                 isFullWidth: true,
-                tooltip: transferrableBalanceTooltip,
+                tooltip: transferableBalanceTooltip,
               }}
               maxErrorMessage="Not enough available balance"
+              minErrorMessage={`Amount must be at least ${formatTokenBalance(
+                existentialDeposit,
+                nativeTokenSymbol
+              )}`}
               setErrorMessage={handleSetErrorMessage}
             />
 
@@ -201,11 +237,21 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             />
           </BridgeInputGroup>
 
-          {/* TODO: This is temporary, to display the error message if one ocurred during the transaction. */}
+          {isMaxAmount && (
+            <Alert
+              type="warning"
+              size="sm"
+              description={`Consider keeping a small amount for transaction fees and future txes.`}
+            />
+          )}
+
           {txError !== null && (
-            <Typography variant="body1" color="red" fw="normal">
-              {txError.message}
-            </Typography>
+            <Alert
+              type="error"
+              size="sm"
+              title={txError.name}
+              description={txError.message}
+            />
           )}
         </div>
 

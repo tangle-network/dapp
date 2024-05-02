@@ -1,36 +1,31 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
-import { RestakingProfileType } from '../../types';
-import Optional from '../../utils/Optional';
-import useRestakingRoleLedger from './useRestakingRoleLedger';
+import { RestakeContext } from '../../context/RestakeContext';
+import { getProfileTypeFromRestakeRoleLedger } from './../../utils/polkadot/restake';
 
 const useRestakingProfile = () => {
-  const { data: ledgerOpt, isLoading } = useRestakingRoleLedger();
+  const {
+    ledger: ledgerOpt,
+    earningsRecord,
+    isLoading,
+  } = useContext(RestakeContext);
 
-  const hasExistingProfile = isLoading
-    ? null
-    : ledgerOpt !== null && !ledgerOpt.isNone;
+  const hasExistingProfile = useMemo(
+    () => (isLoading ? null : ledgerOpt !== null && !ledgerOpt.isNone),
+    [isLoading, ledgerOpt]
+  );
 
-  const profileTypeOpt: Optional<RestakingProfileType> | null = useMemo(() => {
-    if (ledgerOpt === null) {
-      return null;
-    } else if (ledgerOpt.isNone) {
-      return new Optional();
-    }
-
-    const ledger = ledgerOpt.unwrap();
-
-    return new Optional(
-      ledger.profile.isIndependent
-        ? RestakingProfileType.INDEPENDENT
-        : RestakingProfileType.SHARED
-    );
-  }, [ledgerOpt]);
+  const profileTypeOpt = useMemo(
+    () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
+    [ledgerOpt]
+  );
 
   return {
     hasExistingProfile,
     profileTypeOpt,
     ledgerOpt,
+    earningsRecord,
+    isLoading,
   };
 };
 

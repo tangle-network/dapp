@@ -16,6 +16,8 @@ export enum EVMChainId {
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
   ScrollAlpha = 534353,
+
+  TangleLocalEVM = 3799,
   TangleTestnetEVM = 3799,
   TangleMainnetEVM = 5845,
 

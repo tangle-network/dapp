@@ -103,6 +103,7 @@
     "@radix-ui/react-tooltip": "^1.0.6",
     "@sentry/react": "^7.52.1",
     "@sentry/tracing": "^7.52.1",
+    "@shopify/react-web-worker": "^5.0.15",
     "@types/react-syntax-highlighter": "^15.5.11",
     "@webb-tools/proposals": "^1.0.8",
     "bn.js": "^5.2.1",
@@ -156,7 +157,7 @@
     "twitter-api-v2": "^1.15.1",
     "use-local-storage-state": "^19.1.0",
     "use-query-params": "^2.2.1",
-    "viem": "^2.0.10",
+    "viem": "^2.9.21",
     "wagmi": "^1.4.10",
     "zod": "^3.22.4",
     "zustand": "^4.5.2"

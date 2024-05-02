@@ -4,17 +4,14 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import {
-  ExternalLinkLine,
-  LoginBoxLineIcon,
-  WalletLineIcon,
-} from '@webb-tools/icons';
+import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
 import { useWallets } from '@webb-tools/react-hooks';
 import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   Button,
   Dropdown,
   DropdownBody,
+  ExternalLinkIcon,
   KeyValueWithButton,
   MenuItem,
   shortenString,
@@ -24,12 +21,15 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
+import useExplorerUrl from '../../hooks/useExplorerUrl';
+
 export const WalletDropdown: FC<{
   accountName?: string;
   accountAddress: string;
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
-  const { activeChain, inactivateApi } = useWebContext();
+  const { inactivateApi } = useWebContext();
+  const getExplorerUrl = useExplorerUrl();
 
   const { notificationApi } = useWebbUI();
 
@@ -40,14 +40,10 @@ export const WalletDropdown: FC<{
     return wallets.find((w) => w.connected);
   }, [wallets]);
 
-  // Calculate the account explorer url
-  const accountExplorerUrl = useMemo(() => {
-    if (!activeChain?.blockExplorers) return '#';
-
-    const url = activeChain.blockExplorers.default.url;
-
-    return new URL(`/address/${accountAddress}`, url).toString();
-  }, [activeChain?.blockExplorers, accountAddress]);
+  const accountExplorerUrl = useMemo(
+    () => getExplorerUrl(accountAddress, 'address'),
+    [getExplorerUrl, accountAddress]
+  );
 
   // Disconnect function
   const handleDisconnect = useCallback(async () => {
@@ -97,9 +93,9 @@ export const WalletDropdown: FC<{
                   shortenFn={(str) => shortenString(str, 5)}
                 />
 
-                <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
-                  <ExternalLinkLine />
-                </a>
+                {accountExplorerUrl && (
+                  <ExternalLinkIcon href={accountExplorerUrl.toString()} />
+                )}
               </div>
             </div>
           </div>

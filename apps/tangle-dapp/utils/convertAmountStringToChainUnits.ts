@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
-
-import { TANGLE_TOKEN_DECIMALS } from '../constants';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 
 /**
  * Converts a numeric amount in string form to blockchain format

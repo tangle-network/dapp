@@ -6,95 +6,132 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
   useReactTable,
 } from '@tanstack/react-table';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
+  Button,
+  Chip,
   CopyWithTooltip,
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { useRouter } from 'next/navigation';
-import { FC, useCallback } from 'react';
+import Link from 'next/link';
+import { FC, useMemo } from 'react';
 
-import { PagePath, Validator } from '../../types';
+import { IS_PRODUCTION_ENV } from '../../constants/env';
+import useNetworkStore from '../../context/useNetworkStore';
+import { ExplorerType, PagePath, Validator } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
 import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const columns = [
-  columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Identity" className="justify-start" />,
-    cell: (props) => {
-      const address = props.getValue();
-      const identity = props.row.original.identityName;
-
-      return (
-        <div className="flex items-center space-x-1">
-          <Avatar sourceVariant="address" value={address} theme="substrate">
-            hello
-          </Avatar>
-
-          <Typography variant="body1" fw="normal" className="truncate">
-            {identity === address ? shortenString(address, 6) : identity}
-          </Typography>
-
-          <CopyWithTooltip
-            textToCopy={address}
-            isButton={false}
-            className="cursor-pointer"
-          />
-        </div>
-      );
-    },
+const staticColumns = [
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('activeServicesNum', {
+          header: () => <HeaderCell title="Active Services" />,
+          cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+        }),
+        columnHelper.accessor('restaked', {
+          header: () => <HeaderCell title="Restaked" />,
+          cell: (props) => <StringCell value={props.getValue()} />,
+        }),
+      ]),
+  columnHelper.accessor('effectiveAmountStaked', {
+    header: () => <HeaderCell title="Effective amount staked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
-  }),
-  columnHelper.accessor('effectiveAmountStaked', {
-    header: () => (
-      <HeaderCell title="Effective amount staked" className="justify-center" />
-    ),
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+    header: () => <HeaderCell title="Self-staked" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Nominations" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
+    header: () => <HeaderCell title="Nominations" />,
+    cell: (props) => <StringCell value={props.getValue()} />,
   }),
   columnHelper.accessor('commission', {
-    header: () => <HeaderCell title="Commission" className="justify-center" />,
+    header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
-      <StringCell
-        value={Number(props.getValue()).toFixed(2) + '%'}
-        className="text-center"
-      />
+      <StringCell value={Number(props.getValue()).toFixed(2) + '%'} />
     ),
   }),
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('address', {
+          id: 'details',
+          header: () => null,
+          cell: (props) => (
+            <div className="flex justify-center items-center">
+              <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
+                <Button variant="link" size="sm">
+                  DETAILS
+                </Button>
+              </Link>
+            </div>
+          ),
+        }),
+      ]),
 ];
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
-  const router = useRouter();
+  const { network } = useNetworkStore();
 
-  const onRowClick = useCallback(
-    (row: Row<Validator>) => {
-      if (process.env.NODE_ENV === 'production') {
-        return;
-      }
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('address', {
+        header: () => <HeaderCell title="Identity" className="justify-start" />,
+        cell: (props) => {
+          const address = props.getValue();
+          const identity = props.row.original.identityName;
+          const accountExplorerLink = getExplorerURI(
+            network.polkadotExplorerUrl,
+            address,
+            'address',
+            ExplorerType.Substrate
+          ).toString();
 
-      router.push(`${PagePath.NOMINATION}/${row.original.address}`);
-    },
-    [router]
+          return (
+            <div className="flex items-center space-x-1">
+              <Avatar
+                sourceVariant="address"
+                value={address}
+                theme="substrate"
+              />
+
+              <Typography variant="body1" fw="normal" className="truncate">
+                {identity === address
+                  ? shortenString(address, 6)
+                  : formatIdentity(identity)}
+              </Typography>
+
+              <CopyWithTooltip
+                textToCopy={address}
+                isButton={false}
+                className="cursor-pointer"
+                iconClassName="!fill-mono-160 dark:!fill-mono-80"
+              />
+
+              <ExternalLinkIcon
+                href={accountExplorerLink}
+                className="fill-mono-160 dark:fill-mono-80"
+              />
+            </div>
+          );
+        },
+      }),
+      ...staticColumns,
+    ],
+    [network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({
@@ -114,16 +151,22 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
         thClassName="border-t-0 bg-mono-0"
-        trClassName={
-          process.env.NODE_ENV === 'production' ? '' : 'cursor-pointer'
-        }
+        trClassName={IS_PRODUCTION_ENV ? '' : 'cursor-pointer'}
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated
-        onRowClick={onRowClick}
       />
     </div>
   );
 };
 
 export default ValidatorTable;
+
+/* @internal */
+function formatIdentity(inputString: string): string {
+  if (inputString.length > 15) {
+    return `${inputString.slice(0, 12)}...`;
+  } else {
+    return inputString;
+  }
+}

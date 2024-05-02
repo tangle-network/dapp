@@ -5,13 +5,13 @@ import {
   ChevronUp,
   CoinsStackedLineIcon,
   SendPlanLineIcon,
-  TokenIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
+import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -27,7 +27,7 @@ import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
 import VestBalanceAction from './VestBalanceAction';
 
 const BalancesTableContainer: FC = () => {
-  const { locked, transferrable } = useBalances();
+  const { locked, transferable } = useBalances();
   const activeSubstrateAddress = useSubstrateAddress();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
@@ -74,11 +74,11 @@ const BalancesTableContainer: FC = () => {
       <GlassCard className="overflow-x-auto">
         <div className="flex flex-row min-w-[630px]">
           {/* Asset column */}
-          <div className="flex flex-col w-full justify-between">
+          <div className="flex flex-col justify-between w-full">
             <HeaderCell title="Asset" />
 
             <AssetCell
-              title="Transferrable Balance"
+              title="Transferable Balance"
               tooltip="The amount of tokens you can freely transfer right now. These tokens are not subject to any limitations."
             />
 
@@ -99,22 +99,22 @@ const BalancesTableContainer: FC = () => {
           <div className="flex flex-col w-full">
             <HeaderCell title="Balance" />
 
-            {/* Transferrable balance */}
+            {/* Transferable balance */}
             <div className="flex flex-row justify-between">
-              <BalanceCell amount={transferrable} />
+              <BalanceCell amount={transferable} />
 
-              <div className="flex flex-row gap-1 items-center p-3">
+              <div className="flex flex-row items-center gap-1 p-3">
                 <BalanceAction
                   Icon={SendPlanLineIcon}
                   tooltip="Send"
-                  isDisabled={transferrable === null || transferrable.eqn(0)}
+                  isDisabled={transferable === null || transferable.eqn(0)}
                   onClick={() => setIsTransferModalOpen(true)}
                 />
 
                 <BalanceAction
                   Icon={CoinsStackedLineIcon}
                   tooltip="Nominate"
-                  isDisabled={transferrable === null || transferrable.eqn(0)}
+                  isDisabled={transferable === null || transferable.eqn(0)}
                   internalHref={StaticSearchQueryPath.NominationsTable}
                 />
               </div>
@@ -122,7 +122,7 @@ const BalancesTableContainer: FC = () => {
 
             {/* Vested balance */}
             {hasVestedAmount && (
-              <div className="flex flex-row justify-between items-center">
+              <div className="flex flex-row items-center justify-between">
                 <BalanceCell amount={vestedAmount} />
 
                 <div className="p-3">
@@ -132,7 +132,7 @@ const BalancesTableContainer: FC = () => {
             )}
 
             {/* Locked balance */}
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row items-center justify-between">
               <BalanceCell amount={locked} />
 
               {hasLocks && (
@@ -169,9 +169,9 @@ const AssetCell: FC<{
   const { nativeTokenSymbol } = useNetworkStore();
 
   return (
-    <div className="flex px-3 py-3 gap-6">
+    <div className="flex gap-6 px-3 py-3">
       <div className="flex flex-row items-center gap-1">
-        <TokenIcon name={nativeTokenSymbol} size="lg" />
+        <TangleTokenIcon size="lg" />
 
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
           {nativeTokenSymbol}

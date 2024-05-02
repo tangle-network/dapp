@@ -76,13 +76,6 @@ export const PAYMENT_DESTINATION_OPTIONS = [
   'Stash (do not increase the amount at stake)',
 ];
 
-// Note that the chain decimal count is usually constant, and set when
-// the blockchain is deployed. It could be technically changed due to
-// governance decisions and subsequent runtime upgrades, but that would
-// be exceptionally rare, so it is best to assume that it remains constant
-// here. Regardless, it can easily be changed here in the future if need be.
-export const TANGLE_TOKEN_DECIMALS = 18;
-
 /**
  * The values are based off [Tangle's `RoleType` enum](https://github.com/webb-tools/tangle/blob/2a60f0382db2a1234c490766381872d2c7243f5e/primitives/src/roles/mod.rs#L40).
  */
@@ -121,4 +114,11 @@ export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
   ZcashFrostRistretto255: RestakingService.TSS_ZCASH_FROST_RISTRETTO255,
   ZcashFrostSecp256k1: RestakingService.TSS_ZCASH_FROST_SECP256K1,
   ZcashFrostEd448: RestakingService.TSS_ZCASH_FROST_ED448,
+};
+
+export const TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP: {
+  [Key in TanglePrimitivesRolesZksaasZeroKnowledgeRoleType['type']]: RestakingService;
+} = {
+  ZkSaaSGroth16: RestakingService.ZK_SAAS_GROTH16,
+  ZkSaaSMarlin: RestakingService.ZK_SAAS_MARLIN,
 };

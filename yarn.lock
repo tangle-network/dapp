@@ -1844,6 +1844,13 @@
   dependencies:
     chalk "^4.1.0"
 
+"@commitlint/types@^18.6.1":
+  version "18.6.1"
+  resolved "https://registry.yarnpkg.com/@commitlint/types/-/types-18.6.1.tgz#7eb3ab2d799d9166fbb98b96b0744581e59a4ad4"
+  integrity sha512-gwRLBLra/Dozj2OywopeuHj2ac26gjGkz2cZ+86cTJOdtWfiRRr4+e77ZDAGc6MDWxaWheI+mAV5TLWWRwqrFg==
+  dependencies:
+    chalk "^4.1.0"
+
 "@crustio/type-definitions@1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@crustio/type-definitions/-/type-definitions-1.3.0.tgz#c4810da0bcef58d67439491a5cde1d0beb43a03d"
@@ -6950,6 +6957,14 @@
     is-plain-object "^5.0.0"
     universal-user-agent "^6.0.0"
 
+"@octokit/endpoint@^9.0.1":
+  version "9.0.5"
+  resolved "https://registry.yarnpkg.com/@octokit/endpoint/-/endpoint-9.0.5.tgz#e6c0ee684e307614c02fc6ac12274c50da465c44"
+  integrity sha512-ekqR4/+PCLkEBF6qgj8WqJfvDq65RH85OAgrtnVp1mSxaXF03u2xW/hUdweGS5654IlC0wkNYC18Z50tSYTAFw==
+  dependencies:
+    "@octokit/types" "^13.1.0"
+    universal-user-agent "^6.0.0"
+
 "@octokit/graphql@^5.0.0":
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/@octokit/graphql/-/graphql-5.0.6.tgz#9eac411ac4353ccc5d3fca7d76736e6888c5d248"
@@ -9116,6 +9131,11 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.15.3.tgz#d2509048d69dbb72d5389a14945339f1430b2d3c"
   integrity sha512-Oy8rmScVrVxWZVOpEF57ovlnhpZ8CCPlnIIumVcV9nFdiSIrus99+Lw78ekXyGvVDlIsFJbSfmSovJUhCWYV3w==
 
+"@remote-ui/rpc@^1.2.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.4.5.tgz#20328970c314374d96fdaae1cf93aca4b47fefee"
+  integrity sha512-Cr+06niG/vmE4A9YsmaKngRuuVSWKMY42NMwtZfy+gctRWGu6Wj9BWuMJg5CEp+JTkRBPToqT5rqnrg1G/Wvow==
+
 "@repeaterjs/repeater@3.0.4":
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.4.tgz#a04d63f4d1bf5540a41b01a921c9a7fddc3bd1ca"
@@ -9534,6 +9554,32 @@
   integrity sha512-eibLo2m1a7sHkOHxYYmRujr3D7ek2l9sv26F1SLoQBVDF7Afw5AKyzPmtA1D+4M9P/ux1okj7cGj3SaBrVpxXA==
   dependencies:
     "@sentry/types" "7.110.1"
+
+"@shopify/react-hooks@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@shopify/react-hooks/-/react-hooks-3.1.0.tgz#9e4d5bbd654893e29631d55c115a440f2af06514"
+  integrity sha512-M3FWqis/ADvEg3W7dDtM4dWNZAvFQkVRus7MNWobuXyzO4SMj4hrudyEU+/MHAup4/R7ZcqJq7qoX5saKZwynA==
+
+"@shopify/react-web-worker@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@shopify/react-web-worker/-/react-web-worker-5.0.15.tgz#f654cd0b8bbcf1489816563e6c8018ec7dd2e998"
+  integrity sha512-yyqpjidTzISROXxq5KfBQhlNUfvchr6D+G55PrlpnYgE5Oc+zSvYmKuQf/Bi0ZJllVfFbWjbHRnEanK6baLIcg==
+  dependencies:
+    "@shopify/react-hooks" "^3.1.0"
+    "@shopify/useful-types" "^5.1.2"
+    "@shopify/web-worker" "^6.1.0"
+
+"@shopify/useful-types@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@shopify/useful-types/-/useful-types-5.1.2.tgz#da8f2aaa8b3496705068b21deb76091cc58fcdc4"
+  integrity sha512-EjwIljAYHT1pfIxdMFp6ytJvCUmKXa5NWsvG7zXFX5EnLs7wYp66M/QCuoyJjI0Lq+5ZVyrJXJqqeBiXQVVs0w==
+
+"@shopify/web-worker@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@shopify/web-worker/-/web-worker-6.1.0.tgz#bf9a79378e05d6ef7787ee02f191532c0a67e79c"
+  integrity sha512-YRN41GkZ4FIApsOhIHhTQSbNk0fOPIbVrb1hPP1cV8z86c+saVHN8rONkXZERe0lD/oeJDJKsDeALKWfarbTyw==
+  dependencies:
+    "@remote-ui/rpc" "^1.2.5"
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
@@ -34703,11 +34749,6 @@ universal-user-agent@^6.0.0:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/universal-user-agent/-/universal-user-agent-6.0.1.tgz#15f20f55da3c930c57bddbf1734c6654d5fd35aa"
   integrity sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==
-
-universal-user-agent@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/universal-user-agent/-/universal-user-agent-7.0.2.tgz#52e7d0e9b3dc4df06cc33cb2b9fd79041a54827e"
-  integrity sha512-0JCqzSKnStlRRQfCdowvqy3cy0Dvtlb8xecj/H8JFZuCze4rwjPZQOgvFvn0Ws/usCHQFGpyr+pB9adaGwXn4Q==
 
 universalify@^0.1.0:
   version "0.1.2"

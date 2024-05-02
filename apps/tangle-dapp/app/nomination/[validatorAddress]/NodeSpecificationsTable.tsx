@@ -112,8 +112,8 @@ const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
   });
 
   return (
-    <div className="space-y-5">
-      <Typography variant="h4" fw="bold">
+    <div className="space-y-4">
+      <Typography variant="h5" fw="bold">
         Node Specifications
       </Typography>
 

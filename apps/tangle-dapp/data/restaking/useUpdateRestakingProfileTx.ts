@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useSubstrateTx from '../../hooks/useSubstrateTx';
 import { RestakingProfileType, RestakingService } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
@@ -30,8 +31,9 @@ const useUpdateRestakingProfileTx = (
   createIfMissing = false,
   notifyTxStatusUpdates?: boolean
 ) => {
+  const activeSubstrateAccount = useSubstrateAddress();
   const sharedRestakeAmountRef = useRef<BN | null>(null);
-  const { data: roleLedger } = useRestakingRoleLedger();
+  const { data: roleLedger } = useRestakingRoleLedger(activeSubstrateAccount);
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
   // TODO: Break this into two separate hooks for independent and shared profiles.

@@ -1,44 +1,89 @@
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 import { useCallback } from 'react';
-import { map, of } from 'rxjs';
+import { map } from 'rxjs';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import usePromise from '../../hooks/usePromise';
+import type { ErasRestakeRewardPointsEntry } from './types';
 
-/**
- * Type for the restaking earnings record,
- * key is the era number and value is the restaking earnings for that era
- */
-export type EarningRecord = Record<number, number>;
+const createWorker = createWorkerFactory(
+  () => import('./workers/calculateEarnings')
+);
 
-/**
- * Hook to get the restaking earnings for a given account
- * @param substrateAccount the account to get the restaking earnings for
- * @returns a record of era number to the restaking earnings for that era
- */
-const useRestakingEarnings = (substrateAccount: string | null) =>
-  usePolkadotApiRx(
+function useRestakingEarnings(accountAddress: string | null) {
+  const { rpcEndpoint } = useNetworkStore();
+
+  const worker = useWorker(createWorker);
+
+  const {
+    data: dataPromise,
+    isLoading: rxLoading,
+    error: rxError,
+  } = usePolkadotApiRx(
     useCallback(
       (apiRx) => {
-        if (!substrateAccount) return of(null);
+        if (!apiRx.query.roles.erasRestakeRewardPoints) {
+          return null;
+        }
 
-        if (!('erasRestakeRewardPoints' in apiRx.query.roles))
-          return of<EarningRecord>({});
+        if (accountAddress === null || accountAddress.length === 0) {
+          return null;
+        }
 
         return apiRx.query.roles.erasRestakeRewardPoints.entries().pipe(
-          map((entries) => {
-            return entries.reduce((prev, [era, eraRewardPoints]) => {
-              eraRewardPoints.individual.forEach((reward, accountId32) => {
-                if (accountId32.toString() === substrateAccount) {
-                  prev[era.args[0].toNumber()] = reward.toNumber();
-                }
-              });
+          map((rewardPointsEntries) => {
+            const serializableEntries = rewardPointsEntries
+              .map(
+                ([era, rewardPoints]) =>
+                  [
+                    era.args[0].toNumber(),
+                    {
+                      total: rewardPoints.total.toNumber(),
+                      individual: Object.fromEntries(
+                        Array.from(rewardPoints.individual.entries()).map(
+                          ([accountId, rewardPoints]) => [
+                            accountId.toString(),
+                            rewardPoints.toNumber(),
+                          ]
+                        )
+                      ),
+                    },
+                  ] satisfies ErasRestakeRewardPointsEntry
+              )
+              // Copy and sort the entries by era number
+              .slice()
+              .sort(([a], [b]) => a - b);
 
-              return prev;
-            }, {} as EarningRecord);
+            return worker.calculateEarnings(
+              rpcEndpoint,
+              accountAddress,
+              serializableEntries
+            );
           })
         );
       },
-      [substrateAccount]
+      [accountAddress, rpcEndpoint, worker]
     )
   );
+
+  const {
+    result: data,
+    isLoading: promiseLoading,
+    error: promiseError,
+  } = usePromise(
+    useCallback(
+      () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
+      [dataPromise]
+    ),
+    null
+  );
+
+  return {
+    data,
+    isLoading: rxLoading || promiseLoading,
+    error: rxError || promiseError,
+  };
+}
 
 export default useRestakingEarnings;

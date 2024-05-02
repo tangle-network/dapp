@@ -1,10 +1,13 @@
 import { isAddress } from '@polkadot/util-crypto';
 import { notFound } from 'next/navigation';
 
+import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import NodeSpecificationsTable from './NodeSpecificationsTable';
 import RoleDistributionCard from './RoleDistributionCard';
 import ServiceTableTabs from './ServiceTableTabs';
-import ValidatorOverviewCard from './ValidatorOverviewCard';
+import ValidatorBasicInfoCard from './ValidatorBasicInfoCard';
+
+// TODO: might need to add metadata here
 
 export default function ValidatorDetails({
   params,
@@ -20,7 +23,7 @@ export default function ValidatorDetails({
   return (
     <div className="my-5 space-y-10">
       <div className="flex flex-col lg:flex-row gap-5 items-stretch">
-        <ValidatorOverviewCard
+        <ValidatorBasicInfoCard
           validatorAddress={validatorAddress}
           className="flex-1"
         />
@@ -30,7 +33,10 @@ export default function ValidatorDetails({
         />
       </div>
 
-      <NodeSpecificationsTable validatorAddress={validatorAddress} />
+      {/* TODO: Hide this for now */}
+      {!IS_PRODUCTION_ENV && (
+        <NodeSpecificationsTable validatorAddress={validatorAddress} />
+      )}
 
       <ServiceTableTabs validatorAddress={validatorAddress} />
     </div>

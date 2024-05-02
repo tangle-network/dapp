@@ -15,7 +15,7 @@ import { Payout } from '../../types';
 import {
   formatTokenBalance,
   getPolkadotApiPromise,
-  getValidatorIdentity,
+  getValidatorIdentityName,
 } from '../../utils/polkadot';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 
@@ -199,14 +199,14 @@ export default function usePayouts() {
           nativeTokenSymbol
         );
 
-        const validatorIdentityName = await getValidatorIdentity(
+        const validatorIdentityName = await getValidatorIdentityName(
           rpcEndpoint,
           reward.validatorAddress
         );
 
         const validatorNominators = await Promise.all(
           eraStakerPaged.unwrap().others.map(async (nominator) => {
-            const nominatorIdentity = await getValidatorIdentity(
+            const nominatorIdentity = await getValidatorIdentityName(
               rpcEndpoint,
               nominator.who.toString()
             );

@@ -1,6 +1,7 @@
 export * from './BondedTokensBalanceInfo';
 export * from './Breadcrumbs';
 export * from './DelegatorTable';
+export { default as GlassCard } from './GlassCard';
 export * from './HeaderChip';
 export * from './InfoIconWithTooltip';
 export * from './KeyStatsItem';
@@ -13,6 +14,7 @@ export * from './skeleton';
 export { default as SocialChip } from './SocialChip';
 export * from './TableStatus';
 export { default as TangleBigLogo } from './TangleBigLogo';
+export { default as TangleCard } from './TangleCard';
 export * from './UnbondingStatsItem';
 export * from './ValidatorList';
 export * from './ValidatorTable';

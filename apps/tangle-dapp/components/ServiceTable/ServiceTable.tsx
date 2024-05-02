@@ -7,8 +7,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  Avatar,
-  AvatarGroup,
   Button,
   Chip,
   fuzzyFilter,
@@ -18,7 +16,7 @@ import cx from 'classnames';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import type { Service } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -32,7 +30,10 @@ const staticColumns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={getChipColorOfServiceType(props.getValue())}>
+      <Chip
+        color={getChipColorOfServiceType(props.getValue())}
+        className="normal-case"
+      >
         {props.getValue()}
       </Chip>
     ),
@@ -44,41 +45,30 @@ const staticColumns = [
     cell: (props) => <StringCell value={props.getValue().toString()} />,
   }),
   columnHelper.accessor('participants', {
-    header: () => <HeaderCell title="Participants" className="justify-start" />,
-    cell: (props) => {
-      const participants = props.getValue();
-      return (
-        <AvatarGroup>
-          {participants.map((participantAddr) => (
-            <Avatar
-              key={participantAddr}
-              sourceVariant="address"
-              value={participantAddr}
-              theme="substrate"
-            />
-          ))}
-        </AvatarGroup>
-      );
-    },
+    header: () => (
+      <HeaderCell title="# of Participants" className="justify-start" />
+    ),
+    cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
   }),
-  columnHelper.accessor('thresholds', {
-    header: () => <HeaderCell title="Thresholds" className="justify-start" />,
+  columnHelper.accessor('threshold', {
+    header: () => <HeaderCell title="Threshold" className="justify-start" />,
     cell: (props) => {
       const thresholds = props.getValue();
-      return thresholds ? <Chip color="dark-grey">{thresholds}</Chip> : '---';
-    },
-  }),
-  columnHelper.accessor('phase2Executions', {
-    header: () => <HeaderCell title="# of Jobs" className="justify-start" />,
-    cell: (props) => {
-      const phase2Executions = props.getValue();
-      return phase2Executions ? (
-        <StringCell value={`${phase2Executions}`} />
+      return typeof thresholds === 'number' ? (
+        <Chip color="dark-grey">{thresholds}</Chip>
       ) : (
-        '---'
+        '--'
       );
     },
   }),
+  // TODO: hide this column because we cannot get inactive jobs for now
+  // columnHelper.accessor('jobsCount', {
+  //   header: () => <HeaderCell title="# of Jobs" className="justify-start" />,
+  //   cell: (props) => {
+  //     const jobsCount = props.getValue();
+  //     return jobsCount ? <StringCell value={`${jobsCount}`} /> : '--';
+  //   },
+  // }),
   columnHelper.accessor('expirationBlock', {
     header: () => (
       <HeaderCell title="Expiration Block" className="justify-center" />
@@ -101,7 +91,7 @@ const staticColumns = [
 ];
 
 const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
-  const { nativeTokenSymbol } = useNetworkStore();
+  const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
   const columns = useMemo(
     () => [
@@ -117,15 +107,15 @@ const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
         cell: (props) => {
           const earnings = props.getValue();
           return earnings ? (
-            <StringCell value={`${earnings} ${nativeTokenSymbol}`} />
+            <StringCell value={formatNativeTokenAmount(earnings)} />
           ) : (
-            '---'
+            '--'
           );
         },
       }),
       ...staticColumns.slice(EARNINGS_COLUMN_IDX),
     ],
-    [nativeTokenSymbol]
+    [formatNativeTokenAmount]
   );
 
   const table = useReactTable({

@@ -15,7 +15,7 @@ import {
   getPolkadotApiRx,
   getTotalNumberOfNominators,
   getValidatorCommission,
-  getValidatorIdentity,
+  getValidatorIdentityName,
 } from '../../utils/polkadot';
 
 export default function useNominations(
@@ -73,20 +73,12 @@ export default function useNominations(
                     )
                   );
 
-                const identity = await getValidatorIdentity(
-                  rpcEndpoint,
-                  target.toString()
-                );
-
-                const commission = await getValidatorCommission(
-                  rpcEndpoint,
-                  target.toString()
-                );
-
-                const delegationsValue = await getTotalNumberOfNominators(
-                  rpcEndpoint,
-                  target.toString()
-                );
+                const [identity, commission, delegationsValue] =
+                  await Promise.all([
+                    getValidatorIdentityName(rpcEndpoint, target.toString()),
+                    getValidatorCommission(rpcEndpoint, target.toString()),
+                    getTotalNumberOfNominators(rpcEndpoint, target.toString()),
+                  ]);
 
                 const delegations = delegationsValue?.toString();
 
