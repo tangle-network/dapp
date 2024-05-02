@@ -36,10 +36,12 @@ export enum DelegationsAndPayoutsTab {
 export type Validator = {
   address: string;
   identityName: string;
+  activeServicesNum: number;
+  restaked: string;
   selfStaked: string;
   effectiveAmountStaked: string;
   effectiveAmountStakedRaw: string;
-  delegations: string;
+  delegations: string; // TODO: change to nominations
   commission: string;
   status: string;
 };
@@ -143,20 +145,20 @@ export type InternalPath =
  * of the roles.
  */
 export enum RestakingService {
-  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
-  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
+  ZK_SAAS_GROTH16 = 'ZkSaaS_Groth16',
+  ZK_SAAS_MARLIN = 'ZkSaaS_Marlin',
   LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
-  TSS_SILENT_SHARD_DKLS23SECP256K1 = 'TSS SilentShardDKLS23Secp256k1',
-  TSS_DFNS_CGGMP21SECP256K1 = 'TSS DfnsCGGMP21Secp256k1',
-  TSS_DFNS_CGGMP21SECP256R1 = 'TSS DfnsCGGMP21Secp256r1',
-  TSS_DFNS_CGGMP21STARK = 'TSS DfnsCGGMP21Stark',
-  TSS_ZCASH_FROST_P256 = 'TSS ZcashFrostP256',
-  TSS_ZCASH_FROST_P384 = 'TSS ZcashFrostP384',
-  TSS_ZCASH_FROST_SECP256K1 = 'TSS ZcashFrostSecp256k1',
-  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS ZcashFrostRistretto255',
-  TSS_ZCASH_FROST_ED25519 = 'TSS ZcashFrostEd25519',
-  TSS_GENNARO_DKG_BLS381 = 'TSS GennaroDKGBls381',
-  TSS_ZCASH_FROST_ED448 = 'TSS ZcashFrostEd448',
+  TSS_SILENT_SHARD_DKLS23SECP256K1 = 'TSS_SilentShardDKLS23Secp256k1',
+  TSS_DFNS_CGGMP21SECP256K1 = 'TSS_DfnsCGGMP21Secp256k1',
+  TSS_DFNS_CGGMP21SECP256R1 = 'TSS_DfnsCGGMP21Secp256r1',
+  TSS_DFNS_CGGMP21STARK = 'TSS_DfnsCGGMP21Stark',
+  TSS_ZCASH_FROST_P256 = 'TSS_ZcashFrostP256',
+  TSS_ZCASH_FROST_P384 = 'TSS_ZcashFrostP384',
+  TSS_ZCASH_FROST_SECP256K1 = 'TSS_ZcashFrostSecp256k1',
+  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS_ZcashFrostRistretto255',
+  TSS_ZCASH_FROST_ED25519 = 'TSS_ZcashFrostEd25519',
+  TSS_GENNARO_DKG_BLS381 = 'TSS_GennaroDKGBls381',
+  TSS_ZCASH_FROST_ED448 = 'TSS_ZcashFrostEd448',
 }
 
 export enum RestakingProfileType {

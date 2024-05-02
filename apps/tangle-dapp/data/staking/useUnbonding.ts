@@ -16,7 +16,7 @@ const useUnbonding = () => {
   return useStakingLedgerRx(
     useCallback(
       (ledger) => {
-        if (currentEra === null) {
+        if (currentEra === null || ledger === null) {
           return null;
         }
 

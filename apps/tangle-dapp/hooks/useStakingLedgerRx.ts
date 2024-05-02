@@ -11,7 +11,7 @@ import useSubstrateAddress from './useSubstrateAddress';
  * hook to select which data to fetch from the ledger.
  */
 export type StakingLedgerFetcherRx<T> = (
-  ledger: StakingLedger,
+  ledger: StakingLedger | null,
   api: ApiRx
 ) => T;
 
@@ -22,12 +22,9 @@ function useStakingLedgerRx<T>(fetcher: StakingLedgerFetcherRx<T>) {
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;
-        return (
-          api.query.staking
-            .ledger(activeSubstrateAddress)
-            // TODO: Error handling. Under what circumstances would the ledger be `None`?
-            .pipe(map((ledgerOpt) => fetcher(ledgerOpt.unwrap(), api)))
-        );
+        return api.query.staking
+          .ledger(activeSubstrateAddress)
+          .pipe(map((ledgerOpt) => fetcher(ledgerOpt.unwrapOr(null), api)));
       },
       [fetcher, activeSubstrateAddress]
     )

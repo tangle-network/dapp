@@ -11,6 +11,7 @@ import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-u
 import React, { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, Sidebar, SidebarMenu } from '../../components';
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { TxConfirmationModalContainer } from '../../containers';
 import ApiDevStatsContainer from '../ApiDevStatsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
@@ -35,7 +36,6 @@ const BOTTOM_LINK_OVERRIDES: Partial<
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
-  const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
     <div className="flex bg-body h-screen">
@@ -73,7 +73,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
       <TxConfirmationModalContainer />
 
-      {isDevelopment && <ApiDevStatsContainer />}
+      {!IS_PRODUCTION_ENV && <ApiDevStatsContainer />}
     </div>
   );
 };

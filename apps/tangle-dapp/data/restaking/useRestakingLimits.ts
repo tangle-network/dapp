@@ -6,7 +6,7 @@ import useStakingLedgerRx from '../../hooks/useStakingLedgerRx';
 
 const useRestakingLimits = () => {
   const { data: stakedBalance } = useStakingLedgerRx(
-    useCallback((ledger) => ledger.total.toBn(), [])
+    useCallback((ledger) => ledger?.total.toBn(), [])
   );
 
   const { data: minRestakingBond } = usePolkadotApiRx(

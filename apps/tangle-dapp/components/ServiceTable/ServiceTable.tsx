@@ -30,7 +30,10 @@ const staticColumns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={getChipColorOfServiceType(props.getValue())}>
+      <Chip
+        color={getChipColorOfServiceType(props.getValue())}
+        className="normal-case"
+      >
         {props.getValue()}
       </Chip>
     ),
