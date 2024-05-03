@@ -1,49 +1,22 @@
-import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
-import { useMemo } from 'react';
-import { formatUnits } from 'viem';
+import { useContext, useMemo } from 'react';
 
-import { RestakingProfileType } from '../../types';
-import Optional from '../../utils/Optional';
-import useRestakingRoleLedger from './useRestakingRoleLedger';
+import { RestakeContext } from '../../context/RestakeContext';
+import { getProfileTypeFromRestakeRoleLedger } from './../../utils/polkadot/restake';
 
-const useRestakingProfile = (address?: string) => {
-  const { result: ledgerOpt, isLoading } = useRestakingRoleLedger(address);
+const useRestakingProfile = () => {
+  const {
+    ledger: ledgerOpt,
+    earningsRecord,
+    isLoading,
+  } = useContext(RestakeContext);
 
-  const hasExistingProfile = isLoading
-    ? null
-    : ledgerOpt !== null && !ledgerOpt.isNone;
+  const hasExistingProfile = useMemo(
+    () => (isLoading ? null : ledgerOpt !== null && !ledgerOpt.isNone),
+    [isLoading, ledgerOpt]
+  );
 
-  const profileTypeOpt: Optional<RestakingProfileType> | null = useMemo(() => {
-    if (ledgerOpt === null) {
-      return null;
-    } else if (ledgerOpt.isNone) {
-      return new Optional();
-    }
-
-    const ledger = ledgerOpt.unwrap();
-
-    return new Optional(
-      ledger.profile.isIndependent
-        ? RestakingProfileType.INDEPENDENT
-        : RestakingProfileType.SHARED
-    );
-  }, [ledgerOpt]);
-
-  const totalRestaked = useMemo(
-    () =>
-      ledgerOpt?.isSome
-        ? // Dummy check to whether format the total restaked amount
-          // or not, as the local testnet is in wei but the live one is in unit
-          ledgerOpt.unwrap().total.toString().length > 10
-          ? new BN(
-              formatUnits(
-                ledgerOpt.unwrap().total.toBigInt(),
-                TANGLE_TOKEN_DECIMALS
-              )
-            )
-          : ledgerOpt.unwrap().total.toBn()
-        : null,
+  const profileTypeOpt = useMemo(
+    () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
     [ledgerOpt]
   );
 
@@ -51,7 +24,8 @@ const useRestakingProfile = (address?: string) => {
     hasExistingProfile,
     profileTypeOpt,
     ledgerOpt,
-    totalRestaked,
+    earningsRecord,
+    isLoading,
   };
 };
 

@@ -11,7 +11,7 @@ export interface AlertProps extends IWebbComponentBase {
   /**
    * Type of alert - `info`, `success`, `error` (default: "info")
    */
-  type?: 'info' | 'success' | 'error';
+  type?: 'info' | 'success' | 'error' | 'warning';
   /**
    * Title of alert
    */

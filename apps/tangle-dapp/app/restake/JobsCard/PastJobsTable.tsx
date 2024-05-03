@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import useSWR from 'swr';
 
-import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
+import SkeletonRow from '../../../components/skeleton/SkeletonRow';
 import TableStatus from '../../../components/TableStatus/TableStatus';
 import getPastJobs from '../../../data/JobTables/getPastJobs';
 import JobsTableClient from './JobsTableClient';
@@ -13,7 +13,7 @@ const PastJobsTable: FC<JobsTableProps> = ({ pageSize }) => {
   );
 
   if (isLoading || !data) {
-    return <ContainerSkeleton className="border-0" />;
+    return <SkeletonRow />;
   }
 
   if (data && data.length === 0) {

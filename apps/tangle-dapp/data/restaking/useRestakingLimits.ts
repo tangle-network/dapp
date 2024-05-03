@@ -6,7 +6,7 @@ import useStakingLedger from '../staking/useStakingLedger';
 
 const useRestakingLimits = () => {
   const { result: stakedBalance } = useStakingLedger(
-    useCallback((ledger) => ledger.total.toBn(), [])
+    useCallback((ledger) => ledger?.total.toBn(), [])
   );
 
   const { result: minRestakingBond } = useApiRx(

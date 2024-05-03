@@ -1,11 +1,13 @@
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import Optional from '../../utils/Optional';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
 const useSharedRestakeAmount = () => {
-  const ledgerResult = useRestakingRoleLedger();
+  const activeSubstrateAccount = useSubstrateAddress();
+  const ledgerResult = useRestakingRoleLedger(activeSubstrateAccount);
   const ledgerOpt = ledgerResult.result;
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 

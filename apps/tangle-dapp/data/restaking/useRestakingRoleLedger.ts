@@ -1,21 +1,18 @@
 import { useCallback } from 'react';
 
 import useApiRx from '../../hooks/useApiRx';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
-const useRestakingRoleLedger = (address?: string) => {
-  const activeSubstrateAccount = useSubstrateAddress();
-
+const useRestakingRoleLedger = (address: string | null) => {
   return useApiRx(
     useCallback(
       (api) => {
-        if (activeSubstrateAccount === null) {
+        if (address === null) {
           return null;
         }
 
-        return api.query.roles.ledger(address ?? activeSubstrateAccount);
+        return api.query.roles.ledger(address);
       },
-      [address, activeSubstrateAccount]
+      [address]
     )
   );
 };

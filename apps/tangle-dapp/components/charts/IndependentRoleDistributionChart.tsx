@@ -1,30 +1,29 @@
 'use client';
 
-import {
-  getRoundedAmountString,
-  Typography,
-  useNextDarkMode,
-} from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { BN, BN_ZERO } from '@polkadot/util';
+import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
+import { FC, useMemo } from 'react';
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkStore from '../../context/useNetworkStore';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import type { PieChartProps } from './types';
+import { formatDataForPieCharts } from './utils';
 
 const IndependentRoleDistributionChart: FC<PieChartProps> = ({
   data,
   title = 'Independent',
 }) => {
   const [isDarkMode] = useNextDarkMode();
+  const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
-  const hasData = data.length > 0;
+  const hasData = useMemo(() => data.length > 0, [data]);
 
-  const dataOrDefault = hasData
-    ? data
-    : [{ value: 1, color: isDarkMode ? '#3A3E53' : '#D3D8E2' }];
-
-  const { nativeTokenSymbol } = useNetworkStore();
+  const dataOrDefault = useMemo(() => {
+    return hasData
+      ? formatDataForPieCharts(data)
+      : [{ value: 1, color: isDarkMode ? '#3A3E53' : '#D3D8E2' }];
+  }, [hasData, data, isDarkMode]);
 
   return (
     <div className="relative">
@@ -33,7 +32,7 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           data={dataOrDefault}
           innerRadius={60}
           fill="#8884d8"
-          paddingAngle={hasData ? 5 : 0}
+          paddingAngle={data.length > 1 ? 5 : 0}
           outerRadius={100}
           dataKey="value"
         >
@@ -42,20 +41,22 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           ))}
         </Pie>
 
-        <Tooltip
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              return (
-                <TooltipContent
-                  name={payload[0].payload.name}
-                  value={payload[0].payload.value}
-                  tokenSymbol={nativeTokenSymbol}
-                />
-              );
-            }
-          }}
-          wrapperStyle={{ zIndex: 100 }}
-        />
+        {hasData && (
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <TooltipContent
+                    name={payload[0].payload.name}
+                    value={formatNativeTokenAmount(payload[0].payload.value)}
+                  />
+                );
+              }
+            }}
+            wrapperStyle={{ zIndex: 100 }}
+            cursor={false}
+          />
+        )}
       </PieChart>
 
       <div
@@ -70,10 +71,9 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           fw="bold"
           className="text-mono-200 dark:text-mono-0"
         >
-          {getRoundedAmountString(
-            data.reduce((acc, item) => acc + item.value, 0)
-          )}{' '}
-          {nativeTokenSymbol}
+          {formatNativeTokenAmount(
+            data.reduce((acc, item) => acc.add(new BN(item.value)), BN_ZERO)
+          )}
         </Typography>
       </div>
     </div>
@@ -85,17 +85,12 @@ export default IndependentRoleDistributionChart;
 /** @internal */
 const TooltipContent: FC<{
   name: string;
-  value: number;
-  tokenSymbol: string;
-}> = ({ name, value, tokenSymbol }) => {
+  value: string;
+}> = ({ name, value }) => {
   return (
     <div className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80">
       <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
-        {name}:{' '}
-        {typeof value === 'number' && value >= 10000
-          ? getRoundedAmountString(value)
-          : value}{' '}
-        {tokenSymbol}
+        {name}: {value}
       </Typography>
     </div>
   );

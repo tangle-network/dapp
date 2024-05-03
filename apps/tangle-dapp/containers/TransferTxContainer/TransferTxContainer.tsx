@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import {
+  Alert,
   BridgeInputGroup,
   Button,
   Modal,
@@ -13,7 +14,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, {
@@ -73,7 +81,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 }) => {
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
-  const { transferrable: transferrableBalance } = useBalances();
+  const { transferable: transferableBalance } = useBalances();
   const existentialDeposit = useExistentialDeposit();
 
   const [amount, setAmount] = useState<BN | null>(null);
@@ -101,13 +109,21 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     }
   }, [reset, status]);
 
+  const isMaxAmount = useMemo(
+    () =>
+      transferableBalance !== null &&
+      amount !== null &&
+      transferableBalance.eq(amount),
+    [amount, transferableBalance]
+  );
+
   const handleSend = useCallback(() => {
     // TODO: Check that the address is valid, or return.
     // Transaction not yet ready, or data is invalid.
     if (
       executeTransferTx === null ||
       amount === null ||
-      transferrableBalance === null
+      transferableBalance === null
     ) {
       return;
     }
@@ -115,9 +131,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     executeTransferTx({
       receiverAddress,
       amount,
-      maxAmount: transferrableBalance,
+      maxAmount: transferableBalance,
     });
-  }, [amount, executeTransferTx, receiverAddress, transferrableBalance]);
+  }, [amount, executeTransferTx, receiverAddress, transferableBalance]);
 
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
@@ -139,12 +155,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
 
-  const transferrableBalanceTooltip: ReactNode = transferrableBalance !==
+  const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (
     <span>
       You have{' '}
       <strong>
-        {formatTokenBalance(transferrableBalance, nativeTokenSymbol)}
+        {formatTokenBalance(transferableBalance, nativeTokenSymbol)}
       </strong>{' '}
       available to transfer.
     </span>
@@ -188,7 +204,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               title="Amount"
               max={
                 status === TxStatus.NOT_YET_INITIATED
-                  ? transferrableBalance
+                  ? transferableBalance
                   : null
               }
               min={existentialDeposit}
@@ -197,7 +213,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               setAmount={setAmount}
               baseInputOverrides={{
                 isFullWidth: true,
-                tooltip: transferrableBalanceTooltip,
+                tooltip: transferableBalanceTooltip,
               }}
               maxErrorMessage="Not enough available balance"
               minErrorMessage={`Amount must be at least ${formatTokenBalance(
@@ -219,6 +235,23 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               setErrorMessage={handleSetErrorMessage}
             />
           </BridgeInputGroup>
+
+          {isMaxAmount && (
+            <Alert
+              type="warning"
+              size="sm"
+              description={`Consider keeping a small amount for transaction fees and future txes.`}
+            />
+          )}
+
+          {txError !== null && (
+            <Alert
+              type="error"
+              size="sm"
+              title={txError.name}
+              description={txError.message}
+            />
+          )}
         </div>
 
         <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
