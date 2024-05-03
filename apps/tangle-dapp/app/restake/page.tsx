@@ -1,10 +1,10 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
-import { TANGLE_TOKEN_DECIMALS } from '../../constants';
 import useRestakingEarnings from '../../data/restaking/useRestakingEarnings';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';

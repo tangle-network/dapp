@@ -13,7 +13,7 @@ export enum LocalStorageKey {
   PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
-  NATIVE_TOKEN_SYMBOL = 'nativeTokenSymbol',
+  VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
 }
 
@@ -42,9 +42,7 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null }
     : T extends LocalStorageKey.PAYOUTS
     ? PayoutsCache
-    : T extends
-        | LocalStorageKey.CUSTOM_RPC_ENDPOINT
-        | LocalStorageKey.NATIVE_TOKEN_SYMBOL
+    : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
     ? string
     : T extends LocalStorageKey.KNOWN_NETWORK_ID
     ? number

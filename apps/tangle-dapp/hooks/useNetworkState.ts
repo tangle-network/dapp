@@ -10,7 +10,6 @@ import z from 'zod';
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
-import { getNativeTokenSymbol } from '../utils/polkadot';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
@@ -96,11 +95,7 @@ const useNetworkState = () => {
   const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
-  const { network, setNetwork, rpcEndpoint, setNativeTokenSymbol } =
-    useNetworkStore();
-
-  const { get: getCachedNativeTokenSymbol, set: setCachedNativeTokenSymbol } =
-    useLocalStorage(LocalStorageKey.NATIVE_TOKEN_SYMBOL);
+  const { network, setNetwork } = useNetworkStore();
 
   const {
     get: getCachedCustomRpcEndpoint,
@@ -113,23 +108,6 @@ const useNetworkState = () => {
     get: getCachedNetworkId,
     remove: removeCachedNetworkId,
   } = useLocalStorage(LocalStorageKey.KNOWN_NETWORK_ID);
-
-  const fetchTokenSymbol = useCallback(
-    async (rpcEndpoint: string) => {
-      try {
-        const tokenSymbol = await getNativeTokenSymbol(rpcEndpoint);
-
-        setNativeTokenSymbol(tokenSymbol);
-        setCachedNativeTokenSymbol(tokenSymbol);
-      } catch {
-        notificationApi({
-          variant: 'error',
-          message: `Unable to fetch token symbol for ${network.name}.`,
-        });
-      }
-    },
-    [network.name, setCachedNativeTokenSymbol, setNativeTokenSymbol]
-  );
 
   // Load the initial network from local storage.
   useEffect(() => {
@@ -183,24 +161,6 @@ const useNetworkState = () => {
     setNetwork,
   ]);
 
-  // Load initial token symbol from local storage.
-  useEffect(() => {
-    const cachedTokenSymbol = getCachedNativeTokenSymbol();
-
-    if (cachedTokenSymbol !== null) {
-      setNativeTokenSymbol(cachedTokenSymbol);
-
-      return;
-    }
-
-    fetchTokenSymbol(rpcEndpoint);
-  }, [
-    getCachedNativeTokenSymbol,
-    rpcEndpoint,
-    fetchTokenSymbol,
-    setNativeTokenSymbol,
-  ]);
-
   // Set global RPC endpoint when the network changes,
   // and also changes to local storage for future use.
   const switchNetwork = useCallback(
@@ -233,8 +193,6 @@ const useNetworkState = () => {
         setCachedNetworkId(newNetwork.id);
       }
 
-      await fetchTokenSymbol(newNetwork.wsRpcEndpoint);
-
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
@@ -245,7 +203,6 @@ const useNetworkState = () => {
     },
     [
       network.id,
-      fetchTokenSymbol,
       setNetwork,
       isEvm,
       removeCachedNetworkId,

@@ -1,4 +1,5 @@
 import { BN, formatBalance } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 
 import { TANGLE_TOKEN_DECIMALS } from '../../constants';
 import { getApiPromise } from './api';

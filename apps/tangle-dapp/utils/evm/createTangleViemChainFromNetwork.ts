@@ -28,12 +28,14 @@ const createTangleViemChainFromNetwork = (
       symbol: currencySymbol,
       decimals: 18,
     },
-    blockExplorers: {
-      default: {
-        name: blockExplorerName,
-        url: network.evmExplorerUrl,
-      },
-    },
+    blockExplorers: network.evmExplorerUrl
+      ? {
+          default: {
+            name: blockExplorerName,
+            url: network.evmExplorerUrl,
+          },
+        }
+      : undefined,
     rpcUrls: {
       default: {
         http: [network.httpRpcEndpoint],

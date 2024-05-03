@@ -126,13 +126,6 @@ export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
   [StakingRewardsDestination.NONE]: StakingRewardsDestinationDisplayText.NONE,
 };
 
-// Note that the chain decimal count is usually constant, and set when
-// the blockchain is deployed. It could be technically changed due to
-// governance decisions and subsequent runtime upgrades, but that would
-// be exceptionally rare, so it is best to assume that it remains constant
-// here. Regardless, it can easily be changed here in the future if need be.
-export const TANGLE_TOKEN_DECIMALS = 18;
-
 /**
  * The values are based off [Tangle's `RoleType` enum](https://github.com/webb-tools/tangle/blob/2a60f0382db2a1234c490766381872d2c7243f5e/primitives/src/roles/mod.rs#L40).
  */

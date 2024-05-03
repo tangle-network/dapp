@@ -82,7 +82,7 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 };
 
 export default function getSidebarProps(
-  substratePortalHref?: string,
+  substrateExplorerHref?: string,
   evmExplorerHref?: string
 ): SidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
@@ -91,13 +91,13 @@ export default function getSidebarProps(
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
-    ...(substratePortalHref
+    ...(substrateExplorerHref
       ? [
           {
             Icon: AppsLine,
-            href: substratePortalHref,
+            href: substrateExplorerHref,
             isInternal: false,
-            name: 'Substrate Portal',
+            name: 'Substrate Explorer',
             subItems: [],
           },
         ]
