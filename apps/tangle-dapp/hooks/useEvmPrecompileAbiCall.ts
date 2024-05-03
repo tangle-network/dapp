@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
+import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -11,7 +12,6 @@ import {
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
-import type { EvmAbiCallData, EvmTxFactory } from './types';
 import useEvmAddress from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import useViemPublicClient from './useViemPublicClient';
@@ -56,7 +56,7 @@ export type AbiCall<PrecompileT extends Precompile> = {
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
   context: Context
-) => AbiCall<PrecompileT> | null;
+) => PromiseOrT<AbiCall<PrecompileT>> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.

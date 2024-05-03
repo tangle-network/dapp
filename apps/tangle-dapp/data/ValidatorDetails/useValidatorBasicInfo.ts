@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { getPolkadotApiPromise } from '../../utils/polkadot/api';
+import { getApiPromise } from '../../utils/polkadot/api';
 import {
   extractDataFromIdentityInfo,
   IdentityDataType,
@@ -13,7 +13,8 @@ import useCurrentEra from '../staking/useCurrentEra';
 
 export default function useValidatorBasicInfo(validatorAddress: string) {
   const { rpcEndpoint } = useNetworkStore();
-  const { data: currentEra } = useCurrentEra();
+  const { result: currentEra } = useCurrentEra();
+
   const { profileTypeOpt, totalRestaked } =
     useRestakingProfile(validatorAddress);
 
@@ -27,7 +28,7 @@ export default function useValidatorBasicInfo(validatorAddress: string) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const api = await getPolkadotApiPromise(rpcEndpoint);
+      const api = await getApiPromise(rpcEndpoint);
       const fetchNameAndSocials = async () => {
         const identityData = await api.query.identity.identityOf(
           validatorAddress

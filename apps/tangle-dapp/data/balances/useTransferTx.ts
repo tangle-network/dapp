@@ -4,8 +4,8 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
-import { EvmAbiCallData, EvmTxFactory } from '../../hooks/types';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
+import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { toEvmAddress20, toSubstrateAddress } from '../../utils';
@@ -30,7 +30,7 @@ const useTransferTx = () => {
         ? toEvmAddress20(receiverAddress)
         : receiverAddress;
 
-      const sharedAbiCallData: EvmAbiCallData<Precompile.BALANCES_ERC20> = {
+      const sharedAbiCallData: AbiCall<Precompile.BALANCES_ERC20> = {
         functionName: 'transfer',
         arguments: [recipientEvmAddress20, amount],
       };
