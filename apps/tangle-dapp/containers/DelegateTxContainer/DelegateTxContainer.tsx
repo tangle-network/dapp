@@ -50,12 +50,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const { notificationApi } = useWebbUI();
   const { activeAccount } = useWebContext();
   const maxNominationQuota = useMaxNominationQuota();
-  const [amountToBond, setAmountToBond] = useState<BN | null>(null);
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
+
   const executeTx = useExecuteTxWithNotification();
   const activeSubstrateAddress = useSubstrateAddress();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const [hasAmountToBondError, setHasAmountToBondError] = useState(false);
+
+  const [amountToBond, setAmountToBond] = useState<BN | null>(null);
+  const [selectedValidators, setSelectedValidators] = useState<Set<string>>(
+    new Set()
+  );
 
   const [txConfirmationModalIsOpen, setTxnConfirmationModalIsOpen] =
     useState(false);
@@ -72,7 +76,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     useState(false);
 
   const isExceedingMaxNominationQuota =
-    selectedValidators.length > maxNominationQuota;
+    selectedValidators.size > maxNominationQuota;
 
   const [txStatus, setTxnStatus] = useState<{
     status: 'success' | 'error';
@@ -132,7 +136,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     : false;
 
   const continueToAuthorizeTxStep =
-    selectedValidators.length > 0 && !isExceedingMaxNominationQuota
+    selectedValidators.size > 0 && !isExceedingMaxNominationQuota
       ? true
       : false;
 
@@ -145,7 +149,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setAmountToBond(null);
     setHasAmountToBondError(false);
     setPaymentDestination(PaymentDestination.STAKED);
-    setSelectedValidators([]);
+    setSelectedValidators(new Set());
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
@@ -155,6 +159,8 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
         throw new Error('Amount to bond is required.');
       }
       const bondingAmount = +formatBnToDisplayAmount(amountToBond);
+      const selectedValidatorsArr = Array.from(selectedValidators);
+
       if (isFirstTimeNominator) {
         await executeTx(
           () =>
@@ -184,15 +190,16 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           `Successfully updated payment destination to ${paymentDestination}.`,
           'Failed to update payment destination!'
         );
+
         const hash = await executeTx(
-          () => nominateValidatorsEvm(walletAddress, selectedValidators),
+          () => nominateValidatorsEvm(walletAddress, selectedValidatorsArr),
           () =>
             nominateValidatorsSubstrate(
               rpcEndpoint,
               walletAddress,
-              selectedValidators
+              selectedValidatorsArr
             ),
-          `Successfully nominated ${selectedValidators.length} validators.`,
+          `Successfully nominated ${selectedValidators.size} validators.`,
           'Failed to nominate validators!'
         );
         setTxnStatus({ status: 'success', hash });
@@ -234,14 +241,14 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           );
         }
         const hash = await executeTx(
-          () => nominateValidatorsEvm(walletAddress, selectedValidators),
+          () => nominateValidatorsEvm(walletAddress, selectedValidatorsArr),
           () =>
             nominateValidatorsSubstrate(
               rpcEndpoint,
               walletAddress,
-              selectedValidators
+              selectedValidatorsArr
             ),
-          `Successfully nominated ${selectedValidators.length} validator(s).`,
+          `Successfully nominated ${selectedValidators.size} validator(s).`,
           'Failed to nominate validator(s)!'
         );
         setTxnStatus({ status: 'success', hash });
@@ -315,10 +322,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
                 handleAmountToBondError={handleAmountToBondError}
               />
             ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
-              <SelectValidators
-                selectedValidators={selectedValidators}
-                setSelectedValidators={setSelectedValidators}
-              />
+              <SelectValidators setSelectedValidators={setSelectedValidators} />
             ) : null}
 
             {isExceedingMaxNominationQuota && (
@@ -330,7 +334,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             )}
           </div>
 
-          <ModalFooter className="flex gap-1 items-center">
+          <ModalFooter className="flex items-center gap-1">
             {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
               <Button
                 isFullWidth
