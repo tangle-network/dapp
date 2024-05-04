@@ -1,7 +1,6 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Alert,
@@ -20,6 +19,7 @@ import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePaymentDestination from '../../data/NominatorStats/usePaymentDestinationSubscription';
 import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useErrorReporting from '../../hooks/useErrorReporting';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
@@ -48,7 +48,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
@@ -90,22 +89,15 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     }
   })();
 
-  const walletAddress = (() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  })();
-
   const {
     isFirstTimeNominator,
     isLoading: isFirstTimeNominatorLoading,
     isError: isFirstTimeNominatorError,
   } = useIsFirstTimeNominator();
 
+  const walletAddress = useActiveAccountAddress<string>('');
   const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletFreeBalance(walletAddress);
+    useTokenWalletFreeBalance();
 
   // TODO: Need to change defaulting to empty/dummy strings to instead adhere to the type system. Ex. should be using `| null` instead.
   const {
@@ -127,7 +119,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     : true &&
       !hasAmountToBondError &&
       paymentDestination &&
-      walletAddress !== '0x0'
+      walletAddress.length > 0
     ? true
     : false;
 
@@ -154,6 +146,11 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       if (amountToBond === null) {
         throw new Error('Amount to bond is required.');
       }
+
+      if (walletAddress.length === 0) {
+        throw new Error('Wallet address is required.');
+      }
+
       const bondingAmount = +formatBnToDisplayAmount(amountToBond);
       if (isFirstTimeNominator) {
         await executeTx(

@@ -1,7 +1,6 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
@@ -10,15 +9,13 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { type FC, useMemo, useState } from 'react';
-import React from 'react';
+import { type FC, useState } from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -28,29 +25,15 @@ import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 const NominatorStatsContainer: FC = () => {
   const { activeAccount, loading: isActiveAccountLoading } = useWebContext();
   const { nativeTokenSymbol } = useNetworkStore();
+  const networkFeatures = useNetworkFeatures();
+
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
-  const networkFeatures = useNetworkFeatures();
 
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) return '0x0';
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) return '';
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
 
   const {
     isFirstTimeNominator,
@@ -60,7 +43,7 @@ const NominatorStatsContainer: FC = () => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-4 w-full">
+      <div className="flex flex-col w-full gap-4 md:flex-row">
         <div
           className={cx(
             'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
@@ -68,15 +51,11 @@ const NominatorStatsContainer: FC = () => {
             'border-2 border-mono-0 dark:border-mono-160'
           )}
         >
-          <NominatorStatsItem
-            title={`Free Balance`}
-            type="Wallet Balance"
-            address={walletAddress}
-          />
+          <NominatorStatsItem title={`Free Balance`} type="Wallet Balance" />
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2">
             {networkFeatures.includes(NetworkFeature.Faucet) &&
               !isActiveAccountLoading && (
                 <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
@@ -121,10 +100,9 @@ const NominatorStatsContainer: FC = () => {
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip="The total amount of tokens you have bonded for nominating."
               type="Total Staked"
-              address={substrateAddress}
             />
 
-            <UnbondingStatsItem address={substrateAddress} />
+            <UnbondingStatsItem />
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -132,7 +110,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             {!isFirstTimeNominator ? (
               <>
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
@@ -152,7 +130,7 @@ const NominatorStatsContainer: FC = () => {
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
