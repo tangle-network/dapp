@@ -7,7 +7,7 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 import usePayouts from '../NominationsPayouts/usePayouts';
 
 export default function useTotalPayoutRewards(
-  address: string,
+  address?: string,
   defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
