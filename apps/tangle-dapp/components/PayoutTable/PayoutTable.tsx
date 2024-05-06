@@ -33,7 +33,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
   updateData,
   sessionProgress,
   historyDepth,
-  epochDuration,
+  nativeTokenSymbol,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [payoutTxProps, setPayoutTxProps] = useState<{
@@ -88,7 +88,10 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <StringCell
+            value={props.getValue() + ` ${nativeTokenSymbol}`}
+            className="text-start"
+          />
         ),
       }),
       columnHelper.accessor('nominators', {
@@ -117,7 +120,10 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <StringCell
+            value={props.getValue() + ` ${nativeTokenSymbol}`}
+            className="text-start"
+          />
         ),
       }),
       columnHelper.accessor('nominatorTotalReward', {
@@ -125,7 +131,10 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Your Rewards" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <StringCell
+            value={props.getValue() + ` ${nativeTokenSymbol}`}
+            className="text-start"
+          />
         ),
       }),
       columnHelper.display({

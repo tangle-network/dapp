@@ -18,6 +18,11 @@ export default function useTotalPayoutRewards(
 
   useEffect(() => {
     try {
+      if (address === '0x0' || payoutsData.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+
       const totalPayoutRewards = payoutsData.reduce((acc, payout) => {
         const currentReward = BigInt(payout.nominatorTotalRewardRaw.toString());
         return acc + currentReward;
@@ -33,7 +38,7 @@ export default function useTotalPayoutRewards(
       );
       setIsLoading(false);
     }
-  }, [payoutsData]);
+  }, [address, payoutsData]);
 
   return useFormatReturnType({ isLoading, error, data: { value1 } });
 }

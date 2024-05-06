@@ -1,16 +1,14 @@
 'use client';
 
-import { formatNumber } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
+import { getPolkadotApiPromise } from '../../utils/polkadot';
+import useCurrentEra from '../staking/useCurrentEra';
 
-// TODO: This is causing performance issues. Needs to be optimized.
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
@@ -22,13 +20,13 @@ export default function useActiveAndDelegationCountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
   const { rpcEndpoint } = useNetworkStore();
+  const { data: currentEra } = useCurrentEra();
 
   const { get: getCachedValue, set: setCache } = useLocalStorage(
     LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
     true
   );
 
-  // After mount, try to get the cached value and set it.
   useEffect(() => {
     const cachedValue = getCachedValue();
 
@@ -40,71 +38,68 @@ export default function useActiveAndDelegationCountSubscription(
   }, [getCachedValue]);
 
   useEffect(() => {
-    let isMounted = true;
-    let sub: Subscription | null = null;
-
-    const subscribeData = async () => {
+    const fetchData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        if (!currentEra) {
+          setIsLoading(false);
+          return;
+        }
+
         const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
-        const currentEra = await apiPromise.query.staking.currentEra();
-        const eraIndex = currentEra.unwrap();
 
-        sub = api.query.staking
-          .counterForNominators()
-          .subscribe(async (value) => {
-            try {
-              const counterForNominators = formatNumber(value);
-              const exposures =
-                await apiPromise.query.staking.erasStakers.entries(eraIndex);
+        const validators = await apiPromise.query.staking.validators.entries();
+        const validatorAddress = validators.map(([key, _]) => {
+          return key.args[0].toString();
+        });
+        const counterForNominators =
+          await apiPromise.query.staking.counterForNominators();
 
-              const nominatorsSet = new Set<string>();
+        const nominatorSet = new Set<string>();
 
-              exposures.forEach(([_, exposure]) => {
-                exposure.others.forEach(({ who }) => {
-                  nominatorsSet.add(who.toString());
-                });
-              });
+        const promises = Promise.all(
+          validatorAddress.map(async (address) => {
+            const eraStakerPaged =
+              await apiPromise.query.staking.erasStakersPaged(
+                currentEra,
+                address,
+                0
+              );
 
-              const newValue1 = nominatorsSet.size;
-              const newValue2 = Number(counterForNominators);
-
-              if (isMounted && (newValue1 !== value1 || newValue2 !== value2)) {
-                setValue1(newValue1);
-                setValue2(newValue2);
-                setCache({ value1: newValue1, value2: newValue2 });
-                setIsLoading(false);
-              }
-            } catch (error) {
-              if (isMounted) {
-                setError(
-                  error instanceof Error
-                    ? error
-                    : WebbError.from(WebbErrorCodes.UnknownError)
-                );
-                setIsLoading(false);
-              }
+            if (eraStakerPaged.isNone) {
+              return;
             }
-          });
-      } catch (error) {
-        if (isMounted) {
-          setError(
-            error instanceof Error
-              ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
-          );
+
+            const eraStakerExposure = eraStakerPaged.unwrap();
+
+            eraStakerExposure.others.forEach((exposure) => {
+              nominatorSet.add(exposure.who.toString());
+            });
+          })
+        );
+
+        await promises;
+
+        const newValue1 = nominatorSet.size;
+        const newValue2 = counterForNominators.toNumber();
+
+        if (newValue1 !== value1 || newValue2 !== value2) {
+          setValue1(newValue1);
+          setValue2(newValue2);
+          setCache({ value1: newValue1, value2: newValue2 });
           setIsLoading(false);
         }
+      } catch (error) {
+        setIsLoading(false);
+        setError(
+          error instanceof Error
+            ? error
+            : WebbError.from(WebbErrorCodes.UnknownError)
+        );
       }
     };
 
-    subscribeData();
-
-    return () => {
-      isMounted = false;
-      sub?.unsubscribe();
-    };
-  }, [rpcEndpoint, setCache, value1, value2]);
+    fetchData();
+  }, [currentEra, rpcEndpoint, setCache, value1, value2]);
 
   return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
 }

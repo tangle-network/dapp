@@ -9,4 +9,5 @@ export interface PayoutTableProps {
   sessionProgress: DeriveSessionProgress | null;
   historyDepth: BN | null;
   epochDuration: number | null;
+  nativeTokenSymbol: string;
 }

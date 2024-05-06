@@ -12,8 +12,8 @@ import useNetworkStore from '../../context/useNetworkStore';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import {
-  formatTokenBalance,
   getPolkadotApiPromise,
   getValidatorIdentityName,
 } from '../../utils/polkadot';
@@ -27,7 +27,7 @@ type ValidatorReward = {
 };
 
 export default function usePayouts() {
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const { rpcEndpoint } = useNetworkStore();
 
   const activeSubstrateAddress = useSubstrateAddress();
 
@@ -194,9 +194,18 @@ export default function usePayouts() {
           nominatorStakePercentage / 100
         );
 
-        const nominatorTotalRewardFormatted = formatTokenBalance(
+        // const nominatorTotalRewardFormatted = formatTokenBalance(
+        //   nominatorTotalReward,
+        //   nativeTokenSymbol
+        // );
+
+        const nominatorTotalRewardFormatted = formatBnToDisplayAmount(
           nominatorTotalReward,
-          nativeTokenSymbol
+          {
+            fractionLength: 4,
+            includeCommas: true,
+            padZerosInFraction: true,
+          }
         );
 
         const validatorIdentityName = await getValidatorIdentityName(
@@ -218,14 +227,32 @@ export default function usePayouts() {
           })
         );
 
-        const validatorTotalRewardFormatted = formatTokenBalance(
+        // const validatorTotalRewardFormatted = formatTokenBalance(
+        //   validatorTotalReward,
+        //   nativeTokenSymbol
+        // );
+
+        const validatorTotalRewardFormatted = formatBnToDisplayAmount(
           validatorTotalReward,
-          nativeTokenSymbol
+          {
+            fractionLength: 4,
+            includeCommas: true,
+            padZerosInFraction: true,
+          }
         );
 
-        const validatorTotalStakeFormatted = formatTokenBalance(
-          validatorTotalStake,
-          nativeTokenSymbol
+        // const validatorTotalStakeFormatted = formatTokenBalance(
+        //   validatorTotalStake,
+        //   nativeTokenSymbol
+        // );
+
+        const validatorTotalStakeFormatted = formatBnToDisplayAmount(
+          validatorTotalReward,
+          {
+            fractionLength: 4,
+            includeCommas: true,
+            padZerosInFraction: true,
+          }
         );
 
         if (
@@ -256,7 +283,6 @@ export default function usePayouts() {
     erasRewardsPoints,
     mappedValidatorInfo,
     myNominations,
-    nativeTokenSymbol,
     rpcEndpoint,
   ]);
 

@@ -1,7 +1,7 @@
+import { BN_MILLION } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import calculateBnPercentage from '../../utils/calculateBnPercentage';
 import useCurrentEra from './useCurrentEra';
 
 const useActualStakedPercentage = () => {
@@ -29,7 +29,13 @@ const useActualStakedPercentage = () => {
       return null;
     }
 
-    return calculateBnPercentage(totalStaked, totalIssuance);
+    const stakedFraction =
+      totalStaked.isZero() || totalIssuance.isZero()
+        ? 0
+        : totalStaked.mul(BN_MILLION).div(totalIssuance).toNumber() /
+          BN_MILLION.toNumber();
+
+    return (stakedFraction * 100).toFixed(1);
   }, [totalIssuance, totalStaked]);
 };
 

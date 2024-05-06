@@ -22,11 +22,11 @@ import {
 } from 'react';
 
 import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
+import useNetworkStore from '../../context/useNetworkStore';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useHistoryDepth from '../../data/staking/useHistoryDepth';
 import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
-import useNetworkState from '../../hooks/useNetworkState';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
@@ -61,6 +61,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const payoutsData = usePayouts();
+
+  const { nativeTokenSymbol } = useNetworkStore();
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
@@ -262,6 +264,7 @@ const DelegationsPayoutsContainer: FC = () => {
               sessionProgress={progress}
               historyDepth={historyDepth}
               epochDuration={epochDuration}
+              nativeTokenSymbol={nativeTokenSymbol}
             />
           )}
         </TabContent>

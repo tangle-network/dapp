@@ -2,7 +2,7 @@ import { Option } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import {
   PalletStakingValidatorPrefs,
-  SpStakingExposure,
+  SpStakingPagedExposureMetadata,
   TanglePrimitivesJobsJobInfo,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
@@ -11,6 +11,7 @@ import { useCallback, useMemo } from 'react';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { Validator } from '../../types';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { getTotalRestakedFromRestakeRoleLedger } from '../../utils/polkadot/restake';
 import useCurrentEra from '../staking/useCurrentEra';
 import useValidatorsPrefs from '../staking/useValidatorsPrefs';
@@ -41,24 +42,15 @@ export const useValidators = (
     useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
   );
 
-  const { data: exposures } = usePolkadotApiRx(
+  const { data: stakersOverview } = usePolkadotApiRx(
     useCallback(
       (api) =>
         currentEra === null
           ? null
-          : api.query.staking.erasStakers.entries(currentEra),
+          : api.query.staking.erasStakersOverview.entries(currentEra),
       [currentEra]
     )
   );
-
-  const mappedExposures = useMemo(() => {
-    const map = new Map<string, SpStakingExposure>();
-    exposures?.forEach(([storageKey, exposure]) => {
-      const accountId = storageKey.args[1].toString();
-      map.set(accountId, exposure);
-    });
-    return map;
-  }, [exposures]);
 
   // Mapping Validator Preferences
   const mappedValidatorPrefs = useMemo(() => {
@@ -70,11 +62,19 @@ export const useValidators = (
     return map;
   }, [validatorPrefs]);
 
+  const mappedStakersOverview = useMemo(() => {
+    const map = new Map<string, Option<SpStakingPagedExposureMetadata>>();
+    stakersOverview?.forEach(([storageKey, stakersOverview]) => {
+      const accountId = storageKey.args[1].toString();
+      map.set(accountId, stakersOverview);
+    });
+    return map;
+  }, [stakersOverview]);
+
   return useMemo(() => {
     if (
       addresses === null ||
       identityNames === null ||
-      exposures === null ||
       restakingLedgers === null ||
       nominations === null ||
       validatorPrefs === null ||
@@ -86,11 +86,26 @@ export const useValidators = (
 
     return addresses.map((address) => {
       const name = identityNames.get(address.toString()) ?? address.toString();
-      const exposure = mappedExposures.get(address.toString());
-      const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
+      const overview = mappedStakersOverview.get(address.toString());
 
-      const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
-      const selfStakedBalance = formatNativeTokenSymbol(selfStakedAmount);
+      const balanceTotal = overview?.unwrap().total.unwrap().toBn() ?? BN_ZERO;
+      const ownTotal = overview?.unwrap().own.unwrap().toBn() ?? BN_ZERO;
+
+      const balanceTotalFormatted = balanceTotal
+        ? formatBnToDisplayAmount(balanceTotal, {
+            fractionLength: 4,
+            includeCommas: true,
+            padZerosInFraction: true,
+          })
+        : '0';
+
+      const ownTotalFormatted = ownTotal
+        ? formatBnToDisplayAmount(ownTotal, {
+            fractionLength: 4,
+            includeCommas: true,
+            padZerosInFraction: true,
+          })
+        : '0';
 
       const nominators = nominations.filter(([, nominatorData]) => {
         if (nominatorData.isNone) {
@@ -138,11 +153,14 @@ export const useValidators = (
         })
         .filter(([, jobData]) => {
           // TODO: somehow jobData here has type Codec
-          const jobType = (
+          const jobalanceTotalype = (
             jobData as Option<TanglePrimitivesJobsJobInfo>
           ).unwrap().jobType;
           // services are only phase 1 jobs
-          return jobType?.isDkgtssPhaseOne || jobType?.isZkSaaSPhaseOne;
+          return (
+            jobalanceTotalype?.isDkgtssPhaseOne ||
+            jobalanceTotalype?.isZkSaaSPhaseOne
+          );
         });
 
       return {
@@ -150,9 +168,9 @@ export const useValidators = (
         identityName: name,
         activeServicesNum: activeServices.length,
         restaked: totalRestaked ? formatNativeTokenSymbol(totalRestaked) : '0',
-        selfStaked: selfStakedBalance,
-        effectiveAmountStaked: formatNativeTokenSymbol(totalStakeAmount),
-        effectiveAmountStakedRaw: totalStakeAmount.toString(),
+        selfStaked: ownTotalFormatted,
+        effectiveAmountStaked: balanceTotalFormatted,
+        effectiveAmountStakedRaw: balanceTotal.toString(),
         delegations: nominators.length.toString(),
         commission: commission.toString(),
         status,
@@ -161,15 +179,14 @@ export const useValidators = (
   }, [
     addresses,
     identityNames,
-    exposures,
+    restakingLedgers,
     nominations,
     validatorPrefs,
-    mappedExposures,
-    mappedValidatorPrefs,
-    formatNativeTokenSymbol,
-    status,
-    restakingLedgers,
     jobIdLookups,
     activeJobs,
+    mappedStakersOverview,
+    formatNativeTokenSymbol,
+    mappedValidatorPrefs,
+    status,
   ]);
 };

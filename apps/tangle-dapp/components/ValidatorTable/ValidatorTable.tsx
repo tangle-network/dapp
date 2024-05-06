@@ -31,7 +31,7 @@ import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const staticColumns = [
+const staticColumnsOne = [
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
     ? []
@@ -45,14 +45,9 @@ const staticColumns = [
           cell: (props) => <StringCell value={props.getValue()} />,
         }),
       ]),
-  columnHelper.accessor('effectiveAmountStaked', {
-    header: () => <HeaderCell title="Effective amount staked" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
-  columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
+];
+
+const staticColumnsTwo = [
   columnHelper.accessor('delegations', {
     header: () => <HeaderCell title="Nominations" />,
     cell: (props) => <StringCell value={props.getValue()} />,
@@ -84,7 +79,7 @@ const staticColumns = [
 ];
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
-  const { network } = useNetworkStore();
+  const { network, nativeTokenSymbol } = useNetworkStore();
 
   const columns = useMemo(
     () => [
@@ -129,9 +124,22 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
           );
         },
       }),
-      ...staticColumns,
+      ...staticColumnsOne,
+      columnHelper.accessor('effectiveAmountStaked', {
+        header: () => <HeaderCell title="Effective amount staked" />,
+        cell: (props) => (
+          <StringCell value={props.getValue() + ` ${nativeTokenSymbol}`} />
+        ),
+      }),
+      columnHelper.accessor('selfStaked', {
+        header: () => <HeaderCell title="Self-staked" />,
+        cell: (props) => (
+          <StringCell value={props.getValue() + ` ${nativeTokenSymbol}`} />
+        ),
+      }),
+      ...staticColumnsTwo,
     ],
-    [network.polkadotExplorerUrl]
+    [nativeTokenSymbol, network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({
