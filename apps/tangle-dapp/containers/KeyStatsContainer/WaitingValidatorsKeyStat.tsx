@@ -13,10 +13,11 @@ const WaitingValidatorsKeyStat: FC = () => {
       title="Waiting"
       tooltip="Nodes waiting in line to become active validators."
       className="!border-r-0 lg:!border-r"
+      showDataBeforeLoading
       error={error}
       isLoading={isLoading}
     >
-      {data?.value1}
+      {data?.value1 ?? '--'}
     </KeyStatsItem>
   );
 };
