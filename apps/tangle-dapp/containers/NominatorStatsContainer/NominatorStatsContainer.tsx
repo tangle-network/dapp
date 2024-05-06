@@ -52,16 +52,11 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <div className="grid grid-cols-2 gap-2">
-            <NominatorStatsItem
-              title={`Free Balance`}
-              type="Wallet Balance"
-              address={walletAddress}
-            />
+            <NominatorStatsItem title={`Free Balance`} type="Wallet Balance" />
 
             <NominatorStatsItem
               title={`Unclaimed Payouts`}
               type="Total Payout Rewards"
-              address={walletAddress}
             />
           </div>
 

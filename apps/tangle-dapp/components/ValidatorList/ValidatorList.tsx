@@ -53,7 +53,6 @@ const columnHelper = createColumnHelper<Validator>();
 const ValidatorListTable_: FC<ValidatorListTableProps> = ({
   data,
   setSelectedValidators,
-  pageSize,
 }) => {
   const [searchValue, setSearchValue] = useState('');
 
