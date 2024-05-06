@@ -1,19 +1,12 @@
 'use client';
 
 import { formatNumber } from '@polkadot/util';
+import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs';
 
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-
-const DEFAULT_FLAGS_ELECTED = {
-  withClaimedRewardsEras: false,
-  withController: true,
-  withExposure: true,
-  withExposureMeta: true,
-  withPrefs: true,
-} as const;
 
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {

@@ -3,8 +3,12 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
-import { BN } from '@polkadot/util';
-import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import type {
+  SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
+} from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -212,3 +216,11 @@ export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,
 } as const;
+
+export type ExposureMap = Record<
+  string,
+  {
+    exposure: SpStakingExposurePage;
+    exposureMeta: SpStakingPagedExposureMetadata;
+  }
+>;
