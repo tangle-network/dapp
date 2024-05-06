@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { THeaderProps } from './types';
@@ -22,3 +22,5 @@ export const THeader = forwardRef<HTMLTableCellElement, THeaderProps>(
     );
   }
 );
+
+export const THeaderMemo = memo(THeader);

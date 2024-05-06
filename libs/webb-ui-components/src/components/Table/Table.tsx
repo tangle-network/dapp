@@ -3,8 +3,8 @@ import React, { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Pagination } from '../Pagination';
-import { TData } from './TData';
-import { THeader } from './THeader';
+import { TDataMemo as TData } from './TData';
+import { THeaderMemo as THeader } from './THeader';
 import { TableProps } from './types';
 
 export const Table = <T extends RowData>({
