@@ -5,6 +5,7 @@ import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import usePolkadotApiRx from '../../../hooks/usePolkadotApiRx';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
+import getBlockDate from '../../../utils/getBlockDate';
 import TextCell from './TextCell';
 import { sortVestingSchedulesAscending } from './VestingScheduleBalances';
 
@@ -36,11 +37,15 @@ const VestingSchedulesUnlockingAt: FC = () => {
         schedule.locked.div(schedule.perBlock)
       );
 
-      const timeRemaining = calculateTimeRemaining(
+      const endingBlockDate = getBlockDate(
         babeExpectedBlockTime,
         currentBlockNumber,
         endingBlockNumber
       );
+
+      const timeRemaining = endingBlockDate
+        ? calculateTimeRemaining(endingBlockDate)
+        : null;
 
       const isComplete = currentBlockNumber.gte(endingBlockNumber);
 

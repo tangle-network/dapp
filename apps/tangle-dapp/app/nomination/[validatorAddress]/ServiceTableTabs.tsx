@@ -8,7 +8,7 @@ import {
   ServiceTable,
   TableStatus,
 } from '../../../components';
-import useActiveServicesByValidator from '../../../data/ServiceTables/useActiveServicesByValidator';
+import useActiveServicesByValidator from '../../../data/validatorDetails/useActiveServicesByValidator';
 
 interface ServiceTableTabsProps {
   validatorAddress: string;

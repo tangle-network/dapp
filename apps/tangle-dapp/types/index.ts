@@ -174,11 +174,13 @@ export type DistributionDataType = Record<RestakingService, BN>;
 export type Service = {
   id: string;
   serviceType: RestakingService;
-  participants: number;
+  participants: string[];
   threshold?: number;
   jobsCount?: number;
   earnings?: BN;
-  expirationBlock: string;
+  expirationBlock: BN;
+  ttlBlock: BN;
+  permittedCaller?: string;
 };
 
 export type ServiceJob = {
@@ -197,11 +199,11 @@ export type JobType = {
 
 export type ServiceParticipant = {
   address: string;
-  identity?: string;
-  twitter?: string;
-  discord?: string;
-  email?: string;
-  web?: string;
+  identity?: string | null;
+  twitter?: string | null;
+  discord?: string | null;
+  email?: string | null;
+  web?: string | null;
 };
 
 export enum NetworkFeature {

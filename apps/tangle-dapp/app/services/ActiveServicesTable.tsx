@@ -2,16 +2,15 @@
 
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import useSWR from 'swr';
 
 import { ContainerSkeleton, ServiceTable, TableStatus } from '../../components';
-import { getActiveServices } from '../../data/ServiceTables';
+import { useActiveServices } from '../../data/serviceOverview';
 
 const pageSize = 10;
 
 const ActiveServicesTable: FC = () => {
   const { data: activeServicesData, isLoading: activeServicesDataLoading } =
-    useSWR([getActiveServices.name], getActiveServices);
+    useActiveServices();
 
   return (
     <div className="space-y-5">

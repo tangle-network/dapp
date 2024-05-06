@@ -9,7 +9,15 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type FC,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
@@ -107,6 +115,21 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     walletAddress,
   ]);
 
+  // The outer selected validators state is array of string
+  // but the child select validators state is set of string
+  // so we need to handle the conversion between set <> array
+  const handleSelectedValidatorsChange = useCallback<
+    Dispatch<SetStateAction<Set<string>>>
+  >((nextValueOrUpdater) => {
+    if (typeof nextValueOrUpdater === 'function') {
+      setSelectedValidators((prev) => {
+        return Array.from(nextValueOrUpdater(new Set(prev)));
+      });
+    } else {
+      setSelectedValidators(Array.from(nextValueOrUpdater));
+    }
+  }, []);
+
   return (
     <Modal open>
       <ModalContent
@@ -120,8 +143,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
-            selectedValidators={selectedValidators}
-            setSelectedValidators={setSelectedValidators}
+            setSelectedValidators={handleSelectedValidatorsChange}
           />
 
           {isExceedingMaxNominationQuota && (
@@ -133,7 +155,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="flex gap-1 items-center">
+        <ModalFooter className="flex items-center gap-1">
           <Button isFullWidth variant="secondary" onClick={closeModal}>
             Cancel
           </Button>

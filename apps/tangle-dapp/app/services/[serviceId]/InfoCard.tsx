@@ -1,13 +1,17 @@
+'use client';
+
 import {
   Chip,
-  CopyWithTooltip,
-  TimeProgress,
+  formatDateToUtc,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { getServiceDetailsInfo } from '../../../data/ServiceDetails';
+import useServiceInfoCard from '../../../data/serviceDetails/useServiceInfoCard';
 import { getChipColorOfServiceType } from '../../../utils';
 
 interface InfoCardProps {
@@ -15,9 +19,8 @@ interface InfoCardProps {
   className?: string;
 }
 
-async function InfoCard({ serviceId, className }: InfoCardProps) {
-  const { serviceType, thresholds, key, startTimestamp, endTimestamp } =
-    await getServiceDetailsInfo(serviceId);
+const InfoCard: FC<InfoCardProps> = ({ serviceId, className }) => {
+  const { serviceType, threshold, endDate } = useServiceInfoCard();
 
   return (
     <div
@@ -38,54 +41,57 @@ async function InfoCard({ serviceId, className }: InfoCardProps) {
             <Typography
               variant="body1"
               fw="bold"
-              className="text-mono-200 dark:text-mono-0"
+              className="text-mono-200 dark:text-mono-0 whitespace-nowrap"
             >
               Phase 1 ID: {serviceId}
             </Typography>
-            <Chip color={getChipColorOfServiceType(serviceType)}>
-              {serviceType}
-            </Chip>
-            {thresholds && (
-              <Chip color="dark-grey" className="py-1">
-                {thresholds}
-              </Chip>
-            )}
+
+            <div className="flex items-center gap-1">
+              {serviceType && (
+                <Chip
+                  color={getChipColorOfServiceType(serviceType)}
+                  className="whitespace-nowrap"
+                >
+                  {serviceType}
+                </Chip>
+              )}
+              {threshold && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Chip color="dark-grey" className="py-1">
+                      {threshold}
+                    </Chip>
+                  </TooltipTrigger>
+                  <TooltipBody>Threshold</TooltipBody>
+                </Tooltip>
+              )}
+            </div>
           </div>
 
-          {key && (
-            <div className="flex items-center gap-2">
-              <Typography
-                variant="body1"
-                fw="bold"
-                className="text-mono-200 dark:text-mono-0"
-              >
-                Key:
-              </Typography>
-              <div className="overflow-hidden rounded-lg flex items-stretch">
-                <div
-                  className={twMerge(
-                    'bg-mono-20 dark:bg-mono-160 px-3',
-                    'flex items-center justify-center'
-                  )}
-                >
-                  <Typography variant="body1">
-                    {shortenString(key, 4)}
-                  </Typography>
-                </div>
-                <CopyWithTooltip textToCopy={key} className="rounded-none" />
-              </div>
-            </div>
+          {endDate && (
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0 whitespace-nowrap"
+            >
+              {/* Check if the service has ended or not */}
+              {endDate.getTime() > new Date().getTime()
+                ? 'Expect to end at'
+                : 'Ended at'}
+              : {formatDateToUtc(endDate)}
+            </Typography>
           )}
         </div>
 
-        <TimeProgress
+        {/* TODO: cannot get start date with Polkadotjs */}
+        {/* <TimeProgress
           startTime={startTimestamp}
           endTime={endTimestamp}
           labelClassName="text-mono-200 dark:text-mono-0"
-        />
+        /> */}
       </div>
     </div>
   );
-}
+};
 
 export default InfoCard;

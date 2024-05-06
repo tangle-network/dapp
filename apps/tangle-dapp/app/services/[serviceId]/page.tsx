@@ -18,10 +18,7 @@ export default function ServiceDetails({
           className="lg:min-h-[600px] md:flex-[3] min-w-0"
         />
 
-        <ParticipantsTable
-          serviceId={serviceId}
-          className="lg:min-h-[600px] md:flex-[2]"
-        />
+        <ParticipantsTable className="lg:min-h-[600px] md:flex-[2]" />
       </div>
     </div>
   );

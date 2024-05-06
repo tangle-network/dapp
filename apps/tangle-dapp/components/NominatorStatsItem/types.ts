@@ -10,6 +10,5 @@ export interface NominatorStatsItemProps {
   title: string;
   type: StatsType;
   tooltip?: string | React.ReactNode;
-  address: string;
   className?: string;
 }
