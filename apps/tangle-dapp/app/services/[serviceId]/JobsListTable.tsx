@@ -22,7 +22,7 @@ import { twMerge } from 'tailwind-merge';
 import { SkeletonRow } from '../../../components/skeleton';
 import { HeaderCell, StringCell } from '../../../components/tableCells';
 import useNetworkStore from '../../../context/useNetworkStore';
-import { useServiceJobs } from '../../../data/ServiceDetails';
+import { useServiceJobs } from '../../../data/serviceDetails';
 import { ExplorerType, ServiceJob } from '../../../types';
 
 interface JobsListTableProps {

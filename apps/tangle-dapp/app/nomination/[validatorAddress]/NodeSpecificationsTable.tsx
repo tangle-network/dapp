@@ -19,7 +19,7 @@ import { FC, useMemo } from 'react';
 
 import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
 import { HeaderCell } from '../../../components/tableCells';
-import useNodeSpecifications from '../../../data/useNodeSpecifications';
+import useNodeSpecifications from '../../../data/validatorDetails/useNodeSpecifications';
 import { NodeSpecification } from '../../../types';
 
 interface NodeSpecificationsTableProps {
