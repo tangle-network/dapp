@@ -7,16 +7,13 @@ import {
   createContext,
   FC,
   PropsWithChildren,
+  useCallback,
   useEffect,
-  useState,
 } from 'react';
 
+import usePolkadotApi, { PolkadotApiFetcher } from '../hooks/usePolkadotApi';
 import { Service } from '../types';
-import {
-  extractServiceDetails,
-  getPolkadotApiPromise,
-} from '../utils/polkadot';
-import useNetworkStore from './useNetworkStore';
+import { extractServiceDetails } from '../utils/polkadot';
 
 export const ServiceDetailsContext = createContext<{
   serviceDetails: Service | null;
@@ -30,40 +27,34 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
   children,
   serviceId,
 }) => {
-  const { rpcEndpoint } = useNetworkStore();
   const { notificationApi } = useWebbUI();
 
-  const [serviceDetails, setServiceDetails] = useState<Service | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const servicesFetcher = useCallback<PolkadotApiFetcher<Service | null>>(
+    async (api) => {
+      const jobInfoData = (await api.query.jobs.submittedJobs(
+        // no provided type here, only Id
+        null,
+        new u64(api.registry, BigInt(serviceId))
+      )) as Option<TanglePrimitivesJobsJobInfo>; // Data is returned as Codec type here
+      return extractServiceDetails(serviceId, jobInfoData);
+    },
+    [serviceId]
+  );
+
+  const {
+    value: serviceDetails,
+    isValueLoading: isLoading,
+    error,
+  } = usePolkadotApi(servicesFetcher);
 
   useEffect(() => {
-    // TODO: We can utilizing caching for Mainnet and possibly Testnet. For local, the data will be updated frequently
-    // Not implement at the moment because restaking system is being updated
-    const fetchServiceDetails = async () => {
-      if (!serviceId) return;
-      try {
-        const api = await getPolkadotApiPromise(rpcEndpoint);
-        const jobInfoData = (await api.query.jobs.submittedJobs(
-          // no provided type here, only Id
-          null,
-          new u64(api.registry, BigInt(serviceId))
-        )) as Option<TanglePrimitivesJobsJobInfo>; // Data is returned as Codec type here
-        const extractedServiceData = extractServiceDetails(
-          serviceId,
-          jobInfoData
-        );
-        setServiceDetails(extractedServiceData);
-        setIsLoading(false);
-      } catch (error) {
-        notificationApi({
-          message: 'Failed to load service',
-          variant: 'error',
-        });
-      }
-    };
-
-    fetchServiceDetails();
-  }, [rpcEndpoint, serviceId, notificationApi]);
+    if (error) {
+      notificationApi({
+        message: 'Failed to load service',
+        variant: 'error',
+      });
+    }
+  }, [error, notificationApi]);
 
   return (
     <ServiceDetailsContext.Provider value={{ serviceDetails, isLoading }}>
