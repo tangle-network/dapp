@@ -194,11 +194,6 @@ export default function usePayouts() {
           nominatorStakePercentage / 100
         );
 
-        // const nominatorTotalRewardFormatted = formatTokenBalance(
-        //   nominatorTotalReward,
-        //   nativeTokenSymbol
-        // );
-
         const nominatorTotalRewardFormatted = formatBnToDisplayAmount(
           nominatorTotalReward,
           {
@@ -227,11 +222,6 @@ export default function usePayouts() {
           })
         );
 
-        // const validatorTotalRewardFormatted = formatTokenBalance(
-        //   validatorTotalReward,
-        //   nativeTokenSymbol
-        // );
-
         const validatorTotalRewardFormatted = formatBnToDisplayAmount(
           validatorTotalReward,
           {
@@ -240,11 +230,6 @@ export default function usePayouts() {
             padZerosInFraction: true,
           }
         );
-
-        // const validatorTotalStakeFormatted = formatTokenBalance(
-        //   validatorTotalStake,
-        //   nativeTokenSymbol
-        // );
 
         const validatorTotalStakeFormatted = formatBnToDisplayAmount(
           validatorTotalReward,
