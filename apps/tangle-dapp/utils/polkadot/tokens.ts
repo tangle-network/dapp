@@ -5,12 +5,15 @@ import { getPolkadotApiPromise } from './api';
 
 export const formatTokenBalance = (
   balance: BN | bigint,
-  tokenSymbol?: string
+  tokenSymbol?: string,
+  options: Parameters<typeof formatBalance>[1] = {}
 ): string => {
   return formatBalance(balance, {
     decimals: TANGLE_TOKEN_DECIMALS,
     withZero: false,
+    forceUnit: '-',
     withUnit: tokenSymbol ?? false,
+    ...options,
   });
 };
 

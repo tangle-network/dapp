@@ -10,11 +10,11 @@ import { formatTokenBalance } from '../../utils/polkadot';
 import dataHooks from './dataHooks';
 import type { NominatorStatsItemProps } from './types';
 
-type Props = Pick<NominatorStatsItemProps, 'address' | 'type'>;
+type Props = Pick<NominatorStatsItemProps, 'type'>;
 
-const NominatorStatsItemText = ({ address, type }: Props) => {
+const NominatorStatsItemText = ({ type }: Props) => {
   const { nativeTokenSymbol } = useNetworkStore();
-  const { isLoading, error, data } = dataHooks[type](address);
+  const { isLoading, error, data } = dataHooks[type]();
 
   useEffect(() => {
     if (error) {

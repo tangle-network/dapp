@@ -1,10 +1,19 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import {
+  type Column,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
+  type PaginationState,
+  type Row,
+  type RowSelectionState,
+  type SortingColumn,
+  type SortingState,
+  type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
 import { ArrowDropDownFill, ArrowDropUpFill, Search } from '@webb-tools/icons';
@@ -19,277 +28,330 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import cx from 'classnames';
+import React, {
+  FC,
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { ContainerSkeleton } from '../../components';
 import { Validator } from '../../types';
 import { HeaderCell } from '../tableCells';
-import { SortableKeys, SortBy, ValidatorListTableProps } from './types';
+import type { ValidatorListTableProps } from './types';
+
+const DEFAULT_PAGINATION: PaginationState = {
+  pageIndex: 0,
+  pageSize: 20,
+};
 
 const columnHelper = createColumnHelper<Validator>();
 
-export const ValidatorListTable: FC<ValidatorListTableProps> = ({
+const ValidatorListTable_: FC<ValidatorListTableProps> = ({
   data,
-  selectedValidators,
   setSelectedValidators,
 }) => {
   const [searchValue, setSearchValue] = useState('');
-  const [totalStakeSortBy, setTotalStakeSortBy] = useState<SortBy>('dsc');
-  const [nominationsSortBy, setNominationsSortBy] = useState<SortBy>('dsc');
-  const [commissionSortBy, setCommissionSortBy] = useState<SortBy>('dsc');
-  const [sortBy, setSortBy] = useState<SortableKeys>('effectiveAmountStaked');
 
-  const sortedData = useMemo(() => {
-    const selectedData = data.filter((validator) =>
-      selectedValidators.includes(validator.address)
-    );
-    const unselectedData = data.filter(
-      (validator) => !selectedValidators.includes(validator.address)
-    );
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-    const sortData = (
-      data: Validator[],
-      sortBy: SortableKeys,
-      sortOrder: SortBy
-    ) => {
-      return [...data].sort((a, b) => {
-        const valueA = sortOrder === 'asc' ? a[sortBy] : b[sortBy];
-        const valueB = sortOrder === 'asc' ? b[sortBy] : a[sortBy];
-        return parseFloat(valueA) - parseFloat(valueB);
-      });
-    };
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
-    const sortedSelectedData = sortData(
-      selectedData,
-      sortBy,
-      sortBy === 'effectiveAmountStaked'
-        ? totalStakeSortBy
-        : sortBy === 'delegations'
-        ? nominationsSortBy
-        : commissionSortBy
-    );
+  const [pagination, setPagination] =
+    React.useState<PaginationState>(DEFAULT_PAGINATION);
 
-    const sortedUnselectedData = sortData(
-      unselectedData,
-      sortBy,
-      sortBy === 'effectiveAmountStaked'
-        ? totalStakeSortBy
-        : sortBy === 'delegations'
-        ? nominationsSortBy
-        : commissionSortBy
-    );
+  const toggleSortSelectionHandlerRef = useRef<
+    SortingColumn<Validator>['toggleSorting'] | null
+  >(null);
 
-    return [...sortedSelectedData, ...sortedUnselectedData];
-  }, [
-    data,
-    selectedValidators,
-    sortBy,
-    totalStakeSortBy,
-    nominationsSortBy,
-    commissionSortBy,
-  ]);
+  // Sync the selected validators with the parent state
+  useEffect(() => {
+    startTransition(() => {
+      setSelectedValidators(new Set(Object.keys(rowSelection)));
+    });
+  }, [rowSelection, setSelectedValidators]);
 
-  const filteredData = useMemo(
-    () =>
-      sortedData.filter(
-        (validator) =>
-          validator.identityName
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          validator.address.toLowerCase().includes(searchValue.toLowerCase())
-      ),
-    [searchValue, sortedData]
-  );
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('address', {
+        header: ({ header }) => {
+          toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
+          return <HeaderCell title="Validator" className="justify-start" />;
+        },
+        cell: (props) => {
+          const address = props.getValue();
+          const identity = props.row.original.identityName;
 
-  const handleValidatorToggle = useCallback(
-    (address: string, isSelected: boolean) => {
-      if (isSelected) {
-        setSelectedValidators(
-          selectedValidators.filter(
-            (selectedValidator) => selectedValidator !== address
-          )
-        );
-      } else {
-        setSelectedValidators([...selectedValidators, address]);
-      }
-    },
-    [selectedValidators, setSelectedValidators]
-  );
-
-  const columns = [
-    columnHelper.accessor('address', {
-      header: () => <HeaderCell title="Validator" className="justify-start" />,
-      cell: (props) => {
-        const address = props.getValue();
-        const identity = props.row.original.identityName;
-
-        return (
-          <div className="flex items-center gap-2">
-            <CheckBox
-              wrapperClassName="!block !min-h-auto cursor-pointer"
-              className="cursor-pointer"
-              isChecked={selectedValidators.includes(address)}
-              onChange={() =>
-                handleValidatorToggle(
-                  address,
-                  selectedValidators.includes(address)
-                )
-              }
-            />
-
-            <div className="flex space-x-1 items-center">
-              <Avatar sourceVariant="address" value={address} theme="substrate">
-                hello
-              </Avatar>
-
-              <Typography variant="body1" fw="normal" className="truncate">
-                {identity === address ? shortenString(address, 6) : identity}
-              </Typography>
-
-              <CopyWithTooltip
-                textToCopy={address}
-                isButton={false}
+          return (
+            <div className="flex items-center gap-2">
+              <CheckBox
+                wrapperClassName="!block !min-h-auto cursor-pointer"
                 className="cursor-pointer"
+                isChecked={props.row.getIsSelected()}
+                onChange={props.row.getToggleSelectedHandler()}
               />
+
+              <div className="flex items-center space-x-1">
+                <Avatar
+                  sourceVariant="address"
+                  value={address}
+                  theme="substrate"
+                >
+                  hello
+                </Avatar>
+
+                <Typography variant="body1" fw="normal" className="truncate">
+                  {identity === address ? shortenString(address, 6) : identity}
+                </Typography>
+
+                <CopyWithTooltip
+                  textToCopy={address}
+                  isButton={false}
+                  className="cursor-pointer"
+                />
+              </div>
             </div>
+          );
+        },
+        // Sort the selected validators first
+        sortingFn: (rowA, rowB) => {
+          const rowASelected = rowA.getIsSelected();
+          const rowBSelected = rowB.getIsSelected();
+
+          if (rowASelected && !rowBSelected) {
+            return -1;
+          }
+
+          if (!rowASelected && rowBSelected) {
+            return 1;
+          }
+
+          return 0;
+        },
+      }),
+      columnHelper.accessor('effectiveAmountStaked', {
+        header: ({ header }) => (
+          <div
+            className="flex items-center justify-center cursor-pointer"
+            onClick={header.column.getToggleSortingHandler()}
+          >
+            <HeaderCell title="Total Staked" className="flex-none block" />
+
+            <SortArrow column={header.column} />
           </div>
-        );
+        ),
+        cell: (props) => (
+          <div className="flex items-center justify-center">
+            <Chip color="dark-grey">{props.getValue()}</Chip>
+          </div>
+        ),
+        sortingFn,
+      }),
+      columnHelper.accessor('delegations', {
+        header: ({ header }) => (
+          <div
+            className="flex items-center justify-center cursor-pointer"
+            onClick={header.column.getToggleSortingHandler()}
+          >
+            <HeaderCell title="Nominations" className="flex-none block" />
+
+            <SortArrow column={header.column} />
+          </div>
+        ),
+        cell: (props) => (
+          <div className="flex items-center justify-center">
+            <Chip color="dark-grey">{props.getValue()}</Chip>
+          </div>
+        ),
+        sortingFn,
+      }),
+      columnHelper.accessor('commission', {
+        header: ({ header }) => (
+          <div
+            className="flex items-center justify-center cursor-pointer"
+            onClick={header.column.getToggleSortingHandler()}
+          >
+            <HeaderCell title="Commission" className="flex-none block" />
+
+            <SortArrow column={header.column} />
+          </div>
+        ),
+        cell: (props) => (
+          <div className="flex items-center justify-center">
+            <Chip color="dark-grey">
+              {Number(props.getValue()).toFixed(2)}%
+            </Chip>
+          </div>
+        ),
+        sortingFn,
+      }),
+      columnHelper.accessor('identityName', {
+        header: () => <HeaderCell title="Identity" />,
+        cell: (props) => props.getValue(),
+      }),
+    ],
+    []
+  );
+
+  const tableProps = useMemo<TableOptions<Validator>>(
+    () => ({
+      data,
+      columns,
+      state: {
+        columnVisibility: {
+          identityName: false,
+        },
+        sorting,
+        rowSelection,
+        pagination,
+        globalFilter: searchValue,
       },
-    }),
-    columnHelper.accessor('effectiveAmountStaked', {
-      header: () => (
-        <div className="flex items-center justify-center">
-          <HeaderCell title="Total Staked" className="block flex-none" />
+      enableRowSelection: true,
+      onPaginationChange: setPagination,
+      onGlobalFilterChange: (props) => {
+        setPagination(DEFAULT_PAGINATION);
+        setSearchValue(props);
+      },
+      onRowSelectionChange: (props) => {
+        toggleSortSelectionHandlerRef.current?.(false);
+        setRowSelection(props);
+      },
+      onSortingChange: (updaterOrValue) => {
+        if (typeof updaterOrValue === 'function') {
+          setSorting((prev) => {
+            const newSorting = updaterOrValue(prev);
 
-          {totalStakeSortBy === 'asc' ? (
-            <ArrowDropDownFill
-              className="cursor-pointer"
-              size="lg"
-              onClick={() => {
-                setTotalStakeSortBy('dsc');
-                setSortBy('effectiveAmountStaked');
-              }}
-            />
-          ) : (
-            <ArrowDropUpFill
-              className="cursor-pointer"
-              size="lg"
-              onClick={() => {
-                setTotalStakeSortBy('asc');
-                setSortBy('effectiveAmountStaked');
-              }}
-            />
-          )}
-        </div>
-      ),
-      cell: (props) => (
-        <div className="flex items-center justify-center">
-          <Chip color="dark-grey">{props.getValue()}</Chip>
-        </div>
-      ),
+            // Modify the sorting state to always sort by the selected validators first
+            if (newSorting.length === 0) {
+              return [
+                {
+                  id: 'address',
+                  desc: false,
+                },
+              ];
+            } else if (newSorting[0].id === 'address') {
+              return newSorting;
+            } else {
+              return [
+                {
+                  id: 'address',
+                  desc: false,
+                },
+                ...newSorting,
+              ];
+            }
+          });
+        } else {
+          setSorting(updaterOrValue);
+        }
+      },
+      filterFns: {
+        fuzzy: fuzzyFilter,
+      },
+      globalFilterFn: fuzzyFilter,
+      getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getRowId: (row) => row.address,
+      autoResetPageIndex: false,
     }),
-    columnHelper.accessor('delegations', {
-      header: () => (
-        <div className="flex items-center justify-center">
-          <HeaderCell title="Nominations" className="block flex-none" />
+    [columns, data, pagination, rowSelection, searchValue, sorting]
+  );
 
-          {nominationsSortBy === 'asc' ? (
-            <ArrowDropDownFill
-              className="cursor-pointer"
-              size="lg"
-              onClick={() => {
-                setNominationsSortBy('dsc');
-                setSortBy('delegations');
-              }}
-            />
-          ) : (
-            <ArrowDropUpFill
-              className="cursor-pointer"
-              size="lg"
-              onClick={() => {
-                setNominationsSortBy('asc');
-                setSortBy('delegations');
-              }}
-            />
-          )}
-        </div>
-      ),
-      cell: (props) => (
-        <div className="flex items-center justify-center">
-          <Chip color="dark-grey">{props.getValue()}</Chip>
-        </div>
-      ),
-    }),
-    columnHelper.accessor('commission', {
-      header: () => (
-        <div className="flex items-center justify-center">
-          <HeaderCell title="Commission" className="block flex-none" />
-
-          {commissionSortBy === 'asc' ? (
-            <ArrowDropDownFill
-              className="cursor-pointer"
-              size="lg"
-              onClick={() => {
-                setCommissionSortBy('dsc');
-                setSortBy('commission');
-              }}
-            />
-          ) : (
-            <ArrowDropUpFill
-              className="cursor-pointer"
-              size="lg"
-              onClick={() => {
-                setCommissionSortBy('asc');
-                setSortBy('commission');
-              }}
-            />
-          )}
-        </div>
-      ),
-      cell: (props) => (
-        <div className="flex items-center justify-center">
-          <Chip color="dark-grey">{Number(props.getValue()).toFixed(2)}%</Chip>
-        </div>
-      ),
-    }),
-  ];
-
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
-    globalFilterFn: fuzzyFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+  const table = useReactTable(tableProps);
 
   return (
-    <div className="flex flex-col gap-2">
-      <Input
-        id="token"
-        rightIcon={<Search className="mr-2" />}
-        placeholder="Search validators..."
-        value={searchValue}
-        onChange={(val) => setSearchValue(val)}
-        className="mb-1"
-      />
-
-      {filteredData.length === 0 ? (
-        <ContainerSkeleton className="max-h-[340px] w-full" />
-      ) : (
-        <Table
-          thClassName="border-t-0 py-3 sticky top-0"
-          trClassName="cursor-pointer"
-          tdClassName="py-2 border-t-0"
-          paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
-          tableWrapperClassName="max-h-[340px] overflow-y-scroll"
-          tableProps={table}
-          isPaginated
+    <>
+      <div className="flex flex-col gap-2">
+        <Input
+          id="token"
+          rightIcon={<Search className="mr-2" />}
+          placeholder="Search validators..."
+          value={searchValue}
+          onChange={(val) => setSearchValue(val)}
+          className="mb-1"
         />
-      )}
-    </div>
+
+        {data.length === 0 ? (
+          <ContainerSkeleton className="max-h-[340px] w-full" />
+        ) : (
+          <Table
+            tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
+            thClassName="border-t-0 py-3 sticky top-0"
+            trClassName="cursor-pointer"
+            tdClassName="py-2 border-t-0"
+            paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
+            tableWrapperClassName="max-h-[340px] overflow-y-scroll"
+            tableProps={table}
+            isPaginated
+          />
+        )}
+      </div>
+
+      <Typography
+        variant="body1"
+        fw="normal"
+        className="text-mono-200 dark:text-mono-0"
+      >
+        Selected: {Object.keys(rowSelection).length}/
+        {table.getPreFilteredRowModel().rows.length}
+      </Typography>
+    </>
+  );
+};
+
+export const ValidatorListTable = React.memo(ValidatorListTable_);
+
+type ColumnIdAssertFn = (
+  columnId: string
+) => asserts columnId is keyof Validator;
+
+const assertColumnId: ColumnIdAssertFn = (columnId) => {
+  if (
+    !['address', 'effectiveAmountStaked', 'delegations', 'commission'].includes(
+      columnId
+    )
+  ) {
+    throw new Error(`Invalid columnId: ${columnId}`);
+  }
+};
+
+const sortingFn = (
+  rowA: Row<Validator>,
+  rowB: Row<Validator>,
+  columnId: string
+) => {
+  assertColumnId(columnId);
+
+  if (columnId === 'effectiveAmountStaked') {
+    const totalStakedA = new BN(rowA.original.effectiveAmountStakedRaw);
+    const totalStakedB = new BN(rowB.original.effectiveAmountStakedRaw);
+
+    const result = totalStakedA.sub(totalStakedB);
+
+    return result.ltn(0) ? -1 : result.gtn(0) ? 1 : 0;
+  }
+
+  const rowAValue = Number(rowA.original[columnId]);
+  const rowBValue = Number(rowB.original[columnId]);
+
+  return rowAValue - rowBValue;
+};
+
+const SortArrow: FC<{ column: Column<Validator, string> }> = ({ column }) => {
+  const isSorted = column.getIsSorted();
+
+  if (!isSorted) {
+    return null;
+  }
+
+  return isSorted === 'asc' ? (
+    <ArrowDropUpFill className="cursor-pointer" size="lg" />
+  ) : (
+    <ArrowDropDownFill className="cursor-pointer" size="lg" />
   );
 };

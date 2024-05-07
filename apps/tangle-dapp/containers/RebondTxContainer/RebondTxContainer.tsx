@@ -1,8 +1,6 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -21,8 +19,8 @@ import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalUnbondedAndUnbondingAmount from '../../data/NominatorStats/useTotalUnbondedAndUnbondingAmount';
 import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { evmToSubstrateAddress } from '../../utils';
 import { rebondTokens as rebondTokensEvm } from '../../utils/evm';
 import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { rebondTokens as rebondTokensSubstrate } from '../../utils/polkadot';
@@ -33,7 +31,6 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
   const executeTx = useExecuteTxWithNotification();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
@@ -41,30 +38,13 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   const [isRebondTxLoading, setIsRebondTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    }
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
+  const walletAddress = useActiveAccountAddress<string>('');
 
   const { data: unbondingAmountData, error: unbondingAmountError } =
-    useUnbondingAmountSubscription(substrateAddress);
+    useUnbondingAmountSubscription();
 
   const { data: totalUnbondedAndUnbondingAmountData } =
-    useTotalUnbondedAndUnbondingAmount(substrateAddress);
+    useTotalUnbondedAndUnbondingAmount(walletAddress);
 
   const remainingUnbondedTokensToRebond = useMemo(() => {
     if (unbondingAmountError) {
@@ -82,7 +62,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       amountToRebond !== null &&
       amountToRebond.gt(BN_ZERO) &&
       !hasErrors &&
-      walletAddress !== '0x0'
+      walletAddress.length > 0
     );
   }, [amountToRebond, hasErrors, walletAddress]);
 
@@ -139,7 +119,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           Rebond Funds
         </ModalHeader>
 
-        <div className="p-9 space-y-4">
+        <div className="space-y-4 p-9">
           <Typography variant="body1" fw="normal">
             Rebond to return unbonding or unbonded tokens to staking without
             withdrawing.
@@ -175,7 +155,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           </div>
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
             isDisabled={!continueToSignAndSubmitTx}

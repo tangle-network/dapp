@@ -18,6 +18,7 @@ export enum LocalStorageKey {
   KNOWN_NETWORK_ID = 'knownNetworkId',
   VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
+  SERVICES_CACHE = 'servicesCache',
 }
 
 export type AirdropEligibilityCache = {
@@ -92,7 +93,9 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   return value;
 };
 
-// TODO: During development cycles, changing local storage value types will lead to any users depending on that value to possibly break (because they may be stuck with an older type schema). Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
+// TODO: During development cycles, changing local storage value types will lead to
+// any users depending on that value to possibly break (because they may be stuck with an older type schema).
+// Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
 /**
  * Custom hook for interacting with local storage.
  *

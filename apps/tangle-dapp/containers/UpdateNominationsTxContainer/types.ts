@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 export type UpdateNominationsTxContainerProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
@@ -5,6 +7,5 @@ export type UpdateNominationsTxContainerProps = {
 };
 
 export type SelectValidatorsProps = {
-  selectedValidators: string[];
-  setSelectedValidators: (selectedValidators: string[]) => void;
+  setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
 };

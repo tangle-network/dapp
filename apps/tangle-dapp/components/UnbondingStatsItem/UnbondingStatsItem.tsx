@@ -3,12 +3,14 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import { type FC, Fragment, useMemo } from 'react';
 
+import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
 import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
-const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
+const UnbondingStatsItem: FC = () => {
+  const address = useActiveAccountAddress<string>('');
   const { nativeTokenSymbol } = useNetworkStore();
 
   const {
@@ -33,7 +35,7 @@ const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
     const elements = unbondingRemainingErasData.value1.map((era, index) => {
       return (
         <Fragment key={index}>
-          <div className="text-center mb-2">
+          <div className="mb-2 text-center">
             <p>
               {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'}{' '}
               {formatTokenBalance(era.amount, nativeTokenSymbol)}
@@ -56,7 +58,6 @@ const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
       title={`Unbonding ${nativeTokenSymbol}`}
       tooltip={unbondingRemainingErasTooltip}
       type="Unbonding Amount"
-      address={address}
     />
   );
 };

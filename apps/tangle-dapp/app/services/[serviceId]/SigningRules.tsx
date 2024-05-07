@@ -4,7 +4,7 @@ import { CodeFile, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { getSigningRules } from '../../../data/ServiceDetails';
+import { getSigningRules } from '../../../data/serviceDetails';
 
 interface SigningRulesProps {
   serviceId: string;

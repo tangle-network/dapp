@@ -1,5 +1,4 @@
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs/operators';
 
@@ -32,14 +31,15 @@ export type AccountBalances = {
   locked: BN | null;
 };
 
-const useBalances = (): AccountBalances => {
-  const { activeAccount } = useWebContext();
+const useBalances = (): AccountBalances &
+  Pick<ReturnType<typeof usePolkadotApiRx>, 'error' | 'isLoading'> => {
   const activeSubstrateAddress = useSubstrateAddress();
   const [balances, setBalances] = useState<AccountBalances | null>(null);
 
   const balancesFetcher = useCallback<ObservableFactory<AccountBalances>>(
     (api) => {
       if (!activeSubstrateAddress) return null;
+
       return api.query.system.account(activeSubstrateAddress).pipe(
         map(({ data }) => {
           // Note that without the null/undefined check, an error
@@ -69,7 +69,7 @@ const useBalances = (): AccountBalances => {
     [activeSubstrateAddress]
   );
 
-  const { data, isLoading } = usePolkadotApiRx(balancesFetcher);
+  const { data, isLoading, error } = usePolkadotApiRx(balancesFetcher);
 
   useEffect(() => {
     // If there's data and it's not loading, set the balances.
@@ -80,15 +80,17 @@ const useBalances = (): AccountBalances => {
 
   // Reset balances if there is no active account.
   useEffect(() => {
-    if (activeAccount === null) {
+    if (activeSubstrateAddress === null) {
       setBalances(null);
     }
-  }, [activeAccount]);
+  }, [activeSubstrateAddress]);
 
   return {
     free: balances?.free ?? null,
     transferable: balances?.transferable ?? null,
     locked: balances?.locked ?? null,
+    isLoading,
+    error,
   };
 };
 

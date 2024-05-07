@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TDataProps } from './types';
@@ -29,3 +29,5 @@ export const TData = forwardRef<HTMLTableCellElement, TDataProps>(
     );
   }
 );
+
+export const TDataMemo = memo(TData);
