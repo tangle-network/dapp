@@ -31,7 +31,7 @@ import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const staticColumns = [
+const getStaticColumns = (isWaiting?: boolean) => [
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
     ? []
@@ -45,14 +45,20 @@ const staticColumns = [
           cell: (props) => <StringCell value={props.getValue()} />,
         }),
       ]),
-  columnHelper.accessor('effectiveAmountStaked', {
-    header: () => <HeaderCell title="Effective amount staked" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
-  columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
-  }),
+  // Hide the effective amount staked and self-staked columns on waiting validators tab
+  // as they don't have values for these columns
+  ...(isWaiting
+    ? []
+    : [
+        columnHelper.accessor('effectiveAmountStaked', {
+          header: () => <HeaderCell title="Effective amount staked" />,
+          cell: (props) => <StringCell value={props.getValue()} />,
+        }),
+        columnHelper.accessor('selfStaked', {
+          header: () => <HeaderCell title="Self-staked" />,
+          cell: (props) => <StringCell value={props.getValue()} />,
+        }),
+      ]),
   columnHelper.accessor('delegations', {
     header: () => <HeaderCell title="Nominations" />,
     cell: (props) => <StringCell value={props.getValue()} />,
@@ -71,7 +77,7 @@ const staticColumns = [
           id: 'details',
           header: () => null,
           cell: (props) => (
-            <div className="flex justify-center items-center">
+            <div className="flex items-center justify-center">
               <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
                 <Button variant="link" size="sm">
                   DETAILS
@@ -83,7 +89,7 @@ const staticColumns = [
       ]),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
+const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
   const { network } = useNetworkStore();
 
   const columns = useMemo(
@@ -129,9 +135,9 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
           );
         },
       }),
-      ...staticColumns,
+      ...getStaticColumns(isWaiting),
     ],
-    [network.polkadotExplorerUrl]
+    [isWaiting, network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({

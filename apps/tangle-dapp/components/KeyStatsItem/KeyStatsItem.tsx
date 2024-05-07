@@ -22,6 +22,7 @@ export type KeyStatsItemProps = {
   suffix?: string;
   tooltip?: string;
   className?: string;
+  showDataBeforeLoading?: boolean;
   children?: ReactNode;
   error: Error | null;
   isLoading: boolean;
@@ -32,6 +33,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
   title,
   tooltip,
   className,
+  showDataBeforeLoading,
   prefix,
   suffix,
   children,
@@ -69,7 +71,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
 
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
         <div className="flex items-center gap-0.5">
-          {isLoading ? (
+          {isLoading && !showDataBeforeLoading ? (
             <SkeletonLoader className="w-20 h-8" />
           ) : error !== null ? (
             'Error'

@@ -1,18 +1,28 @@
-import { Option } from '@polkadot/types';
-import { AccountId32 } from '@polkadot/types/interfaces';
-import {
+import type { ApiRx } from '@polkadot/api';
+import type {
+  DeriveStakingElected,
+  DeriveStakingWaiting,
+} from '@polkadot/api-derive/types';
+import type { Option } from '@polkadot/types';
+import type { AccountId32 } from '@polkadot/types/interfaces';
+import type {
   PalletStakingValidatorPrefs,
-  SpStakingExposure,
+  SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
   TanglePrimitivesJobsJobInfo,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
+import {
+  DEFAULT_FLAGS_ELECTED,
+  DEFAULT_FLAGS_WAITING,
+} from '@webb-tools/dapp-config/constants/tangle';
 import { useCallback, useMemo } from 'react';
+import { map } from 'rxjs';
 
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import { Validator } from '../../types';
+import type { ExposureMap, Validator } from '../../types';
 import { getTotalRestakedFromRestakeRoleLedger } from '../../utils/polkadot/restake';
-import useCurrentEra from '../staking/useCurrentEra';
 import useValidatorsPrefs from '../staking/useValidatorsPrefs';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
 
@@ -21,7 +31,6 @@ export const useValidators = (
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
   const formatNativeTokenSymbol = useFormatNativeTokenAmount();
-  const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
 
@@ -41,24 +50,19 @@ export const useValidators = (
     useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
   );
 
-  const { data: exposures } = usePolkadotApiRx(
+  const { data: exposureMap } = usePolkadotApiRx(
     useCallback(
       (api) =>
-        currentEra === null
-          ? null
-          : api.query.staking.erasStakers.entries(currentEra),
-      [currentEra]
+        status === 'Active'
+          ? api.derive.staking
+              .electedInfo(DEFAULT_FLAGS_ELECTED)
+              .pipe(map((derive) => getExposureMap(api, derive)))
+          : api.derive.staking
+              .waitingInfo(DEFAULT_FLAGS_WAITING)
+              .pipe(map((derive) => getExposureMap(api, derive))),
+      [status]
     )
   );
-
-  const mappedExposures = useMemo(() => {
-    const map = new Map<string, SpStakingExposure>();
-    exposures?.forEach(([storageKey, exposure]) => {
-      const accountId = storageKey.args[1].toString();
-      map.set(accountId, exposure);
-    });
-    return map;
-  }, [exposures]);
 
   // Mapping Validator Preferences
   const mappedValidatorPrefs = useMemo(() => {
@@ -70,106 +74,142 @@ export const useValidators = (
     return map;
   }, [validatorPrefs]);
 
-  return useMemo(() => {
-    if (
-      addresses === null ||
-      identityNames === null ||
-      exposures === null ||
-      restakingLedgers === null ||
-      nominations === null ||
-      validatorPrefs === null ||
-      jobIdLookups === null ||
-      activeJobs === null
-    ) {
-      return null;
-    }
+  return useMemo(
+    () => {
+      if (
+        addresses === null ||
+        identityNames === null ||
+        exposureMap === null ||
+        restakingLedgers === null ||
+        nominations === null ||
+        validatorPrefs === null ||
+        jobIdLookups === null ||
+        activeJobs === null
+      ) {
+        return null;
+      }
 
-    return addresses.map((address) => {
-      const name = identityNames.get(address.toString()) ?? address.toString();
-      const exposure = mappedExposures.get(address.toString());
-      const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
+      return addresses.map((address) => {
+        const name =
+          identityNames.get(address.toString()) ?? address.toString();
 
-      const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
-      const selfStakedBalance = formatNativeTokenSymbol(selfStakedAmount);
+        const { exposureMeta } = exposureMap[address.toString()] ?? {};
 
-      const nominators = nominations.filter(([, nominatorData]) => {
-        if (nominatorData.isNone) {
-          return false;
-        }
+        const totalStakeAmount = exposureMeta
+          ? exposureMeta.total.toBn()
+          : BN_ZERO;
 
-        const nominations = nominatorData.unwrap();
+        const selfStakedAmount = exposureMeta
+          ? exposureMeta.own.toBn()
+          : BN_ZERO;
 
-        return (
-          nominations.targets &&
-          nominations.targets.some(
-            (target) => target.toString() === address.toString()
-          )
-        );
+        const selfStakedBalance = formatNativeTokenSymbol(selfStakedAmount);
+
+        const nominators = nominations.filter(([, nominatorData]) => {
+          if (nominatorData.isNone) {
+            return false;
+          }
+
+          const nominations = nominatorData.unwrap();
+
+          return (
+            nominations.targets &&
+            nominations.targets.some(
+              (target) => target.toString() === address.toString()
+            )
+          );
+        });
+
+        const validatorPref = mappedValidatorPrefs.get(address.toString());
+        const commissionRate =
+          validatorPref?.commission.unwrap().toNumber() ?? 0;
+        const commission = commissionRate / 10_000_000;
+
+        const ledger = restakingLedgers.find(([, ledgerData]) => {
+          if (ledgerData.isNone) return false;
+
+          const ledger = ledgerData.unwrap();
+          return address.toString() === ledger.stash.toString();
+        })?.[1];
+
+        const totalRestaked =
+          ledger && ledger.isSome
+            ? getTotalRestakedFromRestakeRoleLedger(ledger)
+            : null;
+
+        const idLookupsByAddress = jobIdLookups
+          .filter(([account]) => {
+            return account.args[0].toString() === address.toString();
+          })
+          .map(([, jobIdAndType]) => {
+            return jobIdAndType.unwrap().toArray()[0][1].toString();
+          });
+
+        const activeServices = activeJobs
+          .filter(([jobIdAndType]) => {
+            const jobId = jobIdAndType.args[1];
+            return idLookupsByAddress.includes(jobId.toString());
+          })
+          .filter(([, jobData]) => {
+            // TODO: somehow jobData here has type Codec
+            const jobType = (
+              jobData as Option<TanglePrimitivesJobsJobInfo>
+            ).unwrap().jobType;
+            // services are only phase 1 jobs
+            return jobType?.isDkgtssPhaseOne || jobType?.isZkSaaSPhaseOne;
+          });
+
+        return {
+          address: address.toString(),
+          identityName: name,
+          activeServicesNum: activeServices.length,
+          restaked: totalRestaked
+            ? formatNativeTokenSymbol(totalRestaked)
+            : '0',
+          selfStaked: selfStakedBalance,
+          effectiveAmountStaked: formatNativeTokenSymbol(totalStakeAmount),
+          effectiveAmountStakedRaw: totalStakeAmount.toString(),
+          delegations: nominators.length.toString(),
+          commission: commission.toString(),
+          status,
+        };
       });
-
-      const validatorPref = mappedValidatorPrefs.get(address.toString());
-      const commissionRate = validatorPref?.commission.unwrap().toNumber() ?? 0;
-      const commission = commissionRate / 10_000_000;
-
-      const ledger = restakingLedgers.find(([, ledgerData]) => {
-        if (ledgerData.isNone) return false;
-
-        const ledger = ledgerData.unwrap();
-        return address.toString() === ledger.stash.toString();
-      })?.[1];
-
-      const totalRestaked =
-        ledger && ledger.isSome
-          ? getTotalRestakedFromRestakeRoleLedger(ledger)
-          : null;
-
-      const idLookupsByAddress = jobIdLookups
-        .filter(([account]) => {
-          return account.args[0].toString() === address.toString();
-        })
-        .map(([, jobIdAndType]) => {
-          return jobIdAndType.unwrap().toArray()[0][1].toString();
-        });
-
-      const activeServices = activeJobs
-        .filter(([jobIdAndType]) => {
-          const jobId = jobIdAndType.args[1];
-          return idLookupsByAddress.includes(jobId.toString());
-        })
-        .filter(([, jobData]) => {
-          // TODO: somehow jobData here has type Codec
-          const jobType = (
-            jobData as Option<TanglePrimitivesJobsJobInfo>
-          ).unwrap().jobType;
-          // services are only phase 1 jobs
-          return jobType?.isDkgtssPhaseOne || jobType?.isZkSaaSPhaseOne;
-        });
-
-      return {
-        address: address.toString(),
-        identityName: name,
-        activeServicesNum: activeServices.length,
-        restaked: totalRestaked ? formatNativeTokenSymbol(totalRestaked) : '0',
-        selfStaked: selfStakedBalance,
-        effectiveAmountStaked: formatNativeTokenSymbol(totalStakeAmount),
-        effectiveAmountStakedRaw: totalStakeAmount.toString(),
-        delegations: nominators.length.toString(),
-        commission: commission.toString(),
-        status,
-      };
-    });
-  }, [
-    addresses,
-    identityNames,
-    exposures,
-    nominations,
-    validatorPrefs,
-    mappedExposures,
-    mappedValidatorPrefs,
-    formatNativeTokenSymbol,
-    status,
-    restakingLedgers,
-    jobIdLookups,
-    activeJobs,
-  ]);
+    },
+    // prettier-ignore
+    [addresses, identityNames, exposureMap, restakingLedgers, nominations, validatorPrefs, jobIdLookups, activeJobs, formatNativeTokenSymbol, mappedValidatorPrefs, status]
+  );
 };
+
+/** @internal */
+function getExposureMap(
+  api: ApiRx,
+  derive: DeriveStakingElected | DeriveStakingWaiting
+): ExposureMap {
+  const emptyExposure = api.createType<SpStakingExposurePage>(
+    'SpStakingExposurePage'
+  );
+  const emptyExposureMeta = api.createType<SpStakingPagedExposureMetadata>(
+    'SpStakingPagedExposureMetadata'
+  );
+
+  return derive.info.reduce(
+    (exposureMap, { accountId, exposureMeta, exposurePaged }) => {
+      const exp = exposurePaged.isSome && exposurePaged.unwrap();
+      const expMeta = exposureMeta.isSome && exposureMeta.unwrap();
+
+      exposureMap[accountId.toString()] = {
+        exposure: exp || emptyExposure,
+        exposureMeta: expMeta || emptyExposureMeta,
+      };
+
+      return exposureMap;
+    },
+    {} as Record<
+      string,
+      {
+        exposure: SpStakingExposurePage;
+        exposureMeta: SpStakingPagedExposureMetadata;
+      }
+    >
+  );
+}

@@ -1,3 +1,4 @@
+import type { u128 } from '@polkadot/types';
 import { useCallback, useMemo } from 'react';
 
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
@@ -18,7 +19,7 @@ const useActualStakedPercentage = () => {
           return null;
         }
 
-        return api.query.staking.erasTotalStake(currentEra);
+        return api.query.staking.erasTotalStake<u128>(currentEra);
       },
       [currentEra]
     )

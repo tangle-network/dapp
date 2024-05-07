@@ -16,10 +16,11 @@ const ValidatorCountKeyStat: FC = () => {
     <KeyStatsItem
       title="Validators"
       tooltip="Current number of active validators out of the total allowed."
+      showDataBeforeLoading
       error={validatorCountError}
       isLoading={isValidatorCountLoading}
     >
-      {validatorCount?.value1}/{validatorCount?.value2}
+      {validatorCount?.value1 ?? '--'}/{validatorCount?.value2 ?? '--'}
     </KeyStatsItem>
   );
 };

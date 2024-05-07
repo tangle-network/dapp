@@ -1,16 +1,13 @@
 'use client';
 
 import { formatNumber } from '@polkadot/util';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
+import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
+import { useCallback, useEffect, useState } from 'react';
+import { map } from 'rxjs';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
-// TODO: This is causing performance issues. Needs to be optimized.
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
@@ -21,12 +18,9 @@ export default function useActiveAndDelegationCountSubscription(
   const [error, setError] = useState<Error | null>(null);
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
-  const { rpcEndpoint } = useNetworkStore();
 
-  const { get: getCachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
-    true
-  );
+  const { get: getCachedValue, setWithPreviousValue: setCacheWithPrev } =
+    useLocalStorage(LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT, true);
 
   // After mount, try to get the cached value and set it.
   useEffect(() => {
@@ -39,72 +33,80 @@ export default function useActiveAndDelegationCountSubscription(
     }
   }, [getCachedValue]);
 
-  useEffect(() => {
-    let isMounted = true;
-    let sub: Subscription | null = null;
+  const {
+    isLoading: isLoadingCounterForNonimators,
+    error: counterForNominatorsError,
+  } = usePolkadotApiRx(
+    useCallback(
+      (apiRx) =>
+        apiRx.query.staking.counterForNominators().pipe(
+          map((nominatorsCount) => {
+            const nominatorsCountNum = Number(formatNumber(nominatorsCount));
+            const { value2: cachedCount } = getCachedValue() ?? {};
 
-    const subscribeData = async () => {
-      try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
-        const currentEra = await apiPromise.query.staking.currentEra();
-        const eraIndex = currentEra.unwrap();
+            if (nominatorsCountNum !== cachedCount) {
+              setValue2(nominatorsCountNum);
 
-        sub = api.query.staking
-          .counterForNominators()
-          .subscribe(async (value) => {
-            try {
-              const counterForNominators = formatNumber(value);
-              const exposures =
-                await apiPromise.query.staking.erasStakers.entries(eraIndex);
-
-              const nominatorsSet = new Set<string>();
-
-              exposures.forEach(([_, exposure]) => {
-                exposure.others.forEach(({ who }) => {
-                  nominatorsSet.add(who.toString());
-                });
+              setCacheWithPrev((prev) => {
+                const value1 = prev?.value1 ?? null;
+                return { value1, value2: nominatorsCountNum };
               });
-
-              const newValue1 = nominatorsSet.size;
-              const newValue2 = Number(counterForNominators);
-
-              if (isMounted && (newValue1 !== value1 || newValue2 !== value2)) {
-                setValue1(newValue1);
-                setValue2(newValue2);
-                setCache({ value1: newValue1, value2: newValue2 });
-                setIsLoading(false);
-              }
-            } catch (error) {
-              if (isMounted) {
-                setError(
-                  error instanceof Error
-                    ? error
-                    : WebbError.from(WebbErrorCodes.UnknownError)
-                );
-                setIsLoading(false);
-              }
             }
-          });
-      } catch (error) {
-        if (isMounted) {
-          setError(
-            error instanceof Error
-              ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
-          );
-          setIsLoading(false);
-        }
-      }
-    };
+          })
+        ),
+      [getCachedValue, setCacheWithPrev]
+    )
+  );
 
-    subscribeData();
+  const { isLoading: isLoadingActiveNominators, error: activeNominatorsError } =
+    usePolkadotApiRx(
+      useCallback(
+        (apiRx) =>
+          apiRx.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED).pipe(
+            map((electedInfo) => {
+              const nominators: Set<string> = new Set();
 
-    return () => {
-      isMounted = false;
-      sub?.unsubscribe();
-    };
-  }, [rpcEndpoint, setCache, value1, value2]);
+              for (let i = 0; i < electedInfo.info.length; i++) {
+                const { exposurePaged } = electedInfo.info[i];
+                const exposure = exposurePaged.isSome && exposurePaged.unwrap();
+                if (!exposure) {
+                  continue;
+                }
 
-  return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
+                exposure.others.map(({ who }) => {
+                  nominators.add(who.toString());
+                });
+              }
+
+              const activeNominatorsCount = nominators.size;
+              const { value1: cachedCount } = getCachedValue() ?? {};
+
+              if (activeNominatorsCount !== cachedCount) {
+                setValue1(activeNominatorsCount);
+
+                setCacheWithPrev((prev) => {
+                  const value2 = prev?.value2 ?? null;
+                  return { value1: activeNominatorsCount, value2 };
+                });
+              }
+            })
+          ),
+        [getCachedValue, setCacheWithPrev]
+      )
+    );
+
+  // Sync the loading & error states.
+  useEffect(() => {
+    setIsLoading(isLoadingCounterForNonimators || isLoadingActiveNominators);
+  }, [isLoadingCounterForNonimators, isLoadingActiveNominators]);
+
+  useEffect(() => {
+    setError(counterForNominatorsError || activeNominatorsError);
+  }, [counterForNominatorsError, activeNominatorsError]);
+
+  return {
+    data: { value1, value2 },
+    isLoading,
+    error,
+  };
 }
