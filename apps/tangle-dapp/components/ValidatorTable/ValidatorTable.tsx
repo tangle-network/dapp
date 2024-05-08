@@ -33,40 +33,41 @@ import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const staticColumns = [
-  columnHelper.accessor('address', {
-    header: () => <HeaderCell title="Identity" className="justify-start" />,
-    cell: (props) => {
-      const address = props.getValue();
-      const identity = props.row.original.identityName;
-
-      return (
-        <div className="flex items-center space-x-1">
-          <Avatar sourceVariant="address" value={address} theme="substrate" />
-
-          <Typography variant="body1" fw="normal" className="truncate">
-            {identity === address ? shortenString(address, 6) : identity}
-          </Typography>
-
-          <CopyWithTooltip
-            textToCopy={address}
-            isButton={false}
-            className="cursor-pointer"
-          />
-        </div>
-      );
-    },
-  }),
-  columnHelper.accessor('selfStakeAmount', {
-    header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-  }),
-  columnHelper.accessor('totalStakeAmount', {
-    header: () => (
-      <HeaderCell title="Effective amount staked" className="justify-center" />
-    ),
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-  }),
+const getStaticColumns = (isWaiting?: boolean) => [
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('activeServicesCount', {
+          header: () => <HeaderCell title="Active Services" />,
+          cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+        }),
+        columnHelper.accessor('restakedAmount', {
+          header: () => <HeaderCell title="Restaked" />,
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        }),
+      ]),
+  // Hide the effective amount staked and self-staked columns on waiting validators tab
+  // as they don't have values for these columns
+  ...(isWaiting
+    ? []
+    : [
+        columnHelper.accessor('totalStakeAmount', {
+          header: () => (
+            <HeaderCell
+              title="Effective amount staked"
+              className="justify-center"
+            />
+          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        }),
+        columnHelper.accessor('selfStakeAmount', {
+          header: () => (
+            <HeaderCell title="Self-staked" className="justify-center" />
+          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        }),
+      ]),
   columnHelper.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
@@ -90,7 +91,7 @@ const staticColumns = [
           id: 'details',
           header: () => null,
           cell: (props) => (
-            <div className="flex justify-center items-center">
+            <div className="flex items-center justify-center">
               <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
                 <Button variant="link" size="sm">
                   DETAILS
@@ -102,7 +103,7 @@ const staticColumns = [
       ]),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
+const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
   const { network } = useNetworkStore();
 
   const columns = useMemo(
@@ -148,9 +149,9 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
           );
         },
       }),
-      ...staticColumns,
+      ...getStaticColumns(isWaiting),
     ],
-    [network.polkadotExplorerUrl]
+    [isWaiting, network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({

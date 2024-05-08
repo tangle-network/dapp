@@ -58,7 +58,7 @@ const ValidatorTablesContainer = () => {
         ) : isWaitingValidatorsLoading ? (
           <ContainerSkeleton />
         ) : (
-          <ValidatorTableContainer data={waitingValidatorsData} />
+          <ValidatorTableContainer isWaiting data={waitingValidatorsData} />
         )}
       </TabContent>
     </TableAndChartTabs>
