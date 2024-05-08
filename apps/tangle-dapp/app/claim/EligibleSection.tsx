@@ -2,7 +2,13 @@
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import { BN_ZERO, hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
+import {
+  BN_ZERO,
+  hexToU8a,
+  stringToU8a,
+  u8aToHex,
+  u8aToString,
+} from '@polkadot/util';
 import {
   decodeAddress,
   isEthereumAddress,
@@ -140,13 +146,14 @@ const EligibleSection: FC<Props> = ({
       );
 
       const signature = await activeApi.sign(payload);
+      const validSignature = ensureValidLedgerSignature(signature, isEvmSigner);
 
       setStep(Step.SENDING_TX);
 
       const tx = api.tx.claims.claimAttest(
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
         isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer
-        isEvmSigner ? { EVM: signature } : { Native: signature }, // signature
+        isEvmSigner ? { EVM: validSignature } : { Native: validSignature }, // signature
         statementSentence
       );
 
@@ -392,4 +399,57 @@ function getLoadingText(step: Step) {
     default:
       return '';
   }
+}
+
+/**
+ *
+ * @param signature the signature to check and format to be used in the claimAttest extrinsic call
+ * @param isEvmSigner whether the signer is an EVM address
+ */
+function ensureValidLedgerSignature(
+  signature: string,
+  isEvmSigner: boolean
+): string {
+  if (isEvmSigner) {
+    return handleEvmSignature(signature);
+  } else {
+    return handleSubstrateSignature(signature);
+  }
+}
+
+/**
+ * @see https://mirror.xyz/coa.eth/mvPbLPXvy375CXi1_XwMTzG84lwlSKYUBHDx_R1TIgU
+ */
+function handleEvmSignature(signature: string): string {
+  const evmSignatureRegex = /(^0[xX]|^)[0-9a-fA-F]{128}(00|01)$/;
+
+  if (evmSignatureRegex.test(signature)) {
+    // Ledger devices produces vrs signatures with a canonical v value of 0 or 1. When signing
+    // a message on a Ledger and then relaying the signature to MetaMask, the v byte is still
+    // going to be 0 or 1 when it is sent to the dapp, instead of the expected 27 or 28. The
+    // invalid last byte will cause validation of the signature to fail. This fixes the issue.
+
+    // [details] https://github.com/ethereum/go-ethereum/issues/19751#issuecomment-504900739
+
+    const vValue = parseInt(signature.slice(-2), 16);
+    const validVValue = (vValue + 27).toString(16);
+
+    const validSignature = signature.slice(0, -2) + validVValue;
+    return validSignature;
+  }
+
+  // If the signature is not in the expected format, return it as is as it is invalid
+  return signature;
+}
+
+function handleSubstrateSignature(signature: string): string {
+  const signatureBytes = hexToU8a(signature);
+  const maxSignatureLength = 64;
+
+  // If the signature is greater than 64 bytes, we return the last 64 bytes
+  if (signatureBytes.length > maxSignatureLength) {
+    return u8aToHex(signatureBytes.slice(-maxSignatureLength));
+  }
+
+  return signature;
 }
