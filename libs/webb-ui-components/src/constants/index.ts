@@ -42,6 +42,7 @@ export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const TANGLE_PRESS_KIT_URL = 'https://www.tangle.tools/press-kit';
 export const TANGLE_DOCS_URL = 'https://docs.tangle.tools/docs/';
 export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
+
 export const WEBB_DOCS_URL = 'https://docs.webb.tools';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
@@ -186,6 +187,15 @@ export const SOCIAL_URLS_RECORD = {
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
 };
+
+export const TANGLE_SOCIAL_URLS_RECORD = {
+  commonwealth: 'https://commonwealth.im/tangle',
+  twitter: TANGLE_TWITTER_URL,
+  youTube: 'https://www.youtube.com/@TangleNetwork',
+  github: TANGLE_GITHUB_URL,
+} as const satisfies Partial<{
+  [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
+}>;
 
 export const SOCIAL_ICONS_RECORD = {
   telegram: TelegramFill,
