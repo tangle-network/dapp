@@ -40,7 +40,11 @@ const getStaticColumns = (isWaiting?: boolean) => [
     : [
         columnHelper.accessor('activeServicesCount', {
           header: () => <HeaderCell title="Active Services" />,
-          cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+          cell: (props) => (
+            <div className="flex justify-center items-center">
+              <Chip color="dark-grey">{props.getValue()}</Chip>
+            </div>
+          ),
         }),
         columnHelper.accessor('restakedAmount', {
           header: () => <HeaderCell title="Restaked" />,
