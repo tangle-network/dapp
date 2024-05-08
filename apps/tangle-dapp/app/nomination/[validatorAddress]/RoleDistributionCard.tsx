@@ -11,11 +11,11 @@ import GlassCard from '../../../components/GlassCard/GlassCard';
 import useRestakingRoleLedger from '../../../data/restaking/useRestakingRoleLedger';
 import { RestakingProfileType } from '../../../types';
 import assertRestakingService from '../../../utils/assertRestakingService';
-import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
 import {
   getProfileTypeFromRestakeRoleLedger,
   getRoleDistributionFromRestakeRoleLedger,
 } from '../../../utils/polkadot/restake';
+import getChartDataAreaColorByServiceType from '../../../utils/restaking/getChartDataAreaColorByServiceType';
 
 interface RoleDistributionCardProps {
   validatorAddress: string;
