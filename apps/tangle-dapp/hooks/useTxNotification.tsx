@@ -5,9 +5,8 @@ import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
 import { TxName } from '../constants';
-import { ExplorerType } from '../types';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useTxExplorerUrl from './useTxExplorerUrl';
+import useExplorerUrl from './useExplorerUrl';
 
 const SUCCESS_TIMEOUT = 10_000;
 
@@ -31,7 +30,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
 const useTxNotification = (txName: TxName) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const getTxExplorerUrl = useTxExplorerUrl();
+  const getTxExplorerUrl = useExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const processingKey = `${txName}-processing`;
@@ -47,12 +46,7 @@ const useTxNotification = (txName: TxName) => {
       // for example, they disconnect their account while the
       // transaction is still processing.
       const txExplorerUrl =
-        isEvmActiveAccount === null
-          ? null
-          : getTxExplorerUrl(
-              txHash,
-              isEvmActiveAccount ? ExplorerType.EVM : ExplorerType.Substrate
-            );
+        isEvmActiveAccount === null ? null : getTxExplorerUrl(txHash, 'tx');
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.

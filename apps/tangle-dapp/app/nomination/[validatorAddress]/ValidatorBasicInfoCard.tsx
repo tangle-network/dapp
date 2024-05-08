@@ -22,7 +22,7 @@ import {
   formatTokenBalance,
   IdentityDataType,
 } from '../../../utils/polkadot';
-import { getPolkadotApiPromise } from '../../../utils/polkadot/api';
+import { getApiPromise } from '../../../utils/polkadot/api';
 import {
   getProfileTypeFromRestakeRoleLedger,
   getTotalRestakedFromRestakeRoleLedger,
@@ -165,8 +165,8 @@ const ValidatorBasicInfoCard: FC<ValidatorBasicInfoCardProps> = ({
 export default ValidatorBasicInfoCard;
 
 function useValidatorBasicInfo(rpcEndpoint: string, validatorAddress: string) {
-  const { data: currentEra } = useCurrentEra();
-  const { data: ledgerOpt, isLoading: isLoadingLedgerOpt } =
+  const { result: currentEra } = useCurrentEra();
+  const { result: ledgerOpt, isLoading: isLoadingLedgerOpt } =
     useRestakingRoleLedger(validatorAddress);
 
   const [name, setName] = useState<string | null>(null);
@@ -189,7 +189,8 @@ function useValidatorBasicInfo(rpcEndpoint: string, validatorAddress: string) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const api = await getPolkadotApiPromise(rpcEndpoint);
+      const api = await getApiPromise(rpcEndpoint);
+
       const fetchNameAndSocials = async () => {
         const identityData = await api.query.identity.identityOf(
           validatorAddress
@@ -198,14 +199,17 @@ function useValidatorBasicInfo(rpcEndpoint: string, validatorAddress: string) {
         if (identityData.isSome) {
           const identity = identityData.unwrap();
           const info = identity[0]?.info;
+
           if (info) {
             setName(extractDataFromIdentityInfo(info, IdentityDataType.NAME));
             setEmail(extractDataFromIdentityInfo(info, IdentityDataType.EMAIL));
             setWeb(extractDataFromIdentityInfo(info, IdentityDataType.WEB));
+
             const twitterName = extractDataFromIdentityInfo(
               info,
               IdentityDataType.TWITTER
             );
+
             setTwitter(
               twitterName === null
                 ? null

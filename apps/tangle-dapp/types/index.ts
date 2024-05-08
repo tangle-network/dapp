@@ -33,15 +33,23 @@ export enum DelegationsAndPayoutsTab {
   PAYOUTS = 'Payouts',
 }
 
-export type Validator = {
+export type BasicAccountInfo = {
   address: string;
-  isActive: boolean;
   identityName: string;
+};
+
+export interface Nominee extends BasicAccountInfo {
+  isActive: boolean;
   commission: BN;
   selfStakeAmount: BN;
   totalStakeAmount: BN;
   nominatorCount: number;
-};
+}
+
+export interface Validator extends Nominee {
+  restakedAmount: BN;
+  activeServicesCount: number;
+}
 
 export type NodeSpecification = {
   os: string;

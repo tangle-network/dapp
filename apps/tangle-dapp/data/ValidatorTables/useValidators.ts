@@ -57,6 +57,9 @@ export const useValidators = (
         identities: identityNames,
         exposures,
         prefs: validatorPrefs,
+        restakingLedgers,
+        jobs: jobIdLookups,
+        activeJobIds: activeJobs,
       })
     );
   }, [

@@ -26,7 +26,7 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
   validatorAddress,
   className,
 }) => {
-  const { data: ledgerOpt, isLoading } =
+  const { result: ledgerOpt, isLoading } =
     useRestakingRoleLedger(validatorAddress);
 
   const profileType = useMemo(

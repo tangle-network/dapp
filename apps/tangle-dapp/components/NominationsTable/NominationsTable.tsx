@@ -19,12 +19,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
-import { Validator } from '../../types';
+import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 
-const columnHelper = createColumnHelper<Validator>();
+const columnHelper = createColumnHelper<Nominee>();
 
 const columns = [
   columnHelper.accessor('address', {
@@ -93,7 +93,7 @@ const columns = [
 ];
 
 export type NominationsTableProps = {
-  nominees: Validator[];
+  nominees: Nominee[];
   pageSize: number;
 };
 

@@ -12,7 +12,6 @@ import React, { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, Sidebar, SidebarMenu } from '../../components';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
-import { TxConfirmationModalContainer } from '../../containers';
 import ApiDevStatsContainer from '../ApiDevStatsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
@@ -70,8 +69,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           />
         </div>
       </main>
-
-      <TxConfirmationModalContainer />
 
       {!IS_PRODUCTION_ENV && <ApiDevStatsContainer />}
     </div>

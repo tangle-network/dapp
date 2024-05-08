@@ -4,9 +4,9 @@ import { useCallback, useMemo } from 'react';
 
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { Validator } from '../../types/index';
+import { Nominee } from '../../types/index';
 import Optional from '../../utils/Optional';
-import createValidator from '../../utils/staking/createValidator';
+import createNominee from '../../utils/staking/createNominee';
 import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
@@ -34,7 +34,7 @@ const useNominations = () => {
     )
   );
 
-  const nominees = useMemo<Optional<Validator[]> | null>(() => {
+  const nominees = useMemo<Optional<Nominee[]> | null>(() => {
     if (
       nominationInfoOpt === null ||
       sessionValidators === null ||
@@ -56,7 +56,7 @@ const useNominations = () => {
         (validatorAddress) => validatorAddress.toString() === nomineeAddress
       );
 
-      return createValidator({
+      return createNominee({
         address: nomineeAddress,
         isActive,
         identities,
