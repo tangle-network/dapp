@@ -1,7 +1,7 @@
 import React, { createElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { WebbTypographyProps } from '../types';
+import type { WebbTypographyProps } from '../types';
 import {
   getDefaultTextColor,
   getFontWeightClassName,
