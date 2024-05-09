@@ -9,7 +9,15 @@ import {
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
 import _ from 'lodash';
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type FC,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import useNominateTx from '../../data/staking/useNominateTx';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
@@ -18,8 +26,8 @@ import SelectValidators from './SelectValidators';
 
 export type UpdateNominationsTxContainerProps = {
   isModalOpen: boolean;
-  currentNominations: string[] | null;
   setIsModalOpen: (isModalOpen: boolean) => void;
+  currentNominations: string[];
 };
 
 const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
@@ -85,6 +93,21 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     selectedValidators,
   ]);
 
+  // The outer selected validators state is array of string
+  // but the child select validators state is set of string
+  // so we need to handle the conversion between set <> array
+  const handleSelectedValidatorsChange = useCallback<
+    Dispatch<SetStateAction<Set<string>>>
+  >((nextValueOrUpdater) => {
+    if (typeof nextValueOrUpdater === 'function') {
+      setSelectedValidators((prev) => {
+        return Array.from(nextValueOrUpdater(new Set(prev)));
+      });
+    } else {
+      setSelectedValidators(Array.from(nextValueOrUpdater));
+    }
+  }, []);
+
   return (
     <Modal open>
       <ModalContent
@@ -98,9 +121,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
-            // TODO: Pass the `| null` explicitly, and handle the case where it is `null` at the lowest level.
-            selectedValidators={selectedValidators ?? []}
-            setSelectedValidators={setSelectedValidators}
+            setSelectedValidators={handleSelectedValidatorsChange}
           />
 
           {isExceedingMaxNominationQuota && (
@@ -112,7 +133,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="flex gap-1 items-center">
+        <ModalFooter className="flex items-center gap-1">
           <Button isFullWidth variant="secondary" onClick={closeModal}>
             Cancel
           </Button>

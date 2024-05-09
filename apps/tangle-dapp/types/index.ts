@@ -3,8 +3,12 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
-import { BN } from '@polkadot/util';
-import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import type {
+  SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
+} from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -180,11 +184,13 @@ export type DistributionDataType = Record<RestakingService, BN>;
 export type Service = {
   id: string;
   serviceType: RestakingService;
-  participants: number;
+  participants: string[];
   threshold?: number;
   jobsCount?: number;
   earnings?: BN;
-  expirationBlock: string;
+  expirationBlock: BN;
+  ttlBlock: BN;
+  permittedCaller?: string;
 };
 
 export type ServiceJob = {
@@ -203,11 +209,11 @@ export type JobType = {
 
 export type ServiceParticipant = {
   address: string;
-  identity?: string;
-  twitter?: string;
-  discord?: string;
-  email?: string;
-  web?: string;
+  identity?: string | null;
+  twitter?: string | null;
+  discord?: string | null;
+  email?: string | null;
+  web?: string | null;
 };
 
 export enum NetworkFeature {
@@ -219,3 +225,11 @@ export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,
 } as const;
+
+export type ExposureMap = Record<
+  string,
+  {
+    exposure: SpStakingExposurePage;
+    exposureMeta: SpStakingPagedExposureMetadata;
+  }
+>;

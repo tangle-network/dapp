@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
-import useApiRx from '../../hooks/useApiRx';
+import useApiRx from '../hooks/useApiRx';
 
 export default function useJobIdAndTypeLookupByValidator(
   validatorAddress: string

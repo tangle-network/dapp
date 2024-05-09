@@ -3,10 +3,10 @@
 import { BN_ZERO } from '@polkadot/util';
 import { type FC, useMemo } from 'react';
 
+import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
 import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { formatBnWithCommas } from '../../utils/formatBnWithCommas';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { NominatorStatsItem } from '../NominatorStatsItem';

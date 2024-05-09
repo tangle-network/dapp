@@ -8,7 +8,9 @@ const useWaitingValidators = () => {
   const { result: waitingValidatorAddresses } = useApiRx(
     useCallback(
       (api) =>
-        api.derive.staking.waitingInfo().pipe(map((info) => info.waiting)),
+        api.derive.staking
+          .waitingInfo()
+          .pipe(map((info) => info.info.map((i) => i.accountId))),
       []
     )
   );

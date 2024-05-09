@@ -61,7 +61,7 @@ const NominatorStatsContainer: FC = () => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-4 w-full">
+      <div className="flex flex-col w-full gap-4 md:flex-row">
         <div
           className={cx(
             'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
@@ -82,7 +82,7 @@ const NominatorStatsContainer: FC = () => {
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2">
             {networkFeatures.includes(NetworkFeature.Faucet) &&
               !isActiveAccountLoading && (
                 <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
@@ -144,7 +144,7 @@ const NominatorStatsContainer: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             {isBondedOrNominating === true ? (
               <>
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
@@ -164,7 +164,7 @@ const NominatorStatsContainer: FC = () => {
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { firstValueFrom, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getApiRx } from '../../utils/polkadot';
 
@@ -96,5 +95,9 @@ export default function useValidatorCountSubscription(
     };
   }, [value1, value2, setCache, rpcEndpoint]);
 
-  return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
+  return {
+    data: { value1, value2 },
+    isLoading,
+    error,
+  };
 }

@@ -78,7 +78,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           Rebond Funds
         </ModalHeader>
 
-        <div className="p-9 space-y-4">
+        <div className="space-y-4 p-9">
           <Typography variant="body1" fw="normal">
             Rebond to return unbonding or unbonded tokens to staking without
             withdrawing.
@@ -109,7 +109,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           </div>
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
             isDisabled={!canSubmitTx}

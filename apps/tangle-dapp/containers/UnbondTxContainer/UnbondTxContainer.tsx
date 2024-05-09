@@ -1,8 +1,6 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   Button,
   Modal,
@@ -22,7 +20,6 @@ import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotal
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbondTx from '../../data/staking/useUnbondTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { toSubstrateAddress } from '../../utils';
 import { UnbondTxContainerProps } from './types';
 
 const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
@@ -33,22 +30,11 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   const [hasErrors, setHasErrors] = useState(false);
 
   const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
   const { nativeTokenSymbol } = useNetworkStore();
   const { execute: executeUnbondTx, status: unbondTxStatus } = useUnbondTx();
 
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    } else if (isSubstrateAddress(activeAccount?.address)) {
-      return activeAccount.address;
-    }
-
-    return toSubstrateAddress(activeAccount.address) ?? '';
-  }, [activeAccount?.address]);
-
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =
-    useTotalStakedAmountSubscription(substrateAddress);
+    useTotalStakedAmountSubscription();
 
   const { result: unbondingAmount, error: unbondingAmountError } =
     useUnbondingAmount();
@@ -134,7 +120,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
           Unbond Stake
         </ModalHeader>
 
-        <div className="p-9 space-y-4">
+        <div className="space-y-4 p-9">
           <AmountInput
             id="unbond-input"
             title="Amount"
@@ -157,7 +143,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
           </Typography>
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
             isDisabled={!canSubmitTx}

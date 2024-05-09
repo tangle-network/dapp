@@ -7,7 +7,6 @@ import { FC, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { InfoIconWithTooltip } from '..';
 
@@ -27,11 +26,9 @@ const Balance: FC = () => {
       return null;
     }
 
-    const amount = formatBnToDisplayAmount(balance, {
-      padZerosInFraction: true,
+    return formatTokenBalance(balance, nativeTokenSymbol, {
+      withAll: true,
     });
-
-    return `${amount} ${nativeTokenSymbol}`;
   }, [balance, nativeTokenSymbol]);
 
   return (

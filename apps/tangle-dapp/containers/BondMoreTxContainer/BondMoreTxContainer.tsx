@@ -1,7 +1,6 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Button,
   Modal,
@@ -30,16 +29,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
+  const walletAddress = useActiveAccountAddress();
   const { data: walletBalance, error: walletBalanceError } =
-    useTokenWalletFreeBalance(walletAddress);
+    useTokenWalletFreeBalance();
 
   useEffect(() => {
     if (walletBalanceError) {
@@ -101,7 +93,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           Add Stake
         </ModalHeader>
 
-        <div className="p-9 space-y-4">
+        <div className="space-y-4 p-9">
           <AmountInput
             id="add-stake-input"
             title="Amount"

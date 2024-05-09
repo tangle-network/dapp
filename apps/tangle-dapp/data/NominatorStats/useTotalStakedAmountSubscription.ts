@@ -8,16 +8,18 @@ import { type Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { getApiRx } from '../../utils/polkadot';
 
 export default function useTotalStakedAmountSubscription(
-  address: string,
   defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const address = useSubstrateAddress();
 
   useEffect(() => {
     let isMounted = true;

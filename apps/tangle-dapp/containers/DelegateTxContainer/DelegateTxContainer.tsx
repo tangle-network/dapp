@@ -33,7 +33,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
-  const [selectedValidators, setSelectedValidators] = useState<string[]>([]);
+  const [selectedValidators, setSelectedValidators] = useState<Set<string>>(
+    new Set()
+  );
   const { nativeTokenSymbol } = useNetworkStore();
   const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
   const [hasAmountToBondError, setHasAmountToBondError] = useState(false);
@@ -44,7 +46,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   );
 
   const isExceedingMaxNominationQuota =
-    selectedValidators.length > maxNominationQuota;
+    selectedValidators.size > maxNominationQuota;
 
   const currentStep = (() => {
     switch (delegateTxStep) {
@@ -70,7 +72,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setPayee(StakingRewardsDestination.STAKED);
     setAmountToBond(null);
     setHasAmountToBondError(false);
-    setSelectedValidators([]);
+    setSelectedValidators(new Set());
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
@@ -149,7 +151,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     : amountToBond !== null && amountToBond.gt(BN_ZERO);
 
   const canContinueToAuthorizeTxStep =
-    selectedValidators.length > 0 && !isExceedingMaxNominationQuota
+    selectedValidators.size > 0 && !isExceedingMaxNominationQuota
       ? true
       : false;
 
@@ -182,10 +184,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               handleAmountToBondError={handleAmountToBondError}
             />
           ) : delegateTxStep === DelegateTxSteps.SELECT_DELEGATES ? (
-            <SelectValidators
-              selectedValidators={selectedValidators}
-              setSelectedValidators={setSelectedValidators}
-            />
+            <SelectValidators setSelectedValidators={setSelectedValidators} />
           ) : null}
 
           {isExceedingMaxNominationQuota && (

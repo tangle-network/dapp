@@ -5,6 +5,7 @@ import useDemocracy from '../../../data/democracy/useDemocracy';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
+import getBlockDate from '../../../utils/getBlockDate';
 import TextCell from './TextCell';
 
 const DemocracyUnlockingAt: FC = () => {
@@ -33,11 +34,15 @@ const DemocracyUnlockingAt: FC = () => {
     return;
   }
 
-  const timeRemaining = calculateTimeRemaining(
+  const democracyLockEndBlockDate = getBlockDate(
     babeExpectedBlockTime,
     currentBlockNumber,
     democracyLockEndBlock
   );
+
+  const timeRemaining = democracyLockEndBlockDate
+    ? calculateTimeRemaining(democracyLockEndBlockDate)
+    : null;
 
   return (
     <TextCell

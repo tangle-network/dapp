@@ -6,7 +6,7 @@ import { Validator } from '../../types';
 import createValidator from '../../utils/staking/createValidator';
 import useAllRestakingLedgers from '../restaking/useAllRestakingLedgers';
 import useRestakingJobIdMap from '../restaking/useRestakingJobIdMap';
-import useStakingExposures from '../staking/useStakingExposures';
+import useStakingExposures2 from '../staking/useStakingExposures2';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
 
@@ -16,7 +16,7 @@ export const useValidators = (
 ): Validator[] | null => {
   const { result: identityNames } = useValidatorIdentityNames();
   const { result: validatorPrefs } = useValidatorPrefs();
-  const { result: exposures } = useStakingExposures();
+  const { result: exposures } = useStakingExposures2(isActive);
   const { result: restakingLedgers } = useAllRestakingLedgers();
   const { result: jobIdLookups } = useRestakingJobIdMap();
 

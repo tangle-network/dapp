@@ -4,7 +4,6 @@ import { BN_ZERO } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { calculateInflation } from '../../utils';
 import ensureError from '../../utils/ensureError';
@@ -55,9 +54,9 @@ export default function useIdealStakedPercentage(
     fetchData();
   }, [value1, setCache, rpcEndpoint]);
 
-  return useFormatReturnType({
+  return {
     isLoading,
     error,
     data: { value1, value2: null },
-  });
+  };
 }
