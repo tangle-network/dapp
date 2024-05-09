@@ -11,3 +11,5 @@
 /**/.netlify
 apps/stats-dapp/graphql.schema.json
 /**/generated
+
+/.nx/cache

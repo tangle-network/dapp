@@ -9,6 +9,7 @@ module.exports = {
       1,
       'always',
       [
+        'repo',
         'bridge-dapp',
         'faucet',
         'hubble-stats',
