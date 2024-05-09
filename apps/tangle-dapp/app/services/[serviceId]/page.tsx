@@ -8,6 +8,7 @@ export default function ServiceDetails({
   params: { serviceId: string };
 }) {
   const { serviceId } = params;
+
   return (
     <div className="space-y-5">
       <InfoCard serviceId={serviceId} />

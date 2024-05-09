@@ -1,4 +1,5 @@
-export { default as getSigningRules } from './getSigningRules';
+export { default as getPermittedCallerContract } from './getPermittedCallerContract';
+export { default as usePermittedCaller } from './usePermittedCaller';
 export { default as useServiceInfoCard } from './useServiceInfoCard';
 export { default as useServiceJobs } from './useServiceJobs';
 export { default as useServiceParticipants } from './useServiceParticipants';
