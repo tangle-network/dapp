@@ -5,10 +5,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import SkeletonRow from '../../../components/skeleton/SkeletonRow';
-import {
-  getPermittedCallerContract,
-  usePermittedCaller,
-} from '../../../data/serviceDetails';
+import { usePermittedCaller } from '../../../data/serviceDetails';
 
 interface PermittedCallerProps {
   serviceId: string;
@@ -16,8 +13,7 @@ interface PermittedCallerProps {
 }
 
 const PermittedCaller: FC<PermittedCallerProps> = ({ className }) => {
-  const { permittedCaller, isContract, isLoading, error } =
-    usePermittedCaller();
+  const { codeData, isLoading, error } = usePermittedCaller();
 
   return (
     <div
@@ -38,36 +34,22 @@ const PermittedCaller: FC<PermittedCallerProps> = ({ className }) => {
         </Typography>
       )}
 
-      {/* No Permitted Caller */}
-      {!isLoading && error === null && permittedCaller === null && (
+      {/* PermittedCaller available is an EOA */}
+      {!isLoading && error === null && codeData === null && (
         <Typography variant="body1">
-          No Permitted Caller associated with this service
+          No Permitted Caller code available
         </Typography>
       )}
 
-      {/* PermittedCaller is an EOA */}
-      {!isLoading &&
-        error === null &&
-        permittedCaller !== null &&
-        !isContract && (
-          <Typography variant="body1">
-            No Permitted Caller associated with this service
-          </Typography>
-        )}
-
       {/* Permitted Caller is a contract */}
-      {!isLoading &&
-        error === null &&
-        permittedCaller !== null &&
-        isContract && (
-          <CodeFile
-            getCodeFileFnc={() => getPermittedCallerContract(permittedCaller)}
-            isInNextProject
-            className="bg-mono-20 dark:bg-mono-200 overflow-auto max-h-[740px]"
-            // smart contract language: Solidity
-            language="sol"
-          />
-        )}
+      {!isLoading && error === null && codeData !== null && (
+        <CodeFile
+          code={codeData.sourceCode}
+          isInNextProject
+          className="bg-mono-20 dark:bg-mono-200 overflow-auto max-h-[740px]"
+          language={codeData.language}
+        />
+      )}
     </div>
   );
 };
