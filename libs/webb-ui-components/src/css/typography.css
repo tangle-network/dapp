@@ -1,30 +1,6 @@
 /** Load fonts */
 
-/* Font Family Breeze Sans */
-
-@font-face {
-  font-family: 'BreezeSans';
-  src: url('fonts/BreezeSans-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'BreezeSans';
-  src: url('fonts/BreezeSans-Medium.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'BreezeSans';
-  src: url('fonts/BreezeSans-Bold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-}
-
-/* Cousine */
-
+/* Font Family Cousine */
 @font-face {
   font-family: 'Cousine';
   src: url('fonts/Cousine-Regular.ttf') format('truetype');
@@ -39,50 +15,44 @@
   font-style: normal;
 }
 
-/** Default font is BreezeSans use fonts */
-*:not(code, .mono1, .mono2) {
-  font-family: 'BreezeSans', -apple-system, BlinkMacSystemFont, Arial,
-    sans-serif;
+/* Font Family Satoshi */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
 }
 
-/* Applied Satoshi for all element when the html tag has `font-satoshi` classnames */
-html.font-satoshi *:not(code, .mono1, .mono2) {
-  /* Font Family Satoshi */
-  @font-face {
-    font-family: 'Satoshi';
-    src: url('fonts/Satoshi-Black.ttf') format('truetype');
-    font-weight: 900;
-    font-style: normal;
-  }
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}
 
-  @font-face {
-    font-family: 'Satoshi';
-    src: url('fonts/Satoshi-BlackItalic.ttf') format('truetype');
-    font-weight: 900;
-    font-style: italic;
-  }
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
 
-  @font-face {
-    font-family: 'Satoshi';
-    src: url('fonts/Satoshi-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-  }
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
 
-  @font-face {
-    font-family: 'Satoshi';
-    src: url('fonts/Satoshi-BoldItalic.ttf') format('truetype');
-    font-weight: 700;
-    font-style: italic;
-  }
+@font-face {
+  font-family: 'Satoshi';
+  src: url('fonts/Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
 
-  @font-face {
-    font-family: 'Satoshi';
-    src: url('fonts/Satoshi-Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-  }
-
+/** Default font is Satoshi use fonts */
+*:not(code, .mono1, .mono2) {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
