@@ -1,7 +1,7 @@
 import { Alert } from '@webb-tools/webb-ui-components';
 import React, { Dispatch, type FC, SetStateAction } from 'react';
 
-import { ValidatorSelectionTable } from '../../components';
+import ValidatorSelectionTable from '../../components/ValidatorSelectionTable/ValidatorSelectionTable';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 
 export type SelectValidatorsProps = {
@@ -15,7 +15,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
 
   return (
     <div className="flex flex-col col-span-2 gap-2">
-      <ValidatorListTable
+      <ValidatorSelectionTable
         data={validators}
         setSelectedValidators={setSelectedValidators}
       />

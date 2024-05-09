@@ -12,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FC, useCallback, useEffect, useState } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
 import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
@@ -24,12 +24,10 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
-  const { activeAccount } = useWebContext();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const walletAddress = useActiveAccountAddress();
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletFreeBalance();
 
@@ -77,10 +75,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   }, [executeBondExtraTx, amountToBond, closeModalAndReset]);
 
   const canSubmitTx =
-    amountToBond !== null &&
-    amountToBond.gt(BN_ZERO) &&
-    walletAddress !== '0x0' &&
-    !hasErrors;
+    amountToBond !== null && amountToBond.gt(BN_ZERO) && !hasErrors;
 
   return (
     <Modal open>

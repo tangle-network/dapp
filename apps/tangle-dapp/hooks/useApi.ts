@@ -5,6 +5,8 @@ import useNetworkStore from '../context/useNetworkStore';
 import { getApiPromise } from '../utils/polkadot';
 import usePromise from './usePromise';
 
+export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
+
 /**
  * Provides access to the Substrate Promise API.
  *
@@ -15,7 +17,7 @@ import usePromise from './usePromise';
  *
  * @returns Substrate API instance or `null` if still loading.
  */
-function useApi<T>(fetcher: (api: ApiPromise) => Promise<T> | T) {
+function useApi<T>(fetcher: ApiFetcher<T>) {
   const [result, setResult] = useState<T | null>(null);
   const { rpcEndpoint } = useNetworkStore();
 

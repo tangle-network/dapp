@@ -52,6 +52,7 @@ const useNominations = () => {
     const nominees = nomineeAccountIds.map((nomineeAccountId) => {
       const nomineeAddress = nomineeAccountId.toString();
 
+      // TODO: Turn this into a set, and then use `has` instead of `some`.
       const isActive = sessionValidators.some(
         (validatorAddress) => validatorAddress.toString() === nomineeAddress
       );

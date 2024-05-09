@@ -17,7 +17,7 @@ import toEvmAddress32 from '../../utils/toEvmAddress32';
 export type NominationOptions = {
   bondAmount: BN;
   payee: StakingRewardsDestination;
-  nominees: string[];
+  nominees: Set<string>;
 };
 
 const useSetupNominatorTx = () => {
@@ -37,7 +37,9 @@ const useSetupNominatorTx = () => {
         payee,
       ]);
 
-      const evmNomineeAddresses32 = context.nominees.map(toEvmAddress32);
+      const evmNomineeAddresses32 = Array.from(context.nominees).map(
+        toEvmAddress32
+      );
 
       const nominateCall = createEvmBatchCallData(
         Precompile.STAKING,
@@ -57,7 +59,7 @@ const useSetupNominatorTx = () => {
 
       return optimizeTxBatch(api, [
         api.tx.staking.bond(context.bondAmount, payee),
-        api.tx.staking.nominate(context.nominees),
+        api.tx.staking.nominate(Array.from(context.nominees)),
       ]);
     },
     []

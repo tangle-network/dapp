@@ -1,10 +1,11 @@
+import { Dispatch, SetStateAction } from 'react';
+
 import { Validator } from '../../types';
 
-export interface ValidatorSelectionTableProps {
-  validators: Validator[];
-  selectedValidatorAddresses: string[];
-  setSelectedValidatorAddresses: (selectedValidators: string[]) => void;
-}
+export type ValidatorSelectionTableProps = {
+  data: Validator[];
+  setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+};
 
 export type SortBy = 'asc' | 'dsc';
 

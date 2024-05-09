@@ -42,7 +42,7 @@ import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
-import type { ValidatorListTableProps } from './types';
+import { ValidatorSelectionTableProps } from './types';
 
 const DEFAULT_PAGINATION: PaginationState = {
   pageIndex: 0,
@@ -51,7 +51,7 @@ const DEFAULT_PAGINATION: PaginationState = {
 
 const columnHelper = createColumnHelper<Validator>();
 
-const ValidatorListTable_: FC<ValidatorListTableProps> = ({
+const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   data,
   setSelectedValidators,
 }) => {
@@ -144,7 +144,9 @@ const ValidatorListTable_: FC<ValidatorListTableProps> = ({
         ),
         cell: (props) => (
           <div className="flex items-center justify-center">
-            <Chip color="dark-grey">{props.getValue()}</Chip>
+            <Chip color="dark-grey">
+              {calculateCommission(props.getValue()).toFixed(2) + '%'}
+            </Chip>
           </div>
         ),
         sortingFn,
@@ -303,8 +305,6 @@ const ValidatorListTable_: FC<ValidatorListTableProps> = ({
   );
 };
 
-export const ValidatorListTable = React.memo(ValidatorListTable_);
-
 type ColumnIdAssertFn = (
   columnId: string
 ) => asserts columnId is keyof Validator;
@@ -329,19 +329,21 @@ const sortingFn = (
   if (columnId === 'totalStakeAmount') {
     const totalStakedA = rowA.original.totalStakeAmount;
     const totalStakedB = rowB.original.totalStakeAmount;
-
     const result = totalStakedA.sub(totalStakedB);
 
     return result.ltn(0) ? -1 : result.gtn(0) ? 1 : 0;
   }
 
+  // TODO: Avoid using Number() here, if it is a BN value, it should be compared as such.
   const rowAValue = Number(rowA.original[columnId]);
   const rowBValue = Number(rowB.original[columnId]);
 
   return rowAValue - rowBValue;
 };
 
-const SortArrow: FC<{ column: Column<Validator, string> }> = ({ column }) => {
+const SortArrow: FC<{ column: Column<Validator, BN | number> }> = ({
+  column,
+}) => {
   const isSorted = column.getIsSorted();
 
   if (!isSorted) {
@@ -354,3 +356,5 @@ const SortArrow: FC<{ column: Column<Validator, string> }> = ({ column }) => {
     <ArrowDropDownFill className="cursor-pointer" size="lg" />
   );
 };
+
+export default React.memo(ValidatorSelectionTable);

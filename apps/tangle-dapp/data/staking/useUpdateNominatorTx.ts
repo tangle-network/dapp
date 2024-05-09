@@ -19,7 +19,7 @@ import toEvmAddress32 from '../../utils/toEvmAddress32';
 import { NominationOptions } from './useSetupNominatorTx';
 
 export type UpdateNominatorOptions = Partial<NominationOptions> & {
-  nominees: string[];
+  nominees: Set<string>;
 };
 
 const useUpdateNominatorTx = () => {
@@ -52,7 +52,9 @@ const useUpdateNominatorTx = () => {
         );
       }
 
-      const evmNomineeAddresses32 = context.nominees.map(toEvmAddress32);
+      const evmNomineeAddresses32 = Array.from(context.nominees).map(
+        toEvmAddress32
+      );
 
       // Push nominate call last. Although the order of calls
       // in the batch may not matter in this case.
@@ -83,7 +85,7 @@ const useUpdateNominatorTx = () => {
 
     const nominateTx =
       context.nominees !== undefined
-        ? api.tx.staking.nominate(context.nominees)
+        ? api.tx.staking.nominate(Array.from(context.nominees))
         : null;
 
     const txs = [bondExtraTx, setPayeeTx, nominateTx].filter(
