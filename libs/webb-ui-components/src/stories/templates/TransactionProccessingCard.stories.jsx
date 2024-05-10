@@ -1,4 +1,5 @@
 import { TokenIcon } from '@webb-tools/icons';
+import noop from 'lodash/noop';
 import { TransactionProgressCard } from '../../containers/TransactionProgressCard';
 
 export default {
@@ -29,7 +30,7 @@ Default.args = {
     amount: '0.999',
     token: 'ETH/WEBB',
   },
-  onDismiss: () => {},
+  onDismiss: noop,
   footer: {
     isLoading: false,
     hasWarning: true,

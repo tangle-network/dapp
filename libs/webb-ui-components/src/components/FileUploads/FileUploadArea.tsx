@@ -113,7 +113,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
  */
 function convertToFileSize(number: number): string {
   const suffixes: string[] = ['B', 'KB', 'MB', 'GB', 'TB'];
-  let index: number = 0;
+  let index = 0;
 
   while (number >= 1024 && index < suffixes.length - 1) {
     number /= 1024;

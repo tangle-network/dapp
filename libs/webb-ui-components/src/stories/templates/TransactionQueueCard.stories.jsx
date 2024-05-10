@@ -1,5 +1,6 @@
 import { TokenIcon } from '@webb-tools/icons';
 import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
+import noop from 'lodash/nopo';
 
 export default {
   title: 'Design System/templates/TransactionQueueCard',
@@ -40,8 +41,8 @@ WithInProgressTransaction.args = {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
   ],
 };
@@ -70,9 +71,9 @@ WithSuccessTransaction.args = {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
-      onSyncNote: () => {},
+      onDetails: noop,
+      onDismiss: noop,
+      onSyncNote: noop,
     },
   ],
 };
@@ -100,8 +101,8 @@ WithFailedTransaction.args = {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
   ],
 };
@@ -130,9 +131,9 @@ WithInAllTransaction.args = {
         return '#';
       },
       nativeValue: '1230SZ',
-      onDetails: () => {},
-      onDismiss: () => {},
-      onSyncNote: () => {},
+      onDetails: noop,
+      onDismiss: noop,
+      onSyncNote: noop,
     },
     {
       method: 'Withdraw',
@@ -154,9 +155,9 @@ WithInAllTransaction.args = {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
-      onSyncNote: () => {},
+      onDetails: noop,
+      onDismiss: noop,
+      onSyncNote: noop,
     },
     {
       method: 'Withdraw',
@@ -179,8 +180,8 @@ WithInAllTransaction.args = {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
     {
       method: 'Transfer',
@@ -202,8 +203,8 @@ WithInAllTransaction.args = {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
   ],
 };

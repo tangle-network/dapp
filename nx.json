@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "useInferencePlugins": false,
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
@@ -12,10 +13,6 @@
         "{workspaceRoot}/dist/apps/tangle-dapp/.next",
         "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
       ],
-      "cache": true
-    },
-    "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
     },
     "build-storybook": {
@@ -41,6 +38,10 @@
           "codeCoverage": true
         }
       }
+    },
+    "@nx/eslint:lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "cache": true
     }
   },
   "namedInputs": {
