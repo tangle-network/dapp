@@ -1,9 +1,4 @@
 import { BN } from '@polkadot/util';
-import { Typography } from '@webb-tools/webb-ui-components';
-import {
-  TypographyFontWeightValues,
-  WebbTypographyVariant,
-} from '@webb-tools/webb-ui-components/typography/types';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,16 +8,9 @@ import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 export type TokenAmountCellProps = {
   amount: BN;
   className?: string;
-  typographyVariant?: WebbTypographyVariant;
-  typographyFontWeight?: TypographyFontWeightValues;
 };
 
-const TokenAmountCell: FC<TokenAmountCellProps> = ({
-  amount,
-  className,
-  typographyVariant = 'body1',
-  typographyFontWeight = 'normal',
-}) => {
+const TokenAmountCell: FC<TokenAmountCellProps> = ({ amount, className }) => {
   const { nativeTokenSymbol } = useNetworkStore();
   const formattedBalance = formatBnToDisplayAmount(amount);
 
@@ -31,11 +19,9 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
   const decimalPart = parts.at(1);
 
   return (
-    <Typography
-      variant={typographyVariant}
-      fw={typographyFontWeight}
+    <span
       className={twMerge(
-        'text-mono-140 dark:text-mono-40 whitespace-nowrap text-center',
+        'text-mono-140 dark:text-mono-40 whitespace-nowrap block text-center',
         className
       )}
     >
@@ -44,7 +30,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
       <span className="opacity-60 text-inherit">
         {decimalPart !== undefined && `.${decimalPart}`} {nativeTokenSymbol}
       </span>
-    </Typography>
+    </span>
   );
 };
 

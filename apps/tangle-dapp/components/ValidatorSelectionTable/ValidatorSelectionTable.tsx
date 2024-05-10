@@ -39,9 +39,9 @@ import React, {
 } from 'react';
 
 import { Validator } from '../../types';
-import calculateCommission from '../../utils/calculateCommission';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 
 const DEFAULT_PAGINATION: PaginationState = {
@@ -98,9 +98,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
                   sourceVariant="address"
                   value={address}
                   theme="substrate"
-                >
-                  hello
-                </Avatar>
+                />
 
                 <Typography variant="body1" fw="normal" className="truncate">
                   {identity === address ? shortenString(address, 6) : identity}
@@ -144,8 +142,8 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         ),
         cell: (props) => (
           <div className="flex items-center justify-center">
-            <Chip color="dark-grey">
-              {calculateCommission(props.getValue()).toFixed(2) + '%'}
+            <Chip color="dark-grey" className="normal-case">
+              <TokenAmountCell amount={props.getValue()} />
             </Chip>
           </div>
         ),
