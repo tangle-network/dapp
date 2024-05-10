@@ -12,7 +12,7 @@ import {
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
-import useEvmAddress from './useEvmAddress';
+import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import useViemPublicClient from './useViemPublicClient';
 import useViemWalletClient from './useViemWalletClient';
@@ -80,7 +80,7 @@ function useEvmPrecompileAbiCall<
   const [error, setError] = useState<Error | null>(null);
   const [txHash, setTxHash] = useState<HexString | null>(null);
 
-  const activeEvmAddress = useEvmAddress();
+  const activeEvmAddress = useEvmAddress20();
   const viemPublicClient = useViemPublicClient();
   const viemWalletClient = useViemWalletClient();
 

@@ -1,14 +1,12 @@
 import { isAddress } from '@polkadot/util-crypto';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { useCallback, useMemo } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import usePromise from '../../hooks/usePromise';
-import useSubstrateTx from '../../hooks/useSubstrateTx';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
 import { toEvmAddress20 } from '../../utils/toEvmAddress20';
 
-export default function usePendingEVMBalance() {
+export default function usePendingEvmBalance() {
   const activeAccountAddress = useActiveAccountAddress();
 
   // Only check the EVM balance if the active account address
@@ -36,25 +34,5 @@ export default function usePendingEVMBalance() {
     null
   );
 
-  const withdrawTx = useSubstrateTx(
-    useCallback(
-      (api) => {
-        if (
-          evmAddress20 === null ||
-          balance === null ||
-          balance === ZERO_BIG_INT
-        ) {
-          return null;
-        }
-
-        return api.tx.evm.withdraw(evmAddress20, balance);
-      },
-      [evmAddress20, balance]
-    )
-  );
-
-  return {
-    balance,
-    ...withdrawTx,
-  };
+  return balance;
 }

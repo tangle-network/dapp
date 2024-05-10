@@ -8,7 +8,7 @@ import {
   getPrecompileAddress,
   type Precompile,
 } from '../constants/evmPrecompiles';
-import useEvmAddress from './useEvmAddress';
+import useEvmAddress20 from './useEvmAddress';
 import { AbiCall } from './useEvmPrecompileAbiCall';
 import useViemPublicClient from './useViemPublicClient';
 
@@ -18,7 +18,7 @@ function useEvmPrecompileFeeFetcher<PrecompileT extends Precompile>() {
   const [status, setStatus] = useState<QueryStatus>('idle');
   const [error, setError] = useState<WebbError | null>(null);
 
-  const activeEvmAddress = useEvmAddress();
+  const activeEvmAddress = useEvmAddress20();
   const client = useViemPublicClient();
 
   const fetchEvmPrecompileFees = useCallback(

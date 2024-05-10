@@ -314,7 +314,7 @@ function ManageButtonContainer(props: {
     props;
 
   return (
-    <div className="items-center hidden space-x-2 md:flex">
+    <div className="items-center space-x-2 flex">
       <ActionsDropdown
         buttonText="Manage"
         actionItems={[

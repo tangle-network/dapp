@@ -3,12 +3,12 @@ import { createWalletClient, custom, type WalletClient } from 'viem';
 
 import useNetworkStore from '../context/useNetworkStore';
 import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';
-import useEvmAddress from './useEvmAddress';
+import useEvmAddress20 from './useEvmAddress';
 
 const useViemWalletClient = () => {
   const [client, setClient] = useState<WalletClient | null>(null);
   const { network } = useNetworkStore();
-  const activeEvmAddress = useEvmAddress();
+  const activeEvmAddress = useEvmAddress20();
 
   // Update the wallet client when the network changes.
   useEffect(() => {
