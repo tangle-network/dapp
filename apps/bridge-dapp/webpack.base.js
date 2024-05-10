@@ -134,7 +134,10 @@ function createWebpack(env, mode = 'production') {
                   ],
                 ],
                 plugins: [
-                  isDevelopment && require.resolve('react-refresh/babel'),
+                  isDevelopment && [
+                    require.resolve('react-refresh/babel'),
+                    { skipEnvCheck: true },
+                  ],
                   'transform-class-properties',
                   ['@babel/plugin-transform-runtime', { loose: false }],
                   ['@babel/plugin-proposal-class-properties', { loose: true }],

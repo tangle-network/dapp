@@ -1,6 +1,5 @@
-import React from 'react';
 import { TokenIcon } from '@webb-tools/icons';
-import { TransactionProgressCard } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
+import { TransactionProgressCard } from '../../containers/TransactionProgressCard';
 
 export default {
   title: 'Design System/templates/TransactionProgressCard',

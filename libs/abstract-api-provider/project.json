@@ -11,23 +11,18 @@
         "outputPath": "dist/libs/abstract-api-provider",
         "main": "libs/abstract-api-provider/src/index.ts",
         "tsConfig": "libs/abstract-api-provider/tsconfig.lib.json",
-        "assets": ["libs/abstract-api-provider/*.md"],
-        "updateBuildableProjectDepsInPackageJson": true
+        "assets": ["libs/abstract-api-provider/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/abstract-api-provider/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/abstract-api-provider/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/abstract-api-provider/jest.config.ts"
       }
     }
   },

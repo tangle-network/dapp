@@ -63,17 +63,13 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/bridge-dapp/**/*.{ts,tsx,js,jsx}"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/bridge-dapp/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/bridge-dapp/jest.config.ts"
       }
     },
     "run-local-tangle": {

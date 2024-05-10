@@ -128,7 +128,10 @@ function createWebpackBase() {
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
               plugins: [
-                isDevelopment && require.resolve('react-refresh/babel'),
+                isDevelopment && [
+                  require.resolve('react-refresh/babel'),
+                  { skipEnvCheck: true },
+                ],
                 [
                   '@babel/plugin-proposal-private-property-in-object',
                   { loose: false },

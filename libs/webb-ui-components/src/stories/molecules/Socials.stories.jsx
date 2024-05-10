@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Socials } from '@webb-tools/webb-ui-components/components';
+import { Socials } from '../../components/Socials';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { CheckBoxMenu } from '@webb-tools/webb-ui-components/components';
 import { FilterIcon } from '@webb-tools/icons';
+import { CheckBoxMenu } from '../../components/CheckBoxMenu';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Stats } from '@webb-tools/webb-ui-components/components';
+import { Stats } from '../../components/Stats';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

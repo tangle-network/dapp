@@ -18,10 +18,6 @@
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
     },
-    "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-      "cache": true
-    },
     "build-storybook": {
       "inputs": [
         "default",
@@ -33,9 +29,18 @@
       ],
       "cache": true
     },
-    "e2e": {
-      "inputs": ["default", "^production"],
-      "cache": true
+    "@nx/jest:jest": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "cache": true,
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
     }
   },
   "namedInputs": {

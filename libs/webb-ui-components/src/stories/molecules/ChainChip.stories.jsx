@@ -1,4 +1,4 @@
-import { ChainChip } from '../../components';
+import { ChainChip } from '../../components/ChainChip';
 
 export default {
   title: 'Design System/Molecules/ChainChip',

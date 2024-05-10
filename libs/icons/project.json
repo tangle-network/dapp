@@ -14,23 +14,18 @@
         "tsConfig": "libs/icons/tsconfig.lib.json",
         "format": ["esm", "cjs"],
         "rollupConfig": ["libs/icons/rollup.config.js"],
-        "external": ["react", "react-dom"],
-        "updateBuildableProjectDepsInPackageJson": true
+        "external": ["react", "react-dom"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/icons/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/icons/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/icons/jest.config.ts"
       }
     }
   },

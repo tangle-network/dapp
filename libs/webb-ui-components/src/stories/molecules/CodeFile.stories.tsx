@@ -1,4 +1,4 @@
-import { CodeFile } from '@webb-tools/webb-ui-components/components';
+import CodeFile from '../../components/CodeFile';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof CodeFile> = {

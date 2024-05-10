@@ -11,23 +11,18 @@
         "outputPath": "dist/libs/note-manager",
         "main": "libs/note-manager/src/index.ts",
         "tsConfig": "libs/note-manager/tsconfig.lib.json",
-        "assets": ["libs/note-manager/*.md"],
-        "updateBuildableProjectDepsInPackageJson": true
+        "assets": ["libs/note-manager/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/note-manager/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/note-manager/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/note-manager/jest.config.ts"
       }
     }
   },

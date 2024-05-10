@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { DepositConfirm } from '@webb-tools/webb-ui-components/containers';
+import { DepositConfirm } from '../../containers/ConfirmationCard/DepositConfirm';
 import { withRouter } from 'storybook-addon-react-router-v6';
 export default {
   title: 'Design System/Templates/DepositConfirm',

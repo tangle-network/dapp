@@ -1,5 +1,4 @@
-import React from 'react';
-import { TokenPair } from '@webb-tools/webb-ui-components/components';
+import { TokenPair } from '../../components/TokenPair';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

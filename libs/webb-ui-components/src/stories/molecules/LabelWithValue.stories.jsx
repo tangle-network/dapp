@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { LabelWithValue } from '@webb-tools/webb-ui-components/components';
+import { LabelWithValue } from '../../components/LabelWithValue';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

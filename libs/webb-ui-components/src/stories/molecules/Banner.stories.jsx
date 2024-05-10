@@ -1,4 +1,4 @@
-import { Banner, Typography } from '@webb-tools/webb-ui-components';
+import { Banner } from '../../components/Banner';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

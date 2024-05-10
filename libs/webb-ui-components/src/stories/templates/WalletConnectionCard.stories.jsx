@@ -1,7 +1,7 @@
-import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components';
-import { withRouter } from 'storybook-addon-react-router-v6';
-import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
+import { WalletConnectionCard } from '../../components/WalletConnectionCard';
+import { withRouter } from 'storybook-addon-react-router-v6';
 
 export default {
   title: 'Design System/Templates/WalletConnectionCard',
@@ -18,7 +18,7 @@ const walletsConfig = {
     platform: 'EVM',
     enabled: true,
     detect() {
-      const hasWeb3 = web3 !== 'undefined';
+      const hasWeb3 = window.web3 !== 'undefined';
       if (hasWeb3) {
         return window.web3.__isMetaMaskShim__;
       }

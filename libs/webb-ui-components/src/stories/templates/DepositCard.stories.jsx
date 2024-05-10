@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { DepositCard } from '@webb-tools/webb-ui-components/containers/DepositCard';
 import { withRouter } from 'storybook-addon-react-router-v6';
+import { DepositCard } from '../../containers/DepositCard';
 export default {
   title: 'Design System/Templates/DepositCard',
   component: DepositCard,

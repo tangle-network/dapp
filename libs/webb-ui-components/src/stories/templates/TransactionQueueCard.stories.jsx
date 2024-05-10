@@ -1,6 +1,5 @@
-import React from 'react';
-import { TransactionQueueCard } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
 import { TokenIcon } from '@webb-tools/icons';
+import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
 
 export default {
   title: 'Design System/templates/TransactionQueueCard',
@@ -37,7 +36,7 @@ WithInProgressTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
@@ -67,7 +66,7 @@ WithSuccessTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
@@ -97,7 +96,7 @@ WithFailedTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
@@ -127,7 +126,7 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230SZ',
@@ -151,7 +150,7 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(Date.now() - 60 * 60 * 1000),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
@@ -176,7 +175,7 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(Date.now() - 60 * 1000),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
@@ -199,7 +198,7 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',

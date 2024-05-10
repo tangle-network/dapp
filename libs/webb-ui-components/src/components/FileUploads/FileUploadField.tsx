@@ -23,18 +23,21 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
   }, [value]);
 
   // Handle change event
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setNote(value);
-    onChange?.(value);
-  }, []);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setNote(value);
+      onChange?.(value);
+    },
+    [onChange]
+  );
 
   // Handle upload event
   const handleUpload = useCallback(async () => {
     setIsUploading(true);
     await onUpload?.(note ?? '');
     setIsUploading(false);
-  }, [note]);
+  }, [note, onUpload]);
 
   return (
     <div className="space-y-2">

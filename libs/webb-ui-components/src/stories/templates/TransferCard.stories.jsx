@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { TransferCard } from '@webb-tools/webb-ui-components/containers/TransferCard';
 import { withRouter } from 'storybook-addon-react-router-v6';
+import { TransferCard } from '../../containers/TransferCard';
 export default {
   title: 'Design System/Templates/TransferCard',
   component: TransferCard,

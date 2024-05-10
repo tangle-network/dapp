@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { WithdrawCard } from '@webb-tools/webb-ui-components/containers/WithdrawCard';
 import { withRouter } from 'storybook-addon-react-router-v6';
+import { WithdrawCard } from '../../containers/WithdrawCard';
 export default {
   title: 'Design System/Templates/WithdrawCard',
   component: WithdrawCard,

@@ -1,7 +1,4 @@
-import {
-  HiddenValue,
-  HiddenValueEye,
-} from '@webb-tools/webb-ui-components/components';
+import { HiddenValue, HiddenValueEye } from '../../components/HiddenValue';
 import { Meta, StoryFn } from '@storybook/react';
 import { HiddenValueProps } from '../../components/HiddenValue/types';
 

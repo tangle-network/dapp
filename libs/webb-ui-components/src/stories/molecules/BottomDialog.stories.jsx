@@ -2,7 +2,7 @@ import {
   BottomDialog,
   BottomDialogTrigger,
   BottomDialogPortal,
-} from '@webb-tools/webb-ui-components/components';
+} from '../../components/BottomDialog';
 
 export default {
   title: 'Design System/Molecules/BottomDialog',
