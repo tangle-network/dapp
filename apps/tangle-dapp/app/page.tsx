@@ -1,4 +1,5 @@
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/Typography';
 import { Metadata } from 'next';
 import { FC, Suspense } from 'react';
 
@@ -15,7 +16,7 @@ export const metadata: Metadata = createPageMetadata({
 const AccountPage: FC = () => {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-6 flex-col xl:flex-row">
+      <div className="flex flex-col gap-6 xl:flex-row">
         <Suspense
           fallback={
             <SkeletonLoader className="rounded-2xl md:max-w-full xl:max-w-[556px] min-h-[274px]" />
