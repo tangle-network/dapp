@@ -47,11 +47,23 @@ export const useValidators = (
         address: accountId.toString(),
         isActive,
         identities: identityNames,
-        exposures,
         prefs: validatorPrefs,
         restakingLedgers,
         jobs: jobIdLookups,
         activeJobIds: activeJobs,
+        getExposure: (address) => {
+          const exposure = exposures.get(address);
+
+          if (exposure === undefined || exposure.exposureMeta === null) {
+            return undefined;
+          }
+
+          return {
+            own: exposure.exposureMeta.own.toBn(),
+            total: exposure.exposureMeta.total.toBn(),
+            nominatorCount: exposure.exposureMeta.nominatorCount.toNumber(),
+          };
+        },
       })
     );
   }, [

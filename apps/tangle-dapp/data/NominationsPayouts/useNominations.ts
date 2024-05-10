@@ -62,7 +62,21 @@ const useNominations = () => {
         isActive,
         identities,
         prefs,
-        exposures,
+        getExposure: (address) => {
+          const exposureOpt = exposures.get(address);
+
+          if (exposureOpt === undefined || exposureOpt.isNone) {
+            return undefined;
+          }
+
+          const exposure = exposureOpt.unwrap();
+
+          return {
+            own: exposure.own.toBn(),
+            total: exposure.total.toBn(),
+            nominatorCount: exposure.nominatorCount.toNumber(),
+          };
+        },
       });
     });
 
