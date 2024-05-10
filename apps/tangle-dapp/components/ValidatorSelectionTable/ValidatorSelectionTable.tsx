@@ -39,6 +39,7 @@ import React, {
 } from 'react';
 
 import { Validator } from '../../types';
+import calculateCommission from '../../utils/calculateCommission';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
@@ -52,7 +53,7 @@ const DEFAULT_PAGINATION: PaginationState = {
 const columnHelper = createColumnHelper<Validator>();
 
 const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
-  data,
+  allValidators,
   setSelectedValidators,
 }) => {
   const [searchValue, setSearchValue] = useState('');
@@ -181,7 +182,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         cell: (props) => (
           <div className="flex items-center justify-center">
             <Chip color="dark-grey">
-              {Number(props.getValue()).toFixed(2)}%
+              {calculateCommission(props.getValue()).toFixed(2)}%
             </Chip>
           </div>
         ),
@@ -197,7 +198,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
 
   const tableProps = useMemo<TableOptions<Validator>>(
     () => ({
-      data,
+      data: allValidators,
       columns,
       state: {
         columnVisibility: {
@@ -258,7 +259,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       getRowId: (row) => row.address,
       autoResetPageIndex: false,
     }),
-    [columns, data, pagination, rowSelection, searchValue, sorting]
+    [columns, allValidators, pagination, rowSelection, searchValue, sorting]
   );
 
   const table = useReactTable(tableProps);
@@ -275,7 +276,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           className="mb-1"
         />
 
-        {data.length === 0 ? (
+        {allValidators.length === 0 ? (
           <ContainerSkeleton className="max-h-[340px] w-full" />
         ) : (
           <Table

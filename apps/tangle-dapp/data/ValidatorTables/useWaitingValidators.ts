@@ -1,3 +1,4 @@
+import { DEFAULT_FLAGS_WAITING } from '@webb-tools/dapp-config';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
@@ -9,8 +10,8 @@ const useWaitingValidators = () => {
     useCallback(
       (api) =>
         api.derive.staking
-          .waitingInfo()
-          .pipe(map((info) => info.info.map((i) => i.accountId))),
+          .waitingInfo(DEFAULT_FLAGS_WAITING)
+          .pipe(map((derive) => derive.waiting)),
       []
     )
   );

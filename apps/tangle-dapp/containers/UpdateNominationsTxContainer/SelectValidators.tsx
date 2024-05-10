@@ -16,7 +16,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   return (
     <div className="flex flex-col col-span-2 gap-2">
       <ValidatorSelectionTable
-        data={validators}
+        allValidators={validators}
         setSelectedValidators={setSelectedValidators}
       />
 

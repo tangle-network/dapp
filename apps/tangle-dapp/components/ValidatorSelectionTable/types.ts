@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { Validator } from '../../types';
 
 export type ValidatorSelectionTableProps = {
-  data: Validator[];
+  allValidators: Validator[];
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
 };
 
