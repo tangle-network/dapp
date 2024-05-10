@@ -7,8 +7,6 @@ import useViemPublicClient from '../../hooks/useViemPublicClient';
 import ensureError from '../../utils/ensureError';
 import useServiceDetails from './useServiceDetails';
 
-// const REQUEST_URL =
-//   'https://testnet-explorer.tangle.tools/api/v2/smart-contracts/';
 const CONTRACT_API_PATH = '/api/v2/smart-contracts/';
 
 export default function usePermittedCaller() {
@@ -80,6 +78,7 @@ export default function usePermittedCaller() {
   }, [notificationApi, permittedCaller, publicClient, network.evmExplorerUrl]);
 
   return {
+    permittedCaller,
     codeData,
     isLoading,
     error,

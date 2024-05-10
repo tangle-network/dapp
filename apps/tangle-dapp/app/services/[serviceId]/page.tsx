@@ -1,6 +1,6 @@
-import DetailTabs from './DetailTabs';
 import InfoCard from './InfoCard';
 import ParticipantsTable from './ParticipantsTable';
+import PermittedCaller from './PermittedCaller';
 
 export default function ServiceDetails({
   params,
@@ -14,10 +14,7 @@ export default function ServiceDetails({
       <InfoCard serviceId={serviceId} />
 
       <div className="flex flex-col lg:flex-row lg:items-stretch gap-5">
-        <DetailTabs
-          serviceId={serviceId}
-          className="lg:min-h-[600px] md:flex-[3] min-w-0"
-        />
+        <PermittedCaller className="lg:min-h-[600px] md:flex-[3] min-w-0" />
 
         <ParticipantsTable className="lg:min-h-[600px] md:flex-[2]" />
       </div>
