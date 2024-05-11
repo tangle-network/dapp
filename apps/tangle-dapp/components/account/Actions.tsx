@@ -1,6 +1,5 @@
 'use client';
 
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import {
   ArrowLeftRightLineIcon,
   CoinsLineIcon,
@@ -13,7 +12,6 @@ import { FC, useState } from 'react';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -36,8 +34,6 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const { transferable: transferableBalance } = useBalances();
-
-  const pendingEvmBalance = usePendingEvmBalance();
 
   const {
     isVesting,
@@ -127,9 +123,7 @@ const Actions: FC = () => {
           />
         )}
 
-        {pendingEvmBalance !== null && pendingEvmBalance > ZERO_BIG_INT && (
-          <WithdrawEvmBalanceAction />
-        )}
+        <WithdrawEvmBalanceAction />
       </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}

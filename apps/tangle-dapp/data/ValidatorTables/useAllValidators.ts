@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import useActiveValidators from './useActiveValidators';
 import useWaitingValidators from './useWaitingValidators';

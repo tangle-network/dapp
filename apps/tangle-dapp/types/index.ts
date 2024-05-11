@@ -233,3 +233,5 @@ export type ExposureMap = Record<
     exposureMeta: SpStakingPagedExposureMetadata;
   }
 >;
+
+export type TokenSymbol = 'tTNT' | 'TNT';

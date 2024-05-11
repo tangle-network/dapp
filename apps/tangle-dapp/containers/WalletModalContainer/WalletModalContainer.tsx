@@ -77,14 +77,12 @@ const networkToTypedChainIds = (network: Network) => {
         evm: PresetTypedChainId.TangleMainnetEVM,
         substrate: PresetTypedChainId.TangleMainnetNative,
       };
-
     case NetworkId.TANGLE_TESTNET:
     case NetworkId.TANGLE_LOCAL_DEV:
       return {
         evm: PresetTypedChainId.TangleTestnetEVM,
         substrate: PresetTypedChainId.TangleTestnetNative,
       };
-
     case NetworkId.CUSTOM: {
       if (typeof network.evmChainId !== 'number') {
         return;
@@ -98,8 +96,5 @@ const networkToTypedChainIds = (network: Network) => {
         ),
       };
     }
-
-    default:
-      return;
   }
 };

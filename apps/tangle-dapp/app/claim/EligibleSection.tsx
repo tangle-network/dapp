@@ -338,7 +338,8 @@ function preparePayload(
 function sendTransaction(
   tx: SubmittableExtrinsic<'promise', ISubmittableResult>
 ) {
-  console.log(`Sending transaction with args ${tx.args.toString()}`);
+  console.debug(`Sending transaction with args ${tx.args.toString()}`);
+
   return new Promise<string>((resolve, reject) => {
     tx.send(async (result) => {
       const status = result.status;

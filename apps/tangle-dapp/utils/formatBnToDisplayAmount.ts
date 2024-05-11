@@ -42,7 +42,7 @@ function formatBnToDisplayAmount(
   // Convert remainder to a string and pad with zeros if necessary.
   let remainderString = remainder.toString(10);
 
-  // There is a case when the decimals part has leading 0s, so that the remainer
+  // There is a case when the decimals part has leading 0s, so that the remaining
   // string can missing those 0s when we use `mod` method.
   // Solution: Try to construct the string again and check the length,
   // if the length is not the same, we can say that the remainder string is missing

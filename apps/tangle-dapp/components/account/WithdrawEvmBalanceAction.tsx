@@ -6,8 +6,8 @@ import Spinner from '@webb-tools/icons/Spinner';
 import { FC, useCallback } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
 import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
-import useEvmBalanceWithdrawTx from '../../data/useEvmBalanceWithdrawTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { formatTokenBalance } from '../../utils/polkadot';
 import ActionItem from './ActionItem';
@@ -26,14 +26,14 @@ const WithdrawEvmBalanceAction: FC = () => {
     execute();
   }, [execute]);
 
-  // TODO: Notify user using tx toast.
+  // TODO: Notify user using tx toast (via useTxNotification).
 
-  // If withdraw is successful, don't show the action item
+  // If withdraw was successful, don't show the action item.
   if (status === TxStatus.COMPLETE) {
     return null;
   }
-
-  if (pendingEvmBalance === null || pendingEvmBalance === ZERO_BIG_INT) {
+  // Nothing to withdraw or not available.
+  else if (pendingEvmBalance === null || pendingEvmBalance === ZERO_BIG_INT) {
     return null;
   }
 
@@ -54,8 +54,10 @@ const WithdrawEvmBalanceAction: FC = () => {
           <>Oops, something went wrong. Please try again.</>
         ) : (
           <>
-            There is {formatTokenBalance(pendingEvmBalance, nativeTokenSymbol)}{' '}
-            available to withdraw. Use this action to release the funds.
+            <strong>
+              {formatTokenBalance(pendingEvmBalance, nativeTokenSymbol)}
+            </strong>{' '}
+            is available to withdraw. Use this action to release the funds.
           </>
         )
       }
