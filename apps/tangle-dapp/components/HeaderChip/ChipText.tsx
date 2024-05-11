@@ -3,7 +3,6 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 
-import getRoundedDownNumberWith2Decimals from '../../utils/getRoundedDownNumberWith2Decimals';
 import dataHooks from './dataHooks';
 import type { HeaderChipItemProps } from './types';
 
@@ -27,7 +26,7 @@ const ChipText = ({ label }: Props) => {
       ) : error ? (
         'Error'
       ) : data === null ? null : (
-        getRoundedDownNumberWith2Decimals(data)
+        data
       )}
     </>
   );

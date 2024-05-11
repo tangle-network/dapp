@@ -91,8 +91,11 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
   // Notify transaction status updates via a toast notification.
   useEffect(() => {
-    // TODO: This won't trigger the notification if the
-    if (agnosticStatus === TxStatus.PROCESSING || isEvmAccount === null) {
+    if (
+      agnosticStatus === TxStatus.NOT_YET_INITIATED ||
+      agnosticStatus === TxStatus.PROCESSING ||
+      isEvmAccount === null
+    ) {
       return;
     }
 
@@ -117,6 +120,16 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     substrateError,
     substrateTxHash,
   ]);
+
+  // Clear notification state when the active account is disconnected,
+  // to prevent a bug from re-triggering the notification when an account
+  // is re-connected.
+  useEffect(() => {
+    if (activeAccountAddress === null) {
+      substrateReset();
+      evmReset();
+    }
+  }, [activeAccountAddress, evmReset, substrateReset]);
 
   return {
     status: agnosticStatus,
