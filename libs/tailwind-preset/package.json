@@ -1,6 +1,5 @@
 {
   "name": "@webb-tools/tailwind-preset",
   "version": "0.0.1",
-  "type": "commonjs",
   "main": "index.js"
 }

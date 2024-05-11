@@ -5,11 +5,11 @@ const svgr = require('@svgr/rollup');
 const copy = require('rollup-plugin-copy');
 const image = require('@rollup/plugin-image');
 
-module.exports = (config) => {
-  return {
+module.exports = (config) =>
+  config.output.map((outputCfg) => ({
     ...config,
     output: {
-      ...(config.output ?? {}),
+      ...outputCfg,
       sourcemap: false,
     },
     plugins: [
@@ -22,7 +22,6 @@ module.exports = (config) => {
           },
         ],
       }),
-
       svgr(),
       typescript({
         tsconfig: 'libs/icons/tsconfig.lib.json',
@@ -30,5 +29,4 @@ module.exports = (config) => {
       image(),
       commonjs(),
     ],
-  };
-};
+  }));
