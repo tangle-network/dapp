@@ -20,6 +20,7 @@ export type AmountInputProps = {
   errorOnEmptyValue?: boolean;
   setAmount: (newAmount: BN | null) => void;
   setErrorMessage?: (error: string | null) => void;
+  placeholder?: string;
 };
 
 const AmountInput: FC<AmountInputProps> = ({
@@ -36,6 +37,7 @@ const AmountInput: FC<AmountInputProps> = ({
   baseInputOverrides,
   errorOnEmptyValue = false,
   setErrorMessage,
+  placeholder,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
@@ -99,7 +101,7 @@ const AmountInput: FC<AmountInputProps> = ({
         inputRef={inputRef}
         inputClassName="placeholder:text-md"
         type="text"
-        placeholder={`0 ${nativeTokenSymbol}`}
+        placeholder={placeholder ?? `0 ${nativeTokenSymbol}`}
         size="sm"
         autoComplete="off"
         value={displayAmount}

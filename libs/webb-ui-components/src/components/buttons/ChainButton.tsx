@@ -36,7 +36,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
         )}
         ref={ref}
       >
-        <div className="flex items-center gap-1 mr-1">
+        <div className="flex items-center gap-1.5 mr-1 justify-between">
           {chain && (
             <ChainIcon
               status={status}

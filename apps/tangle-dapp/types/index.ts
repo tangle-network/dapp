@@ -14,6 +14,7 @@ export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
   ACCOUNT = '/',
+  BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
 }
