@@ -11,11 +11,15 @@ import {
   useState,
 } from 'react';
 
+import { BRIDGE_SUPPORTED_CHAINS } from '../constants/bridge';
+
 interface BridgeContextProps {
   sourceChain: ChainConfig | null;
-  setSourceChain: (chain: ChainConfig) => void;
+  setSourceChain: (chain: ChainConfig | null) => void;
+  supportedSourceChains: ChainConfig[];
   destinationChain: ChainConfig | null;
-  setDestinationChain: (chain: ChainConfig) => void;
+  setDestinationChain: (chain: ChainConfig | null) => void;
+  supportedDestinationChains: ChainConfig[];
   destinationAddress: string;
   setDestinationAddress: (address: string) => void;
   amount: BN | null;
@@ -32,10 +36,12 @@ const BridgeContext = createContext<BridgeContextProps>({
   setDestinationChain: () => {
     //
   },
+  supportedSourceChains: [],
   destinationAddress: '',
   setDestinationAddress: () => {
     //
   },
+  supportedDestinationChains: [],
   amount: null,
   setAmount: () => {
     //
@@ -64,8 +70,10 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         setSourceChain,
         destinationChain,
         setDestinationChain,
+        supportedSourceChains: BRIDGE_SUPPORTED_CHAINS,
         destinationAddress,
         setDestinationAddress,
+        supportedDestinationChains: BRIDGE_SUPPORTED_CHAINS,
         amount,
         setAmount,
         isLoading,

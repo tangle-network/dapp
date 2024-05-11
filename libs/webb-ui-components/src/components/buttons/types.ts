@@ -196,7 +196,7 @@ export type ChainButtonProps = PropsOf<'button'> & {
   /**
    * The classname of the chain name
    */
-  textClassname?: string;
+  textClassName?: string;
 
   /**
    * The classname of the dropdown icon

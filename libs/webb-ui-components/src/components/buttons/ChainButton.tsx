@@ -11,7 +11,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
       className,
       chain,
       status,
-      textClassname,
+      textClassName,
       disabled,
       placeholder = 'Select Chain',
       ...props
@@ -19,8 +19,8 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
     ref
   ) => {
     const textClsx = useMemo(() => {
-      return twMerge('font-bold', textClassname);
-    }, [textClassname]);
+      return twMerge('font-bold', textClassName);
+    }, [textClassName]);
 
     return (
       <button
