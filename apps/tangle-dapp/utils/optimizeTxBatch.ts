@@ -16,6 +16,7 @@ const optimizeTxBatch = (
     return txs[0];
   }
 
+  // TODO: Batching logic needs to consider the maximum allowed batch limit: api.consts.utility.batchedCallsLimit. If >limit, split into multiple batches/transactions. Not as high priority since the limit is (as of writing this) ~10,000.
   return api.tx.utility.batch(txs);
 };
 
