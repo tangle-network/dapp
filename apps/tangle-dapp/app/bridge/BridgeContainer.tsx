@@ -10,19 +10,16 @@ import AddressInput, {
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { useBridge } from '../../context/BridgeContext';
 import ChainSelectors from './ChainSelectors';
+import useActionButton from './useActionButton';
 
 interface BridgeContainerProps {
   className?: string;
 }
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
-  const {
-    destinationAddress,
-    setDestinationAddress,
-    amount,
-    setAmount,
-    isLoading,
-  } = useBridge();
+  const { destinationAddress, setDestinationAddress, amount, setAmount } =
+    useBridge();
+  const { buttonAction, buttonText, isLoading } = useActionButton();
 
   return (
     <div
@@ -59,10 +56,15 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
             setValue={setDestinationAddress}
           />
 
-          {/* Tx Info (Fees & Estimated Time) */}
+          {/* TODO: Tx Info (Fees & Estimated Time) */}
         </div>
-        <Button isFullWidth isDisabled={isLoading}>
-          Connect Wallet
+        <Button
+          isFullWidth
+          isDisabled={isLoading}
+          isLoading={isLoading}
+          onClick={buttonAction}
+        >
+          {buttonText}
         </Button>
       </div>
     </div>

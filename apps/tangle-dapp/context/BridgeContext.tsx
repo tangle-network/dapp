@@ -1,7 +1,6 @@
 'use client';
 
 import { BN } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import {
   createContext,
@@ -24,7 +23,6 @@ interface BridgeContextProps {
   setDestinationAddress: (address: string) => void;
   amount: BN | null;
   setAmount: (amount: BN | null) => void;
-  isLoading: boolean;
 }
 
 const BridgeContext = createContext<BridgeContextProps>({
@@ -46,7 +44,6 @@ const BridgeContext = createContext<BridgeContextProps>({
   setAmount: () => {
     //
   },
-  isLoading: false,
 });
 
 export const useBridge = () => {
@@ -54,13 +51,11 @@ export const useBridge = () => {
 };
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { loading: isLoading } = useWebContext();
-
   const [sourceChain, setSourceChain] = useState<ChainConfig | null>(null);
   const [destinationChain, setDestinationChain] = useState<ChainConfig | null>(
     null
   );
-  const [destinationAddress, setDestinationAddress] = useState<string>('');
+  const [destinationAddress, setDestinationAddress] = useState('');
   const [amount, setAmount] = useState<BN | null>(null);
 
   return (
@@ -76,7 +71,6 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         supportedDestinationChains: BRIDGE_SUPPORTED_CHAINS,
         amount,
         setAmount,
-        isLoading,
       }}
     >
       {children}
