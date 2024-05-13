@@ -33,7 +33,6 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
     >
       <div className="flex-1 w-full flex flex-col justify-between">
         <div className="space-y-8">
-          {/* Chain Dropdowns */}
           <ChainSelectors />
 
           <AmountInput

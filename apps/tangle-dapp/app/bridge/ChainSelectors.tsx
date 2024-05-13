@@ -58,6 +58,8 @@ const ChainSelectors: FC = () => {
   const switchChains = useCallback(() => {
     const temp = sourceChain;
 
+    // If the destination chain is null or is in the supported destination chains,
+    // set it as the source chain.
     if (
       temp === null ||
       supportedDestinationChains.find((chain) => chain.id === temp.id)
@@ -67,6 +69,8 @@ const ChainSelectors: FC = () => {
       setDestinationChain(null);
     }
 
+    // If the source chain is null or is in the supported source chains,
+    // set it as the destination chain.
     if (
       destinationChain === null ||
       supportedSourceChains.find((chain) => chain.id === destinationChain.id)

@@ -28,21 +28,21 @@ interface BridgeContextProps {
 const BridgeContext = createContext<BridgeContextProps>({
   sourceChain: null,
   setSourceChain: () => {
-    //
+    return;
   },
   destinationChain: null,
   setDestinationChain: () => {
-    //
+    return;
   },
   supportedSourceChains: [],
   destinationAddress: '',
   setDestinationAddress: () => {
-    //
+    return;
   },
   supportedDestinationChains: [],
   amount: null,
   setAmount: () => {
-    //
+    return;
   },
 });
 
