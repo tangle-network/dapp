@@ -44,7 +44,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
               >
                 <Typography
                   variant={triggerTypographyVariant}
-                  fw="black"
+                  fw="bold"
                   className="!text-inherit"
                 >
                   {tab}

@@ -76,15 +76,7 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ fileTree }) => {
 
           <Panel className="!overflow-auto">
             <CodeFile
-              getCodeFileFnc={async () => {
-                if (!activeFileData?.fetchUrl) throw new Error('No fetchUrl');
-                const res = await fetch(activeFileData.fetchUrl);
-                if (res.ok) {
-                  const code = await res.text();
-                  return code;
-                }
-                throw new Error('Cannot load file');
-              }}
+              code="contract A {}"
               language={activeFileData?.language}
               isInNextProject
             />
