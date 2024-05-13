@@ -68,7 +68,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         supportedSourceChains: BRIDGE_SUPPORTED_CHAINS,
         destinationAddress,
         setDestinationAddress,
-        supportedDestinationChains: BRIDGE_SUPPORTED_CHAINS,
+        supportedDestinationChains: [BRIDGE_SUPPORTED_CHAINS[0]],
         amount,
         setAmount,
       }}

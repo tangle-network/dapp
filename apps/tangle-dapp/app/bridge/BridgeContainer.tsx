@@ -63,6 +63,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
           isDisabled={isLoading}
           isLoading={isLoading}
           onClick={buttonAction}
+          loadingText="Connecting..."
         >
           {buttonText}
         </Button>

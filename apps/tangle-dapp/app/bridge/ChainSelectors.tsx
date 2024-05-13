@@ -55,6 +55,35 @@ const ChainSelectors: FC = () => {
     [setDestinationChain, setSourceChain, sourceChain?.id]
   );
 
+  const switchChains = useCallback(() => {
+    const temp = sourceChain;
+
+    if (
+      temp === null ||
+      supportedDestinationChains.find((chain) => chain.id === temp.id)
+    ) {
+      setDestinationChain(temp);
+    } else {
+      setDestinationChain(null);
+    }
+
+    if (
+      destinationChain === null ||
+      supportedSourceChains.find((chain) => chain.id === destinationChain.id)
+    ) {
+      setSourceChain(destinationChain);
+    } else {
+      setSourceChain(null);
+    }
+  }, [
+    setSourceChain,
+    setDestinationChain,
+    destinationChain,
+    sourceChain,
+    supportedDestinationChains,
+    supportedSourceChains,
+  ]);
+
   return (
     <div className="flex flex-col md:flex-row justify-between items-center gap-3">
       <ChainSelector
@@ -65,7 +94,12 @@ const ChainSelectors: FC = () => {
         className="flex-1 w-full md:w-auto"
       />
 
-      <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
+      <div
+        className="cursor-pointer p-1 rounded-full hover:bg-mono-20 dark:hover:bg-mono-160"
+        onClick={switchChains}
+      >
+        <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
+      </div>
 
       <ChainSelector
         title="To"
