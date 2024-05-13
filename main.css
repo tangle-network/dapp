@@ -860,6 +860,8 @@ video {
   max-height: 24rem;
 }.max-h-\[200px\]{
   max-height: 200px;
+}.max-h-\[var\(--radix-dropdown-menu-content-max-height\)\]{
+  max-height: var(--radix-dropdown-menu-content-max-height);
 }.min-h-\[28px\]{
   min-height: 28px;
 }.min-h-\[36px\]{
@@ -1416,6 +1418,9 @@ video {
   border-color: rgb(160 55 11 / var(--tw-border-opacity));
 }.border-transparent{
   border-color: transparent;
+}.border-yellow-40{
+  --tw-border-opacity: 1;
+  border-color: rgb(248 213 103 / var(--tw-border-opacity));
 }.border-yellow-70{
   --tw-border-opacity: 1;
   border-color: rgb(244 195 40 / var(--tw-border-opacity));
@@ -1533,6 +1538,9 @@ video {
 }.bg-mono-100{
   --tw-bg-opacity: 1;
   background-color: rgb(156 160 176 / var(--tw-bg-opacity));
+}.bg-mono-120{
+  --tw-bg-opacity: 1;
+  background-color: rgb(108 113 128 / var(--tw-bg-opacity));
 }.bg-mono-160{
   --tw-bg-opacity: 1;
   background-color: rgb(58 62 83 / var(--tw-bg-opacity));
@@ -2263,22 +2271,7 @@ main{
 }/* Input darkmode fix for checkbox / radio */.dark [type='checkbox']:checked,
 .dark [type='radio']:checked {
   background-color: currentColor;
-}/** Load fonts *//* Font Family Breeze Sans */@font-face {
-  font-family: 'BreezeSans';
-  src: url('BreezeSans-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}@font-face {
-  font-family: 'BreezeSans';
-  src: url('BreezeSans-Medium.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}@font-face {
-  font-family: 'BreezeSans';
-  src: url('BreezeSans-Bold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-}/* Cousine */@font-face {
+}/** Load fonts *//* Font Family Cousine */@font-face {
   font-family: 'Cousine';
   src: url('Cousine-Regular.ttf') format('truetype');
   font-weight: 400;
@@ -2288,36 +2281,32 @@ main{
   src: url('Cousine-Bold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
-}/** Default font is BreezeSans use fonts */*:not(code, .mono1, .mono2) {
-  font-family: 'BreezeSans', -apple-system, BlinkMacSystemFont, Arial,
-    sans-serif;
-}/* Applied Satoshi for all element when the html tag has `font-satoshi` classnames *//* Font Family Satoshi */@font-face {
-    font-family: 'Satoshi';
-    src: url('Satoshi-Black.ttf') format('truetype');
-    font-weight: 900;
-    font-style: normal;
-  }@font-face {
-    font-family: 'Satoshi';
-    src: url('Satoshi-BlackItalic.ttf') format('truetype');
-    font-weight: 900;
-    font-style: italic;
-  }@font-face {
-    font-family: 'Satoshi';
-    src: url('Satoshi-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-  }@font-face {
-    font-family: 'Satoshi';
-    src: url('Satoshi-BoldItalic.ttf') format('truetype');
-    font-weight: 700;
-    font-style: italic;
-  }@font-face {
-    font-family: 'Satoshi';
-    src: url('Satoshi-Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-  }html.font-satoshi *:not(code, .mono1, .mono2){
-
+}/* Font Family Satoshi */@font-face {
+  font-family: 'Satoshi';
+  src: url('Satoshi-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}@font-face {
+  font-family: 'Satoshi';
+  src: url('Satoshi-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}@font-face {
+  font-family: 'Satoshi';
+  src: url('Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}@font-face {
+  font-family: 'Satoshi';
+  src: url('Satoshi-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}@font-face {
+  font-family: 'Satoshi';
+  src: url('Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}/** Default font is Satoshi use fonts */*:not(code, .mono1, .mono2) {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }/* Applied Satoshi Variable for all element when the html tag has `font-satoshi-var` classnames */@font-face {
     font-family: 'Satoshi Variable';
@@ -2605,6 +2594,8 @@ main{
   fill: #3D7BCE !important;
 }:root {
   --adjust-amount-width: 160px;
+
+  --radix-dropdown-menu-content-max-height: 320px;
 }.bg-body-base{
   background-size: cover;
   background-attachment: fixed;
@@ -3249,6 +3240,9 @@ main{
 }:is(.dark .dark\:border-yellow-30){
   --tw-border-opacity: 1;
   border-color: rgb(255 224 124 / var(--tw-border-opacity));
+}:is(.dark .dark\:border-yellow-90){
+  --tw-border-opacity: 1;
+  border-color: rgb(175 140 30 / var(--tw-border-opacity));
 }:is(.dark .dark\:border-r-mono-160){
   --tw-border-opacity: 1;
   border-right-color: rgb(58 62 83 / var(--tw-border-opacity));
