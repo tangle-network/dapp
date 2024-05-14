@@ -6,7 +6,7 @@ import type { Subscription } from 'rxjs';
 
 import useNetworkStore from '../context/useNetworkStore';
 import useFormatReturnType from '../hooks/useFormatReturnType';
-import { getPolkadotApiRx } from '../utils/polkadot';
+import { getApiRx } from '../utils/polkadot';
 
 export default function useEraCountSubscription(
   defaultValue: number | null = null
@@ -22,7 +22,7 @@ export default function useEraCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         sub = api.query.staking.activeEra().subscribe((nextEra) => {
           const activeEra = nextEra.unwrapOr(null);

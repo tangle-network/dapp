@@ -6,7 +6,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import usePromise from '../../hooks/usePromise';
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiPromise, getApiRx } from '../../utils/polkadot';
 
 /**
  * Format bytes to megabytes, rounded to two decimal places
@@ -24,12 +24,12 @@ const ApiDevStats: FC = () => {
   const { rpcEndpoint } = useNetworkStore();
 
   const { result: api } = usePromise(
-    useCallback(() => getPolkadotApiPromise(rpcEndpoint), [rpcEndpoint]),
+    useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
     null
   );
 
   const { result: apiRx } = usePromise(
-    useCallback(() => getPolkadotApiRx(rpcEndpoint), [rpcEndpoint]),
+    useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
     null
   );
 

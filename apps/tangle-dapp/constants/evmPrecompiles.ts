@@ -56,6 +56,7 @@ type InputOutputDef = {
   type: AbiTypeSuper;
 };
 
+// TODO: Use Viem ABI types instead, as they already handle this + providing argument type inference: https://viem.sh/docs/typescript#utilities
 export type AbiFunction<T extends Precompile> = {
   inputs: InputOutputDef[];
   name: AbiFunctionName<T>;
@@ -521,7 +522,7 @@ export const BALANCES_ERC20_PRECOMPILE_ABI: AbiFunction<Precompile.BALANCES_ERC2
     },
   ];
 
-export function getAddressOfPrecompile(
+export function getPrecompileAddress(
   precompile: Precompile
 ): PrecompileAddress {
   switch (precompile) {
@@ -536,7 +537,7 @@ export function getAddressOfPrecompile(
   }
 }
 
-export function getAbiForPrecompile(
+export function getPrecompileAbi(
   precompile: Precompile
 ): AbiFunction<Precompile>[] {
   switch (precompile) {

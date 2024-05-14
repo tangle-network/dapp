@@ -1,14 +1,11 @@
-import { isEthereumAddress } from '@polkadot/util-crypto';
-
+import { isEvmAddress } from '../utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
 
 const useAgnosticAccountInfo = () => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const isEvm =
-    activeAccountAddress === null
-      ? null
-      : isEthereumAddress(activeAccountAddress);
+    activeAccountAddress === null ? null : isEvmAddress(activeAccountAddress);
 
   return {
     isEvm,

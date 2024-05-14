@@ -5,8 +5,8 @@ import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle'
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs';
 
+import useApiRx from '../../hooks/useApiRx';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -36,7 +36,7 @@ export default function useActiveAndDelegationCountSubscription(
   const {
     isLoading: isLoadingCounterForNonimators,
     error: counterForNominatorsError,
-  } = usePolkadotApiRx(
+  } = useApiRx(
     useCallback(
       (apiRx) =>
         apiRx.query.staking.counterForNominators().pipe(
@@ -59,7 +59,7 @@ export default function useActiveAndDelegationCountSubscription(
   );
 
   const { isLoading: isLoadingActiveNominators, error: activeNominatorsError } =
-    usePolkadotApiRx(
+    useApiRx(
       useCallback(
         (apiRx) =>
           apiRx.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED).pipe(

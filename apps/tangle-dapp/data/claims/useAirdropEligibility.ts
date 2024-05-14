@@ -4,17 +4,17 @@ import { isEthereumAddress } from '@polkadot/util-crypto';
 import { useCallback, useEffect, useState } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import useApiRx from '../../hooks/useApiRx';
 
 const useAirdropEligibility = () => {
   const [isEligible, setIsEligible] = useState<boolean | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
 
-  const { value: claimInfo } = usePolkadotApi(
+  const { result: claimInfo } = useApiRx(
     useCallback(
       (api) => {
         if (activeAccountAddress === null) {
-          return Promise.resolve(null);
+          return null;
         }
 
         const params = isEthereumAddress(activeAccountAddress)

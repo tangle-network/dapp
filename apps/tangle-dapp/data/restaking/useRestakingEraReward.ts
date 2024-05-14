@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import usePromise from '../../hooks/usePromise';
 
 const createWorker = createWorkerFactory(
@@ -11,7 +11,7 @@ const createWorker = createWorkerFactory(
 );
 
 /**
- * Calculate the total restaking rewrad for the given era
+ * Calculate the total restaking reward for the given era
  * @param era the era number
  */
 function useRestakingEraReward(era: number | null = null) {
@@ -20,10 +20,10 @@ function useRestakingEraReward(era: number | null = null) {
   const worker = useWorker(createWorker);
 
   const {
-    data: dataPromise,
+    result: dataPromise,
     isLoading: rxLoading,
     error: rxError,
-  } = usePolkadotApiRx(
+  } = useApiRx(
     useCallback(
       (apiRx) => {
         if (

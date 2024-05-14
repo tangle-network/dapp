@@ -5,8 +5,8 @@ import { ITuple } from '@polkadot/types/types';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
+import useApiRx from '../../hooks/useApiRx';
 import useEntryMap from '../../hooks/useEntryMap';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import {
   extractDataFromIdentityInfo,
   IdentityDataType,
@@ -30,7 +30,7 @@ const mapIdentitiesToNames = (
   });
 
 const useValidatorIdentityNames = () => {
-  const { data: identityNames, ...other } = usePolkadotApiRx(
+  const { result: identityNames, ...other } = useApiRx(
     useCallback(
       (api) =>
         api.query.identity.identityOf.entries().pipe(map(mapIdentitiesToNames)),
@@ -40,7 +40,7 @@ const useValidatorIdentityNames = () => {
 
   const nameMap = useEntryMap(identityNames, (key) => key);
 
-  return { data: nameMap, ...other };
+  return { result: nameMap, ...other };
 };
 
 export default useValidatorIdentityNames;

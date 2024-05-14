@@ -1,10 +1,8 @@
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
-import usePolkadotApiRx, {
-  ObservableFactory,
-} from '../../hooks/usePolkadotApiRx';
+import useApiRx, { ObservableFactory } from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 export type AccountBalances = {
@@ -31,14 +29,14 @@ export type AccountBalances = {
   locked: BN | null;
 };
 
-const useBalances = (): AccountBalances &
-  Pick<ReturnType<typeof usePolkadotApiRx>, 'error' | 'isLoading'> => {
+const useBalances = () => {
   const activeSubstrateAddress = useSubstrateAddress();
-  const [balances, setBalances] = useState<AccountBalances | null>(null);
 
   const balancesFetcher = useCallback<ObservableFactory<AccountBalances>>(
     (api) => {
-      if (!activeSubstrateAddress) return null;
+      if (activeSubstrateAddress === null) {
+        return null;
+      }
 
       return api.query.system.account(activeSubstrateAddress).pipe(
         map(({ data }) => {
@@ -69,28 +67,13 @@ const useBalances = (): AccountBalances &
     [activeSubstrateAddress]
   );
 
-  const { data, isLoading, error } = usePolkadotApiRx(balancesFetcher);
-
-  useEffect(() => {
-    // If there's data and it's not loading, set the balances.
-    if (data && !isLoading) {
-      setBalances(data);
-    }
-  }, [data, isLoading]);
-
-  // Reset balances if there is no active account.
-  useEffect(() => {
-    if (activeSubstrateAddress === null) {
-      setBalances(null);
-    }
-  }, [activeSubstrateAddress]);
+  const { result: balances, ...other } = useApiRx(balancesFetcher);
 
   return {
     free: balances?.free ?? null,
     transferable: balances?.transferable ?? null,
     locked: balances?.locked ?? null,
-    isLoading,
-    error,
+    ...other,
   };
 };
 

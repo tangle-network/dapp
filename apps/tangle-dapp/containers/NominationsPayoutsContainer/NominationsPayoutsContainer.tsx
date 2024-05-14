@@ -14,14 +14,22 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DelegatorTable, TableStatus } from '../../components';
+import {
+  ContainerSkeleton,
+  NominationsTable,
+  TableStatus,
+} from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
-import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useNetworkState from '../../hooks/useNetworkState';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
-import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
+import {
+  DelegationsAndPayoutsTab as NominationsAndPayoutsTab,
+  Payout,
+  QueryParamKey,
+} from '../../types';
+import { toSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -30,16 +38,16 @@ import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
 
 const PAGE_SIZE = 10;
 
-function assertTab(tab: string): DelegationsAndPayoutsTab {
+function assertTab(tab: string): NominationsAndPayoutsTab {
   if (
-    !Object.values(DelegationsAndPayoutsTab).includes(
-      tab as DelegationsAndPayoutsTab
+    !Object.values(NominationsAndPayoutsTab).includes(
+      tab as NominationsAndPayoutsTab
     )
   ) {
     throw new Error(`Invalid tab: ${tab}`);
   }
 
-  return tab as DelegationsAndPayoutsTab;
+  return tab as NominationsAndPayoutsTab;
 }
 
 const DelegationsPayoutsContainer: FC = () => {
@@ -61,7 +69,7 @@ const DelegationsPayoutsContainer: FC = () => {
   // Default to the nominations tab if no matching browser URL
   // hash is present.
   const [activeTab, setActiveTab] = useState(
-    queryParamsTab ?? DelegationsAndPayoutsTab.NOMINATIONS
+    queryParamsTab ?? NominationsAndPayoutsTab.NOMINATIONS
   );
 
   const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
@@ -77,20 +85,22 @@ const DelegationsPayoutsContainer: FC = () => {
       return activeAccount.address;
     }
 
-    return evmToSubstrateAddress(activeAccount.address);
+    return toSubstrateAddress(activeAccount.address);
   }, [activeAccount?.address]);
 
-  const { data: delegatorsData } = useNominations(substrateAddress);
-  const { isFirstTimeNominator } = useIsFirstTimeNominator();
+  const nomineesOpt = useNominations();
+  const isBondedOrNominating = useIsBondedOrNominating();
   const { data: payoutsData } = usePayouts(substrateAddress);
 
-  const currentNominations = useMemo(() => {
-    if (!delegatorsData?.delegators) {
-      return [];
+  const currentNominationAddresses = useMemo(() => {
+    if (nomineesOpt === null) {
+      return null;
     }
 
-    return delegatorsData.delegators.map((delegator) => delegator.address);
-  }, [delegatorsData?.delegators]);
+    return nomineesOpt.map((nominees) =>
+      nominees.map((nominee) => nominee.address)
+    );
+  }, [nomineesOpt]);
 
   // const { valueAfterMount: cachedPayouts } = useLocalStorage(
   //   LocalStorageKey.Payouts,
@@ -104,12 +114,6 @@ const DelegationsPayoutsContainer: FC = () => {
   //     return cachedPayouts[substrateAddress] ?? [];
   //   }
   // }, [cachedPayouts, payoutsData, substrateAddress]);
-
-  const fetchedNominations = useMemo(() => {
-    if (delegatorsData !== null) {
-      return delegatorsData.delegators;
-    }
-  }, [delegatorsData]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -132,8 +136,8 @@ const DelegationsPayoutsContainer: FC = () => {
   const validatorAndEras = useMemo(
     () =>
       payouts.map((payout) => ({
-        validatorAddress: payout.validator.address,
-        era: payout.era.toString(),
+        validatorSubstrateAddress: payout.validator.address,
+        era: payout.era,
       })),
     [payouts]
   );
@@ -154,11 +158,11 @@ const DelegationsPayoutsContainer: FC = () => {
       <TableAndChartTabs
         value={activeTab}
         onValueChange={(tabString) => setActiveTab(assertTab(tabString))}
-        tabs={[...Object.values(DelegationsAndPayoutsTab)]}
+        tabs={[...Object.values(NominationsAndPayoutsTab)]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={
-          activeAccount?.address && !isFirstTimeNominator ? (
-            activeTab === DelegationsAndPayoutsTab.NOMINATIONS ? (
+          activeAccount?.address && isBondedOrNominating ? (
+            activeTab === NominationsAndPayoutsTab.NOMINATIONS ? (
               <ManageButtonContainer
                 onUpdateNominations={() =>
                   setIsUpdateNominationsModalOpen(true)
@@ -183,8 +187,8 @@ const DelegationsPayoutsContainer: FC = () => {
           ) : null
         }
       >
-        {/* Delegations Table */}
-        <TabContent value={DelegationsAndPayoutsTab.NOMINATIONS}>
+        {/* Nominations Table */}
+        <TabContent value={NominationsAndPayoutsTab.NOMINATIONS}>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -198,26 +202,28 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
-          ) : fetchedNominations && fetchedNominations.length === 0 ? (
+          ) : nomineesOpt === null ? (
+            <ContainerSkeleton />
+          ) : nomineesOpt.value === null || nomineesOpt.value.length === 0 ? (
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
+              icon="🔍"
               buttonText="Nominate"
               buttonProps={{
                 onClick: () => setIsDelegateModalOpen(true),
               }}
-              icon="🔍"
             />
           ) : (
-            <DelegatorTable
-              data={fetchedNominations ?? []}
+            <NominationsTable
+              nominees={nomineesOpt.value}
               pageSize={PAGE_SIZE}
             />
           )}
         </TabContent>
 
         {/* Payouts Table */}
-        <TabContent value={DelegationsAndPayoutsTab.PAYOUTS} aria-disabled>
+        <TabContent value={NominationsAndPayoutsTab.PAYOUTS} aria-disabled>
           {/* {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -263,20 +269,17 @@ const DelegationsPayoutsContainer: FC = () => {
         </TabContent>
       </TableAndChartTabs>
 
-      {isDelegateModalOpen && (
-        <DelegateTxContainer
-          isModalOpen={isDelegateModalOpen}
-          setIsModalOpen={setIsDelegateModalOpen}
-        />
-      )}
+      <DelegateTxContainer
+        isModalOpen={isDelegateModalOpen}
+        setIsModalOpen={setIsDelegateModalOpen}
+      />
 
-      {isUpdateNominationsModalOpen && (
-        <UpdateNominationsTxContainer
-          isModalOpen={isUpdateNominationsModalOpen}
-          setIsModalOpen={setIsUpdateNominationsModalOpen}
-          currentNominations={currentNominations}
-        />
-      )}
+      <UpdateNominationsTxContainer
+        isModalOpen={isUpdateNominationsModalOpen}
+        setIsModalOpen={setIsUpdateNominationsModalOpen}
+        // TODO: Need to pass down the explicit `Optional<T>` type here, instead of defaulting to `[]`, because that will lead to a situation where the lower component things the value is still loading and displays a loading state forever.
+        currentNominations={currentNominationAddresses?.value ?? []}
+      />
 
       <UpdatePayeeTxContainer
         isModalOpen={isUpdatePayeeModalOpen}
@@ -311,7 +314,7 @@ function ManageButtonContainer(props: {
     props;
 
   return (
-    <div className="items-center hidden space-x-2 md:flex">
+    <div className="items-center space-x-2 flex">
       <ActionsDropdown
         buttonText="Manage"
         actionItems={[

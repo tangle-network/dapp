@@ -2,18 +2,18 @@
 
 import { useCallback, useMemo } from 'react';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import useApi from '../../hooks/useApi';
 import getBlockDate from '../../utils/getBlockDate';
 import useServiceDetails from './useServiceDetails';
 
 export default function useServiceInfoCard() {
   const { serviceDetails, isLoading } = useServiceDetails();
 
-  const { value: currentBlockNumber } = usePolkadotApi(
+  const { result: currentBlockNumber } = useApi(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 
-  const { value: babeExpectedBlockTime } = usePolkadotApi(
+  const { result: babeExpectedBlockTime } = useApi(
     useCallback((api) => Promise.resolve(api.consts.babe.expectedBlockTime), [])
   );
 

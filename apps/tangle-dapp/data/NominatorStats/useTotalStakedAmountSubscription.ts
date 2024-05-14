@@ -9,7 +9,7 @@ import { type Subscription } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useTotalStakedAmountSubscription(
   defaultValue: { value1: BN | null } = { value1: null }
@@ -27,7 +27,7 @@ export default function useTotalStakedAmountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         if (!address) {
           setValue1(null);

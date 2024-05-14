@@ -1,6 +1,5 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Alert,
   Button,
@@ -9,6 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
+import _ from 'lodash';
 import {
   type Dispatch,
   type FC,
@@ -19,57 +19,34 @@ import {
   useState,
 } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
+import useNominateTx from '../../data/staking/useNominateTx';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
-import { nominateValidators as nominateValidatorsEvm } from '../../utils/evm';
-import { nominateValidators as nominateValidatorsSubstrate } from '../../utils/polkadot';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import SelectValidators from './SelectValidators';
-import { UpdateNominationsTxContainerProps } from './types';
+
+export type UpdateNominationsTxContainerProps = {
+  isModalOpen: boolean;
+  setIsModalOpen: (isModalOpen: boolean) => void;
+  currentNominations: string[];
+};
 
 const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
   currentNominations,
 }) => {
-  const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
   const maxNominationQuota = useMaxNominationQuota();
-  const { rpcEndpoint } = useNetworkStore();
+
+  const { execute: executeNominateTx, status: nominateTxStatus } =
+    useNominateTx();
 
   const [selectedValidators, setSelectedValidators] =
     useState(currentNominations);
 
-  const [isSubmitAndSignTxLoading, setIsSubmitAndSignTxLoading] =
-    useState(false);
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
+  // Cannot nominate more than a certain number of validators.
   const isExceedingMaxNominationQuota =
+    selectedValidators !== null &&
     selectedValidators.length > maxNominationQuota;
-
-  const isReadyToSubmitAndSignTx = useMemo(() => {
-    if (selectedValidators.length <= 0 || isExceedingMaxNominationQuota) {
-      return false;
-    }
-
-    const sortedSelectedValidators = [...selectedValidators].sort();
-    const sortedCurrentNominations = [...currentNominations].sort();
-
-    const areArraysEqual =
-      sortedSelectedValidators.length === sortedCurrentNominations.length &&
-      sortedSelectedValidators.every(
-        (val, index) => val === sortedCurrentNominations[index]
-      );
-
-    return !areArraysEqual;
-  }, [currentNominations, isExceedingMaxNominationQuota, selectedValidators]);
 
   // Update the selected validators when the current
   // nominations prop changes.
@@ -78,41 +55,42 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   }, [currentNominations]);
 
   const closeModal = useCallback(() => {
-    setIsSubmitAndSignTxLoading(false);
     setIsModalOpen(false);
     setSelectedValidators(currentNominations);
   }, [currentNominations, setIsModalOpen]);
 
-  const submitAndSignTx = useCallback(async () => {
-    if (!isReadyToSubmitAndSignTx) {
+  const submitTx = useCallback(async () => {
+    if (executeNominateTx === null || selectedValidators === null) {
       return;
     }
 
-    setIsSubmitAndSignTxLoading(true);
+    await executeNominateTx({
+      validatorAddresses: selectedValidators,
+    });
 
-    try {
-      await executeTx(
-        () => nominateValidatorsEvm(walletAddress, selectedValidators),
-        () =>
-          nominateValidatorsSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            selectedValidators
-          ),
-        `Successfully updated nominations!`,
-        'Failed to update nominations!'
-      );
-      closeModal();
-    } catch {
-      setIsSubmitAndSignTxLoading(false);
+    closeModal();
+  }, [closeModal, executeNominateTx, selectedValidators]);
+
+  const canSubmitTx = useMemo(() => {
+    if (
+      selectedValidators === null ||
+      selectedValidators.length === 0 ||
+      isExceedingMaxNominationQuota
+    ) {
+      return false;
     }
+
+    // Can only submit transaction if the selected validators differ
+    // from the current nominations.
+    return (
+      !_.isEqual(currentNominations, selectedValidators) &&
+      executeNominateTx !== null
+    );
   }, [
-    closeModal,
-    executeTx,
-    isReadyToSubmitAndSignTx,
-    rpcEndpoint,
+    currentNominations,
+    executeNominateTx,
+    isExceedingMaxNominationQuota,
     selectedValidators,
-    walletAddress,
   ]);
 
   // The outer selected validators state is array of string
@@ -162,9 +140,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
           <Button
             isFullWidth
-            isDisabled={!isReadyToSubmitAndSignTx}
-            isLoading={isSubmitAndSignTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!canSubmitTx}
+            isLoading={nominateTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
             className="!mt-0"
           >
             Confirm Nomination
