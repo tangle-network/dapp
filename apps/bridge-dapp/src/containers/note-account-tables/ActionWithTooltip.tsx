@@ -8,7 +8,7 @@ import {
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ActionWithTooltipProps } from './types';
+import { ActionWithTooltipProps } from './types.js';
 
 export const ActionWithTooltip: FC<ActionWithTooltipProps> = ({
   tooltipContent,

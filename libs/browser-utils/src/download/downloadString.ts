@@ -1,5 +1,5 @@
-import downloadBlob from './downloadBlob';
-import stringIntoBlob from './stringIntoBlob';
+import downloadBlob from './downloadBlob.js';
+import stringIntoBlob from './stringIntoBlob.js';
 
 function downloadString(
   text: string,

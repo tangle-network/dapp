@@ -1,4 +1,4 @@
-import { WebbApiProvider } from '../webb-provider.interface';
+import { WebbApiProvider } from '../webb-provider.interface.js';
 
 export abstract class ECDSAClaims<
   T extends WebbApiProvider<any> = WebbApiProvider<any>

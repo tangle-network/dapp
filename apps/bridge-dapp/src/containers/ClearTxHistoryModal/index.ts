@@ -1,3 +1,3 @@
-import ClearTxHistoryModal from './ClearTxHistoryModal';
+import ClearTxHistoryModal from './ClearTxHistoryModal.js';
 
 export default ClearTxHistoryModal;

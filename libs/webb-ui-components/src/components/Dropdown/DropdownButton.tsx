@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { DropdownButtonProps } from './types';
+import { DropdownButtonProps } from './types.js';
 
 /**
  * The `DropdownMenu` trigger function, must use inside the `Dropdown` component
@@ -37,7 +37,7 @@ export const DropdownButton = forwardRef<
         )}
         ref={ref}
       >
-        <div className="flex items-center space-x-1 max-w-full overflow-x-hidden">
+        <div className="flex items-center max-w-full space-x-1 overflow-x-hidden">
           {icon && <span className="text-inherit">{icon}</span>}
           <span
             className={cx('text-inherit', size === 'md' ? 'body1' : 'body2')}

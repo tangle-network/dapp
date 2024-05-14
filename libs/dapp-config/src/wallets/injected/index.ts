@@ -1,2 +1,2 @@
-export { default as MetaMaskConnector } from './metamask';
-export { default as RainbowConnector } from './rainbow';
+export { default as MetaMaskConnector } from './metamask.js';
+export { default as RainbowConnector } from './rainbow.js';

@@ -3,9 +3,9 @@ import { Close } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography';
-import { shortenString } from '../../utils';
-import { FileUploadItemProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { shortenString } from '../../utils/index.js';
+import { FileUploadItemProps } from './types.js';
 
 export const FileUploadItem = forwardRef<HTMLLIElement, FileUploadItemProps>(
   (

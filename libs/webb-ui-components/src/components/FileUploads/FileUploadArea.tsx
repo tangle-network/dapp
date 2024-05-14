@@ -3,9 +3,9 @@ import cx from 'classnames';
 import { forwardRef } from 'react';
 import { useDropzone, type Accept } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography';
-import { Button } from '../buttons';
-import type { FileUploadAreaProps, AcceptFileType } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { Button } from '../buttons/index.js';
+import type { FileUploadAreaProps, AcceptFileType } from './types.js';
 
 const fileTypeMap: {
   [key in AcceptFileType]: Accept;

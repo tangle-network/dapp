@@ -3,7 +3,7 @@ import cx from 'classnames';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ProgressClassName, ProgressProps } from './types';
+import { ProgressClassName, ProgressProps } from './types.js';
 
 const classNames: ProgressClassName = {
   sm: {

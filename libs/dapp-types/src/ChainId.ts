@@ -6,8 +6,8 @@ import {
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
 
-import EVMChainId from './EVMChainId';
-import SubstrateChainId from './SubstrateChainId';
+import EVMChainId from './EVMChainId.js';
+import SubstrateChainId from './SubstrateChainId.js';
 
 export interface TypedChainId {
   chainType: ChainType;

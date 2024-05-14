@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemorized } from './useMemorized';
+import { useMemorized } from './useMemorized.js';
 import { BareProps } from '@webb-tools/dapp-types';
 import {
   createContext,
@@ -12,13 +12,13 @@ import {
   useMemo,
 } from 'react';
 
-import { useApiQueryStore } from './modules/api-query';
+import { useApiQueryStore } from './modules/api-query.js';
 import {
   SubMenu,
   UIData,
   useUIConfig,
   UseUIConfigReturnType,
-} from './modules/ui';
+} from './modules/ui.js';
 
 export type StoreData = {
   apiQuery: ReturnType<typeof useApiQueryStore>;

@@ -1,2 +1,2 @@
-export * from './wallets-config';
-export * from './wallet-config.interface';
+export * from './wallets-config.js';
+export * from './wallet-config.interface.js';

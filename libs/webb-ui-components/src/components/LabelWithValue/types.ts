@@ -1,8 +1,8 @@
-import type { WebbComponentBase } from '../../types';
+import type { WebbComponentBase } from '../../types/index.js';
 import type {
   TypographyFontWeightValues,
   WebbTypographyVariant,
-} from '../../typography/types';
+} from '../../typography/types.js';
 import type { ReactElement } from 'react';
 
 /**

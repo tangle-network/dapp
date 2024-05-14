@@ -16,12 +16,12 @@ import { BN } from 'bn.js';
 import chalk from 'chalk';
 import { config } from 'dotenv';
 
-import addAssetMetadata from './utils/addAssetMetadata';
-import createPoolShare from './utils/createPoolShare';
-import createVAnchor from './utils/createVAnchor';
-import getKeyring from './utils/getKeyRing';
-import getLocalApi from './utils/getLocalApi';
-import transferAsset from './utils/transferAsset';
+import addAssetMetadata from './utils/addAssetMetadata.js';
+import createPoolShare from './utils/createPoolShare.js';
+import createVAnchor from './utils/createVAnchor.js';
+import getKeyring from './utils/getKeyRing.js';
+import getLocalApi from './utils/getLocalApi.js';
+import transferAsset from './utils/transferAsset.js';
 
 // Load env variables
 config();

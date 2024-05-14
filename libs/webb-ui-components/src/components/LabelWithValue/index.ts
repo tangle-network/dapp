@@ -1,1 +1,1 @@
-export * from './LabelWithValue';
+export * from './LabelWithValue.js';

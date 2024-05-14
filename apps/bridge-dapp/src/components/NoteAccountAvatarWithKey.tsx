@@ -1,12 +1,12 @@
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
-import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
-import type { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar/index.js';
+import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip/index.js';
+import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton/index.js';
+import type { PropsOf } from '@webb-tools/webb-ui-components/types/index.js';
 import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
+import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString.js';
+import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable.js';
 import { useHiddenValue } from '@webb-tools/webb-ui-components';
 
 type Props = {

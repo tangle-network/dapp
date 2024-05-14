@@ -1,6 +1,6 @@
 import type { IdentityProps } from '@polkadot/react-identicon/types';
 
-import { IWebbComponentBase } from '../../types';
+import { IWebbComponentBase } from '../../types/index.js';
 
 type IdenticonPickedKeys = 'theme' | 'value';
 

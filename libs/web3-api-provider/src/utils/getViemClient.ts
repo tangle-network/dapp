@@ -1,4 +1,4 @@
-import { chainsConfig } from '@webb-tools/dapp-config/chains/evm';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/evm/index.js';
 import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   createPublicClient,
@@ -12,7 +12,7 @@ import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,
   defineViemChain,
   getViemChain,
-} from './getViemChain';
+} from './getViemChain.js';
 
 function getViemClient(
   typedChainId: number

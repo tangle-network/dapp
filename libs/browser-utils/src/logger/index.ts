@@ -1,2 +1,2 @@
-export * from './LoggerService';
-export { default as LoggerService } from './LoggerService';
+export * from './LoggerService.js';
+export { default as LoggerService } from './LoggerService.js';

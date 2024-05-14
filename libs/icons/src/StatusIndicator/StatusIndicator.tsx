@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { StatusIndicatorProps, StatusVariant } from './types';
+import { StatusIndicatorProps, StatusVariant } from './types.js';
 
 const classes: {
   [key in StatusVariant]: {

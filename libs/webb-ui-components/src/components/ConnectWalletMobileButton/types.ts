@@ -1,5 +1,5 @@
-import { ButtonProps } from '../buttons/types';
-import { IWebbComponentBase } from '../../types';
+import { ButtonProps } from '../buttons/types.js';
+import { IWebbComponentBase } from '../../types/index.js';
 
 export interface ConnectWalletMobileButtonProps
   extends IWebbComponentBase,

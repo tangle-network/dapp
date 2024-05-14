@@ -1,1 +1,1 @@
-export * from './Disclaimer';
+export * from './Disclaimer.js';

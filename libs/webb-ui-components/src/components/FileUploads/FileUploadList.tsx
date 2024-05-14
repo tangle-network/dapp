@@ -1,7 +1,7 @@
-import { Typography } from '../../typography/Typography';
+import { Typography } from '../../typography/Typography/index.js';
 import { forwardRef } from 'react';
-import { ScrollArea } from '../ScrollArea';
-import { FileUploadListProps } from './types';
+import { ScrollArea } from '../ScrollArea/index.js';
+import { FileUploadListProps } from './types.js';
 import { twMerge } from 'tailwind-merge';
 
 export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(
@@ -18,7 +18,7 @@ export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(
             <Typography
               component="p"
               variant="utility"
-              className="normal-case text-base"
+              className="text-base normal-case"
             >
               {title}
             </Typography>

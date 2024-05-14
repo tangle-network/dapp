@@ -1,8 +1,8 @@
 import type { ComponentProps } from 'react';
 
-import type { UseCopyableReturnType } from '../../hooks/useCopyable';
-import type { WebbComponentBase } from '../../types';
-import type { LabelWithValueProps } from '../LabelWithValue/types';
+import type { UseCopyableReturnType } from '../../hooks/useCopyable.js';
+import type { WebbComponentBase } from '../../types/index.js';
+import type { LabelWithValueProps } from '../LabelWithValue/types.js';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
 

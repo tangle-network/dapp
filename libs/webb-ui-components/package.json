@@ -22,5 +22,5 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "main": "src/index.js"
+  "type": "module"
 }

@@ -1,1 +1,1 @@
-export * from './TokenPairIcons';
+export * from './TokenPairIcons.js';

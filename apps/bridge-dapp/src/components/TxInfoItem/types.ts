@@ -1,6 +1,6 @@
-import { IconBase } from '@webb-tools/icons/types';
+import { IconBase } from '@webb-tools/icons/types.js';
 import { TitleWithInfo } from '@webb-tools/webb-ui-components';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { PropsOf } from '@webb-tools/webb-ui-components/types/index.js';
 import { ComponentProps } from 'react';
 
 export interface TxInfoItemProps extends PropsOf<'div'> {

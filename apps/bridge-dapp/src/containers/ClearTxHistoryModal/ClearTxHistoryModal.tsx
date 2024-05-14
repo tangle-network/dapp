@@ -10,7 +10,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { DeleteBinIcon } from '@webb-tools/icons';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage } from '../../utils/index.js';
 
 const ClearTxHistoryModal: FC<{
   isOpen: boolean;

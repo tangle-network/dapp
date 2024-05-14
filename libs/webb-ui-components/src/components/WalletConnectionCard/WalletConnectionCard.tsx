@@ -2,11 +2,11 @@ import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { PropsOf } from '../../types';
-import { Typography } from '../../typography';
-import { Button } from '../buttons';
-import { ListItem } from '../ListCard/ListItem';
-import { WalletConnectionCardProps } from './types';
+import { PropsOf } from '../../types/index.js';
+import { Typography } from '../../typography/index.js';
+import { Button } from '../buttons/index.js';
+import { ListItem } from '../ListCard/ListItem.js';
+import { WalletConnectionCardProps } from './types.js';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,
@@ -107,7 +107,7 @@ export const WalletConnectionCard = forwardRef<
           )}
           ref={ref}
         >
-          <div className="px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center justify-between px-6 py-4">
             <Typography variant="h5" fw="bold" className="flex-1">
               Connect a Wallet
             </Typography>
@@ -120,7 +120,7 @@ export const WalletConnectionCard = forwardRef<
             <WalletList
               wallets={wallets}
               onWalletSelect={onWalletSelect}
-              className="grow w-full"
+              className="w-full grow"
             />
           ) : (
             <div className="flex items-center justify-center grow">

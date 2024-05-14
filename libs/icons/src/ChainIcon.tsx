@@ -1,10 +1,10 @@
 import React, { cloneElement, useMemo } from 'react';
-import { Spinner } from './Spinner';
-import StatusIndicator from './StatusIndicator';
-import { StatusIndicatorProps } from './StatusIndicator/types';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
-import { TokenIconBase } from './types';
-import { getIconSizeInPixel } from './utils';
+import { Spinner } from './Spinner.js';
+import StatusIndicator from './StatusIndicator/StatusIndicator.js';
+import { StatusIndicatorProps } from './StatusIndicator/types.js';
+import { useDynamicSVGImport } from './hooks/useDynamicSVGImport.js';
+import { TokenIconBase } from './types.js';
+import { getIconSizeInPixel } from './utils.js';
 
 export const ChainIcon: React.FC<
   TokenIconBase & { status?: StatusIndicatorProps['variant'] }

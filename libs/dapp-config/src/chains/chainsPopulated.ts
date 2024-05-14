@@ -1,7 +1,7 @@
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
-import { Chain, Wallet } from '../api-config';
-import { walletsConfig } from '../wallets/wallets-config';
-import { chainsConfig } from './chain-config';
+import { Chain, Wallet } from '../api-config.js';
+import { walletsConfig } from '../wallets/wallets-config.js';
+import { chainsConfig } from './chain-config.js';
 
 const chainsPopulated = Object.values(chainsConfig).reduce(
   (acc, chainsConfig) => {

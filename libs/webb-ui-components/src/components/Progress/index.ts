@@ -1,2 +1,2 @@
-export * from './Progress';
-export { default as SteppedProgress } from './SteppedProgress';
+export * from './Progress.js';
+export { default as SteppedProgress } from './SteppedProgress.js';

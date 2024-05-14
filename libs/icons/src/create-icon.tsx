@@ -1,13 +1,13 @@
 import React, { Children } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { IconBase } from './types';
+import { IconBase } from './types.js';
 import {
   getFillColor,
   getIconSizeInPixel,
   getMinSizeClassName,
   getStrokeColor,
-} from './utils';
+} from './utils.js';
 
 interface CreateIconOptions extends IconBase {
   /**

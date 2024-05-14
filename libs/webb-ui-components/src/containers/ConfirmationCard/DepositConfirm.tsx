@@ -1,19 +1,19 @@
 import { Close, FileShieldLine } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { TxProgressorBody } from '../../components/TxProgressor';
-import { CheckBox } from '../../components/CheckBox/Checkbox';
-import { Chip } from '../../components/Chip/Chip';
-import SteppedProgress from '../../components/Progress/SteppedProgress';
-import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
-import Button from '../../components/buttons/Button';
-import { Typography } from '../../typography';
-import TxConfirmationRing from '../../components/TxConfirmationRing';
-import { formatTokenAmount } from './utils';
-import AmountInfo from './AmountInfo';
-import SpendNoteInput from './SpendNoteInput';
-import WrapperSection from './WrapperSection';
-import { DepositConfirmProps } from './types';
+import { TxProgressorBody } from '../../components/TxProgressor/index.js';
+import { CheckBox } from '../../components/CheckBox/Checkbox.js';
+import { Chip } from '../../components/Chip/Chip.js';
+import SteppedProgress from '../../components/Progress/SteppedProgress.js';
+import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo.js';
+import Button from '../../components/buttons/Button.js';
+import { Typography } from '../../typography/index.js';
+import TxConfirmationRing from '../../components/TxConfirmationRing/index.js';
+import { formatTokenAmount } from './utils.js';
+import AmountInfo from './AmountInfo.js';
+import SpendNoteInput from './SpendNoteInput.js';
+import WrapperSection from './WrapperSection.js';
+import { DepositConfirmProps } from './types.js';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (

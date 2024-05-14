@@ -2,10 +2,10 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ExternalLinkLine } from '@webb-tools/icons';
 
-import { Typography } from '../../typography/Typography';
-import { Link } from '../Link';
-import { ThemeToggle } from '../ThemeToggle';
-import { SideBarFooterProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { Link } from '../Link/index.js';
+import { ThemeToggle } from '../ThemeToggle/index.js';
+import { SideBarFooterProps } from './types.js';
 
 export const SideBarFooter: FC<SideBarFooterProps> = ({
   Icon,

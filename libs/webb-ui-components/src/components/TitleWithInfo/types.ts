@@ -1,8 +1,8 @@
-import { WebbComponentBase } from '../../types';
+import { WebbComponentBase } from '../../types/index.js';
 import {
   WebbTypographyProps,
   WebbTypographyVariant,
-} from '../../typography/types';
+} from '../../typography/types.js';
 
 /**
  * The `TiltieWithInfo` component props

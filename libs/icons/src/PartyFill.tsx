@@ -1,5 +1,5 @@
-import { IconSize } from './types';
-import { getIconSizeInPixel } from './utils';
+import { IconSize } from './types.js';
+import { getIconSizeInPixel } from './utils.js';
 
 export const PartyFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({
   size = 'md',

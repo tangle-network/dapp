@@ -1,1 +1,1 @@
-export * from './TitleWithInfo';
+export * from './TitleWithInfo.js';

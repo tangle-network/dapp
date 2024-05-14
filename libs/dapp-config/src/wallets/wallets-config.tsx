@@ -1,6 +1,6 @@
-import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import { SupportedBrowsers } from '@webb-tools/browser-utils/platform/index.js';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { WalletId } from '@webb-tools/dapp-types/WalletId.js';
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
@@ -8,12 +8,12 @@ import {
   SubWalletIcon,
   TalismanIcon,
   WalletConnectIcon,
-} from '@webb-tools/icons';
+} from '@webb-tools/icons/wallets/index.js';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
-import { MetaMaskConnector, RainbowConnector } from './injected';
-import { chainsConfig as evmChainsConfig } from '../chains/evm';
-import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
-import type { WalletConfig } from './wallet-config.interface';
+import { MetaMaskConnector, RainbowConnector } from './injected/index.js';
+import { chainsConfig as evmChainsConfig } from '../chains/evm/index.js';
+import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet.js';
+import type { WalletConfig } from './wallet-config.interface.js';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,

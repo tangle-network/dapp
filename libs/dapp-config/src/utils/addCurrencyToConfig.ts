@@ -1,6 +1,6 @@
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
-import { CurrencyConfig } from '../currencies/currency-config.interface';
-import { ICurrency } from '../types';
+import { CurrencyConfig } from '../currencies/currency-config.interface.js';
+import { ICurrency } from '../types.js';
 
 const addCurrencyToConfig = (
   config: Record<number, CurrencyConfig>,

@@ -2,7 +2,7 @@ import type { Currency } from '@webb-tools/abstract-api-provider';
 import type { Chain } from '@webb-tools/dapp-config';
 import type { Note } from '@webb-tools/sdk-core';
 
-import type { NoteAccountTableContainerProps } from '../types';
+import type { NoteAccountTableContainerProps } from '../types.js';
 
 /**
  * The shielded asset data type for table

@@ -1,1 +1,1 @@
-export * from './relayer-manager-factory';
+export * from './relayer-manager-factory.js';

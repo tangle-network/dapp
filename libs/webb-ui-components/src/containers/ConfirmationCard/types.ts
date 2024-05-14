@@ -1,4 +1,4 @@
-import type { PropsOf } from '../../types';
+import type { PropsOf } from '../../types/index.js';
 import type { ComponentProps } from 'react';
 import type {
   Avatar,
@@ -6,7 +6,7 @@ import type {
   CheckBox,
   ChipColors,
   TitleWithInfo,
-} from '../../components';
+} from '../../components/index.js';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**

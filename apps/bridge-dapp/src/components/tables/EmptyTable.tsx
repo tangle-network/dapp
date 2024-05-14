@@ -1,6 +1,6 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import React, { FC } from 'react';
-import { EmptyTableProps } from './types';
+import { EmptyTableProps } from './types.js';
 
 export const EmptyTable: FC<EmptyTableProps> = ({
   buttonText,
@@ -20,7 +20,7 @@ export const EmptyTable: FC<EmptyTableProps> = ({
 
           <Typography
             variant="body1"
-            className="text-mono-120 dark:text-mono-100 text-center"
+            className="text-center text-mono-120 dark:text-mono-100"
           >
             {description}
           </Typography>

@@ -1,1 +1,1 @@
-export * from './ConnectWalletMobileButton';
+export * from './ConnectWalletMobileButton.js';

@@ -3,9 +3,9 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InformationLine } from '@webb-tools/icons';
-import { Button } from '../buttons';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
-import { CheckBoxProps } from './types';
+import Button from '../buttons/Button.js';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip.js';
+import { CheckBoxProps } from './types.js';
 
 /**
  * The `CheckBox` component

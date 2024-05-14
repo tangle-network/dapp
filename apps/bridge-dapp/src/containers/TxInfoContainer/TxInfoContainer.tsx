@@ -1,6 +1,6 @@
-import WalletFillIcon from '@webb-tools/icons/WalletFillIcon';
-import TxInfoItem from '../../components/TxInfoItem';
-import ShieldKeyholeFillIcon from '@webb-tools/icons/ShieldKeyholeFillIcon';
+import WalletFillIcon from '@webb-tools/icons/WalletFillIcon.js';
+import TxInfoItem from '../../components/TxInfoItem/index.js';
+import ShieldKeyholeFillIcon from '@webb-tools/icons/ShieldKeyholeFillIcon.js';
 
 const TxInfoContainer = ({
   hasRefund,

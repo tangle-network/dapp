@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ModalHeaderProps } from './types';
-import { Typography } from '../../typography/Typography';
+import { ModalHeaderProps } from './types.js';
+import { Typography } from '../../typography/Typography/index.js';
 import { Close as CloseIcon } from '@webb-tools/icons';
 
 export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(

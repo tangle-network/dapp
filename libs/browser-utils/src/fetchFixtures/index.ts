@@ -1,3 +1,3 @@
-export { default as fetchVAnchorKeyFromAws } from './fetchVAnchorKeyFromAws';
-export { default as fetchVAnchorWasmFromAws } from './fetchVAnchorWasmFromAws';
-export { default as getCachedFixtureURI } from './getCachedFixtureURI';
+export { default as fetchVAnchorKeyFromAws } from './fetchVAnchorKeyFromAws.js';
+export { default as fetchVAnchorWasmFromAws } from './fetchVAnchorWasmFromAws.js';
+export { default as getCachedFixtureURI } from './getCachedFixtureURI.js';

@@ -1,3 +1,3 @@
-import SubmittedTxModal from './SubmittedTxModal';
+import SubmittedTxModal from './SubmittedTxModal.js';
 
 export default SubmittedTxModal;

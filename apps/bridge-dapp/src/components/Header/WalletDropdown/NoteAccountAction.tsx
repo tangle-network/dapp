@@ -1,19 +1,19 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { ThreeDotsVerticalIcon } from '@webb-tools/icons/ThreeDotsVerticalIcon';
-import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
+import { ThreeDotsVerticalIcon } from '@webb-tools/icons/ThreeDotsVerticalIcon.js';
+import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount.js';
 import type { Note } from '@webb-tools/sdk-core';
 import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
-import flatten from 'lodash/flatten';
+} from '@webb-tools/webb-ui-components/components/Dropdown/index.js';
+import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem/index.js';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button.js';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI.js';
+import flatten from 'lodash/flatten.js';
 import { useCallback, useMemo, useState } from 'react';
-import { downloadNotes } from '../../../utils/downloadNotes';
-import ClearDataModal from './ClearDataModal';
+import { downloadNotes } from '../../../utils/downloadNotes.js';
+import ClearDataModal from './ClearDataModal.js';
 
 const NoteAccountAction = () => {
   const {

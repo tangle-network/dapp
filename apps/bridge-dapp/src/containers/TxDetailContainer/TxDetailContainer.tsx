@@ -3,9 +3,9 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { Note } from '@webb-tools/sdk-core';
 import type { TransactionType } from '@webb-tools/abstract-api-provider';
 
-import InputOrOutputNotes from './InputOrOutputNotes';
-import SourceOrDestinationWalletInfo from './SourceOrDestinationWalletInfo';
-import TxBasicInfo from './TxBasicInfo';
+import InputOrOutputNotes from './InputOrOutputNotes.js';
+import SourceOrDestinationWalletInfo from './SourceOrDestinationWalletInfo.js';
+import TxBasicInfo from './TxBasicInfo.js';
 
 const TxDetailContainer: FC<TransactionType> = ({
   hash,
@@ -71,7 +71,7 @@ const TxDetailContainer: FC<TransactionType> = ({
   }, [outputNoteSerializations]);
 
   return (
-    <div className="flex-1 p-9 space-y-9 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto p-9 space-y-9">
       {/* Basic Info */}
       <TxBasicInfo
         amount={amount}

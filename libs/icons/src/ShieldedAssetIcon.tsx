@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
-import { ChainIcon } from './ChainIcon';
-import { IconBase } from './types';
+import { ChainIcon } from './ChainIcon.js';
+import { IconBase } from './types.js';
 
 const getSizeProps = (size: IconBase['size']) => {
   switch (size) {

@@ -1,4 +1,4 @@
-import { WebbComponentBase } from '../../types';
+import { WebbComponentBase } from '../../types/index.js';
 
 export interface BreadcrumbsPropsType extends WebbComponentBase {
   separator?: string | React.ReactNode;

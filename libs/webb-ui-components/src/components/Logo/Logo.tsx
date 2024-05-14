@@ -1,7 +1,7 @@
-import { createIcon } from '@webb-tools/icons/create-icon';
+import { createIcon } from '@webb-tools/icons/create-icon.js';
 import React, { useMemo } from 'react';
 
-import { LogoProps } from './types';
+import { LogoProps } from './types.js';
 
 const defaultLogoSize = {
   width: 96,

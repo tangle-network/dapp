@@ -4,9 +4,9 @@ import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import assert from 'assert';
 import type { PublicClient } from 'viem';
 
-import { ChainAddressConfig } from '../anchors';
-import { CurrencyConfig } from '../currencies';
-import { ICurrency } from '../types';
+import { ChainAddressConfig } from '../anchors/index.js';
+import { CurrencyConfig } from '../currencies/index.js';
+import { ICurrency } from '../types.js';
 
 export interface CurrencyResponse {
   typedChainId: number;

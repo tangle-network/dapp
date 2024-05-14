@@ -7,11 +7,11 @@ import {
   ModalFooter,
   Typography,
   useCopyable,
-} from '@webb-tools/webb-ui-components';
-import { QRScanLineIcon } from '@webb-tools/icons';
-import { shortenHex } from '@webb-tools/webb-ui-components';
-import { useReceiveModal } from '../hooks';
-import { NOTE_ACCOUNT_DOCS_URL } from '../constants/links';
+} from '@webb-tools/webb-ui-components/index.js';
+import { QRScanLineIcon } from '@webb-tools/icons/index.js';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex.js';
+import { useReceiveModal } from '../hooks/index.js';
+import { NOTE_ACCOUNT_DOCS_URL } from '../constants/links.js';
 
 const ReceiveModal: FC = () => {
   const { copy, isCopied } = useCopyable();

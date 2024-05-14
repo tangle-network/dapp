@@ -2,8 +2,8 @@ import { InformationLine } from '@webb-tools/icons';
 import { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography';
-import { DisclaimerProps, DisclaimerVariant } from './types';
+import { Typography } from '../../typography/index.js';
+import { DisclaimerProps, DisclaimerVariant } from './types.js';
 
 function getColors(variant: DisclaimerVariant) {
   switch (variant) {

@@ -1,4 +1,4 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { PropsOf } from '@webb-tools/webb-ui-components/types/index.js';
 
 export interface PageTabsContainerProps extends PropsOf<'div'> {
   /**

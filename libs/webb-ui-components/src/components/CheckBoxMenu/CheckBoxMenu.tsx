@@ -1,9 +1,9 @@
-import { CheckBox } from '../CheckBox';
+import { CheckBox } from '../CheckBox/index.js';
 import cx from 'classnames';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { CheckBoxMenuProps } from './types';
+import { CheckBoxMenuProps } from './types.js';
 
 /**
  * The `CheckBoxMenu` component

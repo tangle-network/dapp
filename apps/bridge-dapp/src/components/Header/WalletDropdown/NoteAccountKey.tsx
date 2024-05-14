@@ -1,10 +1,10 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { InformationLine } from '@webb-tools/icons/InformationLine';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
+import { InformationLine } from '@webb-tools/icons/InformationLine.js';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/Typography.js';
 import cx from 'classnames';
 import { useMemo } from 'react';
-import { NOTE_ACCOUNT_DOCS_URL } from '../../../constants/links';
-import NoteAccountAvatarWithKey from '../../NoteAccountAvatarWithKey';
+import { NOTE_ACCOUNT_DOCS_URL } from '../../../constants/links.js';
+import NoteAccountAvatarWithKey from '../../NoteAccountAvatarWithKey.js';
 
 const NoteAccountKey = () => {
   const { noteManager } = useWebContext();

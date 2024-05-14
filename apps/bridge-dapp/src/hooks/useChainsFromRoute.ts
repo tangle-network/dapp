@@ -1,7 +1,7 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
 import { useMemo } from 'react';
 import { NumberParam, useQueryParams } from 'use-query-params';
-import { DEST_CHAIN_KEY, SOURCE_CHAIN_KEY } from '../constants';
+import { DEST_CHAIN_KEY, SOURCE_CHAIN_KEY } from '../constants/index.js';
 
 /**
  * Get the source chain and destination chain info from search params

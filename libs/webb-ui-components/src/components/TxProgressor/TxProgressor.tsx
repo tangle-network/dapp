@@ -1,6 +1,6 @@
 'use client';
 
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config.js';
 import {
   ArrowRight,
   ExternalLinkLine,
@@ -10,22 +10,22 @@ import {
 } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import useTimeAgo from '../../hooks/useTimeAgo';
-import { PropsOf } from '../../types';
-import { Typography } from '../../typography';
-import { ChainChip } from '../ChainChip/ChainChip';
-import { Chip, ChipProps } from '../Chip';
-import SteppedProgress from '../Progress/SteppedProgress';
-import { Button } from '../buttons';
-import { TitleWithInfo } from '../TitleWithInfo';
-import AddressChip from '../AddressChip';
+import useTimeAgo from '../../hooks/useTimeAgo.js';
+import { PropsOf } from '../../types/index.js';
+import { Typography } from '../../typography/index.js';
+import { ChainChip } from '../ChainChip/ChainChip.js';
+import { Chip, ChipProps } from '../Chip/index.js';
+import SteppedProgress from '../Progress/SteppedProgress.js';
+import { Button } from '../buttons/index.js';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import AddressChip from '../AddressChip/index.js';
 import {
   TxInfo,
   TxProgressorBodyProps,
   TxProgressorFooterProps,
   TxProgressorHeaderProps,
   TxProgressorRootProps,
-} from './types';
+} from './types.js';
 
 const TxProgressorRoot = forwardRef<
   React.ElementRef<'div'>,
@@ -107,7 +107,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         className="text-mono-120 dark:text-mono-80"
       />
 
-      <div className="flex flex-col md:flex-row md:items-center gap-2">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center">
         <ChainChip
           className="px-2 py-1"
           chainName={chain.name}

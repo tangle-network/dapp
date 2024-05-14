@@ -1,5 +1,5 @@
 import { HexString } from '@polkadot/util/types';
-import { AddressType } from '../types';
+import { AddressType } from '../types.js';
 
 const ensureHex = (maybeHex: string): HexString => {
   if (maybeHex.startsWith('0x')) {

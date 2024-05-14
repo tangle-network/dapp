@@ -6,14 +6,14 @@ import React, { createContext, useCallback, useMemo, useState } from 'react';
 import {
   NotificationProvider,
   notificationApi,
-} from '../components/Notification';
+} from '../components/Notification/index.js';
 
-import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
+import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary/index.js';
 import {
   useDarkMode as useNormalDarkMode,
   useNextDarkMode,
-} from '../hooks/useDarkMode';
-import { IWebbUIContext, WebbUIProviderProps } from './types';
+} from '../hooks/useDarkMode.js';
+import { IWebbUIContext, WebbUIProviderProps } from './types.js';
 
 const initialContext: IWebbUIContext = {
   customMainComponent: undefined,

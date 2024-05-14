@@ -1,1 +1,1 @@
-export * from './ConnectWalletMobileContent';
+export * from './ConnectWalletMobileContent.js';

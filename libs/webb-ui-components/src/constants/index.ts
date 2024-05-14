@@ -1,7 +1,7 @@
 import {
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
-} from '@webb-tools/dapp-config/constants/tangle';
+} from '@webb-tools/dapp-config/constants/tangle.js';
 import {
   Common2Icon,
   DiscordFill,
@@ -11,14 +11,14 @@ import {
   TwitterFill,
   YouTubeFill,
   TangleIcon,
-} from '@webb-tools/icons';
-import type { IconBase } from '@webb-tools/icons/types';
+} from '@webb-tools/icons/index.js';
+import type { IconBase } from '@webb-tools/icons/types.js';
 import type {
   ExternalLink,
   FooterNavsType,
   Link,
   SocialConfigsType,
-} from '../types';
+} from '../types/index.js';
 
 /** TODO: Determine the best way to put thess configs to share across the project */
 const commonExternalProps = {

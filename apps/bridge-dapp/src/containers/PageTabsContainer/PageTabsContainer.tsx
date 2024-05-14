@@ -7,8 +7,8 @@ import {
   WRAPPER_TABS,
   BRIDGE_PATH,
   WRAPPER_PATH,
-} from '../../constants';
-import type { PageTabsContainerProps } from './types';
+} from '../../constants/index.js';
+import type { PageTabsContainerProps } from './types.js';
 
 const PageTabsContainer: FC<PageTabsContainerProps> = ({
   children,
@@ -49,7 +49,7 @@ const PageTabsContainer: FC<PageTabsContainerProps> = ({
         className
       )}
     >
-      <ul className="flex items-center gap-4 overflow-x-scroll pb-2">
+      <ul className="flex items-center gap-4 pb-2 overflow-x-scroll">
         {tabs.map((tab, idx) => (
           <li key={`${tab}-${idx}`}>
             <Link

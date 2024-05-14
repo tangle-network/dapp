@@ -1,8 +1,8 @@
 import { ChainIcon } from '@webb-tools/icons';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChainChipProps } from './types';
-import { getChainChipClassName } from './utils';
+import { ChainChipProps } from './types.js';
+import { getChainChipClassName } from './utils.js';
 
 /**
  * `ChainChip` component

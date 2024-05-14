@@ -1,1 +1,1 @@
-export * from './SpendNotesTableContainer';
+export * from './SpendNotesTableContainer.js';

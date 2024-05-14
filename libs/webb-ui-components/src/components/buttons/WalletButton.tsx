@@ -1,10 +1,10 @@
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import { getFlexBasic } from '@webb-tools/icons/utils.js';
 import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
-import { shortenHex, shortenString } from '../../utils';
-import { WalletButtonProps } from './types';
-import { Typography } from '../../typography/Typography';
+import { shortenHex, shortenString } from '../../utils/index.js';
+import { WalletButtonProps } from './types.js';
+import { Typography } from '../../typography/Typography/index.js';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
   ({ wallet, address, className, addressClassname, ...props }, ref) => {

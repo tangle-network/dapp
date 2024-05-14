@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from 'react';
 import { Navigate, type NavigateProps } from 'react-router';
-import { useWebContext } from './webb-context';
+import { useWebContext } from './webb-context/index.js';
 
 /**
  * Redirects to the given route if the user is not created a note account.

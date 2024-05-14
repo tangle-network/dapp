@@ -4,7 +4,7 @@ import {
   WindowProvider,
 } from '@wagmi/core';
 import { Chain } from 'wagmi';
-import { getExplicitInjectedProvider } from './utils';
+import { getExplicitInjectedProvider } from './utils.js';
 
 // handle multi injected connectors problem with providers
 // Related: https://github.com/wevm/wagmi/discussions/742

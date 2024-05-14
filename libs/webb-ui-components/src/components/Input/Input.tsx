@@ -2,8 +2,8 @@ import cx from 'classnames';
 import React, { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InputProps } from './types';
-import { Typography } from '../../typography/Typography';
+import { InputProps } from './types.js';
+import { Typography } from '../../typography/Typography/index.js';
 
 /**
  * The `Input` component

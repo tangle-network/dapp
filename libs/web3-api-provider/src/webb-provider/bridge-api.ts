@@ -1,6 +1,10 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
+import {
+  Bridge,
+  BridgeApi,
+  Currency,
+} from '@webb-tools/abstract-api-provider/index.js';
 import {
   ERC20__factory as ERC20Factory,
   FungibleTokenWrapper__factory,
@@ -15,7 +19,7 @@ import {
   checkNativeAddress,
 } from '@webb-tools/dapp-types';
 import { getContract } from 'viem';
-import { WebbWeb3Provider } from '../webb-provider';
+import { WebbWeb3Provider } from '../webb-provider.js';
 
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   async fetchWrappableAssetsByBridge(

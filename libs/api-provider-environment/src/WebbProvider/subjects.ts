@@ -1,6 +1,6 @@
 import type { Account } from '@webb-tools/abstract-api-provider';
 import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
-import { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
+import { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types.js';
 import { useObservableState } from 'observable-hooks';
 import { BehaviorSubject } from 'rxjs';
 

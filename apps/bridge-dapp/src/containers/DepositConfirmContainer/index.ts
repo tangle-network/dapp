@@ -1,3 +1,3 @@
-import DepositConfirmContainer from './DepositConfirmContainer';
+import DepositConfirmContainer from './DepositConfirmContainer.js';
 
 export default DepositConfirmContainer;

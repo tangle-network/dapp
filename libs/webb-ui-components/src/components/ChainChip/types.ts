@@ -1,4 +1,4 @@
-import { WebbComponentBase } from '../../types';
+import { WebbComponentBase } from '../../types/index.js';
 import React from 'react';
 import { ChainGroup } from '@webb-tools/dapp-config';
 

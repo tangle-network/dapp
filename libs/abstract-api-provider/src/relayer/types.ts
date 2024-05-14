@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { HexString } from '@polkadot/util/types';
-import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
+import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config.js';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { Hash, Hex } from 'viem';
-import { ActiveWebbRelayer, WebbRelayer } from '.';
+import { ActiveWebbRelayer, WebbRelayer } from './webb-relayer.js';
 
 /**
  * Relayer configuration for a chain

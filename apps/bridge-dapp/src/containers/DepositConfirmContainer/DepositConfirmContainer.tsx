@@ -4,19 +4,19 @@ import {
   TransactionExecutor,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/index.js';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction/index.js';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config.js';
 import { GasStationFill } from '@webb-tools/icons';
 import { useVAnchor } from '@webb-tools/react-hooks';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes.js';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm, FeeDetails } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
-import { useEnqueueSubmittedTx } from '../../hooks';
-import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
+import { useEnqueueSubmittedTx } from '../../hooks/index.js';
+import useInProgressTxInfo from '../../hooks/useInProgressTxInfo.js';
 import {
   captureSentryException,
   getErrorMessage,
@@ -26,8 +26,8 @@ import {
   handleStoreNote,
   getNoteSerializations,
   getCurrentTimestamp,
-} from '../../utils';
-import { DepositConfirmContainerProps } from './types';
+} from '../../utils/index.js';
+import { DepositConfirmContainerProps } from './types.js';
 
 const DepositConfirmContainer = forwardRef<
   HTMLDivElement,

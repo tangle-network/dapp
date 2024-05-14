@@ -12,5 +12,6 @@
   "css.customData": [".vscode/tailwind.json"],
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "typescript.preferences.importModuleSpecifierEnding": "js"
 }

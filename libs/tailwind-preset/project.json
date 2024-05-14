@@ -12,7 +12,7 @@
         "outputPath": "dist/libs/tailwind-preset",
         "entryFile": "libs/tailwind-preset/index.js",
         "tsConfig": "libs/tailwind-preset/tsconfig.lib.json",
-        "format": ["esm", "cjs"],
+        "format": ["esm"],
         "rollupConfig": ["libs/tailwind-preset/rollup.config.js"]
       }
     },

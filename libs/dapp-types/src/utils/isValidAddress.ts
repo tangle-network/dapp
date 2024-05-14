@@ -1,5 +1,5 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import isSubstrateAddress from './isSubstrateAddress';
+import isSubstrateAddress from './isSubstrateAddress.js';
 
 /**
  * Check if the address is valid or not,

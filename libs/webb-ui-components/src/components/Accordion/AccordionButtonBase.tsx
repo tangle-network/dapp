@@ -1,7 +1,7 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { forwardRef } from 'react';
 
-import { AccordionButtonBaseProps } from './types';
+import { AccordionButtonBaseProps } from './types.js';
 
 /**
  * The wrapper around Radix Accordion Trigger, must use inside `<AccordionItem></AccordionItem>` tag

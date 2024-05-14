@@ -1,7 +1,7 @@
-import NextLink from 'next/link';
+import NextLink from 'next/link.js';
 import { Fragment } from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import { LinkProps, isNextLinkProps, isReactRouterLinkProps } from './types';
+import { LinkProps, isNextLinkProps, isReactRouterLinkProps } from './types.js';
 
 export const Link: React.FC<LinkProps> = (props) => {
   if (isNextLinkProps(props)) {

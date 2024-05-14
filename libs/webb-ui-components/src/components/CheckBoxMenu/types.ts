@@ -1,5 +1,5 @@
-import { CheckBoxProps } from '../CheckBox/types';
-import { WebbComponentBase } from '../../types';
+import { CheckBoxProps } from '../CheckBox/types.js';
+import { WebbComponentBase } from '../../types/index.js';
 
 /**
  * `CheckBoxMenu` component's props

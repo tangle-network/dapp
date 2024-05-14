@@ -1,6 +1,6 @@
 'use client';
 
-import isBrowser from '@webb-tools/browser-utils/isBrowser';
+import isBrowser from '@webb-tools/browser-utils/isBrowser.js';
 import { ReactNode, useCallback, useMemo, useReducer } from 'react';
 
 export interface SubMenu {

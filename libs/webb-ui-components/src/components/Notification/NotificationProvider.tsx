@@ -1,8 +1,8 @@
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useState } from 'react';
 
-import { NotificationItem } from './NotificationItem';
-import { NotificationStacked } from './NotificationStacked';
+import { NotificationItem } from './NotificationItem.js';
+import { NotificationStacked } from './NotificationStacked.js';
 
 export const NotificationProvider: React.FC<{
   children?: React.ReactNode;

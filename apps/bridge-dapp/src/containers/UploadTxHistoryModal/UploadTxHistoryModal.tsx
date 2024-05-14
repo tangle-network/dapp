@@ -20,9 +20,9 @@ import {
   KeyIcon,
   InformationLine,
 } from '@webb-tools/icons';
-import { safeParseJson, getErrorMessage } from '../../utils';
+import { safeParseJson, getErrorMessage } from '../../utils/index.js';
 import { twMerge } from 'tailwind-merge';
-import { txArraySchema } from './types';
+import { txArraySchema } from './types.js';
 
 const UploadTxHistoryModal: FC<{
   isOpen: boolean;
@@ -186,7 +186,7 @@ export default UploadTxHistoryModal;
 /** @internal */
 const UploadedMessage: FC<{ isError: boolean }> = ({ isError }) => {
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex items-center gap-1">
       {isError ? (
         <InformationLine className="!fill-red-50" />
       ) : (

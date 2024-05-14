@@ -2,9 +2,9 @@ import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography';
-import { Button } from '../buttons';
-import { FileUploadFieldProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { Button } from '../buttons/index.js';
+import { FileUploadFieldProps } from './types.js';
 
 export const FileUploadField: FC<FileUploadFieldProps> = ({
   error,

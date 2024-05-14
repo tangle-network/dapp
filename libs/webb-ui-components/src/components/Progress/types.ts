@@ -1,4 +1,4 @@
-import { PropsOf, WebbComponentBase } from '../../types';
+import { PropsOf, WebbComponentBase } from '../../types/index.js';
 
 type ProgressSize = 'sm' | 'md' | 'lg';
 

@@ -3,7 +3,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import cx from 'classnames';
 import { forwardRef, Fragment } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ModalContentProps } from './types';
+import { ModalContentProps } from './types.js';
 
 export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (

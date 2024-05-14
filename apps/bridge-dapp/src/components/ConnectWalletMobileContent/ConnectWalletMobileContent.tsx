@@ -1,5 +1,5 @@
-import { Typography } from '@webb-tools/webb-ui-components';
-import { BRIDGE_URL } from '@webb-tools/webb-ui-components/constants';
+import { Typography } from '@webb-tools/webb-ui-components/index.js';
+import { BRIDGE_URL } from '@webb-tools/webb-ui-components/constants/index.js';
 import { FC } from 'react';
 
 export const ConnectWalletMobileContent: FC = () => {

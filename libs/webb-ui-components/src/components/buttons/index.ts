@@ -1,6 +1,6 @@
-export { default as Button } from './Button';
-export { default as ChainButton } from './ChainButton';
-export { default as IconButton } from './IconButton';
-export { default as LoadingPill } from './LoadingPill';
-export { default as WalletButton } from './WalletButton';
-export * from './types';
+export { default as Button } from './Button.js';
+export { default as ChainButton } from './ChainButton.js';
+export { default as IconButton } from './IconButton.js';
+export { default as LoadingPill } from './LoadingPill.js';
+export { default as WalletButton } from './WalletButton.js';
+export * from './types.js';

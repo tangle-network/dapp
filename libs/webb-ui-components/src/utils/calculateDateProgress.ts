@@ -1,5 +1,5 @@
 import { differenceInMilliseconds, isValid } from 'date-fns';
-import { ISubQlTime } from '../types';
+import { ISubQlTime } from '../types/index.js';
 
 /**
  * Calculated the percentage of the current date have passed since the start date

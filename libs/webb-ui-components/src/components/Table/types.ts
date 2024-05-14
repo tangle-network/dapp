@@ -3,7 +3,7 @@ import type {
   IWebbComponentBase,
   PropsOf,
   WebbComponentBase,
-} from '../../types';
+} from '../../types/index.js';
 
 /**
  * The `Table` props

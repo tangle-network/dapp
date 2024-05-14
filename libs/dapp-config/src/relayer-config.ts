@@ -1,7 +1,7 @@
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { PresetTypedChainId } from '@webb-tools/dapp-types/index.js';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
-import { AppEnvironment } from './types';
+import { AppEnvironment } from './types.js';
 
 /**
  * Relayer configuration

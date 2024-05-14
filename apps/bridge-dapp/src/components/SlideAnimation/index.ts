@@ -1,3 +1,3 @@
-import SlideAnimation from './SlideAnimation';
+import SlideAnimation from './SlideAnimation.js';
 
 export default SlideAnimation;

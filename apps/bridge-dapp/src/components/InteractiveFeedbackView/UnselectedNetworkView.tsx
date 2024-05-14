@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { UnselectedNetworkViewProps } from './types';
+import { UnselectedNetworkViewProps } from './types.js';
 import { Close } from '@webb-tools/icons';
 import { FeedbackEntry } from '@webb-tools/dapp-types';
 import { Typography } from '@webb-tools/webb-ui-components';

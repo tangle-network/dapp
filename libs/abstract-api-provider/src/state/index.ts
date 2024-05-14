@@ -3,7 +3,7 @@
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { Currency } from '../currency';
+import { Currency } from '../currency/index.js';
 
 export interface WebbStateInterface {
   wrappableCurrency: Currency | null;

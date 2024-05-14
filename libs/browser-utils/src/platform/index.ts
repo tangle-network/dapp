@@ -1,2 +1,2 @@
-export * from './getPlatformMetaData';
-export { default as getPlatformMetaData } from './getPlatformMetaData';
+export * from './getPlatformMetaData.js';
+export { default as getPlatformMetaData } from './getPlatformMetaData.js';

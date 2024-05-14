@@ -24,9 +24,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { RefHandle, UploadModalContentProps } from './types';
+import { RefHandle, UploadModalContentProps } from './types.js';
 import { formatUnits } from 'viem';
-import { safeParseJson } from '../../utils';
+import { safeParseJson } from '../../utils/index.js';
 
 export const UploadModalContent = forwardRef<
   RefHandle,

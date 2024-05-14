@@ -1,8 +1,8 @@
-import { Spinner } from '@webb-tools/icons';
+import { Spinner } from '@webb-tools/icons/Spinner.js';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ButtonSpinnerProps } from './types';
+import { ButtonSpinnerProps } from './types.js';
 
 const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
   const {

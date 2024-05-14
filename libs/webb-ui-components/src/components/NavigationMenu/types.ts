@@ -1,8 +1,12 @@
 import { ComponentProps } from 'react';
 
-import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItem';
-import type { MenuItemProps } from '../MenuItem/types';
+import {
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+} from '../Dropdown/index.js';
+import { MenuItem } from '../MenuItem/index.js';
+import type { MenuItemProps } from '../MenuItem/types.js';
 
 export interface NavigationMenuProps extends ComponentProps<typeof Dropdown> {}
 

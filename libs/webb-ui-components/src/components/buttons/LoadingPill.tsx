@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { LoadingPillProps } from './types';
+import { LoadingPillProps } from './types.js';
 import { twMerge } from 'tailwind-merge';
 import {
   CheckboxCircleLine,

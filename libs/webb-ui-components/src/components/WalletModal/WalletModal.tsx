@@ -1,9 +1,9 @@
 'use client';
 
 import { forwardRef, useCallback, useMemo } from 'react';
-import { Modal, ModalContent } from '../Modal';
-import { WalletConnectionCard } from '../WalletConnectionCard';
-import { WalletModalProps } from './types';
+import { Modal, ModalContent } from '../Modal/index.js';
+import { WalletConnectionCard } from '../WalletConnectionCard/index.js';
+import { WalletModalProps } from './types.js';
 
 export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
   (

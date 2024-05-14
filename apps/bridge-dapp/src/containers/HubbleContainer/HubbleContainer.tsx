@@ -3,13 +3,16 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import { ErrorFallback, Typography } from '@webb-tools/webb-ui-components';
-import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
+import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants/index.js';
 import cx from 'classnames';
 import { type FC, type PropsWithChildren } from 'react';
 import { Outlet } from 'react-router-dom';
-import { InteractiveFeedbackView } from '../../components';
-import { CreateAccountModal, WalletModalContainer } from '../../containers';
-import { useTryAnotherWalletWithView } from '../../hooks';
+import { InteractiveFeedbackView } from '../../components/index.js';
+import {
+  CreateAccountModal,
+  WalletModalContainer,
+} from '../../containers/index.js';
+import { useTryAnotherWalletWithView } from '../../hooks/index.js';
 
 const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
   const { activeFeedback } = useWebContext();

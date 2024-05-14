@@ -4,14 +4,14 @@ import {
   UNWRAP_PATH,
   WITHDRAW_PATH,
   WRAP_PATH,
-} from './paths';
+} from './paths.js';
 import { ButtonProps, populateDocsUrl } from '@webb-tools/webb-ui-components';
-import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
+import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants/index.js';
 
-export * from '@webb-tools/webb-ui-components/constants';
-export * from './signIn';
-export * from './links';
-export * from './paths';
+export * from '@webb-tools/webb-ui-components/constants/index.js';
+export * from './signIn.js';
+export * from './links.js';
+export * from './paths.js';
 
 export const BRIDGE_TABS = [
   DEPOSIT_PATH,

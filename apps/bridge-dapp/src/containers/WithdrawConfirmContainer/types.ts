@@ -1,10 +1,10 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { Note, Utxo } from '@webb-tools/sdk-core';
 import { TitleWithInfo } from '@webb-tools/webb-ui-components';
-import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types.js';
+import { PropsOf } from '@webb-tools/webb-ui-components/types/index.js';
 import { ComponentProps } from 'react';
-import { BridgeTabContainerProps } from '../types';
+import { BridgeTabContainerProps } from '../types.js';
 
 export interface WithdrawContainerProps
   extends BridgeTabContainerProps,

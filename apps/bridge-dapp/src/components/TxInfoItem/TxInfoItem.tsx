@@ -1,8 +1,8 @@
-import { CornerDownRightLine } from '@webb-tools/icons/CornerDownRightLine';
+import { CornerDownRightLine } from '@webb-tools/icons/CornerDownRightLine.js';
 import { TitleWithInfo, Typography } from '@webb-tools/webb-ui-components';
 import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { TxInfoItemProps } from './types';
+import { TxInfoItemProps } from './types.js';
 
 const TxInfoItem = forwardRef<React.ElementRef<'div'>, TxInfoItemProps>(
   ({ leftContent, rightIcon, rightText, className, ...props }, ref) => {

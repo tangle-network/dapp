@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
-import { BottomDialogTriggerProps } from './types';
+import { BottomDialogTriggerProps } from './types.js';
 
 export const BottomDialogTrigger = forwardRef<
   HTMLButtonElement,

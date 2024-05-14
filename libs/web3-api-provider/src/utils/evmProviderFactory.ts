@@ -1,5 +1,5 @@
 import { PublicClient } from 'viem';
-import getViemClient from './getViemClient';
+import getViemClient from './getViemClient.js';
 
 /**
  * Get the provider for the given typed chain id

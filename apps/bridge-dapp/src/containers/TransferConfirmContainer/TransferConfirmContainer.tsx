@@ -6,13 +6,13 @@ import {
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config.js';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction/index.js';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI.js';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes.js';
 import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError.js';
 import {
   useNoteAccount,
   useRelayers,
@@ -25,13 +25,13 @@ import {
   TransferConfirm,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
-import RelayerFeeDetails from '../../components/RelayerFeeDetails';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails.js';
 import { forwardRef, useMemo, useState, type ComponentProps } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
-import { useEnqueueSubmittedTx } from '../../hooks';
-import useTransferFeeCalculation from '../../hooks/useTransferFeeCalculation';
-import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
+import useEnqueueSubmittedTx from '../../hooks/useEnqueueSubmittedTx.js';
+import useTransferFeeCalculation from '../../hooks/useTransferFeeCalculation.js';
+import useInProgressTxInfo from '../../hooks/useInProgressTxInfo.js';
 import {
   captureSentryException,
   getErrorMessage,
@@ -41,9 +41,9 @@ import {
   handleStoreNote,
   getNoteSerializations,
   getCurrentTimestamp,
-} from '../../utils';
-import { RecipientPublicKeyTooltipContent } from './shared';
-import { TransferConfirmContainerProps } from './types';
+} from '../../utils/index.js';
+import { RecipientPublicKeyTooltipContent } from './shared.js';
+import { TransferConfirmContainerProps } from './types.js';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 

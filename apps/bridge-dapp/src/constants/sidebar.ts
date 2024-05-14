@@ -1,12 +1,12 @@
-import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine';
-import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
-import { Tangle } from '@webb-tools/icons/Tangle';
+import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine.js';
+import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon.js';
+import { Tangle } from '@webb-tools/icons/Tangle.js';
 import {
   type SideBarFooterType,
   type SideBarItemProps,
   type SidebarProps,
 } from '@webb-tools/webb-ui-components';
-import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
+import { Logo } from '@webb-tools/webb-ui-components/components/Logo/index.js';
 import {
   DKG_STATS_URL,
   HUBBLE_STATS_URL,
@@ -14,8 +14,8 @@ import {
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
-} from '@webb-tools/webb-ui-components/constants';
-import { BRIDGE_PATH, WRAPPER_PATH } from './paths';
+} from '@webb-tools/webb-ui-components/constants/index.js';
+import { BRIDGE_PATH, WRAPPER_PATH } from './paths.js';
 
 const items: SideBarItemProps[] = [
   {

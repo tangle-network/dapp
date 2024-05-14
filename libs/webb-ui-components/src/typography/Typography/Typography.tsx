@@ -1,12 +1,12 @@
 import React, { createElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import type { WebbTypographyProps } from '../types';
+import type { WebbTypographyProps } from '../types.js';
 import {
   getDefaultTextColor,
   getFontWeightClassName,
   getTextAlignClassName,
-} from '../utils';
+} from '../utils/index.js';
 
 const defaultComponent = {
   h1: 'h1' as const,

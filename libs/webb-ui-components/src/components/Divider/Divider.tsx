@@ -4,7 +4,7 @@ import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { DividerProps } from './types';
+import { DividerProps } from './types.js';
 
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(
   ({ className, ...props }, ref) => {

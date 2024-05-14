@@ -1,12 +1,12 @@
 import { forwardRef } from 'react';
-import { Typography } from '../../typography';
-import { Button, ButtonProps } from '../buttons';
+import { Typography } from '../../typography/index.js';
+import { Button, ButtonProps } from '../buttons/index.js';
 import {
   BottomDialog,
   BottomDialogTrigger,
   BottomDialogPortal,
-} from '../BottomDialog';
-import { ConnectWalletMobileButtonProps } from './types';
+} from '../BottomDialog/index.js';
+import { ConnectWalletMobileButtonProps } from './types.js';
 
 export const ConnectWalletMobileButton = forwardRef<
   HTMLDivElement,

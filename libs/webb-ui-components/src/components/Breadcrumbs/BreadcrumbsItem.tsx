@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { BreadcrumbsItemPropsType } from './types';
-import { Typography } from '../../typography';
-import { Chip } from '../Chip';
+import { BreadcrumbsItemPropsType } from './types.js';
+import { Typography } from '../../typography/index.js';
+import { Chip } from '../Chip/index.js';
 
 /**
  * The `BreadcrumbsItem` component

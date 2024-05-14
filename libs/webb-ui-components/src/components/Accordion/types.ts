@@ -5,7 +5,7 @@ import {
   AccordionMultipleProps,
   AccordionItemProps as RdxAccordionItemProps,
 } from '@radix-ui/react-accordion';
-import { PropsOf, IWebbComponentBase } from '../../types';
+import { PropsOf, IWebbComponentBase } from '../../types/index.js';
 
 export type AccordionProps = IWebbComponentBase &
   (AccordionSingleProps | AccordionMultipleProps);

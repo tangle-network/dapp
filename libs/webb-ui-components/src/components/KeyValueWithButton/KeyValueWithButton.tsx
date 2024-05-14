@@ -1,13 +1,13 @@
-import { useCopyable } from '../../hooks';
+import { useCopyable } from '../../hooks/useCopyable.js';
 import { FileCopyLine } from '@webb-tools/icons';
-import { shortenHex } from '../../utils';
+import { shortenHex } from '../../utils/shortenHex.js';
 import cx from 'classnames';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LabelWithValue } from '../LabelWithValue';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
-import { KeyValueWithButtonProps } from './types';
+import { LabelWithValue } from '../LabelWithValue/index.js';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/index.js';
+import { KeyValueWithButtonProps } from './types.js';
 
 /**
  * The `KeyValueWithButton` component contains the key label and the shortened key hash along with a copy button

@@ -6,16 +6,16 @@ import type {
   ChainNameIntoChainId,
   RelayedChainConfig,
   RelayerInfo,
-} from '@webb-tools/abstract-api-provider/relayer';
-import { WebbRelayer } from '@webb-tools/abstract-api-provider/relayer';
+} from '@webb-tools/abstract-api-provider/relayer/index.js';
+import { WebbRelayer } from '@webb-tools/abstract-api-provider/relayer/index.js';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
   type RelayerCMDBase,
   type RelayerConfig,
   chainNameAdapter,
   relayerConfig,
-} from '@webb-tools/dapp-config/relayer-config';
-import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
+} from '@webb-tools/dapp-config/relayer-config.js';
+import { isAppEnvironmentType } from '@webb-tools/dapp-config/types.js';
 import { PolkadotRelayerManager } from '@webb-tools/polkadot-api-provider';
 import {
   ChainType,

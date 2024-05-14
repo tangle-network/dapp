@@ -1,11 +1,14 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import {
+  EVMChainId,
+  PresetTypedChainId,
+} from '@webb-tools/dapp-types/ChainId.js';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
-import mergeWith from 'lodash/mergeWith';
+import cloneDeep from 'lodash/cloneDeep.js';
+import merge from 'lodash/merge.js';
+import mergeWith from 'lodash/mergeWith.js';
 import {
   arbitrumGoerli,
   avalancheFuji,
@@ -23,9 +26,12 @@ import {
   TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
   TANGLE_TESTNET_EVM_EXPLORER_URL,
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
-} from '../../constants/tangle';
-import { DEFAULT_EVM_CURRENCY } from '../../currencies';
-import type { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
+} from '../../constants/tangle.js';
+import { DEFAULT_EVM_CURRENCY } from '../../currencies/index.js';
+import type {
+  ChainConfig,
+  WebbExtendedChain,
+} from '../chain-config.interface.js';
 
 const localOrbitMulticall3Address =
   process.env.BRIDGE_DAPP_LOCAL_ORBIT_MULTICALL3_ADDRESS;

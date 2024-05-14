@@ -4,7 +4,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
-import Storage from '@webb-tools/dapp-types/Storage';
+import Storage from '@webb-tools/dapp-types/Storage.js';
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
@@ -12,12 +12,16 @@ import {
   NewNotesTxResult,
   TransactionExecutor,
   TransactionState,
-} from '../transaction/transactionExecutor';
-import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
-import { WebbProviderType } from '../types';
-import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
-import { WebbRelayer } from './webb-relayer';
-import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
+} from '../transaction/transactionExecutor.js';
+import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex.js';
+import { WebbProviderType } from '../types.js';
+import {
+  OptionalActiveRelayer,
+  OptionalRelayer,
+  RelayerQuery,
+} from './types.js';
+import { WebbRelayer } from './webb-relayer.js';
+import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config.js';
 
 export abstract class WebbRelayerManager<
   Provider extends WebbProviderType,

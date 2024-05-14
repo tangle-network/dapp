@@ -1,7 +1,7 @@
 import { forwardRef, memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { THeaderProps } from './types';
+import { THeaderProps } from './types.js';
 
 /**
  * The styler wrapper of `<th></th>` tag, use inside `<thead></thead>` tab for table

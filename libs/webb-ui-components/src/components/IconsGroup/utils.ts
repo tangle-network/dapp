@@ -1,4 +1,4 @@
-import { IconSize } from '@webb-tools/icons/types';
+import { IconSize } from '@webb-tools/icons/types.js';
 
 /**
  * Get the className to handle horizontal spaces between the icons in pixel

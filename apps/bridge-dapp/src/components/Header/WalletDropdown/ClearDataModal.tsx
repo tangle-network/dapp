@@ -7,7 +7,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
+import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants/index.js';
 import { FC, useCallback, useState } from 'react';
 
 const ClearDataModal: FC<{

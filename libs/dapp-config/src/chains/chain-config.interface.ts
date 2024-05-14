@@ -4,7 +4,7 @@
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import type { Chain } from 'viem/chains';
 
-import { AppEnvironment } from '../types';
+import type { AppEnvironment } from '../types.js';
 
 export type ChainGroup =
   | 'arbitrum'

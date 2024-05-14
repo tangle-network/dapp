@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { PropsOf } from '../../types';
+import { PropsOf } from '../../types/index.js';
 
 export const ModalFooter = forwardRef<HTMLDivElement, PropsOf<'div'>>(
   ({ className, ...props }, ref) => {

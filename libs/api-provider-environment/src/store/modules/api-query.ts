@@ -4,7 +4,7 @@ import {
   createStore,
   ManipulationParams,
   ManipulationsConfig,
-} from '../createStore';
+} from '../createStore.js';
 
 type ApiQueryStoreState = Record<string, any>;
 

@@ -1,8 +1,12 @@
-import { IconBase } from '@webb-tools/icons/types';
-import { IWebbComponentBase, PropsOf, WebbComponentBase } from '../../types';
+import { IconBase } from '@webb-tools/icons/types.js';
+import {
+  IWebbComponentBase,
+  PropsOf,
+  WebbComponentBase,
+} from '../../types/index.js';
 import { ChainConfig } from '@webb-tools/dapp-config';
-import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
-import { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
+import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types.js';
+import { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface.js';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
 

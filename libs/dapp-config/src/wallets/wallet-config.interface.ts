@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
-import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData.js';
 import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { MetaMaskConnector, RainbowConnector } from './injected';
+import { MetaMaskConnector, RainbowConnector } from './injected/index.js';
 
 export type SupportedConnector =
   | MetaMaskConnector

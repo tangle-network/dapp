@@ -1,1 +1,1 @@
-export * from './EducationCard';
+export * from './EducationCard.js';

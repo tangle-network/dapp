@@ -1,8 +1,11 @@
 import * as Sentry from '@sentry/react';
-import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
+import {
+  AppEvent,
+  WebbProvider,
+} from '@webb-tools/api-provider-environment/index.js';
+import { WebbUIProvider } from '@webb-tools/webb-ui-components/index.js';
 import { FC } from 'react';
-import AppRoutes from './routes';
+import AppRoutes from './routes/index.js';
 
 // Singleton app event instance
 export const appEvent = new AppEvent();

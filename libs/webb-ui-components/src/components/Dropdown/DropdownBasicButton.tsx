@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { DropdownButtonProps } from './types';
+import { DropdownButtonProps } from './types.js';
 
 /**
  * The `DropdownMenu` trigger function, must use inside the `Dropdown` component

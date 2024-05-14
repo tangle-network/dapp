@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import { DefaultErrorViewProps } from './types';
+import { DefaultErrorViewProps } from './types.js';
 
 export const DefaultErrorView: FC<DefaultErrorViewProps> = ({
   activeFeedback,

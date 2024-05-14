@@ -1,5 +1,5 @@
-import { createIcon } from './create-icon';
-import type { IconBase } from './types';
+import { createIcon } from './create-icon.js';
+import type { IconBase } from './types.js';
 
 const UserFillIcon = (props: IconBase) => {
   return createIcon({

@@ -1,14 +1,14 @@
 import type { ApiPromise } from '@polkadot/api';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import type { ChainAddressConfig } from '../../anchors';
-import { chainsConfig } from '../../chains';
-import { DEFAULT_NATIVE_INDEX } from '../../constants';
-import { CurrencyConfig } from '../../currencies';
-import type { ICurrency } from '../../types';
+import type { ChainAddressConfig } from '../../anchors/index.js';
+import { chainsConfig } from '../../chains/index.js';
+import { DEFAULT_NATIVE_INDEX } from '../../constants/index.js';
+import { CurrencyConfig } from '../../currencies/index.js';
+import type { ICurrency } from '../../types.js';
 import {
   OnChainConfigBase,
   type CurrencyResponse,
-} from '../on-chain-config-base';
+} from '../on-chain-config-base.js';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;

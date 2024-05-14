@@ -4,7 +4,7 @@ import {
   TypographyAlignValues,
   TypographyFontWeightValues,
   WebbTypographyVariant,
-} from '../types';
+} from '../types.js';
 
 /**
  * Get the tailwindcss className to style `text-align` attribute base on the typography align values

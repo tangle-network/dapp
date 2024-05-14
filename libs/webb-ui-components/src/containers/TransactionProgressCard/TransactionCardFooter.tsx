@@ -4,9 +4,12 @@ import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button } from '../../components/buttons';
-import { Typography } from '../../typography';
-import { TransactionCardFooterProps, TransactionCardItemProps } from './types';
+import { Button } from '../../components/buttons/index.js';
+import { Typography } from '../../typography/index.js';
+import {
+  TransactionCardFooterProps,
+  TransactionCardItemProps,
+} from './types.js';
 
 /**
  *  Transaction card footer

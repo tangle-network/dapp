@@ -1,4 +1,4 @@
-import { PropsOf } from '../../types';
+import { PropsOf } from '../../types/index.js';
 
 export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer';
 

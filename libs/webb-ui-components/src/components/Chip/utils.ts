@@ -1,4 +1,4 @@
-import { ChipClassNames, ChipColors } from './types';
+import { ChipClassNames, ChipColors } from './types.js';
 
 const classNames: ChipClassNames = {
   blue: {

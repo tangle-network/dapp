@@ -1,5 +1,5 @@
-import { createIcon } from './create-icon';
-import { IconBase } from './types';
+import { createIcon } from './create-icon.js';
+import { IconBase } from './types.js';
 
 const SpamLineIcon = (props: IconBase) => {
   return createIcon({

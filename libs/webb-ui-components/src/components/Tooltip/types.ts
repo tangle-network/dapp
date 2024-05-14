@@ -3,7 +3,7 @@ import {
   TooltipProps as RdxTooltipPropsBase,
   TooltipTriggerProps as RdxTooltipTriggerProps,
 } from '@radix-ui/react-tooltip';
-import { IWebbComponentBase } from '../../types';
+import { IWebbComponentBase } from '../../types/index.js';
 import React from 'react';
 
 type OmittedKeys =

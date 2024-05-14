@@ -1,5 +1,5 @@
-import type { ChainConfig } from '../chains/chain-config.interface';
-import chainsPopulated from '../chains/chainsPopulated';
+import type { ChainConfig } from '../chains/chain-config.interface.js';
+import chainsPopulated from '../chains/chainsPopulated.js';
 
 /**
  * Get the chain (with supported wallets populated) from the chain config,

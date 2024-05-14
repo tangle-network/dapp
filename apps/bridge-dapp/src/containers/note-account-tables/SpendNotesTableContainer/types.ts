@@ -1,7 +1,7 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { Chain } from '@webb-tools/dapp-config';
 
-import { NoteAccountTableContainerProps } from '../types';
+import { NoteAccountTableContainerProps } from '../types.js';
 import { Note } from '@webb-tools/sdk-core';
 
 export interface SpendNotesTableContainerProps {}

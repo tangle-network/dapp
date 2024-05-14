@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { DropdownBodyProps } from './types';
+import { DropdownBodyProps } from './types.js';
 
 /**
  * The style wrapper around Radix `Content` and `Portal` component, must use inside the `Dropdown` component

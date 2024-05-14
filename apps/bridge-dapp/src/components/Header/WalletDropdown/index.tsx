@@ -1,15 +1,18 @@
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
+import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config/index.js';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ExternalLinkLine,
   LoginBoxLineIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
-import { useWallets } from '@webb-tools/react-hooks';
-import { WebbWeb3Provider, isViemError } from '@webb-tools/web3-api-provider';
+import { useWallets } from '@webb-tools/react-hooks/index.js';
+import {
+  WebbWeb3Provider,
+  isViemError,
+} from '@webb-tools/web3-api-provider/index.js';
 import {
   Button,
   Dropdown,
@@ -20,8 +23,8 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import NoteAccountAction from './NoteAccountAction';
-import NoteAccountKey from './NoteAccountKey';
+import NoteAccountAction from './NoteAccountAction.js';
+import NoteAccountKey from './NoteAccountKey.js';
 
 export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,

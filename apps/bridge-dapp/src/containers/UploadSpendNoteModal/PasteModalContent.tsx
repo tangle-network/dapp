@@ -15,8 +15,8 @@ import {
   chainsPopulated,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
-import { PasteModalContentProps } from './types';
-import { isValidNote } from '../../utils';
+import { PasteModalContentProps } from './types.js';
+import { isValidNote } from '../../utils/index.js';
 import { formatUnits } from 'viem';
 
 const initialNotes = {

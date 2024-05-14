@@ -2,9 +2,9 @@ import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainIcon, TokenIcon } from '@webb-tools/icons';
 
-import { IconWithTooltip } from '../IconWithTooltip';
-import { IconsGroupProps } from './types';
-import { getIconsSpacingClassName } from './utils';
+import { IconWithTooltip } from '../IconWithTooltip/index.js';
+import { IconsGroupProps } from './types.js';
+import { getIconsSpacingClassName } from './utils.js';
 
 export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
   ({ type, icons, iconSize = 'lg', className, ...props }, ref) => {

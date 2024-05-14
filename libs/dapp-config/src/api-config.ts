@@ -3,9 +3,9 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types/Currency';
-import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types/Currency.js';
+import { TypedChainId } from '@webb-tools/dapp-types/ChainId.js';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError.js';
 import {
   ChainType,
   calculateTypedChainId,
@@ -13,21 +13,24 @@ import {
 import { u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
 import { PublicClient } from 'viem';
-import { parsedAnchorConfig } from './anchors';
-import { AnchorConfigEntry } from './anchors/anchor-config.interface';
-import { getBridgeConfigByAsset } from './bridges';
-import { BridgeConfigEntry } from './bridges/bridge-config.interface';
-import { ChainConfig } from './chains/chain-config.interface';
-import { CurrencyConfig } from './currencies/currency-config.interface';
-import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
+import { parsedAnchorConfig } from './anchors/index.js';
+import { AnchorConfigEntry } from './anchors/anchor-config.interface.js';
+import { getBridgeConfigByAsset } from './bridges/index.js';
+import { BridgeConfigEntry } from './bridges/bridge-config.interface.js';
+import { ChainConfig } from './chains/chain-config.interface.js';
+import { CurrencyConfig } from './currencies/currency-config.interface.js';
+import {
+  EVMOnChainConfig,
+  SubstrateOnChainConfig,
+} from './on-chain-config/index.js';
 import {
   getNativeCurrencyFromConfig,
   parseSubstrateTargetSystem,
-} from './utils';
-import { WalletConfig } from './wallets/wallet-config.interface';
-import values from 'lodash/values';
-import keys from 'lodash/keys';
-import { AddressType, isAppEnvironmentType } from './types';
+} from './utils/index.js';
+import { WalletConfig } from './wallets/wallet-config.interface.js';
+import values from 'lodash/values.js';
+import keys from 'lodash/keys.js';
+import { AddressType, isAppEnvironmentType } from './types.js';
 
 export type Chain = ChainConfig & {
   wallets: Array<Wallet['id']>;

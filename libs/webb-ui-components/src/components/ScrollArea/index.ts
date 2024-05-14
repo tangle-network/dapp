@@ -1,1 +1,1 @@
-export * from './ScrollArea';
+export * from './ScrollArea.js';

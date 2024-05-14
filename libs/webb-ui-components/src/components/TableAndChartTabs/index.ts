@@ -1,3 +1,3 @@
-export * from './TableAndChartTabs';
+export * from './TableAndChartTabs.js';
 
-export * from './types';
+export * from './types.js';

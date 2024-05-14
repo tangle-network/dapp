@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { SteppedProgressProps } from './types';
+import { SteppedProgressProps } from './types.js';
 
 const idleClsx = cx('bg-mono-40 dark:bg-mono-140');
 

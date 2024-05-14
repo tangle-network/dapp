@@ -6,9 +6,9 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import {
   useNextDarkMode,
   useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode';
+} from '../../hooks/useDarkMode.js';
 
-import { ThemeToggleProps } from './types';
+import { ThemeToggleProps } from './types.js';
 
 /**
  * ThemeToggle (Dark/Light) Component

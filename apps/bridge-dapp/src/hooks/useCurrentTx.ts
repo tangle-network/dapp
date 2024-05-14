@@ -1,4 +1,4 @@
-import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction/index.js';
 import { useMemo } from 'react';
 
 /**

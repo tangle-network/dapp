@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Dropdown } from '../Dropdown/Dropdown';
-import { NavigationMenuProps } from './types';
+import { Dropdown } from '../Dropdown/Dropdown.js';
+import { NavigationMenuProps } from './types.js';
 
 /**
  * The NavigationMenu wrapper, wrap the navigation menu button and navigation menu content

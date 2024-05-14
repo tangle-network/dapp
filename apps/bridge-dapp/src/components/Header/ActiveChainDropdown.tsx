@@ -3,21 +3,21 @@ import {
   useWebContext,
   useConnectWallet,
 } from '@webb-tools/api-provider-environment';
-import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
-import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { ChainIcon } from '@webb-tools/icons/ChainIcon';
+import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface.js';
+import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig.js';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError.js';
+import { ChainIcon } from '@webb-tools/icons/ChainIcon.js';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Dropdown,
   DropdownBody,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import ChainButtonCmp from '@webb-tools/webb-ui-components/components/buttons/ChainButton';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
+} from '@webb-tools/webb-ui-components/components/Dropdown/index.js';
+import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem/index.js';
+import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea/index.js';
+import ChainButtonCmp from '@webb-tools/webb-ui-components/components/buttons/ChainButton.js';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI.js';
 import { useCallback, useMemo } from 'react';
-import useChainsFromRoute from '../../hooks/useChainsFromRoute';
+import useChainsFromRoute from '../../hooks/useChainsFromRoute.js';
 
 const ActiveChainDropdown = () => {
   const { activeChain, activeWallet, apiConfig, switchChain, loading } =

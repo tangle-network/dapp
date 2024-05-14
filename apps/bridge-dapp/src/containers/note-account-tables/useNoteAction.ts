@@ -10,7 +10,7 @@ import {
   SOURCE_CHAIN_KEY,
   TRANSFER_PATH,
   WITHDRAW_PATH,
-} from '../../constants';
+} from '../../constants/index.js';
 
 function useNoteAction() {
   const navigate = useNavigate();

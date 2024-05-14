@@ -1,2 +1,2 @@
-export * from './HiddenValue';
-export * from './HiddenValueEye';
+export * from './HiddenValue.js';
+export * from './HiddenValueEye.js';

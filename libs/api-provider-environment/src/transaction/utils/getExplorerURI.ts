@@ -1,6 +1,6 @@
 import { encodeAddress } from '@polkadot/util-crypto';
-import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
-import { chainsConfig as substrateChainsConfig } from '@webb-tools/dapp-config/chains/substrate';
+import { WebbProviderType } from '@webb-tools/abstract-api-provider/types.js';
+import { chainsConfig as substrateChainsConfig } from '@webb-tools/dapp-config/chains/substrate/index.js';
 
 const substrateExplorerAndChainIdMap = Object.keys(
   substrateChainsConfig

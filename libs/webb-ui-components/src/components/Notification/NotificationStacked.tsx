@@ -5,7 +5,7 @@ import {
   NotificationContext,
   NotificationCTXDefaultValue,
   SnackBarOpts,
-} from './NotificationContext';
+} from './NotificationContext.js';
 
 let _notificationApi = {
   ...NotificationCTXDefaultValue,

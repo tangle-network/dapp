@@ -1,9 +1,9 @@
 import type { RankingInfo } from '@tanstack/match-sorter-utils';
-import type { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@webb-tools/icons/types.js';
 import type { FilterFn } from '@tanstack/react-table';
-import type { Nullable, Maybe } from '@webb-tools/dapp-types/utils/types';
+import type { Nullable, Maybe } from '@webb-tools/dapp-types/utils/types.js';
 import type React from 'react';
-import { WEBB_AVAILABLE_SOCIALS } from '../constants';
+import { WEBB_AVAILABLE_SOCIALS } from '../constants/index.js';
 
 /******************
  * DECLARE GLOBAL *

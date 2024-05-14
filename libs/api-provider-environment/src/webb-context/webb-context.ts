@@ -5,15 +5,15 @@ import type {
   Bridge,
   TransactionExecutor,
   WebbApiProvider,
-} from '@webb-tools/abstract-api-provider';
+} from '@webb-tools/abstract-api-provider/index.js';
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
 import type { InteractiveFeedback } from '@webb-tools/dapp-types';
-import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
+import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types.js';
 import type { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
-import { AppEvent, type TAppEvent } from '../app-event';
-import type { TransactionQueueApi } from '../transaction';
-import noop from 'lodash/noop';
+import { AppEvent, type TAppEvent } from '../app-event/index.js';
+import type { TransactionQueueApi } from '../transaction/index.js';
+import noop from 'lodash/noop.js';
 
 export interface WebbContextState<T = unknown> {
   /** Boolean indicating if the app is loading */

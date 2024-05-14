@@ -5,29 +5,33 @@ import { ApiPromise } from '@polkadot/api';
 import { EventBus } from '@webb-tools/app-util';
 import { BridgeStorage } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
-import { ApiConfig } from '@webb-tools/dapp-config';
-import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
-import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
+import { ApiConfig } from '@webb-tools/dapp-config/index.js';
+import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config.js';
+import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types/index.js';
+import { NoteManager } from '@webb-tools/note-manager/index.js';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents, Backend } from '@webb-tools/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
-import { AccountsAdapter } from './account/Accounts.adapter';
-import { ChainQuery } from './chain-query';
-import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
-import { ECDSAClaims } from './ecdsa-claims';
-import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { WebbState } from './state';
+import { AccountsAdapter } from './account/Accounts.adapter.js';
+import { ChainQuery } from './chain-query/index.js';
+import {
+  ContributePayload,
+  Crowdloan,
+  CrowdloanEvent,
+} from './crowdloan/index.js';
+import { ECDSAClaims } from './ecdsa-claims/index.js';
+import { WebbRelayerManager } from './relayer/webb-relayer-manager.js';
+import { WebbState } from './state/index.js';
 import {
   ActionEvent,
   NewNotesTxResult,
   TransactionExecutor,
-} from './transaction/transactionExecutor';
-import { BridgeApi } from './vanchor';
-import { VAnchorActions } from './vanchor/vanchor-actions';
-import { WrapUnwrap } from './wrap-unwrap';
-import { WebbProviderType } from './types';
+} from './transaction/transactionExecutor.js';
+import { BridgeApi } from './vanchor/index.js';
+import { VAnchorActions } from './vanchor/vanchor-actions.js';
+import { WrapUnwrap } from './wrap-unwrap/index.js';
+import { WebbProviderType } from './types.js';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API

@@ -10,7 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { ArrowLeft, ExternalLinkLine } from '@webb-tools/icons';
 import type { TransactionType } from '@webb-tools/abstract-api-provider';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/index.js';
 import {
   ChainChip,
   Table,
@@ -25,8 +25,8 @@ import { type FC, useState, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useNavigate } from 'react-router';
 
-import type { TxTableContainerProps } from './types';
-import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants';
+import type { TxTableContainerProps } from './types.js';
+import { ACCOUNT_TRANSACTIONS_FULL_PATH } from '../../constants/index.js';
 
 const staticColumns: ColumnDef<TransactionType>[] = [
   {
@@ -87,7 +87,7 @@ const staticColumns: ColumnDef<TransactionType>[] = [
     cell: (props) => {
       const { recipientAddress, explorerUri } = props.row.original;
       return (
-        <div className="flex gap-1 items-center">
+        <div className="flex items-center gap-1">
           <Typography variant="body1">
             {recipientAddress ? shortenHex(recipientAddress) : '-'}
           </Typography>

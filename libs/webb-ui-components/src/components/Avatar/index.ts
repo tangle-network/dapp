@@ -1,4 +1,4 @@
-export * from './Avatar';
-export * from './types';
+export * from './Avatar.js';
+export * from './types.js';
 
-export * from './Identicon';
+export * from './Identicon.js';

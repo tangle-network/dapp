@@ -15,9 +15,9 @@ import {
   WebbRelayer,
   WebbRelayerManager,
   shuffleRelayers,
-} from '@webb-tools/abstract-api-provider/relayer';
+} from '@webb-tools/abstract-api-provider/relayer/index.js';
 import { BridgeStorage } from '@webb-tools/browser-utils';
-import Storage from '@webb-tools/dapp-types/Storage';
+import Storage from '@webb-tools/dapp-types/Storage.js';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 
 export class PolkadotRelayerManager extends WebbRelayerManager<

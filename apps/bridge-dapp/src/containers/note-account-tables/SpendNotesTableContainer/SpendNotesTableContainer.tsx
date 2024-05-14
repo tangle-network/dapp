@@ -26,12 +26,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { EmptyTable, LoadingTable } from '../../../components/tables';
-import { downloadNotes } from '../../../utils';
-import { ActionWithTooltip } from '../ActionWithTooltip';
-import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
-import useNoteAction from '../useNoteAction';
-import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
+import { EmptyTable, LoadingTable } from '../../../components/tables/index.js';
+import { downloadNotes } from '../../../utils/index.js';
+import { ActionWithTooltip } from '../ActionWithTooltip.js';
+import { MoreOptionsDropdown } from '../MoreOptionsDropdown.js';
+import useNoteAction from '../useNoteAction.js';
+import { SpendNoteDataType, SpendNotesTableContainerProps } from './types.js';
 import { parseEther } from 'viem';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();

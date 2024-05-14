@@ -12,8 +12,8 @@
         "outputPath": "dist/libs/icons",
         "entryFile": "libs/icons/src/index.ts",
         "tsConfig": "libs/icons/tsconfig.lib.json",
-        "format": ["esm", "cjs"],
-        "rollupConfig": ["libs/icons/rollup.config.js"],
+        "format": ["esm"],
+        "rollupConfig": ["libs/icons/rollup.config.mjs"],
         "external": ["react", "react-dom"]
       }
     },

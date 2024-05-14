@@ -1,1 +1,1 @@
-export * from './UploadSpendNoteModal';
+export * from './UploadSpendNoteModal.js';

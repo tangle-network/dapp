@@ -2,9 +2,9 @@ import { WebbErrorCodes } from '@webb-tools/dapp-types';
 import { Modal, ModalContent } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { DefaultErrorView } from './DefaultErrorView';
-import { UnselectedNetworkView } from './UnselectedNetworkView';
-import { InteractiveFeedbackViewProps } from './types';
+import { DefaultErrorView } from './DefaultErrorView.js';
+import { UnselectedNetworkView } from './UnselectedNetworkView.js';
+import { InteractiveFeedbackViewProps } from './types.js';
 
 export const InteractiveFeedbackView: FC<InteractiveFeedbackViewProps> = ({
   activeFeedback,

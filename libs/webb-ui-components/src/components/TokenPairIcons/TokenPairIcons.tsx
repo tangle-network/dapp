@@ -1,8 +1,8 @@
 import { ChainIcon, TokenIcon } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { IconWithTooltip } from '../IconWithTooltip';
-import { TokenPairIconsProps } from './types';
+import { IconWithTooltip } from '../IconWithTooltip/index.js';
+import { TokenPairIconsProps } from './types.js';
 
 export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
   ({ token1Symbol, token2Symbol, chainName, className, ...props }, ref) => {

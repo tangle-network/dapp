@@ -1,5 +1,5 @@
-export * from './Accordion';
-export * from './AccordionButton';
-export { default as AccordionButtonBase } from './AccordionButtonBase';
-export * from './AccordionContent';
-export * from './AccordionItem';
+export * from './Accordion.js';
+export * from './AccordionButton.js';
+export { default as AccordionButtonBase } from './AccordionButtonBase.js';
+export * from './AccordionContent.js';
+export * from './AccordionItem.js';

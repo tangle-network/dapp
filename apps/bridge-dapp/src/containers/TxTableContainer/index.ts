@@ -1,3 +1,3 @@
-import TxTableContainer from './TxTableContainer';
+import TxTableContainer from './TxTableContainer.js';
 
 export default TxTableContainer;
