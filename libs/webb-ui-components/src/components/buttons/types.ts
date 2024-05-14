@@ -170,11 +170,11 @@ export type ButtonClassNames = {
 };
 
 /**
- * The DropdownButton component props
+ * The ChainOrTokenButtonProps component props
  */
-export type DropdownButtonProps = PropsOf<'button'> & {
+export type ChainOrTokenButtonProps = PropsOf<'button'> & {
   /**
-   * The TextFieldRootProps to display in the button
+   * The text to display in the button
    */
   value?: string;
 

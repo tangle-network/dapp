@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import DropdownButton from '@webb-tools/webb-ui-components/components/buttons/DropdownButton';
+import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useMemo } from 'react';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
@@ -65,7 +65,7 @@ const ActiveChainDropdown = () => {
   return (
     <Dropdown>
       <DropdownMenuTrigger asChild disabled={loading}>
-        <DropdownButton
+        <ChainOrTokenButton
           value={chain?.name}
           status="success"
           placeholder={activeChain === null ? 'Unsupported Chain' : undefined}

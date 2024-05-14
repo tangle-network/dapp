@@ -2,7 +2,7 @@
 
 import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import DropdownButton from '@webb-tools/webb-ui-components/components/buttons/DropdownButton';
+import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import {
   Dropdown,
   DropdownBody,
@@ -33,7 +33,7 @@ const AmountAndTokenInput: FC = () => {
       />
       <Dropdown>
         <DropdownTrigger asChild>
-          <DropdownButton
+          <ChainOrTokenButton
             value={selectedToken.symbol}
             status="success"
             className="w-full bg-mono-0 dark:bg-mono-180 border-0 px-3"

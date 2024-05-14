@@ -4,7 +4,7 @@ import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
-import DropdownButton from '@webb-tools/webb-ui-components/components/buttons/DropdownButton';
+import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import {
   Dropdown,
   DropdownBody,
@@ -78,7 +78,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   return (
     <Dropdown className={className}>
       <DropdownTrigger asChild>
-        <DropdownButton
+        <ChainOrTokenButton
           value={selectedChain.name}
           className="w-full bg-mono-20 dark:bg-mono-160 border-0"
           iconType="chain"

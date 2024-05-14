@@ -3,9 +3,9 @@ import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { DropdownButtonProps } from './types';
+import { ChainOrTokenButtonProps } from './types';
 
-const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>(
+const ChainOrTokenButton = forwardRef<HTMLButtonElement, ChainOrTokenButtonProps>(
   (
     {
       className,
@@ -67,6 +67,6 @@ const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>(
   }
 );
 
-DropdownButton.displayName = 'DropdownButton';
+ChainOrTokenButton.displayName = 'ChainOrTokenButton';
 
-export default DropdownButton;
+export default ChainOrTokenButton;
