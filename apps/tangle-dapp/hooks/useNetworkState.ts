@@ -10,6 +10,7 @@ import z from 'zod';
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
+import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 import useViemWalletClient from './useViemWalletClient';
@@ -36,60 +37,6 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
       resolve(false);
     }
   });
-}
-
-// TODO: Awaiting testing of this feature before enabling it.
-export async function switchNetworkInEvmWallet(
-  network: Network
-): Promise<void> {
-  // TODO: This is failing with: "Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received: "3799". Perhaps the chainId should be in hex format?
-
-  // Cannot switch networks on EVM wallets if the network
-  // doesn't have a defined chain id or if there is no
-  // EVM wallet extension present.
-  if (
-    window.ethereum === undefined ||
-    network.evmChainId === undefined ||
-    network.httpRpcEndpoint === undefined
-  ) {
-    return;
-  }
-
-  // Request to switch to the network (if it's already configured in the wallet).
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${network.evmChainId.toString(16)}` }],
-    });
-  } catch (error) {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      error.code !== 4902
-    ) {
-      console.error('Error switching network:', error);
-
-      return;
-    }
-
-    // The network is not added to the wallet, request to add it.
-    try {
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: network.evmChainId.toString(),
-            rpcUrls: [network.httpRpcEndpoint],
-            chainName: network.name,
-            // TODO: Any other network params?
-          },
-        ],
-      });
-    } catch (addError) {
-      console.error('Error adding network:', addError);
-    }
-  }
 }
 
 const useNetworkState = () => {
@@ -198,9 +145,22 @@ const useNetworkState = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
-      if (isEvm !== null && isEvm && newNetwork.evmChainId !== undefined) {
-        // switchNetworkInEvmWallet(newNetwork);
-        viemWalletClient?.switchChain({ id: newNetwork.evmChainId });
+      if (
+        isEvm !== null &&
+        isEvm &&
+        newNetwork.evmChainId !== undefined &&
+        newNetwork.httpRpcEndpoint !== undefined
+      ) {
+        const newChain = createTangleViemChainFromNetwork({
+          ...newNetwork,
+          evmChainId: newNetwork.evmChainId,
+          httpRpcEndpoint: newNetwork.httpRpcEndpoint,
+        });
+
+        // This call will automatically switch the chain if it's already added.
+        viemWalletClient?.addChain({
+          chain: newChain,
+        });
       }
     },
     [
