@@ -12,6 +12,7 @@ import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
+import useViemWalletClient from './useViemWalletClient';
 
 function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   return new Promise((resolve) => {
@@ -55,7 +56,7 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: network.chainId.toString() }],
+      params: [{ chainId: `0x${network.chainId.toString(16)}` }],
     });
   } catch (error) {
     if (
@@ -93,6 +94,7 @@ const useNetworkState = () => {
   const [isCustom, setIsCustom] = useState(false);
 
   const { network, setNetwork } = useNetworkStore();
+  const viemWalletClient = useViemWalletClient();
 
   const {
     get: getCachedCustomRpcEndpoint,
@@ -193,8 +195,9 @@ const useNetworkState = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
-      if (isEvm !== null && isEvm) {
-        switchNetworkInEvmWallet(newNetwork);
+      if (isEvm !== null && isEvm && newNetwork.evmChainId !== undefined) {
+        // switchNetworkInEvmWallet(newNetwork);
+        viemWalletClient?.switchChain({ id: newNetwork.evmChainId });
       }
     },
     [
@@ -205,6 +208,7 @@ const useNetworkState = () => {
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,
       setCachedNetworkId,
+      viemWalletClient,
     ]
   );
 
