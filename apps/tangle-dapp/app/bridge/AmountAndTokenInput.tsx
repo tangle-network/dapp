@@ -36,11 +36,11 @@ const AmountAndTokenInput: FC = () => {
           <DropdownButton
             value={selectedToken.symbol}
             status="success"
-            className="w-full bg-mono-20 dark:bg-mono-160 border-0 px-2"
+            className="w-full bg-mono-0 dark:bg-mono-180 border-0 px-3"
             iconType="token"
           />
         </DropdownTrigger>
-        <DropdownBody>
+        <DropdownBody className="w-[119px] min-w-fit">
           <ScrollArea className="max-h-[300px]">
             <ul>
               {tokenOptions.map((token) => {
@@ -49,6 +49,7 @@ const AmountAndTokenInput: FC = () => {
                     <MenuItem
                       startIcon={<TokenIcon size="lg" name={token.symbol} />}
                       onSelect={() => setSelectedToken(token)}
+                      className="px-3"
                     >
                       {token.symbol}
                     </MenuItem>

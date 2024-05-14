@@ -85,7 +85,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         />
       </DropdownTrigger>
       <DropdownBody>
-        <ScrollArea className="max-h-[300px]">
+        <ScrollArea className="max-h-[300px] w-[calc(100vw-74px)] md:w-[257px]">
           <ul>
             {chainOptions.map((chain) => {
               return (

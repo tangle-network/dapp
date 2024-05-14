@@ -23,7 +23,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   return (
     <div
       className={twMerge(
-        'max-w-[640px] min-h-[580px] bg-mono-0 dark:bg-mono-190 p-8',
+        'max-w-[640px] min-h-[580px] bg-mono-0 dark:bg-mono-190 p-5 md:p-8',
         'rounded-xl border border-mono-40 dark:border-mono-160',
         'shadow-webb-lg dark:shadow-webb-lg-dark',
         'flex flex-col',
