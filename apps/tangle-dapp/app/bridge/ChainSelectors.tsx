@@ -29,72 +29,23 @@ const ChainSelectors: FC = () => {
     setSourceChain,
     destinationChain,
     setDestinationChain,
-    supportedSourceChains,
-    supportedDestinationChains,
+    sourceChainOptions,
+    destinationChainOptions,
   } = useBridge();
-
-  const onSetSourceChain = useCallback(
-    (chain: ChainConfig) => {
-      setSourceChain(chain);
-      // If the source chain is the same as the destination chain, clear the destination chain.
-      if (chain.id === destinationChain?.id) {
-        setDestinationChain(null);
-      }
-    },
-    [destinationChain?.id, setDestinationChain, setSourceChain]
-  );
-
-  const onSetDestinationChain = useCallback(
-    (chain: ChainConfig) => {
-      setDestinationChain(chain);
-      // If the destination chain is the same as the source chain, clear the source chain.
-      if (chain.id === sourceChain?.id) {
-        setSourceChain(null);
-      }
-    },
-    [setDestinationChain, setSourceChain, sourceChain?.id]
-  );
 
   const switchChains = useCallback(() => {
     const temp = sourceChain;
-
-    // If the destination chain is null or is in the supported destination chains,
-    // set it as the source chain.
-    if (
-      temp === null ||
-      supportedDestinationChains.find((chain) => chain.id === temp.id)
-    ) {
-      setDestinationChain(temp);
-    } else {
-      setDestinationChain(null);
-    }
-
-    // If the source chain is null or is in the supported source chains,
-    // set it as the destination chain.
-    if (
-      destinationChain === null ||
-      supportedSourceChains.find((chain) => chain.id === destinationChain.id)
-    ) {
-      setSourceChain(destinationChain);
-    } else {
-      setSourceChain(null);
-    }
-  }, [
-    setSourceChain,
-    setDestinationChain,
-    destinationChain,
-    sourceChain,
-    supportedDestinationChains,
-    supportedSourceChains,
-  ]);
+    setDestinationChain(temp);
+    setSourceChain(destinationChain);
+  }, [setSourceChain, setDestinationChain, destinationChain, sourceChain]);
 
   return (
     <div className="flex flex-col md:flex-row justify-between items-center gap-3">
       <ChainSelector
         title="From"
         selectedChain={sourceChain}
-        chainOptions={supportedSourceChains}
-        onSelectChain={onSetSourceChain}
+        chainOptions={sourceChainOptions}
+        onSelectChain={setSourceChain}
         className="flex-1 w-full md:w-auto"
       />
 
@@ -108,8 +59,8 @@ const ChainSelectors: FC = () => {
       <ChainSelector
         title="To"
         selectedChain={destinationChain}
-        chainOptions={supportedDestinationChains}
-        onSelectChain={onSetDestinationChain}
+        chainOptions={destinationChainOptions}
+        onSelectChain={setDestinationChain}
         className="flex-1 w-full md:w-auto"
       />
     </div>
