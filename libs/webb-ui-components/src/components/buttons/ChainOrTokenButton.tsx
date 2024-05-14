@@ -5,7 +5,10 @@ import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainOrTokenButtonProps } from './types';
 
-const ChainOrTokenButton = forwardRef<HTMLButtonElement, ChainOrTokenButtonProps>(
+const ChainOrTokenButton = forwardRef<
+  HTMLButtonElement,
+  ChainOrTokenButtonProps
+>(
   (
     {
       className,
