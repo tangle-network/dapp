@@ -4,7 +4,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants/index';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useBalancesLock from '../balances/useBalancesLock';
 
@@ -54,7 +54,7 @@ export type VestingInfo = {
 const useVestingInfo = (): VestingInfo => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: schedulesOpt } = usePolkadotApiRx(
+  const { result: schedulesOpt } = useApiRx(
     useCallback(
       (api) => {
         if (!activeSubstrateAddress) return null;
@@ -64,7 +64,7 @@ const useVestingInfo = (): VestingInfo => {
     )
   );
 
-  const { data: currentBlockNumber } = usePolkadotApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 

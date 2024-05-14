@@ -10,8 +10,8 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import { RestakingProfileType } from '../../types';
 import assertRestakingService from '../../utils/assertRestakingService';
-import getChartDataAreaColorByServiceType from '../../utils/getChartDataAreaColorByServiceType';
 import { getRoleDistributionFromRestakeRoleLedger } from '../../utils/polkadot/restake';
+import getChartDataAreaColorByServiceType from '../../utils/restaking/getChartDataAreaColorByServiceType';
 
 const RoleDistributionCard: FC = () => {
   const { ledgerOpt, profileTypeOpt, isLoading } = useRestakingProfile();

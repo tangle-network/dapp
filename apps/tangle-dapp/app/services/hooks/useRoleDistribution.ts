@@ -4,7 +4,7 @@ import { BN } from '@polkadot/util';
 
 import type { PieChartItem } from '../../../components/charts/types';
 import { RestakingService } from '../../../types';
-import getChartDataAreaColorByServiceType from '../../../utils/getChartDataAreaColorByServiceType';
+import getChartDataAreaColorByServiceType from '../../../utils/restaking/getChartDataAreaColorByServiceType';
 
 export default function useRoleDistribution(): PieChartItem[] {
   const data = [

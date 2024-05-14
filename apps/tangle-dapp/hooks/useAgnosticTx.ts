@@ -1,22 +1,30 @@
 import { assert } from '@polkadot/util';
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect } from 'react';
 
+import { TxName } from '../constants';
 import { Precompile } from '../constants/evmPrecompiles';
-import prepareTxNotification from '../utils/prepareTxNotification';
-import type { EvmAbiCallData, EvmTxFactory } from './types';
 import useActiveAccountAddress from './useActiveAccountAddress';
-import useEvmPrecompileAbiCall from './useEvmPrecompileAbiCall';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useEvmPrecompileAbiCall, {
+  AbiCall,
+  EvmTxFactory,
+} from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
+import useTxNotification from './useTxNotification';
 
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
-  evmTxFactory:
-    | EvmTxFactory<PrecompileT, Context>
-    | EvmAbiCallData<PrecompileT>;
+  evmTxFactory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>;
   substrateTxFactory: SubstrateTxFactory<Context>;
-  notifyStatusUpdates?: boolean;
+
+  /**
+   * An identifiable name shown on the toast notification to
+   * let users know which transaction status updates refer to.
+   *
+   * Also used to close the notification when the transaction
+   * is successful or fails.
+   */
+  name: TxName;
 };
 
 /**
@@ -30,29 +38,49 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
   precompile,
   evmTxFactory,
   substrateTxFactory,
-  notifyStatusUpdates = true,
+  name,
 }: AgnosticTxOptions<PrecompileT, Context>) {
   const activeAccountAddress = useActiveAccountAddress();
-  const { notificationApi } = useWebbUI();
+  const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
+
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useTxNotification(name);
 
   const {
     execute: executeSubstrateTx,
     status: substrateTxStatus,
     error: substrateError,
     reset: substrateReset,
-  } = useSubstrateTx(substrateTxFactory);
+    txHash: substrateTxHash,
+  } = useSubstrateTx(substrateTxFactory, false);
 
   const {
     execute: executeEvmPrecompileAbiCall,
     status: evmTxStatus,
     error: evmError,
     reset: evmReset,
+    txHash: evmTxHash,
   } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
 
-  const isEvmAccount =
-    activeAccountAddress === null
-      ? null
-      : isEthereumAddress(activeAccountAddress);
+  const execute = useCallback(
+    async (context: Context) => {
+      notifyProcessing();
+
+      if (executeEvmPrecompileAbiCall !== null) {
+        await executeEvmPrecompileAbiCall(context);
+      } else {
+        // By this point, at least one of the executors should be defined,
+        // otherwise it constitutes a logic error.
+        assert(
+          executeSubstrateTx !== null,
+          'Substrate transaction executor should be defined if EVM transaction executor is not'
+        );
+
+        await executeSubstrateTx(context);
+      }
+    },
+    [executeEvmPrecompileAbiCall, executeSubstrateTx, notifyProcessing]
+  );
 
   const agnosticStatus =
     isEvmAccount === null
@@ -61,56 +89,47 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
       ? evmTxStatus
       : substrateTxStatus;
 
-  const agnosticError =
-    isEvmAccount === null ? null : isEvmAccount ? evmError : substrateError;
-
-  // Notify the user of the transaction status, if applicable.
+  // Notify transaction status updates via a toast notification.
   useEffect(() => {
     if (
-      isEvmAccount === null ||
       agnosticStatus === TxStatus.NOT_YET_INITIATED ||
-      !notifyStatusUpdates
+      agnosticStatus === TxStatus.PROCESSING ||
+      isEvmAccount === null
     ) {
       return;
     }
 
-    const notificationOpts = prepareTxNotification(
-      agnosticStatus,
-      agnosticError
-    );
+    const error = isEvmAccount ? evmError : substrateError;
+    const txHash = isEvmAccount ? evmTxHash : substrateTxHash;
 
-    if (notificationOpts === null) {
-      return;
+    // NOTE: It is totally possible for both to be null, as
+    // React's setState is asynchronous and the state might
+    // not have been updated yet.
+    if (txHash !== null) {
+      notifySuccess(txHash);
+    } else if (error !== null) {
+      notifyError(error);
     }
-
-    notificationApi(notificationOpts);
   }, [
-    substrateTxStatus,
-    evmTxStatus,
-    isEvmAccount,
-    notificationApi,
     agnosticStatus,
-    notifyStatusUpdates,
-    agnosticError,
+    evmError,
+    evmTxHash,
+    isEvmAccount,
+    notifyError,
+    notifySuccess,
+    substrateError,
+    substrateTxHash,
   ]);
 
-  const execute = useCallback(
-    async (context: Context) => {
-      if (executeEvmPrecompileAbiCall !== null) {
-        return executeEvmPrecompileAbiCall(context);
-      } else if (executeSubstrateTx !== null) {
-        return executeSubstrateTx(context);
-      }
-
-      // By this point, at least one of the executors should be defined,
-      // otherwise it constitutes a logic error.
-      assert(
-        executeSubstrateTx !== null,
-        'Substrate transaction executor should be defined if EVM transaction executor is not'
-      );
-    },
-    [executeEvmPrecompileAbiCall, executeSubstrateTx]
-  );
+  // Clear notification state when the active account is disconnected,
+  // to prevent a bug from re-triggering the notification when an account
+  // is re-connected.
+  useEffect(() => {
+    if (activeAccountAddress === null) {
+      substrateReset();
+      evmReset();
+    }
+  }, [activeAccountAddress, evmReset, substrateReset]);
 
   return {
     status: agnosticStatus,

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 const useCurrentEra = () => {
-  return usePolkadotApiRx(
+  return useApiRx(
     useCallback(
       (api) =>
         // TODO: Should not map to `null` if the current era is not available, but rather leave it as `Option<u32>`, or use our `Optional<number>` type. This is because `null` is used as an indicator for loading state, so it would be confusing to know whether the current era is not available or if it's still loading.

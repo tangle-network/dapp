@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 const useRestakingRoleLedger = (address: string | null) => {
-  return usePolkadotApiRx(
+  return useApiRx(
     useCallback(
       (api) => {
         if (address === null) {

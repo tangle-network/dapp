@@ -33,7 +33,9 @@ const useUpdateRestakingProfileTx = (
 ) => {
   const activeSubstrateAccount = useSubstrateAddress();
   const sharedRestakeAmountRef = useRef<BN | null>(null);
-  const { data: roleLedger } = useRestakingRoleLedger(activeSubstrateAccount);
+
+  const { result: roleLedger } = useRestakingRoleLedger(activeSubstrateAccount);
+
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
   // TODO: Break this into two separate hooks for independent and shared profiles.

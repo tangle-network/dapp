@@ -38,7 +38,10 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-async function switchNetworkInEvmWallet(network: Network): Promise<void> {
+// TODO: Awaiting testing of this feature before enabling it.
+export async function switchNetworkInEvmWallet(
+  network: Network
+): Promise<void> {
   // TODO: This is failing with: "Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received: "3799". Perhaps the chainId should be in hex format?
 
   // Cannot switch networks on EVM wallets if the network
@@ -46,7 +49,7 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
   // EVM wallet extension present.
   if (
     window.ethereum === undefined ||
-    network.chainId === undefined ||
+    network.evmChainId === undefined ||
     network.httpRpcEndpoint === undefined
   ) {
     return;
@@ -56,7 +59,7 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${network.chainId.toString(16)}` }],
+      params: [{ chainId: `0x${network.evmChainId.toString(16)}` }],
     });
   } catch (error) {
     if (
@@ -76,7 +79,7 @@ async function switchNetworkInEvmWallet(network: Network): Promise<void> {
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: network.chainId.toString(),
+            chainId: network.evmChainId.toString(),
             rpcUrls: [network.httpRpcEndpoint],
             chainName: network.name,
             // TODO: Any other network params?

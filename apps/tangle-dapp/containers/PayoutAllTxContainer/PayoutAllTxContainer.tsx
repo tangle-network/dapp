@@ -11,12 +11,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { batchPayoutStakers as batchPayoutStakersEvm } from '../../utils/evm';
-import { batchPayoutStakers as batchPayoutStakersSubstrate } from '../../utils/polkadot';
+import usePayoutAllTx from '../../data/payouts/usePayoutAllTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutAllTxContainerProps } from './types';
 
 const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
@@ -27,9 +25,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   updatePayouts,
 }) => {
   const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useNetworkStore();
-  const [isPayoutAllTxLoading, setIsPayoutAllTxLoading] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -39,15 +34,17 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     return activeAccount.address;
   }, [activeAccount?.address]);
 
-  const continueToSignAndSubmitTx = validatorsAndEras.length > 0;
-
   const payoutValidatorsAndEras = useMemo(
     () => validatorsAndEras.slice(0, 10),
     [validatorsAndEras]
   );
 
   const allValidators = useMemo(
-    () => [...new Set(payoutValidatorsAndEras.map((v) => v.validatorAddress))],
+    () => [
+      ...new Set(
+        payoutValidatorsAndEras.map((v) => v.validatorSubstrateAddress)
+      ),
+    ],
     [payoutValidatorsAndEras]
   );
 
@@ -58,50 +55,42 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   }, [payoutValidatorsAndEras]);
 
   const closeModal = useCallback(() => {
-    setIsPayoutAllTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
-  const submitAndSignTx = useCallback(async () => {
-    setIsPayoutAllTxLoading(true);
+  const { execute: executePayoutAllTx, status: payoutAllTxStatus } =
+    usePayoutAllTx();
 
-    try {
-      await executeTx(
-        () => batchPayoutStakersEvm(walletAddress, payoutValidatorsAndEras),
-        () =>
-          batchPayoutStakersSubstrate(
-            rpcEndpoint,
-            walletAddress,
-            payoutValidatorsAndEras
-          ),
-        `Successfully claimed rewards for all stakers!`,
-        'Failed to payout all stakers!'
-      );
-
-      const updatedPayouts = payouts.filter(
-        (payout) =>
-          !payoutValidatorsAndEras.find(
-            (v) =>
-              v.validatorAddress === payout.validator.address &&
-              v.era === payout.era.toString()
-          )
-      );
-
-      updatePayouts(updatedPayouts);
-    } catch {
-      setIsPayoutAllTxLoading(false);
-    } finally {
-      closeModal();
+  const submitTx = useCallback(async () => {
+    if (executePayoutAllTx === null) {
+      return;
     }
+
+    await executePayoutAllTx({
+      validatorEraPairs: payoutValidatorsAndEras,
+    });
+
+    const updatedPayouts = payouts.filter(
+      (payout) =>
+        !payoutValidatorsAndEras.find(
+          (v) =>
+            v.validatorSubstrateAddress === payout.validator.address &&
+            v.era === payout.era
+        )
+    );
+
+    updatePayouts(updatedPayouts);
+    closeModal();
   }, [
-    executeTx,
+    executePayoutAllTx,
+    payoutValidatorsAndEras,
     payouts,
     updatePayouts,
-    walletAddress,
-    payoutValidatorsAndEras,
-    rpcEndpoint,
     closeModal,
   ]);
+
+  const canSubmitTx =
+    validatorsAndEras.length > 0 && executePayoutAllTx !== null;
 
   return (
     <Modal open>
@@ -181,9 +170,9 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isPayoutAllTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!canSubmitTx}
+            isLoading={payoutAllTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
           >
             Confirm
           </Button>

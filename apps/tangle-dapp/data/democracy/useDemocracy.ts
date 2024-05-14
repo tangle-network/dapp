@@ -2,17 +2,20 @@ import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { SubstrateLockId } from '../../constants';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useBalancesLock from '../balances/useBalancesLock';
 
 const useDemocracy = () => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: votes } = usePolkadotApiRx(
+  const { result: votes } = useApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (activeSubstrateAddress === null) {
+          return null;
+        }
+
         return api.query.democracy.votingOf(activeSubstrateAddress);
       },
       [activeSubstrateAddress]
@@ -37,7 +40,7 @@ const useDemocracy = () => {
     return latestDirectVote[0];
   })();
 
-  const { data: latestReferendum } = usePolkadotApiRx(
+  const { result: latestReferendum } = useApiRx(
     useCallback(
       (api) => {
         if (latestReferendumIndex === null) {

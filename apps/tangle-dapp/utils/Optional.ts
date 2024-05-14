@@ -34,6 +34,14 @@ class Optional<T extends NonNullable<unknown>> {
   constructor(value?: T) {
     this.value = value ?? null;
   }
+
+  map<U extends NonNullable<unknown>>(f: (value: T) => U): Optional<U> {
+    if (this.value === null) {
+      return new Optional();
+    }
+
+    return new Optional(f(this.value));
+  }
 }
 
 export default Optional;

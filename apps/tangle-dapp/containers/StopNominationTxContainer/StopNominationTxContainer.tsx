@@ -1,7 +1,5 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import { ProhibitedLineIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -13,72 +11,32 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useMemo, useState } from 'react';
+import { type FC, useCallback } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useNominations from '../../data/NominationsPayouts/useNominations';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { evmToSubstrateAddress } from '../../utils';
-import { stopNomination as stopNominationEvm } from '../../utils/evm';
-import { stopNomination as stopNominationSubstrate } from '../../utils/polkadot';
+import useChillTx from '../../data/staking/useChillTx';
+import useIsNominating from '../../hooks/useIsNominating';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StopNominationTxContainerProps } from './types';
 
 const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { activeAccount } = useWebContext();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint } = useNetworkStore();
-
-  const [isStopNominationTxLoading, setIsStopNominationTxLoading] =
-    useState(false);
-
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    }
-
-    if (isSubstrateAddress(activeAccount?.address))
-      return activeAccount.address;
-
-    return evmToSubstrateAddress(activeAccount.address) ?? '';
-  }, [activeAccount?.address]);
-
-  const { data: delegatorsData } = useNominations(substrateAddress);
-
-  const userHasActiveNominations = useMemo(() => {
-    return delegatorsData?.delegators.length === 0 ? false : true;
-  }, [delegatorsData?.delegators]);
+  const { execute: executeChillTx, status: chillTxStatus } = useChillTx();
+  const { isNominating } = useIsNominating();
 
   const closeModal = useCallback(() => {
-    setIsStopNominationTxLoading(false);
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
-  const submitAndSignTx = useCallback(async () => {
-    setIsStopNominationTxLoading(true);
-
-    try {
-      await executeTx(
-        () => stopNominationEvm(walletAddress),
-        () => stopNominationSubstrate(rpcEndpoint, walletAddress),
-        `Successfully stopped nomination!`,
-        'Failed to stop nomination!'
-      );
-      closeModal();
-    } catch {
-      setIsStopNominationTxLoading(false);
+  const submitTx = useCallback(async () => {
+    if (executeChillTx === null) {
+      return null;
     }
-  }, [closeModal, executeTx, rpcEndpoint, walletAddress]);
+
+    await executeChillTx();
+    closeModal();
+  }, [closeModal, executeChillTx]);
 
   return (
     <Modal open>
@@ -104,9 +62,9 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
         <ModalFooter className="px-8 py-6 flex flex-col gap-1">
           <Button
             isFullWidth
-            isDisabled={!userHasActiveNominations}
-            isLoading={isStopNominationTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={isNominating === null || !isNominating}
+            isLoading={chillTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
           >
             Confirm
           </Button>
