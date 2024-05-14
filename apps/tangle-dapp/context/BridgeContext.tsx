@@ -12,40 +12,60 @@ import {
   useState,
 } from 'react';
 
-import { BRIDGE_SUPPORTED_CHAINS } from '../constants/bridge';
+import {
+  BRIDGE_SUPPORTED_CHAINS,
+  BRIDGE_SUPPORTED_TOKENS,
+} from '../constants/bridge';
+import { BridgeTokenType } from '../types';
 
 interface BridgeContextProps {
-  sourceChain: ChainConfig;
-  setSourceChain: (chain: ChainConfig) => void;
+  selectedSourceChain: ChainConfig;
+  setSelectedSourceChain: (chain: ChainConfig) => void;
   sourceChainOptions: ChainConfig[];
-  destinationChain: ChainConfig;
-  setDestinationChain: (chain: ChainConfig) => void;
+
+  selectedDestinationChain: ChainConfig;
+  setSelectedDestinationChain: (chain: ChainConfig) => void;
   destinationChainOptions: ChainConfig[];
+
   destinationAddress: string;
   setDestinationAddress: (address: string) => void;
+
   amount: BN | null;
   setAmount: (amount: BN | null) => void;
+
+  selectedToken: BridgeTokenType;
+  setSelectedToken: (token: BridgeTokenType) => void;
+  tokenOptions: BridgeTokenType[];
 }
 
 const BridgeContext = createContext<BridgeContextProps>({
-  sourceChain: BRIDGE_SUPPORTED_CHAINS[0],
-  setSourceChain: () => {
+  selectedSourceChain: BRIDGE_SUPPORTED_CHAINS[0],
+  setSelectedSourceChain: () => {
     return;
   },
-  destinationChain: BRIDGE_SUPPORTED_CHAINS[1],
-  setDestinationChain: () => {
+  sourceChainOptions: BRIDGE_SUPPORTED_CHAINS,
+
+  selectedDestinationChain: BRIDGE_SUPPORTED_CHAINS[1],
+  setSelectedDestinationChain: () => {
     return;
   },
-  sourceChainOptions: [],
+  destinationChainOptions: [BRIDGE_SUPPORTED_CHAINS[1]],
+
   destinationAddress: '',
   setDestinationAddress: () => {
     return;
   },
-  destinationChainOptions: [],
+
   amount: null,
   setAmount: () => {
     return;
   },
+
+  selectedToken: BRIDGE_SUPPORTED_TOKENS[0],
+  setSelectedToken: () => {
+    return;
+  },
+  tokenOptions: [],
 });
 
 export const useBridge = () => {
@@ -53,46 +73,60 @@ export const useBridge = () => {
 };
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [sourceChain, setSourceChain] = useState<ChainConfig>(
+  const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
     BRIDGE_SUPPORTED_CHAINS[0]
   );
-  const [destinationChain, setDestinationChain] = useState<ChainConfig>(
-    BRIDGE_SUPPORTED_CHAINS[1]
-  );
+  const [selectedDestinationChain, setSelectedDestinationChain] =
+    useState<ChainConfig>(BRIDGE_SUPPORTED_CHAINS[1]);
+
   const [destinationAddress, setDestinationAddress] = useState('');
   const [amount, setAmount] = useState<BN | null>(null);
+  const [selectedToken, setSelectedToken] = useState<BridgeTokenType>(
+    BRIDGE_SUPPORTED_TOKENS[0]
+  );
 
-  const destinationChainOptions = useMemo(
+  const selectedDestinationChainOptions = useMemo(
     () =>
-      BRIDGE_SUPPORTED_CHAINS.filter((chain) => chain.id !== sourceChain.id),
-    [sourceChain]
+      BRIDGE_SUPPORTED_CHAINS.filter(
+        (chain) => chain.id !== selectedSourceChain.id
+      ),
+    [selectedSourceChain]
   );
 
   useEffect(() => {
     // If current destination chain is not in the destination chain options,
     // set the first option as the destination chain.
     if (
-      !destinationChainOptions.find((chain) => chain.id === destinationChain.id)
+      !selectedDestinationChainOptions.find(
+        (chain) => chain.id === selectedDestinationChain.id
+      )
     ) {
-      setDestinationChain(destinationChainOptions[0]);
+      setSelectedDestinationChain(selectedDestinationChainOptions[0]);
     }
-  }, [destinationChainOptions, destinationChain.id]);
+  }, [selectedDestinationChainOptions, selectedDestinationChain.id]);
 
   return (
     <BridgeContext.Provider
       value={{
-        sourceChain,
-        setSourceChain,
-        destinationChain: destinationChainOptions[0],
-        setDestinationChain,
-        // TODO: add logic to get supported chains for the bridge
+        selectedSourceChain,
+        setSelectedSourceChain,
         sourceChainOptions: BRIDGE_SUPPORTED_CHAINS,
+
+        selectedDestinationChain,
+        setSelectedDestinationChain,
+        // TODO: add logic to get destination chain options based on source chain
+        destinationChainOptions: selectedDestinationChainOptions,
+
         destinationAddress,
         setDestinationAddress,
-        // TODO: add logic to get supported chains for the bridge
-        destinationChainOptions,
+
         amount,
         setAmount,
+
+        selectedToken,
+        setSelectedToken,
+        // TODO: add logic to get token options based on source chain
+        tokenOptions: BRIDGE_SUPPORTED_TOKENS,
       }}
     >
       {children}

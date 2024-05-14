@@ -227,3 +227,9 @@ export type ExposureMap = Record<
     exposureMeta: SpStakingPagedExposureMetadata;
   }
 >;
+
+// TODO: might need to add more metadata here: name, decimals, etc.
+export type BridgeTokenType = {
+  id: string;
+  symbol: string;
+};

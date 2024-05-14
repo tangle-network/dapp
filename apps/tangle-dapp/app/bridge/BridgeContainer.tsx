@@ -7,8 +7,8 @@ import { twMerge } from 'tailwind-merge';
 import AddressInput, {
   AddressType,
 } from '../../components/AddressInput/AddressInput';
-import AmountInput from '../../components/AmountInput/AmountInput';
 import { useBridge } from '../../context/BridgeContext';
+import AmountAndTokenInput from './AmountAndTokenInput';
 import ChainSelectors from './ChainSelectors';
 import useActionButton from './useActionButton';
 
@@ -17,8 +17,7 @@ interface BridgeContainerProps {
 }
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
-  const { destinationAddress, setDestinationAddress, amount, setAmount } =
-    useBridge();
+  const { destinationAddress, setDestinationAddress } = useBridge();
   const { buttonAction, buttonText, isLoading } = useActionButton();
 
   return (
@@ -35,16 +34,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
         <div className="space-y-8">
           <ChainSelectors />
 
-          <AmountInput
-            id="bridge-amount-input"
-            title="Amount"
-            amount={amount}
-            setAmount={setAmount}
-            baseInputOverrides={{
-              isFullWidth: true,
-            }}
-            placeholder=""
-          />
+          <AmountAndTokenInput />
 
           <AddressInput
             id="bridge-destination-address-input"

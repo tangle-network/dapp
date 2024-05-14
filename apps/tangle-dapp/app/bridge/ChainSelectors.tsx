@@ -4,7 +4,7 @@ import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
-import ChainButton from '@webb-tools/webb-ui-components/components/buttons/ChainButton';
+import DropdownButton from '@webb-tools/webb-ui-components/components/buttons/DropdownButton';
 import {
   Dropdown,
   DropdownBody,
@@ -16,8 +16,7 @@ import { FC, useCallback } from 'react';
 import { useBridge } from '../../context/BridgeContext';
 
 interface ChainSelectorProps {
-  title: string;
-  selectedChain: ChainConfig | null;
+  selectedChain: ChainConfig;
   chainOptions: ChainConfig[];
   onSelectChain: (chain: ChainConfig) => void;
   className?: string;
@@ -25,27 +24,31 @@ interface ChainSelectorProps {
 
 const ChainSelectors: FC = () => {
   const {
-    sourceChain,
-    setSourceChain,
-    destinationChain,
-    setDestinationChain,
+    selectedSourceChain,
+    setSelectedSourceChain,
+    selectedDestinationChain,
+    setSelectedDestinationChain,
     sourceChainOptions,
     destinationChainOptions,
   } = useBridge();
 
   const switchChains = useCallback(() => {
-    const temp = sourceChain;
-    setDestinationChain(temp);
-    setSourceChain(destinationChain);
-  }, [setSourceChain, setDestinationChain, destinationChain, sourceChain]);
+    const temp = selectedSourceChain;
+    setSelectedDestinationChain(temp);
+    setSelectedSourceChain(selectedDestinationChain);
+  }, [
+    setSelectedSourceChain,
+    setSelectedDestinationChain,
+    selectedDestinationChain,
+    selectedSourceChain,
+  ]);
 
   return (
     <div className="flex flex-col md:flex-row justify-between items-center gap-3">
       <ChainSelector
-        title="From"
-        selectedChain={sourceChain}
+        selectedChain={selectedSourceChain}
         chainOptions={sourceChainOptions}
-        onSelectChain={setSourceChain}
+        onSelectChain={setSelectedSourceChain}
         className="flex-1 w-full md:w-auto"
       />
 
@@ -57,10 +60,9 @@ const ChainSelectors: FC = () => {
       </div>
 
       <ChainSelector
-        title="To"
-        selectedChain={destinationChain}
+        selectedChain={selectedDestinationChain}
         chainOptions={destinationChainOptions}
-        onSelectChain={setDestinationChain}
+        onSelectChain={setSelectedDestinationChain}
         className="flex-1 w-full md:w-auto"
       />
     </div>
@@ -68,7 +70,6 @@ const ChainSelectors: FC = () => {
 };
 
 const ChainSelector: FC<ChainSelectorProps> = ({
-  title,
   selectedChain,
   chainOptions,
   onSelectChain,
@@ -77,14 +78,10 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   return (
     <Dropdown className={className}>
       <DropdownTrigger asChild>
-        <ChainButton
-          chain={selectedChain ?? undefined}
-          status="success"
-          placeholder={selectedChain === null ? title : undefined}
+        <DropdownButton
+          value={selectedChain.name}
           className="w-full bg-mono-20 dark:bg-mono-160 border-0"
-          textClassName={
-            selectedChain === null ? 'text-mono-100 dark:text-mono-80' : ''
-          }
+          iconType="chain"
         />
       </DropdownTrigger>
       <DropdownBody>

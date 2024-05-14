@@ -1,26 +1,35 @@
-import { ChainIcon, ChevronDown } from '@webb-tools/icons';
+import { ChainIcon, ChevronDown, TokenIcon } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChainButtonProps } from './types';
+import { DropdownButtonProps } from './types';
 
-const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
+const DropdownButton = forwardRef<HTMLButtonElement, DropdownButtonProps>(
   (
     {
       className,
-      chain,
+      value,
       status,
       textClassName,
       disabled,
       placeholder = 'Select Chain',
+      iconType,
       ...props
     },
     ref
   ) => {
     const textClsx = useMemo(() => {
-      return twMerge('font-bold', textClassName);
-    }, [textClassName]);
+      return twMerge(
+        'font-bold',
+        iconType === 'token' ? 'uppercase' : '',
+        textClassName
+      );
+    }, [iconType, textClassName]);
+
+    const IconCmp = useMemo(() => {
+      return iconType === 'chain' ? ChainIcon : TokenIcon;
+    }, [iconType]);
 
     return (
       <button
@@ -37,15 +46,15 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
         ref={ref}
       >
         <div className="flex items-center gap-1.5 mr-1 justify-between">
-          {chain && (
-            <ChainIcon
+          {value && (
+            <IconCmp
               status={status}
               size="lg"
               className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-              name={chain.name}
+              name={value}
             />
           )}
-          <p className={textClsx}>{chain?.name ?? placeholder}</p>
+          <p className={textClsx}>{value ?? placeholder}</p>
           {!disabled && (
             <ChevronDown
               size="lg"
@@ -58,6 +67,6 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
   }
 );
 
-ChainButton.displayName = 'ChainButton';
+DropdownButton.displayName = 'DropdownButton';
 
-export default ChainButton;
+export default DropdownButton;

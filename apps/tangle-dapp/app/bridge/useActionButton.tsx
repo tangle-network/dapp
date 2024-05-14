@@ -27,6 +27,6 @@ export default function useActionButton() {
   return {
     isLoading: loading || isConnecting,
     buttonAction: noActiveAccountOrWallet ? openWalletModal : bridgeTx,
-    buttonText: noActiveAccountOrWallet ? 'Connect' : 'Transfer',
+    buttonText: noActiveAccountOrWallet ? 'Connect' : 'Approve',
   };
 }

@@ -170,38 +170,43 @@ export type ButtonClassNames = {
 };
 
 /**
- * The ChainButton component props
+ * The DropdownButton component props
  */
-export type ChainButtonProps = PropsOf<'button'> & {
+export type DropdownButtonProps = PropsOf<'button'> & {
   /**
-   * The chain to display in the button
+   * The TextFieldRootProps to display in the button
    */
-  chain?: ChainConfig;
+  value?: string;
 
   /**
-   * The placeholder to display when the chain is not available
+   * The placeholder to display when the value is not set
    */
   placeholder?: string;
 
   /**
-   * The status of the chain
+   * The status of the button
    */
   status?: StatusIndicatorProps['variant'];
 
   /**
-   * The classname of the icon
+   * The className of the icon
    */
-  iconClassname?: string;
+  iconClassName?: string;
 
   /**
-   * The classname of the chain name
+   * The className of the chain name
    */
   textClassName?: string;
 
   /**
-   * The classname of the dropdown icon
+   * The className of the dropdown icon
    */
-  dropdownClassname?: string;
+  dropdownClassName?: string;
+
+  /**
+   * The icon's type
+   */
+  iconType: 'chain' | 'token';
 };
 
 /**

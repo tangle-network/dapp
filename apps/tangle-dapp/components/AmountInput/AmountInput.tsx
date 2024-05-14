@@ -21,6 +21,9 @@ export type AmountInputProps = {
   setAmount: (newAmount: BN | null) => void;
   setErrorMessage?: (error: string | null) => void;
   placeholder?: string;
+  wrapperClassName?: string;
+  bodyClassName?: string;
+  dropdownBodyClassName?: string;
 };
 
 const AmountInput: FC<AmountInputProps> = ({
@@ -38,6 +41,9 @@ const AmountInput: FC<AmountInputProps> = ({
   errorOnEmptyValue = false,
   setErrorMessage,
   placeholder,
+  wrapperClassName,
+  bodyClassName,
+  dropdownBodyClassName,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
@@ -95,6 +101,9 @@ const AmountInput: FC<AmountInputProps> = ({
       isDisabled={isDisabled}
       {...baseInputOverrides}
       actions={actions}
+      wrapperClassName={wrapperClassName}
+      bodyClassName={bodyClassName}
+      dropdownBodyClassName={dropdownBodyClassName}
     >
       <Input
         id={id}
