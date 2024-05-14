@@ -1,8 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "es2020",
-    "moduleResolution": "node",
     "rootDir": "./src",
     "declaration": true,
     "declarationDir": "../../dist/libs/icons",

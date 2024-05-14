@@ -1,8 +1,8 @@
 {
   "name": "tailwind-preset",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "library",
   "sourceRoot": "libs/tailwind-preset",
+  "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nx/rollup:rollup",
@@ -13,7 +13,8 @@
         "entryFile": "libs/tailwind-preset/index.js",
         "tsConfig": "libs/tailwind-preset/tsconfig.lib.json",
         "format": ["esm"],
-        "rollupConfig": ["libs/tailwind-preset/rollup.config.js"]
+        "rollupConfig": ["libs/tailwind-preset/rollup.config.mjs"],
+        "generateExportsField": true
       }
     },
     "publish": {

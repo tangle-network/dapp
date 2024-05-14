@@ -14,7 +14,8 @@
         "tsConfig": "libs/icons/tsconfig.lib.json",
         "format": ["esm"],
         "rollupConfig": ["libs/icons/rollup.config.mjs"],
-        "external": ["react", "react-dom"]
+        "external": ["react", "react-dom"],
+        "generateExportsField": true
       }
     },
     "lint": {
