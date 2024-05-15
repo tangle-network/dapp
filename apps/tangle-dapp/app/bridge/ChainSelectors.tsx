@@ -80,12 +80,12 @@ const ChainSelector: FC<ChainSelectorProps> = ({
       <DropdownTrigger asChild>
         <ChainOrTokenButton
           value={selectedChain.name}
-          className="w-full bg-mono-20 dark:bg-mono-160 border-0"
+          className="w-full bg-mono-20 dark:bg-mono-160 border-0 hover:bg-mono-20 dark:hover:bg-mono-160"
           iconType="chain"
         />
       </DropdownTrigger>
-      <DropdownBody>
-        <ScrollArea className="max-h-[300px] w-[calc(100vw-74px)] md:w-[257px]">
+      <DropdownBody className="border-0">
+        <ScrollArea className="max-h-[300px] w-[calc(100vw-74px)] md:w-[259px]">
           <ul>
             {chainOptions.map((chain) => {
               return (

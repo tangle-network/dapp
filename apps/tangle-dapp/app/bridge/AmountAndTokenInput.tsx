@@ -36,11 +36,11 @@ const AmountAndTokenInput: FC = () => {
           <ChainOrTokenButton
             value={selectedToken.symbol}
             status="success"
-            className="w-full bg-mono-0 dark:bg-mono-180 border-0 px-3"
+            className="w-full bg-mono-0 dark:bg-mono-140 border-0 px-3"
             iconType="token"
           />
         </DropdownTrigger>
-        <DropdownBody className="w-[119px] min-w-fit">
+        <DropdownBody className="border-0 w-[119px] min-w-fit">
           <ScrollArea className="max-h-[300px]">
             <ul>
               {tokenOptions.map((token) => {
