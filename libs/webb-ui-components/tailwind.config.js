@@ -3,15 +3,15 @@ import { createGlobPatternsForDependencies } from '@nx/react/tailwind';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const dirname_ = __dirname || dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('tailwindcss').Config} */
 export default {
   presets: [preset],
   darkMode: 'class',
   content: [
-    join(__dirname, 'src/**/*!(*.stories|*.spec).{ts,tsx,html}'),
-    ...createGlobPatternsForDependencies(__dirname),
+    join(dirname_, 'src/**/*!(*.stories|*.spec).{ts,tsx,html}'),
+    ...createGlobPatternsForDependencies(dirname_),
   ],
   theme: {
     extend: {

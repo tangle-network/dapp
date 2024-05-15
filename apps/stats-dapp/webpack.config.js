@@ -163,7 +163,7 @@ function createWebpackBase() {
               loader: 'css-loader',
               options: {
                 esModule: false,
-                importLoaders: 2, // 2 other loaders used first, postcss-loader and sass-loader
+                importLoaders: 1, // 1 other loader used first, postcss-loader.
                 sourceMap: isDevelopment,
               },
             },
@@ -180,13 +180,6 @@ function createWebpackBase() {
                     // easily find plugins at https://www.postcss.parts/
                   ],
                 },
-              },
-            },
-            {
-              // load sass files into css files
-              loader: 'sass-loader',
-              options: {
-                sourceMap: isDevelopment,
               },
             },
           ],

@@ -19,7 +19,7 @@
     "types": [
       "jest",
       "node"
-    ],
+    ]
   },
   "include": [
     "**/*.ts",
@@ -28,7 +28,8 @@
     "**/*.jsx",
     "../../apps/zk-explorer/.next/types/**/*.ts",
     "../../dist/apps/zk-explorer/.next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

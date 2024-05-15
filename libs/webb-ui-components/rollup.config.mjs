@@ -16,14 +16,14 @@ const SAFELY_IGNORE_WARNING_CODES = new Set([
   'THIS_IS_UNDEFINED',
 ]);
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const dirname_ = __dirname || dirname(fileURLToPath(import.meta.url));
 
 const plugins = [
   peerDepsExternal(),
   json(),
   postcss({
     config: {
-      path: join(__dirname, 'postcss.config.js'),
+      path: join(dirname_, 'postcss.config.js'),
     },
     extensions: ['.css'],
     minimize: false,
