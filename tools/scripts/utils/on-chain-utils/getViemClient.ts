@@ -14,7 +14,7 @@ const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha];
  * @param chainId - Chain id of the target EVM chain.
  * @returns Viem's chain object.
  */
-function getViemChain(chainId: number) {
+function getViemChain(chainId: number): Chain | undefined {
   for (const chain of Object.values(chains)) {
     if (chain.id === chainId) {
       return chain;
@@ -26,24 +26,23 @@ function getViemChain(chainId: number) {
  * Defines the Viem chain object from the org chain config.
  * @returns Viem's chain object.
  */
-function defineViemChain(typedChainId: number) {
+function defineViemChain(typedChainId: number): Chain | undefined {
   const chain = chainsConfig[typedChainId];
   if (!chain) {
     throw new Error('Chain not found in the chainsConfig');
   }
 
-  if (!chain.base) {
+  if (!chain.group) {
     throw new Error(`Chain ${chain.name} does not have a base network`);
   }
 
-  if (!chain.evmRpcUrls) {
+  if (!chain.rpcUrls) {
     throw new Error(`Chain ${chain.name} does not have evmRpcUrls`);
   }
 
   return {
-    id: chain.chainId,
+    id: chain.id,
     name: chain.name,
-    network: chain.base,
     testnet: true,
     nativeCurrency: {
       decimals: 18,
@@ -51,22 +50,22 @@ function defineViemChain(typedChainId: number) {
       symbol: 'ETH',
     },
     rpcUrls: {
-      public: { http: chain.evmRpcUrls },
-      default: { http: chain.evmRpcUrls },
+      public: { http: chain.rpcUrls.default.http },
+      default: { http: chain.rpcUrls.default.http },
     },
-    blockExplorers: chain.blockExplorerStub
+    blockExplorers: chain.blockExplorers
       ? {
           default: {
-            name: chain.name,
-            url: chain.blockExplorerStub,
+            name: chain.blockExplorers.default.name,
+            url: chain.blockExplorers.default.url,
           },
         }
       : undefined,
     contracts: {
-      multicall3: chain.multicall3
+      multicall3: chain.contracts?.multicall3
         ? {
-            address: chain.multicall3.address,
-            blockCreated: chain.multicall3.deployedAt,
+            address: chain.contracts.multicall3.address,
+            blockCreated: chain.contracts.multicall3.blockCreated,
           }
         : undefined,
     },

@@ -3,9 +3,9 @@
 
 export * from './ext-provider';
 export * from './utils';
-export * from './webb-provider/bridge-api.js';
-export * from './webb-provider/chain-query.js';
-export * from './webb-provider/relayer-manager.js';
-export * from './webb-provider/vanchor-actions.js';
-export * from './webb-provider/wrap-unwrap.js';
-export * from './webb-provider.js';
+export * from './webb-provider/bridge-api';
+export * from './webb-provider/chain-query';
+export * from './webb-provider/relayer-manager';
+export * from './webb-provider/vanchor-actions';
+export * from './webb-provider/wrap-unwrap';
+export * from './webb-provider';

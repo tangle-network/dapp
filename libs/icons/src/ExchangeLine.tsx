@@ -1,5 +1,5 @@
-import { createIcon } from './create-icon.js';
-import { IconBase } from './types.js';
+import { createIcon } from './create-icon';
+import { IconBase } from './types';
 
 export const ExchangeLine = (props: IconBase) => {
   return createIcon({

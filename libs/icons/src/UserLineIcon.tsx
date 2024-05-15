@@ -1,5 +1,5 @@
-import { createIcon } from './create-icon.js';
-import type { IconBase } from './types.js';
+import { createIcon } from './create-icon';
+import type { IconBase } from './types';
 
 const UserLineIcon = (props: IconBase) => {
   return createIcon({

@@ -9,8 +9,8 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
-import { BridgeStorage } from '@webb-tools/browser-utils/storage.js';
-import Storage from '@webb-tools/dapp-types/Storage.js';
+import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import Storage from '@webb-tools/dapp-types/Storage';
 import type { Note } from '@webb-tools/sdk-core/note';
 import {
   calculateTypedChainId,

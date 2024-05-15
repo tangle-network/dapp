@@ -6,7 +6,7 @@ import type { PublicClient } from 'viem';
 
 import { ChainAddressConfig } from '../anchors';
 import { CurrencyConfig } from '../currencies';
-import { ICurrency } from '../types.js';
+import { ICurrency } from '../types';
 
 export interface CurrencyResponse {
   typedChainId: number;

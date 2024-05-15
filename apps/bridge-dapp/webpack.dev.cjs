@@ -6,7 +6,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const path = require('path');
 const { merge } = require('webpack-merge');
 
-const baseConfig = require('./webpack.base.js');
+const baseConfig = require('./webpack.base.cjs');
 
 module.exports = composePlugins(
   withNx({

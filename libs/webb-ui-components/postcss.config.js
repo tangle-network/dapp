@@ -1,6 +1,9 @@
-const { join } = require('path');
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-module.exports = {
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default {
   plugins: {
     'postcss-import': {},
     'postcss-nested': {},

@@ -1,6 +1,6 @@
 import { CurrencyRole } from '@webb-tools/dapp-types';
 
-import { ApiConfig } from '../api-config.js';
+import { ApiConfig } from '../api-config';
 import { CurrencyConfig } from '../currencies';
 
 /**

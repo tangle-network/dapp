@@ -1,8 +1,8 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { createIcon } from './create-icon.js';
-import { IconBase } from './types.js';
+import { createIcon } from './create-icon';
+import { IconBase } from './types';
 
 export const Spinner = React.memo<IconBase>((props) => {
   // Spin animation attach to className

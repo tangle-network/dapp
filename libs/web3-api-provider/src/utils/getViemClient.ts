@@ -12,7 +12,7 @@ import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,
   defineViemChain,
   getViemChain,
-} from './getViemChain.js';
+} from './getViemChain';
 
 function getViemClient(
   typedChainId: number
@@ -35,7 +35,7 @@ function getViemClient(
       multicall: !!chain.contracts?.multicall3,
     },
     transport: fallback(
-      chain.rpcUrls.public.http.map((url) => http(url, { timeout: 60_000 }))
+      chain.rpcUrls.default.http.map((url) => http(url, { timeout: 60_000 }))
     ),
   });
 }

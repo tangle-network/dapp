@@ -4,11 +4,11 @@ import type { ChainAddressConfig } from '../../anchors';
 import { chainsConfig } from '../../chains';
 import { DEFAULT_NATIVE_INDEX } from '../../constants';
 import { CurrencyConfig } from '../../currencies';
-import type { ICurrency } from '../../types.js';
+import type { ICurrency } from '../../types';
 import {
   OnChainConfigBase,
   type CurrencyResponse,
-} from '../on-chain-config-base.js';
+} from '../on-chain-config-base';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;

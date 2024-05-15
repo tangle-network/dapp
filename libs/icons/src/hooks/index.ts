@@ -1,1 +1,1 @@
-export * from './useDynamicSVGImport.js';
+export * from './useDynamicSVGImport';

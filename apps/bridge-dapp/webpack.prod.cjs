@@ -4,7 +4,7 @@ const { composePlugins, withNx } = require('@nx/webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { merge } = require('webpack-merge');
 
-const baseConfig = require('./webpack.base.js');
+const baseConfig = require('./webpack.base.cjs');
 
 module.exports = composePlugins(
   withNx({

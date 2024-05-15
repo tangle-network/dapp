@@ -14,8 +14,8 @@ import {
   type RelayerConfig,
   chainNameAdapter,
   relayerConfig,
-} from '@webb-tools/dapp-config/relayer-config.js';
-import { isAppEnvironmentType } from '@webb-tools/dapp-config/types.js';
+} from '@webb-tools/dapp-config/relayer-config';
+import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import { PolkadotRelayerManager } from '@webb-tools/polkadot-api-provider';
 import {
   ChainType,

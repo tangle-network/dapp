@@ -9,8 +9,8 @@ import {
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_TOKEN_DECIMALS,
-} from '../../constants/tangle.js';
-import { ChainConfig } from '../chain-config.interface.js';
+} from '../../constants/tangle';
+import { ChainConfig } from '../chain-config.interface';
 
 // All substrate chains temporary use in `development` environment now
 export const chainsConfig: Record<number, ChainConfig> = {

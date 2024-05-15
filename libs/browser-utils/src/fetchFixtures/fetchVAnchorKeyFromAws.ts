@@ -1,6 +1,6 @@
-import { withLocalFixtures } from '@webb-tools/dapp-types/appMode.js';
-import cachedFetch from '../download/cachedFetch.js';
-import getCachedFixtureURI from './getCachedFixtureURI.js';
+import { withLocalFixtures } from '@webb-tools/dapp-types/appMode';
+import cachedFetch from '../download/cachedFetch';
+import getCachedFixtureURI from './getCachedFixtureURI';
 
 const fetchVAnchorKeyFromAws = async (
   maxEdges: number,

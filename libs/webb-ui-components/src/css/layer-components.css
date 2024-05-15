@@ -222,5 +222,5 @@
 
 .navbar-item:hover svg,
 .navbar-item.hover svg {
-  @apply !fill-blue-70;
+  @apply fill-blue-70 #{!important};
 }

@@ -1,4 +1,4 @@
-import { IconSize } from './types.js';
+import { IconSize } from './types';
 
 /**
  * Get the tailwind className for stroke color

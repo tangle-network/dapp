@@ -1,2 +1,2 @@
-export * from './ProposalBadge.js';
-export * from './types.js';
+export * from './ProposalBadge';
+export * from './types';

@@ -1,10 +1,10 @@
 import cx from 'classnames';
 import React, { MouseEventHandler, cloneElement, useMemo } from 'react';
 
-import { Spinner } from './Spinner.js';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport.js';
-import { TokenIconBase } from './types.js';
-import { getIconSizeInPixel } from './utils.js';
+import { Spinner } from './Spinner';
+import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
+import { TokenIconBase } from './types';
+import { getIconSizeInPixel } from './utils';
 import { twMerge } from 'tailwind-merge';
 
 export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (

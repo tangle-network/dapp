@@ -19,14 +19,14 @@ import {
   WebbState,
   calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
-import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage.js';
+import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { EventBus } from '@webb-tools/app-util';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
   retryPromise,
 } from '@webb-tools/browser-utils';
-import { BridgeStorage } from '@webb-tools/browser-utils/storage.js';
+import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   ApiConfig,
@@ -36,13 +36,13 @@ import {
   ensureHex,
   getAnchorDeploymentBlockNumber,
 } from '@webb-tools/dapp-config';
-import maxBlockStepCfg from '@webb-tools/dapp-config/maxBlockStepConfig.js';
+import maxBlockStepCfg from '@webb-tools/dapp-config/maxBlockStepConfig';
 import {
   CurrencyRole,
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import Storage from '@webb-tools/dapp-types/Storage.js';
+import Storage from '@webb-tools/dapp-types/Storage';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   CircomUtxo,
@@ -58,8 +58,8 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core/utxo';
 import { ZkComponents, hexToU8a, Backend } from '@webb-tools/utils';
-import flatten from 'lodash/flatten.js';
-import groupBy from 'lodash/groupBy.js';
+import flatten from 'lodash/flatten';
+import groupBy from 'lodash/groupBy';
 import { BehaviorSubject } from 'rxjs';
 import {
   GetContractReturnType,
@@ -79,13 +79,13 @@ import {
   watchNetwork,
 } from 'wagmi/actions';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import VAnchor from './VAnchor.js';
+import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
-import { Web3BridgeApi } from './webb-provider/bridge-api.js';
-import { Web3ChainQuery } from './webb-provider/chain-query.js';
-import { Web3RelayerManager } from './webb-provider/relayer-manager.js';
-import { Web3VAnchorActions } from './webb-provider/vanchor-actions.js';
-import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap.js';
+import { Web3BridgeApi } from './webb-provider/bridge-api';
+import { Web3ChainQuery } from './webb-provider/chain-query';
+import { Web3RelayerManager } from './webb-provider/relayer-manager';
+import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
+import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
 import {
   MetaMaskConnector,
   RainbowConnector,

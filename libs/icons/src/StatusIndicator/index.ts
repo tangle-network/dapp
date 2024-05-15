@@ -1,6 +1,6 @@
-import StatusIndicator from './StatusIndicator.js';
+import StatusIndicator from './StatusIndicator';
 
-export * from './StatusIndicator.js';
-export { default as StatusIndicator } from './StatusIndicator.js';
+export * from './StatusIndicator';
+export { default as StatusIndicator } from './StatusIndicator';
 
 export default StatusIndicator;

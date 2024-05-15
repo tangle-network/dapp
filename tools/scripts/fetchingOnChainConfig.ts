@@ -1,5 +1,3 @@
-#!/usr/bin/env -S ts-node --files
-
 import { config } from 'dotenv';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
@@ -36,10 +34,12 @@ import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProvi
 import fs from 'fs';
 import { Listr, color } from 'listr2';
 import merge from 'lodash/merge';
-import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import mergeConfig from './utils/on-chain-utils/mergeConfig';
 import { HttpRequestError } from 'viem';
+
+const ON_CHAIN_CONFIG_PATH =
+  'libs/api-provider-environment/src/generated/on-chain-config.json';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 

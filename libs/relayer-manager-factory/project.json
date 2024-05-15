@@ -11,7 +11,8 @@
         "outputPath": "dist/libs/relayer-manager-factory",
         "main": "libs/relayer-manager-factory/src/index.ts",
         "tsConfig": "libs/relayer-manager-factory/tsconfig.lib.json",
-        "assets": ["libs/relayer-manager-factory/*.md"]
+        "assets": ["libs/relayer-manager-factory/*.md"],
+        "generateExportsField": true
       }
     },
     "lint": {

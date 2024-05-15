@@ -1,9 +1,12 @@
-const preset = require('@webb-tools/tailwind-preset');
-const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
-const { join } = require('path');
+import { createGlobPatternsForDependencies } from '@nx/react/tailwind';
+import preset from '@webb-tools/tailwind-preset';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   presets: [preset],
   content: [
     join(__dirname, 'src/**/*!(*.stories|*.spec).{ts,tsx,html}'),

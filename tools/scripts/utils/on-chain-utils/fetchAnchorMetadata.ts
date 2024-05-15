@@ -1,5 +1,3 @@
-import assert from 'assert';
-import { getContract } from 'viem';
 import { ApiPromise } from '@polkadot/api';
 import { Option } from '@polkadot/types';
 import {
@@ -12,6 +10,8 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
+import { anchorDeploymentBlock } from '@webb-tools/dapp-config/anchors';
+import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
 import {
   DEFAULT_DECIMALS,
   DEFAULT_NATIVE_INDEX,
@@ -23,11 +23,11 @@ import {
   ICurrency,
 } from '@webb-tools/dapp-config/src/types';
 import ensureHex from '@webb-tools/dapp-config/src/utils/ensureHex';
-import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId';
+import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
-import { anchorDeploymentBlock } from '@webb-tools/dapp-config/anchors';
-import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
+import assert from 'assert';
+import { getContract } from 'viem';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,

@@ -4,7 +4,7 @@ import {
   IndeterminateCircleFillIcon,
   IndeterminateCircleLineIcon,
 } from '@webb-tools/icons';
-import Decimal from 'decimal';
+import Decimal from 'decimal.js';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Input } from '../Input';

@@ -1,5 +1,5 @@
-import { WalletId } from '../WalletId.js';
-import { WebbError, WebbErrorCodes } from '../WebbError.js';
+import { WalletId } from '../WalletId';
+import { WebbError, WebbErrorCodes } from '../WebbError';
 
 class WalletNotInstalledError extends WebbError {
   public walletId: WalletId;

@@ -22,7 +22,7 @@
         "generateIndexHtml": false,
         "scripts": [],
         "postcssConfig": "apps/bridge-dapp/postcss.config.js",
-        "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
+        "webpackConfig": "apps/bridge-dapp/webpack.dev.cjs"
       },
       "configurations": {
         "development": {
@@ -44,7 +44,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
-          "webpackConfig": "apps/bridge-dapp/webpack.prod.js"
+          "webpackConfig": "apps/bridge-dapp/webpack.prod.cjs"
         }
       }
     },
@@ -52,12 +52,12 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "bridge-dapp:build",
-        "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
+        "webpackConfig": "apps/bridge-dapp/webpack.dev.cjs"
       },
       "configurations": {
         "production": {
           "buildTarget": "bridge-dapp:build:production",
-          "webpackConfig": "apps/bridge-dapp/webpack.prod.js"
+          "webpackConfig": "apps/bridge-dapp/webpack.prod.cjs"
         }
       }
     },
@@ -75,13 +75,13 @@
     "run-local-tangle": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings apps/bridge-dapp/scripts/localTangle"
+        "command": "tsx --no-warnings apps/bridge-dapp/scripts/localTangle"
       }
     },
     "run-local-substrate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings apps/bridge-dapp/scripts/localSubstrate"
+        "command": "tsx --no-warnings apps/bridge-dapp/scripts/localSubstrate"
       }
     }
   },

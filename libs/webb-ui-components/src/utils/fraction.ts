@@ -1,4 +1,4 @@
-import Decimal from 'decimal';
+import Decimal from 'decimal.js';
 
 // Approximate the fraction p/q into a fraction.
 export default function fraction(

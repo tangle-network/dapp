@@ -10,11 +10,8 @@ import { ChainAddressConfig } from '../../anchors';
 import { chainsConfig } from '../../chains';
 import { ZERO_BIG_INT } from '../../constants';
 import { CurrencyConfig } from '../../currencies';
-import { ICurrency } from '../../types.js';
-import {
-  CurrencyResponse,
-  OnChainConfigBase,
-} from '../on-chain-config-base.js';
+import { ICurrency } from '../../types';
+import { CurrencyResponse, OnChainConfigBase } from '../on-chain-config-base';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let EVMOnChainConfigInstance: EVMOnChainConfig;

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { forwardRef } from 'react';
-import { ProposalBadgeProps, ProposalVariant } from './types.js';
+import { ProposalBadgeProps, ProposalVariant } from './types';
 
 const classes: {
   [key in ProposalVariant]: {
