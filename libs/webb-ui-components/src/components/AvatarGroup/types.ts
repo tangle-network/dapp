@@ -1,7 +1,6 @@
-import { WebbComponentBase } from '../../types';
-import { ReactElement } from 'react';
-
-import { Avatar, AvatarProps } from '../Avatar';
+import type { ReactElement } from 'react';
+import type { WebbComponentBase } from '../../types/index.js';
+import type { Avatar, AvatarProps } from '../Avatar/index.js';
 
 export type AvatarChildElement = ReactElement<AvatarProps, typeof Avatar>;
 

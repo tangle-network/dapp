@@ -1,3 +1,3 @@
-export * from './Collapsible';
-export * from './CollapsibleButton';
-export * from './CollapsibleContent';
+export * from './Collapsible.js';
+export * from './CollapsibleButton.js';
+export * from './CollapsibleContent.js';

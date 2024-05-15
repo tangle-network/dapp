@@ -7,8 +7,8 @@ import {
 import Decimal from 'decimal.js';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Input } from '../Input';
-import { AdjustAmountProps } from './types';
+import { Input } from '../Input/index.js';
+import { AdjustAmountProps } from './types.js';
 
 /**
  * The `AdjustAmount` component

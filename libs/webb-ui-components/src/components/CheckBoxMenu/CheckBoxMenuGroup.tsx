@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
 import cx from 'classnames';
-
-import { CheckBoxMenu } from '../CheckBoxMenu/CheckBoxMenu.js';
+import { useMemo } from 'react';
+import { CheckBoxMenu } from './CheckBoxMenu.js';
 
 export type CheckBoxMenuGroupProps<T> = {
   value: T[] | 'all';

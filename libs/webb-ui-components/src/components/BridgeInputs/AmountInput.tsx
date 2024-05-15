@@ -2,16 +2,15 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChevronDown, InformationLine } from '@webb-tools/icons';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { Typography } from '../../typography/Typography';
-import { AmountMenu } from '../AmountMenu';
-import { InputWrapper } from '../BridgeInputs/InputWrapper';
-import { Button } from '../buttons';
-import { Dropdown, DropdownBody } from '../Dropdown';
-import { Input } from '../Input/Input';
-import { Label } from '../Label';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { AmountInputComponentProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { AmountMenu } from '../AmountMenu/index.js';
+import { InputWrapper } from '../BridgeInputs/InputWrapper.js';
+import Button from '../buttons/Button.js';
+import { Dropdown, DropdownBody } from '../Dropdown/index.js';
+import { Input } from '../Input/Input.js';
+import { Label } from '../Label/index.js';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import { AmountInputComponentProps } from './types.js';
 
 export const AmountInput = forwardRef<
   HTMLDivElement,

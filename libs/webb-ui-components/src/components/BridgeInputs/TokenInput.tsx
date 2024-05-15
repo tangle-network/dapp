@@ -6,15 +6,14 @@ import {
 import cx from 'classnames';
 import { MouseEvent, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { Typography } from '../../typography';
-import { getRoundedAmountString } from '../../utils';
-import { Label } from '../Label';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { TokenPairIcons } from '../TokenPairIcons';
-import { AnimatedChevronRight } from './AnimatedChevronRight';
-import { InputWrapper } from './InputWrapper';
-import { TokenInputComponentProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { getRoundedAmountString } from '../../utils/getRoundedAmountString.js';
+import { Label } from '../Label/index.js';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import { TokenPairIcons } from '../TokenPairIcons/index.js';
+import { AnimatedChevronRight } from './AnimatedChevronRight.js';
+import { InputWrapper } from './InputWrapper.js';
+import { TokenInputComponentProps } from './types.js';
 
 /**
  * Token Input component, for selecting token on the bridge

@@ -13,7 +13,7 @@ export default (config) =>
     },
     output: {
       ...outputCfg,
-      sourcemap: false,
+      sourcemap: true,
     },
     plugins: [
       resolve(),

@@ -1,4 +1,4 @@
-import type { IdentityProps } from '@polkadot/react-identicon/types';
+import type { IdentityProps } from '@polkadot/react-identicon/types.js';
 
 import { IWebbComponentBase } from '../../types/index.js';
 

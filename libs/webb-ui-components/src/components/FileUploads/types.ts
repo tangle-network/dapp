@@ -1,7 +1,7 @@
 import type { DropzoneOptions } from 'react-dropzone';
 import { PropsOf } from '../../types/index.js';
 
-type AcceptFileType = 'json' | 'csv';
+export type AcceptFileType = 'json' | 'csv';
 
 export interface FileUploadAreaProps extends Omit<PropsOf<'div'>, 'onDrop'> {
   /**

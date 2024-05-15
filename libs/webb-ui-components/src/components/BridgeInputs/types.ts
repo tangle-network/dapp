@@ -1,12 +1,11 @@
-import { PropsOf, IWebbComponentBase } from '../../types';
-import { ComponentProps, ReactElement } from 'react';
-
-import { AmountMenu } from '../AmountMenu';
-import { InputProps } from '../Input/types';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { AvatarProps } from '../Avatar';
-import { CheckBox } from '../CheckBox';
-import { AmountInput } from './AmountInput';
+import type { ComponentProps, ReactElement } from 'react';
+import type { IWebbComponentBase, PropsOf } from '../../types/index.js';
+import type { AmountMenu } from '../AmountMenu/index.js';
+import type { AvatarProps } from '../Avatar/index.js';
+import type { CheckBox } from '../CheckBox/index.js';
+import type { InputProps } from '../Input/types.js';
+import type { TitleWithInfo } from '../TitleWithInfo/index.js';
+import type { AmountInput } from './AmountInput.js';
 
 export interface InputWrapperProps extends IWebbComponentBase {
   /**

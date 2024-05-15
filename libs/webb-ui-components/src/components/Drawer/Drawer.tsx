@@ -1,11 +1,10 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Close } from '@webb-tools/icons';
-import { PropsOf } from '../../types';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { DrawerContentProps } from './types';
+import { PropsOf } from '../../types/index.js';
+import { DrawerContentProps } from './types.js';
 
 const Drawer = DialogPrimitive.Root;
 const DrawerTrigger = DialogPrimitive.Trigger;
@@ -45,9 +44,9 @@ const DrawerDescription = DialogPrimitive.Description;
 
 export {
   Drawer,
-  DrawerTrigger,
   DrawerCloseButton,
   DrawerContent,
-  DrawerTitle,
   DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
 };

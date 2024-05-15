@@ -1,12 +1,12 @@
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@webb-tools/icons/InformationLine.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography';
-import { Button } from '../buttons';
-import { Chip } from '../Chip';
-import { Divider } from '../Divider';
-import { AmountMenuProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import Button from '../buttons/Button.js';
+import { Chip } from '../Chip/index.js';
+import { Divider } from '../Divider/index.js';
+import { AmountMenuProps } from './types.js';
 
 /**
  * The Webb AmountMenu Component

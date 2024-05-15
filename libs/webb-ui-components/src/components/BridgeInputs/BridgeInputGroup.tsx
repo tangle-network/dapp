@@ -1,6 +1,6 @@
-import { PropsOf } from '../../types';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { PropsOf } from '../../types/index.js';
 
 /**
  * The `BridgeInputGroup` component

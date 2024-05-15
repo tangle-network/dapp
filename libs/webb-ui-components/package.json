@@ -22,5 +22,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "type": "module"
+  "type": "module",
+  "typings": "./src/index.d.ts",
+  "types": "./src/index.d.ts"
 }

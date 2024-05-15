@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { CardProps } from './types';
+import { CardProps } from './types.js';
 
 /**
  * The `Card` component

@@ -1,21 +1,21 @@
 'use client';
 
-import { Alert } from '@webb-tools/icons';
-import { type FC, useMemo } from 'react';
+import { Alert } from '@webb-tools/icons/Alert.js';
+import { useMemo, type FC } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
-} from 'react-syntax-highlighter/dist/cjs/styles/prism';
+} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { twMerge } from 'tailwind-merge';
-
-import { Button, SkeletonLoader } from '..';
 import {
-  useDarkMode as useNormalDarkMode,
   useNextDarkMode,
-} from '../../hooks/useDarkMode';
-import { Typography } from '../../typography';
-import type { CodeFileProps } from './types';
+  useDarkMode as useNormalDarkMode,
+} from '../../hooks/useDarkMode.js';
+import { Typography } from '../../typography/index.js';
+import SkeletonLoader from '../SkeletonLoader/SkeletonLoader.js';
+import Button from '../buttons/Button.js';
+import type { CodeFileProps } from './types.js';
 
 const CodeFile: FC<CodeFileProps> = ({
   code,
@@ -34,7 +34,7 @@ const CodeFile: FC<CodeFileProps> = ({
 
   if (isLoading) {
     return (
-      <div className="h-full space-y-3 p-3">
+      <div className="h-full p-3 space-y-3">
         <SkeletonLoader size="xl" />
         <SkeletonLoader size="xl" />
       </div>
@@ -43,9 +43,9 @@ const CodeFile: FC<CodeFileProps> = ({
 
   if (!isLoading && error) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="flex items-center justify-center h-full">
         <div className="flex flex-col gap-2.5 items-center">
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <Alert size="lg" className="!fill-red-70 dark:!fill-red-50" />
             <Typography
               variant="body1"

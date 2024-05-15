@@ -1,11 +1,11 @@
-import { forwardRef } from 'react';
-import { LoadingPillProps } from './types.js';
-import { twMerge } from 'tailwind-merge';
 import {
   CheckboxCircleLine,
   CloseCircleLineIcon,
   Spinner,
 } from '@webb-tools/icons';
+import { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { LoadingPillProps } from './types.js';
 
 const LoadingPill = forwardRef<HTMLButtonElement, LoadingPillProps>(
   ({ className, status = 'loading', ...props }, ref) => {

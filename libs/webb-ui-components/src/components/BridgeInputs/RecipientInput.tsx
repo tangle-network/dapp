@@ -1,15 +1,14 @@
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@webb-tools/icons/InformationLine.js';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { Typography } from '../../typography/Typography';
-import { Button } from '../buttons';
-import { Input } from '../Input';
-import { Label } from '../Label';
-import { notificationApi } from '../Notification';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { InputWrapper } from './InputWrapper';
-import { RecipientInputProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import Button from '../buttons/Button.js';
+import { Input } from '../Input/index.js';
+import { Label } from '../Label/index.js';
+import { notificationApi } from '../Notification/index.js';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import { InputWrapper } from './InputWrapper.js';
+import { RecipientInputProps } from './types.js';
 
 /**
  * The `RecipientInput` component

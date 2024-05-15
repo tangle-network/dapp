@@ -1,8 +1,7 @@
-import { Typography } from '../../typography';
 import React, { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { AvatarChildElement, AvatarGroupProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { AvatarChildElement, AvatarGroupProps } from './types.js';
 
 /**
  * Webb Avatar Group - Use to display stacked avatar list

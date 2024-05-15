@@ -1,1 +1,1 @@
-export { default as ActionsDropdown } from './ActionsDropdown';
+export { default as ActionsDropdown } from './ActionsDropdown.js';

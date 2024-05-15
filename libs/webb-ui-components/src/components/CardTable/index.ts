@@ -1,1 +1,1 @@
-export * from './CardTable';
+export * from './CardTable.js';

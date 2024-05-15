@@ -13,8 +13,18 @@
         "entryFile": "libs/webb-ui-components/src/index.ts",
         "tsConfig": "libs/webb-ui-components/tsconfig.lib.json",
         "format": ["esm"],
-        "rollupConfig": ["libs/webb-ui-components/rollup.config.js"],
-        "external": ["react", "react-dom"]
+        "rollupConfig": ["libs/webb-ui-components/rollup.config.mjs"],
+        "external": [
+          "react",
+          "react-dom",
+          "@polkadot/util",
+          "@polkadot/util-crypto",
+          "@polkadot/wasm-crypto",
+          "@polkadot/wasm-bridge",
+          "@webb-tools/sdk-core",
+          "@webb-tools/utils"
+        ],
+        "generateExportsField": true
       }
     },
     "publish": {

@@ -1,4 +1,4 @@
-import { PropsOf } from '../../types';
+import { PropsOf } from '../../types/index.js';
 
 export interface ChainsRingProps extends PropsOf<'div'> {
   circleContent?: React.ReactNode;

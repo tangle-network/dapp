@@ -2,7 +2,7 @@ import {
   CollapsibleContentProps as RdxCollapsibleContentProps,
   CollapsibleTriggerProps,
 } from '@radix-ui/react-collapsible';
-import { PropsOf, IWebbComponentBase } from '../../types';
+import { PropsOf, IWebbComponentBase } from '../../types/index.js';
 
 export interface CollapsibleProps
   extends IWebbComponentBase,

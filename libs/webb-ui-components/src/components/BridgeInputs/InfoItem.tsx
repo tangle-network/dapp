@@ -1,9 +1,8 @@
-import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { TitleWithInfo } from '../TitleWithInfo';
-import { InfoItemProps } from './types';
+import { Typography } from '../../typography/Typography/index.js';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import { InfoItemProps } from './types.js';
 
 /**
  * The `InfoItem` component
@@ -56,7 +55,7 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
           <Typography
             variant="body1"
             fw="bold"
-            className="text-mono-180 dark:text-mono-80 capitalize"
+            className="capitalize text-mono-180 dark:text-mono-80"
           >
             {rightContent}
           </Typography>

@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
-import { IconButtonProps } from './types.js';
 import { twMerge } from 'tailwind-merge';
+import { IconButtonProps } from './types.js';
 
 const IconButton = forwardRef<React.ElementRef<'button'>, IconButtonProps>(
   ({ className, ...props }, ref) => {

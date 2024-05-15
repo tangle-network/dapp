@@ -1,2 +1,2 @@
-export * from './ChartContainer';
-export * from './types';
+export * from './ChartContainer.js';
+export * from './types.js';

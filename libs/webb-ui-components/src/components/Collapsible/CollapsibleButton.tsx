@@ -1,11 +1,10 @@
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { ChevronDown } from '@webb-tools/icons';
-import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { CollapsibleButtonProps } from './types';
+import { Typography } from '../../typography/index.js';
+import { CollapsibleButtonProps } from './types.js';
 
 /**
  * The style wrapper around Radix Collapsible Trigger, must use inside `<Collapsible></Collapsible>` tag

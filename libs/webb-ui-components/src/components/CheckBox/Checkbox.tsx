@@ -1,10 +1,9 @@
+import { InformationLine } from '@webb-tools/icons/InformationLine.js';
 import cx from 'classnames';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { InformationLine } from '@webb-tools/icons';
-import Button from '../buttons/Button.js';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip.js';
+import Button from '../buttons/Button.js';
 import { CheckBoxProps } from './types.js';
 
 /**

@@ -1,5 +1,5 @@
-import { ChainGroup } from '@webb-tools/dapp-config';
-import { ChainChipClassNames } from './types.js';
+import type { ChainGroup } from '@webb-tools/dapp-config/chains/chain-config.interface.js';
+import type { ChainChipClassNames } from './types.js';
 
 const classNames: ChainChipClassNames = {
   polygon: {

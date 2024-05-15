@@ -1,14 +1,14 @@
-import { ChevronDown } from '@webb-tools/icons';
+import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChevronDown } from '@webb-tools/icons/ChevronDown.js';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
-import { AmountMenu } from '../AmountMenu';
-import { Button } from '../buttons';
-import { Label } from '../Label';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { InputWrapper } from './InputWrapper';
-import { FixedAmountProps } from './types';
-import { Dropdown, DropdownBody } from '../Dropdown';
-import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
+import { AmountMenu } from '../AmountMenu/index.js';
+import { Dropdown, DropdownBody } from '../Dropdown/index.js';
+import { Label } from '../Label/index.js';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import Button from '../buttons/Button.js';
+import { InputWrapper } from './InputWrapper.js';
+import { FixedAmountProps } from './types.js';
 
 /**
  * The `FixedAmount` component

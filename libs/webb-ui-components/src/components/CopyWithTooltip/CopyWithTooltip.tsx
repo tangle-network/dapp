@@ -1,11 +1,10 @@
-import { FileCopyLine } from '@webb-tools/icons';
+import { FileCopyLine } from '@webb-tools/icons/FileCopyLine.js';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks/index.js';
-
 import { Typography } from '../../typography/Typography/index.js';
-import { Button } from '../buttons/index.js';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/index.js';
+import { Button } from '../buttons/index.js';
 import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types.js';
 
 /**

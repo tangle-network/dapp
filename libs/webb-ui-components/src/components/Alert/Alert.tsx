@@ -1,20 +1,20 @@
-import cx from 'classnames';
-import { Typography } from '../../typography';
-import React, { useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
-import { AlertProps } from './types';
 import {
   AlertFill,
   CheckboxCircleFill,
   InformationLineFill,
 } from '@webb-tools/icons';
+import cx from 'classnames';
+import React, { useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography/Typography/index.js';
+import { AlertProps } from './types.js';
 import {
   getClassNamesByType,
-  getTypographyClassNamesByType,
-  getTitleClassNamesBySize,
   getDescriptionClassNamesBySize,
   getIconClassNamesByType,
-} from './utils';
+  getTitleClassNamesBySize,
+  getTypographyClassNamesByType,
+} from './utils.js';
 
 /**
  * Webb Alert component

@@ -2,6 +2,6 @@
   "name": "@webb-tools/icons",
   "version": "0.0.1",
   "type": "module",
-  "typings": "./index.d.ts",
-  "types": "./index.d.ts"
+  "typings": "./src/index.d.ts",
+  "types": "./src/index.d.ts"
 }

@@ -4,6 +4,7 @@ import typescript from 'rollup-plugin-typescript2';
 import svgr from '@svgr/rollup';
 import copy from 'rollup-plugin-copy';
 import image from '@rollup/plugin-image';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 export default (config) =>
   config.output.map((outputCfg) => {
@@ -20,6 +21,7 @@ export default (config) =>
         sourcemap: true,
       },
       plugins: [
+        peerDepsExternal(),
         resolve(),
         copy({
           targets: [

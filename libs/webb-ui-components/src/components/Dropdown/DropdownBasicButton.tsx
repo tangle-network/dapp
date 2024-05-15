@@ -2,7 +2,6 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { DropdownButtonProps } from './types.js';
 
 /**

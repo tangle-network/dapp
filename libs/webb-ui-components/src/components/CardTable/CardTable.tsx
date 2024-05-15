@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 
-import { TitleWithInfo } from '../TitleWithInfo';
-import { CardTableProps } from './types';
+import { TitleWithInfo } from '../TitleWithInfo/index.js';
+import { CardTableProps } from './types.js';
 
 /**
  * The style wrapper component for card with table. The component will display the title along with tooltip info
@@ -39,7 +39,7 @@ export const CardTable: React.FC<CardTableProps> = ({
       )}
     >
       {/** Title and filter */}
-      <div className="flex items-center justify-between px-6 pt-4 py-4">
+      <div className="flex items-center justify-between px-6 py-4 pt-4">
         <TitleWithInfo {...titleProps} />
 
         {leftTitle}

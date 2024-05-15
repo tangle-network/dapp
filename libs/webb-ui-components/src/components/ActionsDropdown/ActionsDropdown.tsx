@@ -1,13 +1,13 @@
 import { ChevronDown } from '@webb-tools/icons';
+import { type FC } from 'react';
 import {
-  Button,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  MenuItem,
-} from '../../components';
-import { type FC } from 'react';
-import { ManageButtonProps } from './types';
+} from '../Dropdown/index.js';
+import { MenuItem } from '../MenuItem/index.js';
+import Button from '../buttons/Button.js';
+import { ManageButtonProps } from './types.js';
 
 const ActionsDropdown: FC<ManageButtonProps> = ({
   buttonText,

@@ -1,4 +1,4 @@
-import { ChainIcon } from '@webb-tools/icons';
+import { ChainIcon } from '@webb-tools/icons/ChainIcon.js';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainChipProps } from './types.js';

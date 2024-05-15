@@ -1,16 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "outDir": "../../dist/libs/webb-ui-components",
-    "declarationDir": "../../dist/libs/webb-ui-components",
     "declaration": true,
+    "declarationDir": "../../dist",
     "types": ["node"],
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "downlevelIteration": true,
-    "sourceMap": true,
-    "emitDeclarationOnly": true,
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": [
