@@ -14,6 +14,7 @@ export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
   ACCOUNT = '/',
+  BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
 }
@@ -233,5 +234,11 @@ export type ExposureMap = Record<
     exposureMeta: SpStakingPagedExposureMetadata;
   }
 >;
+
+// TODO: might need to add more metadata here: name, decimals, etc.
+export type BridgeTokenType = {
+  id: string;
+  symbol: string;
+};
 
 export type TokenSymbol = 'tTNT' | 'TNT';

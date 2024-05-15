@@ -2,6 +2,7 @@
 
 import { isAddress } from '@polkadot/util-crypto';
 import {
+  ArrowLeftRightLineIcon,
   CheckboxBlankCircleLine,
   CodeFill,
   FundsLine,
@@ -30,6 +31,7 @@ const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
   services: <GridFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
   restake: <TokenSwapLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
   nomination: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
+  bridge: <ArrowLeftRightLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
 };
 
 // TODO: Need to statically link the breadcrumb labels to the page path for better type safety and to enable fearless refactoring in the future.
