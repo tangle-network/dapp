@@ -1,17 +1,17 @@
-import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager/index.js';
+import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
 import { ExternalLinkLine } from '@webb-tools/icons';
-import ShieldedCheckLineIcon from '@webb-tools/icons/ShieldedCheckLineIcon.js';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton/index.js';
+import ShieldedCheckLineIcon from '@webb-tools/icons/ShieldedCheckLineIcon';
+import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import {
   Modal,
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@webb-tools/webb-ui-components/components/Modal/index.js';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button.js';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/index.js';
+} from '@webb-tools/webb-ui-components/components/Modal';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type FC, useMemo } from 'react';
-import { SubmittedTxModalProps } from './types.js';
+import { SubmittedTxModalProps } from './types';
 
 const SubmittedTxModal: FC<SubmittedTxModalProps> = ({ txType, ...props }) => {
   const { dequeue } = useModalQueueManager();

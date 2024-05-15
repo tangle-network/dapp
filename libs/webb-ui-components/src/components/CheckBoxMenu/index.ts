@@ -1,2 +1,2 @@
-export * from './CheckBoxMenu.js';
-export * from './CheckBoxMenuGroup.js';
+export * from './CheckBoxMenu';
+export * from './CheckBoxMenuGroup';

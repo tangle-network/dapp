@@ -20,9 +20,9 @@ import {
   KeyIcon,
   InformationLine,
 } from '@webb-tools/icons';
-import { safeParseJson, getErrorMessage } from '../../utils/index.js';
+import { safeParseJson, getErrorMessage } from '../../utils';
 import { twMerge } from 'tailwind-merge';
-import { txArraySchema } from './types.js';
+import { txArraySchema } from './types';
 
 const UploadTxHistoryModal: FC<{
   isOpen: boolean;

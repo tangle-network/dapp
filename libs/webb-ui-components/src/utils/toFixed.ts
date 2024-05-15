@@ -1,5 +1,5 @@
-import isScientificNotation from './isScientificNotation.js';
-import numberToString from './numberToString.js';
+import isScientificNotation from './isScientificNotation';
+import numberToString from './numberToString';
 
 /**
  * Truncate the decimal places of a number without rounding

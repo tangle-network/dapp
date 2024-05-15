@@ -1,4 +1,4 @@
-import { AlertProps } from './types.js';
+import { AlertProps } from './types';
 
 export const getClassNamesByType = (type: AlertProps['type']) => {
   switch (type) {

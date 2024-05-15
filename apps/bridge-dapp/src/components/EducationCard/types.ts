@@ -1,4 +1,4 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types/index.js';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 export interface EducationCardProps extends PropsOf<'div'> {
   /**

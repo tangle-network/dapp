@@ -2,11 +2,11 @@ import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { PropsOf } from '../../types/index.js';
-import { Typography } from '../../typography/index.js';
-import { Button } from '../buttons/index.js';
-import { ListItem } from '../ListCard/ListItem.js';
-import { WalletConnectionCardProps } from './types.js';
+import { PropsOf } from '../../types';
+import { Typography } from '../../typography';
+import { Button } from '../buttons';
+import { ListItem } from '../ListCard/ListItem';
+import { WalletConnectionCardProps } from './types';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,

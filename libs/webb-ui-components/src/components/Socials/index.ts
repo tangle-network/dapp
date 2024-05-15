@@ -1,1 +1,1 @@
-export * from './Socials.js';
+export * from './Socials';

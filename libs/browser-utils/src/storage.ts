@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Storage } from '@webb-tools/dapp-types';
-import isBrowser from './isBrowser.js';
+import isBrowser from './isBrowser';
 
 /**
  * The `BridgeStorage` is used to store the leaves of the merkle tree

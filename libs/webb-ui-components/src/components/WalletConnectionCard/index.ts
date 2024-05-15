@@ -1,1 +1,1 @@
-export * from './WalletConnectionCard.js';
+export * from './WalletConnectionCard';

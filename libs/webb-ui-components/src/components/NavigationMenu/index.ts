@@ -1,3 +1,3 @@
-export * from './NavigationMenu.js';
-export * from './NavigationMenuContent.js';
-export * from './NavigationMenuTrigger.js';
+export * from './NavigationMenu';
+export * from './NavigationMenuContent';
+export * from './NavigationMenuTrigger';

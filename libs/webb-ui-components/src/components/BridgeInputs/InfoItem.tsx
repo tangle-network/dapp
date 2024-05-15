@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography/index.js';
-import { TitleWithInfo } from '../TitleWithInfo/index.js';
-import { InfoItemProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { TitleWithInfo } from '../TitleWithInfo';
+import { InfoItemProps } from './types';
 
 /**
  * The `InfoItem` component

@@ -1,15 +1,15 @@
-import Link from 'next/link.js';
+import Link from 'next/link';
 import { FC, forwardRef, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
-import * as constants from '../../constants/index.js';
-import type { ExternalLink, Link as ILink } from '../../types/index.js';
-import { Typography } from '../../typography/Typography/index.js';
-import { Divider } from '../Divider/index.js';
-import { Logo } from '../Logo/index.js';
-import { TangleLogo } from '../TangleLogo/index.js';
-import { Socials } from '../Socials/index.js';
-import { FooterProps } from './types.js';
+import * as constants from '../../constants';
+import type { ExternalLink, Link as ILink } from '../../types';
+import { Typography } from '../../typography/Typography';
+import { Divider } from '../Divider';
+import { Logo } from '../Logo';
+import { TangleLogo } from '../TangleLogo';
+import { Socials } from '../Socials';
+import { FooterProps } from './types';
 
 /**
  * The statistic `Footer` for `Layout` container

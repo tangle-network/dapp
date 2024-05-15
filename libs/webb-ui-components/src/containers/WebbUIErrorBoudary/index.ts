@@ -1,1 +1,1 @@
-export * from './WebbUIErrorBoudary.js';
+export * from './WebbUIErrorBoudary';

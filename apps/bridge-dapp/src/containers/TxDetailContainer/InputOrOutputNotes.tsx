@@ -10,8 +10,8 @@ import {
 import { ArrowLeft } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config';
 
-import { SectionWrapper, NoteOrAmountWrapper } from './Wrapper.js';
-import { InputOrOutputNotesProps } from './types.js';
+import { SectionWrapper, NoteOrAmountWrapper } from './Wrapper';
+import { InputOrOutputNotesProps } from './types';
 
 const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
   activity,

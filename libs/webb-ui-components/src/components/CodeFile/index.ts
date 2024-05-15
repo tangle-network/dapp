@@ -1,3 +1,3 @@
-import CodeFile from './CodeFile.js';
+import CodeFile from './CodeFile';
 
 export default CodeFile;

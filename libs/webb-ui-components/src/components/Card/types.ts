@@ -1,4 +1,4 @@
-import type { WebbComponentBase } from '../../types/index.js';
+import type { WebbComponentBase } from '../../types';
 
 /**
  * The `Card` props

@@ -5,8 +5,8 @@ import {
 import { AnchorMetadata, ICurrency } from '../types.js';
 import addCurrencyToConfig from './addCurrencyToConfig.js';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
-import { CurrencyConfig } from '../currencies/index.js';
-import { AnchorConfigEntry } from '../anchors/index.js';
+import { CurrencyConfig } from '../currencies';
+import { AnchorConfigEntry } from '../anchors';
 
 export type OnChainData = {
   nativeCurrency: ICurrency;

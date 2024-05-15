@@ -2,7 +2,7 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { DropdownBodyProps } from './types.js';
+import { DropdownBodyProps } from './types';
 
 /**
  * The style wrapper around Radix `Content` and `Portal` component, must use inside the `Dropdown` component

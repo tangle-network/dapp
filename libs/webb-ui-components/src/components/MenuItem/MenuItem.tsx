@@ -3,7 +3,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { MenuItemProps } from './types.js';
+import { MenuItemProps } from './types';
 
 /**
  * The dropdown `MenuItem` component (must be used inside the `Dropdown*` component)

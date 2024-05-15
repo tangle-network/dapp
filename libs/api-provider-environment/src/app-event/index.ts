@@ -1,1 +1,1 @@
-export * from './app-events.class.js';
+export * from './app-events.class';

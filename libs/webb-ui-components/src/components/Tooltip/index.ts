@@ -1,1 +1,1 @@
-export * from './Tooltip.js';
+export * from './Tooltip';

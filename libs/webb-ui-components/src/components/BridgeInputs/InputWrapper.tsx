@@ -1,6 +1,6 @@
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { InputWrapperProps } from './types.js';
+import { InputWrapperProps } from './types';
 
 export const InputWrapper = forwardRef<HTMLDivElement, InputWrapperProps>(
   ({ children, className, ...props }, ref) => {

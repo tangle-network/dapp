@@ -2,7 +2,7 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData.js';
+import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 import { WalletModal, useWebbUI } from '@webb-tools/webb-ui-components';
 
 export const WalletModalContainer = () => {

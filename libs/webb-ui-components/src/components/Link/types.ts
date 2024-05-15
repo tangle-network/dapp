@@ -1,4 +1,4 @@
-import { LinkProps as InternalLinkProps } from 'next/link.js';
+import { LinkProps as InternalLinkProps } from 'next/link';
 import type { ComponentPropsWithoutRef } from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
 

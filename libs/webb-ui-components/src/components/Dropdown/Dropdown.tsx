@@ -1,7 +1,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { DropdownProps } from './types.js';
+import { DropdownProps } from './types';
 
 /**
  * The wrapper of Radix `DropdownRoot`

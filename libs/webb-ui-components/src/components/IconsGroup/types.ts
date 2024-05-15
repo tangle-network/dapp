@@ -1,4 +1,4 @@
-import { IconSize } from '@webb-tools/icons/types.js';
+import { IconSize } from '@webb-tools/icons/types';
 
 export interface IconsGroupProps {
   type: 'token' | 'chain';

@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 
-import { TitleWithInfo } from '../TitleWithInfo/index.js';
-import { CardTableProps } from './types.js';
+import { TitleWithInfo } from '../TitleWithInfo';
+import { CardTableProps } from './types';
 
 /**
  * The style wrapper component for card with table. The component will display the title along with tooltip info

@@ -1,11 +1,11 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { Close } from '@webb-tools/icons/Close.js';
+import { Close } from '@webb-tools/icons/Close';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography/index.js';
-import { Button } from '../buttons/index.js';
-import { BottomDialogPortalProps } from './types.js';
+import { Typography } from '../../typography';
+import { Button } from '../buttons';
+import { BottomDialogPortalProps } from './types';
 
 export const BottomDialogPortal = forwardRef<
   HTMLDivElement,

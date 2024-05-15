@@ -1,9 +1,9 @@
 import { ChainIcon, ChevronDown } from '@webb-tools/icons';
-import { getFlexBasic } from '@webb-tools/icons/utils.js';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChainButtonProps } from './types.js';
+import { ChainButtonProps } from './types';
 
 const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
   (

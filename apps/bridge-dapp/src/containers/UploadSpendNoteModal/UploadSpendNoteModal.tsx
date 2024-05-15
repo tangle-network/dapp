@@ -13,9 +13,9 @@ import {
   TabTrigger,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { PasteModalContent } from './PasteModalContent.js';
-import { RefHandle, UploadSpendNoteModalProps } from './types.js';
-import { UploadModalContent } from './UploadModalContent.js';
+import { PasteModalContent } from './PasteModalContent';
+import { RefHandle, UploadSpendNoteModalProps } from './types';
+import { UploadModalContent } from './UploadModalContent';
 
 export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   isOpen,

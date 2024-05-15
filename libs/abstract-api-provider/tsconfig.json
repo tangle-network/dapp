@@ -4,7 +4,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
-    "declaration": true
   },
   "files": [],
   "include": [],

@@ -7,8 +7,8 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import { downloadNotes } from '../../utils/index.js';
-import { DeleteNotesModalProps } from './types.js';
+import { downloadNotes } from '../../utils';
+import { DeleteNotesModalProps } from './types';
 import { useVAnchor } from '@webb-tools/react-hooks';
 
 export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({

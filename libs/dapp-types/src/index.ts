@@ -10,7 +10,7 @@ export { default as Storage } from './Storage.js';
 export * from './WalletId.js';
 export * from './WebbError.js';
 export * from './appMode.js';
-export * from './utils/index.js';
+export * from './utils';
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000';
 export const ZERO = 'ZERO';

@@ -1,19 +1,19 @@
 import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction/index.js';
-import { transactionItemStatusFromTxStatus } from '@webb-tools/api-provider-environment/transaction/index.js';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
+import { transactionItemStatusFromTxStatus } from '@webb-tools/api-provider-environment/transaction';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import {
   Dropdown,
   DropdownBody,
-} from '@webb-tools/webb-ui-components/components/Dropdown/index.js';
-import LoadingPill from '@webb-tools/webb-ui-components/components/buttons/LoadingPill.js';
-import type { LoadingPillStatus } from '@webb-tools/webb-ui-components/components/buttons/types.js';
-import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/index.js';
+} from '@webb-tools/webb-ui-components/components/Dropdown';
+import LoadingPill from '@webb-tools/webb-ui-components/components/buttons/LoadingPill';
+import type { LoadingPillStatus } from '@webb-tools/webb-ui-components/components/buttons/types';
+import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router';
-import { NOTE_ACCOUNT_PATH } from '../../../constants/paths.js';
-import useCurrentTx from '../../../hooks/useCurrentTx.js';
-import TxItem from './TxItem.js';
+import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
+import useCurrentTx from '../../../hooks/useCurrentTx';
+import TxItem from './TxItem';
 
 const TxProgressDropdown = () => {
   const { txQueue: txQueue_ } = useWebContext();

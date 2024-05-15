@@ -1,3 +1,3 @@
-import { default as ChainsRing } from './ChainsRing.js';
+import { default as ChainsRing } from './ChainsRing';
 
 export default ChainsRing;

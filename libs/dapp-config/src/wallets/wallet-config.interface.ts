@@ -4,7 +4,7 @@
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData.js';
 import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { MetaMaskConnector, RainbowConnector } from './injected/index.js';
+import { MetaMaskConnector, RainbowConnector } from './injected';
 
 export type SupportedConnector =
   | MetaMaskConnector

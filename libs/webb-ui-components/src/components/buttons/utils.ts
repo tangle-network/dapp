@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 
-import type { ButtonClassNames, ButtonSize, ButtonVariant } from './types.js';
+import type { ButtonClassNames, ButtonSize, ButtonVariant } from './types';
 
 const classNames: ButtonClassNames = {
   primary: {

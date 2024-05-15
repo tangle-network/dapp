@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useObservableState } from 'observable-hooks';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 
-import subjects from './subjects.js';
+import subjects from './subjects';
 
 export type UseReceiveModalReturnType = {
   /**

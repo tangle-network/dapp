@@ -1,14 +1,14 @@
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config.js';
-import { ChainIcon } from '@webb-tools/icons/ChainIcon.js';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import cx from 'classnames';
 import { forwardRef, useCallback } from 'react';
 
 import {
   useNextDarkMode,
   useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode.js';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/index.js';
-import type { ChainRingItemType, ChainsRingProps } from './types.js';
+} from '../../hooks/useDarkMode';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import type { ChainRingItemType, ChainsRingProps } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {

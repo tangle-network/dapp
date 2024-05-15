@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface.js';
+import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { ChainIcon, FilterIcon2, Search } from '@webb-tools/icons';
 import {
   Accordion,
@@ -15,7 +15,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { useMemo, type FC } from 'react';
-import { type FilterButtonProps } from './types.js';
+import { type FilterButtonProps } from './types';
 
 export const FilterButton: FC<FilterButtonProps> = ({
   destinationChains,

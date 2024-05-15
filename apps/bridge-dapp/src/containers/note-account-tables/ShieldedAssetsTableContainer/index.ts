@@ -1,1 +1,1 @@
-export * from './ShieldedAssetsTableContainer.js';
+export * from './ShieldedAssetsTableContainer';

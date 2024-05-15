@@ -2,7 +2,7 @@ import cx from 'classnames';
 import { forwardRef, memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TDataProps } from './types.js';
+import { TDataProps } from './types';
 
 /**
  * The styler wrapper of `<td></td>` tag, use inside `<tbody></tbody>` tab for table

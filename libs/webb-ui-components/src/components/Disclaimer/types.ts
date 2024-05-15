@@ -1,4 +1,4 @@
-import type { PropsOf } from '../../types/index.js';
+import type { PropsOf } from '../../types';
 
 export type DisclaimerVariant = 'info' | 'error' | 'warning' | 'success';
 /**

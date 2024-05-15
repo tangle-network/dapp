@@ -11,7 +11,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { MoreOptionsDropdownProps } from './types.js';
+import { MoreOptionsDropdownProps } from './types';
 
 export const MoreOptionsDropdown: FC<MoreOptionsDropdownProps> = ({
   onDeleteNotes,

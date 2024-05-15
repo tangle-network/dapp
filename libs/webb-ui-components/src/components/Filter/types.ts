@@ -1,4 +1,4 @@
-import { PropsOf, IWebbComponentBase } from '../../types/index.js';
+import { PropsOf, IWebbComponentBase } from '../../types';
 
 export interface FilterProps extends IWebbComponentBase, PropsOf<'div'> {
   /**

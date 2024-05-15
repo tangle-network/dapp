@@ -15,12 +15,12 @@ import { ApiPromise } from '@polkadot/api';
 import { BN } from 'bn.js';
 import chalk from 'chalk';
 
-import addAssetMetadata from './utils/addAssetMetadata.js';
-import createPoolShare from './utils/createPoolShare.js';
-import createVAnchor from './utils/createVAnchor.js';
-import getKeyring from './utils/getKeyRing.js';
-import getLocalApi from './utils/getLocalApi.js';
-import transferAsset from './utils/transferAsset.js';
+import addAssetMetadata from './utils/addAssetMetadata';
+import createPoolShare from './utils/createPoolShare';
+import createVAnchor from './utils/createVAnchor';
+import getKeyring from './utils/getKeyRing';
+import getLocalApi from './utils/getLocalApi';
+import transferAsset from './utils/transferAsset';
 
 const ALICE_PORT = 9944;
 

@@ -2,9 +2,9 @@ import { Transition } from '@headlessui/react';
 import cx from 'classnames';
 import { ComponentProps, FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { CheckBox } from '../CheckBox/index.js';
-import { AmountInput } from './AmountInput.js';
-import { RefundInputProps } from './types.js';
+import { CheckBox } from '../CheckBox';
+import { AmountInput } from './AmountInput';
+import { RefundInputProps } from './types';
 
 const defaultInfo: ComponentProps<typeof CheckBox>['info'] = {
   title: 'Refund Support',

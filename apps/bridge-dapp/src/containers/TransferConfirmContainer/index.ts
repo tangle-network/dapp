@@ -1,3 +1,3 @@
-import TransferConfirmContainer from './TransferConfirmContainer.js';
+import TransferConfirmContainer from './TransferConfirmContainer';
 
 export default TransferConfirmContainer;

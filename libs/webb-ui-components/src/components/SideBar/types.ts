@@ -1,8 +1,8 @@
-import type { AppEnvironment } from '@webb-tools/dapp-config/types.js';
+import type { AppEnvironment } from '@webb-tools/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
-import type { IconBase } from '@webb-tools/icons/types.js';
+import type { IconBase } from '@webb-tools/icons/types';
 import { MouseEventHandler } from 'react';
-import type { LogoProps } from '../Logo/types.js';
+import type { LogoProps } from '../Logo/types';
 
 export type SideBarFooterType = {
   name: string;

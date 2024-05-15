@@ -142,7 +142,7 @@ export { default as WebbLogoIcon } from './WebbLogoIcon.js';
 export * from './YouTubeFill.js';
 
 // Wallet icons
-export * from './wallets/index.js';
+export * from './wallets';
 
 // image URIs
 export * from './Alert.js';
@@ -153,8 +153,8 @@ export * from './PartyFill.js';
 export * from './Tangle.js';
 export * from './TangleIcon.js';
 
-export * from './StatusIndicator/index.js';
-export { default as StatusIndicator } from './StatusIndicator/index.js';
+export * from './StatusIndicator';
+export { default as StatusIndicator } from './StatusIndicator';
 
 // Proposal Badges
-export * from './ProposalBadge/index.js';
+export * from './ProposalBadge';

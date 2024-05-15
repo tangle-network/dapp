@@ -1,10 +1,10 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config.js';
-import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction/index.js';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI.js';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes.js';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
@@ -24,9 +24,9 @@ import {
   formatEther,
   formatUnits,
 } from 'viem';
-import useEnqueueSubmittedTx from '../../hooks/useEnqueueSubmittedTx.js';
-import useInProgressTxInfo from '../../hooks/useInProgressTxInfo.js';
-import useWithdrawFeeCalculation from '../../hooks/useWithdrawFeeCalculation.js';
+import useEnqueueSubmittedTx from '../../hooks/useEnqueueSubmittedTx';
+import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
+import useWithdrawFeeCalculation from '../../hooks/useWithdrawFeeCalculation';
 import {
   captureSentryException,
   getErrorMessage,
@@ -36,9 +36,9 @@ import {
   handleStoreNote,
   getNoteSerializations,
   getCurrentTimestamp,
-} from '../../utils/index.js';
-import RelayerFeeDetails from '../../components/RelayerFeeDetails.js';
-import { WithdrawConfirmContainerProps } from './types.js';
+} from '../../utils';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
+import { WithdrawConfirmContainerProps } from './types';
 
 const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,

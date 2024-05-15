@@ -1,9 +1,9 @@
-import { Close } from '@webb-tools/icons/Close.js';
+import { Close } from '@webb-tools/icons/Close';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/index.js';
-import { Button } from '../buttons/index.js';
-import { BannerPropsType } from './types.js';
+import { Typography } from '../../typography';
+import { Button } from '../buttons';
+import { BannerPropsType } from './types';
 
 /**
  * The `Banner` component

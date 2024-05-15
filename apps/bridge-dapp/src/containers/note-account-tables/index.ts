@@ -1,2 +1,2 @@
-export * from './ShieldedAssetsTableContainer/index.js';
-export * from './SpendNotesTableContainer/index.js';
+export * from './ShieldedAssetsTableContainer';
+export * from './SpendNotesTableContainer';

@@ -1,6 +1,6 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
 
-import { LabelProps } from './types.js';
+import { LabelProps } from './types';
 
 /**
  * The accessible `Label` component

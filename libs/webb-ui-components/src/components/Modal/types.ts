@@ -1,7 +1,7 @@
 import type { Transition } from '@headlessui/react';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
-import type { PropsOf } from '../../types/index.js';
-import type { WebbTypographyVariant } from '../../typography/types.js';
+import type { PropsOf } from '../../types';
+import type { WebbTypographyVariant } from '../../typography/types';
 
 export interface ModalContentProps extends DialogContentProps {
   /**

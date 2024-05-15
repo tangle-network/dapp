@@ -1,10 +1,10 @@
 import { Fragment, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import * as constants from '../../constants/index.js';
-import { Typography } from '../../typography/index.js';
-import { Button, ButtonProps } from '../buttons/index.js';
-import { ErrorFallbackProps } from './types.js';
+import * as constants from '../../constants';
+import { Typography } from '../../typography';
+import { Button, ButtonProps } from '../buttons';
+import { ErrorFallbackProps } from './types';
 
 const telegramInfo = constants.defaultSocialConfigs.find(
   (c) => c.name === 'telegram'

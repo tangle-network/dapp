@@ -1,3 +1,3 @@
-import WithdrawConfirmContainer from './WithdrawConfirmContainer.js';
+import WithdrawConfirmContainer from './WithdrawConfirmContainer';
 
 export default WithdrawConfirmContainer;

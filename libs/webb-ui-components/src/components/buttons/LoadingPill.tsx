@@ -5,7 +5,7 @@ import {
 } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { LoadingPillProps } from './types.js';
+import { LoadingPillProps } from './types';
 
 const LoadingPill = forwardRef<HTMLButtonElement, LoadingPillProps>(
   ({ className, status = 'loading', ...props }, ref) => {

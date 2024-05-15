@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert } from '@webb-tools/icons/Alert.js';
+import { Alert } from '@webb-tools/icons/Alert';
 import { useMemo, type FC } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
@@ -11,11 +11,11 @@ import { twMerge } from 'tailwind-merge';
 import {
   useNextDarkMode,
   useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode.js';
-import { Typography } from '../../typography/index.js';
-import SkeletonLoader from '../SkeletonLoader/SkeletonLoader.js';
-import Button from '../buttons/Button.js';
-import type { CodeFileProps } from './types.js';
+} from '../../hooks/useDarkMode';
+import { Typography } from '../../typography';
+import SkeletonLoader from '../SkeletonLoader/SkeletonLoader';
+import Button from '../buttons/Button';
+import type { CodeFileProps } from './types';
 
 const CodeFile: FC<CodeFileProps> = ({
   code,

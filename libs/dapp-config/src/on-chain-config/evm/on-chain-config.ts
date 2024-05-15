@@ -6,10 +6,10 @@ import {
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
 import { getContract, type PublicClient } from 'viem';
-import { ChainAddressConfig } from '../../anchors/index.js';
-import { chainsConfig } from '../../chains/index.js';
-import { ZERO_BIG_INT } from '../../constants/index.js';
-import { CurrencyConfig } from '../../currencies/index.js';
+import { ChainAddressConfig } from '../../anchors';
+import { chainsConfig } from '../../chains';
+import { ZERO_BIG_INT } from '../../constants';
+import { CurrencyConfig } from '../../currencies';
 import { ICurrency } from '../../types.js';
 import {
   CurrencyResponse,

@@ -1,20 +1,13 @@
 import { Transition } from '@headlessui/react';
-import {
-  Close,
-  HelpLineIcon,
-  UsageGuideIcon,
-} from '@webb-tools/icons/index.js';
-import { Button, Typography } from '@webb-tools/webb-ui-components/index.js';
-import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants/index.js';
+import { Close, HelpLineIcon, UsageGuideIcon } from '@webb-tools/icons';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { forwardRef, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  BRIDGE_OVERVIEW_PATH,
-  USAGE_GUIDE_PATH,
-} from '../../constants/links.js';
-import { useEducationCardStep } from '../../hooks/useEducationCardStep.js';
-import { EducationCardProps } from './types.js';
+import { BRIDGE_OVERVIEW_PATH, USAGE_GUIDE_PATH } from '../../constants/links';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { EducationCardProps } from './types';
 
 const links = [
   {

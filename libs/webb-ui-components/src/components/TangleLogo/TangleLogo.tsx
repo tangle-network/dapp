@@ -1,8 +1,8 @@
-import { createIcon } from '@webb-tools/icons/create-icon.js';
+import { createIcon } from '@webb-tools/icons/create-icon';
 import React, { useMemo, useEffect, useState } from 'react';
 import { randNumber } from '@ngneat/falso';
 
-import { TangleLogoProps } from './types.js';
+import { TangleLogoProps } from './types';
 
 const defaultTangleLogoSize = {
   width: 114,

@@ -2,11 +2,11 @@ import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography/index.js';
-import { getFontWeightClassName } from '../../typography/utils/index.js';
-import { Label } from '../Label/index.js';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/index.js';
-import { LabelWithValueProps } from './types.js';
+import { Typography } from '../../typography';
+import { getFontWeightClassName } from '../../typography/utils';
+import { Label } from '../Label';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import { LabelWithValueProps } from './types';
 
 /**
  * The `LabelWithValue` component

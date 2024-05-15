@@ -1,4 +1,4 @@
-import { IconBase } from '@webb-tools/icons/types.js';
+import { IconBase } from '@webb-tools/icons/types';
 
 /**
  * The Tangle Logo props

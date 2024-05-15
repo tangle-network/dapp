@@ -1,1 +1,1 @@
-export * from './CreateAccountModal.js';
+export * from './CreateAccountModal';

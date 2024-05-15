@@ -1,14 +1,14 @@
-import { ChevronRight } from '@webb-tools/icons/ChevronRight.js';
+import { ChevronRight } from '@webb-tools/icons/ChevronRight';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography/index.js';
-import { getRoundedAmountString } from '../../utils/getRoundedAmountString.js';
-import { Label } from '../Label/index.js';
-import { TitleWithInfo } from '../TitleWithInfo/index.js';
-import { TokenPair } from '../TokenPair/index.js';
-import { InputWrapper } from './InputWrapper.js';
-import { ShieldedAssetInputComponentProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { getRoundedAmountString } from '../../utils/getRoundedAmountString';
+import { Label } from '../Label';
+import { TitleWithInfo } from '../TitleWithInfo';
+import { TokenPair } from '../TokenPair';
+import { InputWrapper } from './InputWrapper';
+import { ShieldedAssetInputComponentProps } from './types';
 
 /**
  * The `ShieldedAssetInput` component

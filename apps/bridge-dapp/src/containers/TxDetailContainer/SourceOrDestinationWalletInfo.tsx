@@ -6,8 +6,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { chainsConfig } from '@webb-tools/dapp-config';
 
-import { SectionWrapper, NoteOrAmountWrapper } from './Wrapper.js';
-import { SourceOrDestinationWalletInfoProps } from './types.js';
+import { SectionWrapper, NoteOrAmountWrapper } from './Wrapper';
+import { SourceOrDestinationWalletInfoProps } from './types';
 
 const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
   type,

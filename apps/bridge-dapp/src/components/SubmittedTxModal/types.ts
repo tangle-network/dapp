@@ -1,4 +1,4 @@
-import { BRIDGE_TABS, WRAPPER_TABS } from '../../constants/index.js';
+import { BRIDGE_TABS, WRAPPER_TABS } from '../../constants';
 
 interface Props {
   /**

@@ -1,4 +1,4 @@
-import { WEBB_DOCS_URL } from '../constants/index.js';
+import { WEBB_DOCS_URL } from '../constants';
 
 type TruncateTrailingSlash<Route extends `/${string}`> =
   Route extends `${infer Truncated}/` ? Truncated : Route;

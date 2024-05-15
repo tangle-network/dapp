@@ -1,4 +1,4 @@
-import { IWebbComponentBase } from '../../types/index.js';
+import { IWebbComponentBase } from '../../types';
 
 /**
  * Props for `Alert` component

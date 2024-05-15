@@ -1,5 +1,5 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
-import { RECIPIENT_PUBLIC_KEY_DOCS_URL } from '../../constants/index.js';
+import { RECIPIENT_PUBLIC_KEY_DOCS_URL } from '../../constants';
 
 export const RecipientPublicKeyTooltipContent = () => (
   <div className="py-2">

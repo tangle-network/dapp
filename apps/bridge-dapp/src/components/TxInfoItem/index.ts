@@ -1,3 +1,3 @@
-import TxInfoItem from './TxInfoItem.js';
+import TxInfoItem from './TxInfoItem';
 
 export default TxInfoItem;

@@ -4,13 +4,13 @@ import {
   Typography,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI.js';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
-import { SectionWrapper } from './Wrapper.js';
-import type { TxBasicInfoProps } from './types.js';
-import { formatDateTimeByTimestamp } from '../../utils/index.js';
+import { SectionWrapper } from './Wrapper';
+import type { TxBasicInfoProps } from './types';
+import { formatDateTimeByTimestamp } from '../../utils';
 
 const TxBasicInfo: FC<TxBasicInfoProps> = ({
   hash,

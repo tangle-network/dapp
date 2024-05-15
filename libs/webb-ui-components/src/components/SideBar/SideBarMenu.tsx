@@ -5,10 +5,10 @@ import { twMerge } from 'tailwind-merge';
 import * as Dialog from '@radix-ui/react-dialog';
 import { HamburgerMenu } from '@webb-tools/icons';
 
-import { SideBarLogo } from './Logo.js';
-import { SideBarItems } from './Items.js';
-import { SideBarFooter } from './Footer.js';
-import { SidebarProps } from './types.js';
+import { SideBarLogo } from './Logo';
+import { SideBarItems } from './Items';
+import { SideBarFooter } from './Footer';
+import { SidebarProps } from './types';
 
 export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
   (

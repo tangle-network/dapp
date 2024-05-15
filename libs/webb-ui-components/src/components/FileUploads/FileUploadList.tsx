@@ -1,7 +1,7 @@
-import { Typography } from '../../typography/Typography/index.js';
+import { Typography } from '../../typography/Typography';
 import { forwardRef } from 'react';
-import { ScrollArea } from '../ScrollArea/index.js';
-import { FileUploadListProps } from './types.js';
+import { ScrollArea } from '../ScrollArea';
+import { FileUploadListProps } from './types';
 import { twMerge } from 'tailwind-merge';
 
 export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(

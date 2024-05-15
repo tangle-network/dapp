@@ -9,7 +9,7 @@ import {
   useRoutes,
 } from 'react-router-dom';
 
-import { StoreData, usePageTitle } from './store/index.js';
+import { StoreData, usePageTitle } from './store';
 
 /* HOC for set page title */
 const withTitle = (

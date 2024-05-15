@@ -1,1 +1,1 @@
-export * from './webb-context.js';
+export * from './webb-context';

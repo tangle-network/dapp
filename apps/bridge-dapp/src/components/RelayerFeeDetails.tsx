@@ -1,13 +1,13 @@
-import type { OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/relayer/types.js';
-import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface.js';
-import type { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface.js';
-import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine.js';
-import GasStationFill from '@webb-tools/icons/GasStationFill.js';
-import { FeeDetails } from '@webb-tools/webb-ui-components/components/FeeDetails/index.js';
-import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types.js';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/index.js';
+import type { OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/relayer/types';
+import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import type { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
+import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
+import GasStationFill from '@webb-tools/icons/GasStationFill';
+import { FeeDetails } from '@webb-tools/webb-ui-components/components/FeeDetails';
+import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { formatEther } from 'viem';
-import { getRelayerFeePercentage } from '../utils/index.js';
+import getRelayerFeePercentage from '../utils/getRelayerFeePercentage';
 import { type FC, useMemo } from 'react';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 

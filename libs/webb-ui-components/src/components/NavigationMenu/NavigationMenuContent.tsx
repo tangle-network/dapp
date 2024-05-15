@@ -8,10 +8,10 @@ import {
 } from '@webb-tools/icons';
 import { Fragment, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography/index.js';
-import { DropdownBody } from '../Dropdown/index.js';
-import { MenuItem } from '../MenuItem/MenuItem.js';
-import { NavigationMenuContentProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { DropdownBody } from '../Dropdown';
+import { MenuItem } from '../MenuItem/MenuItem';
+import { NavigationMenuContentProps } from './types';
 
 /**
  * The navigation menu content, must use inside the `NavigationMenu` component

@@ -1,2 +1,2 @@
-export * from './ChainChip.js';
-export * from './types.js';
+export * from './ChainChip';
+export * from './types';

@@ -1,9 +1,9 @@
-export * from './SideBar.js';
-export * from './SideBarMenu.js';
+export * from './SideBar';
+export * from './SideBarMenu';
 
-export * from './Footer.js';
-export * from './Logo.js';
-export * from './Items.js';
-export * from './SubItem.js';
+export * from './Footer';
+export * from './Logo';
+export * from './Items';
+export * from './SubItem';
 
-export * from './types.js';
+export * from './types';

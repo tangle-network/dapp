@@ -1,2 +1,2 @@
-export * from './Filter.js';
-export * from './utils.js';
+export * from './Filter';
+export * from './utils';

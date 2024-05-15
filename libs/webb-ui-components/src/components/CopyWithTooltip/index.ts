@@ -1,1 +1,1 @@
-export * from './CopyWithTooltip.js';
+export * from './CopyWithTooltip';

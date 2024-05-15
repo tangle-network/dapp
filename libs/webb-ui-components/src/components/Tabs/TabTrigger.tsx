@@ -1,8 +1,8 @@
 import * as Tabs from '@radix-ui/react-tabs';
 
 import { forwardRef } from 'react';
-import { Tab } from './Tabs.js';
-import { TabBaseProps } from './types.js';
+import { Tab } from './Tabs';
+import { TabBaseProps } from './types';
 
 /**
  * The wrapper around the Radix TabTrigger component

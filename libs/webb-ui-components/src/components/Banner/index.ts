@@ -1,1 +1,1 @@
-export * from './Banner.js';
+export * from './Banner';

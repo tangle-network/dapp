@@ -7,8 +7,8 @@ import {
   WRAPPER_TABS,
   BRIDGE_PATH,
   WRAPPER_PATH,
-} from '../../constants/index.js';
-import type { PageTabsContainerProps } from './types.js';
+} from '../../constants';
+import type { PageTabsContainerProps } from './types';
 
 const PageTabsContainer: FC<PageTabsContainerProps> = ({
   children,

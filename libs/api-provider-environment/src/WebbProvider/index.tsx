@@ -5,13 +5,13 @@ import {
   type Account,
   type WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
-import { Bridge } from '@webb-tools/abstract-api-provider/state/index.js';
-import { LoggerService } from '@webb-tools/browser-utils/logger/index.js';
+import { Bridge } from '@webb-tools/abstract-api-provider/state';
+import { LoggerService } from '@webb-tools/browser-utils/logger';
 import {
   multipleKeypairStorageFactory,
   netStorageFactory,
   type NetworkStorage,
-} from '@webb-tools/browser-utils/storage.js';
+} from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   chainsConfig,
@@ -21,7 +21,7 @@ import {
   type Chain,
   type Wallet,
 } from '@webb-tools/dapp-config';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config.js';
+import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   CurrencyRole,
   WalletId,
@@ -30,8 +30,8 @@ import {
   type BareProps,
   type InteractiveFeedback,
 } from '@webb-tools/dapp-types';
-import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError.js';
-import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types.js';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
@@ -47,24 +47,20 @@ import {
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
 import { WagmiConfig } from 'wagmi';
-import type { TAppEvent } from '../app-event/index.js';
-import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface.js';
-import { unsupportedChain } from '../error/interactive-errors/unsupported-chain.js';
+import type { TAppEvent } from '../app-event';
+import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
+import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
 import onChainDataJson from '../generated/on-chain-config.json';
-import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider.js';
-import { StoreProvider } from '../store/index.js';
-import { useTxApiQueue } from '../transaction/index.js';
-import { WebbContext } from '../webb-context/index.js';
+import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
+import { StoreProvider } from '../store';
+import { useTxApiQueue } from '../transaction';
+import { WebbContext } from '../webb-context';
 import {
   notificationHandler,
   registerInteractiveFeedback,
   useNoteAccount,
-} from './private.js';
-import {
-  useActiveAccount,
-  useActiveChain,
-  useActiveWallet,
-} from './subjects.js';
+} from './private';
+import { useActiveAccount, useActiveChain, useActiveWallet } from './subjects';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;

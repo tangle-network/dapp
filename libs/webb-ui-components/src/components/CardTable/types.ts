@@ -1,6 +1,6 @@
-import type { WebbComponentBase } from '../../types/index.js';
+import type { WebbComponentBase } from '../../types';
 
-import type { TitleWithInfoProps } from '../TitleWithInfo/types.js';
+import type { TitleWithInfoProps } from '../TitleWithInfo/types';
 
 export interface CardTableProps extends WebbComponentBase {
   titleProps: TitleWithInfoProps;

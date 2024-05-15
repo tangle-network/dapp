@@ -19,11 +19,11 @@ import {
 import cx from 'classnames';
 import Lottie from 'lottie-react';
 import { FC, useCallback, useState } from 'react';
-import { NOTE_ACCOUNT_DOCS_URL } from '../../constants/links.js';
-import { createSignInMessage } from '../../constants/signIn.js';
+import { NOTE_ACCOUNT_DOCS_URL } from '../../constants/links';
+import { createSignInMessage } from '../../constants/signIn';
 import congratsJson from './congrats.json';
 import privacySecurityJson from './privacy-security.json';
-import { CreateAccountModalProps } from './types.js';
+import { CreateAccountModalProps } from './types';
 
 const successBridgeInfo = [
   {

@@ -1,8 +1,8 @@
-import { InformationLine } from '@webb-tools/icons/InformationLine.js';
+import { InformationLine } from '@webb-tools/icons/InformationLine';
 import { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/index.js';
-import { DisclaimerProps, DisclaimerVariant } from './types.js';
+import { Typography } from '../../typography';
+import { DisclaimerProps, DisclaimerVariant } from './types';
 
 function getColors(variant: DisclaimerVariant) {
   switch (variant) {

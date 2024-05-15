@@ -2,11 +2,7 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  TooltipBodyProps,
-  TooltipProps,
-  TooltipTriggerProps,
-} from './types.js';
+import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
 
 /**
  * The `ToolTipBody` component, use after the `TooltipTrigger`.

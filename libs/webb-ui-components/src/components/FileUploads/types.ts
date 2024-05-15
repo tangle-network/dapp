@@ -1,5 +1,5 @@
 import type { DropzoneOptions } from 'react-dropzone';
-import { PropsOf } from '../../types/index.js';
+import { PropsOf } from '../../types';
 
 export type AcceptFileType = 'json' | 'csv';
 

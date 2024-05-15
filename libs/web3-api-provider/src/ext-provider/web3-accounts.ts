@@ -5,7 +5,7 @@ import {
   Account,
   AccountsAdapter,
   PromiseOrT,
-} from '@webb-tools/abstract-api-provider/account/index.js';
+} from '@webb-tools/abstract-api-provider/account';
 import ensureHex from '@webb-tools/dapp-config/utils/ensureHex.js';
 import { Address, WalletClient } from 'viem';
 import { getAccount } from 'wagmi/actions';

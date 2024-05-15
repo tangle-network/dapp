@@ -1,4 +1,4 @@
-import { PropsOf } from '../../types/index.js';
+import { PropsOf } from '../../types';
 
 export interface TokenPairIconsProps extends PropsOf<'div'> {
   /**

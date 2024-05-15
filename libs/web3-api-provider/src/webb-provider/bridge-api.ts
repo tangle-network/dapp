@@ -1,10 +1,6 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import {
-  Bridge,
-  BridgeApi,
-  Currency,
-} from '@webb-tools/abstract-api-provider/index.js';
+import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
 import {
   ERC20__factory as ERC20Factory,
   FungibleTokenWrapper__factory,

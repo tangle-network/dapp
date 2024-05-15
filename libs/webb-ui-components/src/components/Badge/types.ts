@@ -1,5 +1,5 @@
-import { IconBase } from '@webb-tools/icons/types.js';
-import { PropsOf } from '../../types/index.js';
+import { IconBase } from '@webb-tools/icons/types';
+import { PropsOf } from '../../types';
 
 export type BadgeColor = 'green' | 'blue' | 'purple' | 'red' | 'yellow';
 

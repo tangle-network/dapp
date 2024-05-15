@@ -1,10 +1,10 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import type { WebbApiProvider } from '../webb-provider.interface.js';
+import type { WebbApiProvider } from '../webb-provider.interface';
 
-import { Currency } from '../currency/index.js';
-import { Bridge } from '../state/index.js';
+import { Currency } from '../currency';
+import { Bridge } from '../state';
 
 export type AnchorBase = {
   // Neighbors are indexed on their typedChainId

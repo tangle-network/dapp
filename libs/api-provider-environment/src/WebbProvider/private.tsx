@@ -5,9 +5,9 @@ import type {
 import {
   multipleKeypairStorageFactory,
   resetMultiAccountNoteStorage,
-} from '@webb-tools/browser-utils/storage.js';
+} from '@webb-tools/browser-utils/storage';
 import type { InteractiveFeedback } from '@webb-tools/dapp-types';
-import { Spinner } from '@webb-tools/icons/Spinner.js';
+import { Spinner } from '@webb-tools/icons/Spinner';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Keypair } from '@webb-tools/sdk-core';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';

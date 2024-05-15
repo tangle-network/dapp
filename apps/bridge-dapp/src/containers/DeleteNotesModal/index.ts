@@ -1,1 +1,1 @@
-export * from './DeleteNotesModal.js';
+export * from './DeleteNotesModal';

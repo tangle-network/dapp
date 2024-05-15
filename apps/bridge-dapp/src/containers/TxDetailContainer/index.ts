@@ -1,3 +1,3 @@
-import { default as TxDetailContainer } from './TxDetailContainer.js';
+import { default as TxDetailContainer } from './TxDetailContainer';
 
 export default TxDetailContainer;

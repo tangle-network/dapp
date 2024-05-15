@@ -1,10 +1,10 @@
 import { InformationLine } from '@webb-tools/icons';
-import { Typography } from '../../typography/index.js';
+import { Typography } from '../../typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/index.js';
-import { TitleWithInfoProps } from './types.js';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import { TitleWithInfoProps } from './types';
 
 /**
  * The re-useable title component with small info in a popup tooltip

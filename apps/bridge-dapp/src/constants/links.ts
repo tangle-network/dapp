@@ -1,5 +1,5 @@
-import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl.js';
-import { WEBB_DOC_ROUTES_RECORD } from './index.js';
+import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
+import { WEBB_DOC_ROUTES_RECORD } from '.';
 
 export const NOTE_ACCOUNT_DOCS_URL = populateDocsUrl(
   WEBB_DOC_ROUTES_RECORD.projects['hubble-bridge']['usage-guide'].account

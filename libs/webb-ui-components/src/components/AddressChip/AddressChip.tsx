@@ -1,14 +1,14 @@
 import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import WalletLineIcon from '@webb-tools/icons/WalletLineIcon.js';
-import ShieldKeyholeLineIcon from '@webb-tools/icons/ShieldKeyholeLineIcon.js';
+import WalletLineIcon from '@webb-tools/icons/WalletLineIcon';
+import ShieldKeyholeLineIcon from '@webb-tools/icons/ShieldKeyholeLineIcon';
 
-import { AddressChipProps } from './types.js';
-import { Typography } from '../../typography/Typography/index.js';
-import { Chip } from '../Chip/index.js';
-import SkeletonLoader from '../SkeletonLoader/index.js';
-import { shortenHex, shortenString } from '../../utils/index.js';
+import { AddressChipProps } from './types';
+import { Typography } from '../../typography/Typography';
+import { Chip } from '../Chip';
+import SkeletonLoader from '../SkeletonLoader';
+import { shortenHex, shortenString } from '../../utils';
 
 const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
   ({ className: classNameProp, address, isNoteAccount = false }, ref) => {

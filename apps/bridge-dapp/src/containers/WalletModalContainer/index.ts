@@ -1,1 +1,1 @@
-export * from './WalletModalContainer.js';
+export * from './WalletModalContainer';

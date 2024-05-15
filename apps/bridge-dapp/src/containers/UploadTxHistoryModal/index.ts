@@ -1,3 +1,3 @@
-import UploadTxHistoryModal from './UploadTxHistoryModal.js';
+import UploadTxHistoryModal from './UploadTxHistoryModal';
 
 export default UploadTxHistoryModal;

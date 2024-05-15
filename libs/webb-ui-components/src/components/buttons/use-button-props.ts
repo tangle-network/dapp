@@ -2,7 +2,7 @@ import type {
   AriaButtonProps,
   UseButtonPropsMetadata,
   UseButtonPropsOptions,
-} from './types.js';
+} from './types';
 
 export function isTrivialHref(href?: string) {
   return !href || href.trim() === '#';

@@ -1,3 +1,3 @@
-export * from './BottomDialog.js';
-export * from './BottomDialogTrigger.js';
-export * from './BottomDialogPortal.js';
+export * from './BottomDialog';
+export * from './BottomDialogTrigger';
+export * from './BottomDialogPortal';

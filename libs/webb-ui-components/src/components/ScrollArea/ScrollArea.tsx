@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { FC, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ScrollAreaProps } from './types.js';
+import { ScrollAreaProps } from './types';
 
 export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(
   ({ children, className, ...props }, ref) => {

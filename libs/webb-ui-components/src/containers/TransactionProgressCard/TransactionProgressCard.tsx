@@ -8,13 +8,13 @@ import Lottie from 'lottie-react';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button } from '../../components/buttons/index.js';
-import { Chip, ChipColors } from '../../components/Chip/index.js';
-import { Disclaimer } from '../../components/Disclaimer/index.js';
-import { Typography } from '../../typography/index.js';
-import { TransactionCardFooter } from './TransactionCardFooter.js';
+import { Button } from '../../components/buttons';
+import { Chip, ChipColors } from '../../components/Chip';
+import { Disclaimer } from '../../components/Disclaimer';
+import { Typography } from '../../typography';
+import { TransactionCardFooter } from './TransactionCardFooter';
 import success from './success-tx.json';
-import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types.js';
+import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';

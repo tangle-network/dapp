@@ -1,11 +1,11 @@
-import { getFlexBasic } from '@webb-tools/icons/utils.js';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-import ButtonSpinner from './ButtonSpinner.js';
-import { ButtonContentProps, ButtonProps } from './types.js';
-import { useButtonProps } from './use-button-props.js';
-import { getButtonClassNameByVariant } from './utils.js';
+import ButtonSpinner from './ButtonSpinner';
+import { ButtonContentProps, ButtonProps } from './types';
+import { useButtonProps } from './use-button-props';
+import { getButtonClassNameByVariant } from './utils';
 
 /**
  * The Webb Button Component

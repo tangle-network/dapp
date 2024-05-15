@@ -5,10 +5,10 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography/Typography/index.js';
-import { Identicon } from './Identicon.js';
-import { AvatarProps } from './types.js';
-import { getAvatarSizeInPx, getAvatarClassNames } from './utils.js';
+import { Typography } from '../../typography/Typography';
+import { Identicon } from './Identicon';
+import { AvatarProps } from './types';
+import { getAvatarSizeInPx, getAvatarClassNames } from './utils';
 
 /**
  * Webb Avatar component

@@ -1,3 +1,3 @@
-export { default as useTxClientStorage } from './useTransactionClientStorage.js';
-export * from './useTransactionClientStorage.js';
-export * from './useTransactionQueue.js';
+export { default as useTxClientStorage } from './useTransactionClientStorage';
+export * from './useTransactionClientStorage';
+export * from './useTransactionQueue';

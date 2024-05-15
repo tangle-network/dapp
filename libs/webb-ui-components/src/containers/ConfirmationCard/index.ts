@@ -1,3 +1,3 @@
-export * from './DepositConfirm.js';
-export * from './TransferConfirm.js';
-export * from './WithdrawConfirm.js';
+export * from './DepositConfirm';
+export * from './TransferConfirm';
+export * from './WithdrawConfirm';

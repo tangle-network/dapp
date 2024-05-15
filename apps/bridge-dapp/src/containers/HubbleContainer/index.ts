@@ -1,3 +1,3 @@
-import HubbleContainer from './HubbleContainer.js';
+import HubbleContainer from './HubbleContainer';
 
 export default HubbleContainer;

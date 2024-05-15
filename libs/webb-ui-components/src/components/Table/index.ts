@@ -1,3 +1,3 @@
-export * from './Table.js';
-export * from './TData.js';
-export * from './THeader.js';
+export * from './Table';
+export * from './TData';
+export * from './THeader';

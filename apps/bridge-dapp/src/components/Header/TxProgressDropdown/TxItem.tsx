@@ -1,17 +1,17 @@
-import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction/index.js';
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types.js';
+import type { TransactionExecutor } from '@webb-tools/abstract-api-provider/transaction';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 import {
   getTxMessageFromStatus,
   transactionItemStatusFromTxStatus,
-} from '@webb-tools/api-provider-environment/transaction/useTransactionQueue.js';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/index.js';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
-import TxProgressor from '@webb-tools/webb-ui-components/components/TxProgressor/index.js';
-import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types.js';
-import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types.js';
-import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/types.js';
+} from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import TxProgressor from '@webb-tools/webb-ui-components/components/TxProgressor';
+import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
+import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
+import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/types';
 import type { FC } from 'react';
-import { NOTE_ACCOUNT_PATH } from '../../../constants/paths.js';
+import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
 
 const TxItem: FC<{
   tx: TransactionExecutor<unknown>;

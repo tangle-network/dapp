@@ -11,7 +11,7 @@ import {
 } from 'notistack';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography/index.js';
+import { Typography } from '../../typography/Typography';
 
 interface Props extends CustomContentProps {
   Icon?: JSX.Element;

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChipProps } from './types.js';
-import { getChipClassName } from './utils.js';
+import { ChipProps } from './types';
+import { getChipClassName } from './utils';
 
 /**
  * The `Chip` component

@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
-import { BottomDialogProps } from './types.js';
+import { BottomDialogProps } from './types';
 
 export const BottomDialog = forwardRef<HTMLDivElement, BottomDialogProps>(
   ({ children, className, radixRootProps, ...props }, ref) => {

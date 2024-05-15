@@ -4,11 +4,11 @@ import {
   IndeterminateCircleFillIcon,
   IndeterminateCircleLineIcon,
 } from '@webb-tools/icons';
-import Decimal from 'decimal.js';
+import Decimal from 'decimal';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Input } from '../Input/index.js';
-import { AdjustAmountProps } from './types.js';
+import { Input } from '../Input';
+import { AdjustAmountProps } from './types';
 
 /**
  * The `AdjustAmount` component

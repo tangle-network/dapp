@@ -1,9 +1,9 @@
 import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography/Typography/index.js';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip.js';
-import { IconWithTooltipProp } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip';
+import { IconWithTooltipProp } from './types';
 
 export const IconWithTooltip: FC<IconWithTooltipProp> = ({
   content,

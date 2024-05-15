@@ -1,9 +1,9 @@
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography/index.js';
-import { getRoundedAmountString } from '../../utils/getRoundedAmountString.js';
-import { Chip } from '../Chip/index.js';
-import { ChartContainerProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { getRoundedAmountString } from '../../utils/getRoundedAmountString';
+import { Chip } from '../Chip';
+import { ChartContainerProps } from './types';
 
 /**
  * Container for charts (e.g. TVL, Volume, etc.) that displays chart heading, value, chart (should be passed as a child) and along with optional chart filters (e.g days, tokens and chains).

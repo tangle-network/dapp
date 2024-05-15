@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import type { BreadcrumbsPropsType } from './types.js';
-import { BreadcrumbsSeparator } from './BreadcrumbsSeparator.js';
+import type { BreadcrumbsPropsType } from './types';
+import { BreadcrumbsSeparator } from './BreadcrumbsSeparator';
 
 /**
  * The `Breadcrumbs` component

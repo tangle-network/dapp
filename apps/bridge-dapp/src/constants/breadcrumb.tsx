@@ -1,13 +1,13 @@
-import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine.js';
-import UserFillIcon from '@webb-tools/icons/UserFillIcon.js';
-import type { IconBase } from '@webb-tools/icons/types.js';
+import { ContrastTwoLine } from '@webb-tools/icons/ContrastTwoLine';
+import UserFillIcon from '@webb-tools/icons/UserFillIcon';
+import type { IconBase } from '@webb-tools/icons/types';
 import type React from 'react';
 import {
   BRIDGE_PATH,
   ECOSYSTEM_PATH,
   NOTE_ACCOUNT_PATH,
   WRAPPER_PATH,
-} from './paths.js';
+} from './paths';
 
 export const BREADCRUMBS_RECORD: Record<
   string,

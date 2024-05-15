@@ -1,10 +1,10 @@
-import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager/index.js';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI.js';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context/index.js';
-import { type ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface.js';
+import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { type ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { useCallback } from 'react';
-import SubmittedTxModal from '../components/SubmittedTxModal/index.js';
-import { BRIDGE_TABS, WRAPPER_TABS } from '../constants/index.js';
+import SubmittedTxModal from '../components/SubmittedTxModal';
+import { BRIDGE_TABS, WRAPPER_TABS } from '../constants';
 
 function useEnqueueSubmittedTx() {
   const { activeApi } = useWebContext();

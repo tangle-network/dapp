@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TabsRoot, TabsList, TabTrigger } from '../Tabs/index.js';
-import { Typography } from '../../typography/index.js';
-import { TableAndChartTabsProps } from './types.js';
+import { TabsRoot, TabsList, TabTrigger } from '../Tabs';
+import { Typography } from '../../typography';
+import { TableAndChartTabsProps } from './types';
 
 export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   tabs,

@@ -3,8 +3,8 @@ import { ChevronDown } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/index.js';
-import { CollapsibleButtonProps } from './types.js';
+import { Typography } from '../../typography';
+import { CollapsibleButtonProps } from './types';
 
 /**
  * The style wrapper around Radix Collapsible Trigger, must use inside `<Collapsible></Collapsible>` tag

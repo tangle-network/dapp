@@ -1,8 +1,8 @@
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { defaultSocialConfigs } from '../../constants/index.js';
-import { SocialsProps } from './types.js';
+import { defaultSocialConfigs } from '../../constants';
+import { SocialsProps } from './types';
 
 const iconPlacements = {
   start: 'justify-start',

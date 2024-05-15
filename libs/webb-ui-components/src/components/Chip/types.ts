@@ -1,5 +1,5 @@
 import React from 'react';
-import { WebbComponentBase } from '../../types/index.js';
+import { WebbComponentBase } from '../../types';
 
 export type ChipColors =
   | 'green'

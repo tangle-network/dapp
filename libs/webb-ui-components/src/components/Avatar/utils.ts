@@ -1,4 +1,4 @@
-import { AvatarProps } from './types.js';
+import { AvatarProps } from './types';
 
 /**
  * Get the avatar size in pixel for other avatar components to consistent with WebbUI Avatar component

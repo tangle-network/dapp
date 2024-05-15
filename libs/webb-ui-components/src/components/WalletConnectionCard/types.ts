@@ -1,6 +1,6 @@
 import { Wallet } from '@webb-tools/dapp-config';
 import { WalletId } from '@webb-tools/dapp-types';
-import { PropsOf } from '../../types/index.js';
+import { PropsOf } from '../../types';
 
 /**
  * The wallet connection card props

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { LoggerService } from '@webb-tools/browser-utils';
-import type { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config.js';
+import type { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ChainType,
@@ -19,8 +19,8 @@ import type {
   RelayerMessage,
   SendTxResponse,
   WithdrawRelayerArgs,
-} from './types.js';
-import { AddressType } from '@webb-tools/dapp-config/types.js';
+} from './types';
+import { AddressType } from '@webb-tools/dapp-config/types';
 
 /**
  * Relayer withdraw status

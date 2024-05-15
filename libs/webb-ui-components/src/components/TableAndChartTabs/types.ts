@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 
-import type { WebbTypographyProps } from '../../typography/types.js';
+import type { WebbTypographyProps } from '../../typography/types';
 
 export interface TableAndChartTabsProps extends Tabs.TabsProps {
   /**

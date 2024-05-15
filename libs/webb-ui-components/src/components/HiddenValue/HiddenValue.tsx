@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { HiddenValueProps } from './types.js';
-import { useHiddenValue } from '../../hooks/index.js';
+import { HiddenValueProps } from './types';
+import { useHiddenValue } from '../../hooks';
 
 export const HiddenValue: FC<HiddenValueProps> = ({
   numberOfStars,

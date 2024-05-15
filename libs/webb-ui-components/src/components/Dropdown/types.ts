@@ -2,8 +2,8 @@ import type {
   DropdownMenuContentProps,
   DropdownMenuProps as RdxDropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu';
-import type { IWebbComponentBase, PropsOf } from '../../types/index.js';
-import type { DropdownMenuProps } from '../DropdownMenu/types.js';
+import type { IWebbComponentBase, PropsOf } from '../../types';
+import type { DropdownMenuProps } from '../DropdownMenu/types';
 
 /**
  * The `Dropdown` props

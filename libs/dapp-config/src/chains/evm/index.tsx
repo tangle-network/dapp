@@ -27,7 +27,7 @@ import {
   TANGLE_TESTNET_EVM_EXPLORER_URL,
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
 } from '../../constants/tangle.js';
-import { DEFAULT_EVM_CURRENCY } from '../../currencies/index.js';
+import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import type {
   ChainConfig,
   WebbExtendedChain,

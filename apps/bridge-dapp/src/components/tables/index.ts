@@ -1,3 +1,3 @@
-export * from './EmptyTable.js';
-export * from './LoadingTable.js';
-export * from './FilterButton.js';
+export * from './EmptyTable';
+export * from './LoadingTable';
+export * from './FilterButton';

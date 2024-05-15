@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import type { TransactionType } from '@webb-tools/abstract-api-provider/index.js';
-import transactionDB from './client-storage/db.js';
+import type { TransactionType } from '@webb-tools/abstract-api-provider';
+import transactionDB from './client-storage/db';
 
 export type UseTxClientStorageReturnType = {
   transactions: TransactionType[];

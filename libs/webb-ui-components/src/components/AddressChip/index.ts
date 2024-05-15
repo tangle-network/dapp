@@ -1,5 +1,5 @@
-import AddressChip from './AddressChip.js';
+import AddressChip from './AddressChip';
 
-export { default as AddressChip } from './AddressChip.js';
+export { default as AddressChip } from './AddressChip';
 
 export default AddressChip;

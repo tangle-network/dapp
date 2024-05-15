@@ -3,7 +3,7 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { forwardRef } from 'react';
 
-import { AccordionProps } from './types.js';
+import { AccordionProps } from './types';
 
 /**
  * The wrapper around Radix Accordion Root, use for displaying collapsible content

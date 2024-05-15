@@ -1,5 +1,5 @@
-import { WEBB_AVAILABLE_SOCIALS } from '../../constants/index.js';
-import { PropsOf, SocialConfigsType } from '../../types/index.js';
+import { WEBB_AVAILABLE_SOCIALS } from '../../constants';
+import { PropsOf, SocialConfigsType } from '../../types';
 
 export type IconPlacement = 'start' | 'end' | 'center';
 

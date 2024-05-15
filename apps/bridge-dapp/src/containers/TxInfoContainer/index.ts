@@ -1,3 +1,3 @@
-import TxInfoContainer from './TxInfoContainer.js';
+import TxInfoContainer from './TxInfoContainer';
 
 export default TxInfoContainer;

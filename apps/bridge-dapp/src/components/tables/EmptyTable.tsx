@@ -1,6 +1,6 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import React, { FC } from 'react';
-import { EmptyTableProps } from './types.js';
+import { EmptyTableProps } from './types';
 
 export const EmptyTable: FC<EmptyTableProps> = ({
   buttonText,

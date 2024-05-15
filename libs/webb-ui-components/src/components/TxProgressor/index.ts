@@ -1,5 +1,5 @@
-import TxProgressor from './TxProgressor.js';
+import TxProgressor from './TxProgressor';
 
 export default TxProgressor;
 
-export * from './TxProgressor.js';
+export * from './TxProgressor';

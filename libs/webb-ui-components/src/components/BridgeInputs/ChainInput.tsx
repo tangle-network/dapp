@@ -1,11 +1,11 @@
 import { ChainIcon } from '@webb-tools/icons';
 import { forwardRef } from 'react';
-import { Typography } from '../../typography/Typography/index.js';
-import { Label } from '../Label/index.js';
-import { TitleWithInfo } from '../TitleWithInfo/index.js';
-import { AnimatedChevronRight } from './AnimatedChevronRight.js';
-import { InputWrapper } from './InputWrapper.js';
-import { ChainInputComponentProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { Label } from '../Label';
+import { TitleWithInfo } from '../TitleWithInfo';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
+import { InputWrapper } from './InputWrapper';
+import { ChainInputComponentProps } from './types';
 
 /**
  * The `ChainInput` component

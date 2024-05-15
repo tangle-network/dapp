@@ -4,13 +4,13 @@ import {
   Banner,
   Footer,
   SideBar,
-} from '@webb-tools/webb-ui-components/components/index.js';
+} from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { useState, type FC } from 'react';
 import { Outlet } from 'react-router';
-import { Header } from '../../components/Header/index.js';
-import { WEBB_FAUCET_URL } from '../../constants/index.js';
-import useSidebarProps from '../../hooks/useSidebarProps.js';
+import { Header } from '../../components/Header';
+import { WEBB_FAUCET_URL } from '../../constants';
+import useSidebarProps from '../../hooks/useSidebarProps';
 
 const heightClsx = cx('h-screen');
 

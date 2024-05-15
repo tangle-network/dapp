@@ -1,1 +1,1 @@
-export * from './ErrorFallback.js';
+export * from './ErrorFallback';

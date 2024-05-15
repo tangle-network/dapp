@@ -5,13 +5,13 @@ import cx from 'classnames';
 import { type FC, forwardRef, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useLocalStorageState from 'use-local-storage-state';
-import { SideBarLogo } from './Logo.js';
-import { SideBarItems } from './Items.js';
-import { SideBarFooter } from './Footer.js';
-import { SIDEBAR_OPEN_KEY } from '../../constants/index.js';
-import { LogoProps } from '../Logo/types.js';
-import { SidebarProps } from './types.js';
-import getCookieItem from '../../utils/getCookieItem.js';
+import { SideBarLogo } from './Logo';
+import { SideBarItems } from './Items';
+import { SideBarFooter } from './Footer';
+import { SIDEBAR_OPEN_KEY } from '../../constants';
+import { LogoProps } from '../Logo/types';
+import { SidebarProps } from './types';
+import getCookieItem from '../../utils/getCookieItem';
 
 /**
  * Sidebar Navigation Menu Component

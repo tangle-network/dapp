@@ -1,3 +1,3 @@
-export * from './types.js';
-export * from './TransactionProgressCard.js';
-export * from './TransactionQueueCard.js';
+export * from './types';
+export * from './TransactionProgressCard';
+export * from './TransactionQueueCard';

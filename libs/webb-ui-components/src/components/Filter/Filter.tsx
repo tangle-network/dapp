@@ -1,11 +1,11 @@
 import { FilterIcon, Search } from '@webb-tools/icons';
-import { Typography } from '../../typography/index.js';
+import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 
-import { Button } from '../buttons/index.js';
-import { Dropdown, DropdownBody, DropdownButton } from '../Dropdown/index.js';
-import { Input } from '../Input/index.js';
-import { FilterProps } from './types.js';
+import { Button } from '../buttons';
+import { Dropdown, DropdownBody, DropdownButton } from '../Dropdown';
+import { Input } from '../Input';
+import { FilterProps } from './types';
 
 /**
  * The `Filter` wrapper component, contains title, clear function, and the global search.

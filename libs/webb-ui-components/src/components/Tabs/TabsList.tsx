@@ -3,7 +3,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { TabBaseProps } from './types.js';
+import { TabBaseProps } from './types';
 
 /**
  * The wrapper around the Radix TabsList component

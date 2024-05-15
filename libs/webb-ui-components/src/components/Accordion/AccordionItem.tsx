@@ -4,7 +4,7 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { AccordionItemProps } from './types.js';
+import { AccordionItemProps } from './types';
 
 /**
  * The style wrapper around Radix Accordion, must use inside `<Accordion></Accordion>` tag

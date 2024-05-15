@@ -1,5 +1,5 @@
 import { withLocalFixtures } from '@webb-tools/dapp-types/appMode.js';
-import { cachedFetch } from '../download/index.js';
+import { cachedFetch } from '../download';
 import getCachedFixtureURI from './getCachedFixtureURI.js';
 
 const fetchVAnchorWasmFromAws = async (

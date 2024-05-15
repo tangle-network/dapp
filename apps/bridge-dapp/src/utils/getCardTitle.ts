@@ -1,7 +1,7 @@
 import {
   type TransactionName,
   TransactionState,
-} from '@webb-tools/abstract-api-provider/transaction/index.js';
+} from '@webb-tools/abstract-api-provider/transaction';
 
 export const getCardTitle = (
   stage: TransactionState,

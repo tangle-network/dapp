@@ -2,7 +2,7 @@ import {
   TooltipBodyProps,
   TooltipProps,
   TooltipTriggerProps,
-} from '../Tooltip/types.js';
+} from '../Tooltip/types';
 
 export interface IconWithTooltipProp {
   /**

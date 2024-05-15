@@ -1,7 +1,7 @@
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { CollapsibleContentProps } from './types.js';
+import { CollapsibleContentProps } from './types';
 
 /**
  * The style wrapper around Radix Collapsible Content, must use inside `<Collapsible></Collapsible>` tag

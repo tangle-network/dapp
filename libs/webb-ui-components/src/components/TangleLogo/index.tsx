@@ -1,1 +1,1 @@
-export * from './TangleLogo.js';
+export * from './TangleLogo';

@@ -1,12 +1,12 @@
 import { ChevronRight, Close, ExternalLinkLine } from '@webb-tools/icons';
 import { forwardRef } from 'react';
-import { Typography } from '../../typography/Typography/index.js';
-import { shortenString } from '../../utils/shortenString.js';
-import { Avatar } from '../Avatar/index.js';
-import { Label } from '../Label/index.js';
-import { TitleWithInfo } from '../TitleWithInfo/index.js';
-import { InputWrapper } from './InputWrapper.js';
-import { RelayerInputProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { shortenString } from '../../utils/shortenString';
+import { Avatar } from '../Avatar';
+import { Label } from '../Label';
+import { TitleWithInfo } from '../TitleWithInfo';
+import { InputWrapper } from './InputWrapper';
+import { RelayerInputProps } from './types';
 
 /**
  * The `RelayerInput` component

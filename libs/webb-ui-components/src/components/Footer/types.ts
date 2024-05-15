@@ -1,5 +1,5 @@
-import { WEBB_AVAILABLE_SOCIALS, bottomLinks } from '../../constants/index.js';
-import { PropsOf } from '../../types/index.js';
+import { WEBB_AVAILABLE_SOCIALS, bottomLinks } from '../../constants';
+import { PropsOf } from '../../types';
 
 export interface FooterProps extends PropsOf<'footer'> {
   /**

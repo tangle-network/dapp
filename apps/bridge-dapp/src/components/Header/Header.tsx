@@ -1,8 +1,8 @@
 import {
-  useWebContext,
   useConnectWallet,
+  useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle.js';
+import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
 import { WebbLogoIcon } from '@webb-tools/icons';
 import {
   Breadcrumbs,
@@ -17,14 +17,14 @@ import {
   SideBarMenu,
   getHumanFileSize,
   useCheckMobile,
-} from '@webb-tools/webb-ui-components/index.js';
+} from '@webb-tools/webb-ui-components';
 import {
   GITHUB_REQUEST_FEATURE_URL,
   SOCIAL_URLS_RECORD,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
   WEBB_MKT_URL,
-} from '@webb-tools/webb-ui-components/constants/index.js';
+} from '@webb-tools/webb-ui-components/constants';
 import {
   useCallback,
   useEffect,
@@ -34,16 +34,16 @@ import {
   type FC,
 } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb.js';
-import useChainsFromRoute from '../../hooks/useChainsFromRoute.js';
+import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
+import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 
-import useSidebarProps from '../../hooks/useSidebarProps.js';
-import ActiveChainDropdown from './ActiveChainDropdown.js';
-import TxProgressDropdown from './TxProgressDropdown/index.js';
-import { WalletDropdown } from './WalletDropdown/index.js';
-import { HeaderProps } from './types.js';
-import { ACTION_BUTTON_PROPS } from '../../constants/index.js';
-import { ConnectWalletMobileContent } from '../ConnectWalletMobileContent/index.js';
+import { ACTION_BUTTON_PROPS } from '../../constants';
+import useSidebarProps from '../../hooks/useSidebarProps';
+import { ConnectWalletMobileContent } from '../ConnectWalletMobileContent';
+import ActiveChainDropdown from './ActiveChainDropdown';
+import TxProgressDropdown from './TxProgressDropdown';
+import { WalletDropdown } from './WalletDropdown';
+import { HeaderProps } from './types';
 
 /**
  * The statistic `Header` for `Layout` container

@@ -1,7 +1,7 @@
 import { CurrencyRole } from '@webb-tools/dapp-types';
 
 import { ApiConfig } from '../api-config.js';
-import { CurrencyConfig } from '../currencies/index.js';
+import { CurrencyConfig } from '../currencies';
 
 /**
  * Calculate the bridge config by the fungible curencies

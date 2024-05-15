@@ -2,7 +2,7 @@ import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TabProps, TabsProps } from './types.js';
+import { TabProps, TabsProps } from './types';
 
 /**
  * The `Tabs` component

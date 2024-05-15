@@ -1,4 +1,4 @@
-import type { MenuItemProps } from '../../components/MenuItem/types.js';
+import type { MenuItemProps } from '../../components/MenuItem/types';
 
 export type ActionItemType = {
   label: string;

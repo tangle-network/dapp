@@ -2,10 +2,10 @@ import { type Row, type RowData, flexRender } from '@tanstack/react-table';
 import React, { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Pagination } from '../Pagination/index.js';
-import { TDataMemo as TData } from './TData.js';
-import { THeaderMemo as THeader } from './THeader.js';
-import { TableProps } from './types.js';
+import { Pagination } from '../Pagination';
+import { TDataMemo as TData } from './TData';
+import { THeaderMemo as THeader } from './THeader';
+import { TableProps } from './types';
 
 export const Table = <T extends RowData>({
   isDisplayFooter,

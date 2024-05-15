@@ -1,1 +1,1 @@
-export * from './KeyValueWithButton.js';
+export * from './KeyValueWithButton';

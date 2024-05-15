@@ -1,1 +1,1 @@
-export * from './IconWithTooltip.js';
+export * from './IconWithTooltip';

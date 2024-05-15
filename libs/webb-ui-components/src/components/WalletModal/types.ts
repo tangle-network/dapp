@@ -1,8 +1,8 @@
 import { ApiConfig, WalletConfig } from '@webb-tools/dapp-config';
-import { notificationApi } from '../Notification/index.js';
-import { PropsOf } from '../../types/index.js';
+import { notificationApi } from '../Notification';
+import { PropsOf } from '../../types';
 import { WalletId, WebbError } from '@webb-tools/dapp-types';
-import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData.js';
+import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 
 export interface WalletModalProps extends PropsOf<'div'> {
   /**

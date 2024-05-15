@@ -6,8 +6,8 @@ import type {
   ChainNameIntoChainId,
   RelayedChainConfig,
   RelayerInfo,
-} from '@webb-tools/abstract-api-provider/relayer/index.js';
-import { WebbRelayer } from '@webb-tools/abstract-api-provider/relayer/index.js';
+} from '@webb-tools/abstract-api-provider/relayer';
+import { WebbRelayer } from '@webb-tools/abstract-api-provider/relayer';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
   type RelayerCMDBase,

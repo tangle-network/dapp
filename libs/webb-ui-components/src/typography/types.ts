@@ -1,6 +1,6 @@
 import { ReactHTML } from 'react';
 
-import type { WebbComponentBase } from '../types/index.js';
+import type { WebbComponentBase } from '../types';
 
 export type TypographyBaseProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLElement>,

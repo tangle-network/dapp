@@ -6,15 +6,15 @@ import {
 import cx from 'classnames';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography/index.js';
-import { AlertProps } from './types.js';
+import { Typography } from '../../typography/Typography';
+import { AlertProps } from './types';
 import {
   getClassNamesByType,
   getDescriptionClassNamesBySize,
   getIconClassNamesByType,
   getTitleClassNamesBySize,
   getTypographyClassNamesByType,
-} from './utils.js';
+} from './utils';
 
 /**
  * Webb Alert component

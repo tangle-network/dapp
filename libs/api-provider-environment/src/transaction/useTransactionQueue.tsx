@@ -6,8 +6,8 @@ import {
   TransactionState,
   TransactionStatusMap,
   TransactionStatusValue,
-} from '@webb-tools/abstract-api-provider/transaction/index.js';
-import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage.js';
+} from '@webb-tools/abstract-api-provider/transaction';
+import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
 import {
@@ -15,11 +15,11 @@ import {
   TransactionPayload,
   getRoundedAmountString,
   toFixed,
-} from '@webb-tools/webb-ui-components/index.js';
+} from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
-import { getExplorerURI } from './utils/index.js';
+import { getExplorerURI } from './utils';
 
 export function transactionItemStatusFromTxStatus(
   txStatus: TransactionState

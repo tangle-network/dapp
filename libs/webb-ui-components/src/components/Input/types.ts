@@ -1,4 +1,4 @@
-import { IWebbComponentBase, PropsOf } from '../../types/index.js';
+import { IWebbComponentBase, PropsOf } from '../../types';
 
 type OmittedKeys = 'disabled' | 'required' | 'readOnly' | 'size' | 'onChange';
 

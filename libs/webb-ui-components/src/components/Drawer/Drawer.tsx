@@ -3,8 +3,8 @@ import { Close } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { PropsOf } from '../../types/index.js';
-import { DrawerContentProps } from './types.js';
+import { PropsOf } from '../../types';
+import { DrawerContentProps } from './types';
 
 const Drawer = DialogPrimitive.Root;
 const DrawerTrigger = DialogPrimitive.Trigger;

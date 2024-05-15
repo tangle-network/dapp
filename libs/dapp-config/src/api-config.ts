@@ -13,20 +13,17 @@ import {
 import { u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
 import { PublicClient } from 'viem';
-import { parsedAnchorConfig } from './anchors/index.js';
+import { parsedAnchorConfig } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface.js';
-import { getBridgeConfigByAsset } from './bridges/index.js';
+import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface.js';
 import { ChainConfig } from './chains/chain-config.interface.js';
 import { CurrencyConfig } from './currencies/currency-config.interface.js';
-import {
-  EVMOnChainConfig,
-  SubstrateOnChainConfig,
-} from './on-chain-config/index.js';
+import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
 import {
   getNativeCurrencyFromConfig,
   parseSubstrateTargetSystem,
-} from './utils/index.js';
+} from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface.js';
 import values from 'lodash/values.js';
 import keys from 'lodash/keys.js';

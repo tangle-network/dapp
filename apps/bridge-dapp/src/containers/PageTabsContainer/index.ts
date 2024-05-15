@@ -1,3 +1,3 @@
-import PageTabsContainer from './PageTabsContainer.js';
+import PageTabsContainer from './PageTabsContainer';
 
 export default PageTabsContainer;

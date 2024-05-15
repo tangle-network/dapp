@@ -80,7 +80,7 @@ import {
 } from 'wagmi/actions';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import VAnchor from './VAnchor.js';
-import { Web3Accounts } from './ext-provider/index.js';
+import { Web3Accounts } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api.js';
 import { Web3ChainQuery } from './webb-provider/chain-query.js';
 import { Web3RelayerManager } from './webb-provider/relayer-manager.js';
@@ -89,7 +89,7 @@ import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap.js';
 import {
   MetaMaskConnector,
   RainbowConnector,
-} from '@webb-tools/dapp-config/wallets/injected/index.js';
+} from '@webb-tools/dapp-config/wallets/injected';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>

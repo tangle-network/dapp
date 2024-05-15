@@ -1,4 +1,4 @@
-import { PresetTypedChainId } from '@webb-tools/dapp-types/index.js';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 import { AppEnvironment } from './types.js';
