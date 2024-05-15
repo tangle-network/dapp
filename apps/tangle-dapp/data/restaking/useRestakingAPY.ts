@@ -4,11 +4,11 @@ import fraction from '@webb-tools/webb-ui-components/utils/fraction';
 import { useCallback } from 'react';
 import { map, type Observable } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useRestakingEraReward from './useRestakingEraReward';
 
 const useRestakingAPY = () => {
-  const { data: activeRestakerEra } = usePolkadotApiRx(
+  const { result: activeRestakerEra } = useApiRx(
     useCallback(
       (apiRx) =>
         apiRx.query.roles.activeRestakerEra
@@ -22,7 +22,7 @@ const useRestakingAPY = () => {
     activeRestakerEra?.unwrapOr(null)?.index.toNumber()
   );
 
-  const { data: totalRestaked } = usePolkadotApiRx(getTotalRestaked);
+  const { result: totalRestaked } = useApiRx(getTotalRestaked);
 
   if (
     currentEraRewards === null ||

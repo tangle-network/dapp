@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useRestakingRoleLedger from '../../data/restaking/useRestakingRoleLedger';
 import useCurrentEra from '../../data/staking/useCurrentEra';
-import usePolkadotApi, { PolkadotApiFetcher } from '../../hooks/usePolkadotApi';
+import useApi, { ApiFetcher } from '../../hooks/useApi';
 import { getAccountInfo } from '../../utils/polkadot';
 import {
   getProfileTypeFromRestakeRoleLedger,
@@ -17,8 +17,8 @@ export default function useValidatorInfoCard(
   validatorAddress: string
 ) {
   const { notificationApi } = useWebbUI();
-  const { data: currentEra } = useCurrentEra();
-  const { data: ledgerOpt, isLoading: isLoadingLedgerOpt } =
+  const { result: currentEra } = useCurrentEra();
+  const { result: ledgerOpt, isLoading: isLoadingLedgerOpt } =
     useRestakingRoleLedger(validatorAddress);
 
   const [name, setName] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export default function useValidatorInfoCard(
   const [isLoadingNameAndSocials, setIsLoadingNameAndSocials] = useState(true);
 
   const nominationsFetcher = useCallback<
-    PolkadotApiFetcher<{
+    ApiFetcher<{
       nominations: number | null;
       isActive: boolean | null;
     }>
@@ -60,11 +60,7 @@ export default function useValidatorInfoCard(
     [validatorAddress, currentEra]
   );
 
-  const {
-    value: nominationsData,
-    isValueLoading: isLoadingNominations,
-    error: errorNominations,
-  } = usePolkadotApi(nominationsFetcher);
+  const { result: nominationsData } = useApi(nominationsFetcher);
 
   const restakingMethod = useMemo(
     () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
@@ -102,15 +98,6 @@ export default function useValidatorInfoCard(
     fetchNameAndSocials();
   }, [validatorAddress, rpcEndpoint, currentEra, notificationApi]);
 
-  useEffect(() => {
-    if (errorNominations) {
-      notificationApi({
-        message: 'Failed to load nominations',
-        variant: 'error',
-      });
-    }
-  }, [errorNominations, notificationApi]);
-
   return {
     name,
     totalRestaked,
@@ -121,6 +108,6 @@ export default function useValidatorInfoCard(
     email,
     web,
     isLoading:
-      isLoadingNameAndSocials || isLoadingNominations || isLoadingLedgerOpt,
+      isLoadingNameAndSocials || nominationsData === null || isLoadingLedgerOpt,
   };
 }

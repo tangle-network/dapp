@@ -5,7 +5,7 @@ import { TanglePrimitivesJobsJobInfo } from '@polkadot/types/lookup';
 import { createContext, FC, PropsWithChildren, useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
-import usePolkadotApiRx from '../hooks/usePolkadotApiRx';
+import useApiRx from '../hooks/useApiRx';
 import { Service } from '../types';
 import { extractServiceDetails } from '../utils/polkadot/services';
 
@@ -18,7 +18,7 @@ export const ServiceOverviewContext = createContext<{
 });
 
 const ServiceOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { data: services, isLoading } = usePolkadotApiRx(
+  const { result: services, isLoading } = useApiRx(
     useCallback((api) => {
       return api.query.jobs.submittedJobs.entries().pipe(
         map((jobsData) =>

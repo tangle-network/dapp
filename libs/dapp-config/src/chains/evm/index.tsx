@@ -258,10 +258,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: {
       default: {
-        http: [`http://127.0.0.1:${EVMChainId.HermesLocalnet}`],
+        http: [`http://127.0.0.1:5004`],
       },
       public: {
-        http: [`http://127.0.0.1:${EVMChainId.HermesLocalnet}`],
+        http: [`http://127.0.0.1:5004`],
       },
     },
     env: ['development'],
@@ -284,10 +284,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: {
       default: {
-        http: [`http://127.0.0.1:${EVMChainId.AthenaLocalnet}`],
+        http: [`http://127.0.0.1:5005`],
       },
       public: {
-        http: [`http://127.0.0.1:${EVMChainId.AthenaLocalnet}`],
+        http: [`http://127.0.0.1:5005`],
       },
     },
     env: ['development'],
@@ -310,10 +310,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: {
       default: {
-        http: [`http://127.0.0.1:${EVMChainId.DemeterLocalnet}`],
+        http: [`http://127.0.0.1:5006`],
       },
       public: {
-        http: [`http://127.0.0.1:${EVMChainId.DemeterLocalnet}`],
+        http: [`http://127.0.0.1:5006`],
       },
     },
     env: ['development'],

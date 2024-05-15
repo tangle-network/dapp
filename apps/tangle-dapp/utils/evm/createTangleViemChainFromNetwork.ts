@@ -4,15 +4,17 @@ import {
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { Chain } from 'viem';
 
+import { TokenSymbol } from '../../types';
+
 const createTangleViemChainFromNetwork = (
-  network: Network & { chainId: number; httpRpcEndpoint: string }
+  network: Network & { evmChainId: number; httpRpcEndpoint: string }
 ): Chain => {
   const currencyName =
     network.id === NetworkId.TANGLE_MAINNET
       ? 'Tangle Network Token'
       : 'Test Tangle Network Token';
 
-  const currencySymbol =
+  const tokenSymbol: TokenSymbol =
     network.id === NetworkId.TANGLE_MAINNET ? 'TNT' : 'tTNT';
 
   const blockExplorerName =
@@ -21,11 +23,11 @@ const createTangleViemChainFromNetwork = (
       : 'Tangle Testnet EVM Explorer';
 
   return {
-    id: network.chainId,
+    id: network.evmChainId,
     name: network.name,
     nativeCurrency: {
       name: currencyName,
-      symbol: currencySymbol,
+      symbol: tokenSymbol,
       decimals: 18,
     },
     blockExplorers: network.evmExplorerUrl

@@ -1,6 +1,6 @@
 import { PalletIdentityLegacyIdentityInfo } from '@polkadot/types/lookup';
 
-import { getPolkadotApiPromise } from './api';
+import { getApiPromise } from './api';
 
 export enum IdentityDataType {
   NAME = 'display',
@@ -31,7 +31,7 @@ export const extractDataFromIdentityInfo = (
 };
 
 export async function getAccountInfo(rpcEndpoint: string, address: string) {
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
   const identityData = await api.query.identity.identityOf(address);
 
   if (identityData.isSome) {

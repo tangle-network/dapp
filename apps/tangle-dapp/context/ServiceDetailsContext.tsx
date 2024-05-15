@@ -2,16 +2,9 @@
 
 import { Option, u64 } from '@polkadot/types';
 import { TanglePrimitivesJobsJobInfo } from '@polkadot/types/lookup';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-} from 'react';
+import { createContext, FC, PropsWithChildren, useCallback } from 'react';
 
-import usePolkadotApi, { PolkadotApiFetcher } from '../hooks/usePolkadotApi';
+import useApi, { ApiFetcher } from '../hooks/useApi';
 import { Service } from '../types';
 import { extractServiceDetails } from '../utils/polkadot';
 
@@ -27,9 +20,7 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
   children,
   serviceId,
 }) => {
-  const { notificationApi } = useWebbUI();
-
-  const servicesFetcher = useCallback<PolkadotApiFetcher<Service | null>>(
+  const servicesFetcher = useCallback<ApiFetcher<Service | null>>(
     async (api) => {
       const jobInfoData = (await api.query.jobs.submittedJobs(
         // no provided type here, only Id
@@ -41,23 +32,12 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
     [serviceId]
   );
 
-  const {
-    value: serviceDetails,
-    isValueLoading: isLoading,
-    error,
-  } = usePolkadotApi(servicesFetcher);
-
-  useEffect(() => {
-    if (error) {
-      notificationApi({
-        message: 'Failed to load service',
-        variant: 'error',
-      });
-    }
-  }, [error, notificationApi]);
+  const { result: serviceDetails } = useApi(servicesFetcher);
 
   return (
-    <ServiceDetailsContext.Provider value={{ serviceDetails, isLoading }}>
+    <ServiceDetailsContext.Provider
+      value={{ serviceDetails, isLoading: serviceDetails === null }}
+    >
       {children}
     </ServiceDetailsContext.Provider>
   );

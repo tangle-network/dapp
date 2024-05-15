@@ -24,14 +24,14 @@ import ActionButton from './ActionButton';
 const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
   (props, ref) => {
     const formatNativeTokenAmount = useFormatNativeTokenAmount();
+
     const { hasExistingProfile, profileTypeOpt, ledgerOpt, isLoading } =
       useRestakingProfile();
 
-    const { data: totalRewards, isLoading: isTotalRewardLoading } =
+    const { result: totalRewards, isLoading: isTotalRewardLoading } =
       useRestakingTotalRewards();
 
     const apy = useRestakingAPY();
-
     const { maxRestakingAmount } = useRestakingLimits();
 
     const totalRestaked = useMemo(

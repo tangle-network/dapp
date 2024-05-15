@@ -6,15 +6,14 @@ import {
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 
 import convertRewardPointsToReward from '../../../utils/convertRewardPointsToReward';
-import { getPolkadotApiPromise } from '../../../utils/polkadot';
+import { getApiPromise } from '../../../utils/polkadot';
 
 export async function calculateEraRewardPoints(
   rpcUrl: string,
   era: number,
   validatorRewards: Array<[string, number]>
 ): Promise<bigint | null> {
-  const api = await getPolkadotApiPromise(rpcUrl);
-
+  const api = await getApiPromise(rpcUrl);
   let eraReward = ZERO_BIG_INT;
 
   for (const [accountId, rewardPoints] of validatorRewards) {

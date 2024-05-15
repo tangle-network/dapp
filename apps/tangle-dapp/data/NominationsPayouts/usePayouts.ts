@@ -11,8 +11,8 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { Payout } from '../../types';
 import {
   formatTokenBalance,
-  getPolkadotApiPromise,
-  getPolkadotApiRx,
+  getApiPromise,
+  getApiRx,
   getValidatorCommission,
   getValidatorIdentityName,
 } from '../../utils/polkadot';
@@ -26,7 +26,7 @@ export default function usePayouts(
   const {
     valueAfterMount: cachedPayouts,
     setWithPreviousValue: setCachedPayouts,
-  } = useLocalStorage(LocalStorageKey.Payouts, true);
+  } = useLocalStorage(LocalStorageKey.PAYOUTS, true);
 
   const [payouts, setPayouts] = useState(
     (cachedPayouts && cachedPayouts[address]) ?? defaultValue.payouts
@@ -50,8 +50,8 @@ export default function usePayouts(
       }
 
       try {
-        const apiSub = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+        const apiSub = await getApiRx(rpcEndpoint);
+        const apiPromise = await getApiPromise(rpcEndpoint);
 
         if (!apiSub || !apiPromise) {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);

@@ -5,22 +5,42 @@ import {
   InputField,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { type FC } from 'react';
+import _ from 'lodash';
+import { type FC, useCallback } from 'react';
+import z from 'zod';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
+import {
+  STAKING_PAYEE_TEXT_TO_VALUE_MAP,
+  STAKING_PAYEE_VALUE_TO_TEXT_MAP,
+} from '../../constants';
+import useBalances from '../../data/balances/useBalances';
+import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
-  isFirstTimeNominator,
+  isBondedOrNominating,
   nominatorAddress,
   amountToBond,
   setAmountToBond,
-  paymentDestinationOptions,
-  paymentDestination,
-  setPaymentDestination,
-  walletBalance,
+  payeeOptions,
+  payee,
+  setPayee,
   handleAmountToBondError,
 }) => {
+  const { free: freeBalance } = useBalances();
+
+  const handleSetPayee = useCallback(
+    (newPayeeString: string) => {
+      const payeeDisplayText = z
+        .nativeEnum(StakingRewardsDestinationDisplayText)
+        .parse(newPayeeString);
+
+      setPayee(STAKING_PAYEE_TEXT_TO_VALUE_MAP[payeeDisplayText]);
+    },
+    [setPayee]
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-2 gap-9 items-center">
@@ -53,8 +73,8 @@ const BondTokens: FC<BondTokensProps> = ({
       <div className="grid grid-cols-2 gap-9 items-center">
         <AmountInput
           id="nominate-bond-token"
-          title={isFirstTimeNominator ? 'Amount' : 'Amount (optional)'}
-          max={walletBalance ?? undefined}
+          title={!isBondedOrNominating ? 'Amount' : 'Amount (optional)'}
+          max={freeBalance ?? undefined}
           amount={amountToBond}
           setAmount={setAmountToBond}
           baseInputOverrides={{ isFullWidth: true }}
@@ -74,9 +94,9 @@ const BondTokens: FC<BondTokensProps> = ({
           <>
             <DropdownField
               title="Payment Destination"
-              items={paymentDestinationOptions}
-              selectedItem={paymentDestination}
-              setSelectedItem={setPaymentDestination}
+              items={payeeOptions}
+              selectedItem={STAKING_PAYEE_VALUE_TO_TEXT_MAP[payee]}
+              setSelectedItem={handleSetPayee}
             />
 
             <Typography variant="body1" fw="normal" className="!max-w-[365px]">

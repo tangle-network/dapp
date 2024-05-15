@@ -3,12 +3,12 @@
 import { useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
-import usePolkadotApiRx from '../hooks/usePolkadotApiRx';
+import useApiRx from '../hooks/useApiRx';
 
 export default function useJobIdAndTypeLookupByValidator(
   validatorAddress: string
 ) {
-  return usePolkadotApiRx(
+  return useApiRx(
     useCallback(
       (api) => {
         return api.query.jobs.validatorJobIdLookup(validatorAddress).pipe(

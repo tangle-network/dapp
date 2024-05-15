@@ -18,7 +18,7 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { evmToSubstrateAddress } from '../../utils';
+import { toSubstrateAddress } from '../../utils';
 
 export type AccountAddressProps = {
   activeAddress: string | null;
@@ -49,7 +49,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
 
     return isDisplayingEvmAddress
       ? activeAddress
-      : evmToSubstrateAddress(activeAddress);
+      : toSubstrateAddress(activeAddress);
   }, [activeAddress, isDisplayingEvmAddress]);
 
   const possiblyHiddenAddress = useMemo(

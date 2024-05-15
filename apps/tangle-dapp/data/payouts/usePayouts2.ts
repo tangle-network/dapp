@@ -4,18 +4,18 @@ import { SpStakingExposure } from '@polkadot/types/lookup';
 import { useCallback, useEffect, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import {
   formatTokenBalance,
-  getPolkadotApiPromise,
+  getApiPromise,
   getValidatorCommission,
   getValidatorIdentityName,
 } from '../../utils/polkadot';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
+import useAllLedgers from './useAllLedgers';
 import useEraTotalRewards from './useEraTotalRewards';
-import useLedgers from './useLedgers';
 
 type ValidatorReward = {
   validatorAddress: string;
@@ -27,23 +27,26 @@ type ValidatorReward = {
 const usePayouts2 = () => {
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const activeSubstrateAddress = useSubstrateAddress();
-  const { data: ledgers } = useLedgers();
+  const { data: ledgers } = useAllLedgers();
 
-  const { data: erasRewardsPoints } = usePolkadotApiRx(
+  const { result: erasRewardsPoints } = useApiRx(
     useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
   );
 
-  const { data: nominators } = usePolkadotApiRx(
+  const { result: nominators } = useApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (activeSubstrateAddress === null) {
+          return null;
+        }
+
         return api.query.staking.nominators(activeSubstrateAddress);
       },
       [activeSubstrateAddress]
     )
   );
 
-  const { data: identities } = useValidatorIdentityNames();
+  const { result: identities } = useValidatorIdentityNames();
   const { data: eraTotalRewards } = useEraTotalRewards();
   const [payouts, setPayouts] = useState<Payout[] | null>(null);
   const nominations = nominators?.isSome ? nominators.unwrap().targets : null;
@@ -86,7 +89,7 @@ const usePayouts2 = () => {
 
     const payoutsPromise = Promise.all(
       rewards.map(async (reward) => {
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+        const apiPromise = await getApiPromise(rpcEndpoint);
         const ledgerOpt = ledgers.get(reward.validatorAddress);
 
         // There might not be a ledger for this validator.

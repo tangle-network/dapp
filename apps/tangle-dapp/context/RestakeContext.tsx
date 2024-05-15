@@ -23,8 +23,10 @@ export const RestakeContext = createContext<RestakeContextProps>({
 
 const RestakeProvider: FC<PropsWithChildren> = ({ children }) => {
   const substrateAddress = useSubstrateAddress();
-  const { data: ledger, isLoading: isLedgerLoading } =
+
+  const { result: ledger, isLoading: isLedgerLoading } =
     useRestakingRoleLedger(substrateAddress);
+
   const { data: earningsRecord, isLoading: isEarningsLoading } =
     useRestakingEarnings(substrateAddress);
 
