@@ -1,4 +1,4 @@
-import { DropdownMenuTrigger as DropdownButton } from '@radix-ui/react-dropdown-menu';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import {
   useWebContext,
   useConnectWallet,
@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import ChainButtonCmp from '@webb-tools/webb-ui-components/components/buttons/ChainButton';
+import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useMemo } from 'react';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
@@ -64,14 +64,15 @@ const ActiveChainDropdown = () => {
 
   return (
     <Dropdown>
-      <DropdownButton asChild disabled={loading}>
-        <ChainButtonCmp
-          chain={chain}
+      <DropdownMenuTrigger asChild disabled={loading}>
+        <ChainOrTokenButton
+          value={chain?.name}
           status="success"
           placeholder={activeChain === null ? 'Unsupported Chain' : undefined}
-          textClassname="hidden lg:!block"
+          textClassName="hidden lg:!block"
+          iconType="chain"
         />
-      </DropdownButton>
+      </DropdownMenuTrigger>
       <DropdownBody className="mt-2">
         <ScrollArea className="h-[var(--dropdown-height)]">
           <ul>
