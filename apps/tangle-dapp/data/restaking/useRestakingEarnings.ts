@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { map } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import usePromise from '../../hooks/usePromise';
 import type { ErasRestakeRewardPointsEntry } from './types';
 
@@ -17,10 +17,10 @@ function useRestakingEarnings(accountAddress: string | null) {
   const worker = useWorker(createWorker);
 
   const {
-    data: dataPromise,
+    result: dataPromise,
     isLoading: rxLoading,
     error: rxError,
-  } = usePolkadotApiRx(
+  } = useApiRx(
     useCallback(
       (apiRx) => {
         if (!apiRx.query.roles.erasRestakeRewardPoints) {

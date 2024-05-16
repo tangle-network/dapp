@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
@@ -63,7 +63,7 @@ export default function ClaimPage() {
 
     const fetchClaimData = async () => {
       try {
-        const apiRx = await getPolkadotApiRx(rpcEndpoint);
+        const apiRx = await getApiRx(rpcEndpoint);
 
         const params = isEthereumAddress(accountAddress)
           ? { EVM: accountAddress }

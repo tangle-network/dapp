@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
+import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -9,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { getInjector, getPolkadotApiPromise } from '../utils/polkadot';
+import { getApiPromise, getInjector } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
@@ -23,7 +24,7 @@ export enum TxStatus {
   TIMED_OUT,
 }
 
-export type SubstrateTxFactory<Context> = (
+export type SubstrateTxFactory<Context = void> = (
   api: ApiPromise,
   activeSubstrateAddress: string,
   context: Context
@@ -31,11 +32,11 @@ export type SubstrateTxFactory<Context> = (
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
-  notifyStatusUpdates = false,
-  timeoutDelay = 60_000
+  notifyStatusUpdates = true,
+  timeoutDelay = 120_000
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
-  const [hash, setHash] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<HexString | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const { notificationApi } = useWebbUI();
@@ -44,6 +45,14 @@ function useSubstrateTx<Context = void>(
   const isMountedRef = useIsMountedRef();
   const { rpcEndpoint } = useNetworkStore();
 
+  // Useful for debugging.
+  useEffect(() => {
+    if (error !== null) {
+      console.error(error);
+    }
+  }, [error]);
+
+  // TODO: Replace this with `useTxNotification`.
   useEffect(() => {
     if (!notifyStatusUpdates) {
       return;
@@ -56,7 +65,7 @@ function useSubstrateTx<Context = void>(
     }
 
     notificationApi(notificationOpts);
-  }, [error, error?.message, notificationApi, notifyStatusUpdates, status]);
+  }, [error, notificationApi, notifyStatusUpdates, status]);
 
   const execute = useCallback(
     async (context: Context) => {
@@ -71,15 +80,17 @@ function useSubstrateTx<Context = void>(
         return;
       }
 
-      // Catch logic errors.
       assert(
         !isEvmAccount,
         'Should not be able to execute a Substrate transaction while the active account is an EVM account'
       );
 
       const injector = await getInjector(activeSubstrateAddress);
-      const api = await getPolkadotApiPromise(rpcEndpoint);
+      const api = await getApiPromise(rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
+      let newTxHash: HexString;
+
+      // TODO: Reset state here, before executing the tx.
 
       // The transaction factory may throw an error if it encounters
       // a problem, such as invalid input data. Need to handle that case
@@ -87,14 +98,18 @@ function useSubstrateTx<Context = void>(
       try {
         tx = await factory(api, activeSubstrateAddress, context);
       } catch (possibleError: unknown) {
-        setError(ensureError(possibleError));
+        const error = ensureError(possibleError);
+
+        setError(error);
         setStatus(TxStatus.ERROR);
+        setTxHash(null);
 
         return;
       }
 
       // Factory is not yet ready to produce the transaction.
-      // This is usually because the user hasn't yet connected their wallet.
+      // This is usually because the user hasn't yet connected their wallet,
+      // or the factory's requirements haven't been met.
       if (tx === null) {
         return;
       }
@@ -106,37 +121,38 @@ function useSubstrateTx<Context = void>(
       // At this point, the transaction is ready to be sent.
       // Reset the status and error, and begin the transaction.
       setError(null);
-      setHash(null);
+      setTxHash(null);
       setStatus(TxStatus.PROCESSING);
+
+      const handleStatusUpdate = (status: ISubmittableResult) => {
+        // If the component is unmounted, or the transaction
+        // has not yet been included in a block, ignore the
+        // status update.
+        if (!isMountedRef.current || !status.isInBlock) {
+          return;
+        }
+
+        newTxHash = status.txHash.toHex();
+        setTxHash(newTxHash);
+
+        const error = extractErrorFromTxStatus(status);
+
+        setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
+        setError(error);
+      };
 
       try {
         await tx.signAndSend(
           activeSubstrateAddress,
           { signer: injector.signer },
-          (status) => {
-            // If the component is unmounted, or the transaction
-            // has not yet been included in a block, ignore the
-            // status update.
-            if (!isMountedRef.current || !status.isInBlock) {
-              return;
-            }
-
-            setHash(status.txHash.toHex());
-
-            const error = extractErrorFromTxStatus(status);
-
-            setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
-            setError(error);
-
-            // Useful for debugging.
-            if (error !== null) {
-              console.debug('Substrate transaction failed', error, status);
-            }
-          }
+          handleStatusUpdate
         );
       } catch (possibleError: unknown) {
+        const error = ensureError(possibleError);
+
         setStatus(TxStatus.ERROR);
-        setError(ensureError(possibleError));
+        setError(error);
+        setTxHash(null);
       }
     },
     [
@@ -151,7 +167,7 @@ function useSubstrateTx<Context = void>(
 
   const reset = useCallback(() => {
     setStatus(TxStatus.NOT_YET_INITIATED);
-    setHash(null);
+    setTxHash(null);
     setError(null);
   }, []);
 
@@ -177,7 +193,13 @@ function useSubstrateTx<Context = void>(
 
   // Prevent the consumer from executing the transaction if
   // the active account is an EVM account.
-  return { execute: isEvmAccount ? null : execute, reset, status, error, hash };
+  return {
+    execute: isEvmAccount ? null : execute,
+    reset,
+    status,
+    error,
+    txHash,
+  };
 }
 
 export default useSubstrateTx;

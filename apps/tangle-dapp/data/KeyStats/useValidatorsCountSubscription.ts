@@ -6,7 +6,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useValidatorCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -42,7 +42,7 @@ export default function useValidatorCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         sub = api.query.session.validators().subscribe(async (validators) => {
           try {

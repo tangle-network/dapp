@@ -8,7 +8,7 @@ import useRestakingRoleLedger from './useRestakingRoleLedger';
 const useSharedRestakeAmount = () => {
   const activeSubstrateAccount = useSubstrateAddress();
   const ledgerResult = useRestakingRoleLedger(activeSubstrateAccount);
-  const ledgerOpt = ledgerResult.data;
+  const ledgerOpt = ledgerResult.result;
   const isLedgerAvailable = ledgerOpt !== null && ledgerOpt.isSome;
 
   const sharedRestakeAmount = useMemo<Optional<BN> | null>(() => {

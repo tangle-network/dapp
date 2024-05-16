@@ -4,7 +4,7 @@ import useSWR from 'swr';
 
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
-import { getPolkadotApiPromise } from '../utils/polkadot';
+import { getApiPromise } from '../utils/polkadot/api';
 import usePromise from './usePromise';
 
 export type PolkadotApiFetcher<T> = (api: ApiPromise) => Promise<T>;
@@ -85,7 +85,7 @@ function usePolkadotApi<T>(
     isLoading: isApiLoading,
     error: apiError,
   } = usePromise<ApiPromise | null>(
-    useCallback(() => getPolkadotApiPromise(rpcEndpoint), [rpcEndpoint]),
+    useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
     null
   );
 

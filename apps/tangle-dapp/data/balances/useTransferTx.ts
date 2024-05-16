@@ -1,12 +1,14 @@
 import { BN } from '@polkadot/util';
+import { isAddress } from '@polkadot/util-crypto';
 import { useCallback } from 'react';
 
+import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
-import { EvmAbiCallData, EvmTxFactory } from '../../hooks/types';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
+import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { evmToSubstrateAddress, substrateToEvmAddress } from '../../utils';
+import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
   receiverAddress: string;
@@ -23,12 +25,15 @@ const useTransferTx = () => {
   > = useCallback(
     async ({ receiverAddress, amount, maxAmount }) => {
       const isMaxAmount = amount.eq(maxAmount);
-      const receiverEvm = substrateToEvmAddress(receiverAddress);
 
-      const sharedAbiCallData = {
+      const recipientEvmAddress20 = isAddress(receiverAddress)
+        ? toEvmAddress20(receiverAddress)
+        : receiverAddress;
+
+      const sharedAbiCallData: AbiCall<Precompile.BALANCES_ERC20> = {
         functionName: 'transfer',
-        arguments: [receiverEvm, amount],
-      } satisfies EvmAbiCallData<Precompile.BALANCES_ERC20>;
+        arguments: [recipientEvmAddress20, amount],
+      };
 
       // If the amount to transfer is not the maximum amount
       // just return the abi call data for the transfer function.
@@ -58,7 +63,7 @@ const useTransferTx = () => {
 
       return {
         ...sharedAbiCallData,
-        arguments: [receiverEvm, amountToTransfer],
+        arguments: [recipientEvmAddress20, amountToTransfer],
       };
     },
     [fetchEvmPrecompileFees]
@@ -69,12 +74,14 @@ const useTransferTx = () => {
       api,
       _activeSubstrateAddress,
       { receiverAddress, amount, maxAmount }
-    ) =>
-      amount.eq(maxAmount)
+    ) => {
+      // Convert the EVM address to a Substrate address, in case
+      // that it was provided as an EVM address.
+      const recipientSubstrateAddress = toSubstrateAddress(receiverAddress);
+
+      return amount.eq(maxAmount)
         ? api.tx.balances.transferAll(
-            // Convert the EVM address to a Substrate address, in case
-            // that it was provided as an EVM address.
-            evmToSubstrateAddress(receiverAddress),
+            recipientSubstrateAddress,
             // No need to keep the current account alive
             false
           )
@@ -83,16 +90,13 @@ const useTransferTx = () => {
           // account to drop below the existential deposit, which
           // would essentially cause the account to be 'reaped', or
           // deleted from the chain.
-          api.tx.balances.transferAllowDeath(
-            // Convert the EVM address to a Substrate address, in case
-            // that it was provided as an EVM address.
-            evmToSubstrateAddress(receiverAddress),
-            amount
-          ),
+          api.tx.balances.transferAllowDeath(recipientSubstrateAddress, amount);
+    },
     []
   );
 
   return useAgnosticTx<Precompile.BALANCES_ERC20, TransferTxContext>({
+    name: TxName.TRANSFER,
     precompile: Precompile.BALANCES_ERC20,
     evmTxFactory,
     substrateTxFactory,

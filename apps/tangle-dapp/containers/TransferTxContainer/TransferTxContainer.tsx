@@ -91,8 +91,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const {
     execute: executeTransferTx,
     status,
-    error: txError,
     reset: resetTransferTx,
+    error: txError,
   } = useTransferTx();
 
   // TODO: Likely would ideally want to control this from the parent component.

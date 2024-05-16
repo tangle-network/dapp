@@ -3,7 +3,6 @@
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 
-import getRoundedDownNumberWith2Decimals from '../../utils/getRoundedDownNumberWith2Decimals';
 import dataHooks from './dataHooks';
 import type { HeaderChipItemProps } from './types';
 
@@ -23,11 +22,11 @@ const ChipText = ({ label }: Props) => {
     <>
       {label}:{' '}
       {isLoading ? (
-        <SkeletonLoader className="w-[100px]" />
+        <SkeletonLoader className="w-[40px]" />
       ) : error ? (
         'Error'
       ) : data === null ? null : (
-        getRoundedDownNumberWith2Decimals(data)
+        data
       )}
     </>
   );

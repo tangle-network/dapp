@@ -5,7 +5,7 @@ import type {
 } from '@polkadot/types/lookup';
 
 import convertRewardPointsToReward from '../../../utils/convertRewardPointsToReward';
-import { getPolkadotApiPromise } from '../../../utils/polkadot/api';
+import { getApiPromise } from '../../../utils/polkadot/api';
 import type { EarningRecord, ErasRestakeRewardPointsEntry } from '../types';
 
 export async function calculateEarnings(
@@ -13,8 +13,7 @@ export async function calculateEarnings(
   accountId32: string,
   rewardPointsEntries: ErasRestakeRewardPointsEntry[]
 ): Promise<EarningRecord> {
-  const api = await getPolkadotApiPromise(rpcUrl);
-
+  const api = await getApiPromise(rpcUrl);
   const rewardsRecord: EarningRecord = {};
 
   // Following the `do_payout_stakers` logic in the tangle

@@ -48,7 +48,7 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
 
     return (
       <DropdownMenu.Item className={className} {...props} ref={ref}>
-        {startIcon && <div className="mr-4 shrink-0">{startIcon}</div>}
+        {startIcon && <div className="mr-2.5 shrink-0">{startIcon}</div>}
         <span className="flex-grow text-inherit dark:text-inherit">
           {children}
         </span>

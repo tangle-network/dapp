@@ -19,7 +19,7 @@ const useViemPublicClient = () => {
 
     const chain = createTangleViemChainFromNetwork({
       ...network,
-      chainId: network.evmChainId,
+      evmChainId: network.evmChainId,
       httpRpcEndpoint: network.httpRpcEndpoint,
     });
 

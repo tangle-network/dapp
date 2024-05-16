@@ -2,7 +2,7 @@ import { PalletRolesProfileRecord } from '@polkadot/types/lookup';
 import BN from 'bn.js';
 
 import { RestakingService } from '../types';
-import substrateRoleToServiceType from './substrateRoleToServiceType';
+import substrateRoleToServiceType from './restaking/substrateRoleToServiceType';
 
 /**
  * Given a roles profile record (a tuple originating from chain,

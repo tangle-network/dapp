@@ -6,7 +6,11 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { RestakingProfileType, RestakingService } from '../../types';
+import {
+  RestakingProfileType,
+  RestakingService,
+  TokenSymbol,
+} from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { filterAllocations } from './Independent/IndependentAllocationStep';
@@ -182,7 +186,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 type AllocationItemProps = {
   services: RestakingService[];
   amount?: BN;
-  tokenSymbol: string;
+  tokenSymbol: TokenSymbol;
 };
 
 /** @internal */

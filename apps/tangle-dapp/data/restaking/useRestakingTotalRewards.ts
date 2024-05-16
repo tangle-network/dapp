@@ -2,15 +2,13 @@ import BN from 'bn.js';
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
-const useRestakingTotalRewards = (): ReturnType<
-  typeof usePolkadotApiRx<BN | null>
-> => {
+const useRestakingTotalRewards = (): ReturnType<typeof useApiRx<BN | null>> => {
   const substrateAccount = useSubstrateAddress();
 
-  return usePolkadotApiRx<BN | null>(
+  return useApiRx<BN | null>(
     useCallback(
       (apiRx) => {
         if (!substrateAccount) return of(null);

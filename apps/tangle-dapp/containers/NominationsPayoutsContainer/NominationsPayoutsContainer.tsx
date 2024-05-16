@@ -4,7 +4,6 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   ActionsDropdown,
   Button,
@@ -22,15 +21,24 @@ import {
   useState,
 } from 'react';
 
-import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
+import {
+  ContainerSkeleton,
+  NominationsTable,
+  PayoutTable,
+  TableStatus,
+} from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useHistoryDepth from '../../data/staking/useHistoryDepth';
-import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
+import useNetworkState from '../../hooks/useNetworkState';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
-import { DelegationsAndPayoutsTab, Payout, QueryParamKey } from '../../types';
-import { evmToSubstrateAddress } from '../../utils';
+import {
+  DelegationsAndPayoutsTab as NominationsAndPayoutsTab,
+  Payout,
+  QueryParamKey,
+} from '../../types';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -39,112 +47,26 @@ import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
 
 const PAGE_SIZE = 10;
 
-function assertTab(tab: string): DelegationsAndPayoutsTab {
+function assertTab(tab: string): NominationsAndPayoutsTab {
   if (
-    !Object.values(DelegationsAndPayoutsTab).includes(
-      tab as DelegationsAndPayoutsTab
+    !Object.values(NominationsAndPayoutsTab).includes(
+      tab as NominationsAndPayoutsTab
     )
   ) {
     throw new Error(`Invalid tab: ${tab}`);
   }
 
-  return tab as DelegationsAndPayoutsTab;
+  return tab as NominationsAndPayoutsTab;
 }
 
 const DelegationsPayoutsContainer: FC = () => {
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading } = useWebContext();
+  const [payouts, setPayouts] = useState<Payout[]>([]);
+  const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
-
-  const [payouts, setPayouts] = useState<Payout[]>([]);
-  const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
-
-  const payoutsData = usePayouts();
-
-  const { value: queryParamsTab } = useQueryParamKey(
-    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
-  );
-
-  const [activeTab, setActiveTab] = useState(
-    queryParamsTab ?? DelegationsAndPayoutsTab.NOMINATIONS
-  );
-
-  const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
-    useState(false);
-
-  const [isStopNominationModalOpen, setIsStopNominationModalOpen] =
-    useState(false);
-
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    } else if (isSubstrateAddress(activeAccount?.address)) {
-      return activeAccount.address;
-    }
-
-    return evmToSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
-
-  const { data: delegatorsData } = useNominations(substrateAddress);
-  const { isFirstTimeNominator } = useIsFirstTimeNominator();
-
-  const currentNominations = useMemo(() => {
-    if (!delegatorsData?.delegators) {
-      return [];
-    }
-
-    return delegatorsData.delegators.map((delegator) => delegator.address);
-  }, [delegatorsData?.delegators]);
-
-  const fetchedPayouts = useMemo(() => {
-    if (payoutsData !== null) {
-      return payoutsData;
-    }
-  }, [payoutsData]);
-
-  const fetchedNominations = useMemo(() => {
-    if (delegatorsData !== null) {
-      return delegatorsData.delegators;
-    }
-  }, [delegatorsData]);
-
-  // Scroll to the table when the tab changes, or when the page
-  // is first loaded with a tab query parameter present.
-  useEffect(() => {
-    if (queryParamsTab === null) {
-      return;
-    }
-
-    tableRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [queryParamsTab]);
-
-  useEffect(() => {
-    if (updatedPayouts.length > 0) {
-      setPayouts(updatedPayouts);
-    }
-  }, [updatedPayouts]);
-
-  const validatorAndEras = useMemo(
-    () =>
-      payouts.map((payout) => ({
-        validatorAddress: payout.validator.address,
-        era: payout.era.toString(),
-      })),
-    [payouts]
-  );
-
-  // Clear the updated payouts when the active account changes,
-  // and the user is no longer logged in.
-  useEffect(() => {
-    if (!activeAccount?.address) {
-      setUpdatedPayouts([]);
-    }
-  }, [activeAccount?.address]);
-
-  const { isMobile } = useCheckMobile();
-  const { toggleModal } = useConnectWallet();
 
   const { value: historyDepth } = useHistoryDepth();
   const { value: progress } = usePolkadotApi(
@@ -161,16 +83,90 @@ const DelegationsPayoutsContainer: FC = () => {
     }, [])
   );
 
+  const { value: queryParamsTab } = useQueryParamKey(
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
+  );
+
+  // Allow other pages to link directly to the payouts tab.
+  // Default to the nominations tab if no matching browser URL
+  // hash is present.
+  const [activeTab, setActiveTab] = useState(
+    queryParamsTab ?? NominationsAndPayoutsTab.NOMINATIONS
+  );
+
+  const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
+    useState(false);
+
+  const [isStopNominationModalOpen, setIsStopNominationModalOpen] =
+    useState(false);
+
+  const nomineesOpt = useNominations();
+  const isBondedOrNominating = useIsBondedOrNominating();
+  const payoutsData = usePayouts();
+
+  const currentNominationAddresses = useMemo(() => {
+    if (nomineesOpt === null) {
+      return null;
+    }
+
+    return nomineesOpt.map((nominees) =>
+      nominees.map((nominee) => nominee.address)
+    );
+  }, [nomineesOpt]);
+
+  const fetchedPayouts = useMemo(() => {
+    if (payoutsData !== null) {
+      setPayouts(payoutsData);
+      return payoutsData;
+    }
+  }, [payoutsData]);
+
+  useEffect(() => {
+    if (updatedPayouts.length > 0) {
+      setPayouts(updatedPayouts);
+    }
+  }, [updatedPayouts]);
+
+  // Scroll to the table when the tab changes, or when the page
+  // is first loaded with a tab query parameter present.
+  useEffect(() => {
+    if (queryParamsTab === null) {
+      return;
+    }
+
+    tableRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [queryParamsTab]);
+
+  const validatorAndEras = useMemo(
+    () =>
+      payouts.map((payout) => ({
+        validatorSubstrateAddress: payout.validator.address,
+        era: payout.era,
+      })),
+    [payouts]
+  );
+
+  // Clear the updated payouts when the active account changes,
+  // and the user is no longer logged in.
+  useEffect(() => {
+    if (!activeAccount?.address) {
+      setUpdatedPayouts([]);
+    }
+  }, [activeAccount?.address]);
+
+  const { isMobile } = useCheckMobile();
+  const { toggleModal } = useConnectWallet();
+
   return (
     <div ref={tableRef}>
       <TableAndChartTabs
         value={activeTab}
         onValueChange={(tabString) => setActiveTab(assertTab(tabString))}
-        tabs={[...Object.values(DelegationsAndPayoutsTab)]}
+        tabs={[...Object.values(NominationsAndPayoutsTab)]}
         headerClassName="w-full overflow-x-auto"
         filterComponent={
-          activeAccount?.address && !isFirstTimeNominator ? (
-            activeTab === DelegationsAndPayoutsTab.NOMINATIONS ? (
+          activeAccount?.address && isBondedOrNominating ? (
+            activeTab === NominationsAndPayoutsTab.NOMINATIONS ? (
               <ManageButtonContainer
                 onUpdateNominations={() =>
                   setIsUpdateNominationsModalOpen(true)
@@ -195,8 +191,8 @@ const DelegationsPayoutsContainer: FC = () => {
           ) : null
         }
       >
-        {/* Delegations Table */}
-        <TabContent value={DelegationsAndPayoutsTab.NOMINATIONS}>
+        {/* Nominations Table */}
+        <TabContent value={NominationsAndPayoutsTab.NOMINATIONS}>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -210,26 +206,28 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
-          ) : fetchedNominations && fetchedNominations.length === 0 ? (
+          ) : nomineesOpt === null ? (
+            <ContainerSkeleton />
+          ) : nomineesOpt.value === null || nomineesOpt.value.length === 0 ? (
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
+              icon="🔍"
               buttonText="Nominate"
               buttonProps={{
                 onClick: () => setIsDelegateModalOpen(true),
               }}
-              icon="🔍"
             />
           ) : (
-            <DelegatorTable
-              data={fetchedNominations ?? []}
+            <NominationsTable
+              nominees={nomineesOpt.value}
               pageSize={PAGE_SIZE}
             />
           )}
         </TabContent>
 
         {/* Payouts Table */}
-        <TabContent value={DelegationsAndPayoutsTab.PAYOUTS} aria-disabled>
+        <TabContent value={NominationsAndPayoutsTab.PAYOUTS} aria-disabled>
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
@@ -246,24 +244,24 @@ const DelegationsPayoutsContainer: FC = () => {
           ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
               title={
-                isFirstTimeNominator
+                isBondedOrNominating
                   ? 'Ready to Get Rewarded?'
                   : 'Awaiting Rewards'
               }
               description={
-                isFirstTimeNominator
+                isBondedOrNominating
                   ? "It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
                   : `You've successfully nominated validators and your rewards will be available soon. Check back to see your updated payout status.
                   `
               }
-              buttonText={isFirstTimeNominator ? 'Nominate' : 'Learn More'}
+              buttonText={isBondedOrNominating ? 'Nominate' : 'Learn More'}
               buttonProps={{
                 onClick: () =>
-                  isFirstTimeNominator
+                  isBondedOrNominating
                     ? setIsDelegateModalOpen(true)
                     : window.open(TANGLE_DOCS_URL, '_blank'),
               }}
-              icon={isFirstTimeNominator ? '🔍' : '⏳'}
+              icon={isBondedOrNominating ? '🔍' : '⏳'}
             />
           ) : (
             <PayoutTable
@@ -278,20 +276,17 @@ const DelegationsPayoutsContainer: FC = () => {
         </TabContent>
       </TableAndChartTabs>
 
-      {isDelegateModalOpen && (
-        <DelegateTxContainer
-          isModalOpen={isDelegateModalOpen}
-          setIsModalOpen={setIsDelegateModalOpen}
-        />
-      )}
+      <DelegateTxContainer
+        isModalOpen={isDelegateModalOpen}
+        setIsModalOpen={setIsDelegateModalOpen}
+      />
 
-      {isUpdateNominationsModalOpen && (
-        <UpdateNominationsTxContainer
-          isModalOpen={isUpdateNominationsModalOpen}
-          setIsModalOpen={setIsUpdateNominationsModalOpen}
-          currentNominations={currentNominations}
-        />
-      )}
+      <UpdateNominationsTxContainer
+        isModalOpen={isUpdateNominationsModalOpen}
+        setIsModalOpen={setIsUpdateNominationsModalOpen}
+        // TODO: Need to pass down the explicit `Optional<T>` type here, instead of defaulting to `[]`, because that will lead to a situation where the lower component things the value is still loading and displays a loading state forever.
+        currentNominations={currentNominationAddresses?.value ?? []}
+      />
 
       <UpdatePayeeTxContainer
         isModalOpen={isUpdatePayeeModalOpen}
@@ -326,7 +321,7 @@ function ManageButtonContainer(props: {
     props;
 
   return (
-    <div className="items-center hidden space-x-2 md:flex">
+    <div className="items-center space-x-2 flex">
       <ActionsDropdown
         buttonText="Manage"
         actionItems={[

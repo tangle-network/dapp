@@ -12,7 +12,7 @@ export default function useTotalPayoutRewards(
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const { valueAfterMount: cachedPayouts } = useLocalStorage(
-    LocalStorageKey.Payouts,
+    LocalStorageKey.PAYOUTS,
     true
   );
   const address = useSubstrateAddress();

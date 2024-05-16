@@ -10,13 +10,13 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import usePolkadotApiRx from '../../hooks/useApiRx';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import {
-  getPolkadotApiPromise,
+  getApiPromise as getPolkadotApiPromise,
   getValidatorIdentityName,
 } from '../../utils/polkadot';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
@@ -34,10 +34,10 @@ export default function usePayouts() {
     null
   );
 
-  const {
-    valueAfterMount: cachedPayouts,
-    setWithPreviousValue: setCachedPayouts,
-  } = useLocalStorage(LocalStorageKey.Payouts, true);
+  const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
+    LocalStorageKey.PAYOUTS,
+    true
+  );
 
   const { rpcEndpoint, network } = useNetworkStore();
 
@@ -52,14 +52,14 @@ export default function usePayouts() {
     return encodeAddress(publicKey, network.ss58Prefix);
   }, [activeSubstrateAddress, network.ss58Prefix]);
 
-  const { data: nominators } = usePolkadotApiRx(
+  const { result: nominators } = usePolkadotApiRx(
     useCallback(
       (api) => api.query.staking.nominators(activeSubstrateAddress),
       [activeSubstrateAddress]
     )
   );
 
-  const { data: erasRewardsPoints } = usePolkadotApiRx(
+  const { result: erasRewardsPoints } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
   );
 
@@ -71,7 +71,7 @@ export default function usePayouts() {
 
   const { data: eraTotalRewards } = useEraTotalRewards();
 
-  const { data: validators } = usePolkadotApiRx(
+  const { result: validators } = usePolkadotApiRx(
     useCallback((api) => api.query.staking.validators.entries(), [])
   );
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
@@ -9,13 +10,19 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
-import { type FC, useState } from 'react';
+import { type FC, useCallback, useMemo, useState } from 'react';
+import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
-import useIsFirstTimeNominator from '../../hooks/useIsFirstTimeNominator';
+import useBalances from '../../data/balances/useBalances';
+import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
+import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
+import useStakingLedger from '../../data/staking/useStakingLedger';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
+import { formatTokenBalance } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -23,23 +30,38 @@ import { UnbondTxContainer } from '../UnbondTxContainer';
 import { WithdrawUnbondedTxContainer } from '../WithdrawUnbondedTxContainer';
 
 const NominatorStatsContainer: FC = () => {
-  const { activeAccount, loading: isActiveAccountLoading } = useWebContext();
-  const { nativeTokenSymbol } = useNetworkStore();
-  const networkFeatures = useNetworkFeatures();
-
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isBondMoreModalOpen, setIsBondMoreModalOpen] = useState(false);
   const [isUnbondModalOpen, setIsUnbondModalOpen] = useState(false);
   const [isRebondModalOpen, setIsRebondModalOpen] = useState(false);
 
+  const activeAccountAddress = useActiveAccountAddress();
+  const { activeAccount, loading: isActiveAccountLoading } = useWebContext();
+  const { nativeTokenSymbol } = useNetworkStore();
+  const networkFeatures = useNetworkFeatures();
+  const { free: freeBalance, error: balancesError } = useBalances();
+  const isBondedOrNominating = useIsBondedOrNominating();
+
+  const { error: totalPayoutRewardsError, data: totalPayoutRewards } =
+    useTotalPayoutRewards();
+
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
 
-  const {
-    isFirstTimeNominator,
-    isLoading: isFirstTimeNominatorLoading,
-    isError: isFirstTimeNominatorError,
-  } = useIsFirstTimeNominator();
+  const { result: bondedAmountOpt } = useStakingLedger(
+    useCallback((ledger) => ledger.active.toBn(), [])
+  );
+
+  const bondedAmountBalance = useMemo(() => {
+    if (bondedAmountOpt === null) {
+      return null;
+    }
+
+    return formatTokenBalance(
+      bondedAmountOpt.value ?? BN_ZERO,
+      nativeTokenSymbol
+    );
+  }, [bondedAmountOpt, nativeTokenSymbol]);
 
   return (
     <>
@@ -52,12 +74,30 @@ const NominatorStatsContainer: FC = () => {
           )}
         >
           <div className="grid grid-cols-2 gap-2">
-            <NominatorStatsItem title={`Free Balance`} type="Wallet Balance" />
+            <NominatorStatsItem
+              title="Free Balance"
+              isError={balancesError !== null}
+            >
+              {activeAccountAddress === null
+                ? '--'
+                : freeBalance === null
+                ? null
+                : formatTokenBalance(freeBalance, nativeTokenSymbol)}
+            </NominatorStatsItem>
 
             <NominatorStatsItem
               title={`Unclaimed Payouts`}
-              type="Total Payout Rewards"
-            />
+              isError={totalPayoutRewardsError !== null}
+            >
+              {totalPayoutRewards === null
+                ? '--'
+                : totalPayoutRewards.value1 === null
+                ? '--'
+                : formatTokenBalance(
+                    totalPayoutRewards.value1,
+                    nativeTokenSymbol
+                  )}
+            </NominatorStatsItem>
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -82,7 +122,8 @@ const NominatorStatsContainer: FC = () => {
               </Button>
             </Link>
 
-            {isFirstTimeNominator && (
+            {/* Only allow nominator setup if not already nominating or bonded */}
+            {isBondedOrNominating === false && (
               <Button
                 variant="utility"
                 className="!min-w-[100px]"
@@ -106,8 +147,14 @@ const NominatorStatsContainer: FC = () => {
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip="The total amount of tokens you have bonded for nominating."
-              type="Total Staked"
-            />
+              isError={false}
+            >
+              {activeAccountAddress === null
+                ? '--'
+                : bondedAmountBalance === null
+                ? null
+                : bondedAmountBalance}
+            </NominatorStatsItem>
 
             <UnbondingStatsItem />
           </div>
@@ -115,7 +162,7 @@ const NominatorStatsContainer: FC = () => {
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 
           <div className="grid grid-cols-2 gap-2">
-            {!isFirstTimeNominator ? (
+            {isBondedOrNominating === true ? (
               <>
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
@@ -141,11 +188,7 @@ const NominatorStatsContainer: FC = () => {
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
-                    isDisabled={
-                      !activeAccount ||
-                      isFirstTimeNominatorLoading ||
-                      isFirstTimeNominatorError
-                    }
+                    isDisabled={!activeAccount || isBondedOrNominating === null}
                     onClick={() => setIsRebondModalOpen(true)}
                   >
                     Rebond
@@ -154,11 +197,7 @@ const NominatorStatsContainer: FC = () => {
                   <Button
                     variant="utility"
                     className="!min-w-[100px]"
-                    isDisabled={
-                      !activeAccount ||
-                      isFirstTimeNominatorLoading ||
-                      isFirstTimeNominatorError
-                    }
+                    isDisabled={!activeAccount || isBondedOrNominating === null}
                     onClick={() => setIsWithdrawUnbondedModalOpen(true)}
                   >
                     Withdraw
@@ -180,12 +219,10 @@ const NominatorStatsContainer: FC = () => {
         </div>
       </div>
 
-      {isDelegateModalOpen && (
-        <DelegateTxContainer
-          isModalOpen={isDelegateModalOpen}
-          setIsModalOpen={setIsDelegateModalOpen}
-        />
-      )}
+      <DelegateTxContainer
+        isModalOpen={isDelegateModalOpen}
+        setIsModalOpen={setIsDelegateModalOpen}
+      />
 
       <BondMoreTxContainer
         isModalOpen={isBondMoreModalOpen}
