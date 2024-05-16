@@ -95,7 +95,7 @@ export type Payout = {
   nominators: AddressWithIdentity[];
   validatorTotalReward: string;
   nominatorTotalReward: string;
-  status: 'claimed' | 'unclaimed';
+  nominatorTotalRewardRaw: BN;
 };
 
 /**

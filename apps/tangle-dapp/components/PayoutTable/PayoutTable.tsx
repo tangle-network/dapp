@@ -12,7 +12,6 @@ import { WalletPayIcon } from '@webb-tools/icons';
 import {
   Avatar,
   AvatarGroup,
-  Chip,
   CopyWithTooltip,
   fuzzyFilter,
   shortenString,
@@ -32,6 +31,8 @@ const PayoutTable: FC<PayoutTableProps> = ({
   data = [],
   pageSize,
   updateData,
+  sessionProgress,
+  historyDepth,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -128,11 +129,29 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <StringCell value={props.getValue()} className="text-start" />
         ),
       }),
-      columnHelper.accessor('status', {
+      columnHelper.display({
+        id: 'remaining',
         header: () => (
-          <HeaderCell title="Payout Status" className="justify-start" />
+          <HeaderCell title="Remaining Eras" className="justify-center" />
         ),
-        cell: (props) => <Chip color="blue">{props.getValue()}</Chip>,
+        cell: (props) => {
+          const rowData = props.row.original;
+
+          const remainingErasToClaim = Math.abs(
+            sessionProgress && historyDepth
+              ? sessionProgress.currentEra.toNumber() -
+                  historyDepth.toNumber() -
+                  rowData.era
+              : 0
+          );
+
+          return (
+            <StringCell
+              value={sessionProgress ? `${remainingErasToClaim}` : 'N/A'}
+              className="text-center"
+            />
+          );
+        },
       }),
       columnHelper.display({
         id: 'claim',

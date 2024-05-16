@@ -16,6 +16,7 @@ import React from 'react';
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
+import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useStakingLedger from '../../data/staking/useStakingLedger';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
@@ -40,6 +41,9 @@ const NominatorStatsContainer: FC = () => {
   const networkFeatures = useNetworkFeatures();
   const { free: freeBalance, error: balancesError } = useBalances();
   const isBondedOrNominating = useIsBondedOrNominating();
+
+  const { error: totalPayoutRewardsError, data: totalPayoutRewards } =
+    useTotalPayoutRewards();
 
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
@@ -69,16 +73,32 @@ const NominatorStatsContainer: FC = () => {
             'border-2 border-mono-0 dark:border-mono-160'
           )}
         >
-          <NominatorStatsItem
-            title="Free Balance"
-            isError={balancesError !== null}
-          >
-            {activeAccountAddress === null
-              ? '--'
-              : freeBalance === null
-              ? null
-              : formatTokenBalance(freeBalance, nativeTokenSymbol)}
-          </NominatorStatsItem>
+          <div className="grid grid-cols-2 gap-2">
+            <NominatorStatsItem
+              title="Free Balance"
+              isError={balancesError !== null}
+            >
+              {activeAccountAddress === null
+                ? '--'
+                : freeBalance === null
+                ? null
+                : formatTokenBalance(freeBalance, nativeTokenSymbol)}
+            </NominatorStatsItem>
+
+            <NominatorStatsItem
+              title={`Unclaimed Payouts`}
+              isError={totalPayoutRewardsError !== null}
+            >
+              {totalPayoutRewards === null
+                ? '--'
+                : totalPayoutRewards.value1 === null
+                ? '--'
+                : formatTokenBalance(
+                    totalPayoutRewards.value1,
+                    nativeTokenSymbol
+                  )}
+            </NominatorStatsItem>
+          </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
 

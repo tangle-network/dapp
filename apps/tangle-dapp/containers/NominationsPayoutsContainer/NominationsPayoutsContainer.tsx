@@ -4,7 +4,6 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import {
   ActionsDropdown,
   Button,
@@ -12,24 +11,33 @@ import {
   TableAndChartTabs,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import { type FC, useEffect, useMemo, useRef, useState } from 'react';
+import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   ContainerSkeleton,
   NominationsTable,
+  PayoutTable,
   TableStatus,
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
+import useHistoryDepth from '../../data/staking/useHistoryDepth';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
-import useNetworkState from '../../hooks/useNetworkState';
+import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {
   DelegationsAndPayoutsTab as NominationsAndPayoutsTab,
   Payout,
   QueryParamKey,
 } from '../../types';
-import { toSubstrateAddress } from '../../utils';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
@@ -59,7 +67,20 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
-  const { network } = useNetworkState();
+  const { value: historyDepth } = useHistoryDepth();
+  const { value: progress } = usePolkadotApi(
+    useCallback(async (api) => {
+      const progress = await api.derive.session.progress();
+      return progress;
+    }, []),
+    PolkadotApiSwrKey.SESSION_PROGRESS
+  );
+  const { value: epochDuration } = usePolkadotApi(
+    useCallback(async (api) => {
+      const epochDuration = await api.consts.babe.epochDuration;
+      return epochDuration.toNumber();
+    }, [])
+  );
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
@@ -78,19 +99,9 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isStopNominationModalOpen, setIsStopNominationModalOpen] =
     useState(false);
 
-  const substrateAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '';
-    } else if (isSubstrateAddress(activeAccount?.address)) {
-      return activeAccount.address;
-    }
-
-    return toSubstrateAddress(activeAccount.address);
-  }, [activeAccount?.address]);
-
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const { data: payoutsData } = usePayouts(substrateAddress);
+  const payoutsData = usePayouts();
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -102,18 +113,18 @@ const DelegationsPayoutsContainer: FC = () => {
     );
   }, [nomineesOpt]);
 
-  // const { valueAfterMount: cachedPayouts } = useLocalStorage(
-  //   LocalStorageKey.Payouts,
-  //   true
-  // );
+  const fetchedPayouts = useMemo(() => {
+    if (payoutsData !== null) {
+      setPayouts(payoutsData);
+      return payoutsData;
+    }
+  }, [payoutsData]);
 
-  // const fetchedPayouts = useMemo(() => {
-  //   if (payoutsData !== null) {
-  //     return payoutsData.payouts;
-  //   } else if (cachedPayouts) {
-  //     return cachedPayouts[substrateAddress] ?? [];
-  //   }
-  // }, [cachedPayouts, payoutsData, substrateAddress]);
+  useEffect(() => {
+    if (updatedPayouts.length > 0) {
+      setPayouts(updatedPayouts);
+    }
+  }, [updatedPayouts]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -124,14 +135,6 @@ const DelegationsPayoutsContainer: FC = () => {
 
     tableRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [queryParamsTab]);
-
-  useEffect(() => {
-    if (updatedPayouts.length > 0) {
-      setPayouts(updatedPayouts);
-    } else if (payoutsData && payoutsData.payouts) {
-      setPayouts(payoutsData.payouts);
-    }
-  }, [payoutsData, updatedPayouts]);
 
   const validatorAndEras = useMemo(
     () =>
@@ -177,7 +180,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 <Button
                   variant="utility"
                   size="sm"
-                  isDisabled={payouts.length === 0}
+                  isDisabled={payoutsData.length === 0}
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
                   Payout All
@@ -224,7 +227,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
         {/* Payouts Table */}
         <TabContent value={NominationsAndPayoutsTab.PAYOUTS} aria-disabled>
-          {/* {!activeAccount ? (
+          {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
               description="Connect your wallet to view and manage your staking details."
@@ -239,33 +242,36 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
-              title="Ready to Get Rewarded?"
-              description="It looks like you haven't nominated any tokens yet. Start by choosing a validator to support and earn rewards!"
-              buttonText="Nominate"
+              title={
+                isBondedOrNominating
+                  ? 'Ready to Get Rewarded?'
+                  : 'Awaiting Rewards'
+              }
+              description={
+                isBondedOrNominating
+                  ? "It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
+                  : `You've successfully nominated validators and your rewards will be available soon. Check back to see your updated payout status.
+                  `
+              }
+              buttonText={isBondedOrNominating ? 'Nominate' : 'Learn More'}
               buttonProps={{
-                onClick: () => setIsDelegateModalOpen(true),
+                onClick: () =>
+                  isBondedOrNominating
+                    ? setIsDelegateModalOpen(true)
+                    : window.open(TANGLE_DOCS_URL, '_blank'),
               }}
-              icon="🔍"
+              icon={isBondedOrNominating ? '🔍' : '⏳'}
             />
           ) : (
             <PayoutTable
               data={fetchedPayouts ?? []}
               pageSize={PAGE_SIZE}
               updateData={setUpdatedPayouts}
+              sessionProgress={progress}
+              historyDepth={historyDepth}
+              epochDuration={epochDuration}
             />
-          )} */}
-
-          <TableStatus
-            icon="🚧"
-            title="Payouts Coming Soon"
-            description="The payouts feature for EVM and Substrate users is currently under active development. Meanwhile, Substrate users can view and manage payouts via the Polkadot/Substrate Portal."
-            buttonText="Open Explorer"
-            buttonProps={{
-              // TODO: Ideally, get or build this URL straight from the network object instead of hardcoding it here.
-              href: `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking/payout`,
-              target: '_blank',
-            }}
-          />
+          )}
         </TabContent>
       </TableAndChartTabs>
 

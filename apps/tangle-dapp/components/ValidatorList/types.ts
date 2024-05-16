@@ -4,5 +4,6 @@ import type { Validator } from '../../types';
 
 export interface ValidatorListTableProps {
   data: Validator[];
+  pageSize: number;
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
 }
