@@ -18,7 +18,6 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
       <ValidatorSelectionTable
         allValidators={validators}
         setSelectedValidators={setSelectedValidators}
-        pageSize={20}
       />
 
       <Alert
