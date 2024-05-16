@@ -1,4 +1,4 @@
-import { SkeletonSize } from './types';
+import type { SkeletonSize } from './types';
 
 /**
  * Get the icon size in pixel based on text

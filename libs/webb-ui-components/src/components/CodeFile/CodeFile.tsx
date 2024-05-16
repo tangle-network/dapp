@@ -1,7 +1,7 @@
 'use client';
 
 import { Alert } from '@webb-tools/icons';
-import { type FC, useEffect, useState, useCallback, useMemo } from 'react';
+import { type FC, useMemo } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
@@ -9,7 +9,7 @@ import {
 } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, notificationApi, SkeletonLoader } from '..';
+import { Button, SkeletonLoader } from '..';
 import {
   useDarkMode as useNormalDarkMode,
   useNextDarkMode,
@@ -18,44 +18,21 @@ import { Typography } from '../../typography';
 import type { CodeFileProps } from './types';
 
 const CodeFile: FC<CodeFileProps> = ({
-  getCodeFileFnc,
+  code,
+  isLoading,
+  error,
   language,
+  fetchCodeFnc,
   isInNextProject,
   className,
 }) => {
-  const [code, setCode] = useState<string | null>(null);
-  const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
-
   const useDarkMode = useMemo(
     () => (isInNextProject ? useNextDarkMode : useNormalDarkMode),
     [isInNextProject]
   );
   const [isDarkMode] = useDarkMode();
 
-  const fetchCodeFile = useCallback(async () => {
-    setIsLoadingCode(true);
-    try {
-      const code = await getCodeFileFnc();
-      setCode(code);
-    } catch (e) {
-      if (e instanceof Error) {
-        setError(e);
-        notificationApi({
-          variant: 'error',
-          message: 'Cannot load file',
-        });
-      }
-    } finally {
-      setIsLoadingCode(false);
-    }
-  }, [getCodeFileFnc]);
-
-  useEffect(() => {
-    fetchCodeFile();
-  }, [fetchCodeFile]);
-
-  if (isLoadingCode) {
+  if (isLoading) {
     return (
       <div className="h-full space-y-3 p-3">
         <SkeletonLoader size="xl" />
@@ -64,7 +41,7 @@ const CodeFile: FC<CodeFileProps> = ({
     );
   }
 
-  if (!isLoadingCode && error) {
+  if (!isLoading && error) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="flex flex-col gap-2.5 items-center">
@@ -77,13 +54,15 @@ const CodeFile: FC<CodeFileProps> = ({
               Error when loading file
             </Typography>
           </div>
-          <Button
-            onClick={() => {
-              fetchCodeFile();
-            }}
-          >
-            Reload File
-          </Button>
+          {fetchCodeFnc && (
+            <Button
+              onClick={() => {
+                fetchCodeFnc();
+              }}
+            >
+              Reload File
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -91,7 +70,7 @@ const CodeFile: FC<CodeFileProps> = ({
 
   return (
     <div className={twMerge('p-6 h-full flex flex-col', className)}>
-      {!isLoadingCode && !error && code && (
+      {!isLoading && !error && code && (
         <SyntaxHighlighter
           language={language}
           style={isDarkMode ? oneDark : oneLight}

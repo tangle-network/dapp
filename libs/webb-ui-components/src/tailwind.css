@@ -28,6 +28,8 @@
 
 :root {
   --adjust-amount-width: 160px;
+
+  --radix-dropdown-menu-content-max-height: 320px;
 }
 
 .bg-body-base {

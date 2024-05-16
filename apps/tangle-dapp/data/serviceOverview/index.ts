@@ -1,1 +1,1 @@
-export { default as useActiveServices } from './useActiveServices';
+export { default as useServiceOverview } from './useServiceOverview';

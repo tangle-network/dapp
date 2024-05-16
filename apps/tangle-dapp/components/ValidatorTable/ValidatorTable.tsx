@@ -31,7 +31,7 @@ import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const staticColumnsOne = [
+const getStaticColumns = (isWaiting?: boolean) => [
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
     ? []
@@ -45,9 +45,20 @@ const staticColumnsOne = [
           cell: (props) => <StringCell value={props.getValue()} />,
         }),
       ]),
-];
-
-const staticColumnsTwo = [
+  // Hide the effective amount staked and self-staked columns on waiting validators tab
+  // as they don't have values for these columns
+  ...(isWaiting
+    ? []
+    : [
+        columnHelper.accessor('effectiveAmountStaked', {
+          header: () => <HeaderCell title="Effective amount staked" />,
+          cell: (props) => <StringCell value={props.getValue()} />,
+        }),
+        columnHelper.accessor('selfStaked', {
+          header: () => <HeaderCell title="Self-staked" />,
+          cell: (props) => <StringCell value={props.getValue()} />,
+        }),
+      ]),
   columnHelper.accessor('delegations', {
     header: () => <HeaderCell title="Nominations" />,
     cell: (props) => <StringCell value={props.getValue()} />,
@@ -66,7 +77,7 @@ const staticColumnsTwo = [
           id: 'details',
           header: () => null,
           cell: (props) => (
-            <div className="flex justify-center items-center">
+            <div className="flex items-center justify-center">
               <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
                 <Button variant="link" size="sm">
                   DETAILS
@@ -78,8 +89,8 @@ const staticColumnsTwo = [
       ]),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
-  const { network, nativeTokenSymbol } = useNetworkStore();
+const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
+  const { network } = useNetworkStore();
 
   const columns = useMemo(
     () => [
@@ -124,22 +135,9 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
           );
         },
       }),
-      ...staticColumnsOne,
-      columnHelper.accessor('effectiveAmountStaked', {
-        header: () => <HeaderCell title="Effective amount staked" />,
-        cell: (props) => (
-          <StringCell value={props.getValue() + ` ${nativeTokenSymbol}`} />
-        ),
-      }),
-      columnHelper.accessor('selfStaked', {
-        header: () => <HeaderCell title="Self-staked" />,
-        cell: (props) => (
-          <StringCell value={props.getValue() + ` ${nativeTokenSymbol}`} />
-        ),
-      }),
-      ...staticColumnsTwo,
+      ...getStaticColumns(isWaiting),
     ],
-    [nativeTokenSymbol, network.polkadotExplorerUrl]
+    [isWaiting, network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({

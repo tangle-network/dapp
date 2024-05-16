@@ -12,6 +12,7 @@ import {
   TableAndChartTabs,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
+import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import {
   type FC,
   useCallback,
@@ -22,7 +23,6 @@ import {
 } from 'react';
 
 import { DelegatorTable, PayoutTable, TableStatus } from '../../components';
-import useNetworkStore from '../../context/useNetworkStore';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useHistoryDepth from '../../data/staking/useHistoryDepth';
@@ -60,9 +60,8 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
-  const payoutsData = usePayouts();
 
-  const { nativeTokenSymbol } = useNetworkStore();
+  const payoutsData = usePayouts();
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
@@ -124,10 +123,8 @@ const DelegationsPayoutsContainer: FC = () => {
   useEffect(() => {
     if (updatedPayouts.length > 0) {
       setPayouts(updatedPayouts);
-    } else if (payoutsData && payoutsData) {
-      setPayouts(payoutsData);
     }
-  }, [payoutsData, updatedPayouts]);
+  }, [updatedPayouts]);
 
   const validatorAndEras = useMemo(
     () =>
@@ -188,7 +185,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 <Button
                   variant="utility"
                   size="sm"
-                  isDisabled={payouts.length === 0}
+                  isDisabled={payoutsData.length === 0}
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
                   Payout All
@@ -248,13 +245,25 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
-              title="Ready to Get Rewarded?"
-              description="It looks like you haven't nominated any tokens yet. Start by choosing a validator to support and earn rewards!"
-              buttonText="Nominate"
+              title={
+                isFirstTimeNominator
+                  ? 'Ready to Get Rewarded?'
+                  : 'Awaiting Rewards'
+              }
+              description={
+                isFirstTimeNominator
+                  ? "It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
+                  : `You've successfully nominated validators and your rewards will be available soon. Check back to see your updated payout status.
+                  `
+              }
+              buttonText={isFirstTimeNominator ? 'Nominate' : 'Learn More'}
               buttonProps={{
-                onClick: () => setIsDelegateModalOpen(true),
+                onClick: () =>
+                  isFirstTimeNominator
+                    ? setIsDelegateModalOpen(true)
+                    : window.open(TANGLE_DOCS_URL, '_blank'),
               }}
-              icon="🔍"
+              icon={isFirstTimeNominator ? '🔍' : '⏳'}
             />
           ) : (
             <PayoutTable
@@ -264,7 +273,6 @@ const DelegationsPayoutsContainer: FC = () => {
               sessionProgress={progress}
               historyDepth={historyDepth}
               epochDuration={epochDuration}
-              nativeTokenSymbol={nativeTokenSymbol}
             />
           )}
         </TabContent>

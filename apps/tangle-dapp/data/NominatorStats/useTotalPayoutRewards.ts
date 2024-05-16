@@ -1,32 +1,50 @@
 'use client';
 
-import { BN } from '@polkadot/util';
-import { useEffect, useState } from 'react';
+import { BN, hexToBn } from '@polkadot/util';
+import { useEffect, useMemo, useState } from 'react';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
-import usePayouts from '../NominationsPayouts/usePayouts';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 export default function useTotalPayoutRewards(
-  address?: string,
   defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
-  const payoutsData = usePayouts();
+  const { valueAfterMount: cachedPayouts } = useLocalStorage(
+    LocalStorageKey.Payouts,
+    true
+  );
+  const address = useSubstrateAddress();
+
+  const payoutsData = useMemo(() => {
+    if (!cachedPayouts || !address) return [];
+    return cachedPayouts[address] || [];
+  }, [address, cachedPayouts]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     try {
-      if (address === '0x0' || payoutsData.length === 0) {
+      if (!address) {
+        setValue1(null);
+        setIsLoading(false);
+        return;
+      }
+
+      if (payoutsData.length === 0) {
+        setValue1(new BN(0));
         setIsLoading(false);
         return;
       }
 
       const totalPayoutRewards = payoutsData.reduce((acc, payout) => {
-        const currentReward = BigInt(payout.nominatorTotalRewardRaw.toString());
-        return acc + currentReward;
-      }, BigInt(0));
+        const currentReward = hexToBn(
+          payout.nominatorTotalRewardRaw.toString()
+        );
+        return acc.add(currentReward);
+      }, new BN(0));
 
       setValue1(new BN(totalPayoutRewards.toString()));
       setIsLoading(false);

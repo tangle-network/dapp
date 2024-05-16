@@ -6,13 +6,15 @@ import {
   PalletStakingValidatorPrefs,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import {
   getPolkadotApiPromise,
   getValidatorIdentityName,
@@ -27,9 +29,28 @@ type ValidatorReward = {
 };
 
 export default function usePayouts() {
-  const { rpcEndpoint } = useNetworkStore();
+  const isPayoutsFetched = useRef(false);
+  const fetchedPayoutPromises = useRef<Promise<(Payout | undefined)[]> | null>(
+    null
+  );
+
+  const {
+    valueAfterMount: cachedPayouts,
+    setWithPreviousValue: setCachedPayouts,
+  } = useLocalStorage(LocalStorageKey.Payouts, true);
+
+  const { rpcEndpoint, network } = useNetworkStore();
 
   const activeSubstrateAddress = useSubstrateAddress();
+  const formatNativeTokenSymbol = useFormatNativeTokenAmount();
+
+  const activeSubstrateAddressEncoded = useMemo(() => {
+    if (!activeSubstrateAddress) return;
+
+    const publicKey = decodeAddress(activeSubstrateAddress);
+
+    return encodeAddress(publicKey, network.ss58Prefix);
+  }, [activeSubstrateAddress, network.ss58Prefix]);
 
   const { data: nominators } = usePolkadotApiRx(
     useCallback(
@@ -64,13 +85,21 @@ export default function usePayouts() {
     return map;
   }, [validators]);
 
+  useEffect(() => {
+    isPayoutsFetched.current = false;
+    fetchedPayoutPromises.current = null;
+  }, [activeSubstrateAddress]);
+
   const payoutPromises = useMemo(() => {
+    if (isPayoutsFetched.current) return fetchedPayoutPromises.current;
+
     if (
       !erasRewardsPoints ||
       myNominations.length === 0 ||
       !eraTotalRewards ||
       !mappedValidatorInfo ||
-      !activeSubstrateAddress
+      !activeSubstrateAddress ||
+      !activeSubstrateAddressEncoded
     ) {
       return;
     }
@@ -91,7 +120,9 @@ export default function usePayouts() {
         ) {
           Object.entries(rewards.individual).forEach(([key, value]) => {
             if (key === validatorAddress.toString()) {
-              validatorRewardPoints = Number(value);
+              validatorRewardPoints = value
+                ? parseFloat(value.toString().replace(/,/g, ''))
+                : 0;
             }
           });
         }
@@ -104,7 +135,7 @@ export default function usePayouts() {
       }
     }
 
-    return Promise.all(
+    const payoutPromises = Promise.all(
       allRewards.map(async (reward) => {
         const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
@@ -113,9 +144,10 @@ export default function usePayouts() {
           return;
         }
 
-        const eraTotalReward = eraTotalRewardOpt.unwrap();
+        const eraTotalRewardOptValue = eraTotalRewardOpt.unwrap();
 
-        const validatorTotalReward = eraTotalReward
+        const validatorTotalReward = eraTotalRewardOptValue
+          .toBn()
           .muln(reward.validatorRewardPoints)
           .divn(reward.eraTotalRewardPoints);
 
@@ -156,7 +188,8 @@ export default function usePayouts() {
         const nominatorStakeInfo = eraStakerPaged
           .unwrap()
           .others.find(
-            (nominator) => nominator.who.toString() === activeSubstrateAddress
+            (nominator) =>
+              nominator.who.toString() === activeSubstrateAddressEncoded
           );
 
         if (nominatorStakeInfo === undefined || nominatorStakeInfo.isEmpty) {
@@ -180,8 +213,11 @@ export default function usePayouts() {
           return;
         }
 
+        const validatorCommissionRate = validatorInfo.commission
+          .unwrap()
+          .toNumber();
         const validatorCommissionPercentage =
-          validatorInfo.commission.toNumber();
+          validatorCommissionRate / 10_000_000;
 
         const validatorCommission = validatorTotalReward.muln(
           validatorCommissionPercentage / 100
@@ -194,14 +230,8 @@ export default function usePayouts() {
           nominatorStakePercentage / 100
         );
 
-        const nominatorTotalRewardFormatted = formatBnToDisplayAmount(
-          nominatorTotalReward,
-          {
-            fractionLength: 4,
-            includeCommas: true,
-            padZerosInFraction: true,
-          }
-        );
+        const nominatorTotalRewardFormatted =
+          formatNativeTokenSymbol(nominatorTotalReward);
 
         const validatorIdentityName = await getValidatorIdentityName(
           rpcEndpoint,
@@ -222,23 +252,11 @@ export default function usePayouts() {
           })
         );
 
-        const validatorTotalRewardFormatted = formatBnToDisplayAmount(
-          validatorTotalReward,
-          {
-            fractionLength: 4,
-            includeCommas: true,
-            padZerosInFraction: true,
-          }
-        );
+        const validatorTotalRewardFormatted =
+          formatNativeTokenSymbol(validatorTotalReward);
 
-        const validatorTotalStakeFormatted = formatBnToDisplayAmount(
-          validatorTotalReward,
-          {
-            fractionLength: 4,
-            includeCommas: true,
-            padZerosInFraction: true,
-          }
-        );
+        const validatorTotalStakeFormatted =
+          formatNativeTokenSymbol(validatorTotalStake);
 
         if (
           validatorTotalStakeFormatted &&
@@ -258,14 +276,22 @@ export default function usePayouts() {
             nominatorTotalRewardRaw: nominatorTotalReward,
           };
 
+          isPayoutsFetched.current = true;
+
           return payout;
         }
       })
     );
+
+    fetchedPayoutPromises.current = payoutPromises;
+
+    return payoutPromises;
   }, [
     activeSubstrateAddress,
+    activeSubstrateAddressEncoded,
     eraTotalRewards,
     erasRewardsPoints,
+    formatNativeTokenSymbol,
     mappedValidatorInfo,
     myNominations,
     rpcEndpoint,
@@ -274,19 +300,26 @@ export default function usePayouts() {
   const payoutsRef = useRef<Payout[]>([]);
 
   useEffect(() => {
+    if (!activeSubstrateAddress) return;
+
     const computePayouts = async () => {
       if (!payoutPromises) {
         payoutsRef.current = [];
       } else {
         const payouts = await payoutPromises;
-        payoutsRef.current = payouts
+        const payoutsData = payouts
           .filter((payout): payout is Payout => payout !== undefined)
           .sort((a, b) => a.era - b.era);
+        payoutsRef.current = payoutsData;
+        setCachedPayouts((previous) => ({
+          ...previous,
+          [activeSubstrateAddress]: payoutsData,
+        }));
       }
     };
 
     computePayouts();
-  }, [payoutPromises]);
+  }, [activeSubstrateAddress, payoutPromises, setCachedPayouts]);
 
   return payoutsRef.current;
 }

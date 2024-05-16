@@ -33,7 +33,7 @@ function calculateBnPercentage(amount: BN, total: BN): number {
   // Round the percentage to 2 decimal places. It's suitable to use
   // 2 decimal places since the purpose of this function is to provide
   // a visual representation of the percentage in the UI.
-  return (percentage * 100) / 100;
+  return Math.round(percentage * 100) / 100;
 }
 
 export default calculateBnPercentage;

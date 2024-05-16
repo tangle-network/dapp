@@ -1,13 +1,12 @@
 'use client';
 
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { useEffect, useState } from 'react';
+import { formatNumber } from '@polkadot/util';
+import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
+import { useCallback, useEffect, useState } from 'react';
+import { map } from 'rxjs';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiPromise } from '../../utils/polkadot';
-import useCurrentEra from '../staking/useCurrentEra';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -19,14 +18,11 @@ export default function useActiveAndDelegationCountSubscription(
   const [error, setError] = useState<Error | null>(null);
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
-  const { rpcEndpoint } = useNetworkStore();
-  const { data: currentEra } = useCurrentEra();
 
-  const { get: getCachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
-    true
-  );
+  const { get: getCachedValue, setWithPreviousValue: setCacheWithPrev } =
+    useLocalStorage(LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT, true);
 
+  // After mount, try to get the cached value and set it.
   useEffect(() => {
     const cachedValue = getCachedValue();
 
@@ -37,69 +33,80 @@ export default function useActiveAndDelegationCountSubscription(
     }
   }, [getCachedValue]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!currentEra) {
-          setIsLoading(false);
-          return;
-        }
+  const {
+    isLoading: isLoadingCounterForNonimators,
+    error: counterForNominatorsError,
+  } = usePolkadotApiRx(
+    useCallback(
+      (apiRx) =>
+        apiRx.query.staking.counterForNominators().pipe(
+          map((nominatorsCount) => {
+            const nominatorsCountNum = Number(formatNumber(nominatorsCount));
+            const { value2: cachedCount } = getCachedValue() ?? {};
 
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+            if (nominatorsCountNum !== cachedCount) {
+              setValue2(nominatorsCountNum);
 
-        const validators = await apiPromise.query.staking.validators.entries();
-        const validatorAddress = validators.map(([key, _]) => {
-          return key.args[0].toString();
-        });
-        const counterForNominators =
-          await apiPromise.query.staking.counterForNominators();
-
-        const nominatorSet = new Set<string>();
-
-        const promises = Promise.all(
-          validatorAddress.map(async (address) => {
-            const eraStakerPaged =
-              await apiPromise.query.staking.erasStakersPaged(
-                currentEra,
-                address,
-                0
-              );
-
-            if (eraStakerPaged.isNone) {
-              return;
+              setCacheWithPrev((prev) => {
+                const value1 = prev?.value1 ?? null;
+                return { value1, value2: nominatorsCountNum };
+              });
             }
-
-            const eraStakerExposure = eraStakerPaged.unwrap();
-
-            eraStakerExposure.others.forEach((exposure) => {
-              nominatorSet.add(exposure.who.toString());
-            });
           })
-        );
+        ),
+      [getCachedValue, setCacheWithPrev]
+    )
+  );
 
-        await promises;
+  const { isLoading: isLoadingActiveNominators, error: activeNominatorsError } =
+    usePolkadotApiRx(
+      useCallback(
+        (apiRx) =>
+          apiRx.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED).pipe(
+            map((electedInfo) => {
+              const nominators: Set<string> = new Set();
 
-        const newValue1 = nominatorSet.size;
-        const newValue2 = counterForNominators.toNumber();
+              for (let i = 0; i < electedInfo.info.length; i++) {
+                const { exposurePaged } = electedInfo.info[i];
+                const exposure = exposurePaged.isSome && exposurePaged.unwrap();
+                if (!exposure) {
+                  continue;
+                }
 
-        if (newValue1 !== value1 || newValue2 !== value2) {
-          setValue1(newValue1);
-          setValue2(newValue2);
-          setCache({ value1: newValue1, value2: newValue2 });
-          setIsLoading(false);
-        }
-      } catch (error) {
-        setIsLoading(false);
-        setError(
-          error instanceof Error
-            ? error
-            : WebbError.from(WebbErrorCodes.UnknownError)
-        );
-      }
-    };
+                exposure.others.map(({ who }) => {
+                  nominators.add(who.toString());
+                });
+              }
 
-    fetchData();
-  }, [currentEra, rpcEndpoint, setCache, value1, value2]);
+              const activeNominatorsCount = nominators.size;
+              const { value1: cachedCount } = getCachedValue() ?? {};
 
-  return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
+              if (activeNominatorsCount !== cachedCount) {
+                setValue1(activeNominatorsCount);
+
+                setCacheWithPrev((prev) => {
+                  const value2 = prev?.value2 ?? null;
+                  return { value1: activeNominatorsCount, value2 };
+                });
+              }
+            })
+          ),
+        [getCachedValue, setCacheWithPrev]
+      )
+    );
+
+  // Sync the loading & error states.
+  useEffect(() => {
+    setIsLoading(isLoadingCounterForNonimators || isLoadingActiveNominators);
+  }, [isLoadingCounterForNonimators, isLoadingActiveNominators]);
+
+  useEffect(() => {
+    setError(counterForNominatorsError || activeNominatorsError);
+  }, [counterForNominatorsError, activeNominatorsError]);
+
+  return {
+    data: { value1, value2 },
+    isLoading,
+    error,
+  };
 }

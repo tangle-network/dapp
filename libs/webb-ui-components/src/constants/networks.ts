@@ -13,6 +13,9 @@ import {
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   TANGLE_LOCAL_NATIVE_EXPLORER_URL,
+  TANGLE_MAINET_SS58_PREFIX,
+  TANGLE_TESTNET_SS58_PREFIX,
+  TANGLE_LOCAL_SS58_PREFIX,
 } from '@webb-tools/dapp-config/constants/tangle';
 
 import { SUBQUERY_ENDPOINT } from '.';
@@ -52,6 +55,7 @@ export type Network = {
    * client requests.
    */
   httpRpcEndpoint?: string;
+  ss58Prefix?: number;
 };
 
 export const TANGLE_MAINNET_NETWORK: Network = {
@@ -65,6 +69,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
   httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
+  ss58Prefix: TANGLE_MAINET_SS58_PREFIX,
 };
 
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
@@ -79,6 +84,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   wsRpcEndpoint: TANGLE_TESTNET_WS_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
+  ss58Prefix: TANGLE_TESTNET_SS58_PREFIX,
 };
 
 /**
@@ -95,6 +101,7 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   wsRpcEndpoint: TANGLE_LOCAL_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
+  ss58Prefix: TANGLE_LOCAL_SS58_PREFIX,
 };
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {

@@ -1,9 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import usePayouts from '../NominationsPayouts/usePayouts';
+import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 const usePayoutsAvailability = () => {
-  const payoutsData = usePayouts();
+  const { valueAfterMount: cachedPayouts } = useLocalStorage(
+    LocalStorageKey.Payouts,
+    true
+  );
+  const address = useSubstrateAddress();
+
+  const payoutsData = useMemo(() => {
+    if (!cachedPayouts || !address) return [];
+    return cachedPayouts[address] || [];
+  }, [address, cachedPayouts]);
+
   const [isPayoutsAvailable, setIsPayoutsAvailable] = useState(false);
 
   useEffect(() => {

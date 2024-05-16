@@ -1,16 +1,22 @@
 'use client';
 
-import { u128 } from '@polkadot/types';
+import { BN_ZERO } from '@polkadot/util';
+import {
+  DEFAULT_FLAGS_ELECTED,
+  DEFAULT_FLAGS_WAITING,
+} from '@webb-tools/dapp-config/constants/tangle';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
+import { useCallback, useEffect, useState } from 'react';
+import { map, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
 import { Delegator } from '../../types';
+import { getExposureMap } from '../../utils/getExposureMap';
 import {
-  formatTokenBalance,
   getPolkadotApiPromise,
   getPolkadotApiRx,
   getTotalNumberOfNominators,
@@ -27,6 +33,27 @@ export default function useNominations(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const formatNativeTokenSymbol = useFormatNativeTokenAmount();
+
+  const { data: exposureMapElected } = usePolkadotApiRx(
+    useCallback(
+      (api) =>
+        api.derive.staking
+          .electedInfo(DEFAULT_FLAGS_ELECTED)
+          .pipe(map((derive) => getExposureMap(api, derive))),
+      []
+    )
+  );
+
+  const { data: exposureMapWaiting } = usePolkadotApiRx(
+    useCallback(
+      (api) =>
+        api.derive.staking
+          .waitingInfo(DEFAULT_FLAGS_WAITING)
+          .pipe(map((derive) => getExposureMap(api, derive))),
+      []
+    )
+  );
 
   const {
     valueAfterMount: cachedNominations,
@@ -42,7 +69,11 @@ export default function useNominations(
     let sub: Subscription | null = null;
 
     const subscribeData = async () => {
-      if (!address) {
+      if (
+        !address ||
+        exposureMapElected === null ||
+        exposureMapWaiting === null
+      ) {
         if (isMounted) {
           setDelegators([]);
           setIsLoading(false);
@@ -82,36 +113,27 @@ export default function useNominations(
 
                 const delegations = delegationsValue?.toString();
 
-                const currentEra = await apiPromise.query.staking.currentEra();
-                const exposure = await apiPromise.query.staking.erasStakers(
-                  currentEra.unwrap(),
-                  target.toString()
-                );
+                const { exposureMeta } = isActive
+                  ? exposureMapElected[target.toString()]
+                  : exposureMapWaiting[target.toString()];
 
-                const selfStaked = new u128(
-                  apiPromise.registry,
-                  exposure.own.toString()
-                );
+                const totalStakeAmount = exposureMeta
+                  ? exposureMeta.total.toBn()
+                  : BN_ZERO;
 
-                const selfStakedBalance = formatTokenBalance(
-                  selfStaked,
-                  nativeTokenSymbol
-                );
-
-                const totalStakeAmount = exposure.total.unwrap();
-                const effectiveAmountStaked = formatTokenBalance(
-                  totalStakeAmount,
-                  nativeTokenSymbol
-                );
+                const selfStakedAmount = exposureMeta
+                  ? exposureMeta.own.toBn()
+                  : BN_ZERO;
 
                 return {
                   address: target.toString(),
                   identity: identity ?? '',
-                  selfStaked: selfStakedBalance ?? '',
+                  selfStaked: formatNativeTokenSymbol(selfStakedAmount) ?? '',
                   isActive,
                   commission: commission ?? '',
                   delegations: delegations ?? '',
-                  effectiveAmountStaked: effectiveAmountStaked ?? '',
+                  effectiveAmountStaked:
+                    formatNativeTokenSymbol(totalStakeAmount) ?? '',
                 };
               })
             );
@@ -141,7 +163,15 @@ export default function useNominations(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [address, rpcEndpoint, setCachedNominations, nativeTokenSymbol]);
+  }, [
+    address,
+    rpcEndpoint,
+    setCachedNominations,
+    nativeTokenSymbol,
+    exposureMapElected,
+    exposureMapWaiting,
+    formatNativeTokenSymbol,
+  ]);
 
   return useFormatReturnType({
     isLoading,

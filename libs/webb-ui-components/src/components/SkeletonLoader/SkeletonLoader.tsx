@@ -2,7 +2,7 @@ import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { getSkeletonClassNamesBySize } from './utils';
-import { SkeletonLoaderProps } from './types';
+import type { SkeletonLoaderProps } from './types';
 
 const SkeletonLoader: FC<SkeletonLoaderProps> = ({
   size = 'md',

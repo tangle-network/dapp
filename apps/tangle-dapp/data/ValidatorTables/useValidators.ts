@@ -1,19 +1,22 @@
-import { Option } from '@polkadot/types';
-import { AccountId32 } from '@polkadot/types/interfaces';
-import {
+import type { Option } from '@polkadot/types';
+import type { AccountId32 } from '@polkadot/types/interfaces';
+import type {
   PalletStakingValidatorPrefs,
-  SpStakingPagedExposureMetadata,
   TanglePrimitivesJobsJobInfo,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
+import {
+  DEFAULT_FLAGS_ELECTED,
+  DEFAULT_FLAGS_WAITING,
+} from '@webb-tools/dapp-config/constants/tangle';
 import { useCallback, useMemo } from 'react';
+import { map } from 'rxjs';
 
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import { Validator } from '../../types';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
+import type { Validator } from '../../types';
+import { getExposureMap } from '../../utils/getExposureMap';
 import { getTotalRestakedFromRestakeRoleLedger } from '../../utils/polkadot/restake';
-import useCurrentEra from '../staking/useCurrentEra';
 import useValidatorsPrefs from '../staking/useValidatorsPrefs';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
 
@@ -22,7 +25,6 @@ export const useValidators = (
   status: 'Active' | 'Waiting'
 ): Validator[] | null => {
   const formatNativeTokenSymbol = useFormatNativeTokenAmount();
-  const { data: currentEra } = useCurrentEra();
   const { data: identityNames } = useValidatorIdentityNames();
   const { data: validatorPrefs } = useValidatorsPrefs();
 
@@ -42,13 +44,17 @@ export const useValidators = (
     useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
   );
 
-  const { data: stakersOverview } = usePolkadotApiRx(
+  const { data: exposureMap } = usePolkadotApiRx(
     useCallback(
       (api) =>
-        currentEra === null
-          ? null
-          : api.query.staking.erasStakersOverview.entries(currentEra),
-      [currentEra]
+        status === 'Active'
+          ? api.derive.staking
+              .electedInfo(DEFAULT_FLAGS_ELECTED)
+              .pipe(map((derive) => getExposureMap(api, derive)))
+          : api.derive.staking
+              .waitingInfo(DEFAULT_FLAGS_WAITING)
+              .pipe(map((derive) => getExposureMap(api, derive))),
+      [status]
     )
   );
 
@@ -62,131 +68,108 @@ export const useValidators = (
     return map;
   }, [validatorPrefs]);
 
-  const mappedStakersOverview = useMemo(() => {
-    const map = new Map<string, Option<SpStakingPagedExposureMetadata>>();
-    stakersOverview?.forEach(([storageKey, stakersOverview]) => {
-      const accountId = storageKey.args[1].toString();
-      map.set(accountId, stakersOverview);
-    });
-    return map;
-  }, [stakersOverview]);
+  return useMemo(
+    () => {
+      if (
+        addresses === null ||
+        identityNames === null ||
+        exposureMap === null ||
+        restakingLedgers === null ||
+        nominations === null ||
+        validatorPrefs === null ||
+        jobIdLookups === null ||
+        activeJobs === null
+      ) {
+        return null;
+      }
 
-  return useMemo(() => {
-    if (
-      addresses === null ||
-      identityNames === null ||
-      restakingLedgers === null ||
-      nominations === null ||
-      validatorPrefs === null ||
-      jobIdLookups === null ||
-      activeJobs === null
-    ) {
-      return null;
-    }
+      return addresses.map((address) => {
+        const name =
+          identityNames.get(address.toString()) ?? address.toString();
 
-    return addresses.map((address) => {
-      const name = identityNames.get(address.toString()) ?? address.toString();
-      const overview = mappedStakersOverview.get(address.toString());
+        const { exposureMeta } = exposureMap[address.toString()] ?? {};
 
-      const balanceTotal = overview?.unwrap().total.unwrap().toBn() ?? BN_ZERO;
-      const ownTotal = overview?.unwrap().own.unwrap().toBn() ?? BN_ZERO;
+        const totalStakeAmount = exposureMeta
+          ? exposureMeta.total.toBn()
+          : BN_ZERO;
 
-      const balanceTotalFormatted = balanceTotal
-        ? formatBnToDisplayAmount(balanceTotal, {
-            fractionLength: 4,
-            includeCommas: true,
-            padZerosInFraction: true,
-          })
-        : '0';
+        const selfStakedAmount = exposureMeta
+          ? exposureMeta.own.toBn()
+          : BN_ZERO;
 
-      const ownTotalFormatted = ownTotal
-        ? formatBnToDisplayAmount(ownTotal, {
-            fractionLength: 4,
-            includeCommas: true,
-            padZerosInFraction: true,
-          })
-        : '0';
+        const selfStakedBalance = formatNativeTokenSymbol(selfStakedAmount);
 
-      const nominators = nominations.filter(([, nominatorData]) => {
-        if (nominatorData.isNone) {
-          return false;
-        }
+        const nominators = nominations.filter(([, nominatorData]) => {
+          if (nominatorData.isNone) {
+            return false;
+          }
 
-        const nominations = nominatorData.unwrap();
+          const nominations = nominatorData.unwrap();
 
-        return (
-          nominations.targets &&
-          nominations.targets.some(
-            (target) => target.toString() === address.toString()
-          )
-        );
-      });
-
-      const validatorPref = mappedValidatorPrefs.get(address.toString());
-      const commissionRate = validatorPref?.commission.unwrap().toNumber() ?? 0;
-      const commission = commissionRate / 10_000_000;
-
-      const ledger = restakingLedgers.find(([, ledgerData]) => {
-        if (ledgerData.isNone) return false;
-
-        const ledger = ledgerData.unwrap();
-        return address.toString() === ledger.stash.toString();
-      })?.[1];
-
-      const totalRestaked =
-        ledger && ledger.isSome
-          ? getTotalRestakedFromRestakeRoleLedger(ledger)
-          : null;
-
-      const idLookupsByAddress = jobIdLookups
-        .filter(([account]) => {
-          return account.args[0].toString() === address.toString();
-        })
-        .map(([, jobIdAndType]) => {
-          return jobIdAndType.unwrap().toArray()[0][1].toString();
-        });
-
-      const activeServices = activeJobs
-        .filter(([jobIdAndType]) => {
-          const jobId = jobIdAndType.args[1];
-          return idLookupsByAddress.includes(jobId.toString());
-        })
-        .filter(([, jobData]) => {
-          // TODO: somehow jobData here has type Codec
-          const jobalanceTotalype = (
-            jobData as Option<TanglePrimitivesJobsJobInfo>
-          ).unwrap().jobType;
-          // services are only phase 1 jobs
           return (
-            jobalanceTotalype?.isDkgtssPhaseOne ||
-            jobalanceTotalype?.isZkSaaSPhaseOne
+            nominations.targets &&
+            nominations.targets.some(
+              (target) => target.toString() === address.toString()
+            )
           );
         });
 
-      return {
-        address: address.toString(),
-        identityName: name,
-        activeServicesNum: activeServices.length,
-        restaked: totalRestaked ? formatNativeTokenSymbol(totalRestaked) : '0',
-        selfStaked: ownTotalFormatted,
-        effectiveAmountStaked: balanceTotalFormatted,
-        effectiveAmountStakedRaw: balanceTotal.toString(),
-        delegations: nominators.length.toString(),
-        commission: commission.toString(),
-        status,
-      };
-    });
-  }, [
-    addresses,
-    identityNames,
-    restakingLedgers,
-    nominations,
-    validatorPrefs,
-    jobIdLookups,
-    activeJobs,
-    mappedStakersOverview,
-    formatNativeTokenSymbol,
-    mappedValidatorPrefs,
-    status,
-  ]);
+        const validatorPref = mappedValidatorPrefs.get(address.toString());
+        const commissionRate =
+          validatorPref?.commission.unwrap().toNumber() ?? 0;
+        const commission = commissionRate / 10_000_000;
+
+        const ledger = restakingLedgers.find(([, ledgerData]) => {
+          if (ledgerData.isNone) return false;
+
+          const ledger = ledgerData.unwrap();
+          return address.toString() === ledger.stash.toString();
+        })?.[1];
+
+        const totalRestaked =
+          ledger && ledger.isSome
+            ? getTotalRestakedFromRestakeRoleLedger(ledger)
+            : null;
+
+        const idLookupsByAddress = jobIdLookups
+          .filter(([account]) => {
+            return account.args[0].toString() === address.toString();
+          })
+          .map(([, jobIdAndType]) => {
+            return jobIdAndType.unwrap().toArray()[0][1].toString();
+          });
+
+        const activeServices = activeJobs
+          .filter(([jobIdAndType]) => {
+            const jobId = jobIdAndType.args[1];
+            return idLookupsByAddress.includes(jobId.toString());
+          })
+          .filter(([, jobData]) => {
+            // TODO: somehow jobData here has type Codec
+            const jobType = (
+              jobData as Option<TanglePrimitivesJobsJobInfo>
+            ).unwrap().jobType;
+            // services are only phase 1 jobs
+            return jobType?.isDkgtssPhaseOne || jobType?.isZkSaaSPhaseOne;
+          });
+
+        return {
+          address: address.toString(),
+          identityName: name,
+          activeServicesNum: activeServices.length,
+          restaked: totalRestaked
+            ? formatNativeTokenSymbol(totalRestaked)
+            : '0',
+          selfStaked: selfStakedBalance,
+          effectiveAmountStaked: formatNativeTokenSymbol(totalStakeAmount),
+          effectiveAmountStakedRaw: totalStakeAmount.toString(),
+          delegations: nominators.length.toString(),
+          commission: commission.toString(),
+          status,
+        };
+      });
+    },
+    // prettier-ignore
+    [addresses, identityNames, exposureMap, restakingLedgers, nominations, validatorPrefs, jobIdLookups, activeJobs, formatNativeTokenSymbol, mappedValidatorPrefs, status]
+  );
 };
