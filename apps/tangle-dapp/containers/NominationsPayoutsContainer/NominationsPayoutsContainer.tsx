@@ -31,7 +31,6 @@ import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
 import useHistoryDepth from '../../data/staking/useHistoryDepth';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
-import useNetworkState from '../../hooks/useNetworkState';
 import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {
