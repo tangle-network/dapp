@@ -23,6 +23,7 @@ import { type FC, useState } from 'react';
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
 import { AddressWithIdentity, Payout } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
 
 const columnHelper = createColumnHelper<Payout>();
@@ -89,7 +90,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
       }),
       columnHelper.accessor('nominators', {
@@ -118,7 +119,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
       }),
       columnHelper.accessor('nominatorTotalReward', {
@@ -126,7 +127,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Your Rewards" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
       }),
       columnHelper.display({

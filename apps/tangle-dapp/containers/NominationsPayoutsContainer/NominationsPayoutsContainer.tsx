@@ -101,7 +101,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const payoutsData = usePayouts();
+  const { data: payoutsData, isLoading: payoutsIsLoading } = usePayouts();
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -240,27 +240,29 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
+          ) : isBondedOrNominating && payoutsIsLoading ? (
+            <ContainerSkeleton />
           ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
               title={
-                isBondedOrNominating
+                !isBondedOrNominating
                   ? 'Ready to Get Rewarded?'
                   : 'Awaiting Rewards'
               }
               description={
-                isBondedOrNominating
+                !isBondedOrNominating
                   ? "It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
                   : `You've successfully nominated validators and your rewards will be available soon. Check back to see your updated payout status.
                   `
               }
-              buttonText={isBondedOrNominating ? 'Nominate' : 'Learn More'}
+              buttonText={!isBondedOrNominating ? 'Nominate' : 'Learn More'}
               buttonProps={{
                 onClick: () =>
-                  isBondedOrNominating
+                  !isBondedOrNominating
                     ? setIsDelegateModalOpen(true)
                     : window.open(TANGLE_DOCS_URL, '_blank'),
               }}
-              icon={isBondedOrNominating ? '🔍' : '⏳'}
+              icon={!isBondedOrNominating ? '🔍' : '⏳'}
             />
           ) : (
             <PayoutTable
