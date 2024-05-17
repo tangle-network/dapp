@@ -1,5 +1,10 @@
+import {
+  InjectedExtension,
+  MetadataDef,
+} from '@polkadot/extension-inject/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain } from '@webb-tools/dapp-config';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -7,12 +12,16 @@ import {
   NETWORK_MAP,
   NetworkId,
 } from '@webb-tools/webb-ui-components/constants/networks';
+import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import z from 'zod';
 
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
+import { TokenSymbol } from '../types';
 import createCustomNetwork from '../utils/createCustomNetwork';
+import { findInjectorForAddress } from '../utils/polkadot';
+import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
@@ -40,9 +49,54 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
+const updateSubstrateWalletsMetadata = async (
+  injector: InjectedExtension,
+  tokenSymbol: TokenSymbol,
+  ss58Prefix: number
+) => {
+  const existingMetadata = await injector.metadata?.get();
+
+  // TODO: Currently using some dummy values.
+  const metadata: MetadataDef = {
+    tokenDecimals: TANGLE_TOKEN_DECIMALS,
+    tokenSymbol,
+    genesisHash: `0x0`,
+    specVersion: 0,
+    icon: 'https://webb.tools/favicon.ico',
+    ss58Format: ss58Prefix,
+    types: {},
+    chain: 'Webb',
+  };
+
+  // The 'provide' request will throw an error if the user
+  // rejects the request. Leniently catch the error and log it.
+  const handleError = (error: unknown) => {
+    console.error(`Failed to provide metadata to injected extension: ${error}`);
+  };
+
+  // No metadata exists yet; provide it.
+  if (existingMetadata === undefined) {
+    await injector.metadata?.provide(metadata).catch(handleError);
+  }
+  // Metadata exists; check if it's up to date.
+  else {
+    for (const existing of existingMetadata) {
+      // Already up to date; ignore.
+      if (_.isEqual(existing, metadata)) {
+        return;
+      }
+
+      await injector.metadata?.provide(metadata).catch(handleError);
+
+      break;
+    }
+  }
+};
+
 const useNetworkState = () => {
   const { switchChain, activeWallet, chains } = useWebContext();
 
+  const activeAccountAddress = useActiveAccountAddress();
   const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
@@ -136,6 +190,7 @@ const useNetworkState = () => {
         }`
       );
 
+      // Update local storage cache with the new network.
       if (isCustom) {
         removeCachedNetworkId();
         setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
@@ -147,6 +202,9 @@ const useNetworkState = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
+      // In case that the new network is an EVM network, either add it
+      // to the list of chains on the EVM wallet (ie. MetaMask), or switch
+      // to it if it's already added.
       if (
         isEvm !== null &&
         isEvm &&
@@ -167,12 +225,29 @@ const useNetworkState = () => {
           switchChain(webbChain, activeWallet);
         }
       }
+
+      // TODO: Better placement for this, or at least call it once on app start. Also consider having it be a button instead to prevent spamming the user on first visit.
+      // Update Substrate wallet extensions' metadata if appropriate.
+      if (activeAccountAddress !== null && network.ss58Prefix !== undefined) {
+        const injector = await findInjectorForAddress(activeAccountAddress);
+
+        if (injector !== null) {
+          updateSubstrateWalletsMetadata(
+            injector,
+            network.tokenSymbol,
+            network.ss58Prefix
+          );
+        }
+      }
     },
     [
       network.id,
+      network.ss58Prefix,
+      network.tokenSymbol,
       setNetwork,
       isEvm,
       activeWallet,
+      activeAccountAddress,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,

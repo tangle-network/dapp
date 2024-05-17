@@ -1,5 +1,10 @@
 import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
+import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { firstValueFrom } from 'rxjs';
+
+const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
+const apiRxCache = new Map<string, Promise<ApiRx>>();
+const injectorCache = new Map<string, InjectedExtension>();
 
 async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
   endpoint: string,
@@ -21,8 +26,6 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
   return newInstance;
 }
 
-export const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
-
 export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
   endpoint: string
 ) => {
@@ -35,8 +38,6 @@ export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
     });
   });
 };
-
-export const apiRxCache = new Map<string, Promise<ApiRx>>();
 
 export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
   return getOrCacheApiVariant(endpoint, apiRxCache, async () => {
@@ -51,10 +52,21 @@ export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
   });
 };
 
-export const getInjector = async (address: string) => {
+export const findInjectorForAddress = async (
+  address: string
+): Promise<InjectedExtension | null> => {
+  // TODO: This is a temporary workaround to prevent Next.js from throwing an error complaining about 'window is not defined'.
   const { web3Enable, web3FromAddress } = await import(
     '@polkadot/extension-dapp'
   );
+
+  const cachedInjector = injectorCache.get(address);
+
+  // Prevent multiple redundant initialization calls by
+  // caching the injector for the given address.
+  if (cachedInjector !== undefined) {
+    return cachedInjector;
+  }
 
   const extensions = await web3Enable('Tangle');
 
@@ -63,5 +75,14 @@ export const getInjector = async (address: string) => {
     return null;
   }
 
-  return web3FromAddress(address);
+  try {
+    const injector = await web3FromAddress(address);
+
+    injectorCache.set(address, injector);
+
+    return injector;
+  } catch {
+    // Could not find an injector for the given address.
+    return null;
+  }
 };

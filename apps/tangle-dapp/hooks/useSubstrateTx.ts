@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { getApiPromise, getInjector } from '../utils/polkadot';
+import { getApiPromise, findInjectorForAddress } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
@@ -85,7 +85,7 @@ function useSubstrateTx<Context = void>(
         'Should not be able to execute a Substrate transaction while the active account is an EVM account'
       );
 
-      const injector = await getInjector(activeSubstrateAddress);
+      const injector = await findInjectorForAddress(activeSubstrateAddress);
       const api = await getApiPromise(rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
       let newTxHash: HexString;
@@ -113,7 +113,7 @@ function useSubstrateTx<Context = void>(
       if (tx === null) {
         return;
       }
-      // Wait until the injector is ready.
+      // Injector might report that there are no installed wallet extensions.
       else if (injector === null) {
         return;
       }
