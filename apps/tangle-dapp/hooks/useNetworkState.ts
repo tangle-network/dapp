@@ -1,3 +1,5 @@
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
   Network,
@@ -10,10 +12,8 @@ import z from 'zod';
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
-import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
-import useViemWalletClient from './useViemWalletClient';
 
 function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   return new Promise((resolve) => {
@@ -40,11 +40,12 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
 }
 
 const useNetworkState = () => {
+  const { switchChain, activeWallet, chains } = useWebContext();
+
   const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
   const { network, setNetwork } = useNetworkStore();
-  const viemWalletClient = useViemWalletClient();
 
   const {
     get: getCachedCustomRpcEndpoint,
@@ -149,29 +150,32 @@ const useNetworkState = () => {
         isEvm !== null &&
         isEvm &&
         newNetwork.evmChainId !== undefined &&
-        newNetwork.httpRpcEndpoint !== undefined
+        newNetwork.httpRpcEndpoint !== undefined &&
+        activeWallet !== undefined
       ) {
-        const newChain = createTangleViemChainFromNetwork({
-          ...newNetwork,
-          evmChainId: newNetwork.evmChainId,
-          httpRpcEndpoint: newNetwork.httpRpcEndpoint,
-        });
+        // TODO: For local dev, the chain id is set to the testnet's chain id. Which then attempts to switch to the testnet chain, and its RPC url. Changing the way that the provider API works requires extensive changes, so leaving this for later since local dev is not a priority.
+        const typedChainId = calculateTypedChainId(
+          ChainType.EVM,
+          newNetwork.evmChainId
+        );
+
+        const webbChain = chains[typedChainId];
 
         // This call will automatically switch the chain if it's already added.
-        viemWalletClient?.addChain({
-          chain: newChain,
-        });
+        switchChain(webbChain, activeWallet);
       }
     },
     [
       network.id,
       setNetwork,
       isEvm,
+      activeWallet,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,
       setCachedNetworkId,
-      viemWalletClient,
+      chains,
+      switchChain,
     ]
   );
 
