@@ -1,4 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain } from '@webb-tools/dapp-config';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -159,10 +160,12 @@ const useNetworkState = () => {
           newNetwork.evmChainId
         );
 
-        const webbChain = chains[typedChainId];
+        const webbChain: Chain | undefined = chains[typedChainId];
 
-        // This call will automatically switch the chain if it's already added.
-        switchChain(webbChain, activeWallet);
+        if (webbChain !== undefined) {
+          // This call will automatically switch the chain if it's already added.
+          switchChain(webbChain, activeWallet);
+        }
       }
     },
     [
