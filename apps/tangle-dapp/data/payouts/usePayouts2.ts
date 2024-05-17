@@ -222,7 +222,7 @@ const usePayouts2 = () => {
             nominators: validatorNominators,
             validatorTotalReward: validatorTotalRewardFormatted,
             nominatorTotalReward: nominatorTotalRewardFormatted,
-            status: 'unclaimed',
+            nominatorTotalRewardRaw: nominatorTotalReward,
           };
 
           return payout;
