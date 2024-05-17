@@ -31,16 +31,14 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
     <div className="flex flex-col items-center justify-between gap-2 py-1">
       {/* Mainnet network */}
       <NetworkOption
-        isSelected={selectedNetwork?.name === TANGLE_MAINNET_NETWORK.name}
+        isSelected={selectedNetwork?.id === TANGLE_MAINNET_NETWORK.id}
         name={TANGLE_MAINNET_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
       />
 
       {/* Testnet network */}
       <NetworkOption
-        isSelected={
-          selectedNetwork?.name === TANGLE_TESTNET_NATIVE_NETWORK.name
-        }
+        isSelected={selectedNetwork?.id === TANGLE_TESTNET_NATIVE_NETWORK.id}
         name={TANGLE_TESTNET_NATIVE_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_TESTNET_NATIVE_NETWORK)}
       />
@@ -49,7 +47,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       {/* Local dev network */}
       <NetworkOption
-        isSelected={selectedNetwork?.name === TANGLE_LOCAL_DEV_NETWORK.name}
+        isSelected={selectedNetwork?.id === TANGLE_LOCAL_DEV_NETWORK.id}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
         tooltip={

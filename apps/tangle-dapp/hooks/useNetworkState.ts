@@ -1,3 +1,6 @@
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain } from '@webb-tools/dapp-config';
+import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
   Network,
@@ -37,61 +40,9 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-// TODO: Awaiting testing of this feature before enabling it.
-export async function switchNetworkInEvmWallet(
-  network: Network
-): Promise<void> {
-  // TODO: This is failing with: "Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received: "3799". Perhaps the chainId should be in hex format?
-
-  // Cannot switch networks on EVM wallets if the network
-  // doesn't have a defined chain id or if there is no
-  // EVM wallet extension present.
-  if (
-    window.ethereum === undefined ||
-    network.evmChainId === undefined ||
-    network.httpRpcEndpoint === undefined
-  ) {
-    return;
-  }
-
-  // Request to switch to the network (if it's already configured in the wallet).
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: network.evmChainId.toString() }],
-    });
-  } catch (error) {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      error.code !== 4902
-    ) {
-      console.error('Error switching network:', error);
-
-      return;
-    }
-
-    // The network is not added to the wallet, request to add it.
-    try {
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: network.evmChainId.toString(),
-            rpcUrls: [network.httpRpcEndpoint],
-            chainName: network.name,
-            // TODO: Any other network params?
-          },
-        ],
-      });
-    } catch (addError) {
-      console.error('Error adding network:', addError);
-    }
-  }
-}
-
 const useNetworkState = () => {
+  const { switchChain, activeWallet, chains } = useWebContext();
+
   const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
@@ -196,19 +147,38 @@ const useNetworkState = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
-      if (isEvm !== null && isEvm) {
-        // TODO: Awaiting testing of this feature before enabling it.
-        // switchNetworkInEvmWallet(newNetwork);
+      if (
+        isEvm !== null &&
+        isEvm &&
+        newNetwork.evmChainId !== undefined &&
+        newNetwork.httpRpcEndpoint !== undefined &&
+        activeWallet !== undefined
+      ) {
+        // TODO: For local dev, the chain id is set to the testnet's chain id. Which then attempts to switch to the testnet chain, and its RPC url. Changing the way that the provider API works requires extensive changes, so leaving this for later since local dev is not a priority.
+        const typedChainId = calculateTypedChainId(
+          ChainType.EVM,
+          newNetwork.evmChainId
+        );
+
+        const webbChain: Chain | undefined = chains[typedChainId];
+
+        if (webbChain !== undefined) {
+          // This call will automatically switch the chain if it's already added.
+          switchChain(webbChain, activeWallet);
+        }
       }
     },
     [
       network.id,
       setNetwork,
       isEvm,
+      activeWallet,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,
       setCachedNetworkId,
+      chains,
+      switchChain,
     ]
   );
 
