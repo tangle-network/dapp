@@ -46,7 +46,6 @@ const Balance: FC = () => {
               className="!leading-none pb-1 flex gap-2"
             >
               {suffix}
-
             </Typography>
           </div>
         </div>
