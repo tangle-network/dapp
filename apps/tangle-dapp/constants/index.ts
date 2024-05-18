@@ -71,7 +71,7 @@ export enum TxName {
   NOMINATE = 'nominate',
   SETUP_NOMINATOR = 'setup nominator',
   UPDATE_NOMINATOR = 'update nominator',
-  WITHDRAW_EVM_BALANCE = 'withdraw to balance',
+  WITHDRAW_EVM_BALANCE = 'withdraw',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 
 import { TxName } from '../constants';
 import { Precompile } from '../constants/evmPrecompiles';
+import { GetSuccessMessageFunctionType } from '../types';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileAbiCall, {
@@ -11,10 +12,6 @@ import useEvmPrecompileAbiCall, {
 } from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
-
-export type GetSuccessMessageFunctionType<Context> = (
-  context: Context
-) => string;
 
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
@@ -64,7 +61,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     reset: substrateReset,
     txHash: substrateTxHash,
     successMessage: substrateSuccessMessage,
-  } = useSubstrateTx(substrateTxFactory, false, getSuccessMessageFnc);
+  } = useSubstrateTx(substrateTxFactory, getSuccessMessageFnc);
 
   const {
     execute: executeEvmPrecompileAbiCall,

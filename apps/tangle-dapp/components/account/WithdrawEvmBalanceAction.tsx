@@ -3,27 +3,30 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import RefundLineIcon from '@webb-tools/icons/RefundLineIcon';
 import Spinner from '@webb-tools/icons/Spinner';
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
-import { TxName } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
 import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import useTxNotification from '../../hooks/useTxNotification';
 import { formatTokenBalance } from '../../utils/polkadot';
+import { toEvmAddress20 } from '../../utils/toEvmAddress20';
 import ActionItem from './ActionItem';
 
 const WithdrawEvmBalanceAction: FC = () => {
-  const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
-  const { execute, status, error, txHash, reset } = useEvmBalanceWithdrawTx();
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification(
-    TxName.WITHDRAW_EVM_BALANCE
-  );
-
+  const { substrateAddress, isEvm } = useAgnosticAccountInfo();
   const pendingEvmBalance = usePendingEvmBalance();
+
+  const evmAddress20 = useMemo(() => {
+    // Only Substrate accounts can withdraw EVM balances.
+    if (substrateAddress === null || isEvm) {
+      return null;
+    }
+
+    return toEvmAddress20(substrateAddress);
+  }, [isEvm, substrateAddress]);
 
   const tokenAmountStr = useMemo(
     () =>
@@ -33,38 +36,14 @@ const WithdrawEvmBalanceAction: FC = () => {
     [pendingEvmBalance, nativeTokenSymbol]
   );
 
+  const { execute, status } = useEvmBalanceWithdrawTx(tokenAmountStr);
+
   const handleWithdraw = useCallback(async () => {
-    if (execute === null) {
-      return;
-    }
-    notifyProcessing();
-
-    await execute();
-  }, [execute, notifyProcessing]);
-
-  useEffect(() => {
-    if (activeAccountAddress === null) {
-      reset();
-    }
-  }, [activeAccountAddress, reset]);
-
-  useEffect(() => {
-    if (
-      status === TxStatus.NOT_YET_INITIATED ||
-      status === TxStatus.PROCESSING
-    ) {
-      return;
-    }
-
-    if (txHash !== null) {
-      const successMessage = tokenAmountStr
-        ? `Successfully withdrew ${tokenAmountStr}.`
-        : null;
-      notifySuccess(txHash, successMessage);
-    } else if (error !== null) {
-      notifyError(error);
-    }
-  }, [status, error, txHash, notifyError, notifySuccess, tokenAmountStr]);
+    await execute({
+      pendingEvmBalance,
+      evmAddress20,
+    });
+  }, [execute, pendingEvmBalance, evmAddress20]);
 
   // If withdraw was successful, don't show the action item.
   if (status === TxStatus.COMPLETE) {

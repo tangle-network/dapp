@@ -3,13 +3,14 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
-import useAgnosticTx, {
-  GetSuccessMessageFunctionType,
-} from '../../hooks/useAgnosticTx';
+import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { StakingRewardsDestination } from '../../types';
+import {
+  GetSuccessMessageFunctionType,
+  StakingRewardsDestination,
+} from '../../types';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
@@ -82,7 +83,7 @@ const useSetupNominatorTx = () => {
     precompile: Precompile.BATCH,
     evmTxFactory,
     substrateTxFactory,
-    getSuccessMessageFnc
+    getSuccessMessageFnc,
   });
 };
 

@@ -5,13 +5,12 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
-import useAgnosticTx, {
-  GetSuccessMessageFunctionType,
-} from '../../hooks/useAgnosticTx';
+import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import { GetSuccessMessageFunctionType } from '../../types';
 import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {

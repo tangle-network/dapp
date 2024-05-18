@@ -20,7 +20,7 @@ const nextConfig = {
       process.env.TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT ?? '',
     OFAC_REGIONS: process.env.OFAC_REGIONS ?? '',
     OFAC_COUNTRY_CODES: process.env.OFAC_COUNTRY_CODES ?? '',
-    USING_LOCAL_TANGLE: process.env.USING_LOCAL_TANGLE ?? ''
+    USING_LOCAL_TANGLE: process.env.USING_LOCAL_TANGLE ?? '',
   },
 
   nx: {
