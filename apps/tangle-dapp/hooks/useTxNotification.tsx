@@ -24,7 +24,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.TRANSFER]: 'Transfer successful',
   [TxName.PAYOUT_ALL]: 'Payout executed for all stakers',
   [TxName.SETUP_NOMINATOR]: 'Nominator setup successful',
-  [TxName.UpdateNominator]: 'Nominator updated',
+  [TxName.UPDATE_NOMINATOR]: 'Nominator updated',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.

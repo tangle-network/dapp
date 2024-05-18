@@ -106,7 +106,7 @@ const useUpdateNominatorTx = () => {
   }, []);
 
   return useAgnosticTx<Precompile.BATCH, UpdateNominatorOptions>({
-    name: TxName.UpdateNominator,
+    name: TxName.UPDATE_NOMINATOR,
     precompile: Precompile.BATCH,
     substrateTxFactory,
     evmTxFactory,
