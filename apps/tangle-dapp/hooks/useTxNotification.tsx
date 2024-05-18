@@ -55,7 +55,7 @@ const useTxNotification = (txName: TxName) => {
         <div className="space-y-2">
           <Typography variant="h5">{SUCCESS_MESSAGES[txName]}</Typography>
 
-          {successMessage !== undefined && (
+          {successMessage && (
             <Typography variant="body1">{successMessage}</Typography>
           )}
 

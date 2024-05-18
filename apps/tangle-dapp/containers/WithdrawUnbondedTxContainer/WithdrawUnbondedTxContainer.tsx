@@ -35,7 +35,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   const {
     execute: executeWithdrawUnbondedTx,
     status: withdrawUnbondedTxStatus,
-  } = useWithdrawUnbondedTx();
+  } = useWithdrawUnbondedTx(totalUnbondedAmount?.value ?? null);
 
   const submitTx = useCallback(async () => {
     if (executeWithdrawUnbondedTx === null) {

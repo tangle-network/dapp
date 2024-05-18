@@ -104,7 +104,7 @@ const useTransferTx = () => {
       ({ receiverAddress, amount }) =>
         `Successfully transferred ${formatNativeTokenAmount(
           amount
-        )} to ${shortenString(receiverAddress)}`,
+        )} to ${shortenString(receiverAddress)}.`,
       [formatNativeTokenAmount]
     );
 

@@ -1,13 +1,17 @@
+import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import { GetSuccessMessageFunctionType } from '../../types';
 import useSlashingSpans from './useSlashingSpans';
 
-const useWithdrawUnbondedTx = () => {
+const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
+  const formatNativeTokenAmount = useFormatNativeTokenAmount();
   const { result: slashingSpansOpt } = useSlashingSpans();
 
   // TODO: Need to verify whether defaulting to 0 here is the correct behavior.
@@ -41,11 +45,20 @@ const useWithdrawUnbondedTx = () => {
     [slashingSpans]
   );
 
+  const getSuccessMessageFnc: GetSuccessMessageFunctionType<void> = useCallback(
+    () =>
+      withdrawAmount
+        ? `Successfully withdrew ${formatNativeTokenAmount(withdrawAmount)}.`
+        : '',
+    [withdrawAmount, formatNativeTokenAmount]
+  );
+
   return useAgnosticTx<Precompile.STAKING>({
     name: TxName.WITHDRAW_UNBONDED,
     precompile: Precompile.STAKING,
     evmTxFactory,
     substrateTxFactory,
+    getSuccessMessageFnc,
   });
 };
 
