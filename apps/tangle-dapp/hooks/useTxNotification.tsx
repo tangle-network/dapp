@@ -26,6 +26,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.SETUP_NOMINATOR]: 'Nominator setup successful',
   [TxName.UPDATE_NOMINATOR]: 'Nominator updated',
   [TxName.WITHDRAW_EVM_BALANCE]: 'Withdrawal successful',
+  [TxName.UPDATE_RESTAKE_PROFILE]: 'Restake profile updated',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
