@@ -33,11 +33,13 @@ export type SubstrateTxFactory<Context = void> = (
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
   notifyStatusUpdates = true,
+  getSuccessMessageFnc?: (context: Context) => string,
   timeoutDelay = 120_000
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<HexString | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { notificationApi } = useWebbUI();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
@@ -139,6 +141,10 @@ function useSubstrateTx<Context = void>(
 
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
+
+        if (error === null && getSuccessMessageFnc !== undefined) {
+          setSuccessMessage(getSuccessMessageFnc(context));
+        }
       };
 
       try {
@@ -162,6 +168,7 @@ function useSubstrateTx<Context = void>(
       isMountedRef,
       rpcEndpoint,
       status,
+      getSuccessMessageFnc,
     ]
   );
 
@@ -199,6 +206,7 @@ function useSubstrateTx<Context = void>(
     status,
     error,
     txHash,
+    successMessage,
   };
 }
 

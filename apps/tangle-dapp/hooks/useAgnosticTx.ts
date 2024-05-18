@@ -12,6 +12,10 @@ import useEvmPrecompileAbiCall, {
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
 
+export type GetSuccessMessageFunctionType<Context> = (
+  context: Context
+) => string;
+
 export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
   precompile: PrecompileT;
   evmTxFactory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>;
@@ -25,6 +29,15 @@ export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
    * is successful or fails.
    */
   name: TxName;
+
+  /**
+   * A function that returns a success message to display
+   * when the transaction is successful.
+   *
+   * @param context The context object passed to the `execute` function.
+   * @returns The success message to display.
+   */
+  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>;
 };
 
 /**
@@ -39,12 +52,10 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
   evmTxFactory,
   substrateTxFactory,
   name,
+  getSuccessMessageFnc,
 }: AgnosticTxOptions<PrecompileT, Context>) {
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
-
-  const { notifyProcessing, notifySuccess, notifyError } =
-    useTxNotification(name);
 
   const {
     execute: executeSubstrateTx,
@@ -52,7 +63,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     error: substrateError,
     reset: substrateReset,
     txHash: substrateTxHash,
-  } = useSubstrateTx(substrateTxFactory, false);
+    successMessage: substrateSuccessMessage,
+  } = useSubstrateTx(substrateTxFactory, false, getSuccessMessageFnc);
 
   const {
     execute: executeEvmPrecompileAbiCall,
@@ -60,7 +72,11 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     error: evmError,
     reset: evmReset,
     txHash: evmTxHash,
+    successMessage: evmSuccessMessage,
   } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
+
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useTxNotification(name);
 
   const execute = useCallback(
     async (context: Context) => {
@@ -106,7 +122,11 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     // React's setState is asynchronous and the state might
     // not have been updated yet.
     if (txHash !== null) {
-      notifySuccess(txHash);
+      // const successMessage =
+      notifySuccess(
+        txHash,
+        isEvmAccount ? evmSuccessMessage : substrateSuccessMessage
+      );
     } else if (error !== null) {
       notifyError(error);
     }
@@ -119,6 +139,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     notifySuccess,
     substrateError,
     substrateTxHash,
+    evmSuccessMessage,
+    substrateSuccessMessage,
   ]);
 
   // Clear notification state when the active account is disconnected,

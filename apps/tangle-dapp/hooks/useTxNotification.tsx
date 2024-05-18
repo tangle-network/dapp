@@ -36,7 +36,7 @@ const useTxNotification = (txName: TxName) => {
   const processingKey = `${txName}-processing`;
 
   const notifySuccess = useCallback(
-    (txHash: HexString) => {
+    (txHash: HexString, successMessage?: string | null) => {
       closeSnackbar(processingKey);
 
       // In case that the EVM account status is unavailable,
@@ -53,6 +53,10 @@ const useTxNotification = (txName: TxName) => {
       enqueueSnackbar(
         <div className="space-y-2">
           <Typography variant="h5">{SUCCESS_MESSAGES[txName]}</Typography>
+
+          {successMessage !== undefined && (
+            <Typography variant="body1">{successMessage}</Typography>
+          )}
 
           {txExplorerUrl !== null && (
             <Button
