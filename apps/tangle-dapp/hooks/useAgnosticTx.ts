@@ -122,7 +122,6 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     // React's setState is asynchronous and the state might
     // not have been updated yet.
     if (txHash !== null) {
-      // const successMessage =
       notifySuccess(
         txHash,
         isEvmAccount ? evmSuccessMessage : substrateSuccessMessage

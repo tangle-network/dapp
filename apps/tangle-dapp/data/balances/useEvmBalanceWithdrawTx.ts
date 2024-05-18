@@ -33,7 +33,8 @@ const useEvmBalanceWithdrawTx = () => {
         return api.tx.evm.withdraw(evmAddress20, pendingEvmBalance);
       },
       [evmAddress20, pendingEvmBalance]
-    )
+    ),
+    false
   );
 };
 
