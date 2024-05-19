@@ -1,10 +1,5 @@
-import {
-  InjectedExtension,
-  MetadataDef,
-} from '@polkadot/extension-inject/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain } from '@webb-tools/dapp-config';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -18,10 +13,7 @@ import z from 'zod';
 
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
-import { TokenSymbol } from '../types';
 import createCustomNetwork from '../utils/createCustomNetwork';
-import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
-import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
@@ -49,55 +41,9 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-const updateSubstrateWalletsMetadata = async (
-  injector: InjectedExtension,
-  rpcEndpoint: string,
-  tokenSymbol: TokenSymbol,
-  ss58Prefix: number
-) => {
-  const api = await getApiPromise(rpcEndpoint);
-  const existingMetadata = await injector.metadata?.get();
-
-  const metadata: MetadataDef = {
-    tokenDecimals: TANGLE_TOKEN_DECIMALS,
-    tokenSymbol,
-    genesisHash: api.genesisHash.toHex(),
-    specVersion: api.runtimeVersion.specVersion.toNumber(),
-    icon: 'substrate',
-    ss58Format: ss58Prefix,
-    types: {},
-    chain: api.runtimeChain.toString(),
-  };
-
-  // The 'provide' request will throw an error if the user
-  // rejects the request. Leniently catch the error and log it.
-  const handleError = (error: unknown) => {
-    console.error(`Failed to provide metadata to injected extension: ${error}`);
-  };
-
-  // No metadata exists yet; provide it.
-  if (existingMetadata === undefined) {
-    await injector.metadata?.provide(metadata).catch(handleError);
-  }
-  // Metadata exists; check if it's up to date.
-  else {
-    for (const existing of existingMetadata) {
-      // Already up to date; ignore.
-      if (_.isEqual(existing, metadata)) {
-        return;
-      }
-
-      await injector.metadata?.provide(metadata).catch(handleError);
-
-      break;
-    }
-  }
-};
-
 const useNetworkState = () => {
   const { switchChain, activeWallet, chains } = useWebContext();
 
-  const activeAccountAddress = useActiveAccountAddress();
   const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
@@ -226,31 +172,12 @@ const useNetworkState = () => {
           switchChain(webbChain, activeWallet);
         }
       }
-
-      // TODO: Better placement for this, or at least call it once on app start. Also consider having it be a button instead to prevent spamming the user on first visit.
-      // Update Substrate wallet extensions' metadata if appropriate.
-      if (activeAccountAddress !== null && network.ss58Prefix !== undefined) {
-        const injector = await findInjectorForAddress(activeAccountAddress);
-
-        if (injector !== null) {
-          updateSubstrateWalletsMetadata(
-            injector,
-            network.wsRpcEndpoint,
-            network.tokenSymbol,
-            network.ss58Prefix
-          );
-        }
-      }
     },
     [
       network.id,
-      network.ss58Prefix,
-      network.wsRpcEndpoint,
-      network.tokenSymbol,
       setNetwork,
       isEvm,
       activeWallet,
-      activeAccountAddress,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,
