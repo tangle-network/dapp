@@ -1,17 +1,17 @@
 import { BN_MILLION } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import usePolkadotApiRx from '../../hooks/useApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useCurrentEra from './useCurrentEra';
 
 const useActualStakedPercentage = () => {
   const { result: currentEra } = useCurrentEra();
 
-  const { result: totalIssuance } = usePolkadotApiRx(
+  const { result: totalIssuance } = useApiRx(
     useCallback((api) => api.query.balances.totalIssuance(), [])
   );
 
-  const { result: totalStaked } = usePolkadotApiRx(
+  const { result: totalStaked } = useApiRx(
     useCallback(
       (api) => {
         if (currentEra === null) {

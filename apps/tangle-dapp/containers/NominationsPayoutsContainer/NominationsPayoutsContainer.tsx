@@ -29,9 +29,8 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
-import useHistoryDepth from '../../data/staking/useHistoryDepth';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
-import usePolkadotApi, { PolkadotApiSwrKey } from '../../hooks/usePolkadotApi';
+import useApi from '../../hooks/useApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {
   DelegationsAndPayoutsTab as NominationsAndPayoutsTab,
@@ -67,19 +66,16 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
-  const { value: historyDepth } = useHistoryDepth();
-  const { value: progress } = usePolkadotApi(
-    useCallback(async (api) => {
-      const progress = await api.derive.session.progress();
-      return progress;
-    }, []),
-    PolkadotApiSwrKey.SESSION_PROGRESS
+  const { result: historyDepth } = useApi(
+    useCallback(async (api) => api.consts.staking.historyDepth.toBn(), [])
   );
-  const { value: epochDuration } = usePolkadotApi(
-    useCallback(async (api) => {
-      const epochDuration = await api.consts.babe.epochDuration;
-      return epochDuration.toNumber();
-    }, [])
+
+  const { result: progress } = useApi(
+    useCallback((api) => api.derive.session.progress(), [])
+  );
+
+  const { result: epochDuration } = useApi(
+    useCallback(async (api) => api.consts.babe.epochDuration.toNumber(), [])
   );
 
   const { value: queryParamsTab } = useQueryParamKey(
