@@ -50,14 +50,14 @@ const useNetworkState = () => {
   const { network, setNetwork } = useNetworkStore();
 
   const {
-    get: getCachedCustomRpcEndpoint,
+    refresh: getCachedCustomRpcEndpoint,
     set: setCachedCustomRpcEndpoint,
     remove: removeCachedCustomRpcEndpoint,
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
   const {
     set: setCachedNetworkId,
-    get: getCachedNetworkId,
+    refresh: getCachedNetworkId,
     remove: removeCachedNetworkId,
   } = useLocalStorage(LocalStorageKey.KNOWN_NETWORK_ID);
 
@@ -94,10 +94,10 @@ const useNetworkState = () => {
       const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
 
       // If a custom RPC endpoint is cached, return it as a custom network.
-      if (cachedCustomRpcEndpoint !== null) {
+      if (cachedCustomRpcEndpoint.value !== null) {
         setIsCustom(true);
 
-        return createCustomNetwork(cachedCustomRpcEndpoint);
+        return createCustomNetwork(cachedCustomRpcEndpoint.value);
       }
 
       // Otherwise, use the default network.

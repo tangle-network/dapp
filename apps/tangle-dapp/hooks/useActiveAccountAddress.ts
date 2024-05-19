@@ -1,15 +1,13 @@
 import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 
-const useActiveAccountAddress = <DefaultValue extends string | null>(
-  defaultValue: DefaultValue = null as DefaultValue
-): DefaultValue => {
+const useActiveAccountAddress = (): string | null => {
   const [activeAccount] = useActiveAccount();
 
   if (activeAccount === null) {
-    return defaultValue;
+    return null;
   }
 
-  return activeAccount.address as DefaultValue;
+  return activeAccount.address;
 };
 
 export default useActiveAccountAddress;

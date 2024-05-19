@@ -35,8 +35,13 @@ const BalancesTableContainer: FC = () => {
   const { hasClaimableTokens: hasVestedAmount, claimableAmount: vestedAmount } =
     useVestingInfo();
 
-  const { set: setCachedIsDetailsCollapsed, get: getCachedIsDetailsCollapsed } =
-    useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED, false);
+  const {
+    set: setCachedIsDetailsCollapsed,
+    valueOpt: cachedIsDetailsCollapsed,
+  } = useLocalStorage(
+    LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED,
+    false
+  );
 
   const { result: locks } = useApiRx(
     useCallback(
@@ -50,12 +55,13 @@ const BalancesTableContainer: FC = () => {
 
   // Load the cached collapsed state from local storage on mount.
   useEffect(() => {
-    const cachedIsDetailsCollapsed = getCachedIsDetailsCollapsed();
-
-    if (cachedIsDetailsCollapsed !== null) {
-      setIsDetailsCollapsed(cachedIsDetailsCollapsed);
+    if (
+      cachedIsDetailsCollapsed !== null &&
+      cachedIsDetailsCollapsed.value !== null
+    ) {
+      setIsDetailsCollapsed(cachedIsDetailsCollapsed.value);
     }
-  }, [getCachedIsDetailsCollapsed]);
+  }, [cachedIsDetailsCollapsed]);
 
   const handleToggleDetails = useCallback(() => {
     setIsDetailsCollapsed((prev) => {

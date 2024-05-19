@@ -15,8 +15,8 @@ const FeedbackBanner: FC = () => {
 
   const {
     isSet: isBannerDismissalCacheSet,
-    get: getCachedWasBannerDismissed,
     set: setCachedWasBannerDismissed,
+    valueOpt: wasBannerDismissed,
   } = useLocalStorage(LocalStorageKey.WAS_BANNER_DISMISSED);
 
   // If there is no cache key, show the banner by default.
@@ -29,10 +29,10 @@ const FeedbackBanner: FC = () => {
   // If the banner was dismissed, do not show it to prevent
   // annoying the user.
   useEffect(() => {
-    if (getCachedWasBannerDismissed() === true) {
+    if (wasBannerDismissed?.value === true) {
       setShowBanner(false);
     }
-  }, [getCachedWasBannerDismissed]);
+  }, [wasBannerDismissed?.value]);
 
   const onCloseHandler = useCallback(() => {
     setShowBanner(false);

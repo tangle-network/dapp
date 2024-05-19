@@ -310,7 +310,7 @@ export default function usePayouts(): PayoutData {
           .sort((a, b) => a.era - b.era);
         payoutsRef.current = payoutsData;
         setCachedPayouts((previous) => ({
-          ...previous,
+          ...previous?.value,
           [activeSubstrateAddress]: payoutsData,
         }));
         setIsLoading(false);

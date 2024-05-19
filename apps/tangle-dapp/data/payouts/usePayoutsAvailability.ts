@@ -4,15 +4,23 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 const usePayoutsAvailability = () => {
-  const { valueAfterMount: cachedPayouts } = useLocalStorage(
+  const { valueOpt: cachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
     true
   );
+
   const address = useSubstrateAddress();
 
   const payoutsData = useMemo(() => {
-    if (!cachedPayouts || !address) return [];
-    return cachedPayouts[address] || [];
+    if (
+      cachedPayouts === null ||
+      cachedPayouts.value === null ||
+      address === null
+    ) {
+      return [];
+    }
+
+    return cachedPayouts.value[address] || [];
   }, [address, cachedPayouts]);
 
   const [isPayoutsAvailable, setIsPayoutsAvailable] = useState(false);

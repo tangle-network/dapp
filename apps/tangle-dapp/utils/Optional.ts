@@ -42,6 +42,14 @@ class Optional<T extends NonNullable<unknown>> {
 
     return new Optional(f(this.value));
   }
+
+  get isPresent(): boolean {
+    return this.value !== null;
+  }
+
+  get isEmpty(): boolean {
+    return this.value === null;
+  }
 }
 
 export default Optional;
