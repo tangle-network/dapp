@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { getApiPromise, findInjectorForAddress } from '../utils/polkadot';
+import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
 import prepareTxNotification from '../utils/prepareTxNotification';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';

@@ -20,7 +20,7 @@ import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import { TokenSymbol } from '../types';
 import createCustomNetwork from '../utils/createCustomNetwork';
-import { findInjectorForAddress } from '../utils/polkadot';
+import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
@@ -51,21 +51,22 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
 
 const updateSubstrateWalletsMetadata = async (
   injector: InjectedExtension,
+  rpcEndpoint: string,
   tokenSymbol: TokenSymbol,
   ss58Prefix: number
 ) => {
+  const api = await getApiPromise(rpcEndpoint);
   const existingMetadata = await injector.metadata?.get();
 
-  // TODO: Currently using some dummy values.
   const metadata: MetadataDef = {
     tokenDecimals: TANGLE_TOKEN_DECIMALS,
     tokenSymbol,
-    genesisHash: `0x0`,
-    specVersion: 0,
-    icon: 'https://webb.tools/favicon.ico',
+    genesisHash: api.genesisHash.toHex(),
+    specVersion: api.runtimeVersion.specVersion.toNumber(),
+    icon: 'substrate',
     ss58Format: ss58Prefix,
     types: {},
-    chain: 'Webb',
+    chain: api.runtimeChain.toString(),
   };
 
   // The 'provide' request will throw an error if the user
@@ -234,6 +235,7 @@ const useNetworkState = () => {
         if (injector !== null) {
           updateSubstrateWalletsMetadata(
             injector,
+            network.wsRpcEndpoint,
             network.tokenSymbol,
             network.ss58Prefix
           );
@@ -243,6 +245,7 @@ const useNetworkState = () => {
     [
       network.id,
       network.ss58Prefix,
+      network.wsRpcEndpoint,
       network.tokenSymbol,
       setNetwork,
       isEvm,
