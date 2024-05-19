@@ -1,6 +1,9 @@
-import { MetadataDef } from '@polkadot/extension-inject/types';
+import {
+  InjectedExtension,
+  MetadataDef,
+} from '@polkadot/extension-inject/types';
+import { ArrowUpIcon } from '@radix-ui/react-icons';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { ArrowRightUp } from '@webb-tools/icons';
 import {
   IconButton,
   Tooltip,
@@ -8,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
 import _ from 'lodash';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
@@ -19,13 +22,16 @@ const UpdateMetadataButton: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const { network } = useNetworkStore();
 
-  const { result: injector } = usePromise(() => {
-    if (activeAccountAddress === null) {
-      return null;
-    }
+  const { result: injector } = usePromise<InjectedExtension | null>(
+    useCallback(() => {
+      if (activeAccountAddress === null) {
+        return Promise.resolve(null);
+      }
 
-    return findInjectorForAddress(activeAccountAddress ?? '');
-  }, [activeAccountAddress]);
+      return findInjectorForAddress(activeAccountAddress);
+    }, [activeAccountAddress]),
+    null
+  );
 
   const handleClick = async () => {
     if (
@@ -93,11 +99,11 @@ const UpdateMetadataButton: FC = () => {
           onClick={handleClick}
           className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 rounded-full shadow-md bg-mono-20 dark:bg-mono-160 border border-mono-60 dark:border-mono-120"
         >
-          <ArrowRightUp />
+          <ArrowUpIcon />
         </IconButton>
       </TooltipTrigger>
 
-      <TooltipBody side="bottom" sideOffset={-13}>
+      <TooltipBody side="bottom" sideOffset={-10}>
         Update metadata for Substrate wallets
       </TooltipBody>
     </Tooltip>
