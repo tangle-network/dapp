@@ -91,10 +91,10 @@ export type AddressWithIdentity = {
 export type Payout = {
   era: number;
   validator: AddressWithIdentity;
-  validatorTotalStake: string;
+  validatorTotalStake: BN;
   nominators: AddressWithIdentity[];
-  validatorTotalReward: string;
-  nominatorTotalReward: string;
+  validatorTotalReward: BN;
+  nominatorTotalReward: BN;
   nominatorTotalRewardRaw: BN;
 };
 
