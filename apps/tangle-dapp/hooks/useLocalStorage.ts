@@ -1,8 +1,9 @@
 'use client';
 
+import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Payout } from '../types';
+import { Payout, TokenSymbol } from '../types';
 
 export enum LocalStorageKey {
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
@@ -16,6 +17,7 @@ export enum LocalStorageKey {
   VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
   SERVICES_CACHE = 'servicesCache',
+  SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
 }
 
 export type AirdropEligibilityCache = {
@@ -25,6 +27,16 @@ export type AirdropEligibilityCache = {
 export type PayoutsCache = {
   [address: string]: Payout[];
 };
+
+export type SubstrateWalletsMetadataEntry = {
+  tokenSymbol: TokenSymbol;
+  tokenDecimals: number;
+  ss58Prefix: number;
+};
+
+export type SubstrateWalletsMetadataCache = Partial<
+  Record<HexString, SubstrateWalletsMetadataEntry>
+>;
 
 /**
  * Type definition associating local storage keys with their
@@ -49,6 +61,8 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? number
     : T extends LocalStorageKey.WAS_BANNER_DISMISSED
     ? boolean
+    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+    ? SubstrateWalletsMetadataCache
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(

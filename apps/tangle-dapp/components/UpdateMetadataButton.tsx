@@ -2,6 +2,7 @@ import {
   InjectedExtension,
   MetadataDef,
 } from '@polkadot/extension-inject/types';
+import { HexString } from '@polkadot/util/types';
 import { ArrowUpIcon } from '@radix-ui/react-icons';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import {
@@ -11,10 +12,14 @@ import {
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
 import _ from 'lodash';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
+import useLocalStorage, {
+  LocalStorageKey,
+  SubstrateWalletsMetadataEntry,
+} from '../hooks/useLocalStorage';
 import usePromise from '../hooks/usePromise';
 import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
 
@@ -33,22 +38,67 @@ const UpdateMetadataButton: FC = () => {
     null
   );
 
+  const { result: apiPromise } = usePromise(
+    useCallback(
+      () => getApiPromise(network.wsRpcEndpoint),
+      [network.wsRpcEndpoint]
+    ),
+    null
+  );
+
+  const { get: getCache, setWithPreviousValue: setCache } = useLocalStorage(
+    LocalStorageKey.SUBSTRATE_WALLETS_METADATA,
+    true
+  );
+
+  const updateCache = useCallback(
+    (genesisHash: HexString, metadata: SubstrateWalletsMetadataEntry) => {
+      setCache((cache) => ({
+        ...cache,
+        [genesisHash]: metadata,
+      }));
+    },
+    [setCache]
+  );
+
+  const isMetadataUpToDate = useMemo(() => {
+    if (apiPromise === null) {
+      return null;
+    }
+
+    const genesisHash = apiPromise.genesisHash.toHex();
+    const cachedMetadata = getCache();
+    const relevantEntry = cachedMetadata?.[genesisHash];
+
+    if (cachedMetadata === null || relevantEntry === undefined) {
+      return true;
+    }
+
+    return !_.isEqual(relevantEntry, {
+      ss58Prefix: network.ss58Prefix,
+      tokenSymbol: network.tokenSymbol,
+      tokenDecimals: TANGLE_TOKEN_DECIMALS,
+    });
+  }, [apiPromise, getCache, network.ss58Prefix, network.tokenSymbol]);
+
   const handleClick = async () => {
     if (
       injector === null ||
       activeAccountAddress === null ||
-      network.ss58Prefix === undefined
+      network.ss58Prefix === undefined ||
+      isMetadataUpToDate === null
     ) {
       return;
     }
 
     const api = await getApiPromise(network.wsRpcEndpoint);
+    const genesisHash = api.genesisHash.toHex();
     const existingMetadata = await injector.metadata?.get();
 
     const metadata: MetadataDef = {
       tokenDecimals: TANGLE_TOKEN_DECIMALS,
       tokenSymbol: network.tokenSymbol,
-      genesisHash: api.genesisHash.toHex(),
+      genesisHash,
       specVersion: api.runtimeVersion.specVersion.toNumber(),
       icon: 'substrate',
       ss58Format: network.ss58Prefix,
@@ -64,31 +114,32 @@ const UpdateMetadataButton: FC = () => {
       );
     };
 
-    // No metadata exists yet; provide it.
-    if (existingMetadata === undefined) {
-      await injector.metadata?.provide(metadata).catch(handleError);
-    }
-    // Metadata exists; check if it's up to date.
-    else {
-      for (const existing of existingMetadata) {
-        // Already up to date; ignore.
-        if (_.isEqual(existing, metadata)) {
-          return;
-        }
+    const updateMetadata = async () => {
+      await injector.metadata
+        ?.provide(metadata)
+        // Only update the cache if the metadata was successfully
+        // provided.
+        .then(() => {
+          if (network.ss58Prefix === undefined) {
+            return;
+          }
 
-        await injector.metadata?.provide(metadata).catch(handleError);
+          updateCache(genesisHash, {
+            ss58Prefix: network.ss58Prefix,
+            tokenSymbol: network.tokenSymbol,
+            tokenDecimals: TANGLE_TOKEN_DECIMALS,
+          });
+        })
+        .catch(handleError);
+    };
 
-        break;
-      }
+    if (existingMetadata === undefined || !isMetadataUpToDate) {
+      await updateMetadata();
     }
   };
 
-  const isVisible =
-    activeAccountAddress !== null &&
-    network.ss58Prefix !== undefined &&
-    injector !== null;
-
-  if (!isVisible) {
+  // Hide the button if the metadata is up-to-date or if it's not yet known.
+  if (isMetadataUpToDate === null || !isMetadataUpToDate) {
     return null;
   }
 
