@@ -1,6 +1,6 @@
 import { TokenIcon } from '@webb-tools/icons';
 import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
-import noop from 'lodash/nopo';
+import noop from 'lodash/noop';
 
 export default {
   title: 'Design System/templates/TransactionQueueCard',

@@ -1,4 +1,4 @@
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 import { WithdrawConfirm } from '../../containers/ConfirmationCard/WithdrawConfirm';
 export default {
   title: 'Design System/Templates/WithdrawConfirm',

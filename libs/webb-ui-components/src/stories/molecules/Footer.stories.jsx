@@ -1,4 +1,4 @@
-import { Footer } from '../../components/Filter';
+import { Footer } from '../../components/Footer';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

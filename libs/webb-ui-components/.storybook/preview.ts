@@ -1,4 +1,5 @@
-import { withThemeByClassName } from '@storybook/addon-styling';
+import { withThemeByClassName } from '@storybook/addon-themes';
+
 import '../src/tailwind.css';
 import './override.css';
 
@@ -22,3 +23,8 @@ export const decorators = [
     defaultTheme: 'light',
   }),
 ];
+
+export default {
+  decorators,
+  parameters,
+};

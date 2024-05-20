@@ -1,6 +1,6 @@
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
 import { KeyStatusCard } from '../../components/KeyStatusCard';
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 export default {
   title: 'Design System/Organisms/KeyStatusCard',

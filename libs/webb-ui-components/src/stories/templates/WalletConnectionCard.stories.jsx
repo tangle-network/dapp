@@ -1,7 +1,7 @@
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
 import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
 import { WalletConnectionCard } from '../../components/WalletConnectionCard';
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 export default {
   title: 'Design System/Templates/WalletConnectionCard',

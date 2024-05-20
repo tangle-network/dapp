@@ -1,4 +1,4 @@
-import { SkeletonLoader } from '../../components/SkeletonLoader';
+import SkeletonLoader from '../../components/SkeletonLoader';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

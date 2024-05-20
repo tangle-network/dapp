@@ -1,6 +1,6 @@
 // .storybook/manager.js
 
-import { addons } from '@storybook/addons';
+import { addons } from '@storybook/manager-api';
 import webbTheme from './webbTheme.js';
 import favicon from '../src/stories/assets/favicon.png';
 
