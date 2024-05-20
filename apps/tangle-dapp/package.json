@@ -2,5 +2,5 @@
   "name": "@webb-tools/tangle-dapp",
   "version": "0.0.8",
   "license": "Apache-2.0",
-  "type": "module"
+  "type": "commonjs"
 }

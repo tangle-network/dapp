@@ -1,8 +1,12 @@
 //@ts-check
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-import { composePlugins, withNx } from '@nx/next';
-import nextConfigBase from '../../next.config.js';
+// We still use CommonJS for Next.js apps as Nx plugins are not yet supported in ES modules
+// Track the issues here:
+// - https://github.com/nrwl/nx/issues/15682
+// - https://github.com/nrwl/nx/issues/23048#issuecomment-2120106231
+
+const { composePlugins, withNx } = require('@nx/next');
+const nextConfigBase = require('../../next.config.cjs');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -43,4 +47,4 @@ const plugins = [
   withNx,
 ];
 
-export default composePlugins(...plugins)(nextConfig);
+module.exports = composePlugins(...plugins)(nextConfig);

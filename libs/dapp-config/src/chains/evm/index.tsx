@@ -4,6 +4,7 @@
 import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import {
+  type Chain,
   arbitrumGoerli,
   avalancheFuji,
   goerli,
@@ -41,52 +42,64 @@ const localDemeterMulticall3DeploymentBlock = process.env
   ? parseInt(process.env.BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
+function ensurePublicRpc(chain: Chain): Chain {
+  return {
+    ...chain,
+    rpcUrls: {
+      ...chain.rpcUrls,
+      public: {
+        ...chain.rpcUrls.default,
+      },
+    },
+  };
+}
+
 export const chainsConfig: Record<number, ChainConfig> = {
   // Testnet
   [PresetTypedChainId.Goerli]: {
-    ...goerli,
+    ...ensurePublicRpc(goerli),
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
   },
   [PresetTypedChainId.OptimismTestnet]: {
-    ...optimismGoerli,
+    ...ensurePublicRpc(optimismGoerli),
     chainType: ChainType.EVM,
     group: 'optimism',
     tag: 'test',
   },
   [PresetTypedChainId.ArbitrumTestnet]: {
-    ...arbitrumGoerli,
+    ...ensurePublicRpc(arbitrumGoerli),
     chainType: ChainType.EVM,
     group: 'arbitrum',
     tag: 'test',
   },
   [PresetTypedChainId.PolygonTestnet]: {
-    ...polygonMumbai,
+    ...ensurePublicRpc(polygonMumbai),
     chainType: ChainType.EVM,
     group: 'polygon',
     tag: 'test',
   },
   [PresetTypedChainId.MoonbaseAlpha]: {
-    ...moonbaseAlpha,
+    ...ensurePublicRpc(moonbaseAlpha),
     chainType: ChainType.EVM,
     group: 'moonbeam',
     tag: 'test',
   },
   [PresetTypedChainId.Sepolia]: {
-    ...sepolia,
+    ...ensurePublicRpc(sepolia),
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
   },
   [PresetTypedChainId.AvalancheFuji]: {
-    ...avalancheFuji,
+    ...ensurePublicRpc(avalancheFuji),
     chainType: ChainType.EVM,
     group: 'avalanche',
     tag: 'test',
   },
   [PresetTypedChainId.ScrollAlpha]: {
-    ...scrollTestnet,
+    ...ensurePublicRpc(scrollTestnet),
     chainType: ChainType.EVM,
     group: 'scroll',
     tag: 'test',

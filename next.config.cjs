@@ -1,6 +1,6 @@
 // Contains shared configuration for all Next.js apps in the workspace.
 
-import { createSecureHeaders } from 'next-secure-headers';
+const { createSecureHeaders } = require('next-secure-headers');
 
 const securityHeaders = createSecureHeaders({
   frameGuard: 'sameorigin',
@@ -35,4 +35,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
