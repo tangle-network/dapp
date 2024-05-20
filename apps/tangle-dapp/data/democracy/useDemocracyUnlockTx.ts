@@ -7,12 +7,10 @@ import useSubstrateTx from '../../hooks/useSubstrateTx';
  * @remarks
  * This is a Substrate-only transaction (at least for now).
  */
-const useDemocracyUnlockTx = (notifyTxStatusUpdates?: boolean) => {
+const useDemocracyUnlockTx = () => {
   // TODO: Make this agnostic (add support for EVM).
-  return useSubstrateTx(
-    (api, activeSubstrateAddress) =>
-      api.tx.democracy.unlock(activeSubstrateAddress),
-    notifyTxStatusUpdates
+  return useSubstrateTx((api, activeSubstrateAddress) =>
+    api.tx.democracy.unlock(activeSubstrateAddress)
   );
 };
 

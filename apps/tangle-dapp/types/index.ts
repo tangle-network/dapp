@@ -242,3 +242,12 @@ export type BridgeTokenType = {
 };
 
 export type TokenSymbol = 'tTNT' | 'TNT';
+
+/**
+ * Represents a function type that takes a context parameter and returns a success message.
+ * @param context The context parameter.
+ * @returns The success message.
+ */
+export type GetSuccessMessageFunctionType<Context> = (
+  context: Context
+) => string;

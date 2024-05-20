@@ -3,10 +3,10 @@ import assert from 'assert';
 import { useCallback, useRef } from 'react';
 import { z } from 'zod';
 
-import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants';
+import { SERVICE_TYPE_TO_TANGLE_MAP, TxName } from '../../constants';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import useSubstrateTx from '../../hooks/useSubstrateTx';
+import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import { RestakingProfileType, RestakingService } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
 
@@ -28,8 +28,7 @@ type ProfileRecord = {
  */
 const useUpdateRestakingProfileTx = (
   profileType: RestakingProfileType,
-  createIfMissing = false,
-  notifyTxStatusUpdates?: boolean
+  createIfMissing = false
 ) => {
   const activeSubstrateAccount = useSubstrateAddress();
   const sharedRestakeAmountRef = useRef<BN | null>(null);
@@ -39,10 +38,11 @@ const useUpdateRestakingProfileTx = (
   const hasExistingProfile = roleLedger !== null && roleLedger.isSome;
 
   // TODO: Break this into two separate hooks for independent and shared profiles.
-  const { execute, ...other } = useSubstrateTx<{
+  const { execute, ...other } = useSubstrateTxWithNotification<{
     allocations: RestakingAllocationMap;
     maxActiveServices?: number;
   }>(
+    TxName.UPDATE_RESTAKE_PROFILE,
     useCallback(
       (api, _activeSubstrateAddress, context) => {
         // Cannot update a profile that does not exist.
@@ -101,8 +101,7 @@ const useUpdateRestakingProfileTx = (
           : api.tx.roles.createProfile(profile, null);
       },
       [createIfMissing, hasExistingProfile, profileType]
-    ),
-    notifyTxStatusUpdates
+    )
   );
 
   const executeForIndependentProfile = useCallback(
