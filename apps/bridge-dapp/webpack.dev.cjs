@@ -12,9 +12,12 @@ module.exports = composePlugins(
   withNx({
     target: 'node',
   }),
-  (_config, env) => {
+  async (_config, env) => {
     env.context = __dirname;
-    return merge(baseConfig(env, 'development'), {
+
+    const base = await baseConfig(env, 'development');
+
+    return merge(base, {
       devtool: 'eval-source-map',
       devServer: {
         hot: true,
@@ -44,5 +47,5 @@ module.exports = composePlugins(
         ignored: ['.yarn', 'build', 'node_modules'],
       },
     });
-  }
+  },
 );

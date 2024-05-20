@@ -61,7 +61,10 @@ export default (config) =>
   config.output.map((output) => ({
     ...config,
     onwarn(warning, warn) {
-      if (SAFELY_IGNORE_WARNING_CODES.has(warning.code)) {
+      if (
+        SAFELY_IGNORE_WARNING_CODES.has(warning.code) ||
+        warning.message.includes('node_modules') // Ignore warnings from node_modules
+      ) {
         return;
       }
 

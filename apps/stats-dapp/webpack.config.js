@@ -11,8 +11,7 @@ const path = require('path'),
     require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'),
   HtmlWebPackPlugin = require('html-webpack-plugin'),
-  CopyWebpackPlugin = require('copy-webpack-plugin'),
-  { commandSync } = require('execa');
+  CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const { workspaceRoot } = require('nx/src/utils/workspace-root');
 const findPackages = require('../../tools/scripts/findPackages');
@@ -42,15 +41,18 @@ const plugins = fs.existsSync(path.join(__dirname, 'src/public'))
     ]
   : [];
 
-function createWebpackBase() {
-  commandSync('yarn fetch:onChainConfig', {
+async function createWebpackBase() {
+  // Use dynamic import here as `execa` is an esm only module
+  const { execa } = await import('execa');
+
+  await execa({
     cwd: workspaceRoot,
     stdio: 'inherit',
-  });
+  })`yarn fetch:onChainConfig`;
 
   console.log(
     'Running webpack in: ',
-    isDevelopment ? 'development' : 'production'
+    isDevelopment ? 'development' : 'production',
   );
 
   const bridgeEnvVars = Object.keys(process.env)
@@ -291,7 +293,7 @@ function createWebpackBase() {
         (/** @type {{ dependencies: { critical: any; }[]; }} */ data) => {
           delete data.dependencies[0].critical;
           return data;
-        }
+        },
       ),
     ]
       .concat(plugins)

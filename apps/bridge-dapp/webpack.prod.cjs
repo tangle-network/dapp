@@ -10,10 +10,12 @@ module.exports = composePlugins(
   withNx({
     target: 'node',
   }),
-  (_config, env) => {
+  async (_config, env) => {
     env.context = __dirname;
 
-    return merge(baseConfig(env, 'production'), {
+    const base = await baseConfig(env, 'production');
+
+    return merge(base, {
       devtool: process.env.BUILD_ANALYZE ? 'source-map' : false,
       devServer: {
         client: {
@@ -32,5 +34,5 @@ module.exports = composePlugins(
         }),
       ],
     });
-  }
+  },
 );

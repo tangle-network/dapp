@@ -11,7 +11,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-const { commandSync } = require('execa');
 const { workspaceRoot } = require('nx/src/utils/workspace-root');
 const merge = require('lodash/merge');
 
@@ -30,15 +29,18 @@ function mapChunks(name, regs, inc) {
           test,
         },
       }),
-    {}
+    {},
   );
 }
 
-function createWebpack(env, mode = 'production') {
-  commandSync('yarn fetch:onChainConfig', {
+async function createWebpack(env, mode = 'production') {
+  // Use dynamic import here as `execa` is an esm only module
+  const { execa } = await import('execa');
+
+  await execa({
     cwd: workspaceRoot,
     stdio: 'inherit',
-  });
+  })`yarn fetch:onChainConfig`;
 
   console.log(chalk.cyan('Running webpack in: ', mode));
   const isDevelopment = mode === 'development';
@@ -229,7 +231,7 @@ function createWebpack(env, mode = 'production') {
             /* 00 */ /node_modules\/(@babel|ansi-styles|asn1|browserify|buffer|history|html-parse|inherit|lodash|object|path-|parse-asn1|pbkdf2|process|public-encrypt|query-string|readable-stream|regenerator-runtime|repeat|rtcpeerconnection-shim|safe-buffer|stream-browserify|store|tslib|unified|unist-util|util|vfile|vm-browserify|webrtc-adapter|whatwg-fetch)/,
             /* 01 */ /node_modules\/(attr|brorand|camelcase|core|chalk|color|create|cuint|decode-uri|deep-equal|define-properties|detect-browser|es|event|evp|ext|function-bind|has-symbols|ieee754|ip|is|lru|markdown|minimalistic-|moment|next-tick|node-libs-browser|random|regexp|resolve|rxjs|scheduler|sdp|setimmediate|timers-browserify|trough)/,
             /* 03 */ /node_modules\/(base-x|base64-js|blakejs|bip|bn\.js|cipher-base|crypto|des\.js|diffie-hellman|elliptic|hash|hmac|js-sha3|md5|miller-rabin|ripemd160|secp256k1|scryptsy|sha\.js|xxhashjs)/,
-          ])
+          ]),
         ),
       },
     },
@@ -260,8 +262,8 @@ function createWebpack(env, mode = 'production') {
             'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
             'process.env.NODE_ENV': JSON.stringify(mode),
           },
-          bridgeEnvVars
-        )
+          bridgeEnvVars,
+        ),
       ),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
@@ -277,7 +279,7 @@ function createWebpack(env, mode = 'production') {
         (/** @type {{ dependencies: { critical: any; }[]; }} */ data) => {
           delete data.dependencies[0].critical;
           return data;
-        }
+        },
       ),
     ].concat(plugins),
     resolve: {
