@@ -3,14 +3,15 @@ import {
   MetadataDef,
 } from '@polkadot/extension-inject/types';
 import { HexString } from '@polkadot/util/types';
-import { ArrowUpIcon } from '@radix-ui/react-icons';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { RefreshLineIcon } from '@webb-tools/icons';
 import {
   IconButton,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
+import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
 import _ from 'lodash';
 import { FC, useCallback, useMemo, useState } from 'react';
 
@@ -62,7 +63,11 @@ const UpdateMetadataButton: FC = () => {
   );
 
   const isMetadataUpToDate = useMemo(() => {
-    if (apiPromise === null) {
+    // Only update metadata for the mainnet. This is because
+    // the testnet and local networks have the same genesis hash,
+    // so they represent the same network. Only the mainnet's metadata
+    // is relevant.
+    if (apiPromise === null || network.id !== NetworkId.TANGLE_MAINNET) {
       return null;
     }
 
@@ -81,6 +86,7 @@ const UpdateMetadataButton: FC = () => {
   }, [
     apiPromise,
     cachedMetadata?.value,
+    network.id,
     network.ss58Prefix,
     network.tokenSymbol,
   ]);
@@ -150,11 +156,11 @@ const UpdateMetadataButton: FC = () => {
           onClick={handleClick}
           className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 rounded-full shadow-md bg-mono-20 dark:bg-mono-160 border border-mono-60 dark:border-mono-120"
         >
-          <ArrowUpIcon />
+          <RefreshLineIcon />
         </IconButton>
       </TooltipTrigger>
 
-      <TooltipBody side="bottom" sideOffset={-10}>
+      <TooltipBody side="bottom">
         Update metadata for Substrate wallets
       </TooltipBody>
     </Tooltip>
