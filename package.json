@@ -64,7 +64,6 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@polkadot/wasm-crypto": "^7.3.2",
-    "@polkadot/dev": "^0.79.1",
     "webpack": "5.91.0"
   },
   "dependencies": {
@@ -220,12 +219,12 @@
     "@webb-tools/api": "0.1.4-127",
     "@webb-tools/api-derive": "0.1.4-127",
     "@webb-tools/app-util": "0.1.4-127",
-    "@webb-tools/contracts": "0.5.47",
-    "@webb-tools/interfaces": "0.5.47",
+    "@webb-tools/contracts": "1.0.11",
+    "@webb-tools/interfaces": "1.0.11",
     "@webb-tools/sdk-core": "0.1.4-127",
     "@webb-tools/tangle-substrate-types": "0.5.5",
     "@webb-tools/test-utils": "0.1.8",
-    "@webb-tools/tokens": "1.0.8",
+    "@webb-tools/tokens": "1.0.11",
     "@webb-tools/utils": "1.0.11",
     "@webb-tools/vanchor-client": "0.1.27",
     "@webb-tools/wasm-utils": "0.1.4-127",
