@@ -74,11 +74,13 @@ function useEvmPrecompileAbiCall<
   Context = void
 >(
   precompile: PrecompileT,
-  factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>
+  factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>,
+  getSuccessMessageFnc?: (context: Context) => string
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const [txHash, setTxHash] = useState<HexString | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const activeEvmAddress = useEvmAddress20();
   const viemPublicClient = useViemPublicClient();
@@ -139,6 +141,14 @@ function useEvmPrecompileAbiCall<
         setStatus(
           txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
         );
+
+        if (txReceipt.status === 'success') {
+          setSuccessMessage(
+            getSuccessMessageFnc !== undefined
+              ? getSuccessMessageFnc(context)
+              : null
+          );
+        }
       } catch (possibleError) {
         const error = ensureError(possibleError);
 
@@ -153,6 +163,7 @@ function useEvmPrecompileAbiCall<
       status,
       viemPublicClient,
       viemWalletClient,
+      getSuccessMessageFnc,
     ]
   );
 
@@ -169,6 +180,7 @@ function useEvmPrecompileAbiCall<
     status,
     error,
     txHash,
+    successMessage,
   };
 }
 

@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
+import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -7,7 +8,9 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
+import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import { GetSuccessMessageFunctionType } from '../../types';
 import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
@@ -18,6 +21,7 @@ type TransferTxContext = {
 
 const useTransferTx = () => {
   const { fetchEvmPrecompileFees } = useEvmPrecompileFeeFetcher();
+  const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
   const evmTxFactory: EvmTxFactory<
     Precompile.BALANCES_ERC20,
@@ -95,11 +99,21 @@ const useTransferTx = () => {
     []
   );
 
+  const getSuccessMessageFnc: GetSuccessMessageFunctionType<TransferTxContext> =
+    useCallback(
+      ({ receiverAddress, amount }) =>
+        `Successfully transferred ${formatNativeTokenAmount(
+          amount
+        )} to ${shortenString(receiverAddress)}.`,
+      [formatNativeTokenAmount]
+    );
+
   return useAgnosticTx<Precompile.BALANCES_ERC20, TransferTxContext>({
     name: TxName.TRANSFER,
     precompile: Precompile.BALANCES_ERC20,
     evmTxFactory,
     substrateTxFactory,
+    getSuccessMessageFnc,
   });
 };
 

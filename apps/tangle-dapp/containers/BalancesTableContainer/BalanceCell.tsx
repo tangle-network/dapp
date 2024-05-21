@@ -30,7 +30,7 @@ const BalanceCell: FC<{
       {formattedBalance !== null ? (
         // If the balance is not null, display it.
         <Typography variant="body1" fw="semibold">
-          <HiddenValue>{formattedBalance}</HiddenValue>
+          <HiddenValue numberOfStars={4}>{formattedBalance}</HiddenValue>
         </Typography>
       ) : isAccountActive ? (
         // If there is an active account, but the balance is null,

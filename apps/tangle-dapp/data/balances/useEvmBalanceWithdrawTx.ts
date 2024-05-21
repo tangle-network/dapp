@@ -1,39 +1,40 @@
+import type { HexString } from '@polkadot/util/types';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
-import useSubstrateTx from '../../hooks/useSubstrateTx';
-import { toEvmAddress20 } from '../../utils';
-import usePendingEvmBalance from './usePendingEvmBalance';
+import { TxName } from '../../constants';
+import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
+import { GetSuccessMessageFunctionType } from '../../types';
 
-const useEvmBalanceWithdrawTx = () => {
-  const pendingEvmBalance = usePendingEvmBalance();
-  const { substrateAddress, isEvm } = useAgnosticAccountInfo();
+type EvmBalanceWithdrawContext = {
+  pendingEvmBalance: bigint | null;
+  evmAddress20: HexString | null;
+};
 
-  const evmAddress20 = useMemo(() => {
-    // Only Substrate accounts can withdraw EVM balances.
-    if (substrateAddress === null || isEvm) {
-      return null;
-    }
-
-    return toEvmAddress20(substrateAddress);
-  }, [isEvm, substrateAddress]);
-
-  return useSubstrateTx(
+const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {
+  const getSuccessMessageFnc: GetSuccessMessageFunctionType<EvmBalanceWithdrawContext> =
     useCallback(
-      (api) => {
-        if (
-          evmAddress20 === null ||
-          pendingEvmBalance === null ||
-          pendingEvmBalance === ZERO_BIG_INT
-        ) {
-          return null;
-        }
+      () =>
+        typeof tokenAmountStr === 'string'
+          ? `Successfully withdrew ${tokenAmountStr}.`
+          : '',
+      [tokenAmountStr]
+    );
 
-        return api.tx.evm.withdraw(evmAddress20, pendingEvmBalance);
-      },
-      [evmAddress20, pendingEvmBalance]
-    )
+  return useSubstrateTxWithNotification<EvmBalanceWithdrawContext>(
+    TxName.WITHDRAW_EVM_BALANCE,
+    useCallback((api, _, { pendingEvmBalance, evmAddress20 }) => {
+      if (
+        evmAddress20 === null ||
+        pendingEvmBalance === null ||
+        pendingEvmBalance === ZERO_BIG_INT
+      ) {
+        return null;
+      }
+
+      return api.tx.evm.withdraw(evmAddress20, pendingEvmBalance);
+    }, []),
+    getSuccessMessageFnc
   );
 };
 
