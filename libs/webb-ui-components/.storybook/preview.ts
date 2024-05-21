@@ -27,4 +27,5 @@ export const decorators = [
 export default {
   decorators,
   parameters,
+  tags: ['autodocs'],
 };

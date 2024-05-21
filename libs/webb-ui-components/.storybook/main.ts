@@ -56,7 +56,4 @@ export default {
     return config;
   },
   framework: '@storybook/nextjs',
-  docs: {
-    autodocs: true,
-  },
 } satisfies StorybookConfig;

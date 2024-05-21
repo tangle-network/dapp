@@ -136,12 +136,15 @@ async function createWebpack(env, mode = 'production') {
                   ],
                   'transform-class-properties',
                   ['@babel/plugin-transform-runtime', { loose: false }],
-                  ['@babel/plugin-transform-class-properties', { loose: true }],
+                  [
+                    '@babel/plugin-transform-class-properties',
+                    { loose: false },
+                  ],
                   [
                     '@babel/plugin-transform-private-property-in-object',
-                    { loose: true },
+                    { loose: false },
                   ],
-                  ['@babel/plugin-transform-private-methods', { loose: true }],
+                  ['@babel/plugin-transform-private-methods', { loose: false }],
                 ].filter(Boolean),
               },
             },

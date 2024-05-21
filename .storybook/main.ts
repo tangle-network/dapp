@@ -20,9 +20,6 @@ export default {
   //   return config;
   // },
   framework: '@storybook/nextjs',
-  docs: {
-    autodocs: true,
-  },
 } as const satisfies StorybookConfig;
 
 function getAbsolutePath(value: string) {
