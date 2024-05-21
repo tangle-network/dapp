@@ -1,8 +1,11 @@
-import { ErrorBoundary } from '@sentry/react';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
-import { ErrorFallback, Typography } from '@webb-tools/webb-ui-components';
+import {
+  WebbUIErrorBoudary as ErrorBoundary,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { HUBBLE_STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { type FC, type PropsWithChildren } from 'react';
@@ -11,7 +14,9 @@ import { InteractiveFeedbackView } from '../../components';
 import { CreateAccountModal, WalletModalContainer } from '../../containers';
 import { useTryAnotherWalletWithView } from '../../hooks';
 
-const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
+const logger = LoggerService.get('HubbleContainer');
+
+const HubbleContainer: FC<PropsWithChildren> = () => {
   const { activeFeedback } = useWebContext();
 
   const {
@@ -26,7 +31,7 @@ const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <>
-      <ErrorBoundary fallback={<ErrorFallback className="mx-auto" />}>
+      <ErrorBoundary logger={logger}>
         <div className="min-h-[var(--card-height)] flex flex-col mob:!flex-row justify-center">
           <Outlet />
 
@@ -37,7 +42,7 @@ const HubbleContainer: FC<PropsWithChildren> = ({ children }) => {
             className={cx(
               'mob:!hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
               'flex justify-end items-center',
-              'bg-[#ECF4FF] dark:bg-[#181F2B]'
+              'bg-[#ECF4FF] dark:bg-[#181F2B]',
             )}
           >
             <Typography variant="utility" className="!text-blue-50">
