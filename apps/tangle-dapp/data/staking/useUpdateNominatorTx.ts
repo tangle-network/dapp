@@ -16,9 +16,9 @@ import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import toEvmAddress32 from '../../utils/toEvmAddress32';
-import { NominationOptions } from './useSetupNominatorTx';
+import { NominationOptionsContext } from './useSetupNominatorTx';
 
-export type UpdateNominatorOptions = Partial<NominationOptions> & {
+export type UpdateNominatorOptions = Partial<NominationOptionsContext> & {
   nominees: Set<string>;
 };
 
@@ -71,7 +71,7 @@ const useUpdateNominatorTx = () => {
     }, []);
 
   const substrateTxFactory = useCallback<
-    SubstrateTxFactory<Partial<NominationOptions>>
+    SubstrateTxFactory<Partial<NominationOptionsContext>>
   >((api, _activeSubstrateAddress, context) => {
     const bondExtraTx =
       context.bondAmount !== undefined
@@ -106,7 +106,7 @@ const useUpdateNominatorTx = () => {
   }, []);
 
   return useAgnosticTx<Precompile.BATCH, UpdateNominatorOptions>({
-    name: TxName.UpdateNominator,
+    name: TxName.UPDATE_NOMINATOR,
     precompile: Precompile.BATCH,
     substrateTxFactory,
     evmTxFactory,

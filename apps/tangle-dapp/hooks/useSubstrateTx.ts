@@ -3,18 +3,20 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 
+import { TxName } from '../constants';
 import useNetworkStore from '../context/useNetworkStore';
+import { GetSuccessMessageFunctionType } from '../types';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
-import prepareTxNotification from '../utils/prepareTxNotification';
+import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
 import useSubstrateAddress from './useSubstrateAddress';
+import useTxNotification from './useTxNotification';
 
 export enum TxStatus {
   NOT_YET_INITIATED,
@@ -32,14 +34,14 @@ export type SubstrateTxFactory<Context = void> = (
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
-  notifyStatusUpdates = true,
+  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
   timeoutDelay = 120_000
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<HexString | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { notificationApi } = useWebbUI();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
@@ -51,21 +53,6 @@ function useSubstrateTx<Context = void>(
       console.error(error);
     }
   }, [error]);
-
-  // TODO: Replace this with `useTxNotification`.
-  useEffect(() => {
-    if (!notifyStatusUpdates) {
-      return;
-    }
-
-    const notificationOpts = prepareTxNotification(status, error);
-
-    if (notificationOpts === null) {
-      return;
-    }
-
-    notificationApi(notificationOpts);
-  }, [error, notificationApi, notifyStatusUpdates, status]);
 
   const execute = useCallback(
     async (context: Context) => {
@@ -139,6 +126,10 @@ function useSubstrateTx<Context = void>(
 
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
+
+        if (error === null && getSuccessMessageFnc !== undefined) {
+          setSuccessMessage(getSuccessMessageFnc(context));
+        }
       };
 
       try {
@@ -162,6 +153,7 @@ function useSubstrateTx<Context = void>(
       isMountedRef,
       rpcEndpoint,
       status,
+      getSuccessMessageFnc,
     ]
   );
 
@@ -199,7 +191,62 @@ function useSubstrateTx<Context = void>(
     status,
     error,
     txHash,
+    successMessage,
   };
 }
 
 export default useSubstrateTx;
+
+export function useSubstrateTxWithNotification<Context = void>(
+  txName: TxName,
+  factory: SubstrateTxFactory<Context>,
+  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>
+) {
+  const activeAccountAddress = useActiveAccountAddress();
+
+  const {
+    execute: _execute,
+    reset,
+    status,
+    error,
+    txHash,
+    successMessage,
+  } = useSubstrateTx(factory, getSuccessMessageFnc);
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useTxNotification(txName);
+
+  const execute = useCallback(
+    async (context: Context) => {
+      if (_execute === null) {
+        return;
+      }
+      notifyProcessing();
+
+      await _execute(context);
+    },
+    [_execute, notifyProcessing]
+  );
+
+  useEffect(() => {
+    if (activeAccountAddress === null) {
+      reset();
+    }
+  }, [activeAccountAddress, reset]);
+
+  useEffect(() => {
+    if (
+      status === TxStatus.NOT_YET_INITIATED ||
+      status === TxStatus.PROCESSING
+    ) {
+      return;
+    }
+
+    if (txHash !== null) {
+      notifySuccess(txHash, successMessage);
+    } else if (error !== null) {
+      notifyError(error);
+    }
+  }, [status, error, txHash, notifyError, notifySuccess, successMessage]);
+
+  return { execute, status, error, txHash, successMessage };
+}

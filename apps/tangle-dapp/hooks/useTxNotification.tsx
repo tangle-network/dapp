@@ -24,7 +24,9 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.TRANSFER]: 'Transfer successful',
   [TxName.PAYOUT_ALL]: 'Payout executed for all stakers',
   [TxName.SETUP_NOMINATOR]: 'Nominator setup successful',
-  [TxName.UpdateNominator]: 'Nominator updated',
+  [TxName.UPDATE_NOMINATOR]: 'Nominator updated',
+  [TxName.WITHDRAW_EVM_BALANCE]: 'Withdrawal successful',
+  [TxName.UPDATE_RESTAKE_PROFILE]: 'Restake profile updated',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
@@ -36,7 +38,7 @@ const useTxNotification = (txName: TxName) => {
   const processingKey = `${txName}-processing`;
 
   const notifySuccess = useCallback(
-    (txHash: HexString) => {
+    (txHash: HexString, successMessage?: string | null) => {
       closeSnackbar(processingKey);
 
       // In case that the EVM account status is unavailable,
@@ -53,6 +55,10 @@ const useTxNotification = (txName: TxName) => {
       enqueueSnackbar(
         <div className="space-y-2">
           <Typography variant="h5">{SUCCESS_MESSAGES[txName]}</Typography>
+
+          {successMessage && (
+            <Typography variant="body1">{successMessage}</Typography>
+          )}
 
           {txExplorerUrl !== null && (
             <Button
