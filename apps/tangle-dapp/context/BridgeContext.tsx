@@ -36,6 +36,8 @@ interface BridgeContextProps {
   selectedToken: BridgeTokenType;
   setSelectedToken: (token: BridgeTokenType) => void;
   tokenOptions: BridgeTokenType[];
+
+  // type
 }
 
 const BridgeContext = createContext<BridgeContextProps>({

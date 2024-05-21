@@ -13,7 +13,14 @@ export const BRIDGE_SUPPORTED_CHAINS: ChainConfig[] = [
 // This is just a temporary variable to use as supported tokens
 export const BRIDGE_SUPPORTED_TOKENS: BridgeTokenType[] = [
   {
-    id: '0x0',
+    id: 'TNT',
     symbol: 'TNT',
+    decimals: {
+      default: 18,
+    },
+    destChainTransactionFee: {},
+    existentialDeposit: {},
+    substrateAssetId: {},
+    sygmaResourceId: '',
   },
 ];
