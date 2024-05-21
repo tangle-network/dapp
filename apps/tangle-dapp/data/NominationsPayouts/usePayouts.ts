@@ -10,7 +10,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/useApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
@@ -57,14 +57,14 @@ export default function usePayouts(): PayoutData {
     return encodeAddress(publicKey, network.ss58Prefix);
   }, [activeSubstrateAddress, network.ss58Prefix]);
 
-  const { result: nominators } = usePolkadotApiRx(
+  const { result: nominators } = useApiRx(
     useCallback(
       (api) => api.query.staking.nominators(activeSubstrateAddress),
       [activeSubstrateAddress]
     )
   );
 
-  const { result: erasRewardsPoints } = usePolkadotApiRx(
+  const { result: erasRewardsPoints } = useApiRx(
     useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
   );
 
@@ -76,7 +76,7 @@ export default function usePayouts(): PayoutData {
 
   const { data: eraTotalRewards } = useEraTotalRewards();
 
-  const { result: validators } = usePolkadotApiRx(
+  const { result: validators } = useApiRx(
     useCallback((api) => api.query.staking.validators.entries(), [])
   );
 
@@ -310,7 +310,7 @@ export default function usePayouts(): PayoutData {
           .sort((a, b) => a.era - b.era);
         payoutsRef.current = payoutsData;
         setCachedPayouts((previous) => ({
-          ...previous,
+          ...previous?.value,
           [activeSubstrateAddress]: payoutsData,
         }));
         setIsLoading(false);

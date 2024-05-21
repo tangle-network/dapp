@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { getApiRx } from '../../utils/polkadot';
 
 export default function useWaitingCountSubscription(
@@ -14,25 +13,10 @@ export default function useWaitingCountSubscription(
     value2: null,
   }
 ) {
-  const { get: getCachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.WAITING_COUNT,
-    true
-  );
-
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint } = useNetworkStore();
-
-  // After mount, try to get the cached value and set it.
-  useEffect(() => {
-    const cachedValue = getCachedValue();
-
-    if (cachedValue !== null) {
-      setValue1(cachedValue.value1);
-      setIsLoading(false);
-    }
-  }, [getCachedValue]);
 
   useEffect(() => {
     let isMounted = true;
@@ -47,7 +31,6 @@ export default function useWaitingCountSubscription(
 
           if (isMounted && newWaitingCount !== value1) {
             setValue1(newWaitingCount);
-            setCache({ value1: newWaitingCount });
             setIsLoading(false);
           }
         });
@@ -69,7 +52,7 @@ export default function useWaitingCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [value1, setCache, rpcEndpoint]);
+  }, [value1, rpcEndpoint]);
 
   return {
     isLoading,

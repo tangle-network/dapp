@@ -11,15 +11,24 @@ export default function useTotalPayoutRewards(
   defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
-  const { valueAfterMount: cachedPayouts } = useLocalStorage(
+
+  const { valueOpt: cachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
     true
   );
+
   const address = useSubstrateAddress();
 
   const payoutsData = useMemo(() => {
-    if (!cachedPayouts || !address) return [];
-    return cachedPayouts[address] || [];
+    if (
+      cachedPayouts === null ||
+      cachedPayouts.value === null ||
+      address === null
+    ) {
+      return [];
+    }
+
+    return cachedPayouts.value[address] || [];
   }, [address, cachedPayouts]);
 
   const [isLoading, setIsLoading] = useState(true);

@@ -15,6 +15,7 @@ import dynamic from 'next/dynamic';
 import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
+import UpdateMetadataButton from '../../components/UpdateMetadataButton';
 
 const NetworkSelectionButton = dynamic(
   () => import('../../components/NetworkSelector/NetworkSelectionButton'),
@@ -58,11 +59,15 @@ const WalletAndChainContainer: FC = () => {
             </Button>
           )
         ) : (
-          <WalletDropdown
-            accountAddress={activeAccount.address}
-            accountName={activeAccount.name}
-            wallet={activeWallet}
-          />
+          <div className="relative">
+            <WalletDropdown
+              accountAddress={activeAccount.address}
+              accountName={activeAccount.name}
+              wallet={activeWallet}
+            />
+
+            <UpdateMetadataButton />
+          </div>
         )}
       </div>
     </div>
