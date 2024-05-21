@@ -73,7 +73,6 @@ const useTxNotification = (txName: TxName) => {
           )}
         </div>,
         {
-          key: txName,
           variant: 'success',
           autoHideDuration: SUCCESS_TIMEOUT,
         }

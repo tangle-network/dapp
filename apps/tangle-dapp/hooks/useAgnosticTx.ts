@@ -1,5 +1,5 @@
 import { assert } from '@polkadot/util';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
 import { Precompile } from '../constants/evmPrecompiles';
@@ -51,6 +51,10 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
   name,
   getSuccessMessageFnc,
 }: AgnosticTxOptions<PrecompileT, Context>) {
+  const [agnosticStatus, setAgnosticStatus] = useState(
+    TxStatus.NOT_YET_INITIATED
+  );
+
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
 
@@ -95,19 +99,43 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     [executeEvmPrecompileAbiCall, executeSubstrateTx, notifyProcessing]
   );
 
-  const agnosticStatus =
-    isEvmAccount === null
-      ? TxStatus.NOT_YET_INITIATED
-      : isEvmAccount
-      ? evmTxStatus
-      : substrateTxStatus;
+  // Special effect that handles when an account is disconnected,
+  // and prevents the same transaction status from being notified
+  // multiple times.
+  useEffect(() => {
+    const nextAgnosticStatus =
+      isEvmAccount === null
+        ? null
+        : isEvmAccount
+        ? evmTxStatus
+        : substrateTxStatus;
+
+    // When an account is disconnected, reset the transaction status.
+    if (nextAgnosticStatus === null) {
+      substrateReset();
+      evmReset();
+      setAgnosticStatus(TxStatus.NOT_YET_INITIATED);
+    }
+    // Only update the transaction status when it changes.
+    else if (nextAgnosticStatus !== agnosticStatus) {
+      setAgnosticStatus(nextAgnosticStatus);
+    }
+  }, [
+    agnosticStatus,
+    evmReset,
+    evmTxStatus,
+    isEvmAccount,
+    substrateReset,
+    substrateTxStatus,
+  ]);
 
   // Notify transaction status updates via a toast notification.
   useEffect(() => {
+    // Transaction is processing or not yet initiated.
     if (
-      agnosticStatus === TxStatus.NOT_YET_INITIATED ||
+      isEvmAccount === null ||
       agnosticStatus === TxStatus.PROCESSING ||
-      isEvmAccount === null
+      agnosticStatus === TxStatus.NOT_YET_INITIATED
     ) {
       return;
     }
@@ -126,28 +154,10 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     } else if (error !== null) {
       notifyError(error);
     }
-  }, [
-    agnosticStatus,
-    evmError,
-    evmTxHash,
-    isEvmAccount,
-    notifyError,
-    notifySuccess,
-    substrateError,
-    substrateTxHash,
-    evmSuccessMessage,
-    substrateSuccessMessage,
-  ]);
 
-  // Clear notification state when the active account is disconnected,
-  // to prevent a bug from re-triggering the notification when an account
-  // is re-connected.
-  useEffect(() => {
-    if (activeAccountAddress === null) {
-      substrateReset();
-      evmReset();
-    }
-  }, [activeAccountAddress, evmReset, substrateReset]);
+    // Only execute effect when the transaction status changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agnosticStatus]);
 
   return {
     status: agnosticStatus,
