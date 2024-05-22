@@ -135,7 +135,7 @@ function useSubstrateTx<Context = void>(
       try {
         await tx.signAndSend(
           activeSubstrateAddress,
-          { signer: injector.signer },
+          { signer: injector.signer, nonce: -1 },
           handleStatusUpdate
         );
       } catch (possibleError: unknown) {

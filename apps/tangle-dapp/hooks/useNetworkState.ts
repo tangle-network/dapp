@@ -64,15 +64,15 @@ const useNetworkState = () => {
   // Load the initial network from local storage.
   useEffect(() => {
     const getCachedInitialNetwork = () => {
-      const cachedNetworkName = getCachedNetworkId();
+      const cachedNetworkNameOpt = getCachedNetworkId();
 
       // If the cached network name is present, that indicates that
       // the cached network is a Webb network. Find it in the list of
       // all Webb networks, and return it.
-      if (cachedNetworkName !== null) {
+      if (cachedNetworkNameOpt.value !== null) {
         const parsedNetworkId = z
           .nativeEnum(NetworkId)
-          .safeParse(cachedNetworkName);
+          .safeParse(cachedNetworkNameOpt.value);
 
         if (parsedNetworkId.success) {
           const knownNetwork = NETWORK_MAP[parsedNetworkId.data];
@@ -83,7 +83,7 @@ const useNetworkState = () => {
         }
 
         console.warn(
-          `Could not find an associated network for cached network id: ${cachedNetworkName}, deleting from local storage`
+          `Could not find an associated network for cached network id: ${cachedNetworkNameOpt.value}, deleting from local storage`
         );
 
         removeCachedNetworkId();
@@ -91,13 +91,13 @@ const useNetworkState = () => {
         return DEFAULT_NETWORK;
       }
 
-      const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
+      const cachedCustomRpcEndpointOpt = getCachedCustomRpcEndpoint();
 
       // If a custom RPC endpoint is cached, return it as a custom network.
-      if (cachedCustomRpcEndpoint.value !== null) {
+      if (cachedCustomRpcEndpointOpt.value !== null) {
         setIsCustom(true);
 
-        return createCustomNetwork(cachedCustomRpcEndpoint.value);
+        return createCustomNetwork(cachedCustomRpcEndpointOpt.value);
       }
 
       // Otherwise, use the default network.
