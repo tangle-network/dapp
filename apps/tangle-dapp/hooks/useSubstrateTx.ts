@@ -135,6 +135,10 @@ function useSubstrateTx<Context = void>(
       try {
         await tx.signAndSend(
           activeSubstrateAddress,
+          // Use a nonce of -1 to let the API calculate the nonce for us.
+          // This is important as it prevents nonce collisions when multiple
+          // transactions are sent in quick succession. Read more here:
+          // https://polkadot.js.org/docs/api/cookbook/tx/#how-do-i-take-the-pending-tx-pool-into-account-in-my-nonce
           { signer: injector.signer, nonce: -1 },
           handleStatusUpdate
         );
