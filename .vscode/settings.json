@@ -13,5 +13,4 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "typescript.preferences.importModuleSpecifierEnding": "js"
 }

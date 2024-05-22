@@ -150,7 +150,7 @@ const useConnectWallet = (options?: {
 
         default: {
           throw new Error(
-            'Unknown `walletConnectionState` inside `useConnectWallet` hook'
+            'Unknown `walletConnectionState` inside `useConnectWallet` hook',
           );
         }
       }
@@ -177,7 +177,7 @@ const useConnectWallet = (options?: {
         subjects.setWalletTypedChainId(typedChainId);
       }
     },
-    []
+    [],
   );
 
   const connectWallet = useCallback(
@@ -186,7 +186,7 @@ const useConnectWallet = (options?: {
       targetTypedChainIds?: {
         evm?: number;
         substrate?: number;
-      }
+      },
     ) => {
       try {
         subjects.setSelectedWallet(nextWallet);
@@ -194,7 +194,7 @@ const useConnectWallet = (options?: {
 
         const provider = await nextWallet.detect(appName);
 
-        if (!provider) {
+        if (provider === undefined) {
           subjects.setWalletState(WalletState.FAILED);
           subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
           return;
@@ -202,19 +202,17 @@ const useConnectWallet = (options?: {
 
         // If the provider has a connect method, it is a web3 provider
         if ('connect' in provider) {
-          const {
-            chain: { id, unsupported },
-          } = await provider.connect({
+          const { chainId } = await provider.connect({
             chainId:
               typeof targetTypedChainIds?.evm === 'number'
                 ? parseTypedChainId(targetTypedChainIds.evm).chainId
                 : typeof typedChainId === 'number'
-                ? parseTypedChainId(typedChainId).chainId
-                : undefined,
+                  ? parseTypedChainId(typedChainId).chainId
+                  : undefined,
           });
 
-          const chain = getChain(id, ChainType.EVM);
-          if (unsupported || !chain) {
+          const chain = getChain(chainId, ChainType.EVM);
+          if (!chain) {
             setActiveChain(null);
           } else {
             await switchChain(chain, nextWallet);
@@ -228,7 +226,7 @@ const useConnectWallet = (options?: {
           ) {
             await switchChain(
               chainsPopulated[targetSubstrateChainId],
-              nextWallet
+              nextWallet,
             );
           } else {
             const account = await getDefaultAccount(provider);
@@ -246,12 +244,12 @@ const useConnectWallet = (options?: {
         subjects.setConnectError(
           error instanceof WebbError
             ? error
-            : WebbError.from(WebbErrorCodes.FailedToConnectWallet)
+            : WebbError.from(WebbErrorCodes.FailedToConnectWallet),
         );
       }
     },
     // prettier-ignore
-    [appName, setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId]
+    [appName, setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId],
   );
 
   /**
@@ -299,7 +297,7 @@ function useMemoValues(
     walletState: WalletState;
     selectedWallet?: WalletConfig;
     typedChainId?: number;
-  } & Parameters<typeof useConnectWallet>[0]
+  } & Parameters<typeof useConnectWallet>[0],
 ) {
   const { walletState, selectedWallet, typedChainId, useAllWallets } = props;
   const { apiConfig, activeWallet, loading } = useWebContext();
@@ -307,17 +305,17 @@ function useMemoValues(
   const connectingWalletId = useMemo<number | undefined>(
     () =>
       walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
-    [selectedWallet?.id, walletState]
+    [selectedWallet?.id, walletState],
   );
 
   const failedWalletId = useMemo<number | undefined>(
     () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
-    [selectedWallet?.id, walletState]
+    [selectedWallet?.id, walletState],
   );
 
   const isWalletConnected = useMemo(
     () => [activeWallet, !loading].every(Boolean),
-    [activeWallet, loading]
+    [activeWallet, loading],
   );
 
   const supportedWallets = useMemo(
@@ -325,7 +323,7 @@ function useMemoValues(
       apiConfig.getSupportedWallets(typedChainId, {
         filterByActiveAnchor: !useAllWallets,
       }),
-    [apiConfig, typedChainId, useAllWallets]
+    [apiConfig, typedChainId, useAllWallets],
   );
 
   return {

@@ -25,6 +25,8 @@ const nextConfig = {
       process.env.TANGLE_DAPP_USE_LOCAL_RPC_ENDPOINT ?? '',
     OFAC_REGIONS: process.env.OFAC_REGIONS ?? '',
     OFAC_COUNTRY_CODES: process.env.OFAC_COUNTRY_CODES ?? '',
+    DAPP_NAME: process.env.DAPP_NAME ?? '',
+    DAPP_URL: process.env.DAPP_URL ?? '',
   },
 
   nx: {
@@ -43,7 +45,10 @@ const nextConfig = {
         : 'static/wasm/[modulehash].wasm';
 
     // Since Webpack 5 doesn't enable WebAssembly by default, we should do it manually
-    config.experiments = { ...config.experiments, asyncWebAssembly: true };
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
 
     if (!isServer) {
       config.resolve.fallback = {

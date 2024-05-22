@@ -3,13 +3,7 @@
 
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { MetaMaskConnector, RainbowConnector } from './injected';
-
-export type SupportedConnector =
-  | MetaMaskConnector
-  | WalletConnectConnector
-  | RainbowConnector;
+import type { Connector } from 'wagmi';
 
 export interface WalletConfig {
   id: number;
@@ -38,9 +32,7 @@ export interface WalletConfig {
   /**
    * a function that will tell weather the wallet is installed or reachable
    */
-  detect(
-    appName: string
-  ): Promise<SupportedConnector | InjectedExtension | undefined>;
+  detect(appName: string): Promise<Connector | InjectedExtension | undefined>;
 
   /**
    * a list of supported typed chain ids
@@ -50,7 +42,7 @@ export interface WalletConfig {
   /**
    * The wagmi connector for EVM wallets
    */
-  connector?: SupportedConnector;
+  connector?: Connector;
 }
 
 export type ManagedWallet = {

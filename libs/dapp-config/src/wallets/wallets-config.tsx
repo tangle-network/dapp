@@ -9,10 +9,10 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons/wallets';
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
-import { MetaMaskConnector, RainbowConnector } from './injected';
-import { chainsConfig as evmChainsConfig } from '../chains/evm';
+import { metaMask, walletConnect } from 'wagmi/connectors';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
+import wagmiConfig from '../wagmi-config';
+import rainbow from './connectors/rainbow';
 import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
@@ -47,18 +47,21 @@ const ANY_SUBSTRATE = [
 ];
 
 export const connectors = {
-  [WalletId.MetaMask]: new MetaMaskConnector({
-    chains: Object.values(evmChainsConfig),
-  }),
-  [WalletId.WalletConnectV2]: new WalletConnectConnector({
-    options: {
+  [WalletId.MetaMask]: wagmiConfig._internal.connectors.setup(
+    metaMask({
+      dappMetadata: {
+        name: process.env['DAPP_NAME'] ?? 'dApp',
+        url: process.env['DAPP_URL'],
+      },
+    }),
+  ),
+  [WalletId.WalletConnectV2]: wagmiConfig._internal.connectors.setup(
+    walletConnect({
       projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
-    },
-  }),
-  [WalletId.Rainbow]: new RainbowConnector({
-    chains: Object.values(evmChainsConfig),
-  }),
-};
+    }),
+  ),
+  [WalletId.Rainbow]: wagmiConfig._internal.connectors.setup(rainbow()),
+} as const;
 
 export const walletsConfig: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
@@ -66,18 +69,12 @@ export const walletsConfig: Record<number, WalletConfig> = {
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
     Logo: <MetaMaskIcon />,
-    name: 'metamask',
-    title: `MetaMask`,
+    name: 'MetaMask',
+    title: 'MetaMask',
     platform: 'EVM',
     enabled: true,
     async detect() {
-      const metaMaskConnector = connectors[WalletId.MetaMask];
-      const provider = await metaMaskConnector.getProvider();
-      if (!provider) {
-        return;
-      }
-
-      return metaMaskConnector;
+      return connectors[WalletId.MetaMask];
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
@@ -92,7 +89,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   [WalletId.WalletConnectV2]: {
     id: WalletId.WalletConnectV2,
     Logo: <WalletConnectIcon />,
-    name: 'wallet connect',
+    name: 'WalletConnect',
     title: `Wallet Connect`,
     platform: 'EVM',
     enabled: true,
@@ -106,18 +103,12 @@ export const walletsConfig: Record<number, WalletConfig> = {
   [WalletId.Rainbow]: {
     id: WalletId.Rainbow,
     Logo: <RainbowIcon />,
-    name: 'rainbow',
+    name: 'Rainbow',
     title: 'Rainbow',
     platform: 'EVM',
     enabled: true,
     async detect() {
-      const conn = connectors[WalletId.Rainbow];
-      const provider = await conn.getProvider();
-      if (!provider) {
-        return;
-      }
-
-      return conn;
+      return connectors[WalletId.Rainbow];
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://rainbow.me/',

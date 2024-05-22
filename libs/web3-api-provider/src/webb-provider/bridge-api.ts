@@ -20,7 +20,7 @@ import { WebbWeb3Provider } from '../webb-provider';
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   async fetchWrappableAssetsByBridge(
     typedChainId: number,
-    bridge: Bridge
+    bridge: Bridge,
   ): Promise<Currency[]> {
     const wrappableTokens: Currency[] = [];
     const bridgeAsset = bridge.currency;
@@ -64,7 +64,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
           ]);
 
           const nextCurrencyId = Object.keys(
-            this.inner.config.currencies
+            this.inner.config.currencies,
           ).length;
 
           const newToken: Currency = new Currency({
@@ -87,14 +87,14 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
             wrappableTokens.push(knownCurrencies[registeredCurrency]);
           }
         }
-      })
+      }),
     );
 
     // Add the chain's native currency if the wrappableToken allows native
     if (isNativeAllowed) {
       const currencyConfig = getNativeCurrencyFromConfig(
         this.inner.config.currencies,
-        typedChainId
+        typedChainId,
       );
       if (currencyConfig) {
         wrappableTokens.push(new Currency(currencyConfig));
