@@ -77,7 +77,7 @@ function useSubstrateTx<Context = void>(
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
       let newTxHash: HexString;
 
-      // TODO: Reset state here, before executing the tx.
+      // TODO: Consider resetting state here, before executing the tx. Or is it fine to keep the old state?
 
       // The transaction factory may throw an error if it encounters
       // a problem, such as invalid input data. Need to handle that case
