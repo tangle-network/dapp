@@ -24,13 +24,16 @@ import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
 import LockedBalanceDetails from './LockedBalanceDetails/LockedBalanceDetails';
+import useLongestVestingScheduleTime from './useLongestVestingScheduleTime';
 import VestBalanceAction from './VestBalanceAction';
 
 const BalancesTableContainer: FC = () => {
-  const { locked, transferable } = useBalances();
-  const activeSubstrateAddress = useSubstrateAddress();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isDetailsCollapsed, setIsDetailsCollapsed] = useState(false);
+
+  const { locked, transferable } = useBalances();
+  const activeSubstrateAddress = useSubstrateAddress();
+  const longestVestingScheduleTime = useLongestVestingScheduleTime();
 
   const { hasClaimableTokens: hasVestedAmount, claimableAmount: vestedAmount } =
     useVestingInfo();
@@ -91,7 +94,7 @@ const BalancesTableContainer: FC = () => {
             {hasVestedAmount && (
               <AssetCell
                 title="Claimable Vested Balance"
-                tooltip="The total amount of tokens that has vested from vesting schedules and is now available to be claimed."
+                tooltip="The amount of tokens that has vested from vesting schedules and is now available to be claimed. This is only a portion of the total vested balance, which can be released, but the rest may still be locked and subject to vesting schedules."
               />
             )}
 
@@ -129,7 +132,10 @@ const BalancesTableContainer: FC = () => {
             {/* Vested balance */}
             {hasVestedAmount && (
               <div className="flex flex-row items-center justify-between">
-                <BalanceCell amount={vestedAmount} />
+                <BalanceCell
+                  status={longestVestingScheduleTime ?? undefined}
+                  amount={vestedAmount}
+                />
 
                 <div className="p-3">
                   <VestBalanceAction />
