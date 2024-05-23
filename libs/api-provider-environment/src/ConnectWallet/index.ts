@@ -2,7 +2,7 @@
 
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
+import type { WalletConfig } from '@webb-tools/dapp-config';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
   WebbError,
@@ -10,18 +10,11 @@ import {
   type WalletId,
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import {
-  ChainType,
-  calculateTypedChainId,
-  parseTypedChainId,
-} from '@webb-tools/sdk-core/typed-chain-id';
+import assert from 'assert';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useActiveChain, useActiveWallet } from '../WebbProvider/subjects';
-import getDefaultAccount from '../utils/getDefaultAccount';
 import { useWebContext } from '../webb-context/webb-context';
 import subjects, { WalletState } from './subjects';
-import assert from 'assert';
 
 export type UseConnectWalletReturnType = {
   /**
@@ -106,10 +99,7 @@ const useConnectWallet = (options?: {
   const connectError = useObservableState(subjects.connectErrorSubject);
   const typedChainId = useObservableState(subjects.walletTypedChainIdSubject);
 
-  const { appEvent, appName, setActiveAccount, switchChain } = useWebContext();
-
-  const [, setActiveWallet] = useActiveWallet();
-  const [, setActiveChain] = useActiveChain();
+  const { appEvent, appName, switchChain } = useWebContext();
 
   const platformId = useMemo(() => {
     const platform = getPlatformMetaData();
@@ -232,7 +222,7 @@ const useConnectWallet = (options?: {
       }
     },
     // prettier-ignore
-    [appName, setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId],
+    [appName, switchChain, typedChainId],
   );
 
   /**

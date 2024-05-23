@@ -48,7 +48,6 @@ import {
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
-import type { ProviderRpcError, RpcError } from 'viem';
 import { BaseError as WagmiBaseError, WagmiProvider, useConnect } from 'wagmi';
 import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
@@ -588,7 +587,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
 
           // Libraries error check
           if (isViemError(e) || isErrorInstance(e, WagmiBaseError)) {
-            console.dir(e);
             errorMessage = e.shortMessage;
           } else if (e instanceof Error) {
             errorMessage = e.message;

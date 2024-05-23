@@ -286,8 +286,11 @@ export class WebbWeb3Provider
 
   setAccountListener() {
     const unsub = watchAccount(wagmiConfig, {
-      onChange: () => {
-        this.emit('newAccounts', this.accounts);
+      onChange: (account) => {
+        // Only emit the new accounts if the account is not disconnected
+        if (account.status !== 'disconnected') {
+          this.emit('newAccounts', this.accounts);
+        }
       },
     });
 
