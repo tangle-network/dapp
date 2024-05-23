@@ -21,6 +21,7 @@ import { useActiveChain, useActiveWallet } from '../WebbProvider/subjects';
 import getDefaultAccount from '../utils/getDefaultAccount';
 import { useWebContext } from '../webb-context/webb-context';
 import subjects, { WalletState } from './subjects';
+import assert from 'assert';
 
 export type UseConnectWalletReturnType = {
   /**
@@ -139,7 +140,11 @@ const useConnectWallet = (options?: {
         }
 
         case 'sucess': {
-          isSubscribed && subjects.setWalletState(WalletState.SUCCESS);
+          if (isSubscribed) {
+            subjects.setWalletState(WalletState.SUCCESS);
+            subjects.setConnectError(undefined);
+            subjects.setWalletModalOpen(false);
+          }
           break;
         }
 
@@ -194,51 +199,29 @@ const useConnectWallet = (options?: {
 
         const provider = await nextWallet.detect(appName);
 
-        if (provider === undefined) {
+        if (provider === undefined || provider === false) {
           subjects.setWalletState(WalletState.FAILED);
           subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
           return;
         }
 
-        // If the provider has a connect method, it is a web3 provider
-        if ('connect' in provider) {
-          const { chainId } = await provider.connect({
-            chainId:
-              typeof targetTypedChainIds?.evm === 'number'
-                ? parseTypedChainId(targetTypedChainIds.evm).chainId
-                : typeof typedChainId === 'number'
-                  ? parseTypedChainId(typedChainId).chainId
-                  : undefined,
-          });
+        const nextTypedChainId =
+          (provider === true
+            ? targetTypedChainIds?.evm
+            : targetTypedChainIds?.substrate) ?? typedChainId;
 
-          const chain = getChain(chainId, ChainType.EVM);
-          if (!chain) {
-            setActiveChain(null);
-          } else {
-            await switchChain(chain, nextWallet);
-          }
-        } else {
-          const targetSubstrateChainId =
-            targetTypedChainIds?.substrate ?? typedChainId;
-          if (
-            typeof targetSubstrateChainId === 'number' &&
-            chainsPopulated[targetSubstrateChainId]
-          ) {
-            await switchChain(
-              chainsPopulated[targetSubstrateChainId],
-              nextWallet,
-            );
-          } else {
-            const account = await getDefaultAccount(provider);
-            setActiveAccount(account);
-            setActiveWallet(nextWallet);
-            setActiveChain(null);
-          }
-        }
+        assert(
+          nextTypedChainId,
+          WebbError.from(WebbErrorCodes.UnsupportedChain).message,
+        );
 
-        subjects.setConnectError(undefined);
-        subjects.setWalletState(WalletState.SUCCESS);
-        subjects.setWalletModalOpen(false);
+        const nextChain = chainsPopulated[nextTypedChainId];
+        assert(
+          nextChain,
+          WebbError.from(WebbErrorCodes.UnsupportedChain).message,
+        );
+
+        await switchChain(nextChain, nextWallet);
       } catch (error) {
         subjects.setWalletState(WalletState.FAILED);
         subjects.setConnectError(
@@ -284,12 +267,6 @@ const useConnectWallet = (options?: {
 };
 
 export { useConnectWallet };
-
-/** @internal */
-function getChain(chainId: number, chainType: ChainType): Chain | undefined {
-  const typedChainId = calculateTypedChainId(chainType, chainId);
-  return chainsPopulated[typedChainId];
-}
 
 /** @internal */
 function useMemoValues(

@@ -9,10 +9,7 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons/wallets';
-import { metaMask, walletConnect } from 'wagmi/connectors';
 import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
-import wagmiConfig from '../wagmi-config';
-import rainbow from './connectors/rainbow';
 import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
@@ -46,23 +43,6 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
 ];
 
-export const connectors = {
-  [WalletId.MetaMask]: wagmiConfig._internal.connectors.setup(
-    metaMask({
-      dappMetadata: {
-        name: process.env['DAPP_NAME'] ?? 'dApp',
-        url: process.env['DAPP_URL'],
-      },
-    }),
-  ),
-  [WalletId.WalletConnectV2]: wagmiConfig._internal.connectors.setup(
-    walletConnect({
-      projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
-    }),
-  ),
-  [WalletId.Rainbow]: wagmiConfig._internal.connectors.setup(rainbow()),
-} as const;
-
 export const walletsConfig: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
   // https://wagmi.sh/examples/custom-connector
@@ -71,10 +51,11 @@ export const walletsConfig: Record<number, WalletConfig> = {
     Logo: <MetaMaskIcon />,
     name: 'MetaMask',
     title: 'MetaMask',
+    rdns: 'io.metamask',
     platform: 'EVM',
     enabled: true,
     async detect() {
-      return connectors[WalletId.MetaMask];
+      return true;
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
@@ -84,35 +65,33 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
-    connector: connectors[WalletId.MetaMask],
   },
   [WalletId.WalletConnectV2]: {
     id: WalletId.WalletConnectV2,
     Logo: <WalletConnectIcon />,
     name: 'WalletConnect',
-    title: `Wallet Connect`,
+    title: 'Wallet Connect',
     platform: 'EVM',
     enabled: true,
     async detect() {
-      return connectors[WalletId.WalletConnectV2];
+      return true;
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
-    connector: connectors[WalletId.WalletConnectV2],
   },
   [WalletId.Rainbow]: {
     id: WalletId.Rainbow,
     Logo: <RainbowIcon />,
     name: 'Rainbow',
     title: 'Rainbow',
+    rdns: 'me.rainbow',
     platform: 'EVM',
     enabled: true,
     async detect() {
-      return connectors[WalletId.Rainbow];
+      return true;
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://rainbow.me/',
-    connector: connectors[WalletId.Rainbow],
     installLinks: {
       [SupportedBrowsers.FireFox]:
         'https://addons.mozilla.org/en-US/firefox/addon/rainbow-extension/',

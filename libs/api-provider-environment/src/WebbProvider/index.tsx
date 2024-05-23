@@ -31,6 +31,7 @@ import {
   type BareProps,
   type InteractiveFeedback,
 } from '@webb-tools/dapp-types';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
@@ -41,12 +42,14 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   WebbWeb3Provider,
+  isErrorInstance,
   isViemError,
   type Web3RelayerManager,
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
-import { WagmiProvider, useConnect } from 'wagmi';
+import type { ProviderRpcError, RpcError } from 'viem';
+import { BaseError as WagmiBaseError, WagmiProvider, useConnect } from 'wagmi';
 import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
 import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
@@ -304,7 +307,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
     [appEvent, setActiveChain],
   );
 
-  const { connectAsync } = useConnect();
+  const { connectAsync, connectors } = useConnect();
 
   /// Network switcher
   const switchChain = useCallback(
@@ -404,15 +407,17 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
           case WalletId.WalletConnectV2:
           case WalletId.Rainbow:
             {
-              const connector = walletsConfig[wallet.id].connector;
+              const connector = connectors.find((c) => c.id === wallet.rdns);
               if (!connector) {
-                throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
+                throw new WalletNotInstalledError(wallet.id);
               }
 
-              const { chainId } = await connectAsync({
-                chainId: chain.id,
-                connector: connector,
-              });
+              if (wagmiConfig.state.current !== connector.uid) {
+                await connectAsync({
+                  chainId: chain.id,
+                  connector: connector,
+                });
+              }
 
               const relayerManager =
                 (await relayerManagerFactory.getRelayerManager(
@@ -421,7 +426,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 connector,
-                chainId,
+                chain.id,
                 relayerManager,
                 noteManager,
                 apiConfig,
@@ -581,7 +586,9 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
             WebbErrorCodes.SwitchChainFailed,
           ).message;
 
-          if (isViemError(e)) {
+          // Libraries error check
+          if (isViemError(e) || isErrorInstance(e, WagmiBaseError)) {
+            console.dir(e);
             errorMessage = e.shortMessage;
           } else if (e instanceof Error) {
             errorMessage = e.message;
@@ -604,7 +611,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, applicationName, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet, connectAsync],
+    [activeApi, appEvent, applicationName, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet, connectAsync, connectors],
   );
 
   /// a util will store the network/wallet config before switching
@@ -779,22 +786,24 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
         switchChain: switchChainAndStore,
         isConnecting,
         async inactivateApi(): Promise<void> {
-          if (activeApi) {
-            setAccounts([]);
-            setActiveAccount(null);
-            setNoteManager(null);
-            setActiveWallet(undefined);
-            setActiveChain(activeChain);
-            await activeApi.destroy();
-            setActiveApi(undefined);
-            // remove app config from local storage
-            const _networkStorage = await appNetworkStoragePromise;
-            if (_networkStorage) {
-              await Promise.all([
-                _networkStorage.set('defaultNetwork', undefined),
-                _networkStorage.set('defaultWallet', undefined),
-                _networkStorage.set('networksConfig', {}),
-              ]);
+          setAccounts([]);
+          setActiveAccount(null);
+          setNoteManager(null);
+          setActiveWallet(undefined);
+          setActiveChain(activeChain);
+
+          // remove app config from local storage
+          const _networkStorage = await appNetworkStoragePromise;
+          if (_networkStorage) {
+            await Promise.all([
+              _networkStorage.set('defaultNetwork', undefined),
+              _networkStorage.set('defaultWallet', undefined),
+              _networkStorage.set('networksConfig', {}),
+            ]);
+
+            if (activeApi) {
+              await activeApi.destroy();
+              setActiveApi(undefined);
             }
           }
         },

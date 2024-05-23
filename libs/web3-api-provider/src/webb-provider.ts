@@ -79,6 +79,7 @@ import {
 } from 'viem';
 import type { Connector } from 'wagmi';
 import {
+  disconnect,
   getPublicClient,
   getWalletClient,
   signMessage,
@@ -560,6 +561,9 @@ export class WebbWeb3Provider
   }
 
   async endSession(): Promise<void> {
+    await disconnect(wagmiConfig, {
+      connector: this.connector,
+    });
     this.unsubscribeFns.forEach((unsub) => unsub());
     return this.unsubscribeAll();
   }
@@ -597,13 +601,7 @@ export class WebbWeb3Provider
       throw WebbError.from(WebbErrorCodes.NoCurrencyAvailable);
     }
 
-    const walletClient = await getWalletClient(wagmiConfig, {
-      account: this.accounts.activeOrDefault?.address,
-      connector: this.connector,
-      chainId: this.chainId,
-    });
-
-    return walletClient.watchAsset({
+    return this.walletClient.watchAsset({
       type: 'ERC20',
       options: {
         address: addr,
