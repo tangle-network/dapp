@@ -5,8 +5,7 @@ import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle'
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs';
 
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -19,47 +18,25 @@ export default function useActiveAndDelegationCountSubscription(
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
 
-  const { get: getCachedValue, setWithPreviousValue: setCacheWithPrev } =
-    useLocalStorage(LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT, true);
-
-  // After mount, try to get the cached value and set it.
-  useEffect(() => {
-    const cachedValue = getCachedValue();
-
-    if (cachedValue !== null) {
-      setValue1(cachedValue.value1);
-      setValue2(cachedValue.value2);
-      setIsLoading(false);
-    }
-  }, [getCachedValue]);
-
   const {
-    isLoading: isLoadingCounterForNonimators,
+    isLoading: isLoadingCounterForNominators,
     error: counterForNominatorsError,
-  } = usePolkadotApiRx(
+  } = useApiRx(
     useCallback(
       (apiRx) =>
         apiRx.query.staking.counterForNominators().pipe(
           map((nominatorsCount) => {
             const nominatorsCountNum = Number(formatNumber(nominatorsCount));
-            const { value2: cachedCount } = getCachedValue() ?? {};
 
-            if (nominatorsCountNum !== cachedCount) {
-              setValue2(nominatorsCountNum);
-
-              setCacheWithPrev((prev) => {
-                const value1 = prev?.value1 ?? null;
-                return { value1, value2: nominatorsCountNum };
-              });
-            }
+            setValue2(nominatorsCountNum);
           })
         ),
-      [getCachedValue, setCacheWithPrev]
+      []
     )
   );
 
   const { isLoading: isLoadingActiveNominators, error: activeNominatorsError } =
-    usePolkadotApiRx(
+    useApiRx(
       useCallback(
         (apiRx) =>
           apiRx.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED).pipe(
@@ -79,26 +56,18 @@ export default function useActiveAndDelegationCountSubscription(
               }
 
               const activeNominatorsCount = nominators.size;
-              const { value1: cachedCount } = getCachedValue() ?? {};
 
-              if (activeNominatorsCount !== cachedCount) {
-                setValue1(activeNominatorsCount);
-
-                setCacheWithPrev((prev) => {
-                  const value2 = prev?.value2 ?? null;
-                  return { value1: activeNominatorsCount, value2 };
-                });
-              }
+              setValue1(activeNominatorsCount);
             })
           ),
-        [getCachedValue, setCacheWithPrev]
+        []
       )
     );
 
   // Sync the loading & error states.
   useEffect(() => {
-    setIsLoading(isLoadingCounterForNonimators || isLoadingActiveNominators);
-  }, [isLoadingCounterForNonimators, isLoadingActiveNominators]);
+    setIsLoading(isLoadingCounterForNominators || isLoadingActiveNominators);
+  }, [isLoadingCounterForNominators, isLoadingActiveNominators]);
 
   useEffect(() => {
     setError(counterForNominatorsError || activeNominatorsError);

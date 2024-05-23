@@ -17,33 +17,27 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
-import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmountSubscription';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { unBondTokens as unbondTokensEvm } from '../../utils/evm';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
-import { unbondTokens as unbondTokensSubstrate } from '../../utils/polkadot';
+import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
+import useUnbondTx from '../../data/staking/useUnbondTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import { UnbondTxContainerProps } from './types';
 
 const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { notificationApi } = useWebbUI();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
-
-  const [amountToUnbond, setAmountToUnbond] = useState<BN | null>(null);
-  const [isUnbondTxLoading, setIsUnbondTxLoading] = useState(false);
+  const [amount, setAmount] = useState<BN | null>(null);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const walletAddress = useActiveAccountAddress<string>('');
+  const { notificationApi } = useWebbUI();
+  const { nativeTokenSymbol } = useNetworkStore();
+  const { execute: executeUnbondTx, status: unbondTxStatus } = useUnbondTx();
 
   const { data: totalStakedBalanceData, error: totalStakedBalanceError } =
     useTotalStakedAmountSubscription();
 
-  const { data: unbondingAmountData, error: unbondingAmountError } =
-    useUnbondingAmountSubscription();
+  const { result: unbondingAmount, error: unbondingAmountError } =
+    useUnbondingAmount();
 
   const totalStakedBalance = useMemo(() => {
     if (totalStakedBalanceError) {
@@ -72,31 +66,27 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       });
     }
 
-    if (!unbondingAmountData?.value1) {
+    if (unbondingAmount === null || unbondingAmount.value === null) {
       return undefined;
     }
 
-    return totalStakedBalance.sub(unbondingAmountData.value1);
+    return totalStakedBalance.sub(unbondingAmount.value);
   }, [
     notificationApi,
     totalStakedBalance,
-    unbondingAmountData?.value1,
+    unbondingAmount,
     unbondingAmountError,
   ]);
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return (
-      amountToUnbond !== null &&
-      amountToUnbond.gt(BN_ZERO) &&
-      walletAddress.length > 0 &&
-      !hasErrors
-    );
-  }, [amountToUnbond, hasErrors, walletAddress]);
+  const canSubmitTx =
+    amount !== null &&
+    amount.gt(BN_ZERO) &&
+    executeUnbondTx !== null &&
+    !hasErrors;
 
-  const closeModal = useCallback(() => {
-    setIsUnbondTxLoading(false);
+  const closeModalAndReset = useCallback(() => {
     setIsModalOpen(false);
-    setAmountToUnbond(null);
+    setAmount(null);
     setHasErrors(false);
   }, [setIsModalOpen]);
 
@@ -107,34 +97,17 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     [setHasErrors]
   );
 
-  const submitAndSignTx = useCallback(async () => {
-    setIsUnbondTxLoading(true);
-
-    try {
-      if (amountToUnbond === null) {
-        throw new Error('Amount to unbond is required.');
-      }
-      const unbondingAmount = +formatBnToDisplayAmount(amountToUnbond);
-      await executeTx(
-        () => unbondTokensEvm(walletAddress, unbondingAmount),
-        () =>
-          unbondTokensSubstrate(rpcEndpoint, walletAddress, unbondingAmount),
-        `Successfully unbonded ${unbondingAmount} ${nativeTokenSymbol}.`,
-        'Failed to unbond tokens!'
-      );
-
-      closeModal();
-    } catch {
-      setIsUnbondTxLoading(false);
+  const submitTx = useCallback(async () => {
+    if (executeUnbondTx === null || amount === null) {
+      return;
     }
-  }, [
-    amountToUnbond,
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    walletAddress,
-    nativeTokenSymbol,
-  ]);
+
+    await executeUnbondTx({
+      amount: amount,
+    });
+
+    closeModalAndReset();
+  }, [amount, closeModalAndReset, executeUnbondTx]);
 
   return (
     <Modal open>
@@ -143,7 +116,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
+        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Unbond Stake
         </ModalHeader>
 
@@ -152,12 +125,12 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             id="unbond-input"
             title="Amount"
             max={remainingStakedBalanceToUnbond}
-            amount={amountToUnbond}
-            setAmount={setAmountToUnbond}
+            amount={amount}
+            setAmount={setAmount}
             baseInputOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough staked balance"
             setErrorMessage={handleSetErrorMessage}
-            isDisabled={isUnbondTxLoading}
+            isDisabled={unbondTxStatus === TxStatus.PROCESSING}
           />
           <Typography variant="body1" fw="normal">
             Once unbonding, you must wait certain number of eras for your funds
@@ -173,9 +146,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
-            isLoading={isUnbondTxLoading}
-            onClick={submitAndSignTx}
+            isDisabled={!canSubmitTx}
+            isLoading={unbondTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
           >
             Confirm
           </Button>

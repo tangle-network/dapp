@@ -31,6 +31,8 @@ interface JobsListTableProps {
 }
 
 const PAGE_SIZE = 10;
+
+// TODO: This is hardcoded to the testnet.
 const TANGLE_BLOCK_EXPLORER =
   chainsConfig[PresetTypedChainId.TangleTestnetNative].blockExplorers?.default
     .url;

@@ -23,7 +23,8 @@ export type FormatOptions = {
 };
 
 const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
-  includeCommas: false,
+  fractionLength: 4,
+  includeCommas: true,
   padZerosInFraction: false,
 };
 
@@ -41,7 +42,7 @@ function formatBnToDisplayAmount(
   // Convert remainder to a string and pad with zeros if necessary.
   let remainderString = remainder.toString(10);
 
-  // There is a case when the decimals part has leading 0s, so that the remainer
+  // There is a case when the decimals part has leading 0s, so that the remaining
   // string can missing those 0s when we use `mod` method.
   // Solution: Try to construct the string again and check the length,
   // if the length is not the same, we can say that the remainder string is missing
@@ -62,7 +63,7 @@ function formatBnToDisplayAmount(
 
   remainderString = remainderString.substring(0, finalOptions.fractionLength);
 
-  // remove trailing 0s
+  // Remove trailing 0s.
   while (remainderString.endsWith('0')) {
     remainderString = remainderString.substring(0, remainderString.length - 1);
   }

@@ -1,6 +1,6 @@
 import { Save, SaveWithBg } from '@webb-tools/icons';
 import { Input } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 
@@ -15,11 +15,12 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
   placeholder,
   setCustomNetwork,
 }) => {
-  const { get: getCachedCustomRpcEndpoint } = useLocalStorage(
+  const { refresh: getCachedCustomRpcEndpoint } = useLocalStorage(
     LocalStorageKey.CUSTOM_RPC_ENDPOINT
   );
 
   const [value, setValue] = useState('');
+  const wasValueSetRef = useRef(false);
 
   const handleSave = useCallback(
     () => setCustomNetwork(value),
@@ -29,12 +30,18 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
   // On mount, load the cached custom RPC endpoint. If it
   // exists, set it as the initial value of the input.
   useEffect(() => {
+    // Don't set the value more than once.
+    if (wasValueSetRef.current) {
+      return;
+    }
+
     const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
 
-    if (cachedCustomRpcEndpoint !== null) {
-      setValue(cachedCustomRpcEndpoint);
+    if (cachedCustomRpcEndpoint.value !== null && value === '') {
+      setValue(cachedCustomRpcEndpoint.value);
+      wasValueSetRef.current = true;
     }
-  }, [getCachedCustomRpcEndpoint]);
+  }, [getCachedCustomRpcEndpoint, value]);
 
   return (
     <Input

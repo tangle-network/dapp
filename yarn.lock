@@ -5720,9 +5720,9 @@
     execa "^6.0.0"
 
 "@netlify/serverless-functions-api@^1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@netlify/serverless-functions-api/-/serverless-functions-api-1.18.1.tgz#6b4b7995b7bb58dc14cc4215b0f6eea5675f8e6b"
-  integrity sha512-DrSvivchuwsuQW03zbVPT3nxCQa5tn7m4aoPOsQKibuJXIuSbfxzCBxPLz0+LchU5ds7YyOaCc9872Y32ngYzg==
+  version "1.18.2"
+  resolved "https://registry.yarnpkg.com/@netlify/serverless-functions-api/-/serverless-functions-api-1.18.2.tgz#f3ed62542e95419747c8512e63c903881a64d910"
+  integrity sha512-KHhcNWP1B+8Io2aAobzRRuT1FSWb7Bfsih16dxKgaU9IgP/OxMVvssbmhRAmoR01rVGhQEiNN0vk6juMzOafOw==
   dependencies:
     "@netlify/node-cookies" "^0.1.0"
     "@opentelemetry/core" "^1.23.0"

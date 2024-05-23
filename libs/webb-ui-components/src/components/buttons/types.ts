@@ -1,4 +1,3 @@
-import type { ChainConfig } from '@webb-tools/dapp-config';
 import type { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
 import type { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 import type { IconBase } from '@webb-tools/icons/types';
@@ -174,38 +173,43 @@ export type ButtonClassNames = {
 };
 
 /**
- * The ChainButton component props
+ * The ChainOrTokenButtonProps component props
  */
-export type ChainButtonProps = PropsOf<'button'> & {
+export type ChainOrTokenButtonProps = PropsOf<'button'> & {
   /**
-   * The chain to display in the button
+   * The text to display in the button
    */
-  chain?: ChainConfig;
+  value?: string;
 
   /**
-   * The placeholder to display when the chain is not available
+   * The placeholder to display when the value is not set
    */
   placeholder?: string;
 
   /**
-   * The status of the chain
+   * The status of the button
    */
   status?: StatusIndicatorProps['variant'];
 
   /**
-   * The classname of the icon
+   * The className of the icon
    */
-  iconClassname?: string;
+  iconClassName?: string;
 
   /**
-   * The classname of the chain name
+   * The className of the chain name
    */
-  textClassname?: string;
+  textClassName?: string;
 
   /**
-   * The classname of the dropdown icon
+   * The className of the dropdown icon
    */
-  dropdownClassname?: string;
+  dropdownClassName?: string;
+
+  /**
+   * The icon's type
+   */
+  iconType: 'chain' | 'token';
 };
 
 /**

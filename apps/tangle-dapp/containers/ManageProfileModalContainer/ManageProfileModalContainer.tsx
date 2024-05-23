@@ -143,7 +143,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     executeForIndependentProfile: executeUpdateIndependentProfileTx,
     executeForSharedProfile: executeUpdateSharedProfileTx,
     status: updateProfileTxStatus,
-  } = useUpdateRestakingProfileTx(profileType, true, true);
+  } = useUpdateRestakingProfileTx(profileType, true);
 
   const handlePreviousStep = useCallback(() => {
     const diff = getStepDiff(step, false);

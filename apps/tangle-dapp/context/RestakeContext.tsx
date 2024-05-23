@@ -9,13 +9,13 @@ import useRestakingEarnings from '../data/restaking/useRestakingEarnings';
 import useRestakingRoleLedger from '../data/restaking/useRestakingRoleLedger';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 
-export type RestakeContextType = {
+interface RestakeContextProps {
   ledger: Option<PalletRolesRestakingLedger> | null;
   earningsRecord: EarningRecord | null;
   isLoading: boolean;
-};
+}
 
-export const RestakeContext = createContext<RestakeContextType>({
+export const RestakeContext = createContext<RestakeContextProps>({
   ledger: null,
   earningsRecord: null,
   isLoading: true,
@@ -23,8 +23,10 @@ export const RestakeContext = createContext<RestakeContextType>({
 
 const RestakeProvider: FC<PropsWithChildren> = ({ children }) => {
   const substrateAddress = useSubstrateAddress();
-  const { data: ledger, isLoading: isLedgerLoading } =
+
+  const { result: ledger, isLoading: isLedgerLoading } =
     useRestakingRoleLedger(substrateAddress);
+
   const { data: earningsRecord, isLoading: isEarningsLoading } =
     useRestakingEarnings(substrateAddress);
 

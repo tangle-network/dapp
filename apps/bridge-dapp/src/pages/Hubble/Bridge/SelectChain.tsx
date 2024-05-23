@@ -128,9 +128,11 @@ const useChains = (
     return [];
   }
 
-  return Object.keys(anchorRec).map((typedChainId) => {
-    return apiConfig.chains[parseInt(typedChainId)];
-  });
+  return Object.keys(anchorRec)
+    .map((typedChainId) => {
+      return apiConfig.chains[parseInt(typedChainId)];
+    })
+    .filter(Boolean);
 };
 
 /**

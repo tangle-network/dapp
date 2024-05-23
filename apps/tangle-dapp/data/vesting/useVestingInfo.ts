@@ -4,7 +4,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants/index';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useBalancesLock from '../balances/useBalancesLock';
 
@@ -54,17 +54,20 @@ export type VestingInfo = {
 const useVestingInfo = (): VestingInfo => {
   const activeSubstrateAddress = useSubstrateAddress();
 
-  const { data: schedulesOpt } = usePolkadotApiRx(
+  const { result: schedulesOpt } = useApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (activeSubstrateAddress === null) {
+          return null;
+        }
+
         return api.query.vesting.vesting(activeSubstrateAddress);
       },
       [activeSubstrateAddress]
     )
   );
 
-  const { data: currentBlockNumber } = usePolkadotApiRx(
+  const { result: currentBlockNumber } = useApiRx(
     useCallback((api) => api.derive.chain.bestNumber(), [])
   );
 
@@ -94,8 +97,7 @@ const useVestingInfo = (): VestingInfo => {
       schedulesOpt === null ||
       schedulesOpt.isNone ||
       currentBlockNumber === null ||
-      totalVestingAmount === null ||
-      vestingLockAmount === null
+      totalVestingAmount === null
     ) {
       return null;
     }
@@ -123,7 +125,7 @@ const useVestingInfo = (): VestingInfo => {
     // Without this, the total released amount would eventually exceed
     // the total vested amount, displaying incorrect information.
     return BN.min(totalReleased, totalVestingAmount);
-  }, [currentBlockNumber, totalVestingAmount, schedulesOpt, vestingLockAmount]);
+  }, [currentBlockNumber, totalVestingAmount, schedulesOpt]);
 
   const claimableAmount = useMemo(() => {
     if (

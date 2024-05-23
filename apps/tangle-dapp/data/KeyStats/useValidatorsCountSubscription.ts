@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import { firstValueFrom, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useValidatorCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -14,27 +13,11 @@ export default function useValidatorCountSubscription(
     value2: null,
   }
 ) {
-  const { get: getCachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.VALIDATOR_COUNTS,
-    true
-  );
-
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint } = useNetworkStore();
-
-  // After mount, try to get the cached value and set it.
-  useEffect(() => {
-    const cachedValue = getCachedValue();
-
-    if (cachedValue !== null) {
-      setValue1(cachedValue.value1);
-      setValue2(cachedValue.value2);
-      setIsLoading(false);
-    }
-  }, [getCachedValue]);
 
   useEffect(() => {
     let isMounted = true;
@@ -42,7 +25,7 @@ export default function useValidatorCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         sub = api.query.session.validators().subscribe(async (validators) => {
           try {
@@ -58,10 +41,6 @@ export default function useValidatorCountSubscription(
             ) {
               setValue1(validators.length);
               setValue2(totalValidatorsCount.toNumber());
-              setCache({
-                value1: validators.length,
-                value2: totalValidatorsCount.toNumber(),
-              });
               setIsLoading(false);
             }
           } catch (error) {
@@ -93,7 +72,7 @@ export default function useValidatorCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [value1, value2, setCache, rpcEndpoint]);
+  }, [value1, value2, rpcEndpoint]);
 
   return {
     data: { value1, value2 },

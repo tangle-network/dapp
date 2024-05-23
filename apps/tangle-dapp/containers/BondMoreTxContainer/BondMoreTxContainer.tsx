@@ -12,16 +12,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { type FC, useCallback, useEffect, useState } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
-import useNetworkStore from '../../context/useNetworkStore';
 import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useExecuteTxWithNotification from '../../hooks/useExecuteTxWithNotification';
-import { bondExtraTokens as bondExtraTokensEvm } from '../../utils/evm';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
-import { bondExtraTokens as bondExtraTokensSubstrate } from '../../utils/polkadot';
+import useBondExtraTx from '../../data/staking/useBondExtraTx';
 import { BondMoreTxContainerProps } from './types';
 
 const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
@@ -29,14 +24,10 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   setIsModalOpen,
 }) => {
   const { notificationApi } = useWebbUI();
-  const executeTx = useExecuteTxWithNotification();
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
-
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const walletAddress = useActiveAccountAddress();
   const { data: walletBalance, error: walletBalanceError } =
     useTokenWalletFreeBalance();
 
@@ -56,50 +47,35 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     [setHasErrors]
   );
 
-  const continueToSignAndSubmitTx = useMemo(() => {
-    return (
-      walletAddress !== null &&
-      amountToBond !== null &&
-      amountToBond.gt(BN_ZERO) &&
-      !hasErrors
-    );
-  }, [amountToBond, hasErrors, walletAddress]);
-
-  const closeModal = useCallback(() => {
+  const closeModalAndReset = useCallback(() => {
     setIsBondMoreTxLoading(false);
     setIsModalOpen(false);
     setAmountToBond(null);
     setHasErrors(false);
   }, [setIsModalOpen]);
 
+  const { execute: executeBondExtraTx } = useBondExtraTx();
+
   const submitAndSignTx = useCallback(async () => {
+    if (executeBondExtraTx === null || amountToBond === null) {
+      return;
+    }
+
     setIsBondMoreTxLoading(true);
 
     try {
-      if (amountToBond === null || walletAddress === null) return;
+      await executeBondExtraTx({
+        amount: amountToBond,
+      });
 
-      const bondingAmount = +formatBnToDisplayAmount(amountToBond);
-
-      await executeTx(
-        () => bondExtraTokensEvm(walletAddress, bondingAmount),
-        () =>
-          bondExtraTokensSubstrate(rpcEndpoint, walletAddress, bondingAmount),
-        `Successfully bonded ${bondingAmount} ${nativeTokenSymbol}.`,
-        'Failed to bond extra tokens!'
-      );
-
-      closeModal();
+      closeModalAndReset();
     } catch {
       setIsBondMoreTxLoading(false);
     }
-  }, [
-    amountToBond,
-    closeModal,
-    executeTx,
-    rpcEndpoint,
-    walletAddress,
-    nativeTokenSymbol,
-  ]);
+  }, [executeBondExtraTx, amountToBond, closeModalAndReset]);
+
+  const canSubmitTx =
+    amountToBond !== null && amountToBond.gt(BN_ZERO) && !hasErrors;
 
   return (
     <Modal open>
@@ -108,7 +84,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         isOpen={isModalOpen}
         className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
+        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Add Stake
         </ModalHeader>
 
@@ -133,7 +109,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
           <Button
             isFullWidth
-            isDisabled={!continueToSignAndSubmitTx}
+            isDisabled={!canSubmitTx}
             isLoading={isBondMoreTxLoading}
             onClick={submitAndSignTx}
           >

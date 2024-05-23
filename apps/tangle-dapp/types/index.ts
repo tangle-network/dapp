@@ -14,6 +14,7 @@ export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
   ACCOUNT = '/',
+  BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
 }
@@ -37,28 +38,23 @@ export enum DelegationsAndPayoutsTab {
   PAYOUTS = 'Payouts',
 }
 
-export type Validator = {
+export type BasicAccountInfo = {
   address: string;
   identityName: string;
-  activeServicesNum: number;
-  restaked: string;
-  selfStaked: string;
-  effectiveAmountStaked: string;
-  effectiveAmountStakedRaw: string;
-  delegations: string; // TODO: change to nominations
-  commission: string;
-  status: string;
 };
 
-export type Delegator = {
-  address: string;
-  identity: string;
-  selfStaked: string;
+export interface Nominee extends BasicAccountInfo {
   isActive: boolean;
-  commission: string;
-  delegations: string;
-  effectiveAmountStaked: string;
-};
+  commission: BN;
+  selfStakeAmount: BN;
+  totalStakeAmount: BN;
+  nominatorCount: number;
+}
+
+export interface Validator extends Nominee {
+  restakedAmount: BN;
+  activeServicesCount: number;
+}
 
 export type NodeSpecification = {
   os: string;
@@ -70,10 +66,21 @@ export type NodeSpecification = {
   linuxKernel: string;
 };
 
-export enum PaymentDestination {
+// TODO: As of now, the other reward destinations are disabled in Tangle. Confirm whether they'll be used in the future, otherwise adjust this accordingly.
+export enum StakingRewardsDestination {
+  STAKED,
+  STASH,
+  CONTROLLER,
+  ACCOUNT,
+  NONE,
+}
+
+export enum StakingRewardsDestinationDisplayText {
   STAKED = 'Staked (increase the amount at stake)',
   STASH = 'Stash (do not increase the amount at stake)',
   CONTROLLER = 'Controller Account',
+  ACCOUNT = 'Specific Account',
+  NONE = 'None',
 }
 
 export type AddressWithIdentity = {
@@ -84,11 +91,11 @@ export type AddressWithIdentity = {
 export type Payout = {
   era: number;
   validator: AddressWithIdentity;
-  validatorTotalStake: string;
+  validatorTotalStake: BN;
   nominators: AddressWithIdentity[];
-  validatorTotalReward: string;
-  nominatorTotalReward: string;
-  status: 'claimed' | 'unclaimed';
+  validatorTotalReward: BN;
+  nominatorTotalReward: BN;
+  nominatorTotalRewardRaw: BN;
 };
 
 /**
@@ -212,6 +219,7 @@ export type ServiceParticipant = {
 
 export enum NetworkFeature {
   Faucet,
+  EraStakersOverview,
 }
 
 export const ExplorerType = {
@@ -226,3 +234,20 @@ export type ExposureMap = Record<
     exposureMeta: SpStakingPagedExposureMetadata;
   }
 >;
+
+// TODO: might need to add more metadata here: name, decimals, etc.
+export type BridgeTokenType = {
+  id: string;
+  symbol: string;
+};
+
+export type TokenSymbol = 'tTNT' | 'TNT';
+
+/**
+ * Represents a function type that takes a context parameter and returns a success message.
+ * @param context The context parameter.
+ * @returns The success message.
+ */
+export type GetSuccessMessageFunctionType<Context> = (
+  context: Context
+) => string;

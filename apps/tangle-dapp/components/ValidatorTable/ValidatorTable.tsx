@@ -26,7 +26,9 @@ import { FC, useMemo } from 'react';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
+import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
@@ -36,13 +38,17 @@ const getStaticColumns = (isWaiting?: boolean) => [
   ...(IS_PRODUCTION_ENV
     ? []
     : [
-        columnHelper.accessor('activeServicesNum', {
+        columnHelper.accessor('activeServicesCount', {
           header: () => <HeaderCell title="Active Services" />,
-          cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+          cell: (props) => (
+            <div className="flex justify-center items-center">
+              <Chip color="dark-grey">{props.getValue()}</Chip>
+            </div>
+          ),
         }),
-        columnHelper.accessor('restaked', {
+        columnHelper.accessor('restakedAmount', {
           header: () => <HeaderCell title="Restaked" />,
-          cell: (props) => <StringCell value={props.getValue()} />,
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
         }),
       ]),
   // Hide the effective amount staked and self-staked columns on waiting validators tab
@@ -50,23 +56,35 @@ const getStaticColumns = (isWaiting?: boolean) => [
   ...(isWaiting
     ? []
     : [
-        columnHelper.accessor('effectiveAmountStaked', {
-          header: () => <HeaderCell title="Effective amount staked" />,
-          cell: (props) => <StringCell value={props.getValue()} />,
+        columnHelper.accessor('totalStakeAmount', {
+          header: () => (
+            <HeaderCell
+              title="Effective amount staked"
+              className="justify-center"
+            />
+          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
         }),
-        columnHelper.accessor('selfStaked', {
-          header: () => <HeaderCell title="Self-staked" />,
-          cell: (props) => <StringCell value={props.getValue()} />,
+        columnHelper.accessor('selfStakeAmount', {
+          header: () => (
+            <HeaderCell title="Self-staked" className="justify-center" />
+          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
         }),
       ]),
-  columnHelper.accessor('delegations', {
-    header: () => <HeaderCell title="Nominations" />,
-    cell: (props) => <StringCell value={props.getValue()} />,
+  columnHelper.accessor('nominatorCount', {
+    header: () => <HeaderCell title="Nominations" className="justify-center" />,
+    cell: (props) => (
+      <StringCell value={props.getValue().toString()} className="text-center" />
+    ),
   }),
   columnHelper.accessor('commission', {
     header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
-      <StringCell value={Number(props.getValue()).toFixed(2) + '%'} />
+      <StringCell
+        value={calculateCommission(props.getValue()).toFixed(2) + '%'}
+        className="text-center"
+      />
     ),
   }),
   // TODO: Hide this for live app for now

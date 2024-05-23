@@ -6,17 +6,15 @@ import { useEffect, useState } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 import { Service } from '../../types';
 import ensureError from '../../utils/ensureError';
-import {
-  extractServiceDetails,
-  getPolkadotApiPromise,
-} from '../../utils/polkadot';
+import { extractServiceDetails, getApiPromise } from '../../utils/polkadot';
 import useJobIdAndTypeLookupByValidator from '../useJobIdAndTypeLookupByValidator';
 
 export default function useActiveServicesByValidator(validatorAddress: string) {
   const { rpcEndpoint } = useNetworkStore();
   const { notificationApi } = useWebbUI();
+
   const {
-    data: validatorIdAndTypeLookup,
+    result: validatorIdAndTypeLookup,
     isLoading: isLoadingValidatorIdAndTypeLookup,
     error: validatorIdAndTypeLookupError,
   } = useJobIdAndTypeLookupByValidator(validatorAddress);
@@ -34,7 +32,8 @@ export default function useActiveServicesByValidator(validatorAddress: string) {
       }
 
       try {
-        const api = await getPolkadotApiPromise(rpcEndpoint);
+        const api = await getApiPromise(rpcEndpoint);
+
         const fetchedServices = (
           await Promise.all(
             validatorIdAndTypeLookup.map(async (service) => {

@@ -2,11 +2,11 @@ import { isHex } from '@polkadot/util';
 import { redirect } from 'next/navigation';
 
 import { PagePath } from '../../../types';
-import { getPolkadotApiPromise } from '../../../utils/polkadot';
+import { getApiPromise } from '../../../utils/polkadot';
 import SuccessClient from './SuccessClient';
 
 const isBlockHashExistOnChain = async (
-  api: NonNullable<Awaited<ReturnType<typeof getPolkadotApiPromise>>>,
+  api: NonNullable<Awaited<ReturnType<typeof getApiPromise>>>,
   blockHash: string
 ) => {
   try {
@@ -30,7 +30,7 @@ const Page = async ({
     return redirect(PagePath.CLAIM_AIRDROP);
   }
 
-  const api = await getPolkadotApiPromise(rpcEndpoint);
+  const api = await getApiPromise(rpcEndpoint);
 
   const isValidBlockHash =
     typeof blockHash === 'string' &&

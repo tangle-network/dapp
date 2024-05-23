@@ -1,25 +1,24 @@
-import type { u128 } from '@polkadot/types';
+import { BN_MILLION } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import calculateBnPercentage from '../../utils/calculateBnPercentage';
+import useApiRx from '../../hooks/useApiRx';
 import useCurrentEra from './useCurrentEra';
 
 const useActualStakedPercentage = () => {
-  const { data: currentEra } = useCurrentEra();
+  const { result: currentEra } = useCurrentEra();
 
-  const { data: totalIssuance } = usePolkadotApiRx(
+  const { result: totalIssuance } = useApiRx(
     useCallback((api) => api.query.balances.totalIssuance(), [])
   );
 
-  const { data: totalStaked } = usePolkadotApiRx(
+  const { result: totalStaked } = useApiRx(
     useCallback(
       (api) => {
         if (currentEra === null) {
           return null;
         }
 
-        return api.query.staking.erasTotalStake<u128>(currentEra);
+        return api.query.staking.erasTotalStake(currentEra);
       },
       [currentEra]
     )
@@ -30,7 +29,13 @@ const useActualStakedPercentage = () => {
       return null;
     }
 
-    return calculateBnPercentage(totalStaked, totalIssuance);
+    const stakedFraction =
+      totalStaked.isZero() || totalIssuance.isZero()
+        ? 0
+        : totalStaked.mul(BN_MILLION).div(totalIssuance).toNumber() /
+          BN_MILLION.toNumber();
+
+    return (stakedFraction * 100).toFixed(1);
   }, [totalIssuance, totalStaked]);
 };
 
