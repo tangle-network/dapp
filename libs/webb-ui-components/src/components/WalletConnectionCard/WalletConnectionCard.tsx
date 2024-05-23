@@ -24,11 +24,12 @@ export const WalletConnectionCard = forwardRef<
       downloadWalletURL,
       getHelpURL,
       onTryAgainBtnClick,
+      tryAgainBtnProps,
       wallets,
       contentDefaultText,
       ...props
     },
-    ref
+    ref,
   ) => {
     const connectingWallet = useMemo(() => {
       if (!connectingWalletId) {
@@ -53,7 +54,7 @@ export const WalletConnectionCard = forwardRef<
           {...props}
           className={twMerge(
             'hidden lg:flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
-            className
+            className,
           )}
           ref={ref}
         >
@@ -84,6 +85,7 @@ export const WalletConnectionCard = forwardRef<
                 errorMessage={errorMessage}
                 onTryAgainBtnClick={onTryAgainBtnClick}
                 contentDefaultText={contentDefaultText}
+                tryAgainBtnProps={tryAgainBtnProps}
               />
             </div>
 
@@ -103,7 +105,7 @@ export const WalletConnectionCard = forwardRef<
           className={twMerge(
             'max-w-full w-[356px] min-h-[448px] mx-9 lg:hidden rounded-lg bg-mono-0 dark:bg-mono-190',
             'flex flex-col',
-            className
+            className,
           )}
           ref={ref}
         >
@@ -131,6 +133,7 @@ export const WalletConnectionCard = forwardRef<
                 errorMessage={errorMessage}
                 onTryAgainBtnClick={onTryAgainBtnClick}
                 contentDefaultText={contentDefaultText}
+                tryAgainBtnProps={tryAgainBtnProps}
               />
             </div>
           )}
@@ -144,7 +147,7 @@ export const WalletConnectionCard = forwardRef<
         </div>
       </>
     );
-  }
+  },
 );
 
 /***********************
@@ -155,7 +158,8 @@ type PickedKeys =
   | 'onTryAgainBtnClick'
   | 'errorBtnText'
   | 'errorMessage'
-  | 'contentDefaultText';
+  | 'contentDefaultText'
+  | 'tryAgainBtnProps';
 
 const WalletContent = forwardRef<
   HTMLDivElement,
@@ -174,9 +178,10 @@ const WalletContent = forwardRef<
       failedWallet,
       contentDefaultText,
       onTryAgainBtnClick,
+      tryAgainBtnProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -205,7 +210,11 @@ const WalletContent = forwardRef<
               {errorMessage}
             </Typography>
 
-            <Button className="mx-auto" onClick={onTryAgainBtnClick}>
+            <Button
+              onClick={onTryAgainBtnClick}
+              {...tryAgainBtnProps}
+              className={twMerge('mx-auto', tryAgainBtnProps?.className)}
+            >
               {errorBtnText}
             </Button>
           </>
@@ -257,7 +266,7 @@ const WalletContent = forwardRef<
         )}
       </div>
     );
-  }
+  },
 );
 
 const WalletList: FC<

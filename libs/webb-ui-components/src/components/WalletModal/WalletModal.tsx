@@ -4,6 +4,7 @@ import { forwardRef, useCallback, useMemo } from 'react';
 import { Modal, ModalContent } from '../Modal';
 import { WalletConnectionCard } from '../WalletConnectionCard';
 import { WalletModalProps } from './types';
+import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 
 export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
   (
@@ -24,7 +25,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       contentDefaultText,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Get the current failed or connecting wallet
     const getCurrentWallet = useCallback(() => {
@@ -48,7 +49,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       (isOpen: boolean) => {
         toggleModal(isOpen);
       },
-      [toggleModal]
+      [toggleModal],
     );
 
     const downloadURL = useMemo(() => {
@@ -62,6 +63,10 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
     }, [getCurrentWallet, platformId]);
 
     const handleTryAgainBtnClick = useCallback(async () => {
+      if (connectError instanceof WalletNotInstalledError) {
+        return;
+      }
+
       if (!selectedWallet) {
         notificationApi.addToQueue({
           variant: 'warning',
@@ -72,7 +77,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       }
 
       await connectWallet(selectedWallet);
-    }, [connectWallet, notificationApi, selectedWallet]);
+    }, [connectWallet, notificationApi, selectedWallet, connectError]);
 
     return (
       <div ref={ref} {...props}>
@@ -92,6 +97,19 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
               errorMessage={errorMessage}
               failedWalletId={failedWalletId}
               onTryAgainBtnClick={handleTryAgainBtnClick}
+              errorBtnText={
+                connectError instanceof WalletNotInstalledError
+                  ? 'Download'
+                  : 'Try Again'
+              }
+              tryAgainBtnProps={
+                connectError instanceof WalletNotInstalledError
+                  ? {
+                      href: downloadURL?.toString(),
+                      target: '_blank',
+                    }
+                  : {}
+              }
               downloadWalletURL={downloadURL}
               contentDefaultText={contentDefaultText}
             />
@@ -99,5 +117,5 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
         </Modal>
       </div>
     );
-  }
+  },
 );
