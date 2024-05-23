@@ -40,7 +40,7 @@ const BalancesTableContainer: FC = () => {
 
   const {
     set: setCachedIsDetailsCollapsed,
-    valueOpt: cachedIsDetailsCollapsed,
+    valueOpt: cachedIsDetailsCollapsedOpt,
   } = useLocalStorage(
     LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED,
     false
@@ -59,12 +59,12 @@ const BalancesTableContainer: FC = () => {
   // Load the cached collapsed state from local storage on mount.
   useEffect(() => {
     if (
-      cachedIsDetailsCollapsed !== null &&
-      cachedIsDetailsCollapsed.value !== null
+      cachedIsDetailsCollapsedOpt !== null &&
+      cachedIsDetailsCollapsedOpt.value !== null
     ) {
-      setIsDetailsCollapsed(cachedIsDetailsCollapsed.value);
+      setIsDetailsCollapsed(cachedIsDetailsCollapsedOpt.value);
     }
-  }, [cachedIsDetailsCollapsed]);
+  }, [cachedIsDetailsCollapsedOpt]);
 
   const handleToggleDetails = useCallback(() => {
     setIsDetailsCollapsed((prev) => {
