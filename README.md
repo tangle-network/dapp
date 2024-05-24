@@ -34,17 +34,19 @@
 
 <h2 id="start"> Getting Started </h2>
 
-This monorepo is the cornerstone for decentralized interfaces within the Webb protocol, incorporating a suite of dApps, including the revolutionary [Tangle Network](https://tangle.tools) applications. These applications are geared towards kickstarting advanced cryptographic developments and innovations in blockchain technology, leveraging multi-party computation (MPC) services and cross-chain capabilities. 
+This monorepo is the cornerstone for decentralized interfaces within the Webb protocol, incorporating a suite of dApps, including the revolutionary [Tangle Network](https://tangle.tools) applications. These applications are geared towards kickstarting advanced cryptographic developments and innovations in blockchain technology, leveraging multi-party computation (MPC) services and cross-chain capabilities.
 
 It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` directory contains the protocol's interfaces while `libs` contains the necessary code and logic.
 
 ### Prerequisites
 
-This repository makes use of yarn, nodejs, and requires version node v18. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [yarn](https://classic.yarnpkg.com/en/docs/install):
+This repository makes use of yarn, nodejs, and requires version node v18.12.x. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [yarn](https://yarnpkg.com/):
 
-```bash
-npm install --global yarn
-```
+1. Run `corepack enable` to activate [Corepack](https://nodejs.org/api/corepack.html)
+2. Go into your project directory
+3. Run `yarn set version 4`
+
+For more information about the migration, you can refer to the Yarn [documentation](https://yarnpkg.com/migration/guide#migration-steps).
 
 Great! Now your **Node** environment is ready!
 
@@ -154,7 +156,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 If you need help or you want to additional information please:
 
 - Refer to the [Tangle Network Official Documentation](https://docs.tangle.tools/) or [Webb Official Documentation](https://docs.webb.tools/).
-- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/tangle-dapp) or [Webb dApp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback). 
+- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/tangle-dapp) or [Webb dApp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback).
 - If you found a bug please [open an issue](https://github.com/webb-tools/webb-dapp/issues/new/choose) or [join our Discord](https://discord.gg/jUDeFpggrR) server to report it.
 
 ---
