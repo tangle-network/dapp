@@ -74,6 +74,14 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
+    name: 'Liquid Restaking',
+    href: PagePath.LIQUID_RESTAKING,
+    isInternal: true,
+    isNext: true,
+    Icon: FundsLine,
+    subItems: [],
+  },
+  {
     name: 'Claim Airdrop',
     href: PagePath.CLAIM_AIRDROP,
     isInternal: true,
