@@ -9,7 +9,6 @@ import type {
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
-import { chainsConfig } from '@webb-tools/dapp-config';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -235,28 +234,6 @@ export type ExposureMap = Record<
     exposureMeta: SpStakingPagedExposureMetadata;
   }
 >;
-
-export type BridgeTokenId = 'tTNT' | 'TNT';
-
-export type ChainId = keyof typeof chainsConfig;
-
-export type BridgeTokenType = {
-  id: BridgeTokenId;
-  symbol: string; // this is also used to get the token icon
-  decimals: Partial<Record<ChainId, number>> & { default: number };
-  substrateAssetId?: Partial<Record<ChainId, unknown>>; // for future use (ex: tgDOT, tgETH)
-  sygmaResourceId?: string;
-  destChainTransactionFee: Partial<Record<ChainId, BN>>;
-  existentialDeposit: Partial<Record<ChainId, BN>>;
-
-  // NOTE: Tangle is native token, not ERC20, but might need this for other tokens
-  // erc20TokenContractAddress?: {
-  //   [chainId in EvmChainId]?: HexString
-  // }
-
-  // NOTE: add this for Moonbeam and Moonriver
-  // xc20Address?: Partial<Record<ChainId, HexString>>
-};
 
 export type TokenSymbol = 'tTNT' | 'TNT';
 
