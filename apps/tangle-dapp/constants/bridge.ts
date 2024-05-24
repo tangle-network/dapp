@@ -6,18 +6,12 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
   tTNT: {
     id: 'tTNT',
     symbol: 'tTNT',
-    decimals: {
-      default: 18,
-    },
     existentialDeposit: {},
     destChainTransactionFee: {},
   },
   TNT: {
     id: 'TNT',
     symbol: 'TNT',
-    decimals: {
-      default: 18,
-    },
     existentialDeposit: {},
     destChainTransactionFee: {},
   },
@@ -35,6 +29,7 @@ type BridgeType = Record<
   >
 >;
 
+// TODO: This is a dummy data for now
 export const BRIDGE: BridgeType = {
   [PresetTypedChainId.Sepolia]: {
     [PresetTypedChainId.TangleMainnetEVM]: {

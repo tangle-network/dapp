@@ -10,7 +10,6 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-// TODO: Remove SygmaUSD when Tangle is ready in the SDK
 export type BridgeTokenId = 'tTNT' | 'TNT';
 
 export type ChainId = PresetTypedChainId;
@@ -18,13 +17,6 @@ export type ChainId = PresetTypedChainId;
 export type BridgeTokenType = {
   id: BridgeTokenId;
   symbol: string; // this is also used to get the token icon
-
-  /**
-   * The number of decimal places allowed for the token on each chain
-   * This is required when calculating the amount when transferring tokens between chains
-   * since each chain will have a different decimal places
-   */
-  decimals: Partial<Record<ChainId, number>> & { default: number };
 
   /**
    * Transaction fee to be paid on the destination chain
