@@ -4,11 +4,12 @@
 name: deploy-faucet 🌐
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    branches: [develop, feature/**]
-    paths:
-      - 'apps/faucet/**'
+  # Temporary disable as the backend has been changed and it breaks the build
+  # pull_request:
+  #   types: [opened, synchronize, reopened, ready_for_review]
+  #   branches: [develop, feature/**]
+  #   paths:
+  #     - 'apps/faucet/**'
 
   workflow_dispatch:
 
