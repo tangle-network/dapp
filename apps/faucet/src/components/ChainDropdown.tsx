@@ -24,13 +24,13 @@ const ChainDropdown: FC = () => {
       Object.keys(config)
         .map((c) => chainsConfig[+c])
         .filter(Boolean),
-    [config]
+    [config],
   );
 
   const chainInputVal = useMemo(
     () =>
       typedChainId ? { name: chainsConfig[typedChainId].name } : undefined,
-    [typedChainId]
+    [typedChainId],
   );
 
   const handleValueChange = useCallback(
@@ -40,7 +40,7 @@ const ChainDropdown: FC = () => {
       const currentVal = inputValues$.getValue();
       inputValues$.next({ ...currentVal, chain: val });
     },
-    [inputValues$]
+    [inputValues$],
   );
 
   return (

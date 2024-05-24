@@ -37,7 +37,7 @@ export function CheckBoxMenuGroup<T>({
 }: CheckBoxMenuGroupProps<T>) {
   const isAllSelected = useMemo(
     () => value === 'all' || value.length === options.length,
-    [value, options]
+    [value, options],
   );
   return (
     <>

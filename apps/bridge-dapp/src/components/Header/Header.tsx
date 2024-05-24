@@ -84,7 +84,7 @@ export const Header: FC<HeaderProps> = () => {
           </NavLink>
         );
       }),
-    [items]
+    [items],
   );
 
   return (

@@ -168,7 +168,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             error: 'failed to query the session',
             isLoading: false,
           });
-        }
+        },
       );
     }
   }, [session, call]);
@@ -207,7 +207,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               session: session.id,
               end: sessionTimeStamp
                 ? new Date(
-                    new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000
+                    new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000,
                   )
                 : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
@@ -289,7 +289,7 @@ type AuthorizesFilter = {
 export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
 
 export function useAuthorities(
-  reqQuery: PageInfoQuery<AuthorizesFilter>
+  reqQuery: PageInfoQuery<AuthorizesFilter>,
 ): Loadable<Page<AuthorityListItem>> {
   const [authorities, setAuthorities] = useState<
     Loadable<Page<AuthorityListItem>>
@@ -357,7 +357,7 @@ export function useAuthorities(
             .map((sessionValidator): AuthorityListItem => {
               const auth = mapSessionAuthValidatorNode(sessionValidator as any);
               const authority = authoritiesUptimes?.find(
-                (item) => item?.authorityId === auth.id
+                (item) => item?.authorityId === auth.id,
               );
               const uptime = authority ? authority.uptime : 0;
 
@@ -578,7 +578,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
 }
 
 export function useSessionHistory(
-  pageQuery: PageInfoQuery
+  pageQuery: PageInfoQuery,
 ): Loadable<Page<SessionThresholdEntry>> {
   const [sessionHistory, setSessionHistory] = useState<
     Loadable<Page<SessionThresholdEntry>>
@@ -621,7 +621,7 @@ export function useSessionHistory(
                 keyGenThreshold: String(keyGen?.current ?? '-'),
                 signatureThreshold: String(signature?.current ?? '-'),
               };
-            }
+            },
           );
           return {
             error: '',
@@ -657,7 +657,7 @@ type AuthorityAccountDetailsQuery = Loadable<
 >;
 
 export function useAuthorityAccount(
-  accountId?: string
+  accountId?: string,
 ): AuthorityAccountDetailsQuery {
   const [account, setAccount] = useState<AuthorityAccountDetailsQuery>({
     val: null,

@@ -34,7 +34,7 @@ const NavSideBar: FC<NavSideBarProps> = ({
       activeFileIndex
         ? getExpandedFoldersFromActiveFileIndex(activeFileIndex)
         : undefined,
-    [activeFileIndex]
+    [activeFileIndex],
   );
 
   return (

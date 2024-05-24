@@ -14,10 +14,10 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           'bg-mono-40',
           'radix-orientation-horizontal:h-[1px] radix-orientation-horizontal:w-full',
           'radix-orientation-vertical:h-full radix-orientation-vertical:w-[1px]',
-          className
+          className,
         )}
         ref={ref}
       />
     );
-  }
+  },
 );

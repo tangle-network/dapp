@@ -152,7 +152,7 @@ function useDepositButtonProps({
       return false;
     },
     // prettier-ignore
-    [amount, connectBtnCnt, destTypedId, poolId, srcTypedId, tokenId, validAmount]
+    [amount, connectBtnCnt, destTypedId, poolId, srcTypedId, tokenId, validAmount],
   );
 
   const isLoading = useMemo(() => {
@@ -216,12 +216,12 @@ function useDepositButtonProps({
 
         const srcAnchorId = apiConfig.getAnchorIdentifier(
           poolIdNum,
-          srcTypedIdNum
+          srcTypedIdNum,
         );
 
         const destAnchorId = apiConfig.getAnchorIdentifier(
           poolIdNum,
-          destTypedIdNum
+          destTypedIdNum,
         );
 
         if (!srcAnchorId || !destAnchorId) {
@@ -236,7 +236,7 @@ function useDepositButtonProps({
           destTypedIdNum,
           destAnchorId,
           fungible.symbol,
-          amountBig
+          amountBig,
         );
 
         setGeneratingNote(false);
@@ -260,14 +260,14 @@ function useDepositButtonProps({
             onClose={() => {
               setDepositConfirmComponent(null);
             }}
-          />
+          />,
         );
       } catch (error) {
         handleTxError(error, 'Deposit');
       }
     },
     // prettier-ignore
-    [activeApi, amount, apiConfig, connectBtnCnt, destTypedId, fungible, handleConnect, navigate, noteManager, poolId, srcTypedId, tokenId]
+    [activeApi, amount, apiConfig, connectBtnCnt, destTypedId, fungible, handleConnect, navigate, noteManager, poolId, srcTypedId, tokenId],
   );
 
   return {

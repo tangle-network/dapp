@@ -39,7 +39,7 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
           variant={leftTextProps.variant ?? 'utility'}
           className={twMerge(
             'text-mono-100 dark:text-mono-80',
-            leftTextProps.className
+            leftTextProps.className,
           )}
         />
 
@@ -62,5 +62,5 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
         ) : null}
       </div>
     );
-  }
+  },
 );

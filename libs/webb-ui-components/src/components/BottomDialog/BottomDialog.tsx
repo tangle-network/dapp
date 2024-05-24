@@ -10,5 +10,5 @@ export const BottomDialog = forwardRef<HTMLDivElement, BottomDialogProps>(
         <Dialog.Root {...radixRootProps}>{children}</Dialog.Root>
       </div>
     );
-  }
+  },
 );

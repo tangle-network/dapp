@@ -34,7 +34,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [selectedValidators, setSelectedValidators] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const { nativeTokenSymbol } = useNetworkStore();
   const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
@@ -42,7 +42,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
   const activeAccountAddress = useActiveAccountAddress();
 
   const [delegateTxStep, setDelegateTxStep] = useState(
-    DelegateTxSteps.BOND_TOKENS
+    DelegateTxSteps.BOND_TOKENS,
   );
 
   const isExceedingMaxNominationQuota =
@@ -64,7 +64,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     (error: string | null) => {
       setHasAmountToBondError(error !== null);
     },
-    [setHasAmountToBondError]
+    [setHasAmountToBondError],
   );
 
   const closeModalAndReset = useCallback(() => {
@@ -96,7 +96,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     if (!isBondedOrNominating) {
       assert(
         amountToBond !== null,
-        'Amount to bond should be set if setting up a nominator'
+        'Amount to bond should be set if setting up a nominator',
       );
 
       await executeSetupNominatorTx({

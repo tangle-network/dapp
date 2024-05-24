@@ -42,17 +42,17 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
       placeholder,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [address, setAddress] = useState<string | undefined>(() => value);
 
     const [recipientError, setRecipientError] = useState<string | undefined>(
-      undefined
+      undefined,
     );
 
     const error = useMemo(
       () => errorMessage || recipientError,
-      [recipientError, errorMessage]
+      [recipientError, errorMessage],
     );
 
     const onChange = useCallback(
@@ -69,7 +69,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
           isValidSet?.(false);
         }
       },
-      [isValidSet, onChangeProp, validate]
+      [isValidSet, onChangeProp, validate],
     );
 
     const handlePasteButtonClick = useCallback(async () => {
@@ -144,5 +144,5 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         )}
       </>
     );
-  }
+  },
 );

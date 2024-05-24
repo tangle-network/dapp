@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { Typography } from '../../typography';
 
 const TextFieldContext = createContext<TextFieldContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
@@ -42,7 +42,7 @@ const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
                 !isDisabledHoverStyle && !isDisabled && !error,
               'outline-red-70 dark:outline-red-90': error,
             }),
-            className
+            className,
           )}
         >
           <TextFieldContext.Provider value={{ isDisabled, error }}>
@@ -61,7 +61,7 @@ const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
         )}
       </>
     );
-  }
+  },
 );
 TextFieldRoot.displayName = 'TextFieldRoot';
 
@@ -81,11 +81,11 @@ const TextFieldSlot = forwardRef<React.ElementRef<'div'>, TextFieldSlotProps>(
             '!text-mono-100': !context?.isDisabled,
             'text-mono-80 dark:text-mono-120': context?.isDisabled,
           }),
-          className
+          className,
         )}
       />
     );
-  }
+  },
 );
 TextFieldSlot.displayName = 'TextFieldSlot';
 
@@ -117,7 +117,7 @@ const TextFieldInput = forwardRef<
             'placeholder:text-mono-80 dark:placeholder:text-mono-120':
               isDisabled,
           }),
-          className
+          className,
         )}
       />
     </>
@@ -143,7 +143,7 @@ const TextField = Object.assign(
     Root: TextFieldRoot,
     Slot: TextFieldSlot,
     Input: TextFieldInput,
-  }
+  },
 );
 
 export default TextField;

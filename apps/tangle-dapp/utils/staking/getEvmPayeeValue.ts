@@ -6,7 +6,7 @@ export enum StakingEvmPayee {
 }
 
 export function getEvmPayeeValue(
-  rewardsDestination: StakingRewardsDestination
+  rewardsDestination: StakingRewardsDestination,
 ): StakingEvmPayee | null {
   switch (rewardsDestination) {
     case StakingRewardsDestination.STAKED:

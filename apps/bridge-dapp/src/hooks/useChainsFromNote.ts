@@ -5,7 +5,7 @@ const useChainsFromNote = () => {
   const { noteManager } = useWebContext();
 
   const [typedChainIds, setTypedChainIds] = useState<Set<number>>(
-    new Set<number>()
+    new Set<number>(),
   );
 
   useEffect(() => {

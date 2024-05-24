@@ -90,12 +90,12 @@ export const STAKING_PRECOMPILE_LINK =
 
 export const TANGLE_PRIVACY_POLICY_URL = new URL(
   '/privacy-policy',
-  TANGLE_MKT_URL
+  TANGLE_MKT_URL,
 ).toString();
 
 export const TANGLE_TERMS_OF_SERVICE_URL = new URL(
   '/terms-of-service',
-  TANGLE_MKT_URL
+  TANGLE_MKT_URL,
 ).toString();
 
 export const WEBB_DOC_ROUTES_RECORD = {
@@ -208,7 +208,7 @@ export const SOCIAL_ICONS_RECORD = {
   community: TangleIcon,
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: (
-    props: IconBase
+    props: IconBase,
   ) => JSX.Element;
 };
 
@@ -275,7 +275,7 @@ export const footerNavs: FooterNavsType = {
       name: 'community',
       href: new URL(
         WEBB_DOC_ROUTES_RECORD.community.route,
-        WEBB_DOCS_URL
+        WEBB_DOCS_URL,
       ).toString(),
       ...commonExternalProps,
     },
@@ -316,7 +316,7 @@ export const defaultSocialConfigs: SocialConfigsType[] =
         Icon: SOCIAL_ICONS_RECORD[name],
         target: '_blank',
         rel: 'noopener noreferrer',
-      } as const satisfies SocialConfigsType)
+      }) as const satisfies SocialConfigsType,
   );
 
 /**

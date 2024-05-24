@@ -23,7 +23,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       alertTitle,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Search text
     const [searchText, setSearchText] = useState('');
@@ -36,9 +36,9 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
             r.symbol.toString().includes(searchText.toLowerCase()) ||
             r.assetBalanceProps?.balance
               ?.toString()
-              .includes(searchText.toLowerCase())
+              .includes(searchText.toLowerCase()),
         ),
-      [searchText]
+      [searchText],
     );
 
     const { filteredPopular, filteredSelect } = useMemo(
@@ -47,7 +47,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         filteredSelect: getFilterList(selectTokens),
         filteredUnavailable: getFilterList(unavailableTokens),
       }),
-      [getFilterList, popularTokens, selectTokens, unavailableTokens]
+      [getFilterList, popularTokens, selectTokens, unavailableTokens],
     );
 
     return (
@@ -140,5 +140,5 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         {alertTitle && <Alert title={alertTitle} />}
       </ListCardWrapper>
     );
-  }
+  },
 );

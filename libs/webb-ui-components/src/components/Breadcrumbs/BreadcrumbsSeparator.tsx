@@ -11,12 +11,12 @@ export const BreadcrumbsSeparator = React.forwardRef<
   const baseClsx = useMemo(
     () =>
       'inline-flex pointer-events-none !text-mono-120 dark:!text-mono-80 font-bold mx-2',
-    []
+    [],
   );
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),
-    [baseClsx, classNameProp]
+    [baseClsx, classNameProp],
   );
 
   return (

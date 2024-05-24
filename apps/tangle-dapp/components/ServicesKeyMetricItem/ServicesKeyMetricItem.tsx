@@ -19,7 +19,7 @@ const ServicesKeyMetricItem: FC<ServicesKeyMetricItemProps> = ({
     <div
       className={twMerge(
         'overflow-hidden p-6 flex flex-col gap-2 justify-between',
-        className
+        className,
       )}
     >
       <div className="flex-1 flex items-center justify-between gap-4">
@@ -51,7 +51,7 @@ const ServicesKeyMetricItem: FC<ServicesKeyMetricItemProps> = ({
                   variant="body4"
                   fw="bold"
                   className={twMerge(
-                    changeRate >= 0 ? '!text-green-70' : '!text-red-70'
+                    changeRate >= 0 ? '!text-green-70' : '!text-red-70',
                   )}
                 >
                   {changeRate >= 0 ? `+` : `-`}
@@ -61,7 +61,7 @@ const ServicesKeyMetricItem: FC<ServicesKeyMetricItemProps> = ({
                   className={twMerge(
                     changeRate >= 0
                       ? '!fill-green-70 rotate-[-90deg]'
-                      : '!fill-red-70 rotate-90'
+                      : '!fill-red-70 rotate-90',
                   )}
                 />
               </div>

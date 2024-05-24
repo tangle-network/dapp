@@ -17,7 +17,7 @@ import { Avatar } from '../Avatar';
 import { shortenHex, shortenString } from '../../utils';
 
 const InputFieldContext = createContext<InputFieldContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 const InputFieldRoot = forwardRef<React.ElementRef<'div'>, InputFieldRootProps>(
@@ -36,7 +36,7 @@ const InputFieldRoot = forwardRef<React.ElementRef<'div'>, InputFieldRootProps>(
             cx({
               'outline-red-40 dark:outline-red-90': error,
             }),
-            className
+            className,
           )}
         >
           <InputFieldContext.Provider value={{ isDisabled, error }}>
@@ -55,7 +55,7 @@ const InputFieldRoot = forwardRef<React.ElementRef<'div'>, InputFieldRootProps>(
         )}
       </div>
     );
-  }
+  },
 );
 InputFieldRoot.displayName = 'InputFieldRoot';
 
@@ -75,11 +75,11 @@ const InputFieldSlot = forwardRef<React.ElementRef<'div'>, InputFieldSlotProps>(
             '!text-mono-100': !context?.isDisabled,
             'text-mono-80 dark:text-mono-120': context?.isDisabled,
           }),
-          className
+          className,
         )}
       />
     );
-  }
+  },
 );
 InputFieldSlot.displayName = 'InputFieldSlot';
 
@@ -109,10 +109,10 @@ const InputFieldInput = forwardRef<
         ? isEthereumAddress(String(value))
           ? shortenHex(String(value), 7)
           : isSubstrateAddress(String(value))
-          ? shortenString(String(value), 7)
-          : value
+            ? shortenString(String(value), 7)
+            : value
         : value,
-    [isAddressType, value]
+    [isAddressType, value],
   );
 
   const input = (
@@ -151,7 +151,7 @@ const InputFieldInput = forwardRef<
               'placeholder:text-mono-80 dark:placeholder:text-mono-120':
                 isDisabled,
             }),
-            className
+            className,
           )}
         />
       </div>
@@ -178,7 +178,7 @@ const InputField = Object.assign(
     Root: InputFieldRoot,
     Slot: InputFieldSlot,
     Input: InputFieldInput,
-  }
+  },
 );
 
 export default InputField;

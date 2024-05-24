@@ -80,7 +80,10 @@ class LoggerService {
     return LoggerService.new(ctx);
   }
 
-  constructor(readonly ctx: string, readonly logLevel: LogLevel) {
+  constructor(
+    readonly ctx: string,
+    readonly logLevel: LogLevel,
+  ) {
     return this;
   }
 
@@ -133,7 +136,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -147,7 +150,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -161,7 +164,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -175,7 +178,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -189,7 +192,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -203,7 +206,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 }

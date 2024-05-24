@@ -128,7 +128,7 @@ const TokenListItem = forwardRef<
       isLoadingMetadata,
       ...props
     },
-    ref
+    ref,
   ) => {
     const onAddTokenRef = useRef(onAddToken);
 
@@ -197,7 +197,7 @@ const TokenListItem = forwardRef<
         ) : null}
       </ListItem>
     );
-  }
+  },
 );
 
 export default TokenListItem;

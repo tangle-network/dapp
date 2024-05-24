@@ -18,7 +18,7 @@ const localAnchorRecord = process.env.BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS
 
         return acc;
       },
-      {}
+      {},
     )
   : {};
 
@@ -62,14 +62,14 @@ export const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
     }
     return acc;
   },
-  {} as Record<number, string[]>
+  {} as Record<number, string[]>,
 );
 
 export const getAnchorDeploymentBlockNumber = (
   chainIdType: number,
-  contractAddress: string
+  contractAddress: string,
 ): number | undefined => {
   return Object.entries(anchorDeploymentBlock[chainIdType]).find(
-    (entry) => entry[0].toLowerCase() === contractAddress.toLowerCase()
+    (entry) => entry[0].toLowerCase() === contractAddress.toLowerCase(),
   )?.[1];
 };

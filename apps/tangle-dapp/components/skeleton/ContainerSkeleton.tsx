@@ -14,7 +14,7 @@ const ContainerSkeleton: FC<ContainerSkeletonProps> = ({
         'rounded-lg border border-mono-40 dark:border-mono-160',
         'bg-glass dark:bg-glass_dark px-6 py-5',
         'flex flex-col gap-5',
-        className
+        className,
       )}
     >
       {[...Array(numOfRows)].map((_, i) => (

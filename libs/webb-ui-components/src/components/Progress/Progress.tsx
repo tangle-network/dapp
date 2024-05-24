@@ -62,8 +62,8 @@ export const Progress: React.FC<ProgressProps> = ({
       typeof valueProp === 'number'
         ? valueProp
         : size === 'sm'
-        ? '0'
-        : 'Unavailable';
+          ? '0'
+          : 'Unavailable';
 
     // If the valueProp has value or the progress size not equal to 'lg' => Display the `suffixLabel` if it has value
     const suffix =
@@ -83,14 +83,14 @@ export const Progress: React.FC<ProgressProps> = ({
           style={{ width: `${valueProp}%` }}
           className={cx(
             classNames[size]['indicator'],
-            'radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
+            'radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent',
           )}
         >
           <span
             className={cx(
               classNames[size]['label'],
               'absolute inset-x-0 inset-y-0',
-              'w-full h-full flex justify-center items-center'
+              'w-full h-full flex justify-center items-center',
             )}
           >
             {displayValue}
@@ -102,7 +102,7 @@ export const Progress: React.FC<ProgressProps> = ({
         <span
           className={cx(
             classNames[size]['label'],
-            'w-full h-full flex justify-center items-center'
+            'w-full h-full flex justify-center items-center',
           )}
         >
           {displayValue}

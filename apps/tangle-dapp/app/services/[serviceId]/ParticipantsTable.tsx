@@ -67,7 +67,7 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({ className }) => {
           network.polkadotExplorerUrl,
           address,
           'address',
-          ExplorerType.Substrate
+          ExplorerType.Substrate,
         ).toString();
         return (
           <div className="flex items-center gap-1">
@@ -108,7 +108,7 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({ className }) => {
         className={twMerge(
           'flex-1 bg-glass dark:bg-glass_dark',
           'overflow-hidden rounded-2xl py-5 px-6',
-          'border border-mono-0 dark:border-mono-160'
+          'border border-mono-0 dark:border-mono-160',
         )}
       >
         {!isLoading ? (

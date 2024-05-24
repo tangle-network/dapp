@@ -36,7 +36,7 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
 
   const isReadyToCallFnc = useMemo(
     () => selectedTypedChainId !== undefined,
-    [selectedTypedChainId]
+    [selectedTypedChainId],
   );
 
   const fncCallerProps = useMemo<GovernanceFncCallerProps[]>(
@@ -61,14 +61,14 @@ const GovernanceContractDetailCard: FC<ContractDetailCardProps> = ({
           } as GovernanceFncCallerProps;
         })
         .filter((item): item is GovernanceFncCallerProps => item !== null),
-    [abi, governanceFncNames]
+    [abi, governanceFncNames],
   );
 
   return (
     <div
       className={cx(
         'min-h-[700px] max-w-[600px] space-y-6 bg-mono-0 dark:bg-mono-190 rounded-xl p-9',
-        'border border-mono-40 dark:border-mono-160'
+        'border border-mono-40 dark:border-mono-160',
       )}
     >
       {/* Chains Ring */}

@@ -24,7 +24,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const { notificationApi } = useWebbUI();
 
   const defaultNetworkType = webbNetworks.filter(
-    (network) => network.networkType === 'testnet'
+    (network) => network.networkType === 'testnet',
   );
 
   const [selectedNetwork, setSelectedNetwork] = useState((): Network => {
@@ -57,10 +57,10 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
         if (graphQLErrors) {
           graphQLErrors.forEach(({ locations, message, path }) => {
             console.log(
-              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
             );
             setErrorMessage(
-              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
             );
           });
           return forward(operation);
@@ -69,7 +69,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
           console.log(`[Network error]: ${networkError}`);
           setErrorMessage(`[Network error]: ${networkError}`);
         }
-      }
+      },
     );
 
     const httpLink = new HttpLink({
@@ -99,7 +99,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       });
       localStorage.setItem(
         'selectedNetwork',
-        JSON.stringify(defaultNetworkType[0].networks[0])
+        JSON.stringify(defaultNetworkType[0].networks[0]),
       );
       setSelectedNetwork(defaultNetworkType[0].networks[0]);
     };
@@ -130,11 +130,11 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   const subqueryEndpoint = useMemo(
     () => selectedNetwork.subqueryEndpoint,
-    [selectedNetwork]
+    [selectedNetwork],
   );
   const polkadotEndpoint = useMemo(
     () => selectedNetwork.polkadotEndpoint,
-    [selectedNetwork]
+    [selectedNetwork],
   );
 
   return (

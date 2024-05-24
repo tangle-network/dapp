@@ -14,7 +14,7 @@ const SkeletonLoader: FC<SkeletonLoaderProps> = ({
   const classNames = twMerge(
     baseClassNames,
     getSkeletonClassNamesBySize(size),
-    className
+    className,
   );
   return <div className={classNames} />;
 };

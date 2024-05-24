@@ -25,7 +25,7 @@ const SubmitPageControls: FC<Record<string, never>> = () => {
 
       assert(
         githubUrlParseResult !== null,
-        'Github URL should be valid after a successful submission.'
+        'Github URL should be valid after a successful submission.',
       );
 
       const [owner, repo] = githubUrlParseResult;
@@ -38,7 +38,7 @@ const SubmitPageControls: FC<Record<string, never>> = () => {
 
     assert(
       response.errorMessage !== undefined,
-      'Error message should be provided when the response did not indicate success.'
+      'Error message should be provided when the response did not indicate success.',
     );
 
     const errorMessage = response.errorMessage;
@@ -65,7 +65,7 @@ const SubmitPageControls: FC<Record<string, never>> = () => {
           setErrorMessage(
             value.length > 0 && !isNewUrlValid
               ? 'Invalid GitHub URL.'
-              : undefined
+              : undefined,
           );
         }}
       />

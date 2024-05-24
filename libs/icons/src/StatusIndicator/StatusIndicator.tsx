@@ -59,14 +59,14 @@ const StatusIndicator = forwardRef<SVGSVGElement, StatusIndicatorProps>(
           className={twMerge(
             cx({ 'animate-ping': animated }),
             'origin-center',
-            classes[variant].stroke
+            classes[variant].stroke,
           )}
           strokeOpacity="0.3"
           strokeWidth={haftSize / 2}
         />
       </svg>
     );
-  }
+  },
 );
 
 export default StatusIndicator;

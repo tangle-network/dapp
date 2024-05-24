@@ -6,7 +6,7 @@ const fetchVAnchorKeyFromAws = async (
   maxEdges: number,
   isSmall?: boolean,
   isSubstrate?: boolean,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ) => {
   let filePath: string;
   let cachedURI: string;

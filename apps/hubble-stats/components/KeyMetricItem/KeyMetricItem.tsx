@@ -34,7 +34,7 @@ function KeyMetricItem<T extends boolean>({
 export default KeyMetricItem;
 
 function KeyMetricItemValue<T extends boolean>(
-  props: Omit<MetricItemProps<T>, 'title' | 'tooltip' | 'isLoading'>
+  props: Omit<MetricItemProps<T>, 'title' | 'tooltip' | 'isLoading'>,
 ) {
   const { value: { changeRate, value } = {}, prefix, suffix } = props;
 

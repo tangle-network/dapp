@@ -9,12 +9,12 @@ module.exports = {
   content: [
     join(
       __dirname,
-      'src/{pages,app,components,containers,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      'src/{pages,app,components,containers,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     join(
       __dirname,
       '../../libs/webb-ui-components',
-      'src/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      'src/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],

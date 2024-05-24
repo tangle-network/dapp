@@ -8,7 +8,7 @@ import { PoolTransactionType } from '../../components/PoolTransactionsTable/type
 const TRANSACTIONS_LIMIT = 100;
 
 export default async function getPoolTransactionsTableData(
-  poolAddress: string
+  poolAddress: string,
 ): Promise<PoolTransactionType[]> {
   const { nativeTokenByChain, supportedSubgraphs } = VANCHORS_MAP[poolAddress];
 
@@ -17,7 +17,7 @@ export default async function getPoolTransactionsTableData(
       map[ACTIVE_SUBGRAPH_MAP[+typedChainId]] = +typedChainId;
       return map;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   let transactions: PoolTransactionType[] = [];
@@ -26,7 +26,7 @@ export default async function getPoolTransactionsTableData(
       await vAnchorClient.Transaction.GetVAnchorTransactionsByChains(
         supportedSubgraphs,
         poolAddress,
-        TRANSACTIONS_LIMIT
+        TRANSACTIONS_LIMIT,
       );
 
     transactions = fetchedTransactions.map((tx) => {

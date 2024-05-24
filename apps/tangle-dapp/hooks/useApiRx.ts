@@ -38,7 +38,7 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
 
   const { result: apiRx } = usePromise(
     useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
-    null
+    null,
   );
 
   const resetData = useCallback(() => {
@@ -75,7 +75,7 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
           // observable. Since the empty observable emits nothing, the
           // data/state is left unchanged.
           return new Observable<T>();
-        })
+        }),
       )
       .subscribe((newResult) => {
         setResult(newResult);

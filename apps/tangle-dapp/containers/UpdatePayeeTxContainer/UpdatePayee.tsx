@@ -27,7 +27,7 @@ const UpdatePayee: FC<UpdatePayeeProps> = ({
 
       setPayee(STAKING_PAYEE_TEXT_TO_VALUE_MAP[payeeDisplayText]);
     },
-    [setPayee]
+    [setPayee],
   );
 
   const currentPayeeDisplayText: string = (() => {

@@ -21,7 +21,7 @@ const ReceiveModal: FC = () => {
     (isOpen: boolean) => {
       toggleModal(isOpen);
     },
-    [toggleModal]
+    [toggleModal],
   );
 
   const closeModal = useCallback(() => {

@@ -42,28 +42,28 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
   T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
     : T extends LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT
-    ? { value1: number | null; value2: number | null }
-    : T extends LocalStorageKey.IDEAL_STAKE_PERCENTAGE
-    ? { value1: number | null }
-    : T extends LocalStorageKey.VALIDATOR_COUNTS
-    ? { value1: number | null; value2: number | null }
-    : T extends LocalStorageKey.WAITING_COUNT
-    ? { value1: number | null }
-    : T extends LocalStorageKey.PAYOUTS
-    ? PayoutsCache
-    : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
-    ? string
-    : T extends LocalStorageKey.KNOWN_NETWORK_ID
-    ? number
-    : T extends LocalStorageKey.WAS_BANNER_DISMISSED
-    ? boolean
-    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
-    ? SubstrateWalletsMetadataCache
-    : never;
+      ? { value1: number | null; value2: number | null }
+      : T extends LocalStorageKey.IDEAL_STAKE_PERCENTAGE
+        ? { value1: number | null }
+        : T extends LocalStorageKey.VALIDATOR_COUNTS
+          ? { value1: number | null; value2: number | null }
+          : T extends LocalStorageKey.WAITING_COUNT
+            ? { value1: number | null }
+            : T extends LocalStorageKey.PAYOUTS
+              ? PayoutsCache
+              : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
+                ? string
+                : T extends LocalStorageKey.KNOWN_NETWORK_ID
+                  ? number
+                  : T extends LocalStorageKey.WAS_BANNER_DISMISSED
+                    ? boolean
+                    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+                      ? SubstrateWalletsMetadataCache
+                      : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
-  canClearIfInvalid: boolean
+  canClearIfInvalid: boolean,
 ): LocalStorageValueOf<Key> | null => {
   type Value = LocalStorageValueOf<Key>;
 
@@ -105,7 +105,7 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
  */
 const useLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
-  isUsedAsCache = false
+  isUsedAsCache = false,
 ) => {
   type Value = LocalStorageValueOf<Key>;
 
@@ -117,7 +117,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
     const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
 
     const freshValueOpt = new Optional(
-      freshValue === null ? undefined : freshValue
+      freshValue === null ? undefined : freshValue,
     );
 
     setValueOpt(freshValueOpt);
@@ -148,7 +148,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
       localStorage.setItem(key, JSON.stringify(value));
       console.debug('Set local storage value:', key, value);
     },
-    [key]
+    [key],
   );
 
   const isSet = useCallback(() => localStorage.getItem(key) !== null, [key]);
@@ -170,7 +170,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
 
       set(nextValue);
     },
-    [refresh, set]
+    [refresh, set],
   );
 
   return {

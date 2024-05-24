@@ -59,7 +59,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
             .map(() => '*')
             .join('')
         : displayAddress,
-    [displayAddress, isHiddenValue]
+    [displayAddress, isHiddenValue],
   );
 
   // Switch between EVM & Substrate addresses.
@@ -72,8 +72,8 @@ const AccountAddress: FC<AccountAddressProps> = ({
   const shortenFn = isHiddenValue
     ? shortenString
     : isDisplayingEvmAddress
-    ? shortenHex
-    : shortenString;
+      ? shortenHex
+      : shortenString;
 
   const avatarIcon =
     activeAddress === null ? (

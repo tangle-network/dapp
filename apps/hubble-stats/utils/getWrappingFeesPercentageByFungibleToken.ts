@@ -5,7 +5,7 @@ import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 
 const getWrappingFeesPercentageByFungibleToken = async (
   address: string,
-  typedChainId: number
+  typedChainId: number,
 ) => {
   const client = getViemClient(typedChainId);
   const addressHex = ensureHex(address);

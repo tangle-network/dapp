@@ -25,11 +25,11 @@ const ServiceDetailsProvider: FC<PropsWithChildren<{ serviceId: string }>> = ({
       const jobInfoData = (await api.query.jobs.submittedJobs(
         // no provided type here, only Id
         null,
-        new u64(api.registry, BigInt(serviceId))
+        new u64(api.registry, BigInt(serviceId)),
       )) as Option<TanglePrimitivesJobsJobInfo>; // Data is returned as Codec type here
       return extractServiceDetails(serviceId, jobInfoData);
     },
-    [serviceId]
+    [serviceId],
   );
 
   const { result: serviceDetails } = useApi(servicesFetcher);

@@ -81,7 +81,7 @@ export const useUIConfig = (): UseUIConfigReturnType => {
         value: config,
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const setTheme = useCallback(
@@ -91,7 +91,7 @@ export const useUIConfig = (): UseUIConfigReturnType => {
         value: theme,
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const setSubMenu = useCallback(
@@ -101,7 +101,7 @@ export const useUIConfig = (): UseUIConfigReturnType => {
         value: value,
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   return useMemo(
@@ -111,6 +111,6 @@ export const useUIConfig = (): UseUIConfigReturnType => {
       setTheme,
       setTitle,
     }),
-    [state, setTitle, setTheme, setSubMenu]
+    [state, setTitle, setTheme, setSubMenu],
   );
 };

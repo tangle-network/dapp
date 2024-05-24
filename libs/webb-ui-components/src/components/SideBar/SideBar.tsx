@@ -45,13 +45,13 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       pathnameOrHash,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
       SIDEBAR_OPEN_KEY,
       {
         defaultValue: isExpandedAtDefault,
-      }
+      },
     );
 
     // Make sure sidebar state in local storage match with cookie when page is loaded
@@ -61,8 +61,8 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
         sideBarStateFromCookie === 'true'
           ? true
           : sideBarStateFromCookie === 'false'
-          ? false
-          : isExpandedAtDefault;
+            ? false
+            : isExpandedAtDefault;
 
       setIsSidebarOpen(isSideBarOpen);
     }, [isExpandedAtDefault, setIsSidebarOpen]);
@@ -77,7 +77,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
           className={twMerge(
             'h-full flex flex-col justify-between py-6',
             'bg-mono-0 dark:bg-mono-180 transition-all duration-200 ease-in-out',
-            isSidebarOpen ? 'w-72 px-4' : 'w-16 px-2'
+            isSidebarOpen ? 'w-72 px-4' : 'w-16 px-2',
           )}
         >
           <div>
@@ -116,7 +116,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 const DefaultClosedIcon: FC<LogoProps> = ({ size: _, ...props }) => {

@@ -48,7 +48,7 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
         size: size === 'md' ? 'lg' : 'md',
         className: twMerge(
           'fill-current dark:fill-current',
-          iconProp.props['className']
+          iconProp.props['className'],
         ),
       });
     }, [iconProp, size]);
@@ -61,7 +61,7 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
 
       if (!label && !menuOptions.length) {
         throw new Error(
-          'DropdownMenu without label needs an option list to render'
+          'DropdownMenu without label needs an option list to render',
         );
       }
 
@@ -94,5 +94,5 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
         </DropdownBody>
       </Dropdown>
     );
-  }
+  },
 );

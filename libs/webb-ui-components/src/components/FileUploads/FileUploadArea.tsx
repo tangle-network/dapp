@@ -25,7 +25,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
       maxFiles = 1,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
       noClick: true,
@@ -47,9 +47,9 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                 : 'bg-mono-0 dark:bg-mono-160',
               'border-2 border-dashed border-mono-80 dark:border-mono-100',
               'flex flex-col items-center justify-center',
-              'space-y-8'
+              'space-y-8',
             ),
-            className
+            className,
           ),
         })}
         ref={ref}
@@ -63,7 +63,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
             className={cx(
               isDragActive
                 ? 'text-mono-120 dark:text-mono-40'
-                : 'text-mono-180 dark:text-mono-40'
+                : 'text-mono-180 dark:text-mono-40',
             )}
             ta="center"
             variant="body1"
@@ -76,7 +76,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                 'inline-block',
                 isDragActive
                   ? 'text-blue-40 dark:text-blue-50'
-                  : 'text-blue-70 dark:text-blue-50'
+                  : 'text-blue-70 dark:text-blue-50',
               )}
               onClick={open}
             >
@@ -92,7 +92,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
               variant="body3"
             >
               {`${acceptType.toUpperCase()} only (maximum file size ${convertToFileSize(
-                maxSize
+                maxSize,
               )})`}
             </Typography>
           )}
@@ -101,7 +101,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
         <input hidden {...getInputProps({ className: 'hidden' })} />
       </div>
     );
-  }
+  },
 );
 
 /** @internal */

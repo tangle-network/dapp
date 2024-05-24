@@ -41,7 +41,7 @@ export const ProposalDetail = () => {
         }[]
       >((acc, item) => {
         const found = acc.find(
-          (e: { type: string; count: number }) => e.type === item.type
+          (e: { type: string; count: number }) => e.type === item.type,
         );
         if (found) {
           found.count++;
@@ -79,7 +79,7 @@ export const ProposalDetail = () => {
   const handlePrevProposalBatch = useCallback(() => {
     if (previousProposalBatchId) {
       navigate(
-        `/proposals${isPage ? '' : '/drawer'}/${previousProposalBatchId}`
+        `/proposals${isPage ? '' : '/drawer'}/${previousProposalBatchId}`,
       );
     }
   }, [isPage, navigate, previousProposalBatchId]);
@@ -91,7 +91,7 @@ export const ProposalDetail = () => {
           ...proposal,
           decodedData: getProposalsData(
             proposal.type as ProposalType,
-            proposal.data
+            proposal.data,
           ),
         };
       });

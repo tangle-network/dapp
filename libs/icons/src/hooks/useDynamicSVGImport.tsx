@@ -11,7 +11,7 @@ export interface DynamicSVGImportOptions {
    */
   onCompleted?: (
     name: string,
-    SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined
+    SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined,
   ) => void;
   /**
    * An optional function for handle error when loading SVG icon
@@ -33,7 +33,7 @@ export interface DynamicSVGImportOptions {
  */
 export function useDynamicSVGImport(
   name?: string,
-  options: DynamicSVGImportOptions = {}
+  options: DynamicSVGImportOptions = {},
 ) {
   const [importedIcon, setImportedIcon] = useState<
     React.ReactElement<React.SVGProps<SVGSVGElement>, 'svg'> | undefined
@@ -46,7 +46,7 @@ export function useDynamicSVGImport(
   const _name = useMemo(
     () =>
       typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder',
-    [name]
+    [name],
   );
   const type = useMemo(() => options.type ?? 'token', [options]);
 

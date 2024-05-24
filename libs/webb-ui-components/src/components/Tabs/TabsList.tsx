@@ -17,7 +17,7 @@ export const TabsList = forwardRef<
       {...props}
       className={twMerge(
         cx({ 'flex items-center space-x-2': !isDisableStyle }),
-        className
+        className,
       )}
       ref={ref}
     />

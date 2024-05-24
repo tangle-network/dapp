@@ -47,7 +47,7 @@ const useRelayerWithRoute = (typedChainId?: number | null) => {
               }
             : {}),
         });
-      }
+      },
     );
 
     return () => sub?.unsubscribe();
@@ -75,7 +75,7 @@ const useRelayerWithRoute = (typedChainId?: number | null) => {
     const manager = activeApi.relayerManager;
     const supportedRelayers = manager.getRelayersByChainAndAddress(
       typedChainId,
-      anchorId
+      anchorId,
     );
 
     if (!supportedRelayers || supportedRelayers.length === 0) {
@@ -85,7 +85,7 @@ const useRelayerWithRoute = (typedChainId?: number | null) => {
 
     const active = manager.activeRelayer;
     const isActiveRelayerSupported = supportedRelayers.find(
-      (r) => r.endpoint === active?.endpoint
+      (r) => r.endpoint === active?.endpoint,
     );
     if (isActiveRelayerSupported) {
       return;

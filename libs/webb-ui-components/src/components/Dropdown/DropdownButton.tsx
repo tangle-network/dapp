@@ -30,9 +30,9 @@ export const DropdownButton = forwardRef<
             'enabled:radix-state-open:border-blue-40 dark:enabled:radix-state-open:border-blue-70',
             'enabled:radix-state-open:bg-blue-0 dark:enabled:radix-state-open:bg-blue-120',
             size !== 'sm' && 'enabled:radix-state-open:rounded-t-lg',
-            size !== 'sm' && 'enabled:radix-state-open:rounded-b-none'
+            size !== 'sm' && 'enabled:radix-state-open:rounded-b-none',
           ),
-          className
+          className,
         )}
         ref={ref}
       >

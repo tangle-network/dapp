@@ -5,14 +5,14 @@
  */
 function isSideBarItemActive(
   hrefOrArrayOfHrefs: string | Array<string>,
-  pathnameOrHash?: string
+  pathnameOrHash?: string,
 ): boolean {
   if (typeof pathnameOrHash === 'string' && pathnameOrHash.length > 0) {
     if (Array.isArray(hrefOrArrayOfHrefs)) {
       return hrefOrArrayOfHrefs.some(
         (href) =>
           href.length > 0 &&
-          (pathnameOrHash.includes(href) || pathnameOrHash.includes(href))
+          (pathnameOrHash.includes(href) || pathnameOrHash.includes(href)),
       );
     } else {
       return hrefOrArrayOfHrefs === '/'
@@ -39,7 +39,7 @@ function isSideBarItemActive(
   } else if (Array.isArray(hrefOrArrayOfHrefs)) {
     return hrefOrArrayOfHrefs.some(
       (href) =>
-        href.length > 0 && (pathname.includes(href) || hash.includes(href))
+        href.length > 0 && (pathname.includes(href) || hash.includes(href)),
     );
   }
 

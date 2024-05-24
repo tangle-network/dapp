@@ -4,7 +4,7 @@ import { LeaderboardResponseSchema } from './types';
 const fetchLeaderboardData = async (
   skip = DEFAULT_SKIP,
   limit = DEFAULT_LIMIT,
-  query = ''
+  query = '',
 ) => {
   const searchParams = new URLSearchParams({
     skip: skip.toString(),
@@ -18,7 +18,7 @@ const fetchLeaderboardData = async (
 
   const response = await fetch(
     `${BACKEND_URL}/leaderboard?${searchParams.toString()}`,
-    { next: { revalidate: 3600 } } // 1 hour
+    { next: { revalidate: 3600 } }, // 1 hour
   );
 
   const data = await response.json();

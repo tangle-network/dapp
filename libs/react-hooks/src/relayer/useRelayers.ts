@@ -23,7 +23,7 @@ export const useRelayers = (props: UseRelayersProps) => {
         activeApi?.relayerManager.setActiveRelayer(nextRelayer, typedChainId);
       }
     },
-    [activeApi?.relayerManager, typedChainId]
+    [activeApi?.relayerManager, typedChainId],
   );
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const useRelayers = (props: UseRelayersProps) => {
 
         const relayers = activeApi.relayerManager.getRelayersByChainAndAddress(
           typedChainIdToUse,
-          `${target ?? ''}`
+          `${target ?? ''}`,
         );
 
         setRelayersState((prev) => ({
@@ -46,7 +46,7 @@ export const useRelayers = (props: UseRelayersProps) => {
           loading: false,
           relayers,
         }));
-      }
+      },
     );
 
     const activeSub = activeApi.relayerManager.activeRelayerWatcher.subscribe(
@@ -55,7 +55,7 @@ export const useRelayers = (props: UseRelayersProps) => {
           ...prev,
           activeRelayer: next,
         }));
-      }
+      },
     );
 
     // trigger the relayer list update on mount

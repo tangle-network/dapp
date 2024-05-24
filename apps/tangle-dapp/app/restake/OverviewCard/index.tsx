@@ -36,7 +36,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
 
     const totalRestaked = useMemo(
       () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
-      [ledgerOpt]
+      [ledgerOpt],
     );
 
     const availableForRestake = useMemo(() => {
@@ -97,7 +97,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
         </div>
       </TangleCard>
     );
-  }
+  },
 );
 
 OverviewCard.displayName = 'OverviewCard';

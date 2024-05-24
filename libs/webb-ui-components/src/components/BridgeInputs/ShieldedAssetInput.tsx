@@ -39,7 +39,7 @@ export const ShieldedAssetInput = forwardRef<
 
     if (asset?.balanceInUsd) {
       balanceInUsd = getRoundedAmountString(
-        parseFloat(asset.balanceInUsd.toString())
+        parseFloat(asset.balanceInUsd.toString()),
       );
     }
 

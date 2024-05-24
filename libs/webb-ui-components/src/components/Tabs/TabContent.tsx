@@ -8,5 +8,5 @@ import { forwardRef } from 'react';
 export const TabContent = forwardRef<HTMLDivElement, Tabs.TabsContentProps>(
   (props, ref) => {
     return <Tabs.Content {...props} ref={ref} />;
-  }
+  },
 );

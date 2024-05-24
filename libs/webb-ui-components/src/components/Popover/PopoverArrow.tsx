@@ -6,5 +6,5 @@ import { PopverArrowProps } from './types';
 export const PopoverArrow = forwardRef<SVGSVGElement, PopverArrowProps>(
   (props, ref) => {
     return <PopoverPrimitive.Arrow {...props} ref={ref} />;
-  }
+  },
 );

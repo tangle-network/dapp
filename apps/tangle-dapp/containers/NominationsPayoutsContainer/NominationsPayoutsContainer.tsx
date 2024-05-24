@@ -48,7 +48,7 @@ const PAGE_SIZE = 10;
 function assertTab(tab: string): NominationsAndPayoutsTab {
   if (
     !Object.values(NominationsAndPayoutsTab).includes(
-      tab as NominationsAndPayoutsTab
+      tab as NominationsAndPayoutsTab,
     )
   ) {
     throw new Error(`Invalid tab: ${tab}`);
@@ -67,26 +67,26 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
   const { result: historyDepth } = useApi(
-    useCallback(async (api) => api.consts.staking.historyDepth.toBn(), [])
+    useCallback(async (api) => api.consts.staking.historyDepth.toBn(), []),
   );
 
   const { result: progress } = useApi(
-    useCallback((api) => api.derive.session.progress(), [])
+    useCallback((api) => api.derive.session.progress(), []),
   );
 
   const { result: epochDuration } = useApi(
-    useCallback(async (api) => api.consts.babe.epochDuration.toNumber(), [])
+    useCallback(async (api) => api.consts.babe.epochDuration.toNumber(), []),
   );
 
   const { value: queryParamsTab } = useQueryParamKey(
-    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB
+    QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
   );
 
   // Allow other pages to link directly to the payouts tab.
   // Default to the nominations tab if no matching browser URL
   // hash is present.
   const [activeTab, setActiveTab] = useState(
-    queryParamsTab ?? NominationsAndPayoutsTab.NOMINATIONS
+    queryParamsTab ?? NominationsAndPayoutsTab.NOMINATIONS,
   );
 
   const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
@@ -105,7 +105,7 @@ const DelegationsPayoutsContainer: FC = () => {
     }
 
     return nomineesOpt.map((nominees) =>
-      nominees.map((nominee) => nominee.address)
+      nominees.map((nominee) => nominee.address),
     );
   }, [nomineesOpt]);
 
@@ -138,7 +138,7 @@ const DelegationsPayoutsContainer: FC = () => {
         validatorSubstrateAddress: payout.validator.address,
         era: payout.era,
       })),
-    [payouts]
+    [payouts],
   );
 
   // Clear the updated payouts when the active account changes,

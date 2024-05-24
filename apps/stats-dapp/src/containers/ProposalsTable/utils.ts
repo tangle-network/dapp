@@ -25,7 +25,7 @@ export const PROPOSAL_STATUS: ProposalBatchStatus[] = [
 ];
 
 export const mapProposalStatusToChipColor = (
-  status: ProposalBatchStatus
+  status: ProposalBatchStatus,
 ): ChipColors => {
   switch (status) {
     case ProposalBatchStatus.Signed:

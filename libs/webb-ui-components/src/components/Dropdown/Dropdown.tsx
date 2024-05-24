@@ -19,5 +19,5 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         </DropdownMenuPrimitive.Root>
       </div>
     );
-  }
+  },
 );

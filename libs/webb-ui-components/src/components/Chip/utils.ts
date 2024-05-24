@@ -52,7 +52,7 @@ const classNames: ChipClassNames = {
 export function getChipClassName(
   color: ChipColors,
   isDisabled?: boolean,
-  isSelected?: boolean
+  isSelected?: boolean,
 ) {
   const { active, disabled, selected } = classNames[color];
   return {

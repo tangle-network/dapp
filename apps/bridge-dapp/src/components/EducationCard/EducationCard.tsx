@@ -15,7 +15,7 @@ const links = [
     getLink: (tab: EducationCardProps['currentTab']) => {
       return new URL(
         `${USAGE_GUIDE_PATH}/${tab.toLowerCase()}`,
-        WEBB_DOCS_URL
+        WEBB_DOCS_URL,
       ).toString();
     },
     Icon: UsageGuideIcon,
@@ -119,7 +119,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
           {...props}
           className={twMerge(
             'flex flex-row-reverse items-start',
-            props.className
+            props.className,
           )}
           ref={ref}
         >
@@ -199,7 +199,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
                             'translate-y-6 translate-x-3 bg-mono-120 dark:bg-mono-100':
                               index !==
                               howItWorksContent[currentTab].length - 1,
-                          }
+                          },
                         )}
                       />
 
@@ -212,7 +212,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
                           {
                             'border-mono-120 dark:border-mono-100':
                               !isCurrentStep,
-                          }
+                          },
                         )}
                       >
                         <Typography
@@ -254,5 +254,5 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );

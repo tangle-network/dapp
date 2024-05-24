@@ -26,7 +26,7 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
               .includes(searchText.toLowerCase())
           );
         }),
-      [selectContractItems, searchText]
+      [selectContractItems, searchText],
     );
 
     return (
@@ -108,7 +108,7 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
         </ScrollArea>
       </ListCardWrapper>
     );
-  }
+  },
 );
 
 export default ContractListCard;

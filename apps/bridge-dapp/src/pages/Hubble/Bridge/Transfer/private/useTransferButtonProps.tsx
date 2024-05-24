@@ -145,7 +145,7 @@ function useTransferButtonProps({
       }
     },
     // prettier-ignore
-    [srcTypedChainId, destTypedChainId, fungibleCfg, amount, recipient, hasRefund, refundRecipient, isValidAmount]
+    [srcTypedChainId, destTypedChainId, fungibleCfg, amount, recipient, hasRefund, refundRecipient, isValidAmount],
   );
 
   const btnText = useMemo(() => {
@@ -197,7 +197,7 @@ function useTransferButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, connectBtnCnt, destTypedChainId, fungibleCfg, hasRefund, isFeeLoading, isValidAmount, recipient, refundRecipient, refundRecipientError, srcChain]
+    [activeChain, amount, connectBtnCnt, destTypedChainId, fungibleCfg, hasRefund, isFeeLoading, isValidAmount, recipient, refundRecipient, refundRecipientError, srcChain],
   );
 
   const isLoading = useMemo(() => {
@@ -266,7 +266,7 @@ function useTransferButtonProps({
         const resourceId = await vAnchorApi.getResourceId(
           anchorId,
           srcChain.id,
-          srcChain.chainType
+          srcChain.chainType,
         );
 
         const avaiNotes = (
@@ -274,7 +274,7 @@ function useTransferButtonProps({
         ).filter(
           (note) =>
             note.note.tokenSymbol === fungibleCfg.symbol &&
-            !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
+            !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId)),
         );
 
         const amountBig = BigInt(amount);
@@ -289,7 +289,7 @@ function useTransferButtonProps({
         const valid = await vAnchorApi.validateInputNotes(
           inputNotes,
           srcTypedChainId,
-          fungibleCfg.id
+          fungibleCfg.id,
         );
 
         if (!valid) {
@@ -299,7 +299,7 @@ function useTransferButtonProps({
         // Sum up the amount of the input notes to calculate the change amount
         const totalAmountInput = inputNotes.reduce(
           (acc, note) => acc + BigInt(note.note.amount),
-          ZERO_BIG_INT
+          ZERO_BIG_INT,
         );
 
         const changeAmount = totalAmountInput - amountBig;
@@ -339,7 +339,7 @@ function useTransferButtonProps({
                 srcTypedChainId,
                 anchorId,
                 fungibleCfg.symbol,
-                changeAmount
+                changeAmount,
               )
             : undefined;
 
@@ -347,7 +347,7 @@ function useTransferButtonProps({
         const changeUtxo = changeNote
           ? await utxoFromVAnchorNote(
               changeNote.note,
-              changeNote.note.index ? parseInt(changeNote.note.index) : 0
+              changeNote.note.index ? parseInt(changeNote.note.index) : 0,
             )
           : await actualApi.generateUtxo({
               curve: noteManager.defaultNoteGenInput.curve,
@@ -400,14 +400,14 @@ function useTransferButtonProps({
             refundToken={refundToken}
             refundRecipient={refundRecipient ?? ''} // Already checked in `allInputsFilled`
             activeChain={activeChain}
-          />
+          />,
         );
       } catch (error) {
         handleTxError(error, 'Transfer');
       }
     },
     // prettier-ignore
-    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, activeChain]
+    [activeApi, activeRelayer, amount, connectBtnCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, activeChain],
   );
 
   return {

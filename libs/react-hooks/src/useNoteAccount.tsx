@@ -15,7 +15,7 @@ type OnNewNotesCB = (note: Note[]) => Promise<void> | void;
 
 type OnTryAgainCB = (
   onNewNotes?: OnNewNotesCB,
-  onTryAgain?: OnTryAgainCB
+  onTryAgain?: OnTryAgainCB,
 ) => Promise<void> | void;
 
 export type UseNoteAccountReturnType = {
@@ -52,7 +52,7 @@ export type UseNoteAccountReturnType = {
   syncNotes: (
     onNewNotes?: OnNewNotesCB,
     onTryAgain?: OnTryAgainCB,
-    startingBlock?: bigint
+    startingBlock?: bigint,
   ) => Promise<void>;
 
   /**
@@ -98,20 +98,20 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
 
   const syncNotesProgress = useObservableState(
     NoteManager.$syncNotesProgress,
-    NaN
+    NaN,
   );
 
   const isOpenNoteAccountModal = useObservableState(
-    isOpenNoteAccountModalSubject
+    isOpenNoteAccountModalSubject,
   );
 
   const isSuccessfullyCreatedNoteAccount = useObservableState(
-    isSuccessfullyCreatedNoteAccountSubject
+    isSuccessfullyCreatedNoteAccountSubject,
   );
 
   const hasNoteAccount = useMemo(
     () => Boolean(noteManager?.getKeypair()),
-    [noteManager]
+    [noteManager],
   );
 
   const handleSyncNotes = useCallback<UseNoteAccountReturnType['syncNotes']>(
@@ -152,7 +152,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
             ],
             noteManager.getKeypair(),
             startingBlock,
-            abortController.signal
+            abortController.signal,
           );
 
         const newNotes: Note[] = [];
@@ -167,7 +167,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
 
           const targetIdentifier = note.note.targetIdentifyingData;
           const { chainType, chainId } = parseTypedChainId(
-            +note.note.targetChainId
+            +note.note.targetChainId,
           );
 
           // Index the note by destination resource id
@@ -175,7 +175,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
             await activeApi.methods.variableAnchor.actions.inner.getResourceId(
               targetIdentifier,
               chainId,
-              chainType
+              chainType,
             );
 
           const existed = noteManager
@@ -231,7 +231,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
         noteManager.isSyncingNote = false;
       }
     },
-    [activeApi, activeChain, noteManager, notificationApi]
+    [activeApi, activeChain, noteManager, notificationApi],
   );
 
   // Effect to subscribe to noteManager
@@ -251,7 +251,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     const isSyncingSub = noteManager.$isSyncingNote.subscribe(
       (isSyncingNote) => {
         setIsSyncingNote(isSyncingNote);
-      }
+      },
     );
 
     return () => {

@@ -17,7 +17,7 @@ const TableStatus = ({
         'rounded-lg border border-mono-40 dark:border-mono-160',
         'bg-mono-0 dark:bg-mono-180',
         'flex flex-col items-center justify-center gap-6 p-4',
-        className
+        className,
       )}
     >
       <div className="flex flex-col items-center justify-center gap-2 pt-4">

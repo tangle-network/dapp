@@ -34,7 +34,7 @@ export const NavigationMenuContent = forwardRef<
       version,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <DropdownBody
@@ -42,7 +42,7 @@ export const NavigationMenuContent = forwardRef<
         className={twMerge(
           'pt-2 mt-6 w-full min-w-[200px]',
           !version ? 'pb-2' : '',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -118,7 +118,7 @@ export const NavigationMenuContent = forwardRef<
         )}
       </DropdownBody>
     );
-  }
+  },
 );
 
 const NavigationMenuDivider = () => {

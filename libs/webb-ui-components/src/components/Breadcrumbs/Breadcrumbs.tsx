@@ -40,7 +40,7 @@ export const Breadcrumbs = React.forwardRef<
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),
-    [baseClsx, classNameProp]
+    [baseClsx, classNameProp],
   );
 
   return (

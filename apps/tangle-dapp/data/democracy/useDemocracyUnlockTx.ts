@@ -10,7 +10,7 @@ import useSubstrateTx from '../../hooks/useSubstrateTx';
 const useDemocracyUnlockTx = () => {
   // TODO: Make this agnostic (add support for EVM).
   return useSubstrateTx((api, activeSubstrateAddress) =>
-    api.tx.democracy.unlock(activeSubstrateAddress)
+    api.tx.democracy.unlock(activeSubstrateAddress),
   );
 };
 

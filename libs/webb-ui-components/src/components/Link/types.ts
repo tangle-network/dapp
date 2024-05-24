@@ -25,13 +25,13 @@ export type LinkProps = WithInternal<
 >;
 
 function isNextLinkProps(
-  props: LinkProps
+  props: LinkProps,
 ): props is WithInternal<NextLinkProps> {
   return 'href' in props && !('to' in props) && !!props.isInternal;
 }
 
 function isReactRouterLinkProps(
-  props: LinkProps
+  props: LinkProps,
 ): props is WithInternal<ComponentPropsWithoutRef<typeof ReactRouterLink>> {
   return 'to' in props && !('href' in props) && !!props.isInternal;
 }

@@ -64,14 +64,14 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
     inputHoverClsx,
     inputCheckedClsx,
     inputDisabledClsx,
-    className
+    className,
   );
 
   const labelClsx = cx(
     'inline-block peer-disabled:cursor-not-allowed peer-disabled:text-mono-100',
     'text-mono-140 dark:text-mono-20',
     labelVariant,
-    spacingClassName
+    spacingClassName,
   );
 
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);

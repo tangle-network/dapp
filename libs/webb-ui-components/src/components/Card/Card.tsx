@@ -28,9 +28,9 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       () =>
         twMerge(
           'flex flex-col w-full p-4 space-y-6 rounded-lg bg-mono-0 dark:bg-mono-180',
-          className
+          className,
         ),
-      [className]
+      [className],
     );
 
     return (
@@ -38,5 +38,5 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         {children}
       </div>
     );
-  }
+  },
 );

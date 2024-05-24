@@ -71,5 +71,5 @@ export const AmountMenu = forwardRef<HTMLDivElement, AmountMenuProps>(
         </div>
       </div>
     );
-  }
+  },
 );

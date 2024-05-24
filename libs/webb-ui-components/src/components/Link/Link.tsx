@@ -20,7 +20,7 @@ export const Link: React.FC<LinkProps> = (props) => {
 };
 
 function extractInternalProp<T extends LinkProps>(
-  props: T
+  props: T,
 ): Omit<T, 'isInternal'> {
   const { isInternal, ...restProps } = props;
   return restProps;

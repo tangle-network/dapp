@@ -32,14 +32,14 @@ export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
     const baseClsx = useMemo(
       () =>
         'box-border inline-flex items-center gap-2 px-3 py-1.5 rounded-full uppercase text-[12px] leading-[15px] font-bold',
-      []
+      [],
     );
 
     const className = useMemo(() => {
       const { activeOrDisable, selected } = getChipClassName(
         color,
         isDisabled,
-        isSelected
+        isSelected,
       );
       return twMerge(baseClsx, activeOrDisable, selected, classNameProp);
     }, [baseClsx, color, isDisabled, isSelected, classNameProp]);
@@ -49,5 +49,5 @@ export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
         {children}
       </span>
     );
-  }
+  },
 );

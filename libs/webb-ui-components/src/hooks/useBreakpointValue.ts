@@ -19,7 +19,7 @@ const breakpointsTailwind: BreakpointRecord = {
 function useBreakpointValue<
   V,
   BreakPoints extends BreakpointRecord,
-  Key extends keyof BreakPoints
+  Key extends keyof BreakPoints,
 >(breakpoint: Key, value: V, fallback: V, breakpoints?: BreakPoints) {
   const breakpointsToUse = breakpoints ?? breakpointsTailwind;
   const breakPointValue =

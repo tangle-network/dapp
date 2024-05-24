@@ -16,7 +16,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
       value,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -33,7 +33,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
             'enabled:radix-state-unchecked:hover:shadow-[0_0_0_1px_rgba(213,230,255,1)] hover:dark:shadow-none',
             'radix-state-checked:border-2 radix-state-checked:border-blue-70 dark:radix-state-checked:border-blue-50',
             'radix-disabled:border-mono-80 dark:radix-disabled:border-mono-120 dark:radix-disabled:bg-mono-140',
-            overrideRadixRadioItemProps?.className
+            overrideRadixRadioItemProps?.className,
           )}
           value={value}
           id={id}
@@ -44,7 +44,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
               'flex items-center justify-center w-full h-full relative',
               "after:content-[''] after:block after:w-2.5 after:h-2.5 after:rounded-[50%]",
               'after:bg-blue-70 after:dark:bg-blue-50',
-              overrideRadixRadioIndicatorProps?.className
+              overrideRadixRadioIndicatorProps?.className,
             )}
           />
         </RadioGroup.Item>
@@ -55,7 +55,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
             className={twMerge(
               'text-mono-140 dark:text-mono-20',
               'group-radix-disabled:text-mono-80 dark:group-radix-disabled:text-mono-120',
-              'peer-radix-disabled:text-mono-80 dark:peer-radix-disabled:text-mono-120'
+              'peer-radix-disabled:text-mono-80 dark:peer-radix-disabled:text-mono-120',
             )}
           >
             {label}
@@ -65,5 +65,5 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
         )}
       </div>
     );
-  }
+  },
 );

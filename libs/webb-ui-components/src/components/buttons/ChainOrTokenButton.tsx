@@ -20,13 +20,13 @@ const ChainOrTokenButton = forwardRef<
       iconType,
       ...props
     },
-    ref
+    ref,
   ) => {
     const textClsx = useMemo(() => {
       return twMerge(
         'font-bold',
         iconType === 'token' ? 'uppercase' : '',
-        textClassName
+        textClassName,
       );
     }, [iconType, textClassName]);
 
@@ -44,7 +44,7 @@ const ChainOrTokenButton = forwardRef<
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
           'dark:hover:bg-mono-0/10',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -67,7 +67,7 @@ const ChainOrTokenButton = forwardRef<
         </div>
       </button>
     );
-  }
+  },
 );
 
 ChainOrTokenButton.displayName = 'ChainOrTokenButton';

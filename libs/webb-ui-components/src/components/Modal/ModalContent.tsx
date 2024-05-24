@@ -18,7 +18,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
       overrideTransitionRootProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     const inner = (
       <Transition.Root show={isOpen} {...overrideTransitionRootProps}>
@@ -55,9 +55,9 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
               cx(
                 isCenter
                   ? '-translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
-                  : 'top-0 left-0'
+                  : 'top-0 left-0',
               ),
-              className
+              className,
             )}
             ref={ref}
           >
@@ -72,5 +72,5 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     }
 
     return inner;
-  }
+  },
 );

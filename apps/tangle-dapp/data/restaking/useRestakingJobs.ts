@@ -16,8 +16,8 @@ const useRestakingJobs = () => {
 
         return api.query.jobs.validatorJobIdLookup(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const hasActiveJobs =
@@ -33,7 +33,7 @@ const useRestakingJobs = () => {
     const jobRoleIdPairs = jobRoleIdPairsOpt.unwrap();
 
     return jobRoleIdPairs.map((jobRoleIdPair) =>
-      substrateRoleToServiceType(jobRoleIdPair[0])
+      substrateRoleToServiceType(jobRoleIdPair[0]),
     );
   }, [jobRoleIdPairsOpt]);
 

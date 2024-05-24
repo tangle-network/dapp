@@ -39,7 +39,7 @@ const ActiveChainDropdown = () => {
 
   const selectableChains = useMemo(
     () => apiConfig.getSupportedChains({ withEnv: true }),
-    [apiConfig]
+    [apiConfig],
   );
 
   const handleSelectChain = useCallback(
@@ -59,7 +59,7 @@ const ActiveChainDropdown = () => {
         }
       }
     },
-    [activeWallet, notificationApi, switchChain, toggleModal]
+    [activeWallet, notificationApi, switchChain, toggleModal],
   );
 
   return (

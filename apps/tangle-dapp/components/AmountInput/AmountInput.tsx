@@ -56,7 +56,7 @@ const AmountInput: FC<AmountInputProps> = ({
       errorOnEmptyValue,
       setAmount,
       minErrorMessage,
-      maxErrorMessage
+      maxErrorMessage,
     );
 
   // Set the error message in the parent component.

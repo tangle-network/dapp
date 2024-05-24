@@ -18,9 +18,9 @@ export const CollapsibleButton = forwardRef<
       {...props}
       className={twMerge(
         cx(
-          'group flex w-full select-none items-center justify-between px-4 py-2'
+          'group flex w-full select-none items-center justify-between px-4 py-2',
         ),
-        className
+        className,
       )}
       ref={ref}
     >

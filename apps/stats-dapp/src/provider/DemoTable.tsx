@@ -6,16 +6,16 @@ export function DemoTable<T>(data: { page: Loadable<Page<T>> }) {
   const list = data.page.val;
   const isLoading = useMemo(
     () => data.page.isLoading || !data.page.val,
-    [data]
+    [data],
   );
   const errorMessage = useMemo(
     () =>
       data.page.isFailed ? data.page.error || 'Something went wrong' : null,
-    [data]
+    [data],
   );
   const keys = useMemo(
     () => (list?.items ? Object.keys(list.items[0] as any) : []),
-    [list]
+    [list],
   );
 
   if (isLoading || !list) {

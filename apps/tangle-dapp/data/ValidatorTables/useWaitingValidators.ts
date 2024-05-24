@@ -12,8 +12,8 @@ const useWaitingValidators = () => {
         api.derive.staking
           .waitingInfo(DEFAULT_FLAGS_WAITING)
           .pipe(map((derive) => derive.waiting)),
-      []
-    )
+      [],
+    ),
   );
 
   return useValidators(waitingValidatorAddresses, false);

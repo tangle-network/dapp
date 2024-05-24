@@ -42,7 +42,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
     (error: string | null) => {
       setHasErrors(error !== null);
     },
-    [setHasErrors]
+    [setHasErrors],
   );
 
   const submitTx = useCallback(async () => {

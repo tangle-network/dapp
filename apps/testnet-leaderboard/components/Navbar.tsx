@@ -29,7 +29,7 @@ type NavItem = ComponentProps<typeof Link> & {
 };
 
 const isNavItem = (
-  item: NavItem | { [label: string]: Array<NavItem> }
+  item: NavItem | { [label: string]: Array<NavItem> },
 ): item is NavItem => 'href' in item;
 
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
@@ -160,7 +160,7 @@ const MobileNav = () => {
                     'px-2 py-4 rounded-none text-center text-mono-200 font-bold border-y border-mono-40',
                     {
                       'hover:!bg-transparent': !isNavItem(item),
-                    }
+                    },
                   )}
                 >
                   {item.children}
@@ -179,7 +179,7 @@ const MobileNav = () => {
                   className={cx(
                     'flex items-center justify-between w-full capitalize',
                     'group hover:bg-blue-0 dark:hover:bg-blue-120',
-                    'px-4 py-2 rounded-lg'
+                    'px-4 py-2 rounded-lg',
                   )}
                 >
                   <span>{label}</span>

@@ -19,20 +19,20 @@ const useRebondTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, RebondTxContext> =
     useCallback(
       (context) => ({ functionName: 'rebond', arguments: [context.amount] }),
-      []
+      [],
     );
 
   const substrateTxFactory: SubstrateTxFactory<RebondTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) =>
       api.tx.staking.rebond(context.amount),
-    []
+    [],
   );
 
   const getSuccessMessageFnc: GetSuccessMessageFunctionType<RebondTxContext> =
     useCallback(
       ({ amount }) =>
         `Successfully rebonded ${formatNativeTokenAmount(amount)}.`,
-      [formatNativeTokenAmount]
+      [formatNativeTokenAmount],
     );
 
   return useAgnosticTx<Precompile.STAKING, RebondTxContext>({

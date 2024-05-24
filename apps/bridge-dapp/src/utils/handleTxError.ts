@@ -5,10 +5,10 @@ import { notificationApi } from '@webb-tools/webb-ui-components/components/Notif
 
 function handleTxError(
   error: unknown,
-  txType?: TransactionName | WrapperEventType
+  txType?: TransactionName | WrapperEventType,
 ) {
   let displayErrorMessage = WebbError.getErrorMessage(
-    WebbErrorCodes.UnknownError
+    WebbErrorCodes.UnknownError,
   ).message;
 
   if (error instanceof WebbError) {

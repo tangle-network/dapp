@@ -7,7 +7,7 @@ import { TokenSymbol } from '../../types';
 export const formatTokenBalance = (
   balance: BN | bigint | ToBn,
   tokenSymbol?: TokenSymbol,
-  options: Partial<Parameters<typeof formatBalance>[1]> = {}
+  options: Partial<Parameters<typeof formatBalance>[1]> = {},
 ): string => {
   return formatBalance(balance, {
     decimals: TANGLE_TOKEN_DECIMALS,

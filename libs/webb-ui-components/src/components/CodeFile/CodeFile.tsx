@@ -28,7 +28,7 @@ const CodeFile: FC<CodeFileProps> = ({
 }) => {
   const useDarkMode = useMemo(
     () => (isInNextProject ? useNextDarkMode : useNormalDarkMode),
-    [isInNextProject]
+    [isInNextProject],
   );
   const [isDarkMode] = useDarkMode();
 

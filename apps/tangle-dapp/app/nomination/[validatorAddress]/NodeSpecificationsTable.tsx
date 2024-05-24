@@ -121,7 +121,7 @@ const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
         className={cx(
           'min-h-[120px] bg-glass dark:bg-glass_dark py-3 px-4 rounded-2xl overflow-x-auto',
           'flex flex-col',
-          'border border-mono-0 dark:border-mono-160'
+          'border border-mono-0 dark:border-mono-160',
         )}
       >
         {/* Loading */}

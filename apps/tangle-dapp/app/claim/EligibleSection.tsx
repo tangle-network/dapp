@@ -49,7 +49,7 @@ const EligibleSection: FC<Props> = ({
 }) => {
   assert(
     totalAmount.gte(vestingAmount),
-    "Total amount can't be less than vesting amount"
+    "Total amount can't be less than vesting amount",
   );
 
   const { activeAccount, activeApi } = useWebContext();
@@ -86,7 +86,7 @@ const EligibleSection: FC<Props> = ({
         const systemChain = await api.rpc.system.chain();
         const statement = getStatement(
           systemChain.toHuman(),
-          isRegularStatement
+          isRegularStatement,
         );
         setStatement(statement);
       } catch (error) {
@@ -95,8 +95,8 @@ const EligibleSection: FC<Props> = ({
             typeof error === 'string'
               ? `Error: ${error}`
               : error instanceof Error
-              ? error.message
-              : 'Failed to get statement',
+                ? error.message
+                : 'Failed to get statement',
           variant: 'error',
         });
       }
@@ -136,7 +136,7 @@ const EligibleSection: FC<Props> = ({
         statementSentence,
         recipient,
         isEvmSigner,
-        isEvmRecipient
+        isEvmRecipient,
       );
 
       const signature = await activeApi.sign(payload);
@@ -148,7 +148,7 @@ const EligibleSection: FC<Props> = ({
         isEvmRecipient ? { EVM: recipient } : { Native: recipient }, // destAccount
         isEvmSigner ? { EVM: accountId } : { Native: accountId }, // signer
         isEvmSigner ? { EVM: signature } : { Native: signature }, // signature
-        statementSentence
+        statementSentence,
       );
 
       const txReceiptHash = await sendTransaction(tx);
@@ -169,8 +169,8 @@ const EligibleSection: FC<Props> = ({
           error instanceof Error
             ? error.message
             : typeof error === 'string'
-            ? `Error: ${error}`
-            : 'Failed to sign & send transaction',
+              ? `Error: ${error}`
+              : 'Failed to sign & send transaction',
         secondaryMessage: error instanceof Error ? undefined : String(error),
       });
 
@@ -232,7 +232,7 @@ const EligibleSection: FC<Props> = ({
               <Typography variant="body1" fw="bold" ta="center">
                 {`${formatTokenBalance(
                   totalAmount.sub(vestingAmount),
-                  nativeTokenSymbol
+                  nativeTokenSymbol,
                 )}`}{' '}
                 will be available immediately as free balance.
               </Typography>
@@ -311,16 +311,16 @@ function preparePayload(
   statementSentence: string,
   recipient: string,
   isEvmSigner: boolean,
-  isEvmRecipient: boolean
+  isEvmRecipient: boolean,
 ): string {
   const statementBytes = stringToU8a(statementSentence);
 
   const addressEncoded = toAsciiHex(
-    isEvmRecipient ? hexToU8a(recipient) : decodeAddress(recipient)
+    isEvmRecipient ? hexToU8a(recipient) : decodeAddress(recipient),
   );
 
   const message = new Uint8Array(
-    prefix.length + addressEncoded.length + statementBytes.length
+    prefix.length + addressEncoded.length + statementBytes.length,
   );
 
   message.set(prefix, 0);
@@ -336,7 +336,7 @@ function preparePayload(
 }
 
 function sendTransaction(
-  tx: SubmittableExtrinsic<'promise', ISubmittableResult>
+  tx: SubmittableExtrinsic<'promise', ISubmittableResult>,
 ) {
   console.debug(`Sending transaction with args ${tx.args.toString()}`);
 
@@ -344,7 +344,7 @@ function sendTransaction(
     tx.send(async (result) => {
       const status = result.status;
       const events = result.events.filter(
-        ({ event: { section } }) => section === 'system'
+        ({ event: { section } }) => section === 'system',
       );
 
       if (status.isInBlock || status.isFinalized) {

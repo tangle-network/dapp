@@ -18,7 +18,7 @@ const DropdownField = ({
     (selectedItem: string) => {
       setSelectedItem(selectedItem);
     },
-    [setSelectedItem]
+    [setSelectedItem],
   );
 
   return (
@@ -27,7 +27,7 @@ const DropdownField = ({
         'px-4 py-2 w-full h-[74px] rounded-lg',
         'bg-mono-20 dark:bg-mono-160',
         'outline outline-1 outline-offset-1 outline-transparent',
-        className
+        className,
       )}
     >
       <Typography
@@ -65,7 +65,7 @@ const DropdownField = ({
                     selectedItem === item
                       ? 'bg-blue-10 hover:!bg-blue-10 dark:bg-blue-120 hover:dark:!bg-blue-120'
                       : '',
-                    'hover:!bg-inherit'
+                    'hover:!bg-inherit',
                   )}
                 >
                   <Typography

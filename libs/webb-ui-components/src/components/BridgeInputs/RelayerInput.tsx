@@ -79,5 +79,5 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
         )}
       </InputWrapper>
     );
-  }
+  },
 );

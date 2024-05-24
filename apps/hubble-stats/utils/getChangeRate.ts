@@ -6,7 +6,7 @@
  */
 const getChangeRate = (
   value1: number | undefined,
-  value2: number | undefined
+  value2: number | undefined,
 ) => {
   return value1 && value2 ? ((value1 - value2) / value2) * 100 : undefined;
 };

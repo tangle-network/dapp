@@ -28,7 +28,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
   async fetchFungibleCurrency(
     typedChainId: number,
     _treeId: string,
-    _provider: ApiPromise
+    _provider: ApiPromise,
   ): Promise<ICurrency | null> {
     // First check if the fungible currency is already cached
     const cachedFungibleCurrency = this.fungibleCurrencyCache.get(typedChainId);
@@ -98,7 +98,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
   async fetchWrappableCurrencies(
     _fungibleCurrency: ICurrency,
     typedChainId: number,
-    _provider: ApiPromise
+    _provider: ApiPromise,
   ): Promise<ICurrency[]> {
     // First check if the wrappable currencies are already cached
     const cachedWrappableCurrencies =
@@ -181,7 +181,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
     existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
-    existedAnchorConfig: Record<number, ChainAddressConfig> = {}
+    existedAnchorConfig: Record<number, ChainAddressConfig> = {},
   ): Promise<{
     currenciesConfig: Record<number, CurrencyConfig>;
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
@@ -204,10 +204,10 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
         } catch (error) {
           return false;
         }
-      })
+      }),
     );
     substrateTypedChainIds = substrateTypedChainIds.filter(
-      (_, index) => substrateTypedChainIdBooleans[index]
+      (_, index) => substrateTypedChainIdBooleans[index],
     );
     if (substrateTypedChainIds.length === 0) {
       return {
@@ -243,7 +243,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
             const fungible = await this.fetchFungibleCurrency(
               typedChainId,
               treeId,
-              provider
+              provider,
             );
 
             return {
@@ -257,35 +257,35 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
             > & {
               fungibleCurrency: ICurrency | null;
             };
-          })
+          }),
         );
 
         return fungibleCurrencies;
-      })
+      }),
     );
 
     const fungibleCurrencies = fungibleCurrenciesWithNull
       .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
       .filter(
         (
-          currencies
+          currencies,
         ): currencies is {
           anchorAddressOrTreeId: string;
           fungibleCurrency: ICurrency | null;
           nativeCurrency: ICurrency;
           typedChainId: number;
-        }[] => !!currencies && currencies.length > 0
+        }[] => !!currencies && currencies.length > 0,
       )
       .reduce((acc, currencies) => [...acc, ...currencies], [])
       .filter(
         (
-          currency
+          currency,
         ): currency is {
           anchorAddressOrTreeId: string;
           fungibleCurrency: ICurrency;
           nativeCurrency: ICurrency;
           typedChainId: number;
-        } => currency.fungibleCurrency !== null
+        } => currency.fungibleCurrency !== null,
       );
 
     // Fetch all wrappable currencies
@@ -301,7 +301,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
           const wrappables = await this.fetchWrappableCurrencies(
             fungibleCurrency,
             typedChainId,
-            provider
+            provider,
           );
 
           return {
@@ -311,22 +311,22 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
             typedChainId,
             wrappableCurrencies: wrappables,
           };
-        }
-      )
+        },
+      ),
     );
 
     const wrappableCurrencies = wrappableCurrenciesWithNull
       .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
       .filter(
         (currency): currency is CurrencyResponse =>
-          !!currency && Array.isArray(currency.wrappableCurrencies)
+          !!currency && Array.isArray(currency.wrappableCurrencies),
       );
 
     const config = this.addCurrenciesIntoConfig(
       wrappableCurrencies,
       existedCurreniciesConfig,
       existedFungibleToWrappableMap,
-      existedAnchorConfig
+      existedAnchorConfig,
     );
 
     return config;

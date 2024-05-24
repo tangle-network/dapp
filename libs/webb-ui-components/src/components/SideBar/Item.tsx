@@ -31,7 +31,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(Boolean(isActive));
   const [activeSubItem, setActiveSubItem] = useState<number>(() => {
     const activeSubItemIndex = subItems.findIndex((subItem) =>
-      isSideBarItemActive(subItem.href, pathnameOrHash)
+      isSideBarItemActive(subItem.href, pathnameOrHash),
     );
 
     return activeSubItemIndex;
@@ -39,7 +39,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
 
   useEffect(() => {
     const idx = subItems.findIndex((subItem) =>
-      isSideBarItemActive(subItem.href, pathnameOrHash)
+      isSideBarItemActive(subItem.href, pathnameOrHash),
     );
 
     setActiveSubItem(idx);
@@ -101,13 +101,13 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
                 isExpanded ? 'justify-between px-4 py-3' : 'justify-center',
                 isActive &&
                   (subItems.length === 0 || !isExpanded) &&
-                  'bg-mono-20 dark:bg-mono-160'
+                  'bg-mono-20 dark:bg-mono-160',
               )}
             >
               <div
                 className={twMerge(
                   'flex gap-4 !text-inherit',
-                  !isExpanded && 'justify-center'
+                  !isExpanded && 'justify-center',
                 )}
               >
                 <Icon width={24} height={24} className="!fill-current" />

@@ -35,12 +35,12 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const className = useMemo(() => {
       return twMerge(
         'p-6 flex flex-col justify-between gap-4 border-2 rounded-lg dark:border-mono-160 border-mono-0',
-        wrapperClassName
+        wrapperClassName,
       );
     }, [wrapperClassName]);
 
@@ -134,5 +134,5 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
         <div>{children}</div>
       </div>
     );
-  }
+  },
 );

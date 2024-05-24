@@ -79,7 +79,7 @@ export function createIcon(options: CreateIconOptions) {
         className_,
         colorUsingStroke ? 'fill-transparent' : 'stroke-transparent',
         minSizeClassName,
-        className
+        className,
       )}
       {...restOptions}
       {...defaultProps}

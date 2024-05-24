@@ -8,5 +8,5 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     return (
       <Root {...props} className={twMerge('group', className)} ref={ref} />
     );
-  }
+  },
 );

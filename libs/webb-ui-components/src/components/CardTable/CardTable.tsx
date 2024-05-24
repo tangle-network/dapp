@@ -35,7 +35,7 @@ export const CardTable: React.FC<CardTableProps> = ({
       {...props}
       className={twMerge(
         'rounded-lg bg-mono-0 dark:bg-mono-180 overflow-hidden',
-        className
+        className,
       )}
     >
       {/** Title and filter */}

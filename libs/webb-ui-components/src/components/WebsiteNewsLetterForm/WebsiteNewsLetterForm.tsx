@@ -69,7 +69,7 @@ export const WebsiteNewsletterForm: FC<{
         setLoading(false);
       }
     },
-    [onSuccess]
+    [onSuccess],
   );
 
   return (

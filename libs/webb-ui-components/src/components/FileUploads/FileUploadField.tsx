@@ -29,7 +29,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
       setNote(value);
       onChange?.(value);
     },
-    [onChange]
+    [onChange],
   );
 
   // Handle upload event
@@ -45,7 +45,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
         className={twMerge(
           'w-full max-w-[356px]',
           'p-3 rounded-md bg-mono-20 dark:bg-mono-120',
-          'flex items-center justify-between space-x-5'
+          'flex items-center justify-between space-x-5',
         )}
       >
         <input
@@ -56,7 +56,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
             'bg-transparent mono1 text-mono-200 dark:text-mono-0',
             'placeholder:text-mono-120 dark:placeholder:text-mono-80',
             'disabled:text-mono-120 dark:disabled:text-mono-80',
-            'grow focus:outline-0'
+            'grow focus:outline-0',
           )}
         />
 

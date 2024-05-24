@@ -5,20 +5,20 @@ import { SubgraphUrlType } from '../../types';
 
 const getTvlByVAnchor = async (
   vAnchorAddress: string,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<number | undefined> => {
   let tvl: number | undefined;
   try {
     const tvlVAnchorByChainsData =
       await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
         subgraphUrls,
-        vAnchorAddress
+        vAnchorAddress,
       );
 
     tvl = tvlVAnchorByChainsData.reduce(
       (tvl, vAnchorByChain) =>
         tvl + +formatEther(BigInt(vAnchorByChain?.totalValueLocked ?? 0)),
-      0
+      0,
     );
   } catch {
     tvl = undefined;

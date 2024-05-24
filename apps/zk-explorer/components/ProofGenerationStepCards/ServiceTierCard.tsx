@@ -23,8 +23,8 @@ const ServiceTierCard: FC<ServiceTierCardProps> = ({
     monthlyPrice === null
       ? null
       : monthlyPrice > 0
-      ? `Billed $${monthlyPrice * 12}/year`
-      : 'Free';
+        ? `Billed $${monthlyPrice * 12}/year`
+        : 'Free';
 
   return (
     <Card className="flex flex-col gap-1 space-y-0 rounded-2xl w-full dark:bg-mono-160 px-6 py-3">
@@ -69,8 +69,8 @@ const ServiceTierCard: FC<ServiceTierCardProps> = ({
         {monthlyPrice === null
           ? 'Contact Us'
           : isSelected
-          ? 'Selected'
-          : 'Select Plan'}
+            ? 'Selected'
+            : 'Select Plan'}
       </Button>
     </Card>
   );

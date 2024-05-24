@@ -20,7 +20,7 @@ export const ConnectWalletMobileButton = forwardRef<
       extraActionButtons = [],
       ...props
     },
-    ref
+    ref,
   ) => {
     const defaultActionButtonsProps: Array<ButtonProps> = [
       {
@@ -59,5 +59,5 @@ export const ConnectWalletMobileButton = forwardRef<
         </BottomDialogPortal>
       </BottomDialog>
     );
-  }
+  },
 );

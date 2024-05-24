@@ -106,7 +106,7 @@ export const Input: React.FC<InputProps> = (props) => {
 
   const isInvalid = useMemo(
     () => isInvalidProp || errorMessage,
-    [isInvalidProp, errorMessage]
+    [isInvalidProp, errorMessage],
   );
 
   const paddingX = useMemo(
@@ -114,11 +114,11 @@ export const Input: React.FC<InputProps> = (props) => {
       leftIconProp && rightIconProp
         ? ('px-8' as const)
         : leftIconProp
-        ? ('pl-8 pr-4' as const)
-        : rightIconProp
-        ? ('pl-4 pr-8' as const)
-        : ('px-4' as const),
-    [leftIconProp, rightIconProp]
+          ? ('pl-8 pr-4' as const)
+          : rightIconProp
+            ? ('pl-4 pr-8' as const)
+            : ('px-4' as const),
+    [leftIconProp, rightIconProp],
   );
 
   const inputClsxBase = useMemo(
@@ -128,23 +128,23 @@ export const Input: React.FC<InputProps> = (props) => {
         paddingX,
         isInvalid
           ? ('border-red-70 dark:border-red-50' as const)
-          : ('border-mono-80 dark:border-mono-120' as const)
+          : ('border-mono-80 dark:border-mono-120' as const),
       ),
-    [isInvalid, paddingX]
+    [isInvalid, paddingX],
   );
   const inputClsxHover = useMemo(
     () => 'hover:border-blue-40 dark:hover:border-blue-70',
-    []
+    [],
   );
   const inputClsxFocus = useMemo(
     () =>
       'focus:bg-blue-0 focus:border-blue-40 dark:focus:bg-blue-120 dark:focus:border-blue-70',
-    []
+    [],
   );
   const inputClsxDisabled = useMemo(
     () =>
       'disabled:text-mono-100 dark:disabled:text-mono-120 disabled:bg-mono-40 dark:disabled:bg-mono-160 disabled:cursor-not-allowed disabled:hover:border-mono-80 dark:disabled:hover:border-mono-120',
-    []
+    [],
   );
 
   const mergedInputClsx = useMemo(
@@ -156,13 +156,13 @@ export const Input: React.FC<InputProps> = (props) => {
               inputClsxBase,
               inputClsxHover,
               inputClsxFocus,
-              inputClsxDisabled
+              inputClsxDisabled,
             )
           : cx(
               `border-none w-full bg-transparent focus:ring-0 p-0 h4 leading-[30px] font-bold`,
-              'text-mono-200 dark:text-mono-0'
+              'text-mono-200 dark:text-mono-0',
             ),
-        inputClassName
+        inputClassName,
       ),
     [
       inputClsxBase,
@@ -171,7 +171,7 @@ export const Input: React.FC<InputProps> = (props) => {
       inputClsxHover,
       size,
       inputClassName,
-    ]
+    ],
   );
 
   const iconClsx = useMemo(
@@ -179,10 +179,10 @@ export const Input: React.FC<InputProps> = (props) => {
       cx(
         twMerge(
           'text-mono-140 dark:text-mono-40',
-          isDisabled ? 'text-mono-100 dark:text-mono-120' : ''
-        )
+          isDisabled ? 'text-mono-100 dark:text-mono-120' : '',
+        ),
       ),
-    [isDisabled]
+    [isDisabled],
   );
 
   return (

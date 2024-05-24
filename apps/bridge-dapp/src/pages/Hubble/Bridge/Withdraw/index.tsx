@@ -113,7 +113,7 @@ const Withdraw = () => {
     (isShielded?: boolean) => {
       navigate(isShielded ? SELECT_SHIELDED_POOL_PATH : SELECT_TOKEN_PATH);
     },
-    [navigate]
+    [navigate],
   );
 
   const handlePasteButtonClick = useCallback(async () => {
@@ -201,7 +201,7 @@ const Withdraw = () => {
   const gasFees = useMemo(
     () =>
       gasFeeInfo ? parseFloat(formatEther(gasFeeInfo).slice(0, 10)) : undefined,
-    [gasFeeInfo]
+    [gasFeeInfo],
   );
 
   const relayerFees = useMemo(
@@ -209,7 +209,7 @@ const Withdraw = () => {
       relayerFeeInfo
         ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
         : undefined,
-    [relayerFeeInfo]
+    [relayerFeeInfo],
   );
 
   const { withdrawConfirmComponent, ...buttonProps } = useWithdrawButtonProps({

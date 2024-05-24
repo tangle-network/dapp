@@ -6,7 +6,7 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 const usePayoutsAvailability = () => {
   const { valueOpt: cachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
-    true
+    true,
   );
 
   const address = useSubstrateAddress();

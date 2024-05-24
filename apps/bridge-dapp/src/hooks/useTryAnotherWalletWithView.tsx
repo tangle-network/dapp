@@ -36,7 +36,7 @@ export const useTryAnotherWalletWithView = () => {
               onTryAgainBtnClick={async () => {
                 if (!selectedWallet) {
                   throw new Error(
-                    'There is no wallet selected. Please select a wallet and try again.'
+                    'There is no wallet selected. Please select a wallet and try again.',
                   );
                 }
                 await switchChain(chain, selectedWallet);
@@ -47,7 +47,7 @@ export const useTryAnotherWalletWithView = () => {
       );
     },
     // prettier-ignore
-    [apiConfig.wallets, chain, connectingWalletId, failedWalletId, isModalOpen, selectedWallet, switchChain]
+    [apiConfig.wallets, chain, connectingWalletId, failedWalletId, isModalOpen, selectedWallet, switchChain],
   );
 
   const onTryAnotherWallet = useCallback(() => {

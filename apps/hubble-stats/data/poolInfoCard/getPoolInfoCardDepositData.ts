@@ -5,7 +5,7 @@ import { VANCHORS_MAP } from '../../constants';
 
 export default async function getPoolInfoCardDepositData(
   poolAddress: string,
-  epochNow: number
+  epochNow: number,
 ): Promise<MetricType> {
   const subgraphUrls = VANCHORS_MAP[poolAddress].supportedSubgraphs;
 
@@ -14,13 +14,13 @@ export default async function getPoolInfoCardDepositData(
       poolAddress,
       epochNow - EPOCH_DAY_INTERVAL,
       epochNow,
-      subgraphUrls
+      subgraphUrls,
     ),
     getDepositInTimeRangeByVAnchor(
       poolAddress,
       epochNow - 2 * EPOCH_DAY_INTERVAL,
       epochNow - EPOCH_DAY_INTERVAL,
-      subgraphUrls
+      subgraphUrls,
     ),
   ] as const);
 

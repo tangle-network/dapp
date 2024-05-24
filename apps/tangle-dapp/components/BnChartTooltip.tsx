@@ -14,7 +14,7 @@ const BnChartTooltip = (
   maxAmount: BN,
   allocatedAmount: BN,
   previewAmount: BN,
-  displayAmount: boolean
+  displayAmount: boolean,
 ) => {
   const { nativeTokenSymbol } = useNetworkStore();
 
@@ -39,12 +39,12 @@ const BnChartTooltip = (
       entryName === 'Remaining'
         ? remainingAmount
         : entryName === 'New Allocation'
-        ? previewAmount
-        : allocations[entryName];
+          ? previewAmount
+          : allocations[entryName];
 
     assert(
       amount !== undefined,
-      'Service type should have an allocated amount in the allocation map'
+      'Service type should have an allocated amount in the allocation map',
     );
 
     return (

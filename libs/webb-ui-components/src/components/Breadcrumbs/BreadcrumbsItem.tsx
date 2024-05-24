@@ -34,7 +34,7 @@ export const BreadcrumbsItem = React.forwardRef<
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),
-    [baseClsx, classNameProp]
+    [baseClsx, classNameProp],
   );
 
   if (!isLast) {
@@ -43,7 +43,7 @@ export const BreadcrumbsItem = React.forwardRef<
         color="grey"
         className={twMerge(
           className,
-          'cursor-pointer dark:bg-[rgba(255,255,255,0.05)]'
+          'cursor-pointer dark:bg-[rgba(255,255,255,0.05)]',
         )}
         ref={ref}
       >
@@ -52,7 +52,7 @@ export const BreadcrumbsItem = React.forwardRef<
           variant="label"
           className={twMerge(
             'capitalize !font-semibold text-mono-120 dark:text-mono-60',
-            textClassName
+            textClassName,
           )}
         >
           {children}
@@ -66,7 +66,7 @@ export const BreadcrumbsItem = React.forwardRef<
       color="grey"
       className={twMerge(
         'mb-[0.4px] bg-[#9CA0B01A] dark:bg-[rgba(255,255,255,0.1)]',
-        className
+        className,
       )}
       ref={ref}
     >
@@ -75,7 +75,7 @@ export const BreadcrumbsItem = React.forwardRef<
         variant="label"
         className={twMerge(
           'capitalize !font-semibold dark:text-mono-0',
-          textClassName
+          textClassName,
         )}
       >
         {children}

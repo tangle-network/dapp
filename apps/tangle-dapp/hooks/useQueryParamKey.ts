@@ -15,7 +15,7 @@ type UseQueryParamsReturn<Page extends PagePath> = {
 
 function validateQueryParam(
   key: QueryParamKey,
-  value: string | null
+  value: string | null,
 ): value is QueryParamValueOf<typeof key> {
   // Not defined in the query params, so it's valid.
   if (value === null) {
@@ -29,7 +29,7 @@ function validateQueryParam(
 }
 
 const useQueryParamKey = <Page extends PagePath>(
-  key: QueryParamKeyOf<Page>
+  key: QueryParamKeyOf<Page>,
 ): UseQueryParamsReturn<Page> => {
   const queryParams = useSearchParams();
   const value = queryParams.get(key);

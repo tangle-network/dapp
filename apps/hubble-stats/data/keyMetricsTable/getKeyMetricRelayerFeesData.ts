@@ -8,7 +8,7 @@ export default async function getKeyMetricRelayerFeesData(): Promise<MetricType>
     const fetchedRelayerFeesData =
       await vAnchorClient.RelayerFee.GetVAnchorsRelayerFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
-        VANCHOR_ADDRESSES
+        VANCHOR_ADDRESSES,
       );
 
     const fees = fetchedRelayerFeesData.reduce(
@@ -16,11 +16,11 @@ export default async function getKeyMetricRelayerFeesData(): Promise<MetricType>
         const relayerFeesVAnchorsByChain = vAnchorsByChain.reduce(
           (relayerFeesTotalByChain, vAnchor) =>
             relayerFeesTotalByChain + +formatEther(BigInt(vAnchor.profit ?? 0)),
-          0
+          0,
         );
         return relayerFeesTotal + relayerFeesVAnchorsByChain;
       },
-      0
+      0,
     );
 
     return { value: fees };

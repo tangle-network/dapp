@@ -38,7 +38,7 @@ const TxProgressorRoot = forwardRef<
       className={twMerge(
         'w-full max-w-lg rounded-lg p-4',
         'bg-mono-0 dark:bg-mono-180',
-        className
+        className,
       )}
     >
       {children}
@@ -132,8 +132,8 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
             {amount > 0
               ? `+${amount.toFixed(2)}`
               : amount < 0
-              ? `-${Math.abs(amount).toFixed(2)}`
-              : `${amount.toFixed(2)}`}
+                ? `-${Math.abs(amount).toFixed(2)}`
+                : `${amount.toFixed(2)}`}
           </b>{' '}
           {tokenSymbol}
         </Typography>
@@ -183,7 +183,7 @@ const TxProgressorFooter = forwardRef<
       actionProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -222,7 +222,7 @@ const TxProgressorFooter = forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );
 TxProgressorFooter.displayName = 'TxProgressorFooter';
 
@@ -276,7 +276,7 @@ const TxProgressor = Object.assign(
     Header: TxProgressorHeader,
     Body: TxProgressorBody,
     Footer: TxProgressorFooter,
-  }
+  },
 );
 
 export default TxProgressor;

@@ -65,5 +65,5 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
         <AnimatedChevronRight />
       </InputWrapper>
     );
-  }
+  },
 );

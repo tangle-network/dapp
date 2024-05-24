@@ -59,7 +59,7 @@ export type AbiCall<PrecompileT extends Precompile> = {
 };
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
-  context: Context
+  context: Context,
 ) => PromiseOrT<AbiCall<PrecompileT>> | null;
 
 /**
@@ -75,11 +75,11 @@ export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
  */
 function useEvmPrecompileAbiCall<
   PrecompileT extends Precompile,
-  Context = void
+  Context = void,
 >(
   precompile: PrecompileT,
   factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>,
-  getSuccessMessageFnc?: (context: Context) => string
+  getSuccessMessageFnc?: (context: Context) => string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
@@ -137,20 +137,20 @@ function useEvmPrecompileAbiCall<
           {
             hash: newTxHash,
             // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
-          }
+          },
         );
 
         console.debug('EVM transaction receipt:', txReceipt);
 
         setStatus(
-          txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
+          txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR,
         );
 
         if (txReceipt.status === 'success') {
           setSuccessMessage(
             getSuccessMessageFnc !== undefined
               ? getSuccessMessageFnc(context)
-              : null
+              : null,
           );
         }
       } catch (possibleError) {
@@ -161,7 +161,7 @@ function useEvmPrecompileAbiCall<
       }
     },
     // prettier-ignore
-    [activeEvmAddress, status, connectorClient, factory, precompile, getSuccessMessageFnc]
+    [activeEvmAddress, status, connectorClient, factory, precompile, getSuccessMessageFnc],
   );
 
   const reset = useCallback(() => {

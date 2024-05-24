@@ -303,16 +303,16 @@ export const StatsProvider: React.FC<
         await apiPromise.query.dkg.lastSessionRotationBlock();
       const lastSessionRotaionBlockHash =
         await apiPromise.rpc.chain.getBlockHash(
-          lastSessionRotationBlockNumber.toString()
+          lastSessionRotationBlockNumber.toString(),
         );
       const lastSessionRotationBlock = await apiPromise.rpc.chain.getBlock(
-        lastSessionRotaionBlockHash
+        lastSessionRotaionBlockHash,
       );
       const lastSessionRotationBlockTimestamp =
         lastSessionRotationBlock.block.extrinsics[0].method.args[0].toJSON();
       const [start, end] = sessionFrame(
         new Date(lastSessionRotationBlockTimestamp as string).toString(),
-        sessionHeight
+        sessionHeight,
       );
       const currentAuthoritySet = await apiPromise.query.dkg.authorities();
       const currentAuthorities = currentAuthoritySet.toJSON();

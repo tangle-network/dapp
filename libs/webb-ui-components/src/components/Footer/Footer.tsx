@@ -25,7 +25,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       bottomLinkOverrides,
       ...props
     },
-    ref
+    ref,
   ) => {
     const resolvedBottomLinks = useMemo(() => {
       if (bottomLinkOverrides === undefined) {
@@ -151,7 +151,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         )}
       </footer>
     );
-  }
+  },
 );
 
 /***********************

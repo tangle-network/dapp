@@ -81,14 +81,14 @@ const ctx: Ctx = {
 // Private methods
 
 async function filterActiveEVMChains(
-  typedChainIds: number[]
+  typedChainIds: number[],
 ): Promise<number[]> {
   return (
     await Promise.all(
       typedChainIds
         .filter(
           (typedChainId) =>
-            parseTypedChainId(typedChainId).chainType === ChainType.EVM
+            parseTypedChainId(typedChainId).chainType === ChainType.EVM,
         )
         .map(async (typedChainId) => {
           try {
@@ -107,13 +107,13 @@ async function filterActiveEVMChains(
             }
             return null;
           }
-        })
+        }),
     )
   ).filter((t): t is number => t !== null);
 }
 
 async function filterActiveSubstrateChains(
-  typedChainIds: number[]
+  typedChainIds: number[],
 ): Promise<Record<number, ApiPromise>> {
   const providers = await Promise.all(
     typedChainIds.map(async (typedChainId) => {
@@ -136,54 +136,60 @@ async function filterActiveSubstrateChains(
         }
         return null;
       }
-    })
+    }),
   );
 
-  return providers.reduce((acc, provider, index) => {
-    if (provider) {
-      acc[typedChainIds[index]] = provider;
-    }
-    return acc;
-  }, {} as Record<number, ApiPromise>);
+  return providers.reduce(
+    (acc, provider, index) => {
+      if (provider) {
+        acc[typedChainIds[index]] = provider;
+      }
+      return acc;
+    },
+    {} as Record<number, ApiPromise>,
+  );
 }
 
 function fetchNativeTask(typedChainIds: number[]) {
-  return typedChainIds.reduce((acc, typedChainId) => {
-    const { chainType } = parseTypedChainId(typedChainId);
-    let currencyId: string = '';
+  return typedChainIds.reduce(
+    (acc, typedChainId) => {
+      const { chainType } = parseTypedChainId(typedChainId);
+      let currencyId: string = '';
 
-    switch (chainType) {
-      case ChainType.EVM: {
-        currencyId = ZERO_ADDRESS;
-        break;
+      switch (chainType) {
+        case ChainType.EVM: {
+          currencyId = ZERO_ADDRESS;
+          break;
+        }
+
+        case ChainType.Substrate: {
+          currencyId = `${DEFAULT_NATIVE_INDEX}`;
+          break;
+        }
+
+        default: {
+          throw new Error(
+            `Unsupported chain type ${chainType} for chain ${typedChainId}`,
+          );
+        }
       }
 
-      case ChainType.Substrate: {
-        currencyId = `${DEFAULT_NATIVE_INDEX}`;
-        break;
-      }
+      const native = {
+        ...chainsConfig[typedChainId].nativeCurrency,
+        address: currencyId,
+      } satisfies ICurrency;
 
-      default: {
-        throw new Error(
-          `Unsupported chain type ${chainType} for chain ${typedChainId}`
-        );
-      }
-    }
+      acc[typedChainId] = native;
 
-    const native = {
-      ...chainsConfig[typedChainId].nativeCurrency,
-      address: currencyId,
-    } satisfies ICurrency;
-
-    acc[typedChainId] = native;
-
-    return acc;
-  }, {} as Record<number, ICurrency>);
+      return acc;
+    },
+    {} as Record<number, ICurrency>,
+  );
 }
 
 async function fetchAnchorMetadataTask(
   typedChainIds: number[],
-  substrateProviderRecord?: Record<number, ApiPromise>
+  substrateProviderRecord?: Record<number, ApiPromise>,
 ): Promise<Record<number, AnchorMetadata[]>> {
   // Fetch anchor metadata in parallel
   const metadataWithTypedChainId = await Promise.all(
@@ -194,8 +200,8 @@ async function fetchAnchorMetadataTask(
       // Fetch metadata in parallel and ignore the rejected ones
       const metadataSettled = await Promise.allSettled(
         addresses.map((address) =>
-          fetchAnchorMetadata(address, typedChainId, provider)
-        )
+          fetchAnchorMetadata(address, typedChainId, provider),
+        ),
       );
 
       metadataSettled.forEach((res) => {
@@ -207,7 +213,7 @@ async function fetchAnchorMetadataTask(
       const metadata = metadataSettled
         .filter(
           (result): result is PromiseFulfilledResult<AnchorMetadata> =>
-            result.status === 'fulfilled'
+            result.status === 'fulfilled',
         )
         .map((result) => result.value);
 
@@ -215,7 +221,7 @@ async function fetchAnchorMetadataTask(
         typedChainId,
         metadata,
       };
-    })
+    }),
   );
 
   metadataWithTypedChainId.forEach(
@@ -226,17 +232,17 @@ async function fetchAnchorMetadataTask(
         const linkableAnchorByAddress = metadataWithTypedChainId
           .filter(
             ({ typedChainId: otherTypedChainId }) =>
-              otherTypedChainId !== typedChainId
+              otherTypedChainId !== typedChainId,
           )
           .filter(({ metadata }) =>
-            metadata.some((m) => m.address === currentAnchor)
+            metadata.some((m) => m.address === currentAnchor),
           );
 
         // Aggregate the linkable anchors
         const aggregateAnchor = linkableAnchorByAddress.reduce(
           (acc, { typedChainId, metadata }) => {
             const otherAnchor = metadata.find(
-              (m) => m.address === currentAnchor
+              (m) => m.address === currentAnchor,
             )?.address;
 
             if (otherAnchor) {
@@ -245,16 +251,16 @@ async function fetchAnchorMetadataTask(
 
             return acc;
           },
-          {} as Record<number, string>
+          {} as Record<number, string>,
         );
 
         // Merge the aggregate anchor into the current linkable anchors
         metadata.linkableAnchor = merge(
           metadata.linkableAnchor,
-          aggregateAnchor
+          aggregateAnchor,
         );
       });
-    }
+    },
   );
 
   const metadataRecord = metadataWithTypedChainId.reduce(
@@ -262,7 +268,7 @@ async function fetchAnchorMetadataTask(
       acc[typedChainId] = metadata;
       return acc;
     },
-    {} as Record<number, AnchorMetadata[]>
+    {} as Record<number, AnchorMetadata[]>,
   );
 
   return metadataRecord;
@@ -272,7 +278,7 @@ async function writeFileTask(
   typedChainIds: number[],
   nativeRecord: Record<number, ICurrency>,
   metadataRecord: Record<number, AnchorMetadata[]>,
-  skipMerging = false
+  skipMerging = false,
 ): Promise<void> {
   const fetchedCfg = typedChainIds.reduce((acc, typedChainId) => {
     const native = nativeRecord[typedChainId];
@@ -305,7 +311,7 @@ async function writeFileTask(
   // Write data to the JSON file
   await fs.promises.writeFile(
     configPath,
-    JSON.stringify(writableConfig, null, 2)
+    JSON.stringify(writableConfig, null, 2),
   );
 }
 
@@ -321,7 +327,7 @@ const tasks = new Listr<Ctx>(
         ctx.args = args;
 
         task.output = color.green(
-          `Parsed arguments: ${JSON.stringify(args, null, 2)}`
+          `Parsed arguments: ${JSON.stringify(args, null, 2)}`,
         );
       },
     },
@@ -334,25 +340,25 @@ const tasks = new Listr<Ctx>(
         const evmTypedChainIds = await filterActiveEVMChains(ctx.typedChainIds);
 
         const substrateProviderRecord = await filterActiveSubstrateChains(
-          ctx.typedChainIds
+          ctx.typedChainIds,
         );
 
         const substrateTypedChainIds = Object.keys(substrateProviderRecord).map(
-          (id) => +id
+          (id) => +id,
         );
 
         const activeTypedChainIds = evmTypedChainIds.concat(
-          substrateTypedChainIds
+          substrateTypedChainIds,
         );
 
         const activeChainNames = activeTypedChainIds.map(
-          (typedChainId) => chainsConfig[typedChainId].name
+          (typedChainId) => chainsConfig[typedChainId].name,
         );
 
         task.output = color.green(
           `Found ${
             activeTypedChainIds.length
-          } active chains: ${activeChainNames.join(', ')}`
+          } active chains: ${activeChainNames.join(', ')}`,
         );
 
         ctx.typedChainIds = activeTypedChainIds;
@@ -377,7 +383,7 @@ const tasks = new Listr<Ctx>(
                     acc.add(cur.symbol);
                     return acc;
                   },
-                  new Set<string>()
+                  new Set<string>(),
                 );
 
                 task.output = color.green(
@@ -385,7 +391,7 @@ const tasks = new Listr<Ctx>(
                     Object.keys(ctx.nativeRecord).length
                   } native currencies with ${
                     symbolsSet.size
-                  } symbols: ${Array.from(symbolsSet).join(', ')}`
+                  } symbols: ${Array.from(symbolsSet).join(', ')}`,
                 );
               },
             },
@@ -395,16 +401,16 @@ const tasks = new Listr<Ctx>(
               task: async (ctx, task) => {
                 ctx.anchorMetadataRecord = await fetchAnchorMetadataTask(
                   ctx.typedChainIds,
-                  ctx.substrateProviderRecord
+                  ctx.substrateProviderRecord,
                 );
 
                 // For logging
                 const anchorsCount = Object.values(
-                  ctx.anchorMetadataRecord
+                  ctx.anchorMetadataRecord,
                 ).reduce((acc, cur) => acc + cur.length, 0);
 
                 task.output = color.green(
-                  `Found ${anchorsCount} anchors on ${ctx.typedChainIds.length} chains`
+                  `Found ${anchorsCount} anchors on ${ctx.typedChainIds.length} chains`,
                 );
               },
             },
@@ -414,7 +420,7 @@ const tasks = new Listr<Ctx>(
             exitOnError: true,
             concurrent: true,
             rendererOptions: { collapseSubtasks: false },
-          }
+          },
         ),
     },
     {
@@ -427,17 +433,17 @@ const tasks = new Listr<Ctx>(
             ctx.typedChainIds,
             ctx.nativeRecord,
             ctx.anchorMetadataRecord,
-            ctx.args?.skipMerging
+            ctx.args?.skipMerging,
           );
 
           task.output = color.green(
             `Config successfully written to ${color.bold(
-              color.underline(configPath)
-            )}`
+              color.underline(configPath),
+            )}`,
           );
         } catch (error) {
           task.output = color.red(
-            `Failed to write config to ${configPath}: ${error}`
+            `Failed to write config to ${configPath}: ${error}`,
           );
         }
       },
@@ -447,7 +453,7 @@ const tasks = new Listr<Ctx>(
     ctx,
     exitOnError: true,
     concurrent: false,
-  }
+  },
 );
 
 tasks
@@ -458,7 +464,7 @@ tasks
   })
   .catch((error) => {
     console.log(
-      color.red(color.bold(`❌ Error while running tasks: ${error}`))
+      color.red(color.bold(`❌ Error while running tasks: ${error}`)),
     );
     process.exit(1);
   });

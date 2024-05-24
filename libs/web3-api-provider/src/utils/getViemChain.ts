@@ -8,7 +8,7 @@ import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
 const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha].concat(
-  LOCALNET_CHAIN_IDS
+  LOCALNET_CHAIN_IDS,
 );
 
 /**

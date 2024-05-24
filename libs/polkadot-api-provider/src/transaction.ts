@@ -63,14 +63,14 @@ type PolkadotTXEvents = {
 export type NotificationConfig = {
   loading: (data: PolkadotTXEventsPayload<any>) => string | number;
   finalize: (
-    data: PolkadotTXEventsPayload<string | void | undefined>
+    data: PolkadotTXEventsPayload<string | void | undefined>,
   ) => string | number;
   failed: (data: PolkadotTXEventsPayload<string>) => string | number;
 };
 const txLogger = LoggerService.get('PolkadotTx');
 
 export class PolkadotTx<
-  P extends Array<any>
+  P extends Array<any>,
 > extends EventBus<PolkadotTXEvents> {
   public notificationKey = '';
   private transactionAddress: AddressOrPair | null = null;
@@ -80,7 +80,7 @@ export class PolkadotTx<
     private apiPromise: ApiPromise,
     private paths: MethodPath[],
     private parms: P[],
-    private injectedExtension: InjectedExtension
+    private injectedExtension: InjectedExtension,
   ) {
     super();
   }
@@ -93,7 +93,7 @@ export class PolkadotTx<
       txLogger.info(
         `Sending ${path.section}.${path.method} transaction by`,
         signAddress,
-        this.parms
+        this.parms,
       );
       this.transactionAddress = signAddress;
 
@@ -149,7 +149,7 @@ export class PolkadotTx<
     this.paths.forEach((path) => {
       txLogger.info(
         `Tx ${path.section} ${path.method} is done with tx hash = `,
-        hash
+        hash,
       );
     });
 
@@ -158,7 +158,7 @@ export class PolkadotTx<
 
   protected async emitWithPayload<E extends keyof PolkadotTXEvents>(
     event: E,
-    data: PolkadotTXEvents[E]['data']
+    data: PolkadotTXEvents[E]['data'],
   ): Promise<void> {
     if (this.isWrapped) {
       return;
@@ -200,7 +200,7 @@ export class PolkadotTx<
       tx.send(async (result) => {
         const status = result.status;
         const events = result.events.filter(
-          ({ event: { section } }) => section === 'system'
+          ({ event: { section } }) => section === 'system',
         );
 
         if (status.isInBlock || status.isFinalized) {
@@ -253,25 +253,25 @@ export class PolkaTXBuilder {
   constructor(
     private apiPromise: ApiPromise,
     private notificationHandler: NotificationHandler,
-    private readonly injectedExtension: InjectedExtension
+    private readonly injectedExtension: InjectedExtension,
   ) {}
 
   buildWithoutNotification<P extends Array<any>>(
     paths: MethodPath[],
-    params: P[]
+    params: P[],
   ): PolkadotTx<P> {
     return new PolkadotTx<P>(
       this.apiPromise.clone(),
       paths,
       params,
-      this.injectedExtension
+      this.injectedExtension,
     );
   }
 
   build<P extends Array<any>>(
     methodPath: MethodPath | MethodPath[],
     methodParams: P | P[],
-    notificationHandler?: NotificationHandler
+    notificationHandler?: NotificationHandler,
   ): PolkadotTx<P> {
     const isBatchCall = Array.isArray(methodPath);
     const path = isBatchCall ? methodPath : [methodPath];
@@ -283,7 +283,7 @@ export class PolkaTXBuilder {
           (acc, item, index, { length }) =>
             acc +
             `${item.section}:${item.method}${index + 1 === length ? '' : '&'}`,
-          ''
+          '',
         )
       : `${path[0].section}:${path[0].method}`;
     tx.on('loading', (data) => {

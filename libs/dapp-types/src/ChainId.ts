@@ -18,7 +18,7 @@ export interface TypedChainId {
 export enum PresetTypedChainId {
   EthereumMainNet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.EthereumMainNet
+    EVMChainId.EthereumMainNet,
   ),
 
   Goerli = calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli),
@@ -27,12 +27,12 @@ export enum PresetTypedChainId {
 
   HarmonyTestnet1 = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.HarmonyTestnet1
+    EVMChainId.HarmonyTestnet1,
   ),
 
   HarmonyTestnet0 = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.HarmonyTestnet0
+    EVMChainId.HarmonyTestnet0,
   ),
 
   Ganache = calculateTypedChainId(ChainType.EVM, EVMChainId.Ganache),
@@ -41,47 +41,47 @@ export enum PresetTypedChainId {
 
   OptimismTestnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.OptimismTestnet
+    EVMChainId.OptimismTestnet,
   ),
 
   ArbitrumTestnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.ArbitrumTestnet
+    EVMChainId.ArbitrumTestnet,
   ),
 
   PolygonTestnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.PolygonTestnet
+    EVMChainId.PolygonTestnet,
   ),
 
   TangleMainnetNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.TangleMainnetNative
+    SubstrateChainId.TangleMainnetNative,
   ),
 
   TangleTestnetNative = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.TangleTestnetNative
+    SubstrateChainId.TangleTestnetNative,
   ),
 
   Kusama = calculateTypedChainId(
     ChainType.KusamaRelayChain,
-    SubstrateChainId.Kusama
+    SubstrateChainId.Kusama,
   ),
 
   Polkadot = calculateTypedChainId(
     ChainType.PolkadotRelayChain,
-    SubstrateChainId.Polkadot
+    SubstrateChainId.Polkadot,
   ),
 
   MoonbaseAlpha = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.MoonbaseAlpha
+    EVMChainId.MoonbaseAlpha,
   ),
 
   AvalancheFuji = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.AvalancheFuji
+    EVMChainId.AvalancheFuji,
   ),
 
   ScrollAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha),
@@ -89,27 +89,27 @@ export enum PresetTypedChainId {
   // Localnets
   HermesLocalnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.HermesLocalnet
+    EVMChainId.HermesLocalnet,
   ),
 
   AthenaLocalnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.AthenaLocalnet
+    EVMChainId.AthenaLocalnet,
   ),
 
   DemeterLocalnet = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.DemeterLocalnet
+    EVMChainId.DemeterLocalnet,
   ),
 
   TangleTestnetEVM = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.TangleTestnetEVM
+    EVMChainId.TangleTestnetEVM,
   ),
 
   TangleMainnetEVM = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.TangleMainnetEVM
+    EVMChainId.TangleMainnetEVM,
   ),
 }
 

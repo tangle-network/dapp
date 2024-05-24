@@ -37,7 +37,7 @@ export const CheckBoxMenu = React.forwardRef<
       onChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const className = useMemo(() => {
       return twMerge(
@@ -46,9 +46,9 @@ export const CheckBoxMenu = React.forwardRef<
           'text-mono-140 dark:text-mono-80',
           'hover:bg-blue-0 dark:hover:bg-blue-120',
           'radix-state-checked:text-blue dark:radix-state-checked:text-blue-50',
-          'radix-state-active:text-blue dark:radix-state-active:text-blue-50'
+          'radix-state-active:text-blue dark:radix-state-active:text-blue-50',
         ),
-        clsxProp
+        clsxProp,
       );
     }, [clsxProp]);
     const id = useMemo(() => Math.random().toString(16), []);
@@ -66,5 +66,5 @@ export const CheckBoxMenu = React.forwardRef<
         <CheckBox id={id} onChange={onChange} {...inputProps} />
       </label>
     );
-  }
+  },
 );

@@ -37,14 +37,14 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
           typeof country_code === 'string' &&
           blockedCountryCodes &&
           blockedCountryCodes.find(
-            (code) => code.toLowerCase() === country_code.toLowerCase()
+            (code) => code.toLowerCase() === country_code.toLowerCase(),
           );
 
         const isBlockedByRegion =
           typeof state === 'string' &&
           blockedRegions &&
           blockedRegions.find(
-            (region) => region.toLowerCase() === state.toLowerCase()
+            (region) => region.toLowerCase() === state.toLowerCase(),
           );
 
         if (isBlockedByCountryCode || isBlockedByRegion) {

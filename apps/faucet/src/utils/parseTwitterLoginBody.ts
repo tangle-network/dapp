@@ -18,7 +18,7 @@ const requiredFields = [
  * @returns the parsed body
  */
 export default function parseTwitterLoginBody(
-  body: any
+  body: any,
 ): Result<TwitterLoginBody, FaucetError<FaucetErrorCode.INVALID_REQUEST_BODY>> {
   const { clientId, code, codeVerifier, grantType, redirectUri } = body;
 
@@ -28,7 +28,7 @@ export default function parseTwitterLoginBody(
         extraInfo: `Missing fields: ${requiredFields
           .filter((field) => !body[field])
           .join(', ')}`,
-      })
+      }),
     );
   }
 

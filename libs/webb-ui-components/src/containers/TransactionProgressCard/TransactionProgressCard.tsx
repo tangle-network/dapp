@@ -133,11 +133,11 @@ export const TransactionProgressCard = forwardRef<
 
       ...props
     },
-    ref
+    ref,
   ) => {
     const labelVariant = useMemo<Variant>(
       () => ((label as NativeLabel).nativeValue ? 'native' : 'bridge'),
-      [label]
+      [label],
     );
 
     const timeLabel = useMemo(() => {
@@ -206,7 +206,7 @@ export const TransactionProgressCard = forwardRef<
       <div
         className={twMerge(
           `border-t border-mono-80 dark:border-mono-120 relative`,
-          className
+          className,
         )}
         {...props}
         ref={ref}
@@ -323,5 +323,5 @@ export const TransactionProgressCard = forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );

@@ -29,7 +29,7 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
       textTransform = 'capitalize',
       ...props
     },
-    ref
+    ref,
   ) => {
     const className = useMemo(() => {
       return twMerge(
@@ -39,10 +39,10 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
           'hover:bg-blue-0 dark:hover:bg-blue-120',
           'focus:bg-blue-0 dark:focus:bg-blue-120',
           'radix-state-checked:text-blue dark:radix-state-checked:text-blue-50',
-          'radix-state-active:text-blue dark:radix-state-active:text-blue-50'
+          'radix-state-active:text-blue dark:radix-state-active:text-blue-50',
         ),
         textTransform,
-        clsxProp
+        clsxProp,
       );
     }, [clsxProp, textTransform]);
 
@@ -55,5 +55,5 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         {icon && <div className="shrink-0">{icon}</div>}
       </DropdownMenu.Item>
     );
-  }
+  },
 );

@@ -43,7 +43,7 @@ const BalancesTableContainer: FC = () => {
     valueOpt: cachedIsDetailsCollapsedOpt,
   } = useLocalStorage(
     LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED,
-    false
+    false,
   );
 
   const { result: locks } = useApiRx(
@@ -52,8 +52,8 @@ const BalancesTableContainer: FC = () => {
         if (!activeSubstrateAddress) return null;
         return api.query.balances.locks(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   // Load the cached collapsed state from local storage on mount.

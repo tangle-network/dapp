@@ -38,17 +38,17 @@ export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
       value: valueProp,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Internal state to display labels
     const [value, setValue] = useState<number[] | undefined>(
-      valueProp ?? defaultValue
+      valueProp ?? defaultValue,
     );
 
     useEffect(() => {
       if (!value || !value.length || value.length > 2) {
         console.trace(
-          '[Slider.tsx] You must provide `defaultValue` or `value` and `value.length` should be less than 3'
+          '[Slider.tsx] You must provide `defaultValue` or `value` and `value.length` should be less than 3',
         );
       }
     }, [value]);
@@ -60,14 +60,14 @@ export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
           onChange(nextVal);
         }
       },
-      [onChange]
+      [onChange],
     );
 
     return (
       <div
         className={twMerge(
           'min-w-[495px] min-h-[36px] flex items-end',
-          className
+          className,
         )}
       >
         <SliderPrimitive.Root
@@ -96,7 +96,7 @@ export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
         </SliderPrimitive.Root>
       </div>
     );
-  }
+  },
 );
 
 /***** Internal components */
@@ -112,7 +112,7 @@ function SliderThumb({ hasLabel, value }: SliderThumbProps) {
         'focus-visible:outline-none dark:focus-visible:outline-none',
         'focus:ring',
         'focus:ring-blue-50 dark:focus:ring-blue-60',
-        'focus:ring-opacity-75 dark:focus:ring-opacity-50'
+        'focus:ring-opacity-75 dark:focus:ring-opacity-50',
       )}
     >
       {hasLabel && (

@@ -19,7 +19,7 @@ import UpdateMetadataButton from '../../components/UpdateMetadataButton';
 
 const NetworkSelectionButton = dynamic(
   () => import('../../components/NetworkSelector/NetworkSelectionButton'),
-  { ssr: false }
+  { ssr: false },
 );
 
 const WalletAndChainContainer: FC = () => {

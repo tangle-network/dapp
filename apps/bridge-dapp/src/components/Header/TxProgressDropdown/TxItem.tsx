@@ -91,7 +91,7 @@ const TxItem: FC<{
         status={getFooterStatus(status)}
         statusMessage={getTxMessageFromStatus(
           tx.currentStatus[0],
-          tx.currentStatus[1]
+          tx.currentStatus[1],
         )}
         actionProps={btnProps}
         externalUrl={externalUrl}
@@ -109,7 +109,7 @@ export default TxItem;
 const getExternalUrl = (
   explorer?: string,
   provider?: WebbProviderType,
-  txHash?: string
+  txHash?: string,
 ) => {
   if (!txHash) {
     return undefined;
@@ -126,5 +126,5 @@ const getFooterStatus = (txStatus: TransactionItemStatus) =>
   txStatus === 'completed'
     ? 'success'
     : txStatus === 'warning'
-    ? 'error'
-    : 'info';
+      ? 'error'
+      : 'info';

@@ -8,13 +8,13 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 export default function useTotalPayoutRewards(
-  defaultValue: { value1: BN | null } = { value1: null }
+  defaultValue: { value1: BN | null } = { value1: null },
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
 
   const { valueOpt: cachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
-    true
+    true,
   );
 
   const address = useSubstrateAddress();
@@ -50,7 +50,7 @@ export default function useTotalPayoutRewards(
 
       const totalPayoutRewards = payoutsData.reduce((acc, payout) => {
         const currentReward = hexToBn(
-          payout.nominatorTotalRewardRaw.toString()
+          payout.nominatorTotalRewardRaw.toString(),
         );
         return acc.add(currentReward);
       }, new BN(0));
@@ -61,7 +61,7 @@ export default function useTotalPayoutRewards(
       setError(
         e instanceof Error
           ? e
-          : new Error('An error occurred while calculating total payouts.')
+          : new Error('An error occurred while calculating total payouts.'),
       );
       setIsLoading(false);
     }

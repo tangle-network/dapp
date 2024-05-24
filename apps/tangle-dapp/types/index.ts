@@ -114,7 +114,7 @@ type RemoveTrailingSlash<T extends string> = T extends `${infer U}/` ? U : T;
 type SearchQueryPathOf<
   Page extends PagePath,
   Key extends QueryParamKeyOf<Page>,
-  Value extends QueryParamValueOf<Key>
+  Value extends QueryParamValueOf<Key>,
 > = `${RemoveTrailingSlash<Page>}/?${Key}=${Value}`;
 
 /**
@@ -249,5 +249,5 @@ export type TokenSymbol = 'tTNT' | 'TNT';
  * @returns The success message.
  */
 export type GetSuccessMessageFunctionType<Context> = (
-  context: Context
+  context: Context,
 ) => string;

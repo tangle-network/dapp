@@ -46,21 +46,21 @@ export const Alert: React.FC<AlertProps> = ({
     return twMerge(
       _className,
       'flex w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
-      getClassNamesByType(type)
+      getClassNamesByType(type),
     );
   }, [_className, type]);
 
   const titleClassName = useMemo(() => {
     return twMerge(
       getTypographyClassNamesByType(type),
-      getTitleClassNamesBySize(size)
+      getTitleClassNamesBySize(size),
     );
   }, [type, size]);
 
   const descriptionlassName = useMemo(() => {
     return twMerge(
       getTypographyClassNamesByType(type),
-      getDescriptionClassNamesBySize(size)
+      getDescriptionClassNamesBySize(size),
     );
   }, [type, size]);
 

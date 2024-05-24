@@ -20,7 +20,7 @@ const TokenDropdown = () => {
   const { config, inputValues$, amount$ } = useFaucetContext();
 
   const token = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.token))
+    inputValues$.pipe(map((inputValues) => inputValues.token)),
   );
 
   const setToken = useCallback(
@@ -40,11 +40,11 @@ const TokenDropdown = () => {
         token,
       });
     },
-    [amount$, inputValues$]
+    [amount$, inputValues$],
   );
 
   const selectedChain = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.chain))
+    inputValues$.pipe(map((inputValues) => inputValues.chain)),
   );
 
   const currentChainData = useMemo(() => {
@@ -63,14 +63,14 @@ const TokenDropdown = () => {
 
   const tokenInputVal = useMemo(
     () => (token ? { symbol: token } : undefined),
-    [token]
+    [token],
   );
 
   const handleValueChange = React.useCallback(
     (val: string) => {
       setToken(val, currentChainData?.tokenAddresses[val]);
     },
-    [currentChainData?.tokenAddresses, setToken]
+    [currentChainData?.tokenAddresses, setToken],
   );
 
   // Effect to reset the token value when the chain changes

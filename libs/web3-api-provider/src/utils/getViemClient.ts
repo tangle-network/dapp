@@ -15,7 +15,7 @@ import {
 } from './getViemChain';
 
 function getViemClient(
-  typedChainId: number
+  typedChainId: number,
 ): PublicClient<FallbackTransport, Chain> {
   const { chainId } = parseTypedChainId(typedChainId);
 
@@ -35,7 +35,7 @@ function getViemClient(
       multicall: !!chain.contracts?.multicall3,
     },
     transport: fallback(
-      chain.rpcUrls.default.http.map((url) => http(url, { timeout: 60_000 }))
+      chain.rpcUrls.default.http.map((url) => http(url, { timeout: 60_000 })),
     ),
   });
 }

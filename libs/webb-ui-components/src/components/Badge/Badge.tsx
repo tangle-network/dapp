@@ -58,7 +58,7 @@ const Badge = forwardRef<SVGSVGElement, BadgeProps>(
         </foreignObject>
       </svg>
     );
-  }
+  },
 );
 
 export default Badge;

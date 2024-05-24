@@ -64,7 +64,7 @@ const SelectRelayer = () => {
           ? apiConfig.anchors[poolId]?.[typedChainId]
           : undefined,
     }),
-    [apiConfig.anchors, typedChainId, poolId]
+    [apiConfig.anchors, typedChainId, poolId],
   );
 
   // Given the user inputs above, fetch relayers state
@@ -128,7 +128,7 @@ const SelectRelayer = () => {
 
   const isDisconnected = useMemo(
     () => !loading && !isConnecting && !activeApi?.relayerManager,
-    [activeApi?.relayerManager, isConnecting, loading]
+    [activeApi?.relayerManager, isConnecting, loading],
   );
 
   const handleClose = useCallback(() => {
@@ -149,7 +149,7 @@ const SelectRelayer = () => {
         setRelayer(null);
       }
     },
-    [relayers, activeRelayer, setRelayer]
+    [relayers, activeRelayer, setRelayer],
   );
 
   const handleConnectWallet = useCallback(() => {
@@ -204,7 +204,7 @@ const SelectRelayer = () => {
       setQuery({ [NO_RELAYER_KEY]: nextChecked });
       setRelayer(null);
     },
-    [setQuery, setRelayer]
+    [setQuery, setRelayer],
   );
 
   const isDisabled = useMemo(() => {

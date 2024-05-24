@@ -16,7 +16,7 @@ const useExplorerUrl = () => {
     (
       hash: string,
       variant: ExplorerVariant,
-      type?: (typeof ExplorerType)[keyof typeof ExplorerType]
+      type?: (typeof ExplorerType)[keyof typeof ExplorerType],
     ): URL | null => {
       // Explorer type will be default to the current network if not provided
       const explorerType =
@@ -32,7 +32,7 @@ const useExplorerUrl = () => {
 
       return getExplorerURI(explorerUrl, hash, variant, explorerType);
     },
-    [network.evmExplorerUrl, network.polkadotExplorerUrl, isEvm]
+    [network.evmExplorerUrl, network.polkadotExplorerUrl, isEvm],
   );
 };
 

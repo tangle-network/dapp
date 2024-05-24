@@ -38,7 +38,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       transferBtnProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { isMobile } = useCheckMobile();
     const bridgeAssetProps = useMemo(
@@ -49,7 +49,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
           bridgeAssetInputProps?.info ??
           'Shielded pools hold shielded cryptocurrency and are used to maintain privacy of the transaction.',
       }),
-      [bridgeAssetInputProps]
+      [bridgeAssetInputProps],
     );
 
     return (
@@ -57,7 +57,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
         {...props}
         className={twMerge(
           'flex flex-col max-w-[518px] w-full h-full justify-between',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -107,7 +107,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
               fw="semibold"
               className={cx(
                 'flex items-center',
-                buttonDescVariantClasses[buttonDescVariant]
+                buttonDescVariantClasses[buttonDescVariant],
               )}
             >
               <InformationLine className="!fill-current shrink-0 mr-1" />
@@ -117,5 +117,5 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );

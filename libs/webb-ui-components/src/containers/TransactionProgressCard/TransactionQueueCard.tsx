@@ -88,15 +88,15 @@ export const TransactionQueueCard = forwardRef<
       onCollapseChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const controlled = useMemo(
       () => typeof collapsedParent === 'boolean',
-      [collapsedParent]
+      [collapsedParent],
     );
 
     const [collapsed, setCollapsed] = useState(
-      controlled ? collapsedParent : false
+      controlled ? collapsedParent : false,
     );
 
     // Sync the state of open to the parent component
@@ -149,10 +149,10 @@ export const TransactionQueueCard = forwardRef<
               link: isCompleted
                 ? { uri: txURI, text: <CompletedFooter method={tx.method} /> }
                 : isErrored
-                ? { uri: txURI, text: <FailedFooter /> }
-                : tx.txStatus.message
-                ? undefined
-                : { uri: recipientURI, text: recipientFooter },
+                  ? { uri: txURI, text: <FailedFooter /> }
+                  : tx.txStatus.message
+                    ? undefined
+                    : { uri: recipientURI, text: recipientFooter },
               message: isErrored ? <FailedFooter /> : tx.txStatus.message,
             },
             label: {
@@ -178,19 +178,19 @@ export const TransactionQueueCard = forwardRef<
             onSyncNote: tx.onSyncNote,
             onDetails: tx.onDetails,
           };
-        }
+        },
       );
     }, [transactions]);
 
     const transactionsCountSummery = useMemo(() => {
       const processingCount = transactions.filter(
-        (tx) => tx.txStatus.status === 'in-progress'
+        (tx) => tx.txStatus.status === 'in-progress',
       ).length;
       const failedCount = transactions.filter(
-        (tx) => tx.txStatus.status === 'warning'
+        (tx) => tx.txStatus.status === 'warning',
       ).length;
       const completedCount = transactions.filter(
-        (tx) => tx.txStatus.status === 'completed'
+        (tx) => tx.txStatus.status === 'completed',
       ).length;
 
       return {
@@ -223,13 +223,13 @@ export const TransactionQueueCard = forwardRef<
         messages.push(
           `${processingCount} transaction${
             processingCount > 1 ? 's' : ''
-          } in progress`
+          } in progress`,
         );
       }
 
       if (failedCount) {
         messages.push(
-          `${failedCount} transaction${failedCount > 1 ? 's' : ''} failed`
+          `${failedCount} transaction${failedCount > 1 ? 's' : ''} failed`,
         );
       }
 
@@ -237,7 +237,7 @@ export const TransactionQueueCard = forwardRef<
         messages.push(
           `${completedCount} transaction${
             completedCount > 1 ? 's' : ''
-          } completed`
+          } completed`,
         );
       }
 
@@ -250,7 +250,7 @@ export const TransactionQueueCard = forwardRef<
         className={twMerge(
           'rounded-lg shadow-xl overflow-hidden',
           'flex flex-col max-w-[295px] bg-mono-0 dark:bg-mono-160',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -267,8 +267,8 @@ export const TransactionQueueCard = forwardRef<
                 (txCardProps[0].status === 'completed'
                   ? 'Transaction Completed'
                   : txCardProps[0].status === 'warning'
-                  ? 'Transaction Failed'
-                  : 'Transaction Processing')}
+                    ? 'Transaction Failed'
+                    : 'Transaction Processing')}
             </Typography>
             <Typography
               variant={'body1'}
@@ -302,5 +302,5 @@ export const TransactionQueueCard = forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );

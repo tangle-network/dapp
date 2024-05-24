@@ -49,7 +49,7 @@ const useTransferTx = () => {
       // the maximum amount to get the actual amount to transfer.
       const fees = await fetchEvmPrecompileFees(
         Precompile.BALANCES_ERC20,
-        sharedAbiCallData
+        sharedAbiCallData,
       );
 
       if (fees === null) {
@@ -70,14 +70,14 @@ const useTransferTx = () => {
         arguments: [recipientEvmAddress20, amountToTransfer],
       };
     },
-    [fetchEvmPrecompileFees]
+    [fetchEvmPrecompileFees],
   );
 
   const substrateTxFactory: SubstrateTxFactory<TransferTxContext> = useCallback(
     async (
       api,
       _activeSubstrateAddress,
-      { receiverAddress, amount, maxAmount }
+      { receiverAddress, amount, maxAmount },
     ) => {
       // Convert the EVM address to a Substrate address, in case
       // that it was provided as an EVM address.
@@ -87,7 +87,7 @@ const useTransferTx = () => {
         ? api.tx.balances.transferAll(
             recipientSubstrateAddress,
             // No need to keep the current account alive
-            false
+            false,
           )
         : // By 'allow death' it means that the transfer will not
           // be canceled if that transfer would cause the sender's
@@ -96,16 +96,16 @@ const useTransferTx = () => {
           // deleted from the chain.
           api.tx.balances.transferAllowDeath(recipientSubstrateAddress, amount);
     },
-    []
+    [],
   );
 
   const getSuccessMessageFnc: GetSuccessMessageFunctionType<TransferTxContext> =
     useCallback(
       ({ receiverAddress, amount }) =>
         `Successfully transferred ${formatNativeTokenAmount(
-          amount
+          amount,
         )} to ${shortenString(receiverAddress)}.`,
-      [formatNativeTokenAmount]
+      [formatNativeTokenAmount],
     );
 
   return useAgnosticTx<Precompile.BALANCES_ERC20, TransferTxContext>({

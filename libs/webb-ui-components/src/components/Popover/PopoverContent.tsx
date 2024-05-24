@@ -10,5 +10,5 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         <PopoverPrimitive.Content {...props} ref={ref} />
       </PopoverPrimitive.Portal>
     );
-  }
+  },
 );

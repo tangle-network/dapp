@@ -15,5 +15,5 @@ export type ErasRestakeRewardPointsEntry = [
     individual: {
       [accountId: string]: number;
     };
-  }
+  },
 ];

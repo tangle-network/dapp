@@ -32,7 +32,7 @@ const mintTokens = async (
   accessToken: string,
   inputValues: InputValuesType,
   config: FaucetContextType['config'],
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
   const {
     chain: typedChainId,
@@ -54,7 +54,7 @@ const mintTokens = async (
     return err(
       FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN, {
         selectedChain: chain,
-      })
+      }),
     );
   }
 
@@ -121,7 +121,7 @@ const mintTokens = async (
             FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
               extraInfo: data.message,
               status: data.code,
-            })
+            }),
           );
         } else {
           return err(
@@ -132,7 +132,7 @@ const mintTokens = async (
                 ? new Date(data.last_claimed_date)
                 : undefined,
               reason: data.reason,
-            })
+            }),
           );
         }
       } else {
@@ -150,7 +150,7 @@ const mintTokens = async (
     return err(
       FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
         extraInfo: JSON.stringify(error, null, 2),
-      })
+      }),
     );
   }
 };
@@ -174,7 +174,7 @@ const MintButtonContainer = () => {
   const twitterHandle = useMemo(
     () => getStore(StoreKey.twitterHandle),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getStore(StoreKey.twitterHandle)]
+    [getStore(StoreKey.twitterHandle)],
   );
 
   const inputValues = useObservableState(inputValues$);
@@ -200,7 +200,7 @@ const MintButtonContainer = () => {
       );
     },
     // prettier-ignore
-    [inputValues?.chain, inputValues?.contractAddress, inputValues.isValidRecipientAddress, inputValues?.token, isValidRecipient, twitterHandle]
+    [inputValues?.chain, inputValues?.contractAddress, inputValues.isValidRecipientAddress, inputValues?.token, isValidRecipient, twitterHandle],
   );
 
   // Mocked implementation of minting tokens
@@ -220,11 +220,11 @@ const MintButtonContainer = () => {
         (err) => {
           logger.error('Minting tokens failed', err.message);
           mintTokenResult$.next(err);
-        }
+        },
       );
     },
     // prettier-ignore
-    [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$]
+    [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$],
   );
 
   return (

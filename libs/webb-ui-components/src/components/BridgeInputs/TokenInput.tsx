@@ -37,7 +37,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
 
       if (token?.balanceInUsd) {
         balanceInUsd = getRoundedAmountString(
-          parseFloat(token.balanceInUsd.toString())
+          parseFloat(token.balanceInUsd.toString()),
         );
       }
 
@@ -132,5 +132,5 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
         )}
       </InputWrapper>
     );
-  }
+  },
 );

@@ -52,7 +52,7 @@ const useAllocationsState = (intendedProfileType: RestakingProfileType) => {
     (newAllocations: RestakingAllocationMap) => {
       setAllocations(newAllocations);
     },
-    []
+    [],
   );
 
   return {

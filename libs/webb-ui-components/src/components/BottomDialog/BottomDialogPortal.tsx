@@ -21,7 +21,7 @@ export const BottomDialogPortal = forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <Dialog.Portal {...props}>
@@ -34,7 +34,7 @@ export const BottomDialogPortal = forwardRef<
           className={twMerge(
             '!bg-mono-0 dark:!bg-mono-160 rounded-xl fixed bottom-0',
             'animate-[bottomDialogSlideUp_400ms]',
-            className
+            className,
           )}
           ref={ref}
         >
@@ -65,5 +65,5 @@ export const BottomDialogPortal = forwardRef<
         </Dialog.Content>
       </Dialog.Portal>
     );
-  }
+  },
 );

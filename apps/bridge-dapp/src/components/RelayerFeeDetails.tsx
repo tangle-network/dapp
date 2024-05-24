@@ -41,7 +41,7 @@ const RelayerFeeDetails: FC<RelayerFeeDetailsProps> = ({
 
     const typedChainId = calculateTypedChainId(
       srcChainCfg.chainType,
-      srcChainCfg.id
+      srcChainCfg.id,
     );
 
     return getRelayerFeePercentage(activeRelayer, typedChainId);

@@ -14,7 +14,7 @@ import BalanceCell from '../BalanceCell';
  */
 export const sortVestingSchedulesAscending = (
   a: PalletVestingVestingInfo,
-  b: PalletVestingVestingInfo
+  b: PalletVestingVestingInfo,
 ): 0 | 1 | -1 => {
   const endingBlockNumberOfA = a.startingBlock.add(a.locked.div(a.perBlock));
   const endingBlockNumberOfB = b.startingBlock.add(b.locked.div(b.perBlock));
@@ -26,7 +26,7 @@ const VestingScheduleBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
   const { result: currentBlockNumber } = useApiRx(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
@@ -46,7 +46,7 @@ const VestingScheduleBalances: FC = () => {
             schedule.locked,
             currentBlockNumber
               .sub(schedule.startingBlock)
-              .mul(schedule.perBlock)
+              .mul(schedule.perBlock),
           )
         : BN_ZERO;
 
@@ -57,7 +57,7 @@ const VestingScheduleBalances: FC = () => {
       // tokens being fully vested, so don't repeat it here.
       const status = allVested ? undefined : amountAlreadyVested.isZero() ? (
         `No tokens have vested yet. This vesting schedule will start unlocking at block #${formatDecimal(
-          schedule.startingBlock.toString()
+          schedule.startingBlock.toString(),
         )}.`
       ) : (
         <>

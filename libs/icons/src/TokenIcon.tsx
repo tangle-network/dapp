@@ -8,7 +8,7 @@ import { getIconSizeInPixel } from './utils';
 import { twMerge } from 'tailwind-merge';
 
 export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
-  props
+  props,
 ) => {
   const {
     className: classNameProp,
@@ -33,12 +33,12 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
           'cursor-copy': Boolean(onClick),
           [cx(
             'fill-mono-60 stroke-mono-60',
-            'dark:fill-mono-140 dark:stroke-mono-140'
+            'dark:fill-mono-140 dark:stroke-mono-140',
           )]: typeof name === 'undefined', // Style for placeholder
         }),
-        classNameProp
+        classNameProp,
       ),
-    [classNameProp]
+    [classNameProp],
   );
 
   // Prevent infinite loop when the passed onClick not use useCallback

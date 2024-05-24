@@ -18,7 +18,7 @@ async function createPoolShare(
   name: string,
   nativeAssetId: number,
   signer: KeyringPair,
-  existentialDeposit = new BN(10).mul(new BN(10).pow(new BN(18)))
+  existentialDeposit = new BN(10).mul(new BN(10).pow(new BN(18))),
 ) {
   await polkadotTx(
     apiPromise,
@@ -32,16 +32,15 @@ async function createPoolShare(
         {
           PoolShare: [nativeAssetId],
         },
-        existentialDeposit
+        existentialDeposit,
       ),
     ],
-    signer
+    signer,
   );
   const nextAssetId = await apiPromise.query.assetRegistry.nextAssetId<U32>();
   const id = nextAssetId.toNumber() - 1;
-  const tokenWrapperNonce = await apiPromise.query.tokenWrapper.proposalNonce<
-    Option<U32>
-  >(name);
+  const tokenWrapperNonce =
+    await apiPromise.query.tokenWrapper.proposalNonce<Option<U32>>(name);
   const nonce = tokenWrapperNonce.unwrapOr(new BN(0)).toNumber() + 1;
   await polkadotTx(
     apiPromise,
@@ -50,7 +49,7 @@ async function createPoolShare(
       method: 'sudo',
     },
     [apiPromise.tx.tokenWrapper.setWrappingFee(1, id, nonce)],
-    signer
+    signer,
   );
   return id;
 }

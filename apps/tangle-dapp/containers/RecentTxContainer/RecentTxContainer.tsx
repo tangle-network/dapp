@@ -27,7 +27,7 @@ const RecentTxContainer: FC = () => {
           explorerUrl,
           activeAccountAddress,
           'address',
-          isEvm ? ExplorerType.EVM : ExplorerType.Substrate
+          isEvm ? ExplorerType.EVM : ExplorerType.Substrate,
         ).toString()
       : undefined;
   }, [activeAccountAddress, explorerUrl, isEvm]);

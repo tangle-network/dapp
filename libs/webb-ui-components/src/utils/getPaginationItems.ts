@@ -28,14 +28,14 @@ export interface PaginationItemsOptions {
  * @param options {PaginationItemsOptions} The hook options
  */
 export const getPaginationItems = (
-  options: PaginationItemsOptions
+  options: PaginationItemsOptions,
 ): (number | string)[] => {
   const { boundaryCount = 1, count = 1, page = 1, siblingCount = 1 } = options;
 
   const startPages = range(1, Math.min(boundaryCount, count));
   const endPages = range(
     Math.max(count - boundaryCount + 1, boundaryCount + 1),
-    count
+    count,
   );
 
   const siblingsStart = Math.max(
@@ -43,10 +43,10 @@ export const getPaginationItems = (
       // Natural start
       page - siblingCount,
       // Lower boundary when page is high
-      count - boundaryCount - siblingCount * 2 - 1
+      count - boundaryCount - siblingCount * 2 - 1,
     ),
     // Greater than startPages
-    boundaryCount + 2
+    boundaryCount + 2,
   );
 
   const siblingsEnd = Math.min(
@@ -54,10 +54,10 @@ export const getPaginationItems = (
       // Natural end
       page + siblingCount,
       // Upper boundary when page is low
-      boundaryCount + siblingCount * 2 + 2
+      boundaryCount + siblingCount * 2 + 2,
     ),
     // Less than endPages
-    endPages.length > 0 ? endPages[0] - 2 : count - 1
+    endPages.length > 0 ? endPages[0] - 2 : count - 1,
   );
 
   return [
@@ -67,8 +67,8 @@ export const getPaginationItems = (
     ...(siblingsStart > boundaryCount + 2
       ? ['start-ellipsis']
       : boundaryCount + 1 < count - boundaryCount
-      ? [boundaryCount + 1]
-      : []),
+        ? [boundaryCount + 1]
+        : []),
 
     // Sibling pages
     ...range(siblingsStart, siblingsEnd),
@@ -77,8 +77,8 @@ export const getPaginationItems = (
     ...(siblingsEnd < count - boundaryCount - 1
       ? ['end-ellipsis']
       : count - boundaryCount > boundaryCount
-      ? [count - boundaryCount]
-      : []),
+        ? [count - boundaryCount]
+        : []),
 
     ...endPages,
   ].filter((val) => (typeof val !== 'number' ? true : val > 0));

@@ -60,7 +60,7 @@ const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
 }) => {
   const sortedTypedChainIds = useMemo(
     () => getSortedTypedChainIds(typedChainIds),
-    [typedChainIds]
+    [typedChainIds],
   );
 
   const columns = useMemo(
@@ -91,10 +91,10 @@ const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
                 *
               </Typography>
             ),
-        })
+        }),
       ),
     ],
-    [sortedTypedChainIds, prefixUnit]
+    [sortedTypedChainIds, prefixUnit],
   );
 
   const table = useReactTable({

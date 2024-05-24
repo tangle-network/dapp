@@ -119,7 +119,7 @@ const ArrowBadge: FC<Pick<InputOrOutputNotesProps, 'activity' | 'type'>> = ({
           },
           {
             'rotate-180': type === 'input',
-          }
+          },
         )}
       />
     </div>

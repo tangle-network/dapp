@@ -41,7 +41,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
       values,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [value, setValue] = useState(() => valueProp);
 
@@ -50,7 +50,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
         setValue(nextVal);
         onChangeProp?.(nextVal);
       },
-      [onChangeProp, setValue]
+      [onChangeProp, setValue],
     );
 
     // The amount menu callback
@@ -58,7 +58,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
       (nextVal: 'fixed' | 'custom') => {
         amountMenuProps?.onChange?.(nextVal);
       },
-      [amountMenuProps]
+      [amountMenuProps],
     );
 
     useEffect(() => {
@@ -118,7 +118,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                     {
                       'disabled:text-blue-90 dark:disabled:text-blue-30':
                         !isDisabled,
-                    }
+                    },
                   )}
                   isDisabled={isDisabled || value === val}
                   onClick={() => onClick(val)}
@@ -131,5 +131,5 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
         </div>
       </InputWrapper>
     );
-  }
+  },
 );

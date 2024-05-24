@@ -48,7 +48,7 @@ const TxDetailContainer: FC<TransactionType> = ({
       const inputNotes = await Promise.all(
         inputNoteSerializations.map(async (serialization) => {
           return await Note.deserialize(serialization);
-        })
+        }),
       );
       setInputNotes(inputNotes);
     }
@@ -62,7 +62,7 @@ const TxDetailContainer: FC<TransactionType> = ({
       const outputNotes = await Promise.all(
         outputNoteSerializations.map(async (serialization) => {
           return await Note.deserialize(serialization);
-        })
+        }),
       );
       setOutputNotes(outputNotes);
     }

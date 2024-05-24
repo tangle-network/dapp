@@ -38,7 +38,7 @@ export type AllocationChartProps = {
 };
 
 function getChartColorOfEntryName(
-  entryName: AllocationChartEntryName
+  entryName: AllocationChartEntryName,
 ): ChartColor {
   switch (entryName) {
     case 'Remaining':
@@ -65,7 +65,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
     allocations,
     allocatedAmount,
     variant,
-    previewAmount
+    previewAmount,
   );
 
   const themeCellColor: ChartColor = isDarkMode
@@ -79,7 +79,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
         maxRestakingAmount ?? BN_ZERO,
         allocatedAmount,
         previewAmount ?? BN_ZERO,
-        variant === AllocationChartVariant.INDEPENDENT
+        variant === AllocationChartVariant.INDEPENDENT,
       )}
     />
   );

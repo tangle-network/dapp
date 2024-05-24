@@ -19,7 +19,7 @@ export const Modal: FC<DialogPrimitive.DialogProps> = ({
       setIsOpen(open);
       onOpenChangeProps?.(open);
     },
-    [setIsOpen, onOpenChangeProps]
+    [setIsOpen, onOpenChangeProps],
   );
 
   return (

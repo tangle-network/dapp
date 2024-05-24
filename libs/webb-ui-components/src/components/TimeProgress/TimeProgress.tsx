@@ -18,7 +18,7 @@ import { TimeProgressProps } from './types';
 export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
   ({ endTime, now, startTime, labelClassName, ...props }, ref) => {
     const [dateProgress, setDateProgress] = useState<number | null>(
-      calculateDateProgress(startTime, endTime, now)
+      calculateDateProgress(startTime, endTime, now),
     );
     const timerRef = useRef<NodeJS.Timeout>();
 
@@ -46,7 +46,7 @@ export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
             value={formatDateToUtc(startTime)}
             className={twMerge(
               'flex-col md:flex-row items-start md:items-center md:gap-0.5',
-              labelClassName
+              labelClassName,
             )}
           />
           <LabelWithValue
@@ -54,12 +54,12 @@ export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
             value={formatDateToUtc(endTime)}
             className={twMerge(
               'flex-col md:flex-row items-end md:items-center md:gap-0.5 [&>span]:text-end',
-              labelClassName
+              labelClassName,
             )}
           />
         </div>
         <Progress value={dateProgress} className="w-full mt-3" />
       </div>
     );
-  }
+  },
 );

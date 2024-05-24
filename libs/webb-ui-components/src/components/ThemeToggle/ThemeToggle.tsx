@@ -24,7 +24,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
 }) => {
   const useDarkMode = useMemo(
     () => (useNextThemes ? useNextDarkMode : useNormalDarkMode),
-    [useNextThemes]
+    [useNextThemes],
   );
 
   const [isMounted, setIsMounted] = useState(false);
@@ -52,7 +52,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
         {
           'bg-mono-120': isDarkMode,
           'bg-mono-60': !isDarkMode,
-        }
+        },
       )}
       onClick={(eve) => {
         eve.preventDefault();
@@ -79,7 +79,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
           'absolute inset-y-0 left-0 flex items-center transition-transform duration-200 ease-in',
           {
             'translate-x-full': isDarkMode,
-          }
+          },
         )}
       >
         {isDarkMode ? (

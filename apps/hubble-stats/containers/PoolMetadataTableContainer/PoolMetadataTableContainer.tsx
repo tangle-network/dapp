@@ -14,7 +14,7 @@ export default function PoolMetadataTableContainer({
 }) {
   const { data, isLoading } = useSWR(
     [getPoolMetadataTableData.name, poolAddress],
-    ([, args]) => getPoolMetadataTableData(args)
+    ([, args]) => getPoolMetadataTableData(args),
   );
 
   if (isLoading || !data) {

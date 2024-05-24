@@ -20,12 +20,12 @@ const ShieldedTablesContainer: FC<{
 }> = ({ epochNow }) => {
   const { data: shieldedAssetsData, isLoading: shieldedAssetLoading } = useSWR(
     [getShieldedAssetsTableData.name, epochNow],
-    ([, ...args]) => getShieldedAssetsTableData(...args)
+    ([, ...args]) => getShieldedAssetsTableData(...args),
   );
 
   const { data: shieldedPoolsData, isLoading: shieldedPoolsLoading } = useSWR(
     [getShieldedPoolsTableData.name, epochNow],
-    ([, ...args]) => getShieldedPoolsTableData(...args)
+    ([, ...args]) => getShieldedPoolsTableData(...args),
   );
 
   return (

@@ -21,7 +21,7 @@ function WithInfo({
       side: 'right',
       sideOffset: 24,
     } as Partial<ComponentProps<typeof TooltipBody>>,
-    {} as Partial<ComponentProps<typeof TooltipBody>>
+    {} as Partial<ComponentProps<typeof TooltipBody>>,
   );
 
   if (!info) return <>{children}</>;

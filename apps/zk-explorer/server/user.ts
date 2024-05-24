@@ -2,7 +2,7 @@ import { User } from '../hooks/useAuth';
 import { ApiResponse, ApiRoute, sendApiRequest } from '../utils/api';
 
 export async function updateUserProfile(
-  changes: Partial<User>
+  changes: Partial<User>,
 ): Promise<ApiResponse> {
   const responseWrapper = await sendApiRequest(
     ApiRoute.User,
@@ -10,7 +10,7 @@ export async function updateUserProfile(
     {
       method: 'PUT',
       body: JSON.stringify(changes),
-    }
+    },
   );
 
   return responseWrapper.innerResponse;

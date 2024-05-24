@@ -74,7 +74,7 @@ export const useBridge = () => {
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
-    BRIDGE_SUPPORTED_CHAINS[0]
+    BRIDGE_SUPPORTED_CHAINS[0],
   );
   const [selectedDestinationChain, setSelectedDestinationChain] =
     useState<ChainConfig>(BRIDGE_SUPPORTED_CHAINS[1]);
@@ -82,15 +82,15 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [destinationAddress, setDestinationAddress] = useState('');
   const [amount, setAmount] = useState<BN | null>(null);
   const [selectedToken, setSelectedToken] = useState<BridgeTokenType>(
-    BRIDGE_SUPPORTED_TOKENS[0]
+    BRIDGE_SUPPORTED_TOKENS[0],
   );
 
   const selectedDestinationChainOptions = useMemo(
     () =>
       BRIDGE_SUPPORTED_CHAINS.filter(
-        (chain) => chain.id !== selectedSourceChain.id
+        (chain) => chain.id !== selectedSourceChain.id,
       ),
-    [selectedSourceChain]
+    [selectedSourceChain],
   );
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     // set the first option as the destination chain.
     if (
       !selectedDestinationChainOptions.find(
-        (chain) => chain.id === selectedDestinationChain.id
+        (chain) => chain.id === selectedDestinationChain.id,
       )
     ) {
       setSelectedDestinationChain(selectedDestinationChainOptions[0]);

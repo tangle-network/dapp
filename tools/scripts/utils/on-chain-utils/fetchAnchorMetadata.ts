@@ -31,17 +31,17 @@ import { getContract } from 'viem';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,
-  typedChainId: number
+  typedChainId: number,
 ): Promise<AnchorMetadata> {
   if (anchorDeploymentBlock?.[typedChainId]?.[anchorAddress] === undefined) {
     throw new Error(
-      `Getting Deployment Block: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
+      `Getting Deployment Block: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`,
     );
   }
 
   if (anchorSignatureBridge?.[typedChainId]?.[anchorAddress] === undefined) {
     throw new Error(
-      `Getting Signature Bridge: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
+      `Getting Signature Bridge: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`,
     );
   }
 
@@ -180,19 +180,19 @@ async function fetchEVMAnchorMetadata(
             contract.read.symbol(),
             contract.read.decimals(),
           ]);
-        })
+        }),
       ).then((res) =>
         res.reduce(
           (acc, val) => acc.concat(...val.map((v) => v.toString())),
-          [] as string[]
-        )
+          [] as string[],
+        ),
       ));
 
   assert.strictEqual(res.length % 3, 0, 'Result length is not a multiple of 3');
   assert.strictEqual(
     res.length / 3,
     wrappableWithoutNative.length,
-    'Invalid wrappable token metadata'
+    'Invalid wrappable token metadata',
   );
 
   const wrappableCurrencies: Array<ICurrency> = [];
@@ -214,19 +214,24 @@ async function fetchEVMAnchorMetadata(
 
   const linkableAnchor = neighborEdges
     .filter((edge) => edge.chainID !== ZERO_BIG_INT)
-    .reduce((acc, edge) => {
-      const chainId = edge.chainID.toString();
-      const resourceIdHex = edge.srcResourceID;
+    .reduce(
+      (acc, edge) => {
+        const chainId = edge.chainID.toString();
+        const resourceIdHex = edge.srcResourceID;
 
-      const { targetSystem } = ResourceId.fromBytes(hexToU8a(resourceIdHex));
+        const { targetSystem } = ResourceId.fromBytes(hexToU8a(resourceIdHex));
 
-      const anchorAddr = BigInt(u8aToHex(targetSystem)).toString(16); // Convert to big int to remove leading zeros and convert back to hex
+        const anchorAddr = BigInt(u8aToHex(targetSystem)).toString(16); // Convert to big int to remove leading zeros and convert back to hex
 
-      return {
-        ...acc,
-        [chainId]: anchorAddr.startsWith('0x') ? anchorAddr : `0x${anchorAddr}`,
-      };
-    }, {} as Record<string, string>);
+        return {
+          ...acc,
+          [chainId]: anchorAddr.startsWith('0x')
+            ? anchorAddr
+            : `0x${anchorAddr}`,
+        };
+      },
+      {} as Record<string, string>,
+    );
 
   const { timestamp: creationTimestamp } = await client.getBlock({
     blockNumber: BigInt(anchorDeploymentBlock[typedChainId][anchorAddress]),
@@ -249,7 +254,7 @@ async function fetchEVMAnchorMetadata(
 async function fetchSubstrateAnchorMetadata(
   treeId: string,
   typedChainId: number,
-  provider: ApiPromise
+  provider: ApiPromise,
 ): Promise<AnchorMetadata> {
   const vanchor = await provider.query.vAnchorBn254.vAnchors(treeId);
 
@@ -263,7 +268,7 @@ async function fetchSubstrateAnchorMetadata(
   const [asset, metadata] = await provider.queryMulti<
     [
       Option<PalletAssetRegistryAssetDetails>,
-      Option<PalletAssetRegistryAssetMetadata>
+      Option<PalletAssetRegistryAssetMetadata>,
     ]
   >([
     [provider.query.assetRegistry.assets, assetId],
@@ -298,27 +303,30 @@ async function fetchSubstrateAnchorMetadata(
       Array.from({ length: maxEdges }).map((_, idx) =>
         provider.query.linkableTreeBn254.edgeList<PalletLinkableTreeEdgeMetadata>(
           treeId,
-          idx
-        )
-      )
+          idx,
+        ),
+      ),
     )
   ).filter((edge) => !edge.srcChainId.eq(0));
 
-  const linkableAnchor = edgeList.reduce((acc, edge) => {
-    const chainId = edge.srcChainId.toString();
-    const resourceId = edge.srcResourceId.toHex();
+  const linkableAnchor = edgeList.reduce(
+    (acc, edge) => {
+      const chainId = edge.srcChainId.toString();
+      const resourceId = edge.srcResourceId.toHex();
 
-    const { targetSystem } = ResourceId.fromBytes(hexToU8a(resourceId));
-    const anchorAddr = BigInt(u8aToHex(targetSystem)).toString(16); // Convert to big int to remove leading zeros and convert back to hex
+      const { targetSystem } = ResourceId.fromBytes(hexToU8a(resourceId));
+      const anchorAddr = BigInt(u8aToHex(targetSystem)).toString(16); // Convert to big int to remove leading zeros and convert back to hex
 
-    return {
-      ...acc,
-      [chainId]: anchorAddr.startsWith('0x') ? anchorAddr : `0x${anchorAddr}`,
-    };
-  }, {} as Record<string, string>);
+      return {
+        ...acc,
+        [chainId]: anchorAddr.startsWith('0x') ? anchorAddr : `0x${anchorAddr}`,
+      };
+    },
+    {} as Record<string, string>,
+  );
 
   const wrappableAssetIds = assetDetail.assetType.asPoolShare.map((a) =>
-    a.toString()
+    a.toString(),
   );
 
   const wrappableCurrencies = await Promise.all<ICurrency>(
@@ -342,11 +350,11 @@ async function fetchSubstrateAnchorMetadata(
           decimals: DEFAULT_DECIMALS,
           address: assetId,
         } satisfies ICurrency;
-      })
+      }),
   );
 
   const isNativeAllowed = wrappableAssetIds.includes(
-    DEFAULT_NATIVE_INDEX.toString()
+    DEFAULT_NATIVE_INDEX.toString(),
   );
 
   return {
@@ -361,7 +369,7 @@ async function fetchSubstrateAnchorMetadata(
 async function fetchAnchorMetadata(
   anchorAddress: string,
   typedChainId: number,
-  provider?: ApiPromise
+  provider?: ApiPromise,
 ): Promise<AnchorMetadata> {
   let metadata: AnchorMetadata;
 
@@ -369,7 +377,7 @@ async function fetchAnchorMetadata(
     metadata = await fetchSubstrateAnchorMetadata(
       anchorAddress,
       typedChainId,
-      provider
+      provider,
     );
   } else {
     metadata = await fetchEVMAnchorMetadata(anchorAddress, typedChainId);

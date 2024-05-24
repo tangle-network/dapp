@@ -5,7 +5,7 @@ import { AuthorityReputation } from './types';
 
 const getAuthorityReputations = async (
   currentAuthorities: string[],
-  api: ApiPromise
+  api: ApiPromise,
 ) => {
   const promises = currentAuthorities.map(async (item: string) => {
     const reputation = await api.query.dkg.authorityReputations(item);
@@ -35,16 +35,15 @@ export const useReputations = () => {
   const [authorityReputations, setAuthorityReputations] = useState<
     AuthorityReputation[]
   >([]);
-  const [highestReputationScore, setHighestReputationScore] = useState<number>(
-    -Infinity
-  );
+  const [highestReputationScore, setHighestReputationScore] =
+    useState<number>(-Infinity);
 
   useEffect(() => {
     if (api) {
       const fetchReputations = async () => {
         const reputations = await getAuthorityReputations(
           currentAuthorities,
-          api
+          api,
         );
 
         const maxReputation = reputations.reduce((max, entry) => {

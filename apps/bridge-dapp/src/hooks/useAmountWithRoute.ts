@@ -37,7 +37,7 @@ const useAmountWithRoute = (key = AMOUNT_KEY) => {
         setAmount(amount);
       }
     },
-    [setAmount]
+    [setAmount],
   );
 
   // Update amount on search params with debounce

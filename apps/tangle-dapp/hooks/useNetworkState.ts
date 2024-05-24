@@ -83,7 +83,7 @@ const useNetworkState = () => {
         }
 
         console.warn(
-          `Could not find an associated network for cached network id: ${cachedNetworkNameOpt.value}, deleting from local storage`
+          `Could not find an associated network for cached network id: ${cachedNetworkNameOpt.value}, deleting from local storage`,
         );
 
         removeCachedNetworkId();
@@ -134,7 +134,7 @@ const useNetworkState = () => {
           newNetwork.name
         } (${newNetwork.nodeType}) with RPC endpoint: ${
           newNetwork.wsRpcEndpoint
-        }`
+        }`,
       );
 
       // Update local storage cache with the new network.
@@ -162,7 +162,7 @@ const useNetworkState = () => {
         // TODO: For local dev, the chain id is set to the testnet's chain id. Which then attempts to switch to the testnet chain, and its RPC url. Changing the way that the provider API works requires extensive changes, so leaving this for later since local dev is not a priority.
         const typedChainId = calculateTypedChainId(
           ChainType.EVM,
-          newNetwork.evmChainId
+          newNetwork.evmChainId,
         );
 
         const webbChain: Chain | undefined = chains[typedChainId];
@@ -184,7 +184,7 @@ const useNetworkState = () => {
       setCachedNetworkId,
       chains,
       switchChain,
-    ]
+    ],
   );
 
   return {

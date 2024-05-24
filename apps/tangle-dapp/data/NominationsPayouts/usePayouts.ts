@@ -35,14 +35,14 @@ type PayoutData = {
 export default function usePayouts(): PayoutData {
   const isPayoutsFetched = useRef(false);
   const fetchedPayoutPromises = useRef<Promise<(Payout | undefined)[]> | null>(
-    null
+    null,
   );
 
   const [isLoading, setIsLoading] = useState(false);
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
-    true
+    true,
   );
 
   const { rpcEndpoint, network } = useNetworkStore();
@@ -60,12 +60,12 @@ export default function usePayouts(): PayoutData {
   const { result: nominators } = useApiRx(
     useCallback(
       (api) => api.query.staking.nominators(activeSubstrateAddress),
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const { result: erasRewardsPoints } = useApiRx(
-    useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
+    useCallback((api) => api.query.staking.erasRewardPoints.entries(), []),
   );
 
   const myNominations = useMemo(() => {
@@ -77,7 +77,7 @@ export default function usePayouts(): PayoutData {
   const { data: eraTotalRewards } = useEraTotalRewards();
 
   const { result: validators } = useApiRx(
-    useCallback((api) => api.query.staking.validators.entries(), [])
+    useCallback((api) => api.query.staking.validators.entries(), []),
   );
 
   const mappedValidatorInfo = useMemo(() => {
@@ -118,7 +118,7 @@ export default function usePayouts(): PayoutData {
         const rewards = point[1].toHuman();
         let validatorRewardPoints = 0;
         const totalRewardPoints = parseFloat(
-          rewards.total?.toString().replace(/,/g, '') ?? '0'
+          rewards.total?.toString().replace(/,/g, '') ?? '0',
         );
         if (
           typeof rewards.individual === 'object' &&
@@ -164,7 +164,7 @@ export default function usePayouts(): PayoutData {
         const erasStakersOverview =
           await apiPromise.query.staking.erasStakersOverview(
             reward.era,
-            reward.validatorAddress
+            reward.validatorAddress,
           );
 
         const validatorTotalStake = !erasStakersOverview.isNone
@@ -184,7 +184,7 @@ export default function usePayouts(): PayoutData {
         const eraStakerPaged = await apiPromise.query.staking.erasStakersPaged(
           reward.era,
           reward.validatorAddress,
-          0
+          0,
         );
 
         if (eraStakerPaged.isNone) {
@@ -195,7 +195,7 @@ export default function usePayouts(): PayoutData {
           .unwrap()
           .others.find(
             (nominator) =>
-              nominator.who.toString() === activeSubstrateAddressEncoded
+              nominator.who.toString() === activeSubstrateAddressEncoded,
           );
 
         if (nominatorStakeInfo === undefined || nominatorStakeInfo.isEmpty) {
@@ -226,33 +226,33 @@ export default function usePayouts(): PayoutData {
           validatorCommissionRate / 10_000_000;
 
         const validatorCommission = validatorTotalReward.muln(
-          validatorCommissionPercentage / 100
+          validatorCommissionPercentage / 100,
         );
 
         const distributableReward =
           validatorTotalReward.sub(validatorCommission);
 
         const nominatorTotalReward = distributableReward.muln(
-          nominatorStakePercentage / 100
+          nominatorStakePercentage / 100,
         );
 
         const validatorIdentityName = await getValidatorIdentityName(
           rpcEndpoint,
-          reward.validatorAddress
+          reward.validatorAddress,
         );
 
         const validatorNominators = await Promise.all(
           eraStakerPaged.unwrap().others.map(async (nominator) => {
             const nominatorIdentity = await getValidatorIdentityName(
               rpcEndpoint,
-              nominator.who.toString()
+              nominator.who.toString(),
             );
 
             return {
               address: nominator.who.toString(),
               identity: nominatorIdentity ?? '',
             };
-          })
+          }),
         );
 
         if (
@@ -277,7 +277,7 @@ export default function usePayouts(): PayoutData {
 
           return payout;
         }
-      })
+      }),
     );
 
     fetchedPayoutPromises.current = payoutPromises;

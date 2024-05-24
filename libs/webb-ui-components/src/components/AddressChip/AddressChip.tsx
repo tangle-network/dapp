@@ -17,7 +17,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
         color="grey"
         className={twMerge(
           'w-fit flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1',
-          classNameProp
+          classNameProp,
         )}
         ref={ref}
       >
@@ -39,15 +39,15 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
             {isEthereumAddress(address)
               ? shortenHex(address, 2)
               : isAddress(address)
-              ? shortenString(address, 3)
-              : 'N/A'}
+                ? shortenString(address, 3)
+                : 'N/A'}
           </Typography>
         ) : (
           <SkeletonLoader />
         )}
       </Chip>
     );
-  }
+  },
 );
 
 export default AddressChip;

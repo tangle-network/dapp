@@ -37,14 +37,14 @@ export async function getRelayerManagerFactory(options?: {
 
   // Filter out the relayers which are not enabled for the current environment
   const filteredRelayerConfigs = relayerConfig.filter((relayer) =>
-    relayer.env ? relayer.env.includes(appEnv) : true
+    relayer.env ? relayer.env.includes(appEnv) : true,
   );
 
   if (!relayerManagerFactory) {
     relayerManagerFactory = await WebbRelayerManagerFactory.init(
       filteredRelayerConfigs,
       chainNameAdapter,
-      options?.isLazyFetch
+      options?.isLazyFetch,
     );
   }
 
@@ -66,7 +66,7 @@ export class WebbRelayerManagerFactory {
 
   private constructor(
     protected relayerConfigs: RelayerConfig[],
-    private readonly chainNameAdapter: ChainNameIntoChainId
+    private readonly chainNameAdapter: ChainNameIntoChainId,
   ) {}
 
   /**
@@ -74,7 +74,7 @@ export class WebbRelayerManagerFactory {
    **/
   private static infoIntoCapabilities(
     info: RelayerInfo,
-    nameAdapter: ChainNameIntoChainId
+    nameAdapter: ChainNameIntoChainId,
   ): Capabilities {
     const evmMap = new Map<number, RelayedChainConfig<'evm'>>();
     const substrateMap = new Map<number, RelayedChainConfig<'substrate'>>();
@@ -87,7 +87,7 @@ export class WebbRelayerManagerFactory {
           ? Object.keys(info.evm)
               .filter(
                 (key) =>
-                  info.evm[key]?.beneficiary && nameAdapter(key, 'evm') != null
+                  info.evm[key]?.beneficiary && nameAdapter(key, 'evm') != null,
               )
               .reduce((m, key) => {
                 const cap = info.evm[key];
@@ -103,12 +103,12 @@ export class WebbRelayerManagerFactory {
               .filter(
                 (key) =>
                   info.substrate[key]?.beneficiary &&
-                  info.substrate[key]?.enabled
+                  info.substrate[key]?.enabled,
               )
               .reduce((m, key) => {
                 const typedChainId = calculateTypedChainId(
                   ChainType.Substrate,
-                  +key
+                  +key,
                 );
                 const cap = info.substrate[key];
                 if (!cap) {
@@ -138,7 +138,7 @@ export class WebbRelayerManagerFactory {
   }
 
   public async fetchCapabilities(
-    endpoint: string
+    endpoint: string,
   ): Promise<Capabilities | null> {
     try {
       const response = await fetch(`${endpoint}/api/v1/info`);
@@ -146,7 +146,7 @@ export class WebbRelayerManagerFactory {
       this.logger.info('Received relayer info from endpoint: ', endpoint, info);
       const capabilities = WebbRelayerManagerFactory.infoIntoCapabilities(
         info,
-        this.chainNameAdapter
+        this.chainNameAdapter,
       );
       return capabilities;
     } catch (error) {
@@ -181,11 +181,11 @@ export class WebbRelayerManagerFactory {
   static async init(
     config: RelayerConfig[],
     chainNameAdapter: ChainNameIntoChainId,
-    isLazyFetch?: boolean
+    isLazyFetch?: boolean,
   ): Promise<WebbRelayerManagerFactory> {
     const relayerManagerFactory = new WebbRelayerManagerFactory(
       config,
-      chainNameAdapter
+      chainNameAdapter,
     );
 
     // For all relayers in the relayerConfigs, fetch the info - but timeout after 5 seconds
@@ -199,7 +199,7 @@ export class WebbRelayerManagerFactory {
               setTimeout(resolve.bind(null, null), 5000);
             }),
           ]);
-        })
+        }),
       );
     }
 
@@ -207,7 +207,7 @@ export class WebbRelayerManagerFactory {
   }
 
   async getRelayerManager<CMDBase extends RelayerCMDBase>(
-    type: CMDBase
+    type: CMDBase,
   ): Promise<
     CMDBase extends 'evm' ? Web3RelayerManager : PolkadotRelayerManager
   > {

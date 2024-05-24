@@ -46,7 +46,7 @@ const SharedRoleDistributionChart: FC<PieChartProps> = ({
       <div
         className={twMerge(
           'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]',
-          'flex flex-col items-center gap-1'
+          'flex flex-col items-center gap-1',
         )}
       >
         <Typography variant="body2">{title}</Typography>

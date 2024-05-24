@@ -31,7 +31,7 @@ export const AmountInput = forwardRef<
       title = 'Amount',
       ...props
     },
-    ref
+    ref,
   ) => {
     // State to disable the the input when the dropdown is open
     // (to prevent the re-rendering of the dropdown)
@@ -39,7 +39,7 @@ export const AmountInput = forwardRef<
 
     const mergedClsx = useMemo(
       () => twMerge('cursor-auto select-none space-x-2', className),
-      [className]
+      [className],
     );
 
     // The amount menu callback
@@ -47,7 +47,7 @@ export const AmountInput = forwardRef<
       (nextVal: 'fixed' | 'custom') => {
         amountMenuProps?.onChange?.(nextVal);
       },
-      [amountMenuProps]
+      [amountMenuProps],
     );
 
     return (
@@ -136,5 +136,5 @@ export const AmountInput = forwardRef<
         )}
       </>
     );
-  }
+  },
 );

@@ -14,7 +14,7 @@ function useEnqueueSubmittedTx() {
     (
       transactionHash: string,
       chain?: ChainConfig,
-      txType?: (typeof BRIDGE_TABS)[number] | (typeof WRAPPER_TABS)[number]
+      txType?: (typeof BRIDGE_TABS)[number] | (typeof WRAPPER_TABS)[number],
     ) => {
       const explorer = chain?.blockExplorers?.default?.url;
 
@@ -28,10 +28,10 @@ function useEnqueueSubmittedTx() {
           txType={txType}
           txExplorerUrl={url}
           txHash={transactionHash}
-        />
+        />,
       );
     },
-    [activeApi, enqueue]
+    [activeApi, enqueue],
   );
 }
 

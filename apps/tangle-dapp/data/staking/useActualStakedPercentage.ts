@@ -8,7 +8,7 @@ const useActualStakedPercentage = () => {
   const { result: currentEra } = useCurrentEra();
 
   const { result: totalIssuance } = useApiRx(
-    useCallback((api) => api.query.balances.totalIssuance(), [])
+    useCallback((api) => api.query.balances.totalIssuance(), []),
   );
 
   const { result: totalStaked } = useApiRx(
@@ -20,8 +20,8 @@ const useActualStakedPercentage = () => {
 
         return api.query.staking.erasTotalStake(currentEra);
       },
-      [currentEra]
-    )
+      [currentEra],
+    ),
   );
 
   return useMemo(() => {
