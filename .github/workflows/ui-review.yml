@@ -22,17 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.2
-        with:
-          node-version: '>=18.12.x'
-          cache: yarn
-
       - name: Enable corepack
         run: |
           corepack enable
           corepack prepare yarn@4.2.2 --activate
           yarn set version 4.2.2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: '>=18.12.x'
+          cache: yarn
 
       - name: Install dependencies
         # 👇 Install dependencies with the same package manager used in the project (replace it as needed), e.g. yarn, npm, pnpm
