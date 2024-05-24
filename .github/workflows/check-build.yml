@@ -20,11 +20,21 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/checkout@v4.1.6
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: yarn
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.2.2 --activate
+          yarn set version 4.2.2
+
       - name: create env file
         run: |
           touch .env

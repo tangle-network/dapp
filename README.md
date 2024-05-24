@@ -44,7 +44,7 @@ This repository makes use of yarn, nodejs, and requires version node v18.12.x. T
 
 1. Run `corepack enable` to activate [Corepack](https://nodejs.org/api/corepack.html)
 2. Go into your project directory
-3. Run `yarn set version 4`
+3. Run `yarn set version 4.2.2`
 
 For more information about the migration, you can refer to the Yarn [documentation](https://yarnpkg.com/migration/guide#migration-steps).
 

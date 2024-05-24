@@ -30,11 +30,18 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/checkout@v4.1.6
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
+          cache: yarn
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.2.2 --activate
+          yarn set version 4.2.2
 
       - name: Copy deployment config to root
         run: cp apps/faucet/netlify.toml netlify.toml
