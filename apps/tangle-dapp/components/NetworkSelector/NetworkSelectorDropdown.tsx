@@ -1,5 +1,8 @@
 import { ChainIcon } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import {
   Network,
   TANGLE_LOCAL_DEV_NETWORK,
@@ -9,7 +12,6 @@ import {
 import { FC, ReactNode, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
 import { TANGLE_TESTNET_CHAIN_NAME } from './NetworkSelectionButton';
 

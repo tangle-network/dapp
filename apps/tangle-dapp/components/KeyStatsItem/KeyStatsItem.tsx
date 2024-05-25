@@ -1,14 +1,13 @@
 'use client';
 
 import {
+  InfoIconWithTooltip,
   notificationApi,
   SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 
 export enum KeyStatsItemVariant {
   Left,

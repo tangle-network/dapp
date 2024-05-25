@@ -1,6 +1,7 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
+import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import {
@@ -11,7 +12,6 @@ import {
   useMemo,
 } from 'react';
 
-import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
 import useRestakingAPY from '../../../data/restaking/useRestakingAPY';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';

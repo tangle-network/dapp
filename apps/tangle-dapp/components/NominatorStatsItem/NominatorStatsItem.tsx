@@ -1,8 +1,11 @@
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InfoIconWithTooltip } from '..';
 import { NominatorStatsItemProps } from './types';
 
 export const NominatorStatsItem: FC<NominatorStatsItemProps> = ({
