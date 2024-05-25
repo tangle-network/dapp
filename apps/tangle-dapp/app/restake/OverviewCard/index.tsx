@@ -13,6 +13,7 @@ import {
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useRestakingAPY from '../../../data/restaking/useRestakingAPY';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
@@ -145,7 +146,7 @@ const StatsItem: FC<StatsItemProps> = ({
               fw={isBoldText ? 'bold' : 'normal'}
               className="text-mono-200 dark:text-mono-0"
             >
-              {value ?? '--'}
+              {value ?? EMPTY_VALUE_PLACEHOLDER}
             </Typography>
 
             {valueTooltip && <InfoIconWithTooltip content={valueTooltip} />}

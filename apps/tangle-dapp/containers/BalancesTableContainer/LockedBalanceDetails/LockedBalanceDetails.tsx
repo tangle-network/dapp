@@ -3,7 +3,7 @@ import { ArrowRightUp } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { SubstrateLockId } from '../../../constants';
+import { EMPTY_VALUE_PLACEHOLDER, SubstrateLockId } from '../../../constants';
 import useBalancesLock from '../../../data/balances/useBalancesLock';
 import useDemocracy from '../../../data/democracy/useDemocracy';
 import useCurrentEra from '../../../data/staking/useCurrentEra';
@@ -90,7 +90,7 @@ const LockedBalanceDetails: FC = () => {
 
           <DemocracyUnlockingAt />
 
-          {showNomination && <TextCell text="--" />}
+          {showNomination && <TextCell text={EMPTY_VALUE_PLACEHOLDER} />}
 
           {currentEra !== null &&
             unbondingEntries !== null &&
@@ -141,7 +141,7 @@ const LockedBalanceDetails: FC = () => {
 
           {showNomination && (
             <div className="flex flex-row justify-between items-center">
-              <TextCell text="--" />
+              <TextCell text={EMPTY_VALUE_PLACEHOLDER} />
 
               {visitNominationPageAction}
             </div>
@@ -154,7 +154,7 @@ const LockedBalanceDetails: FC = () => {
                 key={index}
                 className="flex flex-row justify-between items-center"
               >
-                <TextCell text="--" />
+                <TextCell text={EMPTY_VALUE_PLACEHOLDER} />
 
                 {visitNominationPageAction}
               </div>

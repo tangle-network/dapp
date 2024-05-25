@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../../types';
@@ -88,7 +89,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
         Remaining:{' '}
         {remainingAmount !== null
           ? formatTokenBalance(remainingAmount, nativeTokenSymbol)
-          : '--'}
+          : EMPTY_VALUE_PLACEHOLDER}
       </Typography>
     </AllocationStepContainer>
   );

@@ -155,3 +155,5 @@ export const TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP: {
   ZkSaaSGroth16: RestakingService.ZK_SAAS_GROTH16,
   ZkSaaSMarlin: RestakingService.ZK_SAAS_MARLIN,
 };
+
+export const EMPTY_VALUE_PLACEHOLDER = '—';

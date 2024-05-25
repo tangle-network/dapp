@@ -5,7 +5,7 @@ import { GlassCard } from '../../components';
 import LiquidStakingTokenItem from './LiquidStakingTokenItem';
 import StatItem from './StatItem';
 
-const LiquidStaking: FC = () => {
+const LiquidStakingPage: FC = () => {
   return (
     <div className="flex flex-col gap-6">
       <Typography variant="h4" fw="bold">
@@ -72,4 +72,4 @@ const LiquidStaking: FC = () => {
   );
 };
 
-export default LiquidStaking;
+export default LiquidStakingPage;

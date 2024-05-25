@@ -18,6 +18,7 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { toSubstrateAddress } from '../../utils';
 
 export type AccountAddressProps = {
@@ -98,7 +99,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
           <Typography variant="body1" fw="normal" className="text-mono-160">
             {possiblyHiddenAddress !== null
               ? shortenFn(possiblyHiddenAddress, 5)
-              : '--'}
+              : EMPTY_VALUE_PLACEHOLDER}
           </Typography>
         </TooltipTrigger>
 
