@@ -1,9 +1,8 @@
 'use client';
 
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-
 import { useBridge } from '../../../context/BridgeContext';
 import { BridgeType } from '../../../types/bridge';
+import { isEVMChain, isSubstrateChain } from '../../../utils/bridge';
 
 export default function useBridgeType() {
   const { selectedSourceChain, selectedDestinationChain } = useBridge();
@@ -41,19 +40,4 @@ export default function useBridgeType() {
   }
 
   throw new Error('Unsupported bridge type');
-}
-
-function isSubstrateChain(chainType: ChainType) {
-  return (
-    chainType === ChainType.Substrate ||
-    chainType === ChainType.SubstrateDevelopment ||
-    chainType === ChainType.PolkadotRelayChain ||
-    chainType === ChainType.KusamaRelayChain ||
-    chainType === ChainType.PolkadotParachain ||
-    chainType === ChainType.KusamaParachain
-  );
-}
-
-function isEVMChain(chainType: ChainType) {
-  return chainType === ChainType.EVM;
 }

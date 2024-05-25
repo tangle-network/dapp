@@ -38,12 +38,12 @@ export const BRIDGE: BridgeType = {
     [PresetTypedChainId.TangleTestnetEVM]: {
       supportedTokens: ['tTNT'],
     },
-    [PresetTypedChainId.Polkadot]: {
+    [PresetTypedChainId.TangleMainnetNative]: {
       supportedTokens: ['tTNT', 'TNT'],
     },
   },
 
-  [PresetTypedChainId.Polkadot]: {
+  [PresetTypedChainId.TangleMainnetNative]: {
     [PresetTypedChainId.TangleTestnetEVM]: {
       supportedTokens: ['tTNT'],
     },
@@ -62,7 +62,7 @@ export const BRIDGE: BridgeType = {
     [PresetTypedChainId.Sepolia]: {
       supportedTokens: ['TNT'],
     },
-    [PresetTypedChainId.Polkadot]: {
+    [PresetTypedChainId.TangleMainnetNative]: {
       supportedTokens: ['TNT'],
     },
   },
@@ -74,7 +74,7 @@ export const BRIDGE: BridgeType = {
     [PresetTypedChainId.Sepolia]: {
       supportedTokens: ['TNT'],
     },
-    [PresetTypedChainId.Polkadot]: {
+    [PresetTypedChainId.TangleMainnetNative]: {
       supportedTokens: ['tTNT', 'TNT'],
     },
   },
