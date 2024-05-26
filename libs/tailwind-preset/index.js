@@ -253,4 +253,4 @@ const preset = {
   ],
 };
 
-module.export = preset;
+export default preset;

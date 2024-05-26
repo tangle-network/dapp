@@ -1,36 +1,28 @@
 {
   "name": "tailwind-preset",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/tailwind-preset",
+  "sourceRoot": "libs/tailwind-preset/src",
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:eslint"
-    },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/tailwind-preset",
-        "tsConfig": "libs/tailwind-preset/tsconfig.lib.json",
-        "project": "libs/tailwind-preset/package.json",
-        "entryFile": "libs/tailwind-preset/index.js",
-        "external": ["tailwindcss"],
-        "rollupConfig": ["@nx/react/plugins/bundle-rollup"],
-        "format": ["cjs", "esm"],
-        "compiler": "babel",
-        "allowJs": true,
-        "javascriptEnabled": true,
-        "skipTypeCheck": true
+        "outputPath": "dist/libs/tailwind-preset"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
-    "publish": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "node tools/scripts/publish.mjs tailwind-preset {args.ver} {args.tag}"
-      },
-      "dependsOn": ["build"]
+    "lint": {
+      "executor": "@nx/eslint:lint"
     }
   }
 }
