@@ -3,24 +3,33 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/icons/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
     "build": {
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "project": "libs/icons/package.json",
         "outputPath": "dist/libs/icons",
-        "entryFile": "libs/icons/src/index.ts",
         "tsConfig": "libs/icons/tsconfig.lib.json",
+        "project": "libs/icons/package.json",
+        "entryFile": "libs/icons/src/index.ts",
+        "external": ["react", "react-dom", "react/jsx-runtime"],
+        "rollupConfig": ["libs/icons/rollup.config.js"],
         "format": ["esm"],
-        "rollupConfig": ["libs/icons/rollup.config.mjs"],
-        "external": ["react", "react-dom"],
+        "compiler": "babel",
+        "extractCss": "styles.css",
+        "assets": [
+          {
+            "glob": "libs/icons/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ],
         "generateExportsField": true
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -29,6 +38,5 @@
         "jestConfig": "libs/icons/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

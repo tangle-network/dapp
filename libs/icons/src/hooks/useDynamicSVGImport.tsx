@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect, useMemo, useState } from 'react';
 
 /**
@@ -76,7 +74,7 @@ export function useDynamicSVGImport(
       }
     };
     importIcon();
-  }, [_name, onCompleted, onError]);
+  }, [_name, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };
 }
