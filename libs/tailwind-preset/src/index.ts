@@ -1,3 +1,5 @@
+import type { Config, ThemeConfig } from 'tailwindcss/types/config';
+
 const colors = {
   mono: {
     0: '#fff',
@@ -94,7 +96,7 @@ const colors = {
     120: '#422417',
     DEFAULT: '#DD4800',
   },
-};
+} as const satisfies ThemeConfig['colors'];
 
 const keyframes = {
   // Dropdown menu
@@ -188,7 +190,7 @@ const keyframes = {
     from: { transform: 'translate3d(0,0,0)' },
     to: { transform: 'translate3d(100%,0,0)' },
   },
-};
+} as const satisfies ThemeConfig['keyframes'];
 
 const animation = {
   // Dropdown menu
@@ -223,10 +225,9 @@ const animation = {
     'drawer-content-right-slide-in 150ms cubic-bezier(0.22, 1, 0.36, 1)',
   'drawer-content-right-close':
     'drawer-content-right-slide-out 150ms cubic-bezier(0.22, 1, 0.36, 1)',
-};
+} as const satisfies ThemeConfig['animation'];
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const preset = {
   darkMode: 'class',
   content: [],
   theme: {
@@ -248,4 +249,6 @@ module.exports = {
     require('tailwindcss-radix')(),
     require('tailwind-scrollbar')({ nocompatible: true }),
   ],
-};
+} as const satisfies Config;
+
+export default preset;

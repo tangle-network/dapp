@@ -4,7 +4,9 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true
   },
   "files": [],
   "include": [],

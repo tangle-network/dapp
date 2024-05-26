@@ -1,5 +1,6 @@
 {
   "name": "@webb-tools/tailwind-preset",
   "version": "0.0.1",
-  "type": "module"
+  "type": "module",
+  "types": "./src/index.d.ts"
 }

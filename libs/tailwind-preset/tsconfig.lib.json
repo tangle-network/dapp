@@ -1,9 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
-    "declarationDir": "../../dist",
-    "types": ["node"]
+    "types": [
+      "node",
+      "../../node_modules/@nx/react/typings/cssmodule.d.ts",
+      "../../node_modules/@nx/react/typings/image.d.ts"
+    ]
   },
-  "include": ["**/*.ts", "index.js"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }
