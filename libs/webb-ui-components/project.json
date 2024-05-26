@@ -3,20 +3,23 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/webb-ui-components/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
     "build": {
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "project": "libs/webb-ui-components/package.json",
         "outputPath": "dist/libs/webb-ui-components",
-        "entryFile": "libs/webb-ui-components/src/index.ts",
         "tsConfig": "libs/webb-ui-components/tsconfig.lib.json",
-        "format": ["esm"],
-        "rollupConfig": ["libs/webb-ui-components/rollup.config.mjs"],
+        "project": "libs/webb-ui-components/package.json",
+        "entryFile": "libs/webb-ui-components/src/index.ts",
         "external": [
           "react",
           "react-dom",
+          "react/jsx-runtime",
           "@polkadot/util",
           "@polkadot/util-crypto",
           "@polkadot/wasm-crypto",
@@ -24,7 +27,17 @@
           "@webb-tools/sdk-core",
           "@webb-tools/utils"
         ],
-        "generateExportsField": true
+        "rollupConfig": ["libs/webb-ui-components/rollup.config.js"],
+        "format": ["esm"],
+        "compiler": "babel",
+        "extractCss": "styles.css",
+        "assets": [
+          {
+            "glob": "libs/icons/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
       }
     },
     "publish": {
@@ -33,10 +46,6 @@
         "command": "node tools/scripts/publish.mjs webb-ui-components {args.ver} {args.tag}"
       },
       "dependsOn": ["build"]
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -70,6 +79,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }

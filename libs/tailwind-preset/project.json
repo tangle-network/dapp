@@ -1,7 +1,7 @@
 {
   "name": "tailwind-preset",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/tailwind-preset/src",
+  "sourceRoot": "libs/tailwind-preset",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -15,12 +15,14 @@
         "outputPath": "dist/libs/tailwind-preset",
         "tsConfig": "libs/tailwind-preset/tsconfig.lib.json",
         "project": "libs/tailwind-preset/package.json",
-        "entryFile": "libs/tailwind-preset/src/index.ts",
+        "entryFile": "libs/tailwind-preset/index.js",
         "external": ["tailwindcss"],
         "rollupConfig": ["@nx/react/plugins/bundle-rollup"],
-        "format": ["esm"],
+        "format": ["cjs", "esm"],
         "compiler": "babel",
-        "generateExportsField": true
+        "allowJs": true,
+        "javascriptEnabled": true,
+        "skipTypeCheck": true
       }
     },
     "publish": {

@@ -27,8 +27,7 @@
             "input": ".",
             "output": "."
           }
-        ],
-        "generateExportsField": true
+        ]
       }
     },
     "test": {

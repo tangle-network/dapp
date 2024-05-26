@@ -2,6 +2,5 @@
   "name": "@webb-tools/dapp-config",
   "version": "0.0.1",
   "type": "module",
-  "types": "./src/index.d.ts",
-  "typings": "./src/index.d.ts"
+  "types": "./src/index.d.ts"
 }

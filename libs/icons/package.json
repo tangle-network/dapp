@@ -2,8 +2,5 @@
   "name": "@webb-tools/icons",
   "version": "0.0.1",
   "type": "module",
-  "types": "./src/index.d.ts",
-  "exports": {
-    "./styles.css": "./styles.css"
-  }
+  "types": "./src/index.d.ts"
 }

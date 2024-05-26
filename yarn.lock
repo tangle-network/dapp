@@ -40010,6 +40010,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-preserve-directives@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "rollup-plugin-preserve-directives@npm:0.4.0"
+  dependencies:
+    "@rollup/pluginutils": "npm:^5.1.0"
+    magic-string: "npm:^0.30.5"
+  peerDependencies:
+    rollup: 2.x || 3.x || 4.x
+  checksum: 10c0/83e27b6cefe5d2185a39b79fa860644e60b53ed0c32942e1829023e10aa75a2fdd9c0d57e9a46eec4b60804d3fdb1ae51e847d5762f372b0f22fafcaca8c6a0e
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-typescript2@npm:^0.36.0":
   version: 0.36.0
   resolution: "rollup-plugin-typescript2@npm:0.36.0"
@@ -45230,6 +45242,7 @@ __metadata:
     rollup-plugin-modify: "npm:^3.0.0"
     rollup-plugin-peer-deps-external: "npm:^2.2.4"
     rollup-plugin-postcss: "npm:4.0.2"
+    rollup-plugin-preserve-directives: "npm:^0.4.0"
     rollup-plugin-typescript2: "npm:^0.36.0"
     rxjs: "npm:7.8.1"
     snarkjs: "npm:^0.7.4"

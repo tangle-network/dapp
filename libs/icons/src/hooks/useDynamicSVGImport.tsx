@@ -1,4 +1,7 @@
+import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import React, { useEffect, useMemo, useState } from 'react';
+
+const _id = EVMChainId.ArbitrumTestnet;
 
 /**
  * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically

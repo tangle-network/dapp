@@ -16,7 +16,9 @@ export const Link: React.FC<LinkProps> = (props) => {
     return <Fragment key={props.key}>{props.children}</Fragment>;
   }
 
-  return <a {...extractInternalProp(props)} />;
+  const internalProps = extractInternalProp(props);
+
+  return <a {...internalProps}>{internalProps.children}</a>;
 };
 
 function extractInternalProp<T extends LinkProps>(
