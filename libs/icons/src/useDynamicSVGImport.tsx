@@ -1,7 +1,4 @@
-import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import React, { useEffect, useMemo, useState } from 'react';
-
-const _id = EVMChainId.ArbitrumTestnet;
 
 /**
  * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically
@@ -55,16 +52,18 @@ export function useDynamicSVGImport(
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const module = await import(`!!@svgr/webpack!../${type}s/${_name}.svg`);
-        const Icon = module.default;
+        const module = await import(
+          type === 'token' ? `./tokens/${_name}.svg` : `./chains/${_name}.svg`
+        );
+        const Icon = module.ReactComponent;
         setImportedIcon(Icon());
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
           const module = await import(
-            `!!@svgr/webpack!../${type}s/default.svg`
+            type === 'token' ? `./tokens/default.svg` : `./chains/default.svg`
           );
-          const Icon = module.default;
+          const Icon = module.ReactComponent;
           setImportedIcon(Icon());
           onCompleted?.(_name, Icon);
         } else {

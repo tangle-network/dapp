@@ -9,32 +9,26 @@
       "executor": "@nx/eslint:lint"
     },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/icons",
-        "tsConfig": "libs/icons/tsconfig.lib.json",
-        "project": "libs/icons/package.json",
-        "entryFile": "libs/icons/src/index.ts",
-        "external": ["react", "react-dom", "react/jsx-runtime"],
-        "rollupConfig": ["libs/icons/rollup.config.js"],
-        "format": ["esm"],
-        "compiler": "babel",
-        "extractCss": "styles.css",
-        "assets": [
-          {
-            "glob": "libs/icons/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
+        "outputPath": "dist/libs/icons"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/icons/jest.config.ts"
+        "reportsDirectory": "../../coverage/libs/icons"
       }
     }
   }

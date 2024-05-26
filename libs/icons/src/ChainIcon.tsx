@@ -2,7 +2,7 @@ import React, { cloneElement, useMemo } from 'react';
 import { Spinner } from './Spinner';
 import StatusIndicator from './StatusIndicator/StatusIndicator';
 import { StatusIndicatorProps } from './StatusIndicator/types';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
+import { useDynamicSVGImport } from './useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 

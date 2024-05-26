@@ -2,5 +2,12 @@
   "name": "@webb-tools/icons",
   "version": "0.0.1",
   "type": "module",
-  "types": "./src/index.d.ts"
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  }
 }

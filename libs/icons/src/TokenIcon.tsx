@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { MouseEventHandler, cloneElement, useMemo } from 'react';
 
 import { Spinner } from './Spinner';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
+import { useDynamicSVGImport } from './useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 import { twMerge } from 'tailwind-merge';
@@ -38,7 +38,7 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
         }),
         classNameProp,
       ),
-    [classNameProp],
+    [classNameProp, name, onClick],
   );
 
   // Prevent infinite loop when the passed onClick not use useCallback
