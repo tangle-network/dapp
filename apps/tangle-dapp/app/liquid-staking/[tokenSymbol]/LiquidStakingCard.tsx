@@ -1,7 +1,10 @@
-import { InformationLine } from '@webb-tools/icons';
+import { ArrowDownIcon } from '@radix-ui/react-icons';
+import { InformationLine, Search } from '@webb-tools/icons';
 import {
   Button,
+  Chip,
   IconWithTooltip,
+  Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -11,7 +14,7 @@ import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
   return (
-    <div className="w-full max-w-[650px] space-y-4 dark:bg-mono-190 rounded-lg p-9">
+    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9">
       <div className="flex gap-3">
         <Typography className="dark:text-mono-0" variant="h4" fw="bold">
           Stake
@@ -24,6 +27,13 @@ const LiquidStakingCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-from"
+        selectedToken={LiquidStakingToken.Polkadot}
+      />
+
+      <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
+
+      <LiquidStakingInput
+        id="liquid-staking-to"
         selectedToken={LiquidStakingToken.Polkadot}
       />
 
@@ -84,6 +94,53 @@ const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
       <Typography className="dark:text-mono-0" variant="body1" fw="bold">
         {value}
       </Typography>
+    </div>
+  );
+};
+
+type ParachainItem = {
+  id: number;
+  name: string;
+  icon: string;
+  isConnected: boolean;
+};
+
+type SelectParachainContentProps = {
+  parachains: ParachainItem[];
+};
+
+/** @internal */
+const SelectParachainContent: FC<SelectParachainContentProps> = ({
+  parachains,
+}) => {
+  return (
+    <div className="flex flex-col gap-3">
+      <Typography variant="h5" fw="bold">
+        Select Parachain
+      </Typography>
+
+      <Input
+        id="select-parachain-content-search"
+        placeholder="Search parachains..."
+        rightIcon={<Search />}
+      />
+
+      <div className="flex flex-col gap-2 p-2">
+        {parachains.map((parachain) => (
+          <div
+            key={parachain.id}
+            className="flex items-center justify-between gap-1 px-4 py-3"
+          >
+            <div className="flex gap-2 items-center">
+              <Typography variant="h5" fw="bold" className="dark:text-mono-0">
+                {parachain.name}
+              </Typography>
+            </div>
+
+            {parachain.isConnected && <Chip color="green">Connected</Chip>}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

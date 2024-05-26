@@ -27,8 +27,8 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   }
 
   return (
-    <div>
-      <GlassCard className="space-y-6">
+    <div className="flex flex-wrap gap-12 items-start">
+      <GlassCard className="space-y-6 w-auto">
         <div className="grid grid-cols-2 grid-rows-2 gap-6">
           <GridItem title="Staking" value={tokenSymbol} />
 

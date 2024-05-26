@@ -1,3 +1,4 @@
+import { WalletLineIcon } from '@webb-tools/icons';
 import { Input, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
@@ -10,13 +11,29 @@ export type LiquidStakingInputProps = {
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({ id }) => {
   return (
-    <div className="flex flex-col dark:bg-mono-180 p-3 rounded-lg">
-      <div></div>
+    <div className="flex flex-col gap-3 dark:bg-mono-180 p-3 rounded-lg">
+      <div className="flex justify-between">
+        <Typography variant="h5" fw="bold" className="dark:text-mono-40">
+          Polkadot Mainnet
+        </Typography>
 
-      <hr />
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="flex gap-1 items-center dark:text-mono-80"
+        >
+          <WalletLineIcon /> 0.00
+        </Typography>
+      </div>
+
+      <hr className="dark:border-mono-160" />
 
       <div className="flex gap-1">
-        <Input id={id} className="w-full" placeholder="0" />
+        <input
+          id={id}
+          className="w-full bg-transparent border-none text-xl font-bold focus:outline-none"
+          placeholder="0"
+        />
 
         <TokenCard token={LiquidStakingToken.Polkadot} />
       </div>

@@ -8,6 +8,7 @@ import {
   GlobalLine,
   GridFillIcon,
   UserLineIcon,
+  WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
   SideBarFooterType,
@@ -74,11 +75,11 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Liquid Restaking',
+    name: 'Liquid Staking',
     href: PagePath.LIQUID_RESTAKING,
     isInternal: true,
     isNext: true,
-    Icon: FundsLine,
+    Icon: WaterDropletIcon,
     subItems: [],
   },
   {

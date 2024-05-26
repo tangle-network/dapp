@@ -1,102 +1,41 @@
 'use client';
 
-import { isAddress } from '@polkadot/util-crypto';
-import {
-  ArrowLeftRightLineIcon,
-  CheckboxBlankCircleLine,
-  CodeFill,
-  FundsLine,
-  GiftLineIcon,
-  GridFillIcon,
-  TokenSwapLineIcon,
-} from '@webb-tools/icons';
-import { UserFillIcon } from '@webb-tools/icons';
+import { IconBase } from '@webb-tools/icons/types';
 import {
   Breadcrumbs as BreadcrumbsCmp,
   BreadcrumbsItem,
-  shortenString,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import capitalize from 'lodash/capitalize';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FC, useMemo } from 'react';
+import { FC, ReactElement, useMemo } from 'react';
 
-import { PagePath } from '../../types';
-import { BreadcrumbType } from './types';
+import { getBreadcrumbIcon, getBreadcrumbLabel } from './utils';
 
-// TODO: Need to statically link the breadcrumb labels to the page path for better type safety and to enable fearless refactoring in the future.
-const BREADCRUMB_ICONS: Record<string, BreadcrumbType['icon']> = {
-  claim: <GiftLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
-  services: <GridFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
-  restake: <TokenSwapLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
-  nomination: <FundsLine className="w-4 h-4 lg:w-6 lg:h-6" />,
-  bridge: <ArrowLeftRightLineIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
-};
-
-// TODO: Need to statically link the breadcrumb labels to the page path for better type safety and to enable fearless refactoring in the future.
-const BREADCRUMB_LABELS: Record<string, string> = {
-  services: 'Service Overview',
-  claim: 'Claim Airdrop',
-};
-
-const getBreadcrumbLabel = (
-  pathName: string,
-  index: number,
-  pathNames: string[]
-) => {
-  // Service Details page
-  if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
-    return `Details: ${pathName}`;
-  }
-  if (pathName in BREADCRUMB_LABELS) return BREADCRUMB_LABELS[pathName];
-  if (isAddress(pathName)) return shortenString(pathName);
-  return capitalize(pathName);
-};
-
-const getBreadcrumbIcon = (
-  pathName: string,
-  index: number,
-  pathNames: string[]
-) => {
-  // Service Details page
-  if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
-    return <CodeFill className="w-4 h-4 lg:w-6 lg:h-6" />;
-  }
-
-  if (pathName in BREADCRUMB_ICONS) {
-    return BREADCRUMB_ICONS[pathName];
-  }
-
-  return <CheckboxBlankCircleLine className="w-4 h-4" />;
+export type BreadcrumbType = {
+  label: string;
+  isLast: boolean;
+  icon?: ReactElement<IconBase> | null;
+  href: string;
+  className?: string;
 };
 
 const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
   const fullPathname = usePathname();
-  const pathNames = fullPathname.split('/').filter((path) => path);
+  const pathNames = fullPathname.split('/');
 
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
-    // Special case for the home page; must specify the breadcrumb manually.
-    if (pathNames.length === 0) {
-      return [
-        {
-          label: 'Account',
-          isLast: true,
-          icon: <UserFillIcon className="w-4 h-4 lg:w-6 lg:h-6" />,
-          href: PagePath.ACCOUNT,
-        },
-      ];
-    }
+    const finalPathNames = pathNames.length === 0 ? [''] : pathNames;
 
-    return pathNames.map((pathName, index) => {
-      const icon = getBreadcrumbIcon(pathName, index, pathNames);
+    return finalPathNames.map((pathName, index) => {
+      const Icon = getBreadcrumbIcon(pathName, index, pathNames);
       const label = getBreadcrumbLabel(pathName, index, pathNames);
 
       return {
         label,
-        isLast: index === pathNames.length - 1,
-        href: `/${pathNames.slice(0, index + 1).join('/')}`,
-        icon,
+        isLast: index === finalPathNames.length - 1,
+        href: `/${finalPathNames.slice(0, index + 1).join('/')}`,
+        icon: <Icon className="w-4 h-4 lg:w-6 lg:h-6" />,
       };
     });
   }, [pathNames]);

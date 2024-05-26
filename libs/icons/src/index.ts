@@ -140,6 +140,7 @@ export { default as WalletLineIcon } from './WalletLineIcon';
 export { default as WalletPayIcon } from './WalletPayIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
+export * from './WaterDropletIcon';
 
 // Wallet icons
 export * from './wallets';
