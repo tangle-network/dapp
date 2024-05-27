@@ -23,12 +23,8 @@ const ChainOrTokenButton = forwardRef<
     ref
   ) => {
     const textClsx = useMemo(() => {
-      return twMerge(
-        'font-bold',
-        iconType === 'token' ? 'uppercase' : '',
-        textClassName
-      );
-    }, [iconType, textClassName]);
+      return twMerge('font-bold', textClassName);
+    }, [textClassName]);
 
     const IconCmp = useMemo(() => {
       return iconType === 'chain' ? ChainIcon : TokenIcon;
@@ -48,16 +44,18 @@ const ChainOrTokenButton = forwardRef<
         )}
         ref={ref}
       >
-        <div className="flex items-center gap-1.5 mr-1 justify-between">
-          {value && (
-            <IconCmp
-              status={status}
-              size="lg"
-              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-              name={value}
-            />
-          )}
-          <p className={textClsx}>{value ?? placeholder}</p>
+        <div className="flex items-center mr-1 justify-between">
+          <div className="flex items-center gap-2.5">
+            {value && (
+              <IconCmp
+                status={status}
+                size="lg"
+                className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+                name={value}
+              />
+            )}
+            <p className={textClsx}>{value ?? placeholder}</p>
+          </div>
           {!disabled && (
             <ChevronDown
               size="lg"

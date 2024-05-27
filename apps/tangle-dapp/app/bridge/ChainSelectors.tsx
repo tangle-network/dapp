@@ -4,6 +4,7 @@ import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import {
   Dropdown,
@@ -11,8 +12,10 @@ import {
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import assert from 'assert';
 import { FC, useCallback } from 'react';
 
+import { BRIDGE } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 
 interface ChainSelectorProps {
@@ -32,15 +35,45 @@ const ChainSelectors: FC = () => {
     destinationChainOptions,
   } = useBridge();
 
-  const switchChains = useCallback(() => {
-    const temp = selectedSourceChain;
-    setSelectedDestinationChain(temp);
-    setSelectedSourceChain(selectedDestinationChain);
+  const onSwitchChains = useCallback(() => {
+    const newSelectedDestinationChain = selectedSourceChain;
+    const newSelectedSourceChain = selectedDestinationChain;
+
+    assert(
+      sourceChainOptions.find(
+        (chain) =>
+          calculateTypedChainId(chain.chainType, chain.id) ===
+          calculateTypedChainId(
+            newSelectedSourceChain.chainType,
+            newSelectedSourceChain.id
+          )
+      ) !== undefined,
+      'New source chain is not available in source chain options when switching chains'
+    );
+    setSelectedSourceChain(newSelectedSourceChain);
+
+    const newDestinationChainOptions =
+      BRIDGE[
+        calculateTypedChainId(
+          newSelectedSourceChain.chainType,
+          newSelectedSourceChain.id
+        )
+      ];
+    const newDestinationChainPresetTypedChainId = calculateTypedChainId(
+      newSelectedDestinationChain.chainType,
+      newSelectedDestinationChain.id
+    );
+    assert(
+      newDestinationChainPresetTypedChainId in newDestinationChainOptions,
+      'New destination chain is not available in destination chain options when switching chains'
+    );
+    setSelectedDestinationChain(newSelectedDestinationChain);
   }, [
     setSelectedSourceChain,
     setSelectedDestinationChain,
     selectedDestinationChain,
     selectedSourceChain,
+    sourceChainOptions,
   ]);
 
   return (
@@ -54,7 +87,7 @@ const ChainSelectors: FC = () => {
 
       <div
         className="cursor-pointer p-1 rounded-full hover:bg-mono-20 dark:hover:bg-mono-160"
-        onClick={switchChains}
+        onClick={onSwitchChains}
       >
         <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
       </div>
