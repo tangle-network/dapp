@@ -126,9 +126,11 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Your Rewards" className="justify-start" />
         ),
-        cell: (props) => (
-          <TokenAmountCell amount={props.getValue()} className="text-start" />
-        ),
+        cell: (props) => {
+          return (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          );
+        },
       }),
       columnHelper.display({
         id: 'remaining',
