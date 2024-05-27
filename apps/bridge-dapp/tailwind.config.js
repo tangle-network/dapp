@@ -1,5 +1,5 @@
 import { createGlobPatternsForDependencies } from '@nx/react/tailwind';
-import preset from '@webb-tools/tailwind-preset';
+import preset from '../../tailwind.preset.cjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 

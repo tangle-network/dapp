@@ -1,4 +1,4 @@
-import preset from '@webb-tools/tailwind-preset';
+import preset from './tailwind.preset.cjs';
 
 /** @type {import('tailwindcss').Config} */
 export default {

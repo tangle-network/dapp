@@ -1,4 +1,4 @@
-const preset = require('@webb-tools/tailwind-preset');
+const preset = require('../../tailwind.preset.cjs');
 
 const { createGlobPatternsForDependencies } = require('@nx/next/tailwind');
 const { join } = require('path');
