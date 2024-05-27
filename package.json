@@ -38,10 +38,6 @@
     "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes"
   },
   "private": true,
-  "workspaces": [
-    "apps/**",
-    "libs/**"
-  ],
   "resolutions": {
     "@polkadot/api": "^11.0.2",
     "@polkadot/api-augment": "^11.0.2",

@@ -17594,12 +17594,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/abstract-api-provider@workspace:libs/abstract-api-provider":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/abstract-api-provider@workspace:libs/abstract-api-provider"
-  languageName: unknown
-  linkType: soft
-
 "@webb-tools/anchors@npm:1.0.11":
   version: 1.0.11
   resolution: "@webb-tools/anchors@npm:1.0.11"
@@ -17639,12 +17633,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/api-provider-environment@workspace:libs/api-provider-environment":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/api-provider-environment@workspace:libs/api-provider-environment"
-  languageName: unknown
-  linkType: soft
-
 "@webb-tools/api@npm:0.1.4-127":
   version: 0.1.4-127
   resolution: "@webb-tools/api@npm:0.1.4-127"
@@ -17675,18 +17663,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/bridge-dapp@workspace:apps/bridge-dapp":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/bridge-dapp@workspace:apps/bridge-dapp"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/browser-utils@workspace:libs/browser-utils":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/browser-utils@workspace:libs/browser-utils"
-  languageName: unknown
-  linkType: soft
-
 "@webb-tools/contracts@npm:1.0.11, @webb-tools/contracts@npm:^1.0.11":
   version: 1.0.11
   resolution: "@webb-tools/contracts@npm:1.0.11"
@@ -17709,36 +17685,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/dapp-config@workspace:libs/dapp-config":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/dapp-config@workspace:libs/dapp-config"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/dapp-types@workspace:libs/dapp-types":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/dapp-types@workspace:libs/dapp-types"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/faucet@workspace:apps/faucet":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/faucet@workspace:apps/faucet"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/hubble-stats@workspace:apps/hubble-stats":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/hubble-stats@workspace:apps/hubble-stats"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/icons@workspace:libs/icons":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/icons@workspace:libs/icons"
-  languageName: unknown
-  linkType: soft
-
 "@webb-tools/interfaces@npm:1.0.11, @webb-tools/interfaces@npm:^1.0.11":
   version: 1.0.11
   resolution: "@webb-tools/interfaces@npm:1.0.11"
@@ -17747,18 +17693,6 @@ __metadata:
   checksum: 10c0/2f34a187d17af8b6b34e8bcfd7c5d740c8c82b0a7f764ebbabf1e9ea128763af641162955676664aabd815994d94984ed3ab90622fbb1c0994b890b67e46a07f
   languageName: node
   linkType: hard
-
-"@webb-tools/note-manager@workspace:libs/note-manager":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/note-manager@workspace:libs/note-manager"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/polkadot-api-provider@workspace:libs/polkadot-api-provider":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/polkadot-api-provider@workspace:libs/polkadot-api-provider"
-  languageName: unknown
-  linkType: soft
 
 "@webb-tools/proposals@npm:^1.0.11":
   version: 1.0.11
@@ -17807,18 +17741,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/react-hooks@workspace:libs/react-hooks":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/react-hooks@workspace:libs/react-hooks"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/relayer-manager-factory@workspace:libs/relayer-manager-factory":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/relayer-manager-factory@workspace:libs/relayer-manager-factory"
-  languageName: unknown
-  linkType: soft
-
 "@webb-tools/sdk-core@npm:0.1.4-127":
   version: 0.1.4-127
   resolution: "@webb-tools/sdk-core@npm:0.1.4-127"
@@ -17836,24 +17758,6 @@ __metadata:
   checksum: 10c0/e563e97becae37b21ffa612650268312e530b9d17f5f78467f6c4645d4c86f5a70417e21adbd7ed3a8489c88927fca8cdadde01d910e552014c474397af1ebe2
   languageName: node
   linkType: hard
-
-"@webb-tools/stats-dapp@workspace:apps/stats-dapp":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/stats-dapp@workspace:apps/stats-dapp"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/tailwind-preset@workspace:libs/tailwind-preset":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/tailwind-preset@workspace:libs/tailwind-preset"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/tangle-dapp@workspace:apps/tangle-dapp":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/tangle-dapp@workspace:apps/tangle-dapp"
-  languageName: unknown
-  linkType: soft
 
 "@webb-tools/tangle-substrate-types@npm:0.5.5":
   version: 0.5.5
@@ -17911,12 +17815,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/testnet-leaderboard@workspace:apps/testnet-leaderboard":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/testnet-leaderboard@workspace:apps/testnet-leaderboard"
-  languageName: unknown
-  linkType: soft
-
 "@webb-tools/tokens@npm:1.0.11, @webb-tools/tokens@npm:^1.0.11":
   version: 1.0.11
   resolution: "@webb-tools/tokens@npm:1.0.11"
@@ -17972,24 +17870,6 @@ __metadata:
   checksum: 10c0/88963e96e71adfde2d988aa704f67ffdfb2bceba327339ef7dd586fbd9a77882924df47dfe4a2006d1fd22a74275eacbe722b12e7885466c1e0a1c03be390ed1
   languageName: node
   linkType: hard
-
-"@webb-tools/web3-api-provider@workspace:libs/web3-api-provider":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/web3-api-provider@workspace:libs/web3-api-provider"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/webb-ui-components@workspace:libs/webb-ui-components":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/webb-ui-components@workspace:libs/webb-ui-components"
-  languageName: unknown
-  linkType: soft
-
-"@webb-tools/zk-explorer@workspace:apps/zk-explorer":
-  version: 0.0.0-use.local
-  resolution: "@webb-tools/zk-explorer@workspace:apps/zk-explorer"
-  languageName: unknown
-  linkType: soft
 
 "@webpack-cli/configtest@npm:^2.1.1":
   version: 2.1.1
