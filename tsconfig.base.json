@@ -67,7 +67,8 @@
       "@webb-tools/webb-ui-components": [
         "libs/webb-ui-components/src/index.ts"
       ],
-      "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
+      "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"],
+      "@webb-tools/webb-ui-kit": ["libs/webb-ui-kit/src/index.ts"]
     }
   },
   "include": [

@@ -1,0 +1,226 @@
+/** Layer components */
+.h1 {
+  font-size: 64px;
+  line-height: 96px;
+}
+
+.h2 {
+  font-size: 48px;
+  line-height: 72px;
+}
+
+.h3 {
+  font-size: 36px;
+  line-height: 54px;
+}
+
+.h4 {
+  font-size: 24px;
+  line-height: 36px;
+}
+
+.h5 {
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.body1 {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.01em;
+}
+
+.body2 {
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.01em;
+}
+
+.body3 {
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+}
+
+.body4 {
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.01em;
+}
+
+.mono1 {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.mono2 {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Used for subtitles and buttons */
+.label {
+  @apply body1 font-bold;
+}
+
+/* Default type size, used for paragraphs and inputs */
+.para1 {
+  @apply body1;
+}
+
+/* Used for details, and small informational components */
+.para2 {
+  @apply body2;
+}
+
+/* Small utility used for labels and warnings */
+.utility {
+  @apply body1;
+  font-weight: 700;
+}
+
+/** Marketing site variant */
+.mkt-h1 {
+  @apply text-[36px] leading-[48px] md:text-[84px] md:leading-[100px];
+}
+
+.mkt-h2 {
+  @apply text-[28px] leading-[36px] tracking-[2px] md:text-[64px] md:leading-[80px] md:tracking-[4px];
+}
+
+.mkt-h3 {
+  @apply text-[24px] leading-[32px] md:text-[48px] md:leading-[60px];
+}
+
+.mkt-h4 {
+  @apply text-[20px] leading-[28px] md:text-[36px] md:leading-[46px];
+}
+
+.mkt-subheading {
+  @apply text-[18px] leading-[24px] md:text-[24px] md:leading-[40px];
+}
+
+.mkt-body1 {
+  @apply text-[16px] leading-[24px] md:text-[20px] md:leading-[32px];
+}
+
+.mkt-body2 {
+  @apply text-[14px] leading-[20px] tracking-[0.01em] md:text-[18px] md:leading-[28px];
+}
+
+.mkt-small-caps {
+  @apply text-[12px] leading-[20px] tracking-[0.4px] uppercase md:text-[14px] md:leading-[24px] md:tracking-[0.8px];
+}
+
+.mkt-caption {
+  @apply text-[10px] leading-[14px] tracking-[0.01em] md:text-[12px] md:leading-[18px];
+}
+
+.mkt-monospace {
+  @apply text-[14px] leading-[20px] md:text-[16px] md:leading-[24px];
+  font-family: 'Satoshi Variable';
+}
+
+@media screen and (max-width: 800px) {
+  .h1 {
+    font-size: 46px;
+    line-height: 69px;
+  }
+
+  .h2 {
+    font-size: 34px;
+    line-height: 51px;
+  }
+
+  .h3 {
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  .h4 {
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  .h5 {
+    font-size: 15px;
+    line-height: 22px;
+  }
+}
+
+.drawer-content {
+  @apply bg-mono-0 dark:bg-mono-180 shadow-[-12px_0px_12px_0px_rgba(0,0,0,0.25)] dark:shadow-[-12px_0px_12px_0px_rgba(0,0,0,0.25)];
+
+  @apply fixed top-0 bottom-0 right-0 w-[750px] overflow-auto;
+
+  &[data-state='open'] {
+    @apply animate-drawer-content-right-open;
+  }
+
+  &[data-state='closed'] {
+    @apply animate-drawer-content-right-close;
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(var(--radix-toast-swipe-end-x));
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes showDialogOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bottomDialogSlideUp {
+  from {
+    bottom: -400px;
+  }
+  to {
+    bottom: 0;
+  }
+}
+
+@keyframes bottomDialogSlideDown {
+  from {
+    bottom: 0;
+  }
+  to {
+    bottom: -400px;
+  }
+}
+
+@keyframes sideBarSlideLeftToRight {
+  from {
+    left: -280px;
+  }
+  to {
+    left: 0;
+  }
+}
+
+*[data-swipe='end'] {
+  animation: 100ms ease-out;
+}
+
+*[data-swipe='move'] {
+  transform: translateX(var(--radix-toast-swipe-move-x));
+}
+
+*[data-swipe='cancel'] {
+  transform: translateX(0);
+  transition: transform 200ms ease-out;
+}
+
+.navbar-item:hover svg,
+.navbar-item.hover svg {
+  @apply !fill-blue-70;
+}

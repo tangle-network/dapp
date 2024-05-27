@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "../../node_modules/vitest/globals",
+      "../../node_modules/vitest/importMeta",
+      "../../node_modules/vite/client",
+      "node",
+      "../../node_modules/vitest"
+    ]
+  },
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.js",
+    "src/**/*.spec.js",
+    "src/**/*.test.jsx",
+    "src/**/*.spec.jsx",
+    "src/**/*.d.ts"
+  ]
+}
