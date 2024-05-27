@@ -49,7 +49,7 @@ export default function useInflationPercentage(
           const inflationPercentage = inflation.inflation;
 
           if (isMounted) {
-            setValue1(Number(inflationPercentage.toFixed(1)));
+            setValue1(Math.trunc(inflationPercentage * 10) / 10);
             setIsLoading(false);
           }
         });
