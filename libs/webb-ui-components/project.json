@@ -9,35 +9,19 @@
       "executor": "@nx/eslint:lint"
     },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/webb-ui-components",
-        "tsConfig": "libs/webb-ui-components/tsconfig.lib.json",
-        "project": "libs/webb-ui-components/package.json",
-        "entryFile": "libs/webb-ui-components/src/index.ts",
-        "external": [
-          "react",
-          "react-dom",
-          "react/jsx-runtime",
-          "@polkadot/util",
-          "@polkadot/util-crypto",
-          "@polkadot/wasm-crypto",
-          "@polkadot/wasm-bridge",
-          "@webb-tools/sdk-core",
-          "@webb-tools/utils"
-        ],
-        "rollupConfig": ["libs/webb-ui-components/rollup.config.js"],
-        "format": ["esm"],
-        "compiler": "babel",
-        "extractCss": "styles.css",
-        "assets": [
-          {
-            "glob": "libs/icons/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
+        "outputPath": "dist/libs/webb-ui-components"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "publish": {
@@ -48,10 +32,10 @@
       "dependsOn": ["build"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/webb-ui-components/jest.config.ts"
+        "reportsDirectory": "../../coverage/libs/webb-ui-components"
       }
     },
     "storybook": {
