@@ -315,7 +315,7 @@
     "terser-webpack-plugin": "^5.3.3",
     "thread-loader": "^4.0.1",
     "ts-jest": "29.1.0",
-    "ts-node": "10.9.1",
+    "ts-node": "10.9.2",
     "typescript": "^5.1.6",
     "webpack": "5.88.2",
     "webpack-bundle-analyzer": "^4.8.0",
