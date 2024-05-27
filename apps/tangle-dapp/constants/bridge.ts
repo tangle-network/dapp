@@ -1,19 +1,81 @@
-import { chainsConfig } from '@webb-tools/dapp-config';
-import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
-import { BridgeTokenType } from '../types';
+import { BridgeTokenId, BridgeTokenType, ChainId } from '../types/bridge';
 
-// This is just a temporary variable to use as supported source and destination chains
-export const BRIDGE_SUPPORTED_CHAINS: ChainConfig[] = [
-  chainsConfig[PresetTypedChainId.TangleMainnetNative],
-  chainsConfig[PresetTypedChainId.TangleTestnetNative],
-];
-
-// This is just a temporary variable to use as supported tokens
-export const BRIDGE_SUPPORTED_TOKENS: BridgeTokenType[] = [
-  {
-    id: '0x0',
-    symbol: 'TNT',
+export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
+  tTNT: {
+    id: 'tTNT',
+    symbol: 'tTNT',
+    existentialDeposit: {},
+    destChainTransactionFee: {},
   },
-];
+  TNT: {
+    id: 'TNT',
+    symbol: 'TNT',
+    existentialDeposit: {},
+    destChainTransactionFee: {},
+  },
+};
+
+// A Map with key as source chain id and value as another map
+// with key as destination chain id and value as supported tokens
+type BridgeType = Record<
+  ChainId, // Source Chain Id
+  Record<
+    ChainId, // Destination Chain Id
+    {
+      supportedTokens: BridgeTokenId[];
+    }
+  >
+>;
+
+// TODO: This is a dummy data for now
+export const BRIDGE: BridgeType = {
+  [PresetTypedChainId.Sepolia]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.Polkadot]: {
+      supportedTokens: ['tTNT', 'TNT'],
+    },
+  },
+
+  [PresetTypedChainId.Polkadot]: {
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.Sepolia]: {
+      supportedTokens: ['tTNT', 'TNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleMainnetEVM]: {
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['tTNT', 'TNT'],
+    },
+    [PresetTypedChainId.Sepolia]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.Polkadot]: {
+      supportedTokens: ['TNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleTestnetEVM]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['tTNT', 'TNT'],
+    },
+    [PresetTypedChainId.Sepolia]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.Polkadot]: {
+      supportedTokens: ['tTNT', 'TNT'],
+    },
+  },
+};
