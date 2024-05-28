@@ -16,21 +16,21 @@ import type { ApiPromise } from '@polkadot/api';
 import {
   anchorDeploymentBlock,
   parsedAnchorConfig,
-} from '@webb-tools/dapp-config/src/anchors/anchor-config';
-import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
+} from '@webb-tools/dapp-config/anchors/anchor-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/constants';
 import type {
   AnchorMetadata,
   ConfigType,
   ICurrency,
-} from '@webb-tools/dapp-config/src/types';
-import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/utils/substrateProviderFactory';
+} from '@webb-tools/dapp-config/types';
+import substrateProviderFactory from '@webb-tools/polkadot-api-provider/utils/substrateProviderFactory';
 import {
   ChainType,
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
-import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
+import evmProviderFactory from '@webb-tools/web3-api-provider/utils/evmProviderFactory';
 import fs from 'fs';
 import { Listr, color } from 'listr2';
 import merge from 'lodash/merge';
@@ -319,7 +319,7 @@ const tasks = new Listr<Ctx>(
   [
     {
       title: color.cyan('Parsing arguments...'),
-      options: { persistentOutput: true },
+      rendererOptions: { persistentOutput: true },
       task: async (ctx, task) => {
         const parser = yargs(hideBin(process.argv)).options(cliOptions);
 
@@ -333,7 +333,7 @@ const tasks = new Listr<Ctx>(
     },
     {
       title: color.cyan('Filtering active chains...'),
-      options: { persistentOutput: true },
+      rendererOptions: { persistentOutput: true },
       skip: (ctx) => Boolean(ctx.args?.skipFetching),
       task: async (ctx, task) => {
         // Filter out the active chains
@@ -367,14 +367,14 @@ const tasks = new Listr<Ctx>(
     },
     {
       title: color.cyan('Fetching on chain config...'),
-      options: { persistentOutput: true },
+      rendererOptions: { persistentOutput: true },
       skip: (ctx) => Boolean(ctx.args?.skipFetching),
       task: async (ctx, task) =>
         task.newListr<Ctx>(
           [
             {
               title: color.cyan(`Fetching native currencies...`),
-              options: { persistentOutput: true },
+              rendererOptions: { persistentOutput: true },
               task: async (ctx, task) => {
                 ctx.nativeRecord = fetchNativeTask(ctx.typedChainIds);
 
@@ -397,7 +397,7 @@ const tasks = new Listr<Ctx>(
             },
             {
               title: color.cyan(`Fetching anchor metadata...`),
-              options: { persistentOutput: true },
+              rendererOptions: { persistentOutput: true },
               task: async (ctx, task) => {
                 ctx.anchorMetadataRecord = await fetchAnchorMetadataTask(
                   ctx.typedChainIds,
@@ -425,7 +425,7 @@ const tasks = new Listr<Ctx>(
     },
     {
       title: color.cyan(`Writing config to ${configPath}...`),
-      options: { persistentOutput: true },
+      rendererOptions: { persistentOutput: true },
       skip: (ctx) => Boolean(ctx.args?.skipFetching),
       task: async (ctx, task) => {
         try {
