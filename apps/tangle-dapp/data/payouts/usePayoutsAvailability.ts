@@ -23,9 +23,9 @@ const usePayoutsAvailability = () => {
       return [];
     }
 
-    const payouts = cachedPayouts.value[rpcEndpoint][address];
+    const payouts = cachedPayouts.value[rpcEndpoint]?.[address];
 
-    return payouts || [];
+    return payouts ?? [];
   }, [address, cachedPayouts, rpcEndpoint]);
 
   const [isPayoutsAvailable, setIsPayoutsAvailable] = useState(false);
