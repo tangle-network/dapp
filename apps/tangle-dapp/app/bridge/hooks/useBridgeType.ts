@@ -8,33 +8,30 @@ export default function useBridgeType() {
   const { selectedSourceChain, selectedDestinationChain } = useBridge();
 
   // EVM to EVM
-  if (
-    isEVMChain(selectedSourceChain.chainType) &&
-    isEVMChain(selectedDestinationChain.chainType)
-  ) {
+  if (isEVMChain(selectedSourceChain) && isEVMChain(selectedDestinationChain)) {
     return BridgeType.SYGMA_EVM_TO_EVM;
   }
 
   // EVM to Substrate
   if (
-    isEVMChain(selectedSourceChain.chainType) &&
-    isSubstrateChain(selectedDestinationChain.chainType)
+    isEVMChain(selectedSourceChain) &&
+    isSubstrateChain(selectedDestinationChain)
   ) {
     return BridgeType.SYGMA_EVM_TO_SUBSTRATE;
   }
 
   // Substrate to EVM
   if (
-    isSubstrateChain(selectedSourceChain.chainType) &&
-    isEVMChain(selectedDestinationChain.chainType)
+    isSubstrateChain(selectedSourceChain) &&
+    isEVMChain(selectedDestinationChain)
   ) {
     return BridgeType.SYGMA_SUBSTRATE_TO_EVM;
   }
 
   // Substrate to Substrate
   if (
-    isSubstrateChain(selectedSourceChain.chainType) &&
-    isSubstrateChain(selectedDestinationChain.chainType)
+    isSubstrateChain(selectedSourceChain) &&
+    isSubstrateChain(selectedDestinationChain)
   ) {
     return BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE;
   }
