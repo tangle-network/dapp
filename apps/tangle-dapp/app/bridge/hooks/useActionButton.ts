@@ -122,9 +122,10 @@ export default function useActionButton() {
   }, [isRequiredToConnectWallet, openWalletModal, bridgeTx]);
 
   const buttonText = useMemo(() => {
+    if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
     if (isRequiredToConnectWallet) return 'Connect';
     return 'Approve';
-  }, [isRequiredToConnectWallet]);
+  }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet]);
 
   return {
     isLoading: loading || isConnecting,
