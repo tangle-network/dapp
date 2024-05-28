@@ -29,7 +29,7 @@ export const getEvmContractBalance = async (params?: {
 
   const contract = getContract({
     address: contractAddress,
-    // TODO: replace this with the abi of ERC20 contract deployed by Sygma team
+    // TODO: replace and test with the ERC20 contract deployed by Sygma team
     abi: FungibleTokenWrapper__factory.abi,
     client,
   });
