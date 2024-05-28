@@ -2,12 +2,14 @@
 
 import { isAddress } from '@polkadot/util-crypto';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import Decimal from 'decimal.js';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import ensureError from '../../../utils/ensureError';
 import { isEvmAddress } from '../../../utils/isEvmAddress';
 import { getEvmContractBalance, getEvmNativeBalance } from '../lib/evm';
 import { getSubstrateNativeTransferable } from '../lib/substrate';
@@ -20,10 +22,11 @@ import useTypedChainId from './useTypedChainId';
 
 type UseBalanceReturnType = {
   balance: Decimal | null;
-  isTransferable: boolean;
+  isLoading: boolean;
 };
 
 export default function useBalance() {
+  const { notificationApi } = useWebbUI();
   const activeAccountAddress = useActiveAccountAddress();
   const { selectedSourceChain } = useBridge();
   const error = useError();
@@ -42,7 +45,11 @@ export default function useBalance() {
     return selectedToken.erc20TokenContractAddress?.[sourceTypedChainId];
   }, [selectedToken.erc20TokenContractAddress, sourceTypedChainId]);
 
-  const { data: evmNativeBalance } = useSWR(
+  const {
+    data: evmNativeBalance,
+    isLoading: isLoadingEvmNativeBalance,
+    error: errorLoadingEvmNativeBalance,
+  } = useSWR(
     [
       error === null &&
       activeAccountAddress !== null &&
@@ -55,7 +62,11 @@ export default function useBalance() {
     ([...args]) => getEvmNativeBalance(...args)
   );
 
-  const { data: evmErc20Balance } = useSWR(
+  const {
+    data: evmErc20Balance,
+    isLoading: isLoadingEvmErc20Balance,
+    error: errorLoadingEvmErc20Balance,
+  } = useSWR(
     [
       error === null &&
       activeAccountAddress !== null &&
@@ -74,7 +85,11 @@ export default function useBalance() {
     ([...args]) => getEvmContractBalance(...args)
   );
 
-  const { data: substrateNativeBalance } = useSWR(
+  const {
+    data: substrateNativeBalance,
+    isLoading: isLoadingSubstrateNativeBalance,
+    error: errorLoadingSubstrateNativeBalance,
+  } = useSWR(
     [
       error === null &&
       activeAccountAddress !== null &&
@@ -90,10 +105,40 @@ export default function useBalance() {
     ([...args]) => getSubstrateNativeTransferable(...args)
   );
 
+  useEffect(() => {
+    if (errorLoadingEvmNativeBalance) {
+      notificationApi({
+        message: ensureError(errorLoadingEvmNativeBalance).message,
+        variant: 'error',
+      });
+    }
+  }, [notificationApi, errorLoadingEvmNativeBalance]);
+
+  useEffect(() => {
+    if (errorLoadingEvmErc20Balance) {
+      notificationApi({
+        message: ensureError(errorLoadingEvmErc20Balance).message,
+        variant: 'error',
+      });
+    }
+  }, [notificationApi, errorLoadingEvmErc20Balance]);
+
+  useEffect(() => {
+    if (errorLoadingSubstrateNativeBalance) {
+      notificationApi({
+        message: ensureError(errorLoadingSubstrateNativeBalance).message,
+        variant: 'error',
+      });
+    }
+  }, [notificationApi, errorLoadingSubstrateNativeBalance]);
+
   return {
     balance:
       evmNativeBalance ?? evmErc20Balance ?? substrateNativeBalance ?? null,
-    isTransferable: substrateNativeBalance != null,
+    isLoading:
+      isLoadingEvmNativeBalance ||
+      isLoadingEvmErc20Balance ||
+      isLoadingSubstrateNativeBalance,
   } satisfies UseBalanceReturnType;
 }
 

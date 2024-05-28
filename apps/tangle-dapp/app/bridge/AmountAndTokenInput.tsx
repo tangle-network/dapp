@@ -9,20 +9,28 @@ import {
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
+import { isSubstrateChain } from '../../utils/bridge';
 import useBalance from './hooks/useBalance';
 import useSelectedToken from './hooks/useSelectedToken';
 
 const AmountAndTokenInput: FC = () => {
-  const { amount, setAmount, setSelectedTokenId, tokenIdOptions } = useBridge();
+  const {
+    amount,
+    setAmount,
+    setSelectedTokenId,
+    tokenIdOptions,
+    selectedSourceChain,
+  } = useBridge();
   const selectedToken = useSelectedToken();
 
-  const { balance, isTransferable } = useBalance();
+  const { balance, isLoading } = useBalance();
 
   return (
     <div className="relative">
@@ -70,13 +78,20 @@ const AmountAndTokenInput: FC = () => {
         </Dropdown>
       </div>
 
-      {balance !== null && (
+      {isLoading ? (
+        <SkeletonLoader
+          size="md"
+          className="w-[100px] absolute right-0 bottom-[-24px]"
+        />
+      ) : (
         <Typography
           variant="body2"
           className="absolute right-0 bottom-[-24px] text-mono-120 dark:text-mono-100"
         >
-          {isTransferable ? 'Transferable' : 'Balance'}: {balance.toString()}{' '}
-          {selectedToken.symbol}
+          {isSubstrateChain(selectedSourceChain) ? 'Transferable' : 'Balance'}:{' '}
+          {balance !== null
+            ? `${balance.toString()} ${selectedToken.symbol}`
+            : 'N/A'}
         </Typography>
       )}
     </div>
