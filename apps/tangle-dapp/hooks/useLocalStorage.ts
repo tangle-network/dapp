@@ -1,8 +1,10 @@
 'use client';
 
+import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Payout } from '../types';
+import { Payout, TokenSymbol } from '../types';
+import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
@@ -13,18 +15,26 @@ export enum LocalStorageKey {
   PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
-  VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
   SERVICES_CACHE = 'servicesCache',
+  SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
 }
 
-export type AirdropEligibilityCache = {
-  [address: string]: boolean;
+export type PayoutsCache = {
+  [rpcEndpoint: string]: {
+    [address: string]: Payout[];
+  };
 };
 
-export type PayoutsCache = {
-  [address: string]: Payout[];
+export type SubstrateWalletsMetadataEntry = {
+  tokenSymbol: TokenSymbol;
+  tokenDecimals: number;
+  ss58Prefix: number;
 };
+
+export type SubstrateWalletsMetadataCache = Partial<
+  Record<HexString, SubstrateWalletsMetadataEntry>
+>;
 
 /**
  * Type definition associating local storage keys with their
@@ -49,6 +59,8 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? number
     : T extends LocalStorageKey.WAS_BANNER_DISMISSED
     ? boolean
+    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+    ? SubstrateWalletsMetadataCache
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
@@ -100,38 +112,41 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   type Value = LocalStorageValueOf<Key>;
 
   // Initially, the value is `null` until the component is mounted
-  // and the value is extracted from local storage. The explicit
-  // name of the state variable indicates that.
-  const [valueAfterMount, setLateValue] = useState<Value | null>(null);
+  // and the value is extracted from local storage.
+  const [valueOpt, setValueOpt] = useState<Optional<Value> | null>(null);
 
-  const get = useCallback(() => {
+  const refresh = useCallback(() => {
     const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
 
-    setLateValue(freshValue);
+    const freshValueOpt = new Optional(
+      freshValue === null ? undefined : freshValue
+    );
 
-    return freshValue;
+    setValueOpt(freshValueOpt);
+
+    return freshValueOpt;
   }, [isUsedAsCache, key]);
 
   // Extract the value from local storage on mount.
   useEffect(() => {
-    get();
-  }, [get]);
+    refresh();
+  }, [refresh]);
 
   // Listen for changes to local storage. This is useful in case
   // that other logic changes the local storage value.
   useEffect(() => {
     const handleStorageChange = () => {
-      setLateValue(get());
+      setValueOpt(refresh());
     };
 
     window.addEventListener('storage', handleStorageChange);
 
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [key, get]);
+  }, [key, refresh]);
 
   const set = useCallback(
     (value: Value) => {
-      setLateValue(value);
+      setValueOpt(new Optional(value));
       localStorage.setItem(key, JSON.stringify(value));
       console.debug('Set local storage value:', key, value);
     },
@@ -145,27 +160,27 @@ const useLocalStorage = <Key extends LocalStorageKey>(
       return;
     }
 
-    setLateValue(null);
+    setValueOpt(null);
     localStorage.removeItem(key);
     console.debug('Removed local storage key:', key);
   }, [isSet, key]);
 
   const setWithPreviousValue = useCallback(
-    (updater: (previousValue: Value | null) => Value) => {
-      const previousValue = get();
+    (updater: (previousValue: Optional<Value> | null) => Value) => {
+      const previousValue = refresh();
       const nextValue = updater(previousValue);
 
       set(nextValue);
     },
-    [get, set]
+    [refresh, set]
   );
 
   return {
-    valueAfterMount,
+    valueOpt,
     set,
     setWithPreviousValue,
     remove,
-    get,
+    refresh,
     isSet,
   };
 };

@@ -7,6 +7,7 @@ import {
   NETWORK_MAP,
   NetworkId,
 } from '@webb-tools/webb-ui-components/constants/networks';
+import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import z from 'zod';
 
@@ -49,29 +50,29 @@ const useNetworkState = () => {
   const { network, setNetwork } = useNetworkStore();
 
   const {
-    get: getCachedCustomRpcEndpoint,
+    refresh: getCachedCustomRpcEndpoint,
     set: setCachedCustomRpcEndpoint,
     remove: removeCachedCustomRpcEndpoint,
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
   const {
     set: setCachedNetworkId,
-    get: getCachedNetworkId,
+    refresh: getCachedNetworkId,
     remove: removeCachedNetworkId,
   } = useLocalStorage(LocalStorageKey.KNOWN_NETWORK_ID);
 
   // Load the initial network from local storage.
   useEffect(() => {
     const getCachedInitialNetwork = () => {
-      const cachedNetworkName = getCachedNetworkId();
+      const cachedNetworkNameOpt = getCachedNetworkId();
 
       // If the cached network name is present, that indicates that
       // the cached network is a Webb network. Find it in the list of
       // all Webb networks, and return it.
-      if (cachedNetworkName !== null) {
+      if (cachedNetworkNameOpt.value !== null) {
         const parsedNetworkId = z
           .nativeEnum(NetworkId)
-          .safeParse(cachedNetworkName);
+          .safeParse(cachedNetworkNameOpt.value);
 
         if (parsedNetworkId.success) {
           const knownNetwork = NETWORK_MAP[parsedNetworkId.data];
@@ -82,7 +83,7 @@ const useNetworkState = () => {
         }
 
         console.warn(
-          `Could not find an associated network for cached network id: ${cachedNetworkName}, deleting from local storage`
+          `Could not find an associated network for cached network id: ${cachedNetworkNameOpt.value}, deleting from local storage`
         );
 
         removeCachedNetworkId();
@@ -90,13 +91,13 @@ const useNetworkState = () => {
         return DEFAULT_NETWORK;
       }
 
-      const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
+      const cachedCustomRpcEndpointOpt = getCachedCustomRpcEndpoint();
 
       // If a custom RPC endpoint is cached, return it as a custom network.
-      if (cachedCustomRpcEndpoint !== null) {
+      if (cachedCustomRpcEndpointOpt.value !== null) {
         setIsCustom(true);
 
-        return createCustomNetwork(cachedCustomRpcEndpoint);
+        return createCustomNetwork(cachedCustomRpcEndpointOpt.value);
       }
 
       // Otherwise, use the default network.
@@ -136,6 +137,7 @@ const useNetworkState = () => {
         }`
       );
 
+      // Update local storage cache with the new network.
       if (isCustom) {
         removeCachedNetworkId();
         setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
@@ -147,6 +149,9 @@ const useNetworkState = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
+      // In case that the new network is an EVM network, either add it
+      // to the list of chains on the EVM wallet (ie. MetaMask), or switch
+      // to it if it's already added.
       if (
         isEvm !== null &&
         isEvm &&

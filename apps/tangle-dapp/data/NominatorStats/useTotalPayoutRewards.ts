@@ -3,6 +3,7 @@
 import { BN, hexToBn } from '@polkadot/util';
 import { useEffect, useMemo, useState } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
@@ -11,16 +12,29 @@ export default function useTotalPayoutRewards(
   defaultValue: { value1: BN | null } = { value1: null }
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
-  const { valueAfterMount: cachedPayouts } = useLocalStorage(
+
+  const { rpcEndpoint } = useNetworkStore();
+
+  const { valueOpt: cachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
     true
   );
+
   const address = useSubstrateAddress();
 
   const payoutsData = useMemo(() => {
-    if (!cachedPayouts || !address) return [];
-    return cachedPayouts[address] || [];
-  }, [address, cachedPayouts]);
+    if (
+      cachedPayouts === null ||
+      cachedPayouts.value === null ||
+      address === null
+    ) {
+      return [];
+    }
+
+    const payouts = cachedPayouts.value[rpcEndpoint][address];
+
+    return payouts;
+  }, [address, cachedPayouts, rpcEndpoint]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

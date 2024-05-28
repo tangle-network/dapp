@@ -22,6 +22,7 @@ import useStakingLedger from '../../data/staking/useStakingLedger';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
+import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -93,10 +94,8 @@ const NominatorStatsContainer: FC = () => {
                 ? '--'
                 : totalPayoutRewards.value1 === null
                 ? '--'
-                : formatTokenBalance(
-                    totalPayoutRewards.value1,
-                    nativeTokenSymbol
-                  )}
+                : formatBnToDisplayAmount(totalPayoutRewards.value1) +
+                  ` ${nativeTokenSymbol}`}
             </NominatorStatsItem>
           </div>
 

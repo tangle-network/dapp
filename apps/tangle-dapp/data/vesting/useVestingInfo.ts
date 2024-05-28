@@ -57,7 +57,10 @@ const useVestingInfo = (): VestingInfo => {
   const { result: schedulesOpt } = useApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (activeSubstrateAddress === null) {
+          return null;
+        }
+
         return api.query.vesting.vesting(activeSubstrateAddress);
       },
       [activeSubstrateAddress]
@@ -94,8 +97,7 @@ const useVestingInfo = (): VestingInfo => {
       schedulesOpt === null ||
       schedulesOpt.isNone ||
       currentBlockNumber === null ||
-      totalVestingAmount === null ||
-      vestingLockAmount === null
+      totalVestingAmount === null
     ) {
       return null;
     }
@@ -123,7 +125,7 @@ const useVestingInfo = (): VestingInfo => {
     // Without this, the total released amount would eventually exceed
     // the total vested amount, displaying incorrect information.
     return BN.min(totalReleased, totalVestingAmount);
-  }, [currentBlockNumber, totalVestingAmount, schedulesOpt, vestingLockAmount]);
+  }, [currentBlockNumber, totalVestingAmount, schedulesOpt]);
 
   const claimableAmount = useMemo(() => {
     if (
