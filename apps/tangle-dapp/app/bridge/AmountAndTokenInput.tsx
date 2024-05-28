@@ -16,18 +16,11 @@ import { FC } from 'react';
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
-import { isSubstrateChain } from '../../utils/bridge';
 import useBalance from './hooks/useBalance';
 import useSelectedToken from './hooks/useSelectedToken';
 
 const AmountAndTokenInput: FC = () => {
-  const {
-    amount,
-    setAmount,
-    setSelectedTokenId,
-    tokenIdOptions,
-    selectedSourceChain,
-  } = useBridge();
+  const { amount, setAmount, setSelectedTokenId, tokenIdOptions } = useBridge();
   const selectedToken = useSelectedToken();
 
   const { balance, isLoading } = useBalance();
@@ -88,7 +81,7 @@ const AmountAndTokenInput: FC = () => {
           variant="body2"
           className="absolute right-0 bottom-[-24px] text-mono-120 dark:text-mono-100"
         >
-          {isSubstrateChain(selectedSourceChain) ? 'Transferable' : 'Balance'}:{' '}
+          Balance:{' '}
           {balance !== null
             ? `${balance.toString()} ${selectedToken.symbol}`
             : 'N/A'}
