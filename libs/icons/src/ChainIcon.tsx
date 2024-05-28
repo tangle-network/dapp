@@ -43,7 +43,7 @@ export const ChainIcon: React.FC<
   if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
     const sizeInNumber = parseInt(sizeInPx);
-    const props: React.SVGProps<SVGSVGElement> = {
+    const props: React.SVGProps<SVGElement> = {
       className,
       width: sizeInNumber,
       height: sizeInNumber,

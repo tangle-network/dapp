@@ -71,6 +71,7 @@
     }
   },
   "include": [
+    "./types/global.d.ts",
     "./libs/**/src/**/*.{js,jsx,ts,tsx}",
     "./apps/**/src/**/*.{js,jsx,ts,tsx}"
   ],

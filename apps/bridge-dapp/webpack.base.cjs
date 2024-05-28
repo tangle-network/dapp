@@ -121,20 +121,32 @@ async function createWebpack(env, mode = 'production') {
             {
               loader: require.resolve('babel-loader'),
               options: {
+                sourceType: 'unambiguous',
                 presets: [
-                  '@babel/preset-env',
-                  '@babel/preset-typescript',
                   [
-                    '@babel/preset-react',
-                    { development: isDevelopment, runtime: 'automatic' },
+                    '@nx/react/babel',
+                    {
+                      runtime: 'automatic',
+                      useBuiltIns: 'usage',
+                    },
                   ],
+                  [
+                    '@babel/preset-env',
+                    {
+                      modules: false,
+                      useBuiltIns: 'entry',
+                      corejs: '3',
+                    },
+                  ],
+                  '@babel/preset-typescript',
+                  ['@babel/preset-react', { development: isDevelopment }],
                 ],
                 plugins: [
                   isDevelopment && [
                     require.resolve('react-refresh/babel'),
                     { skipEnvCheck: true },
                   ],
-                  'transform-class-properties',
+                  /* 'transform-class-properties',
                   ['@babel/plugin-transform-runtime', { loose: false }],
                   [
                     '@babel/plugin-transform-class-properties',
@@ -144,7 +156,7 @@ async function createWebpack(env, mode = 'production') {
                     '@babel/plugin-transform-private-property-in-object',
                     { loose: false },
                   ],
-                  ['@babel/plugin-transform-private-methods', { loose: false }],
+                  ['@babel/plugin-transform-private-methods', { loose: false }], */
                 ].filter(Boolean),
               },
             },
@@ -191,10 +203,16 @@ async function createWebpack(env, mode = 'production') {
             },
           ],
         },
-        // svg react generator
+        // Svgr for asset SVG & React component in the same project
+        // @see https://react-svgr.com/docs/webpack/#use-svgr-and-asset-svg-in-the-same-project
         {
           test: /\.svg$/i,
-          issuer: /\.[jt]sx?$/,
+          type: 'asset',
+          resourceQuery: /url/, // *.svg?url
+        },
+        {
+          test: /\.svg$/i,
+          resourceQuery: { not: [/url/] }, // exclude react component if *.svg?url
           use: ['@svgr/webpack'],
         },
       ],

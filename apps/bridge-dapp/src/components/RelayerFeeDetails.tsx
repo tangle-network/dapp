@@ -3,7 +3,7 @@ import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.in
 import type { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
 import GasStationFill from '@webb-tools/icons/GasStationFill';
-import { FeeDetails } from '@webb-tools/webb-ui-components/components/FeeDetails';
+import FeeDetails from '@webb-tools/webb-ui-components/components/FeeDetails';
 import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { formatEther } from 'viem';

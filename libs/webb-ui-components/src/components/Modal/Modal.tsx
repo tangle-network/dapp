@@ -26,7 +26,6 @@ export const Modal: FC<DialogPrimitive.DialogProps> = ({
 
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={onOpenChange} {...props}>
-      {/* <Transition.Root show={isOpen}>{children}</Transition.Root> */}
       {children}
     </DialogPrimitive.Root>
   );

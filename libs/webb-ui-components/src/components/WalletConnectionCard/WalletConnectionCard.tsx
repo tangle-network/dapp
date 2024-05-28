@@ -53,7 +53,7 @@ export const WalletConnectionCard = forwardRef<
         <div
           {...props}
           className={twMerge(
-            'hidden lg:flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
+            'hidden lg:!flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
             className,
           )}
           ref={ref}
