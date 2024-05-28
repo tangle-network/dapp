@@ -11,7 +11,7 @@ import { useCallback, useMemo } from 'react';
 import { useBridge } from '../../../context/BridgeContext';
 import { isEVMChain } from '../../../utils/bridge';
 import useError from './useError';
-import useIsWrongEvmNetwork from './useIsWrongEvmNetwork';
+import useTypedChainId from './useTypedChainId';
 
 type UseActionButtonReturnType = {
   isLoading: boolean;
@@ -27,12 +27,18 @@ type ErrorMessage = {
 };
 
 export default function useActionButton() {
-  const { activeAccount, activeWallet, loading, isConnecting, switchChain } =
-    useWebContext();
+  const {
+    activeAccount,
+    activeWallet,
+    loading,
+    isConnecting,
+    switchChain,
+    activeChain,
+  } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { amount, destinationAddress, selectedSourceChain } = useBridge();
   const error = useError();
-  const isWrongEvmNetwork = useIsWrongEvmNetwork();
+  const { sourceTypedChainId } = useTypedChainId();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -61,6 +67,18 @@ export default function useActionButton() {
     () => error === 'evm-wrongWallet' || error === 'substrate-wrongWallet',
     [error]
   );
+
+  const isEvmWrongNetwork = useMemo(() => {
+    if (activeWallet?.platform === 'EVM' && activeChain) {
+      if (
+        sourceTypedChainId !==
+        calculateTypedChainId(activeChain.chainType, activeChain.id)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [activeChain, activeWallet, sourceTypedChainId]);
 
   const isInputInsufficient = useMemo(
     () => !amount || !destinationAddress,
@@ -91,10 +109,12 @@ export default function useActionButton() {
   }, [activeWallet, selectedSourceChain, switchChain]);
 
   const bridgeTx = useCallback(() => {
-    if (isEVMChain(selectedSourceChain) && isWrongEvmNetwork) {
+    if (isEVMChain(selectedSourceChain) && isEvmWrongNetwork) {
       switchNetwork();
     }
-  }, [selectedSourceChain, isWrongEvmNetwork, switchNetwork]);
+
+    // TODO: Implement bridge tx
+  }, [selectedSourceChain, isEvmWrongNetwork, switchNetwork]);
 
   const buttonAction = useMemo(() => {
     if (isRequiredToConnectWallet) return openWalletModal;
@@ -108,10 +128,7 @@ export default function useActionButton() {
 
   return {
     isLoading: loading || isConnecting,
-    isDisabled:
-      isRequiredToConnectWallet || isWrongEvmNetwork
-        ? false
-        : isInputInsufficient,
+    isDisabled: isRequiredToConnectWallet ? false : isInputInsufficient,
     buttonAction,
     buttonText,
     errorMessage,

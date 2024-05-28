@@ -14,7 +14,6 @@ import { getSubstrateNativeTransferable } from '../lib/substrate';
 import useDecimals from './useDecimals';
 import useError from './useError';
 import useEvmViemClient from './useEvmViemClient';
-import useIsWrongEvmNetwork from './useIsWrongEvmNetwork';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
@@ -33,13 +32,10 @@ export default function useBalance() {
   const evmViemClient = useEvmViemClient();
   const substrateApi = useSubstrateApi();
   const decimals = useDecimals();
-  const isWrongEvmNetwork = useIsWrongEvmNetwork();
 
   const isNativeToken = useMemo(
-    () =>
-      !isWrongEvmNetwork &&
-      checkNativeToken(selectedToken.symbol, selectedSourceChain),
-    [isWrongEvmNetwork, selectedToken.symbol, selectedSourceChain]
+    () => checkNativeToken(selectedToken.symbol, selectedSourceChain),
+    [selectedToken.symbol, selectedSourceChain]
   );
 
   const erc20TokenContractAddress = useMemo(() => {
@@ -48,7 +44,6 @@ export default function useBalance() {
 
   const { data: evmNativeBalance } = useSWR(
     [
-      !isWrongEvmNetwork &&
       error === null &&
       activeAccountAddress !== null &&
       evmViemClient !== null &&
@@ -62,7 +57,6 @@ export default function useBalance() {
 
   const { data: evmErc20Balance } = useSWR(
     [
-      !isWrongEvmNetwork &&
       error === null &&
       activeAccountAddress !== null &&
       evmViemClient !== null &&
