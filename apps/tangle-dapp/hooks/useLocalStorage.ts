@@ -1,36 +1,40 @@
 'use client';
 
+import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Delegator, Payout, Validator } from '../types';
+import { Payout, TokenSymbol } from '../types';
+import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
-  ACTIVE_VALIDATOR_CACHE = 'activeValidatorCache',
-  WAITING_VALIDATOR_CACHE = 'waitingValidatorCache',
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
   ACTIVE_AND_DELEGATION_COUNT = 'activeAndDelegationCount',
   IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
   VALIDATOR_COUNTS = 'validatorCounts',
   WAITING_COUNT = 'waitingCount',
-  Payouts = 'payouts',
-  Nominations = 'nominations',
+  PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
-  VALIDATORS = 'validators',
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
+  SERVICES_CACHE = 'servicesCache',
+  SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
 }
 
-export type AirdropEligibilityCache = {
-  [address: string]: boolean;
-};
-
 export type PayoutsCache = {
-  [address: string]: Payout[];
+  [rpcEndpoint: string]: {
+    [address: string]: Payout[];
+  };
 };
 
-export type NominationsCache = {
-  [address: string]: Delegator[];
+export type SubstrateWalletsMetadataEntry = {
+  tokenSymbol: TokenSymbol;
+  tokenDecimals: number;
+  ss58Prefix: number;
 };
+
+export type SubstrateWalletsMetadataCache = Partial<
+  Record<HexString, SubstrateWalletsMetadataEntry>
+>;
 
 /**
  * Type definition associating local storage keys with their
@@ -39,10 +43,6 @@ export type NominationsCache = {
 export type LocalStorageValueOf<T extends LocalStorageKey> =
   T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
     ? boolean
-    : T extends
-        | LocalStorageKey.ACTIVE_VALIDATOR_CACHE
-        | LocalStorageKey.WAITING_VALIDATOR_CACHE
-    ? Validator[]
     : T extends LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.IDEAL_STAKE_PERCENTAGE
@@ -51,16 +51,16 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
     ? { value1: number | null; value2: number | null }
     : T extends LocalStorageKey.WAITING_COUNT
     ? { value1: number | null }
-    : T extends LocalStorageKey.Payouts
+    : T extends LocalStorageKey.PAYOUTS
     ? PayoutsCache
-    : T extends LocalStorageKey.Nominations
-    ? NominationsCache
     : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
     ? string
     : T extends LocalStorageKey.KNOWN_NETWORK_ID
     ? number
     : T extends LocalStorageKey.WAS_BANNER_DISMISSED
     ? boolean
+    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+    ? SubstrateWalletsMetadataCache
     : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
@@ -92,7 +92,9 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   return value;
 };
 
-// TODO: During development cycles, changing local storage value types will lead to any users depending on that value to possibly break (because they may be stuck with an older type schema). Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
+// TODO: During development cycles, changing local storage value types will lead to
+// any users depending on that value to possibly break (because they may be stuck with an older type schema).
+// Need a fallback mechanism that erases the old value if applicable (ie. if it's something not important, but rather used for caching).
 /**
  * Custom hook for interacting with local storage.
  *
@@ -110,38 +112,41 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   type Value = LocalStorageValueOf<Key>;
 
   // Initially, the value is `null` until the component is mounted
-  // and the value is extracted from local storage. The explicit
-  // name of the state variable indicates that.
-  const [valueAfterMount, setLateValue] = useState<Value | null>(null);
+  // and the value is extracted from local storage.
+  const [valueOpt, setValueOpt] = useState<Optional<Value> | null>(null);
 
-  const get = useCallback(() => {
+  const refresh = useCallback(() => {
     const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
 
-    setLateValue(freshValue);
+    const freshValueOpt = new Optional(
+      freshValue === null ? undefined : freshValue
+    );
 
-    return freshValue;
+    setValueOpt(freshValueOpt);
+
+    return freshValueOpt;
   }, [isUsedAsCache, key]);
 
   // Extract the value from local storage on mount.
   useEffect(() => {
-    get();
-  }, [get]);
+    refresh();
+  }, [refresh]);
 
   // Listen for changes to local storage. This is useful in case
   // that other logic changes the local storage value.
   useEffect(() => {
     const handleStorageChange = () => {
-      setLateValue(get());
+      setValueOpt(refresh());
     };
 
     window.addEventListener('storage', handleStorageChange);
 
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [key, get]);
+  }, [key, refresh]);
 
   const set = useCallback(
     (value: Value) => {
-      setLateValue(value);
+      setValueOpt(new Optional(value));
       localStorage.setItem(key, JSON.stringify(value));
       console.debug('Set local storage value:', key, value);
     },
@@ -155,27 +160,27 @@ const useLocalStorage = <Key extends LocalStorageKey>(
       return;
     }
 
-    setLateValue(null);
+    setValueOpt(null);
     localStorage.removeItem(key);
     console.debug('Removed local storage key:', key);
   }, [isSet, key]);
 
   const setWithPreviousValue = useCallback(
-    (updater: (previousValue: Value | null) => Value) => {
-      const previousValue = get();
+    (updater: (previousValue: Optional<Value> | null) => Value) => {
+      const previousValue = refresh();
       const nextValue = updater(previousValue);
 
       set(nextValue);
     },
-    [get, set]
+    [refresh, set]
   );
 
   return {
-    valueAfterMount,
+    valueOpt,
     set,
     setWithPreviousValue,
     remove,
-    get,
+    refresh,
     isSet,
   };
 };

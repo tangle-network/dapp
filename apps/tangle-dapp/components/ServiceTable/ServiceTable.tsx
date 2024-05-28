@@ -30,7 +30,10 @@ const staticColumns = [
   columnHelper.accessor('serviceType', {
     header: () => <HeaderCell title="Service Type" className="justify-start" />,
     cell: (props) => (
-      <Chip color={getChipColorOfServiceType(props.getValue())}>
+      <Chip
+        color={getChipColorOfServiceType(props.getValue())}
+        className="normal-case"
+      >
         {props.getValue()}
       </Chip>
     ),
@@ -45,7 +48,7 @@ const staticColumns = [
     header: () => (
       <HeaderCell title="# of Participants" className="justify-start" />
     ),
-    cell: (props) => <Chip color="dark-grey">{props.getValue()}</Chip>,
+    cell: (props) => <Chip color="dark-grey">{props.getValue().length}</Chip>,
   }),
   columnHelper.accessor('threshold', {
     header: () => <HeaderCell title="Threshold" className="justify-start" />,
@@ -71,7 +74,10 @@ const staticColumns = [
       <HeaderCell title="Expiration Block" className="justify-center" />
     ),
     cell: (props) => (
-      <StringCell value={`${props.getValue()}`} className="text-center" />
+      <StringCell
+        value={`${props.getValue().toString()}`}
+        className="text-center"
+      />
     ),
   }),
   columnHelper.accessor('id', {

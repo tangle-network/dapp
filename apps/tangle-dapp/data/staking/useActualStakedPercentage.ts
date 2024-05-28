@@ -1,36 +1,58 @@
+import { BN_MILLION, BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
-import calculateBnPercentage from '../../utils/calculateBnPercentage';
-import useCurrentEra from './useCurrentEra';
+import useApiRx from '../../hooks/useApiRx';
+
+const DEFAULT_FLAGS_ELECTED = {
+  withController: true,
+  withExposure: true,
+  withExposureMeta: true,
+  withPrefs: true,
+};
 
 const useActualStakedPercentage = () => {
-  const { data: currentEra } = useCurrentEra();
-
-  const { data: totalIssuance } = usePolkadotApiRx(
+  const { result: totalIssuance } = useApiRx(
     useCallback((api) => api.query.balances.totalIssuance(), [])
   );
 
-  const { data: totalStaked } = usePolkadotApiRx(
+  const { result: electedInfo } = useApiRx(
     useCallback(
-      (api) => {
-        if (currentEra === null) {
-          return null;
-        }
-
-        return api.query.staking.erasTotalStake(currentEra);
-      },
-      [currentEra]
+      (api) => api.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED),
+      []
     )
   );
 
-  return useMemo(() => {
-    if (totalStaked === null || totalIssuance === null) {
+  const totalStakedFromElected = useMemo(() => {
+    if (!electedInfo) {
       return null;
     }
 
-    return calculateBnPercentage(totalStaked, totalIssuance);
-  }, [totalIssuance, totalStaked]);
+    return electedInfo.info.reduce(
+      (stakedTotal, { exposurePaged, exposureMeta }) => {
+        const expMetaTotal =
+          exposurePaged.isSome && exposureMeta.isSome
+            ? exposureMeta.unwrap().total.unwrap()
+            : BN_ZERO;
+
+        return stakedTotal.add(expMetaTotal);
+      },
+      BN_ZERO
+    );
+  }, [electedInfo]);
+
+  return useMemo(() => {
+    if (totalStakedFromElected === null || totalIssuance === null) {
+      return null;
+    }
+
+    const stakedFraction =
+      totalStakedFromElected.isZero() || totalIssuance.isZero()
+        ? 0
+        : totalStakedFromElected.mul(BN_MILLION).div(totalIssuance).toNumber() /
+          BN_MILLION.toNumber();
+
+    return (stakedFraction * 100).toFixed(1);
+  }, [totalIssuance, totalStakedFromElected]);
 };
 
 export default useActualStakedPercentage;

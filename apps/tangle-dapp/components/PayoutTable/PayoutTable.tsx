@@ -12,7 +12,6 @@ import { WalletPayIcon } from '@webb-tools/icons';
 import {
   Avatar,
   AvatarGroup,
-  Chip,
   CopyWithTooltip,
   fuzzyFilter,
   shortenString,
@@ -24,6 +23,7 @@ import { type FC, useState } from 'react';
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
 import { AddressWithIdentity, Payout } from '../../types';
 import { HeaderCell, StringCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
 
 const columnHelper = createColumnHelper<Payout>();
@@ -32,14 +32,18 @@ const PayoutTable: FC<PayoutTableProps> = ({
   data = [],
   pageSize,
   updateData,
+  sessionProgress,
+  historyDepth,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [payoutTxProps, setPayoutTxProps] = useState<{
     validatorAddress: string;
-    era: string;
+    era: number;
   }>({
+    // TODO: Should be using `null` for both values. Avoid using empty strings to circumvent TypeScript type checking.
     validatorAddress: '',
-    era: '',
+    era: 0,
   });
 
   const table = useReactTable({
@@ -86,7 +90,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
       }),
       columnHelper.accessor('nominators', {
@@ -115,22 +119,42 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
         cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
+          <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
       }),
       columnHelper.accessor('nominatorTotalReward', {
         header: () => (
           <HeaderCell title="Your Rewards" className="justify-start" />
         ),
-        cell: (props) => (
-          <StringCell value={props.getValue()} className="text-start" />
-        ),
+        cell: (props) => {
+          return (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          );
+        },
       }),
-      columnHelper.accessor('status', {
+      columnHelper.display({
+        id: 'remaining',
         header: () => (
-          <HeaderCell title="Payout Status" className="justify-start" />
+          <HeaderCell title="Remaining Eras" className="justify-center" />
         ),
-        cell: (props) => <Chip color="blue">{props.getValue()}</Chip>,
+        cell: (props) => {
+          const rowData = props.row.original;
+
+          const remainingErasToClaim = Math.abs(
+            sessionProgress && historyDepth
+              ? sessionProgress.currentEra.toNumber() -
+                  historyDepth.toNumber() -
+                  rowData.era
+              : 0
+          );
+
+          return (
+            <StringCell
+              value={sessionProgress ? `${remainingErasToClaim}` : 'N/A'}
+              className="text-center"
+            />
+          );
+        },
       }),
       columnHelper.display({
         id: 'claim',
@@ -143,7 +167,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
               onClick={() => {
                 setPayoutTxProps({
                   validatorAddress: rowData.validator.address,
-                  era: rowData.era.toString(),
+                  era: rowData.era,
                 });
                 setIsModalOpen(true);
               }}

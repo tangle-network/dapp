@@ -10,7 +10,7 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress = (): AddressType | null => {
+const useEvmAddress20 = (): AddressType | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {
@@ -27,4 +27,4 @@ const useEvmAddress = (): AddressType | null => {
   return evmAddress;
 };
 
-export default useEvmAddress;
+export default useEvmAddress20;

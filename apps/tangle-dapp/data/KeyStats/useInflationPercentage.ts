@@ -8,7 +8,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
 import ensureError from '../../utils/ensureError';
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiPromise, getApiRx } from '../../utils/polkadot';
 
 export default function useInflationPercentage(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -27,8 +27,8 @@ export default function useInflationPercentage(
 
     const fetchData = async () => {
       try {
-        const apiRx = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+        const apiRx = await getApiRx(rpcEndpoint);
+        const apiPromise = await getApiPromise(rpcEndpoint);
 
         setIsLoading(true);
 
@@ -49,7 +49,7 @@ export default function useInflationPercentage(
           const inflationPercentage = inflation.inflation;
 
           if (isMounted) {
-            setValue1(Number(inflationPercentage.toFixed(1)));
+            setValue1(Math.trunc(inflationPercentage * 10) / 10);
             setIsLoading(false);
           }
         });

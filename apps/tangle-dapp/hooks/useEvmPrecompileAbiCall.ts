@@ -1,14 +1,18 @@
+import { BN } from '@polkadot/util';
+import { HexString } from '@polkadot/util/types';
+import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
-  getAbiForPrecompile,
-  getAddressOfPrecompile,
+  AbiFunctionName,
+  getPrecompileAbi,
+  getPrecompileAddress,
   Precompile,
+  PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import ensureError from '../utils/ensureError';
-import type { EvmAbiCallData, EvmTxFactory } from './types';
-import useEvmAddress from './useEvmAddress';
+import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import useViemPublicClient from './useViemPublicClient';
 import useViemWalletClient from './useViemWalletClient';
@@ -30,6 +34,30 @@ type TxReceipt = {
   contractAddress: unknown | null;
 };
 
+export type AbiCallArg = string | number | BN | boolean;
+
+export type AbiEncodeableValue = string | number | boolean | bigint;
+
+export type AbiBatchCallData = {
+  to: PrecompileAddress;
+  // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
+  value: AbiEncodeableValue | AbiEncodeableValue[];
+  gasLimit: number;
+  callData: string;
+};
+
+export type AbiBatchCallArgs = (AbiEncodeableValue | AbiEncodeableValue[])[][];
+
+export type AbiCall<PrecompileT extends Precompile> = {
+  functionName: AbiFunctionName<PrecompileT>;
+  // TODO: Use argument types from the ABI for the specific function.
+  arguments: AbiCallArg[] | AbiBatchCallArgs;
+};
+
+export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
+  context: Context
+) => PromiseOrT<AbiCall<PrecompileT>> | null;
+
 /**
  * Obtain a function that can be used to execute a precompile contract call.
  *
@@ -39,21 +67,31 @@ type TxReceipt = {
  * (ex. those using MetaMask).
  *
  * This is used for performing actions from EVM accounts. Substrate accounts
- * should use `useSubstrateTx` for transactions instead, or `usePolkadotApi` for queries.
+ * should use `useSubstrateTx` for transactions instead, or `useApiRx` for queries.
  */
 function useEvmPrecompileAbiCall<
   PrecompileT extends Precompile,
   Context = void
 >(
   precompile: PrecompileT,
-  factory: EvmTxFactory<PrecompileT, Context> | EvmAbiCallData<PrecompileT>
+  factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>,
+  getSuccessMessageFnc?: (context: Context) => string
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
+  const [txHash, setTxHash] = useState<HexString | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const activeEvmAddress = useEvmAddress();
+  const activeEvmAddress = useEvmAddress20();
   const viemPublicClient = useViemPublicClient();
   const viemWalletClient = useViemWalletClient();
+
+  // Useful for debugging.
+  useEffect(() => {
+    if (error !== null) {
+      console.error(error);
+    }
+  }, [error]);
 
   const execute = useCallback(
     async (context: Context) => {
@@ -74,23 +112,27 @@ function useEvmPrecompileAbiCall<
         return;
       }
 
+      // Reset state to prepare for a new transaction.
       setError(null);
+      setTxHash(null);
       setStatus(TxStatus.PROCESSING);
 
       try {
         const { request } = await viemPublicClient.simulateContract({
-          address: getAddressOfPrecompile(precompile),
-          abi: getAbiForPrecompile(precompile),
+          address: getPrecompileAddress(precompile),
+          abi: getPrecompileAbi(precompile),
           functionName: factoryResult.functionName,
           args: factoryResult.arguments,
           account: activeEvmAddress,
         });
 
-        const txHash = await viemWalletClient.writeContract(request);
+        const newTxHash = await viemWalletClient.writeContract(request);
+
+        setTxHash(newTxHash);
 
         const txReceipt: TxReceipt =
           await viemPublicClient.waitForTransactionReceipt({
-            hash: txHash,
+            hash: newTxHash,
             // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
           });
 
@@ -99,14 +141,20 @@ function useEvmPrecompileAbiCall<
         setStatus(
           txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
         );
+
+        if (txReceipt.status === 'success') {
+          setSuccessMessage(
+            getSuccessMessageFnc !== undefined
+              ? getSuccessMessageFnc(context)
+              : null
+          );
+        }
       } catch (possibleError) {
         const error = ensureError(possibleError);
 
         setStatus(TxStatus.ERROR);
         setError(error);
       }
-
-      // TODO: Return clean up.
     },
     [
       activeEvmAddress,
@@ -115,6 +163,7 @@ function useEvmPrecompileAbiCall<
       status,
       viemPublicClient,
       viemWalletClient,
+      getSuccessMessageFnc,
     ]
   );
 
@@ -130,6 +179,8 @@ function useEvmPrecompileAbiCall<
     reset,
     status,
     error,
+    txHash,
+    successMessage,
   };
 }
 

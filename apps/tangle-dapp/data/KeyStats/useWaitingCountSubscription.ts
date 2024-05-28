@@ -5,9 +5,7 @@ import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiRx } from '../../utils/polkadot';
+import { getApiRx } from '../../utils/polkadot';
 
 export default function useWaitingCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -15,25 +13,10 @@ export default function useWaitingCountSubscription(
     value2: null,
   }
 ) {
-  const { get: getCachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.WAITING_COUNT,
-    true
-  );
-
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint } = useNetworkStore();
-
-  // After mount, try to get the cached value and set it.
-  useEffect(() => {
-    const cachedValue = getCachedValue();
-
-    if (cachedValue !== null) {
-      setValue1(cachedValue.value1);
-      setIsLoading(false);
-    }
-  }, [getCachedValue]);
 
   useEffect(() => {
     let isMounted = true;
@@ -41,14 +24,13 @@ export default function useWaitingCountSubscription(
 
     const subscribeData = async () => {
       try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
+        const api = await getApiRx(rpcEndpoint);
 
         sub = api.derive.staking.waitingInfo().subscribe((waitingInfo) => {
           const newWaitingCount = waitingInfo.waiting.length;
 
           if (isMounted && newWaitingCount !== value1) {
             setValue1(newWaitingCount);
-            setCache({ value1: newWaitingCount });
             setIsLoading(false);
           }
         });
@@ -70,11 +52,11 @@ export default function useWaitingCountSubscription(
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [value1, setCache, rpcEndpoint]);
+  }, [value1, rpcEndpoint]);
 
-  return useFormatReturnType({
+  return {
     isLoading,
     error,
     data: { value1, value2: null },
-  });
+  };
 }

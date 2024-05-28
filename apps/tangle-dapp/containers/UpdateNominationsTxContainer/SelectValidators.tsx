@@ -1,31 +1,24 @@
-import { Alert, Typography } from '@webb-tools/webb-ui-components';
-import { type FC } from 'react';
+import { Alert } from '@webb-tools/webb-ui-components';
+import React, { Dispatch, type FC, SetStateAction } from 'react';
 
-import { ValidatorListTable } from '../../components';
+import ValidatorSelectionTable from '../../components/ValidatorSelectionTable/ValidatorSelectionTable';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
-import { SelectValidatorsProps } from './types';
+
+export type SelectValidatorsProps = {
+  setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+};
 
 const SelectValidators: FC<SelectValidatorsProps> = ({
-  selectedValidators,
   setSelectedValidators,
 }) => {
   const validators = useAllValidators();
 
   return (
-    <div className="flex flex-col gap-2 col-span-2">
-      <ValidatorListTable
-        data={validators}
-        selectedValidators={selectedValidators}
+    <div className="flex flex-col col-span-2 gap-2">
+      <ValidatorSelectionTable
+        allValidators={validators}
         setSelectedValidators={setSelectedValidators}
       />
-
-      <Typography
-        variant="body1"
-        fw="normal"
-        className="text-mono-200 dark:text-mono-0"
-      >
-        Selected: {selectedValidators.length}/{validators.length}
-      </Typography>
 
       <Alert
         description="Submitting a new nomination will overwrite any existing nomination."
@@ -35,4 +28,4 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   );
 };
 
-export default SelectValidators;
+export default React.memo(SelectValidators);

@@ -3,7 +3,9 @@ import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
 import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
+import formatBnToDisplayAmount, {
+  FormatOptions,
+} from '../../utils/formatBnToDisplayAmount';
 
 /**
  * Regular expression to validate the input amount.
@@ -46,6 +48,11 @@ function validateInputAmount(
   return !result.success ? result.error.issues[0].message : null;
 }
 
+const INPUT_AMOUNT_FORMAT: Partial<FormatOptions> = {
+  includeCommas: false,
+  fractionLength: undefined,
+};
+
 const useInputAmount = (
   amount: BN | null,
   min: BN | null,
@@ -58,7 +65,7 @@ const useInputAmount = (
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBnToDisplayAmount(amount) : ''
+    amount !== null ? formatBnToDisplayAmount(amount, INPUT_AMOUNT_FORMAT) : ''
   );
 
   const handleChange = useCallback(
@@ -110,7 +117,9 @@ const useInputAmount = (
   );
 
   const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
-    setDisplayAmount(formatBnToDisplayAmount(newDisplayAmount));
+    setDisplayAmount(
+      formatBnToDisplayAmount(newDisplayAmount, INPUT_AMOUNT_FORMAT)
+    );
   }, []);
 
   return {

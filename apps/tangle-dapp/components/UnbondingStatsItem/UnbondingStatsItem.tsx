@@ -1,63 +1,75 @@
 'use client';
 
-import { notificationApi } from '@webb-tools/webb-ui-components';
-import { type FC, Fragment, useMemo } from 'react';
+import { BN_ZERO } from '@polkadot/util';
+import { type FC, useMemo } from 'react';
 
+import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
 import useNetworkStore from '../../context/useNetworkStore';
-import useUnbondingRemainingErasSubscription from '../../data/NominatorStats/useUnbondingRemainingErasSubscription';
+import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
+import useUnbonding from '../../data/staking/useUnbonding';
+import { formatBnWithCommas } from '../../utils/formatBnWithCommas';
 import { formatTokenBalance } from '../../utils/polkadot';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
-const UnbondingStatsItem: FC<{ address: string }> = ({ address }) => {
+const UnbondingStatsItem: FC = () => {
+  const activeAccountAddress = useActiveAccountAddress();
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const {
-    data: unbondingRemainingErasData,
-    error: unbondingRemainingErasError,
-  } = useUnbondingRemainingErasSubscription(address);
+  const { result: unbondingEntriesOpt, error: unbondingEntriesError } =
+    useUnbonding();
+
+  const { result: totalUnbondingAmount, error: unbondingAmountError } =
+    useUnbondingAmount();
 
   const unbondingRemainingErasTooltip = useMemo(() => {
-    if (unbondingRemainingErasError) {
-      notificationApi({
-        variant: 'error',
-        message: unbondingRemainingErasError.message,
-      });
-    }
-
-    if (!unbondingRemainingErasData?.value1) return null;
-
-    if (unbondingRemainingErasData.value1.length === 0) {
+    if (unbondingEntriesOpt === null) {
+      return null;
+    } else if (
+      unbondingEntriesOpt.value === null ||
+      unbondingEntriesOpt.value.length === 0
+    ) {
       return 'You have no unbonding tokens.';
     }
 
-    const elements = unbondingRemainingErasData.value1.map((era, index) => {
+    const elements = unbondingEntriesOpt.value.map((entry, index) => {
       return (
-        <Fragment key={index}>
-          <div className="text-center mb-2">
-            <p>
-              {era.remainingEras > 0 ? 'Unbonding' : 'Unbonded'}{' '}
-              {formatTokenBalance(era.amount, nativeTokenSymbol)}
-            </p>
-            {era.remainingEras > 0 && <p>{era.remainingEras} eras remaining</p>}
-          </div>
-        </Fragment>
+        <div key={index} className="text-center mb-2">
+          <p>
+            {entry.remainingEras.gtn(0) ? 'Unbonding' : 'Unbonded'}{' '}
+            {formatTokenBalance(entry.amount, nativeTokenSymbol)}
+          </p>
+
+          {entry.remainingEras.gtn(0) && (
+            <p>{formatBnWithCommas(entry.remainingEras)} eras remaining.</p>
+          )}
+        </div>
       );
     });
 
     return <>{elements}</>;
-  }, [
-    unbondingRemainingErasError,
-    unbondingRemainingErasData?.value1,
-    nativeTokenSymbol,
-  ]);
+  }, [unbondingEntriesOpt, nativeTokenSymbol]);
+
+  const balance =
+    // No account is active.
+    activeAccountAddress === null
+      ? '--'
+      : // Amount is still loading.
+      totalUnbondingAmount === null
+      ? null
+      : // Amount is loaded and there is an active account.
+        formatTokenBalance(
+          totalUnbondingAmount.value ?? BN_ZERO,
+          nativeTokenSymbol
+        );
 
   return (
     <NominatorStatsItem
       title={`Unbonding ${nativeTokenSymbol}`}
-      tooltip={unbondingRemainingErasTooltip}
-      type="Unbonding Amount"
-      address={address}
-    />
+      tooltip={unbondingRemainingErasTooltip ?? undefined}
+      isError={unbondingEntriesError !== null || unbondingAmountError !== null}
+    >
+      {balance}
+    </NominatorStatsItem>
   );
 };
 

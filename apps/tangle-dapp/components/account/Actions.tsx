@@ -1,6 +1,5 @@
 'use client';
 
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import {
   ArrowLeftRightLineIcon,
   CoinsLineIcon,
@@ -13,7 +12,6 @@ import { FC, useState } from 'react';
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import usePendingEVMBalance from '../../data/balances/usePendingEVMBalance';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -23,7 +21,7 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PagePath, StaticSearchQueryPath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import ActionItem from './ActionItem';
-import WithdrawEVMBalanceAction from './WithdrawEVMBalanceAction';
+import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -36,8 +34,6 @@ const Actions: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const { transferable: transferableBalance } = useBalances();
-
-  const { balance, ...restPendingEVMBalanceProps } = usePendingEVMBalance();
 
   const {
     isVesting,
@@ -119,7 +115,7 @@ const Actions: FC = () => {
                 </>
               ) : (
                 <>
-                  There are vesting schedules in your account, but no tokens
+                  There are vesting schedules in this account, but no tokens
                   have vested yet.
                 </>
               )
@@ -127,12 +123,7 @@ const Actions: FC = () => {
           />
         )}
 
-        {balance !== null && balance > ZERO_BIG_INT && (
-          <WithdrawEVMBalanceAction
-            balance={balance}
-            {...restPendingEVMBalanceProps}
-          />
-        )}
+        <WithdrawEvmBalanceAction />
       </div>
 
       {/* TODO: Might be better to use a hook instead of doing it this way. */}

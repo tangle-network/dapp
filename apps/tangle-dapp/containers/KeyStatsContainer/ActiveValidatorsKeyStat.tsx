@@ -12,10 +12,11 @@ const ActiveValidatorsKeyStat: FC = () => {
     <KeyStatsItem
       title="Active/Nomination"
       tooltip="Current active nominators out of the total possible."
+      showDataBeforeLoading
       isLoading={isLoading}
       error={error}
     >
-      {data?.value1}/{data?.value2}
+      {data?.value1 ?? '--'}/{data?.value2 ?? '--'}
     </KeyStatsItem>
   );
 };

@@ -22,7 +22,7 @@ import { twMerge } from 'tailwind-merge';
 import { SkeletonRow } from '../../../components/skeleton';
 import { HeaderCell, StringCell } from '../../../components/tableCells';
 import useNetworkStore from '../../../context/useNetworkStore';
-import { useServiceJobs } from '../../../data/ServiceDetails';
+import { useServiceJobs } from '../../../data/serviceDetails';
 import { ExplorerType, ServiceJob } from '../../../types';
 
 interface JobsListTableProps {
@@ -31,6 +31,8 @@ interface JobsListTableProps {
 }
 
 const PAGE_SIZE = 10;
+
+// TODO: This is hardcoded to the testnet.
 const TANGLE_BLOCK_EXPLORER =
   chainsConfig[PresetTypedChainId.TangleTestnetNative].blockExplorers?.default
     .url;

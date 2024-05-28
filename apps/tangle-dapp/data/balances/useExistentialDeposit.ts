@@ -3,23 +3,23 @@
 import { BN_ONE } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import useApi from '../../hooks/useApi';
 
 function useExistentialDeposit() {
   // Default existential deposit is 1 unit.
   const [existentialDeposit, setExistentialDeposit] = useState(BN_ONE);
 
-  const { isApiLoading, isValueLoading, error, value } = usePolkadotApi(
+  const { result } = useApi(
     useCallback(async (api) => api.consts.balances.existentialDeposit, [])
   );
 
   useEffect(() => {
-    if (isApiLoading || isValueLoading || error !== null || value === null) {
+    if (result === null) {
       return;
     }
 
-    setExistentialDeposit((prev) => (value.eq(prev) ? prev : value));
-  }, [error, isApiLoading, isValueLoading, value]);
+    setExistentialDeposit((prev) => (result.eq(prev) ? prev : result));
+  }, [result]);
 
   return existentialDeposit;
 }

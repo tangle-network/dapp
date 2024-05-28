@@ -1,4 +1,4 @@
-import { DropdownMenuTrigger as DropdownButton } from '@radix-ui/react-dropdown-menu';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import ArrowLeftRightLineIcon from '@webb-tools/icons/ArrowLeftRightLineIcon';
@@ -174,7 +174,7 @@ function TotalShieldedBalance() {
         </Typography>
 
         <Dropdown>
-          <DropdownButton
+          <DropdownMenuTrigger
             className={cx(
               'flex items-center gap-1 disabled:cursor-not-allowed',
               {
@@ -193,7 +193,7 @@ function TotalShieldedBalance() {
             </Typography>
 
             <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180" />
-          </DropdownButton>
+          </DropdownMenuTrigger>
 
           <DropdownBody className="mt-2" align="center">
             <ScrollArea className="max-h-[var(--dropdown-height)]">

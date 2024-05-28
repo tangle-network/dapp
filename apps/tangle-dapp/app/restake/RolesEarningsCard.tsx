@@ -1,8 +1,10 @@
 'use client';
 
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Spinner } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC, useMemo } from 'react';
+import { ComponentProps, FC, useMemo } from 'react';
+import { formatUnits } from 'viem';
 
 import { RoleEarningsChart } from '../../components/charts';
 import GlassCard from '../../components/GlassCard/GlassCard';
@@ -11,13 +13,13 @@ import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 const RolesEarningsCard: FC = () => {
   const { earningsRecord, isLoading } = useRestakingProfile();
 
-  const data = useMemo(() => {
+  const data = useMemo<ComponentProps<typeof RoleEarningsChart>['data']>(() => {
     if (!earningsRecord) return [];
 
     return Object.entries(earningsRecord).map(([era, reward]) => ({
       era: +era,
-      // Recharts can only handle number, temporarily convert to number
-      reward: reward.toNumber(),
+      // Format to display already handled in the chart component
+      reward: +formatUnits(reward, TANGLE_TOKEN_DECIMALS),
     }));
   }, [earningsRecord]);
 
@@ -28,7 +30,7 @@ const RolesEarningsCard: FC = () => {
       </Typography>
 
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex items-center justify-center flex-1">
           <Spinner size="xl" />
         </div>
       ) : (

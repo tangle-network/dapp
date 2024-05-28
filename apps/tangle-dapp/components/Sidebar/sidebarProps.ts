@@ -1,6 +1,7 @@
 import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import {
   AppsLine,
+  ArrowLeftRightLineIcon,
   DocumentationIcon,
   FundsLine,
   GiftLineIcon,
@@ -32,6 +33,15 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     isNext: true,
     Icon: UserLineIcon,
     subItems: [],
+  },
+  {
+    name: 'Bridge',
+    href: PagePath.BRIDGE,
+    isInternal: true,
+    isNext: true,
+    Icon: ArrowLeftRightLineIcon,
+    subItems: [],
+    environments: ['development', 'staging', 'test'],
   },
   {
     name: 'Services',

@@ -3,13 +3,18 @@
 // about requiring three arguments instead of two.
 import '@webb-tools/tangle-substrate-types';
 
-import { BN } from '@polkadot/util';
-import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import type {
+  SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
+} from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
   ACCOUNT = '/',
+  BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
 }
@@ -33,26 +38,23 @@ export enum DelegationsAndPayoutsTab {
   PAYOUTS = 'Payouts',
 }
 
-export type Validator = {
+export type BasicAccountInfo = {
   address: string;
   identityName: string;
-  selfStaked: string;
-  effectiveAmountStaked: string;
-  effectiveAmountStakedRaw: string;
-  delegations: string;
-  commission: string;
-  status: string;
 };
 
-export type Delegator = {
-  address: string;
-  identity: string;
-  selfStaked: string;
+export interface Nominee extends BasicAccountInfo {
   isActive: boolean;
-  commission: string;
-  delegations: string;
-  effectiveAmountStaked: string;
-};
+  commission: BN;
+  selfStakeAmount: BN;
+  totalStakeAmount: BN;
+  nominatorCount: number;
+}
+
+export interface Validator extends Nominee {
+  restakedAmount: BN;
+  activeServicesCount: number;
+}
 
 export type NodeSpecification = {
   os: string;
@@ -64,10 +66,21 @@ export type NodeSpecification = {
   linuxKernel: string;
 };
 
-export enum PaymentDestination {
+// TODO: As of now, the other reward destinations are disabled in Tangle. Confirm whether they'll be used in the future, otherwise adjust this accordingly.
+export enum StakingRewardsDestination {
+  STAKED,
+  STASH,
+  CONTROLLER,
+  ACCOUNT,
+  NONE,
+}
+
+export enum StakingRewardsDestinationDisplayText {
   STAKED = 'Staked (increase the amount at stake)',
   STASH = 'Stash (do not increase the amount at stake)',
   CONTROLLER = 'Controller Account',
+  ACCOUNT = 'Specific Account',
+  NONE = 'None',
 }
 
 export type AddressWithIdentity = {
@@ -78,11 +91,11 @@ export type AddressWithIdentity = {
 export type Payout = {
   era: number;
   validator: AddressWithIdentity;
-  validatorTotalStake: string;
+  validatorTotalStake: BN;
   nominators: AddressWithIdentity[];
-  validatorTotalReward: string;
-  nominatorTotalReward: string;
-  status: 'claimed' | 'unclaimed';
+  validatorTotalReward: BN;
+  nominatorTotalReward: BN;
+  nominatorTotalRewardRaw: BN;
 };
 
 /**
@@ -143,20 +156,20 @@ export type InternalPath =
  * of the roles.
  */
 export enum RestakingService {
-  ZK_SAAS_GROTH16 = 'ZkSaaS (Groth16)',
-  ZK_SAAS_MARLIN = 'ZkSaaS (Marlin)',
+  ZK_SAAS_GROTH16 = 'ZkSaaS_Groth16',
+  ZK_SAAS_MARLIN = 'ZkSaaS_Marlin',
   LIGHT_CLIENT_RELAYING = 'Light Client Relaying',
-  TSS_SILENT_SHARD_DKLS23SECP256K1 = 'TSS SilentShardDKLS23Secp256k1',
-  TSS_DFNS_CGGMP21SECP256K1 = 'TSS DfnsCGGMP21Secp256k1',
-  TSS_DFNS_CGGMP21SECP256R1 = 'TSS DfnsCGGMP21Secp256r1',
-  TSS_DFNS_CGGMP21STARK = 'TSS DfnsCGGMP21Stark',
-  TSS_ZCASH_FROST_P256 = 'TSS ZcashFrostP256',
-  TSS_ZCASH_FROST_P384 = 'TSS ZcashFrostP384',
-  TSS_ZCASH_FROST_SECP256K1 = 'TSS ZcashFrostSecp256k1',
-  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS ZcashFrostRistretto255',
-  TSS_ZCASH_FROST_ED25519 = 'TSS ZcashFrostEd25519',
-  TSS_GENNARO_DKG_BLS381 = 'TSS GennaroDKGBls381',
-  TSS_ZCASH_FROST_ED448 = 'TSS ZcashFrostEd448',
+  TSS_SILENT_SHARD_DKLS23SECP256K1 = 'TSS_SilentShardDKLS23Secp256k1',
+  TSS_DFNS_CGGMP21SECP256K1 = 'TSS_DfnsCGGMP21Secp256k1',
+  TSS_DFNS_CGGMP21SECP256R1 = 'TSS_DfnsCGGMP21Secp256r1',
+  TSS_DFNS_CGGMP21STARK = 'TSS_DfnsCGGMP21Stark',
+  TSS_ZCASH_FROST_P256 = 'TSS_ZcashFrostP256',
+  TSS_ZCASH_FROST_P384 = 'TSS_ZcashFrostP384',
+  TSS_ZCASH_FROST_SECP256K1 = 'TSS_ZcashFrostSecp256k1',
+  TSS_ZCASH_FROST_RISTRETTO255 = 'TSS_ZcashFrostRistretto255',
+  TSS_ZCASH_FROST_ED25519 = 'TSS_ZcashFrostEd25519',
+  TSS_GENNARO_DKG_BLS381 = 'TSS_GennaroDKGBls381',
+  TSS_ZCASH_FROST_ED448 = 'TSS_ZcashFrostEd448',
 }
 
 export enum RestakingProfileType {
@@ -172,11 +185,13 @@ export type DistributionDataType = Record<RestakingService, BN>;
 export type Service = {
   id: string;
   serviceType: RestakingService;
-  participants: number;
+  participants: string[];
   threshold?: number;
   jobsCount?: number;
   earnings?: BN;
-  expirationBlock: string;
+  expirationBlock: BN;
+  ttlBlock: BN;
+  permittedCaller?: string;
 };
 
 export type ServiceJob = {
@@ -195,18 +210,38 @@ export type JobType = {
 
 export type ServiceParticipant = {
   address: string;
-  identity?: string;
-  twitter?: string;
-  discord?: string;
-  email?: string;
-  web?: string;
+  identity?: string | null;
+  twitter?: string | null;
+  discord?: string | null;
+  email?: string | null;
+  web?: string | null;
 };
 
 export enum NetworkFeature {
   Faucet,
+  EraStakersOverview,
 }
 
 export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,
 } as const;
+
+export type ExposureMap = Record<
+  string,
+  {
+    exposure: SpStakingExposurePage;
+    exposureMeta: SpStakingPagedExposureMetadata;
+  }
+>;
+
+export type TokenSymbol = 'tTNT' | 'TNT';
+
+/**
+ * Represents a function type that takes a context parameter and returns a success message.
+ * @param context The context parameter.
+ * @returns The success message.
+ */
+export type GetSuccessMessageFunctionType<Context> = (
+  context: Context
+) => string;

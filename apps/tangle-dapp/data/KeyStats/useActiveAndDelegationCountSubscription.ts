@@ -1,16 +1,12 @@
 'use client';
 
 import { formatNumber } from '@polkadot/util';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
+import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
+import { useCallback, useEffect, useState } from 'react';
+import { map } from 'rxjs';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useFormatReturnType from '../../hooks/useFormatReturnType';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { getPolkadotApiPromise, getPolkadotApiRx } from '../../utils/polkadot';
+import useApiRx from '../../hooks/useApiRx';
 
-// TODO: This is causing performance issues. Needs to be optimized.
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
@@ -21,90 +17,65 @@ export default function useActiveAndDelegationCountSubscription(
   const [error, setError] = useState<Error | null>(null);
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
-  const { rpcEndpoint } = useNetworkStore();
 
-  const { get: getCachedValue, set: setCache } = useLocalStorage(
-    LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT,
-    true
+  const {
+    isLoading: isLoadingCounterForNominators,
+    error: counterForNominatorsError,
+  } = useApiRx(
+    useCallback(
+      (apiRx) =>
+        apiRx.query.staking.counterForNominators().pipe(
+          map((nominatorsCount) => {
+            const nominatorsCountNum = Number(formatNumber(nominatorsCount));
+
+            setValue2(nominatorsCountNum);
+          })
+        ),
+      []
+    )
   );
 
-  // After mount, try to get the cached value and set it.
-  useEffect(() => {
-    const cachedValue = getCachedValue();
+  const { isLoading: isLoadingActiveNominators, error: activeNominatorsError } =
+    useApiRx(
+      useCallback(
+        (apiRx) =>
+          apiRx.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED).pipe(
+            map((electedInfo) => {
+              const nominators: Set<string> = new Set();
 
-    if (cachedValue !== null) {
-      setValue1(cachedValue.value1);
-      setValue2(cachedValue.value2);
-      setIsLoading(false);
-    }
-  }, [getCachedValue]);
+              for (let i = 0; i < electedInfo.info.length; i++) {
+                const { exposurePaged } = electedInfo.info[i];
+                const exposure = exposurePaged.isSome && exposurePaged.unwrap();
+                if (!exposure) {
+                  continue;
+                }
 
-  useEffect(() => {
-    let isMounted = true;
-    let sub: Subscription | null = null;
-
-    const subscribeData = async () => {
-      try {
-        const api = await getPolkadotApiRx(rpcEndpoint);
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
-        const currentEra = await apiPromise.query.staking.currentEra();
-        const eraIndex = currentEra.unwrap();
-
-        sub = api.query.staking
-          .counterForNominators()
-          .subscribe(async (value) => {
-            try {
-              const counterForNominators = formatNumber(value);
-              const exposures =
-                await apiPromise.query.staking.erasStakers.entries(eraIndex);
-
-              const nominatorsSet = new Set<string>();
-
-              exposures.forEach(([_, exposure]) => {
-                exposure.others.forEach(({ who }) => {
-                  nominatorsSet.add(who.toString());
+                exposure.others.map(({ who }) => {
+                  nominators.add(who.toString());
                 });
-              });
-
-              const newValue1 = nominatorsSet.size;
-              const newValue2 = Number(counterForNominators);
-
-              if (isMounted && (newValue1 !== value1 || newValue2 !== value2)) {
-                setValue1(newValue1);
-                setValue2(newValue2);
-                setCache({ value1: newValue1, value2: newValue2 });
-                setIsLoading(false);
               }
-            } catch (error) {
-              if (isMounted) {
-                setError(
-                  error instanceof Error
-                    ? error
-                    : WebbError.from(WebbErrorCodes.UnknownError)
-                );
-                setIsLoading(false);
-              }
-            }
-          });
-      } catch (error) {
-        if (isMounted) {
-          setError(
-            error instanceof Error
-              ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
-          );
-          setIsLoading(false);
-        }
-      }
-    };
 
-    subscribeData();
+              const activeNominatorsCount = nominators.size;
 
-    return () => {
-      isMounted = false;
-      sub?.unsubscribe();
-    };
-  }, [rpcEndpoint, setCache, value1, value2]);
+              setValue1(activeNominatorsCount);
+            })
+          ),
+        []
+      )
+    );
 
-  return useFormatReturnType({ isLoading, error, data: { value1, value2 } });
+  // Sync the loading & error states.
+  useEffect(() => {
+    setIsLoading(isLoadingCounterForNominators || isLoadingActiveNominators);
+  }, [isLoadingCounterForNominators, isLoadingActiveNominators]);
+
+  useEffect(() => {
+    setError(counterForNominatorsError || activeNominatorsError);
+  }, [counterForNominatorsError, activeNominatorsError]);
+
+  return {
+    data: { value1, value2 },
+    isLoading,
+    error,
+  };
 }

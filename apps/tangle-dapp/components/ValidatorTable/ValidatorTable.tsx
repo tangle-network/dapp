@@ -12,6 +12,7 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 import {
   Avatar,
   Button,
+  Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
   fuzzyFilter,
@@ -22,59 +23,91 @@ import {
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
+import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const staticColumns = [
-  columnHelper.accessor('selfStaked', {
-    header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
-  }),
-  columnHelper.accessor('effectiveAmountStaked', {
-    header: () => (
-      <HeaderCell title="Effective amount staked" className="justify-center" />
-    ),
-    cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
-    ),
-  }),
-  columnHelper.accessor('delegations', {
+const getStaticColumns = (isWaiting?: boolean) => [
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('activeServicesCount', {
+          header: () => <HeaderCell title="Active Services" />,
+          cell: (props) => (
+            <div className="flex justify-center items-center">
+              <Chip color="dark-grey">{props.getValue()}</Chip>
+            </div>
+          ),
+        }),
+        columnHelper.accessor('restakedAmount', {
+          header: () => <HeaderCell title="Restaked" />,
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        }),
+      ]),
+  // Hide the effective amount staked and self-staked columns on waiting validators tab
+  // as they don't have values for these columns
+  ...(isWaiting
+    ? []
+    : [
+        columnHelper.accessor('totalStakeAmount', {
+          header: () => (
+            <HeaderCell
+              title="Effective amount staked"
+              className="justify-center"
+            />
+          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        }),
+        columnHelper.accessor('selfStakeAmount', {
+          header: () => (
+            <HeaderCell title="Self-staked" className="justify-center" />
+          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        }),
+      ]),
+  columnHelper.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={props.getValue()} className="text-center" />
+      <StringCell value={props.getValue().toString()} className="text-center" />
     ),
   }),
   columnHelper.accessor('commission', {
-    header: () => <HeaderCell title="Commission" className="justify-center" />,
+    header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
       <StringCell
-        value={Number(props.getValue()).toFixed(2) + '%'}
+        value={calculateCommission(props.getValue()).toFixed(2) + '%'}
         className="text-center"
       />
     ),
   }),
-  columnHelper.accessor('address', {
-    id: 'details',
-    header: () => null,
-    cell: (props) => (
-      <div className="flex justify-center items-center">
-        <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
-          <Button variant="link" size="sm">
-            DETAILS
-          </Button>
-        </Link>
-      </div>
-    ),
-  }),
+  // TODO: Hide this for live app for now
+  ...(IS_PRODUCTION_ENV
+    ? []
+    : [
+        columnHelper.accessor('address', {
+          id: 'details',
+          header: () => null,
+          cell: (props) => (
+            <div className="flex items-center justify-center">
+              <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
+                <Button variant="link" size="sm">
+                  DETAILS
+                </Button>
+              </Link>
+            </div>
+          ),
+        }),
+      ]),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
+const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
   const { network } = useNetworkStore();
 
   const columns = useMemo(
@@ -120,9 +153,9 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
           );
         },
       }),
-      ...staticColumns,
+      ...getStaticColumns(isWaiting),
     ],
-    [network.polkadotExplorerUrl]
+    [isWaiting, network.polkadotExplorerUrl]
   );
 
   const table = useReactTable({
@@ -142,9 +175,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data }) => {
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
         thClassName="border-t-0 bg-mono-0"
-        trClassName={
-          process.env.NODE_ENV === 'production' ? '' : 'cursor-pointer'
-        }
+        trClassName={IS_PRODUCTION_ENV ? '' : 'cursor-pointer'}
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}
         isPaginated

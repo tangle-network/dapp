@@ -4,22 +4,29 @@ import { Option } from '@polkadot/types';
 import { PalletRolesRestakingLedger } from '@polkadot/types/lookup';
 import { createContext, FC, PropsWithChildren } from 'react';
 
-import useRestakingEarnings, {
-  EarningRecord,
-} from '../data/restaking/useRestakingEarnings';
+import type { EarningRecord } from '../data/restaking/types';
+import useRestakingEarnings from '../data/restaking/useRestakingEarnings';
 import useRestakingRoleLedger from '../data/restaking/useRestakingRoleLedger';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 
-export const RestakeContext = createContext({
-  ledger: null as Option<PalletRolesRestakingLedger> | null,
-  earningsRecord: null as EarningRecord | null,
+interface RestakeContextProps {
+  ledger: Option<PalletRolesRestakingLedger> | null;
+  earningsRecord: EarningRecord | null;
+  isLoading: boolean;
+}
+
+export const RestakeContext = createContext<RestakeContextProps>({
+  ledger: null,
+  earningsRecord: null,
   isLoading: true,
 });
 
 const RestakeProvider: FC<PropsWithChildren> = ({ children }) => {
   const substrateAddress = useSubstrateAddress();
-  const { data: ledger, isLoading: isLedgerLoading } =
+
+  const { result: ledger, isLoading: isLedgerLoading } =
     useRestakingRoleLedger(substrateAddress);
+
   const { data: earningsRecord, isLoading: isEarningsLoading } =
     useRestakingEarnings(substrateAddress);
 

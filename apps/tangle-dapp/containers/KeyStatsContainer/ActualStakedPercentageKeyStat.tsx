@@ -17,9 +17,7 @@ const ActualStakedPercentageKeyStat: FC = () => {
       isLoading={actualStakedPercentage === null}
       error={null}
     >
-      {actualStakedPercentage !== null
-        ? actualStakedPercentage * 100
-        : undefined}
+      {actualStakedPercentage !== null ? actualStakedPercentage : undefined}
     </KeyStatsItem>
   );
 };

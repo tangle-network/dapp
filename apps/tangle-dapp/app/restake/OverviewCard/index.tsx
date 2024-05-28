@@ -13,8 +13,10 @@ import {
 
 import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
+import useRestakingAPY from '../../../data/restaking/useRestakingAPY';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useRestakingTotalRewards from '../../../data/restaking/useRestakingTotalRewards';
 import useFormatNativeTokenAmount from '../../../hooks/useFormatNativeTokenAmount';
 import { getTotalRestakedFromRestakeRoleLedger } from '../../../utils/polkadot/restake';
 import ActionButton from './ActionButton';
@@ -22,28 +24,20 @@ import ActionButton from './ActionButton';
 const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
   (props, ref) => {
     const formatNativeTokenAmount = useFormatNativeTokenAmount();
-    const {
-      hasExistingProfile,
-      profileTypeOpt,
-      earningsRecord,
-      ledgerOpt,
-      isLoading,
-    } = useRestakingProfile();
+
+    const { hasExistingProfile, profileTypeOpt, ledgerOpt, isLoading } =
+      useRestakingProfile();
+
+    const { result: totalRewards, isLoading: isTotalRewardLoading } =
+      useRestakingTotalRewards();
+
+    const apy = useRestakingAPY();
     const { maxRestakingAmount } = useRestakingLimits();
 
     const totalRestaked = useMemo(
       () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
       [ledgerOpt]
     );
-
-    const earnings = useMemo(() => {
-      if (isLoading || !earningsRecord) return null;
-
-      return Object.values(earningsRecord).reduce(
-        (total, curr) => total.add(curr),
-        BN_ZERO
-      );
-    }, [earningsRecord, isLoading]);
 
     const availableForRestake = useMemo(() => {
       if (maxRestakingAmount !== null && totalRestaked !== null) {
@@ -79,18 +73,23 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
           />
 
           <StatsItem
-            isLoading={isLoading}
-            title="Earnings"
-            value={
-              hasExistingProfile && earnings
-                ? formatNativeTokenAmount(earnings)
-                : null
-            }
+            isLoading={isTotalRewardLoading}
+            title="Jobs Rewards"
+            // TODO: Update the tooltip content for more accurate information
+            titleTooltip="The total rewards earned from the jobs fees."
+            value={totalRewards ? formatNativeTokenAmount(totalRewards) : null}
           />
 
-          <StatsItem isLoading={isLoading} title="APY" value={null} />
+          <StatsItem
+            isLoading={isLoading}
+            title="APY"
+            // TODO: Update the tooltip content for more accurate information
+            titleTooltip="The annual percentage yield when restaking the staked tokens into the roles system."
+            value={typeof apy === 'number' ? `${apy}%` : null}
+          />
 
           <ActionButton
+            availableForRestake={availableForRestake}
             hasExistingProfile={hasExistingProfile}
             profileTypeOpt={profileTypeOpt}
             isDataLoading={isLoading}

@@ -1,5 +1,6 @@
 'use client';
 
+import type { BN } from '@polkadot/util';
 import {
   useConnectWallet,
   useWebContext,
@@ -22,9 +23,11 @@ type Props = {
   hasExistingProfile: boolean | null;
   profileTypeOpt: Optional<RestakingProfileType> | null;
   isDataLoading?: boolean;
+  availableForRestake?: BN | null;
 };
 
 const ActionButton: FC<Props> = ({
+  availableForRestake = null,
   hasExistingProfile,
   profileTypeOpt,
   isDataLoading,
@@ -56,7 +59,14 @@ const ActionButton: FC<Props> = ({
   if (activeAccount && activeWallet) {
     return (
       <>
-        <Button onClick={() => setIsManageProfileModalOpen(true)}>
+        <Button
+          isDisabled={
+            !hasExistingProfile
+              ? availableForRestake === null || availableForRestake.isZero()
+              : false
+          }
+          onClick={() => setIsManageProfileModalOpen(true)}
+        >
           {hasExistingProfile ? 'Manage Profile' : 'Create Profile'}
         </Button>
 

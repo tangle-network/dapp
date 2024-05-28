@@ -3,13 +3,11 @@ import {
   HiddenValueEye,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { InfoIconWithTooltip } from '..';
 
 const Balance: FC = () => {
   const { transferable: balance } = useBalances();
@@ -21,21 +19,6 @@ const Balance: FC = () => {
   const parts = formattedBalance?.split(' ');
   const prefix = parts?.[0] ?? '--';
   const suffix = parts?.[1] ?? nativeTokenSymbol;
-
-  const formattedExtendedBalance = useMemo(() => {
-    if (balance === null) {
-      return null;
-    }
-
-    const amount = formatBnToDisplayAmount(balance, {
-      // Show up to 4 decimal places.
-      fractionLength: 4,
-      includeCommas: true,
-      padZerosInFraction: true,
-    });
-
-    return `${amount} ${nativeTokenSymbol}`;
-  }, [balance, nativeTokenSymbol]);
 
   return (
     <div className="flex flex-col w-full gap-5">
@@ -63,10 +46,6 @@ const Balance: FC = () => {
               className="!leading-none pb-1 flex gap-2"
             >
               {suffix}
-
-              {balance !== null && !balance.isZero() && (
-                <InfoIconWithTooltip content={formattedExtendedBalance} />
-              )}
             </Typography>
           </div>
         </div>

@@ -1,14 +1,20 @@
+import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config';
 import { useCallback } from 'react';
+import { map } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useActiveValidators = () => {
-  const { data: activeValidatorAddresses } = usePolkadotApiRx(
-    useCallback((api) => api.query.session.validators(), [])
+  const { result: activeValidatorAddresses } = useApiRx(
+    useCallback((api) => {
+      const electedInfo = api.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED);
+
+      return electedInfo.pipe(map((derive) => derive.nextElected));
+    }, [])
   );
 
-  return useValidators(activeValidatorAddresses, 'Active');
+  return useValidators(activeValidatorAddresses, true);
 };
 
 export default useActiveValidators;

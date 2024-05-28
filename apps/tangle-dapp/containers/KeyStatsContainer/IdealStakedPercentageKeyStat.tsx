@@ -14,10 +14,11 @@ const IdealStakedPercentageKeyStat: FC = () => {
       tooltip="Ideal proportion of tokens staked to secure the network and sustain active token trade and usage."
       className="!border-b-0"
       suffix="%"
+      showDataBeforeLoading
       isLoading={isLoading}
       error={error}
     >
-      {data?.value1}
+      {data?.value1 ?? '--'}
     </KeyStatsItem>
   );
 };

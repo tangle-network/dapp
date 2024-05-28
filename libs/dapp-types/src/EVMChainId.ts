@@ -22,9 +22,9 @@ export enum EVMChainId {
   TangleMainnetEVM = 5845,
 
   /** Local EVM */
-  HermesLocalnet = 5001,
-  AthenaLocalnet = 5002,
-  DemeterLocalnet = 5003,
+  HermesLocalnet = 3884533462,
+  AthenaLocalnet = 3884533461,
+  DemeterLocalnet = 3884533463,
 }
 
 export default EVMChainId;

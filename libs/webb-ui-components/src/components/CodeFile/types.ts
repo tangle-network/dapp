@@ -1,8 +1,24 @@
 export interface CodeFileProps {
   /**
-   * The function to fetch the code file
+   * The source code
    */
-  getCodeFileFnc: () => Promise<string>;
+  code: string;
+
+  /**
+   * Loading state (optional)
+   */
+  isLoading?: boolean;
+
+  /**
+   * Error when loading code (optional)
+   */
+  error?: Error | null;
+
+  /**
+   * The function to fetch the source code (optional)
+   */
+  fetchCodeFnc?: () => Promise<void>;
+
   /**
    * The programming language of the code file (optional)
    */

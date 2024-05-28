@@ -1,125 +1,80 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
-import {
-  PalletStakingValidatorPrefs,
-  SpStakingExposure,
-} from '@polkadot/types/lookup';
-import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import { Validator } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
-import useCurrentEra from '../staking/useCurrentEra';
-import useValidatorsPrefs from '../staking/useValidatorsPrefs';
+import createValidator from '../../utils/staking/createValidator';
+import useAllRestakingLedgers from '../restaking/useAllRestakingLedgers';
+import useRestakingJobIdMap from '../restaking/useRestakingJobIdMap';
+import useStakingExposures2 from '../staking/useStakingExposures2';
+import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
 
 export const useValidators = (
   addresses: AccountId32[] | null,
-  status: 'Active' | 'Waiting'
+  isActive: boolean
 ): Validator[] | null => {
-  const { nativeTokenSymbol } = useNetworkStore();
-  const { data: currentEra } = useCurrentEra();
-  const { data: identityNames } = useValidatorIdentityNames();
-  const { data: validatorPrefs } = useValidatorsPrefs();
+  const { result: identityNames } = useValidatorIdentityNames();
+  const { result: validatorPrefs } = useValidatorPrefs();
+  const { result: exposures } = useStakingExposures2(isActive);
+  const { result: restakingLedgers } = useAllRestakingLedgers();
+  const { result: jobIdLookups } = useRestakingJobIdMap();
 
-  const { data: nominations } = usePolkadotApiRx(
+  const { result: nominations } = useApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), [])
   );
 
-  const { data: exposures } = usePolkadotApiRx(
-    useCallback(
-      (api) =>
-        currentEra === null
-          ? null
-          : api.query.staking.erasStakers.entries(currentEra),
-      [currentEra]
-    )
+  const { result: activeJobs } = useApiRx(
+    useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
   );
-
-  const mappedExposures = useMemo(() => {
-    const map = new Map<string, SpStakingExposure>();
-    exposures?.forEach(([storageKey, exposure]) => {
-      const accountId = storageKey.args[1].toString();
-      map.set(accountId, exposure);
-    });
-    return map;
-  }, [exposures]);
-
-  // Mapping Validator Preferences
-  const mappedValidatorPrefs = useMemo(() => {
-    const map = new Map<string, PalletStakingValidatorPrefs>();
-    validatorPrefs?.forEach(([storageKey, prefs]) => {
-      const accountId = storageKey.args[0].toString();
-      map.set(accountId, prefs);
-    });
-    return map;
-  }, [validatorPrefs]);
 
   return useMemo(() => {
     if (
       addresses === null ||
       identityNames === null ||
       exposures === null ||
+      restakingLedgers === null ||
       nominations === null ||
-      validatorPrefs === null
+      validatorPrefs === null ||
+      jobIdLookups === null ||
+      activeJobs === null
     ) {
       return null;
     }
 
-    return addresses.map((address) => {
-      const name = identityNames.get(address.toString()) ?? address.toString();
-      const exposure = mappedExposures.get(address.toString());
-      const totalStakeAmount = exposure?.total.unwrap() ?? BN_ZERO;
+    return addresses.map((accountId) =>
+      createValidator({
+        address: accountId.toString(),
+        isActive,
+        identities: identityNames,
+        prefs: validatorPrefs,
+        restakingLedgers,
+        jobs: jobIdLookups,
+        activeJobIds: activeJobs,
+        getExposure: (address) => {
+          const exposure = exposures.get(address);
 
-      const selfStakedAmount = exposure?.own.toBn() ?? BN_ZERO;
-      const selfStakedBalance = formatTokenBalance(
-        selfStakedAmount,
-        nativeTokenSymbol
-      );
+          if (exposure === undefined || exposure.exposureMeta === null) {
+            return undefined;
+          }
 
-      const nominators = nominations.filter(([, nominatorData]) => {
-        if (nominatorData.isNone) {
-          return false;
-        }
-
-        const nominations = nominatorData.unwrap();
-
-        return (
-          nominations.targets &&
-          nominations.targets.some(
-            (target) => target.toString() === address.toString()
-          )
-        );
-      });
-
-      const validatorPref = mappedValidatorPrefs.get(address.toString());
-      const commissionRate = validatorPref?.commission.unwrap().toNumber() ?? 0;
-      const commission = commissionRate / 10_000_000;
-
-      return {
-        address: address.toString(),
-        identityName: name,
-        selfStaked: selfStakedBalance,
-        effectiveAmountStaked: formatTokenBalance(
-          totalStakeAmount,
-          nativeTokenSymbol
-        ),
-        effectiveAmountStakedRaw: totalStakeAmount.toString(),
-        delegations: nominators.length.toString(),
-        commission: commission.toString(),
-        status,
-      };
-    });
+          return {
+            own: exposure.exposureMeta.own.toBn(),
+            total: exposure.exposureMeta.total.toBn(),
+            nominatorCount: exposure.exposureMeta.nominatorCount.toNumber(),
+          };
+        },
+      })
+    );
   }, [
+    activeJobs,
     addresses,
-    identityNames,
     exposures,
+    identityNames,
+    isActive,
+    jobIdLookups,
     nominations,
+    restakingLedgers,
     validatorPrefs,
-    mappedExposures,
-    mappedValidatorPrefs,
-    nativeTokenSymbol,
-    status,
   ]);
 };

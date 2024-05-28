@@ -1,9 +1,13 @@
 import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 
-const useActiveAccountAddress = () => {
-  const activeAccount = useActiveAccount();
+const useActiveAccountAddress = (): string | null => {
+  const [activeAccount] = useActiveAccount();
 
-  return activeAccount[0]?.address ?? null;
+  if (activeAccount === null) {
+    return null;
+  }
+
+  return activeAccount.address;
 };
 
 export default useActiveAccountAddress;

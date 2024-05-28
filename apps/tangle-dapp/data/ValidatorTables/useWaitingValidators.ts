@@ -1,19 +1,22 @@
+import { DEFAULT_FLAGS_WAITING } from '@webb-tools/dapp-config';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import usePolkadotApiRx from '../../hooks/usePolkadotApiRx';
+import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useWaitingValidators = () => {
-  const { data: waitingValidatorAddresses } = usePolkadotApiRx(
+  const { result: waitingValidatorAddresses } = useApiRx(
     useCallback(
       (api) =>
-        api.derive.staking.waitingInfo().pipe(map((info) => info.waiting)),
+        api.derive.staking
+          .waitingInfo(DEFAULT_FLAGS_WAITING)
+          .pipe(map((derive) => derive.waiting)),
       []
     )
   );
 
-  return useValidators(waitingValidatorAddresses, 'Waiting');
+  return useValidators(waitingValidatorAddresses, false);
 };
 
 export default useWaitingValidators;

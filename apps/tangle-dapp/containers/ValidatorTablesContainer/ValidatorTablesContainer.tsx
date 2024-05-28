@@ -46,7 +46,7 @@ const ValidatorTablesContainer = () => {
         {waitingValidatorsData !== null &&
         waitingValidatorsData.length === 0 ? (
           <TableStatus
-            title="No Validators in Waiting"
+            title="No Waiting Validators"
             description="All validators are currently active. There are no validators in the waiting pool at the moment.
             "
             buttonText="Learn More"
@@ -58,7 +58,7 @@ const ValidatorTablesContainer = () => {
         ) : isWaitingValidatorsLoading ? (
           <ContainerSkeleton />
         ) : (
-          <ValidatorTableContainer data={waitingValidatorsData} />
+          <ValidatorTableContainer isWaiting data={waitingValidatorsData} />
         )}
       </TabContent>
     </TableAndChartTabs>

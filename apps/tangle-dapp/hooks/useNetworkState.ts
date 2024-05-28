@@ -1,9 +1,13 @@
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain } from '@webb-tools/dapp-config';
+import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
   Network,
   NETWORK_MAP,
   NetworkId,
 } from '@webb-tools/webb-ui-components/constants/networks';
+import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import z from 'zod';
 
@@ -37,87 +41,38 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-async function switchNetworkInEvmWallet(network: Network): Promise<void> {
-  // TODO: This is failing with: "Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received: "3799". Perhaps the chainId should be in hex format?
-
-  // Cannot switch networks on EVM wallets if the network
-  // doesn't have a defined chain id or if there is no
-  // EVM wallet extension present.
-  if (
-    window.ethereum === undefined ||
-    network.chainId === undefined ||
-    network.httpRpcEndpoint === undefined
-  ) {
-    return;
-  }
-
-  // Request to switch to the network (if it's already configured in the wallet).
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: network.chainId.toString() }],
-    });
-  } catch (error) {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      error.code !== 4902
-    ) {
-      console.error('Error switching network:', error);
-
-      return;
-    }
-
-    // The network is not added to the wallet, request to add it.
-    try {
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: network.chainId.toString(),
-            rpcUrls: [network.httpRpcEndpoint],
-            chainName: network.name,
-            // TODO: Any other network params?
-          },
-        ],
-      });
-    } catch (addError) {
-      console.error('Error adding network:', addError);
-    }
-  }
-}
-
 const useNetworkState = () => {
+  const { switchChain, activeWallet, chains } = useWebContext();
+
   const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
   const { network, setNetwork } = useNetworkStore();
 
   const {
-    get: getCachedCustomRpcEndpoint,
+    refresh: getCachedCustomRpcEndpoint,
     set: setCachedCustomRpcEndpoint,
     remove: removeCachedCustomRpcEndpoint,
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
   const {
     set: setCachedNetworkId,
-    get: getCachedNetworkId,
+    refresh: getCachedNetworkId,
     remove: removeCachedNetworkId,
   } = useLocalStorage(LocalStorageKey.KNOWN_NETWORK_ID);
 
   // Load the initial network from local storage.
   useEffect(() => {
     const getCachedInitialNetwork = () => {
-      const cachedNetworkName = getCachedNetworkId();
+      const cachedNetworkNameOpt = getCachedNetworkId();
 
       // If the cached network name is present, that indicates that
       // the cached network is a Webb network. Find it in the list of
       // all Webb networks, and return it.
-      if (cachedNetworkName !== null) {
+      if (cachedNetworkNameOpt.value !== null) {
         const parsedNetworkId = z
           .nativeEnum(NetworkId)
-          .safeParse(cachedNetworkName);
+          .safeParse(cachedNetworkNameOpt.value);
 
         if (parsedNetworkId.success) {
           const knownNetwork = NETWORK_MAP[parsedNetworkId.data];
@@ -128,7 +83,7 @@ const useNetworkState = () => {
         }
 
         console.warn(
-          `Could not find an associated network for cached network id: ${cachedNetworkName}, deleting from local storage`
+          `Could not find an associated network for cached network id: ${cachedNetworkNameOpt.value}, deleting from local storage`
         );
 
         removeCachedNetworkId();
@@ -136,13 +91,13 @@ const useNetworkState = () => {
         return DEFAULT_NETWORK;
       }
 
-      const cachedCustomRpcEndpoint = getCachedCustomRpcEndpoint();
+      const cachedCustomRpcEndpointOpt = getCachedCustomRpcEndpoint();
 
       // If a custom RPC endpoint is cached, return it as a custom network.
-      if (cachedCustomRpcEndpoint !== null) {
+      if (cachedCustomRpcEndpointOpt.value !== null) {
         setIsCustom(true);
 
-        return createCustomNetwork(cachedCustomRpcEndpoint);
+        return createCustomNetwork(cachedCustomRpcEndpointOpt.value);
       }
 
       // Otherwise, use the default network.
@@ -182,6 +137,7 @@ const useNetworkState = () => {
         }`
       );
 
+      // Update local storage cache with the new network.
       if (isCustom) {
         removeCachedNetworkId();
         setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
@@ -193,18 +149,41 @@ const useNetworkState = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
 
-      if (isEvm !== null && isEvm) {
-        switchNetworkInEvmWallet(newNetwork);
+      // In case that the new network is an EVM network, either add it
+      // to the list of chains on the EVM wallet (ie. MetaMask), or switch
+      // to it if it's already added.
+      if (
+        isEvm !== null &&
+        isEvm &&
+        newNetwork.evmChainId !== undefined &&
+        newNetwork.httpRpcEndpoint !== undefined &&
+        activeWallet !== undefined
+      ) {
+        // TODO: For local dev, the chain id is set to the testnet's chain id. Which then attempts to switch to the testnet chain, and its RPC url. Changing the way that the provider API works requires extensive changes, so leaving this for later since local dev is not a priority.
+        const typedChainId = calculateTypedChainId(
+          ChainType.EVM,
+          newNetwork.evmChainId
+        );
+
+        const webbChain: Chain | undefined = chains[typedChainId];
+
+        if (webbChain !== undefined) {
+          // This call will automatically switch the chain if it's already added.
+          switchChain(webbChain, activeWallet);
+        }
       }
     },
     [
       network.id,
       setNetwork,
       isEvm,
+      activeWallet,
       removeCachedNetworkId,
       setCachedCustomRpcEndpoint,
       removeCachedCustomRpcEndpoint,
       setCachedNetworkId,
+      chains,
+      switchChain,
     ]
   );
 

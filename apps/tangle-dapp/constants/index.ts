@@ -4,7 +4,11 @@ import {
   TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
 } from '@polkadot/types/lookup';
 
-import { RestakingService } from '../types';
+import {
+  RestakingService,
+  StakingRewardsDestination,
+  StakingRewardsDestinationDisplayText,
+} from '../types';
 
 /**
  * The lock ids are always 8 characters long, due to their representation
@@ -20,25 +24,6 @@ export enum SubstrateLockId {
 
   // TODO: Need to account for the other lock types.
   OTHER = '?other',
-}
-
-/**
- * Stale-while-revalidate (SWR) is a strategy for caching fetch requests.
- *
- * It helps automatically avoid redundant requests if made again before
- * a specified period has elapsed. This can be particularly useful for
- * Polkadot API requests that return Promise objects.
- *
- * Since these requests don't always require real-time data and their
- * responses might not change frequently, caching them for a particular
- * duration can be efficient.
- *
- * [Learn more about SWR](https://swr.vercel.app/)
- */
-export enum SwrBaseKey {
-  ACTIVE_VALIDATORS = 'active-validators',
-  WAITING_VALIDATORS = 'waiting-validators',
-  ACTIVE_VALIDATORS_PAGINATED = 'active-validator-paginated',
 }
 
 export enum StaticAssetPath {
@@ -71,10 +56,58 @@ export enum ChartColor {
   LAVENDER = '#E7E2FF',
 }
 
-export const PAYMENT_DESTINATION_OPTIONS = [
-  'Staked (increase the amount at stake)',
-  'Stash (do not increase the amount at stake)',
-];
+export enum TxName {
+  PAYOUT_ALL = 'payout all stakers',
+  PAYOUT_STAKERS = 'payout stakers',
+  VEST = 'vest',
+  BOND = 'bond',
+  REBOND = 'rebond',
+  UNBOND = 'unbond',
+  BOND_EXTRA = 'bond extra',
+  WITHDRAW_UNBONDED = 'withdraw unbonded',
+  SET_PAYEE = 'set payee',
+  TRANSFER = 'transfer',
+  CHILL = 'chill',
+  NOMINATE = 'nominate',
+  SETUP_NOMINATOR = 'setup nominator',
+  UPDATE_NOMINATOR = 'update nominator',
+  WITHDRAW_EVM_BALANCE = 'withdraw',
+  UPDATE_RESTAKE_PROFILE = 'update restake profile',
+}
+
+export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
+  [
+    StakingRewardsDestinationDisplayText.STAKED,
+    StakingRewardsDestinationDisplayText.STASH,
+  ];
+
+export const STAKING_PAYEE_TEXT_TO_VALUE_MAP: Record<
+  StakingRewardsDestinationDisplayText,
+  StakingRewardsDestination
+> = {
+  [StakingRewardsDestinationDisplayText.STAKED]:
+    StakingRewardsDestination.STAKED,
+  [StakingRewardsDestinationDisplayText.STASH]: StakingRewardsDestination.STASH,
+  [StakingRewardsDestinationDisplayText.CONTROLLER]:
+    StakingRewardsDestination.CONTROLLER,
+  [StakingRewardsDestinationDisplayText.ACCOUNT]:
+    StakingRewardsDestination.ACCOUNT,
+  [StakingRewardsDestinationDisplayText.NONE]: StakingRewardsDestination.NONE,
+};
+
+export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
+  StakingRewardsDestination,
+  StakingRewardsDestinationDisplayText
+> = {
+  [StakingRewardsDestination.STAKED]:
+    StakingRewardsDestinationDisplayText.STAKED,
+  [StakingRewardsDestination.STASH]: StakingRewardsDestinationDisplayText.STASH,
+  [StakingRewardsDestination.CONTROLLER]:
+    StakingRewardsDestinationDisplayText.CONTROLLER,
+  [StakingRewardsDestination.ACCOUNT]:
+    StakingRewardsDestinationDisplayText.ACCOUNT,
+  [StakingRewardsDestination.NONE]: StakingRewardsDestinationDisplayText.NONE,
+};
 
 /**
  * The values are based off [Tangle's `RoleType` enum](https://github.com/webb-tools/tangle/blob/2a60f0382db2a1234c490766381872d2c7243f5e/primitives/src/roles/mod.rs#L40).
