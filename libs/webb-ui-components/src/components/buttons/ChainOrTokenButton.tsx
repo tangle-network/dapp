@@ -20,15 +20,11 @@ const ChainOrTokenButton = forwardRef<
       iconType,
       ...props
     },
-    ref,
+    ref
   ) => {
     const textClsx = useMemo(() => {
-      return twMerge(
-        'font-bold',
-        iconType === 'token' ? 'uppercase' : '',
-        textClassName,
-      );
-    }, [iconType, textClassName]);
+      return twMerge('font-bold', textClassName);
+    }, [textClassName]);
 
     const IconCmp = useMemo(() => {
       return iconType === 'chain' ? ChainIcon : TokenIcon;
@@ -44,20 +40,22 @@ const ChainOrTokenButton = forwardRef<
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
           'dark:hover:bg-mono-0/10',
-          className,
+          className
         )}
         ref={ref}
       >
-        <div className="flex items-center gap-1.5 mr-1 justify-between">
-          {value && (
-            <IconCmp
-              status={status}
-              size="lg"
-              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-              name={value}
-            />
-          )}
-          <p className={textClsx}>{value ?? placeholder}</p>
+        <div className="flex items-center justify-between mr-1">
+          <div className="flex items-center gap-2.5">
+            {value && (
+              <IconCmp
+                status={status}
+                size="lg"
+                className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+                name={value}
+              />
+            )}
+            <p className={textClsx}>{value ?? placeholder}</p>
+          </div>
           {!disabled && (
             <ChevronDown
               size="lg"
@@ -67,7 +65,7 @@ const ChainOrTokenButton = forwardRef<
         </div>
       </button>
     );
-  },
+  }
 );
 
 ChainOrTokenButton.displayName = 'ChainOrTokenButton';
