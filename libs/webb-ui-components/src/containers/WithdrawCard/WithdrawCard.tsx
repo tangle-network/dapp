@@ -1,3 +1,5 @@
+'use client';
+
 import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useEffect, useMemo, useState } from 'react';

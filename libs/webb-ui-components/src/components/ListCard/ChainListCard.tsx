@@ -1,3 +1,5 @@
+'use client';
+
 import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

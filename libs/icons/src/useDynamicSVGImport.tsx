@@ -48,25 +48,22 @@ export function useDynamicSVGImport(
       typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder',
     [name],
   );
+
   const type = useMemo(() => options.type ?? 'token', [options]);
 
   useEffect(() => {
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const module = await import(
-          type === 'token' ? `./tokens/${_name}.svg` : `./chains/${_name}.svg`
-        );
+        const module = await getIcon(type, _name);
         const Icon = module.ReactComponent;
-        setImportedIcon(Icon());
+        setImportedIcon(<Icon />);
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          const module = await import(
-            type === 'token' ? `./tokens/default.svg` : `./chains/default.svg`
-          );
+          const module = await getDefaultIcon(type);
           const Icon = module.ReactComponent;
-          setImportedIcon(Icon());
+          setImportedIcon(<Icon />);
           onCompleted?.(_name, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
@@ -81,4 +78,23 @@ export function useDynamicSVGImport(
   }, [_name, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };
+}
+
+function getIcon(
+  type: 'token' | 'chain',
+  name: string,
+): Promise<typeof import('*.svg')> {
+  if (type === 'token') {
+    return import(`./tokens/${name}.svg`);
+  } else {
+    return import(`./chains/${name}.svg`);
+  }
+}
+
+function getDefaultIcon(type: 'token' | 'chain') {
+  if (type === 'token') {
+    return import('./tokens/default.svg');
+  } else {
+    return import('./chains/default.svg');
+  }
 }

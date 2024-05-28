@@ -1,3 +1,5 @@
+'use client';
+
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';

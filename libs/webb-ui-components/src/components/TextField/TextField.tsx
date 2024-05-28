@@ -143,6 +143,4 @@ const TextField = Object.assign(
   },
 );
 
-export default TextField;
-
 export { TextField, TextFieldRoot, TextFieldSlot, TextFieldInput };

@@ -1,3 +1,5 @@
+'use client';
+
 import { FileCopyLine } from '@webb-tools/icons/FileCopyLine';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';

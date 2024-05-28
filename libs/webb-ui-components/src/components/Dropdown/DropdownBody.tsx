@@ -1,3 +1,5 @@
+'use client';
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import cx from 'classnames';
 import { forwardRef } from 'react';

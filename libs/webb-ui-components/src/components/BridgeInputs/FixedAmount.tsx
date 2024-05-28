@@ -1,3 +1,5 @@
+'use client';
+
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from '@webb-tools/icons/ChevronDown';
 import cx from 'classnames';

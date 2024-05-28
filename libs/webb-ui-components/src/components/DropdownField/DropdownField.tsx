@@ -1,3 +1,5 @@
+'use client';
+
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem';

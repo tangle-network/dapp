@@ -22,7 +22,7 @@ import { getRoundedAmountString, toFixed } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
 import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
-import TextField from '../TextField';
+import { TextField } from '../TextField';
 import { TitleWithInfo } from '../TitleWithInfo';
 import TokenSelector from '../TokenSelector';
 import {
@@ -406,11 +406,10 @@ const TransactionInputCard = Object.assign(
   },
 );
 
-export default TransactionInputCard;
-
 export {
   TransactionButton,
   TransactionChainSelector,
+  TransactionInputCard,
   TransactionInputCardBody,
   TransactionInputCardFooter,
   TransactionInputCardHeader,

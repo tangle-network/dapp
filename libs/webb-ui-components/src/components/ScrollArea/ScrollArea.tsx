@@ -1,3 +1,5 @@
+'use client';
+
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import cx from 'classnames';
 import { FC, forwardRef } from 'react';

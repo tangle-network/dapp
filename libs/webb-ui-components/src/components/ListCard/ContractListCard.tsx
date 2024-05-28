@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo, forwardRef } from 'react';
 import { ExternalLinkLine, Search } from '@webb-tools/icons';
 import { ScrollArea } from '../ScrollArea';

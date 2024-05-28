@@ -1,3 +1,5 @@
+'use client';
+
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useState } from 'react';
 

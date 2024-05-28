@@ -1,3 +1,5 @@
+'use client';
+
 import NextLink from 'next/link';
 import { Fragment } from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';

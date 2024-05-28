@@ -1,3 +1,5 @@
+'use client';
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from '@webb-tools/icons';
 import cx from 'classnames';

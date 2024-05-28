@@ -1,3 +1,5 @@
+'use client';
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

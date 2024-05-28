@@ -1,3 +1,5 @@
+'use client';
+
 import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { forwardRef, useCallback, useMemo, useState } from 'react';

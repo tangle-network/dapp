@@ -9,7 +9,15 @@
       "../../node_modules/vite/client"
     ]
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "../../types/**/*.d.ts"
+  ],
   "exclude": [
+    "**/vite.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
@@ -22,6 +30,5 @@
     "**/*.stories.tsx",
     "**/*.stories.js",
     "**/*.stories.jsx"
-  ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  ]
 }
