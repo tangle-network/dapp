@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
@@ -8,6 +9,8 @@ const usePayoutsAvailability = () => {
     LocalStorageKey.PAYOUTS,
     true
   );
+
+  const { rpcEndpoint } = useNetworkStore();
 
   const address = useSubstrateAddress();
 
@@ -20,8 +23,10 @@ const usePayoutsAvailability = () => {
       return [];
     }
 
-    return cachedPayouts.value[address] || [];
-  }, [address, cachedPayouts]);
+    const payouts = cachedPayouts.value[rpcEndpoint]?.[address];
+
+    return payouts ?? [];
+  }, [address, cachedPayouts, rpcEndpoint]);
 
   const [isPayoutsAvailable, setIsPayoutsAvailable] = useState(false);
 

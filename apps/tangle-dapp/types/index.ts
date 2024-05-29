@@ -236,12 +236,6 @@ export type ExposureMap = Record<
   }
 >;
 
-// TODO: might need to add more metadata here: name, decimals, etc.
-export type BridgeTokenType = {
-  id: string;
-  symbol: string;
-};
-
 export type TokenSymbol = 'tTNT' | 'TNT';
 
 /**

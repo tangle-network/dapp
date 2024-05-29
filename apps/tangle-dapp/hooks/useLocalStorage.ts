@@ -21,7 +21,9 @@ export enum LocalStorageKey {
 }
 
 export type PayoutsCache = {
-  [address: string]: Payout[];
+  [rpcEndpoint: string]: {
+    [address: string]: Payout[];
+  };
 };
 
 export type SubstrateWalletsMetadataEntry = {
