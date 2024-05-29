@@ -31,9 +31,9 @@ export default function useTotalPayoutRewards(
       return [];
     }
 
-    const payouts = cachedPayouts.value[rpcEndpoint][address];
+    const payouts = cachedPayouts.value[rpcEndpoint]?.[address];
 
-    return payouts;
+    return payouts ?? [];
   }, [address, cachedPayouts, rpcEndpoint]);
 
   const [isLoading, setIsLoading] = useState(true);
