@@ -55,14 +55,14 @@ export function useDynamicSVGImport(
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const module = await getIcon(type, _name);
-        const Icon = module.default;
+        const mod = await getIcon(type, _name);
+        const Icon = mod.default;
         setImportedIcon(<Icon />);
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          const module = await getDefaultIcon(type);
-          const Icon = module.default;
+          const mod = await getDefaultIcon(type);
+          const Icon = mod.default;
           setImportedIcon(<Icon />);
           onCompleted?.(_name, Icon);
         } else {
