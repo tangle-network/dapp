@@ -51,7 +51,7 @@ const RecentTxContainer: FC = () => {
       <div className="flex flex-col gap-5 justify-center items-center h-full text-center">
         <Typography variant="body1" className="text-center max-w-lg">
           Welcome to Tangle dApp &mdash; Your portal to managing Tangle Network
-          assets and upcoming AVS Blueprints in Tangle's modular restaking
+          assets and upcoming AVS Blueprints in Tangle&apos;s modular restaking
           infrastructure.
         </Typography>
 
