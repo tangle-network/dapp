@@ -7,7 +7,7 @@ import EVMChainId from '@webb-tools/dapp-types/EVMChainId';
 import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
-const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha].concat(
+const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollSepolia].concat(
   LOCALNET_CHAIN_IDS
 );
 

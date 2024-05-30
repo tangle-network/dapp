@@ -47,7 +47,7 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [PresetTypedChainId.AvalancheFuji]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 20151492,
   },
-  [PresetTypedChainId.ScrollAlpha]: {
+  [PresetTypedChainId.ScrollSepolia]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
   },
 

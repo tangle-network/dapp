@@ -13,7 +13,7 @@ import {
   moonbaseAlpha,
   optimismGoerli,
   polygonMumbai as polygonMumbai_,
-  scrollTestnet,
+  scrollSepolia,
   sepolia,
   type Chain,
 } from 'viem/chains';
@@ -101,9 +101,9 @@ const additionalRpcUrls = {
     'https://avalanche-fuji-c-chain.publicnode.com',
     'https://api.avax-test.network/ext/bc/C/rpc',
   ],
-  [PresetTypedChainId.ScrollAlpha]: [
-    'https://scroll-testnet.blockpi.network/v1/rpc/public',
-    'https://scroll-alphanet.public.blastapi.io',
+  [PresetTypedChainId.ScrollSepolia]: [
+    'https://scroll-sepolia.blockpi.network/v1/rpc/public',
+    'https://scroll-sepolia.public.blastapi.io',
   ],
 };
 
@@ -172,7 +172,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
       default: { http: additionalRpcUrls[PresetTypedChainId.AvalancheFuji] },
     },
   }),
-  [PresetTypedChainId.ScrollAlpha]: mergeChain(scrollTestnet, {
+  [PresetTypedChainId.ScrollSepolia]: mergeChain(scrollSepolia, {
     chainType: ChainType.EVM,
     group: 'scroll',
     tag: 'test',
@@ -183,8 +183,8 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     rpcUrls: {
-      public: { http: additionalRpcUrls[PresetTypedChainId.ScrollAlpha] },
-      default: { http: additionalRpcUrls[PresetTypedChainId.ScrollAlpha] },
+      public: { http: additionalRpcUrls[PresetTypedChainId.ScrollSepolia] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.ScrollSepolia] },
     },
   }),
 

@@ -7,7 +7,7 @@ import { createPublicClient, http } from 'viem';
 import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
-const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha];
+const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollSepolia];
 
 /**
  * Gets the chain object for the given chain id.

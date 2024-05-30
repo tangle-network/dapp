@@ -24,7 +24,7 @@ const maxBlockStepCfg: MaxBlockStepConfigType = {
 
   [PresetTypedChainId.AvalancheFuji]: 2 ** 11,
 
-  [PresetTypedChainId.ScrollAlpha]: 2 ** 20,
+  [PresetTypedChainId.ScrollSepolia]: 2 ** 20,
 };
 
 export default maxBlockStepCfg;

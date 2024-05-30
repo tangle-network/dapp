@@ -84,7 +84,10 @@ export enum PresetTypedChainId {
     EVMChainId.AvalancheFuji
   ),
 
-  ScrollAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha),
+  ScrollSepolia = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.ScrollSepolia
+  ),
 
   // Localnets
   HermesLocalnet = calculateTypedChainId(
