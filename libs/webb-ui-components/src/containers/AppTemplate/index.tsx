@@ -155,7 +155,7 @@ export {
   AppTemplate,
   AppTemplateRoot,
   AppTemplateRoot as Root,
-  AppTemplateContent as AppTemplateContent,
+  AppTemplateContent,
   AppTemplateContent as Content,
   AppTemplateTitle,
   AppTemplateTitle as Title,

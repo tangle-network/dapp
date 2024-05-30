@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React, { Children, ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { IconBase } from './types';
@@ -35,7 +35,7 @@ interface CreateIconOptions extends IconBase {
   /**
    * Default props automatically passed to the component; overwriteable
    */
-  defaultProps?: React.SVGProps<SVGSVGElement>;
+  defaultProps?: ComponentProps<'svg'>;
 }
 
 /**
@@ -69,7 +69,7 @@ export function createIcon(options: CreateIconOptions) {
   // are not enough to prevent squishing, so this must be set.
   const minSizeClassName = getMinSizeClassName(size);
 
-  const Comp: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  const Comp = (props: ComponentProps<'svg'>) => (
     <svg
       viewBox={viewBox}
       width={size_}

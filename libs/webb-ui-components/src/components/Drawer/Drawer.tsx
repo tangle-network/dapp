@@ -1,3 +1,5 @@
+'use client';
+
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Close } from '@webb-tools/icons';
 import cx from 'classnames';

@@ -26,7 +26,7 @@ const TableStatus = ({
         <Typography
           variant="h5"
           fw="bold"
-          className="text-mono-200 dark:text-mono-0 text-center"
+          className="text-center text-mono-200 dark:text-mono-0"
         >
           {title}
         </Typography>
@@ -34,7 +34,7 @@ const TableStatus = ({
         <Typography
           variant="body1"
           fw="semibold"
-          className="text-mono-120 dark:text-mono-80 text-center max-w-2xl"
+          className="max-w-2xl text-center text-mono-120 dark:text-mono-80"
         >
           {description}
         </Typography>

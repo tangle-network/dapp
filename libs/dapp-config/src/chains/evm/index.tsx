@@ -10,7 +10,6 @@ import {
   moonbaseAlpha,
   optimismGoerli,
   polygonMumbai,
-  scrollTestnet,
   sepolia,
 } from 'viem/chains';
 import {
@@ -84,18 +83,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     group: 'avalanche',
     tag: 'test',
-  },
-  [PresetTypedChainId.ScrollAlpha]: {
-    ...scrollTestnet,
-    chainType: ChainType.EVM,
-    group: 'scroll',
-    tag: 'test',
-    contracts: {
-      multicall3: {
-        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-        blockCreated: 2745641,
-      },
-    },
   },
 
   [PresetTypedChainId.TangleMainnetEVM]: {

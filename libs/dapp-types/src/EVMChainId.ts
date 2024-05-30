@@ -15,7 +15,6 @@ export enum EVMChainId {
   PolygonTestnet = 80001,
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
-  ScrollAlpha = 534353,
 
   TangleLocalEVM = 3799,
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values

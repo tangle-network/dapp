@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, type FC, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import isSideBarItemActive from '../../utils/isSideBarItemActive';

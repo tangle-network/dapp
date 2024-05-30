@@ -16,13 +16,13 @@ import {
   DEFAULT_DECIMALS,
   DEFAULT_NATIVE_INDEX,
   ZERO_BIG_INT,
-} from '@webb-tools/dapp-config/src/constants';
+} from '@webb-tools/dapp-config/constants';
 import {
   AddressType,
   AnchorMetadata,
   ICurrency,
-} from '@webb-tools/dapp-config/src/types';
-import ensureHex from '@webb-tools/dapp-config/src/utils/ensureHex';
+} from '@webb-tools/dapp-config/types';
+import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';

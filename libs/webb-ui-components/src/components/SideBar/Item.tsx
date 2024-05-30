@@ -119,19 +119,16 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
                 )}
               </div>
 
-              {isExpanded && (
-                <>
-                  {!isInternal && href && subItems.length <= 0 ? (
-                    <ExternalLinkLine className="hidden group-hover:block !fill-current" />
-                  ) : subItems.length > 0 ? (
-                    isDropdownOpen ? (
-                      <ChevronDown className="!fill-current" />
-                    ) : (
-                      <ChevronUp className="!fill-current" />
-                    )
-                  ) : null}
-                </>
-              )}
+              {isExpanded &&
+                (!isInternal && href && subItems.length <= 0 ? (
+                  <ExternalLinkLine className="hidden group-hover:block !fill-current" />
+                ) : subItems.length > 0 ? (
+                  isDropdownOpen ? (
+                    <ChevronDown className="!fill-current" />
+                  ) : (
+                    <ChevronUp className="!fill-current" />
+                  )
+                ) : null)}
             </div>
           </Link>
         </div>

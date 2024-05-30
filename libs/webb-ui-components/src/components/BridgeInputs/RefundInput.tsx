@@ -1,3 +1,5 @@
+'use client';
+
 import { Transition } from '@headlessui/react';
 import cx from 'classnames';
 import { ComponentProps, FC, useEffect, useState } from 'react';

@@ -1,3 +1,5 @@
+'use client';
+
 import { AccordionTrigger } from '@radix-ui/react-accordion';
 import {
   ArrowRight,

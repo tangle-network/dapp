@@ -39,6 +39,8 @@ Default.args = {
       text: (
         <>
           <span
+            role="img"
+            aria-label="Warning"
             className={'inline-block pr-2'}
             style={{
               fontSize: 18,

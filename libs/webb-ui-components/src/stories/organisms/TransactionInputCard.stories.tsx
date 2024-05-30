@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { useState } from 'react';
-import TransactionInputCard from '../../components/TransactionInputCard';
+import { TransactionInputCard } from '../../components/TransactionInputCard';
 
 const meta: Meta<typeof TransactionInputCard> = {
   title: 'Design System/V2 (WIP)/Organisms/TransactionInputCard',

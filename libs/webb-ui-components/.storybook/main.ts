@@ -1,10 +1,10 @@
 import type { StorybookConfig } from '@storybook/nextjs';
 import path from 'node:path';
 import remarkGfm from 'remark-gfm';
-import webpack from 'webpack';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import rootMain from '../../../.storybook/main';
+import { RuleSetRule } from 'webpack';
 
 export default {
   stories: [
@@ -52,6 +52,35 @@ export default {
       ],
       include: path.resolve(__dirname, '../'),
     });
+
+    config.module?.rules?.forEach((rule) => {
+      if (typeof rule !== 'object' || rule === null) {
+        return;
+      }
+
+      if (!(rule.test instanceof RegExp)) {
+        return;
+      }
+
+      if (!rule.test.test('.svg')) {
+        return;
+      }
+
+      rule.exclude = /\.svg$/;
+    });
+
+    config.module?.rules?.push(
+      {
+        test: /\.svg$/i,
+        type: 'asset',
+        resourceQuery: /url/, // *.svg?url
+      },
+      {
+        test: /\.svg$/i,
+        resourceQuery: { not: [/url/] }, // exclude react component if *.svg?url
+        use: ['@svgr/webpack'],
+      },
+    );
 
     return config;
   },

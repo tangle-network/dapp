@@ -24,7 +24,7 @@ function WithInfo({
     {} as Partial<ComponentProps<typeof TooltipBody>>,
   );
 
-  if (!info) return <>{children}</>;
+  if (!info) return children;
 
   return (
     <Tooltip isOpen={isOpen}>

@@ -11,8 +11,7 @@
         "outputPath": "dist/libs/react-hooks",
         "main": "libs/react-hooks/src/index.ts",
         "tsConfig": "libs/react-hooks/tsconfig.lib.json",
-        "assets": ["libs/react-hooks/*.md"],
-        "generateExportsField": true
+        "assets": ["libs/react-hooks/*.md"]
       }
     },
     "lint": {

@@ -11,8 +11,7 @@
         "outputPath": "dist/libs/abstract-api-provider",
         "main": "libs/abstract-api-provider/src/index.ts",
         "tsConfig": "libs/abstract-api-provider/tsconfig.lib.json",
-        "assets": ["libs/abstract-api-provider/*.md"],
-        "generateExportsField": true
+        "assets": ["libs/abstract-api-provider/*.md"]
       }
     },
     "lint": {

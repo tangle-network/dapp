@@ -279,8 +279,6 @@ const TxProgressor = Object.assign(
   },
 );
 
-export default TxProgressor;
-
 export {
   TxProgressor,
   TxProgressorBody,

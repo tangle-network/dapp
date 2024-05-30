@@ -1,3 +1,5 @@
+'use client';
+
 import { calculateDateProgress, formatDateToUtc } from '../../utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

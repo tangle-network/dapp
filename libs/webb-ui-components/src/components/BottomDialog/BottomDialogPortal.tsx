@@ -1,3 +1,5 @@
+'use client';
+
 import * as Dialog from '@radix-ui/react-dialog';
 import { Close } from '@webb-tools/icons/Close';
 import { forwardRef } from 'react';

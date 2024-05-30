@@ -1,4 +1,4 @@
-import TangleTokenLogo from '@webb-tools/icons/tokens/tnt.svg';
+import TangleTokenLogo from '@webb-tools/icons/tokens/tnt.svg?url';
 import { IconSize } from '@webb-tools/icons/types';
 import Image from 'next/image';
 import { FC } from 'react';

@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import TxProgressor from '@webb-tools/webb-ui-components/components/TxProgressor';
+import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
 import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
 import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/types';

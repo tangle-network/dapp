@@ -1,3 +1,5 @@
+'use client';
+
 import { SnackbarKey, useSnackbar } from 'notistack';
 import React, { useCallback, useEffect } from 'react';
 

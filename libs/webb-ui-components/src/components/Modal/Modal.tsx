@@ -1,3 +1,5 @@
+'use client';
+
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { FC, useCallback, useEffect, useState } from 'react';
 
@@ -24,7 +26,6 @@ export const Modal: FC<DialogPrimitive.DialogProps> = ({
 
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={onOpenChange} {...props}>
-      {/* <Transition.Root show={isOpen}>{children}</Transition.Root> */}
       {children}
     </DialogPrimitive.Root>
   );

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { FC, forwardRef, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';

@@ -1,6 +1,9 @@
 {
   "name": "@webb-tools/webb-ui-components",
   "version": "0.0.3",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
   "description": "Webb UI Component Library",
   "keywords": [
     "webb",
@@ -22,7 +25,10 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "type": "module",
-  "typings": "./src/index.d.ts",
-  "types": "./src/index.d.ts"
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  }
 }

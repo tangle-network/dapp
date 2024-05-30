@@ -125,9 +125,8 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
                   M
                 </Chip>
               </>
-            ) : filterType === 'tokensAndChains' ? (
-              <>{/* Token and Chain selectors */}</>
-            ) : null}
+            ) : // Token and Chain selectors
+            filterType === 'tokensAndChains' ? null : null}
           </div>
         </div>
 

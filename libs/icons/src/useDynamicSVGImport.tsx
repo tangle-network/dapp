@@ -11,12 +11,12 @@ export interface DynamicSVGImportOptions {
    */
   onCompleted?: (
     name: string,
-    SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined,
+    SvgIcon: React.FC<React.SVGProps<SVGElement>> | undefined,
   ) => void;
   /**
    * An optional function for handle error when loading SVG icon
    */
-  onError?: React.ReactEventHandler<SVGSVGElement>;
+  onError?: React.ReactEventHandler<SVGElement>;
 
   /**
    * The type of icon
@@ -36,7 +36,7 @@ export function useDynamicSVGImport(
   options: DynamicSVGImportOptions = {},
 ) {
   const [importedIcon, setImportedIcon] = useState<
-    React.ReactElement<React.SVGProps<SVGSVGElement>, 'svg'> | undefined
+    React.ReactElement<React.SVGProps<SVGElement>, 'svg'> | undefined
   >();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
@@ -48,23 +48,22 @@ export function useDynamicSVGImport(
       typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder',
     [name],
   );
+
   const type = useMemo(() => options.type ?? 'token', [options]);
 
   useEffect(() => {
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const module = await import(`!!@svgr/webpack!../${type}s/${_name}.svg`);
-        const Icon = module.default;
-        setImportedIcon(Icon());
+        const mod = await getIcon(type, _name);
+        const Icon = mod.default;
+        setImportedIcon(<Icon />);
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          const module = await import(
-            `!!@svgr/webpack!../${type}s/default.svg`
-          );
-          const Icon = module.default;
-          setImportedIcon(Icon());
+          const mod = await getDefaultIcon(type);
+          const Icon = mod.default;
+          setImportedIcon(<Icon />);
           onCompleted?.(_name, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
@@ -76,7 +75,26 @@ export function useDynamicSVGImport(
       }
     };
     importIcon();
-  }, [_name, onCompleted, onError]);
+  }, [_name, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };
+}
+
+function getIcon(
+  type: 'token' | 'chain',
+  name: string,
+): Promise<typeof import('*.svg')> {
+  if (type === 'token') {
+    return import(`./tokens/${name}.svg`);
+  } else {
+    return import(`./chains/${name}.svg`);
+  }
+}
+
+function getDefaultIcon(type: 'token' | 'chain') {
+  if (type === 'token') {
+    return import('./tokens/default.svg');
+  } else {
+    return import('./chains/default.svg');
+  }
 }

@@ -1,27 +1,24 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "types": ["node"],
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowJs": true,
-    "skipLibCheck": true,
     "jsx": "react-jsx",
-    "downlevelIteration": true
+    "allowJs": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "types": ["../../node_modules/vite/client", "../../node_modules/vitest"]
   },
   "files": [],
   "include": [],
-  "typeRoots": ["../../node_modules/@types"],
   "references": [
     {
       "path": "./tsconfig.lib.json"
     },
     {
+      "path": "./tsconfig.spec.json"
+    },
+    {
       "path": "./tsconfig.storybook.json"
     }
-  ]
+  ],
+  "extends": "../../tsconfig.base.json"
 }

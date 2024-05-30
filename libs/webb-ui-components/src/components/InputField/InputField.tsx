@@ -1,3 +1,5 @@
+'use client';
+
 import cx from 'classnames';
 import { createContext, forwardRef, useContext, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -116,7 +118,7 @@ const InputFieldInput = forwardRef<
   );
 
   const input = (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col w-full gap-1">
       <Typography
         variant="body1"
         fw="bold"
@@ -125,7 +127,7 @@ const InputFieldInput = forwardRef<
         {title}
       </Typography>
 
-      <div className="flex gap-1 items-center">
+      <div className="flex items-center gap-1">
         {isAddressType && (
           <Avatar
             value={String(value)}
@@ -180,7 +182,5 @@ const InputField = Object.assign(
     Input: InputFieldInput,
   },
 );
-
-export default InputField;
 
 export { InputField, InputFieldRoot, InputFieldSlot, InputFieldInput };

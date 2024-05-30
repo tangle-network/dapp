@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import TxProgressor from '../../components/TxProgressor';
+import { TxProgressor } from '../../components/TxProgressor';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { randEthereumAddress } from '@ngneat/falso';
 

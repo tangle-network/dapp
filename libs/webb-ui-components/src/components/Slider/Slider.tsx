@@ -1,3 +1,5 @@
+'use client';
+
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import cx from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';

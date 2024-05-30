@@ -243,7 +243,7 @@ function RightButtonsContainer(
   } = props;
 
   return (
-    <div className="items-center hidden space-x-2 md:flex">
+    <div className="items-center hidden space-x-2 md:!flex">
       <ActionsDropdown
         buttonText="Manage"
         actionItems={[

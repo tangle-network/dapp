@@ -3,28 +3,25 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/webb-ui-components/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "project": "libs/webb-ui-components/package.json",
-        "outputPath": "dist/libs/webb-ui-components",
-        "entryFile": "libs/webb-ui-components/src/index.ts",
-        "tsConfig": "libs/webb-ui-components/tsconfig.lib.json",
-        "format": ["esm"],
-        "rollupConfig": ["libs/webb-ui-components/rollup.config.mjs"],
-        "external": [
-          "react",
-          "react-dom",
-          "@polkadot/util",
-          "@polkadot/util-crypto",
-          "@polkadot/wasm-crypto",
-          "@polkadot/wasm-bridge",
-          "@webb-tools/sdk-core",
-          "@webb-tools/utils"
-        ],
-        "generateExportsField": true
+        "outputPath": "dist/libs/webb-ui-components"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "publish": {
@@ -34,15 +31,11 @@
       },
       "dependsOn": ["build"]
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/webb-ui-components/jest.config.ts"
+        "reportsDirectory": "../../coverage/libs/webb-ui-components"
       }
     },
     "storybook": {
@@ -70,6 +63,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }
