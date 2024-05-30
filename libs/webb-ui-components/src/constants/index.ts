@@ -82,7 +82,7 @@ export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 
-export const TANGLE_STAKING_URL =
+export const TANGLE_TESTNET_STAKING_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/staking';
 
 export const STAKING_PRECOMPILE_LINK =
