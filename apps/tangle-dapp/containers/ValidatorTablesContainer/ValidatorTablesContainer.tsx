@@ -1,8 +1,7 @@
 'use client';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
-import { TANGLE_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useActiveValidators from '../../data/ValidatorTables/useActiveValidators';
 import useWaitingValidators from '../../data/ValidatorTables/useWaitingValidators';
@@ -12,10 +11,13 @@ const activeValidatorsTableTab = 'Active Validators';
 const waitingValidatorsTableTab = 'Waiting';
 
 const ValidatorTablesContainer = () => {
+  const { network } = useNetworkStore();
   const activeValidatorsData = useActiveValidators();
   const waitingValidatorsData = useWaitingValidators();
   const isActiveValidatorsLoading = activeValidatorsData === null;
   const isWaitingValidatorsLoading = waitingValidatorsData === null;
+
+  const learnMoreUrl = `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking`;
 
   return (
     <TableAndChartTabs
@@ -30,7 +32,8 @@ const ValidatorTablesContainer = () => {
             description="Validators might be in the waiting state. Check back soon."
             buttonText="Learn More"
             buttonProps={{
-              onClick: () => window.open(TANGLE_STAKING_URL, '_blank'),
+              href: learnMoreUrl,
+              target: '_blank',
             }}
             icon="⏳"
           />
@@ -51,7 +54,8 @@ const ValidatorTablesContainer = () => {
             "
             buttonText="Learn More"
             buttonProps={{
-              onClick: () => window.open(TANGLE_STAKING_URL, '_blank'),
+              href: learnMoreUrl,
+              target: '_blank',
             }}
             icon="⏳"
           />
