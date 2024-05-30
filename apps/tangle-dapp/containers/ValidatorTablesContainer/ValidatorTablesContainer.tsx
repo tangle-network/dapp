@@ -1,12 +1,11 @@
 'use client';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
-
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useActiveValidators from '../../data/ValidatorTables/useActiveValidators';
 import useWaitingValidators from '../../data/ValidatorTables/useWaitingValidators';
 import ValidatorTableContainer from './ValidatorTableContainer';
-import useNetworkStore from '../../context/useNetworkStore';
 
 const activeValidatorsTableTab = 'Active Validators';
 const waitingValidatorsTableTab = 'Waiting';
