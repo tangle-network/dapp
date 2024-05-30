@@ -32,7 +32,8 @@ const ValidatorTablesContainer = () => {
             description="Validators might be in the waiting state. Check back soon."
             buttonText="Learn More"
             buttonProps={{
-              onClick: () => window.open(learnMoreUrl, '_blank'),
+              href: learnMoreUrl,
+              target: '_blank',
             }}
             icon="⏳"
           />
@@ -53,7 +54,8 @@ const ValidatorTablesContainer = () => {
             "
             buttonText="Learn More"
             buttonProps={{
-              onClick: () => window.open(learnMoreUrl, '_blank'),
+              href: learnMoreUrl,
+              target: '_blank',
             }}
             icon="⏳"
           />
