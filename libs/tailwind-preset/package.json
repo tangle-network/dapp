@@ -4,6 +4,6 @@
   "dependencies": {},
   "main": "./index.js",
   "module": "./index.mjs",
-  "typings": "./index.d.ts",
+  "types": "./index.d.ts",
   "private": true
 }

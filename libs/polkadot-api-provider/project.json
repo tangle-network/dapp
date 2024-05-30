@@ -11,8 +11,7 @@
         "outputPath": "dist/libs/polkadot-api-provider",
         "main": "libs/polkadot-api-provider/src/index.ts",
         "tsConfig": "libs/polkadot-api-provider/tsconfig.lib.json",
-        "assets": ["libs/polkadot-api-provider/*.md"],
-        "generateExportsField": true
+        "assets": ["libs/polkadot-api-provider/*.md"]
       }
     },
     "lint": {

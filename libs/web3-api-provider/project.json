@@ -11,8 +11,7 @@
         "outputPath": "dist/libs/web3-api-provider",
         "main": "libs/web3-api-provider/src/index.ts",
         "tsConfig": "libs/web3-api-provider/tsconfig.lib.json",
-        "assets": ["libs/web3-api-provider/*.md"],
-        "generateExportsField": true
+        "assets": ["libs/web3-api-provider/*.md"]
       }
     },
     "lint": {

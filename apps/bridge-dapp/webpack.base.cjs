@@ -146,17 +146,6 @@ async function createWebpack(env, mode = 'production') {
                     require.resolve('react-refresh/babel'),
                     { skipEnvCheck: true },
                   ],
-                  /* 'transform-class-properties',
-                  ['@babel/plugin-transform-runtime', { loose: false }],
-                  [
-                    '@babel/plugin-transform-class-properties',
-                    { loose: false },
-                  ],
-                  [
-                    '@babel/plugin-transform-private-property-in-object',
-                    { loose: false },
-                  ],
-                  ['@babel/plugin-transform-private-methods', { loose: false }], */
                 ].filter(Boolean),
               },
             },

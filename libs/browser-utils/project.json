@@ -11,8 +11,7 @@
         "outputPath": "dist/libs/browser-utils",
         "main": "libs/browser-utils/src/index.ts",
         "tsConfig": "libs/browser-utils/tsconfig.lib.json",
-        "assets": ["libs/browser-utils/*.md"],
-        "generateExportsField": true
+        "assets": ["libs/browser-utils/*.md"]
       }
     },
     "lint": {
