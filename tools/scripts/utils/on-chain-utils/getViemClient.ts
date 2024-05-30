@@ -1,13 +1,11 @@
-import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { EVMChainId } from '@webb-tools/dapp-types/src/EVMChainId';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { parseTypedChainId } from '@webb-tools/sdk-core';
-import { Chain } from 'viem';
-import { createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 
 import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
-const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha];
+const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS: Array<number> = [];
 
 /**
  * Gets the chain object for the given chain id.

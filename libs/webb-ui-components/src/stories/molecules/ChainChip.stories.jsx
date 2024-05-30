@@ -190,13 +190,6 @@ Scroll.args = {
   chainName: 'scroll',
 };
 
-export const ScrollAlpha = Template.bind({});
-ScrollAlpha.args = {
-  chainType: 'scroll',
-  chainName: 'scroll alpha',
-  title: 'alpha',
-};
-
 // TANGLE
 export const Tangle = Template.bind({});
 Tangle.args = {
