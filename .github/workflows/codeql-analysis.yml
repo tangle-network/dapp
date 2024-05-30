@@ -2,14 +2,7 @@ name: 'scan 🔎'
 
 on:
   pull_request:
-    branches:
-      [
-        develop,
-        staging,
-        master,
-        feature/**,
-        trung-tin/esm-migration-and-upgrade-deps,
-      ]
+    branches: [develop, staging, master, feature/**]
 
   schedule:
     #        ┌───────────── minute (0 - 59)
