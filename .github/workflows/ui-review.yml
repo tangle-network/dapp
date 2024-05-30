@@ -6,7 +6,7 @@ name: 'visual ✨'
 on:
   pull_request:
     # types: [opened, synchronize, reopened, ready_for_review]
-    branches: [develop, feature/**]
+    branches: [develop, feature/**, trung-tin/esm-migration-and-upgrade-deps]
 
   workflow_dispatch:
 

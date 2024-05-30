@@ -4,6 +4,7 @@ on:
     branches:
       - develop
       - feature/**
+      - trung-tin/esm-migration-and-upgrade-deps
     paths: [
         'libs/webb-ui-components/src/stories/**',
         'libs/webb-ui-components/.storybook/**',

@@ -2,9 +2,23 @@ name: build 🏗️
 
 on:
   pull_request:
-    branches: [develop, staging, master, feature/**]
+    branches:
+      [
+        develop,
+        staging,
+        master,
+        feature/**,
+        trung-tin/esm-migration-and-upgrade-deps,
+      ]
   push:
-    branches: [develop, staging, master, feature/**]
+    branches:
+      [
+        develop,
+        staging,
+        master,
+        feature/**,
+        trung-tin/esm-migration-and-upgrade-deps,
+      ]
 
   workflow_dispatch:
 
