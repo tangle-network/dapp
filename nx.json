@@ -43,11 +43,6 @@
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
     },
-    "@nx/rollup:rollup": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    },
     "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
