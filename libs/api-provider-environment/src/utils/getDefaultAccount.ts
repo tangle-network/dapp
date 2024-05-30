@@ -12,11 +12,11 @@ import type { Connector } from 'wagmi';
 async function getDefaultAccount(
   provider: Connector | InjectedExtension,
 ): Promise<Account> {
-  if ('accounts' in provider) {
-    return getPolkadotAccount(provider);
+  if ('uid' in provider) {
+    return getWeb3Account(provider);
   }
 
-  return getWeb3Account(provider);
+  return getPolkadotAccount(provider);
 }
 
 export default getDefaultAccount;
