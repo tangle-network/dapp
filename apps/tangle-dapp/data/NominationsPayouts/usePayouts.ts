@@ -1,9 +1,11 @@
 'use client';
 
-import { Option } from '@polkadot/types';
+import { Option, u32, Vec } from '@polkadot/types';
 import {
   PalletStakingNominations,
   PalletStakingValidatorPrefs,
+  SpStakingPagedExposureMetadata,
+  SpStakingExposurePage,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -146,10 +148,10 @@ export default function usePayouts(): PayoutData {
       allRewards.map(async (reward) => {
         const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
-        const claimedReward = await apiPromise.query.staking.claimedRewards(
+        const claimedReward = (await apiPromise.query.staking.claimedRewards(
           reward.era,
           reward.validatorAddress
-        );
+        )) as Vec<u32>;
 
         if (claimedReward.length > 0) {
           return undefined;
@@ -172,10 +174,10 @@ export default function usePayouts(): PayoutData {
         }
 
         const erasStakersOverview =
-          await apiPromise.query.staking.erasStakersOverview(
+          (await apiPromise.query.staking.erasStakersOverview(
             reward.era,
             reward.validatorAddress
-          );
+          )) as Option<SpStakingPagedExposureMetadata>;
 
         const validatorTotalStake = !erasStakersOverview.isNone
           ? erasStakersOverview.unwrap().total.toBn()
@@ -191,11 +193,11 @@ export default function usePayouts(): PayoutData {
           return undefined;
         }
 
-        const eraStakerPaged = await apiPromise.query.staking.erasStakersPaged(
+        const eraStakerPaged = (await apiPromise.query.staking.erasStakersPaged(
           reward.era,
           reward.validatorAddress,
           0
-        );
+        )) as Option<SpStakingExposurePage>;
 
         if (eraStakerPaged.isNone) {
           return undefined;

@@ -1,3 +1,5 @@
+import '@webb-tools/tangle-substrate-types';
+
 import { Option, StorageKey, u32 } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
