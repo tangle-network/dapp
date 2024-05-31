@@ -193,7 +193,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         cell: (props) => props.getValue(),
       }),
     ],
-    []
+    [],
   );
 
   const tableProps = useMemo<TableOptions<Validator>>(
@@ -259,7 +259,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       getRowId: (row) => row.address,
       autoResetPageIndex: false,
     }),
-    [columns, allValidators, pagination, rowSelection, searchValue, sorting]
+    [columns, allValidators, pagination, rowSelection, searchValue, sorting],
   );
 
   const table = useReactTable(tableProps);
@@ -305,7 +305,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
 };
 
 type ColumnIdAssertFn = (
-  columnId: string
+  columnId: string,
 ) => asserts columnId is keyof Validator;
 
 const assertColumnId: ColumnIdAssertFn = (columnId) => {
@@ -326,7 +326,7 @@ const assertColumnId: ColumnIdAssertFn = (columnId) => {
 const sortingFn = (
   rowA: Row<Validator>,
   rowB: Row<Validator>,
-  columnId: string
+  columnId: string,
 ) => {
   assertColumnId(columnId);
 

@@ -62,7 +62,7 @@ const DropdownField = ({
         <DropdownBody
           className={twMerge(
             'max-w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4',
-            dropdownBodyClassName
+            dropdownBodyClassName,
           )}
         >
           <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
