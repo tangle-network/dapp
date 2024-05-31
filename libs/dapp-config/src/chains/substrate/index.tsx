@@ -138,4 +138,28 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
+
+  [PresetTypedChainId.RococoPhala]: {
+    chainType: ChainType.Substrate,
+    id: SubstrateChainId.RococoPhala,
+    name: 'Rococo-phala',
+    group: 'phala',
+    tag: 'live',
+    nativeCurrency: {
+      name: 'Phala',
+      symbol: 'PHA',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rhala-node.phala.network/ws'],
+      },
+      public: {
+        http: [],
+        webSocket: ['wss://rhala-node.phala.network/ws'],
+      },
+    },
+    env: ['development'],
+  },
 };
