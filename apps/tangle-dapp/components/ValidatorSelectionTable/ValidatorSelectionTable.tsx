@@ -310,9 +310,14 @@ type ColumnIdAssertFn = (
 
 const assertColumnId: ColumnIdAssertFn = (columnId) => {
   if (
-    !['address', 'effectiveAmountStaked', 'delegations', 'commission'].includes(
-      columnId
-    )
+    ![
+      'address',
+      'effectiveAmountStaked',
+      'delegations',
+      'commission',
+      'nominatorCount',
+      'totalStakeAmount',
+    ].includes(columnId)
   ) {
     throw new Error(`Invalid columnId: ${columnId}`);
   }

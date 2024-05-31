@@ -13,6 +13,7 @@ const DropdownField = ({
   selectedItem,
   setSelectedItem,
   className,
+  dropdownBodyClassName,
 }: DropdownFieldProps) => {
   const handleValueChange = useCallback(
     (selectedItem: string) => {
@@ -56,7 +57,12 @@ const DropdownField = ({
           </div>
         </DropdownBasicButton>
 
-        <DropdownBody className="w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4">
+        <DropdownBody
+          className={twMerge(
+            'max-w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4',
+            dropdownBodyClassName
+          )}
+        >
           <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
             {items.map((item, i) => (
               <RadioItem key={`${item}-${i}`} value={item} asChild>
