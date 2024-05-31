@@ -22,7 +22,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({ amount, className }) => {
     <span
       className={twMerge(
         'text-mono-140 dark:text-mono-40 whitespace-nowrap block text-center',
-        className
+        className,
       )}
     >
       {integerPart}

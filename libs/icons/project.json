@@ -3,36 +3,33 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/icons/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/rollup:rollup",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "project": "libs/icons/package.json",
-        "outputPath": "dist/libs/icons",
-        "entryFile": "libs/icons/src/index.ts",
-        "tsConfig": "libs/icons/tsconfig.lib.json",
-        "format": ["esm", "cjs"],
-        "rollupConfig": ["libs/icons/rollup.config.js"],
-        "external": ["react", "react-dom"],
-        "updateBuildableProjectDepsInPackageJson": true
-      }
-    },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/eslint:lint"
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "lintFilePatterns": ["libs/icons/**/*.ts"]
+        "outputPath": "dist/libs/icons"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/icons/jest.config.ts",
-        "passWithNoTests": true
+        "reportsDirectory": "../../coverage/libs/icons"
       }
     }
-  },
-  "tags": []
+  }
 }

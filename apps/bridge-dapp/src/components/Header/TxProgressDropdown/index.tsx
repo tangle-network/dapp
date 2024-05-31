@@ -30,7 +30,7 @@ const TxProgressDropdown = () => {
 
   const isOnAccountPage = useMemo(
     () => pathname.includes(`/${NOTE_ACCOUNT_PATH}`),
-    [pathname]
+    [pathname],
   );
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const useSortedTxQueue = (txQueue: Array<TransactionExecutor<unknown>>) => {
       txQueue
         .slice()
         .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
-    [txQueue]
+    [txQueue],
   );
 };
 
@@ -89,5 +89,5 @@ const getPillStatus = (txStatus: TransactionItemStatus): LoadingPillStatus =>
   txStatus === 'completed'
     ? 'success'
     : txStatus === 'warning'
-    ? 'error'
-    : 'loading';
+      ? 'error'
+      : 'loading';

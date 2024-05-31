@@ -21,14 +21,14 @@ import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 
 export abstract class WebbRelayerManager<
   Provider extends WebbProviderType,
-  CMDKey extends RelayerCMDBase
+  CMDKey extends RelayerCMDBase,
 > {
   protected supportedPallet: string | undefined;
 
   protected readonly logger = LoggerService.get('RelayerManager');
 
   private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(
-    null
+    null,
   );
   readonly activeRelayerWatcher: Observable<OptionalActiveRelayer>;
   private _listUpdated = new Subject<void>();
@@ -61,7 +61,7 @@ export abstract class WebbRelayerManager<
 
   abstract mapRelayerIntoActive(
     relayer: OptionalRelayer,
-    typedChainId: number
+    typedChainId: number,
   ): OptionalActiveRelayer;
 
   /*
@@ -73,7 +73,7 @@ export abstract class WebbRelayerManager<
   abstract getRelayersByNote(note: Note): Promise<WebbRelayer[]>;
   abstract getRelayersByChainAndAddress(
     typedChainId: number,
-    address: string
+    address: string,
   ): Array<WebbRelayer>;
 
   /**
@@ -88,8 +88,8 @@ export abstract class WebbRelayerManager<
     api: Provider extends 'polkadot'
       ? ApiPromise
       : Provider extends 'web3'
-      ? GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
-      : never,
+        ? GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
+        : never,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;
@@ -99,7 +99,7 @@ export abstract class WebbRelayerManager<
       treeId: Provider extends 'polkadot' ? number : never;
       palletId: Provider extends 'polkadot' ? number : never;
       tx?: TransactionExecutor<NewNotesTxResult>;
-    }
+    },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -114,7 +114,7 @@ export abstract class WebbRelayerManager<
     leaves: string[],
     targetRoot: string,
     commitment: bigint,
-    tx?: TransactionExecutor<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -125,7 +125,7 @@ export abstract class WebbRelayerManager<
         treeHeight,
         leaves,
         targetRoot,
-        commitment.toString()
+        commitment.toString(),
       );
 
     // If the leafIndex is -1, it means the commitment is not in the tree

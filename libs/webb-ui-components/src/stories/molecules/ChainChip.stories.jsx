@@ -1,4 +1,4 @@
-import { ChainChip } from '../../components';
+import { ChainChip } from '../../components/ChainChip';
 
 export default {
   title: 'Design System/Molecules/ChainChip',
@@ -188,13 +188,6 @@ export const Scroll = Template.bind({});
 Scroll.args = {
   chainType: 'scroll',
   chainName: 'scroll',
-};
-
-export const ScrollAlpha = Template.bind({});
-ScrollAlpha.args = {
-  chainType: 'scroll',
-  chainName: 'scroll alpha',
-  title: 'alpha',
 };
 
 // TANGLE

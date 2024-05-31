@@ -90,7 +90,7 @@ const AddressInput: FC<AddressInputProps> = ({
 
       setValue(newValue);
     },
-    [setValue, type]
+    [setValue, type],
   );
 
   // Set the error message in the parent component.

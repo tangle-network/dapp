@@ -81,7 +81,7 @@ const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
 }) => {
   const sortedTypedChainIds = useMemo(
     () => getSortedTypedChainIds(typedChainIds),
-    [typedChainIds]
+    [typedChainIds],
   );
 
   const columns = useMemo(
@@ -116,10 +116,10 @@ const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
               </Typography>
             );
           },
-        })
+        }),
       ),
     ],
-    [sortedTypedChainIds, prefixUnit]
+    [sortedTypedChainIds, prefixUnit],
   );
 
   const table = useReactTable({

@@ -5,7 +5,7 @@ export default function toAsciiHex(str: Uint8Array): Uint8Array {
     arr.push(
       c < 10
         ? c + 48 // 0
-        : 97 - 10 + c // a
+        : 97 - 10 + c, // a
     );
 
   for (let i = 0, strLen = str.length; i < strLen; i++) {

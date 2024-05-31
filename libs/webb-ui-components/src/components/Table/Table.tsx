@@ -34,7 +34,7 @@ export const Table = <T extends RowData>({
         onRowClick(row);
       };
     },
-    [onRowClick]
+    [onRowClick],
   );
 
   return (
@@ -43,7 +43,7 @@ export const Table = <T extends RowData>({
         <table
           className={twMerge(
             'w-full border-collapse table-auto',
-            tableClassName
+            tableClassName,
           )}
         >
           <thead>
@@ -55,7 +55,7 @@ export const Table = <T extends RowData>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </THeader>
                 ))}
@@ -87,7 +87,7 @@ export const Table = <T extends RowData>({
                         ? null
                         : flexRender(
                             header.column.columnDef.footer,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </THeader>
                   ))}
@@ -104,7 +104,7 @@ export const Table = <T extends RowData>({
           itemsPerPage={table.getState().pagination.pageSize}
           totalItems={Math.max(
             table.getPrePaginationRowModel().rows.length,
-            totalRecords
+            totalRecords,
           )}
           page={table.getState().pagination.pageIndex + 1}
           totalPages={table.getPageCount()}

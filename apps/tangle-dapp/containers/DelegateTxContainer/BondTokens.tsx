@@ -38,7 +38,7 @@ const BondTokens: FC<BondTokensProps> = ({
 
       setPayee(STAKING_PAYEE_TEXT_TO_VALUE_MAP[payeeDisplayText]);
     },
-    [setPayee]
+    [setPayee],
   );
 
   return (

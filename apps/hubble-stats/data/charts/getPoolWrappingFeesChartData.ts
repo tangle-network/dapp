@@ -7,20 +7,20 @@ import { getFormattedDataForBasicChart, serializeEpochData } from '../../utils';
 
 async function getVAnchorWrappingFees(
   vAnchorAddress: string,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ) {
   let wrappingFees: number | undefined;
   try {
     const wrappingFeesVAnchorByChainsData =
       await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChains(
         subgraphUrls,
-        vAnchorAddress
+        vAnchorAddress,
       );
 
     wrappingFees = wrappingFeesVAnchorByChainsData.reduce(
       (fees, vAnchorByChain) =>
         fees + +formatEther(BigInt(vAnchorByChain?.wrappingFee ?? 0)),
-      0
+      0,
     );
   } catch {
     wrappingFees = undefined;
@@ -33,7 +33,7 @@ async function getVAnchorWrappingFeesDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
   numDatesFromStart: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<ChartDataRecord> {
   try {
     const fetchedWrappingFeesData =
@@ -41,7 +41,7 @@ async function getVAnchorWrappingFeesDataByDateRange(
         subgraphUrls,
         vAnchorAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedWrappingFeesData);
@@ -55,7 +55,7 @@ async function getVAnchorWrappingFeesDataByDateRange(
 export default async function getPoolWrappingFeesChartData(
   poolAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   poolWrappingFees?: number;
   poolWrappingFeesData: ReturnType<typeof getFormattedDataForBasicChart>;
@@ -68,7 +68,7 @@ export default async function getPoolWrappingFeesChartData(
       poolAddress,
       startingEpoch,
       numDatesFromStart,
-      supportedSubgraphs
+      supportedSubgraphs,
     ),
   ] as const);
 

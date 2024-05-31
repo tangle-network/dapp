@@ -1,5 +1,5 @@
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { LoggerService } from '../logger';
+import LoggerService from '../logger/LoggerService';
 
 const logger = LoggerService.get('cached fetch');
 

@@ -1,7 +1,7 @@
 import { TooManyClaimResponse } from '../types';
 
 const isTooManyClaimResponse = (
-  response: unknown
+  response: unknown,
 ): response is TooManyClaimResponse => {
   if (typeof response !== 'object' || response === null) {
     return false;

@@ -10,7 +10,7 @@ export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
   ({ type, icons, iconSize = 'lg', className, ...props }, ref) => {
     const Icon = useMemo(
       () => (type === 'chain' ? ChainIcon : TokenIcon),
-      [type]
+      [type],
     );
 
     return (
@@ -19,7 +19,7 @@ export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
         className={twMerge(
           'flex items-center -space-x-2',
           getIconsSpacingClassName(iconSize),
-          className
+          className,
         )}
         {...props}
       >
@@ -32,5 +32,5 @@ export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
         ))}
       </div>
     );
-  }
+  },
 );

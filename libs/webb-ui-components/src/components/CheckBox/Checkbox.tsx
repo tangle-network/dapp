@@ -1,10 +1,9 @@
+import { InformationLine } from '@webb-tools/icons/InformationLine';
 import cx from 'classnames';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { InformationLine } from '@webb-tools/icons';
-import { Button } from '../buttons';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip';
+import Button from '../buttons/Button';
 import { CheckBoxProps } from './types';
 
 /**
@@ -65,14 +64,14 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
     inputHoverClsx,
     inputCheckedClsx,
     inputDisabledClsx,
-    className
+    className,
   );
 
   const labelClsx = cx(
     'inline-block peer-disabled:cursor-not-allowed peer-disabled:text-mono-100',
     'text-mono-140 dark:text-mono-20',
     labelVariant,
-    spacingClassName
+    spacingClassName,
   );
 
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);

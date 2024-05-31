@@ -14,7 +14,7 @@ import { StoreData, usePageTitle } from './store';
 /* HOC for set page title */
 const withTitle = (
   component: RouterConfigData['element'],
-  title: string
+  title: string,
 ): FC => {
   const Inner: FC = () => {
     usePageTitle({ content: title });
@@ -93,6 +93,6 @@ export const RouterProvider: FC<Props> = ({ config }) => {
         <Routes config={_config} />
       </Router>
     ),
-    [_config]
+    [_config],
   );
 };

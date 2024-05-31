@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 export const useCurrencyBalance = (
   currencyId: Currency['id'] | null | undefined,
   address?: string,
-  typedChainId?: number
+  typedChainId?: number,
 ): number | null => {
   const { activeAccount, activeApi, activeChain, loading } = useWebContext();
 

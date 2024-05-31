@@ -61,12 +61,12 @@ export function useBlocks(): LatestBlocksValue {
       // Handler for listenting to new/best headers
       const handler = async (): Promise<Array<() => void>> => {
         const unsubscribeNewHeads = await api.rpc.chain.subscribeNewHeads(
-          (lastHeader) => setBestBlock(Number(lastHeader.number))
+          (lastHeader) => setBestBlock(Number(lastHeader.number)),
         );
 
         const unsubscribeFinalizedHeads =
           await api.rpc.chain.subscribeFinalizedHeads((finalizedHeader) =>
-            setFinalizedBlock(Number(finalizedHeader.number))
+            setFinalizedBlock(Number(finalizedHeader.number)),
           );
 
         return [unsubscribeNewHeads, unsubscribeFinalizedHeads];

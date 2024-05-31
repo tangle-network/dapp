@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { MenuItem } from '@webb-tools/webb-ui-components/components';
+import { MenuItem } from '../../components/MenuItem';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

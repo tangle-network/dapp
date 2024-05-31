@@ -48,7 +48,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
       .getChainId()
       .then((evmChainId) => {
         this._currentChainId.next(
-          calculateTypedChainId(ChainType.EVM, evmChainId)
+          calculateTypedChainId(ChainType.EVM, evmChainId),
         );
         this._event.next({
           ready: null,
@@ -60,7 +60,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
 
     inner.on('providerUpdate', ([evmChainId]) => {
       this._currentChainId.next(
-        calculateTypedChainId(ChainType.EVM, evmChainId)
+        calculateTypedChainId(ChainType.EVM, evmChainId),
       );
       this._event.next({
         stateUpdate: null,
@@ -140,19 +140,19 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         name: 'Transaction',
       });
       const wrappableTokenAddress = wrappableToken.getAddress(
-        await this.inner.getChainId()
+        await this.inner.getChainId(),
       );
 
       if (!wrappableTokenAddress) {
         throw new Error(
-          `No wrappable token address for ${wrappableToken.view.name} on selected chain`
+          `No wrappable token address for ${wrappableToken.view.name} on selected chain`,
         );
       }
 
       const account = this.inner.walletClient.account;
       const { request } = await webbFungibleToken.simulate.unwrap(
         [ensureHex(wrappableTokenAddress), amount],
-        { account: account?.address }
+        { account: account?.address },
       );
 
       const txHash = await this.inner.walletClient.writeContract(request);
@@ -270,7 +270,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
 
           const { request } = await wrappableTokenInstance.simulate.approve(
             [webbFungibleToken.address, amount],
-            { account: account.address }
+            { account: account.address },
           );
 
           await this.inner.walletClient.writeContract(request);
@@ -281,7 +281,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
 
       const { request } = await webbFungibleToken.simulate.wrap(
         [wrappableAddress, amount],
-        { account: account.address }
+        { account: account.address },
       );
 
       const txHash = await this.inner.walletClient.writeContract(request);
@@ -326,7 +326,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
   }
 
   fungibleTokenwrapper(
-    currency: Currency
+    currency: Currency,
   ):
     | GetContractReturnType<
         typeof FungibleTokenWrapper__factory.abi,

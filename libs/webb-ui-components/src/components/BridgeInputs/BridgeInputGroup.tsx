@@ -1,6 +1,6 @@
-import { PropsOf } from '../../types';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { PropsOf } from '../../types';
 
 /**
  * The `BridgeInputGroup` component
@@ -25,12 +25,12 @@ export const BridgeInputGroup = forwardRef<HTMLDivElement, PropsOf<'div'>>(
         {...props}
         className={twMerge(
           'p-2 bg-mono-20 dark:bg-mono-160 rounded-lg',
-          className
+          className,
         )}
         ref={ref}
       >
         {children}
       </div>
     );
-  }
+  },
 );

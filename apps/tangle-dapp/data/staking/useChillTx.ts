@@ -12,12 +12,12 @@ import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 const useChillTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING> = useCallback(
     () => ({ functionName: 'chill', arguments: [] }),
-    []
+    [],
   );
 
   const substrateTxFactory: SubstrateTxFactory = useCallback(
     (api, _activeSubstrateAddress) => api.tx.staking.chill(),
-    []
+    [],
   );
 
   return useAgnosticTx<Precompile.STAKING>({

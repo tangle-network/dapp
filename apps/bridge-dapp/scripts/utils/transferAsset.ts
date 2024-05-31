@@ -16,7 +16,7 @@ async function transferAsset(
   sender: KeyringPair,
   recipient: string,
   assetId: number,
-  amount: BN
+  amount: BN,
 ): Promise<string> {
   // If assetId is 0, then interact with balances pallet
   if (assetId === 0) {

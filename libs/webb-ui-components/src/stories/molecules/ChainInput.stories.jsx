@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { ChainInput } from '@webb-tools/webb-ui-components/components';
+import { ChainInput } from '../../components/BridgeInputs/ChainInput';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,9 +13,9 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {};
 
-export const asDestinationChain = Template.bind({});
+export const AsDestinationChain = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-asDestinationChain.args = {
+AsDestinationChain.args = {
   chainType: 'dest',
   chain: {
     name: 'Optimism',
@@ -25,9 +23,9 @@ asDestinationChain.args = {
   },
 };
 
-export const asSourceChain = Template.bind({});
+export const AsSourceChain = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-asSourceChain.args = {
+AsSourceChain.args = {
   chainType: 'source',
   chain: {
     name: 'Ethereum',

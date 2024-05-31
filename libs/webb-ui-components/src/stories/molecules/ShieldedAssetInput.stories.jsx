@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { ShieldedAssetInput } from '@webb-tools/webb-ui-components/components';
+import { ShieldedAssetInput } from '../../components/BridgeInputs/ShieldedAssetInput';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,9 +13,9 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {};
 
-export const withAsset = Template.bind({});
+export const WithAsset = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withAsset.args = {
+WithAsset.args = {
   asset: {
     token1Symbol: 'webb',
     token2Symbol: 'eth',

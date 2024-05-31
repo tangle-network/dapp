@@ -1,8 +1,9 @@
+'use client';
+
 import { Transition } from '@headlessui/react';
 import cx from 'classnames';
 import { ComponentProps, FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { CheckBox } from '../CheckBox';
 import { AmountInput } from './AmountInput';
 import { RefundInputProps } from './types';

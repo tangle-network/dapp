@@ -9,7 +9,7 @@ import { ChainType, ResourceId, toFixedHex } from '@webb-tools/sdk-core';
  */
 export function makeSubstrateTargetSystem(
   treeId: number,
-  palletIndex: string
+  palletIndex: string,
 ): string {
   const rId = new Uint8Array(26);
   const index = hexToU8a(palletIndex).slice(0, 1);
@@ -33,14 +33,14 @@ export const parseSubstrateTargetSystem = (targetSystem: string) => {
 export function createSubstrateResourceId(
   chainId: number,
   treeId: number,
-  palletIndex: string
+  palletIndex: string,
 ): ResourceId {
   const substrateTargetSystem = makeSubstrateTargetSystem(treeId, palletIndex);
   // set resource ID
   const resourceId = new ResourceId(
     substrateTargetSystem,
     ChainType.Substrate,
-    chainId
+    chainId,
   );
   return resourceId;
 }

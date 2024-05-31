@@ -1,12 +1,13 @@
+'use client';
+
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChevronDown, InformationLine } from '@webb-tools/icons';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { Typography } from '../../typography/Typography';
 import { AmountMenu } from '../AmountMenu';
 import { InputWrapper } from '../BridgeInputs/InputWrapper';
-import { Button } from '../buttons';
+import Button from '../buttons/Button';
 import { Dropdown, DropdownBody } from '../Dropdown';
 import { Input } from '../Input/Input';
 import { Label } from '../Label';
@@ -32,7 +33,7 @@ export const AmountInput = forwardRef<
       title = 'Amount',
       ...props
     },
-    ref
+    ref,
   ) => {
     // State to disable the the input when the dropdown is open
     // (to prevent the re-rendering of the dropdown)
@@ -40,7 +41,7 @@ export const AmountInput = forwardRef<
 
     const mergedClsx = useMemo(
       () => twMerge('cursor-auto select-none space-x-2', className),
-      [className]
+      [className],
     );
 
     // The amount menu callback
@@ -48,7 +49,7 @@ export const AmountInput = forwardRef<
       (nextVal: 'fixed' | 'custom') => {
         amountMenuProps?.onChange?.(nextVal);
       },
-      [amountMenuProps]
+      [amountMenuProps],
     );
 
     return (
@@ -137,5 +138,5 @@ export const AmountInput = forwardRef<
         )}
       </>
     );
-  }
+  },
 );

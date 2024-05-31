@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Slider } from '@webb-tools/webb-ui-components/components';
+import { Slider } from '../../components/Slider';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

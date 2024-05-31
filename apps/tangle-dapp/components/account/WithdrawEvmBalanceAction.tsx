@@ -33,7 +33,7 @@ const WithdrawEvmBalanceAction: FC = () => {
       pendingEvmBalance
         ? formatTokenBalance(pendingEvmBalance, nativeTokenSymbol)
         : null,
-    [pendingEvmBalance, nativeTokenSymbol]
+    [pendingEvmBalance, nativeTokenSymbol],
   );
 
   const { execute, status } = useEvmBalanceWithdrawTx(tokenAmountStr);

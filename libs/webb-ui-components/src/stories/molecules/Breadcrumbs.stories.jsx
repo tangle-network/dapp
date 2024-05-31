@@ -1,4 +1,4 @@
-import { Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
+import { Breadcrumbs, BreadcrumbsItem } from '../../components/Breadcrumbs';
 import {
   GridFillIcon,
   KeyIcon,

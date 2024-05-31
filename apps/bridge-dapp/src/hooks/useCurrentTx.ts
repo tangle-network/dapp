@@ -15,7 +15,7 @@ const useCurrentTx = (
      * If true, return the latest tx if the txId is not found
      */
     latest?: boolean;
-  }
+  },
 ) => {
   return useMemo(() => {
     if (typeof txId === 'string') {

@@ -1,43 +1,42 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
-import { ChainType, Note } from '@webb-tools/sdk-core';
-import {
-  WithdrawConfirm,
-  getRoundedAmountString,
-} from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   NewNotesTxResult,
   TransactionExecutor,
   TransactionState,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
+import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { ChainType, Note } from '@webb-tools/sdk-core';
 import { isViemError } from '@webb-tools/web3-api-provider';
+import {
+  WithdrawConfirm,
+  getRoundedAmountString,
+} from '@webb-tools/webb-ui-components';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   ContractFunctionRevertedError,
   Hash,
   formatEther,
   formatUnits,
 } from 'viem';
-import { useEnqueueSubmittedTx } from '../../hooks';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
+import useEnqueueSubmittedTx from '../../hooks/useEnqueueSubmittedTx';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import useWithdrawFeeCalculation from '../../hooks/useWithdrawFeeCalculation';
 import {
-  captureSentryException,
+  getCurrentTimestamp,
   getErrorMessage,
+  getNoteSerializations,
   getTokenURI,
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
-  getNoteSerializations,
-  getCurrentTimestamp,
 } from '../../utils';
-import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { WithdrawConfirmContainerProps } from './types';
 
 const WithdrawConfirmContainer = forwardRef<
@@ -67,7 +66,7 @@ const WithdrawConfirmContainer = forwardRef<
       onClose,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
@@ -109,7 +108,7 @@ const WithdrawConfirmContainer = forwardRef<
       txStatusMessage,
     } = useInProgressTxInfo(
       typeof unwrapCurrency !== 'undefined',
-      onResetState
+      onResetState,
     );
 
     const {
@@ -132,12 +131,12 @@ const WithdrawConfirmContainer = forwardRef<
 
     const poolAddress = useMemo(
       () => apiConfig.anchors[fungibleCurrency.id][targetTypedChainId],
-      [apiConfig, fungibleCurrency.id, targetTypedChainId]
+      [apiConfig, fungibleCurrency.id, targetTypedChainId],
     );
 
     const blockExplorerUrl = useMemo(
       () => chainsConfig[targetTypedChainId]?.blockExplorers?.default.url,
-      [targetTypedChainId]
+      [targetTypedChainId],
     );
 
     const poolExplorerUrl = useMemo(() => {
@@ -146,7 +145,7 @@ const WithdrawConfirmContainer = forwardRef<
         blockExplorerUrl,
         poolAddress,
         'address',
-        'web3'
+        'web3',
       ).toString();
     }, [blockExplorerUrl, poolAddress]);
 
@@ -164,7 +163,7 @@ const WithdrawConfirmContainer = forwardRef<
         gasFeeInfo
           ? parseFloat(formatEther(gasFeeInfo).slice(0, 10))
           : undefined,
-      [gasFeeInfo]
+      [gasFeeInfo],
     );
 
     const relayerFees = useMemo(
@@ -172,20 +171,13 @@ const WithdrawConfirmContainer = forwardRef<
         relayerFeeInfo
           ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
           : undefined,
-      [relayerFeeInfo]
+      [relayerFeeInfo],
     );
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
       async () => {
         if (availableNotes.length === 0 || !vAnchorApi || !activeApi) {
-          captureSentryException(
-            new Error(
-              'No notes available to withdraw or vAnchorApi not available'
-            ),
-            'transactionType',
-            'withdraw'
-          );
           return;
         }
 
@@ -208,15 +200,10 @@ const WithdrawConfirmContainer = forwardRef<
 
         const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
           tokenSymbol,
-          +destTypedChainId
+          +destTypedChainId,
         );
         if (!currency) {
           console.error(`Currency not found for symbol ${tokenSymbol}`);
-          captureSentryException(
-            new Error(`Currency not found for symbol ${tokenSymbol}`),
-            'transactionType',
-            'withdraw'
-          );
           return;
         }
         const tokenURI = getTokenURI(currency, destTypedChainId);
@@ -254,7 +241,7 @@ const WithdrawConfirmContainer = forwardRef<
           const args = await vAnchorApi.prepareTransaction(
             tx,
             txPayload,
-            unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
+            unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? '',
           );
 
           const outputNotes = changeNote ? [changeNote] : [];
@@ -262,7 +249,7 @@ const WithdrawConfirmContainer = forwardRef<
           let indexBeforeInsert: number | undefined;
           if (changeNote) {
             const nextIdx = Number(
-              await vAnchorApi.getNextIndex(+sourceTypedChainId, currency.id)
+              await vAnchorApi.getNextIndex(+sourceTypedChainId, currency.id),
             );
 
             indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
@@ -274,7 +261,7 @@ const WithdrawConfirmContainer = forwardRef<
             transactionHash = await vAnchorApi.transactWithRelayer(
               activeRelayer,
               args,
-              outputNotes
+              outputNotes,
             );
 
             await handleStoreNote(changeNote, addNoteToNoteManager);
@@ -282,7 +269,7 @@ const WithdrawConfirmContainer = forwardRef<
             enqueueSubmittedTx(
               transactionHash,
               apiConfig.chains[+destTypedChainId],
-              'withdraw'
+              'withdraw',
             );
           } else {
             transactionHash = await vAnchorApi.transact(...args);
@@ -290,7 +277,7 @@ const WithdrawConfirmContainer = forwardRef<
             enqueueSubmittedTx(
               transactionHash,
               apiConfig.chains[+sourceTypedChainId],
-              'transfer'
+              'transfer',
             );
 
             await handleStoreNote(changeNote, addNoteToNoteManager);
@@ -311,7 +298,7 @@ const WithdrawConfirmContainer = forwardRef<
               transactionHash,
               changeNote,
               indexBeforeInsert,
-              sourceIdentifyingData
+              sourceIdentifyingData,
             );
 
             await removeNoteFromNoteManager(changeNote);
@@ -320,7 +307,7 @@ const WithdrawConfirmContainer = forwardRef<
 
           // Cleanup NoteAccount state
           await Promise.all(
-            availableNotes.map((note) => removeNoteFromNoteManager(note))
+            availableNotes.map((note) => removeNoteFromNoteManager(note)),
           );
 
           // add new TRANSFER transaction to client storage
@@ -349,7 +336,7 @@ const WithdrawConfirmContainer = forwardRef<
                   blockExplorerUrl,
                   transactionHash,
                   'tx',
-                  'web3'
+                  'web3',
                 ).toString()
               : undefined,
             sourceTypedChainId: +sourceTypedChainId,
@@ -365,7 +352,7 @@ const WithdrawConfirmContainer = forwardRef<
             errorMessage = error.shortMessage;
 
             const revertError = error.walk(
-              (err) => err instanceof ContractFunctionRevertedError
+              (err) => err instanceof ContractFunctionRevertedError,
             );
 
             if (revertError instanceof ContractFunctionRevertedError) {
@@ -374,12 +361,10 @@ const WithdrawConfirmContainer = forwardRef<
           }
 
           tx.fail(errorMessage);
-
-          captureSentryException(error, 'transactionType', 'withdraw');
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi, addNewTransaction, blockExplorerUrl, refundToken, relayerFees, gasFees]
+      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, inProgressTxId.length, onResetState, recipient, refundAmount, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, txQueueApi, unwrapCurrency, vAnchorApi, addNewTransaction, blockExplorerUrl, refundToken, relayerFees, gasFees],
     );
 
     const formattedFee = useMemo(() => {
@@ -389,7 +374,7 @@ const WithdrawConfirmContainer = forwardRef<
         const formattedRelayerFee = getRoundedAmountString(
           Number(feeInEthers),
           3,
-          { roundingFunction: Math.round }
+          { roundingFunction: Math.round },
         );
         return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
       }
@@ -418,8 +403,8 @@ const WithdrawConfirmContainer = forwardRef<
           children: inProgressTxId
             ? 'Make Another Transaction'
             : unwrapCurrency
-            ? 'Unwrap And Withdraw'
-            : 'Withdraw',
+              ? 'Unwrap And Withdraw'
+              : 'Withdraw',
           onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{
@@ -460,8 +445,8 @@ const WithdrawConfirmContainer = forwardRef<
           txStatus === 'completed'
             ? 'green'
             : txStatus === 'warning'
-            ? 'red'
-            : undefined
+              ? 'red'
+              : undefined
         }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
@@ -475,7 +460,7 @@ const WithdrawConfirmContainer = forwardRef<
             srcChainCfg={apiConfig.chains[sourceTypedChainId]}
             fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
               fungibleCurrency.view.symbol,
-              sourceTypedChainId
+              sourceTypedChainId,
             )}
             activeRelayer={activeRelayer}
             info="Amount deducted from the withdrawal to cover transaction costs within the shielded pool."
@@ -483,7 +468,7 @@ const WithdrawConfirmContainer = forwardRef<
         }
       />
     );
-  }
+  },
 );
 
 export default WithdrawConfirmContainer;

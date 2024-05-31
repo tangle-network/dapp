@@ -3,7 +3,7 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 
 const getExplorerUrlByAddressByChains = (
   address: string,
-  typedChainIds: number[]
+  typedChainIds: number[],
 ): Record<number, string | undefined> => {
   return typedChainIds.reduce((map, typedChainId) => {
     const blockExplorerUrl =
@@ -16,7 +16,7 @@ const getExplorerUrlByAddressByChains = (
             blockExplorerUrl,
             address,
             'address',
-            'web3'
+            'web3',
           ).toString()
         : undefined,
     };

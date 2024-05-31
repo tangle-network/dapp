@@ -48,7 +48,7 @@ export const RunCircuitServiceModalTrigger: FC<
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedRadioItemId, setSelectedRadioItemId] = useState<string | null>(
-    null
+    null,
   );
 
   const router = useRouter();
@@ -56,12 +56,12 @@ export const RunCircuitServiceModalTrigger: FC<
   const handleContinue = useCallback(() => {
     assert(
       circuitFilePath !== undefined,
-      'Circuit file path should not be undefined if the user was able to run a service.'
+      'Circuit file path should not be undefined if the user was able to run a service.',
     );
 
     if (selectedRadioItemId === RadioItem.ProofGenerationService) {
       router.push(
-        createProofGenerationUrl(owner, repositoryName, circuitFilePath)
+        createProofGenerationUrl(owner, repositoryName, circuitFilePath),
       );
     }
 

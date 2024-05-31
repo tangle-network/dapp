@@ -44,7 +44,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     (error: string | null) => {
       setHasErrors(error !== null);
     },
-    [setHasErrors]
+    [setHasErrors],
   );
 
   const closeModalAndReset = useCallback(() => {

@@ -13,7 +13,7 @@ async function getVAnchorDepositDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
   numDatesFromStart: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<ChartDataRecord> {
   try {
     const fetchedDepositData =
@@ -21,7 +21,7 @@ async function getVAnchorDepositDataByDateRange(
         subgraphUrls,
         vAnchorAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedDepositData);
@@ -35,7 +35,7 @@ async function getVAnchorWithdrawalDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
   numDatesFromStart: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<ChartDataRecord> {
   try {
     const fetchedWithdrawalData =
@@ -43,7 +43,7 @@ async function getVAnchorWithdrawalDataByDateRange(
         subgraphUrls,
         vAnchorAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedWithdrawalData);
@@ -58,7 +58,7 @@ export default async function getPoolVolumeChartData(
   poolAddress: string,
   startingEpoch: number,
   epochNow: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   poolDeposit24h?: number;
   poolVolumeData: ReturnType<typeof getFormattedDataForVolumeChart>;
@@ -71,19 +71,19 @@ export default async function getPoolVolumeChartData(
         poolAddress,
         epochNow - EPOCH_DAY_INTERVAL,
         epochNow,
-        subgraphUrls
+        subgraphUrls,
       ),
       getVAnchorDepositDataByDateRange(
         poolAddress,
         startingEpoch,
         numDatesFromStart,
-        subgraphUrls
+        subgraphUrls,
       ),
       getVAnchorWithdrawalDataByDateRange(
         poolAddress,
         startingEpoch,
         numDatesFromStart,
-        subgraphUrls
+        subgraphUrls,
       ),
     ] as const);
 
@@ -91,7 +91,7 @@ export default async function getPoolVolumeChartData(
     poolDeposit24h,
     poolVolumeData: getFormattedDataForVolumeChart(
       poolDepositData,
-      poolWithdrawalData
+      poolWithdrawalData,
     ),
   };
 }

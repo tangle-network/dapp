@@ -21,7 +21,7 @@ const getTimeDetailByEpoch = (epoch: number): string => {
     const date = new Date(epoch * 1000);
     const day = date.getDate().toString().padStart(2, '0');
     const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
-      date
+      date,
     );
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');

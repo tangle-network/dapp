@@ -124,11 +124,11 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
       pageIndex,
       pageSize,
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize],
   );
 
   const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>(
-    'all'
+    'all',
   );
   const countriesQuery = useCountriesQuery();
   const countries = useMemo<string[]>(() => {
@@ -164,7 +164,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
       selectedCountries,
       countries,
       globalFilter,
-    ]
+    ],
   );
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -179,7 +179,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
 
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
-    [pageSize, totalItems]
+    [pageSize, totalItems],
   );
 
   const table = useReactTable<AuthorityListItem>({

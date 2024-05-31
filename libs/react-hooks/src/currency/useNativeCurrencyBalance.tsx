@@ -16,12 +16,12 @@ export const useNativeCurrencyBalance = () => {
 
     const typedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.id
+      activeChain.id,
     );
 
     const nativeCurrency = getNativeCurrencyFromConfig(
       activeApi.config.currencies,
-      typedChainId
+      typedChainId,
     );
     if (!nativeCurrency) {
       console.log('Not native currency found for chain ', activeChain);

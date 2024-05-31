@@ -13,7 +13,7 @@ export const downloadNotes = (notes: Note[]): boolean => {
     downloadString(
       JSON.stringify(serializedNotes),
       `notes-${Date.now()}.json`,
-      '.json'
+      '.json',
     );
     return true;
   } catch (error) {

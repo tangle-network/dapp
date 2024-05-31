@@ -99,11 +99,11 @@ type StatusKey = TransactionState;
 
 export type TransactionStatusValue<
   Key extends StatusKey,
-  DonePayload = any
+  DonePayload = any,
 > = TransactionStatusMap<DonePayload>[Key];
 
 type ExecutorClosure<DonePayload> = (
-  next: TransactionExecutor<DonePayload>['next']
+  next: TransactionExecutor<DonePayload>['next'],
 ) => void | Promise<DonePayload>;
 
 /**
@@ -130,7 +130,7 @@ export type TransactionMetaData = {
 
 type PromiseExec<T> = (
   resolve: (value: T | PromiseLike<T>) => void,
-  reject: (reason?: any) => void
+  reject: (reason?: any) => void,
 ) => void;
 
 export class TransactionExecutor<DonePayload> extends Promise<DonePayload> {
@@ -145,7 +145,7 @@ export class TransactionExecutor<DonePayload> extends Promise<DonePayload> {
 
   // Find the max step in the transactionStepMap
   public readonly totalSteps = Object.values(
-    transactionStepMap[this.name]
+    transactionStepMap[this.name],
   ).reduce((prev, cur) => (cur > prev ? cur : prev), 0);
 
   // 0 for the initial step
@@ -158,16 +158,16 @@ export class TransactionExecutor<DonePayload> extends Promise<DonePayload> {
     private readonly _status: BehaviorSubject<
       [
         StatusKey,
-        TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
+        TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>],
       ]
-    >
+    >,
   ) {
     super(executor);
   }
 
   static new<T>(
     name: TransactionName,
-    metadata: TransactionMetaData
+    metadata: TransactionMetaData,
   ): TransactionExecutor<T> {
     const status = new BehaviorSubject<
       [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
@@ -201,7 +201,7 @@ export class TransactionExecutor<DonePayload> extends Promise<DonePayload> {
 
   next<Status extends keyof TransactionStatusMap<DonePayload>>(
     status: Status,
-    data: TransactionStatusMap<DonePayload>[Status]
+    data: TransactionStatusMap<DonePayload>[Status],
   ) {
     console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
@@ -233,7 +233,7 @@ export class TransactionExecutor<DonePayload> extends Promise<DonePayload> {
 
   get currentStatus(): [
     TransactionState,
-    TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
+    TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>],
   ] {
     return this._status.value;
   }

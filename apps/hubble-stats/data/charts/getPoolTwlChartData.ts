@@ -7,20 +7,20 @@ import { getFormattedDataForBasicChart, serializeEpochData } from '../../utils';
 
 async function getVAnchorTwl(
   vAnchorAddress: string,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ) {
   let twl: number | undefined;
   try {
     const twlVAnchorByChainsData =
       await vAnchorClient.TWL.GetVAnchorTWLByChains(
         subgraphUrls,
-        vAnchorAddress
+        vAnchorAddress,
       );
 
     twl = twlVAnchorByChainsData.reduce(
       (twl, vAnchorByChain) =>
         twl + +formatEther(BigInt(vAnchorByChain?.total ?? 0)),
-      0
+      0,
     );
   } catch {
     twl = undefined;
@@ -32,7 +32,7 @@ async function getVAnchorTwlDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
   numDatesFromStart: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<ChartDataRecord> {
   try {
     const fetchedTwlData =
@@ -40,7 +40,7 @@ async function getVAnchorTwlDataByDateRange(
         subgraphUrls,
         vAnchorAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedTwlData);
@@ -54,7 +54,7 @@ async function getVAnchorTwlDataByDateRange(
 export default async function getPoolTwlChartData(
   poolAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   currentPoolTwl?: number;
   poolTwlData: ReturnType<typeof getFormattedDataForBasicChart>;
@@ -67,7 +67,7 @@ export default async function getPoolTwlChartData(
       poolAddress,
       startingEpoch,
       numDatesFromStart,
-      supportedSubgraphs
+      supportedSubgraphs,
     ),
   ] as const);
 

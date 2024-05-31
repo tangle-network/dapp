@@ -15,8 +15,8 @@ import {
 const mapIdentitiesToNames = (
   identities: [
     StorageKey<[AccountId32]>,
-    Option<ITuple<[PalletIdentityRegistration, Option<Bytes>]>>
-  ][]
+    Option<ITuple<[PalletIdentityRegistration, Option<Bytes>]>>,
+  ][],
 ): [string, string | null][] =>
   identities.map(([address, identityOpt]) => {
     const info = identityOpt.isNone ? null : identityOpt.unwrap()[0].info;
@@ -34,8 +34,8 @@ const useValidatorIdentityNames = () => {
     useCallback(
       (api) =>
         api.query.identity.identityOf.entries().pipe(map(mapIdentitiesToNames)),
-      []
-    )
+      [],
+    ),
   );
 
   const nameMap = useEntryMap(identityNames, (key) => key);

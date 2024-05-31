@@ -7,7 +7,7 @@ import { AreaChartContainerProps } from './types';
 import AreaChart from '../../../components/charts/AreaChart';
 
 export default function AreaChartContainerClient(
-  props: AreaChartContainerProps
+  props: AreaChartContainerProps,
 ) {
   const { defaultValue, data, heading } = props;
 

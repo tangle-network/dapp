@@ -12,14 +12,14 @@ const DEFAULT_FLAGS_ELECTED = {
 
 const useActualStakedPercentage = () => {
   const { result: totalIssuance } = useApiRx(
-    useCallback((api) => api.query.balances.totalIssuance(), [])
+    useCallback((api) => api.query.balances.totalIssuance(), []),
   );
 
   const { result: electedInfo } = useApiRx(
     useCallback(
       (api) => api.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED),
-      []
-    )
+      [],
+    ),
   );
 
   const totalStakedFromElected = useMemo(() => {
@@ -36,7 +36,7 @@ const useActualStakedPercentage = () => {
 
         return stakedTotal.add(expMetaTotal);
       },
-      BN_ZERO
+      BN_ZERO,
     );
   }, [electedInfo]);
 

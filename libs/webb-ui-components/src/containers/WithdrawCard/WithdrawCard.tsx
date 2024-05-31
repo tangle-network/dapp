@@ -1,13 +1,9 @@
+'use client';
+
 import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-const buttonDescVariantClasses = {
-  info: cx('text-mono-100 dark:text-mono-80'),
-  error: cx('text-red-70 dark:text-red-50'),
-};
-
 import {
   AmountInput,
   BridgeInputGroup,
@@ -24,6 +20,11 @@ import {
 import { useCheckMobile } from '../../hooks';
 import { Typography } from '../../typography';
 import { WithdrawCardProps } from './types';
+
+const buttonDescVariantClasses = {
+  info: cx('text-mono-100 dark:text-mono-80'),
+  error: cx('text-red-70 dark:text-red-50'),
+};
 
 export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
   (
@@ -43,12 +44,12 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       withdrawBtnProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { isMobile } = useCheckMobile();
     // Internal switcher state
     const [switcherChecked, setSwitcherChecked] = useState(
-      () => unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked
+      () => unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked,
     );
 
     // Effect to reset the switcher state when props change
@@ -57,7 +58,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
 
       if (isSub) {
         setSwitcherChecked(
-          unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked
+          unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked,
         );
       }
 
@@ -71,7 +72,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         ...unwrappingAssetInputProps,
         title: 'Unwrap Token',
       }),
-      [unwrappingAssetInputProps]
+      [unwrappingAssetInputProps],
     );
 
     const switcherProps = useMemo<typeof unwrapSwitcherProps>(
@@ -83,7 +84,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           setSwitcherChecked(checked);
         },
       }),
-      [switcherChecked, unwrapSwitcherProps]
+      [switcherChecked, unwrapSwitcherProps],
     );
 
     return (
@@ -91,7 +92,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         {...props}
         className={twMerge(
           'flex flex-col justify-between max-w-[518px] w-full h-full',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -153,7 +154,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               isFullWidth
               className={twMerge(
                 'flex justify-center',
-                withdrawBtnProps?.className
+                withdrawBtnProps?.className,
               )}
             >
               {withdrawBtnProps?.children ?? 'Withdraw'}
@@ -168,7 +169,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               fw="semibold"
               className={cx(
                 'flex items-center',
-                buttonDescVariantClasses[buttonDescVariant]
+                buttonDescVariantClasses[buttonDescVariant],
               )}
             >
               <InformationLine className="!fill-current shrink-0 mr-1" />
@@ -178,7 +179,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 /***********************
@@ -199,7 +200,7 @@ export const WithdrawAmountInput: FC<
         onChange: () => setAmountType('custom'),
       },
     }),
-    [fixedAmountInputProps]
+    [fixedAmountInputProps],
   );
 
   const customAmountProps = useMemo<typeof customAmountInputProps>(
@@ -210,7 +211,7 @@ export const WithdrawAmountInput: FC<
         onChange: () => setAmountType('fixed'),
       },
     }),
-    [customAmountInputProps]
+    [customAmountInputProps],
   );
 
   return (

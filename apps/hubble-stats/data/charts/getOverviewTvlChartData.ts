@@ -6,7 +6,7 @@ import { getTvl } from '../utils';
 
 async function getTvlDataByDateRange(
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<ChartDataRecord> {
   try {
     const fetchedTvlData =
@@ -14,7 +14,7 @@ async function getTvlDataByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedTvlData);
@@ -27,7 +27,7 @@ async function getTvlDataByDateRange(
 
 export default async function getOverviewTvlChartData(
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   currentTvl?: number;
   tvlData: ReturnType<typeof getFormattedDataForBasicChart>;

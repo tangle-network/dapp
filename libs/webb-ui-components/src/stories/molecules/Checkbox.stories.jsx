@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { CheckBox } from '@webb-tools/webb-ui-components/components';
+import { CheckBox } from '../../components/CheckBox';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -16,8 +14,8 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {};
 
-export const isDisabled = Template.bind({});
+export const IsDisabled = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-isDisabled.args = {
+IsDisabled.args = {
   isDisabled: true,
 };

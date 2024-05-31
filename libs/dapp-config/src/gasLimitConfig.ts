@@ -16,7 +16,6 @@ const gasLimitConfig: GasLimitConfigType = {
   [PresetTypedChainId.MoonbaseAlpha]: BigInt(2000000),
   [PresetTypedChainId.Goerli]: BigInt(2000000),
   [PresetTypedChainId.AvalancheFuji]: BigInt(2000000),
-  [PresetTypedChainId.ScrollAlpha]: BigInt(2000000),
 
   // Local Orbit
   [PresetTypedChainId.HermesLocalnet]: BigInt(2000000), // TODO: benchmark gas limit

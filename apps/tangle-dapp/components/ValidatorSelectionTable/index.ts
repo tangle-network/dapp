@@ -1,1 +1,1 @@
-export * from './ValidatorSelectionTable';
+export { default as ValidatorSelectionTable } from './ValidatorSelectionTable';

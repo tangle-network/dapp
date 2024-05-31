@@ -143,7 +143,7 @@ export const MOCK_MPC_PARTICIPANTS: MpcParticipant[] = Array.from(
     location: Location.UsWest,
     slashingIncidents: 0,
     uptime: 100,
-  })
+  }),
 );
 
 export const MOCK_CIRCUIT_FILE_PATH = 'pairing.circom';
@@ -339,7 +339,7 @@ import { ProjectDetailsGitHubInfo } from "../server/projectDetails";
 `;
 
 export const MOCK_PROJECT_GITHUB_INFO = (
-  languageColors: Record<string, string>
+  languageColors: Record<string, string>,
 ): ProjectDetailsGitHubInfo =>
   ({
     fullName: 'webb-tools/tangle',
@@ -408,7 +408,7 @@ export const MOCK_PROJECT_GITHUB_INFO = (
         percentage: 0.1,
       },
     },
-  } satisfies ProjectDetailsGitHubInfo);
+  }) satisfies ProjectDetailsGitHubInfo;
 
 export const MOCK_PROJECT_BASIC_INFO: ProjectBasicInfo = {
   name: 'tangle',

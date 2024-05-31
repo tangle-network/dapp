@@ -148,7 +148,7 @@ type PublicKeyDetailsPage = {
 
 export function sessionFrame(
   timestamp?: string,
-  sessionHeight?: number
+  sessionHeight?: number,
 ): [startDateTime: Date, endTime: Date] | [] {
   if (!timestamp || !sessionHeight) {
     return [];
@@ -185,7 +185,7 @@ export function sessionFrame(
  * */
 export function useKeys(
   reqQuery: PageInfoQuery,
-  currentKey: PublicKey | null | undefined
+  currentKey: PublicKey | null | undefined,
 ): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
   const { sessionHeight } = useStaticConfig();
@@ -259,7 +259,7 @@ export function useKeys(
               items: filteredData.map((node, idx) => {
                 const session = node?.sessions?.nodes[0];
                 const thresholds = thresholdMap(
-                  session ? session.thresholds : { nodes: [] }
+                  session ? session.thresholds : { nodes: [] },
                 );
                 const keyGen = thresholds.KEY_GEN;
                 const signature = thresholds.SIGNATURE;
@@ -276,7 +276,7 @@ export function useKeys(
                     : undefined;
                 const [start, end] = sessionFrame(
                   session?.block?.timestamp,
-                  sessionHeight
+                  sessionHeight,
                 );
                 return {
                   height: String(node?.block?.number),
@@ -366,7 +366,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 const sessionTimeStamp = session?.block?.timestamp;
                 const [start, end] = sessionFrame(
                   sessionTimeStamp,
-                  sessionHeight
+                  sessionHeight,
                 );
 
                 return {
@@ -491,7 +491,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
             .filter((auth) => auth.isBest)
             .map((auth): KeyGenAuthority => {
               const authority = authoritiesUptimes?.find(
-                (item) => item?.authorityId === auth.id
+                (item) => item?.authorityId === auth.id,
               );
               const uptime = authority ? authority.uptime : 0;
               return {
@@ -508,7 +508,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
           const validators = sessionAuthorities.length;
           const [start, end] = sessionFrame(
             session.block?.timestamp,
-            sessionHeight
+            sessionHeight,
           );
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
@@ -545,7 +545,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
         if (val.val) {
           const sessionId = Number(val.val.session);
           const sessionIds = [Math.max(sessionId - 1, 0), sessionId + 1].map(
-            (v) => String(v)
+            (v) => String(v),
           );
           callSessionKeys({
             variables: {

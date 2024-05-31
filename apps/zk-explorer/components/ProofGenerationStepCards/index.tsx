@@ -48,14 +48,14 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
 
   // TODO: Need to fetch MPC participants from the backend. Create a request function for this.
   const [mpcParticipants, setMpcParticipants] = useState<MpcParticipant[]>(
-    MOCK_MPC_PARTICIPANTS
+    MOCK_MPC_PARTICIPANTS,
   );
 
   const [selectedMpcParticipantAddresses, setSelectedMpcParticipantAddresses] =
     useState<string[]>([]);
 
   const [verificationKeyFile, setVerificationKeyFile] = useState<File | null>(
-    null
+    null,
   );
 
   const handleNextStep = useCallback(
@@ -71,27 +71,27 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
 
       assert(
         selectedPlan !== null,
-        'Selected plan should have been selected when the proof generation is initialized'
+        'Selected plan should have been selected when the proof generation is initialized',
       );
 
       assert(
         mpcParticipants.length > 0,
-        'At least one MPC participant should be selected when the proof generation is initialized'
+        'At least one MPC participant should be selected when the proof generation is initialized',
       );
 
       assert(
         r1csFile !== null,
-        'R1CS file should have been uploaded when the proof generation is initialized'
+        'R1CS file should have been uploaded when the proof generation is initialized',
       );
 
       assert(
         provingKeyFile !== null,
-        'Proving key file should have been uploaded when the proof generation is initialized'
+        'Proving key file should have been uploaded when the proof generation is initialized',
       );
 
       assert(
         verificationKeyFile !== null,
-        'Verification key file should have been uploaded when the proof generation is initialized'
+        'Verification key file should have been uploaded when the proof generation is initialized',
       );
 
       const response = await requestProofGeneration({
@@ -116,7 +116,7 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
       selectedMpcParticipantAddresses,
       selectedPlan,
       verificationKeyFile,
-    ]
+    ],
   );
 
   const getColumnKeyAsTitle = useCallback((key: ColumnKey): string => {
@@ -137,12 +137,12 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   const handleMpcParticipantSelection = useCallback(
     (address: string) => {
       const participant = MOCK_MPC_PARTICIPANTS.find(
-        (participant) => participant.address === address
+        (participant) => participant.address === address,
       );
 
       assert(
         participant !== undefined,
-        `MPC participant with address ${address} should exist`
+        `MPC participant with address ${address} should exist`,
       );
 
       const isAlreadySelected =
@@ -150,7 +150,7 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
 
       if (isAlreadySelected) {
         setSelectedMpcParticipantAddresses((current) =>
-          current.filter((address) => address !== participant.address)
+          current.filter((address) => address !== participant.address),
         );
 
         return;
@@ -161,7 +161,7 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         participant.address,
       ]);
     },
-    [selectedMpcParticipantAddresses]
+    [selectedMpcParticipantAddresses],
   );
 
   const columns = useMemo<ColumnDef<RowData>[]>(
@@ -174,7 +174,7 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
             isChecked={props.row.original[ColumnKey.IsChecked]}
             onChange={() =>
               handleMpcParticipantSelection(
-                props.row.original[ColumnKey.Identity]
+                props.row.original[ColumnKey.Identity],
               )
             }
           />
@@ -213,14 +213,14 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         ),
       },
     ],
-    [getColumnKeyAsTitle, handleMpcParticipantSelection]
+    [getColumnKeyAsTitle, handleMpcParticipantSelection],
   );
 
   const convertMpcParticipantToRowData = useCallback(
     (participant: MpcParticipant): RowData => {
       return {
         [ColumnKey.IsChecked]: selectedMpcParticipantAddresses.includes(
-          participant.address
+          participant.address,
         ),
         [ColumnKey.Identity]: participant.address,
         [ColumnKey.Location]: participant.location,
@@ -228,12 +228,12 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
         [ColumnKey.Uptime]: participant.uptime,
       };
     },
-    [selectedMpcParticipantAddresses]
+    [selectedMpcParticipantAddresses],
   );
 
   const rows: RowData[] = useMemo(
     () => mpcParticipants.map(convertMpcParticipantToRowData),
-    [convertMpcParticipantToRowData, mpcParticipants]
+    [convertMpcParticipantToRowData, mpcParticipants],
   );
 
   const mpcParticipantsTableProps = useReactTable({

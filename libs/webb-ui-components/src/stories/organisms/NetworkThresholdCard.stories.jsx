@@ -1,8 +1,6 @@
-import React from 'react';
-
-import { NetworkThresholdsCard } from '@webb-tools/webb-ui-components/components/NetworkThresholdsCard';
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { NetworkThresholdsCard } from '../../components/NetworkThresholdsCard';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 export default {
   title: 'Design System/Organisms/NetworkThresholdsCard',

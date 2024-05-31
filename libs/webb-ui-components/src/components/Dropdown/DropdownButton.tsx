@@ -1,9 +1,10 @@
+'use client';
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { DropdownButtonProps } from './types';
 
 /**
@@ -31,13 +32,13 @@ export const DropdownButton = forwardRef<
             'enabled:radix-state-open:border-blue-40 dark:enabled:radix-state-open:border-blue-70',
             'enabled:radix-state-open:bg-blue-0 dark:enabled:radix-state-open:bg-blue-120',
             size !== 'sm' && 'enabled:radix-state-open:rounded-t-lg',
-            size !== 'sm' && 'enabled:radix-state-open:rounded-b-none'
+            size !== 'sm' && 'enabled:radix-state-open:rounded-b-none',
           ),
-          className
+          className,
         )}
         ref={ref}
       >
-        <div className="flex items-center space-x-1 max-w-full overflow-x-hidden">
+        <div className="flex items-center max-w-full space-x-1 overflow-x-hidden">
           {icon && <span className="text-inherit">{icon}</span>}
           <span
             className={cx('text-inherit', size === 'md' ? 'body1' : 'body2')}

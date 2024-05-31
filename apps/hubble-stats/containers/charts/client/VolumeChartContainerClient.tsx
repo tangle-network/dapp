@@ -7,7 +7,7 @@ import { VolumeChartContainerProps } from './types';
 import VolumeChart from '../../../components/charts/VolumeChart';
 
 export default function VolumeChartContainerClient(
-  props: VolumeChartContainerProps
+  props: VolumeChartContainerProps,
 ) {
   const { deposit24h, data, heading } = props;
 

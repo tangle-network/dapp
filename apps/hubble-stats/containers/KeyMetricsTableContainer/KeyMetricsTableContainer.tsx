@@ -18,22 +18,22 @@ export default function KeyMetricsTableContainer(props: {
 
   const { data: tvlData, isLoading: tvlLoading } = useSWR(
     [getKeyMetricTvlData.name, epochStart, epochNow],
-    ([, ...args]) => getKeyMetricTvlData(...args)
+    ([, ...args]) => getKeyMetricTvlData(...args),
   );
 
   const { data: depositData, isLoading: depositLoading } = useSWR(
     [getKeyMetricDepositData.name, epochNow],
-    ([, ...args]) => getKeyMetricDepositData(...args)
+    ([, ...args]) => getKeyMetricDepositData(...args),
   );
 
   const { data: relayerFeesData, isLoading: relayerFeesLoading } = useSWR(
     getKeyMetricRelayerFeesData.name,
-    getKeyMetricRelayerFeesData
+    getKeyMetricRelayerFeesData,
   );
 
   const { data: wrappingFeesData, isLoading: wrappingFeesLoading } = useSWR(
     getKeyMetricWrappingFeesData.name,
-    getKeyMetricWrappingFeesData
+    getKeyMetricWrappingFeesData,
   );
 
   return (
@@ -41,7 +41,7 @@ export default function KeyMetricsTableContainer(props: {
       className={cx(
         'w-full rounded-lg overflow-hidden',
         'bg-glass dark:bg-glass_dark',
-        'border-2 border-mono-0 dark:border-mono-160'
+        'border-2 border-mono-0 dark:border-mono-160',
       )}
     >
       <div
@@ -49,7 +49,7 @@ export default function KeyMetricsTableContainer(props: {
           'grid gap-1 grid-cols-2 md:grid-cols-4',
           '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
           '[&>div]:even:border-none',
-          'md:[&>div]:even:border-r'
+          'md:[&>div]:even:border-r',
         )}
       >
         <KeyMetricItem

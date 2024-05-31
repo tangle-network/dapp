@@ -2,7 +2,7 @@ import type { InjectedExtension } from '@polkadot/extension-inject/types';
 
 async function getPolkadotBasedWallet(
   appName: string,
-  extensionName: string
+  extensionName: string,
 ): Promise<InjectedExtension | undefined> {
   try {
     const { web3Enable } = await import('@polkadot/extension-dapp');

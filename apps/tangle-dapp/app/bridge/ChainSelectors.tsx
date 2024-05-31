@@ -45,10 +45,10 @@ const ChainSelectors: FC = () => {
           calculateTypedChainId(chain.chainType, chain.id) ===
           calculateTypedChainId(
             newSelectedSourceChain.chainType,
-            newSelectedSourceChain.id
-          )
+            newSelectedSourceChain.id,
+          ),
       ) !== undefined,
-      'New source chain is not available in source chain options when switching chains'
+      'New source chain is not available in source chain options when switching chains',
     );
     setSelectedSourceChain(newSelectedSourceChain);
 
@@ -56,16 +56,16 @@ const ChainSelectors: FC = () => {
       BRIDGE[
         calculateTypedChainId(
           newSelectedSourceChain.chainType,
-          newSelectedSourceChain.id
+          newSelectedSourceChain.id,
         )
       ];
     const newDestinationChainPresetTypedChainId = calculateTypedChainId(
       newSelectedDestinationChain.chainType,
-      newSelectedDestinationChain.id
+      newSelectedDestinationChain.id,
     );
     assert(
       newDestinationChainPresetTypedChainId in newDestinationChainOptions,
-      'New destination chain is not available in destination chain options when switching chains'
+      'New destination chain is not available in destination chain options when switching chains',
     );
     setSelectedDestinationChain(newSelectedDestinationChain);
   }, [

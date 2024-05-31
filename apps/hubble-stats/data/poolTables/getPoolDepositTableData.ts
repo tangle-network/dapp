@@ -11,7 +11,7 @@ import {
 export default async function getPoolDepositTableData(
   poolAddress: string,
   epochNow: number,
-  availableTypedChainIds: number[]
+  availableTypedChainIds: number[],
 ) {
   const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
 
@@ -24,7 +24,7 @@ export default async function getPoolDepositTableData(
           ACTIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress,
           getDateFromEpoch(epochNow - EPOCH_DAY_INTERVAL),
-          getDateFromEpoch(epochNow)
+          getDateFromEpoch(epochNow),
         );
 
       deposit24hByVAnchorByChain = deposit24hData.reduce((deposit, item) => {

@@ -7,7 +7,7 @@ import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
 export default function PoolWrappingFeesChartContainer(
-  props: PoolChartPropsType
+  props: PoolChartPropsType,
 ) {
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
@@ -19,7 +19,7 @@ export default function PoolWrappingFeesChartContainer(
         startingEpoch,
         numDatesFromStart,
       ],
-      ([, ...args]) => getPoolWrappingFeesChartData(...args)
+      ([, ...args]) => getPoolWrappingFeesChartData(...args),
     );
 
   if (isLoading || !poolWrappingFeesData) {

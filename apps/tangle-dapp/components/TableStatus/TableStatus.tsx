@@ -17,7 +17,7 @@ const TableStatus = ({
         'rounded-lg border border-mono-40 dark:border-mono-160',
         'bg-mono-0 dark:bg-mono-180',
         'flex flex-col items-center justify-center gap-6 p-4',
-        className
+        className,
       )}
     >
       <div className="flex flex-col items-center justify-center gap-2 pt-4">
@@ -26,7 +26,7 @@ const TableStatus = ({
         <Typography
           variant="h5"
           fw="bold"
-          className="text-mono-200 dark:text-mono-0 text-center"
+          className="text-center text-mono-200 dark:text-mono-0"
         >
           {title}
         </Typography>
@@ -34,7 +34,7 @@ const TableStatus = ({
         <Typography
           variant="body1"
           fw="semibold"
-          className="text-mono-120 dark:text-mono-80 text-center max-w-2xl"
+          className="max-w-2xl text-center text-mono-120 dark:text-mono-80"
         >
           {description}
         </Typography>

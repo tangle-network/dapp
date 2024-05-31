@@ -9,7 +9,7 @@ import { CurrencyConfig } from '../currencies';
  */
 export const getNativeCurrencyFromConfig = (
   config: Record<number, CurrencyConfig>,
-  typedChainId: number
+  typedChainId: number,
 ): CurrencyConfig | undefined => {
   return Object.values(config)
     .filter((currency) => {
@@ -19,7 +19,7 @@ export const getNativeCurrencyFromConfig = (
       return Array.from(currency.addresses.keys()).find(
         (currentTypedChainId) => {
           return currentTypedChainId === typedChainId;
-        }
+        },
       );
     });
 };

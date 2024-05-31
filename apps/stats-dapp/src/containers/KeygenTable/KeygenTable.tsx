@@ -203,7 +203,7 @@ export const KeygenTable: FC = () => {
       pageIndex,
       pageSize,
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize],
   );
 
   const pageQuery: PageInfoQuery = useMemo(
@@ -212,12 +212,12 @@ export const KeygenTable: FC = () => {
       perPage: pagination.pageSize,
       filter: null,
     }),
-    [pageSize, pagination.pageIndex, pagination.pageSize]
+    [pageSize, pagination.pageIndex, pagination.pageSize],
   );
 
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
-    [pageSize, totalItems]
+    [pageSize, totalItems],
   );
 
   const keysStats = useKeys(pageQuery, currentKey);
@@ -250,7 +250,7 @@ export const KeygenTable: FC = () => {
             signatureThreshold: item.signatureThreshold ?? 0,
             previousKeyId: item.previousKeyId,
             nextKeyId: item.nextKeyId,
-          })
+          }),
         );
     }
     return [] as KeygenType[];
@@ -294,12 +294,12 @@ export const KeygenTable: FC = () => {
       table
         .getHeaderGroups()
         .map((headerGroup) => headerGroup.headers.map((header) => header)),
-    [table]
+    [table],
   );
 
   const [{ column: keygenFilterCol }, { column: signatureFilterCol }] = useMemo(
     () => headers[0].filter((header) => header.column.getCanFilter()),
-    [headers]
+    [headers],
   );
 
   const getSliderDefaultValue = useCallback(
@@ -311,7 +311,7 @@ export const KeygenTable: FC = () => {
             column.getFacetedMinMaxValues()?.[1] ?? 0,
           ]
         : column.getFacetedMinMaxValues() ?? [0, 0],
-    []
+    [],
   );
 
   return (

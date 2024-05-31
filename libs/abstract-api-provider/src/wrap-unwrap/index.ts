@@ -33,7 +33,7 @@ export type WrapperEventType = 'Wrap' | 'Unwrap';
 export abstract class WrapUnwrap<
   T,
   WrapPayload extends Amount = Amount,
-  UnwrapPayload extends Amount = Amount
+  UnwrapPayload extends Amount = Amount,
 > {
   constructor(protected inner: T) {}
 

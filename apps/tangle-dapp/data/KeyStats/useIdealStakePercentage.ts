@@ -9,7 +9,7 @@ import ensureError from '../../utils/ensureError';
 import { getApiPromise } from '../../utils/polkadot';
 
 export default function useIdealStakedPercentage(
-  defaultValue: { value1: number | null } = { value1: null }
+  defaultValue: { value1: number | null } = { value1: null },
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);

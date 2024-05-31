@@ -96,9 +96,9 @@ export const Header: FC<HeaderProps> = ({
                   onClick={() => {
                     window.open(
                       populateDocsUrl(
-                        WEBB_DOC_ROUTES_RECORD.projects['stats-dapp'].overview
+                        WEBB_DOC_ROUTES_RECORD.projects['stats-dapp'].overview,
                       ),
-                      '_blank'
+                      '_blank',
                     );
                   }}
                 >
@@ -150,7 +150,7 @@ const NavButton: FC<PropsWithChildren<{ path: string }>> = ({
             'px-3 py-1.5 font-bold rounded-full body1',
             isActive
               ? 'bg-mono-180 text-mono-20 dark:bg-mono-20 dark:text-mono-160 pointer-events-none'
-              : 'bg-mono-20 text-mono-100 dark:bg-mono-140 dark:text-mono-40'
+              : 'bg-mono-20 text-mono-100 dark:bg-mono-140 dark:text-mono-40',
           )}
         >
           {children}

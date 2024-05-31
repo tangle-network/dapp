@@ -57,14 +57,14 @@ export const TransactionCardFooter: FC<
       cx(
         'py-0 align-middle',
         { 'text-yellow-100 dark:text-yellow-50': hasWarning },
-        { 'text-mono-100': !hasWarning }
+        { 'text-mono-100': !hasWarning },
       ),
-    [hasWarning]
+    [hasWarning],
   );
 
   const showDetails = useMemo(
     () => Boolean(onDetails) && (isLoading || hasWarning),
-    [hasWarning, isLoading, onDetails]
+    [hasWarning, isLoading, onDetails],
   );
 
   const buttonHandler = useCallback(() => {

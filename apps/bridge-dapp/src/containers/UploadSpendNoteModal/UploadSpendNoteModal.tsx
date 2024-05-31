@@ -38,7 +38,7 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
       setSaving(true);
 
       await Promise.all(
-        Object.entries(notes).map(([, note]) => addNoteToNoteManager(note))
+        Object.entries(notes).map(([, note]) => addNoteToNoteManager(note)),
       );
 
       notificationApi({

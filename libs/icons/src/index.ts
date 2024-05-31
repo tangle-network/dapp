@@ -1,3 +1,5 @@
+import './css/styles.css';
+
 export { default as AccountCircleLineIcon } from './AccountCircleLineIcon';
 export { default as ActivityIcon } from './ActivityIcon';
 export * from './AddBoxLineIcon';

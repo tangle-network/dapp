@@ -1,10 +1,8 @@
-import React from 'react';
-
 import {
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
-} from '@webb-tools/webb-ui-components/components';
+} from '../../components/Collapsible';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -14,7 +12,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => (
+const Template = () => (
   <Collapsible>
     <CollapsibleButton>Click to expand</CollapsibleButton>
     <CollapsibleContent>Expanded section</CollapsibleContent>

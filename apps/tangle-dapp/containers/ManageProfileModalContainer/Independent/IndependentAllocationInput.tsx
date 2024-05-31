@@ -105,7 +105,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
     errorOnEmptyValue,
     setAmount,
     minErrorMessage,
-    ERROR_NOT_ENOUGH_BALANCE
+    ERROR_NOT_ENOUGH_BALANCE,
   );
 
   const handleDelete = useCallback(() => {
@@ -123,7 +123,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
       setService(service);
       setIsDropdownVisible(false);
     },
-    [setService]
+    [setService],
   );
 
   const dropdownBody = useMemo(
@@ -151,7 +151,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
             )}
           </div>
         )),
-    [availableServices, handleSetService, min, service]
+    [availableServices, handleSetService, min, service],
   );
 
   // Users can remove roles only if there are no active services

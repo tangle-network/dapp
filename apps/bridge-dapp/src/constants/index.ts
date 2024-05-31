@@ -27,7 +27,7 @@ export const ACTION_BUTTON_PROPS: ButtonProps[] = [
     variant: 'secondary',
     isFullWidth: true,
     href: populateDocsUrl(
-      WEBB_DOC_ROUTES_RECORD.projects['hubble-bridge'].overview
+      WEBB_DOC_ROUTES_RECORD.projects['hubble-bridge'].overview,
     ),
   },
 ];

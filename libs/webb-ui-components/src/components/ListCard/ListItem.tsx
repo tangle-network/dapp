@@ -20,7 +20,7 @@ export const ListItem = forwardRef<
           'hover:bg-blue-10 dark:hover:bg-blue-120': !isDisabled,
           'opacity-50': isDisabled,
         }),
-        className
+        className,
       )}
       ref={ref}
     >

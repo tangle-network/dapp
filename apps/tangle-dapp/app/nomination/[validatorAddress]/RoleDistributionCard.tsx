@@ -31,7 +31,7 @@ const RoleDistributionCard: FC<RoleDistributionCardProps> = ({
 
   const profileType = useMemo(
     () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   const chartData = useMemo(() => {

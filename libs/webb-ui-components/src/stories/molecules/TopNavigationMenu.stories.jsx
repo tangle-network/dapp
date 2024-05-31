@@ -2,7 +2,7 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
-} from '@webb-tools/webb-ui-components/components';
+} from '../../components/NavigationMenu';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

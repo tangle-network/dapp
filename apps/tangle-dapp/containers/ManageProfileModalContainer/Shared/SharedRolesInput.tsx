@@ -34,8 +34,8 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
   const { result: maxRolesPerAccount } = useApi(
     useCallback(
       (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
-      []
-    )
+      [],
+    ),
   );
 
   const canSelectMoreRoles =
@@ -53,7 +53,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
 
       onToggleRole(service);
     },
-    [onToggleRole, servicesWithJobs]
+    [onToggleRole, servicesWithJobs],
   );
 
   const handleSelectService = useCallback(
@@ -64,7 +64,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
 
       onToggleRole(service);
     },
-    [canSelectMoreRoles, onToggleRole, selectedServices]
+    [canSelectMoreRoles, onToggleRole, selectedServices],
   );
 
   const determineIfLocked = useCallback(
@@ -76,7 +76,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
       servicesWithJobs === null ||
       // Cannot remove roles with active jobs.
       servicesWithJobs.includes(service),
-    [canSelectMoreRoles, selectedServices, servicesWithJobs]
+    [canSelectMoreRoles, selectedServices, servicesWithJobs],
   );
 
   const dropdownBody = useMemo(
@@ -101,7 +101,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
               }}
               className={twMerge(
                 'flex items-center justify-between rounded-lg p-2  hover:bg-mono-20 dark:hover:bg-mono-160',
-                !isLocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                !isLocked ? 'cursor-pointer' : 'cursor-not-allowed',
               )}
             >
               <div className="flex items-center justify-center gap-3">
@@ -135,7 +135,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
       selectedServices,
       handleDeselectService,
       handleSelectService,
-    ]
+    ],
   );
 
   // Display a notice if there are services with active
@@ -168,7 +168,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
             color={getChipColorOfServiceType(service)}
             className={twMerge(
               'flex items-center justify-center gap-0 cursor-pointer',
-              isLocked && 'cursor-not-allowed'
+              isLocked && 'cursor-not-allowed',
             )}
             onClick={() => handleDeselectService(service)}
           >

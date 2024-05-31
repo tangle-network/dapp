@@ -1,3 +1,5 @@
+'use client';
+
 import * as Tabs from '@radix-ui/react-tabs';
 
 import { forwardRef } from 'react';
@@ -8,5 +10,5 @@ import { forwardRef } from 'react';
 export const TabContent = forwardRef<HTMLDivElement, Tabs.TabsContentProps>(
   (props, ref) => {
     return <Tabs.Content {...props} ref={ref} />;
-  }
+  },
 );

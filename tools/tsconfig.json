@@ -1,17 +1,6 @@
 {
   "extends": "../tsconfig.base.json",
-  "ts-node": {
-    "transpileOnly": true,
-    "require": ["tsconfig-paths/register"],
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs"
-    }
-  },
   "compilerOptions": {
-    "outDir": "../dist/out-tsc/tools",
-    "module": "commonjs",
-    "target": "es5",
     "types": ["node"],
     "importHelpers": false,
     "allowJs": true

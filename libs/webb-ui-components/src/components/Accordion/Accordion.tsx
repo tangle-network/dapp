@@ -22,5 +22,5 @@ import { AccordionProps } from './types';
 export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
   ({ darkMode, ...props }, ref) => {
     return <AccordionPrimitive.Root {...props} ref={ref} />;
-  }
+  },
 );

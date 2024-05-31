@@ -1,4 +1,4 @@
-const preset = require('@webb-tools/tailwind-preset');
+const preset = require('../../tailwind.preset.cjs');
 
 const { createGlobPatternsForDependencies } = require('@nx/next/tailwind');
 const { join } = require('path');
@@ -9,12 +9,12 @@ module.exports = {
   content: [
     join(
       __dirname,
-      'src/{pages,app,components,containers,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      'src/{pages,app,components,containers,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     join(
       __dirname,
       '../../libs/webb-ui-components',
-      'src/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      'src/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],

@@ -10,7 +10,7 @@ function useExistentialDeposit() {
   const [existentialDeposit, setExistentialDeposit] = useState(BN_ONE);
 
   const { result } = useApi(
-    useCallback(async (api) => api.consts.balances.existentialDeposit, [])
+    useCallback(async (api) => api.consts.balances.existentialDeposit, []),
   );
 
   useEffect(() => {

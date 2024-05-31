@@ -24,9 +24,8 @@ export class PolkadotCrowdloan extends Crowdloan<
 
   async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
     // @ts-ignore
-    const fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(
-      parachainId
-    );
+    const fundInfo: FundInfo =
+      await this.inner.api.query.crowdloan?.funds(parachainId);
     const fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
 
     return {
@@ -46,7 +45,7 @@ export class PolkadotCrowdloan extends Crowdloan<
         contributePayload.parachainId,
         contributePayload.amount,
         undefined, // required
-      ]
+      ],
     );
     console.log('contribute tx', tx);
     const account = await this.inner.accounts.activeOrDefault;

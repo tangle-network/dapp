@@ -1,4 +1,4 @@
-import { Alert } from '@webb-tools/webb-ui-components';
+import { Alert } from '../../components/Alert';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -10,7 +10,7 @@ export const SectionWrapper: FC<PropsWithChildren & { className?: string }> = ({
       className={twMerge(
         'p-4 rounded-lg bg-[rgba(247,248,247,0.80)] dark:bg-mono-170',
         'flex flex-col gap-2',
-        className
+        className,
       )}
     >
       {children}
@@ -25,7 +25,7 @@ export const NoteOrAmountWrapper: FC<
     <div
       className={twMerge(
         'px-3 py-2 rounded-lg bg-[rgba(226,229,235,0.30)] dark:bg-mono-160',
-        className
+        className,
       )}
     >
       {children}

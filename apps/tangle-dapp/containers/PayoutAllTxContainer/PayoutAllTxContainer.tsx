@@ -36,16 +36,16 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
 
   const payoutValidatorsAndEras = useMemo(
     () => validatorsAndEras.slice(0, 10),
-    [validatorsAndEras]
+    [validatorsAndEras],
   );
 
   const allValidators = useMemo(
     () => [
       ...new Set(
-        payoutValidatorsAndEras.map((v) => v.validatorSubstrateAddress)
+        payoutValidatorsAndEras.map((v) => v.validatorSubstrateAddress),
       ),
     ],
-    [payoutValidatorsAndEras]
+    [payoutValidatorsAndEras],
   );
 
   const eraRange = useMemo(() => {
@@ -75,8 +75,8 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
         !payoutValidatorsAndEras.find(
           (v) =>
             v.validatorSubstrateAddress === payout.validator.address &&
-            v.era === payout.era
-        )
+            v.era === payout.era,
+        ),
     );
 
     updatePayouts(updatedPayouts);

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   AddCircleFillIcon,
   AddCircleLineIcon,
@@ -42,7 +44,7 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
       value: valueProp = 0,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [value, setValue] = useState(valueProp);
 
@@ -57,9 +59,9 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
           'group',
           'fill-mono-160 hover:fill-mono-200 disabled:fill-mono-100',
           'dark:fill-mono-40 dark:disabled:fill-mono-120',
-          iconClassName
+          iconClassName,
         ),
-      [iconClassName]
+      [iconClassName],
     );
 
     const handleMinusClick = useCallback(() => {
@@ -141,5 +143,5 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
         </button>
       </div>
     );
-  }
+  },
 );

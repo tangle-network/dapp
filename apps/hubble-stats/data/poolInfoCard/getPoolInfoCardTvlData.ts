@@ -10,7 +10,7 @@ async function getTvl24hByVAnchor(
   poolAddress: string,
   epochStart: number,
   epochNow: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ) {
   try {
     const latestTvlByChains = await Promise.all(
@@ -20,16 +20,16 @@ async function getTvl24hByVAnchor(
             subgraphUrl,
             poolAddress,
             epochStart,
-            epochNow - EPOCH_DAY_INTERVAL
+            epochNow - EPOCH_DAY_INTERVAL,
           );
         return latestTvlByVAnchorByChain.totalValueLocked;
-      })
+      }),
     );
 
     return latestTvlByChains.reduce(
       (total, latestTvlByChain) =>
         total + +formatEther(BigInt(latestTvlByChain ?? 0)),
-      0
+      0,
     );
   } catch (error) {
     console.error('Error while fetching TVL 24h data', error);
@@ -41,7 +41,7 @@ async function getTvl24hByVAnchor(
 export default async function getPoolInfoCardTvlData(
   poolAddress: string,
   epochStart: number,
-  epochNow: number
+  epochNow: number,
 ): Promise<MetricType> {
   const subgraphUrls = VANCHORS_MAP[poolAddress].supportedSubgraphs;
 

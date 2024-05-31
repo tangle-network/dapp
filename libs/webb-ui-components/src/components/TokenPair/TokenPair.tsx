@@ -48,5 +48,5 @@ export const TokenPair = forwardRef<HTMLDivElement, TokenPairProps>(
         )}
       </div>
     );
-  }
+  },
 );

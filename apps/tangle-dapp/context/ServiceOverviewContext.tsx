@@ -27,14 +27,14 @@ const ServiceOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
               const id = key.args[1].toString();
               const service = extractServiceDetails(
                 id,
-                job as Option<TanglePrimitivesJobsJobInfo>
+                job as Option<TanglePrimitivesJobsJobInfo>,
               );
               return service;
             })
-            .filter((service): service is Service => service !== null)
-        )
+            .filter((service): service is Service => service !== null),
+        ),
       );
-    }, [])
+    }, []),
   );
 
   return (

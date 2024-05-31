@@ -53,7 +53,12 @@
 
 /** Default font is Satoshi use fonts */
 *:not(code, .mono1, .mono2) {
-  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-family:
+    'Satoshi',
+    -apple-system,
+    BlinkMacSystemFont,
+    Arial,
+    sans-serif;
 }
 
 /* Applied Satoshi Variable for all element when the html tag has `font-satoshi-var` classnames */
@@ -70,7 +75,11 @@ html.font-satoshi-var *:not(code, .mono1, .mono2) {
     font-style: italic;
   }
 
-  font-family: 'Satoshi Variable', -apple-system, BlinkMacSystemFont, Arial,
+  font-family:
+    'Satoshi Variable',
+    -apple-system,
+    BlinkMacSystemFont,
+    Arial,
     sans-serif;
 }
 

@@ -10,7 +10,7 @@ const VAnchorActionClasses = {
 type SupportedChainType = keyof typeof VAnchorActionClasses;
 
 const isSupportedChainType = (
-  chainType: ChainType
+  chainType: ChainType,
 ): chainType is SupportedChainType => {
   return chainType in VAnchorActionClasses;
 };

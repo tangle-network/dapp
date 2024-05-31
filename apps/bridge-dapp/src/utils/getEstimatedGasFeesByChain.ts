@@ -1,16 +1,23 @@
-import { fetchFeeData, getPublicClient } from 'wagmi/actions';
+import wagmiCfg from '@webb-tools/dapp-config/wagmi-config';
+import { estimateFeesPerGas, getPublicClient } from 'wagmi/actions';
 import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import gasLimit from '@webb-tools/dapp-config/gasLimitConfig';
+import assert from 'assert';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 
 export default async function getEstimatedGasFeesByChain(typedChainId: number) {
   const gasAmount = gasLimit[typedChainId] ?? gasLimit.default;
 
   const chainId = parseTypedChainId(typedChainId).chainId;
-  const publicClient = getPublicClient({ chainId });
+  const publicClient = getPublicClient(wagmiCfg, { chainId });
 
-  const { maxFeePerGas, gasPrice, maxPriorityFeePerGas } = await fetchFeeData({
-    chainId,
-  });
+  assert(
+    publicClient,
+    WebbError.getErrorMessage(WebbErrorCodes.NoClientAvailable).message,
+  );
+
+  const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } =
+    await estimateFeesPerGas(wagmiCfg, { chainId });
 
   let actualGasPrice = await publicClient.getGasPrice();
   if (gasPrice && gasPrice > actualGasPrice) {

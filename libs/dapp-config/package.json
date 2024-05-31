@@ -1,5 +1,6 @@
 {
   "name": "@webb-tools/dapp-config",
   "version": "0.0.1",
-  "main": "./src/index.js"
+  "type": "module",
+  "types": "./src/index.d.ts"
 }

@@ -41,7 +41,7 @@ const columns = [
             ta="center"
             className={cx(
               'text-mono-140 dark:text-mono-40',
-              'flex justify-center items-center gap-1'
+              'flex justify-center items-center gap-1',
             )}
           >
             {details}

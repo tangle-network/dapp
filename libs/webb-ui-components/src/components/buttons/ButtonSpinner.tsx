@@ -1,7 +1,6 @@
-import { Spinner } from '@webb-tools/icons';
+import { Spinner } from '@webb-tools/icons/Spinner';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { ButtonSpinnerProps } from './types';
 
 const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
@@ -16,7 +15,7 @@ const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
     'flex items-center',
     hasLabel ? 'relative' : 'absolute',
     hasLabel ? (placement === 'start' ? `mr-2` : `ml-2`) : undefined,
-    className
+    className,
   );
 
   return <div className={mergedClassName}>{children}</div>;

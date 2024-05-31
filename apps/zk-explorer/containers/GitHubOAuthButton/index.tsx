@@ -58,7 +58,7 @@ const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
       scope,
       state,
       router,
-    ]
+    ],
   );
 
   // TODO: Effect is being executed twice. Likely caused by SSR or React's strict mode.
@@ -88,7 +88,7 @@ const GitHubOAuthButton: FC<GitHubOAuthButtonProps> = ({
   const signedInClassName = isSignedIn
     ? twMerge(
         'border-mono-60 dark:border-mono-120 hover:dark:border-mono-120',
-        'hover:bg-mono-0/30 dark:bg-mono-140 dark:hover:bg-mono-160'
+        'hover:bg-mono-0/30 dark:bg-mono-140 dark:hover:bg-mono-160',
       )
     : '';
 

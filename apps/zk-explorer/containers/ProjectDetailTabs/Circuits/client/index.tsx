@@ -18,13 +18,13 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ fileTree }) => {
       Object.values(fileTree)
         .find((item) => !item.isFolder)
         ?.index?.toString() ?? undefined,
-    [fileTree]
+    [fileTree],
   );
 
   const [isMounting, setIsMounting] = useState(true);
 
   const [activeFileIndex, setActiveFileIndex] = useState<string | undefined>(
-    initActiveFileIndex
+    initActiveFileIndex,
   );
 
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
@@ -70,7 +70,7 @@ const CircuitsClient: FC<CircuitsClientProps> = ({ fileTree }) => {
             className={cx(
               'w-[2px] bg-mono-60 dark:bg-mono-180 ease-linear duration-150',
               'hover:bg-blue-70 dark:hover:bg-blue-50',
-              'data-[resize-handle-active]:bg-blue-70 dark:data-[resize-handle-active]:bg-blue-50'
+              'data-[resize-handle-active]:bg-blue-70 dark:data-[resize-handle-active]:bg-blue-50',
             )}
           />
 

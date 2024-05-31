@@ -1,11 +1,11 @@
-import { forwardRef } from 'react';
-import { LoadingPillProps } from './types';
-import { twMerge } from 'tailwind-merge';
 import {
   CheckboxCircleLine,
   CloseCircleLineIcon,
   Spinner,
 } from '@webb-tools/icons';
+import { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { LoadingPillProps } from './types';
 
 const LoadingPill = forwardRef<HTMLButtonElement, LoadingPillProps>(
   ({ className, status = 'loading', ...props }, ref) => {
@@ -19,7 +19,7 @@ const LoadingPill = forwardRef<HTMLButtonElement, LoadingPillProps>(
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
           'dark:hover:bg-mono-0/10',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -42,7 +42,7 @@ const LoadingPill = forwardRef<HTMLButtonElement, LoadingPillProps>(
         </div>
       </button>
     );
-  }
+  },
 );
 
 export default LoadingPill;

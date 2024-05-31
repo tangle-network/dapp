@@ -98,7 +98,7 @@ const config = Object.entries(tokens).reduce(
 
     return acc;
   },
-  {} as Record<number, FaucetChainDataType>
+  {} as Record<number, FaucetChainDataType>,
 );
 
 const defaultContextValue = {

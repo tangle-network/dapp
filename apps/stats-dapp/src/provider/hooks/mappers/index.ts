@@ -18,7 +18,7 @@ export type Authority = {
 };
 
 export function mapSessionAuthValidatorNode(
-  node: SessionAuthValidatorNodeFragment
+  node: SessionAuthValidatorNodeFragment,
 ): Authority {
   return {
     id: node?.validator?.id ?? '',
@@ -36,7 +36,7 @@ export function mapSessionAuthValidatorNode(
 }
 
 export function mapAuthorities(
-  data: SessionAuthValidatorFragment
+  data: SessionAuthValidatorFragment,
 ): Authority[] {
   return data?.edges.map((item: any) => mapSessionAuthValidatorNode(item.node));
 }

@@ -1,8 +1,6 @@
-import React from 'react';
-
-import { KeyStatusCard } from '@webb-tools/webb-ui-components/components/KeyStatusCard';
 import { randNumber, randRecentDate, randSoonDate } from '@ngneat/falso';
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { KeyStatusCard } from '../../components/KeyStatusCard';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 export default {
   title: 'Design System/Organisms/KeyStatusCard',

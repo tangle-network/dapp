@@ -1,3 +1,5 @@
+'use client';
+
 import { AccordionTrigger } from '@radix-ui/react-accordion';
 import {
   ArrowRight,
@@ -99,7 +101,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
         </ul>
       </nav>
     );
-  }
+  },
 );
 
 const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
@@ -145,7 +147,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                   className={cx(
                     'flex items-center justify-between w-full capitalize',
                     'group hover:bg-blue-0 dark:hover:bg-blue-120',
-                    'px-4 py-2 rounded-lg'
+                    'px-4 py-2 rounded-lg',
                   )}
                 >
                   <span>{Object.keys(item)[0]}</span>
@@ -173,7 +175,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          )
+          ),
         )}
       </DropdownBody>
     </Dropdown>

@@ -20,7 +20,7 @@ export async function submitProject(githubSlug: string): Promise<ApiResponse> {
     {
       method: 'POST',
       body: JSON.stringify({ githubSlug }),
-    }
+    },
   );
 
   return responseWrapper.innerResponse;
@@ -30,7 +30,7 @@ export async function searchProjects(
   constraints: FilterConstraints,
   query: string,
   page: number,
-  sortBy?: SearchSortByClause
+  sortBy?: SearchSortByClause,
 ): Promise<ProjectSearchResponseData> {
   const responseWrapper = await sendApiRequest<ProjectSearchResponseData>(
     ApiRoute.SearchProjects,
@@ -43,7 +43,7 @@ export async function searchProjects(
         page,
         sortBy: sortBy ?? null,
       }),
-    }
+    },
   );
 
   return extractResponseData(responseWrapper);

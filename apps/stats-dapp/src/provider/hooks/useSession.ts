@@ -65,7 +65,7 @@ export function useSessionThreshold(isLatest: boolean): LatestThresholdsValue {
               };
             })
             .filter(
-              (s) => s.keygenThreshold && s.signatureThreshold
+              (s) => s.keygenThreshold && s.signatureThreshold,
             ) as SessionThresholdValue[];
 
           return {

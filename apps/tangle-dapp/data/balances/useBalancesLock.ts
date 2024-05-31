@@ -24,8 +24,8 @@ const useBalancesLock = (lockId: SubstrateLockId): BalancesLock => {
 
         return api.query.balances.locks(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const amountAndReasons = useMemo(() => {
@@ -34,7 +34,7 @@ const useBalancesLock = (lockId: SubstrateLockId): BalancesLock => {
     }
 
     const targetLock = locks.find(
-      (lock) => getSubstrateLockId(lock.id) === lockId
+      (lock) => getSubstrateLockId(lock.id) === lockId,
     );
 
     return {

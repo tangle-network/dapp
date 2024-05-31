@@ -14,12 +14,12 @@ const useRestakingAPY = () => {
         apiRx.query.roles.activeRestakerEra
           ? apiRx.query.roles.activeRestakerEra()
           : null,
-      []
-    )
+      [],
+    ),
   );
 
   const { data: currentEraRewards } = useRestakingEraReward(
-    activeRestakerEra?.unwrapOr(null)?.index.toNumber()
+    activeRestakerEra?.unwrapOr(null)?.index.toNumber(),
   );
 
   const { result: totalRestaked } = useApiRx(getTotalRestaked);
@@ -57,6 +57,6 @@ const getTotalRestaked = (api: ApiRx): Observable<BN> => {
 
         return acc.add(value.unwrap().total.toBn());
       }, BN_ZERO);
-    })
+    }),
   );
 };

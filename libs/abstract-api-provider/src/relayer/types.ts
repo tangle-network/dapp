@@ -5,7 +5,7 @@ import { HexString } from '@polkadot/util/types';
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { Hash, Hex } from 'viem';
-import { ActiveWebbRelayer, WebbRelayer } from '.';
+import { ActiveWebbRelayer, WebbRelayer } from './webb-relayer';
 
 /**
  * Relayer configuration for a chain
@@ -131,7 +131,7 @@ export type RelayerQuery = {
 
 export type ChainNameIntoChainId = (
   name: string,
-  basedOn: RelayerCMDBase
+  basedOn: RelayerCMDBase,
 ) => number;
 
 export interface RelayerFeatures {
@@ -335,25 +335,25 @@ export type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm'
 
 export type RelayerCMDs<
   A extends RelayerCMDBase,
-  C extends CMDSwitcher<A>
+  C extends CMDSwitcher<A>,
 > = A extends 'evm'
   ? C extends keyof RelayerEVMCommands
     ? RelayerEVMCommands[C]
     : never
   : C extends keyof RelayerSubstrateCommands
-  ? RelayerSubstrateCommands[C]
-  : never;
+    ? RelayerSubstrateCommands[C]
+    : never;
 
 export type WithdrawRelayerArgs<
   A extends RelayerCMDBase,
-  C extends CMDSwitcher<A>
+  C extends CMDSwitcher<A>,
 > = Omit<RelayerCMDs<A, C>, keyof RelayedChainInput>;
 
 export type OptionalRelayer = WebbRelayer | null;
 export type OptionalActiveRelayer = ActiveWebbRelayer | null;
 
 export interface SendTxResponse<
-  Status extends 'Sent' | 'Failed' = 'Sent' | 'Failed'
+  Status extends 'Sent' | 'Failed' = 'Sent' | 'Failed',
 > {
   status: Status;
   message: string;

@@ -1,7 +1,7 @@
-const preset = require('@webb-tools/tailwind-preset');
+import preset from './tailwind.preset.cjs';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   presets: [preset],
   mode: 'jit',
   content: [

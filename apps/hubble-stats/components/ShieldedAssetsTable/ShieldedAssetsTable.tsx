@@ -122,7 +122,7 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
     (row: Row<ShieldedAssetType>) => {
       router.push(`/pool/${row.original.poolAddress}`);
     },
-    [router]
+    [router],
   );
 
   return (

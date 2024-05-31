@@ -1,6 +1,6 @@
 const useFormatReturnType = <
   DataType = unknown,
-  ErrorType extends Error | unknown = unknown
+  ErrorType extends Error | unknown = unknown,
 >({
   data = null,
   isLoading,

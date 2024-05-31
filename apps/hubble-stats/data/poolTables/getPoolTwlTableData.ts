@@ -6,7 +6,7 @@ import { getAggregateValue } from '../../utils';
 
 export default async function getPoolTwlTableData(
   poolAddress: string,
-  availableTypedChainIds: number[]
+  availableTypedChainIds: number[],
 ) {
   const {
     fungibleTokenSymbol,
@@ -21,7 +21,7 @@ export default async function getPoolTwlTableData(
     try {
       const twlData = await vAnchorClient.TWL.GetVAnchorTWLByChain(
         ACTIVE_SUBGRAPH_MAP[typedChainId],
-        poolAddress
+        poolAddress,
       );
 
       twlByVAnchorByChain = +formatEther(BigInt(twlData.total ?? 0));
@@ -54,7 +54,7 @@ export default async function getPoolTwlTableData(
               ACTIVE_SUBGRAPH_MAP[typedChainId],
               poolAddress,
               // query for native token needs to convert to ETH
-              token === nativeTokenByChain[typedChainId] ? 'ETH' : token
+              token === nativeTokenByChain[typedChainId] ? 'ETH' : token,
             );
           twlByVAnchorByChain = +formatEther(BigInt(twlData.total ?? 0));
         } catch (error) {
@@ -73,7 +73,7 @@ export default async function getPoolTwlTableData(
         aggregate: twlTokenAggregate,
         chainsData: twlTokenChainsData,
       };
-    })
+    }),
   );
 
   return [

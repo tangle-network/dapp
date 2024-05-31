@@ -27,7 +27,7 @@ export type IndependentAllocationStepProps = {
 };
 
 export function filterAllocations(
-  allocations: RestakingAllocationMap
+  allocations: RestakingAllocationMap,
 ): [RestakingService, BN][] {
   return Object.entries(allocations).map(([serviceString, amount]) => {
     const service = z.nativeEnum(RestakingService).parse(serviceString);
@@ -47,17 +47,17 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     () =>
       Object.entries(allocations).reduce(
         (acc, [_key, amount]) => acc.add(amount),
-        BN_ZERO
+        BN_ZERO,
       ),
-    [allocations]
+    [allocations],
   );
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
-    null
+    null,
   );
 
   const { result: maxRolesPerAccount } = useApi(
-    useCallback((api) => api.consts.roles.maxRolesPerAccount, [])
+    useCallback((api) => api.consts.roles.maxRolesPerAccount, []),
   );
 
   const [newAllocationRole, setNewAllocationRole] =
@@ -88,7 +88,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
       assert(
         deallocatedAmount !== undefined,
-        'Allocations should have an entry for the service being deallocated'
+        'Allocations should have an entry for the service being deallocated',
       );
 
       setAllocations((prev) => {
@@ -99,7 +99,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
         return nextAllocations;
       });
     },
-    [allocations, setAllocations]
+    [allocations, setAllocations],
   );
 
   const handleAllocationChange = useCallback(
@@ -115,12 +115,12 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
         [service]: newAmount,
       }));
     },
-    [allocations, setAllocations]
+    [allocations, setAllocations],
   );
 
   const amountRemaining = useMemo(
     () => maxRestakingAmount?.sub(restakedAmount) ?? null,
-    [maxRestakingAmount, restakedAmount]
+    [maxRestakingAmount, restakedAmount],
   );
 
   const isNewAllocationAmountValid = (() => {
@@ -140,14 +140,14 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   const availableRoles = useMemo(
     () =>
       Object.values(RestakingService).filter(
-        (service) => !(service in allocations)
+        (service) => !(service in allocations),
       ),
-    [allocations]
+    [allocations],
   );
 
   const filteredAllocations = useMemo(
     () => filterAllocations(allocations),
-    [allocations]
+    [allocations],
   );
 
   const canAddNewAllocation =
