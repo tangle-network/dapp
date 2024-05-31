@@ -28,11 +28,11 @@ export const WithConstraints = {
   },
 };
 
-const Controlled_ = () => {
+const ControlledComp = () => {
   const [value, setValue] = useState(0);
   return <AdjustAmount style={style} value={value} onChange={setValue} />;
 };
 
 export const Controlled = {
-  render: () => <Controlled_ />,
+  render: () => <ControlledComp />,
 };

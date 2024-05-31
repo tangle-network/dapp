@@ -7,7 +7,7 @@ import useApiRx from '../../hooks/useApiRx';
 import usePromise from '../../hooks/usePromise';
 
 const createWorker = createWorkerFactory(
-  () => import('./workers/calculateEraRewardPoint')
+  () => import('./workers/calculateEraRewardPoint'),
 );
 
 /**
@@ -43,13 +43,13 @@ function useRestakingEraReward(era: number | null = null) {
               Array.from(individuals).map(([accountId, rewardPoints]) => [
                 accountId.toString(),
                 rewardPoints.toNumber(),
-              ])
+              ]),
             );
-          })
+          }),
         );
       },
-      [era, rpcEndpoint, worker]
-    )
+      [era, rpcEndpoint, worker],
+    ),
   );
 
   const {
@@ -59,9 +59,9 @@ function useRestakingEraReward(era: number | null = null) {
   } = usePromise(
     useCallback(
       () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
-      [dataPromise]
+      [dataPromise],
     ),
-    null
+    null,
   );
 
   return {

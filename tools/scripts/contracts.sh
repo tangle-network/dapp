@@ -57,6 +57,6 @@ yarn build
 
 # Start local test network
 echo "Starting local test network..."
-npx ts-node ./scripts/evm/deployments/LocalEvmVBridge.ts
+npx tsx ./scripts/evm/deployments/LocalEvmVBridge.ts
 
 echo "Done!"

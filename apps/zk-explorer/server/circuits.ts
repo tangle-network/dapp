@@ -16,7 +16,7 @@ export async function searchCircuits(
   constraints: FilterConstraints,
   query: string,
   page: number,
-  sortBy?: SearchSortByClause
+  sortBy?: SearchSortByClause,
 ): Promise<CircuitSearchResponseData> {
   const responseWrapper = await sendApiRequest<CircuitSearchResponseData>(
     ApiRoute.SearchCircuits,
@@ -29,7 +29,7 @@ export async function searchCircuits(
         page,
         sortBy: sortBy ?? null,
       }),
-    }
+    },
   );
 
   return extractResponseData(responseWrapper);

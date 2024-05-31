@@ -90,7 +90,7 @@ const InfoCard: FC<InfoCardProps> = ({
                   network.polkadotExplorerUrl,
                   validatorAddress,
                   'address',
-                  ExplorerType.Substrate
+                  ExplorerType.Substrate,
                 ).toString()}
                 className="!fill-mono-100"
               />

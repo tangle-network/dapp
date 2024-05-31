@@ -17,7 +17,7 @@ import assert from 'assert';
 function calculateBnPercentage(amount: BN, total: BN): number {
   assert(
     !total.isZero(),
-    'Total should not be zero, otherwise division by zero would occur'
+    'Total should not be zero, otherwise division by zero would occur',
   );
 
   assert(amount.lte(total), 'Amount should be less than or equal to total');

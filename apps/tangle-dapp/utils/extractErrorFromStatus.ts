@@ -14,7 +14,7 @@ function extractErrorFromTxStatus(status: ISubmittableResult): Error | null {
   }
 
   const metaError = status.dispatchError.registry.findMetaError(
-    status.dispatchError.asModule
+    status.dispatchError.asModule,
   );
 
   return new Error(`Dispatch error: ${metaError.section}.${metaError.name}`);

@@ -1,8 +1,8 @@
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
-import { Account } from '@webb-tools/abstract-api-provider';
-import type { SupportedConnector } from '@webb-tools/dapp-config';
+import type { Account } from '@webb-tools/abstract-api-provider';
 import { PolkadotAccount } from '@webb-tools/polkadot-api-provider/ext-provider/polkadot-accounts';
 import { Web3Account } from '@webb-tools/web3-api-provider/ext-provider/web3-accounts';
+import type { Connector } from 'wagmi';
 
 /**
  * Connect and get the default account the the given wallet provider
@@ -10,21 +10,24 @@ import { Web3Account } from '@webb-tools/web3-api-provider/ext-provider/web3-acc
  * @returns the default account from the wallet provider
  */
 async function getDefaultAccount(
-  provider: SupportedConnector | InjectedExtension
+  provider: Connector | InjectedExtension,
 ): Promise<Account> {
-  if ('accounts' in provider) {
-    return getPolkadotAccount(provider);
+  if ('uid' in provider) {
+    return getWeb3Account(provider);
   }
 
-  return getWeb3Account(provider);
+  return getPolkadotAccount(provider);
 }
 
 export default getDefaultAccount;
 
-async function getWeb3Account(provider: SupportedConnector) {
+async function getWeb3Account(provider: Connector) {
   await provider.connect();
-  const address = await provider.getAccount();
-  return new Web3Account({ type: 'json-rpc', address }, address);
+  const addresses = await provider.getAccounts();
+  return new Web3Account(
+    { type: 'json-rpc', address: addresses[0] },
+    addresses[0],
+  );
 }
 
 async function getPolkadotAccount(provider: InjectedExtension) {

@@ -11,7 +11,7 @@ import { getApiPromise } from '../../../utils/polkadot';
 export async function calculateEraRewardPoints(
   rpcUrl: string,
   era: number,
-  validatorRewards: Array<[string, number]>
+  validatorRewards: Array<[string, number]>,
 ): Promise<bigint | null> {
   const api = await getApiPromise(rpcUrl);
   let eraReward = ZERO_BIG_INT;
@@ -34,7 +34,7 @@ export async function calculateEraRewardPoints(
       rewardPoints,
       validatorPrefs.commission.unwrap().toNumber(),
       exposure.own.unwrap().toBigInt(),
-      exposure.total.unwrap().toBigInt()
+      exposure.total.unwrap().toBigInt(),
     );
   }
 

@@ -29,7 +29,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
 
   mapRelayerIntoActive(
     relayer: OptionalRelayer,
-    typedChainId: number
+    typedChainId: number,
   ): OptionalActiveRelayer {
     if (!relayer) {
       return null;
@@ -66,8 +66,9 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
             capabilities.supportedChains[baseOn]
               .get(typedChainId)
               ?.contracts?.find(
-                (contract) => contract.address === contractAddress.toLowerCase()
-              )
+                (contract) =>
+                  contract.address === contractAddress.toLowerCase(),
+              ),
           );
         }
       }
@@ -91,7 +92,9 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
           return Array.from(chainConfigMap.values()).some(
             (chainConfig) =>
               Array.isArray(chainConfig.pallets) &&
-              chainConfig.pallets.find((p) => p.pallet === this.supportedPallet)
+              chainConfig.pallets.find(
+                (p) => p.pallet === this.supportedPallet,
+              ),
           );
         } else {
           const chainConfigMap: Map<
@@ -114,7 +117,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
     return Promise.resolve(
       this.getRelayers({
         baseOn: 'substrate',
-      })
+      }),
     );
   }
 
@@ -136,7 +139,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
       treeId: number;
       palletId: number;
       tx?: TransactionExecutor<NewNotesTxResult>;
-    }
+    },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -155,7 +158,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
         const { leaves, lastQueriedBlock } = await relayer.getLeaves(
           typedChainId,
           { treeId, palletId },
-          abortSignal
+          abortSignal,
         );
 
         const result = await this.validateRelayerLeaves(
@@ -163,7 +166,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
           leaves,
           targetRoot,
           commitment,
-          tx
+          tx,
         );
 
         if (!result) {

@@ -12,7 +12,7 @@ const logger = LoggerService.get('refreshTwitterTokens()');
 
 const refreshTwitterTokens = async (
   refreshToken: string,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ): Promise<
   | Result<
       TwitterLoginResponse,
@@ -54,7 +54,7 @@ const refreshTwitterTokens = async (
         FaucetError.from(FaucetErrorCode.REFRESH_TOKENS_FAILED, {
           message: msg,
           status: resp.status,
-        })
+        }),
       );
     }
 

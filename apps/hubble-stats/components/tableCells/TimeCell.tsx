@@ -10,7 +10,7 @@ const TimeCell: FC<TimeCellProps> = ({ time, className }) => {
       variant="body1"
       className={twMerge(
         'text-mono-140 dark:text-mono-40 whitespace-nowrap',
-        className
+        className,
       )}
     >
       {time ?? '-'}

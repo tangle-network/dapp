@@ -25,7 +25,7 @@ const setConnectError = (error: Maybe<WebbError>) =>
   connectErrorSubject.next(error);
 
 const selectedWalletSubject = new BehaviorSubject<Maybe<WalletConfig>>(
-  undefined
+  undefined,
 );
 const setSelectedWallet = (wallet: Maybe<WalletConfig>) =>
   selectedWalletSubject.next(wallet);

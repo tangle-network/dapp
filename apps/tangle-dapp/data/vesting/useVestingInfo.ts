@@ -63,16 +63,16 @@ const useVestingInfo = (): VestingInfo => {
 
         return api.query.vesting.vesting(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const { result: currentBlockNumber } = useApiRx(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   const { amount: vestingLockAmount } = useBalancesLock(
-    SubstrateLockId.VESTING
+    SubstrateLockId.VESTING,
   );
 
   const totalVestingAmount = useMemo(() => {
@@ -113,7 +113,7 @@ const useVestingInfo = (): VestingInfo => {
       }
 
       const blocksPassed = currentBlockNumber.sub(
-        vestingSchedule.startingBlock
+        vestingSchedule.startingBlock,
       );
 
       const released = blocksPassed.mul(vestingSchedule.perBlock);

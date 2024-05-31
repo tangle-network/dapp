@@ -13,7 +13,7 @@ export const KeyStatsContainer = () => {
       className={twMerge(
         'w-full rounded-lg overflow-hidden',
         'bg-glass dark:bg-glass_dark',
-        'border-2 border-mono-0 dark:border-mono-160'
+        'border-2 border-mono-0 dark:border-mono-160',
       )}
     >
       <div
@@ -22,7 +22,7 @@ export const KeyStatsContainer = () => {
           '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
           '[&>div]:even:border-none lg:[&>div]:even:border-r',
           'lg:[&>div]:inline-block lg:[&>div]:basis-0 lg:[&>div]:grow',
-          '[&>div]:border-b [&>div]:border-b-mono-40 [&>div]:dark:border-b-mono-160'
+          '[&>div]:border-b [&>div]:border-b-mono-40 [&>div]:dark:border-b-mono-160',
         )}
       >
         <ValidatorCountKeyStat />

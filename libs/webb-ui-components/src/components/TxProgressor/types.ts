@@ -1,7 +1,7 @@
 import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 import { PropsOf, TokenType } from '../../types';
 import { SteppedProgressProps } from '../Progress/types';
-import { ButtonProps } from '../buttons';
+import { ButtonProps } from '../buttons/types';
 
 export type TxName = 'Deposit' | 'Withdraw' | 'Transfer';
 

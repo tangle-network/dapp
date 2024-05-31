@@ -2,9 +2,9 @@ import { getFlexBasic } from '@webb-tools/icons/utils';
 import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
+import { Typography } from '../../typography/Typography';
 import { shortenHex, shortenString } from '../../utils';
 import { WalletButtonProps } from './types';
-import { Typography } from '../../typography/Typography';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
   ({ wallet, address, className, addressClassname, ...props }, ref) => {
@@ -23,7 +23,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
           'dark:hover:bg-mono-0/10',
-          className
+          className,
         )}
       >
         <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
             ...wallet.Logo.props,
             className: twMerge(
               wallet.Logo.props.className,
-              `shrink-0 grow-0 ${getFlexBasic('lg')}`
+              `shrink-0 grow-0 ${getFlexBasic('lg')}`,
             ),
           })}
           <Typography
@@ -47,7 +47,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
         </div>
       </button>
     );
-  }
+  },
 );
 
 export default WalletButton;

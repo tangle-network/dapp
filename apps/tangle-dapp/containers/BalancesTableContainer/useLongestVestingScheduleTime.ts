@@ -10,11 +10,11 @@ import { sortVestingSchedulesAscending } from './LockedBalanceDetails/VestingSch
 
 const useLongestVestingScheduleTime = () => {
   const { result: babeExpectedBlockTime } = useApi(
-    useCallback((api) => api.consts.babe.expectedBlockTime, [])
+    useCallback((api) => api.consts.babe.expectedBlockTime, []),
   );
 
   const { result: currentBlockNumber } = useApiRx(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
@@ -35,20 +35,20 @@ const useLongestVestingScheduleTime = () => {
   }
 
   const sortedVestingSchedules = vestingSchedules.toSorted(
-    sortVestingSchedulesAscending
+    sortVestingSchedulesAscending,
   );
 
   const longestVestingSchedule =
     sortedVestingSchedules[sortedVestingSchedules.length - 1];
 
   const endingBlockNumber = longestVestingSchedule.startingBlock.add(
-    longestVestingSchedule.locked.div(longestVestingSchedule.perBlock)
+    longestVestingSchedule.locked.div(longestVestingSchedule.perBlock),
   );
 
   const endingBlockDate = getBlockDate(
     babeExpectedBlockTime,
     currentBlockNumber,
-    endingBlockNumber
+    endingBlockNumber,
   );
 
   const timeRemaining = endingBlockDate
@@ -60,9 +60,9 @@ const useLongestVestingScheduleTime = () => {
   return isComplete
     ? null
     : `${timeRemaining} remaining until the full amount across all vesting schedules is unlocked. Currently at block #${formatDecimal(
-        currentBlockNumber.toString()
+        currentBlockNumber.toString(),
       )}, with ${formatDecimal(
-        endingBlockNumber.sub(currentBlockNumber).toString()
+        endingBlockNumber.sub(currentBlockNumber).toString(),
       )} blocks left.`;
 };
 

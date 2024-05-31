@@ -1,5 +1,5 @@
-import { WebbComponentBase } from '../../types';
 import { IconSize } from '@webb-tools/icons/types';
+import { WebbComponentBase } from '../../types';
 
 /**
  * The `CopyWithTooltip` props

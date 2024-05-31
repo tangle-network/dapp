@@ -51,8 +51,8 @@ export default function useTransferFeeCalculation(args: {
         fungibleCurrencyId: fungibleCfg?.id,
         typedChainId:
           typeof typedChainId === 'number' ? typedChainId : undefined,
-      } satisfies MaxFeeInfoOption),
-    [fungibleCfg?.id, typedChainId]
+      }) satisfies MaxFeeInfoOption,
+    [fungibleCfg?.id, typedChainId],
   );
 
   const { isLoading, feeInfo, fetchFeeInfo, resetMaxFeeInfo } =
@@ -95,7 +95,7 @@ export default function useTransferFeeCalculation(args: {
     if (hasRefund && refundAmount) {
       const parsedRefund = parseFloat(formatEther(refundAmount));
       const parsedExchangeRate = parseFloat(
-        formatEther(relayerFeeInfo.refundExchangeRate)
+        formatEther(relayerFeeInfo.refundExchangeRate),
       );
 
       const refundCost = parsedRefund * parsedExchangeRate;
@@ -148,13 +148,13 @@ export default function useTransferFeeCalculation(args: {
         activeRelayer.isSupported(
           typedChainId,
           anchorId,
-          activeApi.relayerManager.cmdKey
+          activeApi.relayerManager.cmdKey,
         );
 
       fetchFeeInfo(hasRefund && hasSupport ? activeRelayer : undefined);
     },
     // prettier-ignore
-    [activeApi?.relayerManager, activeRelayer, amount, anchorId, fetchFeeInfo, hasRefund, recipient, recipientErrorMsg, refundRecipient, refundRecipientError, typedChainId]
+    [activeApi?.relayerManager, activeRelayer, amount, anchorId, fetchFeeInfo, hasRefund, recipient, recipientErrorMsg, refundRecipient, refundRecipientError, typedChainId],
   );
 
   return {

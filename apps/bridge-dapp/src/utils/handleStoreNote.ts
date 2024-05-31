@@ -3,7 +3,7 @@ import { downloadNotes } from './downloadNotes';
 
 async function handleStoreNote(
   note?: Note,
-  addNoteToNoteManager?: (note: Note) => Promise<void>
+  addNoteToNoteManager?: (note: Note) => Promise<void>,
 ) {
   if (!note) {
     return;

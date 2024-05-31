@@ -39,11 +39,11 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
       Footer,
       ...props
     },
-    ref
+    ref,
   ) => {
     const disconnectClsx = useMemo(
       () => cx({ 'opacity-40 pointer-events-none': isDisconnected }),
-      [isDisconnected]
+      [isDisconnected],
     );
 
     return (
@@ -81,7 +81,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
                 value={selectedRelayer?.address ?? ''}
                 onValueChange={(nextAddr) => {
                   const nextRelayer = relayers.find(
-                    (relayer) => relayer.address === nextAddr
+                    (relayer) => relayer.address === nextAddr,
                   );
 
                   if (nextRelayer) {
@@ -183,7 +183,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
         <div
           className={cx(
             'flex flex-col items-center justify-center px-2 py-1 mt-9',
-            !isDisconnected && 'hidden'
+            !isDisconnected && 'hidden',
           )}
           hidden={!isDisconnected}
         >
@@ -208,7 +208,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
         {Footer}
       </ListCardWrapper>
     );
-  }
+  },
 );
 
 export default RelayerListCard;

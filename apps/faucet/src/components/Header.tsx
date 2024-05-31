@@ -33,10 +33,10 @@ const Header: FC = () => {
           <TangleIcon className="md:hidden" size="lg" />
 
           {/* Show Logo with name on mobile */}
-          <TangleLogo className="hidden md:block lg:hidden" />
+          <TangleLogo className="hidden md:!block lg:hidden" />
         </Link>
 
-        <Breadcrumbs className="hidden lg:block">
+        <Breadcrumbs className="hidden lg:!block">
           <BreadcrumbsItem icon={<FaucetIcon />} isLast={true}>
             Faucet
           </BreadcrumbsItem>

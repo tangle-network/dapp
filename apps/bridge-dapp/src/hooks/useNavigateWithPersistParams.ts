@@ -28,16 +28,16 @@ const useNavigateWithPersistParams = (): ReturnType<typeof useNavigate> => {
       } else if (typeof toOrDelta === 'string') {
         navigate(
           { search: searchParams.toString(), pathname: toOrDelta },
-          options
+          options,
         );
       } else {
         navigate(
           merge({ search: searchParams.toString() }, toOrDelta),
-          options
+          options,
         );
       }
     },
-    [navigate, pathname, searchParams]
+    [navigate, pathname, searchParams],
   );
 };
 

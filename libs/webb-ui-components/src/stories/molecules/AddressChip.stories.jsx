@@ -1,4 +1,4 @@
-import { AddressChip } from '../../components';
+import { AddressChip } from '../../components/AddressChip';
 
 export default {
   title: 'Design System/Molecules/AddressChip',

@@ -11,7 +11,7 @@ import { JobsTableProps } from './types';
 
 const ActiveJobsTable: FC<JobsTableProps> = ({ pageSize }) => {
   const { data, isLoading } = useSWR([getActiveJobs.name], ([, ...args]) =>
-    getActiveJobs(...args)
+    getActiveJobs(...args),
   );
 
   if (isLoading || !data) {

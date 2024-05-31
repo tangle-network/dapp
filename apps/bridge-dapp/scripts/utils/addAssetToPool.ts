@@ -13,7 +13,7 @@ async function addAssetToPool(
   apiPromise: ApiPromise,
   assetId: string,
   poolAssetId: string,
-  signer: KeyringPair
+  signer: KeyringPair,
 ) {
   await polkadotTx(
     apiPromise,
@@ -22,7 +22,7 @@ async function addAssetToPool(
       method: 'sudo',
     },
     [apiPromise.tx.assetRegistry.addAssetToPool(poolAssetId, Number(assetId))],
-    signer
+    signer,
   );
 }
 

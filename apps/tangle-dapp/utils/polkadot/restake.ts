@@ -6,7 +6,7 @@ import convertRecordToAllocation from '../../utils/convertRecordToAllocation';
 import Optional from '../../utils/Optional';
 
 export const getProfileTypeFromRestakeRoleLedger = (
-  ledgerOpt: Option<PalletRolesRestakingLedger> | null
+  ledgerOpt: Option<PalletRolesRestakingLedger> | null,
 ) => {
   if (ledgerOpt === null || ledgerOpt.isNone) {
     return null;
@@ -17,12 +17,12 @@ export const getProfileTypeFromRestakeRoleLedger = (
   return new Optional(
     ledger.profile.isIndependent
       ? RestakingProfileType.INDEPENDENT
-      : RestakingProfileType.SHARED
+      : RestakingProfileType.SHARED,
   ) satisfies Optional<RestakingProfileType>;
 };
 
 export const getRoleDistributionFromRestakeRoleLedger = (
-  ledgerOpt: Option<PalletRolesRestakingLedger> | null
+  ledgerOpt: Option<PalletRolesRestakingLedger> | null,
 ) => {
   if (!ledgerOpt || ledgerOpt.isNone) {
     return null;
@@ -50,7 +50,7 @@ export const getRoleDistributionFromRestakeRoleLedger = (
 };
 
 export const getTotalRestakedFromRestakeRoleLedger = (
-  ledgerOpt: Option<PalletRolesRestakingLedger> | null
+  ledgerOpt: Option<PalletRolesRestakingLedger> | null,
 ) => {
   return ledgerOpt?.isSome ? ledgerOpt.unwrap().total.toBn() : null;
 };

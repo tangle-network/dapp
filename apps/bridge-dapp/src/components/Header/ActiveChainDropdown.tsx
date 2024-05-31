@@ -1,7 +1,7 @@
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import {
-  useWebContext,
   useConnectWallet,
+  useWebContext,
 } from '@webb-tools/api-provider-environment';
 import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
@@ -39,7 +39,7 @@ const ActiveChainDropdown = () => {
 
   const selectableChains = useMemo(
     () => apiConfig.getSupportedChains({ withEnv: true }),
-    [apiConfig]
+    [apiConfig],
   );
 
   const handleSelectChain = useCallback(
@@ -59,7 +59,7 @@ const ActiveChainDropdown = () => {
         }
       }
     },
-    [activeWallet, notificationApi, switchChain, toggleModal]
+    [activeWallet, notificationApi, switchChain, toggleModal],
   );
 
   return (

@@ -121,7 +121,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
             network.polkadotExplorerUrl,
             address,
             'address',
-            ExplorerType.Substrate
+            ExplorerType.Substrate,
           ).toString();
 
           return (
@@ -155,7 +155,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
       }),
       ...getStaticColumns(isWaiting),
     ],
-    [isWaiting, network.polkadotExplorerUrl]
+    [isWaiting, network.polkadotExplorerUrl],
   );
 
   const table = useReactTable({

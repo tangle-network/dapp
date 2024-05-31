@@ -51,7 +51,7 @@ const HeaderControls: FC<HeaderControlsProps> = ({
         <SidebarCloseButton isRightAligned setSidebarOpen={setSidebarOpen} />
 
         <SearchInput doesRedirectOnChange id="sidebar mobile search" />
-      </div>
+      </div>,
     );
 
     setSidebarOpen(true);
@@ -70,7 +70,7 @@ const HeaderControls: FC<HeaderControlsProps> = ({
         message: `GitHub OAuth login failed: ${params.errorDescription}`,
       });
     },
-    [notificationApi]
+    [notificationApi],
   );
 
   const handleOAuthSuccess = useCallback(
@@ -83,7 +83,7 @@ const HeaderControls: FC<HeaderControlsProps> = ({
         });
       }
     },
-    [notificationApi]
+    [notificationApi],
   );
 
   return (
@@ -91,7 +91,7 @@ const HeaderControls: FC<HeaderControlsProps> = ({
       {...rest}
       className={twMerge(
         'flex flex-col items-end sm:flex-row justify-between sm:items-start md:items-center gap-4 md:gap-2',
-        className
+        className,
       )}
     >
       {!doHideSearchBar && breakpoint > TailwindBreakpoint.SM && (

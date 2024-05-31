@@ -28,7 +28,7 @@ const AreaChart: FC<AreaChartProps> = ({
 
   const fillColor = useMemo(
     () => (isDarkMode ? '#C6BBFA' : '#624FBE'),
-    [isDarkMode]
+    [isDarkMode],
   );
 
   return (

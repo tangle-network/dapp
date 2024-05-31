@@ -23,7 +23,7 @@ type LoginReturnType = Result<
 const loginWithTwitter = async (
   code: string,
   redirectUri: string,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ): Promise<LoginReturnType | undefined> => {
   const body: TwitterLoginBody = {
     clientId: clientConfig.twitterClientId,
@@ -62,7 +62,7 @@ const loginWithTwitter = async (
         FaucetError.from(FaucetErrorCode.TWITTER_LOGIN_FAILED, {
           message: msg,
           status: resp.status,
-        })
+        }),
       );
     }
 

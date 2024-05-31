@@ -19,20 +19,20 @@ const useUnbondTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, UnbondTxContext> =
     useCallback(
       (context) => ({ functionName: 'unbond', arguments: [context.amount] }),
-      []
+      [],
     );
 
   const substrateTxFactory: SubstrateTxFactory<UnbondTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) =>
       api.tx.staking.unbond(context.amount),
-    []
+    [],
   );
 
   const getSuccessMessageFnc: GetSuccessMessageFunctionType<UnbondTxContext> =
     useCallback(
       ({ amount }) =>
         `Successfully unstaked ${formatNativeTokenAmount(amount)}.`,
-      [formatNativeTokenAmount]
+      [formatNativeTokenAmount],
     );
 
   return useAgnosticTx<Precompile.STAKING, UnbondTxContext>({

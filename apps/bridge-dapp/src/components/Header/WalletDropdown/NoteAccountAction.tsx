@@ -34,7 +34,7 @@ const NoteAccountAction = () => {
   const noteSize = useMemo(
     () =>
       Array.from(allNotes.values()).reduce((acc, curr) => acc + curr.length, 0),
-    [allNotes]
+    [allNotes],
   );
 
   // TODO: Implement a function when user click on the new notes link
@@ -44,7 +44,7 @@ const NoteAccountAction = () => {
       logger.info(`Handle ${notes.length} new notes`);
       logger.warn('New notes function is not implemented yet');
     },
-    [logger]
+    [logger],
   );
 
   // Clear data function

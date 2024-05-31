@@ -22,7 +22,7 @@ const InputAction: FC<InputActionProps> = ({
       size={iconSize}
       className={twMerge(
         'dark:fill-mono-0',
-        onClick !== undefined && 'cursor-pointer'
+        onClick !== undefined && 'cursor-pointer',
       )}
     />
   );

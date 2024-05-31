@@ -12,13 +12,13 @@ import { ExposureMap } from '../types';
 
 export function getExposureMap(
   api: ApiRx,
-  derive: DeriveStakingElected | DeriveStakingWaiting
+  derive: DeriveStakingElected | DeriveStakingWaiting,
 ): ExposureMap {
   const emptyExposure = api.createType<SpStakingExposurePage>(
-    'SpStakingExposurePage'
+    'SpStakingExposurePage',
   );
   const emptyExposureMeta = api.createType<SpStakingPagedExposureMetadata>(
-    'SpStakingPagedExposureMetadata'
+    'SpStakingPagedExposureMetadata',
   );
 
   return derive.info.reduce(
@@ -39,6 +39,6 @@ export function getExposureMap(
         exposure: SpStakingExposurePage;
         exposureMeta: SpStakingPagedExposureMetadata;
       }
-    >
+    >,
   );
 }

@@ -10,7 +10,7 @@ const useAllValidators = () => {
   // TODO: Consider making this a map instead of an array.
   const allValidators = useMemo(
     () => [...(activeValidators ?? []), ...(waitingValidators ?? [])],
-    [activeValidators, waitingValidators]
+    [activeValidators, waitingValidators],
   );
 
   return allValidators;

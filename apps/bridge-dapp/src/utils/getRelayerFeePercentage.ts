@@ -6,13 +6,13 @@ import {
 
 function getRelayerFeePercentage(
   relayer: WebbRelayer,
-  typedChainId: number
+  typedChainId: number,
 ): number | undefined {
   const chainType = parseTypedChainId(typedChainId).chainType;
 
   if (chainType === ChainType.Substrate) {
     console.warn(
-      '[getRelayerFeePercentage] Relayer does not support Substrate yet'
+      '[getRelayerFeePercentage] Relayer does not support Substrate yet',
     );
     return;
   }

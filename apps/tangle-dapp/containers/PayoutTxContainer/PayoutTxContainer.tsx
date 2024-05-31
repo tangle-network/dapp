@@ -56,7 +56,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
         !(
           payout.era === Number(era) &&
           payout.validator.address === validatorAddress
-        )
+        ),
     );
 
     updatePayouts(updatedPayouts);

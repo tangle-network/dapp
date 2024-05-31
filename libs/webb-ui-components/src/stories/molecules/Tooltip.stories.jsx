@@ -1,11 +1,5 @@
-import React from 'react';
-
-import {
-  Chip,
-  Tooltip,
-  TooltipBody,
-  TooltipTrigger,
-} from '@webb-tools/webb-ui-components/components';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../../components/Tooltip';
+import { Chip } from '../../components/Chip';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,7 +9,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => (
+const Template = () => (
   <Tooltip isDefaultOpen>
     <TooltipTrigger>
       <Chip color="blue">Text only</Chip>

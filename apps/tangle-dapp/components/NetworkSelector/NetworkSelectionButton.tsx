@@ -24,7 +24,7 @@ const NetworkSelectionButton: FC = () => {
   const switchToCustomNetwork = useCallback(
     (customRpcEndpoint: string) =>
       setNetwork(createCustomNetwork(customRpcEndpoint), true),
-    [setNetwork]
+    [setNetwork],
   );
 
   return (
@@ -53,7 +53,7 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
         'hover:bg-mono-0/30',
         'dark:bg-mono-0/5 dark:border-mono-140',
         'dark:hover:bg-mono-0/10',
-        'flex items-center gap-2'
+        'flex items-center gap-2',
       )}
     >
       <ChainIcon

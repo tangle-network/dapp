@@ -35,7 +35,7 @@ function useSessionCountSubscription(defaultValue = NaN) {
           setError(
             error instanceof Error
               ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
+              : WebbError.from(WebbErrorCodes.UnknownError),
           );
           setIsLoading(false);
         }

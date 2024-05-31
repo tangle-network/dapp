@@ -10,7 +10,7 @@ const VestingRemainingBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
   const { result: currentBlockNumber } = useApiRx(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   if (vestingSchedulesOpt === null || vestingSchedulesOpt.isNone) {
@@ -30,7 +30,7 @@ const VestingRemainingBalances: FC = () => {
             schedule.locked,
             currentBlockNumber
               .sub(schedule.startingBlock)
-              .mul(schedule.perBlock)
+              .mul(schedule.perBlock),
           )
         : BN_ZERO;
 

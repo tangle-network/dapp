@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { FC, forwardRef, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -25,7 +27,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       bottomLinkOverrides,
       ...props
     },
-    ref
+    ref,
   ) => {
     const resolvedBottomLinks = useMemo(() => {
       if (bottomLinkOverrides === undefined) {
@@ -61,7 +63,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               linkOverrides={socialsLinkOverrides}
             />
 
-            <div className="flex flex-col md:flex-row items-end gap-3 justify-between">
+            <div className="flex flex-col items-end justify-between gap-3 md:flex-row">
               <Typography variant="body2" className="!text-mono-100">
                 © {new Date().getFullYear()} Tangle Foundation. All rights
                 reserved.
@@ -84,7 +86,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         ) : (
           // Normal Footer
           <div className="mx-auto w-[360px] md:w-[768px] lg:w-[1160px] px-2">
-            <div className="flex justify-between pb-6 flex-wrap gap-6 md:gap-0">
+            <div className="flex flex-wrap justify-between gap-6 pb-6 md:gap-0">
               {isNext ? (
                 <Link
                   className="block"
@@ -151,7 +153,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         )}
       </footer>
     );
-  }
+  },
 );
 
 /***********************

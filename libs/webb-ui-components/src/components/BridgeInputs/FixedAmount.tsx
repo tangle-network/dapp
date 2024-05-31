@@ -1,14 +1,16 @@
-import { ChevronDown } from '@webb-tools/icons';
+'use client';
+
+import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChevronDown } from '@webb-tools/icons/ChevronDown';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { AmountMenu } from '../AmountMenu';
-import { Button } from '../buttons';
+import { Dropdown, DropdownBody } from '../Dropdown';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import Button from '../buttons/Button';
 import { InputWrapper } from './InputWrapper';
 import { FixedAmountProps } from './types';
-import { Dropdown, DropdownBody } from '../Dropdown';
-import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 
 /**
  * The `FixedAmount` component
@@ -41,7 +43,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
       values,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [value, setValue] = useState(() => valueProp);
 
@@ -50,7 +52,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
         setValue(nextVal);
         onChangeProp?.(nextVal);
       },
-      [onChangeProp, setValue]
+      [onChangeProp, setValue],
     );
 
     // The amount menu callback
@@ -58,7 +60,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
       (nextVal: 'fixed' | 'custom') => {
         amountMenuProps?.onChange?.(nextVal);
       },
-      [amountMenuProps]
+      [amountMenuProps],
     );
 
     useEffect(() => {
@@ -118,7 +120,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                     {
                       'disabled:text-blue-90 dark:disabled:text-blue-30':
                         !isDisabled,
-                    }
+                    },
                   )}
                   isDisabled={isDisabled || value === val}
                   onClick={() => onClick(val)}
@@ -131,5 +133,5 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
         </div>
       </InputWrapper>
     );
-  }
+  },
 );

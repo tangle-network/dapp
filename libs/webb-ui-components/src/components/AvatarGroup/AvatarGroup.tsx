@@ -1,7 +1,6 @@
-import { Typography } from '../../typography';
 import React, { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
+import { Typography } from '../../typography/Typography';
 import { AvatarChildElement, AvatarGroupProps } from './types';
 
 /**
@@ -27,20 +26,20 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
   ({ children: childrenProp, className, max = 3, total, ...props }, ref) => {
     const children: AvatarChildElement[] = useMemo(() => {
       return React.Children.toArray(childrenProp).filter((child) =>
-        React.isValidElement(child)
+        React.isValidElement(child),
       ) as AvatarChildElement[];
     }, [childrenProp]);
 
     const totalAvatars = useMemo(
       () => total || children.length,
-      [children.length, total]
+      [children.length, total],
     );
 
     const extraAvatars = useMemo(() => totalAvatars - max, [totalAvatars, max]);
 
     const mergedClsx = useMemo(
       () => twMerge('flex items-center space-x-1', className),
-      [className]
+      [className],
     );
 
     return (
@@ -62,5 +61,5 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
         )}
       </div>
     );
-  }
+  },
 );

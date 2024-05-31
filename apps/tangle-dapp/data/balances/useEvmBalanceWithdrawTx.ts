@@ -18,7 +18,7 @@ const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {
         typeof tokenAmountStr === 'string'
           ? `Successfully withdrew ${tokenAmountStr}.`
           : '',
-      [tokenAmountStr]
+      [tokenAmountStr],
     );
 
   return useSubstrateTxWithNotification<EvmBalanceWithdrawContext>(
@@ -34,7 +34,7 @@ const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {
 
       return api.tx.evm.withdraw(evmAddress20, pendingEvmBalance);
     }, []),
-    getSuccessMessageFnc
+    getSuccessMessageFnc,
   );
 };
 

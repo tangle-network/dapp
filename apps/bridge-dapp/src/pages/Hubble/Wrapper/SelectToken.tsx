@@ -39,17 +39,17 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
     () =>
       (currentWrapperType === 'wrap' && type === 'dest') ||
       (currentWrapperType === 'unwrap' && type === 'src'),
-    [currentWrapperType, type]
+    [currentWrapperType, type],
   );
 
   const currencyCfgs = useMemo(
     () => (isFungibleTokenList ? fungibleCurrencyCfgs : wrappableCurrencyCfgs),
-    [isFungibleTokenList, fungibleCurrencyCfgs, wrappableCurrencyCfgs]
+    [isFungibleTokenList, fungibleCurrencyCfgs, wrappableCurrencyCfgs],
   );
 
   const currencies = useMemo(
     () => currencyCfgs.map((currencyCfg) => new Currency(currencyCfg)),
-    [currencyCfgs]
+    [currencyCfgs],
   );
 
   const fungibleAddress = useMemo(() => {
@@ -77,7 +77,7 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
     // otherwise, check user's wallet balance
     currentWrapperType === 'unwrap' && type === 'dest'
       ? fungibleAddress
-      : undefined
+      : undefined,
   );
 
   const selectTokens = useMemo<Array<AssetType>>(
@@ -88,7 +88,7 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
           balances,
           type,
           currentWrapperType,
-          isBalancesLoading
+          isBalancesLoading,
         );
 
         const balanceProps =
@@ -110,12 +110,12 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
         } satisfies AssetType;
       }),
     // prettier-ignore
-    [currencyCfgs, balances, type, currentWrapperType, isBalancesLoading, srcTypedChainId, blockExplorer]
+    [currencyCfgs, balances, type, currentWrapperType, isBalancesLoading, srcTypedChainId, blockExplorer],
   );
 
   const targetParam = useMemo(
     () => (isFungibleTokenList ? POOL_KEY : TOKEN_KEY),
-    [isFungibleTokenList]
+    [isFungibleTokenList],
   );
 
   const alertTitle = useMemo(() => {
@@ -139,18 +139,18 @@ const SelectToken: FC<{ type: SelectTokenType }> = ({ type }) => {
         search: params.toString(),
       });
     },
-    [navigate, pathname, searchParams, targetParam]
+    [navigate, pathname, searchParams, targetParam],
   );
 
   const handleTokenChange = useCallback(
     ({ name, symbol }: AssetType) => {
       const currencyCfg = Object.values(apiConfig.currencies).find(
-        (cfg) => cfg.name === name && cfg.symbol === symbol
+        (cfg) => cfg.name === name && cfg.symbol === symbol,
       );
 
       handleClose(currencyCfg);
     },
-    [apiConfig.currencies, handleClose]
+    [apiConfig.currencies, handleClose],
   );
 
   return (
@@ -181,7 +181,7 @@ const getAddress = (currencyCfg: CurrencyConfig, srcTypedChainId?: number) =>
 const getBalanceProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
-  isLoading?: boolean
+  isLoading?: boolean,
 ) => {
   if (isLoading) return;
   const currencyBalance = balances[currencyCfg.id];
@@ -194,7 +194,7 @@ const getBadgeProps = (
   balances: Record<number, number>,
   selectTokenType: SelectTokenType,
   wrapperType: ReturnType<typeof useWrapperTabFromRoute>,
-  isLoading?: boolean
+  isLoading?: boolean,
 ) => {
   if (wrapperType === 'wrap' && selectTokenType === 'dest') return;
 

@@ -16,7 +16,7 @@ import { BN } from '@polkadot/util';
 export default function getBlockDate(
   babeExpectedBlockTime: BN | null,
   currentBlockNumber: BN | null,
-  blockNumber: BN | null
+  blockNumber: BN | null,
 ): Date | null {
   if (
     babeExpectedBlockTime === null ||
@@ -35,6 +35,6 @@ export default function getBlockDate(
   const timeRemainingInMs = babeExpectedBlockTime.mul(difference).toNumber();
 
   return new Date(
-    Date.now() + (isPast ? -timeRemainingInMs : timeRemainingInMs)
+    Date.now() + (isPast ? -timeRemainingInMs : timeRemainingInMs),
   );
 }

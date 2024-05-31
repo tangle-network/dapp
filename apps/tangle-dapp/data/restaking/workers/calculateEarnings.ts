@@ -11,7 +11,7 @@ import type { EarningRecord, ErasRestakeRewardPointsEntry } from '../types';
 export async function calculateEarnings(
   rpcUrl: string,
   accountId32: string,
-  rewardPointsEntries: ErasRestakeRewardPointsEntry[]
+  rewardPointsEntries: ErasRestakeRewardPointsEntry[],
 ): Promise<EarningRecord> {
   const api = await getApiPromise(rpcUrl);
   const rewardsRecord: EarningRecord = {};
@@ -45,9 +45,9 @@ export async function calculateEarnings(
         validatorTotalPayout,
         validatorPrefs.commission.unwrap().toNumber(),
         exposure.own.unwrap().toBigInt(),
-        exposure.total.unwrap().toBigInt()
+        exposure.total.unwrap().toBigInt(),
       );
-    })
+    }),
   );
 
   return rewardsRecord;

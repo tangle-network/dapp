@@ -1,6 +1,13 @@
 {
   "name": "@webb-tools/icons",
   "version": "0.0.1",
-  "type": "commonjs",
-  "main": "./src/index.ts"
+  "type": "module",
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  }
 }

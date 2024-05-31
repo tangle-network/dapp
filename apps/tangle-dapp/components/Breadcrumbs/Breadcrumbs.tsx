@@ -43,7 +43,7 @@ const BREADCRUMB_LABELS: Record<string, string> = {
 const getBreadcrumbLabel = (
   pathName: string,
   index: number,
-  pathNames: string[]
+  pathNames: string[],
 ) => {
   // Service Details page
   if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
@@ -57,7 +57,7 @@ const getBreadcrumbLabel = (
 const getBreadcrumbIcon = (
   pathName: string,
   index: number,
-  pathNames: string[]
+  pathNames: string[],
 ) => {
   // Service Details page
   if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {

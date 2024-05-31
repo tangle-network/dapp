@@ -12,7 +12,7 @@ import useValidatorIdentityNames from './useValidatorIdentityNames';
 
 export const useValidators = (
   addresses: AccountId32[] | null,
-  isActive: boolean
+  isActive: boolean,
 ): Validator[] | null => {
   const { result: identityNames } = useValidatorIdentityNames();
   const { result: validatorPrefs } = useValidatorPrefs();
@@ -21,11 +21,11 @@ export const useValidators = (
   const { result: jobIdLookups } = useRestakingJobIdMap();
 
   const { result: nominations } = useApiRx(
-    useCallback((api) => api.query.staking.nominators.entries(), [])
+    useCallback((api) => api.query.staking.nominators.entries(), []),
   );
 
   const { result: activeJobs } = useApiRx(
-    useCallback((api) => api.query.jobs.submittedJobs.entries(), [])
+    useCallback((api) => api.query.jobs.submittedJobs.entries(), []),
   );
 
   return useMemo(() => {
@@ -64,7 +64,7 @@ export const useValidators = (
             nominatorCount: exposure.exposureMeta.nominatorCount.toNumber(),
           };
         },
-      })
+      }),
     );
   }, [
     activeJobs,

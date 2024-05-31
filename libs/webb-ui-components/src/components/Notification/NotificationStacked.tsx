@@ -1,3 +1,5 @@
+'use client';
+
 import { SnackbarKey, useSnackbar } from 'notistack';
 import React, { useCallback, useEffect } from 'react';
 
@@ -22,18 +24,17 @@ export const NotificationStacked: React.FC<{
         opts.key || new Date().getTime() + Math.random();
 
       enqueueSnackbar(opts.message, {
+        ...opts,
         key: snackKey,
-        variant: opts.variant,
-        ...(opts.extras ?? {}),
       });
       return snackKey;
     },
-    [enqueueSnackbar]
+    [enqueueSnackbar],
   );
 
   const remove = useCallback(
     (key: SnackbarKey) => closeSnackbar(key),
-    [closeSnackbar]
+    [closeSnackbar],
   );
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export const notificationApi = (opts: Omit<SnackBarOpts, 'close'>) => {
 };
 
 notificationApi.addToQueue = (
-  opts: Omit<SnackBarOpts, 'close'>
+  opts: Omit<SnackBarOpts, 'close'>,
 ): SnackbarKey => {
   return _notificationApi.addToQueue(opts);
 };

@@ -47,7 +47,7 @@ export const SubItem: React.FC<
           'px-6 py-3 rounded-full',
           'group hover:bg-mono-20 dark:hover:bg-mono-160',
           { 'pointer-events-none bg-mono-20 dark:bg-mono-160': isActive },
-          isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+          isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
         )}
       >
         <li className="select-none">

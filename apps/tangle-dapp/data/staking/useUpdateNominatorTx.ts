@@ -34,12 +34,12 @@ const useUpdateNominatorTx = () => {
         // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
         if (payee === null) {
           throw new Error(
-            'There is no EVM destination address registered for the given payee'
+            'There is no EVM destination address registered for the given payee',
           );
         }
 
         batchCalls.push(
-          createEvmBatchCallData(Precompile.STAKING, 'setPayee', [payee])
+          createEvmBatchCallData(Precompile.STAKING, 'setPayee', [payee]),
         );
       }
 
@@ -48,12 +48,12 @@ const useUpdateNominatorTx = () => {
         batchCalls.push(
           createEvmBatchCallData(Precompile.STAKING, 'bondExtra', [
             BigInt(context.bondAmount.toString()),
-          ])
+          ]),
         );
       }
 
       const evmNomineeAddresses32 = Array.from(context.nominees).map(
-        toEvmAddress32
+        toEvmAddress32,
       );
 
       // Push nominate call last. Although the order of calls
@@ -61,7 +61,7 @@ const useUpdateNominatorTx = () => {
       batchCalls.push(
         createEvmBatchCallData(Precompile.STAKING, 'nominate', [
           evmNomineeAddresses32,
-        ])
+        ]),
       );
 
       return {
@@ -90,13 +90,13 @@ const useUpdateNominatorTx = () => {
 
     const txs = [bondExtraTx, setPayeeTx, nominateTx].filter(
       (tx): tx is SubmittableExtrinsic<'promise', ISubmittableResult> =>
-        tx !== null
+        tx !== null,
     );
 
     // Nothing to update.
     if (txs.length === 0) {
       console.warn(
-        'Tried to update nominator with no changes. Did you forget to handle an edge case?'
+        'Tried to update nominator with no changes. Did you forget to handle an edge case?',
       );
 
       return null;

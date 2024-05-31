@@ -18,7 +18,7 @@ export const IconWithTooltip: FC<IconWithTooltipProp> = ({
         {...overrideTooltipTriggerProps}
         className={twMerge(
           'cursor-auto',
-          overrideTooltipTriggerProps?.className
+          overrideTooltipTriggerProps?.className,
         )}
       >
         {icon}

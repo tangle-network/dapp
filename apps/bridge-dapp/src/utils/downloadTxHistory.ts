@@ -10,7 +10,7 @@ const downloadTxHistory = (transactions: TransactionType[]): boolean => {
     downloadString(
       JSON.stringify(transactions),
       `txHistory-${Date.now()}.json`,
-      '.json'
+      '.json',
     );
     return true;
   } catch (error) {

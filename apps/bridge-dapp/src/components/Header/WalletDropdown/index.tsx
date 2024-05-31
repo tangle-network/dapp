@@ -80,7 +80,7 @@ export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
       await inactivateApi();
     } catch {
       const message = WebbError.getErrorMessage(
-        WebbErrorCodes.FailedToDisconnect
+        WebbErrorCodes.FailedToDisconnect,
       ).message;
 
       notificationApi({ variant: 'error', message });

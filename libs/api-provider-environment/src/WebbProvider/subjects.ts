@@ -37,7 +37,7 @@ export function useActiveAccount() {
  * - `Chain` means the active chain is supported
  */
 const activeChainSubject = new BehaviorSubject<Nullable<Maybe<Chain>>>(
-  undefined
+  undefined,
 );
 
 /** Active chain setter */

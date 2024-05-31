@@ -62,7 +62,7 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
       <div
         className={twMerge(
           'absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]',
-          'flex flex-col items-center gap-1'
+          'flex flex-col items-center gap-1',
         )}
       >
         <Typography variant="body2">{title}</Typography>
@@ -72,7 +72,7 @@ const IndependentRoleDistributionChart: FC<PieChartProps> = ({
           className="text-mono-200 dark:text-mono-0"
         >
           {formatNativeTokenAmount(
-            data.reduce((acc, item) => acc.add(new BN(item.value)), BN_ZERO)
+            data.reduce((acc, item) => acc.add(new BN(item.value)), BN_ZERO),
           )}
         </Typography>
       </div>

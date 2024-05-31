@@ -27,7 +27,7 @@ const Filters: FC<FiltersProps> = ({
 }) => {
   assert(
     hasCloseButton ? onClose !== undefined : onClose === undefined,
-    'If `hasCloseButton` is true, `onClose` must be defined, and vice versa.'
+    'If `hasCloseButton` is true, `onClose` must be defined, and vice versa.',
   );
 
   const [constraints, setConstraints] = useFilterConstraints();
@@ -60,14 +60,14 @@ const Filters: FC<FiltersProps> = ({
       } else {
         updatedConstraints[category].splice(
           updatedConstraints[category].indexOf(label),
-          1
+          1,
         );
       }
 
       onConstraintsChange(updatedConstraints);
       setConstraints(updatedConstraints);
     },
-    [constraints, onConstraintsChange, setConstraints]
+    [constraints, onConstraintsChange, setConstraints],
   );
 
   return (

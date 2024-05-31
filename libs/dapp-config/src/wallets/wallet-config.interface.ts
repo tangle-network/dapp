@@ -2,18 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
-import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
-import type { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { MetaMaskConnector, RainbowConnector } from './injected';
-
-export type SupportedConnector =
-  | MetaMaskConnector
-  | WalletConnectConnector
-  | RainbowConnector;
+import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 
 export interface WalletConfig {
   id: number;
   Logo: React.ReactElement;
+
+  rdns?: string;
   name: string;
   title: string;
 
@@ -38,19 +33,12 @@ export interface WalletConfig {
   /**
    * a function that will tell weather the wallet is installed or reachable
    */
-  detect(
-    appName: string
-  ): Promise<SupportedConnector | InjectedExtension | undefined>;
+  detect(appName: string): Promise<boolean | InjectedExtension | undefined>;
 
   /**
    * a list of supported typed chain ids
    */
   supportedChainIds: number[];
-
-  /**
-   * The wagmi connector for EVM wallets
-   */
-  connector?: SupportedConnector;
 }
 
 export type ManagedWallet = {

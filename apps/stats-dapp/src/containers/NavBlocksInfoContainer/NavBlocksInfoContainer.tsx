@@ -66,10 +66,10 @@ export const NavBoxInfoContainer = () => {
             {currentPage === 'keys'
               ? 'Keys Overview'
               : currentPage === 'authorities'
-              ? 'Authorities Overview'
-              : currentPage === 'proposals'
-              ? 'Proposals Overview'
-              : ''}
+                ? 'Authorities Overview'
+                : currentPage === 'proposals'
+                  ? 'Proposals Overview'
+                  : ''}
           </BreadcrumbsItem>
         </NavLink>
         {pathnames.length > 1 && (
@@ -90,12 +90,12 @@ export const NavBoxInfoContainer = () => {
             {currentPage === 'keys'
               ? 'Keygen details'
               : currentPage === 'authorities' && subPage !== 'history'
-              ? 'Authority details'
-              : currentPage === 'authorities' && subPage === 'history'
-              ? 'History'
-              : currentPage === 'proposals'
-              ? 'Proposal details'
-              : ''}
+                ? 'Authority details'
+                : currentPage === 'authorities' && subPage === 'history'
+                  ? 'History'
+                  : currentPage === 'proposals'
+                    ? 'Proposal details'
+                    : ''}
           </BreadcrumbsItem>
         )}
       </Breadcrumbs>

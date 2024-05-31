@@ -27,12 +27,12 @@ export const TimeLine = forwardRef<HTMLDivElement, TimeLineProps>(
         className={twMerge(
           'flex flex-col space-y-2 border-l border-blue dark:border-blue-30',
           'translate-x-3 transalte-y-0.5',
-          className
+          className,
         )}
         ref={ref}
       >
         {children}
       </div>
     );
-  }
+  },
 );

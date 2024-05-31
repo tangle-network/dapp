@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Footer } from '@webb-tools/webb-ui-components/components';
+import { Footer } from '../../components/Footer';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

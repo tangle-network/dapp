@@ -32,7 +32,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
 
   mapRelayerIntoActive(
     relayer: OptionalRelayer,
-    typedChainId: number
+    typedChainId: number,
   ): OptionalActiveRelayer {
     if (!relayer) {
       return null;
@@ -71,8 +71,8 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
                 .get(typedChainId)
                 ?.contracts?.find(
                   (contract) =>
-                    contract.address === contractAddress.toLowerCase()
-                )
+                    contract.address === contractAddress.toLowerCase(),
+                ),
             ) && capabilities.features.dataQuery
           );
         }
@@ -83,7 +83,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
           capabilities.supportedChains['evm']
             .get(typedChainId)
             ?.contracts.findIndex(
-              (contract) => contract.contract === query.contract
+              (contract) => contract.contract === query.contract,
             ) ?? -1;
         return relayerIndex > -1;
       }
@@ -150,7 +150,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
       targetRoot: string;
       commitment: bigint;
       tx?: TransactionExecutor<NewNotesTxResult>;
-    }
+    },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -161,7 +161,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
 
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
-      +sourceEvmId.toString()
+      +sourceEvmId.toString(),
     );
 
     // loop through the sourceRelayers to fetch leaves
@@ -170,11 +170,11 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
         const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
           vanchorContract.address,
-          tx?.cancelToken.abortSignal
+          tx?.cancelToken.abortSignal,
         );
 
         console.log(
-          `Got ${leaves.length} leaves from relayer ${relayers[i].endpoint}`
+          `Got ${leaves.length} leaves from relayer ${relayers[i].endpoint}`,
         );
 
         const result = await this.validateRelayerLeaves(
@@ -182,7 +182,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
           leaves,
           targetRoot,
           commitment,
-          tx
+          tx,
         );
 
         if (!result || result.commitmentIndex === -1) {

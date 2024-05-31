@@ -1,3 +1,5 @@
+'use client';
+
 import * as Tabs from '@radix-ui/react-tabs';
 
 import cx from 'classnames';
@@ -17,7 +19,7 @@ export const TabsList = forwardRef<
       {...props}
       className={twMerge(
         cx({ 'flex items-center space-x-2': !isDisableStyle }),
-        className
+        className,
       )}
       ref={ref}
     />

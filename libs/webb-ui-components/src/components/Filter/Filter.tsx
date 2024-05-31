@@ -21,7 +21,7 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
       searchText,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <Dropdown {...props} ref={ref}>
@@ -69,5 +69,5 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
         </DropdownBody>
       </Dropdown>
     );
-  }
+  },
 );

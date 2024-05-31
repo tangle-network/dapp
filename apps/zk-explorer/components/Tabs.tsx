@@ -81,16 +81,16 @@ const Tabs: TabsType = ({
 }) => {
   assert(
     initiallySelectedTabIndex >= 0 && initiallySelectedTabIndex < tabs.length,
-    'Initially selected tab index is out of range'
+    'Initially selected tab index is out of range',
   );
 
   assert(
     tabs.length > 0,
-    'At least one tab must be provided, otherwise there would be nothing to render'
+    'At least one tab must be provided, otherwise there would be nothing to render',
   );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
-    initiallySelectedTabIndex
+    initiallySelectedTabIndex,
   );
 
   const value = { selectedTabIndex, setSelectedTabIndex };
@@ -133,7 +133,7 @@ const Tabs: TabsType = ({
                   'flex justify-center items-center gap-2 py-1 border-b-2 border-transparent w-full sm:w-auto sm:justify-start',
                   isSelected
                     ? 'border-mono-200 dark:border-mono-0'
-                    : 'cursor-pointer'
+                    : 'cursor-pointer',
                 )}
                 onClick={() => handleTabChangeAttempt(tab, index)}
               >

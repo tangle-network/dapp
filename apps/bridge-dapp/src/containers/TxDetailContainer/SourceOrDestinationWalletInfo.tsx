@@ -20,7 +20,7 @@ const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
 }) => {
   return (
     <SectionWrapper>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Typography variant="body2" fw="bold">
           {type === 'source' ? 'Source' : 'Destination'}
         </Typography>
@@ -32,7 +32,7 @@ const SourceOrDestinationWalletInfo: FC<SourceOrDestinationWalletInfoProps> = ({
           <AddressChip address={walletAddress ?? ''} />
         </div>
       </div>
-      <NoteOrAmountWrapper className="flex justify-between items-center">
+      <NoteOrAmountWrapper className="flex items-center justify-between">
         <Typography variant="body2">Amount</Typography>
         <Typography variant="body2" fw="bold">
           {`${amount} ${

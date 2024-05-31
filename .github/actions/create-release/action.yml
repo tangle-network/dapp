@@ -9,12 +9,17 @@ inputs:
   repo-token:
     description: 'token to create github release'
     required: true
-  
+
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
-    - working-directory: ${{ github.workspace }}
+    - name: Use Node.js >=18.12.x
+      uses: actions/setup-node@v4.0.2
+      with:
+        node-version: '>=18.12.x'
+    - name: Run gh-release-script.js
+      working-directory: ${{ github.workspace }}
       run: node ${{ github.action_path }}/gh-release-script.js ${{ github.workspace }}/${{ inputs.package-path }}
-      env: 
+      env:
         REPO_TOKEN: ${{ inputs.repo-token }}
       shell: bash

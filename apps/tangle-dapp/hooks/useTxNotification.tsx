@@ -75,7 +75,7 @@ const useTxNotification = (txName: TxName) => {
         {
           variant: 'success',
           autoHideDuration: SUCCESS_TIMEOUT,
-        }
+        },
       );
     },
     [
@@ -85,7 +85,7 @@ const useTxNotification = (txName: TxName) => {
       isEvmActiveAccount,
       processingKey,
       txName,
-    ]
+    ],
   );
 
   const notifyError = useCallback(
@@ -105,10 +105,10 @@ const useTxNotification = (txName: TxName) => {
           // in case that they leave the page or not pay attention to
           // the error message, they can still see it when they return.
           autoHideDuration: null,
-        }
+        },
       );
     },
-    [closeSnackbar, enqueueSnackbar, processingKey, txName]
+    [closeSnackbar, enqueueSnackbar, processingKey, txName],
   );
 
   const notifyProcessing = useCallback(() => {

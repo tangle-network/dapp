@@ -4,7 +4,7 @@ import useApiRx from './useApiRx';
 
 const useMaxNominationQuota = (): number => {
   const { result: maxNominationQuotaOpt } = useApiRx(
-    useCallback((api) => api.query.staking.maxNominatorsCount(), [])
+    useCallback((api) => api.query.staking.maxNominatorsCount(), []),
   );
 
   const maxNominatorQuota = maxNominationQuotaOpt?.unwrapOr(null) ?? null;

@@ -10,10 +10,10 @@ const SocialChip: FC<{
     type === 'twitter'
       ? TwitterFill
       : type === 'discord'
-      ? DiscordFill
-      : type === 'email'
-      ? Mail
-      : GlobalLine;
+        ? DiscordFill
+        : type === 'email'
+          ? Mail
+          : GlobalLine;
 
   return (
     <a target="_blank" rel="noopener noreferrer" href={href}>

@@ -26,12 +26,12 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
       variant = 'body1',
       ...props
     },
-    ref
+    ref,
   ) => {
     const mergedClsx = useMemo(() => {
       return twMerge(
         'flex items-center space-x-1 text-mono-180 dark:text-mono-0',
-        className
+        className,
       );
     }, [className]);
 
@@ -65,5 +65,5 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
         )}
       </div>
     );
-  }
+  },
 );

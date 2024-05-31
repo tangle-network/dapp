@@ -11,7 +11,7 @@ function Suspense({ children, ...props }: PropsWithChildren<PropsOf<'div'>>) {
           {...props}
           className={twMerge(
             'flex items-center justify-center min-w-full min-h-screen',
-            props.className
+            props.className,
           )}
         >
           <Spinner size="xl" />

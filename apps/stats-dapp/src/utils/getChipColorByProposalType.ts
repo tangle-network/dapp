@@ -2,7 +2,7 @@ import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types'
 import { ProposalBatchStatus } from '../generated/graphql';
 
 export function getChipColorByProposalType(
-  type: ProposalBatchStatus
+  type: ProposalBatchStatus,
 ): ChipProps['color'] {
   switch (type) {
     case ProposalBatchStatus.Signed: {

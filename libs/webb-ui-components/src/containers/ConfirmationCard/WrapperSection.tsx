@@ -10,14 +10,14 @@ export const WrapperSection = forwardRef<HTMLDivElement, PropsOf<'div'>>(
         {...props}
         className={twMerge(
           'px-4 py-2 rounded-lg bg-mono-20 dark:bg-mono-180',
-          className
+          className,
         )}
         ref={ref}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 
 export default WrapperSection;

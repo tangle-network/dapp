@@ -34,7 +34,7 @@ export function getDecimals(digit: number): number {
 export function getRoundedAmountString(
   num: number | undefined,
   digits = 3,
-  formatOption: RoundedAmountFormatOptions = {}
+  formatOption: RoundedAmountFormatOptions = {},
 ): string {
   const {
     roundingFunction = Math.floor,

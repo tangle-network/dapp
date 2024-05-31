@@ -19,9 +19,9 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
     slashingSpansOpt === null
       ? null
       : slashingSpansOpt.isNone
-      ? 0
-      : // TODO: Need to verify that the span index is what is wanted by the extrinsics.
-        slashingSpansOpt.unwrap().spanIndex.toNumber();
+        ? 0
+        : // TODO: Need to verify that the span index is what is wanted by the extrinsics.
+          slashingSpansOpt.unwrap().spanIndex.toNumber();
 
   const evmTxFactory: EvmTxFactory<Precompile.STAKING> = useCallback(() => {
     if (slashingSpans === null) {
@@ -42,7 +42,7 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
 
       return api.tx.staking.withdrawUnbonded(slashingSpans);
     },
-    [slashingSpans]
+    [slashingSpans],
   );
 
   const getSuccessMessageFnc: GetSuccessMessageFunctionType<void> = useCallback(
@@ -50,7 +50,7 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
       withdrawAmount
         ? `Successfully withdrew ${formatNativeTokenAmount(withdrawAmount)}.`
         : '',
-    [withdrawAmount, formatNativeTokenAmount]
+    [withdrawAmount, formatNativeTokenAmount],
   );
 
   return useAgnosticTx<Precompile.STAKING>({

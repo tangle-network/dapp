@@ -12,7 +12,7 @@ const TxInfoItem = forwardRef<React.ElementRef<'div'>, TxInfoItemProps>(
         ref={ref}
         className={twMerge(
           'px-2 flex items-center justify-between !text-mono-100',
-          className
+          className,
         )}
       >
         <div className="flex items-center gap-0.5 !text-current">
@@ -23,7 +23,7 @@ const TxInfoItem = forwardRef<React.ElementRef<'div'>, TxInfoItemProps>(
             className={twMerge('!text-inherit', leftContent?.className)}
             titleClassName={twMerge(
               'text-mono-100 dark:text-mono-100',
-              leftContent?.titleClassName
+              leftContent?.titleClassName,
             )}
           />
         </div>
@@ -43,7 +43,7 @@ const TxInfoItem = forwardRef<React.ElementRef<'div'>, TxInfoItemProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default TxInfoItem;

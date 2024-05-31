@@ -67,12 +67,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   static async getNextIndex(
     apiConfig: ApiConfig,
     typedChainId: number,
-    fungibleCurrencyId: number
+    fungibleCurrencyId: number,
   ): Promise<bigint> {
     const chain = apiConfig.chains[typedChainId];
     const treeIdStr = apiConfig.getAnchorIdentifier(
       fungibleCurrencyId,
-      typedChainId
+      typedChainId,
     );
 
     if (!chain || !treeIdStr) {
@@ -98,7 +98,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   prepareTransaction(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
-    wrapUnwrapAssetId: string
+    wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
     tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
 
@@ -132,7 +132,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'polkadot'>,
-    changeNotes: Note[]
+    changeNotes: Note[],
   ): Promise<HexString> {
     const [tx, anchorId, rawInputUtxos, rawOutputUtxos, ...restArgs] = txArgs;
 
@@ -162,7 +162,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     ] as Parameters<typeof this.setupTransaction>;
 
     const { extData, publicInputs: proofData } = await this.setupTransaction(
-      ...setupTransactionArgs
+      ...setupTransactionArgs,
     );
 
     const relayTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<
@@ -202,19 +202,19 @@ export class PolkadotVAnchorActions extends VAnchorActions<
           await Promise.all(
             changeNotes.map(async (note) => {
               const { chainId, chainType } = parseTypedChainId(
-                +note.note.targetChainId
+                +note.note.targetChainId,
               );
 
               const resourceId =
                 await this.inner.methods.variableAnchor.actions.inner.getResourceId(
                   note.note.targetIdentifyingData,
                   chainId,
-                  chainType
+                  chainType,
                 );
 
               this.inner.noteManager?.removeNote(resourceId, note);
               return true;
-            })
+            }),
           );
           tx.fail(message ? message : 'Transaction failed');
           break;
@@ -246,7 +246,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     recipient: string,
     relayer: string,
     wrapUnwrapAssetId: string,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
   ) {
     // Get active bridge and currency fungible asset
     const activeBridge = this.inner.state.activeBridge;
@@ -280,12 +280,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       relayer,
       wrapUnwrapAssetId,
       leavesMap,
-      treeId
+      treeId,
     );
 
     tx.next(
       TransactionState.SendingTransaction,
-      'Sending transaction to vanchor'
+      'Sending transaction to vanchor',
     );
 
     // now we call the vanchor transact on substrate
@@ -296,7 +296,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
           section: 'vAnchorBn254',
         },
       ],
-      [[treeId, publicInputs, extData]]
+      [[treeId, publicInputs, extData]],
     );
 
     const txHash = await polkadotTx.call(activeAccount.address);
@@ -311,7 +311,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   async isPairRegistered(
     _treeId: string,
     _account: string,
-    _pubkey: string
+    _pubkey: string,
   ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -319,7 +319,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   async register(
     _treeId: string,
     _account: string,
-    _pubkey: string
+    _pubkey: string,
   ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -328,7 +328,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     _anchorAddress: string,
     _owner: Keypair,
     _startingBlock?: bigint,
-    _abortSignal?: AbortSignal
+    _abortSignal?: AbortSignal,
   ): Promise<Note[]> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -343,7 +343,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     _txHash: string,
     note: Note,
     indexBeforeInsertion: number,
-    addressOrTreeId: string
+    addressOrTreeId: string,
   ): Promise<bigint> {
     const leaf = note.getLeaf();
     const treeId = Number(addressOrTreeId);
@@ -351,19 +351,19 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       this.inner.api,
       leaf,
       indexBeforeInsertion,
-      treeId
+      treeId,
     );
     return BigInt(idx);
   }
 
   async getNextIndex(
     typedChainId: number,
-    fungibleCurrencyId: number
+    fungibleCurrencyId: number,
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
     const treeIdStr = this.inner.config.getAnchorIdentifier(
       fungibleCurrencyId,
-      typedChainId
+      typedChainId,
     );
 
     if (!chain || !treeIdStr) {
@@ -375,16 +375,15 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const nextIdx = await this.inner.api.query.merkleTreeBn254.nextLeafIndex(
-      treeId
-    );
+    const nextIdx =
+      await this.inner.api.query.merkleTreeBn254.nextLeafIndex(treeId);
     return nextIdx.toBigInt();
   }
 
   async getResourceId(
     treeId: string,
     chainId: number,
-    _: ChainType
+    _: ChainType,
   ): Promise<ResourceId> {
     const palletId = await this.getVAnchorPalletId(this.inner.api);
     return createSubstrateResourceId(chainId, +treeId, palletId.toString());
@@ -392,7 +391,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
   async commitmentsSetup(
     notes: Note[],
-    tx?: TransactionExecutor<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>,
   ) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
@@ -405,7 +404,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const leavesMap: Record<string, Uint8Array[]> = {};
 
     const notesLeaves = await Promise.all(
-      notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destApi, tx))
+      notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destApi, tx)),
     );
 
     // Keep track of the leafindices for each note
@@ -432,7 +431,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
   async getLatestNeighborEdges(
     _fungibleId: number,
-    _typedChainId?: number | undefined
+    _typedChainId?: number | undefined,
   ): Promise<readonly NeighborEdge[]> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -440,7 +439,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   async validateInputNotes(
     _notes: readonly Note[],
     _typedChainId: number,
-    _fungibleId: number
+    _fungibleId: number,
   ): Promise<boolean> {
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
@@ -450,7 +449,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private async prepareDepositTransaction(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
-    wrapUnwrapAssetId: string
+    wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const activeAccount = await this.inner.accounts.activeOrDefault;
     if (!activeAccount) {
@@ -463,7 +462,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const depositUtxo = await utxoFromVAnchorNote(
       payload.note,
-      +payload.note.index
+      +payload.note.index,
     );
     const inputUtxos: Utxo[] = [];
 
@@ -488,7 +487,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private async prepareWithdrawTransaction(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
-    wrapUnwrapAssetId: string
+    wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
 
@@ -520,7 +519,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private async prepareTransferTransaction(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
-    wrapUnwrapAssetId: string
+    wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const { notes, changeUtxo, transferUtxo, feeAmount } = payload;
 
@@ -548,22 +547,22 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private async checkHasBalance(payload: Note, wrapUnwrapAssetId: string) {
     // Check if the user has enough balance
     const balance = await firstValueFrom(
-      this.inner.methods.chainQuery.tokenBalanceByAddress(wrapUnwrapAssetId)
+      this.inner.methods.chainQuery.tokenBalanceByAddress(wrapUnwrapAssetId),
     );
 
     const amount = formatUnits(
       BigInt(payload.note.amount),
-      +payload.note.denomination
+      +payload.note.denomination,
     );
 
     if (Number(balance) < Number(amount)) {
       const { chainId, chainType } = parseTypedChainId(
-        +payload.note.targetChainId
+        +payload.note.targetChainId,
       );
       const resourceId = await this.getResourceId(
         payload.note.targetIdentifyingData,
         chainId,
-        chainType
+        chainType,
       );
 
       this.emit('stateChange', TransactionState.Failed);
@@ -594,7 +593,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     relayer: string,
     wrapUnwrapAssetId: string,
     leavesMap: Record<string, Uint8Array[]>,
-    treeId: string
+    treeId: string,
   ) {
     if (wrapUnwrapAssetId.length === 0) {
       throw new Error('No asset id provided');
@@ -634,7 +633,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     fixturesList.set('vanchor key', 'Waiting');
     const { zkey, wasm } = await this.inner.getZkFixtures(
       maxEdges,
-      inputs.length <= 2
+      inputs.length <= 2,
     );
     fixturesList.set('vanchor key', 'Done');
 
@@ -651,7 +650,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       BigInt(refund.toString()),
       wrapUnwrapAssetId,
       u8aToHex(encryptedCommitments[0]),
-      u8aToHex(encryptedCommitments[1])
+      u8aToHex(encryptedCommitments[1]),
     );
 
     const proofInputs = await this.generateProofInputs(
@@ -663,7 +662,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       extAmount,
       feeBigInt,
       extDataHash,
-      leavesMap
+      leavesMap,
     );
 
     const witness = await this.getSnarkJsWitness(proofInputs, wasm);
@@ -676,7 +675,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       inputs,
       outputs,
       publicAmount,
-      extDataHash
+      extDataHash,
     );
 
     // For Substrate, specifically, we need the extAmount to not be in hex value,
@@ -697,14 +696,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     inputs: Utxo[],
     outputs: Utxo[],
     publicAmount: bigint,
-    extDataHash: bigint
+    extDataHash: bigint,
   ): Promise<IVAnchorPublicInputs> {
     const proofBytes = await groth16ProofToBytes(proof);
     const publicAmountHex = ensureHex(toFixedHex(publicAmount, 32));
     const extDataHashHex = ensureHex(toFixedHex(extDataHash));
 
     const inputNullifiers = inputs.map((x) =>
-      ensureHex(toFixedHex('0x' + x.nullifier))
+      ensureHex(toFixedHex('0x' + x.nullifier)),
     );
 
     const outputCommitments = [
@@ -732,7 +731,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     refund: bigint,
     wrapUnwrapToken: string,
     encryptedOutput1: string,
-    encryptedOutput2: string
+    encryptedOutput2: string,
   ): {
     extData: IVariableAnchorExtData;
     extDataHash: bigint;
@@ -767,7 +766,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private getMerkleProof(
     levels: number,
     input: Utxo,
-    leavesMap?: Uint8Array[]
+    leavesMap?: Uint8Array[],
   ) {
     const tree = new MerkleTree(levels, leavesMap);
 
@@ -777,12 +776,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     if (Number(input.amount) > 0) {
       if (input.index === undefined) {
         throw new Error(
-          `Input commitment ${u8aToHex(input.commitment)} index was not set`
+          `Input commitment ${u8aToHex(input.commitment)} index was not set`,
         );
       }
       if (input.index < 0) {
         throw new Error(
-          `Input commitment ${u8aToHex(input.commitment)} index should be >= 0`
+          `Input commitment ${u8aToHex(input.commitment)} index should be >= 0`,
         );
       }
       if (leavesMap === undefined) {
@@ -817,19 +816,19 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     extAmount: bigint,
     fee: bigint,
     extDataHash: bigint,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
   ) {
     const levels = await this.inner.getVAnchorLevels(treeId);
 
     let vanchorMerkleProof: Array<ReturnType<typeof this.getMerkleProof>>;
     if (Object.keys(leavesMap).length === 0) {
       vanchorMerkleProof = inputUtxos.map((u) =>
-        this.getMerkleProof(levels, u)
+        this.getMerkleProof(levels, u),
       );
     } else {
       const treeElements = leavesMap[typedChainId.toString()];
       vanchorMerkleProof = inputUtxos.map((u) =>
-        this.getMerkleProof(levels, u, treeElements)
+        this.getMerkleProof(levels, u, treeElements),
       );
     }
 
@@ -845,7 +844,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       chainID: typedChainId.toString(),
       inputNullifier: inputUtxos.map((x) => ensureHex(x.nullifier)),
       outputCommitment: outputUtxos.map((x) =>
-        BigInt(u8aToHex(x.commitment)).toString()
+        BigInt(u8aToHex(x.commitment)).toString(),
       ),
       publicAmount: ((extAmount - fee + fieldSize) % fieldSize).toString(),
       extDataHash: extDataHash.toString(),
@@ -853,7 +852,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       inAmount: inputUtxos.map((x) => x.amount.toString()),
       inPrivateKey: inputUtxos.map((x) => ensureHex(x.secret_key)),
       inBlinding: inputUtxos.map((x) =>
-        BigInt(ensureHex(x.blinding)).toString()
+        BigInt(ensureHex(x.blinding)).toString(),
       ),
       inPathIndices: vanchorMerkleProofs.map((x) => x.pathIndex),
       inPathElements: vanchorMerkleProofs.map((x) => x.pathElements),
@@ -861,10 +860,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       outChainID: outputUtxos.map((x) => x.chainId),
       outAmount: outputUtxos.map((x) => x.amount.toString()),
       outPubkey: outputUtxos.map((x) =>
-        BigInt(x.getKeypair().getPubKey()).toString()
+        BigInt(x.getKeypair().getPubKey()).toString(),
       ),
       outBlinding: outputUtxos.map((x) =>
-        BigInt(ensureHex(x.blinding)).toString()
+        BigInt(ensureHex(x.blinding)).toString(),
       ),
     };
 
@@ -873,18 +872,18 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
   private async getSnarkJsWitness(
     witnessInput: any,
-    circuitWasm: Buffer
+    circuitWasm: Buffer,
   ): Promise<Uint8Array> {
     const witnessCalculator = await buildVariableWitnessCalculator(
       circuitWasm,
-      0
+      0,
     );
     return witnessCalculator.calculateWTNSBin(witnessInput, 0);
   }
 
   private async getSnarkJsProof(
     zkey: Uint8Array,
-    witness: Uint8Array
+    witness: Uint8Array,
   ): Promise<Groth16Proof> {
     const proofOutput: Groth16Proof = await groth16.prove(zkey, witness);
 
@@ -904,7 +903,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
     destApi: ApiPromise,
-    tx?: TransactionExecutor<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
     if (tx) {
       tx.next(TransactionState.FetchingLeaves, {
@@ -973,7 +972,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       const resourceId = createSubstrateResourceId(
         chainId,
         +sourceTreeId,
-        String(palletId)
+        String(palletId),
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
@@ -993,7 +992,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       commitmentIndex = leafIndex;
     } else {
       const leaves = leavesMap[sourceTypedChainId].map((leaf) =>
-        u8aToHex(leaf)
+        u8aToHex(leaf),
       );
 
       tx?.next(TransactionState.ValidatingLeaves, undefined);
@@ -1002,7 +1001,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
           treeHeight,
           leaves,
           destRelayedRoot,
-          commitment.toString()
+          commitment.toString(),
         );
       tx?.next(TransactionState.ValidatingLeaves, true);
 
@@ -1013,7 +1012,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       // so we need to reset the leaves
       if (provingLeaves.length > leaves.length) {
         leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) =>
-          hexToU8a(leaf)
+          hexToU8a(leaf),
         );
       }
     }
@@ -1043,11 +1042,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {
     const outAmount = outputs.reduce(
       (sum, x) => sum + BigInt(x.amount),
-      ZERO_BIG_INT
+      ZERO_BIG_INT,
     );
     const inAmount = inputs.reduce(
       (sum, x) => sum + BigInt(x.amount),
-      ZERO_BIG_INT
+      ZERO_BIG_INT,
     );
 
     return fee + outAmount - inAmount;
@@ -1069,7 +1068,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
           blinding: hexToU8a(randomBN(31).toHexString()),
           keypair: randomKeypair,
           index: this.inner.state.defaultUtxoIndex.toString(),
-        })
+        }),
       );
     }
     if (utxos.length !== 2 && utxos.length !== maxLen) {

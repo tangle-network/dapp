@@ -31,7 +31,7 @@ export const toEvmAddress20 = (substrateAddress: string): AddressType => {
 
   assert(
     isEvmAddress(conversionResult),
-    'Conversion to EVM address should not fail when a valid Substrate address is provided'
+    'Conversion to EVM address should not fail when a valid Substrate address is provided',
   );
 
   return conversionResult;

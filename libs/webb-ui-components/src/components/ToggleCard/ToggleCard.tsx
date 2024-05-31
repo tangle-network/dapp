@@ -22,7 +22,7 @@ import { ToggleCardProps } from './types';
 const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
   (
     { className, Icon, title, id, description, info, switcherProps, ...props },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -30,7 +30,7 @@ const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
           'px-4 py-2 rounded-lg max-w-md',
           'bg-[#F7F8F7]/50 hover:bg-mono-20',
           'dark:bg-mono-180 dark:hover:bg-mono-170',
-          className
+          className,
         )}
         ref={ref}
         {...props}
@@ -41,7 +41,7 @@ const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
               <span
                 className={twMerge(
                   'grow-0 shrink-0',
-                  getFlexBasic(Icon.props.size)
+                  getFlexBasic(Icon.props.size),
                 )}
               >
                 {cloneElement(Icon, {
@@ -78,7 +78,7 @@ const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default ToggleCard;

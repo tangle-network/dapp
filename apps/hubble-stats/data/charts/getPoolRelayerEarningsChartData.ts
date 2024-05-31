@@ -7,21 +7,21 @@ import { getFormattedDataForBasicChart } from '../../utils';
 
 async function getVAnchorRelayerEarningsData(
   vAnchorAddress: string,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ) {
   let relayerEarnings: number | undefined;
   try {
     const fetchedRelayerEarningsData =
       await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChains(
         subgraphUrls,
-        vAnchorAddress
+        vAnchorAddress,
       );
 
     relayerEarnings = fetchedRelayerEarningsData.reduce(
       (total, relayerFeeByChain) => {
         return total + +formatEther(BigInt(relayerFeeByChain.profit ?? 0));
       },
-      0
+      0,
     );
   } catch {
     relayerEarnings = undefined;
@@ -33,7 +33,7 @@ async function getVAnchorRelayerEarningsDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
   numDatesFromStart: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<ChartDataRecord> {
   try {
     const fetchedRelayerFeesData =
@@ -41,7 +41,7 @@ async function getVAnchorRelayerEarningsDataByDateRange(
         subgraphUrls,
         vAnchorAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     const relayerEarningsData = fetchedRelayerFeesData.reduce(
@@ -49,12 +49,12 @@ async function getVAnchorRelayerEarningsDataByDateRange(
         Object.keys(relayerEarningsByChain).forEach((epoch) => {
           if (!relayerEarningsMap[epoch]) relayerEarningsMap[epoch] = 0;
           relayerEarningsMap[epoch] += +formatEther(
-            BigInt(relayerEarningsByChain[epoch].profit)
+            BigInt(relayerEarningsByChain[epoch].profit),
           );
         });
         return relayerEarningsMap;
       },
-      {} as { [epoch: string]: number }
+      {} as { [epoch: string]: number },
     );
 
     return relayerEarningsData;
@@ -67,7 +67,7 @@ async function getVAnchorRelayerEarningsDataByDateRange(
 export default async function getPoolRelayerEarningsChartData(
   poolAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   relayerEarnings?: number;
   poolRelayerEarningsData: ReturnType<typeof getFormattedDataForBasicChart>;
@@ -80,14 +80,14 @@ export default async function getPoolRelayerEarningsChartData(
       poolAddress,
       startingEpoch,
       numDatesFromStart,
-      supportedSubgraphs
+      supportedSubgraphs,
     ),
   ] as const);
 
   return {
     relayerEarnings,
     poolRelayerEarningsData: getFormattedDataForBasicChart(
-      poolRelayerEarningsData
+      poolRelayerEarningsData,
     ),
   };
 }

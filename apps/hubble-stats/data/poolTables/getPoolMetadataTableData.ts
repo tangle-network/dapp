@@ -21,7 +21,7 @@ type PoolMetadataDataType = {
 };
 
 export default async function getPoolMetadataTableData(
-  poolAddress: string
+  poolAddress: string,
 ): Promise<PoolMetadataDataType> {
   const vAnchor = VANCHORS_MAP[poolAddress];
   const {
@@ -41,7 +41,7 @@ export default async function getPoolMetadataTableData(
     try {
       feesPercentage = await getWrappingFeesPercentageByFungibleToken(
         fungibleTokenAddress,
-        typedChainId
+        typedChainId,
       );
     } catch {
       feesPercentage = undefined;
@@ -64,7 +64,7 @@ export default async function getPoolMetadataTableData(
       address: fungibleTokenAddress,
       urls: getExplorerUrlByAddressByChains(
         fungibleTokenAddress,
-        supportedChains
+        supportedChains,
       ),
     },
     treasuryAddress: {

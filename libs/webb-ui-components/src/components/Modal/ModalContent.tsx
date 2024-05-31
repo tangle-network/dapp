@@ -1,4 +1,6 @@
-import { Transition } from '@headlessui/react';
+'use client';
+
+import { Transition, TransitionChild } from '@headlessui/react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import cx from 'classnames';
 import { forwardRef, Fragment } from 'react';
@@ -18,11 +20,11 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
       overrideTransitionRootProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     const inner = (
-      <Transition.Root show={isOpen} {...overrideTransitionRootProps}>
-        <Transition.Child
+      <Transition show={isOpen} {...overrideTransitionRootProps}>
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -36,8 +38,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             forceMount
             className="fixed inset-0 z-20 bg-black/50"
           />
-        </Transition.Child>
-        <Transition.Child
+        </TransitionChild>
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0 scale-95"
@@ -55,16 +57,16 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
               cx(
                 isCenter
                   ? '-translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
-                  : 'top-0 left-0'
+                  : 'top-0 left-0',
               ),
-              className
+              className,
             )}
             ref={ref}
           >
             {children}
           </DialogPrimitive.Content>
-        </Transition.Child>
-      </Transition.Root>
+        </TransitionChild>
+      </Transition>
     );
 
     if (usePortal) {
@@ -72,5 +74,5 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     }
 
     return inner;
-  }
+  },
 );

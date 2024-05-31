@@ -14,7 +14,7 @@ export default function useInflationPercentage(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
     value2: null,
-  }
+  },
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function useInflationPercentage(
 
         sub = apiRx.query.staking.currentEra().subscribe(async (currentEra) => {
           const totalStaked = await apiPromise.query.staking.erasTotalStake(
-            currentEra.unwrapOrDefault()
+            currentEra.unwrapOrDefault(),
           );
 
           const totalIssuance = await apiPromise.query.balances.totalIssuance();
@@ -43,7 +43,7 @@ export default function useInflationPercentage(
             apiPromise,
             totalStaked,
             totalIssuance,
-            BN_ZERO
+            BN_ZERO,
           );
 
           const inflationPercentage = inflation.inflation;

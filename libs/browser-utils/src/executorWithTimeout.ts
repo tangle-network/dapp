@@ -7,7 +7,7 @@
  */
 const executorWithTimeout = <T>(
   promise: Promise<T>,
-  timeout = 5000
+  timeout = 5000,
 ): Promise<T> => {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {

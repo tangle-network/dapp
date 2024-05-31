@@ -1,4 +1,4 @@
-import { IconsGroup } from '@webb-tools/webb-ui-components';
+import { IconsGroup } from '../../components/IconsGroup';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

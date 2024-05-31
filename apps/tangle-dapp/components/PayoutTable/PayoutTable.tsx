@@ -145,7 +145,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
               ? sessionProgress.currentEra.toNumber() -
                   historyDepth.toNumber() -
                   rowData.era
-              : 0
+              : 0,
           );
 
           return (

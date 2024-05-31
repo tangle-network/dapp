@@ -15,7 +15,7 @@ async function addAssetMetadata(
   signer: KeyringPair,
   assetId: string,
   assetSymbol: string,
-  decimals = 18
+  decimals = 18,
 ) {
   await polkadotTx(
     apiPromise,
@@ -24,7 +24,7 @@ async function addAssetMetadata(
       method: 'sudo',
     },
     [apiPromise.tx.assetRegistry.setMetadata(assetId, assetSymbol, decimals)],
-    signer
+    signer,
   );
 }
 

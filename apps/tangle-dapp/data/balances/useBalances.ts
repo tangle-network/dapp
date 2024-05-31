@@ -46,12 +46,12 @@ const useBalances = () => {
           const maxFrozen = bnMax(
             data.frozen ?? BN_ZERO,
             data.miscFrozen ?? BN_ZERO,
-            data.feeFrozen ?? BN_ZERO
+            data.feeFrozen ?? BN_ZERO,
           );
 
           const transferable = BN.max(
             data.free.sub(maxFrozen).sub(data.reserved ?? BN_ZERO),
-            BN_ZERO
+            BN_ZERO,
           );
 
           return {
@@ -61,10 +61,10 @@ const useBalances = () => {
             transferable,
             locked: data.free.sub(transferable),
           };
-        })
+        }),
       );
     },
-    [activeSubstrateAddress]
+    [activeSubstrateAddress],
   );
 
   const { result: balances, ...other } = useApiRx(balancesFetcher);

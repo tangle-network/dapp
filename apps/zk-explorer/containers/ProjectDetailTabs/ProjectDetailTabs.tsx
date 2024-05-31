@@ -26,7 +26,7 @@ const ProjectDetailTabsContainer: FC<ProjectDetailTabsContainerProps> = ({
     <div
       className={cx(
         'bg-mono-0 dark:bg-mono-180 p-4 md:p-6 space-y-6 rounded-2xl',
-        className
+        className,
       )}
     >
       <TabsRoot defaultValue={CIRCUITS_TAB} className="h-[100%] flex flex-col">

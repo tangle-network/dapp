@@ -104,7 +104,7 @@ const JobsTableClient: FC<JobsTableProps> = ({ data, pageSize }) => {
       }),
       ...staticColumns.slice(EARNINGS_COLUMN_IDX),
     ],
-    [nativeTokenSymbol]
+    [nativeTokenSymbol],
   );
 
   const table = useReactTable({

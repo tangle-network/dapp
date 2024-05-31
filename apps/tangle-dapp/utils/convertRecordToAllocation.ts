@@ -16,7 +16,7 @@ import substrateRoleToServiceType from './restaking/substrateRoleToServiceType';
  * JavaScript/TypeScript.
  */
 function convertRecordToAllocation(
-  record: PalletRolesProfileRecord
+  record: PalletRolesProfileRecord,
 ): [RestakingService, BN] {
   const serviceType = substrateRoleToServiceType(record.role);
 

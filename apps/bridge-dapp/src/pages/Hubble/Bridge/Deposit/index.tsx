@@ -45,7 +45,7 @@ const Deposit = () => {
 
   const { balances: walletBalances } = useCurrenciesBalances(
     allCurrencies,
-    srcTypedChainId
+    srcTypedChainId,
   );
 
   const { balances: shieldedBalances } = useBalancesFromNotes();
@@ -54,7 +54,7 @@ const Deposit = () => {
     {
       balance: wrappableCfg ? walletBalances[wrappableCfg.id] : undefined,
       fungible: fungibleCfg,
-    }
+    },
   );
 
   const amountProps = useMemo(
@@ -62,7 +62,7 @@ const Deposit = () => {
       amount,
       onAmountChange,
     }),
-    [amount, onAmountChange]
+    [amount, onAmountChange],
   );
 
   const totalFungibleAmount = useMemo(() => {
@@ -72,7 +72,7 @@ const Deposit = () => {
 
     if (fungibleCfg && shieldedBalances[fungibleCfg.id]?.[destTypedChainId]) {
       return Number(
-        formatEther(shieldedBalances[fungibleCfg.id][destTypedChainId])
+        formatEther(shieldedBalances[fungibleCfg.id][destTypedChainId]),
       );
     }
   }, [shieldedBalances, fungibleCfg, destTypedChainId]);

@@ -4,16 +4,16 @@
 import {
   Account,
   AccountsAdapter,
-  PromiseOrT,
+  type PromiseOrT,
 } from '@webb-tools/abstract-api-provider/account';
-import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
-import { Address, WalletClient } from 'viem';
+import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import type { Address, JsonRpcAccount } from 'viem';
+import type { Connector } from 'wagmi';
 import { getAccount } from 'wagmi/actions';
-
-export class Web3Account extends Account<WalletClient['account']> {
+export class Web3Account extends Account<JsonRpcAccount> {
   constructor(
-    public readonly _inner: WalletClient['account'],
-    public readonly address: Address
+    public readonly _inner: JsonRpcAccount,
+    public readonly address: Address,
   ) {
     super(_inner, address);
   }
@@ -27,26 +27,23 @@ export class Web3Account extends Account<WalletClient['account']> {
   }
 }
 
-export class Web3Accounts extends AccountsAdapter<
-  WalletClient,
-  WalletClient['account']
-> {
+export class Web3Accounts extends AccountsAdapter<Connector, JsonRpcAccount> {
   providerName = 'Web3';
 
   async accounts() {
-    const addresses = await this.inner.getAddresses();
+    const addresses = await this.inner.getAccounts();
 
     return addresses.map(
       (address) =>
         new Web3Account(
-          { type: 'json-rpc', address } satisfies WalletClient['account'],
-          address
-        )
+          { type: 'json-rpc', address } satisfies JsonRpcAccount,
+          address,
+        ),
     );
   }
 
   get activeOrDefault() {
-    const defaultAccount = getAccount();
+    const defaultAccount = getAccount(wagmiConfig);
 
     if (!defaultAccount.address) {
       return null;
@@ -56,15 +53,12 @@ export class Web3Accounts extends AccountsAdapter<
       {
         type: 'json-rpc',
         address: defaultAccount.address,
-      } satisfies WalletClient['account'],
-      defaultAccount.address
+      } satisfies JsonRpcAccount,
+      defaultAccount.address,
     );
   }
 
-  setActiveAccount(nextAccount: Account): PromiseOrT<void> {
-    this.inner.account = {
-      type: 'json-rpc',
-      address: ensureHex(nextAccount.address),
-    } satisfies WalletClient['account'];
+  setActiveAccount(_nextAccount: Account): PromiseOrT<void> {
+    return;
   }
 }

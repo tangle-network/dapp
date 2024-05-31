@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { TransferConfirm } from '@webb-tools/webb-ui-components/containers';
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { TransferConfirm } from '../../containers/ConfirmationCard/TransferConfirm';
+import { withRouter } from 'storybook-addon-remix-react-router';
 export default {
   title: 'Design System/Templates/TransferConfirm',
   component: TransferConfirm,

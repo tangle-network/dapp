@@ -3,11 +3,11 @@ import { getAccountInfo } from './identity';
 
 export const getValidatorIdentityName = async (
   rpcEndpoint: string,
-  validatorAddress: string
+  validatorAddress: string,
 ): Promise<string> => {
   const validatorAccountInfo = await getAccountInfo(
     rpcEndpoint,
-    validatorAddress
+    validatorAddress,
   );
 
   if (validatorAccountInfo?.name) {
@@ -21,7 +21,7 @@ export const getValidatorIdentityName = async (
 
 export const getValidatorCommission = async (
   rpcEndpoint: string,
-  validatorAddress: string
+  validatorAddress: string,
 ): Promise<string> => {
   const api = await getApiPromise(rpcEndpoint);
   const validatorPrefs = await api.query.staking.validators(validatorAddress);

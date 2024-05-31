@@ -16,7 +16,7 @@ function isBrowser(): boolean {
  * Function to toggle or change the theme mode (possible value: `light`, `dark`, `undefined`)
  */
 export type ToggleThemeModeFunc = (
-  nextThemeMode?: SupportTheme | undefined
+  nextThemeMode?: SupportTheme | undefined,
 ) => void;
 
 /**
@@ -24,7 +24,7 @@ export type ToggleThemeModeFunc = (
  * @returns `[isDarkMode, toggleThemeMode]`
  */
 export function useDarkMode(
-  defaultTheme: SupportTheme = 'dark'
+  defaultTheme: SupportTheme = 'dark',
 ): [boolean, ToggleThemeModeFunc] {
   const [theme, setTheme] = useLocalStorageState('theme', {
     defaultValue: defaultTheme,
@@ -73,7 +73,7 @@ export function useDarkMode(
 
       setTheme(_nextThemeMode);
     },
-    [theme, setTheme]
+    [theme, setTheme],
   );
 
   return [isDarkMode, toggleThemeMode];

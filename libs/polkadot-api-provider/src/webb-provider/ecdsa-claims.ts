@@ -30,7 +30,7 @@ export class PolkadotECDSAClaims extends ECDSAClaims<WebbPolkadot> {
           isSignerEth ? { EVM: signer.address } : { Native: signer.address }, // signer
           isDestAccountEth ? { EVM: signature } : { Native: signature }, // signataure
         ],
-      ]
+      ],
     );
 
     const txHash = await tx.call(null);
@@ -39,9 +39,8 @@ export class PolkadotECDSAClaims extends ECDSAClaims<WebbPolkadot> {
   }
 
   async getClaim(address: string): Promise<string | null> {
-    const claimRaw = await this.inner.api.query.claims.claims<Option<U128>>(
-      address
-    );
+    const claimRaw =
+      await this.inner.api.query.claims.claims<Option<U128>>(address);
 
     if (claimRaw.isSome) {
       let amount = claimRaw.unwrap().toBn();

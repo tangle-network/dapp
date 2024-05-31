@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export abstract class Account<T = unknown> {
-  constructor(protected readonly _inner: T, public readonly address: string) {}
+  constructor(
+    protected readonly _inner: T,
+    public readonly address: string,
+  ) {}
 
   // TODO abstract create react element
   abstract get avatar(): unknown;

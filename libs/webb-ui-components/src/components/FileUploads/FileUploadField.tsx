@@ -1,3 +1,5 @@
+'use client';
+
 import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, useCallback, useEffect, useState } from 'react';
@@ -23,18 +25,21 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
   }, [value]);
 
   // Handle change event
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setNote(value);
-    onChange?.(value);
-  }, []);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setNote(value);
+      onChange?.(value);
+    },
+    [onChange],
+  );
 
   // Handle upload event
   const handleUpload = useCallback(async () => {
     setIsUploading(true);
     await onUpload?.(note ?? '');
     setIsUploading(false);
-  }, [note]);
+  }, [note, onUpload]);
 
   return (
     <div className="space-y-2">
@@ -42,7 +47,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
         className={twMerge(
           'w-full max-w-[356px]',
           'p-3 rounded-md bg-mono-20 dark:bg-mono-120',
-          'flex items-center justify-between space-x-5'
+          'flex items-center justify-between space-x-5',
         )}
       >
         <input
@@ -53,7 +58,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
             'bg-transparent mono1 text-mono-200 dark:text-mono-0',
             'placeholder:text-mono-120 dark:placeholder:text-mono-80',
             'disabled:text-mono-120 dark:disabled:text-mono-80',
-            'grow focus:outline-0'
+            'grow focus:outline-0',
           )}
         />
 

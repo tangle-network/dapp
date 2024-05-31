@@ -8,7 +8,7 @@ import usePromise from '../../hooks/usePromise';
 import type { ErasRestakeRewardPointsEntry } from './types';
 
 const createWorker = createWorkerFactory(
-  () => import('./workers/calculateEarnings')
+  () => import('./workers/calculateEarnings'),
 );
 
 function useRestakingEarnings(accountAddress: string | null) {
@@ -45,11 +45,11 @@ function useRestakingEarnings(accountAddress: string | null) {
                           ([accountId, rewardPoints]) => [
                             accountId.toString(),
                             rewardPoints.toNumber(),
-                          ]
-                        )
+                          ],
+                        ),
                       ),
                     },
-                  ] satisfies ErasRestakeRewardPointsEntry
+                  ] satisfies ErasRestakeRewardPointsEntry,
               )
               // Copy and sort the entries by era number
               .slice()
@@ -58,13 +58,13 @@ function useRestakingEarnings(accountAddress: string | null) {
             return worker.calculateEarnings(
               rpcEndpoint,
               accountAddress,
-              serializableEntries
+              serializableEntries,
             );
-          })
+          }),
         );
       },
-      [accountAddress, rpcEndpoint, worker]
-    )
+      [accountAddress, rpcEndpoint, worker],
+    ),
   );
 
   const {
@@ -74,9 +74,9 @@ function useRestakingEarnings(accountAddress: string | null) {
   } = usePromise(
     useCallback(
       () => (dataPromise === null ? Promise.resolve(null) : dataPromise),
-      [dataPromise]
+      [dataPromise],
     ),
-    null
+    null,
   );
 
   return {

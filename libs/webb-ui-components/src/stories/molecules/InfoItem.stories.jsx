@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { InfoItem } from '@webb-tools/webb-ui-components/components';
+import { InfoItem } from '../../components/BridgeInputs/InfoItem';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -20,10 +18,11 @@ Default.args = {
     info: 'Depositing',
   },
 };
+
 // TODO: investigate rightContent props
-export const withRightContent = Template.bind({});
+export const WithRightContent = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withRightContent.args = {
+WithRightContent.args = {
   ...Default.args,
   rightContent: '100/ETH',
 };

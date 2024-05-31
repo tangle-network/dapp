@@ -11,7 +11,7 @@ const useActiveValidators = () => {
       const electedInfo = api.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED);
 
       return electedInfo.pipe(map((derive) => derive.nextElected));
-    }, [])
+    }, []),
   );
 
   return useValidators(activeValidatorAddresses, true);

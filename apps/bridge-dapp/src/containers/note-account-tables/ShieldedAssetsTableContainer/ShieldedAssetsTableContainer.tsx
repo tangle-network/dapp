@@ -145,7 +145,7 @@ export const ShieldedAssetsTableContainer: FC<
                     'transfer',
                     shieldedAsset.rawChain,
                     shieldedAsset.rawFungibleCurrency,
-                    parseEther(numberToString(shieldedAsset.availableBalance))
+                    parseEther(numberToString(shieldedAsset.availableBalance)),
                   )
                 }
               >
@@ -159,7 +159,7 @@ export const ShieldedAssetsTableContainer: FC<
                     'withdraw',
                     shieldedAsset.rawChain,
                     shieldedAsset.rawFungibleCurrency,
-                    parseEther(numberToString(shieldedAsset.availableBalance))
+                    parseEther(numberToString(shieldedAsset.availableBalance)),
                   )
                 }
               >
@@ -177,7 +177,7 @@ export const ShieldedAssetsTableContainer: FC<
         },
       }),
     ],
-    [onDeleteNotesChange, noteActionHandler]
+    [onDeleteNotesChange, noteActionHandler],
   );
 
   const table = useReactTable({

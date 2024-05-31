@@ -26,7 +26,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { result: currentPayee } = useStakingRewardsDestination();
 
   const [selectedPayee, setSelectedPayee] = useState(
-    StakingRewardsDestination.STAKED
+    StakingRewardsDestination.STAKED,
   );
 
   const { execute: executeSetPayeeTx, status: setPayeeTxStatus } =

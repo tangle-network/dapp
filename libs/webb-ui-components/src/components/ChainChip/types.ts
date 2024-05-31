@@ -1,6 +1,6 @@
-import { WebbComponentBase } from '../../types';
+import type { ChainGroup } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import React from 'react';
-import { ChainGroup } from '@webb-tools/dapp-config';
+import type { WebbComponentBase } from '../../types';
 
 export type ChainChipClassNames = {
   [key in ChainGroup]: {

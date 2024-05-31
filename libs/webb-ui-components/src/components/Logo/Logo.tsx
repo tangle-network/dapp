@@ -35,7 +35,7 @@ export const Logo: React.FC<LogoProps> = (props) => {
           ? ('fill-mono-0' as const)
           : ('fill-mono-200' as const)
         : ('fill-mono-200 dark:fill-mono-0' as const),
-    [darkMode]
+    [darkMode],
   );
 
   const { height, width } = useMemo(() => {

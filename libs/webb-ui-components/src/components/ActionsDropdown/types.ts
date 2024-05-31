@@ -1,10 +1,9 @@
-import { MenuItem } from '../../components';
-import { type ComponentProps } from 'react';
+import type { MenuItemProps } from '../../components/MenuItem/types';
 
 export type ActionItemType = {
   label: string;
   icon?: React.ReactElement;
-  onClick: ComponentProps<typeof MenuItem>['onClick'];
+  onClick: MenuItemProps['onClick'];
 };
 
 export interface ManageButtonProps {

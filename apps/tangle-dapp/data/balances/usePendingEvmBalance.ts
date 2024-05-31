@@ -31,7 +31,7 @@ const usePendingEvmBalance = () => {
 
       return viemPublicClient.getBalance({ address: evmAddress20 });
     }, [evmAddress20, viemPublicClient]),
-    null
+    null,
   );
 
   return balance;

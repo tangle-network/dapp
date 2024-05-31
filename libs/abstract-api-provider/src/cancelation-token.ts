@@ -21,7 +21,7 @@ export class CancellationToken {
     this.$canceled()
       .pipe(
         filter((v) => v),
-        first()
+        first(),
       )
       .subscribe(() => {
         console.log('canceled');
@@ -46,7 +46,7 @@ export class CancellationToken {
     this.$canceled()
       .pipe(
         filter((v) => v),
-        first()
+        first(),
       )
       .subscribe(() => {
         abortController.abort('Canceled');
@@ -69,7 +69,7 @@ export class CancellationToken {
    * */
   handleOrThrow<T = any>(
     resolver: () => Promise<T>,
-    onCancel: () => any
+    onCancel: () => any,
   ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const sub = this.$canceled().subscribe(() => {

@@ -1,6 +1,7 @@
-import { Wallet } from '@webb-tools/dapp-config';
-import { WalletId } from '@webb-tools/dapp-types';
-import { PropsOf } from '../../types';
+import type { Wallet } from '@webb-tools/dapp-config';
+import type { WalletId } from '@webb-tools/dapp-types';
+import type { PropsOf } from '../../types';
+import type { ButtonProps } from '../buttons/types';
 
 /**
  * The wallet connection card props
@@ -61,7 +62,12 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
    * The callback which is invoked when user hits the try again button.
    * This button only displays on the failed state
    */
-  onTryAgainBtnClick?: PropsOf<'button'>['onClick'];
+  onTryAgainBtnClick?: ButtonProps['onClick'];
+
+  /**
+   * The prop to override the try again button props
+   */
+  tryAgainBtnProps?: ButtonProps;
 
   /**
    * The default text to display when there's no connection and error yet

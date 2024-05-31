@@ -1,8 +1,7 @@
-import { ChevronRight, ExternalLinkLine, Close } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import { shortenString } from '../../utils';
+import { ChevronRight, Close, ExternalLinkLine } from '@webb-tools/icons';
 import { forwardRef } from 'react';
-
+import { Typography } from '../../typography/Typography';
+import { shortenString } from '../../utils/shortenString';
 import { Avatar } from '../Avatar';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
@@ -80,5 +79,5 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
         )}
       </InputWrapper>
     );
-  }
+  },
 );

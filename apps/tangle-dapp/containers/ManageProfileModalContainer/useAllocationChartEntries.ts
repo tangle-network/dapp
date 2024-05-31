@@ -22,7 +22,7 @@ const useAllocationChartEntries = (
   allocations: RestakingAllocationMap,
   allocatedAmount: BN,
   variant: AllocationChartVariant,
-  previewAmount: BN | undefined
+  previewAmount: BN | undefined,
 ) => {
   const { maxRestakingAmount } = useRestakingLimits();
 
@@ -69,7 +69,7 @@ const useAllocationChartEntries = (
             ? 0
             : calculateBnPercentage(amount, maxRestakingAmount),
       })),
-    [allocations, maxRestakingAmount]
+    [allocations, maxRestakingAmount],
   );
 
   // For the independent variant, use both the remaining data

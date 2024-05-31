@@ -31,7 +31,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
       tokenInputProps = {},
       ...props
     },
-    ref
+    ref,
   ) => {
     const { isMobile } = useCheckMobile();
     const { amount } = useMemo(() => {
@@ -62,7 +62,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
         {...props}
         className={twMerge(
           'flex flex-col justify-between max-w-[518px] w-full h-full',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -70,7 +70,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           <BridgeInputGroup className="flex flex-col space-y-2">
             <ChainInput {...sourceChainProps} chainType="source" />
 
-            <div className="hidden space-x-2 lg:flex">
+            <div className="hidden space-x-2 lg:!flex">
               <TokenInput
                 {...tokenInputProps}
                 className="grow shrink-0 basis-1"
@@ -132,5 +132,5 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
         )}
       </div>
     );
-  }
+  },
 );

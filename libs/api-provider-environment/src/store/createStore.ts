@@ -27,7 +27,7 @@ type MapManipulation<T, M extends ManipulationsConfig<T>> = {
 type CreateStoreReturnType<
   T,
   M extends ManipulationsConfig<T>,
-  R = MapManipulation<T, M>
+  R = MapManipulation<T, M>,
 > = {
   state: T;
   setState: Dispatch<SetStateAction<T>>;
@@ -36,7 +36,7 @@ type CreateStoreReturnType<
 
 export function createStore<T, M extends ManipulationsConfig<T>>(
   initializeStore: T,
-  manipulations: M
+  manipulations: M,
 ) {
   return (): CreateStoreReturnType<T, M> => {
     // use useState to initialize a store
@@ -51,7 +51,7 @@ export function createStore<T, M extends ManipulationsConfig<T>>(
         // update state
         _setState(value);
       },
-      [_setState]
+      [_setState],
     );
 
     const _manipulates: MapManipulation<T, M> = {} as any;

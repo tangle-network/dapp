@@ -42,7 +42,7 @@ export const WalletDropdown: FC<{
 
   const accountExplorerUrl = useMemo(
     () => getExplorerUrl(accountAddress, 'address'),
-    [getExplorerUrl, accountAddress]
+    [getExplorerUrl, accountAddress],
   );
 
   // Disconnect function
@@ -55,7 +55,7 @@ export const WalletDropdown: FC<{
       await inactivateApi();
     } catch {
       const message = WebbError.getErrorMessage(
-        WebbErrorCodes.FailedToDisconnect
+        WebbErrorCodes.FailedToDisconnect,
       ).message;
 
       notificationApi({ variant: 'error', message });
@@ -137,7 +137,7 @@ const SwitchAccountButton: FC = () => {
         await walletClient.requestPermissions({ eth_accounts: {} });
       } catch (error) {
         let message = WebbError.from(
-          WebbErrorCodes.SwitchAccountFailed
+          WebbErrorCodes.SwitchAccountFailed,
         ).message;
 
         if (isViemError(error)) {

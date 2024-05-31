@@ -67,7 +67,7 @@ const useInputs = () => {
       newValue:
         | typeof hasRefund
         | ((latestValue: typeof hasRefund) => typeof hasRefund),
-      updateType?: UrlUpdateType
+      updateType?: UrlUpdateType,
     ) => {
       let nextValue: typeof hasRefund;
       if (typeof newValue === 'function') {
@@ -85,10 +85,10 @@ const useInputs = () => {
               }
             : {}),
         },
-        updateType
+        updateType,
       );
     },
-    [hasRefund, setQuery]
+    [hasRefund, setQuery],
   );
 
   return {
