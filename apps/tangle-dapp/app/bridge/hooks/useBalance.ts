@@ -38,7 +38,7 @@ export default function useBalance() {
 
   const isNativeToken = useMemo(
     () => checkNativeToken(selectedToken.symbol, selectedSourceChain),
-    [selectedToken.symbol, selectedSourceChain]
+    [selectedToken.symbol, selectedSourceChain],
   );
 
   const erc20TokenContractAddress = useMemo(() => {
@@ -59,7 +59,7 @@ export default function useBalance() {
         ? { client: evmViemClient, accAddress: activeAccountAddress }
         : undefined,
     ],
-    ([...args]) => getEvmNativeBalance(...args)
+    ([...args]) => getEvmNativeBalance(...args),
   );
 
   const {
@@ -82,7 +82,7 @@ export default function useBalance() {
           }
         : undefined,
     ],
-    ([...args]) => getEvmContractBalance(...args)
+    ([...args]) => getEvmContractBalance(...args),
   );
 
   const {
@@ -102,7 +102,7 @@ export default function useBalance() {
           }
         : undefined,
     ],
-    ([...args]) => getSubstrateNativeTransferable(...args)
+    ([...args]) => getSubstrateNativeTransferable(...args),
   );
 
   useEffect(() => {

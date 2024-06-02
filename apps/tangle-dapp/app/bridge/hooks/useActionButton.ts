@@ -65,7 +65,7 @@ export default function useActionButton() {
 
   const isWalletAndSourceChainMismatch = useMemo(
     () => error === 'evm-wrongWallet' || error === 'substrate-wrongWallet',
-    [error]
+    [error],
   );
 
   const isEvmWrongNetwork = useMemo(() => {
@@ -82,12 +82,12 @@ export default function useActionButton() {
 
   const isInputInsufficient = useMemo(
     () => !amount || !destinationAddress,
-    [amount, destinationAddress]
+    [amount, destinationAddress],
   );
 
   const isRequiredToConnectWallet = useMemo(
     () => isNoActiveAccountOrWallet || isWalletAndSourceChainMismatch,
-    [isNoActiveAccountOrWallet, isWalletAndSourceChainMismatch]
+    [isNoActiveAccountOrWallet, isWalletAndSourceChainMismatch],
   );
 
   const openWalletModal = useCallback(() => {
@@ -96,9 +96,9 @@ export default function useActionButton() {
       isWalletAndSourceChainMismatch
         ? calculateTypedChainId(
             selectedSourceChain.chainType,
-            selectedSourceChain.id
+            selectedSourceChain.id,
           )
-        : undefined
+        : undefined,
     );
   }, [toggleModal, isWalletAndSourceChainMismatch, selectedSourceChain]);
 

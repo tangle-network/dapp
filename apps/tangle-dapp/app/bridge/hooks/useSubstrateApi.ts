@@ -19,7 +19,7 @@ export default function useSubstrateApi() {
       if (!substrateRpcEndpoint) return null;
       return getApiPromise(substrateRpcEndpoint);
     }, [substrateRpcEndpoint]),
-    null
+    null,
   );
 
   return substrateApi;

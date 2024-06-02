@@ -14,6 +14,6 @@ export async function getSubstrateNativeTransferable(params?: {
 
   // Convert to the right format based on the chain's decimals
   return new Decimal(transferable.toString()).div(
-    Decimal.pow(10, api.registry.chainDecimals[0])
+    Decimal.pow(10, api.registry.chainDecimals[0]),
   );
 }

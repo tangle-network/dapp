@@ -86,7 +86,7 @@ export enum PresetTypedChainId {
 
   ScrollSepolia = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.ScrollSepolia
+    EVMChainId.ScrollSepolia,
   ),
 
   // Localnets

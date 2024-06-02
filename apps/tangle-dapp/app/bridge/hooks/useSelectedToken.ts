@@ -9,7 +9,7 @@ export default function useSelectedToken() {
   const { selectedTokenId } = useBridge();
   const selectedToken = useMemo(
     () => BRIDGE_SUPPORTED_TOKENS[selectedTokenId],
-    [selectedTokenId]
+    [selectedTokenId],
   );
 
   return selectedToken;

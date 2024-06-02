@@ -85,7 +85,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     group: 'avalanche',
     tag: 'test',
   },
-  [PresetTypedChainId.ScrollSepolia]:  {
+  [PresetTypedChainId.ScrollSepolia]: {
     ...scrollSepolia,
     chainType: ChainType.EVM,
     group: 'scroll',

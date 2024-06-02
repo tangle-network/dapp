@@ -4,8 +4,8 @@ import { Option, u32, Vec } from '@polkadot/types';
 import {
   PalletStakingNominations,
   PalletStakingValidatorPrefs,
-  SpStakingPagedExposureMetadata,
   SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
@@ -150,7 +150,7 @@ export default function usePayouts(): PayoutData {
 
         const claimedReward = (await apiPromise.query.staking.claimedRewards(
           reward.era,
-          reward.validatorAddress
+          reward.validatorAddress,
         )) as Vec<u32>;
 
         if (claimedReward.length > 0) {
@@ -176,7 +176,7 @@ export default function usePayouts(): PayoutData {
         const erasStakersOverview =
           (await apiPromise.query.staking.erasStakersOverview(
             reward.era,
-            reward.validatorAddress
+            reward.validatorAddress,
           )) as Option<SpStakingPagedExposureMetadata>;
 
         const validatorTotalStake = !erasStakersOverview.isNone
@@ -196,7 +196,7 @@ export default function usePayouts(): PayoutData {
         const eraStakerPaged = (await apiPromise.query.staking.erasStakersPaged(
           reward.era,
           reward.validatorAddress,
-          0
+          0,
         )) as Option<SpStakingExposurePage>;
 
         if (eraStakerPaged.isNone) {

@@ -100,9 +100,9 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const destinationChainOptions = useMemo(
     () =>
       Object.keys(BRIDGE[selectedSourceTypedChainId]).map(
-        (presetTypedChainId) => chainsConfig[+presetTypedChainId]
+        (presetTypedChainId) => chainsConfig[+presetTypedChainId],
       ),
-    [selectedSourceTypedChainId]
+    [selectedSourceTypedChainId],
   );
 
   assert(destinationChainOptions.length > 0, 'No destination chain options');
@@ -127,7 +127,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       BRIDGE[selectedSourceTypedChainId][selectedDestinationTypedChainId]
         ?.supportedTokens ??
       Object.values(BRIDGE[selectedSourceTypedChainId])[0].supportedTokens,
-    [selectedSourceTypedChainId, selectedDestinationTypedChainId]
+    [selectedSourceTypedChainId, selectedDestinationTypedChainId],
   );
 
   const [selectedTokenId, setSelectedTokenId] = useState<BridgeTokenId>(
