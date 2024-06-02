@@ -30,7 +30,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
         'rounded-xl border border-mono-40 dark:border-mono-160',
         'shadow-webb-lg dark:shadow-webb-lg-dark',
         'flex flex-col',
-        className
+        className,
       )}
     >
       <div className="flex-1 w-full flex flex-col justify-between">

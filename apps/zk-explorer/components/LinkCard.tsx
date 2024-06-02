@@ -24,9 +24,9 @@ const LinkCard: FC<LinkCardProps> = ({
     () =>
       twMerge(
         'block hover:translate-y-[-6px] transition duration-100',
-        className
+        className,
       ),
-    [className]
+    [className],
   );
 
   return isExternal ? (

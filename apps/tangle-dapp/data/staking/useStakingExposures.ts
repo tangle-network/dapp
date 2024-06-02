@@ -23,13 +23,13 @@ const useStakingExposures = () => {
         }
         return api.query.staking.erasStakersOverview.entries(currentEra);
       },
-      [currentEra]
-    )
+      [currentEra],
+    ),
   );
 
   const exposureMap = useEntryMap(
     exposures,
-    useCallback((key) => key.args[1].toString(), [])
+    useCallback((key) => key.args[1].toString(), []),
   );
 
   return { result: exposureMap, ...other };

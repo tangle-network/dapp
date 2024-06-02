@@ -42,7 +42,7 @@ function getTangle(isRegularStatement?: boolean | null): Statement | null {
 
 function getStatement(
   network: string,
-  isRegularStatement?: boolean | null
+  isRegularStatement?: boolean | null,
 ): Statement | null {
   if (network === 'Polkadot' || network === 'Polkadot CC1') {
     return getPolkadot(isRegularStatement);

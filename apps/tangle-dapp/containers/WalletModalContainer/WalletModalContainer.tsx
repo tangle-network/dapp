@@ -38,7 +38,7 @@ export const WalletModalContainer = () => {
 
   const targetTypedChainIds = useMemo(
     () => networkToTypedChainIds(network),
-    [network]
+    [network],
   );
 
   // TODO: Fix the issue with WalletConnectV2 and re-enable it.
@@ -46,7 +46,7 @@ export const WalletModalContainer = () => {
     // Exclude WalletConnectV2 from the list of supported wallets, as it
     // is currently broken in the dApp.
     return supportedWallets.filter(
-      (wallet) => wallet.id !== WalletId.WalletConnectV2
+      (wallet) => wallet.id !== WalletId.WalletConnectV2,
     );
   }, [supportedWallets]);
 
@@ -92,7 +92,7 @@ const networkToTypedChainIds = (network: Network) => {
         evm: calculateTypedChainId(ChainType.EVM, network.evmChainId),
         substrate: calculateTypedChainId(
           ChainType.Substrate,
-          network.evmChainId
+          network.evmChainId,
         ),
       };
     }

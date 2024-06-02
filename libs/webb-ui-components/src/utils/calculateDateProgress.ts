@@ -11,7 +11,7 @@ import { ISubQlTime } from '../types';
 export const calculateDateProgress = (
   startDateStr: string | Date | null,
   endDateStr: string | Date | null,
-  now?: ISubQlTime
+  now?: ISubQlTime,
 ): number | null => {
   if (startDateStr === null || endDateStr === null) {
     return null;
@@ -30,7 +30,7 @@ export const calculateDateProgress = (
   }
 
   const diffBetweenStartAndEnd = Math.abs(
-    startDate.getTime() - endDate.getTime()
+    startDate.getTime() - endDate.getTime(),
   );
   const diffBetweenStartAndNow = Math.abs(startDate.getTime() - currentTime);
 
@@ -41,6 +41,6 @@ export const calculateDateProgress = (
     return 100;
   }
   return parseFloat(
-    ((diffBetweenStartAndNow / diffBetweenStartAndEnd) * 100).toFixed(2)
+    ((diffBetweenStartAndNow / diffBetweenStartAndEnd) * 100).toFixed(2),
   );
 };

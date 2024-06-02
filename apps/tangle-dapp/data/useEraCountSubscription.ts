@@ -9,7 +9,7 @@ import useFormatReturnType from '../hooks/useFormatReturnType';
 import { getApiRx } from '../utils/polkadot';
 
 export default function useEraCountSubscription(
-  defaultValue: number | null = null
+  defaultValue: number | null = null,
 ) {
   const [era, setEra] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +42,7 @@ export default function useEraCountSubscription(
           setError(
             error instanceof Error
               ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
+              : WebbError.from(WebbErrorCodes.UnknownError),
           );
           setIsLoading(false);
         }

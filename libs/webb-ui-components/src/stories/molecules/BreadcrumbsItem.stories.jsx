@@ -1,4 +1,4 @@
-import { BreadcrumbsItem } from '@webb-tools/webb-ui-components';
+import { BreadcrumbsItem } from '../../components/Breadcrumbs';
 import { UserStarFillIcon } from '@webb-tools/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

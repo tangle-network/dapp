@@ -68,7 +68,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
                 network.polkadotExplorerUrl,
                 txHash,
                 'tx',
-                ExplorerType.Substrate
+                ExplorerType.Substrate,
               ).toString()
             : null;
           return (
@@ -81,7 +81,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
       }),
       timestampColumn,
     ],
-    [network.polkadotExplorerUrl]
+    [network.polkadotExplorerUrl],
   );
 
   const table = useReactTable({
@@ -107,7 +107,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
         'dark:bg-[linear-gradient(180deg,#2B2F40_0%,rgba(43,47,64,0.00)_100%)]',
         'overflow-hidden rounded-2xl p-5',
         'border border-mono-0 dark:border-mono-160',
-        className
+        className,
       )}
     >
       {/* Successfully get data */}

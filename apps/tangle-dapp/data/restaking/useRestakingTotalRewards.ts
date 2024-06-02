@@ -22,11 +22,11 @@ const useRestakingTotalRewards = (): ReturnType<typeof useApiRx<BN | null>> => {
             }
 
             return reward.unwrap().toBn();
-          })
+          }),
         );
       },
-      [substrateAccount]
-    )
+      [substrateAccount],
+    ),
   );
 };
 

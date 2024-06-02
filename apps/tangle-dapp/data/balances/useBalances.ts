@@ -53,10 +53,10 @@ const useBalances = () => {
             transferable,
             locked: data.free.sub(transferable),
           };
-        })
+        }),
       );
     },
-    [activeSubstrateAddress]
+    [activeSubstrateAddress],
   );
 
   const { result: balances, ...other } = useApiRx(balancesFetcher);

@@ -31,6 +31,10 @@ export enum WebbErrorCodes {
   NoEndpointsConfigured,
   /* No claims pallet found */
   NoClaimsPalletFound,
+  /** No client available */
+  NoClientAvailable,
+  /** No switch chain method found */
+  NoSwitchChainMethod,
   /* Failed to parse deposit note */
   NoteParsingFailure,
   /* Polkadot{.js} extension not installed */
@@ -299,6 +303,18 @@ export class WebbError extends Error {
         return {
           code,
           message: `No claims pallet found`,
+        };
+
+      case WebbErrorCodes.NoClientAvailable:
+        return {
+          code,
+          message: `No client available`,
+        };
+
+      case WebbErrorCodes.NoSwitchChainMethod:
+        return {
+          code,
+          message: `No switch chain method found`,
         };
 
       case WebbErrorCodes.AnchorIdNotFound:

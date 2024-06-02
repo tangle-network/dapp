@@ -38,14 +38,14 @@ export default function usePayouts(): PayoutData {
   const payoutsRef = useRef<Payout[]>([]);
   const isPayoutsFetched = useRef(false);
   const fetchedPayoutPromises = useRef<Promise<(Payout | undefined)[]> | null>(
-    null
+    null,
   );
 
   const [isLoading, setIsLoading] = useState(false);
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
-    true
+    true,
   );
 
   const { rpcEndpoint, network } = useNetworkStore();
@@ -63,12 +63,12 @@ export default function usePayouts(): PayoutData {
   const { result: nominators } = useApiRx(
     useCallback(
       (api) => api.query.staking.nominators(activeSubstrateAddress),
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const { result: erasRewardsPoints } = useApiRx(
-    useCallback((api) => api.query.staking.erasRewardPoints.entries(), [])
+    useCallback((api) => api.query.staking.erasRewardPoints.entries(), []),
   );
 
   const myNominations = useMemo(() => {
@@ -80,7 +80,7 @@ export default function usePayouts(): PayoutData {
   const { data: eraTotalRewards } = useEraTotalRewards();
 
   const { result: validators } = useApiRx(
-    useCallback((api) => api.query.staking.validators.entries(), [])
+    useCallback((api) => api.query.staking.validators.entries(), []),
   );
 
   const mappedValidatorInfo = useMemo(() => {
@@ -121,7 +121,7 @@ export default function usePayouts(): PayoutData {
         const rewards = point[1].toHuman();
         let validatorRewardPoints = 0;
         const totalRewardPoints = parseFloat(
-          rewards.total?.toString().replace(/,/g, '') ?? '0'
+          rewards.total?.toString().replace(/,/g, '') ?? '0',
         );
         if (
           typeof rewards.individual === 'object' &&
@@ -207,7 +207,7 @@ export default function usePayouts(): PayoutData {
           .unwrap()
           .others.find(
             (nominator) =>
-              nominator.who.toString() === activeSubstrateAddressEncoded
+              nominator.who.toString() === activeSubstrateAddressEncoded,
           );
 
         if (nominatorStakeInfo === undefined || nominatorStakeInfo.isEmpty) {
@@ -228,29 +228,29 @@ export default function usePayouts(): PayoutData {
 
         const validatorIdentityName = await getValidatorIdentityName(
           rpcEndpoint,
-          reward.validatorAddress
+          reward.validatorAddress,
         );
 
         const validatorNominators = await Promise.all(
           eraStakerPaged.unwrap().others.map(async (nominator) => {
             const nominatorIdentity = await getValidatorIdentityName(
               rpcEndpoint,
-              nominator.who.toString()
+              nominator.who.toString(),
             );
 
             return {
               address: nominator.who.toString(),
               identity: nominatorIdentity ?? '',
             };
-          })
+          }),
         );
 
         const stakerEraReward = await apiPromise.derive.staking.stakerRewards(
-          activeSubstrateAddressEncoded
+          activeSubstrateAddressEncoded,
         );
 
         const stakerEraRewardsEra = stakerEraReward.find(
-          (_reward) => _reward.era.toNumber() === reward.era
+          (_reward) => _reward.era.toNumber() === reward.era,
         );
 
         let nominatorTotalReward = BN_ZERO;
@@ -287,7 +287,7 @@ export default function usePayouts(): PayoutData {
         }
 
         return undefined;
-      })
+      }),
     );
 
     fetchedPayoutPromises.current = payoutPromises;

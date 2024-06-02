@@ -18,7 +18,7 @@ export async function requestProofGeneration(data: {
 
   formData.append(
     'mpcParticipantAddresses',
-    JSON.stringify(data.mpcParticipantAddresses)
+    JSON.stringify(data.mpcParticipantAddresses),
   );
 
   const responseWrapper = await sendApiRequest(
@@ -31,7 +31,7 @@ export async function requestProofGeneration(data: {
       // will be automatically set by the browser. The browser
       // will automatically add a 'boundary' parameter to the header,
       // which is required for multipart form data.
-    }
+    },
   );
 
   return responseWrapper.innerResponse;

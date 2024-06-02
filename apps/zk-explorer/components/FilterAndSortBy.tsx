@@ -37,7 +37,7 @@ const FilterAndSortBy: FC<FilterAndSortByProps> = ({
         onConstraintsChange={onConstraintsChange}
         hasCloseButton
         onClose={() => setSidebarOpen(false)}
-      />
+      />,
     );
 
     setSidebarOpen(true);

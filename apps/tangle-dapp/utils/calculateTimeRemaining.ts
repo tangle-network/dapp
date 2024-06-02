@@ -3,7 +3,7 @@ import capitalize from 'lodash/capitalize';
 
 function calculateTimeRemaining(
   futureDate: Date,
-  currentDate?: Date
+  currentDate?: Date,
 ): string | null {
   return capitalize(formatDistance(futureDate, currentDate ?? new Date()));
 }

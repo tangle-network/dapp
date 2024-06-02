@@ -13,7 +13,7 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
  * this factor (input amount * 10^18).
  */
 export const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
-  new BN(TANGLE_TOKEN_DECIMALS)
+  new BN(TANGLE_TOKEN_DECIMALS),
 );
 
 export type FormatOptions = {
@@ -30,7 +30,7 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
 
 function formatBnToDisplayAmount(
   amount: BN,
-  options?: Partial<FormatOptions>
+  options?: Partial<FormatOptions>,
 ): string {
   const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
   const divisor = CHAIN_UNIT_CONVERSION_FACTOR;

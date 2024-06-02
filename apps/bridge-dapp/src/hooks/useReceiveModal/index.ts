@@ -37,7 +37,7 @@ const useReceiveModal = (): UseReceiveModalReturnType => {
 
   const publicKey = useMemo(
     () => noteManager?.getKeypair().toString(),
-    [noteManager]
+    [noteManager],
   );
 
   return {

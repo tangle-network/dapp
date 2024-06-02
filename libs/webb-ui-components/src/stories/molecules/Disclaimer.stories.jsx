@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Disclaimer } from '@webb-tools/webb-ui-components/components';
+import { Disclaimer } from '../../components/Disclaimer';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -23,7 +23,7 @@ function useApi<T>(fetcher: ApiFetcher<T>) {
 
   const { result: api } = usePromise<ApiPromise | null>(
     useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
-    null
+    null,
   );
 
   const refetch = useCallback(async () => {

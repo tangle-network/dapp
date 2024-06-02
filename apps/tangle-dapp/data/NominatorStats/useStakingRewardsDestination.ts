@@ -41,11 +41,11 @@ const useStakingRewardsDestination = () => {
                 substrateRewardsDestinationOpt.type
               ]
             );
-          })
+          }),
         );
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 };
 

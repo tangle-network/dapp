@@ -12,12 +12,12 @@ const useRestakingProfile = () => {
 
   const hasExistingProfile = useMemo(
     () => (isLoading ? null : ledgerOpt !== null && !ledgerOpt.isNone),
-    [isLoading, ledgerOpt]
+    [isLoading, ledgerOpt],
   );
 
   const profileTypeOpt = useMemo(
     () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   return {

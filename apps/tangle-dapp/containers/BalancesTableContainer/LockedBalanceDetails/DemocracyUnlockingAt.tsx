@@ -15,11 +15,11 @@ const DemocracyUnlockingAt: FC = () => {
   } = useDemocracy();
 
   const { result: currentBlockNumber } = useApiRx(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   const { result: babeExpectedBlockTime } = useApi(
-    useCallback((api) => api.consts.babe.expectedBlockTime, [])
+    useCallback((api) => api.consts.babe.expectedBlockTime, []),
   );
 
   const isInDemocracy =
@@ -37,7 +37,7 @@ const DemocracyUnlockingAt: FC = () => {
   const democracyLockEndBlockDate = getBlockDate(
     babeExpectedBlockTime,
     currentBlockNumber,
-    democracyLockEndBlock
+    democracyLockEndBlock,
   );
 
   const timeRemaining = democracyLockEndBlockDate
@@ -53,7 +53,7 @@ const DemocracyUnlockingAt: FC = () => {
         democracyLockEndBlock === null
           ? 'Referendum ended'
           : `Referendum ongoing; ends at block #${formatDecimal(
-              democracyLockEndBlock.toString()
+              democracyLockEndBlock.toString(),
             )}`
       }
     />

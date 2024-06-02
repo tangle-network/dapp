@@ -1,6 +1,6 @@
-import React from 'react';
-import { TransactionQueueCard } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
 import { TokenIcon } from '@webb-tools/icons';
+import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
+import noop from 'lodash/noop';
 
 export default {
   title: 'Design System/templates/TransactionQueueCard',
@@ -37,12 +37,12 @@ WithInProgressTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
   ],
 };
@@ -67,13 +67,13 @@ WithSuccessTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
-      onSyncNote: () => {},
+      onDetails: noop,
+      onDismiss: noop,
+      onSyncNote: noop,
     },
   ],
 };
@@ -97,12 +97,12 @@ WithFailedTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
   ],
 };
@@ -127,13 +127,13 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230SZ',
-      onDetails: () => {},
-      onDismiss: () => {},
-      onSyncNote: () => {},
+      onDetails: noop,
+      onDismiss: noop,
+      onSyncNote: noop,
     },
     {
       method: 'Withdraw',
@@ -151,13 +151,13 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(Date.now() - 60 * 60 * 1000),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
-      onSyncNote: () => {},
+      onDetails: noop,
+      onDismiss: noop,
+      onSyncNote: noop,
     },
     {
       method: 'Withdraw',
@@ -176,12 +176,12 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(Date.now() - 60 * 1000),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
     {
       method: 'Transfer',
@@ -199,12 +199,12 @@ WithInAllTransaction.args = {
         dist: <TokenIcon name={'ETH'} />,
       },
       timestamp: new Date(),
-      getExplorerURI(addOrTxHash, variant) {
+      getExplorerURI() {
         return '#';
       },
       nativeValue: '1230',
-      onDetails: () => {},
-      onDismiss: () => {},
+      onDetails: noop,
+      onDismiss: noop,
     },
   ],
 };

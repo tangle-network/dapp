@@ -84,7 +84,7 @@ export type MaxFeeInfoOption = {
  * - resetMaxFeeInfo: () => void
  */
 export const useMaxFeeInfo = (
-  opt?: MaxFeeInfoOption
+  opt?: MaxFeeInfoOption,
 ): UseMaxFeeInfoReturnType => {
   const { notificationApi } = useWebbUI();
   const { activeApi, activeChain, apiConfig } = useWebContext();
@@ -130,7 +130,7 @@ export const useMaxFeeInfo = (
 
         const vanchorId = apiConfig.getAnchorIdentifier(
           opt.fungibleCurrencyId,
-          typedChainId
+          typedChainId,
         );
         if (!vanchorId) {
           console.error('No anchor address in current active chain');
@@ -141,7 +141,7 @@ export const useMaxFeeInfo = (
         const feeInfo = await relayer.getFeeInfo(
           typedChainId,
           vanchorId,
-          gasAmount
+          gasAmount,
         );
         setFeeInfo(feeInfo);
       } catch (error) {
@@ -151,7 +151,7 @@ export const useMaxFeeInfo = (
         setIsLoading(false);
       }
     },
-    [apiConfig, opt?.fungibleCurrencyId, typedChainId]
+    [apiConfig, opt?.fungibleCurrencyId, typedChainId],
   );
 
   const calculateFeeInfo = useCallback(async () => {
@@ -189,7 +189,7 @@ export const useMaxFeeInfo = (
         return calculateFeeInfo();
       }
     },
-    [calculateFeeInfo, fetchMaxFeeInfoFromRelayer]
+    [calculateFeeInfo, fetchMaxFeeInfoFromRelayer],
   );
 
   const resetMaxFeeInfo = useCallback(() => {

@@ -12,8 +12,8 @@ const useRestakingRoleLedger = (address: string | null) => {
 
         return api.query.roles.ledger(address);
       },
-      [address]
-    )
+      [address],
+    ),
   );
 };
 

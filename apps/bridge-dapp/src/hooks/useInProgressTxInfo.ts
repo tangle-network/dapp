@@ -21,7 +21,7 @@ import { getCardTitle } from '../utils/getCardTitle';
  */
 const useInProgressTxInfo = (
   isWrapOrUnwrapFlow?: boolean,
-  onTransactionDismiss?: () => void
+  onTransactionDismiss?: () => void,
 ) => {
   const { txQueue } = useWebContext();
 
@@ -49,7 +49,7 @@ const useInProgressTxInfo = (
     const { txPayloads } = txQueue;
 
     const txPayload = txPayloads.find(
-      (txPayload) => txPayload.id === inProgressTxId
+      (txPayload) => txPayload.id === inProgressTxId,
     );
     const message = txPayload
       ? txPayload.txStatus.message?.replace('...', '')

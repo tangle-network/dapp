@@ -73,7 +73,7 @@ export class NoteManager {
 
   private constructor(
     private multiAccountNoteStorage: Storage<MultiAccountNoteStorage>,
-    private keypair: Keypair
+    private keypair: Keypair,
   ) {
     this.notesMap = new Map();
     NoteManager.syncNotesProgressSubject.next(NaN);
@@ -149,7 +149,7 @@ export class NoteManager {
   static async initAndDecryptNotes(keypair: Keypair): Promise<NoteManager> {
     const notesRecord = await NoteManager.decryptNotes(
       await getV1NotesRecord(),
-      keypair
+      keypair,
     );
 
     const multiAccNoteStorage = await multiAccountNoteStorageFactory();
@@ -166,7 +166,7 @@ export class NoteManager {
 
     const multiAccNotesRecord = await NoteManager.decryptNotes(
       encNotes,
-      keypair
+      keypair,
     );
 
     // Merge the v1 notes record with the multi account note record
@@ -175,9 +175,9 @@ export class NoteManager {
       multiAccNotesRecord,
       (objectValue: Array<Note> = [], sourceValue: Array<Note> = []) => {
         return uniqBy(objectValue.concat(sourceValue), (note) =>
-          note.serialize()
+          note.serialize(),
         );
-      }
+      },
     );
 
     const isEqual = compareNotesRecord(notesRecord, multiAccNotesRecord);
@@ -189,7 +189,7 @@ export class NoteManager {
         accountPubKey,
         transform(notesRecord, (result, value, key) => {
           result[key] = value.map((note) => note.serialize());
-        })
+        }),
       );
     }
 
@@ -201,7 +201,7 @@ export class NoteManager {
   // Decrypt the notes and return a record of notes grouped by their resource id.
   static async decryptNotes(
     encryptedNotes: MultiAccountNoteStorage[string],
-    keypair: Keypair
+    keypair: Keypair,
   ) {
     const notesRecord: Record<string, Note[]> = {};
 
@@ -239,8 +239,8 @@ export class NoteManager {
             const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
             notesRecord[resourceId.toString()] = notes;
           }
-        }
-      )
+        },
+      ),
     );
 
     return notesRecord;
@@ -252,7 +252,7 @@ export class NoteManager {
     srcTypedChainId: number,
     srcAnchorId: string,
     destAnchorId: string,
-    tokenSymbol: string
+    tokenSymbol: string,
   ): Promise<Note> {
     const secrets = [
       toFixedHex(utxo.chainId, 8),
@@ -398,7 +398,7 @@ export class NoteManager {
     }
 
     const noteIndex = targetNotes.findIndex(
-      (managedNote) => managedNote.serialize() === note.serialize()
+      (managedNote) => managedNote.serialize() === note.serialize(),
     );
 
     if (noteIndex === -1) {
@@ -441,7 +441,7 @@ export class NoteManager {
 
           return prev;
         },
-        {} as MultiAccountNoteStorage[string]
+        {} as MultiAccountNoteStorage[string],
       );
 
       await this.multiAccountNoteStorage.set(pubKey, encryptedNotesRecord);
@@ -468,7 +468,7 @@ export class NoteManager {
     destTypedChainId: number,
     destAnchorAddress: string,
     tokenSymbol: string,
-    amount: bigint
+    amount: bigint,
   ): Promise<Note> {
     if (!this.keypair.privkey) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
@@ -516,7 +516,7 @@ type NoteRecord = Record<string, Note[]>;
 /** @internal */
 function compareNotesRecord(
   notesRecord: NoteRecord,
-  otherNotesRecord: NoteRecord
+  otherNotesRecord: NoteRecord,
 ) {
   if (
     Object.keys(notesRecord).length !== Object.keys(otherNotesRecord).length
@@ -539,7 +539,7 @@ function compareNotesRecord(
       for (const note of notes) {
         if (
           !otherNotes.find(
-            (otherNote) => otherNote.serialize() === note.serialize()
+            (otherNote) => otherNote.serialize() === note.serialize(),
           )
         ) {
           return false;

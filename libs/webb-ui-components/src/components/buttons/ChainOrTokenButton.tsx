@@ -20,7 +20,7 @@ const ChainOrTokenButton = forwardRef<
       iconType,
       ...props
     },
-    ref
+    ref,
   ) => {
     const textClsx = useMemo(() => {
       return twMerge('font-bold', textClassName);
@@ -40,11 +40,11 @@ const ChainOrTokenButton = forwardRef<
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
           'dark:hover:bg-mono-0/10',
-          className
+          className,
         )}
         ref={ref}
       >
-        <div className="flex items-center mr-1 justify-between">
+        <div className="flex items-center justify-between mr-1">
           <div className="flex items-center gap-2.5">
             {value && (
               <IconCmp
@@ -65,7 +65,7 @@ const ChainOrTokenButton = forwardRef<
         </div>
       </button>
     );
-  }
+  },
 );
 
 ChainOrTokenButton.displayName = 'ChainOrTokenButton';

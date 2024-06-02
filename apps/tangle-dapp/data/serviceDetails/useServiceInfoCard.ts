@@ -10,11 +10,14 @@ export default function useServiceInfoCard() {
   const { serviceDetails, isLoading } = useServiceDetails();
 
   const { result: currentBlockNumber } = useApi(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   const { result: babeExpectedBlockTime } = useApi(
-    useCallback((api) => Promise.resolve(api.consts.babe.expectedBlockTime), [])
+    useCallback(
+      (api) => Promise.resolve(api.consts.babe.expectedBlockTime),
+      [],
+    ),
   );
 
   const endingBlockDate = useMemo(() => {

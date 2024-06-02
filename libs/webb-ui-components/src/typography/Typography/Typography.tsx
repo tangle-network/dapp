@@ -68,7 +68,7 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
 
   const _component = useMemo(
     () => component ?? defaultComponent[variant],
-    [component, variant]
+    [component, variant],
   );
 
   const _className = useMemo(() => {
@@ -77,13 +77,13 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
       getTextAlignClassName(ta),
       getFontWeightClassName(variant, fw),
       getDefaultTextColor(variant),
-      className
+      className,
     );
   }, [className, fw, ta, variant]);
 
   return createElement(
     _component,
     { ...restProps, className: _className },
-    children
+    children,
   );
 };

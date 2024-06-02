@@ -1,9 +1,9 @@
+import { Close } from '@webb-tools/icons/Close';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 import { Button } from '../buttons';
 import { BannerPropsType } from './types';
-import { Close } from '@webb-tools/icons';
-import { Typography } from '../../typography';
 
 /**
  * The `Banner` component
@@ -35,21 +35,21 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerPropsType>(
     const bannerBaseClx = useMemo(
       () =>
         'flex justify-between gap-2 w-full items-center px-7 py-2 bg-blue-10 dark:bg-blue-120',
-      []
+      [],
     );
     const bannerClassName = useMemo(
       () => twMerge(bannerBaseClx, bannerClassNameProp),
-      [bannerBaseClx, bannerClassNameProp]
+      [bannerBaseClx, bannerClassNameProp],
     );
 
     const buttonBaseClx = useMemo(
       () =>
         'ml-2 py-2 px-3 rounded-lg uppercase bg-mono-0 dark:bg-mono-0 text-blue-70 dark:text-blue-120 hover:bg-mono-0 hover:dark:bg-mono-0 border-none',
-      []
+      [],
     );
     const buttonClassName = useMemo(
       () => twMerge(buttonBaseClx, buttonClassNameProp),
-      [buttonBaseClx, buttonClassNameProp]
+      [buttonBaseClx, buttonClassNameProp],
     );
 
     return (
@@ -84,5 +84,5 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerPropsType>(
         </span>
       </div>
     );
-  }
+  },
 );

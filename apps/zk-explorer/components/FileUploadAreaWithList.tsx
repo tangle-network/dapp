@@ -34,14 +34,14 @@ const FileUploadAreaWithList: FC<FileUploadAreaWithListProps> = ({
 
       assert(
         acceptedFiles.length === 1,
-        'Upload file dialog should allow exactly one file to be provided'
+        'Upload file dialog should allow exactly one file to be provided',
       );
 
       const uploadedFile = acceptedFiles[0];
 
       setFile(uploadedFile);
     },
-    [setFile]
+    [setFile],
   );
 
   return (

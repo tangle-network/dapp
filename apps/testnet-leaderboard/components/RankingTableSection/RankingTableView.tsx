@@ -106,7 +106,7 @@ const participantToRankingItem = (participant: ParticipantType, idx: number) =>
     points: participant.points,
     sessions: participant.sessions,
     identity: participant.identity,
-  } satisfies RankingItemType);
+  }) satisfies RankingItemType;
 
 const logger = LoggerService.get('RankingTableView');
 
@@ -127,7 +127,7 @@ const RankingTableView: FC<Props> = ({
   const { data, isLoading } = useSWR(
     [fetchLeaderboardData.name, pageIndex * pageSize, pageSize, searchTerm],
     ([, ...args]) => fetchLeaderboardData(...args),
-    { keepPreviousData: true }
+    { keepPreviousData: true },
   );
 
   const total = useMemo(() => {
@@ -154,7 +154,7 @@ const RankingTableView: FC<Props> = ({
 
   const columns = useMemo(
     () => getColumns(pageIndex, pageSize),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize],
   );
 
   const {
@@ -189,7 +189,7 @@ const RankingTableView: FC<Props> = ({
   if (!isLoading && data && !data.success) {
     logger.error(
       'Error when parsing the response',
-      data.error.issues.map((issue) => issue.message).join('\n')
+      data.error.issues.map((issue) => issue.message).join('\n'),
     );
     return <ParseResponseErrorView />;
   }
@@ -231,7 +231,7 @@ const RankingTableView: FC<Props> = ({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </th>
                 ))}
@@ -246,7 +246,7 @@ const RankingTableView: FC<Props> = ({
                     <td key={idx} className="px-2 py-2 md:px-4 md:py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}

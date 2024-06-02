@@ -28,12 +28,12 @@ const usePayoutStakersTx = () => {
   const substrateTxFactory: SubstrateTxFactory<PayoutStakersTxContext> =
     useCallback((api, _activeSubstrateAddress, context) => {
       const validatorSubstrateAddress = toSubstrateAddress(
-        context.validatorAddress
+        context.validatorAddress,
       );
 
       return api.tx.staking.payoutStakers(
         validatorSubstrateAddress,
-        context.era
+        context.era,
       );
     }, []);
 

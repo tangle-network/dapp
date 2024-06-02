@@ -1,6 +1,6 @@
-import { useCopyable } from '../../hooks';
+import { useCopyable } from '../../hooks/useCopyable';
 import { FileCopyLine } from '@webb-tools/icons';
-import { shortenHex } from '../../utils';
+import { shortenHex } from '../../utils/shortenHex';
 import cx from 'classnames';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -39,7 +39,7 @@ export const KeyValueWithButton = forwardRef<
       copyProps,
       ...props
     },
-    ref
+    ref,
   ) => {
     const copyableResult = useCopyable();
 
@@ -63,7 +63,7 @@ export const KeyValueWithButton = forwardRef<
       return twMerge(
         'overflow-hidden rounded-lg',
         size === 'md' ? 'bg-mono-20 dark:bg-mono-160' : '',
-        className
+        className,
       );
     }, [className, size]);
 
@@ -74,7 +74,7 @@ export const KeyValueWithButton = forwardRef<
             ? shortenFn(keyValue)
             : shortenHex(keyValue, 5)
           : shortenHex(keyValue, 5).replace('0x', ''),
-      [hasShortenValue, keyValue, shortenFn]
+      [hasShortenValue, keyValue, shortenFn],
     );
 
     return (
@@ -82,7 +82,7 @@ export const KeyValueWithButton = forwardRef<
         <div
           className={cx(
             'flex items-center',
-            size === 'md' ? 'space-x-2' : 'space-x-1'
+            size === 'md' ? 'space-x-2' : 'space-x-1',
           )}
         >
           <div className={size === 'md' ? 'py-1 pl-3' : ''}>
@@ -104,7 +104,7 @@ export const KeyValueWithButton = forwardRef<
                     'cursor-default',
                     isDisabledTooltip
                       ? 'pointer-events-none'
-                      : 'pointer-events-auto'
+                      : 'pointer-events-auto',
                   )}
                 />
               </TooltipTrigger>
@@ -117,7 +117,7 @@ export const KeyValueWithButton = forwardRef<
                 size === 'md'
                   ? 'p-2 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30'
                   : '',
-                isCopied ? 'cursor-not-allowed' : ''
+                isCopied ? 'cursor-not-allowed' : '',
               )}
               onClick={
                 typeof onCopyButtonClick === 'function'
@@ -132,5 +132,5 @@ export const KeyValueWithButton = forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );

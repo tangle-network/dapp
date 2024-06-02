@@ -14,30 +14,30 @@ function calculateProvingLeavesAndCommitmentIndex(
   levels: number,
   leaves: string[],
   targetRoot: string,
-  commitment: string
+  commitment: string,
 ): Promise<{ provingLeaves: HexString[]; leafIndex: number }> {
   // Validate inputs
   leaves.forEach((leaf) => {
     assert.strictEqual(
       leaf.length,
       66,
-      'Invalid leaf size, expected 32 bytes or 64 hex chars with 0x prefix'
+      'Invalid leaf size, expected 32 bytes or 64 hex chars with 0x prefix',
     );
   });
 
   assert.strictEqual(
     targetRoot.length,
     66,
-    'Invalid target root size, expected 32 bytes or 64 hex chars with 0x prefix'
+    'Invalid target root size, expected 32 bytes or 64 hex chars with 0x prefix',
   );
 
   return new Promise((resolve, reject) => {
     const worker = new Worker(
       new URL(
         './worker/calculateProvingLeavesAndCommitmentIndex.ts',
-        import.meta.url
+        import.meta.url,
       ),
-      { type: 'module' }
+      { type: 'module' },
     );
 
     worker.onmessage = (e) => {

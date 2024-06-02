@@ -18,7 +18,6 @@ import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
 import { useEnqueueSubmittedTx } from '../../hooks';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
 import {
-  captureSentryException,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -44,7 +43,7 @@ const DepositConfirmContainer = forwardRef<
       destTypedChainId: destTypedChainIdProp,
       wrappableTokenId,
     },
-    ref
+    ref,
   ) => {
     const [checked, setChecked] = useState(false);
     const {
@@ -79,7 +78,7 @@ const DepositConfirmContainer = forwardRef<
 
     const wrappingFlow = useMemo(
       () => typeof wrappableTokenId !== 'undefined',
-      [wrappableTokenId]
+      [wrappableTokenId],
     );
 
     const {
@@ -95,12 +94,12 @@ const DepositConfirmContainer = forwardRef<
 
     const sourceTypedChainId = useMemo(
       () => sourceTypedChainIdProp ?? +note.note.sourceChainId,
-      [sourceTypedChainIdProp, note.note.sourceChainId]
+      [sourceTypedChainIdProp, note.note.sourceChainId],
     );
 
     const destTypedChainId = useMemo(
       () => destTypedChainIdProp ?? +note.note.targetChainId,
-      [destTypedChainIdProp, note.note.targetChainId]
+      [destTypedChainIdProp, note.note.targetChainId],
     );
 
     const newBalance = useMemo(() => {
@@ -111,12 +110,12 @@ const DepositConfirmContainer = forwardRef<
 
     const poolAddress = useMemo(
       () => apiConfig.anchors[fungibleTokenId][destTypedChainId],
-      [apiConfig, fungibleTokenId, destTypedChainId]
+      [apiConfig, fungibleTokenId, destTypedChainId],
     );
 
     const blockExplorerUrl = useMemo(
       () => chainsConfig[destTypedChainId]?.blockExplorers?.default.url,
-      [destTypedChainId]
+      [destTypedChainId],
     );
 
     const poolExplorerUrl = useMemo(() => {
@@ -126,18 +125,13 @@ const DepositConfirmContainer = forwardRef<
         blockExplorerUrl,
         poolAddress,
         'address',
-        'web3'
+        'web3',
       ).toString();
     }, [blockExplorerUrl, poolAddress]);
 
     const handleExecuteDeposit = useCallback(
       async () => {
         if (!api || !activeApi || !activeChain) {
-          captureSentryException(
-            new Error('No api or chain found'),
-            'transactionType',
-            'deposit'
-          );
           return;
         }
 
@@ -174,15 +168,10 @@ const DepositConfirmContainer = forwardRef<
 
         const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
           tokenSymbol,
-          +destTypedChainId
+          +destTypedChainId,
         );
         if (!currency) {
           console.error(`Currency not found for symbol ${tokenSymbol}`);
-          captureSentryException(
-            new Error(`Currency not found for symbol ${tokenSymbol}`),
-            'transactionType',
-            'deposit'
-          );
           return;
         }
 
@@ -209,14 +198,14 @@ const DepositConfirmContainer = forwardRef<
           const args = await api?.prepareTransaction(
             tx,
             note,
-            wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
+            wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? '',
           );
           if (!args) {
             return txQueueApi.cancelTransaction(tx.id);
           }
 
           const nextIdx = Number(
-            await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)
+            await api.getNextIndex(+sourceTypedChainId, fungibleTokenId),
           );
 
           const indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
@@ -228,7 +217,7 @@ const DepositConfirmContainer = forwardRef<
           enqueueSubmittedTx(
             transactionHash,
             apiConfig.chains[+sourceTypedChainId],
-            'deposit'
+            'deposit',
           );
 
           await api.waitForFinalization(transactionHash);
@@ -238,7 +227,7 @@ const DepositConfirmContainer = forwardRef<
             transactionHash,
             note,
             indexBeforeInsert,
-            sourceIdentifyingData
+            sourceIdentifyingData,
           );
 
           await removeNoteFromNoteManager(note);
@@ -266,7 +255,7 @@ const DepositConfirmContainer = forwardRef<
                   blockExplorerUrl,
                   transactionHash,
                   'tx',
-                  'web3'
+                  'web3',
                 ).toString()
               : undefined,
             sourceTypedChainId: +sourceTypedChainId,
@@ -282,7 +271,7 @@ const DepositConfirmContainer = forwardRef<
             errorMessage = error.shortMessage;
 
             const revertError = error.walk(
-              (err) => err instanceof ContractFunctionRevertedError
+              (err) => err instanceof ContractFunctionRevertedError,
             );
 
             if (revertError instanceof ContractFunctionRevertedError) {
@@ -291,12 +280,10 @@ const DepositConfirmContainer = forwardRef<
           }
 
           tx.fail(errorMessage);
-
-          captureSentryException(error, 'transactionType', 'deposit');
         }
       },
       // prettier-ignore
-      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken, blockExplorerUrl, fungibleToken.view.symbol, addNewTransaction]
+      [activeAccount?.address, activeApi, activeChain, addNoteToNoteManager, api, apiConfig, enqueueSubmittedTx, fungibleTokenId, inProgressTxId.length, note, onResetState, removeNoteFromNoteManager, setInProgressTxId, setTotalStep, startNewTransaction, txQueueApi, wrappableToken, blockExplorerUrl, fungibleToken.view.symbol, addNewTransaction],
     );
 
     return (
@@ -310,8 +297,8 @@ const DepositConfirmContainer = forwardRef<
           children: inProgressTxId
             ? 'Make Another Transaction'
             : wrappingFlow
-            ? 'Wrap And Deposit'
-            : 'Deposit',
+              ? 'Wrap And Deposit'
+              : 'Deposit',
           onClick: handleExecuteDeposit,
         }}
         checkboxProps={{
@@ -336,8 +323,8 @@ const DepositConfirmContainer = forwardRef<
           txStatus === 'completed'
             ? 'green'
             : txStatus === 'warning'
-            ? 'red'
-            : undefined
+              ? 'red'
+              : undefined
         }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
@@ -354,7 +341,7 @@ const DepositConfirmContainer = forwardRef<
         }
       />
     );
-  }
+  },
 );
 
 export default DepositConfirmContainer;

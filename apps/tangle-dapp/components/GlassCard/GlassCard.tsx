@@ -12,13 +12,13 @@ const GlassCard = forwardRef<ElementRef<'div'>, GlassCardProps>(
         ref={ref}
         className={twMerge(
           'p-6 space-y-0 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark',
-          className
+          className,
         )}
       >
         {children}
       </Card>
     );
-  }
+  },
 );
 
 GlassCard.displayName = 'GlassCard';

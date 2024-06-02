@@ -8,7 +8,7 @@ import { ListCardWrapperProps } from './types';
 export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
   (
     { children, className, onClose, title, hideCloseButton = false, ...props },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -16,7 +16,7 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
         className={twMerge(
           'flex flex-col',
           'rounded-xl bg-mono-0 dark:bg-mono-190 w-full max-w-xl p-9',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -34,5 +34,5 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
         {children}
       </div>
     );
-  }
+  },
 );

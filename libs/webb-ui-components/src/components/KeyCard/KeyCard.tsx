@@ -18,7 +18,7 @@ export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(
   ({ className, keyValue, title, ...props }, ref) => {
     const mergedClsx = useMemo(
       () => twMerge('max-w-[343px] break-all', className),
-      [className]
+      [className],
     );
     return (
       <div {...props} className={mergedClsx} ref={ref}>
@@ -37,5 +37,5 @@ export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );

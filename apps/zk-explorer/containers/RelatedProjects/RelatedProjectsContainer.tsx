@@ -5,7 +5,7 @@ import { fetchRelatedProjects } from '../../server/projectDetails';
 
 const RelatedProjectsCarousel = dynamic(
   () => import('./client/RelatedProjectsCarousel'),
-  { ssr: false }
+  { ssr: false },
 );
 
 type RelatedProjectsContainerProps = {

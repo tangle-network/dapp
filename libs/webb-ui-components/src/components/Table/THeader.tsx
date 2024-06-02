@@ -13,14 +13,14 @@ export const THeader = forwardRef<HTMLTableCellElement, THeaderProps>(
         {...props}
         className={twMerge(
           'px-2 py-5 text-left border-y body1 first:pl-6 last:pr-6 border-mono-40 dark:border-mono-140 text-mono-140 dark:text-mono-60 bg-mono-0 dark:bg-mono-180',
-          className
+          className,
         )}
         ref={ref}
       >
         {children}
       </th>
     );
-  }
+  },
 );
 
 export const THeaderMemo = memo(THeader);

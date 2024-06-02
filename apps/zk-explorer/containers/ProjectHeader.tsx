@@ -22,7 +22,7 @@ export default async function ProjectHeaderContainer({
     <div
       className={cx(
         'bg-mono-0 dark:bg-mono-180 p-4 md:p-6 space-y-8 rounded-2xl',
-        className
+        className,
       )}
     >
       <div className="flex justify-between items-start">

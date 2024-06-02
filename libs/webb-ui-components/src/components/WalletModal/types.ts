@@ -48,7 +48,7 @@ export interface WalletModalProps extends PropsOf<'div'> {
     targetTypedChainIds?: {
       evm?: number;
       substrate?: number;
-    }
+    },
   ) => void | Promise<void>;
 
   /**
@@ -56,7 +56,7 @@ export interface WalletModalProps extends PropsOf<'div'> {
    */
   toggleModal: (
     isOpen?: boolean | undefined,
-    typedChainId?: number | undefined
+    typedChainId?: number | undefined,
   ) => void;
 
   /**

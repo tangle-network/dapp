@@ -159,7 +159,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
                     'transfer',
                     data.rawChain,
                     data.rawFungibleCurrency,
-                    parseEther(numberToString(data.balance))
+                    parseEther(numberToString(data.balance)),
                   )
                 }
               >
@@ -173,7 +173,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
                     'withdraw',
                     data.rawChain,
                     data.rawFungibleCurrency,
-                    parseEther(numberToString(data.balance))
+                    parseEther(numberToString(data.balance)),
                   )
                 }
               >

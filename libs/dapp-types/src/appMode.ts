@@ -1,11 +1,7 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { LoggerService } from '@webb-tools/app-util';
-
 export type AppMode = 'development' | 'production';
-const appLogger = LoggerService.get('App');
-
 export function appMode(): AppMode {
   return process.env.NODE_ENV as AppMode;
 }
@@ -24,9 +20,6 @@ export function isLocalFixtures() {
 
 export function withLocalFixtures() {
   const dev = isDevelopment();
-
-  appLogger.info('local fixtures react app env: ', process.env.LOCAL_FIXTURES);
-  appLogger.info('isDevelopment? ', dev);
 
   return dev && isLocalFixtures();
 }

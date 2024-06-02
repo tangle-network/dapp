@@ -34,5 +34,5 @@ export const useApiQueryStore = createStore<
           [key]: value,
         });
       },
-  }
+  },
 );

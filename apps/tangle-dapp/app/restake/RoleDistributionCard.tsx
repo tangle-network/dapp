@@ -18,7 +18,7 @@ const RoleDistributionCard: FC = () => {
 
   const distribution = useMemo(
     () => getRoleDistributionFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   const chartData = useMemo(() => {

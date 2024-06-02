@@ -1,6 +1,5 @@
-import React from 'react';
 import { randRecentDate, randSoonDate } from '@ngneat/falso';
-import { TimeProgress } from '@webb-tools/webb-ui-components/components';
+import { TimeProgress } from '../../components/TimeProgress';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

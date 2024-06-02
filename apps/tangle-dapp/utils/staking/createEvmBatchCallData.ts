@@ -15,7 +15,7 @@ import {
 function createEvmBatchCallData<PrecompileT extends Precompile>(
   precompile: PrecompileT,
   functionName: AbiFunctionName<PrecompileT>,
-  args: AbiEncodeableValue[] | AbiBatchCallArgs
+  args: AbiEncodeableValue[] | AbiBatchCallArgs,
 ): AbiBatchCallData {
   const precompileAddress = getPrecompileAddress(precompile);
 

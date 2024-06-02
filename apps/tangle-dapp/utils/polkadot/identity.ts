@@ -11,13 +11,13 @@ export enum IdentityDataType {
 
 export const extractDataFromIdentityInfo = (
   info: PalletIdentityLegacyIdentityInfo,
-  type: IdentityDataType
+  type: IdentityDataType,
 ): string | null => {
   const displayData = info[type];
   if (displayData.isNone) return null;
 
   const displayDataObject: { raw?: string } = JSON.parse(
-    displayData.toString()
+    displayData.toString(),
   );
 
   // If the display name is in hex format, convert it to a string.
@@ -43,7 +43,7 @@ export async function getAccountInfo(rpcEndpoint: string, address: string) {
       const web = extractDataFromIdentityInfo(info, IdentityDataType.WEB);
       const twitterName = extractDataFromIdentityInfo(
         info,
-        IdentityDataType.TWITTER
+        IdentityDataType.TWITTER,
       );
       const twitter =
         twitterName === null

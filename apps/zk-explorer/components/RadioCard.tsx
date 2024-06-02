@@ -48,7 +48,7 @@ const RadioCard: FC<RadioCardProps> = ({
 
   const radioButtonClass = twMerge(
     'self-center w-5 h-5 rounded-full border flex-grow',
-    isCheckedClass
+    isCheckedClass,
   );
 
   const isDisabledClass = isDisabled
@@ -60,7 +60,7 @@ const RadioCard: FC<RadioCardProps> = ({
       onClick={handleOnChange}
       className={twMerge(
         'flex gap-2 dark:bg-mono-160  px-4 py-2 rounded-[8px]',
-        isDisabledClass
+        isDisabledClass,
       )}
     >
       {Icon && (

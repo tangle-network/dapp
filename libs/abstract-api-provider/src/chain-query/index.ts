@@ -13,11 +13,11 @@ export abstract class ChainQuery<Provider> {
   abstract tokenBalanceByCurrencyId(
     typedChainId: number,
     currency: number,
-    accountAddress?: string
+    accountAddress?: string,
   ): Observable<string>;
 
   abstract tokenBalanceByAddress(
     address: string,
-    accountAddress?: string
+    accountAddress?: string,
   ): Observable<string>;
 }

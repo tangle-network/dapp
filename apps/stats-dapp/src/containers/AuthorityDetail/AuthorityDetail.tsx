@@ -145,7 +145,7 @@ export const AuthorityDetail = () => {
 
   const isStatsLoading = useMemo(
     () => authority.stats.isLoading || stats === null,
-    [authority.stats.isLoading, stats]
+    [authority.stats.isLoading, stats],
   );
 
   const pagination = useMemo(
@@ -153,21 +153,21 @@ export const AuthorityDetail = () => {
       pageIndex,
       pageSize,
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize],
   );
 
   const totalItems = useMemo(
     () => authority.keyGens.val?.pageInfo.count ?? 0,
-    [authority]
+    [authority],
   );
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
-    [pageSize, totalItems]
+    [pageSize, totalItems],
   );
 
   const keyGens = useMemo(
     () => authority.keyGens.val?.items ?? [],
-    [authority]
+    [authority],
   );
   const table = useReactTable<KeyGenKeyListItem>({
     data: keyGens,
@@ -271,7 +271,7 @@ const DetailsView: FC<{
         'flex flex-col space-y-6',
         {
           'px-4 py-6': isPage,
-        }
+        },
       )}
     >
       <div
@@ -342,7 +342,7 @@ const DetailsView: FC<{
 
               <div
                 className={cx(
-                  'flex items-center p-1 space-x-2 text-mono-120 dark:text-mono-80 grow justify-end'
+                  'flex items-center p-1 space-x-2 text-mono-120 dark:text-mono-80 grow justify-end',
                 )}
               >
                 {validatorMetaData}
@@ -444,7 +444,7 @@ const Col: FC<{ children?: React.ReactNode; className?: string }> = ({
     fw="bold"
     className={twMerge(
       'flex items-center justify-center grow shrink basis-0',
-      className
+      className,
     )}
   >
     {children}

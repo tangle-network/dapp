@@ -30,7 +30,7 @@ const ExplorerUrlsDropdownItem: FC<{
         </Typography>
       </div>
     ),
-    [typedChainId]
+    [typedChainId],
   );
 
   if (href === undefined) {

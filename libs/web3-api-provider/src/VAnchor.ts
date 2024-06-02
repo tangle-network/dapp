@@ -37,7 +37,7 @@ import {
   Address,
   GetContractReturnType,
   Hash,
-  PublicClient,
+  Client as ViemClient,
   TransactionRequestBase,
   WalletClient,
   encodeAbiParameters,
@@ -62,16 +62,16 @@ class VAnchor {
   public readonly depositHistory: Record<number, string>;
 
   constructor(
-    public readonly publicClient: PublicClient,
+    public readonly client: ViemClient,
     public readonly contract: GetContractReturnType<
       typeof VAnchorTree__factory.abi,
-      PublicClient
+      ViemClient
     >,
     public readonly treeHeight: number,
     public readonly maxEdges: number,
     public readonly fungibleToken: Address,
     public readonly smallCircuitZkComponents: ZkComponents,
-    public readonly largeCircuitZkComponents: ZkComponents
+    public readonly largeCircuitZkComponents: ZkComponents,
   ) {
     this.tree = new MerkleTree(treeHeight);
     this.depositHistory = {};
@@ -81,7 +81,7 @@ class VAnchor {
     address: Address,
     smallCircuitZkComponents: ZkComponents,
     largeCircuitZkComponents: ZkComponents,
-    publicClient: PublicClient
+    publicClient: ViemClient,
   ) {
     const vAnchorContract = getContract({
       address: address,
@@ -102,7 +102,7 @@ class VAnchor {
       maxEdges,
       token,
       smallCircuitZkComponents,
-      largeCircuitZkComponents
+      largeCircuitZkComponents,
     );
 
     return createdAnchor;
@@ -123,7 +123,7 @@ class VAnchor {
           amount: '0',
           blinding: hexToU8a(randomBN(31).toHexString()),
           keypair: randomKeypair,
-        })
+        }),
       );
     }
 
@@ -142,7 +142,7 @@ class VAnchor {
     recipient: Address,
     relayer: Address,
     wrapUnwrapTokenArg: string,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
   ) {
     let wrapUnwrapToken: Address = this.fungibleToken;
 
@@ -171,7 +171,7 @@ class VAnchor {
       refund,
       wrapUnwrapToken,
       ensureHex(outputs[0].encrypt()),
-      ensureHex(outputs[1].encrypt())
+      ensureHex(outputs[1].encrypt()),
     );
 
     const vanchorInput: VAnchorProofInputs = await this.generateProofInputs(
@@ -181,7 +181,7 @@ class VAnchor {
       extAmount,
       fee,
       extDataHash,
-      leavesMap
+      leavesMap,
     );
 
     const fullProof = await this.generateProof(vanchorInput);
@@ -196,7 +196,7 @@ class VAnchor {
     const isValid: boolean = await groth16.verify(
       vKey,
       fullProof.publicSignals,
-      fullProof.proof
+      fullProof.proof,
     );
 
     assert.strictEqual(isValid, true);
@@ -211,7 +211,7 @@ class VAnchor {
       inputs,
       outputs,
       publicAmount,
-      extDataHash
+      extDataHash,
     );
 
     return {
@@ -241,7 +241,7 @@ class VAnchor {
     extAmount: bigint,
     fee: bigint,
     extDataHash: bigint,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
   ): Promise<VAnchorProofInputs> {
     const vAnchorRoots = await this.populateRootsForProof();
     let vanchorMerkleProof: Array<ReturnType<typeof this.getMerkleProof>>;
@@ -252,8 +252,8 @@ class VAnchor {
       vanchorMerkleProof = inputs.map((utxo) =>
         this.getMerkleProof(
           utxo,
-          utxo.originChainId ? leavesMap[utxo.originChainId] : undefined
-        )
+          utxo.originChainId ? leavesMap[utxo.originChainId] : undefined,
+        ),
       );
     }
 
@@ -268,7 +268,7 @@ class VAnchor {
       chainID: chainId.toString(),
       inputNullifier: inputs.map((x) => '0x' + x.nullifier),
       outputCommitment: outputs.map((x) =>
-        BigInt(u8aToHex(x.commitment)).toString()
+        BigInt(u8aToHex(x.commitment)).toString(),
       ),
       publicAmount: this.getPublicAmount(extAmount, fee).toString(),
       extDataHash: extDataHash.toString(),
@@ -282,7 +282,7 @@ class VAnchor {
       outChainID: outputs.map((x) => x.chainId),
       outAmount: outputs.map((x) => x.amount.toString()),
       outPubkey: outputs.map((x) =>
-        BigInt(x.getKeypair().getPubKey()).toString()
+        BigInt(x.getKeypair().getPubKey()).toString(),
       ),
       outBlinding: outputs.map((x) => BigInt(ensureHex(x.blinding)).toString()),
     };
@@ -291,7 +291,7 @@ class VAnchor {
   }
 
   public async generateProof(
-    vanchorInputs: VAnchorProofInputs
+    vanchorInputs: VAnchorProofInputs,
   ): Promise<FullProof> {
     const circuitWasm =
       vanchorInputs.inAmount.length === 2
@@ -304,7 +304,7 @@ class VAnchor {
 
     const witnessCalculator = await buildVariableWitnessCalculator(
       circuitWasm,
-      0
+      0,
     );
     const witness = await witnessCalculator.calculateWTNSBin(vanchorInputs, 0);
 
@@ -316,7 +316,7 @@ class VAnchor {
   public async generateProofCalldata(fullProof: FullProof) {
     const calldata = await groth16.exportSolidityCallData(
       fullProof.proof,
-      fullProof.publicSignals
+      fullProof.publicSignals,
     );
     const proof = JSON.parse('[' + calldata + ']');
     const pi_a = proof[0];
@@ -350,7 +350,7 @@ class VAnchor {
     leavesMap: Record<string, Uint8Array[]>, // subtree
     overridesTransaction: TransactionOptions & {
       walletClient: WalletClient;
-    } & Partial<TransactionRequestBase>
+    } & Partial<TransactionRequestBase>,
   ) {
     const [{ walletClient, ...override }, txOptions] =
       this.splitTransactionOptions(overridesTransaction);
@@ -365,7 +365,7 @@ class VAnchor {
 
     txOptions.onTransactionState?.(
       TransactionState.GENERATE_ZK_PROOF,
-      undefined
+      undefined,
     );
     const { extAmount, extData, publicInputs } = await this.setupTransaction(
       inputs_,
@@ -375,18 +375,18 @@ class VAnchor {
       recipient,
       relayer,
       wrapUnwrapToken,
-      leavesMap
+      leavesMap,
     );
 
     const txValueOption = await this.getWrapUnwrapOptions(
       extAmount,
       refund,
-      wrapUnwrapToken
+      wrapUnwrapToken,
     );
 
     txOptions.onTransactionState?.(
       TransactionState.INITIALIZE_TRANSACTION,
-      undefined
+      undefined,
     );
 
     const { request } = await this.contract.simulate.transact(
@@ -418,7 +418,7 @@ class VAnchor {
           encryptedOutput2: extData.encryptedOutput2,
         },
       ],
-      merge({ account: walletClient.account.address }, txValueOption, override)
+      merge({ account: walletClient.account.address }, txValueOption, override),
     );
 
     console.log('request', request);
@@ -427,7 +427,7 @@ class VAnchor {
 
     txOptions.onTransactionState?.(
       TransactionState.WAITING_FOR_FINALIZATION,
-      txHash
+      txHash,
     );
 
     this.updateTreeOrForestState(outputs);
@@ -438,13 +438,13 @@ class VAnchor {
   public async getWrapUnwrapOptions(
     extAmount: bigint,
     refund: bigint,
-    wrapUnwrapToken: string
+    wrapUnwrapToken: string,
   ) {
     if (extAmount > ZERO_BIG_INT && checkNativeAddress(wrapUnwrapToken)) {
       const tokenWrapperContract = getContract({
         address: this.fungibleToken,
         abi: TokenWrapper__factory.abi,
-        client: this.publicClient,
+        client: this.client,
       });
 
       const valueToSend = await tokenWrapperContract.read.getAmountToWrap([
@@ -471,7 +471,7 @@ class VAnchor {
 
   public async isWebbTokenApprovalRequired(
     depositAmount: bigint,
-    account: Account
+    account: Account,
   ) {
     const tokenInstance = this.getWebbToken();
     const tokenAllowance = await tokenInstance.read.allowance([
@@ -489,14 +489,14 @@ class VAnchor {
   public async isWrappableTokenApprovalRequired(
     tokenAddress: Address,
     depositAmount: bigint,
-    account: Account
+    account: Account,
   ) {
     const userAddress = account.address;
 
     const tokenInstance = getContract({
       address: tokenAddress,
       abi: ERC20__factory.abi,
-      client: this.publicClient,
+      client: this.client,
     });
 
     // When wrapping, we need to check allowance of the fungible token
@@ -516,17 +516,17 @@ class VAnchor {
 
   public getWebbToken(): GetContractReturnType<
     typeof ERC20__factory.abi,
-    PublicClient
+    ViemClient
   > {
     return getContract({
       address: this.fungibleToken,
       abi: ERC20__factory.abi,
-      client: this.publicClient,
+      client: this.client,
     });
   }
 
   public splitTransactionOptions<T extends object>(
-    options?: T & TransactionOptions
+    options?: T & TransactionOptions,
   ): [T, TransactionOptions] {
     const {
       keypair,
@@ -545,12 +545,12 @@ class VAnchor {
   public getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {
     const sumInAmount = inputs.reduce(
       (sum, current) => sum + BigInt(current.amount),
-      ZERO_BIG_INT
+      ZERO_BIG_INT,
     );
 
     const sumOutAmount = outputs.reduce(
       (sum, current) => sum + BigInt(current.amount),
-      ZERO_BIG_INT
+      ZERO_BIG_INT,
     );
 
     return fee + sumOutAmount - sumInAmount;
@@ -569,7 +569,7 @@ class VAnchor {
     refund: bigint,
     wrapUnwrapToken: Address,
     encryptedOutput1: Hash,
-    encryptedOutput2: Hash
+    encryptedOutput2: Hash,
   ) {
     const extData = {
       recipient: toFixedHex(recipient, 20) as Hash,
@@ -587,11 +587,11 @@ class VAnchor {
   }
 
   public getVAnchorExtDataHash(
-    extData: ReturnType<VAnchor['generateExtData']>['extData']
+    extData: ReturnType<VAnchor['generateExtData']>['extData'],
   ): bigint {
     const encodedData = encodeAbiParameters(
       parseAbiParameters(
-        '(address recipient,int256 extAmount,address relayer,uint256 fee,uint256 refund,address token,bytes encryptedOutput1,bytes encryptedOutput2)'
+        '(address recipient,int256 extAmount,address relayer,uint256 fee,uint256 refund,address token,bytes encryptedOutput1,bytes encryptedOutput2)',
       ),
       [
         {
@@ -604,7 +604,7 @@ class VAnchor {
           encryptedOutput1: extData.encryptedOutput1,
           encryptedOutput2: extData.encryptedOutput2,
         },
-      ]
+      ],
     );
 
     const hash = keccak256(encodedData);
@@ -619,13 +619,13 @@ class VAnchor {
     if (Number(input.amount) > 0) {
       if (input.index === undefined) {
         throw new Error(
-          `Input commitment ${u8aToHex(input.commitment)} index was not set`
+          `Input commitment ${u8aToHex(input.commitment)} index was not set`,
         );
       }
 
       if (input.index < 0) {
         throw new Error(
-          `Input commitment ${u8aToHex(input.commitment)} index should be >= 0`
+          `Input commitment ${u8aToHex(input.commitment)} index should be >= 0`,
         );
       }
 
@@ -658,7 +658,7 @@ class VAnchor {
     inputs: Array<Utxo>,
     outputs: [Utxo, Utxo],
     publicAmount: bigint,
-    extDataHash: bigint
+    extDataHash: bigint,
   ) {
     // public inputs to the contract
     const args = {
@@ -666,7 +666,7 @@ class VAnchor {
       roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}` as Hash,
       extensionRoots: '0x' as Hash,
       inputNullifiers: inputs.map((x) =>
-        BigInt(toFixedHex(ensureHex(x.nullifier)))
+        BigInt(toFixedHex(ensureHex(x.nullifier))),
       ),
       outputCommitments: [
         BigInt(toFixedHex(u8aToHex(outputs[0].commitment))),
@@ -684,7 +684,7 @@ class VAnchor {
       this.tree.insert(u8aToHex(x.commitment));
       const numOfElements = this.tree.number_of_elements();
       this.depositHistory[numOfElements - 1] = toFixedHex(
-        this.tree.root().toString()
+        this.tree.root().toString(),
       );
     });
   }

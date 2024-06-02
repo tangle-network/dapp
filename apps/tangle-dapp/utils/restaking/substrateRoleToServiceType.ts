@@ -4,7 +4,7 @@ import { TANGLE_TO_SERVICE_TYPE_TSS_MAP } from '../../constants';
 import { RestakingService } from '../../types';
 
 function substrateRoleToServiceType(
-  role: TanglePrimitivesRolesRoleType
+  role: TanglePrimitivesRolesRoleType,
 ): RestakingService {
   let serviceType: RestakingService | null = null;
 
@@ -28,7 +28,7 @@ function substrateRoleToServiceType(
   // provide exhaustive static type checking.
   if (serviceType === null) {
     throw new Error(
-      'Unknown role type (was a new role added? if so, update this function)'
+      'Unknown role type (was a new role added? if so, update this function)',
     );
   }
 

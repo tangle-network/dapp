@@ -41,7 +41,7 @@ const Wrap: FC = () => {
 
   const { balances: walletBalances } = useCurrenciesBalances(
     allCurrencies,
-    srcTypedChainId ?? undefined
+    srcTypedChainId ?? undefined,
   );
 
   const { ...wrapBtnProps } = useWrapButtonProps({
@@ -61,7 +61,7 @@ const Wrap: FC = () => {
       amount,
       onAmountChange: setAmount,
     }),
-    [amount, setAmount]
+    [amount, setAmount],
   );
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);

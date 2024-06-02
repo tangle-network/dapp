@@ -1,4 +1,4 @@
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 import { useState } from 'react';
 import { Modal } from '../../components/Modal/Modal';
 import { ModalTrigger } from '../../components/Modal/ModalTrigger';

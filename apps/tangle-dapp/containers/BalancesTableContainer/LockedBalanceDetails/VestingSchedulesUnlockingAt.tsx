@@ -13,11 +13,11 @@ const VestingSchedulesUnlockingAt: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
 
   const { result: currentBlockNumber } = useApiRx(
-    useCallback((api) => api.derive.chain.bestNumber(), [])
+    useCallback((api) => api.derive.chain.bestNumber(), []),
   );
 
   const { result: babeExpectedBlockTime } = useApi(
-    useCallback((api) => api.consts.babe.expectedBlockTime, [])
+    useCallback((api) => api.consts.babe.expectedBlockTime, []),
   );
 
   if (
@@ -34,13 +34,13 @@ const VestingSchedulesUnlockingAt: FC = () => {
     .toSorted(sortVestingSchedulesAscending)
     .map((schedule, index) => {
       const endingBlockNumber = schedule.startingBlock.add(
-        schedule.locked.div(schedule.perBlock)
+        schedule.locked.div(schedule.perBlock),
       );
 
       const endingBlockDate = getBlockDate(
         babeExpectedBlockTime,
         currentBlockNumber,
-        endingBlockNumber
+        endingBlockNumber,
       );
 
       const timeRemaining = endingBlockDate
@@ -52,9 +52,9 @@ const VestingSchedulesUnlockingAt: FC = () => {
       const progressText = isComplete
         ? undefined
         : `${timeRemaining} remaining. Currently at block #${formatDecimal(
-            currentBlockNumber.toString()
+            currentBlockNumber.toString(),
           )}, with ${formatDecimal(
-            endingBlockNumber.sub(currentBlockNumber).toString()
+            endingBlockNumber.sub(currentBlockNumber).toString(),
           )} blocks left until all vested tokens are available to claim.`;
 
       const text = isComplete

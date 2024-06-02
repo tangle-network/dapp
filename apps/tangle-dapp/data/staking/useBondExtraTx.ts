@@ -19,23 +19,23 @@ const useBondExtraTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.STAKING, BondExtraTxContext> =
     useCallback(
       (context) => ({ functionName: 'bondExtra', arguments: [context.amount] }),
-      []
+      [],
     );
 
   const substrateTxFactory: SubstrateTxFactory<BondExtraTxContext> =
     useCallback(
       (api, _activeSubstrateAddress, context) =>
         api.tx.staking.bondExtra(context.amount),
-      []
+      [],
     );
 
   const getSuccessMessageFnc: GetSuccessMessageFunctionType<BondExtraTxContext> =
     useCallback(
       ({ amount }) =>
         `Successfully added ${formatNativeTokenAmount(
-          amount
+          amount,
         )} to your existing stake.`,
-      [formatNativeTokenAmount]
+      [formatNativeTokenAmount],
     );
 
   return useAgnosticTx<Precompile.STAKING, BondExtraTxContext>({

@@ -1,4 +1,4 @@
-import ChainsRing from '@webb-tools/webb-ui-components/components/ChainsRing';
+import ChainsRing from '../../components/ChainsRing';
 import type { Meta, StoryObj } from '@storybook/react';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 

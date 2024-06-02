@@ -25,12 +25,12 @@ const ApiDevStats: FC = () => {
 
   const { result: api } = usePromise(
     useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
-    null
+    null,
   );
 
   const { result: apiRx } = usePromise(
     useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
-    null
+    null,
   );
 
   const isApiLoading = api === null || apiRx === null;

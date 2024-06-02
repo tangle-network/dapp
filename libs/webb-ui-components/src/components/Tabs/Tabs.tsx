@@ -1,3 +1,5 @@
+'use client';
+
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -25,14 +27,14 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
 
         onChange?.(nextValue);
       },
-      [onChange]
+      [onChange],
     );
 
     const tabs = useMemo(() => value, [value]);
 
     const mergedClsx = useMemo(
       () => twMerge('flex items-center space-x-2', className),
-      [className]
+      [className],
     );
 
     // Update the default selected tab when `value` prop change
@@ -55,7 +57,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
         })}
       </div>
     );
-  }
+  },
 );
 
 /**
@@ -73,14 +75,14 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(
             'py-2 font-bold rounded-lg body2',
             'text-mono-120 dark:text-mono-80 bg-mono-0 dark:bg-mono-180',
             'disabled:bg-blue-0 dark:disabled:bg-blue-120 disabled:text-blue-70 dark:disabled:text-blue-50',
-            'radix-state-active:bg-blue-0 dark:radix-state-active:bg-blue-120 radix-state-active:text-blue-70 dark:radix-state-active:text-blue-50'
+            'radix-state-active:bg-blue-0 dark:radix-state-active:bg-blue-120 radix-state-active:text-blue-70 dark:radix-state-active:text-blue-50',
           ),
-          className
+          className,
         )}
         ref={ref}
       >
         <span className="inline-block !text-inherit">{children}</span>
       </button>
     );
-  }
+  },
 );

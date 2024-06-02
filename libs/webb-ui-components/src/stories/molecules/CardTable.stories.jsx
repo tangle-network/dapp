@@ -1,11 +1,5 @@
-import React from 'react';
-
-import {
-  CardTable,
-  Table,
-  TitleWithInfo,
-  Filter,
-} from '@webb-tools/webb-ui-components/components';
+import { CardTable } from '../../components/CardTable';
+import { Filter } from '../../components/Filter';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

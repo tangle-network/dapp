@@ -11,8 +11,7 @@ const path = require('path'),
     require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'),
   HtmlWebPackPlugin = require('html-webpack-plugin'),
-  CopyWebpackPlugin = require('copy-webpack-plugin'),
-  { commandSync } = require('execa');
+  CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const { workspaceRoot } = require('nx/src/utils/workspace-root');
 const findPackages = require('../../tools/scripts/findPackages');
@@ -42,15 +41,18 @@ const plugins = fs.existsSync(path.join(__dirname, 'src/public'))
     ]
   : [];
 
-function createWebpackBase() {
-  commandSync('yarn fetch:onChainConfig', {
+async function createWebpackBase() {
+  // Use dynamic import here as `execa` is an esm only module
+  const { execa } = await import('execa');
+
+  await execa({
     cwd: workspaceRoot,
     stdio: 'inherit',
-  });
+  })`yarn fetch:onChainConfig`;
 
   console.log(
     'Running webpack in: ',
-    isDevelopment ? 'development' : 'production'
+    isDevelopment ? 'development' : 'production',
   );
 
   const bridgeEnvVars = Object.keys(process.env)
@@ -128,13 +130,16 @@ function createWebpackBase() {
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
               plugins: [
-                isDevelopment && require.resolve('react-refresh/babel'),
+                isDevelopment && [
+                  require.resolve('react-refresh/babel'),
+                  { skipEnvCheck: true },
+                ],
                 [
-                  '@babel/plugin-proposal-private-property-in-object',
+                  '@babel/plugin-transform-private-property-in-object',
                   { loose: false },
                 ],
-                ['@babel/plugin-proposal-private-methods', { loose: false }],
-                ['@babel/plugin-proposal-class-properties', { loose: false }],
+                ['@babel/plugin-transform-private-methods', { loose: false }],
+                ['@babel/plugin-transform-class-properties', { loose: false }],
                 'preval',
               ].filter(Boolean),
             },
@@ -160,7 +165,7 @@ function createWebpackBase() {
               loader: 'css-loader',
               options: {
                 esModule: false,
-                importLoaders: 2, // 2 other loaders used first, postcss-loader and sass-loader
+                importLoaders: 1, // 1 other loader used first, postcss-loader.
                 sourceMap: isDevelopment,
               },
             },
@@ -177,13 +182,6 @@ function createWebpackBase() {
                     // easily find plugins at https://www.postcss.parts/
                   ],
                 },
-              },
-            },
-            {
-              // load sass files into css files
-              loader: 'sass-loader',
-              options: {
-                sourceMap: isDevelopment,
               },
             },
           ],
@@ -295,7 +293,7 @@ function createWebpackBase() {
         (/** @type {{ dependencies: { critical: any; }[]; }} */ data) => {
           delete data.dependencies[0].critical;
           return data;
-        }
+        },
       ),
     ]
       .concat(plugins)

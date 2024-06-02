@@ -61,7 +61,7 @@ function PoolInfoCardItemValue<T extends boolean>({
           tw="black"
           className={cx(
             'uppercase block text-center !text-[10px] md:!text-[12px]',
-            'text-mono-120 dark:text-mono-80'
+            'text-mono-120 dark:text-mono-80',
           )}
         >
           {title}
@@ -76,7 +76,7 @@ function PoolInfoCardItemValue<T extends boolean>({
               {
                 '!text-green-70': changeRate >= 0,
                 '!text-red-70': changeRate < 0,
-              }
+              },
             )}
           >
             <ArrowRight
@@ -108,7 +108,7 @@ function SuspenseFallback<T extends boolean>({
           tw="black"
           className={cx(
             'uppercase block text-center !text-[10px] md:!text-[12px]',
-            'text-mono-120 dark:text-mono-80'
+            'text-mono-120 dark:text-mono-80',
           )}
         >
           {title}

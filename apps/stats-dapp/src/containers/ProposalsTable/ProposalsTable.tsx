@@ -104,7 +104,7 @@ export const ProposalsTable = () => {
       pageIndex,
       pageSize,
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize],
   );
 
   const chains = useMemo<Array<[string, ChainConfig]>>(
@@ -113,7 +113,7 @@ export const ProposalsTable = () => {
         String(key),
         chainsConfig[key],
       ]),
-    []
+    [],
   );
 
   const [globalFilter, setGlobalFilter] = useState('');
@@ -141,7 +141,7 @@ export const ProposalsTable = () => {
       selectedProposalTypes,
       selectedProposalsStatuses,
       selectedChains,
-    ]
+    ],
   );
 
   const batchedProposals = useBatchedProposals(pageQuery);
@@ -155,7 +155,7 @@ export const ProposalsTable = () => {
 
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
-    [pageSize, totalItems]
+    [pageSize, totalItems],
   );
 
   const data = useMemo(() => {

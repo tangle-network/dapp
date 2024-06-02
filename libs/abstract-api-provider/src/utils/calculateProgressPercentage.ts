@@ -8,7 +8,7 @@
 function calculateProgressPercentage(
   start: number,
   end: number,
-  current: number
+  current: number,
 ): number {
   const percentage = ((current - start) / (end - start + 1)) * 100;
 

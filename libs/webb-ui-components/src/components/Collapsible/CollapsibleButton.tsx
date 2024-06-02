@@ -1,10 +1,11 @@
+'use client';
+
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { ChevronDown } from '@webb-tools/icons';
-import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
+import { Typography } from '../../typography';
 import { CollapsibleButtonProps } from './types';
 
 /**
@@ -19,9 +20,9 @@ export const CollapsibleButton = forwardRef<
       {...props}
       className={twMerge(
         cx(
-          'group flex w-full select-none items-center justify-between px-4 py-2'
+          'group flex w-full select-none items-center justify-between px-4 py-2',
         ),
-        className
+        className,
       )}
       ref={ref}
     >

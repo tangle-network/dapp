@@ -12,7 +12,7 @@ function useLinkProps(
     'isInternal' | 'href' | 'isNext' | 'isDisabled' | 'onClick'
   > & {
     hasSubItem?: boolean;
-  }
+  },
 ) {
   const { isInternal, isNext, href, isDisabled, hasSubItem, onClick } = args;
 

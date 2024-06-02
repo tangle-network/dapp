@@ -1,3 +1,5 @@
+'use client';
+
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { forwardRef } from 'react';
 
@@ -10,5 +12,5 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         <PopoverPrimitive.Content {...props} ref={ref} />
       </PopoverPrimitive.Portal>
     );
-  }
+  },
 );

@@ -1,4 +1,4 @@
-import { ChainIcon } from '@webb-tools/icons';
+import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainChipProps } from './types';
@@ -44,7 +44,7 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
     const baseClsx = useMemo(
       () =>
         'box-border inline-flex items-center gap-1 pl-2 pr-3 py-1.5 rounded-md uppercase text-[12px] leading-[15px] font-bold text-mono-200 w-fit',
-      []
+      [],
     );
 
     const iconName = useMemo(
@@ -52,7 +52,7 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
         chainName.toLowerCase().includes('tangle')
           ? 'tangle transparent'
           : chainName,
-      [chainName]
+      [chainName],
     );
 
     const className = useMemo(() => {
@@ -71,5 +71,5 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
         {title ?? shortChainName}
       </span>
     );
-  }
+  },
 );

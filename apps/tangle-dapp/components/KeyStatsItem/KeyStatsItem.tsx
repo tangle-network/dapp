@@ -54,7 +54,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
     <div
       className={twMerge(
         'flex flex-col gap-2 justify-center px-2 py-2 md:px-2 lg:px-4',
-        className
+        className,
       )}
     >
       <div className="flex items-center gap-0.5">

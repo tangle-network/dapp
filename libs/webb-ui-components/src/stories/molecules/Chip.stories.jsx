@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Chip } from '@webb-tools/webb-ui-components/components';
+import { Chip } from '../../components/Chip';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

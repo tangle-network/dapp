@@ -37,7 +37,7 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 /// list of the apis that are available for  the provider
 export interface WebbMethods<
   ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any>
+  T extends WebbApiProvider<any>,
 > {
   // Variable Anchor API
   variableAnchor: WebbVariableAnchor<ProviderType, T>;
@@ -56,7 +56,7 @@ export interface WebbMethods<
 
 export type WebbMethod<
   T extends EventBus<K>,
-  K extends Record<string, unknown>
+  K extends Record<string, unknown>,
 > = {
   // The underlying provider for the methods
   inner: T;
@@ -70,7 +70,7 @@ export type WebbTransactionMethod<T> = {
 
 export interface WebbVariableAnchor<
   ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any>
+  T extends WebbApiProvider<any>,
 > {
   actions: WebbMethod<VAnchorActions<ProviderType, T>, ActionEvent>;
 }
@@ -188,7 +188,7 @@ export type NotificationPayload = {
 };
 // Function call to register a notification
 export type NotificationHandler = ((
-  notification: NotificationPayload
+  notification: NotificationPayload,
 ) => string | number) & {
   // remove the notification programmatically
   remove(key: string | number): void;
@@ -254,22 +254,20 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // get vanchor max edges
   getVAnchorMaxEdges: (
     vAnchorAddress: string,
-    provider?: PublicClient | ApiPromise
+    provider?: PublicClient | ApiPromise,
   ) => Promise<number>;
 
   // get vanchor levels
   getVAnchorLevels: (
     vAnchorAddressOrTreeId: string,
-    providerOrApi?: PublicClient | ApiPromise
+    providerOrApi?: PublicClient | ApiPromise,
   ) => Promise<number>;
 
   // generate utxo
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
 
   getVAnchorLeaves(
-    vanchor:
-      | GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
-      | ApiPromise,
+    vanchor: GetContractReturnType<typeof VAnchor__factory.abi> | ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;
@@ -279,7 +277,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
       treeId?: number;
       palletId?: number;
       tx?: TransactionExecutor<NewNotesTxResult>;
-    }
+    },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;

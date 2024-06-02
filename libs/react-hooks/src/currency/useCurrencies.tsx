@@ -22,7 +22,7 @@ export const useCurrencies = () => {
 
     const currentTypedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.id
+      activeChain.id,
     );
     const currencies = apiConfig.currencies ?? [];
 
@@ -31,8 +31,8 @@ export const useCurrencies = () => {
         (currencyConfig) =>
           currencyConfig.role === CurrencyRole.Governable &&
           Array.from(currencyConfig.addresses.keys()).includes(
-            currentTypedChainId
-          ) // filter out currencies that are not supported on the current chain
+            currentTypedChainId,
+          ), // filter out currencies that are not supported on the current chain
       )
       .map((currencyConfig) => new Currency(currencyConfig));
   }, [activeChain, apiConfig.currencies]);
@@ -52,7 +52,7 @@ export const useCurrencies = () => {
 
     const typedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.id
+      activeChain.id,
     );
 
     return Array.from(apiConfig.fungibleToWrappableMap.entries()).reduce(
@@ -60,13 +60,13 @@ export const useCurrencies = () => {
         const wrappableSet = wrappableMap.get(typedChainId);
         if (wrappableSet) {
           acc[fungibleId] = Array.from(wrappableSet.values()).map(
-            (id) => new Currency(apiConfig.currencies[id])
+            (id) => new Currency(apiConfig.currencies[id]),
           );
         }
 
         return acc;
       },
-      {} as Record<number, Currency[]> // fungible currency id -> wrappable currencies
+      {} as Record<number, Currency[]>, // fungible currency id -> wrappable currencies
     );
   }, [activeChain, apiConfig.fungibleToWrappableMap, apiConfig.currencies]);
 
@@ -75,19 +75,19 @@ export const useCurrencies = () => {
     return Array.from(apiConfig.fungibleToWrappableMap.entries()).reduce(
       (prev, [fungibleId, typedChainIdWrappableMap]) => {
         const wrappableIdSet = Array.from(
-          typedChainIdWrappableMap.values()
+          typedChainIdWrappableMap.values(),
         ).reduce((acc, set) => {
           set.forEach((id) => acc.add(id));
           return acc;
         }, new Set<number>());
 
         prev[fungibleId] = Array.from(wrappableIdSet.values()).map(
-          (id) => new Currency(apiConfig.currencies[id])
+          (id) => new Currency(apiConfig.currencies[id]),
         );
 
         return prev;
       },
-      {} as Record<number, Currency[]>
+      {} as Record<number, Currency[]>,
     );
   }, [apiConfig.currencies, apiConfig.fungibleToWrappableMap]);
 
@@ -102,11 +102,11 @@ export const useCurrencies = () => {
   const getPossibleFungibleCurrencies = useCallback(
     (currencyId: number) => {
       const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
-        wrappableCurrenciesMap[Number(key)].find((c) => c.id === currencyId)
+        wrappableCurrenciesMap[Number(key)].find((c) => c.id === currencyId),
       );
       return fungibleCurrencies.filter((c) => ids.includes(String(c.id)));
     },
-    [wrappableCurrenciesMap, fungibleCurrencies]
+    [wrappableCurrenciesMap, fungibleCurrencies],
   );
 
   /**
@@ -120,7 +120,7 @@ export const useCurrencies = () => {
 
       return allWrappableCurrenciesMap[currencyId] || [];
     },
-    [allWrappableCurrenciesMap, wrappableCurrenciesMap]
+    [allWrappableCurrenciesMap, wrappableCurrenciesMap],
   );
 
   const setWrappableCurrency = useCallback(
@@ -129,7 +129,7 @@ export const useCurrencies = () => {
         activeApi.state.wrappableCurrency = currency;
       }
     },
-    [activeApi]
+    [activeApi],
   );
 
   const setFungibleCurrency = useCallback(
@@ -140,7 +140,7 @@ export const useCurrencies = () => {
 
       activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
     },
-    [activeApi]
+    [activeApi],
   );
 
   // Side effect to subscribe to fungible currency and wrappable currency

@@ -1,6 +1,5 @@
-import * as Sentry from '@sentry/react';
 import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
+import { WebbUIProvider } from '@webb-tools/webb-ui-components/provider';
 import { FC } from 'react';
 import AppRoutes from './routes';
 
@@ -17,4 +16,4 @@ const App: FC = () => {
   );
 };
 
-export default Sentry.withProfiler(App);
+export default App;

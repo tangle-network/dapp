@@ -108,7 +108,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
         'flex gap-2 w-full py-2 px-4',
         onClick !== undefined &&
           'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-140',
-        isSelected && 'bg-mono-20 dark:bg-mono-140 cursor-default'
+        isSelected && 'bg-mono-20 dark:bg-mono-140 cursor-default',
       )}
     >
       <ChainIcon size="lg" name={TANGLE_TESTNET_CHAIN_NAME} />

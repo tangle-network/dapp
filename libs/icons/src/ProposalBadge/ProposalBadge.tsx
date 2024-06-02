@@ -88,7 +88,7 @@ const ProposalBadge = forwardRef<SVGSVGElement, ProposalBadgeProps>(
         {getIconPathByVariant(variant, classes[variant].iconColor)}
       </svg>
     );
-  }
+  },
 );
 
 export default ProposalBadge;

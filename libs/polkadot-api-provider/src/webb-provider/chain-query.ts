@@ -38,7 +38,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
           try {
             tokenAccountData = await this.inner.api.query.tokens.accounts(
               activeAccount.address,
-              +assetId
+              +assetId,
             );
 
             if (tokenAccountData.isEmpty) {
@@ -56,32 +56,32 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
 
           tokenBalance = tokenBalance.replaceAll(',', '');
           const denominatedTokenBalance = new BN(tokenBalance).div(
-            new BN(10).pow(new BN(decimals))
+            new BN(10).pow(new BN(decimals)),
           );
 
           return denominatedTokenBalance.toString();
         } else {
           const systemAccountData = await this.inner.api.query.system.account(
-            activeAccount.address
+            activeAccount.address,
           );
 
           let tokenBalance: string = systemAccountData.data.free.toString();
 
           tokenBalance = tokenBalance.replaceAll(',', '');
           const denominatedTokenBalance = new BN(tokenBalance).div(
-            new BN(10).pow(new BN(decimals))
+            new BN(10).pow(new BN(decimals)),
           );
 
           return denominatedTokenBalance.toString();
         }
-      })
+      }),
     );
   }
 
   tokenBalanceByCurrencyId(
     typedChainId: number,
     currencyId: number,
-    accountAddressArg?: string
+    accountAddressArg?: string,
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
@@ -100,7 +100,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tokenBalanceByAddress(
     assetId: string,
-    accountAddressArg?: string
+    accountAddressArg?: string,
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');

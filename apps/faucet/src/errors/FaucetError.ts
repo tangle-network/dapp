@@ -80,7 +80,7 @@ class FaucetError<Code extends FaucetErrorCode> extends Error {
    */
   static from<Code extends FaucetErrorCode>(
     errorCode: Code,
-    payload?: ErrorPayload[Code]
+    payload?: ErrorPayload[Code],
   ): FaucetError<Code> {
     return new FaucetError(errorCode, payload);
   }
@@ -91,7 +91,7 @@ class FaucetError<Code extends FaucetErrorCode> extends Error {
    * @returns a FaucetError instance
    */
   static fromTwitterError(
-    error: string
+    error: string,
   ):
     | FaucetError<FaucetErrorCode.UNKNOWN_TWITTER_ERROR>
     | FaucetError<FaucetErrorCode.TWITTER_LOGIN_DENIED> {

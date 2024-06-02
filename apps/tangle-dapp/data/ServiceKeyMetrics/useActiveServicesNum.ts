@@ -6,7 +6,7 @@ import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useActiveServicesNum() {
   const [activeServicesNum, setActiveServicesNum] = useState<number | null>(
-    null
+    null,
   );
   const [activeServicesChangeRate, setActiveServicesChangeRate] = useState<
     number | null

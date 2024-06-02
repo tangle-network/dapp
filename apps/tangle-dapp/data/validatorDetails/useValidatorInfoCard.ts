@@ -14,7 +14,7 @@ import {
 
 export default function useValidatorInfoCard(
   rpcEndpoint: string,
-  validatorAddress: string
+  validatorAddress: string,
 ) {
   const { notificationApi } = useWebbUI();
   const { result: currentEra } = useCurrentEra();
@@ -43,7 +43,7 @@ export default function useValidatorInfoCard(
       const erasStakersOverviewData =
         await api.query.staking.erasStakersOverview(
           currentEra,
-          validatorAddress
+          validatorAddress,
         );
       if (erasStakersOverviewData.isSome) {
         const nominatorCount = erasStakersOverviewData.unwrap().nominatorCount;
@@ -57,19 +57,19 @@ export default function useValidatorInfoCard(
         isActive: false,
       };
     },
-    [validatorAddress, currentEra]
+    [validatorAddress, currentEra],
   );
 
   const { result: nominationsData } = useApi(nominationsFetcher);
 
   const restakingMethod = useMemo(
     () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   const totalRestaked = useMemo(
     () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function useValidatorInfoCard(
       try {
         const validatorAccountInfo = await getAccountInfo(
           rpcEndpoint,
-          validatorAddress
+          validatorAddress,
         );
         if (validatorAccountInfo) {
           setName(validatorAccountInfo.name);

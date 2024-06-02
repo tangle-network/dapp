@@ -39,17 +39,17 @@ export default function useActiveServicesByValidator(validatorAddress: string) {
             validatorIdAndTypeLookup.map(async (service) => {
               const jobInfoData = await api.query.jobs.submittedJobs(
                 service.type,
-                service.id
+                service.id,
               );
               const extractedServiceData = extractServiceDetails(
                 service.id.toString(),
-                jobInfoData
+                jobInfoData,
               );
               if (extractedServiceData === null) {
                 throw new Error('Failed to get service data');
               }
               return extractedServiceData;
-            })
+            }),
           )
         ).filter((service) => service !== null) as Service[];
         setServices(fetchedServices);

@@ -1,13 +1,5 @@
-import React from 'react';
-
-import { Button } from '@webb-tools/webb-ui-components/components';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Close,
-  Expand,
-  Spinner,
-} from '@webb-tools/icons';
+import { ArrowLeft, ArrowRight } from '@webb-tools/icons';
+import Button from '../../components/buttons/Button';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -45,14 +37,14 @@ Small.args = {
   variant: 'primary',
 };
 
-export const isDisabled = Template.bind({});
-isDisabled.args = {
+export const IsDisabled = Template.bind({});
+IsDisabled.args = {
   isDisabled: true,
   variant: 'primary',
 };
 
-export const isLoading = Template.bind({});
-isLoading.args = {
+export const IsLoading = Template.bind({});
+IsLoading.args = {
   isLoading: 'true',
   loadingText: 'Loading...',
   variant: 'utility',
@@ -77,14 +69,14 @@ SmallSecondary.args = {
   variant: 'secondary',
 };
 
-export const isDisabledSecondary = Template.bind({});
-isDisabledSecondary.args = {
+export const IsDisabledSecondary = Template.bind({});
+IsDisabledSecondary.args = {
   isDisabled: 'true',
   variant: 'secondary',
 };
 
-export const isLoadingSecondary = Template.bind({});
-isLoadingSecondary.args = {
+export const IsLoadingSecondary = Template.bind({});
+IsLoadingSecondary.args = {
   isLoading: 'true',
   loadingText: 'Loading...',
   variant: 'secondary',

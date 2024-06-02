@@ -41,35 +41,39 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
       return [];
     }
 
-    return Array.from(allNotes.values()).reduce((acc, notes) => {
-      notes.forEach((note) => {
-        const { sourceChainId, tokenSymbol } = note.note;
+    return Array.from(allNotes.values()).reduce(
+      (acc, notes) => {
+        notes.forEach((note) => {
+          const { sourceChainId, tokenSymbol } = note.note;
 
-        const fungible = Object.values(apiConfig.currencies)
-          .filter((c) => c.role === CurrencyRole.Governable)
-          .find(
-            (c) => c.symbol === tokenSymbol && c.addresses.has(+sourceChainId)
+          const fungible = Object.values(apiConfig.currencies)
+            .filter((c) => c.role === CurrencyRole.Governable)
+            .find(
+              (c) =>
+                c.symbol === tokenSymbol && c.addresses.has(+sourceChainId),
+            );
+          if (!fungible) {
+            return acc;
+          }
+
+          const isExisted = acc.find(
+            (val) =>
+              val.fungibleCurrencyId === fungible.id &&
+              val.typedChainId === Number(sourceChainId),
           );
-        if (!fungible) {
-          return acc;
-        }
 
-        const isExisted = acc.find(
-          (val) =>
-            val.fungibleCurrencyId === fungible.id &&
-            val.typedChainId === Number(sourceChainId)
-        );
+          if (!isExisted) {
+            acc.push({
+              fungibleCurrencyId: fungible.id,
+              typedChainId: Number(sourceChainId),
+            });
+          }
+        });
 
-        if (!isExisted) {
-          acc.push({
-            fungibleCurrencyId: fungible.id,
-            typedChainId: Number(sourceChainId),
-          });
-        }
-      });
-
-      return acc;
-    }, [] as Array<Omit<ArrayElement<typeof nextIndices>, 'nextIndex'>>);
+        return acc;
+      },
+      [] as Array<Omit<ArrayElement<typeof nextIndices>, 'nextIndex'>>,
+    );
   }, [apiConfig, allNotes]);
 
   const notes = useMemo(
@@ -79,7 +83,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
           const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
           const typedChainId = calculateTypedChainId(
             resourceId.chainType,
-            resourceId.chainId
+            resourceId.chainId,
           );
 
           const chain = chains[typedChainId];
@@ -98,7 +102,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
               if (!fungible) {
                 console.error(
                   'Fungible currency not found with id: ',
-                  item.fungibleCurrencyId
+                  item.fungibleCurrencyId,
                 );
                 return false;
               }
@@ -124,10 +128,10 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             if (fungibleCurrency) {
               const foundCurrencies = getWrappableCurrencies(
                 fungibleCurrency.id,
-                false
+                false,
               );
               foundCurrencies.forEach((c) =>
-                compositionSet.add(c.view.symbol.toUpperCase())
+                compositionSet.add(c.view.symbol.toUpperCase()),
               );
             }
 
@@ -135,7 +139,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             let assetsUrl = '#';
             const explorerUrl = chain.blockExplorers?.default.url;
             const address = fungibleCurrency?.getAddressOfChain(
-              calculateTypedChainId(chain.chainType, chain.id)
+              calculateTypedChainId(chain.chainType, chain.id),
             );
 
             if (explorerUrl && address) {
@@ -152,7 +156,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
               composition: Array.from(compositionSet),
               createdTime, // TODO: get the actual created time
               balance: Number(
-                formatUnits(BigInt(note.note.amount), +note.note.denomination)
+                formatUnits(BigInt(note.note.amount), +note.note.denomination),
               ),
               subsequentDeposits: note.note.index
                 ? subsequentDepositsNumber.toString()
@@ -165,11 +169,11 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           return acc;
         },
-        [] as Array<SpendNoteDataType>
+        [] as Array<SpendNoteDataType>,
       );
     },
     // prettier-ignore
-    [allNotes, chains, nextIndices, fungibleCurrencies, apiConfig.currencies, getWrappableCurrencies]
+    [allNotes, chains, nextIndices, fungibleCurrencies, apiConfig.currencies, getWrappableCurrencies],
   );
 
   // Effect to get next indices asynchorously
@@ -189,7 +193,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
               const idx = await VAnchorAction.getNextIndex(
                 apiConfig,
                 typedChainId,
-                fungibleCurrencyId
+                fungibleCurrencyId,
               );
 
               return {
@@ -197,8 +201,8 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
                 typedChainId,
                 nextIndex: Number(idx),
               };
-            }
-          )
+            },
+          ),
         );
 
         setNextIndices(indices);

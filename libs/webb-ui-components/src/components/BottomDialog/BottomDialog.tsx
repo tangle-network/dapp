@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -10,5 +12,5 @@ export const BottomDialog = forwardRef<HTMLDivElement, BottomDialogProps>(
         <Dialog.Root {...radixRootProps}>{children}</Dialog.Root>
       </div>
     );
-  }
+  },
 );

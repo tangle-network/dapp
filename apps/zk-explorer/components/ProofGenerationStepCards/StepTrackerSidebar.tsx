@@ -126,7 +126,7 @@ const VerticalStepperItem: FC<VerticalStepperItemProps> = ({
       <div
         className={twMerge(
           'flex items-center justify-center px-3 py-1 rounded-full',
-          isActiveOrCompletedClass
+          isActiveOrCompletedClass,
         )}
       >
         {number}

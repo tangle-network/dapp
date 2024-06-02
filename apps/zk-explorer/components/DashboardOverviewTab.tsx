@@ -25,7 +25,7 @@ const DashboardOverviewTab: FC = () => {
 
   const creationTimestampString = useMemo(
     () => formatTimestamp(createdAt),
-    [createdAt]
+    [createdAt],
   );
 
   const breakpoint = useTailwindBreakpoint();

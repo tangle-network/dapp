@@ -94,7 +94,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     (error: string | null) => {
       setHasErrors(error !== null);
     },
-    [setHasErrors]
+    [setHasErrors],
   );
 
   const submitTx = useCallback(async () => {

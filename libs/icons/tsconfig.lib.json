@@ -1,19 +1,35 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "../../dist/libs/icons",
-    "declarationDir": "../../dist/libs/icons",
-    "declaration": true,
-    "types": ["node"],
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "downlevelIteration": true,
-    "sourceMap": true,
-    "strict": true,
-    "emitDeclarationOnly": true,
-    "module": "esnext"
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "node",
+      "../../node_modules/@nx/react/typings/cssmodule.d.ts",
+      "../../node_modules/@nx/react/typings/image.d.ts",
+      "../../node_modules/vite/client",
+      "../../node_modules/vitest/importMeta"
+    ]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "../../types/**/*.d.ts"
+  ],
+  "exclude": [
+    "**/vite.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.jsx",
+    "**/*.test.jsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx"
+  ]
 }

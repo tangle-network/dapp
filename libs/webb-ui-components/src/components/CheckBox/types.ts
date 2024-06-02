@@ -1,8 +1,7 @@
-import { ComponentProps } from 'react';
-
-import { Button } from '../buttons';
-import { WebbComponentBase } from '../../types';
-import { WebbTypographyVariant } from '../../typography/types';
+import type { ComponentProps } from 'react';
+import type Button from '../buttons/Button';
+import type { WebbComponentBase } from '../../types';
+import type { WebbTypographyVariant } from '../../typography/types';
 
 /**
  * CheckBox Props

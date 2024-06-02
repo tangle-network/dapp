@@ -1,5 +1,6 @@
 {
   "name": "@webb-tools/dapp-types",
   "version": "0.0.1",
-  "type": "commonjs"
+  "type": "module",
+  "types": "./src/index.d.ts"
 }

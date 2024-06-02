@@ -13,7 +13,7 @@ async function getTvl24h(epochStart: number, epochNow: number) {
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         epochStart,
-        epochNow - EPOCH_DAY_INTERVAL
+        epochNow - EPOCH_DAY_INTERVAL,
       );
 
     return Object.values(latestTvlByVAnchorsByChains).reduce(
@@ -22,11 +22,11 @@ async function getTvl24h(epochStart: number, epochNow: number) {
           (totalByChain, tvlByVAnchor) =>
             totalByChain +
             +formatEther(BigInt(tvlByVAnchor.totalValueLocked ?? 0)),
-          0
+          0,
         );
         return total + latestTvlByChain;
       },
-      0
+      0,
     );
   } catch (error) {
     console.error('Error while fetching TVL 24h data', error);
@@ -35,7 +35,7 @@ async function getTvl24h(epochStart: number, epochNow: number) {
 
 export default async function getKeyMetricTvlData(
   epochStart: number,
-  epochNow: number
+  epochNow: number,
 ): Promise<MetricType> {
   const [tvl, tvl24h] = await Promise.all([
     getTvl(),

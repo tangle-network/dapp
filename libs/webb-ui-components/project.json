@@ -3,19 +3,25 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/webb-ui-components/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "project": "libs/webb-ui-components/package.json",
-        "outputPath": "dist/libs/webb-ui-components",
-        "entryFile": "libs/webb-ui-components/src/index.ts",
-        "tsConfig": "libs/webb-ui-components/tsconfig.lib.json",
-        "format": ["esm", "cjs"],
-        "rollupConfig": ["libs/webb-ui-components/rollup.config.js"],
-        "external": ["react", "react-dom"],
-        "updateBuildableProjectDepsInPackageJson": true
+        "outputPath": "dist/libs/webb-ui-components"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "publish": {
@@ -25,19 +31,11 @@
       },
       "dependsOn": ["build"]
     },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/webb-ui-components/**/*.ts"]
-      }
-    },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "jestConfig": "libs/webb-ui-components/jest.config.ts",
-        "passWithNoTests": true
+        "reportsDirectory": "../../coverage/libs/webb-ui-components"
       }
     },
     "storybook": {
@@ -65,6 +63,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }

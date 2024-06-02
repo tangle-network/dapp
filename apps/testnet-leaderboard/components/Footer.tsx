@@ -8,7 +8,7 @@ const Footer = forwardRef<ElementRef<'footer'>, ComponentProps<'footer'>>(
     return (
       <WebsiteFooter {...props} websiteType="tangle" ref={ref} hideNewsletter />
     );
-  }
+  },
 );
 
 Footer.displayName = 'Footer';

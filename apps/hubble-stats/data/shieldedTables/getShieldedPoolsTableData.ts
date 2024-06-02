@@ -5,7 +5,7 @@ import { EPOCH_DAY_INTERVAL } from '../../utils';
 
 const getPoolInfoFromVAnchor = async (
   vAnchorAddress: string,
-  epochNow: number
+  epochNow: number,
 ) => {
   const vAnchor = VANCHORS_MAP[vAnchorAddress];
 
@@ -17,7 +17,7 @@ const getPoolInfoFromVAnchor = async (
       vAnchorAddress,
       epochNow - EPOCH_DAY_INTERVAL,
       epochNow,
-      vAnchor.supportedSubgraphs
+      vAnchor.supportedSubgraphs,
     ),
     getTvlByVAnchor(vAnchorAddress, vAnchor.supportedSubgraphs),
   ]);
@@ -35,11 +35,11 @@ const getPoolInfoFromVAnchor = async (
 };
 
 export default async function getShieldedPoolsTableData(
-  epochNow: number
+  epochNow: number,
 ): Promise<ShieldedPoolType[]> {
   return await Promise.all(
     VANCHOR_ADDRESSES.map((vAnchor) =>
-      getPoolInfoFromVAnchor(vAnchor, epochNow)
-    )
+      getPoolInfoFromVAnchor(vAnchor, epochNow),
+    ),
   );
 }

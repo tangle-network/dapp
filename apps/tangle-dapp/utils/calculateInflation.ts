@@ -7,7 +7,7 @@ export const calculateInflation = (
   api: ApiPromise,
   totalStaked: BN,
   totalIssuance: BN,
-  numAuctions: BN
+  numAuctions: BN,
 ) => {
   const {
     auctionAdjust,

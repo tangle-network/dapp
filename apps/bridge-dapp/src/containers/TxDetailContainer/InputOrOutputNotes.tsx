@@ -23,7 +23,7 @@ const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
 }) => {
   return (
     <SectionWrapper>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Typography variant="body2" fw="bold">
           {type === 'input' ? 'Source' : 'Destination'}
         </Typography>
@@ -56,7 +56,7 @@ const InputOrOutputNotes: FC<InputOrOutputNotesProps> = ({
               </div>
             </div>
 
-            <div className="flex justify-end items-center gap-1">
+            <div className="flex items-center justify-end gap-1">
               <Typography variant="body2" fw="semibold">
                 {formatEther(BigInt(amount))} {fungibleTokenSymbol}
               </Typography>
@@ -119,7 +119,7 @@ const ArrowBadge: FC<Pick<InputOrOutputNotesProps, 'activity' | 'type'>> = ({
           },
           {
             'rotate-180': type === 'input',
-          }
+          },
         )}
       />
     </div>
