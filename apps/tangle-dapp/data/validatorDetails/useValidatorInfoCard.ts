@@ -1,5 +1,7 @@
 'use client';
 
+import { Option } from '@polkadot/types';
+import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -41,10 +43,10 @@ export default function useValidatorInfoCard(
         });
       }
       const erasStakersOverviewData =
-        await api.query.staking.erasStakersOverview(
+        (await api.query.staking.erasStakersOverview(
           currentEra,
           validatorAddress,
-        );
+        )) as Option<SpStakingPagedExposureMetadata>;
       if (erasStakersOverviewData.isSome) {
         const nominatorCount = erasStakersOverviewData.unwrap().nominatorCount;
         return {
