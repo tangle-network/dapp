@@ -179,7 +179,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
 
         // Return the leaves for proving
         return result;
-      } catch (e) {
+      } catch {
         tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }

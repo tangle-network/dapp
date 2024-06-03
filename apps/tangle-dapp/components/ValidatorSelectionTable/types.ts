@@ -4,6 +4,7 @@ import { Validator } from '../../types';
 
 export type ValidatorSelectionTableProps = {
   allValidators: Validator[];
+  defaultSelectedValidators: string[];
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
 };
 

@@ -364,7 +364,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       const txHash = await this.inner.walletClient.writeContract(request);
 
       await this.inner.publicClient.waitForTransactionReceipt({ hash: txHash });
-    } catch (ex) {
+    } catch {
       this.inner.notificationHandler({
         description: 'Account Registration Failed',
         key: 'register',

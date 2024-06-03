@@ -33,7 +33,7 @@ async function cachedFetch(
       // Handle the insuficient disk space error here
       try {
         await fixturesCache.put(url, response.clone());
-      } catch (error) {
+      } catch {
         throw WebbError.from(WebbErrorCodes.InsufficientDiskSpace);
       }
 

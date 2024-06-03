@@ -37,6 +37,7 @@ export default function usePayouts(): PayoutData {
   );
   const { rpcEndpoint, network } = useNetworkStore();
   const activeSubstrateAddress = useSubstrateAddress();
+
   const { data: eraTotalRewards } = useEraTotalRewards();
   const { result: validators } = useApiRx(
     useCallback((api) => api.query.staking.validators.entries(), []),

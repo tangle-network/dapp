@@ -20,7 +20,7 @@ const getCurrencyImageUrl = async (symbol: string): Promise<string> => {
     }
 
     return url;
-  } catch (error) {
+  } catch {
     return '';
   }
 };

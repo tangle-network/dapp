@@ -97,7 +97,7 @@ class LoggerService {
 
     try {
       m = JSON.stringify(message, null, 2);
-    } catch (e) {
+    } catch {
       m = 'Cant show message';
     }
 

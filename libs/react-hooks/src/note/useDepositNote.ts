@@ -12,7 +12,7 @@ export const useDepositNote = (value: string): null | Note => {
         }
         const note = await Note.deserialize(value);
         setDepositNote(note);
-      } catch (e) {
+      } catch {
         setDepositNote(null);
       }
     };

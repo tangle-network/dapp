@@ -49,9 +49,8 @@ const WalletAndChainContainer: FC = () => {
             </ConnectWalletMobileButton>
           ) : (
             <Button
-              isDisabled={loading}
-              isLoading={loading}
-              loadingText="Connecting..."
+              isLoading={isConnecting || loading}
+              loadingText={isConnecting ? 'Connecting...' : 'Loading...'}
               onClick={() => toggleModal(true)}
               className="flex items-center justify-center px-6"
             >

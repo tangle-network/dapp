@@ -59,7 +59,7 @@ const UploadTxHistoryModal: FC<{
         message: 'Transactions saved successfully',
       });
       closeModal();
-    } catch (error) {
+    } catch {
       notificationApi({
         variant: 'error',
         message: 'Error saving transactions',
