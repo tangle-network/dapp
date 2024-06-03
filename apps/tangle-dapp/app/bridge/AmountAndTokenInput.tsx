@@ -11,7 +11,7 @@ import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC } from 'react';
+import { ComponentProps, FC } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
@@ -19,7 +19,13 @@ import { useBridge } from '../../context/BridgeContext';
 import useBalance from './hooks/useBalance';
 import useSelectedToken from './hooks/useSelectedToken';
 
-const AmountAndTokenInput: FC = () => {
+interface AmountAndTokenInputProps {
+  setErrorMessage?: ComponentProps<typeof AmountInput>['setErrorMessage'];
+}
+
+const AmountAndTokenInput: FC<AmountAndTokenInputProps> = ({
+  setErrorMessage,
+}) => {
   const { amount, setAmount, setSelectedTokenId, tokenIdOptions } = useBridge();
   const selectedToken = useSelectedToken();
 
@@ -38,6 +44,7 @@ const AmountAndTokenInput: FC = () => {
           }}
           placeholder=""
           wrapperClassName="!pr-0"
+          setErrorMessage={setErrorMessage}
         />
         <Dropdown>
           <DropdownTrigger asChild>

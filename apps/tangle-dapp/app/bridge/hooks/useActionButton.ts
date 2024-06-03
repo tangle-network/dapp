@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/api-provider-environment';
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { isEVMChain } from '../../../utils/bridge';
@@ -19,6 +19,7 @@ type UseActionButtonReturnType = {
   buttonAction: () => void;
   buttonText: string;
   errorMessage: ErrorMessage | null;
+  handleSetErrorMessage: (error: string | null) => void;
 };
 
 type ErrorMessage = {
@@ -39,6 +40,8 @@ export default function useActionButton() {
   const { amount, destinationAddress, selectedSourceChain } = useBridge();
   const error = useError();
   const { sourceTypedChainId } = useTypedChainId();
+
+  const [isInputInvalid, setHasErrors] = useState(false);
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -65,7 +68,7 @@ export default function useActionButton() {
 
   const isWalletAndSourceChainMismatch = useMemo(
     () => error === 'evm-wrongWallet' || error === 'substrate-wrongWallet',
-    [error]
+    [error],
   );
 
   const isEvmWrongNetwork = useMemo(() => {
@@ -82,12 +85,12 @@ export default function useActionButton() {
 
   const isInputInsufficient = useMemo(
     () => !amount || !destinationAddress,
-    [amount, destinationAddress]
+    [amount, destinationAddress],
   );
 
   const isRequiredToConnectWallet = useMemo(
     () => isNoActiveAccountOrWallet || isWalletAndSourceChainMismatch,
-    [isNoActiveAccountOrWallet, isWalletAndSourceChainMismatch]
+    [isNoActiveAccountOrWallet, isWalletAndSourceChainMismatch],
   );
 
   const openWalletModal = useCallback(() => {
@@ -96,11 +99,18 @@ export default function useActionButton() {
       isWalletAndSourceChainMismatch
         ? calculateTypedChainId(
             selectedSourceChain.chainType,
-            selectedSourceChain.id
+            selectedSourceChain.id,
           )
-        : undefined
+        : undefined,
     );
   }, [toggleModal, isWalletAndSourceChainMismatch, selectedSourceChain]);
+
+  const handleSetErrorMessage = useCallback(
+    (error: string | null) => {
+      setHasErrors(error !== null);
+    },
+    [setHasErrors],
+  );
 
   const switchNetwork = useCallback(() => {
     if (!activeWallet) return;
@@ -127,11 +137,16 @@ export default function useActionButton() {
     return 'Approve';
   }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet]);
 
+  // TODO: handle max amount
+
   return {
     isLoading: loading || isConnecting,
-    isDisabled: isRequiredToConnectWallet ? false : isInputInsufficient,
+    isDisabled: isRequiredToConnectWallet
+      ? false
+      : isInputInsufficient || isInputInvalid,
     buttonAction,
     buttonText,
     errorMessage,
+    handleSetErrorMessage,
   } satisfies UseActionButtonReturnType;
 }
