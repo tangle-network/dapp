@@ -43,12 +43,13 @@ export default function useNominationsUnclaimedRewards() {
 
   return (validators ?? []).reduce((unclaimedRewards, validator) => {
     (erasRewardsPoints ?? []).forEach(([era, reward]) => {
-      const hasClaimed = claimedRewards.get(era)?.get(validator)?.size !== 0;
+      const claimedErasLength = claimedRewards.get(era)?.get(validator)?.size;
+      const hasClaimed = claimedErasLength ? claimedErasLength >= 1 : false;
 
       // If the reward has claimed, do nothing
       if (hasClaimed) return;
 
-      unclaimedRewards.concat({
+      unclaimedRewards.push({
         era,
         eraTotalRewardPoints: reward.total,
         validatorAddress: validator,

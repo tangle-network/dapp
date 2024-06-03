@@ -8,7 +8,7 @@ import {
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
@@ -31,78 +31,77 @@ type PayoutData = {
 
 export default function usePayouts(): PayoutData {
   const { isLoading, data: payouts } = usePayoutsStore();
-
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
     true,
   );
-
   const { rpcEndpoint, network } = useNetworkStore();
-
   const activeSubstrateAddress = useSubstrateAddress();
-
   const { data: eraTotalRewards } = useEraTotalRewards();
-
   const { result: validators } = useApiRx(
     useCallback((api) => api.query.staking.validators.entries(), []),
   );
-
   const mappedValidatorInfo = useMemo(() => {
     const map = new Map<string, PalletStakingValidatorPrefs>();
-
     validators?.forEach(([storageKey, validatorInfo]) => {
       map.set(storageKey.args[0].toString(), validatorInfo);
     });
-
     return map;
   }, [validators]);
-
   const unclaimedRewards = useNominationsUnclaimedRewards();
+  const hasComputedPayoutsRef = useRef(false);
 
-  useEffect(
-    () => {
-      // Make sure all data is available before computing payouts
-      if (
-        activeSubstrateAddress === null ||
-        unclaimedRewards.length === 0 ||
-        eraTotalRewards === null ||
-        eraTotalRewards.size === 0 ||
-        mappedValidatorInfo.size === 0 ||
-        payouts.length > 0 // If the payouts are already computed, don't recompute
-      )
-        return;
+  useEffect(() => {
+    // Make sure all data is available before computing payouts
+    if (
+      activeSubstrateAddress === null ||
+      unclaimedRewards.length === 0 ||
+      eraTotalRewards === null ||
+      eraTotalRewards.size === 0 ||
+      mappedValidatorInfo.size === 0 ||
+      hasComputedPayoutsRef.current ||
+      isLoading
+    )
+      return;
 
-      const computePayouts = async () => {
-        setIsLoading(true);
+    const computePayouts = async () => {
+      setIsLoading(true);
 
-        const payouts = await fetchPayouts(
-          rpcEndpoint,
-          activeSubstrateAddress,
-          unclaimedRewards,
-          eraTotalRewards,
-          mappedValidatorInfo,
-          network.ss58Prefix,
-        );
+      const payouts = await fetchPayouts(
+        rpcEndpoint,
+        activeSubstrateAddress,
+        unclaimedRewards,
+        eraTotalRewards,
+        mappedValidatorInfo,
+        network.ss58Prefix,
+      );
 
-        const sortedPayout = payouts.sort((a, b) => a.era - b.era);
+      const sortedPayout = payouts.sort((a, b) => a.era - b.era);
 
-        setPayouts(sortedPayout);
-        setCachedPayouts((previous) => ({
-          ...previous?.value,
-          [rpcEndpoint]: {
-            ...previous?.value?.[rpcEndpoint],
-            [activeSubstrateAddress]: sortedPayout,
-          },
-        }));
+      setPayouts(sortedPayout);
+      setCachedPayouts((previous) => ({
+        ...previous?.value,
+        [rpcEndpoint]: {
+          ...previous?.value?.[rpcEndpoint],
+          [activeSubstrateAddress]: sortedPayout,
+        },
+      }));
 
-        setIsLoading(false);
-      };
+      hasComputedPayoutsRef.current = true; // Mark payouts as computed
+      setIsLoading(false);
+    };
 
-      computePayouts();
-    },
-    // prettier-ignore
-    [activeSubstrateAddress, eraTotalRewards, mappedValidatorInfo, network.ss58Prefix, payouts.length, rpcEndpoint, setCachedPayouts, unclaimedRewards],
-  );
+    computePayouts();
+  }, [
+    activeSubstrateAddress,
+    eraTotalRewards,
+    mappedValidatorInfo,
+    network.ss58Prefix,
+    rpcEndpoint,
+    setCachedPayouts,
+    unclaimedRewards,
+    isLoading,
+  ]);
 
   return {
     data: payouts,
@@ -119,9 +118,7 @@ const fetchPayouts = async (
   ss58Prefix?: number,
 ): Promise<Payout[]> => {
   const publicKey = decodeAddress(activeSubstrateAddress);
-
   const activeSubstrateAddressEncoded = encodeAddress(publicKey, ss58Prefix);
-
   const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
   const payoutsWithNull = await Promise.all(
@@ -132,7 +129,6 @@ const fetchPayouts = async (
       }
 
       const eraTotalRewardOptValue = eraTotalRewardOpt.unwrap();
-
       const validatorTotalReward = eraTotalRewardOptValue
         .toBn()
         .muln(reward.validatorRewardPoints)
