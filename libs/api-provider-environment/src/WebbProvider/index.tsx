@@ -98,7 +98,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
   const [activeApi, setActiveApi] =
     useState<Maybe<WebbApiProvider<unknown>>>(undefined);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [accounts, setAccounts] = useState<Array<Account>>([]);
 
