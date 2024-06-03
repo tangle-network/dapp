@@ -1,15 +1,14 @@
 'use client';
 
-import { Option, u32, Vec } from '@polkadot/types';
+import type { Option, u128 } from '@polkadot/types';
 import {
-  PalletStakingNominations,
   PalletStakingValidatorPrefs,
   SpStakingExposurePage,
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
@@ -20,14 +19,10 @@ import {
   getApiPromise as getPolkadotApiPromise,
   getValidatorIdentityName,
 } from '../../utils/polkadot';
+import { setIsLoading, setPayouts, usePayoutsStore } from '../payouts/store';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
-
-type ValidatorReward = {
-  validatorAddress: string;
-  era: number;
-  eraTotalRewardPoints: number;
-  validatorRewardPoints: number;
-};
+import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
+import type { ValidatorReward } from '../types';
 
 type PayoutData = {
   data: Payout[];
@@ -35,13 +30,7 @@ type PayoutData = {
 };
 
 export default function usePayouts(): PayoutData {
-  const payoutsRef = useRef<Payout[]>([]);
-  const isPayoutsFetched = useRef(false);
-  const fetchedPayoutPromises = useRef<Promise<(Payout | undefined)[]> | null>(
-    null,
-  );
-
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, data: payouts } = usePayoutsStore();
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
@@ -51,31 +40,6 @@ export default function usePayouts(): PayoutData {
   const { rpcEndpoint, network } = useNetworkStore();
 
   const activeSubstrateAddress = useSubstrateAddress();
-
-  const activeSubstrateAddressEncoded = useMemo(() => {
-    if (!activeSubstrateAddress) return;
-
-    const publicKey = decodeAddress(activeSubstrateAddress);
-
-    return encodeAddress(publicKey, network.ss58Prefix);
-  }, [activeSubstrateAddress, network.ss58Prefix]);
-
-  const { result: nominators } = useApiRx(
-    useCallback(
-      (api) => api.query.staking.nominators(activeSubstrateAddress),
-      [activeSubstrateAddress],
-    ),
-  );
-
-  const { result: erasRewardsPoints } = useApiRx(
-    useCallback((api) => api.query.staking.erasRewardPoints.entries(), []),
-  );
-
-  const myNominations = useMemo(() => {
-    if (!nominators) return [];
-    const nominatorsData = nominators as Option<PalletStakingNominations>;
-    return nominatorsData.isSome ? nominatorsData.unwrap().targets : [];
-  }, [nominators]);
 
   const { data: eraTotalRewards } = useEraTotalRewards();
 
@@ -93,249 +57,196 @@ export default function usePayouts(): PayoutData {
     return map;
   }, [validators]);
 
-  useEffect(() => {
-    isPayoutsFetched.current = false;
-    fetchedPayoutPromises.current = null;
-    setIsLoading(false);
-  }, [activeSubstrateAddress, rpcEndpoint]);
+  const unclaimedRewards = useNominationsUnclaimedRewards();
 
-  const payoutPromises = useMemo(() => {
-    if (isPayoutsFetched.current) return fetchedPayoutPromises.current;
-
-    if (
-      !erasRewardsPoints ||
-      myNominations.length === 0 ||
-      !eraTotalRewards ||
-      !mappedValidatorInfo ||
-      !activeSubstrateAddress ||
-      !activeSubstrateAddressEncoded
-    ) {
-      return null;
-    }
-
-    const allRewards: ValidatorReward[] = [];
-
-    for (const validatorAddress of myNominations) {
-      for (const point of erasRewardsPoints) {
-        const era = point[0].args[0].toNumber();
-        const rewards = point[1].toHuman();
-        let validatorRewardPoints = 0;
-        const totalRewardPoints = parseFloat(
-          rewards.total?.toString().replace(/,/g, '') ?? '0',
-        );
-        if (
-          typeof rewards.individual === 'object' &&
-          rewards.individual !== null
-        ) {
-          Object.entries(rewards.individual).forEach(([key, value]) => {
-            if (key === validatorAddress.toString()) {
-              validatorRewardPoints = value
-                ? parseFloat(value.toString().replace(/,/g, ''))
-                : 0;
-            }
-          });
-        }
-        allRewards.push({
-          era,
-          eraTotalRewardPoints: totalRewardPoints,
-          validatorAddress: validatorAddress.toString(),
-          validatorRewardPoints,
-        });
-      }
-    }
-
-    const payoutPromises = Promise.all(
-      allRewards.map(async (reward) => {
-        const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
-
-        const claimedReward = (await apiPromise.query.staking.claimedRewards(
-          reward.era,
-          reward.validatorAddress,
-        )) as Vec<u32>;
-
-        if (claimedReward.length > 0) {
-          return undefined;
-        }
-
-        const eraTotalRewardOpt = eraTotalRewards.get(reward.era);
-        if (eraTotalRewardOpt === undefined || eraTotalRewardOpt.isNone) {
-          return undefined;
-        }
-
-        const eraTotalRewardOptValue = eraTotalRewardOpt.unwrap();
-
-        const validatorTotalReward = eraTotalRewardOptValue
-          .toBn()
-          .muln(reward.validatorRewardPoints)
-          .divn(reward.eraTotalRewardPoints);
-
-        if (validatorTotalReward.isZero()) {
-          return undefined;
-        }
-
-        const erasStakersOverview =
-          (await apiPromise.query.staking.erasStakersOverview(
-            reward.era,
-            reward.validatorAddress,
-          )) as Option<SpStakingPagedExposureMetadata>;
-
-        const validatorTotalStake = !erasStakersOverview.isNone
-          ? erasStakersOverview.unwrap().total.toBn()
-          : BN_ZERO;
-        const validatorNominatorCount = !erasStakersOverview.isNone
-          ? erasStakersOverview.unwrap().nominatorCount.toNumber()
-          : 0;
-
-        if (
-          Number(validatorTotalStake) === 0 ||
-          validatorNominatorCount === 0
-        ) {
-          return undefined;
-        }
-
-        const eraStakerPaged = (await apiPromise.query.staking.erasStakersPaged(
-          reward.era,
-          reward.validatorAddress,
-          0,
-        )) as Option<SpStakingExposurePage>;
-
-        if (eraStakerPaged.isNone) {
-          return undefined;
-        }
-
-        const nominatorStakeInfo = eraStakerPaged
-          .unwrap()
-          .others.find(
-            (nominator) =>
-              nominator.who.toString() === activeSubstrateAddressEncoded,
-          );
-
-        if (nominatorStakeInfo === undefined || nominatorStakeInfo.isEmpty) {
-          return undefined;
-        }
-
-        const nominatorTotalStake = nominatorStakeInfo.value.unwrap();
-
-        if (nominatorTotalStake.isZero()) {
-          return undefined;
-        }
-
-        const validatorInfo = mappedValidatorInfo.get(reward.validatorAddress);
-
-        if (!validatorInfo) {
-          return undefined;
-        }
-
-        const validatorIdentityName = await getValidatorIdentityName(
-          rpcEndpoint,
-          reward.validatorAddress,
-        );
-
-        const validatorNominators = await Promise.all(
-          eraStakerPaged.unwrap().others.map(async (nominator) => {
-            const nominatorIdentity = await getValidatorIdentityName(
-              rpcEndpoint,
-              nominator.who.toString(),
-            );
-
-            return {
-              address: nominator.who.toString(),
-              identity: nominatorIdentity ?? '',
-            };
-          }),
-        );
-
-        const stakerEraReward = await apiPromise.derive.staking.stakerRewards(
-          activeSubstrateAddressEncoded,
-        );
-
-        const stakerEraRewardsEra = stakerEraReward.find(
-          (_reward) => _reward.era.toNumber() === reward.era,
-        );
-
-        let nominatorTotalReward = BN_ZERO;
-
-        if (stakerEraRewardsEra) {
-          if (stakerEraRewardsEra.validators[reward.validatorAddress]) {
-            nominatorTotalReward =
-              stakerEraRewardsEra.validators[reward.validatorAddress].value ??
-              BN_ZERO;
-          }
-        }
-
-        if (
-          validatorTotalStake &&
-          validatorTotalReward &&
-          nominatorTotalReward
-        ) {
-          const payout: Payout = {
-            era: reward.era,
-            validator: {
-              address: reward.validatorAddress,
-              identity: validatorIdentityName ?? '',
-            },
-            validatorTotalStake: validatorTotalStake,
-            nominators: validatorNominators,
-            validatorTotalReward: validatorTotalReward,
-            nominatorTotalReward: nominatorTotalReward,
-            nominatorTotalRewardRaw: nominatorTotalReward,
-          };
-
-          isPayoutsFetched.current = true;
-
-          return payout;
-        }
-
-        return undefined;
-      }),
-    );
-
-    fetchedPayoutPromises.current = payoutPromises;
-
-    return payoutPromises;
-  }, [
-    activeSubstrateAddress,
-    activeSubstrateAddressEncoded,
-    eraTotalRewards,
-    erasRewardsPoints,
-    mappedValidatorInfo,
-    myNominations,
-    rpcEndpoint,
-  ]);
-
-  useEffect(() => {
-    if (!activeSubstrateAddress) return;
-
-    const computePayouts = async () => {
-      setIsLoading(true);
-
-      if (!payoutPromises) {
-        payoutsRef.current = [];
-        setIsLoading(false);
+  useEffect(
+    () => {
+      // Make sure all data is available before computing payouts
+      if (
+        activeSubstrateAddress === null ||
+        unclaimedRewards.length === 0 ||
+        eraTotalRewards === null ||
+        eraTotalRewards.size === 0 ||
+        mappedValidatorInfo.size === 0 ||
+        payouts.length > 0 // If the payouts are already computed, don't recompute
+      )
         return;
-      }
 
-      const payouts = await payoutPromises;
-      const payoutsData = payouts
-        .filter((payout): payout is Payout => payout !== undefined)
-        .sort((a, b) => a.era - b.era);
+      const computePayouts = async () => {
+        setIsLoading(true);
 
-      payoutsRef.current = payoutsData;
-      setCachedPayouts((previous) => ({
-        ...previous?.value,
-        [rpcEndpoint]: {
-          ...previous?.value?.[rpcEndpoint],
-          [activeSubstrateAddress]: payoutsData,
-        },
-      }));
-      setIsLoading(false);
-    };
+        const payouts = await fetchPayouts(
+          rpcEndpoint,
+          activeSubstrateAddress,
+          unclaimedRewards,
+          eraTotalRewards,
+          mappedValidatorInfo,
+          network.ss58Prefix,
+        );
 
-    computePayouts();
-  }, [activeSubstrateAddress, payoutPromises, rpcEndpoint, setCachedPayouts]);
+        const sortedPayout = payouts.sort((a, b) => a.era - b.era);
+
+        setPayouts(sortedPayout);
+        setCachedPayouts((previous) => ({
+          ...previous?.value,
+          [rpcEndpoint]: {
+            ...previous?.value?.[rpcEndpoint],
+            [activeSubstrateAddress]: sortedPayout,
+          },
+        }));
+
+        setIsLoading(false);
+      };
+
+      computePayouts();
+    },
+    // prettier-ignore
+    [activeSubstrateAddress, eraTotalRewards, mappedValidatorInfo, network.ss58Prefix, payouts.length, rpcEndpoint, setCachedPayouts, unclaimedRewards],
+  );
 
   return {
-    data: payoutsRef.current,
+    data: payouts,
     isLoading,
   };
 }
+
+const fetchPayouts = async (
+  rpcEndpoint: string,
+  activeSubstrateAddress: string,
+  unclaimedRewards: ValidatorReward[],
+  eraTotalRewards: Map<number, Option<u128>>,
+  mappedValidatorInfo: Map<string, PalletStakingValidatorPrefs>,
+  ss58Prefix?: number,
+): Promise<Payout[]> => {
+  const publicKey = decodeAddress(activeSubstrateAddress);
+
+  const activeSubstrateAddressEncoded = encodeAddress(publicKey, ss58Prefix);
+
+  const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
+
+  const payoutsWithNull = await Promise.all(
+    unclaimedRewards.map(async (reward) => {
+      const eraTotalRewardOpt = eraTotalRewards.get(reward.era);
+      if (eraTotalRewardOpt === undefined || eraTotalRewardOpt.isNone) {
+        return null;
+      }
+
+      const eraTotalRewardOptValue = eraTotalRewardOpt.unwrap();
+
+      const validatorTotalReward = eraTotalRewardOptValue
+        .toBn()
+        .muln(reward.validatorRewardPoints)
+        .divn(reward.eraTotalRewardPoints);
+
+      if (validatorTotalReward.isZero()) {
+        return null;
+      }
+
+      const erasStakersOverview =
+        await apiPromise.query.staking.erasStakersOverview<
+          Option<SpStakingPagedExposureMetadata>
+        >(reward.era, reward.validatorAddress);
+
+      const validatorTotalStake = !erasStakersOverview.isNone
+        ? erasStakersOverview.unwrap().total.toBn()
+        : BN_ZERO;
+
+      const validatorNominatorCount = !erasStakersOverview.isNone
+        ? erasStakersOverview.unwrap().nominatorCount.toNumber()
+        : 0;
+
+      if (validatorTotalStake.isZero() || validatorNominatorCount === 0) {
+        return null;
+      }
+
+      const eraStakerPaged = await apiPromise.query.staking.erasStakersPaged<
+        Option<SpStakingExposurePage>
+      >(reward.era, reward.validatorAddress, 0);
+
+      if (eraStakerPaged.isNone) {
+        return null;
+      }
+
+      const individualExposures = eraStakerPaged.unwrap().others;
+
+      const nominatorStakeInfo = individualExposures.find(
+        (nominator) =>
+          nominator.who.toString() === activeSubstrateAddressEncoded,
+      );
+
+      if (nominatorStakeInfo === undefined || nominatorStakeInfo.isEmpty) {
+        return null;
+      }
+
+      const nominatorTotalStake = nominatorStakeInfo.value.unwrap();
+
+      if (nominatorTotalStake.isZero()) {
+        return null;
+      }
+
+      const validatorInfo = mappedValidatorInfo.get(reward.validatorAddress);
+
+      if (validatorInfo === undefined) {
+        return null;
+      }
+
+      const validatorIdentityName = await getValidatorIdentityName(
+        rpcEndpoint,
+        reward.validatorAddress,
+      );
+
+      const validatorNominators = await Promise.all(
+        individualExposures.map(async (nominator) => {
+          const nominatorIdentity = await getValidatorIdentityName(
+            rpcEndpoint,
+            nominator.who.toString(),
+          );
+
+          return {
+            address: nominator.who.toString(),
+            identity: nominatorIdentity ?? '',
+          };
+        }),
+      );
+
+      const stakerEraReward = await apiPromise.derive.staking.stakerRewards(
+        activeSubstrateAddressEncoded,
+      );
+
+      const stakerEraRewardsEra = stakerEraReward.find(
+        (_reward) => _reward.era.toNumber() === reward.era,
+      );
+
+      let nominatorTotalReward = BN_ZERO;
+
+      if (stakerEraRewardsEra) {
+        if (stakerEraRewardsEra.validators[reward.validatorAddress]) {
+          nominatorTotalReward =
+            stakerEraRewardsEra.validators[reward.validatorAddress].value ??
+            BN_ZERO;
+        }
+      }
+
+      if (validatorTotalStake && validatorTotalReward && nominatorTotalReward) {
+        const payout: Payout = {
+          era: reward.era,
+          validator: {
+            address: reward.validatorAddress,
+            identity: validatorIdentityName ?? '',
+          },
+          validatorTotalStake: validatorTotalStake,
+          nominators: validatorNominators,
+          validatorTotalReward: validatorTotalReward,
+          nominatorTotalReward: nominatorTotalReward,
+          nominatorTotalRewardRaw: nominatorTotalReward,
+        };
+
+        return payout;
+      }
+
+      return null;
+    }),
+  );
+
+  return payoutsWithNull.filter((payout): payout is Payout => payout !== null);
+};
