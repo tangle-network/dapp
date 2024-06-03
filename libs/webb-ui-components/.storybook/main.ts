@@ -4,7 +4,6 @@ import remarkGfm from 'remark-gfm';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import rootMain from '../../../.storybook/main';
-import { RuleSetRule } from 'webpack';
 
 export default {
   stories: [

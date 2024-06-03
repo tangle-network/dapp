@@ -1036,7 +1036,7 @@ export class WebbWeb3Provider
       }
 
       return regeneratedUtxo;
-    } catch (e) {
+    } catch {
       return null;
     }
   }

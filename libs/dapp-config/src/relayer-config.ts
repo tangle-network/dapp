@@ -63,7 +63,7 @@ export function chainNameAdapter(name: string, basedOn: RelayerCMDBase) {
     return basedOn === 'evm'
       ? calculateTypedChainId(ChainType.EVM, Number(name))
       : relayerSubstrateNameToTypedChainId(name);
-  } catch (e) {
+  } catch {
     return -1;
   }
 }

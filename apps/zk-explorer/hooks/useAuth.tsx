@@ -76,7 +76,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         // TODO: Alert the user that the login attempt failed.
         throw new Error('Not authenticated');
       }
-    } catch (error) {
+    } catch {
       if (!IS_DEBUG_MODE) {
         setUser(null);
         setIsLoggedIn(false);
