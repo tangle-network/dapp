@@ -51,7 +51,7 @@ const WrappingFeesDropdown: FC<{
                 {getShortenChainName(+typedChainId)}:{' '}
                 {feesByChain[+typedChainId] !== undefined
                   ? `${getRoundedDownNumberWith2Decimals(
-                      feesByChain[+typedChainId]
+                      feesByChain[+typedChainId],
                     )}%`
                   : '-'}
               </Typography>

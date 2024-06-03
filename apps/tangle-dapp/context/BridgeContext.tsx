@@ -19,11 +19,11 @@ import { BRIDGE } from '../constants/bridge';
 import { BridgeTokenId } from '../types/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = Object.keys(BRIDGE).map(
-  (presetTypedChainId) => chainsConfig[+presetTypedChainId]
+  (presetTypedChainId) => chainsConfig[+presetTypedChainId],
 );
 
 const DEFAULT_DESTINATION_CHAIN_OPTIONS = Object.keys(
-  BRIDGE_SOURCE_CHAIN_OPTIONS[0]
+  BRIDGE_SOURCE_CHAIN_OPTIONS[0],
 ).map((presetTypedChainId) => chainsConfig[+presetTypedChainId]);
 
 const DEFAULT_TOKEN_OPTIONS = Object.values(Object.values(BRIDGE)[0])[0]
@@ -85,16 +85,16 @@ export const useBridge = () => {
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
-    BRIDGE_SOURCE_CHAIN_OPTIONS[0]
+    BRIDGE_SOURCE_CHAIN_OPTIONS[0],
   );
 
   const selectedSourceTypedChainId = useMemo(
     () =>
       calculateTypedChainId(
         selectedSourceChain.chainType,
-        selectedSourceChain.id
+        selectedSourceChain.id,
       ),
-    [selectedSourceChain.chainType, selectedSourceChain.id]
+    [selectedSourceChain.chainType, selectedSourceChain.id],
   );
 
   const destinationChainOptions = useMemo(
@@ -114,9 +114,9 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     () =>
       calculateTypedChainId(
         selectedDestinationChain.chainType,
-        selectedDestinationChain.id
+        selectedDestinationChain.id,
       ),
-    [selectedDestinationChain.chainType, selectedDestinationChain.id]
+    [selectedDestinationChain.chainType, selectedDestinationChain.id],
   );
 
   const [destinationAddress, setDestinationAddress] = useState('');
@@ -131,7 +131,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const [selectedTokenId, setSelectedTokenId] = useState<BridgeTokenId>(
-    tokenIdOptions[0]
+    tokenIdOptions[0],
   );
 
   useEffect(() => {
@@ -143,8 +143,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
           calculateTypedChainId(chain.chainType, chain.id) ===
           calculateTypedChainId(
             selectedDestinationChain.chainType,
-            selectedDestinationChain.id
-          )
+            selectedDestinationChain.id,
+          ),
       )
     ) {
       setSelectedDestinationChain(destinationChainOptions[0]);

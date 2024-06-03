@@ -1,8 +1,8 @@
-import { CheckboxBlankCircleLine } from '@webb-tools/icons';
-import { cloneElement, forwardRef } from 'react';
-import { BadgeColor, BadgeProps } from './types';
+import { CheckboxBlankCircleLine } from '@webb-tools/icons/CheckboxBlankCircleLine';
 import cx from 'classnames';
+import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { BadgeColor, BadgeProps } from './types';
 
 const classNames: {
   [key in BadgeColor]: {
@@ -58,7 +58,7 @@ const Badge = forwardRef<SVGSVGElement, BadgeProps>(
         </foreignObject>
       </svg>
     );
-  }
+  },
 );
 
 export default Badge;

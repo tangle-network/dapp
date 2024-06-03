@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import useApiRx from '../hooks/useApiRx';
 
 export default function useJobIdAndTypeLookupByValidator(
-  validatorAddress: string
+  validatorAddress: string,
 ) {
   return useApiRx(
     useCallback(
@@ -23,10 +23,10 @@ export default function useJobIdAndTypeLookupByValidator(
                 id,
               };
             });
-          })
+          }),
         );
       },
-      [validatorAddress]
-    )
+      [validatorAddress],
+    ),
   );
 }

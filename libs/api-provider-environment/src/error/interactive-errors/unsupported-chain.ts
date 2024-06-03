@@ -27,7 +27,7 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
       () => {
         interactiveFeedback?.cancelWithoutHandler();
       },
-      'success'
+      'success',
     )
     .actions();
 
@@ -38,7 +38,7 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
       interactiveFeedback?.cancel();
     },
     feedbackBody,
-    WebbErrorCodes.UnsupportedChain
+    WebbErrorCodes.UnsupportedChain,
   );
 
   return interactiveFeedback;

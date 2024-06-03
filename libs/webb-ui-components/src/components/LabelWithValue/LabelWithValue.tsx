@@ -30,15 +30,15 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
       valueFontWeight = 'semibold',
       ...props
     },
-    ref
+    ref,
   ) => {
     const mergedClsx = useMemo(
       () =>
         twMerge(
           'flex items-center space-x-1 text-mono-140 dark:text-mono-80',
-          className
+          className,
         ),
-      [className]
+      [className],
     );
     return (
       <span {...props} className={mergedClsx} ref={ref}>
@@ -49,7 +49,7 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
               '!text-inherit',
               getFontWeightClassName(valueVariant, valueFontWeight),
               labelVariant,
-              isHiddenLabel && 'hidden'
+              isHiddenLabel && 'hidden',
             )}
             htmlFor={label}
           >
@@ -63,7 +63,7 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
               variant={valueVariant}
               className={cx(
                 '!text-inherit',
-                getFontWeightClassName(valueVariant, valueFontWeight)
+                getFontWeightClassName(valueVariant, valueFontWeight),
               )}
             >
               {value.toString()}
@@ -80,5 +80,5 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
         )}
       </span>
     );
-  }
+  },
 );

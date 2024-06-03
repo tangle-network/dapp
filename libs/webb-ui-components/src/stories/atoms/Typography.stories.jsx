@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { Typography } from '../../typography/Typography/Typography';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

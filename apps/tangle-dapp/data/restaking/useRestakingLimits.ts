@@ -6,7 +6,7 @@ import useStakingLedger from '../staking/useStakingLedger';
 
 const useRestakingLimits = () => {
   const { result: stakedBalance } = useStakingLedger(
-    useCallback((ledger) => ledger?.total.toBn(), [])
+    useCallback((ledger) => ledger?.total.toBn(), []),
   );
 
   const { result: minRestakingBond } = useApiRx(
@@ -15,8 +15,8 @@ const useRestakingLimits = () => {
         api.query.roles
           .minRestakingBond()
           .pipe(map((minRestakingBond) => minRestakingBond.toBn())),
-      []
-    )
+      [],
+    ),
   );
 
   // Max restaking amount = 50% of the total staked balance, which
@@ -26,7 +26,7 @@ const useRestakingLimits = () => {
   // See: https://github.com/webb-tools/tangle/blob/8be20aa02a764422e1fd0ba30bc70b99d5f66887/runtime/mainnet/src/lib.rs#L1137
   const maxRestakingAmount = useMemo(
     () => stakedBalance?.value?.divn(2) ?? null,
-    [stakedBalance]
+    [stakedBalance],
   );
 
   return { maxRestakingAmount, minRestakingBond };

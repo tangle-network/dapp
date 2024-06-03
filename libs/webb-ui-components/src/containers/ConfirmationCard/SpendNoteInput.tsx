@@ -1,3 +1,5 @@
+'use client';
+
 import { type FC, useState } from 'react';
 import { EyeLineIcon, EyeClosedLine } from '@webb-tools/icons';
 

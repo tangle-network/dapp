@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 
-import { ButtonClassNames, ButtonSize, ButtonVariant } from './types';
+import type { ButtonClassNames, ButtonSize, ButtonVariant } from './types';
 
 const classNames: ButtonClassNames = {
   primary: {
@@ -64,7 +64,7 @@ const classNames: ButtonClassNames = {
  */
 export function getButtonClassNameByVariant(
   variant: ButtonVariant,
-  size: ButtonSize
+  size: ButtonSize,
 ) {
   const commonClsx =
     'box-border flex justify-center items-center disabled:pointer-events-none text-center disabled:pointer-events-none';
@@ -75,6 +75,6 @@ export function getButtonClassNameByVariant(
     common,
     hover,
     active,
-    disabled
+    disabled,
   );
 }

@@ -27,7 +27,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         </div>
       </TangleCard>
     );
-  }
+  },
 );
 
 AccountSummaryCard.displayName = 'AccountSummaryCard';

@@ -11,7 +11,7 @@ export default function useValidatorCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
     value2: null,
-  }
+  },
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [value2, setValue2] = useState(defaultValue.value2);
@@ -30,7 +30,7 @@ export default function useValidatorCountSubscription(
         sub = api.query.session.validators().subscribe(async (validators) => {
           try {
             const overview = await firstValueFrom(
-              api.derive.staking.overview()
+              api.derive.staking.overview(),
             );
             const totalValidatorsCount = overview.validatorCount;
 
@@ -48,7 +48,7 @@ export default function useValidatorCountSubscription(
               setError(
                 error instanceof Error
                   ? error
-                  : WebbError.from(WebbErrorCodes.UnknownError)
+                  : WebbError.from(WebbErrorCodes.UnknownError),
               );
               setIsLoading(false);
             }
@@ -59,7 +59,7 @@ export default function useValidatorCountSubscription(
           setError(
             error instanceof Error
               ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
+              : WebbError.from(WebbErrorCodes.UnknownError),
           );
           setIsLoading(false);
         }

@@ -57,5 +57,5 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
         )}
       </div>
     );
-  }
+  },
 );

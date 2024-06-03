@@ -51,8 +51,8 @@ const CountdownItem: FC<{ timeUnit: string; value: string | null }> = ({
   const convertedValue = !value
     ? '--'
     : value.length === 1
-    ? `0${value}`
-    : value;
+      ? `0${value}`
+      : value;
 
   return (
     <div className="flex flex-col items-center w-full gap-3 md:w-auto">
@@ -64,7 +64,7 @@ const CountdownItem: FC<{ timeUnit: string; value: string | null }> = ({
               'border border-mono-0 rounded-xl',
               'flex justify-center items-center',
               'bg-[linear-gradient(180deg,#FFFFFF_0%,rgba(255,255,255,0.5)_100%)]',
-              'shadow-[0_4px_4px_rgba(0,0,0,0.25)]'
+              'shadow-[0_4px_4px_rgba(0,0,0,0.25)]',
             )}
             key={idx}
           >

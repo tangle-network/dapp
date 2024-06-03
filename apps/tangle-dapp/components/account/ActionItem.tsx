@@ -45,14 +45,14 @@ const ActionItem: FC<ActionItemProps> = ({
     <div
       className={twMerge(
         'inline-flex flex-col justify-center items-center gap-2',
-        isDisabled && 'opacity-50'
+        isDisabled && 'opacity-50',
       )}
     >
       <div
         onClick={handleClick}
         className={twMerge(
           'inline-flex mx-auto items-center justify-center relative p-2 rounded-lg hover:bg-mono-20 dark:hover:bg-mono-160 text-mono-200 dark:text-mono-0',
-          isDisabled ? '!cursor-not-allowed' : 'cursor-pointer'
+          isDisabled ? '!cursor-not-allowed' : 'cursor-pointer',
         )}
       >
         {/* Notification dot */}

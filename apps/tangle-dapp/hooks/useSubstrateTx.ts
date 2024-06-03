@@ -29,13 +29,13 @@ export enum TxStatus {
 export type SubstrateTxFactory<Context = void> = (
   api: ApiPromise,
   activeSubstrateAddress: string,
-  context: Context
+  context: Context,
 ) => PromiseOrT<SubmittableExtrinsic<'promise', ISubmittableResult> | null>;
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
   getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
-  timeoutDelay = 120_000
+  timeoutDelay = 120_000,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<HexString | null>(null);
@@ -69,7 +69,7 @@ function useSubstrateTx<Context = void>(
 
       assert(
         !isEvmAccount,
-        'Should not be able to execute a Substrate transaction while the active account is an EVM account'
+        'Should not be able to execute a Substrate transaction while the active account is an EVM account',
       );
 
       const injector = await findInjectorForAddress(activeSubstrateAddress);
@@ -140,7 +140,7 @@ function useSubstrateTx<Context = void>(
           // transactions are sent in quick succession. Read more here:
           // https://polkadot.js.org/docs/api/cookbook/tx/#how-do-i-take-the-pending-tx-pool-into-account-in-my-nonce
           { signer: injector.signer, nonce: -1 },
-          handleStatusUpdate
+          handleStatusUpdate,
         );
       } catch (possibleError: unknown) {
         const error = ensureError(possibleError);
@@ -158,7 +158,7 @@ function useSubstrateTx<Context = void>(
       rpcEndpoint,
       status,
       getSuccessMessageFnc,
-    ]
+    ],
   );
 
   const reset = useCallback(() => {
@@ -204,7 +204,7 @@ export default useSubstrateTx;
 export function useSubstrateTxWithNotification<Context = void>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>
+  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
 ) {
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -228,7 +228,7 @@ export function useSubstrateTxWithNotification<Context = void>(
 
       await _execute(context);
     },
-    [_execute, notifyProcessing]
+    [_execute, notifyProcessing],
   );
 
   useEffect(() => {

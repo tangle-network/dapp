@@ -44,7 +44,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   constructor(
     protected apiPromise: ApiPromise,
     protected injectedExtension: InjectedExtension,
-    readonly txBuilder: PolkaTXBuilder
+    readonly txBuilder: PolkaTXBuilder,
   ) {
     super();
     this.hookListeners();
@@ -64,14 +64,14 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     endPoints: string[],
     apiInitHandler: ApiInitHandler,
     txBuilder: PolkaTXBuilder,
-    wallet: Wallet
+    wallet: Wallet,
   ): Promise<PolkadotProvider> {
     const [endPoint, ...allEndPoints] = endPoints;
     const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(
       appName,
       [endPoint, ...allEndPoints],
       apiInitHandler.onError,
-      wallet
+      wallet,
     );
 
     return new PolkadotProvider(apiPromise, currentExtensions, txBuilder);
@@ -85,7 +85,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   static async getApiPromise(
     endPoints: string[],
     onError: ApiInitHandler['onError'],
-    options?: { ignoreLog?: boolean }
+    options?: { ignoreLog?: boolean },
   ) {
     const wsProvider = await new Promise<WsProvider>(
       // eslint-disable-next-line no-async-promise-executor
@@ -199,20 +199,20 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
                 keepRetrying = false;
                 reject(new Error('Disconnected'));
               },
-              body
+              body,
             );
 
             onError(interactiveFeedback);
           }
         }
-      }
+      },
     );
 
     const apiPromise = await ApiPromise.create(
       apiOptions({
         provider: wsProvider,
         noInitWarn: true,
-      })
+      }),
     );
 
     return apiPromise;
@@ -229,7 +229,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     appName: string,
     endPoints: string[],
     onError: ApiInitHandler['onError'],
-    wallet: Wallet
+    wallet: Wallet,
   ): Promise<[ApiPromise, InjectedExtension]> {
     // Check whether the extension is existed or not
     const currentExtension = await getPolkadotBasedWallet(appName, wallet.name);
@@ -302,7 +302,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       genesisHash: this.apiPromise.genesisHash.toHex(),
       icon: 'substrate',
       metaCalls: Buffer.from(
-        this.apiPromise.runtimeMetadata.asCallsOnly.toU8a()
+        this.apiPromise.runtimeMetadata.asCallsOnly.toU8a(),
       ).toString('base64'),
       specVersion: this.apiPromise.runtimeVersion.specVersion.toNumber(),
       ss58Format: isNumber(this.apiPromise.registry.chainSS58)

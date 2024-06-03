@@ -36,7 +36,7 @@ function HeaderChipItem<T>({
         )}
       </Chip>
     ),
-    [Icon, isLoading, label, value]
+    [Icon, isLoading, label, value],
   );
 
   if (hasTooltip && tooltipContent) {

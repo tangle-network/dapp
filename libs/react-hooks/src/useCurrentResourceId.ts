@@ -42,7 +42,7 @@ export const useCurrentResourceId = (): ResourceId | null => {
         await activeApi.methods.variableAnchor.actions.inner.getResourceId(
           addressOrTreeId,
           chainId,
-          chainType
+          chainType,
         );
 
       if (currentReourceId?.toString() !== nextReourceId.toString()) {

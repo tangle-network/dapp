@@ -45,14 +45,14 @@ const SteppedProgress = forwardRef<HTMLUListElement, SteppedProgressProps>(
                 'rounded-full',
                 'transition-all',
                 'duration-300',
-                stepClsx
+                stepClsx,
               )}
             />
           );
         })}
       </ul>
     );
-  }
+  },
 );
 
 export default SteppedProgress;

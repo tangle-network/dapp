@@ -40,11 +40,11 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
   });
 
   const [customSubqueryEndpoint, setCustomSubqueryEndpoint] = useState(
-    savedEnpoints.customSubqueryEndpoint ?? ''
+    savedEnpoints.customSubqueryEndpoint ?? '',
   );
 
   const [customPolkadotEndpoint, setCustomPolkadotEndpoint] = useState(
-    savedEnpoints.customPolkadotEndpoint ?? ''
+    savedEnpoints.customPolkadotEndpoint ?? '',
   );
 
   const [customSubqueryEndpointIsValid, setCustomSubqueryEndpointIsValid] =
@@ -54,7 +54,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
     useState(true);
 
   const filteredNetworkType = webbNetworks.filter(
-    (network) => network.networkType === selectedNetworkType
+    (network) => network.networkType === selectedNetworkType,
   );
 
   const setCustomEndpointsAsUserSelected = () => {
@@ -88,7 +88,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
       localStorage.getItem('customPolkadotEndpoint')
     ) {
       const defaultNetworkType = webbNetworks.filter(
-        (network) => network.networkType === 'testnet'
+        (network) => network.networkType === 'testnet',
       );
 
       setUserSelectedNetwork(defaultNetworkType[0].networks[0]);
@@ -108,7 +108,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
           }
 
           const network = filteredNetworkType[0].networks.filter(
-            (network) => network.name === val
+            (network) => network.name === val,
           );
 
           setUserSelectedNetwork(network[0] as Network);
@@ -186,12 +186,12 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                         onClick={async () => {
                           if (
                             await isValidSubqueryEndpoint(
-                              customSubqueryEndpoint
+                              customSubqueryEndpoint,
                             )
                           ) {
                             localStorage.setItem(
                               'customSubqueryEndpoint',
-                              customSubqueryEndpoint
+                              customSubqueryEndpoint,
                             );
                             setSavedEnpoints({
                               ...savedEnpoints,
@@ -243,12 +243,12 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                         onClick={async () => {
                           if (
                             await isValidPolkadotEndpoint(
-                              customPolkadotEndpoint
+                              customPolkadotEndpoint,
                             )
                           ) {
                             localStorage.setItem(
                               'customPolkadotEndpoint',
-                              customPolkadotEndpoint
+                              customPolkadotEndpoint,
                             );
                             setSavedEnpoints({
                               ...savedEnpoints,
@@ -287,7 +287,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
               overrideRadixRadioItemProps={{
                 disabled:
                   webbNetworks.filter(
-                    (network) => network.networkType === networkType
+                    (network) => network.networkType === networkType,
                   )[0].networks.length === 0,
               }}
             >

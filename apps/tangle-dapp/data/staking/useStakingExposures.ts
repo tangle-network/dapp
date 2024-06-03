@@ -1,5 +1,3 @@
-import '@webb-tools/tangle-substrate-types';
-
 import { Option, StorageKey, u32 } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
@@ -23,13 +21,13 @@ const useStakingExposures = () => {
         }
         return api.query.staking.erasStakersOverview.entries(currentEra);
       },
-      [currentEra]
-    )
+      [currentEra],
+    ),
   );
 
   const exposureMap = useEntryMap(
     exposures,
-    useCallback((key) => key.args[1].toString(), [])
+    useCallback((key) => key.args[1].toString(), []),
   );
 
   return { result: exposureMap, ...other };

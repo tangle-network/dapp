@@ -15,9 +15,9 @@ type Story = StoryObj<typeof RelayerListCard>;
 const addresses = Array.from(
   new Set(
     Array.from({ length: randNumber({ min: 10, max: 20 }) }).map(() =>
-      randEthereumAddress()
-    )
-  )
+      randEthereumAddress(),
+    ),
+  ),
 );
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

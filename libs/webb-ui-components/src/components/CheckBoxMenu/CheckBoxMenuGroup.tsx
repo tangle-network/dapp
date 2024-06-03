@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
 import cx from 'classnames';
-
-import { CheckBoxMenu } from '../CheckBoxMenu/CheckBoxMenu';
+import { useMemo } from 'react';
+import { CheckBoxMenu } from './CheckBoxMenu';
 
 export type CheckBoxMenuGroupProps<T> = {
   value: T[] | 'all';
@@ -38,7 +37,7 @@ export function CheckBoxMenuGroup<T>({
 }: CheckBoxMenuGroupProps<T>) {
   const isAllSelected = useMemo(
     () => value === 'all' || value.length === options.length,
-    [value, options]
+    [value, options],
   );
   return (
     <>

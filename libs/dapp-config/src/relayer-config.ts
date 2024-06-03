@@ -39,7 +39,7 @@ export const relayerConfig: RelayerConfig[] = [
 ];
 
 export function relayerSubstrateNameToTypedChainId(
-  name: string
+  name: string,
 ): PresetTypedChainId {
   switch (name) {
     case 'tangle':

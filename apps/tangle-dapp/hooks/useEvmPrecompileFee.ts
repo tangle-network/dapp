@@ -53,7 +53,7 @@ function useEvmPrecompileFeeFetcher<PrecompileT extends Precompile>() {
         ...fees,
       };
     },
-    [activeEvmAddress, client]
+    [activeEvmAddress, client],
   );
 
   const resetStates = useCallback(() => {

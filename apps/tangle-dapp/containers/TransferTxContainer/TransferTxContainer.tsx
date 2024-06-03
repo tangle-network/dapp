@@ -115,7 +115,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
       transferableBalance !== null &&
       amount !== null &&
       transferableBalance.eq(amount),
-    [amount, transferableBalance]
+    [amount, transferableBalance],
   );
 
   const handleSend = useCallback(() => {
@@ -140,7 +140,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     (error: string | null) => {
       setHasErrors(error !== null);
     },
-    [setHasErrors]
+    [setHasErrors],
   );
 
   const isReady = status !== TxStatus.PROCESSING;
@@ -219,7 +219,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               maxErrorMessage="Not enough available balance"
               minErrorMessage={`Amount must be at least ${formatTokenBalance(
                 existentialDeposit,
-                nativeTokenSymbol
+                nativeTokenSymbol,
               )}`}
               setErrorMessage={handleSetErrorMessage}
             />

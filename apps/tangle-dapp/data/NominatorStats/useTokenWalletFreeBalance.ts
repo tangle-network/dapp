@@ -6,7 +6,7 @@ import { useBalancesContext } from '../../context/BalancesContext';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 
 export default function useTokenWalletFreeBalance(
-  defaultValue: { value1: BN | null } = { value1: null }
+  defaultValue: { value1: BN | null } = { value1: null },
 ) {
   const { free, isLoading, error } = useBalancesContext();
 

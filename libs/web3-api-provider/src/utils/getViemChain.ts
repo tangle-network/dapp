@@ -3,13 +3,10 @@ import {
   chainsConfig,
 } from '@webb-tools/dapp-config/chains';
 import { DEFAULT_EVM_CURRENCY } from '@webb-tools/dapp-config/currencies';
-import EVMChainId from '@webb-tools/dapp-types/EVMChainId';
 import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
-const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollSepolia].concat(
-  LOCALNET_CHAIN_IDS
-);
+const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = LOCALNET_CHAIN_IDS;
 
 /**
  * Gets the chain object for the given chain id.

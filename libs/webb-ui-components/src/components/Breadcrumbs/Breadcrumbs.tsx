@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { BreadcrumbsPropsType } from './types';
+import type { BreadcrumbsPropsType } from './types';
 import { BreadcrumbsSeparator } from './BreadcrumbsSeparator';
 
 /**
@@ -40,7 +40,7 @@ export const Breadcrumbs = React.forwardRef<
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),
-    [baseClsx, classNameProp]
+    [baseClsx, classNameProp],
   );
 
   return (

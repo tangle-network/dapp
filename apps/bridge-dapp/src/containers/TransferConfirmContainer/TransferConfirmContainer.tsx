@@ -6,18 +6,18 @@ import {
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { useTxClientStorage } from '@webb-tools/api-provider-environment/transaction';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
-import { LoggerService } from '@webb-tools/app-util';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
+import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import {
   useNoteAccount,
   useRelayers,
   useVAnchor,
 } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
 import { isViemError } from '@webb-tools/web3-api-provider';
@@ -25,22 +25,21 @@ import {
   TransferConfirm,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
-import RelayerFeeDetails from '../../components/RelayerFeeDetails';
 import { forwardRef, useMemo, useState, type ComponentProps } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
-import { useEnqueueSubmittedTx } from '../../hooks';
-import useTransferFeeCalculation from '../../hooks/useTransferFeeCalculation';
+import RelayerFeeDetails from '../../components/RelayerFeeDetails';
+import useEnqueueSubmittedTx from '../../hooks/useEnqueueSubmittedTx';
 import useInProgressTxInfo from '../../hooks/useInProgressTxInfo';
+import useTransferFeeCalculation from '../../hooks/useTransferFeeCalculation';
 import {
-  captureSentryException,
+  getCurrentTimestamp,
   getErrorMessage,
+  getNoteSerializations,
   getTokenURI,
   getTransactionHash,
   handleMutateNoteIndex,
   handleStoreNote,
-  getNoteSerializations,
-  getCurrentTimestamp,
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
@@ -74,7 +73,7 @@ const TransferConfirmContainer = forwardRef<
       refundToken,
       ...props
     },
-    ref
+    ref,
   ) => {
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
@@ -94,27 +93,27 @@ const TransferConfirmContainer = forwardRef<
       txStatusMessage,
     } = useInProgressTxInfo(
       false, // Wrap/unwrap doesn't support on transfer flow
-      onResetState
+      onResetState,
     );
 
     const srcTypedChainId = useMemo(
       () => calculateTypedChainId(srcChain.chainType, srcChain.id),
-      [srcChain]
+      [srcChain],
     );
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.id),
-      [destChain]
+      [destChain],
     );
 
     const poolAddress = useMemo(
       () => apiConfig.anchors[currency.id][targetChainId],
-      [apiConfig, currency.id, targetChainId]
+      [apiConfig, currency.id, targetChainId],
     );
 
     const blockExplorerUrl = useMemo(
       () => chainsConfig[targetChainId]?.blockExplorers?.default.url,
-      [targetChainId]
+      [targetChainId],
     );
 
     const poolExplorerUrl = useMemo(() => {
@@ -123,7 +122,7 @@ const TransferConfirmContainer = forwardRef<
         blockExplorerUrl,
         poolAddress,
         'address',
-        'web3'
+        'web3',
       ).toString();
     }, [blockExplorerUrl, poolAddress]);
 
@@ -153,7 +152,7 @@ const TransferConfirmContainer = forwardRef<
         gasFeeInfo
           ? parseFloat(formatEther(gasFeeInfo).slice(0, 10))
           : undefined,
-      [gasFeeInfo]
+      [gasFeeInfo],
     );
 
     const relayerFees = useMemo(
@@ -161,7 +160,7 @@ const TransferConfirmContainer = forwardRef<
         relayerFeeInfo
           ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
           : undefined,
-      [relayerFeeInfo]
+      [relayerFeeInfo],
     );
 
     const handleTransferExecute = useTransferExecuteHandler({
@@ -251,8 +250,8 @@ const TransferConfirmContainer = forwardRef<
           txStatus === 'completed'
             ? 'green'
             : txStatus === 'warning'
-            ? 'red'
-            : undefined
+              ? 'red'
+              : undefined
         }
         txStatusMessage={txStatusMessage}
         refundAmount={
@@ -273,7 +272,7 @@ const TransferConfirmContainer = forwardRef<
             srcChainCfg={apiConfig.chains[srcTypedChainId]}
             fungibleCfg={apiConfig.getCurrencyBySymbolAndTypedChainId(
               currency.view.symbol,
-              srcTypedChainId
+              srcTypedChainId,
             )}
             activeRelayer={activeRelayer}
             info="Amount deducted from the transfer to cover transaction costs within the shielded pool."
@@ -281,7 +280,7 @@ const TransferConfirmContainer = forwardRef<
         }
       />
     );
-  }
+  },
 );
 
 export default TransferConfirmContainer;
@@ -355,11 +354,6 @@ const useTransferExecuteHandler = (args: Args) => {
   return async () => {
     if (inputNotes.length === 0) {
       logger.error('No input notes provided');
-      captureSentryException(
-        new Error('No input notes provided'),
-        'transactionType',
-        'transfer'
-      );
       return;
     }
 
@@ -367,11 +361,6 @@ const useTransferExecuteHandler = (args: Args) => {
 
     if (!vAnchorApi || !activeApi || !activeChain) {
       logger.error('No vAnchor API provided');
-      captureSentryException(
-        new Error('No vAnchor API provided'),
-        'transactionType',
-        'transfer'
-      );
       return;
     }
 
@@ -384,20 +373,15 @@ const useTransferExecuteHandler = (args: Args) => {
     const tokenSymbol = currency.view.symbol;
     const srcTypedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.id
+      activeChain.id,
     );
 
     const destCurrency = apiConfig.getCurrencyBySymbolAndTypedChainId(
       tokenSymbol,
-      +targetTypedChainId
+      +targetTypedChainId,
     );
     if (!destCurrency) {
       console.error(`Currency not found for symbol ${tokenSymbol}`);
-      captureSentryException(
-        new Error(`Currency not found for symbol ${tokenSymbol}`),
-        'transactionType',
-        'transfer'
-      );
       return;
     }
     const tokenURI = getTokenURI(destCurrency, targetTypedChainId.toString());
@@ -423,12 +407,12 @@ const useTransferExecuteHandler = (args: Args) => {
     try {
       const srcAnchorId = apiConfig.getAnchorIdentifier(
         currency.id,
-        srcTypedChainId
+        srcTypedChainId,
       );
 
       const destAnchorId = apiConfig.getAnchorIdentifier(
         currency.id,
-        targetTypedChainId
+        targetTypedChainId,
       );
 
       if (!srcAnchorId || !destAnchorId) {
@@ -456,7 +440,7 @@ const useTransferExecuteHandler = (args: Args) => {
 
       if (changeNote) {
         const nextIdx = Number(
-          await vAnchorApi.getNextIndex(srcTypedChainId, currency.id)
+          await vAnchorApi.getNextIndex(srcTypedChainId, currency.id),
         );
 
         indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
@@ -468,7 +452,7 @@ const useTransferExecuteHandler = (args: Args) => {
         transactionHash = await vAnchorApi.transactWithRelayer(
           activeRelayer,
           args,
-          outputNotes
+          outputNotes,
         );
 
         await handleStoreNote(changeNote, addNoteToNoteManager);
@@ -476,7 +460,7 @@ const useTransferExecuteHandler = (args: Args) => {
         enqueueSubmittedTx(
           transactionHash,
           apiConfig.chains[srcTypedChainId],
-          'transfer'
+          'transfer',
         );
       } else {
         transactionHash = await vAnchorApi.transact(...args);
@@ -484,7 +468,7 @@ const useTransferExecuteHandler = (args: Args) => {
         enqueueSubmittedTx(
           transactionHash,
           apiConfig.chains[srcTypedChainId],
-          'transfer'
+          'transfer',
         );
 
         await handleStoreNote(changeNote, addNoteToNoteManager);
@@ -504,7 +488,7 @@ const useTransferExecuteHandler = (args: Args) => {
           transactionHash,
           changeNote,
           indexBeforeInsert,
-          srcAnchorId
+          srcAnchorId,
         );
 
         await removeNoteFromNoteManager(changeNote);
@@ -548,7 +532,7 @@ const useTransferExecuteHandler = (args: Args) => {
               blockExplorerUrl,
               transactionHash,
               'tx',
-              'web3'
+              'web3',
             ).toString()
           : undefined,
         sourceTypedChainId: srcTypedChainId,
@@ -564,7 +548,7 @@ const useTransferExecuteHandler = (args: Args) => {
         errorMessage = error.shortMessage;
 
         const revertError = error.walk(
-          (err) => err instanceof ContractFunctionRevertedError
+          (err) => err instanceof ContractFunctionRevertedError,
         );
 
         if (revertError instanceof ContractFunctionRevertedError) {
@@ -573,8 +557,6 @@ const useTransferExecuteHandler = (args: Args) => {
       }
 
       tx.fail(errorMessage);
-
-      captureSentryException(error, 'transactionType', 'transfer');
     }
   };
 };

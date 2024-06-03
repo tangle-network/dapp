@@ -11,6 +11,6 @@ export default async function getProtocolEarningsChartData(): Promise<
     (_, idx) => ({
       era: idx + 1,
       reward: randNum(),
-    })
+    }),
   );
 }

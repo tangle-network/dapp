@@ -34,13 +34,13 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   if (isSharedVariant) {
     assert(
       sharedRestakeAmount !== undefined,
-      'Shared restake amount should be defined for the shared profile type (did you forget to pass the shared restake amount prop?)'
+      'Shared restake amount should be defined for the shared profile type (did you forget to pass the shared restake amount prop?)',
     );
   }
 
   const restakedAmount = filterAllocations(allocations).reduce(
     (acc, [, amount]) => acc.add(amount),
-    BN_ZERO
+    BN_ZERO,
   );
 
   const filteredAllocations = filterAllocations(allocations);
@@ -56,7 +56,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
     isSharedVariant && sharedRestakeAmount !== undefined
       ? sharedRestakeAmount
       : restakedAmount,
-    nativeTokenSymbol
+    nativeTokenSymbol,
   );
 
   return (
@@ -79,7 +79,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             ? filteredAllocations.length > 0 && (
                 <AllocationItem
                   services={Object.values(filteredAllocations).map(
-                    ([service]) => service
+                    ([service]) => service,
                   )}
                   tokenSymbol={nativeTokenSymbol}
                 />

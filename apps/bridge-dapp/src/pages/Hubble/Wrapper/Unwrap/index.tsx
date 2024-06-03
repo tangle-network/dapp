@@ -41,7 +41,7 @@ const Unwrap: FC = () => {
 
   const { balances: walletBalances } = useCurrenciesBalances(
     allCurrencies,
-    srcTypedChainId ?? undefined
+    srcTypedChainId ?? undefined,
   );
 
   const { ...unwrapBtnProps } = useUnwrapButtonProps({
@@ -59,7 +59,7 @@ const Unwrap: FC = () => {
       amount,
       onAmountChange: setAmount,
     }),
-    [amount, setAmount]
+    [amount, setAmount],
   );
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);

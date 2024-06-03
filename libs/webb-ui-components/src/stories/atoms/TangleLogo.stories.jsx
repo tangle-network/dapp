@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { TangleLogo } from '@webb-tools/webb-ui-components/components';
+import { TangleLogo } from '../../components/TangleLogo';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

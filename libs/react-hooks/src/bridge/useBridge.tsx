@@ -23,7 +23,7 @@ export const useBridge = (): BridgeApi => {
         activeApi.state.wrappableCurrency = currency;
       }
     },
-    [activeApi]
+    [activeApi],
   );
 
   const setFungibleCurrency = useCallback(
@@ -34,7 +34,7 @@ export const useBridge = (): BridgeApi => {
 
       activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
     },
-    [activeApi]
+    [activeApi],
   );
   useEffect(() => {
     if (activeApi) {

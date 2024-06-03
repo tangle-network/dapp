@@ -1,9 +1,8 @@
-/** @type {import('tailwindcss').Config} */
-
-const preset = require('@webb-tools/tailwind-preset');
+const preset = require('../../tailwind.preset.cjs');
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
 const { join } = require('path');
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   presets: [preset],
   content: [

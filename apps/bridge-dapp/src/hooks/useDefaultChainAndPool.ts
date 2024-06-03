@@ -66,7 +66,7 @@ const useDefaultChainAndPool = () => {
     const anchor = Object.entries(apiConfig.anchors).find(
       ([, anchorsRecord]) => {
         return Object.keys(anchorsRecord).includes(`${srcTypedChainId}`);
-      }
+      },
     );
 
     const pool = anchor?.[0];

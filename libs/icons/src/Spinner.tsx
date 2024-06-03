@@ -8,7 +8,7 @@ export const Spinner = React.memo<IconBase>((props) => {
   // Spin animation attach to className
   const className = twMerge(
     props.className,
-    'animate-spin !fill-transparent !stroke-none'
+    'animate-spin !fill-transparent !stroke-none',
   );
 
   return createIcon({

@@ -11,7 +11,7 @@ const DestinationCell: FC<DestinationCellProps> = ({ className }) => {
         'w-fit bg-blue-10 dark:bg-mono-140 px-2 py-1.5 rounded-md',
         'inline-flex items-center gap-1',
         'uppercase text-[12px] leading-[15px] font-bold !text-mono-120 dark:!text-mono-40',
-        className
+        className,
       )}
     >
       <ShieldedAssetIcon className="opacity-70" />

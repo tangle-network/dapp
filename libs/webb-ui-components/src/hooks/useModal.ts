@@ -13,7 +13,7 @@ interface ReturnData {
 
 export const useModal = (
   defaultStatus = false,
-  callback?: () => void
+  callback?: () => void,
 ): ReturnData => {
   const [status, setStatus] = useState<boolean>(defaultStatus);
   const open = useCallback((): void => setStatus(true), []);

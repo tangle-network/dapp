@@ -8,7 +8,7 @@ async function retryPromise<T extends () => Promise<any>>(
   executor: T,
   maxRetries = 20,
   sleepTime = 0,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ): Promise<ReturnType<T>> {
   let resolved = false;
   let tries = maxRetries;

@@ -36,7 +36,7 @@ const FAQSection: FC<FAQSectionProps> = ({
         {...overrideTitleProps}
         className={twMerge(
           'text-center text-mono-200',
-          overrideTitleProps?.className
+          overrideTitleProps?.className,
         )}
       >
         {overrideTitleProps?.children ?? 'FAQ'}
@@ -62,7 +62,7 @@ const FAQSection: FC<FAQSectionProps> = ({
                 variant="mkt-body2"
                 className={twMerge(
                   'font-medium whitespace-pre-wrap text-mono-160',
-                  answerClassName
+                  answerClassName,
                 )}
               >
                 {item.answer}

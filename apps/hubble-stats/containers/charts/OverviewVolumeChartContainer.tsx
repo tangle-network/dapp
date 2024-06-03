@@ -16,7 +16,7 @@ export default function OverviewVolumeChartContainer(props: ChartProps) {
       epochNow,
       numDatesFromStart,
     ],
-    ([, ...args]) => getOverviewVolumeChartData(...args)
+    ([, ...args]) => getOverviewVolumeChartData(...args),
   );
 
   if (isLoading || !volumeData) {

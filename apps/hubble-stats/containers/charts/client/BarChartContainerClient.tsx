@@ -7,7 +7,7 @@ import { BarChartContainerProps } from './types';
 import BarChart from '../../../components/charts/BarChart';
 
 export default function AreaChartContainerClient(
-  props: BarChartContainerProps
+  props: BarChartContainerProps,
 ) {
   const { defaultValue, data, heading } = props;
 

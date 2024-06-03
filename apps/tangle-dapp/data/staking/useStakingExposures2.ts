@@ -28,8 +28,8 @@ const useStakingExposures2 = (isActive: boolean) => {
 
         return deriveObservable.pipe(map((derive) => derive.info));
       },
-      [isActive]
-    )
+      [isActive],
+    ),
   );
 
   const exposureMap = useMemo(() => {

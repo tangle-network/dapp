@@ -6,7 +6,7 @@ import { PolkadotProvider } from '../ext-provider/polkadot-provider';
 const substrateProviderCache: { [typedChainId: number]: ApiPromise } = {};
 
 const substrateProviderFactory = async (
-  typedChainId: number
+  typedChainId: number,
 ): Promise<ApiPromise> => {
   const cached = substrateProviderCache[typedChainId];
   if (cached) {
@@ -26,7 +26,7 @@ const substrateProviderFactory = async (
           error.cancel();
           rej(error);
         },
-        { ignoreLog: true }
+        { ignoreLog: true },
       )
         .then((apiPromise) => {
           substrateProviderCache[typedChainId] = apiPromise;
@@ -34,7 +34,7 @@ const substrateProviderFactory = async (
           return res(apiPromise);
         })
         .catch(rej);
-    })
+    }),
   );
 };
 

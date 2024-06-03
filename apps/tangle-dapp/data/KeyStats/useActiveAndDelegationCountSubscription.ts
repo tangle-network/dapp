@@ -11,7 +11,7 @@ export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
     value2: null,
-  }
+  },
 ) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -29,10 +29,10 @@ export default function useActiveAndDelegationCountSubscription(
             const nominatorsCountNum = Number(formatNumber(nominatorsCount));
 
             setValue2(nominatorsCountNum);
-          })
+          }),
         ),
-      []
-    )
+      [],
+    ),
   );
 
   const { isLoading: isLoadingActiveNominators, error: activeNominatorsError } =
@@ -58,10 +58,10 @@ export default function useActiveAndDelegationCountSubscription(
               const activeNominatorsCount = nominators.size;
 
               setValue1(activeNominatorsCount);
-            })
+            }),
           ),
-        []
-      )
+        [],
+      ),
     );
 
   // Sync the loading & error states.

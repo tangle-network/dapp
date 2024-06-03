@@ -1,5 +1,7 @@
 'use client';
 
+import { Option } from '@polkadot/types';
+import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -14,7 +16,7 @@ import {
 
 export default function useValidatorInfoCard(
   rpcEndpoint: string,
-  validatorAddress: string
+  validatorAddress: string,
 ) {
   const { notificationApi } = useWebbUI();
   const { result: currentEra } = useCurrentEra();
@@ -41,10 +43,10 @@ export default function useValidatorInfoCard(
         });
       }
       const erasStakersOverviewData =
-        await api.query.staking.erasStakersOverview(
+        (await api.query.staking.erasStakersOverview(
           currentEra,
-          validatorAddress
-        );
+          validatorAddress,
+        )) as Option<SpStakingPagedExposureMetadata>;
       if (erasStakersOverviewData.isSome) {
         const nominatorCount = erasStakersOverviewData.unwrap().nominatorCount;
         return {
@@ -57,19 +59,19 @@ export default function useValidatorInfoCard(
         isActive: false,
       };
     },
-    [validatorAddress, currentEra]
+    [validatorAddress, currentEra],
   );
 
   const { result: nominationsData } = useApi(nominationsFetcher);
 
   const restakingMethod = useMemo(
     () => getProfileTypeFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   const totalRestaked = useMemo(
     () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   useEffect(() => {
@@ -77,7 +79,7 @@ export default function useValidatorInfoCard(
       try {
         const validatorAccountInfo = await getAccountInfo(
           rpcEndpoint,
-          validatorAddress
+          validatorAddress,
         );
         if (validatorAccountInfo) {
           setName(validatorAccountInfo.name);

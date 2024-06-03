@@ -29,7 +29,7 @@ export default function ClaimPage() {
   // If false, then we know that the user is not eligible
   // Otherwise, the state will be the claim info.
   const [claimInfo, setClaimInfo] = useState<ClaimInfoType | false | null>(
-    null
+    null,
   );
   const [isClaiming, setIsClaiming] = useState(false);
 
@@ -104,8 +104,8 @@ export default function ClaimPage() {
               typeof error === 'string'
                 ? `Error: ${error}`
                 : error instanceof Error
-                ? error.message
-                : 'Failed to check eligibility',
+                  ? error.message
+                  : 'Failed to check eligibility',
             variant: 'error',
           });
         }

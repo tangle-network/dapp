@@ -20,7 +20,7 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
       linkOverrides,
       ...props
     },
-    ref
+    ref,
   ) => {
     const resolvedSocialConfigs = useMemo(() => {
       if (linkOverrides === undefined) {
@@ -48,7 +48,7 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
         className={twMerge(
           'flex items-center space-x-4',
           iconPlacements[iconPlacement],
-          className
+          className,
         )}
       >
         {resolvedSocialConfigs.map(({ Icon, name, ...linkProps }) => (
@@ -58,5 +58,5 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
         ))}
       </div>
     );
-  }
+  },
 );

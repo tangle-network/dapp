@@ -103,7 +103,7 @@ const OptionCard: FC<OptionCardProps> = ({
       onClick={() => setSelected(profileType)}
       className={twMerge(
         'flex justify-center items-center gap-1 space-y-0 border-[3px] rounded-2xl bg-mono-20 dark:bg-mono-160',
-        isSelectedClassName
+        isSelectedClassName,
       )}
     >
       {children}

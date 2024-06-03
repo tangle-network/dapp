@@ -6,7 +6,7 @@ import { getAggregateValue } from '../../utils';
 
 export default async function getPoolWrappingFeesTableData(
   poolAddress: string,
-  availableTypedChainIds: number[]
+  availableTypedChainIds: number[],
 ) {
   const {
     fungibleTokenSymbol,
@@ -22,11 +22,11 @@ export default async function getPoolWrappingFeesTableData(
       const wrappingFeesData =
         await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChain(
           ACTIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
+          poolAddress,
         );
 
       wrappingFeesByVAnchorByChain = +formatEther(
-        BigInt(wrappingFeesData.wrappingFee ?? 0)
+        BigInt(wrappingFeesData.wrappingFee ?? 0),
       );
     } catch (error) {
       wrappingFeesByVAnchorByChain = undefined;
@@ -60,11 +60,11 @@ export default async function getPoolWrappingFeesTableData(
               ACTIVE_SUBGRAPH_MAP[typedChainId],
               poolAddress,
               // query for native token needs to convert to ETH
-              token === nativeTokenByChain[typedChainId] ? 'ETH' : token
+              token === nativeTokenByChain[typedChainId] ? 'ETH' : token,
             );
 
           wrappingFeesByVAnchorByChain = +formatEther(
-            BigInt(wrappingFeesData.wrappingFee ?? 0)
+            BigInt(wrappingFeesData.wrappingFee ?? 0),
           );
         } catch (error) {
           wrappingFeesByVAnchorByChain = undefined;
@@ -73,7 +73,7 @@ export default async function getPoolWrappingFeesTableData(
           wrappingFeesByVAnchorByChain;
       }
       const wrappingFeesTokenAggregate = getAggregateValue(
-        wrappingFeesTokenChainsData
+        wrappingFeesTokenChainsData,
       );
       const compositionPercentage =
         wrappingFeesAggregate && wrappingFeesTokenAggregate
@@ -81,7 +81,7 @@ export default async function getPoolWrappingFeesTableData(
               (
                 (wrappingFeesTokenAggregate / wrappingFeesAggregate) *
                 100
-              ).toFixed(1)
+              ).toFixed(1),
             )
           : undefined;
       return {
@@ -90,7 +90,7 @@ export default async function getPoolWrappingFeesTableData(
         aggregate: wrappingFeesTokenAggregate,
         chainsData: wrappingFeesTokenChainsData,
       };
-    })
+    }),
   );
 
   return [

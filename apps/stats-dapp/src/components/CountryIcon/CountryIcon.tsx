@@ -5,7 +5,7 @@ import {} from 'country-flag-icons';
 import { FC } from 'react';
 
 export const CountryIcon: FC<TokenIconBase & { isActive?: boolean }> = (
-  props
+  props,
 ) => {
   const {
     className,

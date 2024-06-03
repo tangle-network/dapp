@@ -21,7 +21,7 @@ export type AppEvents = {
 export class AppEvent extends EventBus<AppEvents> {
   public readonly send: <E extends keyof AppEvents>(
     event: E,
-    data: AppEvents[E]
+    data: AppEvents[E],
   ) => void | Promise<void>;
 
   constructor() {

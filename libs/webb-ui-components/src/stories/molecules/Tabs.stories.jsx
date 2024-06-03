@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Tabs } from '@webb-tools/webb-ui-components/components';
+import { Tabs } from '../../components/Tabs';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -10,7 +10,7 @@ import { getDepositInTimeRange } from '../utils';
 
 async function getDepositDataByDateRange(
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<ChartDataRecord> {
   try {
     const fetchedDepositData =
@@ -18,7 +18,7 @@ async function getDepositDataByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedDepositData);
@@ -31,7 +31,7 @@ async function getDepositDataByDateRange(
 
 async function getWithdrawDataByDateRange(
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<ChartDataRecord> {
   try {
     const fetchedWithdrawalData =
@@ -39,7 +39,7 @@ async function getWithdrawDataByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedWithdrawalData);
@@ -53,7 +53,7 @@ async function getWithdrawDataByDateRange(
 export default async function getOverviewVolumeChartData(
   startingEpoch: number,
   epochNow: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   deposit24h?: number;
   volumeData: ReturnType<typeof getFormattedDataForVolumeChart>;

@@ -5,12 +5,12 @@ import { Layout } from '../containers';
 
 const PageAuthorities = lazy(() => import('../pages/Authorities'));
 const PageAuthorityDetailDrawer = lazy(
-  () => import('../pages/AuthorityDetailDrawer')
+  () => import('../pages/AuthorityDetailDrawer'),
 );
 const PageAuthorityDetail = lazy(() => import('../pages/AuthorityDetailPage'));
 
 const PageAuthoritiesHistory = lazy(
-  () => import('../pages/AuthoritiesHistory')
+  () => import('../pages/AuthoritiesHistory'),
 );
 
 const PageKeys = lazy(() => import('../pages/Keys'));
@@ -19,7 +19,7 @@ const PageKeyDetail = lazy(() => import('../pages/KeyDetailPage'));
 
 const PageProposals = lazy(() => import('../pages/Proposals'));
 const PageProposalDetailDrawer = lazy(
-  () => import('../pages/ProposalDetailDrawer')
+  () => import('../pages/ProposalDetailDrawer'),
 );
 const PageProposalDetail = lazy(() => import('../pages/ProposalDetailPage'));
 

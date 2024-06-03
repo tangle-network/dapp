@@ -54,13 +54,13 @@ const UnbondingStatsItem: FC = () => {
     activeAccountAddress === null
       ? '--'
       : // Amount is still loading.
-      totalUnbondingAmount === null
-      ? null
-      : // Amount is loaded and there is an active account.
-        formatTokenBalance(
-          totalUnbondingAmount.value ?? BN_ZERO,
-          nativeTokenSymbol
-        );
+        totalUnbondingAmount === null
+        ? null
+        : // Amount is loaded and there is an active account.
+          formatTokenBalance(
+            totalUnbondingAmount.value ?? BN_ZERO,
+            nativeTokenSymbol,
+          );
 
   return (
     <NominatorStatsItem

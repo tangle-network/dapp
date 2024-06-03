@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import TxProgressor from '@webb-tools/webb-ui-components/components/TxProgressor';
+import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
 import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
 import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/types';
@@ -91,7 +91,7 @@ const TxItem: FC<{
         status={getFooterStatus(status)}
         statusMessage={getTxMessageFromStatus(
           tx.currentStatus[0],
-          tx.currentStatus[1]
+          tx.currentStatus[1],
         )}
         actionProps={btnProps}
         externalUrl={externalUrl}
@@ -109,7 +109,7 @@ export default TxItem;
 const getExternalUrl = (
   explorer?: string,
   provider?: WebbProviderType,
-  txHash?: string
+  txHash?: string,
 ) => {
   if (!txHash) {
     return undefined;
@@ -126,5 +126,5 @@ const getFooterStatus = (txStatus: TransactionItemStatus) =>
   txStatus === 'completed'
     ? 'success'
     : txStatus === 'warning'
-    ? 'error'
-    : 'info';
+      ? 'error'
+      : 'info';

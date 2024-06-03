@@ -11,7 +11,7 @@ import {
 export default async function getPoolWithdrawalTableData(
   poolAddress: string,
   epochNow: number,
-  availableTypedChainIds: number[]
+  availableTypedChainIds: number[],
 ) {
   const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
 
@@ -24,14 +24,14 @@ export default async function getPoolWithdrawalTableData(
           ACTIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress,
           getDateFromEpoch(epochNow - EPOCH_DAY_INTERVAL),
-          getDateFromEpoch(epochNow)
+          getDateFromEpoch(epochNow),
         );
 
       withdrawal24hByVAnchorByChain = withdrawal24hData.reduce(
         (withdrawal, item) => {
           return withdrawal + +formatEther(BigInt(item.withdrawal ?? 0));
         },
-        0
+        0,
       );
     } catch (error) {
       withdrawal24hByVAnchorByChain = undefined;

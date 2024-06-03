@@ -30,7 +30,7 @@ const BalanceAction: FC<{
     <IconButton
       className={twMerge(
         'bg-blue-10 hover:bg-blue-10 dark:bg-blue-120 dark:hover:bg-blue-110',
-        isDisabledClass
+        isDisabledClass,
       )}
       disabled={isDisabled}
       onClick={onClick}

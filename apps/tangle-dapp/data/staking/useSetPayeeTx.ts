@@ -21,7 +21,7 @@ const useSetPayeeTx = () => {
       // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
       if (payee === null) {
         throw new Error(
-          'There is no EVM destination address registered for the given payee'
+          'There is no EVM destination address registered for the given payee',
         );
       }
 
@@ -37,7 +37,7 @@ const useSetPayeeTx = () => {
 
       return api.tx.staking.setPayee(payee);
     },
-    []
+    [],
   );
 
   return useAgnosticTx<Precompile.STAKING, SetPayeeTxContext>({

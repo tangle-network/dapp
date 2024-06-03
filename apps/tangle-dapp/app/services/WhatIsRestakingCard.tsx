@@ -16,7 +16,7 @@ const WhatIsRestakingCard: FC<WhatIsRestakingCardProps> = ({ className }) => {
     <GlassCard
       className={twMerge(
         'flex flex-col justify-between min-h-[300px] relative',
-        className
+        className,
       )}
     >
       <div className="flex-1 space-y-5">

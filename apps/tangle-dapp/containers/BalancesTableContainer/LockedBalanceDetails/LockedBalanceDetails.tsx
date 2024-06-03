@@ -28,7 +28,7 @@ const LockedBalanceDetails: FC = () => {
   const { result: unbondingEntriesOpt } = useUnbonding();
 
   const { amount: stakingLockedBalance } = useBalancesLock(
-    SubstrateLockId.STAKING
+    SubstrateLockId.STAKING,
   );
 
   const unbondingEntries = useMemo(() => {
@@ -99,7 +99,7 @@ const LockedBalanceDetails: FC = () => {
               const status = entry.remainingEras.isZero()
                 ? undefined
                 : `${formatDecimal(
-                    entry.remainingEras.toString()
+                    entry.remainingEras.toString(),
                   )} era(s) remaining.`;
 
               const text = entry.remainingEras.isZero()

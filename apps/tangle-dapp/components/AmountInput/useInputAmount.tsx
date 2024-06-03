@@ -20,13 +20,13 @@ function validateInputAmount(
   max: BN | null,
   errorOnEmptyValue: boolean,
   minErrorMessage?: string,
-  maxErrorMessage?: string
+  maxErrorMessage?: string,
 ): string | null {
   const schema = z
     .string()
     .transform((value) => (value === '' ? null : value))
     .transform((value) =>
-      value === null ? null : convertAmountStringToChainUnits(value)
+      value === null ? null : convertAmountStringToChainUnits(value),
     )
     .refine((amount) => !errorOnEmptyValue || amount !== null, {
       message: 'No amount given',
@@ -60,12 +60,12 @@ const useInputAmount = (
   errorOnEmptyValue: boolean,
   setAmount?: (newAmount: BN | null) => void,
   minErrorMessage?: string,
-  maxErrorMessage?: string
+  maxErrorMessage?: string,
 ) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBnToDisplayAmount(amount, INPUT_AMOUNT_FORMAT) : ''
+    amount !== null ? formatBnToDisplayAmount(amount, INPUT_AMOUNT_FORMAT) : '',
   );
 
   const handleChange = useCallback(
@@ -92,7 +92,7 @@ const useInputAmount = (
         max,
         errorOnEmptyValue,
         minErrorMessage,
-        maxErrorMessage
+        maxErrorMessage,
       );
 
       setErrorMessage(errorMessage);
@@ -109,16 +109,16 @@ const useInputAmount = (
         setAmount(
           newAmountString === ''
             ? null
-            : convertAmountStringToChainUnits(newAmountString)
+            : convertAmountStringToChainUnits(newAmountString),
         );
       }
     },
-    [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount]
+    [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount],
   );
 
   const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
     setDisplayAmount(
-      formatBnToDisplayAmount(newDisplayAmount, INPUT_AMOUNT_FORMAT)
+      formatBnToDisplayAmount(newDisplayAmount, INPUT_AMOUNT_FORMAT),
     );
   }, []);
 

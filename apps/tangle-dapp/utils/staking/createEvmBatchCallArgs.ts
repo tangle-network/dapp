@@ -4,7 +4,7 @@ import {
 } from '../../hooks/useEvmPrecompileAbiCall';
 
 function createEvmBatchCallArgs(
-  callData: AbiBatchCallData[]
+  callData: AbiBatchCallData[],
 ): AbiBatchCallArgs {
   return [
     callData.map((call) => call.to),

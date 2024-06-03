@@ -48,20 +48,20 @@ const SidebarAndItemGrid: FC<Record<string, never>> = () => {
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
   const [sortByClause, setSortByClause] = useState(
-    SearchSortByClause.MostPopular
+    SearchSortByClause.MostPopular,
   );
 
   const DEFAULT_PAGE_NUMBER = 1;
   const PROJECTS_TAB_INDEX = 0;
 
   const initialPaginationPage = useSearchParams().get(
-    SearchParamKey.PaginationPageNumber
+    SearchParamKey.PaginationPageNumber,
   );
 
   const [paginationPage, setPaginationPage] = useState(
     initialPaginationPage !== null
       ? parseInt(initialPaginationPage, 10)
-      : DEFAULT_PAGE_NUMBER
+      : DEFAULT_PAGE_NUMBER,
   );
 
   // Initial 'most popular' project search.
@@ -70,7 +70,7 @@ const SidebarAndItemGrid: FC<Record<string, never>> = () => {
       constraints,
       '',
       paginationPage,
-      SearchSortByClause.MostPopular
+      SearchSortByClause.MostPopular,
     )
       // TODO: Temporarily use mock data until we have a backend.
       .catch(getMockProjects)
@@ -107,7 +107,7 @@ const SidebarAndItemGrid: FC<Record<string, never>> = () => {
           });
       }
     },
-    [constraints, paginationPage, selectedTabIndex, sortByClause]
+    [constraints, paginationPage, selectedTabIndex, sortByClause],
   );
 
   // Fetch items when the search query changes.

@@ -34,7 +34,7 @@ export enum ManageProfileStep {
 
 function getStepDiff(
   currentStep: ManageProfileStep,
-  isNext: boolean
+  isNext: boolean,
 ): ManageProfileStep | null {
   const difference = isNext ? 1 : -1;
 
@@ -48,7 +48,7 @@ function getStepDiff(
 function getStepTitle(
   step: ManageProfileStep,
   profileType: RestakingProfileType,
-  isCreatingProfile: boolean
+  isCreatingProfile: boolean,
 ): string {
   switch (step) {
     case ManageProfileStep.CHOOSE_METHOD:
@@ -93,7 +93,7 @@ function getStepPreviousButtonLabel(step: ManageProfileStep): string {
 function getStepDescription(
   step: ManageProfileStep,
   profileType: RestakingProfileType,
-  isCreatingProfile: boolean
+  isCreatingProfile: boolean,
 ): string | null {
   switch (step) {
     case ManageProfileStep.CHOOSE_METHOD:
@@ -104,8 +104,8 @@ function getStepDescription(
           ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
           : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.'
         : profileType === RestakingProfileType.INDEPENDENT
-        ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
-        : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.';
+          ? 'Independent restaking allows you to allocate specific amounts of your stake to individual roles. Active roles may have their stake increased. Inactive roles are flexible for both stake adjustments and removal.'
+          : 'Shared restaking allows your entire restake to be allocated across selected roles, amplifying your participation. You can increase the total stake but cannot reduce it until every active service ends. Role removal is possible only if they are inactive.';
     case ManageProfileStep.CONFIRM_ALLOCATIONS:
       return null;
   }
@@ -118,7 +118,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   setIsModalOpen,
 }) => {
   const [profileType, setProfileType] = useState(
-    RestakingProfileType.INDEPENDENT
+    RestakingProfileType.INDEPENDENT,
   );
 
   const {
@@ -171,7 +171,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     } else {
       assert(
         sharedRestakeAmount !== null,
-        'Shared restake amount should be set if updating shared profile'
+        'Shared restake amount should be set if updating shared profile',
       );
 
       executeUpdateSharedProfileTx(allocations, sharedRestakeAmount);
@@ -244,7 +244,7 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const stepDescription = getStepDescription(
     step,
     profileType,
-    isCreatingProfile
+    isCreatingProfile,
   );
 
   const isLoading =

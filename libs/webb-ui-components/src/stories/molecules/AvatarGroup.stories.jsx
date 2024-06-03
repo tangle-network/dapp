@@ -1,6 +1,5 @@
-import React from 'react';
-
-import { Avatar, AvatarGroup } from '@webb-tools/webb-ui-components/components';
+import { Avatar } from '../../components/Avatar';
+import { AvatarGroup } from '../../components/AvatarGroup';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

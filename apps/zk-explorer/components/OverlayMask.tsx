@@ -50,7 +50,7 @@ const OverlayMask: FC<OverlayMaskProps> = ({
         className={twMerge(
           'absolute top-0 left-0 right-0 bottom-0 bg-black',
           isPrevalent ? 'z-20' : '',
-          className
+          className,
         )}
         style={{ opacity }}
       />

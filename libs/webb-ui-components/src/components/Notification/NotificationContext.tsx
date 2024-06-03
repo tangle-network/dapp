@@ -1,3 +1,5 @@
+'use client';
+
 import { OptionsObject, SnackbarKey, VariantType } from 'notistack';
 import React from 'react';
 

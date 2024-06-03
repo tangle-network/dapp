@@ -58,7 +58,7 @@ const useStore = () => {
 
   const [refreshToken, setRefreshToken, { removeItem: removeRefreshToken }] =
     useLocalStorageState<StoreType[StoreKey.refreshToken]>(
-      StoreKey.refreshToken
+      StoreKey.refreshToken,
     );
 
   const [expiresIn, setExpiresIn, { removeItem: removeExpiresIn }] =
@@ -66,7 +66,7 @@ const useStore = () => {
 
   const [twitterHandle, setTwitterHandle, { removeItem: removeTwitterHandle }] =
     useLocalStorageState<StoreType[StoreKey.twitterHandle]>(
-      StoreKey.twitterHandle
+      StoreKey.twitterHandle,
     );
 
   const store = useMemo(
@@ -76,19 +76,19 @@ const useStore = () => {
       [StoreKey.expiresIn]: expiresIn,
       [StoreKey.twitterHandle]: twitterHandle,
     }),
-    [accessToken, expiresIn, refreshToken, twitterHandle]
+    [accessToken, expiresIn, refreshToken, twitterHandle],
   );
 
   const getStore = useCallback(
     <K extends StoreKey | undefined>(
-      key?: K
+      key?: K,
     ): K extends StoreKey ? StoreType[K] : StoreType => {
       if (key === undefined) {
         return store as K extends StoreKey ? StoreType[K] : StoreType;
       }
       return store[key] as K extends StoreKey ? StoreType[K] : StoreType;
     },
-    [store]
+    [store],
   );
 
   const setStoreByKey = useCallback(
@@ -111,7 +111,7 @@ const useStore = () => {
         }
       }
     },
-    [setAccessToken, setExpiresIn, setRefreshToken, setTwitterHandle]
+    [setAccessToken, setExpiresIn, setRefreshToken, setTwitterHandle],
   );
 
   const removeStore = useCallback(
@@ -133,7 +133,7 @@ const useStore = () => {
           handleInvalidKey(key);
       }
     },
-    [removeAccessToken, removeExpiresIn, removeRefreshToken, removeTwitterHandle] // prettier-ignore
+    [removeAccessToken, removeExpiresIn, removeRefreshToken, removeTwitterHandle], // prettier-ignore
   );
 
   const setStore = useCallback(
@@ -165,14 +165,14 @@ const useStore = () => {
         if (newStore[StoreKey.twitterHandle]) {
           setStoreByKey(
             StoreKey.twitterHandle,
-            newStore[StoreKey.twitterHandle]
+            newStore[StoreKey.twitterHandle],
           );
         } else {
           removeStore(StoreKey.twitterHandle);
         }
       }
     },
-    [removeStore, setStoreByKey]
+    [removeStore, setStoreByKey],
   );
 
   return [getStore, setStore] as const;

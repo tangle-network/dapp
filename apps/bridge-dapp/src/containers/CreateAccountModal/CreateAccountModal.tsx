@@ -102,7 +102,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
     async (nextOpen: boolean) => {
       onOpenChange(nextOpen);
     },
-    [onOpenChange]
+    [onOpenChange],
   );
 
   const handleCloseAutoFocus = useCallback(() => {

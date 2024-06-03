@@ -58,12 +58,12 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
 
   const typoVariant = useMemo(
     () => (size === 'md' ? 'body4' : 'body1'),
-    [size]
+    [size],
   );
 
   const valueAddress = useMemo(
     () => (sourceVariant === 'address' ? valueProp : undefined),
-    [valueProp, sourceVariant]
+    [valueProp, sourceVariant],
   );
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         sizeClassName,
         classNames.borderColor,
         classNames.bg,
-        outerClassName
+        outerClassName,
       )}
     >
       {valueAddress && (
@@ -104,7 +104,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
             <AvatarPrimitive.Fallback
               className={cx(
                 'w-full h-full flex justify-center items-center',
-                classNames.text
+                classNames.text,
               )}
             >
               <Typography

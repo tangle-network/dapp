@@ -118,7 +118,7 @@ const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
       }),
       ...staticColumns.slice(EARNINGS_COLUMN_IDX),
     ],
-    [formatNativeTokenAmount]
+    [formatNativeTokenAmount],
   );
 
   const table = useReactTable({
@@ -145,7 +145,7 @@ const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
         'bg-[linear-gradient(180deg,#FFF_0%,rgba(255,255,255,0.00)_100%)]',
         'dark:bg-[linear-gradient(180deg,#2B2F40_0%,rgba(43,47,64,0.00)_100%)]',
         'overflow-hidden rounded-2xl py-3 px-4',
-        'border border-mono-0 dark:border-mono-160'
+        'border border-mono-0 dark:border-mono-160',
       )}
     >
       <Table

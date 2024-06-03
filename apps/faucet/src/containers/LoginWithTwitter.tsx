@@ -84,7 +84,7 @@ const LoginWithTwitter = () => {
         twitterHandle,
       });
     },
-    [setStore]
+    [setStore],
   );
 
   // Handle error
@@ -100,7 +100,7 @@ const LoginWithTwitter = () => {
 
       setLoginError(error.getDisplayMessage());
     },
-    []
+    [],
   );
 
   // Effect for checking the query params and reset the loading state
@@ -120,7 +120,7 @@ const LoginWithTwitter = () => {
         if (state && error) {
           handleError(
             FaucetError.fromTwitterError(error),
-            abortController.signal
+            abortController.signal,
           );
           router.replace(router.pathname, undefined, { shallow: true });
         }
@@ -178,7 +178,7 @@ const LoginWithTwitter = () => {
 
       const result = await refreshTwitterTokens(
         refreshToken,
-        abortContr.signal
+        abortContr.signal,
       );
       if (!result) {
         setIsLoggingIn(false);
@@ -262,10 +262,10 @@ const Info = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getStore(StoreKey.twitterHandle)]);
   const selectedChain = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.chain))
+    inputValues$.pipe(map((inputValues) => inputValues.chain)),
   );
   const selectedToken = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.token))
+    inputValues$.pipe(map((inputValues) => inputValues.token)),
   );
 
   const isDisplayed = !twitterHandle && !!selectedChain && !!selectedToken;

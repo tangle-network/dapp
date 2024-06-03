@@ -36,19 +36,16 @@ const useStakingRewardsDestination = () => {
               return new Optional();
             }
 
-            const substrateRewardsDestination =
-              substrateRewardsDestinationOpt.unwrap();
-
             return new Optional(
               STAKING_SUBSTRATE_PAYEE_TO_LOCAL_PAYEE_MAP[
-                substrateRewardsDestination.type
-              ]
+                substrateRewardsDestinationOpt.type
+              ],
             );
-          })
+          }),
         );
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 };
 

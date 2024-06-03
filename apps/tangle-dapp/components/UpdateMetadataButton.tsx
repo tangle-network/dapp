@@ -38,15 +38,15 @@ const UpdateMetadataButton: FC = () => {
 
       return findInjectorForAddress(activeAccountAddress);
     }, [activeAccountAddress]),
-    null
+    null,
   );
 
   const { result: apiPromise } = usePromise(
     useCallback(
       () => getApiPromise(network.wsRpcEndpoint),
-      [network.wsRpcEndpoint]
+      [network.wsRpcEndpoint],
     ),
-    null
+    null,
   );
 
   const { setWithPreviousValue: setCache, valueOpt: cachedMetadata } =
@@ -59,7 +59,7 @@ const UpdateMetadataButton: FC = () => {
         [genesisHash]: metadata,
       }));
     },
-    [setCache]
+    [setCache],
   );
 
   const isMetadataUpToDate = useMemo(() => {
@@ -118,7 +118,7 @@ const UpdateMetadataButton: FC = () => {
     // rejects the request. Leniently catch the error and log it.
     const handleError = (error: unknown) => {
       console.error(
-        `Failed to provide updated metadata to injected extension: ${error}`
+        `Failed to provide updated metadata to injected extension: ${error}`,
       );
     };
 

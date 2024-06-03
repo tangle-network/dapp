@@ -3,7 +3,7 @@ import { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import { StakingRewardsDestination } from '../../types';
 
 function getSubstratePayeeValue(
-  payee: StakingRewardsDestination
+  payee: StakingRewardsDestination,
 ): PalletStakingRewardDestination['type'] {
   switch (payee) {
     case StakingRewardsDestination.CONTROLLER:

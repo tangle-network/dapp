@@ -15,7 +15,7 @@ export default function useFormatNativeTokenAmount() {
     (amount: BN) => {
       return formatTokenBalance(amount, nativeTokenSymbol);
     },
-    [nativeTokenSymbol]
+    [nativeTokenSymbol],
   );
 
   return formatNativeTokenAmount;

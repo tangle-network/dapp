@@ -7,10 +7,10 @@ const addCurrencyToConfig = (
   currencyToAdd: ICurrency,
   typedChainId: number,
   role: CurrencyRole,
-  type: CurrencyType
+  type: CurrencyType,
 ): CurrencyConfig => {
   let currencyConfig = Object.values(config).find(
-    (c) => c.name === currencyToAdd.name && c.symbol === currencyToAdd.symbol
+    (c) => c.name === currencyToAdd.name && c.symbol === currencyToAdd.symbol,
   );
 
   if (currencyConfig) {
@@ -19,7 +19,7 @@ const addCurrencyToConfig = (
       currencyConfig.addresses.get(typedChainId) !== currencyToAdd.address
     ) {
       throw new Error(
-        `The currency ${currencyToAdd.symbol} already exists in the config with different address`
+        `The currency ${currencyToAdd.symbol} already exists in the config with different address`,
       );
     }
 

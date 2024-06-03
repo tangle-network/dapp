@@ -1,5 +1,4 @@
-import React from 'react';
-import { TitleWithInfo } from '@webb-tools/webb-ui-components/components';
+import { TitleWithInfo } from '../../components/TitleWithInfo';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

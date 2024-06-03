@@ -31,7 +31,7 @@ const PoolOverviewTableContainer: FC<{
       epochNow,
       availableTypedChainIds,
     ],
-    ([, ...args]) => getPoolDepositTableData(...args)
+    ([, ...args]) => getPoolDepositTableData(...args),
   );
 
   const { data: withdrawalData, isLoading: withdrawalLoading } = useSWR(
@@ -41,7 +41,7 @@ const PoolOverviewTableContainer: FC<{
       epochNow,
       availableTypedChainIds,
     ],
-    ([, ...args]) => getPoolWithdrawalTableData(...args)
+    ([, ...args]) => getPoolWithdrawalTableData(...args),
   );
 
   const { data: relayerEarningsData, isLoading: relayerEarningsLoading } =
@@ -51,7 +51,7 @@ const PoolOverviewTableContainer: FC<{
         poolAddress,
         availableTypedChainIds,
       ],
-      ([, ...args]) => getPoolRelayerEarningsTableData(...args)
+      ([, ...args]) => getPoolRelayerEarningsTableData(...args),
     );
 
   return (

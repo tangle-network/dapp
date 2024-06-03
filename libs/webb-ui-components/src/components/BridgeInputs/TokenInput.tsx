@@ -6,9 +6,8 @@ import {
 import cx from 'classnames';
 import { MouseEvent, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { Typography } from '../../typography';
-import { getRoundedAmountString } from '../../utils';
+import { Typography } from '../../typography/Typography';
+import { getRoundedAmountString } from '../../utils/getRoundedAmountString';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { TokenPairIcons } from '../TokenPairIcons';
@@ -38,7 +37,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
 
       if (token?.balanceInUsd) {
         balanceInUsd = getRoundedAmountString(
-          parseFloat(token.balanceInUsd.toString())
+          parseFloat(token.balanceInUsd.toString()),
         );
       }
 
@@ -133,5 +132,5 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
         )}
       </InputWrapper>
     );
-  }
+  },
 );

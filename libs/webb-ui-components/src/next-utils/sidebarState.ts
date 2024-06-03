@@ -19,6 +19,6 @@ export const getSidebarStateFromCookie = () => {
   return sidebarStateFromCookie === undefined
     ? undefined
     : sidebarStateFromCookie.value === 'true'
-    ? true
-    : false;
+      ? true
+      : false;
 };

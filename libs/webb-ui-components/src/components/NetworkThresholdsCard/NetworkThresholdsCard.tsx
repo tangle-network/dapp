@@ -41,7 +41,7 @@ export const NetworkThresholdsCard = forwardRef<
       viewHistoryUrl,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <Card {...props} ref={ref}>
@@ -104,5 +104,5 @@ export const NetworkThresholdsCard = forwardRef<
         </div>
       </Card>
     );
-  }
+  },
 );

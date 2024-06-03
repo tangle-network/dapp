@@ -78,7 +78,7 @@ export default function useWrapFeeDetailsProps({
 
   const client = useMemo(
     () => (srcTypedId ? getViemClient(srcTypedId) : undefined),
-    [srcTypedId]
+    [srcTypedId],
   );
 
   const gasFeeDetailProps = useMemo<FeeItem>(() => {
@@ -106,7 +106,7 @@ export default function useWrapFeeDetailsProps({
       };
     },
     // prettier-ignore
-    [wrappingFeesPercentage, wrappingFees, isLoadingWrappingFees, wrappableCfg]
+    [wrappingFeesPercentage, wrappingFees, isLoadingWrappingFees, wrappableCfg],
   );
 
   const totalFeeCmp = useMemo(() => {
@@ -195,7 +195,7 @@ export default function useWrapFeeDetailsProps({
       updateWrappingFees();
     },
     // prettier-ignore
-    [client, isValidAmount, srcTypedId, fungibleCfg, amount, srcChainCfg]
+    [client, isValidAmount, srcTypedId, fungibleCfg, amount, srcChainCfg],
   );
 
   useEffect(() => {

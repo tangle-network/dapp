@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/abstract-api-provider",
   "version": "0.0.1",
-  "type": "commonjs",
-  "main": "./src/index.js"
+  "type": "module",
+  "types": "./src/index.d.ts"
 }

@@ -38,7 +38,7 @@ const useNominateTx = () => {
 
       return api.tx.staking.nominate(substrateAddresses);
     },
-    []
+    [],
   );
 
   return useAgnosticTx<Precompile.STAKING, NominateTxContext>({

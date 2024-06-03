@@ -1,7 +1,8 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EventBus, LoggerService } from '@webb-tools/app-util';
+import { EventBus } from '@webb-tools/app-util';
+import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 import {
   ChainType,
   Keypair,
@@ -18,8 +19,8 @@ import {
   TransactionExecutor,
   TransactionState,
 } from '../transaction/transactionExecutor';
-import type { WebbApiProvider } from '../webb-provider.interface';
 import { WebbProviderType } from '../types';
+import type { WebbApiProvider } from '../webb-provider.interface';
 import { NeighborEdge } from './types';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
@@ -49,13 +50,13 @@ export type TransactionPayloadType =
   | TransferTransactionPayloadType;
 
 export const isVAnchorDepositPayload = (
-  payload: TransactionPayloadType
+  payload: TransactionPayloadType,
 ): payload is Note => {
   return payload instanceof Note;
 };
 
 export const isVAnchorWithdrawPayload = (
-  payload: TransactionPayloadType
+  payload: TransactionPayloadType,
 ): payload is WithdrawTransactionPayloadType => {
   if (!('changeUtxo' in payload)) {
     return false;
@@ -88,7 +89,7 @@ export const isVAnchorWithdrawPayload = (
 };
 
 export const isVAnchorTransferPayload = (
-  payload: TransactionPayloadType
+  payload: TransactionPayloadType,
 ): payload is TransferTransactionPayloadType => {
   if (!('notes' in payload)) {
     return false;
@@ -121,7 +122,7 @@ export const isVAnchorTransferPayload = (
 };
 
 export abstract class AbstractState<
-  T extends WebbApiProvider<unknown>
+  T extends WebbApiProvider<unknown>,
 > extends EventBus<ActionEvent> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
@@ -146,7 +147,7 @@ export abstract class AbstractState<
 
 export abstract class VAnchorActions<
   ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<unknown> = WebbApiProvider<unknown>
+  T extends WebbApiProvider<unknown> = WebbApiProvider<unknown>,
 > extends AbstractState<T> {
   logger: LoggerService = LoggerService.new(`${this.inner.type}VAnchorActions`);
 
@@ -159,7 +160,7 @@ export abstract class VAnchorActions<
    */
   abstract getNextIndex(
     typedChainId: number,
-    fungibleCurrencyId: number
+    fungibleCurrencyId: number,
   ): Promise<bigint>;
 
   /**
@@ -169,27 +170,27 @@ export abstract class VAnchorActions<
     txHashOrLeaf: Hash,
     noteOrIndexBeforeInsertion: Note,
     indexBeforeInsertion: number,
-    vAnchorAddressOrTreeId: string
+    vAnchorAddressOrTreeId: string,
   ): Promise<bigint>;
 
   abstract getResourceId(
     anchorAddressOrTreeId: string,
     chainId: number,
-    chainType: ChainType
+    chainType: ChainType,
   ): Promise<ResourceId>;
 
   // A function to check if the (account, public key) pair is registered.
   abstract isPairRegistered(
     target: string,
     account: string,
-    pubkey: string
+    pubkey: string,
   ): Promise<boolean>;
 
   // A function to register an account. It will return true if the account was registered, and false otherwise.
   abstract register(
     target: string,
     account: string,
-    pubkey: string
+    pubkey: string,
   ): Promise<boolean>;
 
   // A function to retrieve notes from chain that are spendable by a keypair
@@ -197,14 +198,14 @@ export abstract class VAnchorActions<
     target: string,
     owner: Keypair,
     startingBlock?: bigint,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<Note[]>;
 
   // A function to prepare the parameters for a transaction
   abstract prepareTransaction(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
-    wrapUnwrapToken: string
+    wrapUnwrapToken: string,
   ): Promise<ParametersOfTransactMethod<ProviderType>> | never;
 
   /**
@@ -216,7 +217,7 @@ export abstract class VAnchorActions<
   abstract transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<ProviderType>,
-    changeNotes: Note[]
+    changeNotes: Note[],
   ): Promise<Hash>;
 
   /**
@@ -233,14 +234,14 @@ export abstract class VAnchorActions<
     recipient: ProviderType extends 'web3' ? Address : string,
     relayer: ProviderType extends 'web3' ? Address : string,
     wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
   ): Promise<Hash>;
 
   abstract waitForFinalization(hash: Hash): Promise<void>;
 
   abstract getLatestNeighborEdges(
     fungibleId: number,
-    typedChainId?: number
+    typedChainId?: number,
   ): Promise<ReadonlyArray<NeighborEdge>>;
 
   /**
@@ -253,6 +254,6 @@ export abstract class VAnchorActions<
   abstract validateInputNotes(
     notes: ReadonlyArray<Note>,
     typedChainId: number,
-    fungibleId: number
+    fungibleId: number,
   ): Promise<boolean>;
 }

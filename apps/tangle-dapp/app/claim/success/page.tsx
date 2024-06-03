@@ -7,7 +7,7 @@ import SuccessClient from './SuccessClient';
 
 const isBlockHashExistOnChain = async (
   api: NonNullable<Awaited<ReturnType<typeof getApiPromise>>>,
-  blockHash: string
+  blockHash: string,
 ) => {
   try {
     await api.rpc.chain.getBlock(blockHash);

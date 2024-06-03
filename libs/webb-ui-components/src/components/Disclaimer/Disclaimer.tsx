@@ -1,7 +1,6 @@
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@webb-tools/icons/InformationLine';
 import { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { Typography } from '../../typography';
 import { DisclaimerProps, DisclaimerVariant } from './types';
 

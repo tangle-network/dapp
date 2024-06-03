@@ -55,7 +55,7 @@ export default function useWrapButtonProps({
 
   const { content: connectBtnCnt, handleConnect } = useConnectButtonProps(
     srcTypedId,
-    true
+    true,
   );
 
   const [isWrapping, setIsWrapping] = useState(false);
@@ -149,7 +149,7 @@ export default function useWrapButtonProps({
       return false;
     },
     // prettier-ignore
-    [amount, connectBtnCnt, fungibleTokenId, srcTypedId, wrappableTokenId, isValidAmount, isWrapping]
+    [amount, connectBtnCnt, fungibleTokenId, srcTypedId, wrappableTokenId, isValidAmount, isWrapping],
   );
 
   const isLoading = useMemo(() => {
@@ -247,7 +247,7 @@ export default function useWrapButtonProps({
       }
     },
     // prettier-ignore
-    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig, navigate]
+    [activeApi, amount, fungibleTokenId, connectBtnCnt, srcTypedId, handleConnect, fungibleCfg, wrappableCfg, enqueueSubmittedTx, apiConfig, navigate],
   );
 
   return {

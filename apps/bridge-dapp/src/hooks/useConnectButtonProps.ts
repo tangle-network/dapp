@@ -10,7 +10,7 @@ import { useCallback, useMemo } from 'react';
 
 function useConnectButtonProps(
   typedChainId?: number | null,
-  notCheckNoteAcc?: boolean
+  notCheckNoteAcc?: boolean,
 ) {
   const { activeApi = null, activeWallet, switchChain } = useWebContext();
 
@@ -47,7 +47,7 @@ function useConnectButtonProps(
       }
     },
     // prettier-ignore
-    [activeTypedChainId, activeWallet, hasNoteAccount, typedChainId, notCheckNoteAcc]
+    [activeTypedChainId, activeWallet, hasNoteAccount, typedChainId, notCheckNoteAcc],
   );
 
   const handleConnect = useCallback(
@@ -92,7 +92,7 @@ function useConnectButtonProps(
       }
     },
     // prettier-ignore
-    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, notCheckNoteAcc, setOpenNoteAccountModal, switchChain, toggleModal]
+    [activeApi, activeTypedChainId, activeWallet, hasNoteAccount, notCheckNoteAcc, setOpenNoteAccountModal, switchChain, toggleModal],
   );
 
   return {

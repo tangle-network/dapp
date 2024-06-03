@@ -9,10 +9,10 @@ export const ModalFooter = forwardRef<HTMLDivElement, PropsOf<'div'>>(
         {...props}
         className={twMerge(
           'space-y-2 px-8 py-6 border-t border-mono-60 dark:border-mono-140',
-          className
+          className,
         )}
         ref={ref}
       />
     );
-  }
+  },
 );

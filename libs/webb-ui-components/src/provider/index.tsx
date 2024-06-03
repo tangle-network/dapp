@@ -1,7 +1,7 @@
 'use client';
 
 import { noop } from '@tanstack/react-table';
-import { LoggerService } from '@webb-tools/app-util';
+import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 import React, { createContext, useCallback, useMemo, useState } from 'react';
 import {
   NotificationProvider,
@@ -10,8 +10,8 @@ import {
 
 import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
 import {
-  useDarkMode as useNormalDarkMode,
   useNextDarkMode,
+  useDarkMode as useNormalDarkMode,
 } from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
 
@@ -39,7 +39,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
 }) => {
   const useDarkMode = useMemo(
     () => (isNextApp ? useNextDarkMode : useNormalDarkMode),
-    [isNextApp]
+    [isNextApp],
   );
 
   const [isDarkMode, toggleMode] = useDarkMode(defaultThemeMode);
@@ -55,7 +55,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
     (component: React.ReactElement | undefined) => {
       setCustomMainComponent(component);
     },
-    [setCustomMainComponent]
+    [setCustomMainComponent],
   );
 
   const theme = useMemo<IWebbUIContext['theme']>(
@@ -63,7 +63,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
       isDarkMode,
       toggleThemeMode: toggleMode,
     }),
-    [isDarkMode, toggleMode]
+    [isDarkMode, toggleMode],
   );
 
   const WebbUIEErrorBoundaryElement = useMemo(() => {

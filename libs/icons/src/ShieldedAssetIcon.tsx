@@ -53,7 +53,7 @@ const ShieldedAssetIconInner = ({
         displayPlaceholder
           ? 'fill-mono-60 stroke-mono-60 dark:fill-mono-140 dark:stroke-mono-140'
           : '!fill-none',
-        props.className
+        props.className,
       )}
     >
       <mask

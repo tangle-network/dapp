@@ -66,14 +66,14 @@ const ProcessingModal: FC = () => {
       isSuccess
         ? successAnimation
         : isFailed // If there is an error, use the failed animation
-        ? failedAnimation
-        : processingAnimation,
-    [isSuccess, isFailed]
+          ? failedAnimation
+          : processingAnimation,
+    [isSuccess, isFailed],
   );
 
   const errorMessage = useMemo(
     () => parseErrorFromResult(mintTokenRes),
-    [mintTokenRes]
+    [mintTokenRes],
   );
 
   const handleOpenChange = useCallback(
@@ -85,7 +85,7 @@ const ProcessingModal: FC = () => {
         isMintingModalOpen$.next(true);
       }
     },
-    [isMintingModalOpen$, isSuccess, isFailed]
+    [isMintingModalOpen$, isSuccess, isFailed],
   );
 
   const handleCloseAutoFocus = useCallback(() => {
@@ -110,7 +110,7 @@ const ProcessingModal: FC = () => {
         onCloseAutoFocus={handleCloseAutoFocus}
         className={cx(
           'bg-mono-0 dark:bg-mono-160 rounded-xl !w-full md:!w-[500px]',
-          'top-auto bottom-0 md:-translate-x-1/2 md:-translate-y-1/2 md:top-1/2 md:bottom-auto md:left-1/2'
+          'top-auto bottom-0 md:-translate-x-1/2 md:-translate-y-1/2 md:top-1/2 md:bottom-auto md:left-1/2',
         )}
         isOpen={isModalOpen}
       >
@@ -131,16 +131,16 @@ const ProcessingModal: FC = () => {
             {isSuccess
               ? 'Transfer Successful'
               : isFailed
-              ? 'Transfer Failed'
-              : 'Request in Progress'}
+                ? 'Transfer Failed'
+                : 'Request in Progress'}
           </Typography>
 
           <Typography fw="semibold" ta="center" variant="body1">
             {isSuccess
               ? getSuccessMessage()
               : isFailed
-              ? errorMessage
-              : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
+                ? errorMessage
+                : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
           </Typography>
 
           <MintTxLinkOrHash mintTokenResult={mintTokenRes} />
@@ -216,7 +216,7 @@ const MintTxLinkOrHash = (props: {
 
     if (!chain) {
       console.warn(
-        `Typed chain id ${typedChainId} is not in the chains config`
+        `Typed chain id ${typedChainId} is not in the chains config`,
       );
       return hash;
     }
@@ -230,7 +230,7 @@ const MintTxLinkOrHash = (props: {
         chain.blockExplorers.default.url,
         hash,
         'tx',
-        isSubstrate ? 'polkadot' : 'web3'
+        isSubstrate ? 'polkadot' : 'web3',
       ).toString();
     } catch (error) {
       console.error(error);
@@ -264,7 +264,7 @@ const MintTxLinkOrHash = (props: {
 };
 
 const usageUrl = populateDocsUrl(
-  WEBB_DOC_ROUTES_RECORD['projects']['hubble-bridge']['usage-guide'].route
+  WEBB_DOC_ROUTES_RECORD['projects']['hubble-bridge']['usage-guide'].route,
 );
 
 const getSuccessMessage = () => {
@@ -285,7 +285,7 @@ const getSuccessMessage = () => {
 };
 
 const parseMintResult = (
-  result: MintTokenBody
+  result: MintTokenBody,
 ): {
   isSubstrate: boolean;
   hash: string;
@@ -299,7 +299,7 @@ const parseMintResult = (
       isSubstrate: true,
       typedChainId: calculateTypedChainId(
         ChainType.Substrate,
-        typed_chain_id.id
+        typed_chain_id.id,
       ),
     };
   }

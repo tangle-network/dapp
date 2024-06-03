@@ -12,7 +12,7 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { getApiRx } from '../../utils/polkadot';
 
 export default function useTotalStakedAmountSubscription(
-  defaultValue: { value1: BN | null } = { value1: null }
+  defaultValue: { value1: BN | null } = { value1: null },
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +43,7 @@ export default function useTotalStakedAmountSubscription(
 
               const totalStaked = new u128(
                 api.registry,
-                ledger.total.toString()
+                ledger.total.toString(),
               );
 
               setValue1(totalStaked);
@@ -55,7 +55,7 @@ export default function useTotalStakedAmountSubscription(
           setError(
             error instanceof Error
               ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
+              : WebbError.from(WebbErrorCodes.UnknownError),
           );
           setIsLoading(false);
         }

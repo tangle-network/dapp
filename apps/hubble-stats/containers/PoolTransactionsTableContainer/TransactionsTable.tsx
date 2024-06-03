@@ -12,13 +12,13 @@ const pageSize = 10;
 function TransactionsTable({ poolAddress }: { poolAddress: string }) {
   const { data: allTransactions = [], isLoading } = useSWR(
     [getPoolTransactionsTableData.name, poolAddress],
-    ([, ...args]) => getPoolTransactionsTableData(...args)
+    ([, ...args]) => getPoolTransactionsTableData(...args),
   );
 
   const deposits = allTransactions.filter((tx) => tx.activity === 'deposit');
   const transfers = allTransactions.filter((tx) => tx.activity === 'transfer');
   const withdrawals = allTransactions.filter(
-    (tx) => tx.activity === 'withdraw'
+    (tx) => tx.activity === 'withdraw',
   );
 
   if (isLoading) {

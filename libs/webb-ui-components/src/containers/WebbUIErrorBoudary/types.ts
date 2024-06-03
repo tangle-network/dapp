@@ -1,5 +1,5 @@
-import { LoggerService } from '@webb-tools/app-util';
-import React, { ErrorInfo } from 'react';
+import type LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
+import type { ErrorInfo, ReactNode } from 'react';
 
 export interface WebbUIErrorBoudaryState {
   hasError: boolean;
@@ -8,6 +8,6 @@ export interface WebbUIErrorBoudaryState {
 }
 
 export interface WebbUIErrorBoudaryProps {
-  children: React.ReactNode;
+  children: ReactNode;
   logger: LoggerService;
 }

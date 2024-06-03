@@ -2,7 +2,7 @@
 
 import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
 import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
+import type { WalletConfig } from '@webb-tools/dapp-config';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
   WebbError,
@@ -10,15 +10,9 @@ import {
   type WalletId,
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import {
-  ChainType,
-  calculateTypedChainId,
-  parseTypedChainId,
-} from '@webb-tools/sdk-core/typed-chain-id';
+import assert from 'assert';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useActiveChain, useActiveWallet } from '../WebbProvider/subjects';
-import getDefaultAccount from '../utils/getDefaultAccount';
 import { useWebContext } from '../webb-context/webb-context';
 import subjects, { WalletState } from './subjects';
 
@@ -105,10 +99,7 @@ const useConnectWallet = (options?: {
   const connectError = useObservableState(subjects.connectErrorSubject);
   const typedChainId = useObservableState(subjects.walletTypedChainIdSubject);
 
-  const { appEvent, appName, setActiveAccount, switchChain } = useWebContext();
-
-  const [, setActiveWallet] = useActiveWallet();
-  const [, setActiveChain] = useActiveChain();
+  const { appEvent, appName, switchChain } = useWebContext();
 
   const platformId = useMemo(() => {
     const platform = getPlatformMetaData();
@@ -139,7 +130,11 @@ const useConnectWallet = (options?: {
         }
 
         case 'sucess': {
-          isSubscribed && subjects.setWalletState(WalletState.SUCCESS);
+          if (isSubscribed) {
+            subjects.setWalletState(WalletState.SUCCESS);
+            subjects.setConnectError(undefined);
+            subjects.setWalletModalOpen(false);
+          }
           break;
         }
 
@@ -150,7 +145,7 @@ const useConnectWallet = (options?: {
 
         default: {
           throw new Error(
-            'Unknown `walletConnectionState` inside `useConnectWallet` hook'
+            'Unknown `walletConnectionState` inside `useConnectWallet` hook',
           );
         }
       }
@@ -177,7 +172,7 @@ const useConnectWallet = (options?: {
         subjects.setWalletTypedChainId(typedChainId);
       }
     },
-    []
+    [],
   );
 
   const connectWallet = useCallback(
@@ -186,7 +181,7 @@ const useConnectWallet = (options?: {
       targetTypedChainIds?: {
         evm?: number;
         substrate?: number;
-      }
+      },
     ) => {
       try {
         subjects.setSelectedWallet(nextWallet);
@@ -194,64 +189,40 @@ const useConnectWallet = (options?: {
 
         const provider = await nextWallet.detect(appName);
 
-        if (!provider) {
+        if (provider === undefined || provider === false) {
           subjects.setWalletState(WalletState.FAILED);
           subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
           return;
         }
 
-        // If the provider has a connect method, it is a web3 provider
-        if ('connect' in provider) {
-          const {
-            chain: { id, unsupported },
-          } = await provider.connect({
-            chainId:
-              typeof targetTypedChainIds?.evm === 'number'
-                ? parseTypedChainId(targetTypedChainIds.evm).chainId
-                : typeof typedChainId === 'number'
-                ? parseTypedChainId(typedChainId).chainId
-                : undefined,
-          });
+        const nextTypedChainId =
+          (provider === true
+            ? targetTypedChainIds?.evm
+            : targetTypedChainIds?.substrate) ?? typedChainId;
 
-          const chain = getChain(id, ChainType.EVM);
-          if (unsupported || !chain) {
-            setActiveChain(null);
-          } else {
-            await switchChain(chain, nextWallet);
-          }
-        } else {
-          const targetSubstrateChainId =
-            targetTypedChainIds?.substrate ?? typedChainId;
-          if (
-            typeof targetSubstrateChainId === 'number' &&
-            chainsPopulated[targetSubstrateChainId]
-          ) {
-            await switchChain(
-              chainsPopulated[targetSubstrateChainId],
-              nextWallet
-            );
-          } else {
-            const account = await getDefaultAccount(provider);
-            setActiveAccount(account);
-            setActiveWallet(nextWallet);
-            setActiveChain(null);
-          }
-        }
+        assert(
+          nextTypedChainId,
+          WebbError.from(WebbErrorCodes.UnsupportedChain).message,
+        );
 
-        subjects.setConnectError(undefined);
-        subjects.setWalletState(WalletState.SUCCESS);
-        subjects.setWalletModalOpen(false);
+        const nextChain = chainsPopulated[nextTypedChainId];
+        assert(
+          nextChain,
+          WebbError.from(WebbErrorCodes.UnsupportedChain).message,
+        );
+
+        await switchChain(nextChain, nextWallet);
       } catch (error) {
         subjects.setWalletState(WalletState.FAILED);
         subjects.setConnectError(
           error instanceof WebbError
             ? error
-            : WebbError.from(WebbErrorCodes.FailedToConnectWallet)
+            : WebbError.from(WebbErrorCodes.FailedToConnectWallet),
         );
       }
     },
     // prettier-ignore
-    [appName, setActiveAccount, setActiveChain, setActiveWallet, switchChain, typedChainId]
+    [appName, switchChain, typedChainId],
   );
 
   /**
@@ -288,18 +259,12 @@ const useConnectWallet = (options?: {
 export { useConnectWallet };
 
 /** @internal */
-function getChain(chainId: number, chainType: ChainType): Chain | undefined {
-  const typedChainId = calculateTypedChainId(chainType, chainId);
-  return chainsPopulated[typedChainId];
-}
-
-/** @internal */
 function useMemoValues(
   props: {
     walletState: WalletState;
     selectedWallet?: WalletConfig;
     typedChainId?: number;
-  } & Parameters<typeof useConnectWallet>[0]
+  } & Parameters<typeof useConnectWallet>[0],
 ) {
   const { walletState, selectedWallet, typedChainId, useAllWallets } = props;
   const { apiConfig, activeWallet, loading } = useWebContext();
@@ -307,17 +272,17 @@ function useMemoValues(
   const connectingWalletId = useMemo<number | undefined>(
     () =>
       walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
-    [selectedWallet?.id, walletState]
+    [selectedWallet?.id, walletState],
   );
 
   const failedWalletId = useMemo<number | undefined>(
     () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
-    [selectedWallet?.id, walletState]
+    [selectedWallet?.id, walletState],
   );
 
   const isWalletConnected = useMemo(
     () => [activeWallet, !loading].every(Boolean),
-    [activeWallet, loading]
+    [activeWallet, loading],
   );
 
   const supportedWallets = useMemo(
@@ -325,7 +290,7 @@ function useMemoValues(
       apiConfig.getSupportedWallets(typedChainId, {
         filterByActiveAnchor: !useAllWallets,
       }),
-    [apiConfig, typedChainId, useAllWallets]
+    [apiConfig, typedChainId, useAllWallets],
   );
 
   return {

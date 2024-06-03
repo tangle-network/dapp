@@ -18,8 +18,8 @@ const useDemocracy = () => {
 
         return api.query.democracy.votingOf(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const latestDirectVote = useMemo(() => {
@@ -55,8 +55,8 @@ const useDemocracy = () => {
             .pipe(map((referendumOpt) => referendumOpt.unwrap()))
         );
       },
-      [latestReferendumIndex]
-    )
+      [latestReferendumIndex],
+    ),
   );
 
   const { amount: lockedBalance } = useBalancesLock(SubstrateLockId.DEMOCRACY);

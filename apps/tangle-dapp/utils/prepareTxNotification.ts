@@ -4,7 +4,7 @@ import { TxStatus } from '../hooks/useSubstrateTx';
 
 const prepareTxNotification = (
   status: TxStatus,
-  error: Error | null
+  error: Error | null,
 ): Parameters<typeof notificationApi>[0] | null => {
   let primaryMessage: string | null = null;
   let secondaryMessage: string | null = null;

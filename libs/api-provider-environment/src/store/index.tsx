@@ -35,14 +35,14 @@ export const StoreProvider: FC<BareProps> = ({ children }) => {
       apiQuery,
       ui,
     }),
-    [apiQuery, ui]
+    [apiQuery, ui],
   );
 
   return <StoreContext.Provider value={data}>{children}</StoreContext.Provider>;
 };
 
 export function useStore<T extends StoreData, K extends keyof T>(
-  namespace: K
+  namespace: K,
 ): T[K] {
   const context = useContext(StoreContext) as T;
 

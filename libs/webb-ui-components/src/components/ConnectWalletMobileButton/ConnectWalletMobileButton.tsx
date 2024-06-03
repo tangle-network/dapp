@@ -1,11 +1,11 @@
 import { forwardRef } from 'react';
 import { Typography } from '../../typography';
-import { Button, ButtonProps } from '../buttons';
 import {
   BottomDialog,
-  BottomDialogTrigger,
   BottomDialogPortal,
+  BottomDialogTrigger,
 } from '../BottomDialog';
+import { Button, ButtonProps } from '../buttons';
 import { ConnectWalletMobileButtonProps } from './types';
 
 export const ConnectWalletMobileButton = forwardRef<
@@ -20,7 +20,7 @@ export const ConnectWalletMobileButton = forwardRef<
       extraActionButtons = [],
       ...props
     },
-    ref
+    ref,
   ) => {
     const defaultActionButtonsProps: Array<ButtonProps> = [
       {
@@ -59,5 +59,5 @@ export const ConnectWalletMobileButton = forwardRef<
         </BottomDialogPortal>
       </BottomDialog>
     );
-  }
+  },
 );

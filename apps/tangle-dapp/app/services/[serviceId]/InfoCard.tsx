@@ -28,7 +28,7 @@ const InfoCard: FC<InfoCardProps> = ({ serviceId, className }) => {
         'p-5 space-y-4 rounded-2xl',
         'bg-glass dark:bg-glass_dark',
         'border border-mono-0 dark:border-mono-160',
-        className
+        className,
       )}
     >
       <Typography variant="h4" fw="bold">

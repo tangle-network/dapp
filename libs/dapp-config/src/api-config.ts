@@ -76,7 +76,7 @@ export class ApiConfig {
     /**
      * fungible currency id -> typed chain id -> wrappable currency ids
      */
-    public fungibleToWrappableMap: Map<number, Map<number, Set<number>>>
+    public fungibleToWrappableMap: Map<number, Map<number, Set<number>>>,
   ) {
     const typedChainIdsSet = new Set<number>();
 
@@ -102,14 +102,14 @@ export class ApiConfig {
       currencies,
       bridgeByAsset,
       anchors,
-      fungibleToWrappableMap
+      fungibleToWrappableMap,
     );
   };
 
   static initFromApi = async (
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
     evmProviderFactory: (typedChainId: number) => Promise<PublicClient>,
-    substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>
+    substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>,
   ) => {
     const evmOnChainConfig = EVMOnChainConfig.getInstance();
     const substrateOnChainConfig = SubstrateOnChainConfig.getInstance();
@@ -120,7 +120,7 @@ export class ApiConfig {
       anchorConfig: evmAnchorConfig,
     } = await evmOnChainConfig.fetchCurrenciesConfig(
       parsedAnchorConfig,
-      evmProviderFactory
+      evmProviderFactory,
     );
 
     const {
@@ -132,7 +132,7 @@ export class ApiConfig {
       substrateProviderFactory,
       onChainConfig,
       evmFungibleToWrappableMap,
-      evmAnchorConfig
+      evmAnchorConfig,
     );
 
     const bridgeByAsset = getBridgeConfigByAsset(currenciesConfig, anchors);
@@ -143,13 +143,13 @@ export class ApiConfig {
       currenciesConfig,
       bridgeByAsset,
       anchors,
-      fungibleToWrappableMap
+      fungibleToWrappableMap,
     );
   };
 
   getEVMChainName(evmId: number): string {
     const chain = Object.values(this.chains).find(
-      (chainsConfig) => chainsConfig.id === evmId
+      (chainsConfig) => chainsConfig.id === evmId,
     );
 
     if (chain) {
@@ -170,7 +170,7 @@ export class ApiConfig {
   getNativeCurrencySymbol(evmId: number): string {
     const currency = getNativeCurrencyFromConfig(
       this.currencies,
-      calculateTypedChainId(ChainType.EVM, evmId)
+      calculateTypedChainId(ChainType.EVM, evmId),
     );
 
     return currency?.symbol ?? 'Unknown';
@@ -178,11 +178,12 @@ export class ApiConfig {
 
   getCurrencyBySymbolAndTypedChainId(
     symbol: string,
-    typedChainId: number
+    typedChainId: number,
   ): CurrencyConfig | undefined {
     return Object.values(this.currencies).find(
       (currencyCfg) =>
-        currencyCfg.symbol === symbol && currencyCfg.addresses.has(typedChainId)
+        currencyCfg.symbol === symbol &&
+        currencyCfg.addresses.has(typedChainId),
     );
   }
 
@@ -190,7 +191,7 @@ export class ApiConfig {
     const address = rawAddress.toLowerCase();
     const currency = Object.keys(this.currencies).find((key) => {
       const addresses = Array.from(
-        this.currencies[key as any].addresses.values()
+        this.currencies[key as any].addresses.values(),
       ).map((address) => address.toLowerCase()) as string[];
       return addresses.includes(address);
     });
@@ -213,10 +214,10 @@ export class ApiConfig {
   }
 
   getUnavailableCurrencies(
-    avaialbleCurrencies: CurrencyConfig[]
+    avaialbleCurrencies: CurrencyConfig[],
   ): CurrencyConfig[] {
     const unavailableCurrencies = Object.values(this.currencies).filter(
-      (currency) => !avaialbleCurrencies.find((c) => c.id === currency.id)
+      (currency) => !avaialbleCurrencies.find((c) => c.id === currency.id),
     );
     return unavailableCurrencies;
   }
@@ -242,7 +243,7 @@ export class ApiConfig {
    */
   isEqTargetSystem(
     anchorIdentifier: AddressType,
-    targetSystem: Uint8Array
+    targetSystem: Uint8Array,
   ): boolean {
     assert(targetSystem.length === 26, 'target system should be 26-bytes');
 
@@ -270,14 +271,14 @@ export class ApiConfig {
    */
   getSupportedWallets(
     typedChainId?: number,
-    opts = { filterByActiveAnchor: true }
+    opts = { filterByActiveAnchor: true },
   ): WalletConfig[] {
     const filterByActiveAnchor = opts.filterByActiveAnchor ?? true;
 
     const wallets =
       typeof typedChainId === 'number'
         ? values(this.wallets).filter((walletCfg) =>
-            walletCfg.supportedChainIds.includes(typedChainId)
+            walletCfg.supportedChainIds.includes(typedChainId),
           )
         : values(this.wallets);
 
@@ -287,7 +288,7 @@ export class ApiConfig {
 
     return wallets.filter((walletCfg) => {
       return walletCfg.supportedChainIds.some((typedChainId) =>
-        this.supportedTypedChainIds.has(typedChainId)
+        this.supportedTypedChainIds.has(typedChainId),
       );
     });
   }
@@ -301,7 +302,7 @@ export class ApiConfig {
     options: {
       /** If `true`, only return the chaisn that support the current env */
       withEnv?: boolean;
-    } = {}
+    } = {},
   ): ChainConfig[] {
     const { withEnv } = options;
 

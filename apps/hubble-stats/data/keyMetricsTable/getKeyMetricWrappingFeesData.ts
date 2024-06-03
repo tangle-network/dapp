@@ -8,7 +8,7 @@ export default async function getKeyMetricWrappingFeesData(): Promise<MetricType
     const fetchedWrappingFeesData =
       await vAnchorClient.WrappingFee.GetVAnchorsWrappingFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
-        VANCHOR_ADDRESSES
+        VANCHOR_ADDRESSES,
       );
 
     const fees = fetchedWrappingFeesData?.reduce(
@@ -17,11 +17,11 @@ export default async function getKeyMetricWrappingFeesData(): Promise<MetricType
           (wrappingFeesTotalByChain, vAnchor) =>
             wrappingFeesTotalByChain +
             +formatEther(BigInt(vAnchor.wrappingFee ?? 0)),
-          0
+          0,
         );
         return wrappingFeesTotal + wrappingFeesVAnchorsByChain;
       },
-      0
+      0,
     );
 
     return { value: fees };

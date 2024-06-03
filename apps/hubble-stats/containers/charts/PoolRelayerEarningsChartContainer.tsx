@@ -7,7 +7,7 @@ import { BarChartContainerClient } from './client';
 import { PoolChartPropsType } from './types';
 
 export default function PoolRelayerEarningsChartContainer(
-  props: PoolChartPropsType
+  props: PoolChartPropsType,
 ) {
   const { poolAddress, numDatesFromStart, startingEpoch } = props;
 
@@ -19,7 +19,7 @@ export default function PoolRelayerEarningsChartContainer(
         startingEpoch,
         numDatesFromStart,
       ],
-      ([, ...args]) => getPoolRelayerEarningsChartData(...args)
+      ([, ...args]) => getPoolRelayerEarningsChartData(...args),
     );
 
   if (isLoading || !poolRelayerEarningsData) {

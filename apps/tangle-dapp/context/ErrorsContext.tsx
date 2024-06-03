@@ -45,7 +45,7 @@ export const useErrorCountContext = () => {
     (error: string) => {
       setErrors((prevErrors) => new Set([...prevErrors, error]));
     },
-    [setErrors]
+    [setErrors],
   );
 
   const removeError = useCallback(
@@ -58,7 +58,7 @@ export const useErrorCountContext = () => {
         return newErrors;
       });
     },
-    [setErrors]
+    [setErrors],
   );
 
   const clearErrors = useCallback(() => {

@@ -30,13 +30,13 @@ const useUnbonding = () => {
               // If the era is less than the current era, the unbonding is complete.
               remainingEras: eraDifference.gtn(0) ? eraDifference : BN_ZERO,
             };
-          }
+          },
         );
 
         return unbonding;
       },
-      [currentEra]
-    )
+      [currentEra],
+    ),
   );
 };
 

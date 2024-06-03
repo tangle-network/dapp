@@ -1,10 +1,12 @@
+'use client';
+
+import * as Dialog from '@radix-ui/react-dialog';
+import { Close } from '@webb-tools/icons/Close';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import * as Dialog from '@radix-ui/react-dialog';
-import { Close } from '@webb-tools/icons';
 
-import { Button } from '../buttons';
 import { Typography } from '../../typography';
+import { Button } from '../buttons';
 import { BottomDialogPortalProps } from './types';
 
 export const BottomDialogPortal = forwardRef<
@@ -21,7 +23,7 @@ export const BottomDialogPortal = forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <Dialog.Portal {...props}>
@@ -34,7 +36,7 @@ export const BottomDialogPortal = forwardRef<
           className={twMerge(
             '!bg-mono-0 dark:!bg-mono-160 rounded-xl fixed bottom-0',
             'animate-[bottomDialogSlideUp_400ms]',
-            className
+            className,
           )}
           ref={ref}
         >
@@ -65,5 +67,5 @@ export const BottomDialogPortal = forwardRef<
         </Dialog.Content>
       </Dialog.Portal>
     );
-  }
+  },
 );

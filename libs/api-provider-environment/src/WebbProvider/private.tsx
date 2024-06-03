@@ -15,7 +15,7 @@ import { useCallback, useState } from 'react';
 
 export const registerInteractiveFeedback = (
   setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
-  interactiveFeedback: InteractiveFeedback
+  interactiveFeedback: InteractiveFeedback,
 ) => {
   let off: any;
   setter((p) => [...p, interactiveFeedback]);
@@ -109,7 +109,7 @@ export function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
       setNoteManager(noteManager);
       return noteManager;
     },
-    [activeApi]
+    [activeApi],
   );
 
   const logoutNoteAccount = useCallback(
@@ -123,7 +123,7 @@ export function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
       }
       setNoteManager(null);
     },
-    [activeApi]
+    [activeApi],
   );
 
   const purgeNoteAccount = useCallback(
@@ -145,7 +145,7 @@ export function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
       }
       setNoteManager(null);
     },
-    [activeApi]
+    [activeApi],
   );
 
   const loginIfExist = useCallback(
@@ -160,7 +160,7 @@ export function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
 
       await loginNoteAccount(currentPrivKey, walletAddress);
     },
-    [loginNoteAccount]
+    [loginNoteAccount],
   );
 
   return {

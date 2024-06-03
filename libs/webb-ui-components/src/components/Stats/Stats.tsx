@@ -9,7 +9,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(
   ({ className, items, ...props }, ref) => {
     const mergedClsx = useMemo(
       () => twMerge('flex items-center pb-12 justify-evenly', className),
-      [className]
+      [className],
     );
 
     return (
@@ -28,5 +28,5 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(
         ))}
       </div>
     );
-  }
+  },
 );

@@ -87,7 +87,7 @@ const staticColumns: ColumnDef<TransactionType>[] = [
     cell: (props) => {
       const { recipientAddress, explorerUri } = props.row.original;
       return (
-        <div className="flex gap-1 items-center">
+        <div className="flex items-center gap-1">
           <Typography variant="body1">
             {recipientAddress ? shortenHex(recipientAddress) : '-'}
           </Typography>
@@ -145,7 +145,7 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
                 <ArrowLeft
                   className={twMerge(
                     '!fill-mono-140 dark:!fill-mono-60',
-                    sortingState === 'asc' ? 'rotate-90' : '-rotate-90'
+                    sortingState === 'asc' ? 'rotate-90' : '-rotate-90',
                   )}
                 />
               )}
@@ -165,7 +165,7 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
     (row: Row<TransactionType>) => {
       navigate(`${ACCOUNT_TRANSACTIONS_FULL_PATH}/${row.original.hash}`);
     },
-    [navigate]
+    [navigate],
   );
 
   const table = useReactTable({
@@ -195,7 +195,7 @@ const TxTableContainer: FC<TxTableContainerProps> = ({
     <div
       className={twMerge(
         'overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160',
-        className
+        className,
       )}
     >
       <Table

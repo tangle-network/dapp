@@ -15,7 +15,7 @@ export type AnchorBase = {
  * Most of the state in the dApp is derived from the selected activeBridge.
  **/
 export abstract class BridgeApi<
-  T extends WebbApiProvider<any> = WebbApiProvider<any>
+  T extends WebbApiProvider<any> = WebbApiProvider<any>,
 > {
   public constructor(protected inner: T) {}
 
@@ -31,7 +31,7 @@ export abstract class BridgeApi<
     const bridgeCurrency = Object.values(this.inner.state.getCurrencies()).find(
       (currency) => {
         return currency.id === currencyId;
-      }
+      },
     );
     return bridgeCurrency ?? null;
   }
@@ -76,7 +76,7 @@ export abstract class BridgeApi<
 
   fetchWrappableAssetsByBridge(
     _typedChainId: number,
-    _bridge: Bridge
+    _bridge: Bridge,
   ): Promise<Currency[]> {
     return Promise.resolve([]);
   }

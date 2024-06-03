@@ -45,7 +45,7 @@ const PermittedCaller: FC<PermittedCallerProps> = ({ className }) => {
                   network.evmExplorerUrl,
                   permittedCaller,
                   'address',
-                  'web3'
+                  'web3',
                 ).toString()}
                 className="!fill-mono-160 dark:!fill-mono-80"
               />
@@ -58,7 +58,7 @@ const PermittedCaller: FC<PermittedCallerProps> = ({ className }) => {
           'bg-glass dark:bg-glass_dark',
           'h-full p-6 rounded-2xl flex flex-col',
           'border border-mono-0 dark:border-mono-160',
-          className
+          className,
         )}
       >
         {/* Loading */}

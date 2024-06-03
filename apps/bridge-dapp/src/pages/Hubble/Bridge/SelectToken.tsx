@@ -29,7 +29,7 @@ const SelectToken: FC = () => {
   }, [srcChainCfg]);
 
   const { allCurrencies, allCurrencyCfgs } = useCurrenciesFromRoute(
-    srcTypedChainId ?? undefined
+    srcTypedChainId ?? undefined,
   );
 
   const fungibleAddress = useMemo(() => {
@@ -62,7 +62,7 @@ const SelectToken: FC = () => {
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
     allCurrencies,
     srcTypedChainId ?? undefined,
-    currentTxType === 'withdraw' ? fungibleAddress : undefined
+    currentTxType === 'withdraw' ? fungibleAddress : undefined,
   );
 
   const selectTokens = useMemo<Array<AssetType>>(
@@ -72,14 +72,14 @@ const SelectToken: FC = () => {
           currencyCfg,
           balances,
           isBalancesLoading,
-          currentTxType
+          currentTxType,
         );
 
         const badgeProps = getBadgeProps(
           currencyCfg,
           balances,
           isBalancesLoading,
-          currentTxType
+          currentTxType,
         );
 
         const address = getAddress(currencyCfg, srcTypedChainId ?? undefined);
@@ -96,7 +96,7 @@ const SelectToken: FC = () => {
         } satisfies AssetType;
       }),
     // prettier-ignore
-    [allCurrencyCfgs, balances, blockExplorer, currentTxType, isBalancesLoading, srcTypedChainId]
+    [allCurrencyCfgs, balances, blockExplorer, currentTxType, isBalancesLoading, srcTypedChainId],
   );
 
   const handleClose = useCallback(
@@ -112,18 +112,18 @@ const SelectToken: FC = () => {
         search: params.toString(),
       });
     },
-    [navigate, pathname, searhParams]
+    [navigate, pathname, searhParams],
   );
 
   const handleTokenChange = useCallback(
     ({ name, symbol }: AssetType) => {
       const currencyCfg = Object.values(apiConfig.currencies).find(
-        (cfg) => cfg.name === name && cfg.symbol === symbol
+        (cfg) => cfg.name === name && cfg.symbol === symbol,
       );
 
       handleClose(currencyCfg);
     },
-    [apiConfig.currencies, handleClose]
+    [apiConfig.currencies, handleClose],
   );
 
   return (
@@ -153,7 +153,7 @@ const getBalanceProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
   isLoading?: boolean,
-  txType?: string
+  txType?: string,
 ) => {
   if (isLoading) {
     return;
@@ -186,7 +186,7 @@ const getBadgeProps = (
   currencyCfg: CurrencyConfig,
   balances: Record<number, number>,
   isLoading?: boolean,
-  txType?: string
+  txType?: string,
 ) =>
   !isLoading &&
   !balances[currencyCfg.id] &&

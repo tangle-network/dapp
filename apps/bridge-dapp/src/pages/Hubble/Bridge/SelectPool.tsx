@@ -33,7 +33,7 @@ const SelectPool: FC = () => {
   }, [srcChainCfg]);
 
   const { fungibleCurrencies } = useCurrenciesFromRoute(
-    srcTypedChainId ?? undefined
+    srcTypedChainId ?? undefined,
   );
 
   const { balances: balancesFromNotes, initialized } = useBalancesFromNotes();
@@ -44,7 +44,7 @@ const SelectPool: FC = () => {
         const chainName = getChainName(
           apiConfig.chains,
           currentTxType,
-          srcTypedChainId
+          srcTypedChainId,
         );
 
         const assetBalanceProps = getBalanceProps(
@@ -52,7 +52,7 @@ const SelectPool: FC = () => {
           balancesFromNotes,
           chainName,
           currentTxType,
-          srcTypedChainId
+          srcTypedChainId,
         );
 
         const addr = getAddress(currencyCfg, currentTxType, srcTypedChainId);
@@ -71,7 +71,7 @@ const SelectPool: FC = () => {
       });
     },
     // prettier-ignore
-    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, initialized, srcTypedChainId]
+    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, fungibleCurrencies, initialized, srcTypedChainId],
   );
 
   const poolsFromBalance = useMemo<Array<AssetType>>(
@@ -109,7 +109,7 @@ const SelectPool: FC = () => {
       }, [] as Array<AssetType>);
     },
     // prettier-ignore
-    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, initialized, srcTypedChainId]
+    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, initialized, srcTypedChainId],
   );
 
   const alertTitle = useMemo(() => {
@@ -135,7 +135,7 @@ const SelectPool: FC = () => {
       if (chain) {
         params.set(
           SOURCE_CHAIN_KEY,
-          calculateTypedChainId(chain.chainType, chain.id).toString()
+          calculateTypedChainId(chain.chainType, chain.id).toString(),
         );
       }
 
@@ -145,18 +145,18 @@ const SelectPool: FC = () => {
         search: params.toString(),
       });
     },
-    [apiConfig.chains, navigate, pathname, searhParams]
+    [apiConfig.chains, navigate, pathname, searhParams],
   );
 
   const handleTokenChange = useCallback(
     ({ name, symbol, chainName }: AssetType) => {
       const currencyCfg = Object.values(apiConfig.currencies).find(
-        (cfg) => cfg.name === name && cfg.symbol === symbol
+        (cfg) => cfg.name === name && cfg.symbol === symbol,
       );
 
       handleClose(currencyCfg, chainName);
     },
-    [apiConfig.currencies, handleClose]
+    [apiConfig.currencies, handleClose],
   );
 
   return (
@@ -181,7 +181,7 @@ export default SelectPool;
 const getAddress = (
   currencyCfg: CurrencyConfig,
   txType?: string,
-  srcTypedChainId?: number | null
+  srcTypedChainId?: number | null,
 ) =>
   txType && typeof srcTypedChainId === 'number'
     ? currencyCfg.addresses.get(srcTypedChainId)
@@ -197,7 +197,7 @@ const getBalanceProps = (
   balances: BalancesFromNotesType,
   chainName?: string,
   txType?: string,
-  srcTypedChainId?: number | null
+  srcTypedChainId?: number | null,
 ) => {
   if (!txType || typeof srcTypedChainId !== 'number') {
     return;
@@ -213,7 +213,7 @@ const getBalanceProps = (
 const getChainName = (
   chainsConfig: Record<number, ChainConfig>,
   txType?: string,
-  srcTypedChainId?: number | null
+  srcTypedChainId?: number | null,
 ) => {
   if (!txType || typeof srcTypedChainId !== 'number') {
     return;

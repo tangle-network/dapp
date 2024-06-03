@@ -25,7 +25,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
       isInNextApp = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
     const [isDarkMode] = useDarkMode();
@@ -61,7 +61,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                 {title}
               </Typography>
 
-              <div className="flex justify-center items-center gap-1">
+              <div className="flex items-center justify-center gap-1">
                 {subtitle && (
                   <Typography variant="body4">
                     {isHex(subtitle) ? shortenHex(subtitle) : subtitle}
@@ -80,58 +80,56 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
             </div>
           }
           additionalSvgContent={
-            <>
-              <g>
-                {/* Source Address Chip */}
-                <foreignObject width={91.333} height={24} x={0} y={92}>
-                  <AddressChip
-                    address={source.address}
-                    isNoteAccount={source.isNoteAccount}
-                    className="absolute top-1/2 translate-y-[-50%] px-[6.25px] min-w-[87.5px]"
-                  />
-                </foreignObject>
+            <g>
+              {/* Source Address Chip */}
+              <foreignObject width={91.333} height={24} x={0} y={92}>
+                <AddressChip
+                  address={source.address}
+                  isNoteAccount={source.isNoteAccount}
+                  className="absolute top-1/2 translate-y-[-50%] px-[6.25px] min-w-[87.5px]"
+                />
+              </foreignObject>
 
-                {/* Destination Address Chip */}
-                <foreignObject width={91.333} height={24} x={323.667} y={92}>
-                  <AddressChip
-                    address={dest.address}
-                    isNoteAccount={dest.isNoteAccount}
-                    className="absolute top-1/2 translate-y-[-50%] right-0 px-[6.25px] min-w-[87.5px]"
-                  />
-                </foreignObject>
-                <circle
-                  cx="87"
-                  cy="104.082"
-                  r="2.5"
-                  stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
-                  strokeWidth="2"
+              {/* Destination Address Chip */}
+              <foreignObject width={91.333} height={24} x={323.667} y={92}>
+                <AddressChip
+                  address={dest.address}
+                  isNoteAccount={dest.isNoteAccount}
+                  className="absolute top-1/2 translate-y-[-50%] right-0 px-[6.25px] min-w-[87.5px]"
                 />
-                <path
-                  d="M105.5 104.082L89.5 104.082"
-                  stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
-                  strokeWidth="2"
-                />
-                <circle
-                  cx="328"
-                  cy="104.082"
-                  r="2.5"
-                  transform="rotate(-180 328 104.082)"
-                  stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
-                  strokeWidth="2"
-                />
-                <path
-                  d="M309.5 104.082L325.5 104.082"
-                  stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
-                  strokeWidth="2"
-                />
-              </g>
-            </>
+              </foreignObject>
+              <circle
+                cx="87"
+                cy="104.082"
+                r="2.5"
+                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
+                strokeWidth="2"
+              />
+              <path
+                d="M105.5 104.082L89.5 104.082"
+                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
+                strokeWidth="2"
+              />
+              <circle
+                cx="328"
+                cy="104.082"
+                r="2.5"
+                transform="rotate(-180 328 104.082)"
+                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
+                strokeWidth="2"
+              />
+              <path
+                d="M309.5 104.082L325.5 104.082"
+                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
+                strokeWidth="2"
+              />
+            </g>
           }
           isInNextApp={isInNextApp}
         />
       </div>
     );
-  }
+  },
 );
 
 export default TxConfirmationRing;
