@@ -64,6 +64,7 @@ const useSetupNominatorTx = () => {
       const payee = getSubstratePayeeValue(context.payee);
 
       return optimizeTxBatch(api, [
+        // @ts-expect-error: Quick fix for the issue with the types here (Expected 3 arguments but got 2)
         api.tx.staking.bond(context.bondAmount, payee),
         api.tx.staking.nominate(Array.from(context.nominees)),
       ]);

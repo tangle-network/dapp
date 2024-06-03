@@ -5,7 +5,7 @@ import { Typography } from '../../typography/Typography';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip';
 import { IconWithTooltipProp } from './types';
 
-export const IconWithTooltip: FC<IconWithTooltipProp> = ({
+const IconWithTooltip: FC<IconWithTooltipProp> = ({
   content,
   icon,
   overrideTooltipBodyProps,
@@ -32,3 +32,5 @@ export const IconWithTooltip: FC<IconWithTooltipProp> = ({
     </Tooltip>
   );
 };
+
+export default IconWithTooltip;

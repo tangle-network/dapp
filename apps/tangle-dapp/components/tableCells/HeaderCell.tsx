@@ -1,8 +1,10 @@
-import { Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InfoIconWithTooltip } from '..';
 import { HeaderCellProps } from './types';
 
 const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {

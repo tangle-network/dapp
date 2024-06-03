@@ -1,8 +1,11 @@
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 
-import { InfoIconWithTooltip } from '..';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
 import { MetricItemProps } from './types';
 

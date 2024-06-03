@@ -1,6 +1,8 @@
 'use client';
 
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -10,7 +12,7 @@ import AddressInput, {
 import { useBridge } from '../../context/BridgeContext';
 import AmountAndTokenInput from './AmountAndTokenInput';
 import ChainSelectors from './ChainSelectors';
-import useActionButton from './useActionButton';
+import useActionButton from './hooks/useActionButton';
 
 interface BridgeContainerProps {
   className?: string;
@@ -18,7 +20,8 @@ interface BridgeContainerProps {
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   const { destinationAddress, setDestinationAddress } = useBridge();
-  const { buttonAction, buttonText, isLoading } = useActionButton();
+  const { buttonAction, buttonText, isLoading, isDisabled, errorMessage } =
+    useActionButton();
 
   return (
     <div
@@ -31,7 +34,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
       )}
     >
       <div className="flex-1 w-full flex flex-col justify-between">
-        <div className="space-y-8">
+        <div className="space-y-10">
           <ChainSelectors />
 
           <AmountAndTokenInput />
@@ -47,15 +50,34 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
 
           {/* TODO: Tx Info (Fees & Estimated Time) */}
         </div>
-        <Button
-          isFullWidth
-          isDisabled={isLoading}
-          isLoading={isLoading}
-          onClick={buttonAction}
-          loadingText="Connecting..."
-        >
-          {buttonText}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          {errorMessage && (
+            <div className="flex items-center gap-1">
+              <Typography
+                variant="body2"
+                className="text-red-70 dark:text-red-50"
+              >
+                * {errorMessage.text}
+              </Typography>
+              {errorMessage.tooltip && (
+                <InfoIconWithTooltip
+                  content={errorMessage.tooltip}
+                  className="fill-red-70 dark:fill-red-50"
+                  overrideTooltipBodyProps={{ className: 'max-w-[200px]' }}
+                />
+              )}
+            </div>
+          )}
+          <Button
+            isFullWidth
+            isDisabled={isDisabled}
+            isLoading={isLoading}
+            onClick={buttonAction}
+            loadingText="Connecting..."
+          >
+            {buttonText}
+          </Button>
+        </div>
       </div>
     </div>
   );

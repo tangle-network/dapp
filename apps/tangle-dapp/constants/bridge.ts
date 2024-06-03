@@ -8,12 +8,14 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     symbol: 'tTNT',
     existentialDeposit: {},
     destChainTransactionFee: {},
+    decimals: { default: 18 },
   },
   TNT: {
     id: 'TNT',
     symbol: 'TNT',
     existentialDeposit: {},
     destChainTransactionFee: {},
+    decimals: { default: 18 },
   },
 };
 
@@ -31,51 +33,51 @@ type BridgeType = Record<
 
 // TODO: This is a dummy data for now
 export const BRIDGE: BridgeType = {
-  [PresetTypedChainId.Sepolia]: {
-    [PresetTypedChainId.TangleMainnetEVM]: {
-      supportedTokens: ['TNT'],
-    },
-    [PresetTypedChainId.TangleTestnetEVM]: {
-      supportedTokens: ['tTNT'],
-    },
-    [PresetTypedChainId.Polkadot]: {
-      supportedTokens: ['tTNT', 'TNT'],
-    },
-  },
-
-  [PresetTypedChainId.Polkadot]: {
-    [PresetTypedChainId.TangleTestnetEVM]: {
-      supportedTokens: ['tTNT'],
-    },
-    [PresetTypedChainId.TangleMainnetEVM]: {
-      supportedTokens: ['TNT'],
-    },
-    [PresetTypedChainId.Sepolia]: {
-      supportedTokens: ['tTNT', 'TNT'],
-    },
-  },
-
   [PresetTypedChainId.TangleMainnetEVM]: {
     [PresetTypedChainId.TangleTestnetEVM]: {
-      supportedTokens: ['tTNT', 'TNT'],
-    },
-    [PresetTypedChainId.Sepolia]: {
       supportedTokens: ['TNT'],
     },
-    [PresetTypedChainId.Polkadot]: {
+    [PresetTypedChainId.TangleTestnetNative]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleMainnetNative]: {
       supportedTokens: ['TNT'],
     },
   },
 
   [PresetTypedChainId.TangleTestnetEVM]: {
     [PresetTypedChainId.TangleMainnetEVM]: {
-      supportedTokens: ['tTNT', 'TNT'],
+      supportedTokens: ['tTNT'],
     },
-    [PresetTypedChainId.Sepolia]: {
+    [PresetTypedChainId.TangleTestnetNative]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleMainnetNative]: {
+      supportedTokens: ['tTNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleMainnetNative]: {
+    [PresetTypedChainId.TangleTestnetEVM]: {
       supportedTokens: ['TNT'],
     },
-    [PresetTypedChainId.Polkadot]: {
-      supportedTokens: ['tTNT', 'TNT'],
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleTestnetNative]: {
+      supportedTokens: ['TNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleTestnetNative]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleMainnetNative]: {
+      supportedTokens: ['tTNT'],
     },
   },
 };

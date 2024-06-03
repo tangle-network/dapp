@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from '@webb-tools/icons';
 import {
   Chip,
   ChipColors,
+  InfoIconWithTooltip,
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -17,7 +18,6 @@ import { twMerge } from 'tailwind-merge';
 
 import InputAction from '../../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../../context/ErrorsContext';
-import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 
 export type BaseInputProps = {
   title: string;

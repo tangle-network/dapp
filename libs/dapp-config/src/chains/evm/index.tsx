@@ -10,6 +10,7 @@ import {
   moonbaseAlpha,
   optimismGoerli,
   polygonMumbai,
+  scrollSepolia,
   sepolia,
 } from 'viem/chains';
 import {
@@ -82,6 +83,12 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ...avalancheFuji,
     chainType: ChainType.EVM,
     group: 'avalanche',
+    tag: 'test',
+  },
+  [PresetTypedChainId.ScrollSepolia]: {
+    ...scrollSepolia,
+    chainType: ChainType.EVM,
+    group: 'scroll',
     tag: 'test',
   },
 
