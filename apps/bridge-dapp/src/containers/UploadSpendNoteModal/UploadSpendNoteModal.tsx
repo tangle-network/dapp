@@ -45,7 +45,7 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
         variant: 'success',
         message: 'Notes saved successfully',
       });
-    } catch (error) {
+    } catch {
       notificationApi({
         variant: 'error',
         message: 'Failed to save notes',

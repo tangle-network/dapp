@@ -47,7 +47,7 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   const [provingKeyFile, setProvingKeyFile] = useState<File | null>(null);
 
   // TODO: Need to fetch MPC participants from the backend. Create a request function for this.
-  const [mpcParticipants, setMpcParticipants] = useState<MpcParticipant[]>(
+  const [mpcParticipants, _setMpcParticipants] = useState<MpcParticipant[]>(
     MOCK_MPC_PARTICIPANTS,
   );
 
@@ -259,7 +259,7 @@ const ProofGenerationStepCards: FC<ProofGenerationStepCardsProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 flex-grow">
+    <div className="flex flex-col flex-grow gap-6">
       <StepCard
         title="Process R1SC File"
         number={1}

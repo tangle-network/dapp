@@ -65,7 +65,7 @@ export const WebsiteNewsletterForm: FC<{
           const { message } = await response.json();
           setError(message);
         }
-      } catch (error) {
+      } catch {
         setError('Something went wrong');
       } finally {
         setLoading(false);

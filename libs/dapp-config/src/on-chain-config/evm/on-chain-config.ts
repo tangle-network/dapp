@@ -213,7 +213,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           const provider = await providerFactory(+typedChainId);
           await provider.getChainId();
           return true;
-        } catch (error) {
+        } catch {
           return false;
         }
       }),

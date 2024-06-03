@@ -77,7 +77,7 @@ const parseRelayerFeeErrorMessage = async (
     if (text) {
       return `Relayer fee error: \`${text}\``;
     }
-  } catch (e) {
+  } catch {
     // ignore error
   }
 

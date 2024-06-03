@@ -201,7 +201,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
         try {
           await providerFactory(+typedChainId);
           return true;
-        } catch (error) {
+        } catch {
           return false;
         }
       }),

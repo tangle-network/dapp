@@ -5,10 +5,12 @@ import ValidatorSelectionTable from '../../components/ValidatorSelectionTable/Va
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 
 export type SelectValidatorsProps = {
+  defaultSelectedValidators?: string[];
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
 };
 
 const SelectValidators: FC<SelectValidatorsProps> = ({
+  defaultSelectedValidators = [],
   setSelectedValidators,
 }) => {
   const validators = useAllValidators();
@@ -16,6 +18,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   return (
     <div className="flex flex-col col-span-2 gap-2">
       <ValidatorSelectionTable
+        defaultSelectedValidators={defaultSelectedValidators}
         allValidators={validators}
         setSelectedValidators={setSelectedValidators}
       />

@@ -9,7 +9,7 @@ import { GasStationFill } from '@webb-tools/icons';
 import type {
   FeeDetailsProps,
   FeeItem,
-} from '@webb-tools/webb-ui-components/src/components/FeeDetails/types';
+} from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 
 import { getEstimatedGasFeesByChain } from '../../../../../utils';
 import { AMOUNT_KEY, SOURCE_CHAIN_KEY } from '../../../../../constants';
@@ -80,7 +80,7 @@ export default function useUnwrapFeeDetailsProps({
         setIsLoadingGasFees(true);
         const estimatedGasFees = await getEstimatedGasFeesByChain(srcTypedId);
         setGasFees(parseFloat(formatEther(estimatedGasFees)));
-      } catch (error) {
+      } catch {
         notificationApi.addToQueue({
           variant: 'error',
           message: 'Failed to estimate gas fees',

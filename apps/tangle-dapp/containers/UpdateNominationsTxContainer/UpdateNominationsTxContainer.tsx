@@ -8,7 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 import {
   type Dispatch,
   type FC,
@@ -83,7 +83,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     // Can only submit transaction if the selected validators differ
     // from the current nominations.
     return (
-      !_.isEqual(currentNominations, selectedValidators) &&
+      !isEqual(currentNominations, selectedValidators) &&
       executeNominateTx !== null
     );
   }, [
@@ -121,6 +121,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
         <div className="px-8 py-6">
           <SelectValidators
+            defaultSelectedValidators={currentNominations}
             setSelectedValidators={handleSelectedValidatorsChange}
           />
 
