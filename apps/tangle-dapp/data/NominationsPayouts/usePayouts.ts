@@ -59,10 +59,6 @@ export default function usePayouts(): UsePayoutsReturnType {
     return map;
   }, [validators]);
 
-  // useEffect(() => {
-  //   setPayouts([]);
-  // }, [setPayouts, unclaimedRewards]);
-
   useEffect(
     () => {
       // Make sure all data is available before computing payouts
