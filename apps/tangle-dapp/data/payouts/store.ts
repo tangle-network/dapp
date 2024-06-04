@@ -8,8 +8,8 @@ type State = {
 };
 
 type Actions = {
-  setIsLoading: (isLoading: boolean) => void;
-  setPayouts: (data: Payout[]) => void;
+  setIsLoading: (isLoading: State['isLoading']) => void;
+  setPayouts: (data: State['data']) => void;
 };
 
 type Store = State & Actions;
@@ -17,6 +17,6 @@ type Store = State & Actions;
 export const usePayoutsStore = create<Store>((set) => ({
   isLoading: false,
   data: [],
-  setIsLoading: (isLoading) => set((state) => ({ ...state, isLoading })),
-  setPayouts: (data) => set((state) => ({ ...state, data })),
+  setIsLoading: (isLoading) => set({ isLoading }),
+  setPayouts: (data) => set({ data }),
 }));
