@@ -29,7 +29,9 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
+import { usePayoutsStore } from '../../data/payouts/store';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
+import { PayoutFilterableEra } from '../../data/types';
 import useApi from '../../hooks/useApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {
@@ -60,11 +62,15 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 const DelegationsPayoutsContainer: FC = () => {
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
-  const [payouts, setPayouts] = useState<Payout[]>([]);
+  // const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
+  const [payoutsMaxEras, setPayoutsMaxEras] = useState<PayoutFilterableEra>(
+    PayoutFilterableEra.TWO,
+  );
+  const { setPayouts, data } = usePayoutsStore();
 
   const { result: historyDepth } = useApi(
     useCallback(async (api) => api.consts.staking.historyDepth.toBn(), []),
@@ -97,7 +103,8 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const { data: payoutsData, isLoading: payoutsIsLoading } = usePayouts();
+  const { data: payoutsData, isLoading: payoutsIsLoading } =
+    usePayouts(payoutsMaxEras);
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -110,17 +117,21 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [nomineesOpt]);
 
   const fetchedPayouts = useMemo(() => {
-    if (payoutsData !== null) {
-      setPayouts(payoutsData);
-      return payoutsData;
+    if (payoutsData[payoutsMaxEras]) {
+      return payoutsData[payoutsMaxEras];
     }
-  }, [payoutsData]);
+
+    return [];
+  }, [payoutsData, payoutsMaxEras]);
 
   useEffect(() => {
     if (updatedPayouts.length > 0) {
-      setPayouts(updatedPayouts);
+      setPayouts({
+        ...data,
+        [payoutsMaxEras]: updatedPayouts,
+      });
     }
-  }, [updatedPayouts]);
+  }, [data, payoutsMaxEras, setPayouts, updatedPayouts]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -134,20 +145,20 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const validatorAndEras = useMemo(
     () =>
-      payouts.map((payout) => ({
+      fetchedPayouts.map((payout) => ({
         validatorSubstrateAddress: payout.validator.address,
         era: payout.era,
       })),
-    [payouts],
+    [fetchedPayouts],
   );
 
   // Clear the updated payouts when the active account changes,
   // and the user is no longer logged in.
-  useEffect(() => {
-    if (!activeAccount?.address) {
-      setUpdatedPayouts([]);
-    }
-  }, [activeAccount?.address]);
+  // useEffect(() => {
+  //   if (!activeAccount?.address) {
+  //     setUpdatedPayouts([]);
+  //   }
+  // }, [activeAccount?.address]);
 
   const { isMobile } = useCheckMobile();
   const { toggleModal } = useConnectWallet();
@@ -172,11 +183,16 @@ const DelegationsPayoutsContainer: FC = () => {
                 onStopNomination={() => setIsStopNominationModalOpen(true)}
               />
             ) : (
-              <div>
+              <div className="flex items-center gap-2">
+                <FilterByErasContainer
+                  maxEras={payoutsMaxEras}
+                  setMaxEras={setPayoutsMaxEras}
+                />
+
                 <Button
                   variant="utility"
                   size="sm"
-                  isDisabled={payoutsData.length === 0}
+                  isDisabled={fetchedPayouts.length === 0}
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
                   Payout All
@@ -299,7 +315,7 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isPayoutAllModalOpen}
         setIsModalOpen={setIsPayoutAllModalOpen}
         validatorsAndEras={validatorAndEras}
-        payouts={payouts}
+        payouts={fetchedPayouts}
         updatePayouts={setUpdatedPayouts}
       />
     </div>
@@ -333,6 +349,48 @@ function ManageButtonContainer(props: {
           {
             label: 'Change Reward Destination',
             onClick: onChangeRewardDestination,
+          },
+        ]}
+      />
+    </div>
+  );
+}
+
+/** @internal */
+function FilterByErasContainer(props: {
+  maxEras: PayoutFilterableEra;
+  setMaxEras: (maxEras: PayoutFilterableEra) => void;
+}) {
+  const { maxEras, setMaxEras } = props;
+
+  return (
+    <div className="items-center space-x-2 flex">
+      <ActionsDropdown
+        buttonText={
+          maxEras === PayoutFilterableEra.MAX
+            ? `Max, ${maxEras} Eras`
+            : `${maxEras} Days`
+        }
+        actionItems={[
+          {
+            label: '2 Days',
+            onClick: () => setMaxEras(PayoutFilterableEra.TWO),
+          },
+          {
+            label: '6 Days',
+            onClick: () => setMaxEras(PayoutFilterableEra.SIX),
+          },
+          {
+            label: '18 Days',
+            onClick: () => setMaxEras(PayoutFilterableEra.EIGHTEEN),
+          },
+          {
+            label: '54 Days',
+            onClick: () => setMaxEras(PayoutFilterableEra.FIFTYFOUR),
+          },
+          {
+            label: 'Max, 80 eras',
+            onClick: () => setMaxEras(PayoutFilterableEra.MAX),
           },
         ]}
       />

@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
+import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { ValidatorReward } from '../types';
+import useCurrentEra from '../staking/useCurrentEra';
+import { PayoutFilterableEra, ValidatorReward } from '../types';
 import useClaimedRewards from './useClaimedRewards';
 import useErasRewardsPoints from './useErasRewardsPoints';
 
@@ -17,8 +19,15 @@ const EMPTY_ARRAY: ValidatorReward[] = [];
 /**
  * Get all unclaimed rewards of the active account's nominations
  */
-export default function useNominationsUnclaimedRewards() {
+export default function useNominationsUnclaimedRewards(
+  maxEras: PayoutFilterableEra = PayoutFilterableEra.TWO,
+) {
   const activeSubstrateAddress = useSubstrateAddress();
+  const { result: currentEra } = useCurrentEra();
+
+  const { result: historyDepth } = useApi(
+    useCallback(async (api) => api.consts.staking.historyDepth.toBn(), []),
+  );
 
   // Retrieve all validators that the account has nominated
   const { result: validators } = useApiRx(
@@ -56,10 +65,15 @@ export default function useNominationsUnclaimedRewards() {
       erasRewardsPoints === null ||
       erasRewardsPoints.length === 0 ||
       claimedRewards === null ||
-      claimedRewards.size === 0
+      claimedRewards.size === 0 ||
+      currentEra === null ||
+      historyDepth === null
     ) {
       return EMPTY_ARRAY;
     }
+
+    const startEra = currentEra - maxEras;
+    const erasRange = Array.from({ length: maxEras }, (_, i) => startEra + i);
 
     return validators.reduce((unclaimedRewards, validator) => {
       erasRewardsPoints.forEach(([era, reward]) => {
@@ -68,6 +82,9 @@ export default function useNominationsUnclaimedRewards() {
 
         // If the reward has claimed, do nothing
         if (hasClaimed) return;
+
+        // If the era is not in the range, do nothing
+        if (!erasRange.includes(era)) return;
 
         unclaimedRewards.push({
           era,
@@ -79,5 +96,12 @@ export default function useNominationsUnclaimedRewards() {
 
       return unclaimedRewards;
     }, [] as ValidatorReward[]);
-  }, [claimedRewards, erasRewardsPoints, validators]);
+  }, [
+    claimedRewards,
+    currentEra,
+    erasRewardsPoints,
+    historyDepth,
+    maxEras,
+    validators,
+  ]);
 }

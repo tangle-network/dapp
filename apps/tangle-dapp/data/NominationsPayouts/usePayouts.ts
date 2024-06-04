@@ -19,15 +19,19 @@ import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
 import { usePayoutsStore } from '../payouts/store';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
-import type { ValidatorReward } from '../types';
+import { PayoutFilterableEra, ValidatorReward } from '../types';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
 
 type UsePayoutsReturnType = {
   isLoading: boolean;
-  data: Payout[];
+  data: {
+    [maxEras: number]: Payout[];
+  };
 };
 
-export default function usePayouts(): UsePayoutsReturnType {
+export default function usePayouts(
+  maxEras: PayoutFilterableEra = PayoutFilterableEra.TWO,
+): UsePayoutsReturnType {
   const { setIsLoading, setPayouts, isLoading, data } = usePayoutsStore();
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
@@ -41,7 +45,7 @@ export default function usePayouts(): UsePayoutsReturnType {
   const { data: eraTotalRewards } = useEraTotalRewards();
   const { result: validatorIdentityNamesMap } = useValidatorIdentityNames();
 
-  const unclaimedRewards = useNominationsUnclaimedRewards();
+  const unclaimedRewards = useNominationsUnclaimedRewards(maxEras);
 
   const { result: validators } = useApiRx(
     useCallback((api) => api.query.staking.validators.entries(), []),
@@ -55,6 +59,10 @@ export default function usePayouts(): UsePayoutsReturnType {
     return map;
   }, [validators]);
 
+  // useEffect(() => {
+  //   setPayouts([]);
+  // }, [setPayouts, unclaimedRewards]);
+
   useEffect(
     () => {
       // Make sure all data is available before computing payouts
@@ -66,7 +74,7 @@ export default function usePayouts(): UsePayoutsReturnType {
         mappedValidatorInfo.size === 0 ||
         validatorIdentityNamesMap === null ||
         validatorIdentityNamesMap.size === 0 ||
-        data.length > 0
+        (data[maxEras] !== undefined && data[maxEras].length > 0)
       )
         return;
 
@@ -91,7 +99,10 @@ export default function usePayouts(): UsePayoutsReturnType {
           const sortedPayout = payouts.sort((a, b) => a.era - b.era);
 
           abortController.signal.throwIfAborted();
-          setPayouts(sortedPayout);
+          setPayouts({
+            ...data,
+            [maxEras]: sortedPayout,
+          });
           setCachedPayouts((previous) => ({
             ...previous?.value,
             [rpcEndpoint]: {
@@ -119,7 +130,7 @@ export default function usePayouts(): UsePayoutsReturnType {
       };
     },
     // prettier-ignore
-    [activeSubstrateAddress, data.length, eraTotalRewards, mappedValidatorInfo, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
+    [activeSubstrateAddress, data, eraTotalRewards, mappedValidatorInfo, maxEras, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
   );
 
   return {

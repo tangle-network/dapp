@@ -4,7 +4,9 @@ import type { Payout } from '../../types';
 
 type State = {
   isLoading: boolean;
-  data: Payout[];
+  data: {
+    [maxEras: number]: Payout[];
+  };
 };
 
 type Actions = {
@@ -16,7 +18,7 @@ type Store = State & Actions;
 
 export const usePayoutsStore = create<Store>((set) => ({
   isLoading: false,
-  data: [],
+  data: {},
   setIsLoading: (isLoading) => set({ isLoading }),
   setPayouts: (data) => set({ data }),
 }));
