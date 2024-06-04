@@ -1,4 +1,3 @@
-import type { Prettify } from 'viem/chains';
 import { create } from 'zustand';
 
 import type { Payout } from '../../types';
@@ -8,13 +7,16 @@ type State = {
   data: Payout[];
 };
 
-export const usePayoutsStore = create<Prettify<State>>(() => ({
+type Actions = {
+  setIsLoading: (isLoading: State['isLoading']) => void;
+  setPayouts: (data: State['data']) => void;
+};
+
+type Store = State & Actions;
+
+export const usePayoutsStore = create<Store>((set) => ({
   isLoading: false,
   data: [],
+  setIsLoading: (isLoading) => set({ isLoading }),
+  setPayouts: (data) => set({ data }),
 }));
-
-export const setIsLoading = (isLoading: State['isLoading']) =>
-  usePayoutsStore.setState({ isLoading });
-
-export const setPayouts = (data: State['data']) =>
-  usePayoutsStore.setState({ data });
