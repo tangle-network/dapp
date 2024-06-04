@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useBridge } from '../../../context/BridgeContext';
 import { isEVMChain, isSubstrateChain } from '../../../utils/bridge';
 
-export default function useError() {
+export default function useNetworkError() {
   const { activeWallet } = useWebContext();
   const { selectedSourceChain } = useBridge();
 

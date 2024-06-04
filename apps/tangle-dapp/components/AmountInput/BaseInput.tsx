@@ -160,7 +160,7 @@ const BaseInput: FC<BaseInputProps> = ({
           variant="body1"
           fw="normal"
         >
-          *{errorMessage}
+          * {errorMessage}
         </Typography>
       )}
     </div>

@@ -10,7 +10,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { isEVMChain } from '../../../utils/bridge';
-import useError from './useError';
+import useNetworkError from './useNetworkError';
 import useTypedChainId from './useTypedChainId';
 
 type UseActionButtonReturnType = {
@@ -38,7 +38,7 @@ export default function useActionButton() {
   } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { amount, destinationAddress, selectedSourceChain } = useBridge();
-  const error = useError();
+  const error = useNetworkError();
   const { sourceTypedChainId } = useTypedChainId();
 
   const [isInputInvalid, setHasErrors] = useState(false);
@@ -124,6 +124,7 @@ export default function useActionButton() {
     }
 
     // TODO: Implement bridge tx
+    // NOTE: use parseUnits to pass to SygmaSDK tx
   }, [selectedSourceChain, isEvmWrongNetwork, switchNetwork]);
 
   const buttonAction = useMemo(() => {
@@ -137,8 +138,6 @@ export default function useActionButton() {
     return 'Approve';
   }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet]);
 
-  // TODO: handle max amount
-
   return {
     isLoading: loading || isConnecting,
     isDisabled: isRequiredToConnectWallet
@@ -147,6 +146,6 @@ export default function useActionButton() {
     buttonAction,
     buttonText,
     errorMessage,
-    handleSetErrorMessage,
+    handleSetErrorMessage, // TODO: this is not used in button -> move it to another hook
   } satisfies UseActionButtonReturnType;
 }

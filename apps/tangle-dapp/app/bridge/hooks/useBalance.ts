@@ -14,7 +14,7 @@ import { isEvmAddress } from '../../../utils/isEvmAddress';
 import { getEvmContractBalance, getEvmNativeBalance } from '../lib/evm';
 import { getSubstrateNativeTransferable } from '../lib/substrate';
 import useDecimals from './useDecimals';
-import useError from './useError';
+import useNetworkError from './useNetworkError';
 import useEvmViemClient from './useEvmViemClient';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
@@ -29,7 +29,7 @@ export default function useBalance() {
   const { notificationApi } = useWebbUI();
   const activeAccountAddress = useActiveAccountAddress();
   const { selectedSourceChain } = useBridge();
-  const error = useError();
+  const error = useNetworkError();
   const selectedToken = useSelectedToken();
   const { sourceTypedChainId } = useTypedChainId();
   const evmViemClient = useEvmViemClient();
@@ -38,7 +38,7 @@ export default function useBalance() {
 
   const isNativeToken = useMemo(
     () => checkNativeToken(selectedToken.symbol, selectedSourceChain),
-    [selectedToken.symbol, selectedSourceChain]
+    [selectedToken.symbol, selectedSourceChain],
   );
 
   const erc20TokenContractAddress = useMemo(() => {
@@ -59,7 +59,7 @@ export default function useBalance() {
         ? { client: evmViemClient, accAddress: activeAccountAddress }
         : undefined,
     ],
-    ([...args]) => getEvmNativeBalance(...args)
+    ([...args]) => getEvmNativeBalance(...args),
   );
 
   const {
@@ -82,7 +82,7 @@ export default function useBalance() {
           }
         : undefined,
     ],
-    ([...args]) => getEvmContractBalance(...args)
+    ([...args]) => getEvmContractBalance(...args),
   );
 
   const {
@@ -102,7 +102,7 @@ export default function useBalance() {
           }
         : undefined,
     ],
-    ([...args]) => getSubstrateNativeTransferable(...args)
+    ([...args]) => getSubstrateNativeTransferable(...args),
   );
 
   useEffect(() => {
