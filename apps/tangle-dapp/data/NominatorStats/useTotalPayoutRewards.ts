@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import { usePayoutsFilterByEraStore } from '../payouts/filterByEraStore';
 import { usePayoutsStore } from '../payouts/store';
 
 export default function useTotalPayoutRewards(
@@ -12,6 +13,7 @@ export default function useTotalPayoutRewards(
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
 
+  const { maxEras } = usePayoutsFilterByEraStore();
   const { setIsLoading, isLoading, data } = usePayoutsStore();
 
   const address = useSubstrateAddress();
@@ -21,8 +23,8 @@ export default function useTotalPayoutRewards(
       return [];
     }
 
-    return data ?? [];
-  }, [address, data]);
+    return data[maxEras] ?? [];
+  }, [address, data, maxEras]);
 
   const [error, setError] = useState<Error | null>(null);
 
@@ -33,14 +35,12 @@ export default function useTotalPayoutRewards(
         return;
       }
 
-      if (payoutsData[2].length === 0) {
+      if (payoutsData.length === 0) {
         setValue1(new BN(0));
         return;
       }
 
-      console.debug('Calculating total payouts rewards', payoutsData);
-
-      const totalPayoutRewards = payoutsData[2].reduce((acc, payout) => {
+      const totalPayoutRewards = payoutsData.reduce((acc, payout) => {
         const currentReward = payout.nominatorTotalRewardRaw;
         return acc.add(currentReward);
       }, new BN(0));

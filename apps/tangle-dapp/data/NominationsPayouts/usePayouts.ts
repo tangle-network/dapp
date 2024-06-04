@@ -16,10 +16,11 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
+import { usePayoutsFilterByEraStore } from '../payouts/filterByEraStore';
 import { usePayoutsStore } from '../payouts/store';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
-import { PayoutFilterableEra, ValidatorReward } from '../types';
+import { ValidatorReward } from '../types';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
 
 type UsePayoutsReturnType = {
@@ -29,9 +30,8 @@ type UsePayoutsReturnType = {
   };
 };
 
-export default function usePayouts(
-  maxEras: PayoutFilterableEra = PayoutFilterableEra.TWO,
-): UsePayoutsReturnType {
+export default function usePayouts(): UsePayoutsReturnType {
+  const { maxEras } = usePayoutsFilterByEraStore();
   const { setIsLoading, setPayouts, isLoading, data } = usePayoutsStore();
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
@@ -45,7 +45,7 @@ export default function usePayouts(
   const { data: eraTotalRewards } = useEraTotalRewards();
   const { result: validatorIdentityNamesMap } = useValidatorIdentityNames();
 
-  const unclaimedRewards = useNominationsUnclaimedRewards(maxEras);
+  const unclaimedRewards = useNominationsUnclaimedRewards();
 
   const { result: validators } = useApiRx(
     useCallback((api) => api.query.staking.validators.entries(), []),

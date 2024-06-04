@@ -29,6 +29,7 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
+import { usePayoutsFilterByEraStore } from '../../data/payouts/filterByEraStore';
 import { usePayoutsStore } from '../../data/payouts/store';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import { PayoutFilterableEra } from '../../data/types';
@@ -62,14 +63,12 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 const DelegationsPayoutsContainer: FC = () => {
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
-  // const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
-  const [payoutsMaxEras, setPayoutsMaxEras] = useState<PayoutFilterableEra>(
-    PayoutFilterableEra.TWO,
-  );
+
+  const { setMaxEras, maxEras } = usePayoutsFilterByEraStore();
   const { setPayouts, data } = usePayoutsStore();
 
   const { result: historyDepth } = useApi(
@@ -103,8 +102,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const { data: payoutsData, isLoading: payoutsIsLoading } =
-    usePayouts(payoutsMaxEras);
+  const { data: payoutsData, isLoading: payoutsIsLoading } = usePayouts();
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -117,21 +115,21 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [nomineesOpt]);
 
   const fetchedPayouts = useMemo(() => {
-    if (payoutsData[payoutsMaxEras]) {
-      return payoutsData[payoutsMaxEras];
+    if (payoutsData[maxEras]) {
+      return payoutsData[maxEras];
     }
 
     return [];
-  }, [payoutsData, payoutsMaxEras]);
+  }, [payoutsData, maxEras]);
 
   useEffect(() => {
     if (updatedPayouts.length > 0) {
       setPayouts({
         ...data,
-        [payoutsMaxEras]: updatedPayouts,
+        [maxEras]: updatedPayouts,
       });
     }
-  }, [data, payoutsMaxEras, setPayouts, updatedPayouts]);
+  }, [data, maxEras, setPayouts, updatedPayouts]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -154,11 +152,11 @@ const DelegationsPayoutsContainer: FC = () => {
 
   // Clear the updated payouts when the active account changes,
   // and the user is no longer logged in.
-  // useEffect(() => {
-  //   if (!activeAccount?.address) {
-  //     setUpdatedPayouts([]);
-  //   }
-  // }, [activeAccount?.address]);
+  useEffect(() => {
+    if (!activeAccount?.address) {
+      setUpdatedPayouts([]);
+    }
+  }, [activeAccount?.address]);
 
   const { isMobile } = useCheckMobile();
   const { toggleModal } = useConnectWallet();
@@ -185,8 +183,8 @@ const DelegationsPayoutsContainer: FC = () => {
             ) : (
               <div className="flex items-center gap-2">
                 <FilterByErasContainer
-                  maxEras={payoutsMaxEras}
-                  setMaxEras={setPayoutsMaxEras}
+                  maxEras={maxEras}
+                  setMaxEras={setMaxEras}
                 />
 
                 <Button
