@@ -97,7 +97,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const { data: payoutsData } = usePayouts();
+  const { data: payoutsData, isLoading: payoutsIsLoading } = usePayouts();
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -236,6 +236,8 @@ const DelegationsPayoutsContainer: FC = () => {
               }}
               icon="🔗"
             />
+          ) : payoutsIsLoading ? (
+            <ContainerSkeleton />
           ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
               title={

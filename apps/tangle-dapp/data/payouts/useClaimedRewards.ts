@@ -11,14 +11,7 @@ import useApiRx from '../../hooks/useApiRx';
  * @returns keyed by era and validator stash
  * which maps to the set of page indexes which have been claimed.
  */
-const useClaimedRewards = () => {
-  const { result, ...rest } = useApiRx(claimedRewardsFetcher);
-
-  return {
-    result: result ?? new Map<number, Map<string, Set<number>>>(),
-    ...rest,
-  };
-};
+const useClaimedRewards = () => useApiRx(claimedRewardsFetcher);
 
 export default useClaimedRewards;
 
