@@ -30,6 +30,8 @@ type UsePayoutsReturnType = {
 export default function usePayouts(): UsePayoutsReturnType {
   const { setIsLoading, setPayouts, isLoading, data } = usePayoutsStore();
 
+  console.debug('usePayouts', data);
+
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
     true,
