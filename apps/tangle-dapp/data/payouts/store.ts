@@ -8,13 +8,14 @@ type State = {
   data: Payout[];
 };
 
-export const usePayoutsStore = create<Prettify<State>>(() => ({
+type Actions = {
+  setIsLoading: (isLoading: State['isLoading']) => void;
+  setPayouts: (data: State['data']) => void;
+};
+
+export const usePayoutsStore = create<Prettify<State & Actions>>(() => ({
   isLoading: false,
   data: [],
+  setIsLoading: (isLoading: State['isLoading']) => ({ isLoading }),
+  setPayouts: (data: State['data']) => ({ data }),
 }));
-
-export const setIsLoading = (isLoading: State['isLoading']) =>
-  usePayoutsStore.setState({ isLoading });
-
-export const setPayouts = (data: State['data']) =>
-  usePayoutsStore.setState({ data });

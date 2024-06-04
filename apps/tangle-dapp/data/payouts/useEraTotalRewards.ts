@@ -8,10 +8,15 @@ const useEraTotalRewards = () => {
     useCallback((api) => api.query.staking.erasValidatorReward.entries(), []),
   );
 
-  const erasValidatorRewardsMap = useEntryMap(erasValidatorRewards, (key) =>
-    // It's fine to convert `u32` to a JavaScript number, it'll
-    // always be within the safe range.
-    key.args[0].toNumber(),
+  const erasValidatorRewardsMap = useEntryMap(
+    erasValidatorRewards,
+    useCallback(
+      (key) =>
+        // It's fine to convert `u32` to a JavaScript number, it'll
+        // always be within the safe range.
+        key.args[0].toNumber(),
+      [],
+    ),
   );
 
   return { data: erasValidatorRewardsMap, ...other };
