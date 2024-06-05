@@ -87,7 +87,7 @@ export default function useValidatorInfoCard(
           setWeb(validatorAccountInfo.web);
           setTwitter(validatorAccountInfo.twitter);
         }
-      } catch (error) {
+      } catch {
         notificationApi({
           message: "Failed to load validators' name and socials",
           variant: 'error',

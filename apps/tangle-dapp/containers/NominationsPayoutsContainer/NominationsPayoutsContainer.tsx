@@ -59,7 +59,7 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 
 const DelegationsPayoutsContainer: FC = () => {
   const tableRef = useRef<HTMLDivElement>(null);
-  const { activeAccount, loading } = useWebContext();
+  const { activeAccount, loading, isConnecting } = useWebContext();
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -97,7 +97,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const { data: payoutsData } = usePayouts();
+  const { data: payoutsData, isLoading: payoutsIsLoading } = usePayouts();
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -194,9 +194,9 @@ const DelegationsPayoutsContainer: FC = () => {
               description="Connect your wallet to view and manage your staking details."
               buttonText="Connect"
               buttonProps={{
-                isLoading: loading,
+                isLoading: loading || isConnecting,
                 isDisabled: isMobile,
-                loadingText: 'Connecting...',
+                loadingText: isConnecting ? 'Connecting...' : 'Loading...',
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"
@@ -229,13 +229,15 @@ const DelegationsPayoutsContainer: FC = () => {
               description="Connect your wallet to view and manage your staking details."
               buttonText="Connect"
               buttonProps={{
-                isLoading: loading,
+                isLoading: loading || isConnecting,
                 isDisabled: isMobile,
-                loadingText: 'Connecting...',
+                loadingText: isConnecting ? 'Connecting...' : 'Loading...',
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"
             />
+          ) : payoutsIsLoading ? (
+            <ContainerSkeleton />
           ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
             <TableStatus
               title={

@@ -39,7 +39,7 @@ export function createProofGenerationUrl(
 export function tryOrElse<T>(fn: () => T, fallback: () => T): T {
   try {
     return fn();
-  } catch (error) {
+  } catch {
     return fallback();
   }
 }

@@ -79,7 +79,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         const addr = await window.navigator.clipboard.readText();
 
         onChange(addr);
-      } catch (e) {
+      } catch {
         notificationApi({
           message: 'Failed to read clipboard',
           secondaryMessage:

@@ -98,7 +98,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
   const [activeApi, setActiveApi] =
     useState<Maybe<WebbApiProvider<unknown>>>(undefined);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [accounts, setAccounts] = useState<Array<Account>>([]);
 
@@ -398,7 +398,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                 ...sharedWalletConnectionPayload,
                 status: 'sucess',
               });
-              setLoading(false);
             }
             break;
 
@@ -550,7 +549,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
               );
               /// listen to `providerUpdate` by MetaMask
               localActiveApi = webbWeb3Provider;
-              setLoading(false);
             }
             break;
         }
@@ -641,104 +639,129 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
     [switchChain],
   );
 
-  useEffect(() => {
-    /// init the dApp
-    const init = async () => {
-      setIsConnecting(true);
-      const _networkStorage = await appNetworkStoragePromise;
-      /// get the default wallet and network from storage
-      const [net, wallet] = await Promise.all([
-        _networkStorage.get('defaultNetwork'),
-        _networkStorage.get('defaultWallet'),
-      ]);
+  useEffect(
+    () => {
+      const abortController = new AbortController();
 
-      /// if there's no chain, return
-      if (!net || !wallet) {
-        return;
-      }
+      /// init the dApp
+      const init = async () => {
+        setIsConnecting(true);
+        const _networkStorage = await appNetworkStoragePromise;
+        /// get the default wallet and network from storage
+        const [net, wallet] = await Promise.all([
+          _networkStorage.get('defaultNetwork'),
+          _networkStorage.get('defaultWallet'),
+        ]);
 
-      /// chain config by net id
-      const chainConfig = chains[net];
-      if (!chainConfig) {
-        return;
-      }
-
-      let walletCfg: Wallet;
-
-      // wallet config by chain
-      if (Array.isArray(chainConfig.wallets)) {
-        if (!chainConfig.wallets.length) {
+        /// if there's no chain, return
+        if (!net || !wallet) {
           return;
         }
 
-        // The new API with array of wallet ids
-        if (chainConfig.wallets.includes(wallet)) {
-          walletCfg = apiConfig.wallets[wallet];
+        /// chain config by net id
+        const chainConfig = chains[net];
+        if (!chainConfig) {
+          return;
+        }
+
+        let walletCfg: Wallet;
+
+        // wallet config by chain
+        if (Array.isArray(chainConfig.wallets)) {
+          if (!chainConfig.wallets.length) {
+            return;
+          }
+
+          // The new API with array of wallet ids
+          if (chainConfig.wallets.includes(wallet)) {
+            walletCfg = apiConfig.wallets[wallet];
+          } else {
+            walletCfg = apiConfig.wallets[chainConfig.wallets[0]];
+          }
         } else {
-          walletCfg = apiConfig.wallets[chainConfig.wallets[0]];
+          // The old API with Record of wallet ids and wallet configs
+          walletCfg =
+            chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
         }
-      } else {
-        // The old API with Record of wallet ids and wallet configs
-        walletCfg =
-          chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
-      }
 
-      const activeApi = await switchChain(
-        chainConfig,
-        walletCfg,
-        _networkStorage,
-      );
-
-      const networkDefaultConfig = await _networkStorage.get('networksConfig');
-
-      if (activeApi) {
-        const accounts = await activeApi.accounts.accounts();
-        let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
-        defaultAccount = defaultAccount ?? accounts[0]?.address;
-
-        const defaultFromSettings = accounts.find(
-          (account) => account.address === defaultAccount,
+        // If the signal is aborted, do not proceed.
+        abortController.signal.throwIfAborted();
+        const activeApi = await switchChain(
+          chainConfig,
+          walletCfg,
+          _networkStorage,
         );
-        logger.info(`Default account from settings`, defaultFromSettings);
 
-        if (defaultFromSettings) {
-          const defaultAddr = defaultFromSettings.address;
+        const networkDefaultConfig =
+          await _networkStorage.get('networksConfig');
 
-          // NoteManager configuration
-          const multipleKeyPairStorage = await multipleKeypairStorageFactory();
-          const storedKeypair = await multipleKeyPairStorage.get(defaultAddr);
-          let createdNoteManager: NoteManager | null = null;
+        if (activeApi) {
+          const accounts = await activeApi.accounts.accounts();
+          let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
+          defaultAccount = defaultAccount ?? accounts[0]?.address;
 
-          // Create the NoteManager if the stored keypair exists.
-          if (storedKeypair) {
-            createdNoteManager = await loginNoteAccount(
-              storedKeypair,
-              defaultAddr,
-            );
+          const defaultFromSettings = accounts.find(
+            (account) => account.address === defaultAccount,
+          );
+          logger.info(`Default account from settings`, defaultFromSettings);
+
+          if (defaultFromSettings) {
+            const defaultAddr = defaultFromSettings.address;
+
+            // NoteManager configuration
+            const multipleKeyPairStorage =
+              await multipleKeypairStorageFactory();
+            const storedKeypair = await multipleKeyPairStorage.get(defaultAddr);
+            let createdNoteManager: NoteManager | null = null;
+
+            // Create the NoteManager if the stored keypair exists.
+            if (storedKeypair) {
+              createdNoteManager = await loginNoteAccount(
+                storedKeypair,
+                defaultAddr,
+              );
+            }
+
+            if (!activeApi.noteManager) {
+              activeApi.noteManager = createdNoteManager;
+            }
+
+            setActiveAccountWithStorage(defaultFromSettings, {
+              networkStorage: _networkStorage,
+              chain: chainConfig,
+              activeApi,
+            });
           }
-
-          if (!activeApi.noteManager) {
-            activeApi.noteManager = createdNoteManager;
-          }
-
-          setActiveAccountWithStorage(defaultFromSettings, {
-            networkStorage: _networkStorage,
-            chain: chainConfig,
-            activeApi,
-          });
+        } else {
+          // If the user did not want to switch to the previously stored chain,
+          // set the previosuly stored chain in the app for display only.
+          setActiveChain(chains[net]);
         }
-      } else {
-        // If the user did not want to switch to the previously stored chain,
-        // set the previosuly stored chain in the app for display only.
-        setActiveChain(chains[net]);
-      }
-    };
+      };
 
-    init().finally(() => {
-      setIsConnecting(false);
-      setLoading(false);
-    });
+      init()
+        .catch((error) => {
+          // If the error is an AbortError, ignore it.
+          if (error.name === 'AbortError') {
+            return;
+          }
 
+          logger.error(error);
+        })
+        .finally(() => {
+          setIsConnecting(false);
+        });
+
+      return () => {
+        abortController.abort();
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  // App event listeners
+  useEffect(() => {
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
       // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
@@ -758,8 +781,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
     appEvent.on('setActiveAccount', (nextAccount) => {
       setActiveAccountWithStorage(nextAccount);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [appEvent, setActiveAccountWithStorage, switchChainAndStore]);
 
   const txQueue = useTxApiQueue(apiConfig);
 

@@ -226,6 +226,12 @@ export type WalletButtonProps = PropsOf<'button'> & {
    */
   address: string;
 
+  /**
+   * The name of the account to display
+   * prior to the address
+   */
+  accountName?: string;
+
   addressClassname?: string;
 };
 

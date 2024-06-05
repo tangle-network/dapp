@@ -105,7 +105,7 @@ const Transfer = () => {
       const addr = await window.navigator.clipboard.readText();
 
       setRecipient(addr);
-    } catch (e) {
+    } catch {
       notificationApi({
         message: 'Failed to read clipboard',
         secondaryMessage:

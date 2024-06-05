@@ -63,7 +63,7 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
         const note = await Note.deserialize(rawNote);
         setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
         onNotesChange?.(id, note);
-      } catch (error) {
+      } catch {
         setErrors((prevErrors) => ({
           ...prevErrors,
           [id]: 'Error: incorrect format',

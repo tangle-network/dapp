@@ -7,9 +7,12 @@ import { shortenHex, shortenString } from '../../utils';
 import { WalletButtonProps } from './types';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
-  ({ wallet, address, className, addressClassname, ...props }, ref) => {
+  (
+    { accountName, wallet, address, className, addressClassname, ...props },
+    ref,
+  ) => {
     const addressClx = useMemo(() => {
-      return twMerge('dark:text-mono-0', addressClassname);
+      return twMerge('truncate dark:text-mono-0', addressClassname);
     }, [addressClassname]);
 
     return (
@@ -18,7 +21,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
         type="button"
         ref={ref}
         className={twMerge(
-          'rounded-full border-2 py-2 px-4',
+          'rounded-full border-2 py-2 px-4 max-w-52',
           'bg-mono-0/10 border-mono-60',
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
@@ -40,9 +43,11 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
             component="p"
             className={addressClx}
           >
-            {isHex(address)
-              ? `${shortenHex(address)}`
-              : `${shortenString(address)}`}
+            {accountName
+              ? accountName
+              : isHex(address)
+                ? `${shortenHex(address)}`
+                : `${shortenString(address)}`}
           </Typography>
         </div>
       </button>

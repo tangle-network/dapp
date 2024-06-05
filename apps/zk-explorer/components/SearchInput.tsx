@@ -40,7 +40,7 @@ const DEFAULT_DEBOUNCE_DELAY = 1500;
 const SearchInput: FC<SearchInputProps> = ({
   isFullWidth,
   isHomepageVariant,
-  debounceTime = DEFAULT_DEBOUNCE_DELAY,
+  debounceTime: _debounceTime = DEFAULT_DEBOUNCE_DELAY,
   doesRedirectOnChange: doesRedirect,
   className,
   inputClassName,

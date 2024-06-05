@@ -121,7 +121,7 @@ const Withdraw = () => {
       const addr = await window.navigator.clipboard.readText();
 
       setRecipient(addr.slice(0, 200)); // limit to 200 chars
-    } catch (e) {
+    } catch {
       notificationApi({
         message: 'Failed to read clipboard',
         secondaryMessage:
