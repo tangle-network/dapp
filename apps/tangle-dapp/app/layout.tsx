@@ -1,7 +1,7 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import Suspense from '@webb-tools/webb-ui-components/components/Suspense';
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const initialState = cookieToInitialState(
-    wagmiConfig,
+    getWagmiConfig({ isSSR: true }),
     headers().get('cookie'),
   );
 

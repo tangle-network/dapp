@@ -6,7 +6,7 @@ import {
   AccountsAdapter,
   type PromiseOrT,
 } from '@webb-tools/abstract-api-provider/account';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import type { Address, JsonRpcAccount } from 'viem';
 import type { Connector } from 'wagmi';
 import { getAccount } from 'wagmi/actions';
@@ -43,7 +43,7 @@ export class Web3Accounts extends AccountsAdapter<Connector, JsonRpcAccount> {
   }
 
   get activeOrDefault() {
-    const defaultAccount = getAccount(wagmiConfig);
+    const defaultAccount = getAccount(getWagmiConfig());
 
     if (!defaultAccount.address) {
       return null;

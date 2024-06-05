@@ -1,4 +1,4 @@
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   ActiveWebbRelayer,
   NewNotesTxResult,
@@ -77,7 +77,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const client = getPublicClient(wagmiConfig, {
+    const client = getPublicClient(getWagmiConfig(), {
       chainId,
     });
 
@@ -263,7 +263,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
     }
 
-    const walletClient = await getWalletClient(wagmiConfig, {
+    const walletClient = await getWalletClient(getWagmiConfig(), {
       chainId: parseTypedChainId(typedChainId).chainId,
       connector: this.inner.connector,
     });
@@ -312,7 +312,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const vAnchorContract = this.inner.getVAnchorContractByAddressAndProvider(
       anchorId,
-      getPublicClient(wagmiConfig, {
+      getPublicClient(getWagmiConfig(), {
         chainId: parseTypedChainId(typedChainId).chainId,
       }),
     );
@@ -595,7 +595,9 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const publicClient = getPublicClient(wagmiConfig, { chainId: chain.id });
+    const publicClient = getPublicClient(getWagmiConfig(), {
+      chainId: chain.id,
+    });
     if (!publicClient) {
       throw WebbError.from(WebbErrorCodes.NoClientAvailable);
     }
@@ -798,7 +800,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       const { chainId } = parseTypedChainId(+parsedNote.sourceChainId);
       const sourceAnchorId = parsedNote.sourceIdentifyingData;
 
-      const sourcePublicClient = getPublicClient(wagmiConfig, { chainId });
+      const sourcePublicClient = getPublicClient(getWagmiConfig(), { chainId });
       if (!sourcePublicClient) {
         throw WebbError.from(WebbErrorCodes.NoClientAvailable);
       }

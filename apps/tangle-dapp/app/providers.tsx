@@ -41,6 +41,7 @@ const Providers = ({
         <WebbProvider
           appEvent={appEvent}
           applicationName="Tangle dApp"
+          isSSR
           wagmiInitialState={wagmiInitialState}
         >
           <OFACFilterProvider

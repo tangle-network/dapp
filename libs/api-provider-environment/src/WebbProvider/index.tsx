@@ -22,7 +22,7 @@ import {
   type Chain,
   type Wallet,
 } from '@webb-tools/dapp-config';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   CurrencyRole,
   WalletId,
@@ -415,7 +415,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                 throw new WalletNotInstalledError(wallet.id);
               }
 
-              if (wagmiConfig.state.current !== connector.uid) {
+              if (getWagmiConfig().state.current !== connector.uid) {
                 await connectAsync({
                   chainId: chain.id,
                   connector: connector,
@@ -855,15 +855,20 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 const queryClient = new QueryClient();
 
 interface WebbProviderProps extends WebbProviderInnerProps {
+  isSSR?: boolean;
   wagmiInitialState?: WagmiState;
 }
 
 export const WebbProvider: FC<WebbProviderProps> = ({
+  isSSR,
   wagmiInitialState,
   ...innerProps
 }) => {
   return (
-    <WagmiProvider config={wagmiConfig} initialState={wagmiInitialState}>
+    <WagmiProvider
+      config={getWagmiConfig({ isSSR })}
+      initialState={wagmiInitialState}
+    >
       <QueryClientProvider client={queryClient}>
         <WebbProviderInner {...innerProps} />
       </QueryClientProvider>
