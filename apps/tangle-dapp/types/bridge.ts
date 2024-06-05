@@ -1,4 +1,3 @@
-import { Address } from 'viem';
 import type { HexString } from '@polkadot/util/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import Decimal from 'decimal.js';

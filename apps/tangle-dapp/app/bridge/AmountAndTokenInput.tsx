@@ -11,16 +11,17 @@ import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC } from 'react';
+import Decimal from 'decimal.js';
+import { FC, useMemo } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
-import useMinAmount from './hooks/useMinAmount';
 import useSelectedToken from './hooks/useSelectedToken';
 import useDecimals from './hooks/useDecimals';
+import useTypedChainId from './hooks/useTypedChainId';
 
 const AmountAndTokenInput: FC = () => {
   const {
@@ -33,7 +34,25 @@ const AmountAndTokenInput: FC = () => {
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
-  const minAmount = useMinAmount();
+  const { sourceTypedChainId } = useTypedChainId();
+
+  const minAmount = useMemo(() => {
+    const existentialDeposit =
+      selectedToken.existentialDeposit[sourceTypedChainId];
+    const destChainTransactionFee =
+      selectedToken.destChainTransactionFee[sourceTypedChainId];
+
+    if (!existentialDeposit || !destChainTransactionFee) return null;
+
+    // TODO: add bridge fees
+    return (existentialDeposit ?? new Decimal(0)).add(
+      destChainTransactionFee ?? new Decimal(0),
+    );
+  }, [
+    selectedToken.existentialDeposit,
+    selectedToken.destChainTransactionFee,
+    sourceTypedChainId,
+  ]);
 
   return (
     <div className="relative">
