@@ -5,20 +5,17 @@ const config = resolveConfig({
   content: [],
 });
 
-function useBreakpointValue<
+function useBreakpoint<
   BreakPoints extends Record<string, string>,
   Key extends keyof BreakPoints,
-  V = unknown,
->(breakpoint: Key, value: V, fallback: V, breakpoints?: BreakPoints) {
+>(breakpoint: Key, breakpoints?: BreakPoints) {
   const breakpointsToUse = breakpoints ?? config.theme.screens;
 
   const breakPointValue =
     breakpointsToUse[breakpoint as keyof typeof breakpointsToUse] ??
     config.theme.screens['md'];
 
-  const isMatched = useMediaQuery(`(min-width: ${breakPointValue})`);
-
-  return isMatched ? value : fallback;
+  return useMediaQuery(`(min-width: ${breakPointValue})`);
 }
 
-export default useBreakpointValue;
+export default useBreakpoint;
