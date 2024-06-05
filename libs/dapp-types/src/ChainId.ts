@@ -76,7 +76,7 @@ export enum PresetTypedChainId {
 
   RococoPhala = calculateTypedChainId(
     ChainType.Substrate,
-    SubstrateChainId.RococoPhala
+    SubstrateChainId.RococoPhala,
   ),
 
   MoonbaseAlpha = calculateTypedChainId(
@@ -91,7 +91,7 @@ export enum PresetTypedChainId {
 
   ScrollSepolia = calculateTypedChainId(
     ChainType.EVM,
-    EVMChainId.ScrollSepolia
+    EVMChainId.ScrollSepolia,
   ),
 
   // Localnets

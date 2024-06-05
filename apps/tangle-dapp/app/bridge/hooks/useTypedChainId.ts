@@ -12,18 +12,18 @@ export default function useTypedChainId() {
     () =>
       calculateTypedChainId(
         selectedSourceChain.chainType,
-        selectedSourceChain.id
+        selectedSourceChain.id,
       ),
-    [selectedSourceChain]
+    [selectedSourceChain],
   );
 
   const destinationTypedChainId = useMemo(
     () =>
       calculateTypedChainId(
         selectedDestinationChain.chainType,
-        selectedDestinationChain.id
+        selectedDestinationChain.id,
       ),
-    [selectedDestinationChain]
+    [selectedDestinationChain],
   );
 
   return { sourceTypedChainId, destinationTypedChainId };
