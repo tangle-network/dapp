@@ -1,4 +1,4 @@
-import isSSR from './isSsr';
+import isSSR from './isSSR';
 
 const isBrowser = () => !isSSR();
 
