@@ -22,19 +22,17 @@ export type BreadcrumbType = {
 
 const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
   const fullPathname = usePathname();
-  const pathNames = fullPathname.split('/');
+  const pathNames = fullPathname.split('/').filter(segment => segment.trim() !== '');
 
   const breadCrumbs = useMemo<BreadcrumbType[]>(() => {
-    const finalPathNames = pathNames.length === 0 ? [''] : pathNames;
-
-    return finalPathNames.map((pathName, index) => {
+    return pathNames.map((pathName, index) => {
       const Icon = getBreadcrumbIcon(pathName, index, pathNames);
       const label = getBreadcrumbLabel(pathName, index, pathNames);
 
       return {
         label,
-        isLast: index === finalPathNames.length - 1,
-        href: `/${finalPathNames.slice(0, index + 1).join('/')}`,
+        isLast: index === pathNames.length - 1,
+        href: `/${pathNames.slice(0, index + 1).join('/')}`,
         icon: <Icon className="w-4 h-4 lg:w-6 lg:h-6" />,
       };
     });
