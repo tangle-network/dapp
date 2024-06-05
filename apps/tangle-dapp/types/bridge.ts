@@ -1,3 +1,4 @@
+import { Address } from 'viem';
 import type { HexString } from '@polkadot/util/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import Decimal from 'decimal.js';
@@ -45,3 +46,8 @@ export type BridgeTokenType = {
    */
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
 };
+
+export enum BridgeWalletError {
+  MismatchEvm = 'wallet-mismatch-evm',
+  MismatchSubstrate = 'wallet-mismatch-substrate',
+}

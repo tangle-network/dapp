@@ -19,15 +19,10 @@ interface BridgeContainerProps {
 }
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
-  const { destinationAddress, setDestinationAddress } = useBridge();
-  const {
-    buttonAction,
-    buttonText,
-    isLoading,
-    isDisabled,
-    errorMessage,
-    handleSetErrorMessage,
-  } = useActionButton();
+  const { destinationAddress, setDestinationAddress, setIsInputError } =
+    useBridge();
+  const { buttonAction, buttonText, isLoading, isDisabled, errorMessage } =
+    useActionButton();
 
   return (
     <div
@@ -43,7 +38,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
         <div className="space-y-10">
           <ChainSelectors />
 
-          <AmountAndTokenInput setErrorMessage={handleSetErrorMessage} />
+          <AmountAndTokenInput />
 
           <AddressInput
             id="bridge-destination-address-input"
@@ -52,7 +47,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
             baseInputOverrides={{ isFullWidth: true }}
             value={destinationAddress}
             setValue={setDestinationAddress}
-            setErrorMessage={handleSetErrorMessage}
+            setErrorMessage={() => setIsInputError(true)}
           />
 
           {/* TODO: Tx Info (Fees & Estimated Time) */}

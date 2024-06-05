@@ -6,11 +6,11 @@ import {
 } from '@webb-tools/api-provider-environment';
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
+import { BridgeWalletError } from '../../../types/bridge';
 import { isEVMChain } from '../../../utils/bridge';
-import useNetworkError from './useNetworkError';
 import useTypedChainId from './useTypedChainId';
 
 type UseActionButtonReturnType = {
@@ -19,7 +19,6 @@ type UseActionButtonReturnType = {
   buttonAction: () => void;
   buttonText: string;
   errorMessage: ErrorMessage | null;
-  handleSetErrorMessage: (error: string | null) => void;
 };
 
 type ErrorMessage = {
@@ -37,25 +36,28 @@ export default function useActionButton() {
     activeChain,
   } = useWebContext();
   const { toggleModal } = useConnectWallet();
-  const { amount, destinationAddress, selectedSourceChain } = useBridge();
-  const error = useNetworkError();
+  const {
+    amount,
+    destinationAddress,
+    selectedSourceChain,
+    isInputError,
+    walletError,
+  } = useBridge();
   const { sourceTypedChainId } = useTypedChainId();
-
-  const [isInputInvalid, setHasErrors] = useState(false);
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
   }, [activeAccount, activeWallet]);
 
   const errorMessage = useMemo<ErrorMessage | null>(() => {
-    switch (error) {
-      case 'evm-wrongWallet':
+    switch (walletError) {
+      case BridgeWalletError.MismatchEvm:
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
             'Source Chain is EVM but the connected wallet only supports Substrate networks',
         };
-      case 'substrate-wrongWallet':
+      case BridgeWalletError.MismatchSubstrate:
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
@@ -64,11 +66,13 @@ export default function useActionButton() {
       default:
         return null;
     }
-  }, [error]);
+  }, [walletError]);
 
   const isWalletAndSourceChainMismatch = useMemo(
-    () => error === 'evm-wrongWallet' || error === 'substrate-wrongWallet',
-    [error],
+    () =>
+      walletError === BridgeWalletError.MismatchEvm ||
+      walletError === BridgeWalletError.MismatchSubstrate,
+    [walletError],
   );
 
   const isEvmWrongNetwork = useMemo(() => {
@@ -105,13 +109,6 @@ export default function useActionButton() {
     );
   }, [toggleModal, isWalletAndSourceChainMismatch, selectedSourceChain]);
 
-  const handleSetErrorMessage = useCallback(
-    (error: string | null) => {
-      setHasErrors(error !== null);
-    },
-    [setHasErrors],
-  );
-
   const switchNetwork = useCallback(() => {
     if (!activeWallet) return;
     const targetChain = getChainFromConfig(selectedSourceChain);
@@ -142,10 +139,9 @@ export default function useActionButton() {
     isLoading: loading || isConnecting,
     isDisabled: isRequiredToConnectWallet
       ? false
-      : isInputInsufficient || isInputInvalid,
+      : isInputInsufficient || isInputError,
     buttonAction,
     buttonText,
     errorMessage,
-    handleSetErrorMessage, // TODO: this is not used in button -> move it to another hook
   } satisfies UseActionButtonReturnType;
 }

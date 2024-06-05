@@ -14,7 +14,6 @@ import { isEvmAddress } from '../../../utils/isEvmAddress';
 import { getEvmContractBalance, getEvmNativeBalance } from '../lib/evm';
 import { getSubstrateNativeTransferable } from '../lib/substrate';
 import useDecimals from './useDecimals';
-import useNetworkError from './useNetworkError';
 import useEvmViemClient from './useEvmViemClient';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
@@ -28,8 +27,7 @@ type UseBalanceReturnType = {
 export default function useBalance() {
   const { notificationApi } = useWebbUI();
   const activeAccountAddress = useActiveAccountAddress();
-  const { selectedSourceChain } = useBridge();
-  const error = useNetworkError();
+  const { selectedSourceChain, walletError } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceTypedChainId } = useTypedChainId();
   const evmViemClient = useEvmViemClient();
@@ -51,7 +49,7 @@ export default function useBalance() {
     error: errorLoadingEvmNativeBalance,
   } = useSWR(
     [
-      error === null &&
+      walletError === null &&
       activeAccountAddress !== null &&
       evmViemClient !== null &&
       isEvmAddress(activeAccountAddress) &&
@@ -68,7 +66,7 @@ export default function useBalance() {
     error: errorLoadingEvmErc20Balance,
   } = useSWR(
     [
-      error === null &&
+      walletError === null &&
       activeAccountAddress !== null &&
       evmViemClient !== null &&
       isEvmAddress(activeAccountAddress) &&
@@ -91,7 +89,7 @@ export default function useBalance() {
     error: errorLoadingSubstrateNativeBalance,
   } = useSWR(
     [
-      error === null &&
+      walletError === null &&
       activeAccountAddress !== null &&
       substrateApi !== null &&
       isAddress(activeAccountAddress) &&

@@ -11,7 +11,7 @@ import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { ComponentProps, FC } from 'react';
+import { FC } from 'react';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
@@ -22,14 +22,14 @@ import useMinAmount from './hooks/useMinAmount';
 import useSelectedToken from './hooks/useSelectedToken';
 import useDecimals from './hooks/useDecimals';
 
-interface AmountAndTokenInputProps {
-  setErrorMessage?: ComponentProps<typeof AmountInput>['setErrorMessage'];
-}
-
-const AmountAndTokenInput: FC<AmountAndTokenInputProps> = ({
-  setErrorMessage,
-}) => {
-  const { amount, setAmount, setSelectedTokenId, tokenIdOptions } = useBridge();
+const AmountAndTokenInput: FC = () => {
+  const {
+    amount,
+    setAmount,
+    setSelectedTokenId,
+    tokenIdOptions,
+    setIsInputError,
+  } = useBridge();
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
@@ -48,11 +48,11 @@ const AmountAndTokenInput: FC<AmountAndTokenInputProps> = ({
           }}
           placeholder=""
           wrapperClassName="!pr-0"
-          setErrorMessage={setErrorMessage}
           max={balance ? convertDecimalToBn(balance, decimals) : null}
           maxErrorMessage="Insufficient balance"
           min={minAmount ? convertDecimalToBn(minAmount, decimals) : null}
           minErrorMessage="Amount too small"
+          setErrorMessage={() => setIsInputError(true)}
         />
         <Dropdown>
           <DropdownTrigger asChild>
