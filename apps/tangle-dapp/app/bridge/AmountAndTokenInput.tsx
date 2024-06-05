@@ -33,7 +33,6 @@ const AmountAndTokenInput: FC = () => {
     setIsAmountInputError,
     isAmountInputError,
   } = useBridge();
-  console.log('amount :', amount);
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();

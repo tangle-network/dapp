@@ -72,7 +72,6 @@ const AmountInput: FC<AmountInputProps> = ({
     if (max !== null) {
       setAmount(max);
       refreshDisplayAmount(max);
-      inputRef.current?.focus();
     }
   }, [max, refreshDisplayAmount, setAmount]);
 
