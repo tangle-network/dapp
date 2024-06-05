@@ -17,7 +17,7 @@ import {
 } from 'react';
 
 import { BRIDGE } from '../constants/bridge';
-import { BridgeTokenId,BridgeWalletError } from '../types/bridge';
+import { BridgeTokenId, BridgeWalletError } from '../types/bridge';
 import { isEVMChain, isSubstrateChain } from '../utils/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = Object.keys(BRIDGE).map(
