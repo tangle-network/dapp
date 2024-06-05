@@ -24,6 +24,7 @@ export type AmountInputProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
+  errorMessageClassName?: string;
 };
 
 const AmountInput: FC<AmountInputProps> = ({
@@ -44,6 +45,7 @@ const AmountInput: FC<AmountInputProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
+  errorMessageClassName,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
@@ -104,6 +106,7 @@ const AmountInput: FC<AmountInputProps> = ({
       wrapperClassName={wrapperClassName}
       bodyClassName={bodyClassName}
       dropdownBodyClassName={dropdownBodyClassName}
+      errorMessageClassName={errorMessageClassName}
     >
       <Input
         id={id}
