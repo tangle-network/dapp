@@ -122,7 +122,8 @@ export default function useActionButton() {
     }
 
     // TODO: Implement bridge tx
-    // NOTE: use parseUnits to pass to SygmaSDK tx
+    // TODO: use parseUnits to pass to SygmaSDK tx
+    // TODO: handle calculate real amount to bridge when user choose max amount
   }, [selectedSourceChain, isEvmWrongNetwork, switchNetwork]);
 
   const buttonAction = useMemo(() => {
