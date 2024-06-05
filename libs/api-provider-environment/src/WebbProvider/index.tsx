@@ -48,7 +48,12 @@ import {
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
-import { BaseError as WagmiBaseError, WagmiProvider, useConnect } from 'wagmi';
+import {
+  type State as WagmiState,
+  BaseError as WagmiBaseError,
+  WagmiProvider,
+  useConnect,
+} from 'wagmi';
 import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
 import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
@@ -64,7 +69,7 @@ import {
 } from './private';
 import { useActiveAccount, useActiveChain, useActiveWallet } from './subjects';
 
-interface WebbProviderProps extends BareProps {
+interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
   applicationName: string;
   applicationVersion?: string;
@@ -86,7 +91,7 @@ const apiConfig = ApiConfig.init({
 
 const appNetworkStoragePromise = netStorageFactory();
 
-const WebbProviderInner: FC<WebbProviderProps> = ({
+const WebbProviderInner: FC<WebbProviderInnerProps> = ({
   children,
   appEvent,
   applicationName,
@@ -849,11 +854,18 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
 
 const queryClient = new QueryClient();
 
-export const WebbProvider: FC<WebbProviderProps> = (props) => {
+interface WebbProviderProps extends WebbProviderInnerProps {
+  wagmiInitialState?: WagmiState;
+}
+
+export const WebbProvider: FC<WebbProviderProps> = ({
+  wagmiInitialState,
+  ...innerProps
+}) => {
   return (
-    <WagmiProvider config={wagmiConfig}>
+    <WagmiProvider config={wagmiConfig} initialState={wagmiInitialState}>
       <QueryClientProvider client={queryClient}>
-        <WebbProviderInner {...props} />
+        <WebbProviderInner {...innerProps} />
       </QueryClientProvider>
     </WagmiProvider>
   );

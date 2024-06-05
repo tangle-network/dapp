@@ -8,6 +8,7 @@ const chains = Object.values(chainsConfig).map((chainCfg) =>
 ) as [Chain, ...Chain[]];
 
 const config = createConfig({
+  ssr: true,
   chains,
   client: ({ chain }) => {
     return createClient({
