@@ -14,12 +14,12 @@ export default function ItemsContainer(props: {
 
   const { data: tvlData, isLoading: tvlDataLoading } = useSWR(
     [getPoolInfoCardTvlData.name, poolAddress, epochStart, epochNow],
-    ([, ...args]) => getPoolInfoCardTvlData(...args)
+    ([, ...args]) => getPoolInfoCardTvlData(...args),
   );
 
   const { data: depositData, isLoading: depositDataLoading } = useSWR(
     [getPoolInfoCardDepositData.name, poolAddress, epochNow],
-    ([, ...args]) => getPoolInfoCardDepositData(...args)
+    ([, ...args]) => getPoolInfoCardDepositData(...args),
   );
 
   return (

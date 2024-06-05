@@ -36,7 +36,7 @@ const GovernanceFncCaller: FC<GovernanceFncCallerProps> = ({
             className={cx(
               'ml-2 fill-mono-120 dark:fill-mono-100 duration-300',
               'group-radix-state-open:rotate-180',
-              'group-radix-state-closed:rotate-0'
+              'group-radix-state-closed:rotate-0',
             )}
           />
         </AccordionButtonBase>
@@ -45,7 +45,7 @@ const GovernanceFncCaller: FC<GovernanceFncCallerProps> = ({
           className={cx(
             'overflow-hidden',
             'radix-state-open:animate-accordion-slide-down',
-            'radix-state-closed:animate-accordion-slide-up'
+            'radix-state-closed:animate-accordion-slide-up',
           )}
         >
           <div className="flex flex-col items-end gap-2">

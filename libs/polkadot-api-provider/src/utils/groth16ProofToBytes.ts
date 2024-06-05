@@ -6,7 +6,7 @@ import { Groth16Proof } from '../types';
 async function groth16ProofToBytes(proof: Groth16Proof): Promise<Uint8Array> {
   const callData = await groth16.exportSolidityCallData(
     proof.proof,
-    proof.publicSignals
+    proof.publicSignals,
   );
 
   const parsedCalldata = JSON.parse('[' + callData + ']');

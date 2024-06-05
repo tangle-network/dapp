@@ -30,7 +30,7 @@ const ClaimingAccountInput: FC<Props> = ({
   const { notificationApi } = useWebbUI();
 
   const handleEvmSwitch = async (
-    walletClient: WebbWeb3Provider['walletClient']
+    walletClient: WebbWeb3Provider['walletClient'],
   ) => {
     try {
       await walletClient.requestPermissions({ eth_accounts: {} });
@@ -62,7 +62,7 @@ const ClaimingAccountInput: FC<Props> = ({
             'border-mono-80 dark:border-mono-120',
             'text-mono-140 dark:text-mono-40',
             'hover:enabled:border-blue-40 dark:hover:enabled:border-blue-70',
-            'disabled:opacity-80'
+            'disabled:opacity-80',
           )}
         >
           <div className="flex items-center space-x-1 w-full max-w-full overflow-x-hidden">

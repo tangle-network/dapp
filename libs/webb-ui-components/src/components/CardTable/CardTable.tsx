@@ -35,11 +35,11 @@ export const CardTable: React.FC<CardTableProps> = ({
       {...props}
       className={twMerge(
         'rounded-lg bg-mono-0 dark:bg-mono-180 overflow-hidden',
-        className
+        className,
       )}
     >
       {/** Title and filter */}
-      <div className="flex items-center justify-between px-6 pt-4 py-4">
+      <div className="flex items-center justify-between px-6 py-4 pt-4">
         <TitleWithInfo {...titleProps} />
 
         {leftTitle}

@@ -15,7 +15,7 @@ function getSubstrateLockId(rawLockId: U8aFixed): SubstrateLockId {
   const lockIdString = u8aToString(rawLockId);
 
   return Object.values(SubstrateLockId).includes(
-    lockIdString as SubstrateLockId
+    lockIdString as SubstrateLockId,
   )
     ? (lockIdString as SubstrateLockId)
     : SubstrateLockId.OTHER;

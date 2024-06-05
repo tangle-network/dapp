@@ -1,5 +1,8 @@
 import { ChainIcon } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import {
   Network,
   TANGLE_LOCAL_DEV_NETWORK,
@@ -11,7 +14,6 @@ import { FC, ReactNode, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
-import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
 import { TANGLE_TESTNET_CHAIN_NAME } from './NetworkSelectionButton';
 
@@ -122,7 +124,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
         'flex gap-2 w-full py-2 px-4',
         onClick !== undefined &&
           'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-140',
-        isSelected && 'bg-mono-20 dark:bg-mono-140 cursor-default'
+        isSelected && 'bg-mono-20 dark:bg-mono-140 cursor-default',
       )}
     >
       <ChainIcon size="lg" name={TANGLE_TESTNET_CHAIN_NAME} />

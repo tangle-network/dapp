@@ -23,8 +23,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/stats-dapp/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/stats-dapp/jest.config.ts"
       }
     },
     "gql-codegen": {

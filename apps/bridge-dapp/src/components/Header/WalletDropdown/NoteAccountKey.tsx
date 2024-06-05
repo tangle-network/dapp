@@ -1,6 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { InformationLine } from '@webb-tools/icons/InformationLine';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/Typography';
 import cx from 'classnames';
 import { useMemo } from 'react';
 import { NOTE_ACCOUNT_DOCS_URL } from '../../../constants/links';
@@ -12,7 +12,7 @@ const NoteAccountKey = () => {
   // Get the note account keypair to display public + encryption key
   const keyPairStr = useMemo(
     () => noteManager?.getKeypair().toString(),
-    [noteManager]
+    [noteManager],
   );
 
   return (
@@ -22,7 +22,7 @@ const NoteAccountKey = () => {
         'hover:bg-mono-20 hover:dark:bg-mono-170',
         keyPairStr ? 'items-center' : 'items-start',
         keyPairStr ? 'space-x-1' : 'space-x-0.5',
-        keyPairStr ? 'p-2' : 'px-1'
+        keyPairStr ? 'p-2' : 'px-1',
       )}
     >
       {keyPairStr ? (

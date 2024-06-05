@@ -18,7 +18,7 @@ export type UseCurrenciesBalancesReturnType = {
 export const useCurrenciesBalances = (
   currencies: Currency[],
   typedChainId?: number,
-  address?: string
+  address?: string,
 ): UseCurrenciesBalancesReturnType => {
   const { activeApi, activeChain, activeAccount } = useWebContext();
 
@@ -68,7 +68,7 @@ export const useCurrenciesBalances = (
   const isAllBalancesLoaded = useMemo(
     () =>
       currencies.every((currency) => typeof balances[currency.id] === 'number'),
-    [balances, currencies]
+    [balances, currencies],
   );
 
   useEffect(() => {

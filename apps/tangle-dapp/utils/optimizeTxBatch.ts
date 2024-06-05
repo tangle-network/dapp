@@ -5,7 +5,7 @@ import { assert } from '@polkadot/util';
 
 const optimizeTxBatch = (
   api: ApiPromise,
-  txs: SubmittableExtrinsic<'promise', ISubmittableResult>[]
+  txs: SubmittableExtrinsic<'promise', ISubmittableResult>[],
 ) => {
   assert(txs.length > 0, 'At least one transaction should be provided');
 

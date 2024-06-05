@@ -1,7 +1,6 @@
-import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
+import { Typography } from '../../typography/Typography';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InfoItemProps } from './types';
 
@@ -40,7 +39,7 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
           variant={leftTextProps.variant ?? 'utility'}
           className={twMerge(
             'text-mono-100 dark:text-mono-80',
-            leftTextProps.className
+            leftTextProps.className,
           )}
         />
 
@@ -56,12 +55,12 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
           <Typography
             variant="body1"
             fw="bold"
-            className="text-mono-180 dark:text-mono-80 capitalize"
+            className="capitalize text-mono-180 dark:text-mono-80"
           >
             {rightContent}
           </Typography>
         ) : null}
       </div>
     );
-  }
+  },
 );

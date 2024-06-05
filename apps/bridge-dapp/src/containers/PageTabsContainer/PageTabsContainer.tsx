@@ -21,19 +21,19 @@ const PageTabsContainer: FC<PageTabsContainerProps> = ({
 
   const rootPath = useMemo(
     () => (pageType === 'bridge' ? BRIDGE_PATH : WRAPPER_PATH),
-    [pageType]
+    [pageType],
   );
 
   const tabs = useMemo(
     () => (pageType === 'bridge' ? BRIDGE_TABS : WRAPPER_TABS),
-    [pageType]
+    [pageType],
   );
 
   // Find active tab from pathname
   const activeTab = useMemo(
     () =>
       pathname.split('/').find((path) => !!tabs.find((tab) => tab === path)),
-    [pathname, tabs]
+    [pathname, tabs],
   );
 
   return (
@@ -46,10 +46,10 @@ const PageTabsContainer: FC<PageTabsContainerProps> = ({
         'border border-mono-40 dark:border-mono-160 py-8 px-4 md:!px-9',
         'flex flex-col',
         'shadow-webb-lg dark:shadow-webb-lg-dark',
-        className
+        className,
       )}
     >
-      <ul className="flex items-center gap-4 overflow-x-scroll pb-2">
+      <ul className="flex items-center gap-4 pb-2 overflow-x-scroll">
         {tabs.map((tab, idx) => (
           <li key={`${tab}-${idx}`}>
             <Link
@@ -58,7 +58,7 @@ const PageTabsContainer: FC<PageTabsContainerProps> = ({
                 'h4 font-bold',
                 activeTab === tab
                   ? 'text-mono-200 dark:text-mono-0'
-                  : 'text-mono-100'
+                  : 'text-mono-100',
               )}
             >
               {`${tab[0].toUpperCase()}${tab.substring(1)}`}

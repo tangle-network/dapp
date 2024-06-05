@@ -52,17 +52,17 @@ export const useVAnchor = (): VAnchorAPI => {
       }
 
       const { chainId, chainType } = parseTypedChainId(
-        +note.note.targetChainId
+        +note.note.targetChainId,
       );
       const noteResourceId = await api.getResourceId(
         note.note.targetIdentifyingData,
         chainId,
-        chainType
+        chainType,
       );
 
       await noteManager.addNote(noteResourceId, note);
     },
-    [api, noteManager, notificationApi]
+    [api, noteManager, notificationApi],
   );
 
   const removeNoteFromNoteManager = useCallback(
@@ -78,17 +78,17 @@ export const useVAnchor = (): VAnchorAPI => {
       }
 
       const { chainId, chainType } = parseTypedChainId(
-        +note.note.targetChainId
+        +note.note.targetChainId,
       );
       const noteResourceId = await api.getResourceId(
         note.note.targetIdentifyingData,
         chainId,
-        chainType
+        chainType,
       );
 
       await noteManager.removeNote(noteResourceId, note);
     },
-    [api, noteManager, notificationApi]
+    [api, noteManager, notificationApi],
   );
 
   return {

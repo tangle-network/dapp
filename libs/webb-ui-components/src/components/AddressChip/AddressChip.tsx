@@ -1,10 +1,11 @@
 import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { WalletLineIcon, ShieldKeyholeLineIcon } from '@webb-tools/icons';
+import WalletLineIcon from '@webb-tools/icons/WalletLineIcon';
+import ShieldKeyholeLineIcon from '@webb-tools/icons/ShieldKeyholeLineIcon';
 
 import { AddressChipProps } from './types';
-import { Typography } from '../../typography';
+import { Typography } from '../../typography/Typography';
 import { Chip } from '../Chip';
 import SkeletonLoader from '../SkeletonLoader';
 import { shortenHex, shortenString } from '../../utils';
@@ -16,7 +17,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
         color="grey"
         className={twMerge(
           'w-fit flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1',
-          classNameProp
+          classNameProp,
         )}
         ref={ref}
       >
@@ -38,15 +39,15 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
             {isEthereumAddress(address)
               ? shortenHex(address, 2)
               : isAddress(address)
-              ? shortenString(address, 3)
-              : 'N/A'}
+                ? shortenString(address, 3)
+                : 'N/A'}
           </Typography>
         ) : (
           <SkeletonLoader />
         )}
       </Chip>
     );
-  }
+  },
 );
 
 export default AddressChip;

@@ -4,7 +4,7 @@ import {
   Typography,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
@@ -30,7 +30,7 @@ const TxBasicInfo: FC<TxBasicInfoProps> = ({
 }) => {
   const blockExplorerUrl = useMemo(
     () => chainsConfig[destinationTypedChainId]?.blockExplorers?.default.url,
-    [destinationTypedChainId]
+    [destinationTypedChainId],
   );
 
   const getAddressTypeValueComponent = useCallback(
@@ -42,14 +42,14 @@ const TxBasicInfo: FC<TxBasicInfoProps> = ({
             blockExplorerUrl,
             hash,
             isTx ? 'tx' : 'address',
-            'web3'
+            'web3',
           ).toString()}
         />
       ) : (
         <ValueWithCopyTooltip value={shortenHex(hash, 5)} copyText={hash} />
       );
     },
-    [blockExplorerUrl]
+    [blockExplorerUrl],
   );
 
   return (

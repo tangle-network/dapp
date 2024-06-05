@@ -43,7 +43,7 @@ const Unwrap = lazy(() => import('../pages/Hubble/Wrapper/Unwrap'));
 const Account = lazy(() => import('../pages/Account'));
 const AccountTransactions = lazy(() => import('../pages/Account/Transactions'));
 const AccountTransactionDetail = lazy(
-  () => import('../pages/Account/Transactions/TransactionDetail')
+  () => import('../pages/Account/Transactions/TransactionDetail'),
 );
 const Ecosystem = lazy(() => import('../pages/Ecosystem'));
 

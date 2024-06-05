@@ -1,10 +1,6 @@
-import React from 'react';
-
-import {
-  BridgeInputGroup,
-  AmountInput,
-  ChainInput,
-} from '@webb-tools/webb-ui-components/components';
+import { AmountInput } from '../../components/BridgeInputs/AmountInput';
+import { BridgeInputGroup } from '../../components/BridgeInputs/BridgeInputGroup';
+import { ChainInput } from '../../components/BridgeInputs/ChainInput';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -12,13 +8,13 @@ export default {
   component: BridgeInputGroup,
 };
 
-export const OneItems = (args) => (
+export const OneItems = () => (
   <BridgeInputGroup>
     <AmountInput />
   </BridgeInputGroup>
 );
 
-export const TwoItems = (args) => (
+export const TwoItems = () => (
   <BridgeInputGroup>
     <AmountInput />
     <ChainInput />

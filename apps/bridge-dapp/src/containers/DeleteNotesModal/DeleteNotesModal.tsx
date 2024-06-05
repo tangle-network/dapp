@@ -19,7 +19,7 @@ export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
 
   const isOpen = useMemo(
     () => Array.isArray(notes) && notes.length > 0,
-    [notes]
+    [notes],
   );
 
   const handleOpenChange = useCallback(
@@ -28,7 +28,7 @@ export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
         setNotes?.(undefined);
       }
     },
-    [setNotes]
+    [setNotes],
   );
 
   const handleDownloadNotes = useCallback(() => {

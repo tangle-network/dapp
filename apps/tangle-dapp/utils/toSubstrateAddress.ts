@@ -26,7 +26,7 @@ export const toSubstrateAddress = (address: string) => {
 
   assert(
     isSubstrateAddress(address),
-    'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)'
+    'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)',
   );
 
   return address;

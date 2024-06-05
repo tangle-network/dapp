@@ -2,7 +2,7 @@ import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { TAppEvent } from '../../app-event';
 
 export function insufficientApiInterface(
-  appEvent: TAppEvent
+  appEvent: TAppEvent,
 ): InteractiveFeedback {
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
@@ -21,14 +21,14 @@ export function insufficientApiInterface(
           interactiveFeedback?.cancelWithoutHandler();
           appEvent.send('changeNetworkSwitcherVisibility', true);
         },
-        'success'
+        'success',
       )
       .actions(),
     () => {
       interactiveFeedback?.cancel();
     },
     feedbackBody,
-    WebbErrorCodes.UnsupportedChain
+    WebbErrorCodes.UnsupportedChain,
   );
   return interactiveFeedback;
 }

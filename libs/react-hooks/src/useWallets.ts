@@ -24,7 +24,7 @@ export const useWallets = () => {
       const configureSelectedWallets = async () => {
         const walletIds = Object.values(activeChain?.wallets ?? {});
         const walletsFromActiveChain = walletIds.map(
-          (walletId) => apiConfig.wallets[walletId]
+          (walletId) => apiConfig.wallets[walletId],
         );
 
         const wallets = await Promise.all(
@@ -61,8 +61,8 @@ export const useWallets = () => {
                 async endSession() {},
                 canEndSession: false,
               };
-            }
-          )
+            },
+          ),
         );
 
         if (isSubscribed) {
@@ -76,7 +76,7 @@ export const useWallets = () => {
       };
     },
     // prettier-ignore
-    [activeChain, activeWallet, activeApi, inactivateApi, apiConfig.wallets, appName]
+    [activeChain, activeWallet, activeApi, inactivateApi, apiConfig.wallets, appName],
   );
 
   return {

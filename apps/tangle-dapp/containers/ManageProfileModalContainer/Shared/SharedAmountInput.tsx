@@ -66,7 +66,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
     true,
     setAmount,
     minErrorMessage,
-    ERROR_NOT_ENOUGH_BALANCE
+    ERROR_NOT_ENOUGH_BALANCE,
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,7 +74,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
   const setMaxRestakingAmount = useCallback(() => {
     assert(
       maxRestakingAmount !== null,
-      'Should not be able to set max restaking amount if not yet loaded, since the max button should have been disabled'
+      'Should not be able to set max restaking amount if not yet loaded, since the max button should have been disabled',
     );
 
     setAmount(maxRestakingAmount);

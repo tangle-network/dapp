@@ -54,7 +54,7 @@ export const UploadModalContent = forwardRef<
         setFile(files[0]);
       }
     },
-    [onRemoveAllNotes]
+    [onRemoveAllNotes],
   );
 
   const handleRemoveAllNotes = useCallback(() => {
@@ -116,7 +116,7 @@ export const UploadModalContent = forwardRef<
               setProgress(((index + 1) / notes.length) * 100);
               setNotes((prev) => ({ ...prev, [id]: parsedNote }));
               onNotesChange?.(id, parsedNote);
-            })
+            }),
           );
 
           return;
@@ -177,11 +177,11 @@ export const UploadModalContent = forwardRef<
 
             const sourceCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(sourceChain.chainType, sourceChain.id)
+              calculateTypedChainId(sourceChain.chainType, sourceChain.id),
             );
             const destCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(destChain.chainType, destChain.id)
+              calculateTypedChainId(destChain.chainType, destChain.id),
             );
 
             if (!sourceCurrency || !destCurrency) {
@@ -190,7 +190,7 @@ export const UploadModalContent = forwardRef<
 
             const balance = formatUnits(
               BigInt(note.note.amount),
-              +note.note.denomination
+              +note.note.denomination,
             );
 
             return (

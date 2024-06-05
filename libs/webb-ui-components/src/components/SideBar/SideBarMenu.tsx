@@ -23,7 +23,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
       pathnameOrHash,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -48,7 +48,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
                 'bg-mono-0 dark:bg-mono-180 fixed left-0 top-0',
                 'animate-[sideBarSlideLeftToRight_400ms]',
                 'flex flex-col justify-between',
-                overrideContentProps?.className
+                overrideContentProps?.className,
               )}
             >
               <div>
@@ -74,5 +74,5 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
         </Dialog.Root>
       </div>
     );
-  }
+  },
 );

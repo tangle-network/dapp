@@ -27,13 +27,13 @@ const DashboardSettingsTab: FC = () => {
       shortBio: '',
       ...user,
     }),
-    [user]
+    [user],
   );
 
   const [email, setEmail] = useState(initialUser.email);
 
   const [githubUsername, setGithubUsername] = useState(
-    initialUser.githubUsername
+    initialUser.githubUsername,
   );
 
   const [twitterHandle, setTwitter] = useState(initialUser.twitterHandle || '');

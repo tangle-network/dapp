@@ -12,13 +12,13 @@ import { CurrencyConfig } from '../currencies';
  */
 export const getBridgeConfigByAsset = (
   currencies: Record<number, CurrencyConfig>,
-  anchors: ApiConfig['anchors']
+  anchors: ApiConfig['anchors'],
 ): ApiConfig['bridgeByAsset'] => {
   const bridgeByAsset: ApiConfig['bridgeByAsset'] = {};
 
   // Get all fungible currencies
   const fungibleCurrencies = Object.values(currencies).filter(
-    (currency) => currency.role === CurrencyRole.Governable
+    (currency) => currency.role === CurrencyRole.Governable,
   );
 
   // Calculate the bridge config by the fungible currencies

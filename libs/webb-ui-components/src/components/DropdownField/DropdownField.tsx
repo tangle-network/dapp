@@ -1,3 +1,5 @@
+'use client';
+
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem';
@@ -13,12 +15,13 @@ const DropdownField = ({
   selectedItem,
   setSelectedItem,
   className,
+  dropdownBodyClassName,
 }: DropdownFieldProps) => {
   const handleValueChange = useCallback(
     (selectedItem: string) => {
       setSelectedItem(selectedItem);
     },
-    [setSelectedItem]
+    [setSelectedItem],
   );
 
   return (
@@ -27,7 +30,7 @@ const DropdownField = ({
         'px-4 py-2 w-full h-[74px] rounded-lg',
         'bg-mono-20 dark:bg-mono-160',
         'outline outline-1 outline-offset-1 outline-transparent',
-        className
+        className,
       )}
     >
       <Typography
@@ -56,7 +59,12 @@ const DropdownField = ({
           </div>
         </DropdownBasicButton>
 
-        <DropdownBody className="w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4">
+        <DropdownBody
+          className={twMerge(
+            'max-w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4',
+            dropdownBodyClassName,
+          )}
+        >
           <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
             {items.map((item, i) => (
               <RadioItem key={`${item}-${i}`} value={item} asChild>
@@ -65,7 +73,7 @@ const DropdownField = ({
                     selectedItem === item
                       ? 'bg-blue-10 hover:!bg-blue-10 dark:bg-blue-120 hover:dark:!bg-blue-120'
                       : '',
-                    'hover:!bg-inherit'
+                    'hover:!bg-inherit',
                   )}
                 >
                   <Typography

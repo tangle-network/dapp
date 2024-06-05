@@ -115,7 +115,7 @@ export class WebbPolkadot
     readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     private readonly provider: PolkadotProvider,
-    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>
+    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
   ) {
     super();
 
@@ -158,7 +158,7 @@ export class WebbPolkadot
     const initialSupportedCurrencies: Record<number, Currency> = {};
     for (const currencyConfig of Object.values(config.currencies)) {
       initialSupportedCurrencies[currencyConfig.id] = new Currency(
-        currencyConfig
+        currencyConfig,
       );
     }
 
@@ -171,7 +171,7 @@ export class WebbPolkadot
         if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
           initialSupportedBridges[bridgeConfig.asset] = new Bridge(
             bridgeCurrency,
-            bridgeTargets
+            bridgeTargets,
           );
         }
       }
@@ -179,7 +179,7 @@ export class WebbPolkadot
 
     this.state = new WebbState(
       initialSupportedCurrencies,
-      initialSupportedBridges
+      initialSupportedBridges,
     );
 
     // set the available bridges of the new chain
@@ -228,7 +228,7 @@ export class WebbPolkadot
         .action(
           'Update MetaData',
           () => this.provider.updateMetaData(metaData),
-          'success'
+          'success',
         )
         .actions();
       const feedback = new InteractiveFeedback(
@@ -237,7 +237,7 @@ export class WebbPolkadot
         () => {
           return null;
         },
-        feedbackEntries
+        feedbackEntries,
       );
 
       /// emit the feedback object
@@ -267,19 +267,19 @@ export class WebbPolkadot
     apiConfig: ApiConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
     typedChainId: number,
-    wallet: Wallet // Current wallet to initialize
+    wallet: Wallet, // Current wallet to initialize
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(
       appName,
       endpoints,
       errorHandler.onError,
-      wallet
+      wallet,
     );
 
     const provider = new PolkadotProvider(
       apiPromise,
       injectedExtension,
-      new PolkaTXBuilder(apiPromise, notification, injectedExtension)
+      new PolkaTXBuilder(apiPromise, notification, injectedExtension),
     );
     const accounts = provider.accounts;
     const instance = new WebbPolkadot(
@@ -290,7 +290,7 @@ export class WebbPolkadot
       apiConfig,
       notification,
       provider,
-      accounts
+      accounts,
     );
     /// check metadata update
     await instance.awaitMetaDataCheck();
@@ -306,7 +306,7 @@ export class WebbPolkadot
   static async getApiPromise(endpoint: string): Promise<ApiPromise> {
     return new Promise((resolve, reject) => {
       resolve(
-        PolkadotProvider.getApiPromise([endpoint], (error) => reject(error))
+        PolkadotProvider.getApiPromise([endpoint], (error) => reject(error)),
       );
     });
   }
@@ -322,7 +322,7 @@ export class WebbPolkadot
     const sub = await this.provider.api.rpc.chain.subscribeFinalizedHeads(
       (header) => {
         this._newBlock.next(header.number.toBigInt());
-      }
+      },
     );
     return sub;
   }
@@ -345,7 +345,7 @@ export class WebbPolkadot
       treeId?: number;
       palletId?: number;
       tx?: TransactionExecutor<NewNotesTxResult>;
-    }
+    },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -375,7 +375,7 @@ export class WebbPolkadot
           ...options,
           palletId,
           treeId,
-        }
+        },
       );
 
     // If unable to fetch leaves from the relayers, get them from chain
@@ -397,14 +397,14 @@ export class WebbPolkadot
       console.log(
         `Query leaves from chain ${
           chain?.name ?? 'Unknown'
-        } of tree id ${treeId} from block ${queryBlock} to ${endBlock.toNumber()}`
+        } of tree id ${treeId} from block ${queryBlock} to ${endBlock.toNumber()}`,
       );
 
       const leavesFromChain = await getLeaves(
         api,
         treeId,
         queryBlock,
-        endBlock.toNumber()
+        endBlock.toNumber(),
       );
 
       const leavesFromChainHex = leavesFromChain
@@ -414,7 +414,7 @@ export class WebbPolkadot
       // Merge the leaves from chain with the stored leaves
       // and fixed them to 32 bytes
       const leaves = [...storedLeaves, ...leavesFromChainHex].map((leaf) =>
-        toFixedHex(leaf)
+        toFixedHex(leaf),
       );
 
       console.log(`Got ${leaves.length} leaves from chain`);
@@ -426,7 +426,7 @@ export class WebbPolkadot
           treeHeight,
           leaves,
           targetRoot,
-          commitment.toString()
+          commitment.toString(),
         );
 
       // If the leafIndex is -1, it means the commitment is not in the tree
@@ -460,7 +460,7 @@ export class WebbPolkadot
    */
   async getZkFixtures(
     maxEdges: number,
-    isSmall?: boolean
+    isSmall?: boolean,
   ): Promise<ZkComponents> {
     if (isSmall) {
       if (this.smallFixtures) {
@@ -501,12 +501,12 @@ export class WebbPolkadot
 
   async getVAnchorMaxEdges(
     treeId: string,
-    provider?: PublicClient | ApiPromise
+    provider?: PublicClient | ApiPromise,
   ): Promise<number> {
     // If provider is not instance of ApiPromise, display error and use `this.api` instead
     if (!(provider instanceof ApiPromise)) {
       console.error(
-        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`',
       );
       provider = this.api;
     }
@@ -529,11 +529,11 @@ export class WebbPolkadot
 
   async getVAnchorLevels(
     treeId: string,
-    provider?: PublicClient | ApiPromise
+    provider?: PublicClient | ApiPromise,
   ): Promise<number> {
     if (!(provider instanceof ApiPromise)) {
       console.error(
-        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`',
       );
       provider = this.api;
     }
@@ -576,7 +576,7 @@ export class WebbPolkadot
       (acc) =>
         acc.address === account.address &&
         acc.meta.name === account.name &&
-        acc.meta.source === this.injectedExtension.name
+        acc.meta.source === this.injectedExtension.name,
     );
 
     if (!injectedAccount) {

@@ -14,14 +14,13 @@ export const useRelayerManager = (): RelayerManagerApi => {
   const addRelayer = useCallback(
     async (endpoint: string) => {
       const relayerManagerFactory = await getRelayerManagerFactory();
-      const relayerCapabilities = await relayerManagerFactory.addRelayer(
-        endpoint
-      );
+      const relayerCapabilities =
+        await relayerManagerFactory.addRelayer(endpoint);
       const relayer = new WebbRelayer(endpoint, relayerCapabilities[endpoint]);
       activeApi?.relayerManager.addRelayer(relayer);
       return relayer;
     },
-    [activeApi]
+    [activeApi],
   );
 
   const getInfo = useCallback(async (endpoint: string) => {

@@ -11,7 +11,7 @@ export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
         {...props}
         className={twMerge(
           'p-9 pb-0 flex items-center justify-between',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -24,5 +24,5 @@ export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
         </button>
       </div>
     );
-  }
+  },
 );

@@ -46,7 +46,7 @@ export class ActionsBuilder {
     name: string,
     handler: () => any,
     level: FeedbackLevel = 'info',
-    id: string | null = null
+    id: string | null = null,
   ): ActionsBuilder {
     this._actions[name] = {
       id,
@@ -92,7 +92,7 @@ export class InteractiveFeedback extends EventBus<{
     /// The body of the interactive feedback showing the message
     public readonly feedbackBody: FeedbackBody,
     /// this can be used to identify the feedback by reason and hide it
-    public reason?: number | string
+    public reason?: number | string,
   ) {
     super();
   }

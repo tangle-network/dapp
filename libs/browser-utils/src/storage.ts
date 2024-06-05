@@ -3,7 +3,7 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import Storage from '@webb-tools/dapp-types/Storage';
+import { Storage } from '@webb-tools/dapp-types';
 import isBrowser from './isBrowser';
 
 /**
@@ -155,7 +155,7 @@ export const getV1NotesRecord = async () => {
 
       return acc;
     },
-    {} as Record<string, Array<string>>
+    {} as Record<string, Array<string>>,
   );
 
   if (Object.keys(encryptedNotesMap).length === 0) {
@@ -285,7 +285,7 @@ export const resetMultiAccountNoteStorage = (pubKey: string): void => {
 
   localStorage.setItem(
     MULTI_ACCOUNT_NOTE_STORAGE_KEY,
-    JSON.stringify({ ...parsedStorage, [pubKey]: {} })
+    JSON.stringify({ ...parsedStorage, [pubKey]: {} }),
   );
 };
 
@@ -318,6 +318,6 @@ export const multiAccountNoteStorageFactory = () => {
 
         return defaultResult;
       },
-    }
+    },
   );
 };

@@ -39,7 +39,7 @@ export const relayerConfig: RelayerConfig[] = [
 ];
 
 export function relayerSubstrateNameToTypedChainId(
-  name: string
+  name: string,
 ): PresetTypedChainId {
   switch (name) {
     case 'tangle':
@@ -63,7 +63,7 @@ export function chainNameAdapter(name: string, basedOn: RelayerCMDBase) {
     return basedOn === 'evm'
       ? calculateTypedChainId(ChainType.EVM, Number(name))
       : relayerSubstrateNameToTypedChainId(name);
-  } catch (e) {
+  } catch {
     return -1;
   }
 }

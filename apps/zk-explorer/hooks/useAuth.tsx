@@ -54,7 +54,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(
-    IS_DEBUG_MODE ? MOCK_USER : null
+    IS_DEBUG_MODE ? MOCK_USER : null,
   );
 
   const [isLoggedIn, setIsLoggedIn] = useState(IS_DEBUG_MODE);
@@ -76,7 +76,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         // TODO: Alert the user that the login attempt failed.
         throw new Error('Not authenticated');
       }
-    } catch (error) {
+    } catch {
       if (!IS_DEBUG_MODE) {
         setUser(null);
         setIsLoggedIn(false);
@@ -113,7 +113,7 @@ export const useRequireAuth = (): User => {
   useEffect(() => {
     if (!auth.isLoggedIn) {
       alert(
-        'You must be logged in to access this page or resource. Please, sign in then try again.'
+        'You must be logged in to access this page or resource. Please, sign in then try again.',
       );
 
       router.push(RelativePageUrl.Root);

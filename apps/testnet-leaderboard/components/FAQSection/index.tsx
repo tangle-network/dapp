@@ -18,7 +18,7 @@ const faqItems = [
     answer: (
       <a
         href={populateDocsUrl(
-          WEBB_DOC_ROUTES_RECORD['tangle-network'].overview
+          WEBB_DOC_ROUTES_RECORD['tangle-network'].overview,
         )}
         target="_blank"
         rel="noopener noreferrer"

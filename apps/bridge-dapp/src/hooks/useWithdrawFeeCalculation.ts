@@ -44,8 +44,8 @@ export default function useWithdrawFeeCalculation(args: {
         fungibleCurrencyId: fungibleCfg?.id,
         typedChainId:
           typeof typedChainId === 'number' ? typedChainId : undefined,
-      } satisfies MaxFeeInfoOption),
-    [fungibleCfg?.id, typedChainId]
+      }) satisfies MaxFeeInfoOption,
+    [fungibleCfg?.id, typedChainId],
   );
 
   const { isLoading, feeInfo, fetchFeeInfo, resetMaxFeeInfo } =
@@ -88,7 +88,7 @@ export default function useWithdrawFeeCalculation(args: {
     if (hasRefund && refundAmount) {
       const parsedRefund = parseFloat(formatEther(refundAmount));
       const parsedExchangeRate = parseFloat(
-        formatEther(relayerFeeInfo.refundExchangeRate)
+        formatEther(relayerFeeInfo.refundExchangeRate),
       );
 
       const refundCost = parsedRefund * parsedExchangeRate;
@@ -116,7 +116,7 @@ export default function useWithdrawFeeCalculation(args: {
 
   const allInputFilled = useMemo(() => {
     return [amount, wrappableCfg, chain, recipient, !recipientErrorMsg].every(
-      (item) => Boolean(item)
+      (item) => Boolean(item),
     );
   }, [amount, chain, recipient, recipientErrorMsg, wrappableCfg]);
 
@@ -138,13 +138,13 @@ export default function useWithdrawFeeCalculation(args: {
         activeRelayer.isSupported(
           typedChainId,
           anchorId,
-          activeApi.relayerManager.cmdKey
+          activeApi.relayerManager.cmdKey,
         );
 
       fetchFeeInfo(hasRefund && hasSupport ? activeRelayer : undefined);
     },
     // prettier-ignore
-    [activeApi?.relayerManager, activeRelayer, allInputFilled, anchorId, fetchFeeInfo, hasRefund, typedChainId]
+    [activeApi?.relayerManager, activeRelayer, allInputFilled, anchorId, fetchFeeInfo, hasRefund, typedChainId],
   );
 
   return {

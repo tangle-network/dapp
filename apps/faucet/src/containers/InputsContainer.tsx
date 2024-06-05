@@ -85,7 +85,7 @@ const AmountChip = () => {
   const amount = useObservableState(amount$);
 
   const token = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.token))
+    inputValues$.pipe(map((inputValues) => inputValues.token)),
   );
 
   const twitterHandle = useMemo(() => {
@@ -116,15 +116,15 @@ const TokenInfo = () => {
   const { inputValues$ } = useFaucetContext();
 
   const tokenAddress = useObservableState<string | undefined>(
-    inputValues$.pipe(map((inputValues) => inputValues.contractAddress))
+    inputValues$.pipe(map((inputValues) => inputValues.contractAddress)),
   );
 
   const typedChainId = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.chain))
+    inputValues$.pipe(map((inputValues) => inputValues.chain)),
   );
 
   const tokenSymbol = useObservableState(
-    inputValues$.pipe(map((inputValue) => inputValue.token))
+    inputValues$.pipe(map((inputValue) => inputValue.token)),
   );
 
   const isNative = useMemo(() => {

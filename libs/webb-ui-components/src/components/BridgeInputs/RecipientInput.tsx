@@ -1,9 +1,10 @@
-import { InformationLine } from '@webb-tools/icons';
+'use client';
+
+import { InformationLine } from '@webb-tools/icons/InformationLine';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { Typography } from '../../typography/Typography';
-import { Button } from '../buttons';
+import Button from '../buttons/Button';
 import { Input } from '../Input';
 import { Label } from '../Label';
 import { notificationApi } from '../Notification';
@@ -43,17 +44,17 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
       placeholder,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [address, setAddress] = useState<string | undefined>(() => value);
 
     const [recipientError, setRecipientError] = useState<string | undefined>(
-      undefined
+      undefined,
     );
 
     const error = useMemo(
       () => errorMessage || recipientError,
-      [recipientError, errorMessage]
+      [recipientError, errorMessage],
     );
 
     const onChange = useCallback(
@@ -70,7 +71,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
           isValidSet?.(false);
         }
       },
-      [isValidSet, onChangeProp, validate]
+      [isValidSet, onChangeProp, validate],
     );
 
     const handlePasteButtonClick = useCallback(async () => {
@@ -78,7 +79,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         const addr = await window.navigator.clipboard.readText();
 
         onChange(addr);
-      } catch (e) {
+      } catch {
         notificationApi({
           message: 'Failed to read clipboard',
           secondaryMessage:
@@ -145,5 +146,5 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         )}
       </>
     );
-  }
+  },
 );

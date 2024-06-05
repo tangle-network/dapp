@@ -7,12 +7,12 @@ import { Button, ButtonProps } from '../buttons';
 import { ErrorFallbackProps } from './types';
 
 const telegramInfo = constants.defaultSocialConfigs.find(
-  (c) => c.name === 'telegram'
+  (c) => c.name === 'telegram',
 );
 const contactLink = telegramInfo?.href ?? '';
 
 const githubInfo = constants.defaultSocialConfigs.find(
-  (c) => c.name === 'github'
+  (c) => c.name === 'github',
 );
 const reportIssueLink = `${githubInfo?.href ?? ''}/webb-dapp/issues/new/choose`;
 
@@ -46,7 +46,7 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
       title = 'Oops something went wrong.',
       ...props
     },
-    ref
+    ref,
   ) => {
     const description = useMemo(() => {
       if (descriptionProp) {
@@ -112,8 +112,8 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
         {...props}
         className={twMerge(
           'bg-mono-0 dark:bg-mono-180 p-6 rounded-lg',
-          'max-w-xl space-y-4',
-          className
+          'max-w-xl space-y-4 mx-auto',
+          className,
         )}
         ref={ref}
       >
@@ -151,5 +151,5 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
         </div>
       </div>
     );
-  }
+  },
 );

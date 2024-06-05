@@ -22,7 +22,7 @@ import { BehaviorSubject } from 'rxjs';
 import { getExplorerURI } from './utils';
 
 export function transactionItemStatusFromTxStatus(
-  txStatus: TransactionState
+  txStatus: TransactionState,
 ): TransactionItemStatus {
   switch (txStatus) {
     case TransactionState.Done:
@@ -39,7 +39,7 @@ export function transactionItemStatusFromTxStatus(
 function mapTxToPayload(
   tx: TransactionExecutor<any>,
   chainConfig: Record<number, ChainConfig>,
-  dismissTransaction: (id: string) => void
+  dismissTransaction: (id: string) => void,
 ): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
   const { amount, wallets, token, tokens, tokenURI } = tx.metaData;
@@ -73,7 +73,7 @@ function mapTxToPayload(
         explorerUri,
         addOrTxHash,
         variant,
-        txProviderType
+        txProviderType,
       ).toString(),
     timestamp: tx.timestamp,
     token,
@@ -92,7 +92,7 @@ function mapTxToPayload(
 
 export function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
-  transactionStatusValue: TransactionStatusValue<Key>
+  transactionStatusValue: TransactionStatusValue<Key>,
 ): string {
   switch (txStatus) {
     case TransactionState.Cancelling:
@@ -112,8 +112,8 @@ export function getTxMessageFromStatus<Key extends TransactionState>(
       return isValid === undefined
         ? 'Validating transaction leaves...'
         : isValid
-        ? 'Transaction leaves are valid'
-        : 'Transaction leaves are invalid';
+          ? 'Transaction leaves are valid'
+          : 'Transaction leaves are invalid';
     }
 
     case TransactionState.FetchingLeaves:
@@ -156,14 +156,14 @@ export type TransactionQueueApi = {
      * @returns The latest transaction of the given name or null if no transaction is found
      */
     getLatestTransaction(
-      name: 'Deposit' | 'Withdraw' | 'Transfer'
+      name: 'Deposit' | 'Withdraw' | 'Transfer',
     ): TransactionExecutor<NewNotesTxResult> | null;
   };
 };
 
 // The global transaction queue for the bridge dApp
 const txQueue$ = new BehaviorSubject<TransactionExecutor<NewNotesTxResult>[]>(
-  []
+  [],
 );
 
 const txPayloads$ = new BehaviorSubject<TransactionPayload[]>([]);
@@ -172,7 +172,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const { chains } = apiConfig;
 
   const subscriptions = useRef(
-    new Map<string, Array<{ unsubscribe: () => void }>>()
+    new Map<string, Array<{ unsubscribe: () => void }>>(),
   );
 
   const txQueue = useObservableState(txQueue$);
@@ -202,7 +202,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         });
       }
     },
-    [subscriptions]
+    [subscriptions],
   );
 
   const registerTransaction = useCallback(
@@ -228,7 +228,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
           const payloads = txPayloads$.getValue();
 
           const currentPayload = payloads.find(
-            (payload) => payload.id === tx.id
+            (payload) => payload.id === tx.id,
           );
           if (!currentPayload) {
             return;
@@ -267,7 +267,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
           });
 
           txPayloads$.next(nextPayloads);
-        }
+        },
       );
 
       // Subscribe to the transaction hash
@@ -328,7 +328,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
       // Update the subscriptions ref
       subscriptions.current.set(tx.id, [statusSub, hashSub, stepSub]);
     },
-    []
+    [],
   );
 
   const cancelTransaction = useCallback((id: string) => {
@@ -342,7 +342,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
 
   const getLatestTransaction = useCallback(
     (
-      name: 'Deposit' | 'Withdraw' | 'Transfer'
+      name: 'Deposit' | 'Withdraw' | 'Transfer',
     ): TransactionExecutor<NewNotesTxResult> | null => {
       const txes = txQueue$.getValue().filter((tx) => tx.name === name);
       if (txes.length === 0) {
@@ -350,7 +350,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
       }
       return txes[txes.length - 1];
     },
-    []
+    [],
   );
 
   // Effect to subscribe to the txQueue and update the txPayloads

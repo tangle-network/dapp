@@ -1,4 +1,4 @@
-import { ChevronRight } from '@webb-tools/icons';
+import { ChevronRight } from '@webb-tools/icons/ChevronRight';
 import { ComponentProps, memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -12,8 +12,8 @@ export const AnimatedChevronRight = memo<ComponentProps<typeof ChevronRight>>(
       className={twMerge(
         'inline-block',
         'transition-transform duration-300 ease-in-out group-radix-state-open:rotate-90',
-        className
+        className,
       )}
     />
-  )
+  ),
 );

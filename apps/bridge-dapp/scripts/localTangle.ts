@@ -61,10 +61,10 @@ async function initPoolShare(api: ApiPromise) {
     api,
     FUNGIBLE_ASSET,
     +NATIVE_ASSET_ID,
-    sudoKey
+    sudoKey,
   );
   console.log(
-    chalk`  => {green Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}}`
+    chalk`  => {green Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}}`,
   );
 
   // Add assets metadata
@@ -76,12 +76,12 @@ async function initPoolShare(api: ApiPromise) {
     api,
     sudoKey,
     poolShareAssetId.toString(),
-    FUNGIBLE_ASSET
+    FUNGIBLE_ASSET,
   );
   console.log(chalk`  => {green Assets metadata added}`);
 
   console.log(
-    chalk`[+] {blue Creating VAnchor for asset ${FUNGIBLE_ASSET}...}`
+    chalk`[+] {blue Creating VAnchor for asset ${FUNGIBLE_ASSET}...}`,
   );
 
   const vanchorId = await createVAnchor(api, poolShareAssetId, sudoKey);
@@ -91,24 +91,24 @@ async function initPoolShare(api: ApiPromise) {
   // Transfer some tokens to the test account
   if (TEST_ACCOUNT) {
     console.log(
-      chalk`[+] {blue Transferring ${AMOUNT} ${NATIVE_ASSET} to test account...}`
+      chalk`[+] {blue Transferring ${AMOUNT} ${NATIVE_ASSET} to test account...}`,
     );
     const hash = await transferAsset(
       api,
       sudoKey,
       TEST_ACCOUNT,
       0,
-      new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
+      new BN(AMOUNT).mul(new BN(10).pow(new BN(18))),
     );
 
     console.log(
-      chalk`  => {green Token transferred to test account with hash \`${hash}\`}`
+      chalk`  => {green Token transferred to test account with hash \`${hash}\`}`,
     );
   }
 
   // Wrapping the token to initialize the fee recipient account
   console.log(
-    chalk`[+] {blue Wrapping ${AMOUNT} ${NATIVE_ASSET} to initialize the fee recipient account...}`
+    chalk`[+] {blue Wrapping ${AMOUNT} ${NATIVE_ASSET} to initialize the fee recipient account...}`,
   );
   const wrappingAmount = new BN(AMOUNT).mul(new BN(10).pow(new BN(18)));
 

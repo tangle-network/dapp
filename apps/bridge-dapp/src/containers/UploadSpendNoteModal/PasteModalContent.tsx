@@ -63,14 +63,14 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
         const note = await Note.deserialize(rawNote);
         setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
         onNotesChange?.(id, note);
-      } catch (error) {
+      } catch {
         setErrors((prevErrors) => ({
           ...prevErrors,
           [id]: 'Error: incorrect format',
         }));
       }
     },
-    [rawNotes, onNotesChange, notificationApi]
+    [rawNotes, onNotesChange, notificationApi],
   );
 
   return (
@@ -115,11 +115,11 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
 
             const sourceCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(sourceChain.chainType, sourceChain.id)
+              calculateTypedChainId(sourceChain.chainType, sourceChain.id),
             );
             const destCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(destChain.chainType, destChain.id)
+              calculateTypedChainId(destChain.chainType, destChain.id),
             );
 
             if (!sourceCurrency || !destCurrency) {
@@ -128,7 +128,7 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
 
             const balance = formatUnits(
               BigInt(note.note.amount),
-              +note.note.denomination
+              +note.note.denomination,
             );
 
             return (

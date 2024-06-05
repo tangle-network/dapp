@@ -25,7 +25,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
       <div
         className={twMerge(
           'flex justify-between items-center gap-4',
-          headerClassName
+          headerClassName,
         )}
       >
         {/* Tabs List on the left */}
@@ -39,7 +39,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                 className={twMerge(
                   'text-mono-100 radix-state-active:text-mono-200',
                   'dark:radix-state-active:!text-mono-0',
-                  triggerClassName
+                  triggerClassName,
                 )}
               >
                 <Typography

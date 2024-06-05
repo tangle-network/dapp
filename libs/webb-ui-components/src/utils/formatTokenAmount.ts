@@ -4,7 +4,7 @@ const generateNumber = (decimalDigits: number) => {
   return parseFloat(
     `0.${Array(decimalDigits - 1)
       .fill(0)
-      .join('')}1`
+      .join('')}1`,
   );
 };
 

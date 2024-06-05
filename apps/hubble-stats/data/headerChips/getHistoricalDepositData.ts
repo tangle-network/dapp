@@ -9,7 +9,7 @@ export default async function getHistoricalDepositData() {
     const depositVAnchorsByChainsData =
       await vAnchorClient.Deposit.GetVAnchorsDepositByChains(
         ACTIVE_SUBGRAPH_URLS,
-        VANCHOR_ADDRESSES
+        VANCHOR_ADDRESSES,
       );
 
     deposit = depositVAnchorsByChainsData?.reduce(
@@ -17,11 +17,11 @@ export default async function getHistoricalDepositData() {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
           (depositTotalByChain, vAnchorDeposit) =>
             depositTotalByChain + +formatEther(BigInt(vAnchorDeposit ?? 0)),
-          0
+          0,
         );
         return depositTotal + depositVAnchorsByChain;
       },
-      0
+      0,
     );
   } catch {
     deposit = undefined;

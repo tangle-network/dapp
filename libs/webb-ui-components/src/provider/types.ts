@@ -1,7 +1,7 @@
+import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 import React, { type ComponentProps } from 'react';
 import type { NotificationProvider, notificationApi } from '../components';
 import type { ToggleThemeModeFunc } from '../hooks/useDarkMode';
-import type { LoggerService } from '@webb-tools/app-util';
 
 export interface IWebbUIContext {
   theme: {

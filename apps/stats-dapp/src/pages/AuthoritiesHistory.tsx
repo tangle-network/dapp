@@ -48,7 +48,7 @@ ChartJS.register(
   Tooltip,
   CLegend,
   PointElement,
-  LineElement
+  LineElement,
 );
 
 const AuthoritiesHistory = () => {
@@ -61,17 +61,20 @@ const AuthoritiesHistory = () => {
     ComponentProps<typeof DropdownMenu>['menuOptions']
   >(
     () =>
-      historyOpts.reduce((acc, cur) => {
-        return [...acc, { value: cur }];
-      }, [] as ComponentProps<typeof DropdownMenu>['menuOptions']),
-    [historyOpts]
+      historyOpts.reduce(
+        (acc, cur) => {
+          return [...acc, { value: cur }];
+        },
+        [] as ComponentProps<typeof DropdownMenu>['menuOptions'],
+      ),
+    [historyOpts],
   );
 
   const onChange = useCallback(
     (nextVal: string) => {
       setSelectedIdx(historyOpts.indexOf(nextVal));
     },
-    [historyOpts]
+    [historyOpts],
   );
 
   const isLatest = useMemo(() => selectedIdx === 0, [selectedIdx]);
@@ -152,7 +155,7 @@ const AuthoritiesHistory = () => {
         },
       },
     }),
-    [isDarkMode, selectedIdx]
+    [isDarkMode, selectedIdx],
   );
 
   return (

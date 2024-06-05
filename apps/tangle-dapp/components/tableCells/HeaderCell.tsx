@@ -1,8 +1,10 @@
-import { Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { InfoIconWithTooltip } from '..';
 import { HeaderCellProps } from './types';
 
 const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
@@ -13,7 +15,7 @@ const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
       className={twMerge(
         'whitespace-nowrap text-mono-140 dark:text-mono-40 flex-[1]',
         'flex items-center gap-0.5',
-        className
+        className,
       )}
     >
       {title}

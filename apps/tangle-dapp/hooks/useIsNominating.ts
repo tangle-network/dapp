@@ -15,8 +15,8 @@ const useIsNominating = () => {
 
         return api.query.staking.nominators(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   return {

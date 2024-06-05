@@ -24,7 +24,7 @@ export type CrowdloanFundInfo = {
  **/
 export abstract class Crowdloan<
   T,
-  CrowdloanPayload extends ContributePayload
+  CrowdloanPayload extends ContributePayload,
 > extends EventBus<CrowdloanEvent> {
   // The crowdloan token id
   protected crowdloanToken: BehaviorSubject<number | null> =

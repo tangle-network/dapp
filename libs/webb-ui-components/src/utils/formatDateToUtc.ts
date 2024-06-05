@@ -1,6 +1,5 @@
 import { isValid, parseISO } from 'date-fns';
-import { format } from 'date-fns-tz';
-import utcToZonedTime from 'date-fns-tz/utcToZonedTime';
+import { UTCDateMini } from '@date-fns/utc';
 
 /**
  * Format a `date` to UTC string
@@ -22,7 +21,5 @@ export const formatDateToUtc = (dateArg: string | Date | null): string => {
   } else {
     dateISO = parseISO(dateArg.toISOString());
   }
-  return format(utcToZonedTime(dateISO, 'UTC'), "MMM dd (HH:mm:ss a 'UTC')", {
-    timeZone: 'UTC',
-  });
+  return new UTCDateMini(dateISO.toString()).toString();
 };

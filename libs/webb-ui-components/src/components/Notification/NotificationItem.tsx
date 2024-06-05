@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Alert,
   CheckboxCircleLine,
@@ -60,7 +62,7 @@ export const NotificationItem = forwardRef<HTMLDivElement, Props>(
           'bg-mono-0 dark:bg-mono-140',
           'flex items-start justify-between',
           'shadow-md',
-          className
+          className,
         )}
       >
         <div className="flex space-x-3">
@@ -89,5 +91,5 @@ export const NotificationItem = forwardRef<HTMLDivElement, Props>(
         </button>
       </SnackbarContent>
     );
-  }
+  },
 );

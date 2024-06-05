@@ -1,3 +1,5 @@
+'use client';
+
 import { InformationLine } from '@webb-tools/icons';
 import { FC, useCallback, useState } from 'react';
 
@@ -63,13 +65,13 @@ export const WebsiteNewsletterForm: FC<{
           const { message } = await response.json();
           setError(message);
         }
-      } catch (error) {
+      } catch {
         setError('Something went wrong');
       } finally {
         setLoading(false);
       }
     },
-    [onSuccess]
+    [onSuccess],
   );
 
   return (

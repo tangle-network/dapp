@@ -37,7 +37,7 @@ export type BatchedProposal = Loadable<ProposalBatch>;
 
 // FOR BATCHED PROPOSALS TABLE
 export const useBatchedProposals = (
-  batchedProposalsQuery: BatchedProposalsQuery
+  batchedProposalsQuery: BatchedProposalsQuery,
 ): BatchedProposals => {
   const { offset, perPage, orderBy } = batchedProposalsQuery;
 
@@ -122,7 +122,7 @@ export const useBatchedProposals = (
 
 // FOR INDIVIDUAL BATCHED PROPOSAL DETAILS
 export const useBatchedProposal = (
-  batchedProposalQuery: BatchedProposalQuery
+  batchedProposalQuery: BatchedProposalQuery,
 ) => {
   const { data, error, loading } = useProposalBatchQuery({
     variables: {

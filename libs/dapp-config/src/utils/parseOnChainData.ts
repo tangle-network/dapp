@@ -18,23 +18,26 @@ export type OnChainData = {
  * @param data the generated on-chain data which is fetched on chain
  */
 function parseOnChainData(data: any) {
-  const onChainConfigData = Object.keys(data).reduce((acc, typedChainId) => {
-    const typedChainIdNum = Number(typedChainId);
-    const onChainData = data[typedChainIdNum];
-    const nativeCurrency = onChainData.nativeCurrency;
-    const anchorMetadatas = onChainData.anchorMetadatas;
-    return {
-      ...acc,
-      [typedChainIdNum]: {
-        nativeCurrency,
-        anchorMetadatas,
-      },
-    };
-  }, {} as Record<number, OnChainData>);
+  const onChainConfigData = Object.keys(data).reduce(
+    (acc, typedChainId) => {
+      const typedChainIdNum = Number(typedChainId);
+      const onChainData = data[typedChainIdNum];
+      const nativeCurrency = onChainData.nativeCurrency;
+      const anchorMetadatas = onChainData.anchorMetadatas;
+      return {
+        ...acc,
+        [typedChainIdNum]: {
+          nativeCurrency,
+          anchorMetadatas,
+        },
+      };
+    },
+    {} as Record<number, OnChainData>,
+  );
 
   // Construct the currency config from the on-chain config by their symbol and name
   const { currencies, anchors, fungibleToWrappableMap } = Object.entries(
-    onChainConfigData
+    onChainConfigData,
   ).reduce(
     (acc, [typedChainIdStr, config]) => {
       const { currencies, anchors, fungibleToWrappableMap } = acc;
@@ -49,7 +52,7 @@ function parseOnChainData(data: any) {
         native,
         typedChainId,
         CurrencyRole.Wrappable,
-        CurrencyType.NATIVE
+        CurrencyType.NATIVE,
       );
 
       // Iterate through the anchor metadata and add them to the config
@@ -68,7 +71,7 @@ function parseOnChainData(data: any) {
           fungibleCurrency,
           typedChainId,
           CurrencyRole.Governable,
-          chainType === ChainType.EVM ? CurrencyType.ERC20 : CurrencyType.ORML
+          chainType === ChainType.EVM ? CurrencyType.ERC20 : CurrencyType.ORML,
         );
 
         const wrappableIdSet = new Set<number>();
@@ -80,7 +83,9 @@ function parseOnChainData(data: any) {
             wrappableCurrency,
             typedChainId,
             CurrencyRole.Wrappable,
-            chainType === ChainType.EVM ? CurrencyType.ERC20 : CurrencyType.ORML
+            chainType === ChainType.EVM
+              ? CurrencyType.ERC20
+              : CurrencyType.ORML,
           );
 
           wrappableIdSet.add(wrappableConfig.id);
@@ -91,12 +96,12 @@ function parseOnChainData(data: any) {
         }
 
         const wrappableMap = fungibleToWrappableMap.get(
-          fungibleCurrencyConfig.id
+          fungibleCurrencyConfig.id,
         );
         if (!wrappableMap) {
           fungibleToWrappableMap.set(
             fungibleCurrencyConfig.id,
-            new Map([[typedChainId, wrappableIdSet]])
+            new Map([[typedChainId, wrappableIdSet]]),
           );
         } else {
           wrappableMap.set(typedChainId, wrappableIdSet);
@@ -116,7 +121,7 @@ function parseOnChainData(data: any) {
               anchorAddress.toLowerCase()
           ) {
             throw new Error(
-              `Anchor for currency ${fungibleCurrency.name} already exists on chain ${typedChainId} Current: ${existedAnchor[typedChainId]}, new one: ${anchorAddress}`
+              `Anchor for currency ${fungibleCurrency.name} already exists on chain ${typedChainId} Current: ${existedAnchor[typedChainId]}, new one: ${anchorAddress}`,
             );
           }
 
@@ -130,7 +135,7 @@ function parseOnChainData(data: any) {
       currencies: Record<number, CurrencyConfig>;
       anchors: Record<number, AnchorConfigEntry>;
       fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
-    }
+    },
   );
 
   return {

@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components';
+import { KeyValueWithButton } from '../../components/KeyValueWithButton';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

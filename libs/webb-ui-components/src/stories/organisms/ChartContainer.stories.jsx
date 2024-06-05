@@ -16,10 +16,10 @@ export default {
 };
 
 export const TVL = () => {
-  const [currentTvlValue, setCurrentTvlValue] = useState(13.6);
+  const [currentTvlValue] = useState(13.6);
   const [tvlValue, setTvlValue] = useState(null);
   const [tvlDate, setTVLDate] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode] = useState(false);
 
   const tvlData = useMemo(() => {
     const data = [];
@@ -88,11 +88,11 @@ export const TVL = () => {
 };
 
 export const Volume = () => {
-  const [currentVolumeValue, setCurrentVolumeValue] = useState(8.56);
+  const [currentVolumeValue] = useState(8.56);
   const [volumeDate, setVolumeDate] = useState(null);
   const [volumeValue, setVolumeValue] = useState(null);
   const [volumeDataType, setVolumeDataType] = useState('week');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode] = useState(false);
 
   const volumeData = useMemo(() => {
     const data = [];

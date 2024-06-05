@@ -22,7 +22,7 @@ export interface WebbStateInterface {
 export class Bridge {
   constructor(
     readonly currency: Currency,
-    readonly targets: Record<number, string>
+    readonly targets: Record<number, string>,
   ) {
     this.currency = currency;
     this.targets = targets;
@@ -52,7 +52,7 @@ export class WebbState implements WebbStateInterface {
     // Currencies are indexed by their Currency IDs
     private supportedCurrencies: Record<number, Currency>,
     // Bridges are indexed by their fungible Currency IDs.
-    private supportedBridges: Record<number, Bridge>
+    private supportedBridges: Record<number, Bridge>,
   ) {
     const wrappedCurrencies: Record<number, Currency> = {};
 

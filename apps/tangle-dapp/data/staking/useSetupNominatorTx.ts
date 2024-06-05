@@ -34,7 +34,7 @@ const useSetupNominatorTx = () => {
       // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
       if (payee === null) {
         throw new Error(
-          'There is no EVM destination address registered for the given payee'
+          'There is no EVM destination address registered for the given payee',
         );
       }
 
@@ -44,13 +44,13 @@ const useSetupNominatorTx = () => {
       ]);
 
       const evmNomineeAddresses32 = Array.from(context.nominees).map(
-        toEvmAddress32
+        toEvmAddress32,
       );
 
       const nominateCall = createEvmBatchCallData(
         Precompile.STAKING,
         'nominate',
-        [evmNomineeAddresses32]
+        [evmNomineeAddresses32],
       );
 
       return {
@@ -64,6 +64,7 @@ const useSetupNominatorTx = () => {
       const payee = getSubstratePayeeValue(context.payee);
 
       return optimizeTxBatch(api, [
+        // @ts-expect-error: Quick fix for the issue with the types here (Expected 3 arguments but got 2)
         api.tx.staking.bond(context.bondAmount, payee),
         api.tx.staking.nominate(Array.from(context.nominees)),
       ]);
@@ -75,7 +76,7 @@ const useSetupNominatorTx = () => {
         `Successfully nominated ${formatNativeTokenAmount(bondAmount)} to ${
           nominees.size
         } validators.`,
-      [formatNativeTokenAmount]
+      [formatNativeTokenAmount],
     );
 
   return useAgnosticTx<Precompile.BATCH, NominationOptionsContext>({

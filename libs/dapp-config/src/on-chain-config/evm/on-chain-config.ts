@@ -38,7 +38,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   async fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: PublicClient
+    provider: PublicClient,
   ): Promise<ICurrency | null> {
     // First check if the fungible currency is already cached
     const cachedFungibleCurrency = this.fungibleCurrencyCache.get(typedChainId);
@@ -88,7 +88,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       const chain = chainsConfig[typedChainId]?.name ?? 'Unknown';
       console.error(
         `Unable to retrieve fungible token information on ${chain}`,
-        error
+        error,
       );
       // Cache the error
       this.fungibleCurrencyCache.set(typedChainId, error as Error);
@@ -100,7 +100,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   async fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: PublicClient
+    provider: PublicClient,
   ): Promise<ICurrency[]> {
     // First check if the wrappable currencies are already cached
     const cachedCurrencies = this.wrappableCurrenciesCache.get(typedChainId);
@@ -131,7 +131,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       // Filter the zero addresses because they are not ERC20 tokens
       // and we use the isNativeAllowed flag to determine if native currency is allowed
       const addresses = addressesWithNative.filter(
-        (address) => BigInt(address) !== ZERO_BIG_INT
+        (address) => BigInt(address) !== ZERO_BIG_INT,
       );
 
       const wrappableERC20Contracts = addresses.map((address) =>
@@ -139,7 +139,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           address,
           abi: ERC20__factory.abi,
           client: provider,
-        })
+        }),
       );
 
       const wrappableCurrenciesResponse = await Promise.allSettled<ICurrency>(
@@ -157,7 +157,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
             symbol,
             name,
           };
-        })
+        }),
       );
 
       const wrappableCurrencies = wrappableCurrenciesResponse
@@ -192,7 +192,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
     existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
-    existedAnchorConfig: Record<number, ChainAddressConfig> = {}
+    existedAnchorConfig: Record<number, ChainAddressConfig> = {},
   ): Promise<typeof cachedCurrenciesConfig> {
     if (cachedCurrenciesConfig) {
       return cachedCurrenciesConfig;
@@ -213,13 +213,13 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           const provider = await providerFactory(+typedChainId);
           await provider.getChainId();
           return true;
-        } catch (error) {
+        } catch {
           return false;
         }
-      })
+      }),
     );
     evmTypedChainIds = evmTypedChainIds.filter(
-      (_, index) => typedChainIdBooleans[index]
+      (_, index) => typedChainIdBooleans[index],
     );
 
     if (evmTypedChainIds.length === 0) {
@@ -257,7 +257,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
               const fungible = await this.fetchFungibleCurrency(
                 typedChainId,
                 address,
-                provider
+                provider,
               );
 
               return {
@@ -266,36 +266,36 @@ export class EVMOnChainConfig extends OnChainConfigBase {
                 fungibleCurrency: fungible,
                 anchorAddressOrTreeId: address,
               };
-            })
+            }),
           );
 
           return fungibleCurrencies;
-        }
-      )
+        },
+      ),
     );
 
     const fungibleCurrencies = fungibleCurrenciesWithNull
       .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
       .filter(
         (
-          currencies
+          currencies,
         ): currencies is {
           anchorAddressOrTreeId: string;
           fungibleCurrency: ICurrency | null;
           nativeCurrency: ICurrency;
           typedChainId: number;
-        }[] => !!currencies && currencies.length > 0
+        }[] => !!currencies && currencies.length > 0,
       )
       .reduce((acc, currencies) => [...acc, ...currencies], [])
       .filter(
         (
-          currency
+          currency,
         ): currency is {
           anchorAddressOrTreeId: string;
           fungibleCurrency: ICurrency;
           nativeCurrency: ICurrency;
           typedChainId: number;
-        } => currency.fungibleCurrency !== null
+        } => currency.fungibleCurrency !== null,
       );
 
     // Fetch all wrappable currencies
@@ -311,7 +311,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           const wrappables = await this.fetchWrappableCurrencies(
             fungibleCurrency,
             typedChainId,
-            provider
+            provider,
           );
 
           return {
@@ -321,22 +321,22 @@ export class EVMOnChainConfig extends OnChainConfigBase {
             typedChainId,
             wrappableCurrencies: wrappables,
           };
-        }
-      )
+        },
+      ),
     );
 
     const wrappableCurrencies = wrappableCurrenciesWithNull
       .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
       .filter(
         (currency): currency is CurrencyResponse =>
-          !!currency && Array.isArray(currency.wrappableCurrencies)
+          !!currency && Array.isArray(currency.wrappableCurrencies),
       );
 
     const config = this.addCurrenciesIntoConfig(
       wrappableCurrencies,
       existedCurreniciesConfig,
       existedFungibleToWrappableMap,
-      existedAnchorConfig
+      existedAnchorConfig,
     );
     cachedCurrenciesConfig = config;
     return config;

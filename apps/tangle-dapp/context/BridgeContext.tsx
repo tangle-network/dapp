@@ -19,11 +19,11 @@ import { BRIDGE } from '../constants/bridge';
 import { BridgeTokenId } from '../types/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = Object.keys(BRIDGE).map(
-  (presetTypedChainId) => chainsConfig[+presetTypedChainId]
+  (presetTypedChainId) => chainsConfig[+presetTypedChainId],
 );
 
 const DEFAULT_DESTINATION_CHAIN_OPTIONS = Object.keys(
-  BRIDGE_SOURCE_CHAIN_OPTIONS[0]
+  BRIDGE_SOURCE_CHAIN_OPTIONS[0],
 ).map((presetTypedChainId) => chainsConfig[+presetTypedChainId]);
 
 const DEFAULT_TOKEN_OPTIONS = Object.values(Object.values(BRIDGE)[0])[0]
@@ -85,24 +85,24 @@ export const useBridge = () => {
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
-    BRIDGE_SOURCE_CHAIN_OPTIONS[0]
+    BRIDGE_SOURCE_CHAIN_OPTIONS[0],
   );
 
-  const selectedSourcePresetTypedChainId = useMemo(
+  const selectedSourceTypedChainId = useMemo(
     () =>
       calculateTypedChainId(
         selectedSourceChain.chainType,
-        selectedSourceChain.id
+        selectedSourceChain.id,
       ),
-    [selectedSourceChain.chainType, selectedSourceChain.id]
+    [selectedSourceChain.chainType, selectedSourceChain.id],
   );
 
   const destinationChainOptions = useMemo(
     () =>
-      Object.keys(BRIDGE[selectedSourcePresetTypedChainId]).map(
-        (presetTypedChainId) => chainsConfig[+presetTypedChainId]
+      Object.keys(BRIDGE[selectedSourceTypedChainId]).map(
+        (presetTypedChainId) => chainsConfig[+presetTypedChainId],
       ),
-    [selectedSourcePresetTypedChainId]
+    [selectedSourceTypedChainId],
   );
 
   assert(destinationChainOptions.length > 0, 'No destination chain options');
@@ -110,13 +110,13 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [selectedDestinationChain, setSelectedDestinationChain] =
     useState<ChainConfig>(destinationChainOptions[0]);
 
-  const selectedDestinationPresetTypedChainId = useMemo(
+  const selectedDestinationTypedChainId = useMemo(
     () =>
       calculateTypedChainId(
         selectedDestinationChain.chainType,
-        selectedDestinationChain.id
+        selectedDestinationChain.id,
       ),
-    [selectedDestinationChain.chainType, selectedDestinationChain.id]
+    [selectedDestinationChain.chainType, selectedDestinationChain.id],
   );
 
   const [destinationAddress, setDestinationAddress] = useState('');
@@ -124,16 +124,14 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const tokenIdOptions = useMemo(
     () =>
-      BRIDGE[selectedSourcePresetTypedChainId][
-        selectedDestinationPresetTypedChainId
-      ]?.supportedTokens ??
-      Object.values(BRIDGE[selectedSourcePresetTypedChainId])[0]
-        .supportedTokens,
-    [selectedSourcePresetTypedChainId, selectedDestinationPresetTypedChainId]
+      BRIDGE[selectedSourceTypedChainId][selectedDestinationTypedChainId]
+        ?.supportedTokens ??
+      Object.values(BRIDGE[selectedSourceTypedChainId])[0].supportedTokens,
+    [selectedSourceTypedChainId, selectedDestinationTypedChainId],
   );
 
   const [selectedTokenId, setSelectedTokenId] = useState<BridgeTokenId>(
-    tokenIdOptions[0]
+    tokenIdOptions[0],
   );
 
   useEffect(() => {
@@ -145,8 +143,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
           calculateTypedChainId(chain.chainType, chain.id) ===
           calculateTypedChainId(
             selectedDestinationChain.chainType,
-            selectedDestinationChain.id
-          )
+            selectedDestinationChain.id,
+          ),
       )
     ) {
       setSelectedDestinationChain(destinationChainOptions[0]);

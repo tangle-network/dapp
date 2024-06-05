@@ -1,6 +1,6 @@
-import React from 'react';
 import { TokenIcon } from '@webb-tools/icons';
-import { TransactionProgressCard } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
+import noop from 'lodash/noop';
+import { TransactionProgressCard } from '../../containers/TransactionProgressCard';
 
 export default {
   title: 'Design System/templates/TransactionProgressCard',
@@ -30,7 +30,7 @@ Default.args = {
     amount: '0.999',
     token: 'ETH/WEBB',
   },
-  onDismiss: () => {},
+  onDismiss: noop,
   footer: {
     isLoading: false,
     hasWarning: true,
@@ -39,6 +39,8 @@ Default.args = {
       text: (
         <>
           <span
+            role="img"
+            aria-label="Warning"
             className={'inline-block pr-2'}
             style={{
               fontSize: 18,

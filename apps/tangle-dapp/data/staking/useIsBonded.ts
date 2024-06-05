@@ -15,8 +15,8 @@ const useIsBonded = () => {
 
         return api.query.staking.bonded(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   return { isBonded: bondedInfo === null ? null : bondedInfo.isSome, ...other };

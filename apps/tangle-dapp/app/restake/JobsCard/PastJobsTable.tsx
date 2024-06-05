@@ -9,7 +9,7 @@ import { JobsTableProps } from './types';
 
 const PastJobsTable: FC<JobsTableProps> = ({ pageSize }) => {
   const { data, isLoading } = useSWR([getPastJobs.name], ([, ...args]) =>
-    getPastJobs(...args)
+    getPastJobs(...args),
   );
 
   if (isLoading || !data) {

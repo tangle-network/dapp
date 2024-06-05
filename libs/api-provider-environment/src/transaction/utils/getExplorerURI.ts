@@ -3,14 +3,17 @@ import { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 import { chainsConfig as substrateChainsConfig } from '@webb-tools/dapp-config/chains/substrate';
 
 const substrateExplorerAndChainIdMap = Object.keys(
-  substrateChainsConfig
-).reduce((acc, key) => {
-  const url = substrateChainsConfig[Number(key)].blockExplorers?.default.url;
-  if (url) {
-    acc[url] = substrateChainsConfig[Number(key)].id;
-  }
-  return acc;
-}, {} as Record<string, number>);
+  substrateChainsConfig,
+).reduce(
+  (acc, key) => {
+    const url = substrateChainsConfig[Number(key)].blockExplorers?.default.url;
+    if (url) {
+      acc[url] = substrateChainsConfig[Number(key)].id;
+    }
+    return acc;
+  },
+  {} as Record<string, number>,
+);
 
 export type ExplorerVariant = 'tx' | 'address';
 
@@ -18,7 +21,7 @@ export const getExplorerURI = (
   explorerUri: string,
   pathOrTxHash: string,
   variant: ExplorerVariant,
-  txProviderType: WebbProviderType
+  txProviderType: WebbProviderType,
 ): URL => {
   switch (txProviderType) {
     case 'web3':
@@ -33,7 +36,7 @@ export const getExplorerURI = (
               typeof substrateExplorerAndChainIdMap[explorerUri] === 'number'
                 ? encodeAddress(
                     pathOrTxHash,
-                    substrateExplorerAndChainIdMap[explorerUri]
+                    substrateExplorerAndChainIdMap[explorerUri],
                   )
                 : pathOrTxHash
             }`;

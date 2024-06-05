@@ -9,7 +9,7 @@ const injectorCache = new Map<string, InjectedExtension>();
 async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
   endpoint: string,
   cache: Map<string, Promise<T>>,
-  factory: () => Promise<T>
+  factory: () => Promise<T>,
 ): Promise<T> {
   const possiblyCachedInstance = cache.get(endpoint);
 
@@ -27,7 +27,7 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
 }
 
 export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
-  endpoint: string
+  endpoint: string,
 ) => {
   return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
     const wsProvider = new WsProvider(endpoint);
@@ -53,7 +53,7 @@ export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
 };
 
 export const findInjectorForAddress = async (
-  address: string
+  address: string,
 ): Promise<InjectedExtension | null> => {
   // TODO: This is a temporary workaround to prevent Next.js from throwing an error complaining about 'window is not defined'.
   const { web3Enable, web3FromAddress } = await import(

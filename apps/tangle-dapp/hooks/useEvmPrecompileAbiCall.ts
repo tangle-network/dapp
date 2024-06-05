@@ -3,6 +3,12 @@ import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useEffect, useState } from 'react';
+import {
+  simulateContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'viem/actions';
+import { useConnectorClient } from 'wagmi';
 
 import {
   AbiFunctionName,
@@ -14,8 +20,6 @@ import {
 import ensureError from '../utils/ensureError';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
-import useViemPublicClient from './useViemPublicClient';
-import useViemWalletClient from './useViemWalletClient';
 
 // TODO: For some reason, Viem returns `any` for the tx receipt. Perhaps it is because it has no knowledge of the network, and thus no knowledge of its produced tx receipts. As a temporary workaround, use this custom type.
 type TxReceipt = {
@@ -55,7 +59,7 @@ export type AbiCall<PrecompileT extends Precompile> = {
 };
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
-  context: Context
+  context: Context,
 ) => PromiseOrT<AbiCall<PrecompileT>> | null;
 
 /**
@@ -71,11 +75,11 @@ export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
  */
 function useEvmPrecompileAbiCall<
   PrecompileT extends Precompile,
-  Context = void
+  Context = void,
 >(
   precompile: PrecompileT,
   factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>,
-  getSuccessMessageFnc?: (context: Context) => string
+  getSuccessMessageFnc?: (context: Context) => string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
@@ -83,8 +87,7 @@ function useEvmPrecompileAbiCall<
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const activeEvmAddress = useEvmAddress20();
-  const viemPublicClient = useViemPublicClient();
-  const viemWalletClient = useViemWalletClient();
+  const { data: connectorClient } = useConnectorClient();
 
   // Useful for debugging.
   useEffect(() => {
@@ -98,8 +101,7 @@ function useEvmPrecompileAbiCall<
       if (
         activeEvmAddress === null ||
         status === TxStatus.PROCESSING ||
-        viemWalletClient === null ||
-        viemPublicClient === null
+        connectorClient === undefined
       ) {
         return;
       }
@@ -118,7 +120,7 @@ function useEvmPrecompileAbiCall<
       setStatus(TxStatus.PROCESSING);
 
       try {
-        const { request } = await viemPublicClient.simulateContract({
+        const { request } = await simulateContract(connectorClient, {
           address: getPrecompileAddress(precompile),
           abi: getPrecompileAbi(precompile),
           functionName: factoryResult.functionName,
@@ -126,27 +128,29 @@ function useEvmPrecompileAbiCall<
           account: activeEvmAddress,
         });
 
-        const newTxHash = await viemWalletClient.writeContract(request);
+        const newTxHash = await writeContract(connectorClient, request);
 
         setTxHash(newTxHash);
 
-        const txReceipt: TxReceipt =
-          await viemPublicClient.waitForTransactionReceipt({
+        const txReceipt: TxReceipt = await waitForTransactionReceipt(
+          connectorClient,
+          {
             hash: newTxHash,
             // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
-          });
+          },
+        );
 
         console.debug('EVM transaction receipt:', txReceipt);
 
         setStatus(
-          txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR
+          txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR,
         );
 
         if (txReceipt.status === 'success') {
           setSuccessMessage(
             getSuccessMessageFnc !== undefined
               ? getSuccessMessageFnc(context)
-              : null
+              : null,
           );
         }
       } catch (possibleError) {
@@ -156,15 +160,8 @@ function useEvmPrecompileAbiCall<
         setError(error);
       }
     },
-    [
-      activeEvmAddress,
-      factory,
-      precompile,
-      status,
-      viemPublicClient,
-      viemWalletClient,
-      getSuccessMessageFnc,
-    ]
+    // prettier-ignore
+    [activeEvmAddress, status, connectorClient, factory, precompile, getSuccessMessageFnc],
   );
 
   const reset = useCallback(() => {

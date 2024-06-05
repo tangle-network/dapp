@@ -1,7 +1,7 @@
 import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types';
 
 export function getChipColorByKeyType(
-  type: 'Next' | 'Current' | 'Previous'
+  type: 'Next' | 'Current' | 'Previous',
 ): ChipProps['color'] {
   switch (type) {
     case 'Current': {
@@ -18,14 +18,14 @@ export function getChipColorByKeyType(
 
     default: {
       throw new Error(
-        'Unknow ProposalStatus inside `getChipColorByKeyType` function'
+        'Unknow ProposalStatus inside `getChipColorByKeyType` function',
       );
     }
   }
 }
 
 export function getChipColorByKeyStatus(
-  status: true | false
+  status: true | false,
 ): ChipProps['color'] {
   switch (status) {
     case true: {

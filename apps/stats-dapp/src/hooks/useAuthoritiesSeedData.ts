@@ -23,7 +23,7 @@ const getNewAuthority = (): AuthorityRowType => {
  * @param sizeArg Represents the size of the data array (default will be a random number in range 50..100 inclusive)
  */
 export const useAuthoritiesSeedData = (
-  sizeArg?: number
+  sizeArg?: number,
 ): AuthorityRowType[] => {
   const size = sizeArg ?? randNumber({ min: 50, max: 100 });
 
@@ -32,7 +32,7 @@ export const useAuthoritiesSeedData = (
 
 // Seeded data for pagination
 const DATA = arrayFrom(randNumber({ min: 10, max: 20 }), () =>
-  getNewAuthority()
+  getNewAuthority(),
 );
 
 /**
@@ -50,7 +50,7 @@ export const fetchAuthoritiesData = async (options: {
   return {
     rows: DATA.slice(
       options.pageIndex * options.pageSize,
-      (options.pageIndex + 1) * options.pageSize
+      (options.pageIndex + 1) * options.pageSize,
     ),
     pageCount: Math.ceil(DATA.length / options.pageSize),
     totalItems: DATA.length,

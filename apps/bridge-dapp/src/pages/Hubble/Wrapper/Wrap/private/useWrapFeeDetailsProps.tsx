@@ -14,7 +14,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import type {
   FeeDetailsProps,
   FeeItem,
-} from '@webb-tools/webb-ui-components/src/components/FeeDetails/types';
+} from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 
 import { getEstimatedGasFeesByChain } from '../../../../../utils';
 import { AMOUNT_KEY, SOURCE_CHAIN_KEY } from '../../../../../constants';
@@ -78,7 +78,7 @@ export default function useWrapFeeDetailsProps({
 
   const client = useMemo(
     () => (srcTypedId ? getViemClient(srcTypedId) : undefined),
-    [srcTypedId]
+    [srcTypedId],
   );
 
   const gasFeeDetailProps = useMemo<FeeItem>(() => {
@@ -106,7 +106,7 @@ export default function useWrapFeeDetailsProps({
       };
     },
     // prettier-ignore
-    [wrappingFeesPercentage, wrappingFees, isLoadingWrappingFees, wrappableCfg]
+    [wrappingFeesPercentage, wrappingFees, isLoadingWrappingFees, wrappableCfg],
   );
 
   const totalFeeCmp = useMemo(() => {
@@ -195,7 +195,7 @@ export default function useWrapFeeDetailsProps({
       updateWrappingFees();
     },
     // prettier-ignore
-    [client, isValidAmount, srcTypedId, fungibleCfg, amount, srcChainCfg]
+    [client, isValidAmount, srcTypedId, fungibleCfg, amount, srcChainCfg],
   );
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export default function useWrapFeeDetailsProps({
         setIsLoadingGasFees(true);
         const estimatedGasFees = await getEstimatedGasFeesByChain(srcTypedId);
         setGasFees(parseFloat(formatEther(estimatedGasFees)));
-      } catch (error) {
+      } catch {
         notificationApi.addToQueue({
           variant: 'error',
           message: 'Failed to estimate gas fees',

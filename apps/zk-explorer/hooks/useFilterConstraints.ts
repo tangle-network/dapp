@@ -6,10 +6,10 @@ import { SearchParamKey } from '../utils';
 
 const useFilterConstraints = (): [
   FilterConstraints,
-  (newConstraints: FilterConstraints) => void
+  (newConstraints: FilterConstraints) => void,
 ] => {
   const [constraintsSearchParam, setConstraintsSearchParam] = useQueryState(
-    SearchParamKey.Filters
+    SearchParamKey.Filters,
   );
 
   const initialConstraints: FilterConstraints =
@@ -28,7 +28,7 @@ const useFilterConstraints = (): [
 
         return acc;
       },
-      {} as FilterConstraints
+      {} as FilterConstraints,
     );
 
     const areFiltersEmpty =
@@ -37,7 +37,7 @@ const useFilterConstraints = (): [
 
     // Reflect the new constraints in the URL's search params.
     setConstraintsSearchParam(
-      areFiltersEmpty ? null : JSON.stringify(processedConstraints)
+      areFiltersEmpty ? null : JSON.stringify(processedConstraints),
     );
 
     setConstraints(areFiltersEmpty ? {} : cloneDeep(processedConstraints));

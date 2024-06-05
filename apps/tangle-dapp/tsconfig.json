@@ -18,7 +18,10 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node"],
+    "types": [
+      "jest",
+      "node"
+    ],
     "skipLibCheck": true
   },
   "include": [
@@ -29,7 +32,8 @@
     "../../apps/tangle-dapp/.next/types/**/*.ts",
     "../../dist/apps/tangle-dapp/.next/types/**/*.ts",
     "next-env.d.ts",
-    "../../types/global.d.ts"
+    "../../types/global.d.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

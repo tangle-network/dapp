@@ -19,7 +19,7 @@ import UpdateMetadataButton from '../../components/UpdateMetadataButton';
 
 const NetworkSelectionButton = dynamic(
   () => import('../../components/NetworkSelector/NetworkSelectionButton'),
-  { ssr: false }
+  { ssr: false },
 );
 
 const WalletAndChainContainer: FC = () => {
@@ -49,9 +49,8 @@ const WalletAndChainContainer: FC = () => {
             </ConnectWalletMobileButton>
           ) : (
             <Button
-              isDisabled={loading}
-              isLoading={loading}
-              loadingText="Connecting..."
+              isLoading={isConnecting || loading}
+              loadingText={isConnecting ? 'Connecting...' : 'Loading...'}
               onClick={() => toggleModal(true)}
               className="flex items-center justify-center px-6"
             >

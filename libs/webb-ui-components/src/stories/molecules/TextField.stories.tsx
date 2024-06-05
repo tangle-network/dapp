@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AccountCircleLineIcon, ClipboardLineIcon } from '@webb-tools/icons';
 import { IconWithTooltip } from '../../components/IconWithTooltip';
-import TextField from '../../components/TextField';
+import { TextField } from '../../components/TextField';
 
 const meta: Meta<typeof TextField> = {
   title: 'Design System/V2 (WIP)/Molecules/TextField',

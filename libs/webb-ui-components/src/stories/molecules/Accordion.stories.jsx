@@ -1,11 +1,9 @@
-import React from 'react';
-
 import {
   Accordion,
-  AccordionItem,
   AccordionButton,
   AccordionContent,
-} from '@webb-tools/webb-ui-components/components';
+  AccordionItem,
+} from '../../components/Accordion';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

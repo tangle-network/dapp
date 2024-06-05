@@ -15,7 +15,7 @@ import { DEFAULT_NATIVE_INDEX } from './shared';
 /// Private Methods
 
 async function fetchEVMNativeCurrency(
-  typedChainId: number
+  typedChainId: number,
 ): Promise<ICurrency> {
   const { chainId } = parseTypedChainId(typedChainId);
 
@@ -39,7 +39,7 @@ async function fetchEVMNativeCurrency(
 }
 
 async function fetchSubstrateNativeCurrency(
-  provider: ApiPromise
+  provider: ApiPromise,
 ): Promise<ICurrency> {
   const name = provider.registry.chainTokens[DEFAULT_NATIVE_INDEX];
   const decimals = provider.registry.chainDecimals[DEFAULT_NATIVE_INDEX];
@@ -58,7 +58,7 @@ async function fetchSubstrateNativeCurrency(
 
 async function fetchNativeCurrency(
   typedChainId: number,
-  provider?: ApiPromise
+  provider?: ApiPromise,
 ): Promise<ICurrency> {
   if (provider instanceof ApiPromise) {
     return fetchSubstrateNativeCurrency(provider);

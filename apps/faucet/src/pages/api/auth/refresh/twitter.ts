@@ -31,7 +31,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
               expiresIn,
               refreshToken: newRefreshToken,
               twitterHandle: userObject.username,
-            })
+            }),
           );
         } catch (error) {
           resolve(handleTwitterApiError(error, res));
@@ -42,9 +42,9 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
           res.status(400).json({
             extraInfo: err.getPayload()?.extraInfo,
             message: err.message,
-          })
+          }),
         );
-      }
+      },
     );
   });
 }

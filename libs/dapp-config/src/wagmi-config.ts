@@ -1,28 +1,22 @@
-import { configureChains, createConfig } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { createClient, fallback, http, type Chain } from 'viem';
+import { createConfig } from 'wagmi';
 import { chainsConfig } from './chains/evm';
-import { SupportedConnector } from './wallets/wallet-config.interface';
-import { walletsConfig } from './wallets/wallets-config';
+import extractChain from './chains/utils/extractChain';
 
-// if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
-//   throw new Error('Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID');
-// }
-
-const { publicClient, webSocketPublicClient } = configureChains(
-  Object.values(chainsConfig),
-  [publicProvider()],
-  { batch: { multicall: true }, stallTimeout: 30_000 }
-);
-
-const connectors = Object.values(walletsConfig)
-  .map((wallet) => wallet.connector)
-  .filter((connector): connector is SupportedConnector => !!connector);
+const chains = Object.values(chainsConfig).map((chainCfg) =>
+  extractChain(chainCfg),
+) as [Chain, ...Chain[]];
 
 const config = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
+  chains,
+  client: ({ chain }) => {
+    return createClient({
+      chain,
+      transport: fallback(
+        chain.rpcUrls.default.http.map((url) => http(url, { timeout: 60_000 })),
+      ),
+    });
+  },
 });
 
 export default config;

@@ -79,7 +79,7 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
       blockHash,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -129,5 +129,5 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
         <div className="ml-8">{extraContent}</div>
       </div>
     );
-  }
+  },
 );

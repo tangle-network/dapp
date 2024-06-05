@@ -35,7 +35,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       isDropdown = true,
       ...props
     },
-    ref
+    ref,
   ) => {
     const mergedClsx = useMemo(
       () =>
@@ -47,16 +47,16 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
             'border border-transparent',
             'enabled:hover:border-mono-60',
             'dark:enabled:hover:border-mono-140',
-            'disabled:bg-[#E2E5EB]/20 dark:disabled:bg-[#3A3E53]/70'
+            'disabled:bg-[#E2E5EB]/20 dark:disabled:bg-[#3A3E53]/70',
           ),
-          className
+          className,
         ),
-      [className]
+      [className],
     );
 
     const disabled = useMemo(
       () => isActive || isDisabled,
-      [isDisabled, isActive]
+      [isDisabled, isActive],
     );
 
     return (
@@ -91,13 +91,13 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
               'group-disabled:hidden',
               'fill-mono-120 dark:fill-mono-100',
               'shrink-0 grow-0',
-              getFlexBasic('lg')
+              getFlexBasic('lg'),
             )}
           />
         )}
       </button>
     );
-  }
+  },
 );
 
 export default TokenSelector;

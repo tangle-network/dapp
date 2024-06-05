@@ -51,7 +51,7 @@ export interface WebbContextState<T = unknown> {
    */
   loginNoteAccount(
     key: string,
-    walletAddress: string
+    walletAddress: string,
   ): Promise<Nullable<NoteManager>>;
 
   /**
@@ -88,7 +88,7 @@ export interface WebbContextState<T = unknown> {
   switchChain(
     chain: Chain,
     wallet: Wallet,
-    bridge?: Bridge
+    bridge?: Bridge,
   ): Promise<Nullable<WebbApiProvider<T>>>;
 
   /** The active feedback */
@@ -96,7 +96,7 @@ export interface WebbContextState<T = unknown> {
 
   /** Function to register interactive feedback */
   registerInteractiveFeedback: (
-    interactiveFeedback: InteractiveFeedback
+    interactiveFeedback: InteractiveFeedback,
   ) => void;
 
   /** The application's name */

@@ -1,9 +1,9 @@
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@webb-tools/icons/InformationLine';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography';
-import { Button } from '../buttons';
+import { Typography } from '../../typography/Typography';
+import Button from '../buttons/Button';
 import { Chip } from '../Chip';
 import { Divider } from '../Divider';
 import { AmountMenuProps } from './types';
@@ -71,5 +71,5 @@ export const AmountMenu = forwardRef<HTMLDivElement, AmountMenuProps>(
         </div>
       </div>
     );
-  }
+  },
 );

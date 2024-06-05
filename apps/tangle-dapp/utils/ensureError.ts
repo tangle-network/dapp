@@ -10,7 +10,7 @@ function ensureError(possibleError: unknown): Error {
   }
 
   return new Error(
-    `Unknown error because the thrown value was not an Error or string (type was ${typeof possibleError})`
+    `Unknown error because the thrown value was not an Error or string (type was ${typeof possibleError})`,
   );
 }
 

@@ -12,7 +12,7 @@ import { polkadotTx } from '@webb-tools/test-utils';
 async function createVAnchor(
   apiPromise: ApiPromise,
   assetId: number,
-  signer: KeyringPair
+  signer: KeyringPair,
 ): Promise<number> {
   await polkadotTx(
     apiPromise,
@@ -21,7 +21,7 @@ async function createVAnchor(
       method: 'sudo',
     },
     [apiPromise.tx.vAnchorBn254.create(1, 30, assetId)],
-    signer
+    signer,
   );
   const nextTreeId = await apiPromise?.query.merkleTreeBn254.nextTreeId();
   return nextTreeId.toNumber() - 1;

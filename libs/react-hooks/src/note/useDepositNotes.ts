@@ -11,12 +11,12 @@ export const useDepositNotes = (values: string[]): Note[] => {
           throw new Error('empty value');
         }
         const notes = await Promise.all(
-          values.map((value) => Note.deserialize(value))
+          values.map((value) => Note.deserialize(value)),
         );
         // all notes are valid
         const allNotes = notes.reduce(
           (acc, note) => acc && note !== null,
-          true
+          true,
         );
         if (allNotes) {
           setDepositNotes(notes as Note[]);

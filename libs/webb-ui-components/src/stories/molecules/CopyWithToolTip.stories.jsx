@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { CopyWithTooltip } from '@webb-tools/webb-ui-components/components';
+import { CopyWithTooltip } from '../../components/CopyWithTooltip';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -18,8 +16,8 @@ Default.args = {
   textToCopy: '0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7',
 };
 
-export const isUseSpan = Template.bind({});
-isUseSpan.args = {
+export const IsUseSpan = Template.bind({});
+IsUseSpan.args = {
   isUseSpan: true,
   textToCopy: '0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7',
 };

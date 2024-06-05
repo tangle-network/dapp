@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   forwardRef,
@@ -89,7 +91,7 @@ export const WebsiteFooter = forwardRef<
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{<TangleLogo />}</Link>
           {getNavLinks(websiteType).map(({ group, links }) => (
-            <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
+            <div className="hidden md:!flex md:flex-col flex-[1]" key={group}>
               <Typography
                 variant="mkt-body2"
                 className="!text-lg mb-4 font-black"

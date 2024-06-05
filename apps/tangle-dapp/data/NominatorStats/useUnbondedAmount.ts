@@ -22,7 +22,7 @@ const useUnbondedAmount = () => {
         // Do not add to unbonded amount if the entry
         // is still in the unbonding period.
         return acc;
-      }, new BN(0))
+      }, new BN(0)),
     );
   }, [unbondingEntriesOpt]);
 

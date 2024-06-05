@@ -98,7 +98,7 @@ const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
         blockExplorerUrl,
         txHash,
         'tx',
-        'web3'
+        'web3',
       );
       window.open(txExplorerURI, '_blank');
     }

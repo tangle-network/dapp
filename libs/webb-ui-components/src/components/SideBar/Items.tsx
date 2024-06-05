@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, type FC, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import isSideBarItemActive from '../../utils/isSideBarItemActive';
@@ -18,7 +20,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
           ? isSideBarItemActive(item.href, pathnameOrHash)
           : isSideBarItemActive(
               item.subItems.map((i) => i.href),
-              pathnameOrHash
+              pathnameOrHash,
             );
 
       return isActive;
@@ -34,7 +36,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
           ? isSideBarItemActive(item.href, pathnameOrHash)
           : isSideBarItemActive(
               item.subItems.map((i) => i.href),
-              pathnameOrHash
+              pathnameOrHash,
             );
 
       return isActive;
@@ -48,7 +50,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
       className={twMerge(
         'flex flex-col mt-11',
         isExpanded ? 'gap-1' : 'gap-4',
-        className
+        className,
       )}
     >
       {items.map((itemProps, idx) => {

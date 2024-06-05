@@ -14,7 +14,7 @@ import { ProjectSearchResponseData } from '../server/projects';
 
 export function createProjectDetailPath(
   repositoryOwner: string,
-  repositoryName: string
+  repositoryName: string,
 ): string {
   const encodedRepositoryOwner = encodeURIComponent(repositoryOwner);
   const encodedRepositoryName = encodeURIComponent(repositoryName);
@@ -25,7 +25,7 @@ export function createProjectDetailPath(
 export function createProofGenerationUrl(
   owner: string,
   repositoryName: string,
-  circuitFilePath: string
+  circuitFilePath: string,
 ): string {
   const encodedCircuitFilePath = encodeURIComponent(circuitFilePath);
 
@@ -39,7 +39,7 @@ export function createProofGenerationUrl(
 export function tryOrElse<T>(fn: () => T, fallback: () => T): T {
   try {
     return fn();
-  } catch (error) {
+  } catch {
     return fallback();
   }
 }
@@ -167,12 +167,12 @@ export function computeUserDiff(initial: User, updated: User): Partial<User> {
   // deep equality checks.
   return _.pickBy(
     updated,
-    (value, key) => !_.isEqual(value, initial[key as keyof User])
+    (value, key) => !_.isEqual(value, initial[key as keyof User]),
   );
 }
 
 export function gracefullyParseJson<T = unknown>(
-  jsonString: string
+  jsonString: string,
 ): T | Error {
   try {
     return JSON.parse(jsonString);
@@ -182,7 +182,7 @@ export function gracefullyParseJson<T = unknown>(
     }
 
     return new Error(
-      'Unknown error because the thrown object is not an instance of an error'
+      'Unknown error because the thrown object is not an instance of an error',
     );
   }
 }
@@ -199,7 +199,7 @@ export function getPathFilename(path: string): string {
 
 export function isPageUrl(pathSegment: string): pathSegment is RelativePageUrl {
   return Object.values(RelativePageUrl).includes(
-    pathSegment as RelativePageUrl
+    pathSegment as RelativePageUrl,
   );
 }
 
@@ -216,7 +216,7 @@ export function getPageName(page: RelativePageUrl): string {
 
 export function getDynamicPathSegmentNames(
   dynamicPath: DynamicPath,
-  segments: string[]
+  segments: string[],
 ): string[] {
   switch (dynamicPath) {
     case DynamicPath.Project:
@@ -249,7 +249,7 @@ export function getPathBreadcrumbNames(pathSegments: string[]): string[] {
 }
 
 export async function getGitHubLanguageColors(
-  colorList: string[]
+  colorList: string[],
 ): Promise<Record<string, string>> {
   const response = await fetch(GITHUB_LANGUAGE_COLORS_API_URL);
 
@@ -261,17 +261,20 @@ export async function getGitHubLanguageColors(
   const formattedResponse = await response.json();
 
   const relevantLanguageColors = Object.keys(formattedResponse).filter(
-    (color) => colorList.includes(color)
+    (color) => colorList.includes(color),
   );
 
-  return relevantLanguageColors.reduce((map, language) => {
-    // TODO: Might need to perform a deep copy here to avoid mutating the original object.
-    const updatedMap = map;
+  return relevantLanguageColors.reduce(
+    (map, language) => {
+      // TODO: Might need to perform a deep copy here to avoid mutating the original object.
+      const updatedMap = map;
 
-    map[language] = formattedResponse[language].color;
+      map[language] = formattedResponse[language].color;
 
-    return updatedMap;
-  }, {} as Record<string, string>);
+      return updatedMap;
+    },
+    {} as Record<string, string>,
+  );
 }
 
 export function artificialDelay(timeInMs: number): Promise<void> {

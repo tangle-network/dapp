@@ -19,7 +19,7 @@ export default function convertRewardPointsToReward(
   rewardPoints: number,
   validatorCommision: number,
   ownStaked: bigint,
-  totalStaked: bigint
+  totalStaked: bigint,
 ): bigint {
   // Convert Perbill to a number
   const validatorCommission = validatorCommision / 10_000_000 / 100;
@@ -29,7 +29,7 @@ export default function convertRewardPointsToReward(
   const validatorLeftoverPayout = rewardPoints - validatorCommissionPayout;
 
   const validatorExposurePart = Number(
-    (ownStaked * BIG_INT_QUINTILL) / totalStaked / BIG_INT_QUINTILL
+    (ownStaked * BIG_INT_QUINTILL) / totalStaked / BIG_INT_QUINTILL,
   );
 
   const validatorStakingPayout =

@@ -1,12 +1,11 @@
+import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import ButtonSpinner from './ButtonSpinner';
 import { ButtonContentProps, ButtonProps } from './types';
 import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
-import { getFlexBasic } from '@webb-tools/icons/utils';
 
 /**
  * The Webb Button Component
@@ -58,7 +57,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     'max-w-max',
     cx({ 'w-full max-w-none justify-center': isFullWidth }),
     getButtonClassNameByVariant(variant, size),
-    className
+    className,
   );
 
   const contentProps = { children, leftIcon, rightIcon, variant };
@@ -105,7 +104,7 @@ function ButtonContent(props: ButtonContentProps) {
             variant === 'link' ? 'mr-1' : 'mr-2',
             'block !text-inherit',
             'grow-0 shrink-0',
-            getFlexBasic(leftIcon.props.size)
+            getFlexBasic(leftIcon.props.size),
           )}
         >
           {leftIcon}
@@ -121,7 +120,7 @@ function ButtonContent(props: ButtonContentProps) {
             variant === 'link' ? 'ml-1' : 'ml-2',
             'block !text-inherit',
             'grow-0 shrink-0',
-            getFlexBasic(rightIcon.props.size)
+            getFlexBasic(rightIcon.props.size),
           )}
         >
           {rightIcon}

@@ -1,10 +1,10 @@
-import { ComponentProps } from 'react';
-import { PropsOf } from '../../types';
-import { AdjustAmount } from '../BridgeInputs';
-import { TextFieldInput } from '../TextField';
-import TokenSelector from '../TokenSelector';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { IconBase } from '@webb-tools/icons/types';
+import type { ComponentProps } from 'react';
+import type { PropsOf } from '../../types';
+import type { AdjustAmount } from '../BridgeInputs';
+import type { TextFieldInput } from '../TextField';
+import type TokenSelector from '../TokenSelector';
+import type { TitleWithInfo } from '../TitleWithInfo';
+import type { IconBase } from '@webb-tools/icons/types';
 
 export type TransactionInputCardContextValue = {
   /**

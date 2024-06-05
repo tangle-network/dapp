@@ -18,7 +18,7 @@ import {
   TANGLE_LOCAL_SS58_PREFIX,
 } from '@webb-tools/dapp-config/constants/tangle';
 
-import { SUBQUERY_ENDPOINT } from '.';
+import { SUBQUERY_ENDPOINT } from './index';
 
 export type NetworkNodeType = 'parachain' | 'standalone';
 

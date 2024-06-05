@@ -1,4 +1,4 @@
-import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components';
+import { TableAndChartTabs } from '../../components/TableAndChartTabs';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

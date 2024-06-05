@@ -102,7 +102,7 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 
 export default function getSidebarProps(
   substrateExplorerHref?: string,
-  evmExplorerHref?: string
+  evmExplorerHref?: string,
 ): SidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
     ? process.env.NODE_ENV

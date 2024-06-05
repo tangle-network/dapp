@@ -6,10 +6,12 @@ import {
   CoinsStackedLineIcon,
   SendPlanLineIcon,
 } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import {
+  InfoIconWithTooltip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { InfoIconWithTooltip } from '../../components';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -43,7 +45,7 @@ const BalancesTableContainer: FC = () => {
     valueOpt: cachedIsDetailsCollapsedOpt,
   } = useLocalStorage(
     LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED,
-    false
+    false,
   );
 
   const { result: locks } = useApiRx(
@@ -52,8 +54,8 @@ const BalancesTableContainer: FC = () => {
         if (!activeSubstrateAddress) return null;
         return api.query.balances.locks(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   // Load the cached collapsed state from local storage on mount.

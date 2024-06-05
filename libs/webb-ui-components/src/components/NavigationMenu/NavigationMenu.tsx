@@ -18,5 +18,5 @@ export const NavigationMenu = forwardRef<HTMLDivElement, NavigationMenuProps>(
         {children}
       </Dropdown>
     );
-  }
+  },
 );

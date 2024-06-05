@@ -30,8 +30,8 @@ const useAirdropEligibility = () => {
           [api.query.claims.signing, params],
         ]);
       },
-      [activeAccountAddress]
-    )
+      [activeAccountAddress],
+    ),
   );
 
   const claimAmountOpt = claimInfo?.[0] || null;

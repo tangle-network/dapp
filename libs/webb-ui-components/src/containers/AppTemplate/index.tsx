@@ -14,11 +14,11 @@ const AppTemplateRoot = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
           'px-4 md:px-12 py-12 w-full max-w-5xl rounded-2xl mx-auto',
           'border-4 border-mono-0 dark:border-mono-170',
           'bg-transparent',
-          className
+          className,
         )}
       />
     );
-  }
+  },
 );
 
 AppTemplateRoot.displayName = 'AppTemplateRoot';
@@ -32,7 +32,7 @@ const AppTemplateContent = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         className={twMerge('max-w-xl mx-auto', className)}
       />
     );
-  }
+  },
 );
 
 AppTemplateContent.displayName = 'AppTemplateContent';
@@ -48,7 +48,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div {...props} ref={ref} className={twMerge('mb-4', className)}>
@@ -58,7 +58,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
             {...overrideSubTitleProps}
             className={twMerge(
               'font-black text-center',
-              overrideSubTitleProps.className
+              overrideSubTitleProps.className,
             )}
           >
             {subTitle}
@@ -70,7 +70,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
           {...overrideTitleProps}
           className={twMerge(
             'font-black text-center text-mono-200',
-            overrideTitleProps.className
+            overrideTitleProps.className,
           )}
         >
           {title}
@@ -82,7 +82,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
             {...overrideSubTitleProps}
             className={twMerge(
               'font-black text-center',
-              overrideSubTitleProps.className
+              overrideSubTitleProps.className,
             )}
           >
             {subTitle}
@@ -90,7 +90,7 @@ const AppTemplateTitle = forwardRef<ElementRef<'div'>, AppTemplateTitleProps>(
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 AppTemplateTitle.displayName = 'AppTemplateTitle';
@@ -111,7 +111,7 @@ const AppTemplateDescriptionContainer = forwardRef<
 AppTemplateDescriptionContainer.displayName = 'AppTemplateDescriptionContainer';
 
 const AppTemplateDescription: FC<Partial<PropsOf<typeof Typography>>> = (
-  props
+  props,
 ) => {
   const variant = props.variant ?? 'mkt-body1';
 
@@ -121,7 +121,7 @@ const AppTemplateDescription: FC<Partial<PropsOf<typeof Typography>>> = (
       {...props}
       className={twMerge(
         'font-medium text-center text-mono-140',
-        props.className
+        props.className,
       )}
     />
   );
@@ -136,7 +136,7 @@ const AppTemplateBody = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         className={twMerge('mt-10 space-y-4', className)}
       />
     );
-  }
+  },
 );
 
 const AppTemplate = Object.assign(
@@ -148,14 +148,14 @@ const AppTemplate = Object.assign(
     DescriptionContainer: AppTemplateDescriptionContainer,
     Description: AppTemplateDescription,
     Body: AppTemplateBody,
-  }
+  },
 );
 
 export {
   AppTemplate,
   AppTemplateRoot,
   AppTemplateRoot as Root,
-  AppTemplateContent as AppTemplateContent,
+  AppTemplateContent,
   AppTemplateContent as Content,
   AppTemplateTitle,
   AppTemplateTitle as Title,

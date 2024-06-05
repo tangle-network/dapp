@@ -12,7 +12,7 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
         className={twMerge(
           'flex items-center group/token relative',
           chainName ? 'mr-1' : '',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -38,5 +38,5 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
         )}
       </div>
     );
-  }
+  },
 );

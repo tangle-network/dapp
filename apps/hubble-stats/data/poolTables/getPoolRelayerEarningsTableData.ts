@@ -6,7 +6,7 @@ import { getAggregateValue } from '../../utils';
 
 export default async function getPoolRelayerEarningsTableData(
   poolAddress: string,
-  availableTypedChainIds: number[]
+  availableTypedChainIds: number[],
 ) {
   const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
 
@@ -17,10 +17,10 @@ export default async function getPoolRelayerEarningsTableData(
       const relayerEarningsData =
         await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChain(
           ACTIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
+          poolAddress,
         );
       relayerEarningsByVAnchorByChain = +formatEther(
-        BigInt(relayerEarningsData.profit ?? 0)
+        BigInt(relayerEarningsData.profit ?? 0),
       );
     } catch (error) {
       relayerEarningsByVAnchorByChain = undefined;

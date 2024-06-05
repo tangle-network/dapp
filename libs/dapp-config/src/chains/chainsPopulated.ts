@@ -7,7 +7,7 @@ const chainsPopulated = Object.values(chainsConfig).reduce(
   (acc, chainsConfig) => {
     const typedChainId = calculateTypedChainId(
       chainsConfig.chainType,
-      chainsConfig.id
+      chainsConfig.id,
     );
 
     return {
@@ -16,15 +16,18 @@ const chainsPopulated = Object.values(chainsConfig).reduce(
         ...chainsConfig,
         wallets: Object.values(walletsConfig)
           .filter(({ supportedChainIds }) =>
-            supportedChainIds.includes(typedChainId)
+            supportedChainIds.includes(typedChainId),
           )
-          .reduce((acc, walletsConfig) => {
-            return Array.from(new Set([...acc, walletsConfig.id])); // dedupe
-          }, [] as Array<Wallet['id']>),
+          .reduce(
+            (acc, walletsConfig) => {
+              return Array.from(new Set([...acc, walletsConfig.id])); // dedupe
+            },
+            [] as Array<Wallet['id']>,
+          ),
       },
     };
   },
-  {} as Record<number, Chain>
+  {} as Record<number, Chain>,
 );
 
 export default chainsPopulated;

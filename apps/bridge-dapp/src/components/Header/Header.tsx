@@ -1,6 +1,6 @@
 import {
-  useWebContext,
   useConnectWallet,
+  useWebContext,
 } from '@webb-tools/api-provider-environment';
 import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
 import { WebbLogoIcon } from '@webb-tools/icons';
@@ -37,13 +37,13 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { BREADCRUMBS_RECORD } from '../../constants/breadcrumb';
 import useChainsFromRoute from '../../hooks/useChainsFromRoute';
 
+import { ACTION_BUTTON_PROPS } from '../../constants';
 import useSidebarProps from '../../hooks/useSidebarProps';
+import { ConnectWalletMobileContent } from '../ConnectWalletMobileContent';
 import ActiveChainDropdown from './ActiveChainDropdown';
 import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
-import { ACTION_BUTTON_PROPS } from '../../constants';
-import { ConnectWalletMobileContent } from '../ConnectWalletMobileContent';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -84,7 +84,7 @@ export const Header: FC<HeaderProps> = () => {
           </NavLink>
         );
       }),
-    [items]
+    [items],
   );
 
   return (

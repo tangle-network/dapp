@@ -11,7 +11,7 @@ export default function OverviewTvlChartContainer(props: ChartProps) {
 
   const { data: { tvlData, currentTvl } = {}, isLoading } = useSWR(
     [getOverviewTvlChartData.name, startingEpoch, numDatesFromStart],
-    ([, ...args]) => getOverviewTvlChartData(...args)
+    ([, ...args]) => getOverviewTvlChartData(...args),
   );
 
   if (isLoading || !tvlData) {

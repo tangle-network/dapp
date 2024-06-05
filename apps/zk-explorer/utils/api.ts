@@ -36,7 +36,7 @@ export function makeAbsoluteApiEndpointUrl(route: ApiRoute): string {
 export async function sendApiRequest<T = Record<string, never>>(
   route: ApiRoute,
   errorPrimaryMessage: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<ApiResponseWrapper<T>> {
   const headers = new Headers(options?.headers);
 
@@ -58,7 +58,7 @@ export async function sendApiRequest<T = Record<string, never>>(
       finalOptions.method || '(method not specified?)'
     } request:`,
     finalRequestUrl,
-    options?.body
+    options?.body,
   );
 
   const fetchResponse = await fetch(finalRequestUrl, finalOptions);
@@ -96,7 +96,7 @@ export async function sendApiRequest<T = Record<string, never>>(
       'Hmm... No error message was provided by the backend. Please submit a bug report.';
 
     console.error(
-      `[API] Request failed with status ${fetchResponse.status}: ${errorMessage}`
+      `[API] Request failed with status ${fetchResponse.status}: ${errorMessage}`,
     );
 
     notificationApi({
@@ -113,18 +113,18 @@ export async function sendApiRequest<T = Record<string, never>>(
 }
 
 export function extractResponseData<T>(
-  responseWrapper: ApiResponseWrapper<T>
+  responseWrapper: ApiResponseWrapper<T>,
 ): T {
   // TODO: Determine whether gracefully handle errors is more appropriate here.
 
   assert(
     responseWrapper.innerResponse.isSuccess,
-    'Response should have been successful'
+    'Response should have been successful',
   );
 
   assert(
     responseWrapper.innerResponse.data !== undefined,
-    'Response data should not be undefined'
+    'Response data should not be undefined',
   );
 
   return responseWrapper.innerResponse.data;

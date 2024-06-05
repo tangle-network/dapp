@@ -1,27 +1,34 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "outDir": "../../dist/libs/webb-ui-components",
-    "declarationDir": "../../dist/libs/webb-ui-components",
-    "declaration": true,
-    "types": ["node"],
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "downlevelIteration": true,
-    "sourceMap": true,
-    "emitDeclarationOnly": true,
-    "module": "esnext"
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "node",
+      "../../node_modules/@nx/react/typings/cssmodule.d.ts",
+      "../../node_modules/@nx/react/typings/image.d.ts",
+      "../../node_modules/vite/client"
+    ]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "../../types/**/*.d.ts"
+  ],
   "exclude": [
-    "jest.config.ts",
+    "**/vite.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.jsx",
+    "**/*.test.jsx",
     "**/*.stories.ts",
+    "**/*.stories.tsx",
     "**/*.stories.js",
-    "**/*.stories.jsx",
-    "**/*.stories.tsx"
+    "**/*.stories.jsx"
   ]
 }

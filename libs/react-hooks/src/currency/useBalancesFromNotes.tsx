@@ -38,7 +38,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
 
   const allFungibles = useMemo(() => {
     return Currency.fromArray(
-      apiConfig.getCurrenciesBy({ role: CurrencyRole.Governable })
+      apiConfig.getCurrenciesBy({ role: CurrencyRole.Governable }),
     );
   }, [apiConfig]);
 
@@ -49,7 +49,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
           const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
           const typedChainId = calculateTypedChainId(
             resourceId.chainType,
-            resourceId.chainId
+            resourceId.chainId,
           );
 
           // Iterate through all notes and calculate the balance of each fungible currency
@@ -58,7 +58,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             const fungible = allFungibles.find((f) => {
               const anchorIdentifier = apiConfig.getAnchorIdentifier(
                 f.id,
-                typedChainId
+                typedChainId,
               );
 
               return (
@@ -67,7 +67,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
                 f.hasChain(typedChainId) &&
                 apiConfig.isEqTargetSystem(
                   ensureHex(anchorIdentifier),
-                  resourceId.targetSystem
+                  resourceId.targetSystem,
                 )
               );
             });
@@ -76,7 +76,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
               console.error(
                 'Not found fungible currency',
                 note.tokenSymbol,
-                typedChainId
+                typedChainId,
               );
               return;
             }
@@ -123,7 +123,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
 
         return acc;
       },
-      {} as BalancesFromNotesType
+      {} as BalancesFromNotesType,
     );
   }, [allFungibles, allNotes, apiConfig]);
 

@@ -1,4 +1,4 @@
-import { ConnectWalletMobileButton } from '@webb-tools/webb-ui-components/components';
+import { ConnectWalletMobileButton } from '../../components/ConnectWalletMobileButton';
 
 export default {
   title: 'Design System/Molecules/ConnectWalletMobileButton',

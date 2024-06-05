@@ -10,7 +10,7 @@ export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(
       <ScrollArea
         className={twMerge(
           'max-w-[420px] w-full h-full max-h-[200px] overflow-y-auto',
-          className
+          className,
         )}
       >
         <ul className="space-y-2" {...props} ref={ref}>
@@ -18,7 +18,7 @@ export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(
             <Typography
               component="p"
               variant="utility"
-              className="normal-case text-base"
+              className="text-base normal-case"
             >
               {title}
             </Typography>
@@ -27,5 +27,5 @@ export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(
         </ul>
       </ScrollArea>
     );
-  }
+  },
 );

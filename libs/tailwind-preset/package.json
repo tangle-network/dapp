@@ -1,6 +1,9 @@
 {
   "name": "@webb-tools/tailwind-preset",
   "version": "0.0.1",
-  "type": "commonjs",
-  "main": "index.js"
+  "dependencies": {},
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
+  "private": true
 }

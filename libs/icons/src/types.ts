@@ -1,6 +1,7 @@
-import { DynamicSVGImportOptions } from './hooks';
+import { ComponentProps } from 'react';
+import type { DynamicSVGImportOptions } from './useDynamicSVGImport';
 
-type SVGBase = Omit<React.SVGProps<SVGSVGElement>, 'path' | 'd'>;
+type SVGBase = Omit<ComponentProps<'svg'>, 'path' | 'd' | 'onError'>;
 
 export type IconSize = 'md' | 'lg' | 'xl';
 

@@ -1,12 +1,30 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./",
-    "outDir": "../../dist/libs/tailwind-preset",
-    "declarationDir": "../../dist/libs/tailwind-preset",
+    "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "sourceMap": false,
-    "types": ["node"]
+    "types": ["node", "../../node_modules/vite/client"]
   },
-  "include": ["**/*.ts", "index.js"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "../../types/**/*.d.ts"
+  ],
+  "exclude": [
+    "**/vite.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.jsx",
+    "**/*.test.jsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.js",
+    "**/*.stories.jsx"
+  ]
 }

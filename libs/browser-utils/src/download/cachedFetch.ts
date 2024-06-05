@@ -1,5 +1,5 @@
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { LoggerService } from '../logger';
+import LoggerService from '../logger/LoggerService';
 
 const logger = LoggerService.get('cached fetch');
 
@@ -33,7 +33,7 @@ async function cachedFetch(
       // Handle the insuficient disk space error here
       try {
         await fixturesCache.put(url, response.clone());
-      } catch (error) {
+      } catch {
         throw WebbError.from(WebbErrorCodes.InsufficientDiskSpace);
       }
 

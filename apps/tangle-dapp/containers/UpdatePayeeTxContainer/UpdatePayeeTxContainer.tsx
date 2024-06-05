@@ -26,7 +26,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
   const { result: currentPayee } = useStakingRewardsDestination();
 
   const [selectedPayee, setSelectedPayee] = useState(
-    StakingRewardsDestination.STAKED
+    StakingRewardsDestination.STAKED,
   );
 
   const { execute: executeSetPayeeTx, status: setPayeeTxStatus } =
@@ -59,36 +59,36 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
           Change Reward Destination
         </ModalHeader>
 
-        <div className="px-8 py-6">
+        <div className="p-9">
           <UpdatePayee
-            currentPayee={currentPayee}
             payeeOptions={PAYMENT_DESTINATION_OPTIONS}
             selectedPayee={selectedPayee}
             setSelectedPayee={setSelectedPayee}
           />
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-          <Button
-            isFullWidth
-            isLoading={setPayeeTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-            isDisabled={!canSubmitTx}
-          >
-            Confirm
-          </Button>
-
+        <ModalFooter className="px-8 py-6 flex items-center gap-2">
           <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
             <Button isFullWidth variant="secondary">
               Learn More
             </Button>
           </Link>
+
+          <Button
+            isFullWidth
+            isLoading={setPayeeTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
+            isDisabled={!canSubmitTx}
+            className="!m-0"
+          >
+            Confirm
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

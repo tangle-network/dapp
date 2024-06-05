@@ -1,14 +1,13 @@
-import { getRoundedAmountString } from '../../utils';
-import { ChevronRight } from '@webb-tools/icons';
-import { Typography } from '../../typography';
+import { ChevronRight } from '@webb-tools/icons/ChevronRight';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
+import { Typography } from '../../typography/Typography';
+import { getRoundedAmountString } from '../../utils/getRoundedAmountString';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
-import { InputWrapper } from './InputWrapper';
 import { TokenPair } from '../TokenPair';
+import { InputWrapper } from './InputWrapper';
 import { ShieldedAssetInputComponentProps } from './types';
 
 /**
@@ -40,7 +39,7 @@ export const ShieldedAssetInput = forwardRef<
 
     if (asset?.balanceInUsd) {
       balanceInUsd = getRoundedAmountString(
-        parseFloat(asset.balanceInUsd.toString())
+        parseFloat(asset.balanceInUsd.toString()),
       );
     }
 
