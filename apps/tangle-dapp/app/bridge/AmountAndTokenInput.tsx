@@ -13,6 +13,7 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Decimal from 'decimal.js';
 import { FC, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import AmountInput from '../../components/AmountInput/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
@@ -29,8 +30,10 @@ const AmountAndTokenInput: FC = () => {
     setAmount,
     setSelectedTokenId,
     tokenIdOptions,
-    setIsInputError,
+    setIsAmountInputError,
+    isAmountInputError,
   } = useBridge();
+  console.log('amount :', amount);
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
@@ -56,7 +59,12 @@ const AmountAndTokenInput: FC = () => {
 
   return (
     <div className="relative">
-      <div className="w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg pr-4">
+      <div
+        className={twMerge(
+          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg pr-4',
+          isAmountInputError && 'border border-red-70 dark:border-red-50',
+        )}
+      >
         <AmountInput
           id="bridge-amount-input"
           title="Amount"
@@ -71,8 +79,10 @@ const AmountAndTokenInput: FC = () => {
           maxErrorMessage="Insufficient balance"
           min={minAmount ? convertDecimalToBn(minAmount, decimals) : null}
           minErrorMessage="Amount too small"
-          setErrorMessage={() => setIsInputError(true)}
-          errorMessageClassName="absolute left-0 bottom-[-24px]"
+          setErrorMessage={(error) =>
+            setIsAmountInputError(error ? true : false)
+          }
+          errorMessageClassName="absolute left-0 bottom-[-28px]"
         />
         <Dropdown>
           <DropdownTrigger asChild>

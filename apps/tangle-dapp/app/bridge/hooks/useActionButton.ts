@@ -40,7 +40,8 @@ export default function useActionButton() {
     amount,
     destinationAddress,
     selectedSourceChain,
-    isInputError,
+    isAmountInputError,
+    isAddressInputError,
     walletError,
   } = useBridge();
   const { sourceTypedChainId } = useTypedChainId();
@@ -139,7 +140,7 @@ export default function useActionButton() {
     isLoading: loading || isConnecting,
     isDisabled: isRequiredToConnectWallet
       ? false
-      : isInputInsufficient || isInputError,
+      : isInputInsufficient || isAmountInputError || isAddressInputError,
     buttonAction,
     buttonText,
     errorMessage,

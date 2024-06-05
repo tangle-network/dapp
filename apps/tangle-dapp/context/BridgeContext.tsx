@@ -50,8 +50,11 @@ interface BridgeContextProps {
   setSelectedTokenId: (token: BridgeTokenId) => void;
   tokenIdOptions: BridgeTokenId[];
 
-  isInputError: boolean;
-  setIsInputError: (isInputError: boolean) => void;
+  isAmountInputError: boolean;
+  setIsAmountInputError: (isAmountInputError: boolean) => void;
+
+  isAddressInputError: boolean;
+  setIsAddressInputError: (isAddressInputError: boolean) => void;
 
   walletError: BridgeWalletError | null;
 }
@@ -85,8 +88,13 @@ const BridgeContext = createContext<BridgeContextProps>({
   },
   tokenIdOptions: DEFAULT_TOKEN_OPTIONS,
 
-  isInputError: false,
-  setIsInputError: () => {
+  isAmountInputError: false,
+  setIsAmountInputError: () => {
+    return;
+  },
+
+  isAddressInputError: false,
+  setIsAddressInputError: () => {
     return;
   },
 
@@ -140,7 +148,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [walletError, setWalletError] = useState<BridgeWalletError | null>(
     null,
   );
-  const [isInputError, setIsInputError] = useState(false);
+  const [isAmountInputError, setIsAmountInputError] = useState(false);
+  const [isAddressInputError, setIsAddressInputError] = useState(false);
 
   const tokenIdOptions = useMemo(
     () =>
@@ -223,8 +232,11 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         setSelectedTokenId,
         tokenIdOptions,
 
-        isInputError,
-        setIsInputError,
+        isAmountInputError,
+        setIsAmountInputError,
+
+        isAddressInputError,
+        setIsAddressInputError,
 
         walletError,
       }}
