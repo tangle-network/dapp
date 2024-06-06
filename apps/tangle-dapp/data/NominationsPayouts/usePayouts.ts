@@ -8,6 +8,7 @@ import {
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -30,8 +31,11 @@ type UsePayoutsReturnType = {
 };
 
 export default function usePayouts(): UsePayoutsReturnType {
+  const { activeAccount } = useWebContext();
+
   const setIsLoading = usePayoutsStore((state) => state.setIsLoading);
   const setPayouts = usePayoutsStore((state) => state.setPayouts);
+  const resetPayouts = usePayoutsStore((state) => state.resetPayouts);
   const isLoading = usePayoutsStore((state) => state.isLoading);
   const data = usePayoutsStore((state) => state.data);
   const maxEras = usePayoutsStore((state) => state.maxEras);
@@ -60,6 +64,11 @@ export default function usePayouts(): UsePayoutsReturnType {
     });
     return map;
   }, [validators]);
+
+  // Reset payouts when the active account changes or when the user is not connected
+  useEffect(() => {
+    resetPayouts();
+  }, [activeAccount?.address, resetPayouts, setPayouts]);
 
   useEffect(
     () => {

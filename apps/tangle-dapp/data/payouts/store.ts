@@ -14,6 +14,7 @@ type State = {
 type Actions = {
   setIsLoading: (isLoading: State['isLoading']) => void;
   setPayouts: (data: State['data']) => void;
+  resetPayouts: () => void;
   setMaxEras: (maxEras: State['maxEras']) => void;
 };
 
@@ -26,5 +27,6 @@ export const usePayoutsStore = create<Store>((set) => ({
   setIsLoading: (isLoading) => set({ isLoading }),
   setPayouts: (newData) =>
     set((state) => ({ data: { ...state.data, ...newData } })),
+  resetPayouts: () => set({ data: {} }),
   setMaxEras: (maxEras) => set({ maxEras }),
 }));
