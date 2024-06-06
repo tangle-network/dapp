@@ -9,8 +9,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { LiquidStakingToken } from '../../../constants/liquidStaking';
 import LiquidStakingInput from './LiquidStakingInput';
+import { LiquidStakingToken } from '../../../types/liquidStaking';
 
 const LiquidStakingCard: FC = () => {
   return (
@@ -27,14 +27,14 @@ const LiquidStakingCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-from"
-        selectedToken={LiquidStakingToken.Polkadot}
+        selectedToken={LiquidStakingToken.DOT}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
         id="liquid-staking-to"
-        selectedToken={LiquidStakingToken.Polkadot}
+        selectedToken={LiquidStakingToken.DOT}
       />
 
       {/* Details */}

@@ -31,6 +31,11 @@ export enum StaticAssetPath {
   RESTAKING_METHOD_SHARED_DARK = '/static/assets/restaking/method-shared-dark.svg',
   RESTAKING_METHOD_INDEPENDENT_LIGHT = '/static/assets/restaking/method-independent-light.svg',
   RESTAKING_METHOD_SHARED_LIGHT = '/static/assets/restaking/method-shared-light.svg',
+  LIQUID_STAKING_TOKEN_ASTAR = '/static/assets/liquidStaking/token-astar.svg',
+  LIQUID_STAKING_TOKEN_GLIMMER = '/static/assets/liquidStaking/token-glimmer.svg',
+  LIQUID_STAKING_TOKEN_MANTA = '/static/assets/liquidStaking/token-manta.svg',
+  LIQUID_STAKING_TOKEN_PHALA = '/static/assets/liquidStaking/token-phala.svg',
+  LIQUID_STAKING_TOKEN_POLKADOT = '/static/assets/liquidStaking/token-polkadot.svg',
 }
 
 type TangleRoleMapping = {

@@ -4,6 +4,11 @@ import { FC } from 'react';
 import { GlassCard } from '../../components';
 import LiquidStakingTokenItem from './LiquidStakingTokenItem';
 import StatItem from './StatItem';
+import {
+  LiquidStakingChainToLogoMap,
+  LiquidStakingChainToTokenMap,
+} from '../../types/liquidStaking';
+import entriesOf from '../../utils/entriesOf';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -38,35 +43,16 @@ const LiquidStakingPage: FC = () => {
           Liquid Staking Tokens
         </Typography>
 
-        <LiquidStakingTokenItem
-          icon=""
-          title="Tangle Polkadot"
-          tokenSymbol="DOT"
-        />
-
-        <LiquidStakingTokenItem
-          icon=""
-          title="Tangle Glimmer"
-          tokenSymbol="GLMR"
-        />
-
-        <LiquidStakingTokenItem
-          icon=""
-          title="Tangle Manta"
-          tokenSymbol="MANTA"
-        />
-
-        <LiquidStakingTokenItem
-          icon=""
-          title="Tangle Astar"
-          tokenSymbol="ASTAR"
-        />
-
-        <LiquidStakingTokenItem
-          icon=""
-          title="Tangle Phala"
-          tokenSymbol="PHALA"
-        />
+        {entriesOf(LiquidStakingChainToTokenMap).map(([chain, token]) => {
+          return (
+            <LiquidStakingTokenItem
+              key={chain}
+              logoPath={LiquidStakingChainToLogoMap[chain]}
+              title={`Tangle ${chain}`}
+              tokenSymbol={token}
+            />
+          );
+        })}
       </GlassCard>
     </div>
   );

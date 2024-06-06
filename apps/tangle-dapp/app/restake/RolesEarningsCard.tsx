@@ -9,6 +9,7 @@ import { formatUnits } from 'viem';
 import { RoleEarningsChart } from '../../components/charts';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
+import entriesOf from '../../utils/entriesOf';
 
 const RolesEarningsCard: FC = () => {
   const { earningsRecord, isLoading } = useRestakingProfile();
@@ -16,8 +17,8 @@ const RolesEarningsCard: FC = () => {
   const data = useMemo<ComponentProps<typeof RoleEarningsChart>['data']>(() => {
     if (!earningsRecord) return [];
 
-    return Object.entries(earningsRecord).map(([era, reward]) => ({
-      era: +era,
+    return entriesOf(earningsRecord).map(([era, reward]) => ({
+      era,
       // Format to display already handled in the chart component
       reward: +formatUnits(reward, TANGLE_TOKEN_DECIMALS),
     }));
