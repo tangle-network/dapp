@@ -31,7 +31,6 @@ const columnHelper = createColumnHelper<Payout>();
 const PayoutTable: FC<PayoutTableProps> = ({
   data = [],
   pageSize,
-  updateData,
   sessionProgress,
   historyDepth,
 }) => {
@@ -211,7 +210,6 @@ const PayoutTable: FC<PayoutTableProps> = ({
         setIsModalOpen={setIsModalOpen}
         payoutTxProps={payoutTxProps}
         payouts={data}
-        updatePayouts={updateData}
       />
     </>
   );

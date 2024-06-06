@@ -21,8 +21,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
   validatorsAndEras,
-  payouts,
-  updatePayouts,
 }) => {
   const { activeAccount } = useWebContext();
 
@@ -70,24 +68,8 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       validatorEraPairs: payoutValidatorsAndEras,
     });
 
-    const updatedPayouts = payouts.filter(
-      (payout) =>
-        !payoutValidatorsAndEras.find(
-          (v) =>
-            v.validatorSubstrateAddress === payout.validator.address &&
-            v.era === payout.era,
-        ),
-    );
-
-    updatePayouts(updatedPayouts);
     closeModal();
-  }, [
-    executePayoutAllTx,
-    payoutValidatorsAndEras,
-    payouts,
-    updatePayouts,
-    closeModal,
-  ]);
+  }, [executePayoutAllTx, payoutValidatorsAndEras, closeModal]);
 
   const canSubmitTx =
     validatorsAndEras.length > 0 && executePayoutAllTx !== null;

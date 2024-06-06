@@ -36,7 +36,6 @@ import useApi from '../../hooks/useApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {
   DelegationsAndPayoutsTab as NominationsAndPayoutsTab,
-  Payout,
   QueryParamKey,
 } from '../../types';
 import { DelegateTxContainer } from '../DelegateTxContainer';
@@ -62,12 +61,9 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 const DelegationsPayoutsContainer: FC = () => {
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
-  const [updatedPayouts, setUpdatedPayouts] = useState<Payout[]>([]);
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
-
-  const { setPayouts, data, setMaxEras, maxEras } = usePayoutsStore();
 
   const { result: historyDepth } = useApi(
     useCallback(async (api) => api.consts.staking.historyDepth.toBn(), []),
@@ -100,7 +96,15 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
-  const { data: payoutsData, isLoading: payoutsIsLoading } = usePayouts();
+
+  const {
+    data: payoutsData,
+    isLoading: payoutsIsLoading,
+    setMaxEras,
+    maxEras,
+  } = usePayoutsStore();
+
+  usePayouts();
 
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
@@ -120,15 +124,6 @@ const DelegationsPayoutsContainer: FC = () => {
     return [];
   }, [payoutsData, maxEras]);
 
-  useEffect(() => {
-    if (updatedPayouts.length > 0) {
-      setPayouts({
-        ...data,
-        [maxEras]: updatedPayouts,
-      });
-    }
-  }, [data, maxEras, setPayouts, updatedPayouts]);
-
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
   useEffect(() => {
@@ -147,14 +142,6 @@ const DelegationsPayoutsContainer: FC = () => {
       })),
     [fetchedPayouts],
   );
-
-  // Clear the updated payouts when the active account changes,
-  // and the user is no longer logged in.
-  useEffect(() => {
-    if (!activeAccount?.address) {
-      setUpdatedPayouts([]);
-    }
-  }, [activeAccount?.address]);
 
   const { isMobile } = useCheckMobile();
   const { toggleModal } = useConnectWallet();
@@ -276,7 +263,6 @@ const DelegationsPayoutsContainer: FC = () => {
             <PayoutTable
               data={fetchedPayouts ?? []}
               pageSize={PAGE_SIZE}
-              updateData={setUpdatedPayouts}
               sessionProgress={progress}
               historyDepth={historyDepth}
               epochDuration={epochDuration}
@@ -312,7 +298,6 @@ const DelegationsPayoutsContainer: FC = () => {
         setIsModalOpen={setIsPayoutAllModalOpen}
         validatorsAndEras={validatorAndEras}
         payouts={fetchedPayouts}
-        updatePayouts={setUpdatedPayouts}
       />
     </div>
   );

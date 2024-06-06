@@ -21,8 +21,6 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
   payoutTxProps: { validatorAddress, era },
-  payouts,
-  updatePayouts,
 }) => {
   const { activeAccount } = useWebContext();
 
@@ -51,24 +49,8 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       validatorAddress,
     });
 
-    const updatedPayouts = payouts.filter(
-      (payout) =>
-        !(
-          payout.era === Number(era) &&
-          payout.validator.address === validatorAddress
-        ),
-    );
-
-    updatePayouts(updatedPayouts);
     closeModal();
-  }, [
-    closeModal,
-    era,
-    executePayoutStakersTx,
-    payouts,
-    updatePayouts,
-    validatorAddress,
-  ]);
+  }, [closeModal, era, executePayoutStakersTx, validatorAddress]);
 
   // TODO: This validation doesn't make much sense because the values are never null or undefined, so why are they being used as booleans? In fact, the variable's inferred type is not a boolean.
   const canSubmitTx =
