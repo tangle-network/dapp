@@ -29,7 +29,6 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
-import { usePayoutsFilterByEraStore } from '../../data/payouts/filterByEraStore';
 import { usePayoutsStore } from '../../data/payouts/store';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import { PayoutFilterableEra } from '../../data/types';
@@ -68,8 +67,7 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
-  const { setMaxEras, maxEras } = usePayoutsFilterByEraStore();
-  const { setPayouts, data } = usePayoutsStore();
+  const { setPayouts, data, setMaxEras, maxEras } = usePayoutsStore();
 
   const { result: historyDepth } = useApi(
     useCallback(async (api) => api.consts.staking.historyDepth.toBn(), []),

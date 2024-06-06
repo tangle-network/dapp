@@ -16,7 +16,6 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
-import { usePayoutsFilterByEraStore } from '../payouts/filterByEraStore';
 import { usePayoutsStore } from '../payouts/store';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
@@ -31,8 +30,7 @@ type UsePayoutsReturnType = {
 };
 
 export default function usePayouts(): UsePayoutsReturnType {
-  const { maxEras } = usePayoutsFilterByEraStore();
-  const { setIsLoading, setPayouts, isLoading, data } = usePayoutsStore();
+  const { setIsLoading, setPayouts, isLoading, data, maxEras } = usePayoutsStore();
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,

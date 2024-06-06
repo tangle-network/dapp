@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { usePayoutsFilterByEraStore } from '../payouts/filterByEraStore';
 import { usePayoutsStore } from '../payouts/store';
 
 export default function useTotalPayoutRewards(
@@ -13,8 +12,7 @@ export default function useTotalPayoutRewards(
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
 
-  const { maxEras } = usePayoutsFilterByEraStore();
-  const { setIsLoading, isLoading, data } = usePayoutsStore();
+  const { setIsLoading, isLoading, data, maxEras } = usePayoutsStore();
 
   const address = useSubstrateAddress();
 
