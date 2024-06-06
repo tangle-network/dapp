@@ -10,7 +10,6 @@ import {
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
 import entriesOf from '../../utils/entriesOf';
-import { BN } from '@polkadot/util';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -40,26 +39,29 @@ const LiquidStakingPage: FC = () => {
         </div>
       </GlassCard>
 
-      <GlassCard>
-        <div className="flex flex-col gap-4 min-w-[630px]">
-          <Typography variant="h5" fw="bold">
-            Liquid Staking Tokens
-          </Typography>
+      <GlassCard className="space-y-4">
+        <Typography variant="h5" fw="bold">
+          Liquid Staking Tokens
+        </Typography>
 
-          {entriesOf(LiquidStakingChainToTokenMap).map(([chain, token]) => {
-            return (
-              <LiquidStakingTokenItem
-                key={chain}
-                logoPath={LiquidStakingChainToLogoMap[chain]}
-                title={`Tangle ${chain}`}
-                tokenSymbol={token}
-                // TODO: Using dummy values.
-                annualPercentageYield={0.23456}
-                totalStaked={new BN(100_000_000)}
-                totalValueStaked={220_000_123}
-              />
-            );
-          })}
+        <div className="overflow-x-auto">
+          <div className="flex flex-col gap-4 min-w-[750px]">
+            {entriesOf(LiquidStakingChainToTokenMap).map(([chain, token]) => {
+              return (
+                <LiquidStakingTokenItem
+                  key={chain}
+                  logoPath={LiquidStakingChainToLogoMap[chain]}
+                  title={`Tangle ${chain}`}
+                  tokenSymbol={token}
+                  // TODO: Using dummy values.
+                  annualPercentageYield={0.23456}
+                  // TODO: Can't pass non-plain objects as props to Client components from Server components (this page). For now, passing in as a string then creating BN instance inside the component.
+                  totalStaked="100000000"
+                  totalValueStaked={220_000_123}
+                />
+              );
+            })}
+          </div>
         </div>
       </GlassCard>
     </div>

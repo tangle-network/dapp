@@ -2,7 +2,7 @@
 
 import { ArrowRight } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import Image from 'next/image';
 
 import { PagePath } from '../../types';
@@ -10,15 +10,15 @@ import StatItem from './StatItem';
 import { LiquidStakingToken, TVS_TOOLTIP } from '../../constants/liquidStaking';
 import { StaticAssetPath } from '../../constants';
 import assert from 'assert';
-import { BN } from '@polkadot/util';
 import { formatTokenBalance } from '../../utils/polkadot';
+import { BN } from '@polkadot/util';
 
 export type LiquidStakingTokenItemProps = {
   logoPath: StaticAssetPath;
   title: string;
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;
-  totalStaked: BN;
+  totalStaked: string;
 
   /**
    * Annual Percentage Yield (APY). Should a decimal value
@@ -26,8 +26,6 @@ export type LiquidStakingTokenItemProps = {
    */
   annualPercentageYield: number;
 };
-
-const LOGO_SIZE = 40;
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   logoPath,
@@ -51,17 +49,29 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
     2,
   );
 
-  const formattedTotalStaked = formatTokenBalance(totalStaked);
+  const formattedTotalStaked = useMemo(
+    () => formatTokenBalance(new BN(totalStaked)),
+    [totalStaked],
+  );
 
   return (
-    <div className="flex justify-between rounded-xl dark:bg-mono-160 w-full px-3 py-6">
+    <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
       <div className="flex gap-2 items-center">
-        <div className="rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
+        <div className="relative rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
           <Image
+            className="min-w-[40px] min-h-[40px]"
             src={logoPath}
             alt="Logo of the liquid staking token"
-            width={LOGO_SIZE}
-            height={LOGO_SIZE}
+            width={40}
+            height={40}
+          />
+
+          <Image
+            className="absolute bottom-0 right-0"
+            src={StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO}
+            alt="Tangle logo"
+            width={14}
+            height={14}
           />
         </div>
 
@@ -80,7 +90,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         <StatItem title={`${formattedAnnualPercentageYield}%`} subtitle="APY" />
 
         <StatItem
-          title={`$${formattedTotalValueStaked}`}
+          title={formattedTotalValueStaked}
           subtitle="TVS"
           tooltip={TVS_TOOLTIP}
         />
