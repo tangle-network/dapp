@@ -20,8 +20,7 @@ export type ChainGroup =
   | 'scroll'
   | 'tangle'
   | 'orbit'
-  | 'webb-dev'
-  | 'phala';
+  | 'webb-dev';
 
 /**
  * The extended chain interface that includes the chain type and group

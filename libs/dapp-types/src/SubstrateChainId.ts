@@ -5,7 +5,6 @@ export enum SubstrateChainId {
   TangleTestnetNative = 1081, // Tangle Native Testnet
   Kusama = 2,
   Polkadot = 0,
-  RococoPhala = 5231,
 }
 
 export default SubstrateChainId;

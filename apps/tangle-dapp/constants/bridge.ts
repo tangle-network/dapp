@@ -17,14 +17,6 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     destChainTransactionFee: {},
     decimals: { default: 18 },
   },
-  // NOTE: this is for testing, will remove later
-  PHA: {
-    id: 'PHA',
-    symbol: 'PHA',
-    existentialDeposit: {},
-    destChainTransactionFee: {},
-    decimals: { default: 18 },
-  },
 };
 
 // A Map with key as source chain id and value as another map
@@ -89,17 +81,3 @@ export const BRIDGE: BridgeType = {
     },
   },
 };
-
-// export const BRIDGE: BridgeType = {
-//   [PresetTypedChainId.Sepolia]: {
-//     [PresetTypedChainId.RococoPhala]: {
-//       supportedTokens: ['PHA'],
-//     },
-//   },
-
-//   [PresetTypedChainId.RococoPhala]: {
-//     [PresetTypedChainId.Sepolia]: {
-//       supportedTokens: ['PHA'],
-//     },
-//   },
-// };
