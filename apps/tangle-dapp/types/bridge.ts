@@ -29,6 +29,7 @@ export type BridgeTokenType = {
   /**
    * Transaction fee to be paid on the destination chain
    * Use to calculate the minimum amount of token required to be transferred
+   * Note: The final amount to transfer will be the input of user minus this value
    */
   destChainTransactionFee: Partial<Record<ChainId, Decimal>>;
 
