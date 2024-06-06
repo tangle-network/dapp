@@ -2,10 +2,8 @@ import { BN } from '@polkadot/util';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
-import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import formatBnToDisplayAmount, {
-  FormatOptions,
-} from '../../utils/formatBnToDisplayAmount';
+import parseChainUnits from '../../utils/parseChainUnits';
+import formatBn, { FormatOptions } from '../../utils/formatBn';
 
 /**
  * Regular expression to validate the input amount.
@@ -25,9 +23,7 @@ function validateInputAmount(
   const schema = z
     .string()
     .transform((value) => (value === '' ? null : value))
-    .transform((value) =>
-      value === null ? null : convertAmountStringToChainUnits(value),
-    )
+    .transform((value) => (value === null ? null : parseChainUnits(value)))
     .refine((amount) => !errorOnEmptyValue || amount !== null, {
       message: 'No amount given',
     })
@@ -65,7 +61,7 @@ const useInputAmount = (
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBnToDisplayAmount(amount, INPUT_AMOUNT_FORMAT) : '',
+    amount !== null ? formatBn(amount, INPUT_AMOUNT_FORMAT) : '',
   );
 
   const handleChange = useCallback(
@@ -107,9 +103,7 @@ const useInputAmount = (
         // Allow the amount string to be removed, by setting its value
         // to null.
         setAmount(
-          newAmountString === ''
-            ? null
-            : convertAmountStringToChainUnits(newAmountString),
+          newAmountString === '' ? null : parseChainUnits(newAmountString),
         );
       }
     },
@@ -117,9 +111,7 @@ const useInputAmount = (
   );
 
   const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
-    setDisplayAmount(
-      formatBnToDisplayAmount(newDisplayAmount, INPUT_AMOUNT_FORMAT),
-    );
+    setDisplayAmount(formatBn(newDisplayAmount, INPUT_AMOUNT_FORMAT));
   }, []);
 
   return {

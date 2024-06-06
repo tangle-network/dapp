@@ -28,10 +28,7 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   padZerosInFraction: false,
 };
 
-function formatBnToDisplayAmount(
-  amount: BN,
-  options?: Partial<FormatOptions>,
-): string {
+function formatBn(amount: BN, options?: Partial<FormatOptions>): string {
   const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
   const divisor = CHAIN_UNIT_CONVERSION_FACTOR;
   const divided = amount.div(divisor);
@@ -79,4 +76,4 @@ function formatBnToDisplayAmount(
   return remainderString ? `${integerPart}.${remainderString}` : integerPart;
 }
 
-export default formatBnToDisplayAmount;
+export default formatBn;

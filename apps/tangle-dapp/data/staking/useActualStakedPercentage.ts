@@ -23,7 +23,7 @@ const useActualStakedPercentage = () => {
   );
 
   const totalStakedFromElected = useMemo(() => {
-    if (!electedInfo) {
+    if (electedInfo === null) {
       return null;
     }
 

@@ -109,8 +109,9 @@ type SelectParachainContentProps = {
   parachains: ParachainItem[];
 };
 
+// TODO: Not yet used. Exported on purpose to avoid getting warnings. However, this is a local component.
 /** @internal */
-const SelectParachainContent: FC<SelectParachainContentProps> = ({
+export const SelectParachainContent: FC<SelectParachainContentProps> = ({
   parachains,
 }) => {
   return (

@@ -9,11 +9,22 @@ import { PagePath } from '../../types';
 import StatItem from './StatItem';
 import { LiquidStakingToken } from '../../types/liquidStaking';
 import { StaticAssetPath } from '../../constants';
+import assert from 'assert';
+import { BN } from '@polkadot/util';
+import { formatTokenBalance } from '../../utils/polkadot';
 
 export type LiquidStakingTokenItemProps = {
   logoPath: StaticAssetPath;
   title: string;
   tokenSymbol: LiquidStakingToken;
+  totalValueStaked: number;
+  totalStaked: BN;
+
+  /**
+   * Annual Percentage Yield (APY). Should a decimal value
+   * between 0 and 1.
+   */
+  annualPercentageYield: number;
 };
 
 const LOGO_SIZE = 40;
@@ -22,7 +33,26 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   logoPath,
   title,
   tokenSymbol,
+  totalValueStaked,
+  annualPercentageYield,
+  totalStaked,
 }) => {
+  assert(
+    annualPercentageYield >= 0 && annualPercentageYield <= 1,
+    'APY should be between 0 and 1',
+  );
+
+  const formattedTotalValueStaked = totalValueStaked.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+
+  const formattedAnnualPercentageYield = (annualPercentageYield * 100).toFixed(
+    2,
+  );
+
+  const formattedTotalStaked = formatTokenBalance(totalStaked);
+
   return (
     <div className="flex justify-between rounded-xl dark:bg-mono-160 w-full px-3 py-6">
       <div className="flex gap-2 items-center">
@@ -45,11 +75,15 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
       </div>
 
       <div className="flex items-center gap-6">
-        <StatItem title="100.00" subtitle="Staked" />
+        <StatItem title={formattedTotalStaked} subtitle="Staked" />
 
-        <StatItem title="5.00 %" subtitle="APY" />
+        <StatItem title={`${formattedAnnualPercentageYield}%`} subtitle="APY" />
 
-        <StatItem title="20,000.00" subtitle="TVS" />
+        <StatItem
+          title={`$${formattedTotalValueStaked}`}
+          subtitle="TVS"
+          tooltip="Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness."
+        />
 
         <Button
           size="sm"

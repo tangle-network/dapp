@@ -9,6 +9,7 @@ import {
   LiquidStakingChainToTokenMap,
 } from '../../types/liquidStaking';
 import entriesOf from '../../utils/entriesOf';
+import { BN } from '@polkadot/util';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -50,6 +51,10 @@ const LiquidStakingPage: FC = () => {
               logoPath={LiquidStakingChainToLogoMap[chain]}
               title={`Tangle ${chain}`}
               tokenSymbol={token}
+              // TODO: Using dummy values.
+              annualPercentageYield={0.23456}
+              totalStaked={new BN(100_000_000)}
+              totalValueStaked={220_000_123}
             />
           );
         })}

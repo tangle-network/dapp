@@ -13,17 +13,17 @@ export type StatItemProps = {
 const StatItem: FC<StatItemProps> = ({ title, subtitle, tooltip }) => {
   return (
     <div className="flex flex-col border-l dark:border-mono-120 px-3">
+      <Typography className="dark:text-mono-0" variant="body2" fw="bold">
+        {title}
+      </Typography>
+
       <div className="flex gap-1 items-center justify-center">
-        <Typography className="dark:text-mono-0" variant="body2" fw="bold">
-          {title}
+        <Typography variant="body2" fw="bold">
+          {subtitle}
         </Typography>
 
         {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
       </div>
-
-      <Typography variant="body2" fw="bold">
-        {subtitle}
-      </Typography>
     </div>
   );
 };

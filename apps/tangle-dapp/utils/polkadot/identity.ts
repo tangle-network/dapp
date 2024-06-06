@@ -37,14 +37,17 @@ export async function getAccountInfo(rpcEndpoint: string, address: string) {
   if (identityData.isSome) {
     const identity = identityData.unwrap();
     const info = identity[0]?.info;
+
     if (info) {
       const name = extractDataFromIdentityInfo(info, IdentityDataType.NAME);
       const email = extractDataFromIdentityInfo(info, IdentityDataType.EMAIL);
       const web = extractDataFromIdentityInfo(info, IdentityDataType.WEB);
+
       const twitterName = extractDataFromIdentityInfo(
         info,
         IdentityDataType.TWITTER,
       );
+
       const twitter =
         twitterName === null
           ? null

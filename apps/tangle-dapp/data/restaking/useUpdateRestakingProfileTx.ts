@@ -3,12 +3,13 @@ import assert from 'assert';
 import { useCallback, useRef } from 'react';
 import { z } from 'zod';
 
-import { SERVICE_TYPE_TO_TANGLE_MAP, TxName } from '../../constants';
+import { TxName } from '../../constants';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import { RestakingProfileType, RestakingService } from '../../types';
 import useRestakingRoleLedger from './useRestakingRoleLedger';
+import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants/restaking';
 
 type ProfileRecord = {
   role: (typeof SERVICE_TYPE_TO_TANGLE_MAP)[RestakingService];
