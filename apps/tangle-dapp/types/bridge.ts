@@ -11,7 +11,6 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-// TODO: Remove PHA token later (this is for testing)
 export type BridgeTokenId = 'tTNT' | 'TNT';
 
 export type ChainId = PresetTypedChainId;
