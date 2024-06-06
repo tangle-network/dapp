@@ -1,7 +1,7 @@
 import { WalletLineIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
+import { LiquidStakingToken } from '../../../constants/liquidStaking';
 
 export type LiquidStakingInputProps = {
   id: string;

@@ -1,11 +1,11 @@
-import { StaticAssetPath } from '../constants';
+import { StaticAssetPath } from '.';
 
 export enum LiquidStakingChain {
-  Polkadot,
-  Phala,
-  Moonbeam,
-  Astar,
-  Manta,
+  Polkadot = 'Polkadot',
+  Phala = 'Phala',
+  Moonbeam = 'Moonbeam',
+  Astar = 'Astar',
+  Manta = 'Manta',
 }
 
 export enum LiquidStakingToken {
@@ -37,3 +37,6 @@ export const LiquidStakingChainToLogoMap: Record<
   [LiquidStakingChain.Astar]: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
   [LiquidStakingChain.Manta]: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
 };
+
+export const TVS_TOOLTIP =
+  "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";

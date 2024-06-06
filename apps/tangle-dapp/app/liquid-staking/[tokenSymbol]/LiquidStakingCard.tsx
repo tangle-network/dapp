@@ -10,7 +10,7 @@ import {
 import { FC } from 'react';
 
 import LiquidStakingInput from './LiquidStakingInput';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
+import { LiquidStakingToken } from '../../../constants/liquidStaking';
 
 const LiquidStakingCard: FC = () => {
   return (

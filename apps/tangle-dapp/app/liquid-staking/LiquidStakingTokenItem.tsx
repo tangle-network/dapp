@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 import { PagePath } from '../../types';
 import StatItem from './StatItem';
-import { LiquidStakingToken } from '../../types/liquidStaking';
+import { LiquidStakingToken, TVS_TOOLTIP } from '../../constants/liquidStaking';
 import { StaticAssetPath } from '../../constants';
 import assert from 'assert';
 import { BN } from '@polkadot/util';
@@ -56,7 +56,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   return (
     <div className="flex justify-between rounded-xl dark:bg-mono-160 w-full px-3 py-6">
       <div className="flex gap-2 items-center">
-        <div className="rounded-full w-10 h-10 dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
+        <div className="rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
           <Image
             src={logoPath}
             alt="Logo of the liquid staking token"
@@ -82,7 +82,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         <StatItem
           title={`$${formattedTotalValueStaked}`}
           subtitle="TVS"
-          tooltip="Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness."
+          tooltip={TVS_TOOLTIP}
         />
 
         <Button

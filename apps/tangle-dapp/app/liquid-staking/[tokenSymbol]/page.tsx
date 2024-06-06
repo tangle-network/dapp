@@ -10,7 +10,7 @@ import { FC } from 'react';
 import { GlassCard } from '../../../components';
 import { PagePath } from '../../../types';
 import LiquidStakingCard from './LiquidStakingCard';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
+import { LiquidStakingToken } from '../../../constants/liquidStaking';
 
 type Props = {
   params: { tokenSymbol: string };
