@@ -11,8 +11,11 @@ import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import ensureError from '../../../utils/ensureError';
 import { isEvmAddress } from '../../../utils/isEvmAddress';
-import { getEvmContractBalance, getEvmNativeBalance } from '../lib/evm';
-import { getSubstrateNativeTransferable } from '../lib/substrate';
+import {
+  getEvmContractBalance,
+  getEvmNativeBalance,
+  getSubstrateNativeTransferable,
+} from '../lib/balance';
 import useDecimals from './useDecimals';
 import useEvmViemClient from './useEvmViemClient';
 import useSelectedToken from './useSelectedToken';
