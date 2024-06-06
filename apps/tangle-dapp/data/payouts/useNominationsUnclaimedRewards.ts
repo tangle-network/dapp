@@ -67,7 +67,6 @@ export default function useNominationsUnclaimedRewards() {
     }
 
     const startEra = currentEra - maxEras;
-    const erasRange = Array.from({ length: maxEras }, (_, i) => startEra + i);
 
     return validators.reduce((unclaimedRewards, validator) => {
       erasRewardsPoints.forEach(([era, reward]) => {
@@ -78,7 +77,7 @@ export default function useNominationsUnclaimedRewards() {
         if (hasClaimed) return;
 
         // If the era is not in the range, do nothing
-        if (!erasRange.includes(era)) return;
+        if (era < startEra || era > currentEra) return;
 
         unclaimedRewards.push({
           era,
