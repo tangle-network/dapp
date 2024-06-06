@@ -1,19 +1,12 @@
 'use client';
 
 import { BN } from '@polkadot/util';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { usePayoutsStore } from '../payouts/store';
 
-export default function useTotalPayoutRewards(
-  defaultValue: { value1: BN | null } = { value1: null },
-) {
-  const [value1, setValue1] = useState(defaultValue.value1);
-
-  const setIsLoading = usePayoutsStore((state) => state.setIsLoading);
-  const isLoading = usePayoutsStore((state) => state.isLoading);
+export default function useTotalPayoutRewards() {
   const data = usePayoutsStore((state) => state.data);
   const maxEras = usePayoutsStore((state) => state.maxEras);
 
@@ -29,16 +22,14 @@ export default function useTotalPayoutRewards(
 
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
+  const totalPayoutRewards = useMemo(() => {
     try {
       if (!address) {
-        setValue1(null);
-        return;
+        return null;
       }
 
       if (payoutsData.length === 0) {
-        setValue1(new BN(0));
-        return;
+        return new BN(0);
       }
 
       const totalPayoutRewards = payoutsData.reduce((acc, payout) => {
@@ -46,16 +37,16 @@ export default function useTotalPayoutRewards(
         return acc.add(currentReward);
       }, new BN(0));
 
-      setValue1(new BN(totalPayoutRewards.toString()));
+      return new BN(totalPayoutRewards.toString());
     } catch (e) {
       setError(
         e instanceof Error
           ? e
           : new Error('An error occurred while calculating total payouts.'),
       );
-      setIsLoading(false);
+      return null;
     }
-  }, [address, payoutsData, setIsLoading]);
+  }, [address, payoutsData]);
 
-  return useFormatReturnType({ isLoading, error, data: { value1 } });
+  return { error, data: totalPayoutRewards };
 }
