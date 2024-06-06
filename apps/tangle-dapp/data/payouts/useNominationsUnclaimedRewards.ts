@@ -3,7 +3,9 @@ import { map } from 'rxjs';
 
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import useCurrentEra from '../staking/useCurrentEra';
 import { ValidatorReward } from '../types';
+import { usePayoutsStore } from './store';
 import useClaimedRewards from './useClaimedRewards';
 import useErasRewardsPoints from './useErasRewardsPoints';
 
@@ -18,7 +20,9 @@ const EMPTY_ARRAY: ValidatorReward[] = [];
  * Get all unclaimed rewards of the active account's nominations
  */
 export default function useNominationsUnclaimedRewards() {
+  const maxEras = usePayoutsStore((state) => state.maxEras);
   const activeSubstrateAddress = useSubstrateAddress();
+  const { result: currentEra } = useCurrentEra();
 
   // Retrieve all validators that the account has nominated
   const { result: validators } = useApiRx(
@@ -56,10 +60,13 @@ export default function useNominationsUnclaimedRewards() {
       erasRewardsPoints === null ||
       erasRewardsPoints.length === 0 ||
       claimedRewards === null ||
-      claimedRewards.size === 0
+      claimedRewards.size === 0 ||
+      currentEra === null
     ) {
       return EMPTY_ARRAY;
     }
+
+    const startEra = currentEra - maxEras;
 
     return validators.reduce((unclaimedRewards, validator) => {
       erasRewardsPoints.forEach(([era, reward]) => {
@@ -68,6 +75,9 @@ export default function useNominationsUnclaimedRewards() {
 
         // If the reward has claimed, do nothing
         if (hasClaimed) return;
+
+        // If the era is not in the range, do nothing
+        if (era < startEra || era > currentEra) return;
 
         unclaimedRewards.push({
           era,
@@ -79,5 +89,5 @@ export default function useNominationsUnclaimedRewards() {
 
       return unclaimedRewards;
     }, [] as ValidatorReward[]);
-  }, [claimedRewards, erasRewardsPoints, validators]);
+  }, [claimedRewards, currentEra, erasRewardsPoints, maxEras, validators]);
 }
