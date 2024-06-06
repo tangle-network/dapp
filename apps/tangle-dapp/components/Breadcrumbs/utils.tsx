@@ -46,11 +46,11 @@ const isSubPath = (
   expectedIndex: number,
   expectedLength: number,
   actualIndex: number,
-  pathNames: string[]
+  pathNames: string[],
 ): boolean => {
   assert(
     expectedIndex < expectedLength && actualIndex < pathNames.length,
-    'Index should be in bounds'
+    'Index should be in bounds',
   );
 
   if (pathNames.length === 0) {
@@ -69,7 +69,7 @@ const isSubPath = (
 export const getBreadcrumbLabel = (
   pathName: string,
   index: number,
-  pathNames: string[]
+  pathNames: string[],
 ): string => {
   // Special case for the Service Details page.
   if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
@@ -102,7 +102,7 @@ export const getBreadcrumbLabel = (
 export const getBreadcrumbIcon = (
   pathName: string,
   index: number,
-  pathNames: string[]
+  pathNames: string[],
 ): ((props: IconBase) => JSX.Element) => {
   // Special case for the Service Details page.
   if (isSubPath(PagePath.SERVICES_OVERVIEW, 1, 2, index, pathNames)) {
