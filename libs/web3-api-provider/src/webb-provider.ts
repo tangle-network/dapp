@@ -36,7 +36,7 @@ import {
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import maxBlockStepCfg from '@webb-tools/dapp-config/maxBlockStepConfig';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   CurrencyRole,
   WalletId,
@@ -151,6 +151,7 @@ export class WebbWeb3Provider
     const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
     this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
 
+    const wagmiConfig = getWagmiConfig();
     const client = getPublicClient(wagmiConfig, { chainId });
 
     assert(client, WebbError.from(WebbErrorCodes.NoClientAvailable).message);
@@ -241,7 +242,7 @@ export class WebbWeb3Provider
   ) {
     const accounts = new Web3Accounts(connector);
 
-    const walletClient = await getWalletClient(wagmiConfig, {
+    const walletClient = await getWalletClient(getWagmiConfig(), {
       connector,
       chainId,
       account: accounts.activeOrDefault?.address,
@@ -273,7 +274,7 @@ export class WebbWeb3Provider
   }
 
   setChainListener() {
-    const unsub = watchChainId(wagmiConfig, {
+    const unsub = watchChainId(getWagmiConfig(), {
       onChange: (chainId) => {
         this.emit('providerUpdate', [chainId]);
       },
@@ -285,7 +286,7 @@ export class WebbWeb3Provider
   }
 
   setAccountListener() {
-    const unsub = watchAccount(wagmiConfig, {
+    const unsub = watchAccount(getWagmiConfig(), {
       onChange: (account) => {
         // Only emit the new accounts if the account is not disconnected
         if (account.status !== 'disconnected') {
@@ -395,7 +396,7 @@ export class WebbWeb3Provider
         storedLeaves = storedContractInfo.leaves;
       }
 
-      const publicClient = getPublicClient(wagmiConfig, {
+      const publicClient = getPublicClient(getWagmiConfig(), {
         chainId: +evmId.toString(),
       });
 
@@ -564,7 +565,7 @@ export class WebbWeb3Provider
   }
 
   async endSession(): Promise<void> {
-    await disconnect(wagmiConfig, {
+    await disconnect(getWagmiConfig(), {
       connector: this.connector,
     });
     this.unsubscribeFns.forEach((unsub) => unsub());
@@ -622,7 +623,7 @@ export class WebbWeb3Provider
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
 
-    return signMessage(wagmiConfig, {
+    return signMessage(getWagmiConfig(), {
       account: account.address,
       connector: this.connector,
       message,
@@ -954,7 +955,7 @@ export class WebbWeb3Provider
     abortSignal?: AbortSignal,
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
-    const publicClient = getPublicClient(wagmiConfig, {
+    const publicClient = getPublicClient(getWagmiConfig(), {
       chainId: +chainId.toString(),
     });
 
@@ -1062,7 +1063,7 @@ export class WebbWeb3Provider
       (acc, chainIdStr) => {
         const chainId = +chainIdStr;
 
-        const client = getPublicClient(wagmiConfig, {
+        const client = getPublicClient(getWagmiConfig(), {
           chainId,
         });
 

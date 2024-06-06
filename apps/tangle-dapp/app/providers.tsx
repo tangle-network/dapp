@@ -8,6 +8,7 @@ import {
 } from '@webb-tools/api-provider-environment';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
+import type { State } from 'wagmi';
 import z from 'zod';
 
 const appEvent = new AppEvent();
@@ -21,7 +22,14 @@ const envSchema = z.object({
     .optional(),
 });
 
-const Providers = ({ children }: PropsWithChildren): ReactNode => {
+type Props = {
+  wagmiInitialState?: State;
+};
+
+const Providers = ({
+  children,
+  wagmiInitialState,
+}: PropsWithChildren<Props>): ReactNode => {
   const {
     OFAC_COUNTRY_CODES: blockedCountryCodes,
     OFAC_REGIONS: blockedRegions,
@@ -30,7 +38,12 @@ const Providers = ({ children }: PropsWithChildren): ReactNode => {
   return (
     <NextThemeProvider>
       <WebbUIProvider hasErrorBoudary isNextApp>
-        <WebbProvider appEvent={appEvent} applicationName="Tangle dApp">
+        <WebbProvider
+          appEvent={appEvent}
+          applicationName="Tangle dApp"
+          isSSR
+          wagmiInitialState={wagmiInitialState}
+        >
           <OFACFilterProvider
             isActivated
             blockedRegions={blockedRegions}
