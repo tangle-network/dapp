@@ -100,7 +100,6 @@ const DelegationsPayoutsContainer: FC = () => {
   const payoutsData = usePayoutsStore((state) => state.data);
   const payoutsIsLoading = usePayoutsStore((state) => state.isLoading);
   const maxEras = usePayoutsStore((state) => state.maxEras);
-  const setMaxEras = usePayoutsStore((state) => state.setMaxEras);
 
   usePayouts();
 
@@ -165,10 +164,7 @@ const DelegationsPayoutsContainer: FC = () => {
               />
             ) : (
               <div className="flex items-center gap-2">
-                <FilterByErasContainer
-                  maxEras={maxEras}
-                  setMaxEras={setMaxEras}
-                />
+                <FilterByErasContainer />
 
                 <Button
                   variant="utility"
@@ -336,11 +332,9 @@ function ManageButtonContainer(props: {
 }
 
 /** @internal */
-function FilterByErasContainer(props: {
-  maxEras: PayoutFilterableEra;
-  setMaxEras: (maxEras: PayoutFilterableEra) => void;
-}) {
-  const { maxEras, setMaxEras } = props;
+function FilterByErasContainer() {
+  const maxEras = usePayoutsStore((state) => state.maxEras);
+  const setMaxEras = usePayoutsStore((state) => state.setMaxEras);
 
   return (
     <div className="items-center space-x-2 flex">
