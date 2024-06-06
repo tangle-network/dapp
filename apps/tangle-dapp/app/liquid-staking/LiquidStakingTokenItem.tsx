@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowRight } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';

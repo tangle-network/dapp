@@ -22,6 +22,7 @@ export type BreadcrumbType = {
 
 const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
   const fullPathname = usePathname();
+
   const pathNames = fullPathname
     .split('/')
     .filter((segment) => segment.trim() !== '');
