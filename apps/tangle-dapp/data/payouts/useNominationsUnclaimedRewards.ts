@@ -21,7 +21,7 @@ const EMPTY_ARRAY: ValidatorReward[] = [];
  * Get all unclaimed rewards of the active account's nominations
  */
 export default function useNominationsUnclaimedRewards() {
-  const { maxEras } = usePayoutsStore();
+  const maxEras = usePayoutsStore((state) => state.maxEras);
   const activeSubstrateAddress = useSubstrateAddress();
   const { result: currentEra } = useCurrentEra();
 

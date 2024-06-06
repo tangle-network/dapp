@@ -97,12 +97,10 @@ const DelegationsPayoutsContainer: FC = () => {
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
 
-  const {
-    data: payoutsData,
-    isLoading: payoutsIsLoading,
-    setMaxEras,
-    maxEras,
-  } = usePayoutsStore();
+  const payoutsData = usePayoutsStore((state) => state.data);
+  const payoutsIsLoading = usePayoutsStore((state) => state.isLoading);
+  const maxEras = usePayoutsStore((state) => state.maxEras);
+  const setMaxEras = usePayoutsStore((state) => state.setMaxEras);
 
   usePayouts();
 

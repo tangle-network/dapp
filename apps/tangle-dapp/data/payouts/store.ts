@@ -24,6 +24,7 @@ export const usePayoutsStore = create<Store>((set) => ({
   data: {},
   maxEras: PayoutFilterableEra.TWO,
   setIsLoading: (isLoading) => set({ isLoading }),
-  setPayouts: (data) => set({ data }),
+  setPayouts: (newData) =>
+    set((state) => ({ data: { ...state.data, ...newData } })),
   setMaxEras: (maxEras) => set({ maxEras }),
 }));

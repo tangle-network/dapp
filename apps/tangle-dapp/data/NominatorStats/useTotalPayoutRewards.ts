@@ -12,7 +12,10 @@ export default function useTotalPayoutRewards(
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
 
-  const { setIsLoading, isLoading, data, maxEras } = usePayoutsStore();
+  const setIsLoading = usePayoutsStore((state) => state.setIsLoading);
+  const isLoading = usePayoutsStore((state) => state.isLoading);
+  const data = usePayoutsStore((state) => state.data);
+  const maxEras = usePayoutsStore((state) => state.maxEras);
 
   const address = useSubstrateAddress();
 

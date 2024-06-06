@@ -30,7 +30,11 @@ type UsePayoutsReturnType = {
 };
 
 export default function usePayouts(): UsePayoutsReturnType {
-  const { setIsLoading, setPayouts, isLoading, data, maxEras } = usePayoutsStore();
+  const setIsLoading = usePayoutsStore((state) => state.setIsLoading);
+  const setPayouts = usePayoutsStore((state) => state.setPayouts);
+  const isLoading = usePayoutsStore((state) => state.isLoading);
+  const data = usePayoutsStore((state) => state.data);
+  const maxEras = usePayoutsStore((state) => state.maxEras);
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
@@ -93,10 +97,7 @@ export default function usePayouts(): UsePayoutsReturnType {
           const sortedPayout = payouts.sort((a, b) => a.era - b.era);
 
           abortController.signal.throwIfAborted();
-          setPayouts({
-            ...data,
-            [maxEras]: sortedPayout,
-          });
+          setPayouts({ [maxEras]: sortedPayout });
           setCachedPayouts((previous) => ({
             ...previous?.value,
             [rpcEndpoint]: {
