@@ -18,7 +18,7 @@ const StatItem: FC<StatItemProps> = ({ title, subtitle, tooltip }) => {
       </Typography>
 
       <div className="flex gap-1 items-start justify-start">
-        <Typography variant="body2" fw="regular">
+        <Typography variant="body2" fw="normal">
           {subtitle}
         </Typography>
 
