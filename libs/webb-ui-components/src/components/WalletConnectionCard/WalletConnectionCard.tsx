@@ -1,11 +1,14 @@
+'use client';
+
 import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import useBreakpoint from '../../hooks/useBreakpoint';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { Button } from '../buttons';
 import { ListItem } from '../ListCard/ListItem';
+import { Button } from '../buttons';
 import { WalletConnectionCardProps } from './types';
 
 export const WalletConnectionCard = forwardRef<
@@ -31,6 +34,8 @@ export const WalletConnectionCard = forwardRef<
     },
     ref,
   ) => {
+    const isDesktop = useBreakpoint('md');
+
     const connectingWallet = useMemo(() => {
       if (!connectingWalletId) {
         return;
@@ -47,13 +52,12 @@ export const WalletConnectionCard = forwardRef<
       return wallets.find((wallet) => wallet.id === failedWalletId);
     }, [failedWalletId, wallets]);
 
-    return (
-      <>
-        {/* Desktop */}
+    if (isDesktop) {
+      return (
         <div
           {...props}
           className={twMerge(
-            'hidden lg:!flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
+            'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
             className,
           )}
           ref={ref}
@@ -98,54 +102,55 @@ export const WalletConnectionCard = forwardRef<
             />
           </div>
         </div>
+      );
+    }
 
-        {/* Tablet and Mobile */}
-        <div
-          {...props}
-          className={twMerge(
-            'max-w-full w-[356px] min-h-[448px] mx-9 lg:hidden rounded-lg bg-mono-0 dark:bg-mono-190',
-            'flex flex-col',
-            className,
-          )}
-          ref={ref}
-        >
-          <div className="flex items-center justify-between px-6 py-4">
-            <Typography variant="h5" fw="bold" className="flex-1">
-              Connect a Wallet
-            </Typography>
-            <button onClick={onClose}>
-              <Close size="lg" />
-            </button>
-          </div>
-
-          {!failedWallet && !connectingWallet ? (
-            <WalletList
-              wallets={wallets}
-              onWalletSelect={onWalletSelect}
-              className="w-full grow"
-            />
-          ) : (
-            <div className="flex items-center justify-center grow">
-              <WalletContent
-                failedWallet={failedWallet}
-                connectingWallet={connectingWallet}
-                errorBtnText={errorBtnText}
-                errorMessage={errorMessage}
-                onTryAgainBtnClick={onTryAgainBtnClick}
-                contentDefaultText={contentDefaultText}
-                tryAgainBtnProps={tryAgainBtnProps}
-              />
-            </div>
-          )}
-
-          <DownloadWallet
-            downloadWalletURL={downloadWalletURL}
-            getHelpURL={getHelpURL}
-            connectingWallet={connectingWallet}
-            failedWallet={failedWallet}
-          />
+    return (
+      <div
+        {...props}
+        className={twMerge(
+          'max-w-full w-[356px] min-h-[448px] mx-9 rounded-lg bg-mono-0 dark:bg-mono-190',
+          'flex flex-col',
+          className,
+        )}
+        ref={ref}
+      >
+        <div className="flex items-center justify-between px-6 py-4">
+          <Typography variant="h5" fw="bold" className="flex-1">
+            Connect a Wallet
+          </Typography>
+          <button onClick={onClose}>
+            <Close size="lg" />
+          </button>
         </div>
-      </>
+
+        {!failedWallet && !connectingWallet ? (
+          <WalletList
+            wallets={wallets}
+            onWalletSelect={onWalletSelect}
+            className="w-full grow"
+          />
+        ) : (
+          <div className="flex items-center justify-center grow">
+            <WalletContent
+              failedWallet={failedWallet}
+              connectingWallet={connectingWallet}
+              errorBtnText={errorBtnText}
+              errorMessage={errorMessage}
+              onTryAgainBtnClick={onTryAgainBtnClick}
+              contentDefaultText={contentDefaultText}
+              tryAgainBtnProps={tryAgainBtnProps}
+            />
+          </div>
+        )}
+
+        <DownloadWallet
+          downloadWalletURL={downloadWalletURL}
+          getHelpURL={getHelpURL}
+          connectingWallet={connectingWallet}
+          failedWallet={failedWallet}
+        />
+      </div>
     );
   },
 );

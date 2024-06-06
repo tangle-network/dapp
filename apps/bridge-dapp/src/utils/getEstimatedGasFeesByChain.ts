@@ -1,4 +1,4 @@
-import wagmiCfg from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiCfg from '@webb-tools/dapp-config/wagmi-config';
 import { estimateFeesPerGas, getPublicClient } from 'wagmi/actions';
 import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import gasLimit from '@webb-tools/dapp-config/gasLimitConfig';
@@ -6,6 +6,8 @@ import assert from 'assert';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 
 export default async function getEstimatedGasFeesByChain(typedChainId: number) {
+  const wagmiCfg = getWagmiCfg();
+
   const gasAmount = gasLimit[typedChainId] ?? gasLimit.default;
 
   const chainId = parseTypedChainId(typedChainId).chainId;
