@@ -52,6 +52,12 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
+    },
+    "bundle-analyzer": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ANALYZE=true nx build tangle-dapp --prod"
+      }
     }
   },
   "tags": []
