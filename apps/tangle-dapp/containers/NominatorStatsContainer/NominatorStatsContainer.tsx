@@ -92,12 +92,8 @@ const NominatorStatsContainer: FC = () => {
             >
               {totalPayoutRewards === null
                 ? EMPTY_VALUE_PLACEHOLDER
-                : totalPayoutRewards.value1 === null
-                  ? EMPTY_VALUE_PLACEHOLDER
-                  : `${formatTokenBalance(
-                      totalPayoutRewards.value1,
-                      nativeTokenSymbol,
-                    )} ${nativeTokenSymbol}`}
+                : formatTokenBalance(totalPayoutRewards) +
+                  ` ${nativeTokenSymbol}`}
             </NominatorStatsItem>
           </div>
 

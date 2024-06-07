@@ -8,6 +8,7 @@ import {
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -19,16 +20,25 @@ import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
 import { usePayoutsStore } from '../payouts/store';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
-import type { ValidatorReward } from '../types';
+import { ValidatorReward } from '../types';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
 
 type UsePayoutsReturnType = {
   isLoading: boolean;
-  data: Payout[];
+  data: {
+    [maxEras: number]: Payout[];
+  };
 };
 
 export default function usePayouts(): UsePayoutsReturnType {
-  const { setIsLoading, setPayouts, isLoading, data } = usePayoutsStore();
+  const { activeAccount } = useWebContext();
+
+  const setIsLoading = usePayoutsStore((state) => state.setIsLoading);
+  const setPayouts = usePayoutsStore((state) => state.setPayouts);
+  const resetPayouts = usePayoutsStore((state) => state.resetPayouts);
+  const isLoading = usePayoutsStore((state) => state.isLoading);
+  const data = usePayoutsStore((state) => state.data);
+  const maxEras = usePayoutsStore((state) => state.maxEras);
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
@@ -57,6 +67,11 @@ export default function usePayouts(): UsePayoutsReturnType {
     return map;
   }, [validators]);
 
+  // Reset payouts when the active account changes or when the user is not connected
+  useEffect(() => {
+    resetPayouts();
+  }, [activeAccount?.address, resetPayouts, setPayouts]);
+
   useEffect(
     () => {
       // Make sure all data is available before computing payouts
@@ -68,7 +83,7 @@ export default function usePayouts(): UsePayoutsReturnType {
         mappedValidatorInfo.size === 0 ||
         validatorIdentityNamesMap === null ||
         validatorIdentityNamesMap.size === 0 ||
-        data.length > 0
+        (data[maxEras] !== undefined && data[maxEras].length > 0)
       ) {
         return;
       }
@@ -95,8 +110,7 @@ export default function usePayouts(): UsePayoutsReturnType {
           const sortedPayout = payouts.sort((a, b) => a.era - b.era);
 
           abortController.signal.throwIfAborted();
-          setPayouts(sortedPayout);
-
+          setPayouts({ [maxEras]: sortedPayout });
           setCachedPayouts((previous) => ({
             ...previous?.value,
             [rpcEndpoint]: {
@@ -124,7 +138,7 @@ export default function usePayouts(): UsePayoutsReturnType {
       };
     },
     // prettier-ignore
-    [activeSubstrateAddress, data.length, eraTotalRewards, mappedValidatorInfo, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
+    [activeSubstrateAddress, data, eraTotalRewards, mappedValidatorInfo, maxEras, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
   );
 
   return {
