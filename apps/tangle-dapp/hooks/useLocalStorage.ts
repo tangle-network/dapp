@@ -18,7 +18,6 @@ export enum LocalStorageKey {
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
   SERVICES_CACHE = 'servicesCache',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
-  USE_DEV_ENV = 'useDevEnv',
 }
 
 export type PayoutsCache = {

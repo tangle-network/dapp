@@ -25,15 +25,6 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 
 import { PagePath } from '../../types';
-import { LocalStorageKey } from '../../hooks/useLocalStorage';
-
-const isForcedDevelopmentEnv = (): boolean => {
-  // Allow the use of the `USE_DEV_ENV` local storage key
-  // to force the use of the development environment. This is useful
-  // for development previews, where the NODE_ENV is set to production
-  // by Netlify.
-  return window.localStorage.getItem(LocalStorageKey.USE_DEV_ENV) !== null;
-};
 
 // TODO: This entire system of handling sidebar props can be improved in a more React-compliant manner. For now, leaving as is since it is not necessary.
 // Only show the services dropdown if on development mode.
@@ -153,7 +144,7 @@ export default function getSidebarProps(
       return true;
     }
 
-    return item.environments.includes(currentEnv) || isForcedDevelopmentEnv();
+    return item.environments.includes(currentEnv);
   });
 
   return {
