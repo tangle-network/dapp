@@ -12,7 +12,7 @@ export type StatItemProps = {
 
 const StatItem: FC<StatItemProps> = ({ title, subtitle, tooltip }) => {
   return (
-    <div className="flex flex-col items-center justify-center border-l dark:border-mono-120 px-3">
+    <div className="flex flex-col items-start justify-center border-l dark:border-mono-120 px-3">
       <Typography className="dark:text-mono-0" variant="body2" fw="bold">
         {title}
       </Typography>
