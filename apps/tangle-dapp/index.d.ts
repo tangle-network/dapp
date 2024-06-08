@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module '*.svg' {
-  const content: unknown;
-  export const ReactComponent: unknown;
+  const content: any;
+  export const ReactComponent: any;
   export default content;
 }
 
