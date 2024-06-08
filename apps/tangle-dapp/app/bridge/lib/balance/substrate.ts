@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import Decimal from 'decimal.js';
 
-import { getTransferable } from '../../../utils/polkadot/balance';
+import { getTransferable } from '../../../../utils/polkadot/balance';
 
 export async function getSubstrateNativeTransferable(params?: {
   api: ApiPromise;

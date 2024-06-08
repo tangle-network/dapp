@@ -34,6 +34,7 @@ export type BaseInputProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
+  errorMessageClassName?: string;
   isFullWidth?: boolean;
   isDisabled?: boolean;
   tooltip?: ReactNode;
@@ -54,6 +55,7 @@ const BaseInput: FC<BaseInputProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
+  errorMessageClassName,
   isFullWidth = false,
   isDisabled = false,
   tooltip,
@@ -156,11 +158,14 @@ const BaseInput: FC<BaseInputProps> = ({
 
       {hasError && (
         <Typography
-          className="text-red-70 dark:text-red-50"
+          className={twMerge(
+            'text-red-70 dark:text-red-50',
+            errorMessageClassName,
+          )}
           variant="body1"
           fw="normal"
         >
-          *{errorMessage}
+          * {errorMessage}
         </Typography>
       )}
     </div>
