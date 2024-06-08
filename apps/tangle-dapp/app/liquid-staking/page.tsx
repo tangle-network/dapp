@@ -2,14 +2,14 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { GlassCard } from '../../components';
-import LiquidStakingTokenItem from './LiquidStakingTokenItem';
-import StatItem from './StatItem';
 import {
   LiquidStakingChainToLogoMap,
   LiquidStakingChainToTokenMap,
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
 import entriesOf from '../../utils/entriesOf';
+import LiquidStakingTokenItem from './LiquidStakingTokenItem';
+import StatItem from './StatItem';
 
 const LiquidStakingPage: FC = () => {
   return (

@@ -8,9 +8,9 @@ import { redirect } from 'next/navigation';
 import { FC } from 'react';
 
 import { GlassCard } from '../../../components';
+import { LiquidStakingToken } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
 import LiquidStakingCard from './LiquidStakingCard';
-import { LiquidStakingToken } from '../../../constants/liquidStaking';
 
 type Props = {
   params: { tokenSymbol: string };

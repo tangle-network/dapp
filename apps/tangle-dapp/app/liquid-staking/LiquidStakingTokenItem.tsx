@@ -1,17 +1,17 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import { ArrowRight } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
-import Image from 'next/image';
-
-import { PagePath } from '../../types';
-import StatItem from './StatItem';
-import { LiquidStakingToken, TVS_TOOLTIP } from '../../constants/liquidStaking';
-import { StaticAssetPath } from '../../constants';
 import assert from 'assert';
+import Image from 'next/image';
+import { FC, useMemo } from 'react';
+
+import { StaticAssetPath } from '../../constants';
+import { LiquidStakingToken, TVS_TOOLTIP } from '../../constants/liquidStaking';
+import { PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
-import { BN } from '@polkadot/util';
+import StatItem from './StatItem';
 
 export type LiquidStakingTokenItemProps = {
   logoPath: StaticAssetPath;

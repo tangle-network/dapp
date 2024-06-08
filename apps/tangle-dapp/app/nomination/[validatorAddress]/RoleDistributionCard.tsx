@@ -10,12 +10,12 @@ import SharedRoleDistributionChart from '../../../components/charts/SharedRoleDi
 import GlassCard from '../../../components/GlassCard/GlassCard';
 import useRestakingRoleLedger from '../../../data/restaking/useRestakingRoleLedger';
 import { RestakingProfileType } from '../../../types';
+import entriesOf from '../../../utils/entriesOf';
 import {
   getProfileTypeFromRestakeRoleLedger,
   getRoleDistributionFromRestakeRoleLedger,
 } from '../../../utils/polkadot/restake';
 import getChartDataAreaColorByServiceType from '../../../utils/restaking/getChartDataAreaColorByServiceType';
-import entriesOf from '../../../utils/entriesOf';
 
 interface RoleDistributionCardProps {
   validatorAddress: string;

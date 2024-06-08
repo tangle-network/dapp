@@ -9,9 +9,9 @@ import SharedRoleDistributionChart from '../../components/charts/SharedRoleDistr
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import { RestakingProfileType } from '../../types';
+import entriesOf from '../../utils/entriesOf';
 import { getRoleDistributionFromRestakeRoleLedger } from '../../utils/polkadot/restake';
 import getChartDataAreaColorByServiceType from '../../utils/restaking/getChartDataAreaColorByServiceType';
-import entriesOf from '../../utils/entriesOf';
 
 const RoleDistributionCard: FC = () => {
   const { ledgerOpt, profileTypeOpt, isLoading } = useRestakingProfile();

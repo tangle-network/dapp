@@ -3,6 +3,7 @@ import {
   TanglePrimitivesRolesTssThresholdSignatureRoleType,
   TanglePrimitivesRolesZksaasZeroKnowledgeRoleType,
 } from '@polkadot/types/lookup';
+
 import { RestakingService } from '../types';
 
 type TangleRoleMapping = {

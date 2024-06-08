@@ -2,11 +2,11 @@ import { Option } from '@polkadot/types';
 import { TanglePrimitivesJobsJobInfo } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 
-import { Service } from '../../types';
 import {
   TANGLE_TO_SERVICE_TYPE_TSS_MAP,
   TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP,
 } from '../../constants/restaking';
+import { Service } from '../../types';
 
 /**
  * Extracts service details from job information data.

@@ -9,8 +9,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import LiquidStakingInput from './LiquidStakingInput';
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
+import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
   return (

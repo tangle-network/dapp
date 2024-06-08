@@ -2,8 +2,8 @@ import { BN } from '@polkadot/util';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
-import parseChainUnits from '../../utils/parseChainUnits';
 import formatBn, { FormatOptions } from '../../utils/formatBn';
+import parseChainUnits from '../../utils/parseChainUnits';
 
 /**
  * Regular expression to validate the input amount.
