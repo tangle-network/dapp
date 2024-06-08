@@ -5,6 +5,7 @@
 // - https://github.com/nrwl/nx/issues/15682
 // - https://github.com/nrwl/nx/issues/23048#issuecomment-2120106231
 
+const withBundleAnalyzer = require('@next/bundle-analyzer');
 const { composePlugins, withNx } = require('@nx/next');
 const nextConfigBase = require('../../next.config.cjs');
 
@@ -96,9 +97,14 @@ const nextConfig = {
   },
 };
 
+/** @type {(import('@nx/next').withNx | ReturnType<import('@next/bundle-analyzer')>)[]} */
 const plugins = [
   // Add more Next.js plugins to this list if needed.
   withNx,
 ];
+
+if (process.env.ANALYZE === 'true') {
+  plugins.push(withBundleAnalyzer({ enabled: true }));
+}
 
 module.exports = composePlugins(...plugins)(nextConfig);

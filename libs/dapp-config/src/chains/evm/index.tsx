@@ -130,14 +130,16 @@ export const chainsConfig: Record<number, ChainConfig> = {
       symbol: 'tTNT',
       decimals: 18,
     },
-    blockExplorers: !process.env['USING_LOCAL_TANGLE']
+    ...(!process.env['USING_LOCAL_TANGLE']
       ? {
-          default: {
-            name: 'Tangle Testnet EVM Explorer',
-            url: TANGLE_TESTNET_EVM_EXPLORER_URL,
+          blockExplorers: {
+            default: {
+              name: 'Tangle Testnet EVM Explorer',
+              url: TANGLE_TESTNET_EVM_EXPLORER_URL,
+            },
           },
         }
-      : undefined,
+      : {}),
     rpcUrls: {
       default: {
         http: process.env['USING_LOCAL_TANGLE']
@@ -169,14 +171,16 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-    contracts: localOrbitMulticall3Address
+    ...(localOrbitMulticall3Address
       ? {
-          multicall3: {
-            address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: localHermesMulticall3DeploymentBlock,
+          contracts: {
+            multicall3: {
+              address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
+              blockCreated: localHermesMulticall3DeploymentBlock,
+            },
           },
         }
-      : undefined,
+      : {}),
   } satisfies ChainConfig,
 
   [PresetTypedChainId.AthenaLocalnet]: {
@@ -195,14 +199,16 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-    contracts: localOrbitMulticall3Address
+    ...(localOrbitMulticall3Address
       ? {
-          multicall3: {
-            address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: localAthenaMulticall3DeploymentBlock,
+          contracts: {
+            multicall3: {
+              address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
+              blockCreated: localAthenaMulticall3DeploymentBlock,
+            },
           },
         }
-      : undefined,
+      : {}),
   } satisfies ChainConfig,
 
   [PresetTypedChainId.DemeterLocalnet]: {
@@ -221,13 +227,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-    contracts: localOrbitMulticall3Address
+    ...(localOrbitMulticall3Address
       ? {
-          multicall3: {
-            address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
-            blockCreated: localDemeterMulticall3DeploymentBlock,
+          contracts: {
+            multicall3: {
+              address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
+              blockCreated: localDemeterMulticall3DeploymentBlock,
+            },
           },
         }
-      : undefined,
+      : {}),
   } satisfies ChainConfig,
 };

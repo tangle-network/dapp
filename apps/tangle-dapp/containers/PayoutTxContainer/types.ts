@@ -10,5 +10,4 @@ export type PayoutTxContainerProps = {
   setIsModalOpen: (isModalOpen: boolean) => void;
   payoutTxProps: PayoutTxProps;
   payouts: Payout[];
-  updatePayouts: (payouts: Payout[]) => void;
 };

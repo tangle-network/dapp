@@ -5,7 +5,7 @@ import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { ensureHex } from '@webb-tools/dapp-config';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { Observable, catchError, of, switchMap } from 'rxjs';
 import { Address, formatEther } from 'viem';
 import { getBlockNumber, getBalance } from 'wagmi/actions';
@@ -17,7 +17,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   }
 
   currentBlock() {
-    return getBlockNumber(wagmiConfig, {
+    return getBlockNumber(getWagmiConfig(), {
       chainId: parseTypedChainId(this.inner.typedChainId).chainId,
     });
   }
@@ -94,7 +94,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     typedChainId: number,
     tokenAddress?: Address,
   ) {
-    return getBalance(wagmiConfig, {
+    return getBalance(getWagmiConfig(), {
       address: accountAddress,
       chainId: parseTypedChainId(typedChainId).chainId,
       token:
