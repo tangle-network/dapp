@@ -1,4 +1,4 @@
-const entriesOf = <Key extends string | number | symbol, Value>(
+const entriesOf = <Key extends string, Value>(
   object: Record<Key, Value>,
 ): [Key, Value][] => {
   // Type cast is needed because `Object.entries()` returns `[string, Value][]`,

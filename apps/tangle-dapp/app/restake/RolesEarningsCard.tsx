@@ -18,7 +18,7 @@ const RolesEarningsCard: FC = () => {
     if (!earningsRecord) return [];
 
     return entriesOf(earningsRecord).map(([era, reward]) => ({
-      era,
+      era: +era,
       // Format to display already handled in the chart component
       reward: +formatUnits(reward, TANGLE_TOKEN_DECIMALS),
     }));
