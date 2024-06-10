@@ -24,7 +24,7 @@ export const TANGLE_LOCAL_HTTP_RPC_ENDPOINT = 'http://127.0.0.1:9944';
 // Note: there is no official explorer for the local dev network, using Polkadot.{js} dashboard
 export const TANGLE_LOCAL_NATIVE_EXPLORER_URL = `https://polkadot.js.org/apps/?rpc=${TANGLE_TESTNET_WS_RPC_ENDPOINT}#/explorer`;
 
-export const TANGLE_MAINET_SS58_PREFIX = 5845;
+export const TANGLE_MAINNET_SS58_PREFIX = 5845;
 export const TANGLE_TESTNET_SS58_PREFIX = 5845;
 export const TANGLE_LOCAL_SS58_PREFIX = 42;
 

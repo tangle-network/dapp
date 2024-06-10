@@ -17,6 +17,7 @@ export function getExposureMap(
   const emptyExposure = api.createType<SpStakingExposurePage>(
     'SpStakingExposurePage',
   );
+
   const emptyExposureMeta = api.createType<SpStakingPagedExposureMetadata>(
     'SpStakingPagedExposureMetadata',
   );

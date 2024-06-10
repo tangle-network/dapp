@@ -59,9 +59,11 @@ export default function usePayouts(): UsePayoutsReturnType {
 
   const mappedValidatorInfo = useMemo(() => {
     const map = new Map<string, PalletStakingValidatorPrefs>();
+
     validators?.forEach(([storageKey, validatorInfo]) => {
       map.set(storageKey.args[0].toString(), validatorInfo);
     });
+
     return map;
   }, [validators]);
 
@@ -82,8 +84,9 @@ export default function usePayouts(): UsePayoutsReturnType {
         validatorIdentityNamesMap === null ||
         validatorIdentityNamesMap.size === 0 ||
         (data[maxEras] !== undefined && data[maxEras].length > 0)
-      )
+      ) {
         return;
+      }
 
       const abortController = new AbortController();
 
@@ -103,6 +106,7 @@ export default function usePayouts(): UsePayoutsReturnType {
           );
 
           abortController.signal.throwIfAborted();
+
           const sortedPayout = payouts.sort((a, b) => a.era - b.era);
 
           abortController.signal.throwIfAborted();
@@ -158,14 +162,17 @@ const fetchPayouts = async (
   const apiPromise = await getPolkadotApiPromise(rpcEndpoint);
 
   abortSignal?.throwIfAborted();
+
   const payoutsWithNull = await Promise.all(
     unclaimedRewards.map(async (reward) => {
       const eraTotalRewardOpt = eraTotalRewards.get(reward.era);
+
       if (eraTotalRewardOpt === undefined || eraTotalRewardOpt.isNone) {
         return null;
       }
 
       const eraTotalRewardOptValue = eraTotalRewardOpt.unwrap();
+
       const validatorTotalReward = eraTotalRewardOptValue
         .toBn()
         .muln(reward.validatorRewardPoints)
@@ -176,6 +183,7 @@ const fetchPayouts = async (
       }
 
       abortSignal?.throwIfAborted();
+
       const erasStakersOverview =
         await apiPromise.query.staking.erasStakersOverview<
           Option<SpStakingPagedExposureMetadata>
@@ -194,6 +202,7 @@ const fetchPayouts = async (
       }
 
       abortSignal?.throwIfAborted();
+
       const eraStakerPaged = await apiPromise.query.staking.erasStakersPaged<
         Option<SpStakingExposurePage>
       >(reward.era, reward.validatorAddress, 0);
@@ -239,6 +248,7 @@ const fetchPayouts = async (
       });
 
       abortSignal?.throwIfAborted();
+
       const stakerEraReward = await apiPromise.derive.staking.stakerRewards(
         activeSubstrateAddressEncoded,
       );
@@ -257,6 +267,7 @@ const fetchPayouts = async (
         }
       }
 
+      // TODO: Isn't this check redundant? The type of each is never null or undefined. Is it checking for zero? If so, should be using `isZero()` instead.
       if (validatorTotalStake && validatorTotalReward && nominatorTotalReward) {
         const payout: Payout = {
           era: reward.era,

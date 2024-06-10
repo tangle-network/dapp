@@ -13,7 +13,7 @@ import {
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   TANGLE_LOCAL_NATIVE_EXPLORER_URL,
-  TANGLE_MAINET_SS58_PREFIX,
+  TANGLE_MAINNET_SS58_PREFIX,
   TANGLE_TESTNET_SS58_PREFIX,
   TANGLE_LOCAL_SS58_PREFIX,
 } from '@webb-tools/dapp-config/constants/tangle';
@@ -27,6 +27,7 @@ export enum NetworkId {
   TANGLE_TESTNET,
   TANGLE_LOCAL_DEV,
   CUSTOM,
+  TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV,
 }
 
 export type Network = {
@@ -69,7 +70,7 @@ export const TANGLE_MAINNET_NETWORK: Network = {
   httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
-  ss58Prefix: TANGLE_MAINET_SS58_PREFIX,
+  ss58Prefix: TANGLE_MAINNET_SS58_PREFIX,
 };
 
 export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
@@ -104,8 +105,19 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   ss58Prefix: TANGLE_LOCAL_SS58_PREFIX,
 };
 
+export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK: Network = {
+  id: NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV,
+  name: 'Tangle Restaking Parachain (Local)',
+  nodeType: 'parachain',
+  tokenSymbol: 'TNT',
+  wsRpcEndpoint: 'ws://localhost:41323',
+  polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
+};
+
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
   [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
   [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
   [NetworkId.TANGLE_LOCAL_DEV]: TANGLE_LOCAL_DEV_NETWORK,
+  [NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV]:
+    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK,
 };

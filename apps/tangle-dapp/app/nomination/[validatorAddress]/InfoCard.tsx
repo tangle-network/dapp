@@ -13,6 +13,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SocialChip, TangleCard } from '../../../components';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
 import useFormatNativeTokenAmount from '../../../hooks/useFormatNativeTokenAmount';
@@ -115,7 +116,7 @@ const InfoCard: FC<InfoCardProps> = ({
                 >
                   {totalRestaked
                     ? formatNativeTokenAmount(totalRestaked)
-                    : '--'}
+                    : EMPTY_VALUE_PLACEHOLDER}
                 </Typography>
               )}
               {!isLoading && (
@@ -133,7 +134,7 @@ const InfoCard: FC<InfoCardProps> = ({
               <ValueSkeleton />
             ) : (
               <Typography variant="h4" fw="bold">
-                {nominations ?? '--'}
+                {nominations ?? EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             )}
           </div>

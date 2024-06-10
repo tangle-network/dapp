@@ -3,6 +3,7 @@
 import { FC } from 'react';
 
 import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useIdealStakePercentage from '../../data/KeyStats/useIdealStakePercentage';
 
 const IdealStakedPercentageKeyStat: FC = () => {
@@ -18,7 +19,7 @@ const IdealStakedPercentageKeyStat: FC = () => {
       isLoading={isLoading}
       error={error}
     >
-      {data?.value1 ?? '--'}
+      {data?.value1 ?? EMPTY_VALUE_PLACEHOLDER}
     </KeyStatsItem>
   );
 };

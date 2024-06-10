@@ -3,6 +3,7 @@
 import { FC } from 'react';
 
 import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useActiveAndDelegationCountSubscription from '../../data/KeyStats/useActiveAndDelegationCountSubscription';
 
 const ActiveValidatorsKeyStat: FC = () => {
@@ -16,7 +17,8 @@ const ActiveValidatorsKeyStat: FC = () => {
       isLoading={isLoading}
       error={error}
     >
-      {data?.value1 ?? '--'}/{data?.value2 ?? '--'}
+      {data?.value1 ?? EMPTY_VALUE_PLACEHOLDER}/
+      {data?.value2 ?? EMPTY_VALUE_PLACEHOLDER}
     </KeyStatsItem>
   );
 };

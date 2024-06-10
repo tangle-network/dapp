@@ -21,7 +21,7 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
  * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
  * ```
  */
-const convertAmountStringToChainUnits = (amountString: string): BN => {
+const parseChainUnits = (amountString: string): BN => {
   // TODO: Use zod for validation, and convert this function to support input amount strings, as it is currently only used with strings & for user inputs.
 
   const [whole, fraction = ''] = amountString.split('.');
@@ -34,4 +34,4 @@ const convertAmountStringToChainUnits = (amountString: string): BN => {
   return new BN(fullAmountString);
 };
 
-export default convertAmountStringToChainUnits;
+export default parseChainUnits;
