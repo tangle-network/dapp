@@ -29,6 +29,7 @@ export type BridgeTokenType = {
   /**
    * Transaction fee to be paid on the destination chain
    * Use to calculate the minimum amount of token required to be transferred
+   * Note: The final amount to transfer will be the input of user minus this value
    */
   destChainTransactionFee: Partial<Record<ChainId, Decimal>>;
 
@@ -44,3 +45,8 @@ export type BridgeTokenType = {
    */
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
 };
+
+export enum BridgeWalletError {
+  MismatchEvm = 'WALLET_MISMATCH_EVM',
+  MismatchSubstrate = 'WALLET_MISMATCH_SUBSTRATE',
+}

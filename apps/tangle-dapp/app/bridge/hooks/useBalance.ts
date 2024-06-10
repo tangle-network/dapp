@@ -11,10 +11,12 @@ import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import ensureError from '../../../utils/ensureError';
 import { isEvmAddress } from '../../../utils/isEvmAddress';
-import { getEvmContractBalance, getEvmNativeBalance } from '../lib/evm';
-import { getSubstrateNativeTransferable } from '../lib/substrate';
+import {
+  getEvmContractBalance,
+  getEvmNativeBalance,
+  getSubstrateNativeTransferable,
+} from '../lib/balance';
 import useDecimals from './useDecimals';
-import useError from './useError';
 import useEvmViemClient from './useEvmViemClient';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
@@ -28,8 +30,7 @@ type UseBalanceReturnType = {
 export default function useBalance() {
   const { notificationApi } = useWebbUI();
   const activeAccountAddress = useActiveAccountAddress();
-  const { selectedSourceChain } = useBridge();
-  const error = useError();
+  const { selectedSourceChain, walletError } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceTypedChainId } = useTypedChainId();
   const evmViemClient = useEvmViemClient();
@@ -51,7 +52,7 @@ export default function useBalance() {
     error: errorLoadingEvmNativeBalance,
   } = useSWR(
     [
-      error === null &&
+      walletError === null &&
       activeAccountAddress !== null &&
       evmViemClient !== null &&
       isEvmAddress(activeAccountAddress) &&
@@ -68,7 +69,7 @@ export default function useBalance() {
     error: errorLoadingEvmErc20Balance,
   } = useSWR(
     [
-      error === null &&
+      walletError === null &&
       activeAccountAddress !== null &&
       evmViemClient !== null &&
       isEvmAddress(activeAccountAddress) &&
@@ -91,7 +92,7 @@ export default function useBalance() {
     error: errorLoadingSubstrateNativeBalance,
   } = useSWR(
     [
-      error === null &&
+      walletError === null &&
       activeAccountAddress !== null &&
       substrateApi !== null &&
       isAddress(activeAccountAddress) &&

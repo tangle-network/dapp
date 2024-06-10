@@ -1,6 +1,7 @@
 'use client';
 
 import { BN } from '@polkadot/util';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
@@ -16,7 +17,8 @@ import {
 } from 'react';
 
 import { BRIDGE } from '../constants/bridge';
-import { BridgeTokenId } from '../types/bridge';
+import { BridgeTokenId, BridgeWalletError } from '../types/bridge';
+import { isEVMChain, isSubstrateChain } from '../utils/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = Object.keys(BRIDGE).map(
   (presetTypedChainId) => chainsConfig[+presetTypedChainId],
@@ -47,6 +49,14 @@ interface BridgeContextProps {
   selectedTokenId: BridgeTokenId;
   setSelectedTokenId: (token: BridgeTokenId) => void;
   tokenIdOptions: BridgeTokenId[];
+
+  isAmountInputError: boolean;
+  setIsAmountInputError: (isAmountInputError: boolean) => void;
+
+  isAddressInputError: boolean;
+  setIsAddressInputError: (isAddressInputError: boolean) => void;
+
+  walletError: BridgeWalletError | null;
 }
 
 const BridgeContext = createContext<BridgeContextProps>({
@@ -77,6 +87,18 @@ const BridgeContext = createContext<BridgeContextProps>({
     return;
   },
   tokenIdOptions: DEFAULT_TOKEN_OPTIONS,
+
+  isAmountInputError: false,
+  setIsAmountInputError: () => {
+    return;
+  },
+
+  isAddressInputError: false,
+  setIsAddressInputError: () => {
+    return;
+  },
+
+  walletError: null,
 });
 
 export const useBridge = () => {
@@ -84,6 +106,8 @@ export const useBridge = () => {
 };
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { activeWallet } = useWebContext();
+
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
     BRIDGE_SOURCE_CHAIN_OPTIONS[0],
   );
@@ -121,6 +145,11 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [destinationAddress, setDestinationAddress] = useState('');
   const [amount, setAmount] = useState<BN | null>(null);
+  const [walletError, setWalletError] = useState<BridgeWalletError | null>(
+    null,
+  );
+  const [isAmountInputError, setIsAmountInputError] = useState(false);
+  const [isAddressInputError, setIsAddressInputError] = useState(false);
 
   const tokenIdOptions = useMemo(
     () =>
@@ -162,6 +191,26 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [selectedTokenId, tokenIdOptions]);
 
+  useEffect(() => {
+    if (
+      activeWallet?.platform === 'Substrate' &&
+      isEVMChain(selectedSourceChain)
+    ) {
+      setWalletError(BridgeWalletError.MismatchEvm);
+      return;
+    }
+
+    if (
+      activeWallet?.platform === 'EVM' &&
+      isSubstrateChain(selectedSourceChain)
+    ) {
+      setWalletError(BridgeWalletError.MismatchSubstrate);
+      return;
+    }
+
+    setWalletError(null);
+  }, [activeWallet?.platform, selectedSourceChain]);
+
   return (
     <BridgeContext.Provider
       value={{
@@ -182,6 +231,14 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         selectedTokenId,
         setSelectedTokenId,
         tokenIdOptions,
+
+        isAmountInputError,
+        setIsAmountInputError,
+
+        isAddressInputError,
+        setIsAddressInputError,
+
+        walletError,
       }}
     >
       {children}
