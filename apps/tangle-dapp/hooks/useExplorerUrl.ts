@@ -17,14 +17,16 @@ const useExplorerUrl = () => {
       hash: string,
       variant: ExplorerVariant,
       type?: (typeof ExplorerType)[keyof typeof ExplorerType],
+      explorerUrl_?: string,
     ): URL | null => {
       // Explorer type will be default to the current network if not provided
       const explorerType =
         type ?? (isEvm ? ExplorerType.EVM : ExplorerType.Substrate);
 
-      const explorerUrl = isEvm
-        ? network.evmExplorerUrl
-        : network.polkadotExplorerUrl;
+      const explorerUrl =
+        explorerUrl_ ?? isEvm
+          ? network.evmExplorerUrl
+          : network.polkadotExplorerUrl;
 
       if (explorerUrl === undefined) {
         return null;

@@ -11,9 +11,11 @@ import { BridgeType } from '../../../types/bridge';
 import formatBnToDisplayAmount from '../../../utils/formatBnToDisplayAmount';
 import viemConnectorClientToEthersSigner from '../../../utils/viemConnectorClientToEthersSigner';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
+import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useDecimals from './useDecimals';
 import useEvmViemClient from './useEvmViemClient';
 import useSelectedToken from './useSelectedToken';
+import useSubstrateApi from './useSubstrateApi';
 
 export default function useBridgeTransfer() {
   const { activeApi } = useWebContext();
@@ -28,7 +30,9 @@ export default function useBridgeTransfer() {
   const selectedToken = useSelectedToken();
   const decimals = useDecimals();
   const viemClient = useEvmViemClient();
+  const api = useSubstrateApi();
 
+  // TODO: handle calculate real amount to bridge when user choose max amount
   const amountToString = useMemo(
     () =>
       amount !== null
@@ -43,7 +47,7 @@ export default function useBridgeTransfer() {
     [amount, decimals],
   );
 
-  return async ({ onReady }: { onReady?: () => void }) => {
+  return async () => {
     if (activeAccountAddress === null) {
       throw new Error('No active account');
     }
@@ -76,16 +80,30 @@ export default function useBridgeTransfer() {
         const walletClient = activeApi.walletClient;
         const ethersSigner = viemConnectorClientToEthersSigner(walletClient);
         const response = await ethersSigner.sendTransaction(tx);
-        onReady?.();
-
         return response;
       }
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
-        break;
-      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-        break;
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE: {
+        if (api === null) {
+          throw new Error('No Substrate API found');
+        }
+
+        const { tx } = await sygmaSubstrate(
+          activeAccountAddress,
+          destinationAddress,
+          api,
+          selectedSourceChain,
+          selectedDestinationChain,
+          selectedToken,
+          amountToString,
+        );
+
+        const response = await tx.signAndSend(activeAccountAddress);
+        return response;
+      }
+
       default:
-        throw new Error('Bridge type not supported');
+        return null;
     }
   };
 }

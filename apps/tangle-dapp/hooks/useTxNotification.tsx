@@ -27,10 +27,11 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.UPDATE_NOMINATOR]: 'Nominator updated',
   [TxName.WITHDRAW_EVM_BALANCE]: 'Withdrawal successful',
   [TxName.UPDATE_RESTAKE_PROFILE]: 'Restake profile updated',
+  [TxName.BRIDGE_TRANSFER]: 'Bridge transferred successful',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
-const useTxNotification = (txName: TxName) => {
+const useTxNotification = (txName: TxName, explorerUrl?: string) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const getTxExplorerUrl = useExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
@@ -48,7 +49,9 @@ const useTxNotification = (txName: TxName) => {
       // for example, they disconnect their account while the
       // transaction is still processing.
       const txExplorerUrl =
-        isEvmActiveAccount === null ? null : getTxExplorerUrl(txHash, 'tx');
+        isEvmActiveAccount === null
+          ? null
+          : getTxExplorerUrl(txHash, 'tx', undefined, explorerUrl);
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.
@@ -85,6 +88,7 @@ const useTxNotification = (txName: TxName) => {
       isEvmActiveAccount,
       processingKey,
       txName,
+      explorerUrl,
     ],
   );
 
