@@ -11,6 +11,7 @@ import { useCallback, useMemo } from 'react';
 import { useBridge } from '../../../context/BridgeContext';
 import { BridgeWalletError } from '../../../types/bridge';
 import { isEVMChain } from '../../../utils/bridge';
+import useBridgeTransfer from './useBridgeTransfer';
 import useTypedChainId from './useTypedChainId';
 
 type UseActionButtonReturnType = {
@@ -45,6 +46,7 @@ export default function useActionButton() {
     walletError,
   } = useBridge();
   const { sourceTypedChainId } = useTypedChainId();
+  const transfer = useBridgeTransfer();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -116,7 +118,7 @@ export default function useActionButton() {
     switchChain(targetChain, activeWallet);
   }, [activeWallet, selectedSourceChain, switchChain]);
 
-  const bridgeTx = useCallback(() => {
+  const bridgeTx = useCallback(async () => {
     if (isEVMChain(selectedSourceChain) && isEvmWrongNetwork) {
       switchNetwork();
     }
@@ -124,7 +126,8 @@ export default function useActionButton() {
     // TODO: Implement bridge tx
     // TODO: use parseUnits to pass to SygmaSDK tx
     // TODO: handle calculate real amount to bridge when user choose max amount
-  }, [selectedSourceChain, isEvmWrongNetwork, switchNetwork]);
+    await transfer({});
+  }, [selectedSourceChain, isEvmWrongNetwork, switchNetwork, transfer]);
 
   const buttonAction = useMemo(() => {
     if (isRequiredToConnectWallet) return openWalletModal;

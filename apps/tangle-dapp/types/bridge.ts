@@ -44,6 +44,11 @@ export type BridgeTokenType = {
    * TODO: might need type only for EVM Chain Id
    */
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
+
+  /**
+   * The id of the token provided in the SygmaSDK docs
+   */
+  sygmaResourceId?: string;
 };
 
 export enum BridgeWalletError {
