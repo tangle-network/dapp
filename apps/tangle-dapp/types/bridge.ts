@@ -11,7 +11,7 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-export type BridgeTokenId = 'tTNT' | 'TNT';
+export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD';
 
 export type ChainId = PresetTypedChainId;
 

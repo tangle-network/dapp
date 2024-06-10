@@ -138,4 +138,34 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
+
+  [PresetTypedChainId.RococoPhala]: {
+    chainType: ChainType.Substrate,
+    id: SubstrateChainId.RococoPhala,
+    name: 'Rococo Phala',
+    group: 'phala',
+    tag: 'test',
+    nativeCurrency: {
+      name: 'Phala',
+      symbol: 'PHA',
+      decimals: 6,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Phala Explorer',
+        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer/',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rhala-node.phala.network/'],
+      },
+      public: {
+        http: [],
+        webSocket: ['wss://rhala-node.phala.network/'],
+      },
+    },
+    env: ['development'],
+  },
 };
