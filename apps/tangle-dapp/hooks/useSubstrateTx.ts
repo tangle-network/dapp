@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
 import useNetworkStore from '../context/useNetworkStore';
-import { GetSuccessMessageFunctionType } from '../types';
+import { GetSuccessMessageFunction } from '../types';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
@@ -34,7 +34,7 @@ export type SubstrateTxFactory<Context = void> = (
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
+  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
   timeoutDelay = 120_000,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
@@ -204,7 +204,7 @@ export default useSubstrateTx;
 export function useSubstrateTxWithNotification<Context = void>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
+  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
 ) {
   const activeAccountAddress = useActiveAccountAddress();
 

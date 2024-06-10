@@ -243,6 +243,4 @@ export type TokenSymbol = 'tTNT' | 'TNT';
  * @param context The context parameter.
  * @returns The success message.
  */
-export type GetSuccessMessageFunctionType<Context> = (
-  context: Context,
-) => string;
+export type GetSuccessMessageFunction<Context> = (context: Context) => string;

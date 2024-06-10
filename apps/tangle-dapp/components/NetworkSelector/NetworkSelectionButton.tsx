@@ -10,7 +10,8 @@ import {
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkState from '../../hooks/useNetworkState';
+import useNetworkStore from '../../context/useNetworkStore';
+import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
@@ -18,7 +19,8 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
-  const { network, setNetwork, isCustom } = useNetworkState();
+  const { network, isLocked } = useNetworkStore();
+  const { setNetwork, isCustom } = useNetworkSwitcher();
 
   // TODO: Handle switching network on EVM wallet here
   const switchToCustomNetwork = useCallback(
@@ -27,9 +29,16 @@ const NetworkSelectionButton: FC = () => {
     [setNetwork],
   );
 
-  return (
+  const networkName = network?.name ?? 'Loading';
+
+  return isLocked ? (
+    <TriggerButton
+      className="opacity-70 cursor-not-allowed"
+      networkName={networkName}
+    />
+  ) : (
     <Dropdown>
-      <TriggerButton networkName={network?.name ?? 'Loading'} />
+      <TriggerButton networkName={networkName} />
 
       <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
         <NetworkSelectorDropdown
@@ -43,7 +52,10 @@ const NetworkSelectionButton: FC = () => {
   );
 };
 
-const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
+const TriggerButton: FC<{ networkName: string; className?: string }> = ({
+  networkName,
+  className,
+}) => {
   return (
     <DropdownBasicButton
       type="button"
@@ -54,6 +66,7 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
         'dark:bg-mono-0/5 dark:border-mono-140',
         'dark:hover:bg-mono-0/10',
         'flex items-center gap-2',
+        className,
       )}
     >
       <ChainIcon

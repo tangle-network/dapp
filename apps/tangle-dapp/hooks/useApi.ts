@@ -15,14 +15,23 @@ export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
  * This function should **always** be memoized using `useCallback`,
  * since it is used as a dependency internally.
  *
+ * @param overrideRpcEndpoint Optional RPC endpoint to use instead of the
+ * one provided by the network store.
+ *
  * @returns Substrate API instance or `null` if still loading.
  */
-function useApi<T>(fetcher: ApiFetcher<T>) {
+function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
   const [result, setResult] = useState<T | null>(null);
   const { rpcEndpoint } = useNetworkStore();
 
   const { result: api } = usePromise<ApiPromise | null>(
-    useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
+    useCallback(
+      () =>
+        getApiPromise(
+          overrideRpcEndpoint !== undefined ? overrideRpcEndpoint : rpcEndpoint,
+        ),
+      [overrideRpcEndpoint, rpcEndpoint],
+    ),
     null,
   );
 
