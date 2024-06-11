@@ -10,6 +10,7 @@ import AddressInput, {
   AddressType,
 } from '../../components/AddressInput/AddressInput';
 import { useBridge } from '../../context/BridgeContext';
+import { isEVMChain } from '../../utils/bridge';
 import AmountAndTokenInput from './AmountAndTokenInput';
 import ChainSelectors from './ChainSelectors';
 import useActionButton from './hooks/useActionButton';
@@ -19,8 +20,12 @@ interface BridgeContainerProps {
 }
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
-  const { destinationAddress, setDestinationAddress, setIsAddressInputError } =
-    useBridge();
+  const {
+    selectedDestinationChain,
+    destinationAddress,
+    setDestinationAddress,
+    setIsAddressInputError,
+  } = useBridge();
   const { buttonAction, buttonText, isLoading, isDisabled, errorMessage } =
     useActionButton();
 
@@ -42,7 +47,11 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
 
           <AddressInput
             id="bridge-destination-address-input"
-            type={AddressType.Both}
+            type={
+              isEVMChain(selectedDestinationChain)
+                ? AddressType.EVM
+                : AddressType.Substrate
+            }
             title="Receiver Address"
             baseInputOverrides={{ isFullWidth: true }}
             value={destinationAddress}
