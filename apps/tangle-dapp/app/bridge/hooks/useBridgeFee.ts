@@ -10,7 +10,7 @@ import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountToTransfer from './useAmountToTransfer';
 import useDecimals from './useDecimals';
-import useEvmViemClient from './useEvmViemClient';
+import useEthersProvider from './useEthersProvider';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
@@ -23,7 +23,7 @@ export default function useBridgeFee() {
     selectedDestinationChain,
   } = useBridge();
   const selectedToken = useSelectedToken();
-  const viemClient = useEvmViemClient();
+  const ethersProvider = useEthersProvider();
   const api = useSubstrateApi();
   const amountToTransfer = useAmountToTransfer();
   const decimals = useDecimals();
@@ -32,11 +32,11 @@ export default function useBridgeFee() {
     [
       activeAccountAddress !== null &&
       bridgeType !== null &&
-      viemClient !== null
+      ethersProvider !== null
         ? {
             senderAddress: activeAccountAddress,
             recipientAddress: destinationAddress,
-            viemClient,
+            ethersProvider,
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,

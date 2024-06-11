@@ -10,7 +10,7 @@ import viemConnectorClientToEthersSigner from '../../../utils/viemConnectorClien
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountToTransfer from './useAmountToTransfer';
-import useEvmViemClient from './useEvmViemClient';
+import useEthersProvider from './useEthersProvider';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
@@ -24,7 +24,7 @@ export default function useBridgeTransfer() {
     selectedDestinationChain,
   } = useBridge();
   const selectedToken = useSelectedToken();
-  const viemClient = useEvmViemClient();
+  const ethersProvider = useEthersProvider();
   const api = useSubstrateApi();
   const amountToTransfer = useAmountToTransfer();
 
@@ -41,8 +41,8 @@ export default function useBridgeTransfer() {
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE: {
-        if (viemClient === null) {
-          throw new Error('No Viem client found');
+        if (ethersProvider === null) {
+          throw new Error('No Ethers Provider found');
         }
         if (!activeApi || !(activeApi instanceof WebbWeb3Provider)) {
           throw new Error('No active API found');
@@ -51,7 +51,7 @@ export default function useBridgeTransfer() {
         const sygmaEvmTransfer = await sygmaEvm({
           senderAddress: activeAccountAddress,
           recipientAddress: destinationAddress,
-          viemClient,
+          provider: ethersProvider,
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,

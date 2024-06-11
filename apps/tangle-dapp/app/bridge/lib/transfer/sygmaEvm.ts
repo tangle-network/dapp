@@ -1,14 +1,13 @@
 import { Environment, EVMAssetTransfer } from '@buildwithsygma/sygma-sdk-core';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
-import { type Chain, type FallbackTransport, type PublicClient } from 'viem';
+import { ethers } from 'ethers';
 
 import { BridgeTokenType } from '../../../../types/bridge';
-import viemNetworkClientToEthersProvider from '../../../../utils/viemNetworkClientToEthersProvider';
 
 export default async function sygmaEvm(params?: {
   senderAddress: string;
   recipientAddress: string;
-  viemClient: PublicClient<FallbackTransport, Chain>;
+  provider: ethers.providers.BaseProvider;
   sourceChain: ChainConfig;
   destinationChain: ChainConfig;
   token: BridgeTokenType;
@@ -19,18 +18,16 @@ export default async function sygmaEvm(params?: {
   const {
     senderAddress,
     recipientAddress,
-    viemClient,
+    provider,
     sourceChain,
     destinationChain,
     token,
     amount,
   } = params;
 
-  const ethersProvider = viemNetworkClientToEthersProvider(viemClient);
-
   const assetTransfer = new EVMAssetTransfer();
   await assetTransfer.init(
-    ethersProvider,
+    provider,
     sourceChain.tag === 'live'
       ? Environment.MAINNET
       : sourceChain.tag === 'test'

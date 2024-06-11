@@ -18,7 +18,7 @@ import {
   getSubstrateNativeTransferable,
 } from '../lib/balance';
 import useDecimals from './useDecimals';
-import useEvmViemClient from './useEvmViemClient';
+import useEthersProvider from './useEthersProvider';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
@@ -34,7 +34,7 @@ export default function useBalance() {
   const { selectedSourceChain, walletError } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceTypedChainId } = useTypedChainId();
-  const evmViemClient = useEvmViemClient();
+  const ethersProvider = useEthersProvider();
   const substrateApi = useSubstrateApi();
   const decimals = useDecimals();
 
@@ -60,10 +60,10 @@ export default function useBalance() {
     [
       walletError === null &&
       activeAccountAddress !== null &&
-      evmViemClient !== null &&
+      ethersProvider !== null &&
       isEvmAddress(activeAccountAddress) &&
       isNativeToken
-        ? { client: evmViemClient, accAddress: activeAccountAddress }
+        ? { provider: ethersProvider, accAddress: activeAccountAddress }
         : undefined,
     ],
     ([...args]) => getEvmNativeBalance(...args),
@@ -77,12 +77,12 @@ export default function useBalance() {
     [
       walletError === null &&
       activeAccountAddress !== null &&
-      evmViemClient !== null &&
+      ethersProvider !== null &&
       isEvmAddress(activeAccountAddress) &&
       !isNativeToken &&
       erc20TokenContractAddress !== undefined
         ? {
-            client: evmViemClient,
+            provider: ethersProvider,
             contractAddress: erc20TokenContractAddress,
             accAddress: activeAccountAddress,
             decimals,
