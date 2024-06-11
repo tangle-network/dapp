@@ -14,6 +14,7 @@ import { isEvmAddress } from '../../../utils/isEvmAddress';
 import {
   getEvmContractBalance,
   getEvmNativeBalance,
+  getSubstrateAssetBalance,
   getSubstrateNativeTransferable,
 } from '../lib/balance';
 import useDecimals from './useDecimals';
@@ -45,6 +46,11 @@ export default function useBalance() {
   const erc20TokenContractAddress = useMemo(() => {
     return selectedToken.erc20TokenContractAddress?.[sourceTypedChainId];
   }, [selectedToken.erc20TokenContractAddress, sourceTypedChainId]);
+
+  const substrateAssetId = useMemo(
+    () => selectedToken.substrateAssetId?.[sourceTypedChainId],
+    [selectedToken.substrateAssetId, sourceTypedChainId],
+  );
 
   const {
     data: evmNativeBalance,
@@ -106,6 +112,29 @@ export default function useBalance() {
     ([...args]) => getSubstrateNativeTransferable(...args),
   );
 
+  const {
+    data: substrateAssetBalance,
+    isLoading: isLoadingSubstrateAssetBalance,
+    error: errorLoadingSubstrateAssetBalance,
+  } = useSWR(
+    [
+      walletError === null &&
+      activeAccountAddress !== null &&
+      substrateApi !== null &&
+      isAddress(activeAccountAddress) &&
+      !isNativeToken &&
+      substrateAssetId !== undefined
+        ? {
+            api: substrateApi,
+            accAddress: activeAccountAddress,
+            assetId: substrateAssetId,
+            decimals,
+          }
+        : undefined,
+    ],
+    ([...args]) => getSubstrateAssetBalance(...args),
+  );
+
   useEffect(() => {
     if (errorLoadingEvmNativeBalance) {
       notificationApi({
@@ -133,13 +162,27 @@ export default function useBalance() {
     }
   }, [notificationApi, errorLoadingSubstrateNativeBalance]);
 
+  useEffect(() => {
+    if (errorLoadingSubstrateAssetBalance) {
+      notificationApi({
+        message: ensureError(errorLoadingSubstrateAssetBalance).message,
+        variant: 'error',
+      });
+    }
+  }, [notificationApi, errorLoadingSubstrateAssetBalance]);
+
   return {
     balance:
-      evmNativeBalance ?? evmErc20Balance ?? substrateNativeBalance ?? null,
+      evmNativeBalance ??
+      evmErc20Balance ??
+      substrateNativeBalance ??
+      substrateAssetBalance ??
+      null,
     isLoading:
       isLoadingEvmNativeBalance ||
       isLoadingEvmErc20Balance ||
-      isLoadingSubstrateNativeBalance,
+      isLoadingSubstrateNativeBalance ||
+      isLoadingSubstrateAssetBalance,
   } satisfies UseBalanceReturnType;
 }
 

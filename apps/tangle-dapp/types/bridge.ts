@@ -11,7 +11,7 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD';
+export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD' ;
 
 export type ChainId = PresetTypedChainId;
 
@@ -44,6 +44,11 @@ export type BridgeTokenType = {
    * TODO: might need type only for EVM Chain Id
    */
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
+
+  /**
+   * The id of an asset on Substrate chain pallet
+   */
+  substrateAssetId?: Partial<Record<ChainId, number>>;
 
   /**
    * The id of the token provided in the SygmaSDK docs

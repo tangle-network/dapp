@@ -159,11 +159,11 @@ export const chainsConfig: Record<number, ChainConfig> = {
     rpcUrls: {
       default: {
         http: [],
-        webSocket: ['wss://rhala-node.phala.network/'],
+        webSocket: ['wss://rhala-node.phala.network/ws'],
       },
       public: {
         http: [],
-        webSocket: ['wss://rhala-node.phala.network/'],
+        webSocket: ['wss://rhala-node.phala.network/ws'],
       },
     },
     env: ['development'],

@@ -23,6 +23,9 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     existentialDeposit: {},
     destChainTransactionFee: {},
     decimals: { default: 18, [PresetTypedChainId.RococoPhala]: 6 },
+    substrateAssetId: {
+      [PresetTypedChainId.RococoPhala]: 1984,
+    },
     sygmaResourceId:
       '0x0000000000000000000000000000000000000000000000000000000000001100',
     erc20TokenContractAddress: {
@@ -96,14 +99,13 @@ type BridgeType = Record<
 // };
 
 export const BRIDGE: BridgeType = {
-  [PresetTypedChainId.Sepolia]: {
-    [PresetTypedChainId.RococoPhala]: {
+  [PresetTypedChainId.RococoPhala]: {
+    [PresetTypedChainId.Sepolia]: {
       supportedTokens: ['sygUSD'],
     },
   },
-
-  [PresetTypedChainId.RococoPhala]: {
-    [PresetTypedChainId.Sepolia]: {
+  [PresetTypedChainId.Sepolia]: {
+    [PresetTypedChainId.RococoPhala]: {
       supportedTokens: ['sygUSD'],
     },
   },
