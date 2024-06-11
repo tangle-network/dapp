@@ -55,7 +55,7 @@ export default function useBalance() {
   const {
     data: evmNativeBalance,
     isLoading: isLoadingEvmNativeBalance,
-    error: errorLoadingEvmNativeBalance,
+    error: errorEvmNativeBalance,
   } = useSWR(
     [
       walletError === null &&
@@ -72,7 +72,7 @@ export default function useBalance() {
   const {
     data: evmErc20Balance,
     isLoading: isLoadingEvmErc20Balance,
-    error: errorLoadingEvmErc20Balance,
+    error: errorEvmErc20Balance,
   } = useSWR(
     [
       walletError === null &&
@@ -95,7 +95,7 @@ export default function useBalance() {
   const {
     data: substrateNativeBalance,
     isLoading: isLoadingSubstrateNativeBalance,
-    error: errorLoadingSubstrateNativeBalance,
+    error: errorSubstrateNativeBalance,
   } = useSWR(
     [
       walletError === null &&
@@ -115,7 +115,7 @@ export default function useBalance() {
   const {
     data: substrateAssetBalance,
     isLoading: isLoadingSubstrateAssetBalance,
-    error: errorLoadingSubstrateAssetBalance,
+    error: errorSubstrateAssetBalance,
   } = useSWR(
     [
       walletError === null &&
@@ -136,40 +136,40 @@ export default function useBalance() {
   );
 
   useEffect(() => {
-    if (errorLoadingEvmNativeBalance) {
+    if (errorEvmNativeBalance) {
       notificationApi({
-        message: ensureError(errorLoadingEvmNativeBalance).message,
+        message: ensureError(errorEvmNativeBalance).message,
         variant: 'error',
       });
     }
-  }, [notificationApi, errorLoadingEvmNativeBalance]);
+  }, [notificationApi, errorEvmNativeBalance]);
 
   useEffect(() => {
-    if (errorLoadingEvmErc20Balance) {
+    if (errorEvmErc20Balance) {
       notificationApi({
-        message: ensureError(errorLoadingEvmErc20Balance).message,
+        message: ensureError(errorEvmErc20Balance).message,
         variant: 'error',
       });
     }
-  }, [notificationApi, errorLoadingEvmErc20Balance]);
+  }, [notificationApi, errorEvmErc20Balance]);
 
   useEffect(() => {
-    if (errorLoadingSubstrateNativeBalance) {
+    if (errorSubstrateNativeBalance) {
       notificationApi({
-        message: ensureError(errorLoadingSubstrateNativeBalance).message,
+        message: ensureError(errorSubstrateNativeBalance).message,
         variant: 'error',
       });
     }
-  }, [notificationApi, errorLoadingSubstrateNativeBalance]);
+  }, [notificationApi, errorSubstrateNativeBalance]);
 
   useEffect(() => {
-    if (errorLoadingSubstrateAssetBalance) {
+    if (errorSubstrateAssetBalance) {
       notificationApi({
-        message: ensureError(errorLoadingSubstrateAssetBalance).message,
+        message: ensureError(errorSubstrateAssetBalance).message,
         variant: 'error',
       });
     }
-  }, [notificationApi, errorLoadingSubstrateAssetBalance]);
+  }, [notificationApi, errorSubstrateAssetBalance]);
 
   return {
     balance:

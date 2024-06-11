@@ -2,17 +2,14 @@
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
-import { useMemo } from 'react';
-import { parseUnits } from 'viem';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { BridgeType } from '../../../types/bridge';
-import formatBnToDisplayAmount from '../../../utils/formatBnToDisplayAmount';
 import viemConnectorClientToEthersSigner from '../../../utils/viemConnectorClientToEthersSigner';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
-import useDecimals from './useDecimals';
+import useAmountToTransfer from './useAmountToTransfer';
 import useEvmViemClient from './useEvmViemClient';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
@@ -21,31 +18,15 @@ export default function useBridgeTransfer() {
   const { activeApi } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
   const {
-    amount,
     destinationAddress,
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
   } = useBridge();
   const selectedToken = useSelectedToken();
-  const decimals = useDecimals();
   const viemClient = useEvmViemClient();
   const api = useSubstrateApi();
-
-  // TODO: handle calculate real amount to bridge when user choose max amount
-  const amountToString = useMemo(
-    () =>
-      amount !== null
-        ? parseUnits(
-            formatBnToDisplayAmount(amount, decimals, {
-              includeCommas: false,
-              fractionLength: undefined,
-            }),
-            decimals,
-          ).toString()
-        : '0',
-    [amount, decimals],
-  );
+  const amountToTransfer = useAmountToTransfer();
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -67,15 +48,21 @@ export default function useBridgeTransfer() {
           throw new Error('No active API found');
         }
 
-        const { tx } = await sygmaEvm(
-          activeAccountAddress,
-          destinationAddress,
+        const sygmaEvmTransfer = await sygmaEvm({
+          senderAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
           viemClient,
-          selectedSourceChain,
-          selectedDestinationChain,
-          selectedToken,
-          amountToString,
-        );
+          sourceChain: selectedSourceChain,
+          destinationChain: selectedDestinationChain,
+          token: selectedToken,
+          amount: amountToTransfer,
+        });
+
+        if (!sygmaEvmTransfer) {
+          throw new Error('Sygma EVM transfer failed');
+        }
+
+        const { tx } = sygmaEvmTransfer;
 
         const walletClient = activeApi.walletClient;
         const ethersSigner = viemConnectorClientToEthersSigner(walletClient);
@@ -88,15 +75,21 @@ export default function useBridgeTransfer() {
           throw new Error('No Substrate API found');
         }
 
-        const { tx } = await sygmaSubstrate(
-          activeAccountAddress,
-          destinationAddress,
+        const sygmaSubstrateTransfer = await sygmaSubstrate({
+          senderAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
           api,
-          selectedSourceChain,
-          selectedDestinationChain,
-          selectedToken,
-          amountToString,
-        );
+          sourceChain: selectedSourceChain,
+          destinationChain: selectedDestinationChain,
+          token: selectedToken,
+          amount: amountToTransfer,
+        });
+
+        if (!sygmaSubstrateTransfer) {
+          throw new Error('Sygma Substrate transfer failed');
+        }
+
+        const { tx } = sygmaSubstrateTransfer;
 
         const response = await tx.signAndSend(activeAccountAddress);
         return response;

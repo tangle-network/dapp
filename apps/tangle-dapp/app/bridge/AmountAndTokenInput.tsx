@@ -20,6 +20,7 @@ import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
+import useBridgeFee from './hooks/useBridgeFee';
 import useDecimals from './hooks/useDecimals';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
@@ -37,6 +38,8 @@ const AmountAndTokenInput: FC = () => {
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
+  const bridgeFee = useBridgeFee();
+  console.log('bridgeFee :', bridgeFee?.toString());
 
   const minAmount = useMemo(() => {
     const existentialDeposit =

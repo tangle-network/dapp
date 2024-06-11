@@ -11,7 +11,7 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD' ;
+export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD';
 
 export type ChainId = PresetTypedChainId;
 
@@ -27,9 +27,8 @@ export type BridgeTokenType = {
   decimals: Partial<Record<ChainId, number>> & { default: number };
 
   /**
-   * Transaction fee to be paid on the destination chain
-   * Use to calculate the minimum amount of token required to be transferred
-   * Note: The final amount to transfer will be the input of user minus this value
+   * This fee is used to pay the XCM fee of the destination chain
+   * This will be used when bridging assets across Polkadot parachains using XCM (https://wiki.polkadot.network/docs/learn-xcm)
    */
   destChainTransactionFee: Partial<Record<ChainId, Decimal>>;
 

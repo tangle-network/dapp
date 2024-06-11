@@ -6,15 +6,27 @@ import { BridgeTokenType } from '../../../../types/bridge';
 
 const { SubstrateAssetTransfer } = Substrate;
 
-export default async function sygmaSubstrate(
-  senderAddress: string,
-  recipientAddress: string,
-  api: ApiPromise,
-  sourceChain: ChainConfig,
-  destinationChain: ChainConfig,
-  token: BridgeTokenType,
-  amount: string,
-) {
+export default async function sygmaSubstrate(params?: {
+  senderAddress: string;
+  recipientAddress: string;
+  api: ApiPromise;
+  sourceChain: ChainConfig;
+  destinationChain: ChainConfig;
+  token: BridgeTokenType;
+  amount: string;
+}) {
+  if (!params) return null;
+
+  const {
+    senderAddress,
+    recipientAddress,
+    api,
+    sourceChain,
+    destinationChain,
+    token,
+    amount,
+  } = params;
+
   const assetTransfer = new SubstrateAssetTransfer();
 
   await assetTransfer.init(
@@ -42,5 +54,5 @@ export default async function sygmaSubstrate(
   const fee = await assetTransfer.getFee(transfer);
   const tx = assetTransfer.buildTransferTransaction(transfer, fee);
 
-  return { assetTransfer, transfer, fee, tx };
+  return { fee, tx };
 }
