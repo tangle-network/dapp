@@ -7,14 +7,11 @@ import {
   LiquidStakingChainToTokenMap,
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
-import useLiquidStakingPage from '../../data/liquidStaking/useLiquidStakingPage';
 import entriesOf from '../../utils/entriesOf';
 import LiquidStakingTokenItem from './LiquidStakingTokenItem';
 import StatItem from './StatItem';
 
 const LiquidStakingPage: FC = () => {
-  useLiquidStakingPage();
-
   return (
     <div className="flex flex-col gap-6">
       <Typography variant="h4" fw="bold">

@@ -23,7 +23,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
 
   // Invalid token on the URL.
   if (!possibleTokens.includes(tokenSymbol)) {
-    return redirect(PagePath.LIQUID_RESTAKING);
+    return redirect(PagePath.LIQUID_STAKING);
   }
 
   return (

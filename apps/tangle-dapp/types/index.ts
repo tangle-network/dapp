@@ -17,7 +17,7 @@ export enum PagePath {
   BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   SERVICES_RESTAKE = '/restake',
-  LIQUID_RESTAKING = '/liquid-staking',
+  LIQUID_STAKING = '/liquid-staking',
 }
 
 export enum QueryParamKey {

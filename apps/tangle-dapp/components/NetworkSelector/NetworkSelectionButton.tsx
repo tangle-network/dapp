@@ -5,13 +5,19 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
+import { usePathname } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
+import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
@@ -19,23 +25,35 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
-  const { network, isLocked } = useNetworkStore();
-  const { setNetwork, isCustom } = useNetworkSwitcher();
+  const { network } = useNetworkStore();
+  const { switchNetwork, isCustom } = useNetworkSwitcher();
+  const pathname = usePathname();
 
-  // TODO: Handle switching network on EVM wallet here
+  // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(
     (customRpcEndpoint: string) =>
-      setNetwork(createCustomNetwork(customRpcEndpoint), true),
-    [setNetwork],
+      switchNetwork(createCustomNetwork(customRpcEndpoint), true),
+    [switchNetwork],
   );
 
   const networkName = network?.name ?? 'Loading';
+  const isInLiquidStakingPath = pathname.startsWith(PagePath.LIQUID_STAKING);
 
-  return isLocked ? (
-    <TriggerButton
-      className="opacity-70 cursor-not-allowed"
-      networkName={networkName}
-    />
+  return isInLiquidStakingPath ? (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Dropdown>
+          <TriggerButton
+            className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
+            networkName={TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name}
+          />
+        </Dropdown>
+      </TooltipTrigger>
+
+      <TooltipBody>
+        Network can&apos;t be changed while you&apos;re in this page.
+      </TooltipBody>
+    </Tooltip>
   ) : (
     <Dropdown>
       <TriggerButton networkName={networkName} />
@@ -45,7 +63,7 @@ const NetworkSelectionButton: FC = () => {
           isCustomEndpointSelected={isCustom}
           selectedNetwork={network}
           onSetCustomNetwork={switchToCustomNetwork}
-          onNetworkChange={(newNetwork) => setNetwork(newNetwork, false)}
+          onNetworkChange={(newNetwork) => switchNetwork(newNetwork, false)}
         />
       </DropdownBody>
     </Dropdown>

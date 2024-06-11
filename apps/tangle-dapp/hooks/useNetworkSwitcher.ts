@@ -188,7 +188,7 @@ const useNetworkSwitcher = () => {
   );
 
   return {
-    setNetwork: switchNetwork,
+    switchNetwork,
     isCustom,
   };
 };

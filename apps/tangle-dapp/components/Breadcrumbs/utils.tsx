@@ -25,7 +25,7 @@ const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.SERVICES_OVERVIEW]: GridFillIcon,
   [PagePath.SERVICES_RESTAKE]: TokenSwapLineIcon,
   [PagePath.BRIDGE]: ArrowLeftRightLineIcon,
-  [PagePath.LIQUID_RESTAKING]: WaterDropletIcon,
+  [PagePath.LIQUID_STAKING]: WaterDropletIcon,
 };
 
 const BREADCRUMB_LABELS: Partial<Record<PagePath, string>> = {

@@ -15,9 +15,6 @@ const useNetworkStore = create<{
   network: Network;
   setNetwork: (network: Network) => void;
   nativeTokenSymbol: TokenSymbol;
-  isLocked: boolean;
-  lockReason?: string;
-  setIsLocked: (isLocked: boolean) => void;
 }>((set) => ({
   rpcEndpoint: DEFAULT_NETWORK.wsRpcEndpoint,
   network: DEFAULT_NETWORK,
@@ -28,8 +25,6 @@ const useNetworkStore = create<{
       rpcEndpoint: network.wsRpcEndpoint,
       nativeTokenSymbol: network.tokenSymbol,
     }),
-  isLocked: false,
-  setIsLocked: (isLocked) => set({ isLocked }),
 }));
 
 export default useNetworkStore;

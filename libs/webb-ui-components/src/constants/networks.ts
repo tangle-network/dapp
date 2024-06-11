@@ -110,7 +110,7 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK: Network = {
   name: 'Tangle Restaking Parachain (Local)',
   nodeType: 'parachain',
   tokenSymbol: 'TNT',
-  wsRpcEndpoint: 'ws://localhost:41323',
+  wsRpcEndpoint: 'ws://localhost:30337',
   polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
 };
 
