@@ -1,21 +1,17 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
-
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { BridgeType } from '../../../types/bridge';
-import viemConnectorClientToEthersSigner from '../../../utils/viemConnectorClientToEthersSigner';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountToTransfer from './useAmountToTransfer';
 import useEthersProvider from './useEthersProvider';
+import useEthersSigner from './useEthersSigner';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
 export default function useBridgeTransfer() {
-  const { activeApi } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
   const {
     destinationAddress,
@@ -25,6 +21,7 @@ export default function useBridgeTransfer() {
   } = useBridge();
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
+  const ethersSigner = useEthersSigner();
   const api = useSubstrateApi();
   const amountToTransfer = useAmountToTransfer();
 
@@ -44,8 +41,8 @@ export default function useBridgeTransfer() {
         if (ethersProvider === null) {
           throw new Error('No Ethers Provider found');
         }
-        if (!activeApi || !(activeApi instanceof WebbWeb3Provider)) {
-          throw new Error('No active API found');
+        if (ethersSigner === null) {
+          throw new Error('No Ethers Signer found');
         }
 
         const sygmaEvmTransfer = await sygmaEvm({
@@ -63,9 +60,6 @@ export default function useBridgeTransfer() {
         }
 
         const { tx } = sygmaEvmTransfer;
-
-        const walletClient = activeApi.walletClient;
-        const ethersSigner = viemConnectorClientToEthersSigner(walletClient);
         const response = await ethersSigner.sendTransaction(tx);
         return response;
       }

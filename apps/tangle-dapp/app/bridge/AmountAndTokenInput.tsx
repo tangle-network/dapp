@@ -22,6 +22,7 @@ import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
 import useBridgeFee from './hooks/useBridgeFee';
 import useDecimals from './hooks/useDecimals';
+import useEstimatedGasFee from './hooks/useEstimatedGasFee';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
 
@@ -39,7 +40,9 @@ const AmountAndTokenInput: FC = () => {
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
   const bridgeFee = useBridgeFee();
+  const estimatedGasFee = useEstimatedGasFee();
   console.log('bridgeFee :', bridgeFee?.toString());
+  console.log('estimatedGasFee :', estimatedGasFee?.toString());
 
   const minAmount = useMemo(() => {
     const existentialDeposit =
