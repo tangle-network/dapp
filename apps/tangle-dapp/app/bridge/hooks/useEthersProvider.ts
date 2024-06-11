@@ -12,10 +12,10 @@ export default function useEthersProvider() {
   const { selectedSourceChain } = useBridge();
   const { sourceTypedChainId } = useTypedChainId();
 
-  const evmViemClient = useMemo(() => {
+  const ethersProvider = useMemo(() => {
     if (!isEVMChain(selectedSourceChain)) return null;
     return viemNetworkClientToEthersProvider(getViemClient(sourceTypedChainId));
   }, [selectedSourceChain, sourceTypedChainId]);
 
-  return evmViemClient;
+  return ethersProvider;
 }
