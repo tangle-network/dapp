@@ -16,7 +16,7 @@ export function misbehavingRelayer(): InteractiveFeedback {
       () => {
         interactiveFeedback?.cancelWithoutHandler();
       },
-      'success'
+      'success',
     )
     .actions();
   const interactiveFeedback = new InteractiveFeedback(
@@ -26,7 +26,7 @@ export function misbehavingRelayer(): InteractiveFeedback {
       interactiveFeedback?.cancel();
     },
     feedbackBody,
-    WebbErrorCodes.RelayerMisbehaving
+    WebbErrorCodes.RelayerMisbehaving,
   );
   return interactiveFeedback;
 }

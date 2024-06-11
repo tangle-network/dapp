@@ -1,4 +1,4 @@
-import { Avatar } from '@webb-tools/webb-ui-components/components';
+import { Avatar } from '../../components/Avatar';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

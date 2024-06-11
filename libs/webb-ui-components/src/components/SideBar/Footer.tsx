@@ -21,7 +21,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
       className={twMerge(
         'flex items-center',
         isExpanded ? 'justify-between' : 'justify-center',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between group">

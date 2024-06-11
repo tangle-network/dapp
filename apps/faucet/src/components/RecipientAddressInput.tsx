@@ -28,15 +28,15 @@ const RecipientAddressInput = () => {
   const [error, setError] = useState('');
 
   const recipientAddress = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.recepient))
+    inputValues$.pipe(map((inputValues) => inputValues.recepient)),
   );
 
   const typedChainId = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.chain))
+    inputValues$.pipe(map((inputValues) => inputValues.chain)),
   );
 
   const tokenAddress = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.contractAddress))
+    inputValues$.pipe(map((inputValues) => inputValues.contractAddress)),
   );
 
   const twitterHandle = useMemo(() => {
@@ -74,7 +74,7 @@ const RecipientAddressInput = () => {
         recepientAddressType: addrType,
       });
     },
-    [inputValues$, tokenAddress, typedChainId]
+    [inputValues$, tokenAddress, typedChainId],
   );
 
   useEffect(() => {
@@ -89,7 +89,7 @@ const RecipientAddressInput = () => {
         className={cx(
           '!max-w-none input-height border dark:bg-mono-160',
           'transition-[border-color] duration-150',
-          error ? 'border-red-70 dark:border-red-50' : 'border-transparent'
+          error ? 'border-red-70 dark:border-red-50' : 'border-transparent',
         )}
         title="Address"
         value={recipientAddress}
@@ -149,7 +149,7 @@ const getErrorMessage = (typedChainId?: number, tokenAddress?: string) => {
 const validateAddress = (
   address: string,
   typedChainId?: number,
-  tokenAddress?: string
+  tokenAddress?: string,
 ) => {
   if (!address) {
     return false;

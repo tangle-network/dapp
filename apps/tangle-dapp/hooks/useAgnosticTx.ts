@@ -52,7 +52,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
   getSuccessMessageFnc,
 }: AgnosticTxOptions<PrecompileT, Context>) {
   const [agnosticStatus, setAgnosticStatus] = useState(
-    TxStatus.NOT_YET_INITIATED
+    TxStatus.NOT_YET_INITIATED,
   );
 
   const activeAccountAddress = useActiveAccountAddress();
@@ -90,13 +90,13 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
         // otherwise it constitutes a logic error.
         assert(
           executeSubstrateTx !== null,
-          'Substrate transaction executor should be defined if EVM transaction executor is not'
+          'Substrate transaction executor should be defined if EVM transaction executor is not',
         );
 
         await executeSubstrateTx(context);
       }
     },
-    [executeEvmPrecompileAbiCall, executeSubstrateTx, notifyProcessing]
+    [executeEvmPrecompileAbiCall, executeSubstrateTx, notifyProcessing],
   );
 
   // Special effect that handles when an account is disconnected,
@@ -107,8 +107,8 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
       isEvmAccount === null
         ? null
         : isEvmAccount
-        ? evmTxStatus
-        : substrateTxStatus;
+          ? evmTxStatus
+          : substrateTxStatus;
 
     // When an account is disconnected, reset the transaction status.
     if (nextAgnosticStatus === null) {
@@ -149,7 +149,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     if (txHash !== null) {
       notifySuccess(
         txHash,
-        isEvmAccount ? evmSuccessMessage : substrateSuccessMessage
+        isEvmAccount ? evmSuccessMessage : substrateSuccessMessage,
       );
     } else if (error !== null) {
       notifyError(error);

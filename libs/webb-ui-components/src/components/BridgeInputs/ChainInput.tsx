@@ -1,7 +1,6 @@
 import { ChainIcon } from '@webb-tools/icons';
 import { forwardRef } from 'react';
-
-import { Typography } from '../../typography';
+import { Typography } from '../../typography/Typography';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { AnimatedChevronRight } from './AnimatedChevronRight';
@@ -66,5 +65,5 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
         <AnimatedChevronRight />
       </InputWrapper>
     );
-  }
+  },
 );

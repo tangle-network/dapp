@@ -27,7 +27,7 @@ function dateParser(date: string | number | Date): Date {
       ...restPs,
     ];
     const isoDate = new Date(
-      Date.UTC(year, monthIdx, date, hours, minutes, seconds, ms)
+      Date.UTC(year, monthIdx, date, hours, minutes, seconds, ms),
     );
     return isoDate;
   }
@@ -36,7 +36,7 @@ function dateParser(date: string | number | Date): Date {
 function defaultFormatter(
   value: number,
   _unit: string,
-  suffix: string
+  suffix: string,
 ): string {
   const unit = value !== 1 ? _unit + 's' : _unit;
 
@@ -82,7 +82,7 @@ export type TimeAgoOptions = {
     suffix: 'ago' | 'from now',
     epochMilliseconds: number,
     nextFormatter: () => React.ReactNode,
-    now: () => number
+    now: () => number,
   ) => React.ReactNode;
 };
 
@@ -111,14 +111,14 @@ const useTimeAgo = (opts: TimeAgoOptions) => {
         seconds < MINUTE
           ? 1000
           : seconds < HOUR
-          ? 1000 * MINUTE
-          : seconds < DAY
-          ? 1000 * HOUR
-          : 1000 * WEEK;
+            ? 1000 * MINUTE
+            : seconds < DAY
+              ? 1000 * HOUR
+              : 1000 * WEEK;
 
       const period = Math.min(
         Math.max(unboundPeriod, minPeriod * 1000),
-        maxPeriod * 1000
+        maxPeriod * 1000,
       );
 
       if (period) {
@@ -149,16 +149,16 @@ const useTimeAgo = (opts: TimeAgoOptions) => {
     seconds < MINUTE
       ? ([Math.round(seconds), 'second'] as const)
       : seconds < HOUR
-      ? ([Math.round(seconds / MINUTE), 'minute'] as const)
-      : seconds < DAY
-      ? ([Math.round(seconds / HOUR), 'hour'] as const)
-      : seconds < WEEK
-      ? ([Math.round(seconds / DAY), 'day'] as const)
-      : seconds < MONTH
-      ? ([Math.round(seconds / WEEK), 'week'] as const)
-      : seconds < YEAR
-      ? ([Math.round(seconds / MONTH), 'month'] as const)
-      : ([Math.round(seconds / YEAR), 'year'] as const);
+        ? ([Math.round(seconds / MINUTE), 'minute'] as const)
+        : seconds < DAY
+          ? ([Math.round(seconds / HOUR), 'hour'] as const)
+          : seconds < WEEK
+            ? ([Math.round(seconds / DAY), 'day'] as const)
+            : seconds < MONTH
+              ? ([Math.round(seconds / WEEK), 'week'] as const)
+              : seconds < YEAR
+                ? ([Math.round(seconds / MONTH), 'month'] as const)
+                : ([Math.round(seconds / YEAR), 'year'] as const);
 
   const nextFormatter = defaultFormatter.bind(null, value, unit, suffix);
 

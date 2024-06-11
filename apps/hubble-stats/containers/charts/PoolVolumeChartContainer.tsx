@@ -17,7 +17,7 @@ export default function PoolVolumeChartContainer(props: PoolChartPropsType) {
       epochNow,
       numDatesFromStart,
     ],
-    ([, ...args]) => getPoolVolumeChartData(...args)
+    ([, ...args]) => getPoolVolumeChartData(...args),
   );
 
   if (isLoading || !poolVolumeData) {

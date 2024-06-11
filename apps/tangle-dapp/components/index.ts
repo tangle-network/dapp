@@ -2,7 +2,6 @@ export * from './BondedTokensBalanceInfo';
 export * from './Breadcrumbs';
 export { default as GlassCard } from './GlassCard';
 export * from './HeaderChip';
-export * from './InfoIconWithTooltip';
 export * from './KeyStatsItem';
 export * from './NominationsTable';
 export * from './NominationsTable';

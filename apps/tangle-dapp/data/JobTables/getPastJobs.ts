@@ -15,7 +15,7 @@ const randJob = (id: number): JobType =>
     thresholds: randNum(),
     earnings: randNum(),
     expiration: randNum(),
-  } satisfies JobType);
+  }) satisfies JobType;
 
 export default async function getPastJobs(): Promise<JobType[]> {
   const length = randNumber({ min: 10, max: 30, precision: 1 });

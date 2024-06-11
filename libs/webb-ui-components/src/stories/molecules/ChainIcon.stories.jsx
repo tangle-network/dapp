@@ -1,4 +1,4 @@
-import { ChainIcon } from '../../../../icons';
+import { ChainIcon } from '@webb-tools/icons';
 
 const Template = (args) => <ChainIcon {...args} />;
 

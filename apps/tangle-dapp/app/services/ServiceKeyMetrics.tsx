@@ -46,13 +46,13 @@ const ServiceKeyMetrics: FC = () => {
       className={twMerge(
         'w-full rounded-2xl overflow-hidden',
         'bg-glass dark:bg-glass_dark',
-        'border border-mono-0 dark:border-mono-160'
+        'border border-mono-0 dark:border-mono-160',
       )}
     >
       <div
         className={twMerge(
           'grid grid-cols-2 lg:grid-cols-4',
-          '[&>div]:border-r [&>div]:border-mono-40 [&>div]:dark:border-mono-160'
+          '[&>div]:border-r [&>div]:border-mono-40 [&>div]:dark:border-mono-160',
         )}
       >
         <ServicesKeyMetricItem

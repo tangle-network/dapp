@@ -4,7 +4,7 @@
   "plugins": ["@nx"],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs", "*.cjs"],
       "rules": {
         "@nx/enforce-module-boundaries": [
           "error",
@@ -21,7 +21,18 @@
         ],
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/no-unused-vars": 0
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "args": "all",
+            "argsIgnorePattern": "^_",
+            "caughtErrors": "all",
+            "caughtErrorsIgnorePattern": "^_",
+            "destructuredArrayIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
       }
     },
     {
@@ -30,11 +41,22 @@
       "rules": {
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/no-unused-vars": 0
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "args": "all",
+            "argsIgnorePattern": "^_",
+            "caughtErrors": "all",
+            "caughtErrorsIgnorePattern": "^_",
+            "destructuredArrayIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
       }
     },
     {
-      "files": ["*.js", "*.jsx"],
+      "files": ["*.js", "*.jsx", "*.mjs", "*.cjs"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {}
     },

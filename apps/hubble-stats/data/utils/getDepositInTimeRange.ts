@@ -6,7 +6,7 @@ import { getDateFromEpoch } from '../../utils';
 
 export default async function getDepositInTimeRange(
   epochStart: number,
-  epochEnd: number
+  epochEnd: number,
 ) {
   let deposit: number | undefined;
   try {
@@ -15,7 +15,7 @@ export default async function getDepositInTimeRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         getDateFromEpoch(epochStart),
-        getDateFromEpoch(epochEnd)
+        getDateFromEpoch(epochEnd),
       );
 
     deposit = depositVAnchorsByChainsData?.reduce(
@@ -23,11 +23,11 @@ export default async function getDepositInTimeRange(
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
           (depositTotalByChain, vAnchor) =>
             depositTotalByChain + +formatEther(BigInt(vAnchor.deposit ?? 0)),
-          0
+          0,
         );
         return depositTotal + depositVAnchorsByChain;
       },
-      0
+      0,
     );
   } catch {
     deposit = undefined;

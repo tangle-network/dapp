@@ -10,7 +10,7 @@ import chainsPopulated from '../chains/chainsPopulated';
  */
 function getChainFromConfig(chainCfg: ChainConfig) {
   const chain = Object.values(chainsPopulated).find(
-    (chain) => chain.id === chainCfg.id && chain.chainType === chain.chainType
+    (chain) => chain.id === chainCfg.id && chain.chainType === chain.chainType,
   );
 
   if (!chain) {

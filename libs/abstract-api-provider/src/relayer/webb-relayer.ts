@@ -70,14 +70,14 @@ export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
 };
 
 const parseRelayerFeeErrorMessage = async (
-  response: Response
+  response: Response,
 ): Promise<string> => {
   try {
     const text = await response.text();
     if (text) {
       return `Relayer fee error: \`${text}\``;
     }
-  } catch (e) {
+  } catch {
     // ignore error
   }
 
@@ -128,7 +128,10 @@ class RelayedWithdraw {
 
   readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
 
-  constructor(private endpoint: URL, private prefix: RelayerCMDKey) {
+  constructor(
+    private endpoint: URL,
+    private prefix: RelayerCMDKey,
+  ) {
     this.watcher = this.emitter.asObservable();
 
     this.txProcesser.subscribe(async (next) => {
@@ -162,8 +165,8 @@ class RelayedWithdraw {
           `Sending tx to relayer: ${uri} with body: ${JSON.stringify(
             JSON.parse(body),
             null,
-            2
-          )}`
+            2,
+          )}`,
         );
         const resp = await fetch(uri, {
           method: 'POST',
@@ -175,7 +178,7 @@ class RelayedWithdraw {
 
         const data: SendTxResponse = await resp.json();
         this.logger.info(
-          `Got tx response from relayer: ${JSON.stringify(data, null, 2)}`
+          `Got tx response from relayer: ${JSON.stringify(data, null, 2)}`,
         );
         if (data.status === 'Sent') {
           const { itemKey } = data as SendTxResponse<'Sent'>;
@@ -187,7 +190,7 @@ class RelayedWithdraw {
 
             try {
               const resp = await fetch(
-                this.getQueryStatusUri(baseOn, chainId, itemKey)
+                this.getQueryStatusUri(baseOn, chainId, itemKey),
               );
 
               const data: RelayerMessage = await resp.json();
@@ -204,7 +207,7 @@ class RelayedWithdraw {
               }
             } catch (error) {
               let message = WebbError.getErrorMessage(
-                WebbErrorCodes.FailedToSendTx
+                WebbErrorCodes.FailedToSendTx,
               ).message;
               if (error instanceof Error) {
                 message = error.message;
@@ -239,27 +242,27 @@ class RelayedWithdraw {
   private getSendTxUri(
     base: RelayerCMDBase,
     chainId: number,
-    anchorIdentifier: string
+    anchorIdentifier: string,
   ) {
     return new URL(
       `${this.SEND_TX_ROUTE}/${base}/${chainId}/${anchorIdentifier}`,
-      this.endpoint
+      this.endpoint,
     );
   }
 
   private getQueryStatusUri(
     base: RelayerCMDBase,
     chainId: number,
-    itemKey: string
+    itemKey: string,
   ) {
     return new URL(
       `${this.QUERY_STATUS_ROUTE}/${base}/${chainId}/${itemKey}`,
-      this.endpoint
+      this.endpoint,
     );
   }
 
   private handleMessage = (
-    data: RelayerMessage
+    data: RelayerMessage,
   ): [RelayedWithdrawResult, string | undefined] => {
     this.logger.info('Relayer message: ', data);
 
@@ -276,7 +279,7 @@ class RelayedWithdraw {
 
   generateWithdrawRequest<
     T extends RelayedChainInput,
-    C extends CMDSwitcher<T['baseOn']>
+    C extends CMDSwitcher<T['baseOn']>,
   >(chain: T, payload: WithdrawRelayerArgs<T['baseOn'], C>) {
     return {
       [chain.baseOn]: {
@@ -290,7 +293,7 @@ class RelayedWithdraw {
 
   send(
     withdrawRequest: ReturnType<RelayedWithdraw['generateWithdrawRequest']>,
-    chainId: number
+    chainId: number,
   ) {
     if (this.status !== RelayedWithdrawResult.PreFlight) {
       throw Error('there is a withdraw process running');
@@ -310,8 +313,8 @@ class RelayedWithdraw {
           }
 
           return next === RelayedWithdrawResult.CleanExit;
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -321,7 +324,10 @@ class RelayedWithdraw {
 }
 
 export class WebbRelayer {
-  constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
+  constructor(
+    readonly endpoint: string,
+    readonly capabilities: Capabilities,
+  ) {}
 
   readonly infoRoute = '/api/v1/info';
 
@@ -332,10 +338,10 @@ export class WebbRelayer {
 
   private isEVMSupported(
     relayerChainCfg: RelayedChainConfig<'evm'>,
-    anchorId: string
+    anchorId: string,
   ): boolean {
     const supportAnchor = relayerChainCfg.contracts.find(
-      (contract) => BigInt(contract.address) === BigInt(anchorId) // Use BigInt to prevent case-sensitive comparison
+      (contract) => BigInt(contract.address) === BigInt(anchorId), // Use BigInt to prevent case-sensitive comparison
     );
 
     return Boolean(supportAnchor);
@@ -343,10 +349,10 @@ export class WebbRelayer {
 
   private isSubstrateSupported(
     relayerChainCfg: RelayedChainConfig<'substrate'>,
-    anchorId: string
+    anchorId: string,
   ): boolean {
     const supportAnchor = relayerChainCfg.pallets.find(
-      (pallet) => BigInt(pallet.pallet) === BigInt(anchorId) // Use BigInt to prevent case-sensitive comparison
+      (pallet) => BigInt(pallet.pallet) === BigInt(anchorId), // Use BigInt to prevent case-sensitive comparison
     );
 
     return Boolean(supportAnchor);
@@ -355,7 +361,7 @@ export class WebbRelayer {
   isSupported(
     typedChainId: number,
     anchorId: string,
-    basedOn: RelayerCMDBase
+    basedOn: RelayerCMDBase,
   ): boolean {
     if (basedOn === 'evm') {
       const relayerChainCfg =
@@ -400,7 +406,7 @@ export class WebbRelayer {
     contractAddressOrSubstratePayload:
       | string
       | { treeId: number; palletId: number },
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<RelayerLeaves> {
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     const baseUrl = `${this.endpoint}/api/v1/leaves`;
@@ -454,7 +460,7 @@ export class WebbRelayer {
     typedChainId: number,
     vanchor: string,
     gasAmount: bigint,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<RelayerFeeInfo> | never {
     const { chainId, chainType } = parseTypedChainId(typedChainId);
 
@@ -465,12 +471,12 @@ export class WebbRelayer {
     switch (chainType) {
       case ChainType.EVM:
         endpoint = endpoint.concat(
-          `/evm/${chainId.toString()}/${vanchor}/${gasAmount.toString()}`
+          `/evm/${chainId.toString()}/${vanchor}/${gasAmount.toString()}`,
         );
         break;
       case ChainType.Substrate:
         endpoint = endpoint.concat(
-          `/substrate/${chainId.toString()}/${gasAmount.toString()}`
+          `/substrate/${chainId.toString()}/${gasAmount.toString()}`,
         );
         break;
       default:
@@ -488,12 +494,12 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { typedChainId: number; basedOn: 'evm' | 'substrate' }
+    query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(
       instance.endpoint,
       instance.capabilities,
-      query
+      query,
     );
   }
 }
@@ -502,7 +508,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     endpoint: string,
     capabilities: Capabilities,
-    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' }
+    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
   ) {
     super(endpoint, capabilities);
   }

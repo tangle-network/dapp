@@ -1,3 +1,5 @@
+'use client';
+
 import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import {
   AppsLine,
@@ -77,6 +79,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
     name: 'Liquid Staking',
     href: PagePath.LIQUID_RESTAKING,
+    environments: ['development', 'staging', 'test'],
     isInternal: true,
     isNext: true,
     Icon: WaterDropletIcon,
@@ -102,7 +105,7 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
 
 export default function getSidebarProps(
   substrateExplorerHref?: string,
-  evmExplorerHref?: string
+  evmExplorerHref?: string,
 ): SidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
     ? process.env.NODE_ENV
@@ -134,11 +137,13 @@ export default function getSidebarProps(
       : []),
   ];
 
-  // Filter the sidebar items based on the current environment
+  // Filter the sidebar items based on the current environment.
+  // This is useful to keep development-only items hidden in production.
   const items = sideBarItems.filter((item) => {
-    if (!item.environments) {
+    if (item.environments === undefined) {
       return true;
     }
+
     return item.environments.includes(currentEnv);
   });
 

@@ -1,10 +1,11 @@
+'use client';
+
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Close } from '@webb-tools/icons';
-import { PropsOf } from '../../types';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
+import { PropsOf } from '../../types';
 import { DrawerContentProps } from './types';
 
 const Drawer = DialogPrimitive.Root;
@@ -17,7 +18,7 @@ const DrawerCloseButton = forwardRef<HTMLButtonElement, PropsOf<'button'>>(
         <Close size="lg" />
       </button>
     </DialogPrimitive.Close>
-  )
+  ),
 );
 
 const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
@@ -26,7 +27,7 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
       <DialogPrimitive.Overlay
         className={cx(
           'fixed top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,0.25)]',
-          'radix-state-open:animate-drawer-overlay-open radix-state-closed:animate-drawer-overlay-close'
+          'radix-state-open:animate-drawer-overlay-open radix-state-closed:animate-drawer-overlay-close',
         )}
       />
       <DialogPrimitive.Content
@@ -37,7 +38,7 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
         {children}
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
-  )
+  ),
 );
 
 const DrawerTitle = DialogPrimitive.Title;
@@ -45,9 +46,9 @@ const DrawerDescription = DialogPrimitive.Description;
 
 export {
   Drawer,
-  DrawerTrigger,
   DrawerCloseButton,
   DrawerContent,
-  DrawerTitle,
   DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
 };

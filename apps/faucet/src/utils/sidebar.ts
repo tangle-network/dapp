@@ -21,7 +21,7 @@ export const setSideBarCookieOnToggle = () => {
  * @returns the state of the sidebar that is stored in the cookie
  */
 export function getSideBarStateFromCookie(
-  options: Parameters<typeof getCookie>[1]
+  options: Parameters<typeof getCookie>[1],
 ) {
   const sideBarStateFromCookie = getCookie(SIDEBAR_OPEN_KEY, options);
   return sideBarStateFromCookie === 'false' ? false : true;

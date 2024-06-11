@@ -1,4 +1,5 @@
-import { Banner, Typography } from '@webb-tools/webb-ui-components';
+import noop from 'lodash/noop';
+import { Banner } from '../../components/Banner';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,7 +16,7 @@ BridgeDapp.args = {
   dappName: 'bridge',
   bannerText: 'Hubble Bridge is in beta version.',
   buttonText: 'Report Bug',
-  onClose: () => {},
+  onClose: noop,
 };
 
 export const StatsDapp = Template.bind({});
@@ -23,12 +24,12 @@ StatsDapp.args = {
   dappName: 'stats',
   bannerText: 'Stats dApp is in beta version.',
   buttonText: 'Report Bug',
-  onClose: () => {},
+  onClose: noop,
 };
 
 export const WithoutButton = Template.bind({});
 WithoutButton.args = {
   dappName: 'bridge',
   bannerText: 'Hubble Bridge is in beta version.',
-  onClose: () => {},
+  onClose: noop,
 };

@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { TokenInput } from '@webb-tools/webb-ui-components/components';
+import { TokenInput } from '../../components/BridgeInputs/TokenInput';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,9 +13,9 @@ const Template = (args) => <TokenInput {...args} />;
 export const Default = Template.bind({});
 Default.args = {};
 
-export const withToken = Template.bind({});
+export const WithToken = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withToken.args = {
+WithToken.args = {
   ...Default.args,
   token: {
     symbol: 'eth',

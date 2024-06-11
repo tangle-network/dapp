@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from '@webb-tools/icons';
 import {
   Chip,
   ChipColors,
+  InfoIconWithTooltip,
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -17,7 +18,6 @@ import { twMerge } from 'tailwind-merge';
 
 import InputAction from '../../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../../context/ErrorsContext';
-import { InfoIconWithTooltip } from '../InfoIconWithTooltip';
 
 export type BaseInputProps = {
   title: string;
@@ -34,6 +34,7 @@ export type BaseInputProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
+  errorMessageClassName?: string;
   isFullWidth?: boolean;
   isDisabled?: boolean;
   tooltip?: ReactNode;
@@ -54,6 +55,7 @@ const BaseInput: FC<BaseInputProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
+  errorMessageClassName,
   isFullWidth = false,
   isDisabled = false,
   tooltip,
@@ -82,7 +84,7 @@ const BaseInput: FC<BaseInputProps> = ({
     <div
       className={twMerge(
         'flex flex-col gap-1 w-full max-w-[356px]',
-        isFullWidth && 'max-w-full'
+        isFullWidth && 'max-w-full',
       )}
     >
       <div
@@ -95,7 +97,7 @@ const BaseInput: FC<BaseInputProps> = ({
           'border border-mono-20 dark:border-mono-160',
           hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
-          wrapperClassName
+          wrapperClassName,
         )}
       >
         <div className="flex flex-col gap-1 w-full mr-auto">
@@ -123,7 +125,7 @@ const BaseInput: FC<BaseInputProps> = ({
                 'inline-block uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]',
                 !isDropdownDisabled &&
                   dropdownBody !== undefined &&
-                  'cursor-pointer'
+                  'cursor-pointer',
               )}
             >
               {chipText}
@@ -146,7 +148,7 @@ const BaseInput: FC<BaseInputProps> = ({
           <div
             className={twMerge(
               'absolute z-50 top-[100%] left-0 mt-1 w-full bg-mono-0 border border-mono-40 dark:border-mono-140 dark:bg-mono-170 shadow-md rounded-lg overflow-hidden max-h-56 overflow-y-auto',
-              dropdownBodyClassName
+              dropdownBodyClassName,
             )}
           >
             {dropdownBody}
@@ -156,11 +158,14 @@ const BaseInput: FC<BaseInputProps> = ({
 
       {hasError && (
         <Typography
-          className="text-red-70 dark:text-red-50"
+          className={twMerge(
+            'text-red-70 dark:text-red-50',
+            errorMessageClassName,
+          )}
           variant="body1"
           fw="normal"
         >
-          *{errorMessage}
+          * {errorMessage}
         </Typography>
       )}
     </div>

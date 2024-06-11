@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { WebbUIContext } from '../provider/';
+import { WebbUIContext } from '../provider';
 
 /**
  * The hook use the read the Webb UI Kit configurations (ex: `theme`, etc...)

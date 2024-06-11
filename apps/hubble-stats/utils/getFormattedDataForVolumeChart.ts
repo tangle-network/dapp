@@ -7,7 +7,7 @@ type VolumeDataType = {
 
 const getFormattedDataForVolumeChart = (
   depositData: ChartDataRecord,
-  withdrawalData: ChartDataRecord
+  withdrawalData: ChartDataRecord,
 ): FormattedVolumeChartDataType => {
   const volumeData: VolumeDataType = Object.keys(depositData).reduce(
     (volumeMap, epoch) => {
@@ -17,7 +17,7 @@ const getFormattedDataForVolumeChart = (
       };
       return volumeMap;
     },
-    {} as VolumeDataType
+    {} as VolumeDataType,
   );
 
   return Object.keys(volumeData).map((epoch) => {

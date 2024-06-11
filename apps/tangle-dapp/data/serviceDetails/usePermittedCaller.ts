@@ -24,7 +24,7 @@ export default function usePermittedCaller() {
 
   const permittedCaller = useMemo(
     () => serviceDetails?.permittedCaller ?? null,
-    [serviceDetails?.permittedCaller]
+    [serviceDetails?.permittedCaller],
   );
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function usePermittedCaller() {
         // This follows the api provided by Blockscout: https://testnet-explorer.tangle.tools/api-docs
         const fetchUrl = new URL(
           `${CONTRACT_API_PATH}/${permittedCaller}`,
-          network.evmExplorerUrl
+          network.evmExplorerUrl,
         ).toString();
 
         const res = await fetch(fetchUrl);

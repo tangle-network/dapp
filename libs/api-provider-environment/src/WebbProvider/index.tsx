@@ -1,5 +1,6 @@
 'use client';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   Currency,
   type Account,
@@ -21,7 +22,7 @@ import {
   type Chain,
   type Wallet,
 } from '@webb-tools/dapp-config';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   CurrencyRole,
   WalletId,
@@ -41,12 +42,18 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   WebbWeb3Provider,
+  isErrorInstance,
   isViemError,
   type Web3RelayerManager,
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
-import { WagmiConfig } from 'wagmi';
+import {
+  type State as WagmiState,
+  BaseError as WagmiBaseError,
+  WagmiProvider,
+  useConnect,
+} from 'wagmi';
 import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
 import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
@@ -62,7 +69,7 @@ import {
 } from './private';
 import { useActiveAccount, useActiveChain, useActiveWallet } from './subjects';
 
-interface WebbProviderProps extends BareProps {
+interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
   applicationName: string;
   applicationVersion?: string;
@@ -84,7 +91,7 @@ const apiConfig = ApiConfig.init({
 
 const appNetworkStoragePromise = netStorageFactory();
 
-const WebbProviderInner: FC<WebbProviderProps> = ({
+const WebbProviderInner: FC<WebbProviderInnerProps> = ({
   children,
   appEvent,
   applicationName,
@@ -96,7 +103,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
   const [activeApi, setActiveApi] =
     useState<Maybe<WebbApiProvider<unknown>>>(undefined);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [accounts, setAccounts] = useState<Array<Account>>([]);
 
@@ -152,7 +159,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
         networkStorage?: NetworkStorage | undefined | null;
         chain?: Chain | undefined;
         activeApi?: Maybe<WebbApiProvider<unknown>>;
-      } = {}
+      } = {},
     ) => {
       const innerNetworkStorage =
         options.networkStorage ?? (await appNetworkStoragePromise);
@@ -162,7 +169,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       if (innerNetworkStorage && innerChain) {
         const typedChainId = calculateTypedChainId(
           innerChain.chainType,
-          innerChain.id
+          innerChain.id,
         );
 
         const networksConfig = await innerNetworkStorage.get('networksConfig');
@@ -182,7 +189,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       setActiveAccount(account);
       await loginIfExist(account.address);
     },
-    [activeApi, activeChain, loginIfExist, setActiveAccount]
+    [activeApi, activeChain, loginIfExist, setActiveAccount],
   );
 
   /// this will set the active api and the accounts
@@ -190,7 +197,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
     async (
       nextActiveApi: WebbApiProvider<unknown> | undefined,
       chain: Chain,
-      _networkStorage?: NetworkStorage | null
+      _networkStorage?: NetworkStorage | null,
     ): Promise<void> => {
       if (!nextActiveApi) {
         setActiveApi(nextActiveApi);
@@ -208,14 +215,13 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       setAccounts(accounts);
 
       if (_networkStorage) {
-        const networkDefaultConfig = await _networkStorage.get(
-          'networksConfig'
-        );
+        const networkDefaultConfig =
+          await _networkStorage.get('networksConfig');
 
         const defaultAccount =
           networkDefaultConfig?.[typedChainId]?.defaultAccount;
         const defaultFromSettings = accounts.find(
-          (account) => account.address === defaultAccount
+          (account) => account.address === defaultAccount,
         );
 
         if (defaultFromSettings) {
@@ -254,7 +260,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       });
     },
     // prettier-ignore
-    [loginIfExist, setActiveAccount, setActiveAccountWithStorage, setNoteManager]
+    [loginIfExist, setActiveAccount, setActiveAccountWithStorage, setNoteManager],
   );
 
   /// Error handler for the `WebbError`
@@ -270,7 +276,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
             if (interactiveFeedback) {
               registerInteractiveFeedback(
                 setInteractiveFeedbacks,
-                interactiveFeedback
+                interactiveFeedback,
               );
             }
           }
@@ -292,7 +298,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
             const interactiveFeedback = insufficientApiInterface(appEvent);
             registerInteractiveFeedback(
               setInteractiveFeedbacks,
-              interactiveFeedback
+              interactiveFeedback,
             );
           }
           break;
@@ -302,8 +308,10 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
           alert(code);
       }
     },
-    [appEvent, setActiveChain]
+    [appEvent, setActiveChain],
   );
+
+  const { connectAsync, connectors } = useConnect();
 
   /// Network switcher
   const switchChain = useCallback(
@@ -311,7 +319,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       chain: Chain,
       wallet: Wallet,
       _networkStorage?: NetworkStorage | undefined,
-      _bridge?: Bridge | undefined
+      _bridge?: Bridge | undefined,
     ) => {
       const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
@@ -353,7 +361,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
               const webSocketUrls = chain.rpcUrls.default.webSocket;
               if (!webSocketUrls || webSocketUrls.length === 0) {
                 throw new Error(
-                  `No websocket urls found for chain ${chain.name}`
+                  `No websocket urls found for chain ${chain.name}`,
                 );
               }
 
@@ -364,7 +372,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                   onError: (feedback: InteractiveFeedback) => {
                     registerInteractiveFeedback(
                       setInteractiveFeedbacks,
-                      feedback
+                      feedback,
                     );
                     appEvent.send('walletConnectionState', {
                       ...sharedWalletConnectionPayload,
@@ -376,13 +384,13 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                 apiConfig,
                 notificationHandler,
                 nextTypedChainId,
-                wallet
+                wallet,
               );
 
               await setActiveApiWithAccounts(
                 webbPolkadot,
                 chain,
-                _networkStorage ?? (await appNetworkStoragePromise)
+                _networkStorage ?? (await appNetworkStoragePromise),
               );
 
               localActiveApi = webbPolkadot;
@@ -395,7 +403,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                 ...sharedWalletConnectionPayload,
                 status: 'sucess',
               });
-              setLoading(false);
             }
             break;
 
@@ -403,30 +410,30 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
           case WalletId.WalletConnectV2:
           case WalletId.Rainbow:
             {
-              const connector = walletsConfig[wallet.id].connector;
+              const connector = connectors.find((c) => c.id === wallet.rdns);
               if (!connector) {
-                throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
-              }
-
-              const connProvider = await connector.getProvider();
-              if (!connProvider) {
                 throw new WalletNotInstalledError(wallet.id);
               }
 
-              const chainId = chain.id;
+              if (getWagmiConfig().state.current !== connector.uid) {
+                await connectAsync({
+                  chainId: chain.id,
+                  connector: connector,
+                });
+              }
 
               const relayerManager =
                 (await relayerManagerFactory.getRelayerManager(
-                  'evm'
+                  'evm',
                 )) as Web3RelayerManager;
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 connector,
-                chainId,
+                chain.id,
                 relayerManager,
                 noteManager,
                 apiConfig,
-                notificationHandler
+                notificationHandler,
               );
 
               const providerUpdateHandler = async ([
@@ -435,7 +442,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                 const nextChain = Object.values(chains).find(
                   (chain) =>
                     chain.id === updatedChainId &&
-                    chain.chainType === ChainType.EVM
+                    chain.chainType === ChainType.EVM,
                 );
                 const activeChain = nextChain ? nextChain : chain;
 
@@ -444,7 +451,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                   const name = apiConfig.getEVMChainName(updatedChainId);
                   const newTypedChainId = calculateTypedChainId(
                     ChainType.EVM,
-                    updatedChainId
+                    updatedChainId,
                   );
 
                   /// update the current typed chain id
@@ -464,11 +471,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                   // Set a reasonable default bridge and change available bridges based on the new chain
                   let defaultBridge: Bridge | null = null;
                   for (const bridgeConfig of Object.values(
-                    webbWeb3Provider.config.bridgeByAsset
+                    webbWeb3Provider.config.bridgeByAsset,
                   )) {
                     if (
                       Object.keys(bridgeConfig.anchors).includes(
-                        newTypedChainId.toString()
+                        newTypedChainId.toString(),
                       )
                     ) {
                       // List the bridge as supported by the new chain
@@ -483,7 +490,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
                       const bridgeTargets = bridgeConfig.anchors;
                       const supportedBridge = new Bridge(
                         bridgeCurrency,
-                        bridgeTargets
+                        bridgeTargets,
                       );
                       bridgeOptions[bridgeCurrency.id] = supportedBridge;
 
@@ -543,11 +550,10 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
               await setActiveApiWithAccounts(
                 webbWeb3Provider,
                 chain,
-                _networkStorage ?? networkStorage
+                _networkStorage ?? networkStorage,
               );
               /// listen to `providerUpdate` by MetaMask
               localActiveApi = webbWeb3Provider;
-              setLoading(false);
             }
             break;
         }
@@ -579,10 +585,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
         } else {
           // Parse and display error
           let errorMessage = WebbError.getErrorMessage(
-            WebbErrorCodes.SwitchChainFailed
+            WebbErrorCodes.SwitchChainFailed,
           ).message;
 
-          if (isViemError(e)) {
+          // Libraries error check
+          if (isViemError(e) || isErrorInstance(e, WagmiBaseError)) {
             errorMessage = e.shortMessage;
           } else if (e instanceof Error) {
             errorMessage = e.message;
@@ -605,7 +612,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, applicationName, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet]
+    [activeApi, appEvent, applicationName, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet, connectAsync, connectors],
   );
 
   /// a util will store the network/wallet config before switching
@@ -624,7 +631,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
           await Promise.all([
             _networkStorage.set(
               'defaultNetwork',
-              calculateTypedChainId(chain.chainType, chain.id)
+              calculateTypedChainId(chain.chainType, chain.id),
             ),
             _networkStorage.set('defaultWallet', wallet.id),
           ]);
@@ -634,114 +641,139 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
         setIsConnecting(false);
       }
     },
-    [switchChain]
+    [switchChain],
   );
 
-  useEffect(() => {
-    /// init the dApp
-    const init = async () => {
-      setIsConnecting(true);
-      const _networkStorage = await appNetworkStoragePromise;
-      /// get the default wallet and network from storage
-      const [net, wallet] = await Promise.all([
-        _networkStorage.get('defaultNetwork'),
-        _networkStorage.get('defaultWallet'),
-      ]);
+  useEffect(
+    () => {
+      const abortController = new AbortController();
 
-      /// if there's no chain, return
-      if (!net || !wallet) {
-        return;
-      }
+      /// init the dApp
+      const init = async () => {
+        setIsConnecting(true);
+        const _networkStorage = await appNetworkStoragePromise;
+        /// get the default wallet and network from storage
+        const [net, wallet] = await Promise.all([
+          _networkStorage.get('defaultNetwork'),
+          _networkStorage.get('defaultWallet'),
+        ]);
 
-      /// chain config by net id
-      const chainConfig = chains[net];
-      if (!chainConfig) {
-        return;
-      }
-
-      let walletCfg: Wallet;
-
-      // wallet config by chain
-      if (Array.isArray(chainConfig.wallets)) {
-        if (!chainConfig.wallets.length) {
+        /// if there's no chain, return
+        if (!net || !wallet) {
           return;
         }
 
-        // The new API with array of wallet ids
-        if (chainConfig.wallets.includes(wallet)) {
-          walletCfg = apiConfig.wallets[wallet];
+        /// chain config by net id
+        const chainConfig = chains[net];
+        if (!chainConfig) {
+          return;
+        }
+
+        let walletCfg: Wallet;
+
+        // wallet config by chain
+        if (Array.isArray(chainConfig.wallets)) {
+          if (!chainConfig.wallets.length) {
+            return;
+          }
+
+          // The new API with array of wallet ids
+          if (chainConfig.wallets.includes(wallet)) {
+            walletCfg = apiConfig.wallets[wallet];
+          } else {
+            walletCfg = apiConfig.wallets[chainConfig.wallets[0]];
+          }
         } else {
-          walletCfg = apiConfig.wallets[chainConfig.wallets[0]];
+          // The old API with Record of wallet ids and wallet configs
+          walletCfg =
+            chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
         }
-      } else {
-        // The old API with Record of wallet ids and wallet configs
-        walletCfg =
-          chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
-      }
 
-      const activeApi = await switchChain(
-        chainConfig,
-        walletCfg,
-        _networkStorage
-      );
-
-      const networkDefaultConfig = await _networkStorage.get('networksConfig');
-
-      if (activeApi) {
-        const accounts = await activeApi.accounts.accounts();
-        let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
-        defaultAccount = defaultAccount ?? accounts[0]?.address;
-
-        const defaultFromSettings = accounts.find(
-          (account) => account.address === defaultAccount
+        // If the signal is aborted, do not proceed.
+        abortController.signal.throwIfAborted();
+        const activeApi = await switchChain(
+          chainConfig,
+          walletCfg,
+          _networkStorage,
         );
-        logger.info(`Default account from settings`, defaultFromSettings);
 
-        if (defaultFromSettings) {
-          const defaultAddr = defaultFromSettings.address;
+        const networkDefaultConfig =
+          await _networkStorage.get('networksConfig');
 
-          // NoteManager configuration
-          const multipleKeyPairStorage = await multipleKeypairStorageFactory();
-          const storedKeypair = await multipleKeyPairStorage.get(defaultAddr);
-          let createdNoteManager: NoteManager | null = null;
+        if (activeApi) {
+          const accounts = await activeApi.accounts.accounts();
+          let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
+          defaultAccount = defaultAccount ?? accounts[0]?.address;
 
-          // Create the NoteManager if the stored keypair exists.
-          if (storedKeypair) {
-            createdNoteManager = await loginNoteAccount(
-              storedKeypair,
-              defaultAddr
-            );
+          const defaultFromSettings = accounts.find(
+            (account) => account.address === defaultAccount,
+          );
+          logger.info(`Default account from settings`, defaultFromSettings);
+
+          if (defaultFromSettings) {
+            const defaultAddr = defaultFromSettings.address;
+
+            // NoteManager configuration
+            const multipleKeyPairStorage =
+              await multipleKeypairStorageFactory();
+            const storedKeypair = await multipleKeyPairStorage.get(defaultAddr);
+            let createdNoteManager: NoteManager | null = null;
+
+            // Create the NoteManager if the stored keypair exists.
+            if (storedKeypair) {
+              createdNoteManager = await loginNoteAccount(
+                storedKeypair,
+                defaultAddr,
+              );
+            }
+
+            if (!activeApi.noteManager) {
+              activeApi.noteManager = createdNoteManager;
+            }
+
+            setActiveAccountWithStorage(defaultFromSettings, {
+              networkStorage: _networkStorage,
+              chain: chainConfig,
+              activeApi,
+            });
           }
-
-          if (!activeApi.noteManager) {
-            activeApi.noteManager = createdNoteManager;
-          }
-
-          setActiveAccountWithStorage(defaultFromSettings, {
-            networkStorage: _networkStorage,
-            chain: chainConfig,
-            activeApi,
-          });
+        } else {
+          // If the user did not want to switch to the previously stored chain,
+          // set the previosuly stored chain in the app for display only.
+          setActiveChain(chains[net]);
         }
-      } else {
-        // If the user did not want to switch to the previously stored chain,
-        // set the previosuly stored chain in the app for display only.
-        setActiveChain(chains[net]);
-      }
-    };
+      };
 
-    init().finally(() => {
-      setIsConnecting(false);
-      setLoading(false);
-    });
+      init()
+        .catch((error) => {
+          // If the error is an AbortError, ignore it.
+          if (error.name === 'AbortError') {
+            return;
+          }
 
+          logger.error(error);
+        })
+        .finally(() => {
+          setIsConnecting(false);
+        });
+
+      return () => {
+        abortController.abort();
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  // App event listeners
+  useEffect(() => {
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
       // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
       await Promise.all([
         networkStorage.set(
           'defaultNetwork',
-          calculateTypedChainId(chain.chainType, chain.chainId)
+          calculateTypedChainId(chain.chainType, chain.chainId),
         ),
         networkStorage.set('defaultWallet', wallet),
       ]);
@@ -754,8 +786,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
     appEvent.on('setActiveAccount', (nextAccount) => {
       setActiveAccountWithStorage(nextAccount);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [appEvent, setActiveAccountWithStorage, switchChainAndStore]);
 
   const txQueue = useTxApiQueue(apiConfig);
 
@@ -780,32 +811,34 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
         switchChain: switchChainAndStore,
         isConnecting,
         async inactivateApi(): Promise<void> {
-          if (activeApi) {
-            setAccounts([]);
-            setActiveAccount(null);
-            setNoteManager(null);
-            setActiveWallet(undefined);
-            setActiveChain(activeChain);
-            await activeApi.destroy();
-            setActiveApi(undefined);
-            // remove app config from local storage
-            const _networkStorage = await appNetworkStoragePromise;
-            if (_networkStorage) {
-              await Promise.all([
-                _networkStorage.set('defaultNetwork', undefined),
-                _networkStorage.set('defaultWallet', undefined),
-                _networkStorage.set('networksConfig', {}),
-              ]);
+          setAccounts([]);
+          setActiveAccount(null);
+          setNoteManager(null);
+          setActiveWallet(undefined);
+          setActiveChain(activeChain);
+
+          // remove app config from local storage
+          const _networkStorage = await appNetworkStoragePromise;
+          if (_networkStorage) {
+            await Promise.all([
+              _networkStorage.set('defaultNetwork', undefined),
+              _networkStorage.set('defaultWallet', undefined),
+              _networkStorage.set('networksConfig', {}),
+            ]);
+
+            if (activeApi) {
+              await activeApi.destroy();
+              setActiveApi(undefined);
             }
           }
         },
         activeFeedback,
         registerInteractiveFeedback: (
-          interactiveFeedback: InteractiveFeedback
+          interactiveFeedback: InteractiveFeedback,
         ) => {
           registerInteractiveFeedback(
             setInteractiveFeedbacks,
-            interactiveFeedback
+            interactiveFeedback,
           );
         },
         appEvent,
@@ -819,10 +852,26 @@ const WebbProviderInner: FC<WebbProviderProps> = ({
   );
 };
 
-export const WebbProvider: FC<WebbProviderProps> = (props) => {
+const queryClient = new QueryClient();
+
+interface WebbProviderProps extends WebbProviderInnerProps {
+  isSSR?: boolean;
+  wagmiInitialState?: WagmiState;
+}
+
+export const WebbProvider: FC<WebbProviderProps> = ({
+  isSSR,
+  wagmiInitialState,
+  ...innerProps
+}) => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <WebbProviderInner {...props} />
-    </WagmiConfig>
+    <WagmiProvider
+      config={getWagmiConfig({ isSSR })}
+      initialState={wagmiInitialState}
+    >
+      <QueryClientProvider client={queryClient}>
+        <WebbProviderInner {...innerProps} />
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };

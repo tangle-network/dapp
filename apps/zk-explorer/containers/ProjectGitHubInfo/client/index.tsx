@@ -73,7 +73,7 @@ const ProjectGitHubInfoClient: FC<{
         className,
         {
           'lg:w-0 lg:!m-0': isCollapsed,
-        }
+        },
       )}
     >
       {/* Main Content */}
@@ -288,7 +288,7 @@ const ProjectGitHubInfoClient: FC<{
       <div
         className={cx(
           'cursor-pointer absolute top-[50%] translate-y-[-50%] hidden lg:block',
-          { 'lg:rotate-180': isCollapsed }
+          { 'lg:rotate-180': isCollapsed },
         )}
         style={{
           left: `${controllerLeftPosition}px`,

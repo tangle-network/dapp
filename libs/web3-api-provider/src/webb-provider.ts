@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
-import { getConfig } from '@wagmi/core';
 import {
   Bridge,
   Currency,
@@ -31,14 +30,16 @@ import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   ApiConfig,
   LOCALNET_CHAIN_IDS,
-  SupportedConnector,
   ZERO_BIG_INT,
   ensureHex,
   getAnchorDeploymentBlockNumber,
+  walletsConfig,
 } from '@webb-tools/dapp-config';
 import maxBlockStepCfg from '@webb-tools/dapp-config/maxBlockStepConfig';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   CurrencyRole,
+  WalletId,
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
@@ -46,10 +47,10 @@ import Storage from '@webb-tools/dapp-types/Storage';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   CircomUtxo,
+  Keypair,
   buildVariableWitnessCalculator,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { Keypair } from '@webb-tools/sdk-core/keypair';
 import { Note } from '@webb-tools/sdk-core/note';
 import {
   ChainType,
@@ -57,28 +58,35 @@ import {
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core/utxo';
-import { ZkComponents, hexToU8a, Backend } from '@webb-tools/utils';
+import { Backend, ZkComponents, hexToU8a } from '@webb-tools/utils';
+import assert from 'assert';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
+import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';
 import {
-  GetContractReturnType,
-  GetLogsReturnType,
-  Hash,
-  PublicClient,
-  SwitchChainError,
   WalletClient,
   getContract,
   parseAbiItem,
+  type Account,
+  type Chain,
+  type GetContractReturnType,
+  type GetLogsReturnType,
+  type Hash,
+  type PublicClient,
+  type Transport,
+  type Client as ViemClient,
 } from 'viem';
+import type { Connector } from 'wagmi';
 import {
-  connect,
+  disconnect,
   getPublicClient,
+  getWalletClient,
+  signMessage,
   watchAccount,
   watchBlockNumber,
-  watchNetwork,
+  watchChainId,
 } from 'wagmi/actions';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
@@ -86,10 +94,6 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import {
-  MetaMaskConnector,
-  RainbowConnector,
-} from '@webb-tools/dapp-config/wallets/injected';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -126,37 +130,43 @@ export class WebbWeb3Provider
   /**
    * The current public client instance of the connected chain.
    */
-  readonly publicClient: PublicClient;
+  readonly publicClient: PublicClient<Transport, Chain>;
 
   get newBlock() {
     return this._newBlock.asObservable();
   }
 
   private constructor(
-    readonly connector: SupportedConnector,
-    readonly walletClient: WalletClient,
+    readonly connector: Connector,
+    readonly walletClient: WalletClient<Transport, Chain, Account>,
     protected chainId: number,
     readonly relayerManager: Web3RelayerManager,
     readonly noteManager: NoteManager | null,
     readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
-    readonly accounts: Web3Accounts
+    readonly accounts: Web3Accounts,
   ) {
     super();
 
     const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
     this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
 
-    this.publicClient = getPublicClient({ chainId });
+    const wagmiConfig = getWagmiConfig();
+    const client = getPublicClient(wagmiConfig, { chainId });
+
+    assert(client, WebbError.from(WebbErrorCodes.NoClientAvailable).message);
+
+    this.publicClient = client;
 
     this.unsubscribeFns = new Set();
 
-    const unsub = watchBlockNumber(
-      { chainId, listen: true },
-      (nextBlockNumber) => {
-        this._newBlock.next(nextBlockNumber);
-      }
-    );
+    const unsub = watchBlockNumber(wagmiConfig, {
+      chainId,
+      emitOnBegin: true,
+      onBlockNumber: (blockNumber) => {
+        this._newBlock.next(blockNumber);
+      },
+    });
 
     this.unsubscribeFns.add(unsub);
 
@@ -188,7 +198,7 @@ export class WebbWeb3Provider
     const initialSupportedCurrencies: Record<number, Currency> = {};
     for (const currencyConfig of Object.values(config.currencies)) {
       initialSupportedCurrencies[currencyConfig.id] = new Currency(
-        currencyConfig
+        currencyConfig,
       );
     }
 
@@ -198,7 +208,7 @@ export class WebbWeb3Provider
     for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
       if (
         Object.keys(bridgeConfig.anchors).includes(
-          calculateTypedChainId(ChainType.EVM, chainId).toString()
+          calculateTypedChainId(ChainType.EVM, chainId).toString(),
         )
       ) {
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
@@ -206,7 +216,7 @@ export class WebbWeb3Provider
         if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
           initialSupportedBridges[bridgeConfig.asset] = new Bridge(
             bridgeCurrency,
-            bridgeTargets
+            bridgeTargets,
           );
         }
       }
@@ -214,7 +224,7 @@ export class WebbWeb3Provider
 
     this.state = new WebbState(
       initialSupportedCurrencies,
-      initialSupportedBridges
+      initialSupportedBridges,
     );
 
     // Select a reasonable default bridge
@@ -223,56 +233,34 @@ export class WebbWeb3Provider
 
   // Init web3 provider with the `Web3Accounts` as the default account provider
   static async init(
-    requestConnector: SupportedConnector,
+    connector: Connector,
     chainId: number,
     relayerManager: Web3RelayerManager,
     noteManager: NoteManager | null,
     appConfig: ApiConfig,
-    notification: NotificationHandler
+    notification: NotificationHandler,
   ) {
-    let connector = requestConnector;
+    const accounts = new Web3Accounts(connector);
 
-    const cfg = getConfig();
-    if (cfg.connector !== connector) {
-      const { connector: connector_, chain } = await connect({
-        chainId,
-        connector: requestConnector,
-      });
-
-      if (chain.unsupported) {
-        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-      }
-
-      if (!connector_) {
-        throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
-      }
-
-      connector = connector_ as SupportedConnector;
-    } else {
-      // If the connector is already configured, we need to make sure it's connected.
-      const { chain } = await connector.connect({ chainId });
-      if (chain.unsupported) {
-        throw WebbError.from(WebbErrorCodes.UnsupportedWallet);
-      }
-    }
-
-    const walletClient = await connector.getWalletClient({ chainId });
-
-    const accounts = new Web3Accounts(walletClient);
+    const walletClient = await getWalletClient(getWagmiConfig(), {
+      connector,
+      chainId,
+      account: accounts.activeOrDefault?.address,
+    });
 
     return new WebbWeb3Provider(
-      connector as SupportedConnector, // TODO: Remove the cast
+      connector,
       walletClient,
       chainId,
       relayerManager,
       noteManager,
       appConfig,
       notification,
-      accounts
+      accounts,
     );
   }
 
-  getProvider(): WalletClient {
+  getProvider() {
     return this.walletClient;
   }
 
@@ -281,17 +269,15 @@ export class WebbWeb3Provider
   }
 
   // Web3 has the evm, so the "api interface" should always be available.
-  async ensureApiInterface(): Promise<boolean> {
+  async ensureApiInterface() {
     return Promise.resolve(true);
   }
 
   setChainListener() {
-    const unsub = watchNetwork(({ chain }) => {
-      if (!chain) {
-        return;
-      }
-
-      this.emit('providerUpdate', [chain.id]);
+    const unsub = watchChainId(getWagmiConfig(), {
+      onChange: (chainId) => {
+        this.emit('providerUpdate', [chainId]);
+      },
     });
 
     this.unsubscribeFns.add(unsub);
@@ -300,8 +286,13 @@ export class WebbWeb3Provider
   }
 
   setAccountListener() {
-    const unsub = watchAccount(async () => {
-      this.emit('newAccounts', this.accounts);
+    const unsub = watchAccount(getWagmiConfig(), {
+      onChange: (account) => {
+        // Only emit the new accounts if the account is not disconnected
+        if (account.status !== 'disconnected') {
+          this.emit('newAccounts', this.accounts);
+        }
+      },
     });
 
     this.unsubscribeFns.add(unsub);
@@ -309,7 +300,7 @@ export class WebbWeb3Provider
     return unsub;
   }
 
-  async destroy(): Promise<void> {
+  async destroy() {
     await this.endSession();
     this.subscriptions = {
       interactiveFeedback: [],
@@ -317,21 +308,21 @@ export class WebbWeb3Provider
     };
   }
 
-  async getChainId(): Promise<number> {
-    return this.walletClient.getChainId();
+  async getChainId() {
+    return this.connector.getChainId();
   }
 
   // VAnchors require zero knowledge proofs on deposit - Fetch the small and large circuits.
   getVAnchorContractByAddress(
-    address: string
-  ): GetContractReturnType<typeof VAnchor__factory.abi, PublicClient> {
+    address: string,
+  ): GetContractReturnType<typeof VAnchor__factory.abi, ViemClient> {
     return this.getVAnchorContractByAddressAndProvider(address);
   }
 
   getVAnchorContractByAddressAndProvider(
     address: string,
-    provider?: PublicClient
-  ): GetContractReturnType<typeof VAnchor__factory.abi, PublicClient> {
+    provider?: PublicClient,
+  ): GetContractReturnType<typeof VAnchor__factory.abi, ViemClient> {
     return getContract({
       abi: VAnchor__factory.abi,
       address: ensureHex(address),
@@ -342,7 +333,7 @@ export class WebbWeb3Provider
   async getVAnchorLeaves(
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
-      PublicClient
+      ViemClient
     >,
     storage: Storage<BridgeStorage>,
     options: {
@@ -350,7 +341,7 @@ export class WebbWeb3Provider
       targetRoot: string;
       commitment: bigint;
       tx?: TransactionExecutor<NewNotesTxResult>;
-    }
+    },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -361,7 +352,7 @@ export class WebbWeb3Provider
 
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
-      +evmId.toString()
+      +evmId.toString(),
     );
 
     const anchorId = vAnchorContract.address;
@@ -369,7 +360,7 @@ export class WebbWeb3Provider
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
       typedChainId,
-      anchorId
+      anchorId,
     );
 
     const leavesFromRelayers =
@@ -377,7 +368,7 @@ export class WebbWeb3Provider
         relayers,
         vAnchorContract,
         storage,
-        options
+        options,
       );
 
     // If unable to fetch leaves from the relayers, get them from chain
@@ -405,10 +396,19 @@ export class WebbWeb3Provider
         storedLeaves = storedContractInfo.leaves;
       }
 
+      const publicClient = getPublicClient(getWagmiConfig(), {
+        chainId: +evmId.toString(),
+      });
+
+      assert(
+        publicClient,
+        WebbError.from(WebbErrorCodes.NoClientAvailable).message,
+      );
+
       const leavesFromChain = await this.getDepositLeaves(
         BigInt(lastQueriedBlock + 1),
         ZERO_BIG_INT,
-        getPublicClient({ chainId: +evmId.toString() }),
+        publicClient,
         vAnchorContract,
         (fromBlock, toBlock, currentBlock) => {
           tx?.next(TransactionState.FetchingLeaves, {
@@ -416,13 +416,13 @@ export class WebbWeb3Provider
             end: +toBlock.toString(),
             current: +currentBlock.toString(),
           });
-        }
+        },
       );
 
       // Merge the leaves from chain with the stored leaves
       // and fixed them to 32 bytes
       const leaves = [...storedLeaves, ...leavesFromChain.newLeaves].map(
-        (leaf) => toFixedHex(leaf)
+        (leaf) => toFixedHex(leaf),
       );
 
       console.log(`Got ${leaves.length} leaves from chain`);
@@ -434,7 +434,7 @@ export class WebbWeb3Provider
           treeHeight,
           leaves,
           targetRoot,
-          commitment.toString()
+          commitment.toString(),
         );
 
       // If the leafIndex is -1, it means the commitment is not in the tree
@@ -449,7 +449,7 @@ export class WebbWeb3Provider
       if (!isLocal) {
         await storage.set(
           'lastQueriedBlock',
-          +leavesFromChain.lastQueriedBlock.toString()
+          +leavesFromChain.lastQueriedBlock.toString(),
         );
         await storage.set('leaves', leaves);
       }
@@ -467,16 +467,16 @@ export class WebbWeb3Provider
   async getVAnchorNotesFromChain(
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
-      PublicClient
+      ViemClient
     >,
     owner: Keypair,
     startingBlockArg?: bigint,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<Note[]> {
     const evmId = await vAnchorContract.read.getChainId();
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
-      +evmId.toString()
+      +evmId.toString(),
     );
 
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
@@ -503,12 +503,12 @@ export class WebbWeb3Provider
         const progress = calculateProgressPercentage(
           fromBlockNumber,
           toBlockNumber,
-          currenctBlockNumber
+          currenctBlockNumber,
         );
 
         NoteManager.syncNotesProgress = progress;
       },
-      abortSignal
+      abortSignal,
     );
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
@@ -527,9 +527,9 @@ export class WebbWeb3Provider
           typedChainId,
           anchorId,
           anchorId,
-          tokenSymbol.view.symbol
+          tokenSymbol.view.symbol,
         );
-      })
+      }),
     );
 
     // Reset the progress
@@ -547,57 +547,56 @@ export class WebbWeb3Provider
   get capabilities(): ProvideCapabilities {
     const connector = this.connector;
 
-    if (
-      connector instanceof MetaMaskConnector ||
-      connector instanceof RainbowConnector
-    ) {
-      return {
-        addNetworkRpc: true,
-        hasSessions: false,
-        listenForAccountChange: true,
-        listenForChainChane: true,
-      } satisfies ProvideCapabilities;
-    } else if (connector instanceof WalletConnectConnector) {
+    if (connector.name === walletsConfig[WalletId.WalletConnectV2].name) {
       return {
         addNetworkRpc: false,
         hasSessions: true,
         listenForAccountChange: false,
         listenForChainChane: false,
       } satisfies ProvideCapabilities;
+    } else {
+      return {
+        addNetworkRpc: true,
+        hasSessions: false,
+        listenForAccountChange: true,
+        listenForChainChane: true,
+      } satisfies ProvideCapabilities;
     }
-
-    console.error(
-      WebbError.getErrorMessage(WebbErrorCodes.NoConnectorConfigured).message
-    );
-
-    // Default to false
-    return {
-      addNetworkRpc: false,
-      hasSessions: false,
-      listenForAccountChange: false,
-      listenForChainChane: false,
-    } satisfies ProvideCapabilities;
   }
 
   async endSession(): Promise<void> {
+    await disconnect(getWagmiConfig(), {
+      connector: this.connector,
+    });
     this.unsubscribeFns.forEach((unsub) => unsub());
     return this.unsubscribeAll();
   }
 
   async switchOrAddChain(evmChainId: number) {
-    try {
-      await this.walletClient.switchChain({ id: evmChainId });
-    } catch (error) {
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (error instanceof SwitchChainError) {
-        await this.walletClient.addChain({
-          chain: this.config.chains[this.typedChainId],
-        });
-      } else {
-        throw error; // Otherwise, throw the error to be handled by the caller.
-      }
+    if (typeof this.connector.switchChain !== 'function') {
+      throw WebbError.from(WebbErrorCodes.NoSwitchChainMethod);
     }
-    return;
+
+    const typedChainId = calculateTypedChainId(ChainType.EVM, evmChainId);
+    const chain = this.config.chains[typedChainId];
+    if (chain === undefined) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+    }
+
+    const blockExplorerUrls = values(chain.blockExplorers).map((c) => c.url);
+    const rpcUrls = values(chain.rpcUrls)
+      .map((c) => c.http)
+      .flat();
+
+    return this.connector.switchChain({
+      chainId: evmChainId,
+      addEthereumChainParameter: {
+        chainName: chain.name,
+        nativeCurrency: chain.nativeCurrency,
+        blockExplorerUrls,
+        rpcUrls,
+      },
+    });
   }
 
   async watchAsset(currency: Currency, imgUrl?: string) {
@@ -606,7 +605,7 @@ export class WebbWeb3Provider
       throw WebbError.from(WebbErrorCodes.NoCurrencyAvailable);
     }
 
-    this.walletClient.watchAsset({
+    return this.walletClient.watchAsset({
       type: 'ERC20',
       options: {
         address: addr,
@@ -624,15 +623,16 @@ export class WebbWeb3Provider
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
 
-    return this.walletClient.signMessage({
-      account: ensureHex(account.address),
+    return signMessage(getWagmiConfig(), {
+      account: account.address,
+      connector: this.connector,
       message,
     });
   }
 
   async getZkFixtures(
     maxEdges: number,
-    isSmall = false
+    isSmall = false,
   ): Promise<ZkComponents> {
     const dummyAbortSignal = new AbortController().signal;
 
@@ -646,7 +646,7 @@ export class WebbWeb3Provider
       const smallWasm = await fetchVAnchorWasmFromAws(
         maxEdges,
         isSmall,
-        dummyAbortSignal
+        dummyAbortSignal,
       );
 
       const smallFixtures = {
@@ -668,7 +668,7 @@ export class WebbWeb3Provider
     const largeWasm = await fetchVAnchorWasmFromAws(
       maxEdges,
       isSmall,
-      dummyAbortSignal
+      dummyAbortSignal,
     );
 
     const largeFixtures = {
@@ -683,7 +683,7 @@ export class WebbWeb3Provider
 
   async getVAnchorMaxEdges(
     vAnchorAddress: string,
-    provider?: PublicClient | ApiPromise
+    provider?: ViemClient | ApiPromise,
   ): Promise<number> {
     if (provider instanceof ApiPromise || !provider) {
       throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
@@ -708,7 +708,7 @@ export class WebbWeb3Provider
 
   async getVAnchorLevels(
     vAnchorAddressOrTreeId: string,
-    provider?: ApiPromise | PublicClient
+    provider?: ApiPromise | PublicClient,
   ): Promise<number> {
     if (provider instanceof ApiPromise || !provider) {
       throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
@@ -745,9 +745,9 @@ export class WebbWeb3Provider
    */
   async getVAnchorInstance(
     address: string,
-    provider: PublicClient,
+    provider: ViemClient,
     tx?: TransactionExecutor<NewNotesTxResult>,
-    useDummyFixtures?: boolean
+    useDummyFixtures?: boolean,
   ): Promise<VAnchor> {
     if (useDummyFixtures) {
       const dummyFixtures = {
@@ -760,7 +760,7 @@ export class WebbWeb3Provider
         ensureHex(address),
         dummyFixtures,
         dummyFixtures,
-        provider
+        provider,
       );
     }
 
@@ -796,7 +796,7 @@ export class WebbWeb3Provider
       ensureHex(address),
       smallZkFixtures,
       largeZkFixtures,
-      provider
+      provider,
     );
   }
 
@@ -816,19 +816,19 @@ export class WebbWeb3Provider
     publicClient: PublicClient,
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
-      PublicClient
+      ViemClient
     >,
     fromBlock: bigint,
     toBlock: bigint,
     onCurrentProcessingBlock?: (block: bigint) => void,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) {
     const isTheSameBlock = fromBlock === toBlock;
 
     const chainId = await vAnchorContract.read.getChainId();
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
-      +chainId.toString()
+      +chainId.toString(),
     );
 
     const maxBlockStep =
@@ -836,7 +836,7 @@ export class WebbWeb3Provider
 
     // TODO: use the abi from the contract
     const event = parseAbiItem(
-      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)'
+      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)',
     );
 
     const commonGetLogsProps = {
@@ -860,7 +860,7 @@ export class WebbWeb3Provider
           }),
         undefined,
         undefined,
-        abortSignal
+        abortSignal,
       );
     }
 
@@ -874,7 +874,7 @@ export class WebbWeb3Provider
       const _toBlock = maybeToBlock > toBlock ? toBlock : maybeToBlock;
 
       console.log(
-        `Fetching logs from block ${currentBlock} to block ${_toBlock}`
+        `Fetching logs from block ${currentBlock} to block ${_toBlock}`,
       );
 
       onCurrentProcessingBlock?.(currentBlock);
@@ -888,7 +888,7 @@ export class WebbWeb3Provider
           }),
         undefined,
         undefined,
-        abortSignal
+        abortSignal,
       );
 
       logs.push(...logsChunk);
@@ -908,16 +908,16 @@ export class WebbWeb3Provider
   private async getDepositLeaves(
     startingBlock: bigint,
     finalBlockArg: bigint,
-    publicClient: PublicClient,
+    publicClient: PublicClient<Transport, Chain>,
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
-      PublicClient
+      ViemClient
     >,
     onBlockProcessed?: (
       fromBlock: bigint,
       toBlock: bigint,
-      currentBlock: bigint
-    ) => void
+      currentBlock: bigint,
+    ) => void,
   ): Promise<{ lastQueriedBlock: bigint; newLeaves: Array<Hash> }> {
     const latestBlock = finalBlockArg || (await publicClient.getBlockNumber());
 
@@ -927,7 +927,7 @@ export class WebbWeb3Provider
       startingBlock,
       latestBlock,
       (currentBlock) =>
-        onBlockProcessed?.(startingBlock, latestBlock, currentBlock)
+        onBlockProcessed?.(startingBlock, latestBlock, currentBlock),
     );
 
     return {
@@ -945,19 +945,23 @@ export class WebbWeb3Provider
     startingBlock: bigint,
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
-      PublicClient
+      ViemClient
     >,
     onBlockProcessed?: (
       fromBlock: bigint,
       toBlock: bigint,
-      currentBlock: bigint
+      currentBlock: bigint,
     ) => void,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
-    const publicClient = getPublicClient({
+    const publicClient = getPublicClient(getWagmiConfig(), {
       chainId: +chainId.toString(),
     });
+
+    if (!publicClient) {
+      throw WebbError.from(WebbErrorCodes.NoClientAvailable);
+    }
 
     const latestBlock = await publicClient.getBlockNumber();
 
@@ -968,7 +972,7 @@ export class WebbWeb3Provider
       latestBlock,
       (currentBlock) =>
         onBlockProcessed?.(startingBlock, latestBlock, currentBlock),
-      abortSignal
+      abortSignal,
     );
 
     const parsedLogs = logs.map((log) => ({
@@ -980,17 +984,17 @@ export class WebbWeb3Provider
 
     const utxosWithNull = await Promise.all(
       parsedLogs.map(({ encryptedOutput, leafIndex }) =>
-        this.validateAmountEncryptedOutput(owner, encryptedOutput, leafIndex)
-      )
+        this.validateAmountEncryptedOutput(owner, encryptedOutput, leafIndex),
+      ),
     );
 
     const filteredUtxos = utxosWithNull.filter(
-      (utxo): utxo is Utxo => utxo !== null
+      (utxo): utxo is Utxo => utxo !== null,
     );
 
     const spendableUtxos = await this.validateIsSpent(
       filteredUtxos,
-      vAnchorContract.address
+      vAnchorContract.address,
     );
 
     abortSignal?.throwIfAborted();
@@ -1007,7 +1011,7 @@ export class WebbWeb3Provider
   private async validateAmountEncryptedOutput(
     owner: Keypair,
     encryptedOutput: Hash,
-    leafIndex: bigint
+    leafIndex: bigint,
   ): Promise<Utxo | null> {
     try {
       const decryptedUtxo = await CircomUtxo.decrypt(owner, encryptedOutput);
@@ -1033,7 +1037,7 @@ export class WebbWeb3Provider
       }
 
       return regeneratedUtxo;
-    } catch (e) {
+    } catch {
       return null;
     }
   }
@@ -1046,12 +1050,12 @@ export class WebbWeb3Provider
    */
   private async validateIsSpent(
     utxos: ReadonlyArray<Utxo>,
-    vAnchorIdentifier: string
+    vAnchorIdentifier: string,
   ): Promise<Array<Utxo>> {
     // Get record of chainId -> Utxos
     const utxosByChainId = groupBy(
       utxos,
-      (utxo) => parseTypedChainId(+utxo.chainId).chainId
+      (utxo) => parseTypedChainId(+utxo.chainId).chainId,
     );
 
     // Get record of chainId -> contract instance
@@ -1059,11 +1063,19 @@ export class WebbWeb3Provider
       (acc, chainIdStr) => {
         const chainId = +chainIdStr;
 
+        const client = getPublicClient(getWagmiConfig(), {
+          chainId,
+        });
+
+        if (!client) {
+          throw WebbError.from(WebbErrorCodes.NoClientAvailable);
+        }
+
         if (!acc[chainId]) {
           acc[chainId] = getContract({
             address: ensureHex(vAnchorIdentifier),
             abi: VAnchor__factory.abi,
-            client: getPublicClient({ chainId }),
+            client,
           });
         }
 
@@ -1071,8 +1083,8 @@ export class WebbWeb3Provider
       },
       {} as Record<
         number,
-        GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
-      >
+        GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>
+      >,
     );
 
     // Use the contract instance to validate the nullifiers
@@ -1081,7 +1093,7 @@ export class WebbWeb3Provider
       Object.entries(vAnchorContractsByChainId).map(
         async ([chainId, vAnchorContract]) => {
           const nullifiers = utxosByChainId[chainId].map((utxo) =>
-            BigInt(ensureHex(utxo.nullifier))
+            BigInt(ensureHex(utxo.nullifier)),
           );
 
           const isSpentArray = await vAnchorContract.read.isSpentArray([
@@ -1089,10 +1101,10 @@ export class WebbWeb3Provider
           ]);
 
           return utxosByChainId[chainId].filter(
-            (_, index) => !isSpentArray[index]
+            (_, index) => !isSpentArray[index],
           );
-        }
-      )
+        },
+      ),
     );
 
     // Flatten the array of arrays

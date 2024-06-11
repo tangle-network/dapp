@@ -1,7 +1,7 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { LoggerService } from '@webb-tools/app-util';
+import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 
 import { WebbPolkadot } from './webb-provider';
 
@@ -47,7 +47,7 @@ export class ORMLCurrency {
 
     if (activeAccount) {
       const ormlBalances = await this.api.api.query.tokens.accounts.entries(
-        activeAccount.address
+        activeAccount.address,
       );
 
       logger.info(`ORML Balances ${ormlBalances.length}`, ormlBalances);

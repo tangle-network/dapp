@@ -52,14 +52,14 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       feesSection,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
         {...props}
         className={twMerge(
           'p-4 rounded-lg bg-mono-0 dark:bg-mono-190 flex flex-col justify-between gap-9',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -182,7 +182,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
             {...checkboxProps}
             wrapperClassName={twMerge(
               'flex items-start',
-              checkboxProps?.wrapperClassName
+              checkboxProps?.wrapperClassName,
             )}
           >
             {checkboxProps?.children ??
@@ -208,5 +208,5 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         </div>
       </div>
     );
-  }
+  },
 );

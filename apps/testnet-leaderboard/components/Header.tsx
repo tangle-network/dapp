@@ -13,7 +13,7 @@ const Header = forwardRef<ElementRef<'header'>, ComponentProps<'header'>>(
         {...props}
         className={twMerge(
           'relative z-[1000] top-0 bg-mono-0 min-h-[88px] webb-shadow-sm px-[5%] py-6',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -32,7 +32,7 @@ const Header = forwardRef<ElementRef<'header'>, ComponentProps<'header'>>(
         </div>
       </header>
     );
-  }
+  },
 );
 
 Header.displayName = 'Header';

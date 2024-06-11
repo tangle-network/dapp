@@ -45,9 +45,9 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
           ({
             name: c.name,
             tag: c.tag,
-          } satisfies ChainType)
+          }) satisfies ChainType,
       ),
-    [chainsCfg]
+    [chainsCfg],
   );
 
   const handleClose = useCallback(
@@ -64,13 +64,13 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         search: nextParams.toString(),
       });
     },
-    [chainType, navigate, pathname, searchParams, updateParams]
+    [chainType, navigate, pathname, searchParams, updateParams],
   );
 
   const handleChainChange = useCallback(
     async ({ name, tag }: ChainType) => {
       const chain = Object.values(chainsPopulated).find(
-        (chainCfg) => chainCfg.name === name && chainCfg.tag === tag
+        (chainCfg) => chainCfg.name === name && chainCfg.tag === tag,
       );
 
       if (!chain) {
@@ -79,7 +79,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
 
       return handleClose(calculateTypedChainId(chain.chainType, chain.id));
     },
-    [handleClose]
+    [handleClose],
   );
 
   const { defaultCategory, onlyCategory } = useChainCategoryProps(chainType);
@@ -109,7 +109,7 @@ export default SelectChain;
  * @returns the chains to select for the given chain type
  */
 const useChains = (
-  chainType: ChainListCardProps['chainType'] = 'source'
+  chainType: ChainListCardProps['chainType'] = 'source',
 ): ReadonlyArray<ChainConfig> => {
   const { apiConfig } = useWebContext();
 
@@ -154,7 +154,7 @@ const useChains = (
  * @return {defaultCategory, onlyCategory}
  */
 const useChainCategoryProps = (
-  chainType: ChainListCardProps['chainType'] = 'source'
+  chainType: ChainListCardProps['chainType'] = 'source',
 ) => {
   const { activeChain } = useWebContext();
 
@@ -190,7 +190,7 @@ const useChainCategoryProps = (
 const isTokenSupported = (
   params: URLSearchParams,
   nextTypedChainId: number,
-  fungibleToWrappableMap: ApiConfig['fungibleToWrappableMap']
+  fungibleToWrappableMap: ApiConfig['fungibleToWrappableMap'],
 ): boolean => {
   const poolId = getParam(params, POOL_KEY, NumberParam);
   if (typeof poolId !== 'number') {
@@ -225,7 +225,7 @@ const isTokenSupported = (
 const isDestChainSupported = (
   params: URLSearchParams,
   nextTypedChainId: number,
-  anchorsCfg: ApiConfig['anchors']
+  anchorsCfg: ApiConfig['anchors'],
 ): boolean => {
   const destChainId = getParam(params, DEST_CHAIN_KEY, NumberParam);
   if (typeof destChainId !== 'number') {
@@ -251,7 +251,7 @@ const useUpdateParams = () => {
     (
       prevParams: URLSearchParams,
       nextTypedChainId: number,
-      chainType: ChainListCardProps['chainType']
+      chainType: ChainListCardProps['chainType'],
     ) => {
       const nextParams = new URLSearchParams(prevParams);
       const key = chainType === 'source' ? SOURCE_CHAIN_KEY : DEST_CHAIN_KEY;
@@ -268,7 +268,7 @@ const useUpdateParams = () => {
       const tokenSupported = isTokenSupported(
         nextParams,
         nextTypedChainId,
-        apiConfig.fungibleToWrappableMap
+        apiConfig.fungibleToWrappableMap,
       );
       if (!tokenSupported) {
         nextParams.delete(TOKEN_KEY);
@@ -277,7 +277,7 @@ const useUpdateParams = () => {
       const destChainSupported = isDestChainSupported(
         nextParams,
         nextTypedChainId,
-        apiConfig.anchors
+        apiConfig.anchors,
       );
       if (!destChainSupported) {
         nextParams.delete(DEST_CHAIN_KEY);
@@ -285,6 +285,6 @@ const useUpdateParams = () => {
 
       return nextParams;
     },
-    [apiConfig.anchors, apiConfig.fungibleToWrappableMap]
+    [apiConfig.anchors, apiConfig.fungibleToWrappableMap],
   );
 };

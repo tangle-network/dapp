@@ -29,7 +29,7 @@ const RelatedProjectsCarousel: FC<{ projects: ProjectItem[] }> = ({
         <Link
           href={createProjectDetailPath(
             project.repositoryOwner,
-            project.repositoryName
+            project.repositoryName,
           )}
         >
           <ProjectCard {...project} />

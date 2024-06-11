@@ -5,7 +5,7 @@ import getCachedFixtureURI from './getCachedFixtureURI';
 const fetchVAnchorWasmFromAws = async (
   maxEdges: number,
   isSmall?: boolean,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ) => {
   let filePath: string;
   let cachedURI: string;

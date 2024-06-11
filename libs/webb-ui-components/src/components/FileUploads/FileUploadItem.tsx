@@ -17,7 +17,7 @@ export const FileUploadItem = forwardRef<HTMLLIElement, FileUploadItemProps>(
       onRemove = noop,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <li
@@ -28,9 +28,9 @@ export const FileUploadItem = forwardRef<HTMLLIElement, FileUploadItemProps>(
             'p-2 rounded-lg bg-mono-0 dark:bg-mono-160',
             'border border-mono-80 dark:border-mono-100',
             'hover:bg-mono-20 dark:hover:bg-mono-120',
-            'hover:border-mono-100 dark:hover:border-mono-60'
+            'hover:border-mono-100 dark:hover:border-mono-60',
           ),
-          className
+          className,
         )}
         ref={ref}
       >
@@ -51,5 +51,5 @@ export const FileUploadItem = forwardRef<HTMLLIElement, FileUploadItemProps>(
         </div>
       </li>
     );
-  }
+  },
 );

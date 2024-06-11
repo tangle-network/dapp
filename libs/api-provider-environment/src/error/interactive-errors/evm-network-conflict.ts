@@ -13,7 +13,7 @@ export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
 
 export function evmChainConflict(
   params: EvmNetworkConflictParams,
-  appEvent: TAppEvent
+  appEvent: TAppEvent,
 ): InteractiveFeedback {
   const addChainContent = [
     {
@@ -58,14 +58,14 @@ export function evmChainConflict(
         () => {
           appEvent.send('changeNetworkSwitcherVisibility', true);
         },
-        'info'
+        'info',
       )
       .actions(),
     () => {
       interactiveFeedback?.cancelWithoutHandler();
     },
     feedbackBody,
-    WebbErrorCodes.UnselectedChain
+    WebbErrorCodes.UnselectedChain,
   );
   return interactiveFeedback;
 }

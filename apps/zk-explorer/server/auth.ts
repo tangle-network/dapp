@@ -1,7 +1,7 @@
 import { ApiRoute, sendApiRequest } from '../utils/api';
 
 export async function exchangeAuthCodeForOAuthToken(
-  code: string
+  code: string,
 ): Promise<boolean> {
   const responseWrapper = await sendApiRequest(
     ApiRoute.OAuthGithub,
@@ -9,7 +9,7 @@ export async function exchangeAuthCodeForOAuthToken(
     {
       method: 'POST',
       body: JSON.stringify({ code }),
-    }
+    },
   );
 
   // No need to handle the response further, as the OAuth

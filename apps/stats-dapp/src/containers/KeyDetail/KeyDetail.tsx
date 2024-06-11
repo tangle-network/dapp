@@ -71,7 +71,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
     const commonCardClsx = useMemo(
       () => 'rounded-lg bg-mono-0 dark:bg-mono-180',
-      []
+      [],
     );
     const time = useSubQLtime();
 
@@ -100,7 +100,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
     const onPreviousKey = useCallback(() => {
       if (prevAndNextKey?.previousKeyId) {
         navigate(
-          `/keys${isPage ? '' : '/drawer'}/${prevAndNextKey.previousKeyId}`
+          `/keys${isPage ? '' : '/drawer'}/${prevAndNextKey.previousKeyId}`,
         );
       }
     }, [isPage, navigate, prevAndNextKey]);
@@ -197,8 +197,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               {keyDetail.isDone
                 ? 'Previous'
                 : keyDetail.isCurrent
-                ? 'Current'
-                : 'Next'}
+                  ? 'Current'
+                  : 'Next'}
             </Chip>
             <LabelWithValue label="Session: " value={keyDetail.session} />
           </div>
@@ -281,7 +281,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
                 default: {
                   throw new Error(
-                    'Unknown SessionKeyStatus in KeyDetail component'
+                    'Unknown SessionKeyStatus in KeyDetail component',
                   );
                 }
               }
@@ -296,7 +296,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               'flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow',
               isPage
                 ? 'bg-mono-0 dark:bg-mono-180'
-                : 'bg-mono-20 dark:bg-mono-160'
+                : 'bg-mono-20 dark:bg-mono-160',
             )}
           >
             <Typography variant="h4" fw="bold" className="block">
@@ -312,7 +312,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               'flex flex-col items-center justify-center py-3 space-y-1 rounded-lg grow',
               isPage
                 ? 'bg-mono-0 dark:bg-mono-180'
-                : 'bg-mono-20 dark:bg-mono-160'
+                : 'bg-mono-20 dark:bg-mono-160',
             )}
           >
             <Typography variant="h4" fw="bold" className="block">
@@ -336,7 +336,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
         </CardTable>
       </div>
     );
-  }
+  },
 );
 
 const columnHelper = createColumnHelper<KeyGenAuthority>();
@@ -438,7 +438,7 @@ const uncompressPublicKey = (compressed: string): AddressType => {
     Buffer.from(compressed.slice(2), 'hex'),
     {
       compressed: false,
-    }
+    },
   ).publicKey.toString('hex');
   // now we remove the `04` prefix byte and return it.
   return `0x${dkgPubKey.slice(2)}`;

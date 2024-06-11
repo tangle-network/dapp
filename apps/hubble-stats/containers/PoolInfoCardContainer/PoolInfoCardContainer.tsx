@@ -25,7 +25,7 @@ export default function PoolInfoCardContainer({
         'w-full lg:min-h-[284px] p-6 rounded-lg',
         'bg-glass dark:bg-glass_dark',
         'border-2 border-mono-0 dark:border-mono-160',
-        'lg:flex lg:items-center'
+        'lg:flex lg:items-center',
       )}
     >
       <div className="w-full space-y-4">

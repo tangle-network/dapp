@@ -9,7 +9,7 @@ const RoleEarningsChart = dynamic(
   () => import('../../components/charts/RoleEarningsChart'),
   {
     ssr: false,
-  }
+  },
 );
 
 interface ProtocolEarningsCardProps {

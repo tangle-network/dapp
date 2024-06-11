@@ -1,14 +1,14 @@
-import { forwardRef, useCallback } from 'react';
-import cx from 'classnames';
-import { ChainIcon } from '@webb-tools/icons';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { ChainIcon } from '@webb-tools/icons/ChainIcon';
+import cx from 'classnames';
+import { forwardRef, useCallback } from 'react';
 
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import {
-  useDarkMode as useNormalDarkMode,
   useNextDarkMode,
+  useDarkMode as useNormalDarkMode,
 } from '../../hooks/useDarkMode';
-import type { ChainsRingProps, ChainRingItemType } from './types';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
+import type { ChainRingItemType, ChainsRingProps } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
@@ -20,7 +20,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         if (item === undefined) return '#9CA0B0';
         return item.isActive ? (isDarkMode ? '#4B3AA4' : '#B5A9F2') : '#9CA0B0';
       },
-      [isDarkMode]
+      [isDarkMode],
     );
 
     return (
@@ -59,7 +59,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             'absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]',
             'bg-mono-0 dark:bg-[rgba(247,248,247,0.10)]',
             'aspect-square w-[128px] px-4 rounded-full',
-            'flex justify-center items-center'
+            'flex justify-center items-center',
           )}
           style={{ backdropFilter: 'blur(12px)' }}
         >
@@ -295,7 +295,7 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         </svg>
       </div>
     );
-  }
+  },
 );
 
 export default ChainsRing;

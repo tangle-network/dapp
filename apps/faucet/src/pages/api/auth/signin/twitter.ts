@@ -33,7 +33,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
               expiresIn,
               refreshToken,
               twitterHandle,
-            })
+            }),
           );
         } catch (error) {
           resolve(handleTwitterApiError(error, res));
@@ -44,9 +44,9 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
           res.status(400).json({
             extraInfo: err.getPayload()?.extraInfo,
             message: err.getDisplayMessage(),
-          })
+          }),
         );
-      }
+      },
     );
   });
 }
@@ -68,16 +68,16 @@ async function getTwitterHandle(authorizedClient: TwitterApi) {
     if (isTwitterRateLimitError(error)) {
       if (error.rateLimit) {
         console.warn(
-          `You just hit the rate limit! Limit for this endpoint is ${error.rateLimit.limit} requests!`
+          `You just hit the rate limit! Limit for this endpoint is ${error.rateLimit.limit} requests!`,
         );
         const resetDate = new Date(error.rateLimit.reset * 1000); // Convert seconds to milliseconds
         const resetLocaleTime = resetDate.toLocaleTimeString();
         const resetLocaleDate = resetDate.toLocaleDateString();
         console.log(
-          `Request counter will reset at timestamp ${resetLocaleDate} ${resetLocaleTime}.`
+          `Request counter will reset at timestamp ${resetLocaleDate} ${resetLocaleTime}.`,
         );
         console.log(
-          `You have ${error.rateLimit.remaining} requests left before hitting the rate limit.`
+          `You have ${error.rateLimit.remaining} requests left before hitting the rate limit.`,
         );
       }
       return 'Unknown';

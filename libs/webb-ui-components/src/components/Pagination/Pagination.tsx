@@ -25,7 +25,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       iconSize = 'lg',
       ...props
     },
-    ref
+    ref,
   ) => {
     const paginationDisplayItems = useMemo(
       () =>
@@ -35,13 +35,13 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           boundaryCount,
           siblingCount,
         }),
-      [boundaryCount, currentPage, siblingCount, totalPages]
+      [boundaryCount, currentPage, siblingCount, totalPages],
     );
 
     const showingItemsCount = useMemo(
       () =>
         itemsPerPage && totalItems ? Math.min(itemsPerPage, totalItems) : '-',
-      [itemsPerPage, totalItems]
+      [itemsPerPage, totalItems],
     );
 
     const mergedClsx = useMemo(
@@ -49,9 +49,9 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
         twMerge(
           'flex items-center justify-between px-3 py-4',
           'border-mono-40 dark:border-mono-140 border-t',
-          className
+          className,
         ),
-      [className]
+      [className],
     );
 
     return (
@@ -81,7 +81,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                   'p-2 text-center body1 rounded-md',
                   currentPage === page
                     ? 'bg-blue-0 text-blue dark:bg-blue-120 dark:text-blue-0' // Active
-                    : 'bg-mono-0 dark:bg-mono-180 text-mono-200 dark:text-mono-40 hover:bg-mono-20 hover:dark:bg-mono-160'
+                    : 'bg-mono-0 dark:bg-mono-180 text-mono-200 dark:text-mono-40 hover:bg-mono-20 hover:dark:bg-mono-160',
                 )}
                 onClick={() => setPageIndex?.(page - 1)}
               >
@@ -94,7 +94,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
               >
                 ...
               </p>
-            )
+            ),
           )}
 
           <ChevronRight
@@ -109,5 +109,5 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
         </div>
       </div>
     );
-  }
+  },
 );

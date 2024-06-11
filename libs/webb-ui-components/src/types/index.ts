@@ -195,7 +195,7 @@ type GetEventHandlers<T extends keyof JSX.IntrinsicElements> = Extract<
  */
 export type EventFor<
   TElement extends keyof JSX.IntrinsicElements,
-  THandler extends GetEventHandlers<TElement>
+  THandler extends GetEventHandlers<TElement>,
 > = JSX.IntrinsicElements[TElement][THandler] extends
   | ((e: infer TEvent) => any)
   | undefined

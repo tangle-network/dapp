@@ -16,7 +16,7 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
   setCustomNetwork,
 }) => {
   const { refresh: getCachedCustomRpcEndpoint } = useLocalStorage(
-    LocalStorageKey.CUSTOM_RPC_ENDPOINT
+    LocalStorageKey.CUSTOM_RPC_ENDPOINT,
   );
 
   const [value, setValue] = useState('');
@@ -24,7 +24,7 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
 
   const handleSave = useCallback(
     () => setCustomNetwork(value),
-    [value, setCustomNetwork]
+    [value, setCustomNetwork],
   );
 
   // On mount, load the cached custom RPC endpoint. If it

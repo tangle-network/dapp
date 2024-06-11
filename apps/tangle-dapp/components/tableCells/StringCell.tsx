@@ -11,7 +11,7 @@ const StringCell: FC<StringCellProps> = ({ value, className }) => {
       fw="normal"
       className={twMerge(
         'text-mono-140 dark:text-mono-40 whitespace-nowrap',
-        className
+        className,
       )}
     >
       {value}

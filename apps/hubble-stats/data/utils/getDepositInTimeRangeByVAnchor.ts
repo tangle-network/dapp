@@ -8,7 +8,7 @@ export default async function getDepositInTimeRangeByVAnchor(
   vAnchorAddress: string,
   epochStart: number,
   epochEnd: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ) {
   let deposit: number | undefined;
   try {
@@ -17,14 +17,14 @@ export default async function getDepositInTimeRangeByVAnchor(
         subgraphUrls,
         vAnchorAddress,
         getDateFromEpoch(epochStart),
-        getDateFromEpoch(epochEnd)
+        getDateFromEpoch(epochEnd),
       );
 
     deposit = depositVAnchorByChainsData.reduce((deposit, vAnchorsByChain) => {
       const depositVAnchorsByChain = vAnchorsByChain.reduce(
         (depositByChain, vAnchorDeposit) =>
           depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
-        0
+        0,
       );
       return deposit + depositVAnchorsByChain;
     }, 0);

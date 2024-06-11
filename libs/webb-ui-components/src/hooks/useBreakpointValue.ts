@@ -1,31 +1,22 @@
-'use client';
-
 import useMediaQuery from './useMediaQuery';
+import resolveConfig from 'tailwindcss/resolveConfig';
 
-type BreakpointRecord = Record<string, number>;
-
-/**
- * Breakpoints from Tailwind
- * @see https://tailwindcss.com/docs/breakpoints
- */
-const breakpointsTailwind: BreakpointRecord = {
-  sm: 640,
-  md: 768,
-  lg: 1024,
-  xl: 1280,
-  '2xl': 1536,
-};
+const config = resolveConfig({
+  content: [],
+});
 
 function useBreakpointValue<
-  V,
-  BreakPoints extends BreakpointRecord,
-  Key extends keyof BreakPoints
+  BreakPoints extends Record<string, string>,
+  Key extends keyof BreakPoints,
+  V = unknown,
 >(breakpoint: Key, value: V, fallback: V, breakpoints?: BreakPoints) {
-  const breakpointsToUse = breakpoints ?? breakpointsTailwind;
-  const breakPointValue =
-    breakpointsToUse[breakpoint as string] ?? breakpointsTailwind['md'];
+  const breakpointsToUse = breakpoints ?? config.theme.screens;
 
-  const isMatched = useMediaQuery(`(min-width: ${breakPointValue}px)`);
+  const breakPointValue =
+    breakpointsToUse[breakpoint as keyof typeof breakpointsToUse] ??
+    config.theme.screens['md'];
+
+  const isMatched = useMediaQuery(`(min-width: ${breakPointValue})`);
 
   return isMatched ? value : fallback;
 }

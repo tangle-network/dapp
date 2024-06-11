@@ -150,6 +150,6 @@ export function getSocials(websiteType: WebsiteType) {
         name: capitalize(name),
         Icon: SOCIAL_ICONS_RECORD[name],
         href: urlRecord[name],
-      } as const satisfies SocialType)
+      }) as const satisfies SocialType,
   );
 }

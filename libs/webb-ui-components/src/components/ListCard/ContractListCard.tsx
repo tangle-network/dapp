@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo, forwardRef } from 'react';
 import { ExternalLinkLine, Search } from '@webb-tools/icons';
 import { ScrollArea } from '../ScrollArea';
@@ -26,7 +28,7 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
               .includes(searchText.toLowerCase())
           );
         }),
-      [selectContractItems, searchText]
+      [selectContractItems, searchText],
     );
 
     return (
@@ -108,7 +110,7 @@ const ContractListCard = forwardRef<HTMLDivElement, ContractListCardProps>(
         </ScrollArea>
       </ListCardWrapper>
     );
-  }
+  },
 );
 
 export default ContractListCard;

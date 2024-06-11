@@ -22,7 +22,7 @@ import { getRoundedAmountString, toFixed } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
 import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
-import TextField from '../TextField';
+import { TextField } from '../TextField';
 import { TitleWithInfo } from '../TitleWithInfo';
 import TokenSelector from '../TokenSelector';
 import {
@@ -57,7 +57,7 @@ const TransactionInputCardRoot = forwardRef<
       typedChainId,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -67,7 +67,7 @@ const TransactionInputCardRoot = forwardRef<
           'w-full rounded-lg px-3 py-1.5 space-y-2',
           'bg-mono-20 dark:bg-mono-180',
           'hover:bg-[#E2E5EB]/30 dark:hover:bg-mono-170',
-          className
+          className,
         )}
       >
         <TransactionInputCardContext.Provider
@@ -86,7 +86,7 @@ const TransactionInputCardRoot = forwardRef<
         </TransactionInputCardContext.Provider>
       </div>
     );
-  }
+  },
 );
 TransactionInputCardRoot.displayName = 'TransactionInputCardRoot';
 
@@ -142,7 +142,7 @@ const TransactionButton = forwardRef<
         'text-mono-170 dark:text-mono-80',
         'hover:enabled:text-mono-190 dark:hover:enabled:text-mono-20',
         'disabled:text-mono-100 dark:disabled:text-mono-100',
-        className
+        className,
       )}
       ref={ref}
     >
@@ -181,7 +181,7 @@ const TransactionMaxAmountButton = forwardRef<
       disabled: disabledProp,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = useContext(TransactionInputCardContext);
 
@@ -202,7 +202,7 @@ const TransactionMaxAmountButton = forwardRef<
 
     const disabled = useMemo(
       () => disabledProp ?? typeof maxAmount !== 'number',
-      [disabledProp, maxAmount]
+      [disabledProp, maxAmount],
     );
 
     return (
@@ -240,7 +240,7 @@ const TransactionMaxAmountButton = forwardRef<
         </TooltipBody>
       </Tooltip>
     );
-  }
+  },
 );
 TransactionMaxAmountButton.displayName = 'TransactionMaxAmountButton';
 
@@ -255,7 +255,7 @@ const TransactionInputCardHeader = forwardRef<
       className={twMerge(
         'py-1 flex items-center justify-between',
         'border-b border-mono-40 dark:border-mono-160',
-        className
+        className,
       )}
     >
       {children}
@@ -280,7 +280,7 @@ const TransactionInputCardBody = forwardRef<
       tokenSymbol: tokenSymbolProp,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = useContext(TransactionInputCardContext);
 
@@ -305,7 +305,7 @@ const TransactionInputCardBody = forwardRef<
         ref={ref}
         className={twMerge(
           'flex items-center justify-between gap-2',
-          className
+          className,
         )}
       >
         <div className="grow min-h-[52px] flex items-center">
@@ -315,7 +315,7 @@ const TransactionInputCardBody = forwardRef<
               {...fixedAmountProps}
               className={twMerge(
                 'max-w-[var(--adjust-amount-width)] h-full',
-                fixedAmountProps?.className
+                fixedAmountProps?.className,
               )}
               value={typeof amount === 'string' ? Number(amount) : undefined}
               onChange={
@@ -347,7 +347,7 @@ const TransactionInputCardBody = forwardRef<
         </TokenSelector>
       </div>
     );
-  }
+  },
 );
 TransactionInputCardBody.displayName = 'TransactionInputCardBody';
 
@@ -363,7 +363,7 @@ const TransactionInputCardFooter = forwardRef<
       onIsFixedAmountChange: onIsFixedAmountChangeProp,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = useContext(TransactionInputCardContext);
 
@@ -389,7 +389,7 @@ const TransactionInputCardFooter = forwardRef<
         />
       </div>
     );
-  }
+  },
 );
 TransactionInputCardFooter.displayName = 'TransactionInputCardFooter';
 
@@ -403,14 +403,13 @@ const TransactionInputCard = Object.assign(
     ChainSelector: TransactionChainSelector,
     Button: TransactionButton,
     MaxAmountButton: TransactionMaxAmountButton,
-  }
+  },
 );
-
-export default TransactionInputCard;
 
 export {
   TransactionButton,
   TransactionChainSelector,
+  TransactionInputCard,
   TransactionInputCardBody,
   TransactionInputCardFooter,
   TransactionInputCardHeader,

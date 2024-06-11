@@ -1,8 +1,7 @@
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
-const plugin = require('tailwindcss/plugin');
+const preset = require('../../tailwind.preset.cjs');
 const { join } = require('path');
-
-const preset = require('@webb-tools/tailwind-preset');
+const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -10,12 +9,12 @@ module.exports = {
   content: [
     join(
       __dirname,
-      '{src,pages,components,containers,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      '{src,pages,components,containers,app}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     join(
       __dirname,
       '../../libs/webb-ui-components',
-      'src/{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      'src/{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],
@@ -63,7 +62,7 @@ module.exports = {
             },
           },
         },
-        ['responsive']
+        ['responsive'],
       );
     }),
   ],

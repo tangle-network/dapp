@@ -1,7 +1,8 @@
+'use client';
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { DropdownProps } from './types';
 
 /**
@@ -20,5 +21,5 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         </DropdownMenuPrimitive.Root>
       </div>
     );
-  }
+  },
 );

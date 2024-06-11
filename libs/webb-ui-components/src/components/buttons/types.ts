@@ -1,7 +1,11 @@
-import { IconBase } from '@webb-tools/icons/types';
-import { IWebbComponentBase, PropsOf, WebbComponentBase } from '../../types';
-import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
-import { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
+import type { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
+import type { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
+import type { IconBase } from '@webb-tools/icons/types';
+import type {
+  IWebbComponentBase,
+  PropsOf,
+  WebbComponentBase,
+} from '../../types';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
 
@@ -221,6 +225,12 @@ export type WalletButtonProps = PropsOf<'button'> & {
    * The current address of the wallet
    */
   address: string;
+
+  /**
+   * The name of the account to display
+   * prior to the address
+   */
+  accountName?: string;
 
   addressClassname?: string;
 };

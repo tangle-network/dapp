@@ -42,12 +42,13 @@ function getTangle(isRegularStatement?: boolean | null): Statement | null {
 
 function getStatement(
   network: string,
-  isRegularStatement?: boolean | null
+  isRegularStatement?: boolean | null,
 ): Statement | null {
   if (network === 'Polkadot' || network === 'Polkadot CC1') {
     return getPolkadot(isRegularStatement);
   }
 
+  // TODO: This test is weak, and could be improved.
   if (
     network.toLowerCase().includes('tangle') ||
     network.toLowerCase().includes('local')

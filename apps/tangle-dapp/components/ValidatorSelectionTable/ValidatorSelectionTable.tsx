@@ -3,6 +3,7 @@
 import { BN } from '@polkadot/util';
 import {
   type Column,
+  type ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
@@ -50,15 +51,28 @@ const DEFAULT_PAGINATION: PaginationState = {
   pageSize: 20,
 };
 
+const SELECTED_VALIDATORS_COLUMN_SORT = {
+  id: 'address',
+  desc: false,
+} as const satisfies ColumnSort;
+
 const columnHelper = createColumnHelper<Validator>();
 
 const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   allValidators,
+  defaultSelectedValidators,
   setSelectedValidators,
 }) => {
   const [searchValue, setSearchValue] = useState('');
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+    defaultSelectedValidators.reduce((acc, address) => {
+      acc[address] = true;
+      return acc;
+    }, {} as RowSelectionState),
+  );
+  const [sorting, setSorting] = useState<SortingState>([
+    SELECTED_VALIDATORS_COLUMN_SORT,
+  ]);
 
   const [pagination, setPagination] =
     useState<PaginationState>(DEFAULT_PAGINATION);
@@ -193,7 +207,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         cell: (props) => props.getValue(),
       }),
     ],
-    []
+    [],
   );
 
   const tableProps = useMemo<TableOptions<Validator>>(
@@ -226,22 +240,11 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
 
             // Modify the sorting state to always sort by the selected validators first
             if (newSorting.length === 0) {
-              return [
-                {
-                  id: 'address',
-                  desc: false,
-                },
-              ];
+              return [SELECTED_VALIDATORS_COLUMN_SORT];
             } else if (newSorting[0].id === 'address') {
               return newSorting;
             } else {
-              return [
-                {
-                  id: 'address',
-                  desc: false,
-                },
-                ...newSorting,
-              ];
+              return [SELECTED_VALIDATORS_COLUMN_SORT, ...newSorting];
             }
           });
         } else {
@@ -259,7 +262,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       getRowId: (row) => row.address,
       autoResetPageIndex: false,
     }),
-    [columns, allValidators, pagination, rowSelection, searchValue, sorting]
+    [columns, allValidators, pagination, rowSelection, searchValue, sorting],
   );
 
   const table = useReactTable(tableProps);
@@ -305,14 +308,19 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
 };
 
 type ColumnIdAssertFn = (
-  columnId: string
+  columnId: string,
 ) => asserts columnId is keyof Validator;
 
 const assertColumnId: ColumnIdAssertFn = (columnId) => {
   if (
-    !['address', 'effectiveAmountStaked', 'delegations', 'commission'].includes(
-      columnId
-    )
+    ![
+      'address',
+      'effectiveAmountStaked',
+      'delegations',
+      'commission',
+      'nominatorCount',
+      'totalStakeAmount',
+    ].includes(columnId)
   ) {
     throw new Error(`Invalid columnId: ${columnId}`);
   }
@@ -321,7 +329,7 @@ const assertColumnId: ColumnIdAssertFn = (columnId) => {
 const sortingFn = (
   rowA: Row<Validator>,
   rowB: Row<Validator>,
-  columnId: string
+  columnId: string,
 ) => {
   assertColumnId(columnId);
 

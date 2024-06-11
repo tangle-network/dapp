@@ -59,7 +59,7 @@ const UploadTxHistoryModal: FC<{
         message: 'Transactions saved successfully',
       });
       closeModal();
-    } catch (error) {
+    } catch {
       notificationApi({
         variant: 'error',
         message: 'Error saving transactions',
@@ -83,7 +83,7 @@ const UploadTxHistoryModal: FC<{
           const [err, parsedData] = safeParseJson(text);
           if (err) {
             throw new Error(
-              'Invalid file type: Only JSON files are supported.'
+              'Invalid file type: Only JSON files are supported.',
             );
           }
           const data = parsedData as TransactionType[];
@@ -98,7 +98,7 @@ const UploadTxHistoryModal: FC<{
             });
           } catch {
             throw new Error(
-              'Invalid format of data: Please ensure the data is in the correct format.'
+              'Invalid format of data: Please ensure the data is in the correct format.',
             );
           }
         } catch (error) {
@@ -186,7 +186,7 @@ export default UploadTxHistoryModal;
 /** @internal */
 const UploadedMessage: FC<{ isError: boolean }> = ({ isError }) => {
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex items-center gap-1">
       {isError ? (
         <InformationLine className="!fill-red-50" />
       ) : (
@@ -196,7 +196,7 @@ const UploadedMessage: FC<{ isError: boolean }> = ({ isError }) => {
         variant="body4"
         className={twMerge(
           'uppercase',
-          isError ? '!text-red-50' : '!text-green-70'
+          isError ? '!text-red-50' : '!text-green-70',
         )}
       >
         {isError ? 'Error' : 'Loaded File Successfully'}

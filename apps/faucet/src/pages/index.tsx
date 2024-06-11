@@ -53,7 +53,7 @@ export default function Page({ sideBarInitialState }: PageProps) {
                 className={cx(
                   'px-4 md:px-12 py-12 max-w-[964px] rounded-2xl mx-auto',
                   'border-4 border-mono-0 dark:border-mono-170',
-                  'bg-glass dark:bg-glass_dark'
+                  'bg-glass dark:bg-glass_dark',
                 )}
                 style={{ backdropFilter: 'blur(15px)' }}
               >

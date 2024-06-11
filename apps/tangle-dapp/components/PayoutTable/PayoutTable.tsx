@@ -31,7 +31,6 @@ const columnHelper = createColumnHelper<Payout>();
 const PayoutTable: FC<PayoutTableProps> = ({
   data = [],
   pageSize,
-  updateData,
   sessionProgress,
   historyDepth,
 }) => {
@@ -126,9 +125,11 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Your Rewards" className="justify-start" />
         ),
-        cell: (props) => (
-          <TokenAmountCell amount={props.getValue()} className="text-start" />
-        ),
+        cell: (props) => {
+          return (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          );
+        },
       }),
       columnHelper.display({
         id: 'remaining',
@@ -143,7 +144,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
               ? sessionProgress.currentEra.toNumber() -
                   historyDepth.toNumber() -
                   rowData.era
-              : 0
+              : 0,
           );
 
           return (
@@ -209,7 +210,6 @@ const PayoutTable: FC<PayoutTableProps> = ({
         setIsModalOpen={setIsModalOpen}
         payoutTxProps={payoutTxProps}
         payouts={data}
-        updatePayouts={updateData}
       />
     </>
   );

@@ -18,7 +18,7 @@ const TwitterLink = forwardRef<
       isInheritFont,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <a
@@ -27,7 +27,7 @@ const TwitterLink = forwardRef<
         className={twMerge(
           'text-blue-70 hover:underline font-bold',
           cx({ 'mkt-body1': !isInheritFont }),
-          className
+          className,
         )}
         href={href}
         rel={rel}
@@ -36,7 +36,7 @@ const TwitterLink = forwardRef<
         {children}
       </a>
     );
-  }
+  },
 );
 
 TwitterLink.displayName = 'TwitterLink';

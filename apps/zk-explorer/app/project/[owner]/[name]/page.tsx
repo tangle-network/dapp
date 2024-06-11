@@ -6,7 +6,7 @@ import ProjectHeaderContainer from '../../../../containers/ProjectHeader';
 import RelatedProjectsContainer from '../../../../containers/RelatedProjects/RelatedProjectsContainer';
 
 export default function ProjectPage({
-  params,
+  params: _,
 }: {
   params: { slug: { owner: string; name: string } };
 }) {
@@ -22,11 +22,11 @@ export default function ProjectPage({
         id={PROJECT_DETAIL_CONTAINER_ID}
         className="lg:max-h-[1150px] grid grid-cols-1 lg:grid-cols-[auto_1fr] grid-rows-[minmax(min-content,max-content)] lg:grid-rows-[auto_1fr] gap-y-6"
       >
-        <ProjectGitHubInfoContainer className="row-span-1 lg:row-span-2 order-3 lg:order-1" />
+        <ProjectGitHubInfoContainer className="order-3 row-span-1 lg:row-span-2 lg:order-1" />
 
-        <ProjectHeaderContainer className="col-span-1 order-1 lg:order-2" />
+        <ProjectHeaderContainer className="order-1 col-span-1 lg:order-2" />
 
-        <ProjectDetailTabsContainer className="col-span-1 order-2 lg:order-3" />
+        <ProjectDetailTabsContainer className="order-2 col-span-1 lg:order-3" />
       </div>
 
       <RelatedProjectsContainer />

@@ -40,13 +40,13 @@ export const TESTNET_LEADERBOARD_URL = 'https://leaderboard.tangle.tools';
 
 export const TANGLE_MKT_URL = 'https://tangle.tools';
 export const TANGLE_PRESS_KIT_URL = 'https://www.tangle.tools/press-kit';
-export const TANGLE_DOCS_URL = 'https://docs.tangle.tools/docs/';
+export const TANGLE_DOCS_URL = 'https://docs.tangle.tools/';
 export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 
-export const WEBB_DOCS_URL = 'https://docs.webb.tools';
+export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 export const WEBB_TANGLE_DOCS_STAKING_URL =
-  'https://docs.tangle.tools/docs/staking-intro/';
+  'https://docs.tangle.tools/network/staking-intro';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
@@ -82,7 +82,7 @@ export const DKG_STATS_PROPOSALS_URL = `${DKG_STATS_URL}/#/proposals`;
 export const SUBQUERY_ENDPOINT =
   'https://standalone-subql.tangle.tools/graphql';
 
-export const TANGLE_STAKING_URL =
+export const TANGLE_TESTNET_STAKING_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/staking';
 
 export const STAKING_PRECOMPILE_LINK =
@@ -90,12 +90,12 @@ export const STAKING_PRECOMPILE_LINK =
 
 export const TANGLE_PRIVACY_POLICY_URL = new URL(
   '/privacy-policy',
-  TANGLE_MKT_URL
+  TANGLE_MKT_URL,
 ).toString();
 
 export const TANGLE_TERMS_OF_SERVICE_URL = new URL(
   '/terms-of-service',
-  TANGLE_MKT_URL
+  TANGLE_MKT_URL,
 ).toString();
 
 export const WEBB_DOC_ROUTES_RECORD = {
@@ -208,7 +208,7 @@ export const SOCIAL_ICONS_RECORD = {
   community: TangleIcon,
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: (
-    props: IconBase
+    props: IconBase,
   ) => JSX.Element;
 };
 
@@ -275,7 +275,7 @@ export const footerNavs: FooterNavsType = {
       name: 'community',
       href: new URL(
         WEBB_DOC_ROUTES_RECORD.community.route,
-        WEBB_DOCS_URL
+        WEBB_DOCS_URL,
       ).toString(),
       ...commonExternalProps,
     },
@@ -316,7 +316,7 @@ export const defaultSocialConfigs: SocialConfigsType[] =
         Icon: SOCIAL_ICONS_RECORD[name],
         target: '_blank',
         rel: 'noopener noreferrer',
-      } as const satisfies SocialConfigsType)
+      }) as const satisfies SocialConfigsType,
   );
 
 /**

@@ -11,7 +11,7 @@ import {
 function handlehandleVAnchorTxState<State extends VAnchorTxState>(
   tx: TransactionExecutor<NewNotesTxResult>,
   txState: State,
-  payload: TransactionStateUpdatePayload[State]
+  payload: TransactionStateUpdatePayload[State],
 ) {
   switch (txState) {
     case VAnchorTxState.GENERATE_ZK_PROOF: {

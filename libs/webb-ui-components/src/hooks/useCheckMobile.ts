@@ -13,7 +13,7 @@ export const useCheckMobile = (): UseCheckMobileReturnType => {
     const checkIsMobile = () => {
       const isMobileCheck =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
+          navigator.userAgent,
         );
       setIsMobile(isMobileCheck);
     };

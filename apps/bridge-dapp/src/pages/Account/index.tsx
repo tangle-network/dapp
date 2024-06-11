@@ -89,7 +89,7 @@ const Account: FC = () => {
         onDeleteNotesChange: (notes) => setDeleteNotes(notes),
         globalSearchText: globalSearchText,
       }),
-      [globalSearchText, openUploadModal]
+      [globalSearchText, openUploadModal],
     );
 
   if (!hasNoteAccount || !allNotesInitialized) {
@@ -232,7 +232,7 @@ function RightButtonsContainer(
     onDownloadAllNotes: () => void;
     destChains: string[];
     activeTable: typeof shieldedAssetsTab | typeof spendNotesTab;
-  } & ReturnType<typeof useFilterProps>
+  } & ReturnType<typeof useFilterProps>,
 ) {
   const {
     onUpload,
@@ -243,7 +243,7 @@ function RightButtonsContainer(
   } = props;
 
   return (
-    <div className="items-center hidden space-x-2 md:flex">
+    <div className="items-center hidden space-x-2 md:!flex">
       <ActionsDropdown
         buttonText="Manage"
         actionItems={[
@@ -275,7 +275,7 @@ function RightButtonsContainer(
 /** @internal */
 function getFilterData<T extends Array<{ chain: string }>>(
   selectedChains: SelectedChain,
-  data: T
+  data: T,
 ): T {
   if (selectedChains === 'all') {
     return data;
@@ -283,7 +283,7 @@ function getFilterData<T extends Array<{ chain: string }>>(
 
   return data.filter((asset) =>
     selectedChains.some(
-      (chain) => chain['1'].name.toLowerCase() === asset.chain.toLowerCase()
-    )
+      (chain) => chain['1'].name.toLowerCase() === asset.chain.toLowerCase(),
+    ),
   ) as T;
 }

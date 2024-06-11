@@ -1,3 +1,5 @@
+'use client';
+
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -35,7 +37,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
         'radix-side-left:animate-slide-right-fade',
         'inline-flex items-center break-all rounded p-2',
         'bg-mono-20 dark:bg-mono-160',
-        'webb-shadow-sm z-[9999]'
+        'webb-shadow-sm z-[9999]',
       )}
       {...props}
     >
@@ -43,7 +45,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
       <div
         className={twMerge(
           'body4 text-mono-140 dark:text-mono-80 font-normal min-w-0 max-w-[300px]',
-          className
+          className,
         )}
       >
         {title && <h6 className="mb-2 utility">{title}</h6>}

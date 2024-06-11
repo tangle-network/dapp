@@ -9,7 +9,7 @@ import SharedRoleDistributionChart from '../../components/charts/SharedRoleDistr
 import GlassCard from '../../components/GlassCard/GlassCard';
 import useRestakingProfile from '../../data/restaking/useRestakingProfile';
 import { RestakingProfileType } from '../../types';
-import assertRestakingService from '../../utils/assertRestakingService';
+import entriesOf from '../../utils/entriesOf';
 import { getRoleDistributionFromRestakeRoleLedger } from '../../utils/polkadot/restake';
 import getChartDataAreaColorByServiceType from '../../utils/restaking/getChartDataAreaColorByServiceType';
 
@@ -18,21 +18,17 @@ const RoleDistributionCard: FC = () => {
 
   const distribution = useMemo(
     () => getRoleDistributionFromRestakeRoleLedger(ledgerOpt),
-    [ledgerOpt]
+    [ledgerOpt],
   );
 
   const chartData = useMemo(() => {
     if (!distribution) return [];
 
-    return Object.entries(distribution).map(([name, value]) => {
-      assertRestakingService(name);
-
-      return {
-        name,
-        value,
-        color: getChartDataAreaColorByServiceType(name),
-      };
-    });
+    return entriesOf(distribution).map(([name, value]) => ({
+      name,
+      value,
+      color: getChartDataAreaColorByServiceType(name),
+    }));
   }, [distribution]);
 
   return (

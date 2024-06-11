@@ -10,7 +10,7 @@ import { TwitterLoginResponse } from '../types';
  * @returns the tokens response or throw an error
  */
 const parseTokensResponse = (
-  json: any
+  json: any,
 ): Result<
   TwitterLoginResponse,
   FaucetError<FaucetErrorCode.INVALID_RESPONSE>
@@ -21,7 +21,7 @@ const parseTokensResponse = (
     return err(
       FaucetError.from(FaucetErrorCode.INVALID_RESPONSE, {
         context: 'parseTokensResponse()',
-      })
+      }),
     );
   }
 

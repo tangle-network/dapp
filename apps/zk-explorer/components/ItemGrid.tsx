@@ -30,7 +30,7 @@ const ItemGrid: FC<CardGridProps> = ({
               key={index}
               href={createProjectDetailPath(
                 project.repositoryOwner,
-                project.repositoryName
+                project.repositoryName,
               )}
             >
               <ProjectCard {...project} />

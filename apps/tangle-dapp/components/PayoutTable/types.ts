@@ -5,7 +5,6 @@ import { Payout } from '../../types';
 export interface PayoutTableProps {
   data?: Payout[];
   pageSize: number;
-  updateData: (data: Payout[]) => void;
   sessionProgress: DeriveSessionProgress | null;
   historyDepth: BN | null;
   epochDuration: number | null;

@@ -9,7 +9,7 @@ import FaucetErrorCode from '../errors/FaucetErrorCode';
  * @returns {Promise<Result<any, FaucetError<FaucetErrorCode.JSON_PARSE_ERROR>>>} - parsed json
  */
 const safeParseJSON = async <T = unknown>(
-  response: Response
+  response: Response,
 ): Promise<Result<T, FaucetError<FaucetErrorCode.JSON_PARSE_ERROR>>> => {
   try {
     const json = await response.json();
@@ -18,7 +18,7 @@ const safeParseJSON = async <T = unknown>(
     return err(
       FaucetError.from(FaucetErrorCode.JSON_PARSE_ERROR, {
         context: JSON.stringify(e, null, 2),
-      })
+      }),
     );
   }
 };

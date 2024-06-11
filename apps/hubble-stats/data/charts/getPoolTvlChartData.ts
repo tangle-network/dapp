@@ -9,7 +9,7 @@ async function getVAnchorTvlDataByDateRange(
   vAnchorAddress: string,
   startingEpoch: number,
   numDatesFromStart: number,
-  subgraphUrls: SubgraphUrlType[]
+  subgraphUrls: SubgraphUrlType[],
 ): Promise<ChartDataRecord> {
   try {
     const fetchedTvlData =
@@ -17,7 +17,7 @@ async function getVAnchorTvlDataByDateRange(
         subgraphUrls,
         vAnchorAddress,
         startingEpoch,
-        numDatesFromStart
+        numDatesFromStart,
       );
 
     return serializeEpochData(fetchedTvlData);
@@ -31,7 +31,7 @@ async function getVAnchorTvlDataByDateRange(
 export default async function getPoolTvlChartData(
   poolAddress: string,
   startingEpoch: number,
-  numDatesFromStart: number
+  numDatesFromStart: number,
 ): Promise<{
   currentPoolTvl?: number;
   poolTvlData: ReturnType<typeof getFormattedDataForBasicChart>;
@@ -44,7 +44,7 @@ export default async function getPoolTvlChartData(
       poolAddress,
       startingEpoch,
       numDatesFromStart,
-      subgraphUrls
+      subgraphUrls,
     ),
   ] as const);
 

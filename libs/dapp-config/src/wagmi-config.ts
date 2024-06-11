@@ -1,28 +1,42 @@
-import { configureChains, createConfig } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { Transport, createClient, fallback, http, type Chain } from 'viem';
+import { Config, createConfig } from 'wagmi';
 import { chainsConfig } from './chains/evm';
-import { SupportedConnector } from './wallets/wallet-config.interface';
-import { walletsConfig } from './wallets/wallets-config';
+import extractChain from './chains/utils/extractChain';
 
-// if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
-//   throw new Error('Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID');
-// }
+const chains = Object.values(chainsConfig).map((chainCfg) =>
+  extractChain(chainCfg),
+) as [Chain, ...Chain[]];
 
-const { publicClient, webSocketPublicClient } = configureChains(
-  Object.values(chainsConfig),
-  [publicProvider()],
-  { batch: { multicall: true }, stallTimeout: 30_000 }
-);
+/**
+ * TODO: Find a better way to improve the typing of the config
+ * with supported chains.
+ * @see https://wagmi.sh/react/typescript#config-types
+ */
+let config: Config<[Chain, ...Chain[]], Record<number, Transport>>;
 
-const connectors = Object.values(walletsConfig)
-  .map((wallet) => wallet.connector)
-  .filter((connector): connector is SupportedConnector => !!connector);
+export type GetWagmiConfigParamsType = {
+  isSSR?: boolean;
+};
 
-const config = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
-});
+export default function getWagmiConfig({
+  isSSR,
+}: GetWagmiConfigParamsType = {}) {
+  if (config === undefined) {
+    config = createConfig({
+      ...(typeof isSSR === 'boolean' ? { ssr: isSSR } : {}),
+      chains,
+      client: ({ chain }) => {
+        return createClient({
+          chain,
+          transport: fallback(
+            chain.rpcUrls.default.http.map((url) =>
+              http(url, { timeout: 60_000 }),
+            ),
+          ),
+        });
+      },
+    });
+  }
 
-export default config;
+  return config;
+}

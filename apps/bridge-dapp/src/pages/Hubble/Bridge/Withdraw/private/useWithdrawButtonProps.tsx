@@ -92,7 +92,7 @@ function useWithdrawButtonProps({
       ? wrappableCfg.id
       : undefined,
     fungibleAddress,
-    srcTypedChainId ?? undefined
+    srcTypedChainId ?? undefined,
   );
 
   const isSucficientLiq = useMemo(() => {
@@ -182,7 +182,7 @@ function useWithdrawButtonProps({
       }
     },
     // prettier-ignore
-    [amount, srcTypedChainId, fungibleCfg, isSucficientLiq, isValidAmount, recipient, wrappableCfg]
+    [amount, srcTypedChainId, fungibleCfg, isSucficientLiq, isValidAmount, recipient, wrappableCfg],
   );
 
   const btnText = useMemo(() => {
@@ -228,7 +228,7 @@ function useWithdrawButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, connectBtnCnt, fungibleCfg, isFeeLoading, isSucficientLiq, isValidAmount, recipient, srcChainCfg, wrappableCfg]
+    [activeChain, amount, connectBtnCnt, fungibleCfg, isFeeLoading, isSucficientLiq, isValidAmount, recipient, srcChainCfg, wrappableCfg],
   );
 
   const isLoading = useMemo(() => {
@@ -294,7 +294,7 @@ function useWithdrawButtonProps({
         const resourceId = await vAnchorApi.getResourceId(
           anchorId,
           srcChainCfg.id,
-          srcChainCfg.chainType
+          srcChainCfg.chainType,
         );
 
         const avaiNotes = (
@@ -302,7 +302,7 @@ function useWithdrawButtonProps({
         ).filter(
           (note) =>
             note.note.tokenSymbol === fungibleCfg.symbol &&
-            !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
+            !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId)),
         );
 
         const fungibleDecimals = fungibleCfg.decimals;
@@ -319,7 +319,7 @@ function useWithdrawButtonProps({
         const valid = await vAnchorApi.validateInputNotes(
           inputNotes,
           srcTypedChainId,
-          fungibleCfg.id
+          fungibleCfg.id,
         );
 
         if (!valid) {
@@ -329,7 +329,7 @@ function useWithdrawButtonProps({
         // Sum up the amount of the input notes to calculate the change amount
         const totalAmountInput = inputNotes.reduce(
           (acc, note) => acc + BigInt(note.note.amount),
-          ZERO_BIG_INT
+          ZERO_BIG_INT,
         );
 
         const changeAmount = totalAmountInput - amountBig;
@@ -351,7 +351,7 @@ function useWithdrawButtonProps({
                 srcTypedChainId,
                 anchorId,
                 fungibleCfg.symbol,
-                changeAmount
+                changeAmount,
               )
             : undefined;
 
@@ -359,7 +359,7 @@ function useWithdrawButtonProps({
         const changeUtxo = changeNote
           ? await utxoFromVAnchorNote(
               changeNote.note,
-              changeNote.note.index ? parseInt(changeNote.note.index) : 0
+              changeNote.note.index ? parseInt(changeNote.note.index) : 0,
             )
           : await actualApi.generateUtxo({
               curve: noteManager.defaultNoteGenInput.curve,
@@ -376,7 +376,7 @@ function useWithdrawButtonProps({
             changeUtxo={changeUtxo}
             changeNote={changeNote}
             changeAmount={parseFloat(
-              formatUnits(changeAmount, fungibleDecimals)
+              formatUnits(changeAmount, fungibleDecimals),
             )}
             sourceTypedChainId={srcTypedChainId}
             targetTypedChainId={srcTypedChainId}
@@ -404,14 +404,14 @@ function useWithdrawButtonProps({
             onClose={() => {
               setWithdrawConfirmComponent(null);
             }}
-          />
+          />,
         );
       } catch (error) {
         handleTxError(error, 'Withdraw');
       }
     },
     // prettier-ignore
-    [activeApi, amount, connectBtnCnt, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, srcChainCfg, srcTypedChainId, totalFeeWei, wrappableCfg]
+    [activeApi, amount, connectBtnCnt, fungibleCfg, handleConnect, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, srcChainCfg, srcTypedChainId, totalFeeWei, wrappableCfg],
   );
 
   return {

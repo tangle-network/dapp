@@ -3,7 +3,7 @@ import type { NeighborEdge } from '../vanchor/types';
 
 function validateNoteLeafIndex(
   note: Note,
-  edges: ReadonlyArray<NeighborEdge>
+  edges: ReadonlyArray<NeighborEdge>,
 ): boolean {
   const { index, sourceChainId } = note.note;
   // If the index is empty, we don't need to validate

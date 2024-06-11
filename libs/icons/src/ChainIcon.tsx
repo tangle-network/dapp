@@ -1,8 +1,8 @@
 import React, { cloneElement, useMemo } from 'react';
 import { Spinner } from './Spinner';
-import StatusIndicator from './StatusIndicator';
+import StatusIndicator from './StatusIndicator/StatusIndicator';
 import { StatusIndicatorProps } from './StatusIndicator/types';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
+import { useDynamicSVGImport } from './useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
@@ -43,11 +43,10 @@ export const ChainIcon: React.FC<
   if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
     const sizeInNumber = parseInt(sizeInPx);
-    const props: React.SVGProps<SVGSVGElement> = {
+    const props: React.SVGProps<SVGElement> = {
       className,
       width: sizeInNumber,
       height: sizeInNumber,
-      viewBox: '0 0 24 24',
       ...restProps,
     };
 

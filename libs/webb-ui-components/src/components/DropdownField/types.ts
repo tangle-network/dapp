@@ -4,4 +4,5 @@ export type DropdownFieldProps = {
   className?: string;
   selectedItem: string;
   setSelectedItem: (selectedItem: string) => void;
+  dropdownBodyClassName?: string;
 };

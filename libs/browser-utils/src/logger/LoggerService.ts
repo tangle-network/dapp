@@ -1,6 +1,3 @@
-// Copyright (C) 2020-2022 Acala Foundation.
-// SPDX-License-Identifier: Apache-2.0
-
 // Copyright 2024 Webb Technologies Inc.
 // SPDX-License-Identifier: Apache-2.0
 // This file has been modified by Webb Technologies Inc.
@@ -83,7 +80,10 @@ class LoggerService {
     return LoggerService.new(ctx);
   }
 
-  constructor(readonly ctx: string, readonly logLevel: LogLevel) {
+  constructor(
+    readonly ctx: string,
+    readonly logLevel: LogLevel,
+  ) {
     return this;
   }
 
@@ -97,7 +97,7 @@ class LoggerService {
 
     try {
       m = JSON.stringify(message, null, 2);
-    } catch (e) {
+    } catch {
       m = 'Cant show message';
     }
 
@@ -136,7 +136,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -150,7 +150,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -164,7 +164,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -178,7 +178,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -192,7 +192,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 
@@ -206,7 +206,7 @@ class LoggerService {
     return Function.prototype.bind.call(
       console.log,
       console,
-      ...log
+      ...log,
     ) as LoggerFn;
   }.call(this);
 }

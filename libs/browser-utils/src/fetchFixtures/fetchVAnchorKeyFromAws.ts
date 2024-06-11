@@ -1,12 +1,12 @@
 import { withLocalFixtures } from '@webb-tools/dapp-types/appMode';
-import { cachedFetch } from '../download';
+import cachedFetch from '../download/cachedFetch';
 import getCachedFixtureURI from './getCachedFixtureURI';
 
 const fetchVAnchorKeyFromAws = async (
   maxEdges: number,
   isSmall?: boolean,
   isSubstrate?: boolean,
-  abortSignal?: AbortSignal
+  abortSignal?: AbortSignal,
 ) => {
   let filePath: string;
   let cachedURI: string;

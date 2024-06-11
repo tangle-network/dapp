@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Pagination } from '@webb-tools/webb-ui-components/components';
+import { Pagination } from '../../components/Pagination';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

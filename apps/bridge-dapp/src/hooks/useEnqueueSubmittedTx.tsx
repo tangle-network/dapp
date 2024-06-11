@@ -1,5 +1,5 @@
 import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils/getExplorerURI';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { type ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { useCallback } from 'react';
@@ -14,7 +14,7 @@ function useEnqueueSubmittedTx() {
     (
       transactionHash: string,
       chain?: ChainConfig,
-      txType?: (typeof BRIDGE_TABS)[number] | (typeof WRAPPER_TABS)[number]
+      txType?: (typeof BRIDGE_TABS)[number] | (typeof WRAPPER_TABS)[number],
     ) => {
       const explorer = chain?.blockExplorers?.default?.url;
 
@@ -28,10 +28,10 @@ function useEnqueueSubmittedTx() {
           txType={txType}
           txExplorerUrl={url}
           txHash={transactionHash}
-        />
+        />,
       );
     },
-    [activeApi, enqueue]
+    [activeApi, enqueue],
   );
 }
 

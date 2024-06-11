@@ -3,7 +3,7 @@ import { RestakingService } from '../../types';
 
 // TODO: Update this to match the actual service types.
 export default function getChartDataAreaColorByServiceType(
-  serviceType: RestakingService
+  serviceType: RestakingService,
 ): ChartColor {
   switch (serviceType) {
     case RestakingService.ZK_SAAS_GROTH16:

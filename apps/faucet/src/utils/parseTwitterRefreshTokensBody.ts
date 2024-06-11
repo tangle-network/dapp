@@ -11,7 +11,7 @@ const requiredFields = ['clientId', 'refreshToken'] as const;
  * @param body the body of the request
  */
 const parseTwitterRefreshTokensBody = (
-  body: any
+  body: any,
 ): Result<
   TwitterRefreshTokensBody,
   FaucetError<FaucetErrorCode.INVALID_REQUEST_BODY>
@@ -23,7 +23,7 @@ const parseTwitterRefreshTokensBody = (
         extraInfo: `Missing fields: ${requiredFields
           .filter((field) => !body[field])
           .join(', ')}`,
-      })
+      }),
     );
   }
 

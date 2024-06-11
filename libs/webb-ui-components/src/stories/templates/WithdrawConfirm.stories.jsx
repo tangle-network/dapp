@@ -1,7 +1,5 @@
-import React from 'react';
-
-import { WithdrawConfirm } from '@webb-tools/webb-ui-components/containers';
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
+import { WithdrawConfirm } from '../../containers/ConfirmationCard/WithdrawConfirm';
 export default {
   title: 'Design System/Templates/WithdrawConfirm',
   component: WithdrawConfirm,

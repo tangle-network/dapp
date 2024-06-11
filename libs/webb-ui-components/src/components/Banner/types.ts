@@ -1,7 +1,7 @@
 import type { IconBase } from '@webb-tools/icons/types';
 import { PropsOf, WebbComponentBase } from '../../types';
 import { ComponentProps } from 'react';
-import { Button } from '../buttons';
+import type { Button } from '../buttons';
 
 export interface BannerPropsType extends WebbComponentBase {
   /**

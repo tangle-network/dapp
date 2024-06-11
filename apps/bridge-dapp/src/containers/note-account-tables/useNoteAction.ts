@@ -20,7 +20,7 @@ function useNoteAction() {
       action: 'transfer' | 'withdraw',
       chain: Chain,
       fungibleCurrency?: Currency,
-      amount?: bigint
+      amount?: bigint,
     ) => {
       const actionPaths: {
         [key in typeof action]: string;
@@ -48,7 +48,7 @@ function useNoteAction() {
         search: searchParams.toString(),
       });
     },
-    [navigate]
+    [navigate],
   );
 
   return handleNoteAction;

@@ -6,7 +6,7 @@ import {
 export const getCardTitle = (
   stage: TransactionState,
   txName: TransactionName,
-  wrappingFlow?: boolean
+  wrappingFlow?: boolean,
 ) => {
   let status = '';
 
@@ -56,7 +56,7 @@ const getDefaultTitle = (txName: TransactionName, wrappingFlow?: boolean) => {
 const getStatusTitle = (
   status: string,
   txName: TransactionName,
-  wrappingFlow?: boolean
+  wrappingFlow?: boolean,
 ) => {
   switch (txName) {
     case 'Deposit': {

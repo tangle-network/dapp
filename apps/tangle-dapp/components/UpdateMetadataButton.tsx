@@ -4,6 +4,7 @@ import {
 } from '@polkadot/extension-inject/types';
 import { HexString } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { RefreshLineIcon } from '@webb-tools/icons';
 import {
   IconButton,
@@ -12,7 +13,7 @@ import {
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
 import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
@@ -38,15 +39,15 @@ const UpdateMetadataButton: FC = () => {
 
       return findInjectorForAddress(activeAccountAddress);
     }, [activeAccountAddress]),
-    null
+    null,
   );
 
   const { result: apiPromise } = usePromise(
     useCallback(
       () => getApiPromise(network.wsRpcEndpoint),
-      [network.wsRpcEndpoint]
+      [network.wsRpcEndpoint],
     ),
-    null
+    null,
   );
 
   const { setWithPreviousValue: setCache, valueOpt: cachedMetadata } =
@@ -59,7 +60,7 @@ const UpdateMetadataButton: FC = () => {
         [genesisHash]: metadata,
       }));
     },
-    [setCache]
+    [setCache],
   );
 
   const isMetadataUpToDate = useMemo(() => {
@@ -78,7 +79,7 @@ const UpdateMetadataButton: FC = () => {
       return false;
     }
 
-    return _.isEqual(cachedEntry, {
+    return isEqual(cachedEntry, {
       ss58Prefix: network.ss58Prefix,
       tokenSymbol: network.tokenSymbol,
       tokenDecimals: TANGLE_TOKEN_DECIMALS,
@@ -90,6 +91,14 @@ const UpdateMetadataButton: FC = () => {
     network.ss58Prefix,
     network.tokenSymbol,
   ]);
+
+  const isSubstrateAccount = useMemo(
+    () =>
+      activeAccountAddress !== null
+        ? isSubstrateAddress(activeAccountAddress)
+        : null,
+    [activeAccountAddress],
+  );
 
   const handleClick = async () => {
     if (
@@ -118,7 +127,7 @@ const UpdateMetadataButton: FC = () => {
     // rejects the request. Leniently catch the error and log it.
     const handleError = (error: unknown) => {
       console.error(
-        `Failed to provide updated metadata to injected extension: ${error}`
+        `Failed to provide updated metadata to injected extension: ${error}`,
       );
     };
 
@@ -145,7 +154,12 @@ const UpdateMetadataButton: FC = () => {
 
   // Hide the button if the metadata is up-to-date, if it's not yet known,
   // and after metadata has been updated.
-  if (isMetadataUpToDate === null || isMetadataUpToDate || isHidden) {
+  if (
+    isMetadataUpToDate === null ||
+    isMetadataUpToDate ||
+    isHidden ||
+    !isSubstrateAccount
+  ) {
     return null;
   }
 
@@ -154,7 +168,7 @@ const UpdateMetadataButton: FC = () => {
       <TooltipTrigger asChild>
         <IconButton
           onClick={handleClick}
-          className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 rounded-full shadow-md bg-mono-20 dark:bg-mono-160 border border-mono-60 dark:border-mono-120"
+          className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 border rounded-full shadow-md bg-mono-20 dark:bg-mono-160 border-mono-60 dark:border-mono-120"
         >
           <RefreshLineIcon />
         </IconButton>

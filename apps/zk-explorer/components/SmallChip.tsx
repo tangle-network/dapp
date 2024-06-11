@@ -15,7 +15,7 @@ const SmallChip: FC<PropsWithChildren<PropsOf<typeof Chip>>> = ({
       className={twMerge(
         'bg-mono-100 dark:bg-mono-140',
         '!text-mono-0 px-2',
-        className
+        className,
       )}
     >
       {children}

@@ -24,7 +24,7 @@ export default function useServiceParticipants() {
             address,
             ...(accountInfo ?? {}),
           } satisfies ServiceParticipant;
-        })
+        }),
       );
       setParticipants(participantsInfo);
       setIsLoadingParticipants(false);

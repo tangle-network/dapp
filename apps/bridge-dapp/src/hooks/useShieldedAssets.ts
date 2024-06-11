@@ -37,19 +37,19 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const existedChain = acc.find(
           (item) =>
             item.chain === chain.name &&
-            item.fungibleTokenSymbol === tokenSymbol
+            item.fungibleTokenSymbol === tokenSymbol,
         );
 
         if (existedChain) {
           const parsedAvailableBalance = parseUnits(
             numberToString(existedChain.availableBalance),
-            denomination
+            denomination,
           );
 
           const summedBalance = amount + parsedAvailableBalance;
 
           existedChain.availableBalance = Number(
-            formatUnits(summedBalance, denomination)
+            formatUnits(summedBalance, denomination),
           );
 
           existedChain.numberOfNotesFound += 1;
@@ -59,24 +59,24 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         const compositionSet = new Set<string>();
         const fungibleCurrency = fungibleCurrencies.find(
-          (currency) => currency.view.symbol === tokenSymbol
+          (currency) => currency.view.symbol === tokenSymbol,
         );
 
         if (fungibleCurrency) {
           const foundCurrencies = getWrappableCurrencies(
             fungibleCurrency.id,
-            false
+            false,
           );
 
           foundCurrencies.forEach((c) =>
-            compositionSet.add(c.view.symbol.toUpperCase())
+            compositionSet.add(c.view.symbol.toUpperCase()),
           );
         }
 
         let assetsUrl = '#';
         const explorerUrl = chain.blockExplorers?.default.url;
         const address = fungibleCurrency?.getAddressOfChain(
-          calculateTypedChainId(chain.chainType, chain.id)
+          calculateTypedChainId(chain.chainType, chain.id),
         );
 
         if (explorerUrl && address) {

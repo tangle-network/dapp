@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { AmountInput } from '@webb-tools/webb-ui-components/components';
+import { AmountInput } from '../../components/BridgeInputs/AmountInput';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -18,16 +16,16 @@ Default.args = {
   id: 'amount',
 };
 
-export const withAmount = Template.bind({});
+export const WithAmount = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withAmount.args = {
+WithAmount.args = {
   id: 'amount',
   amount: '200',
 };
 
-export const withTitle = Template.bind({});
+export const WithTitle = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withAmount.args = {
-  ...withAmount.args,
+WithAmount.args = {
+  ...WithAmount.args,
   title: 'Enter Amount:',
 };

@@ -40,7 +40,7 @@ const DEFAULT_DEBOUNCE_DELAY = 1500;
 const SearchInput: FC<SearchInputProps> = ({
   isFullWidth,
   isHomepageVariant,
-  debounceTime = DEFAULT_DEBOUNCE_DELAY,
+  debounceTime: _debounceTime = DEFAULT_DEBOUNCE_DELAY,
   doesRedirectOnChange: doesRedirect,
   className,
   inputClassName,
@@ -50,12 +50,12 @@ const SearchInput: FC<SearchInputProps> = ({
   if (onValueChange === undefined) {
     assert(
       doesRedirect,
-      "a value change handler is required if the input doesn't redirect, otherwise the input will be uncontrolled"
+      "a value change handler is required if the input doesn't redirect, otherwise the input will be uncontrolled",
     );
   }
 
   const [searchQuery, setSearchQuery] = useQueryState(
-    SearchParamKey.SearchQuery
+    SearchParamKey.SearchQuery,
   );
 
   const breakpoint = useTailwindBreakpoint();
@@ -70,13 +70,13 @@ const SearchInput: FC<SearchInputProps> = ({
     if (doesRedirect && validateSearchQuery(newSearchQuery)) {
       const searchPageUrl = new URL(
         RelativePageUrl.Root,
-        window.location.origin
+        window.location.origin,
       );
 
       // Attach the search query to the search page URL.
       searchPageUrl.searchParams.set(
         SearchParamKey.SearchQuery,
-        newSearchQuery
+        newSearchQuery,
       );
 
       router.push(searchPageUrl.href);

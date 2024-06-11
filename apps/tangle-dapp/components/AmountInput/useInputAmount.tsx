@@ -2,10 +2,8 @@ import { BN } from '@polkadot/util';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
-import convertAmountStringToChainUnits from '../../utils/convertAmountStringToChainUnits';
-import formatBnToDisplayAmount, {
-  FormatOptions,
-} from '../../utils/formatBnToDisplayAmount';
+import formatBn, { FormatOptions } from '../../utils/formatBn';
+import parseChainUnits from '../../utils/parseChainUnits';
 
 /**
  * Regular expression to validate the input amount.
@@ -20,14 +18,12 @@ function validateInputAmount(
   max: BN | null,
   errorOnEmptyValue: boolean,
   minErrorMessage?: string,
-  maxErrorMessage?: string
+  maxErrorMessage?: string,
 ): string | null {
   const schema = z
     .string()
     .transform((value) => (value === '' ? null : value))
-    .transform((value) =>
-      value === null ? null : convertAmountStringToChainUnits(value)
-    )
+    .transform((value) => (value === null ? null : parseChainUnits(value)))
     .refine((amount) => !errorOnEmptyValue || amount !== null, {
       message: 'No amount given',
     })
@@ -60,12 +56,12 @@ const useInputAmount = (
   errorOnEmptyValue: boolean,
   setAmount?: (newAmount: BN | null) => void,
   minErrorMessage?: string,
-  maxErrorMessage?: string
+  maxErrorMessage?: string,
 ) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBnToDisplayAmount(amount, INPUT_AMOUNT_FORMAT) : ''
+    amount !== null ? formatBn(amount, INPUT_AMOUNT_FORMAT) : '',
   );
 
   const handleChange = useCallback(
@@ -92,7 +88,7 @@ const useInputAmount = (
         max,
         errorOnEmptyValue,
         minErrorMessage,
-        maxErrorMessage
+        maxErrorMessage,
       );
 
       setErrorMessage(errorMessage);
@@ -107,19 +103,15 @@ const useInputAmount = (
         // Allow the amount string to be removed, by setting its value
         // to null.
         setAmount(
-          newAmountString === ''
-            ? null
-            : convertAmountStringToChainUnits(newAmountString)
+          newAmountString === '' ? null : parseChainUnits(newAmountString),
         );
       }
     },
-    [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount]
+    [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount],
   );
 
   const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
-    setDisplayAmount(
-      formatBnToDisplayAmount(newDisplayAmount, INPUT_AMOUNT_FORMAT)
-    );
+    setDisplayAmount(formatBn(newDisplayAmount, INPUT_AMOUNT_FORMAT));
   }, []);
 
   return {

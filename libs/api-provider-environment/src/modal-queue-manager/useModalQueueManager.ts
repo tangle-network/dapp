@@ -7,7 +7,7 @@ const useModalQueueManager = () => {
   const ctx = useContext(ModalQueueManagerContext);
   if (!ctx) {
     throw new Error(
-      'useModalQueueManager must be used within a ModalQueueManagerProvider'
+      'useModalQueueManager must be used within a ModalQueueManagerProvider',
     );
   }
   return ctx;

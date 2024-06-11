@@ -33,7 +33,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
     maxRestakingAmount?.sub(restakeAmount ?? BN_ZERO) ?? null;
 
   const [selectedRoles, setSelectedRoles] = useState<RestakingService[]>(
-    Object.keys(allocations) as RestakingService[]
+    Object.keys(allocations) as RestakingService[],
   );
 
   const handleToggleRole = useCallback(
@@ -42,13 +42,13 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
 
       if (isSelected) {
         setSelectedRoles((roles) =>
-          roles.filter((selectedRole) => selectedRole !== role)
+          roles.filter((selectedRole) => selectedRole !== role),
         );
       } else {
         setSelectedRoles((roles) => [...roles, role]);
       }
     },
-    [selectedRoles]
+    [selectedRoles],
   );
 
   // Update allocations when the selected roles changes.

@@ -9,7 +9,7 @@ import {
   useCopyable,
 } from '@webb-tools/webb-ui-components';
 import { QRScanLineIcon } from '@webb-tools/icons';
-import { shortenHex } from '@webb-tools/webb-ui-components';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { useReceiveModal } from '../hooks';
 import { NOTE_ACCOUNT_DOCS_URL } from '../constants/links';
 
@@ -21,7 +21,7 @@ const ReceiveModal: FC = () => {
     (isOpen: boolean) => {
       toggleModal(isOpen);
     },
-    [toggleModal]
+    [toggleModal],
   );
 
   const closeModal = useCallback(() => {

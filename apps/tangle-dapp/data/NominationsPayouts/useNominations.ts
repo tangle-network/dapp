@@ -18,7 +18,7 @@ const useNominations = () => {
   const { result: exposures } = useStakingExposures();
 
   const { result: sessionValidators } = useApiRx(
-    useCallback((api) => api.query.session.validators(), [])
+    useCallback((api) => api.query.session.validators(), []),
   );
 
   const { result: nominationInfoOpt } = useApiRx(
@@ -30,8 +30,8 @@ const useNominations = () => {
 
         return api.query.staking.nominators(activeSubstrateAddress);
       },
-      [activeSubstrateAddress]
-    )
+      [activeSubstrateAddress],
+    ),
   );
 
   const nominees = useMemo<Optional<Nominee[]> | null>(() => {
@@ -54,7 +54,7 @@ const useNominations = () => {
 
       // TODO: Turn this into a set, and then use `has` instead of `some`.
       const isActive = sessionValidators.some(
-        (validatorAddress) => validatorAddress.toString() === nomineeAddress
+        (validatorAddress) => validatorAddress.toString() === nomineeAddress,
       );
 
       return createNominee({

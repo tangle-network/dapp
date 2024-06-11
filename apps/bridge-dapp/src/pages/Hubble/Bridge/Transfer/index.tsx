@@ -90,10 +90,10 @@ const Transfer = () => {
   const handleChainClick = useCallback(
     (destChain?: boolean) => {
       navigate(
-        destChain ? SELECT_DESTINATION_CHAIN_PATH : SELECT_SOURCE_CHAIN_PATH
+        destChain ? SELECT_DESTINATION_CHAIN_PATH : SELECT_SOURCE_CHAIN_PATH,
       );
     },
-    [navigate]
+    [navigate],
   );
 
   const handleTokenClick = useCallback(() => {
@@ -105,7 +105,7 @@ const Transfer = () => {
       const addr = await window.navigator.clipboard.readText();
 
       setRecipient(addr);
-    } catch (e) {
+    } catch {
       notificationApi({
         message: 'Failed to read clipboard',
         secondaryMessage:
@@ -189,7 +189,7 @@ const Transfer = () => {
   const gasFees = useMemo(
     () =>
       gasFeeInfo ? parseFloat(formatEther(gasFeeInfo).slice(0, 10)) : undefined,
-    [gasFeeInfo]
+    [gasFeeInfo],
   );
 
   const relayerFees = useMemo(
@@ -197,7 +197,7 @@ const Transfer = () => {
       relayerFeeInfo
         ? parseFloat(formatEther(relayerFeeInfo.estimatedFee).slice(0, 10))
         : undefined,
-    [relayerFeeInfo]
+    [relayerFeeInfo],
   );
 
   const remainingBalance = useMemo(() => {

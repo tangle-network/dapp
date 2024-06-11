@@ -17,7 +17,7 @@ function isSubstrateAddress(address: string): boolean {
     try {
       encodeAddress(address);
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }

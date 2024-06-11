@@ -22,14 +22,14 @@ const usePayoutAllTx = () => {
         ({ validatorSubstrateAddress, era }) => {
           // The precompile function expects a 32-byte address.
           const validatorEvmAddress32 = toEvmAddress32(
-            validatorSubstrateAddress
+            validatorSubstrateAddress,
           );
 
           return createEvmBatchCallData(Precompile.STAKING, 'payoutStakers', [
             validatorEvmAddress32,
             era,
           ]);
-        }
+        },
       );
 
       return {
@@ -46,7 +46,7 @@ const usePayoutAllTx = () => {
             toSubstrateAddress(validatorAddress);
 
           return api.tx.staking.payoutStakers(validatorSubstrateAddress, era);
-        }
+        },
       );
 
       return optimizeTxBatch(api, txs);

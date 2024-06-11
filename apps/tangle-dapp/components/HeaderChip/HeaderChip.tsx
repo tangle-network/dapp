@@ -23,7 +23,7 @@ export const HeaderChip: FC<HeaderChipItemProps> = ({
         <ChipText label={label} />
       </Chip>
     ),
-    [Icon, label]
+    [Icon, label],
   );
 
   if (hasTooltip && tooltipContent) {

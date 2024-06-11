@@ -24,8 +24,8 @@ export const DEFAULT_OPENGRAPH_METADATA = {
   metadataBase: process.env.URL
     ? new URL(process.env.URL)
     : process.env.PORT != null
-    ? new URL(`http://localhost:${process.env.PORT}`)
-    : null,
+      ? new URL(`http://localhost:${process.env.PORT}`)
+      : new URL(TANGLE_DAPP_URL), // Fallback to the default URL
   openGraph: {
     title: `${APP_NAME} | ${APP_SUBTITLE}`,
     description: APP_DESCRIPTION,

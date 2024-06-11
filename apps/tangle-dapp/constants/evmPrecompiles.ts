@@ -31,12 +31,12 @@ export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
       | 'validatorCount'
       | 'withdrawUnbonded'
   : T extends Precompile.VESTING
-  ? 'vest'
-  : T extends Precompile.BATCH
-  ? 'batchAll' | 'batchSome' | 'batchSomeUntilFailure'
-  : T extends Precompile.BALANCES_ERC20
-  ? 'transfer'
-  : never;
+    ? 'vest'
+    : T extends Precompile.BATCH
+      ? 'batchAll' | 'batchSome' | 'batchSomeUntilFailure'
+      : T extends Precompile.BALANCES_ERC20
+        ? 'transfer'
+        : never;
 
 type AbiType =
   | 'uint256'
@@ -523,7 +523,7 @@ export const BALANCES_ERC20_PRECOMPILE_ABI: AbiFunction<Precompile.BALANCES_ERC2
   ];
 
 export function getPrecompileAddress(
-  precompile: Precompile
+  precompile: Precompile,
 ): PrecompileAddress {
   switch (precompile) {
     case Precompile.STAKING:
@@ -538,7 +538,7 @@ export function getPrecompileAddress(
 }
 
 export function getPrecompileAbi(
-  precompile: Precompile
+  precompile: Precompile,
 ): AbiFunction<Precompile>[] {
   switch (precompile) {
     case Precompile.STAKING:

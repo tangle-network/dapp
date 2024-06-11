@@ -69,7 +69,7 @@ export const getErrorMessage = (error: unknown) => {
  * Check if an unknown error has a `transactionHash` property
  */
 const hasTransactionHash = (
-  error: unknown
+  error: unknown,
 ): error is { transactionHash: string } => {
   return (
     typeof error === 'object' && error !== null && 'transactionHash' in error
@@ -80,7 +80,7 @@ const hasTransactionHash = (
  * Check if an unknown error has a `transaction` property
  */
 const hasTransaction = (
-  error: unknown
+  error: unknown,
 ): error is { transaction: Transaction } => {
   return typeof error === 'object' && error !== null && 'transaction' in error;
 };
@@ -89,7 +89,7 @@ const hasTransaction = (
  * Check if an unknown error has a `receipt` property
  */
 const hasReceipt = (
-  error: unknown
+  error: unknown,
 ): error is { receipt: TransactionReceipt } => {
   return typeof error === 'object' && error !== null && 'receipt' in error;
 };

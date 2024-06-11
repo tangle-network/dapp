@@ -1,9 +1,9 @@
-import { useMemo, forwardRef } from 'react';
-import { ChartContainerProps } from './types';
-import { Chip } from '../Chip';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
-import { getRoundedAmountString } from '../../utils';
+import { getRoundedAmountString } from '../../utils/getRoundedAmountString';
+import { Chip } from '../Chip';
+import { ChartContainerProps } from './types';
 
 /**
  * Container for charts (e.g. TVL, Volume, etc.) that displays chart heading, value, chart (should be passed as a child) and along with optional chart filters (e.g days, tokens and chains).
@@ -35,12 +35,12 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const className = useMemo(() => {
       return twMerge(
         'p-6 flex flex-col justify-between gap-4 border-2 rounded-lg dark:border-mono-160 border-mono-0',
-        wrapperClassName
+        wrapperClassName,
       );
     }, [wrapperClassName]);
 
@@ -125,14 +125,13 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
                   M
                 </Chip>
               </>
-            ) : filterType === 'tokensAndChains' ? (
-              <>{/* Token and Chain selectors */}</>
-            ) : null}
+            ) : // Token and Chain selectors
+            filterType === 'tokensAndChains' ? null : null}
           </div>
         </div>
 
         <div>{children}</div>
       </div>
     );
-  }
+  },
 );

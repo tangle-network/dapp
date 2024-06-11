@@ -61,7 +61,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       isTotalLoading,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <Accordion
@@ -69,7 +69,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         className={twMerge(
           'rounded-lg w-full',
           'bg-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
-          className
+          className,
         )}
         ref={ref}
         collapsible
@@ -83,7 +83,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
           <AccordionButtonBase
             className={cx(
               'group flex items-center justify-between w-full',
-              'p-3'
+              'p-3',
             )}
           >
             <TitleWithInfo
@@ -106,7 +106,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                     {typeof totalFee === 'number'
                       ? `~${numberToString(totalFee).slice(
                           0,
-                          10
+                          10,
                         )} ${totalFeeToken}`.trim()
                       : '-'}
                   </Typography>
@@ -122,7 +122,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                 className={cx(
                   'ml-2 fill-mono-120 dark:fill-mono-100 duration-300',
                   'group-radix-state-open:rotate-180',
-                  'group-radix-state-closed:rotate-0'
+                  'group-radix-state-closed:rotate-0',
                 )}
               />
             </div>
@@ -132,7 +132,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
             className={cx(
               'overflow-hidden p-0',
               'radix-state-open:animate-accordion-slide-down',
-              'radix-state-closed:animate-accordion-slide-up'
+              'radix-state-closed:animate-accordion-slide-up',
             )}
           >
             {/** Put content in the <div></div> to prevent UI shifting when animating */}
@@ -148,7 +148,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                     valueInUsd,
                     isLoading,
                   },
-                  index
+                  index,
                 ) => (
                   <div
                     className="flex items-center justify-between text-mono-120 dark:text-mono-100"
@@ -163,7 +163,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                           size: 'md',
                           className: twMerge(
                             Icon.props.className,
-                            '!fill-current'
+                            '!fill-current',
                           ),
                         })}
 
@@ -192,7 +192,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                               {typeof value === 'number'
                                 ? `~${numberToString(value).slice(
                                     0,
-                                    10
+                                    10,
                                   )} ${tokenSymbol}`.trim()
                                 : '-'}
                             </Typography>
@@ -213,14 +213,14 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                       )}
                     </div>
                   </div>
-                )
+                ),
               )}
             </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     );
-  }
+  },
 );
 
 FeeDetails.displayName = 'FeeDetails';

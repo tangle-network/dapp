@@ -17,14 +17,14 @@ class Storage<Store> extends EventBus<{
   static instances = new Map<string, Storage<any>>();
 
   static get<Store extends Record<string, unknown>>(
-    key: string
+    key: string,
   ): Storage<Store> {
     return Storage.instances.get(key) as Storage<Store>;
   }
 
   static async newFresh<Store>(
     name: string,
-    handler: StorageHandler<Store>
+    handler: StorageHandler<Store>,
   ): Promise<Storage<Store>> {
     const instance = new Storage<Store>(name, handler);
 
@@ -36,7 +36,7 @@ class Storage<Store> extends EventBus<{
 
   static async newFromCache<Store>(
     name: string,
-    data: Omit<StorageHandler<Store>, 'inner'>
+    data: Omit<StorageHandler<Store>, 'inner'>,
   ): Promise<Storage<Store>> {
     const storage = await data.fetch(name);
     const instance = new Storage<Store>(name, {
@@ -53,7 +53,10 @@ class Storage<Store> extends EventBus<{
   private readonly commit: StorageHandler<Store>['commit'];
   private data: Store;
 
-  private constructor(readonly name: string, data: StorageHandler<Store>) {
+  private constructor(
+    readonly name: string,
+    data: StorageHandler<Store>,
+  ) {
     super();
 
     this.data = data.inner;

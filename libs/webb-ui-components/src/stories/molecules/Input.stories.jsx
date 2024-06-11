@@ -1,7 +1,4 @@
-import React from 'react';
-
-import { Input } from '@webb-tools/webb-ui-components/components';
-import { Graph } from '@webb-tools/icons';
+import { Input } from '../../components/Input/Input';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -34,8 +31,8 @@ WithReadonly.args = {
   className: 'mt-3',
 };
 // TODO: Figure out how to pass component as prop
-export const isDisabled = Template.bind({});
-isDisabled.args = {
+export const IsDisabled = Template.bind({});
+IsDisabled.args = {
   id: 'disabled',
   name: 'disabled',
   value: 'disabled',
@@ -43,16 +40,16 @@ isDisabled.args = {
   className: 'mt-3',
 };
 
-export const isInvalid = Template.bind({});
-isInvalid.args = {
+export const IsInvalid = Template.bind({});
+IsInvalid.args = {
   id: 'invalid',
   value: 'isInvalid',
   isInvalid: true,
   className: 'mt-3',
 };
 
-export const withError = Template.bind({});
-withError.args = {
+export const WithError = Template.bind({});
+WithError.args = {
   id: 'withError',
   value: 'withError',
   isInvalid: true,

@@ -55,7 +55,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
           'border-mono-0 bg-mono-0/70 dark:border-mono-160 dark:bg-mono-0/5',
           'dark:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] dark:backdrop-blur-sm',
           'w-full lg:!w-fit flex items-center lg:h-[325px]',
-          className
+          className,
         )}
         ref={ref}
       >
@@ -77,7 +77,7 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
         <Logo className="absolute bottom-0 right-0 rounded-br-2xl overflow-hidden" />
       </div>
     );
-  }
+  },
 );
 
 export default AccountSummaryCard;
@@ -95,19 +95,19 @@ function useShieldedBalances() {
       const existedRecord = acc.get(+currencyId);
       const totalCurrentRecord = Object.values(balancesRecord).reduce(
         (acc, balance) => acc + balance,
-        ZERO_BIG_INT
+        ZERO_BIG_INT,
       );
 
       acc.set(
         +currencyId,
         typeof existedRecord === 'bigint'
           ? existedRecord + totalCurrentRecord
-          : totalCurrentRecord
+          : totalCurrentRecord,
       );
 
       return acc;
     },
-    new Map<number, bigint>()
+    new Map<number, bigint>(),
   );
 }
 
@@ -179,7 +179,7 @@ function TotalShieldedBalance() {
               'flex items-center gap-1 disabled:cursor-not-allowed',
               {
                 hidden: !tokenSymbol,
-              }
+              },
             )}
             disabled={availableCurrencyCfgs.length === 0 || !tokenSymbol}
           >

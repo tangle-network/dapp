@@ -1,19 +1,83 @@
-import { chainsConfig } from '@webb-tools/dapp-config';
-import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
-import { BridgeTokenType } from '../types';
+import { BridgeTokenId, BridgeTokenType, ChainId } from '../types/bridge';
 
-// This is just a temporary variable to use as supported source and destination chains
-export const BRIDGE_SUPPORTED_CHAINS: ChainConfig[] = [
-  chainsConfig[PresetTypedChainId.TangleMainnetNative],
-  chainsConfig[PresetTypedChainId.TangleTestnetNative],
-];
-
-// This is just a temporary variable to use as supported tokens
-export const BRIDGE_SUPPORTED_TOKENS: BridgeTokenType[] = [
-  {
-    id: '0x0',
-    symbol: 'TNT',
+export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
+  tTNT: {
+    id: 'tTNT',
+    symbol: 'tTNT',
+    existentialDeposit: {},
+    destChainTransactionFee: {},
+    decimals: { default: 18 },
   },
-];
+  TNT: {
+    id: 'TNT',
+    symbol: 'TNT',
+    existentialDeposit: {},
+    destChainTransactionFee: {},
+    decimals: { default: 18 },
+  },
+};
+
+// A Map with key as source chain id and value as another map
+// with key as destination chain id and value as supported tokens
+type BridgeType = Record<
+  ChainId, // Source Chain Id
+  Record<
+    ChainId, // Destination Chain Id
+    {
+      supportedTokens: BridgeTokenId[];
+    }
+  >
+>;
+
+// TODO: This is a dummy data for now
+export const BRIDGE: BridgeType = {
+  [PresetTypedChainId.TangleMainnetEVM]: {
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleTestnetNative]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleMainnetNative]: {
+      supportedTokens: ['TNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleTestnetEVM]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleTestnetNative]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleMainnetNative]: {
+      supportedTokens: ['tTNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleMainnetNative]: {
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['TNT'],
+    },
+    [PresetTypedChainId.TangleTestnetNative]: {
+      supportedTokens: ['TNT'],
+    },
+  },
+
+  [PresetTypedChainId.TangleTestnetNative]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleTestnetEVM]: {
+      supportedTokens: ['tTNT'],
+    },
+    [PresetTypedChainId.TangleMainnetNative]: {
+      supportedTokens: ['tTNT'],
+    },
+  },
+};

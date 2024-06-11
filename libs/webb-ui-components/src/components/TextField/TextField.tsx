@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { Typography } from '../../typography';
 
 const TextFieldContext = createContext<TextFieldContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
@@ -42,7 +42,7 @@ const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
                 !isDisabledHoverStyle && !isDisabled && !error,
               'outline-red-70 dark:outline-red-90': error,
             }),
-            className
+            className,
           )}
         >
           <TextFieldContext.Provider value={{ isDisabled, error }}>
@@ -61,7 +61,7 @@ const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
         )}
       </>
     );
-  }
+  },
 );
 TextFieldRoot.displayName = 'TextFieldRoot';
 
@@ -81,11 +81,11 @@ const TextFieldSlot = forwardRef<React.ElementRef<'div'>, TextFieldSlotProps>(
             '!text-mono-100': !context?.isDisabled,
             'text-mono-80 dark:text-mono-120': context?.isDisabled,
           }),
-          className
+          className,
         )}
       />
     );
-  }
+  },
 );
 TextFieldSlot.displayName = 'TextFieldSlot';
 
@@ -100,27 +100,24 @@ const TextFieldInput = forwardRef<
     props;
 
   const input = (
-    <>
-      <input
-        spellCheck="false"
-        type="text"
-        {...inputProps}
-        disabled={context?.isDisabled ?? isDisabled}
-        ref={forwardedRef}
-        className={twMerge(
-          'h4 font-bold grow bg-transparent focus-visible:outline-none',
-          'focus:ring-0 border-0 p-0 w-full',
-          cx({
-            'text-mono-200 dark:text-mono-0': !isDisabled,
-            'text-mono-80 dark:text-mono-120': isDisabled,
-            'placeholder:text-mono-100': !isDisabled,
-            'placeholder:text-mono-80 dark:placeholder:text-mono-120':
-              isDisabled,
-          }),
-          className
-        )}
-      />
-    </>
+    <input
+      spellCheck="false"
+      type="text"
+      {...inputProps}
+      disabled={context?.isDisabled ?? isDisabled}
+      ref={forwardedRef}
+      className={twMerge(
+        'h4 font-bold grow !bg-transparent focus-visible:!outline-none',
+        'focus:!ring-0 !border-0 !p-0 w-full',
+        cx({
+          'text-mono-200 dark:text-mono-0': !isDisabled,
+          'text-mono-80 dark:text-mono-120': isDisabled,
+          'placeholder:text-mono-100': !isDisabled,
+          'placeholder:text-mono-80 dark:placeholder:text-mono-120': isDisabled,
+        }),
+        className,
+      )}
+    />
   );
 
   return hasRoot ? (
@@ -143,9 +140,7 @@ const TextField = Object.assign(
     Root: TextFieldRoot,
     Slot: TextFieldSlot,
     Input: TextFieldInput,
-  }
+  },
 );
-
-export default TextField;
 
 export { TextField, TextFieldRoot, TextFieldSlot, TextFieldInput };

@@ -1,7 +1,13 @@
 //@ts-check
 
+// We still use CommonJS for Next.js apps as Nx plugins are not yet supported in ES modules
+// Track the issues here:
+// - https://github.com/nrwl/nx/issues/15682
+// - https://github.com/nrwl/nx/issues/23048#issuecomment-2120106231
+
+const withBundleAnalyzer = require('@next/bundle-analyzer');
 const { composePlugins, withNx } = require('@nx/next');
-const nextConfigBase = require('../../next.config.js');
+const nextConfigBase = require('../../next.config.cjs');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -39,7 +45,10 @@ const nextConfig = {
         : 'static/wasm/[modulehash].wasm';
 
     // Since Webpack 5 doesn't enable WebAssembly by default, we should do it manually
-    config.experiments = { ...config.experiments, asyncWebAssembly: true };
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
 
     if (!isServer) {
       config.resolve.fallback = {
@@ -57,13 +66,45 @@ const nextConfig = {
       exprContextCritical: false,
     };
 
+    // Handle SVG imports
+    // @see https://react-svgr.com/docs/next/#usage
+    // Grab the existing rule that handles SVG imports
+    const fileLoaderRule = config.module.rules.find(
+      (/** @type {{ test: { test: (arg0: string) => any; }; }} */ rule) =>
+        rule.test?.test?.('.svg'),
+    );
+
+    config.module.rules.push(
+      // Reapply the existing rule, but only for svg imports ending in ?url
+      {
+        ...fileLoaderRule,
+        test: /\.svg$/i,
+        resourceQuery: /url/, // *.svg?url
+      },
+      // Convert all other *.svg imports to React components
+      {
+        test: /\.svg$/i,
+        issuer: fileLoaderRule.issuer,
+        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        use: ['@svgr/webpack'],
+      },
+    );
+
+    // Modify the file loader rule to ignore *.svg, since we have it handled now.
+    fileLoaderRule.exclude = /\.svg$/i;
+
     return config;
   },
 };
 
+/** @type {(import('@nx/next').withNx | ReturnType<import('@next/bundle-analyzer')>)[]} */
 const plugins = [
   // Add more Next.js plugins to this list if needed.
   withNx,
 ];
+
+if (process.env.ANALYZE === 'true') {
+  plugins.push(withBundleAnalyzer({ enabled: true }));
+}
 
 module.exports = composePlugins(...plugins)(nextConfig);

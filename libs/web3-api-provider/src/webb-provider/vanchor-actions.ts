@@ -1,3 +1,4 @@
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   ActiveWebbRelayer,
   NewNotesTxResult,
@@ -53,7 +54,7 @@ import {
   PublicClient,
   getContract,
 } from 'viem';
-import { getPublicClient } from 'wagmi/actions';
+import { getPublicClient, getWalletClient } from 'wagmi/actions';
 import { handleVAnchorTxState } from '../utils';
 import { WebbWeb3Provider } from '../webb-provider';
 
@@ -64,22 +65,30 @@ export class Web3VAnchorActions extends VAnchorActions<
   static async getNextIndex(
     apiConfig: ApiConfig,
     typedChainId: number,
-    fungibleCurrencyId: number
+    fungibleCurrencyId: number,
   ): Promise<bigint> {
     const { chainId } = parseTypedChainId(typedChainId);
 
     const anchor = apiConfig.getAnchorIdentifier(
       fungibleCurrencyId,
-      typedChainId
+      typedChainId,
     );
     if (!anchor) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
+    const client = getPublicClient(getWagmiConfig(), {
+      chainId,
+    });
+
+    if (!client) {
+      throw WebbError.from(WebbErrorCodes.NoClientAvailable);
+    }
+
     const vAnchorContract = getContract({
       abi: VAnchor__factory.abi,
       address: ensureHex(anchor),
-      client: getPublicClient({ chainId: chainId }),
+      client,
     });
 
     const nextIdx = await vAnchorContract.read.getNextIndex();
@@ -90,7 +99,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async prepareTransaction(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
-    wrapUnwrapToken: string
+    wrapUnwrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
 
@@ -109,7 +118,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'web3'>,
-    changeNotes: Note[]
+    changeNotes: Note[],
   ): Promise<Hash> | never {
     const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
       txArgs;
@@ -131,7 +140,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
       this.inner.publicClient,
-      tx
+      tx,
     );
 
     // Pad the input & output utxo
@@ -141,7 +150,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const { extAmount, extData, publicInputs } = await vAnchor.setupTransaction(
       inputUtxos,
       [outputUtxos[0], outputUtxos[1]],
-      ...restArgs
+      ...restArgs,
     );
 
     tx.next(TransactionState.InitializingTransaction, undefined);
@@ -172,10 +181,10 @@ export class Web3VAnchorActions extends VAnchorActions<
           publicAmount: publicInputs.publicAmount,
           roots: publicInputs.roots,
           outputCommitments: publicInputs.outputCommitments.map((output) =>
-            padHexString(ensureHex(output.toString(16)))
+            padHexString(ensureHex(output.toString(16))),
           ),
           inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
-            padHexString(ensureHex(nullifier.toString(16)))
+            padHexString(ensureHex(nullifier.toString(16))),
           ),
         },
       });
@@ -199,14 +208,14 @@ export class Web3VAnchorActions extends VAnchorActions<
         case RelayedWithdrawResult.Errored: {
           changeNotes.forEach(async (note) => {
             const { chainId, chainType } = parseTypedChainId(
-              +note.note.targetChainId
+              +note.note.targetChainId,
             );
 
             const resourceId =
               await this.inner.methods.variableAnchor.actions.inner.getResourceId(
                 note.note.targetIdentifyingData,
                 chainId,
-                chainType
+                chainType,
               );
 
             this.inner.noteManager?.removeNote(resourceId, note);
@@ -237,12 +246,12 @@ export class Web3VAnchorActions extends VAnchorActions<
     recipient: Address,
     relayer: Address,
     wrapUnwrapToken: Address,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
   ) {
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
       this.inner.publicClient,
-      tx
+      tx,
     );
 
     tx.txHash = '';
@@ -253,6 +262,11 @@ export class Web3VAnchorActions extends VAnchorActions<
     if (tx.name !== 'Deposit') {
       gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
     }
+
+    const walletClient = await getWalletClient(getWagmiConfig(), {
+      chainId: parseTypedChainId(typedChainId).chainId,
+      connector: this.inner.connector,
+    });
 
     const hash = await vAnchor.transact(
       inputs,
@@ -265,11 +279,11 @@ export class Web3VAnchorActions extends VAnchorActions<
       leavesMap,
       {
         gas: gasLimit,
-        walletClient: this.inner.walletClient,
+        walletClient,
         onTransactionState(state, payload) {
           handleVAnchorTxState(tx, state, payload);
         },
-      }
+      },
     );
 
     tx.txHash = hash;
@@ -284,12 +298,12 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   async getLatestNeighborEdges(
     fungibleId: number,
-    typedChainIdArg?: number | undefined
+    typedChainIdArg?: number | undefined,
   ): Promise<ReadonlyArray<NeighborEdge>> {
     const typedChainId = typedChainIdArg ?? this.inner.typedChainId;
     const anchorId = this.inner.config.getAnchorIdentifier(
       fungibleId,
-      typedChainId
+      typedChainId,
     );
 
     if (!anchorId) {
@@ -298,7 +312,9 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const vAnchorContract = this.inner.getVAnchorContractByAddressAndProvider(
       anchorId,
-      getPublicClient({ chainId: parseTypedChainId(typedChainId).chainId })
+      getPublicClient(getWagmiConfig(), {
+        chainId: parseTypedChainId(typedChainId).chainId,
+      }),
     );
 
     return vAnchorContract.read.getLatestNeighborEdges();
@@ -308,7 +324,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async isPairRegistered(
     anchorAddress: string,
     account: string,
-    keyData: string
+    keyData: string,
   ): Promise<boolean> {
     // Check the localStorage for now.
     // TODO: Implement a query on relayers?
@@ -326,7 +342,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async register(
     anchorAddress: string,
     account: Address,
-    keyData: Address
+    keyData: Address,
   ): Promise<boolean> {
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(anchorAddress);
@@ -342,13 +358,13 @@ export class Web3VAnchorActions extends VAnchorActions<
     try {
       const { request } = await vAnchorContract.simulate.register(
         [{ owner: account, keyData }],
-        { account }
+        { account },
       );
 
       const txHash = await this.inner.walletClient.writeContract(request);
 
       await this.inner.publicClient.waitForTransactionReceipt({ hash: txHash });
-    } catch (ex) {
+    } catch {
       this.inner.notificationHandler({
         description: 'Account Registration Failed',
         key: 'register',
@@ -386,7 +402,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     anchorAddress: string,
     owner: Keypair,
     startingBlock?: bigint,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<Note[]> {
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(anchorAddress);
@@ -395,7 +411,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       vAnchorContract,
       owner,
       startingBlock,
-      abortSignal
+      abortSignal,
     );
 
     return notes;
@@ -412,7 +428,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       relayer: Address;
       wrapUnwrapToken: string;
       leavesMap: Record<string, Uint8Array[]>;
-    }
+    },
   ): Promise<bigint> | never {
     const account = this.inner.walletClient.account;
     if (!account) {
@@ -421,13 +437,13 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const vAnchorInstance = await this.inner.getVAnchorInstance(
       vAnchorAddress,
-      this.inner.publicClient
+      this.inner.publicClient,
     );
 
     const inUtxos = await vAnchorInstance.padUtxos(option.inputs, 16); // 16 is the max number of inputs
     const [outUtxo1, outUtxo2] = await vAnchorInstance.padUtxos(
       option.outputs,
-      2
+      2,
     ); // 2 is the max number of outputs
 
     const { publicInputs, extData, extAmount } =
@@ -439,13 +455,13 @@ export class Web3VAnchorActions extends VAnchorActions<
         option.recipient,
         option.relayer,
         option.wrapUnwrapToken,
-        option.leavesMap
+        option.leavesMap,
       );
 
     const options = await vAnchorInstance.getWrapUnwrapOptions(
       extAmount,
       option.refund,
-      option.wrapUnwrapToken
+      option.wrapUnwrapToken,
     );
 
     return vAnchorInstance.contract.estimateGas.transact(
@@ -459,13 +475,13 @@ export class Web3VAnchorActions extends VAnchorActions<
       {
         account,
         value: options.value ?? ZERO_BIG_INT,
-      }
+      },
     );
   }
 
   async commitmentsSetup(
     notes: Note[],
-    tx?: TransactionExecutor<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>,
   ) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
@@ -492,7 +508,7 @@ export class Web3VAnchorActions extends VAnchorActions<
         leavesMap,
         destVAnchor,
         treeHeight,
-        tx
+        tx,
       );
 
       notesLeaves.push(noteLeaves);
@@ -530,7 +546,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     txHash: Hash,
     note: Note,
     _: number, // Ignore the index before insertion
-    addressOrTreeId: string
+    addressOrTreeId: string,
   ): Promise<bigint> {
     const typedChainId = this.inner.typedChainId;
     const chain = this.inner.config.chains[typedChainId];
@@ -550,7 +566,7 @@ export class Web3VAnchorActions extends VAnchorActions<
         client: this.inner.publicClient,
       }),
       receipt.blockNumber,
-      receipt.blockNumber
+      receipt.blockNumber,
     );
 
     // Get the leaf index of the note
@@ -558,7 +574,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const log = logs.find((log) => log.args.commitment === depositedCommitment);
     if (!log) {
       console.error(
-        `Leaf index not found in log ${log}, falling back to \`${ZERO_BIG_INT}\``
+        `Leaf index not found in log ${log}, falling back to \`${ZERO_BIG_INT}\``,
       );
       return ZERO_BIG_INT;
     }
@@ -568,18 +584,23 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   async getNextIndex(
     typedChainId: number,
-    fungibleCurrencyId: number
+    fungibleCurrencyId: number,
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
     const anchor = this.inner.config.getAnchorIdentifier(
       fungibleCurrencyId,
-      typedChainId
+      typedChainId,
     );
     if (!chain || !anchor) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const publicClient = getPublicClient({ chainId: chain.id });
+    const publicClient = getPublicClient(getWagmiConfig(), {
+      chainId: chain.id,
+    });
+    if (!publicClient) {
+      throw WebbError.from(WebbErrorCodes.NoClientAvailable);
+    }
 
     const vAnchorContract = getContract({
       abi: VAnchor__factory.abi,
@@ -595,7 +616,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async getResourceId(
     anchorAddress: string,
     chainId: number,
-    chainType: ChainType
+    chainType: ChainType,
   ): Promise<ResourceId> {
     return new ResourceId(anchorAddress, chainType, chainId);
   }
@@ -603,7 +624,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async validateInputNotes(
     notes: readonly Note[],
     typedChainId: number,
-    fungibleId: number
+    fungibleId: number,
   ): Promise<boolean> {
     const edges = await this.getLatestNeighborEdges(fungibleId, typedChainId);
     const nextIdx = await this.getNextIndex(typedChainId, fungibleId);
@@ -622,7 +643,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   private async prepareDeposit(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
-    wrapToken: string
+    wrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     // Get the wrapped token and check the balance and approvals
     const tokenWrapper = await this.getTokenWrapperContract(payload);
@@ -663,7 +684,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   private async prepareWithdraw(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
-    unwrapToken: string
+    unwrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
 
@@ -692,7 +713,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   private async prepareTransfer(
     tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
-    _unwrapToken: string
+    _unwrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     const {
       changeUtxo,
@@ -742,7 +763,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       PublicClient
     >,
     treeHeight: number,
-    tx?: TransactionExecutor<NewNotesTxResult>
+    tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: bigint }> | never {
     if (tx) {
       // Fetching leaves from relayer initially
@@ -779,7 +800,11 @@ export class Web3VAnchorActions extends VAnchorActions<
       const { chainId } = parseTypedChainId(+parsedNote.sourceChainId);
       const sourceAnchorId = parsedNote.sourceIdentifyingData;
 
-      const sourcePublicClient = getPublicClient({ chainId });
+      const sourcePublicClient = getPublicClient(getWagmiConfig(), { chainId });
+      if (!sourcePublicClient) {
+        throw WebbError.from(WebbErrorCodes.NoClientAvailable);
+      }
+
       const sourceVAnchorContract = getContract({
         abi: VAnchor__factory.abi,
         address: ensureHex(sourceAnchorId),
@@ -789,7 +814,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       const resourceId = ResourceId.newFromContractAddress(
         sourceVAnchorContract.address,
         ChainType.EVM,
-        chainId
+        chainId,
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
@@ -804,7 +829,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       // Validate that the commitment is in the tree
       if (leafIndex === -1) {
         return Promise.reject(
-          WebbError.from(WebbErrorCodes.CommitmentNotInTree)
+          WebbError.from(WebbErrorCodes.CommitmentNotInTree),
         );
       }
 
@@ -815,7 +840,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       commitmentIndex = leafIndex;
     } else {
       const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
-        toFixedHex(leaf)
+        toFixedHex(leaf),
       );
 
       tx?.next(TransactionState.ValidatingLeaves, undefined);
@@ -824,13 +849,13 @@ export class Web3VAnchorActions extends VAnchorActions<
           treeHeight,
           leaves,
           destRelayedRoot,
-          commitment.toString()
+          commitment.toString(),
         );
 
       // Validate that the commitment is in the tree
       if (leafIndex === -1) {
         return Promise.reject(
-          WebbError.from(WebbErrorCodes.CommitmentNotInTree)
+          WebbError.from(WebbErrorCodes.CommitmentNotInTree),
         );
       }
 
@@ -843,7 +868,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       // so we need to reset the leaves
       if (provingLeaves.length > leaves.length) {
         leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) =>
-          hexToU8a(leaf)
+          hexToU8a(leaf),
         );
       }
     }
@@ -861,7 +886,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   private async getVAnchor(
     payload: Note,
-    isDestAnchor = false
+    isDestAnchor = false,
   ):
     | Promise<GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>>
     | never {
@@ -903,7 +928,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   private async checkHasBalance(
     payload: Note,
-    wrapUnwrapToken: string
+    wrapUnwrapToken: string,
   ): Promise<void> | never {
     const account = this.inner.walletClient.account;
     if (!account) {
@@ -937,12 +962,12 @@ export class Web3VAnchorActions extends VAnchorActions<
     // Notification failed transaction if not enough balance
     if (!hasBalance) {
       const { chainId, chainType } = parseTypedChainId(
-        +payload.note.targetChainId
+        +payload.note.targetChainId,
       );
       const resourceId = await this.getResourceId(
         payload.note.targetIdentifyingData,
         chainId,
-        chainType
+        chainType,
       );
 
       this.emit('stateChange', TransactionState.Failed);
@@ -958,7 +983,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     tokenWrapper: GetContractReturnType<
       typeof FungibleTokenWrapper__factory.abi,
       PublicClient
-    >
+    >,
   ): Promise<void> | never {
     tx.next(TransactionState.Intermediate, {
       name: 'Checking approval',
@@ -979,7 +1004,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       ensureHex(payload.note.sourceIdentifyingData),
       this.inner.publicClient,
       tx,
-      true
+      true,
     );
 
     const currentFungibleToken = srcVAnchor.getWebbToken();
@@ -1001,7 +1026,7 @@ export class Web3VAnchorActions extends VAnchorActions<
         : await srcVAnchor.isWrappableTokenApprovalRequired(
             ensureHex(wrapUnwrapToken),
             approvalValue,
-            account
+            account,
           );
 
       if (isRequiredApproval) {
@@ -1029,7 +1054,7 @@ export class Web3VAnchorActions extends VAnchorActions<
             {
               gas: BigInt('0x5B8D80'),
               account: account.address,
-            }
+            },
           );
 
           approvalHash = await this.inner.walletClient.writeContract(request);
@@ -1041,7 +1066,7 @@ export class Web3VAnchorActions extends VAnchorActions<
             {
               gas: BigInt('0x5B8D80'),
               account: account.address,
-            }
+            },
           );
 
           approvalHash = await this.inner.walletClient.writeContract(request);

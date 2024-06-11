@@ -18,5 +18,5 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         ref={ref}
       />
     );
-  }
+  },
 );

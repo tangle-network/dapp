@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-
-import { FixedAmount } from '@webb-tools/webb-ui-components/components';
+import noop from 'lodash/noop';
+import { FixedAmount } from '../../components/BridgeInputs/FixedAmount';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -19,12 +18,11 @@ export default {
 const Template = (args) => <FixedAmount {...args} />;
 
 export const Default = Template.bind({});
-// TODO: investigate handle change
-const handleChange = (nextVal) => setValue(nextVal);
+
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
   info: 'Fix amount',
   values: [0.1, 0.25, 0.5, 1],
   value: '0.1',
-  onChange: { handleChange },
+  onChange: { handleChange: noop },
 };

@@ -40,7 +40,7 @@ export abstract class OnChainConfigBase {
   abstract fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: PublicClient | ApiPromise
+    provider: PublicClient | ApiPromise,
   ): Promise<ICurrency | null>;
 
   /**
@@ -53,7 +53,7 @@ export abstract class OnChainConfigBase {
   abstract fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: PublicClient | ApiPromise
+    provider: PublicClient | ApiPromise,
   ): Promise<ICurrency[]>;
 
   /**
@@ -68,11 +68,11 @@ export abstract class OnChainConfigBase {
   abstract fetchCurrenciesConfig(
     anchorConfig: Record<number, string[]>,
     providerFactory: (
-      typedChainId: number
+      typedChainId: number,
     ) => Promise<PublicClient | ApiPromise>,
     existedCurreniciesConfig?: Record<number, CurrencyConfig>,
     existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>,
-    existedAnchorConfig?: Record<number, ChainAddressConfig>
+    existedAnchorConfig?: Record<number, ChainAddressConfig>,
   ): Promise<{
     currenciesConfig: Record<number, CurrencyConfig>;
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
@@ -84,7 +84,7 @@ export abstract class OnChainConfigBase {
       parseTypedChainId(typedChainId);
     assert(
       chainType === parsedChainType,
-      `Invalid chain type for ${chainType}`
+      `Invalid chain type for ${chainType}`,
     );
 
     return {
@@ -97,7 +97,7 @@ export abstract class OnChainConfigBase {
     currenciesResponse: CurrencyResponse[],
     currenciesConfig: Record<number, CurrencyConfig>,
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>,
-    anchorConfig: Record<string, ChainAddressConfig>
+    anchorConfig: Record<string, ChainAddressConfig>,
   ) {
     currenciesResponse.forEach(
       ({
@@ -112,7 +112,7 @@ export abstract class OnChainConfigBase {
         const existedNative = Object.values(currenciesConfig).find(
           (currency) =>
             currency.name === nativeCurrency.name &&
-            currency.symbol === nativeCurrency.symbol
+            currency.symbol === nativeCurrency.symbol,
         );
 
         const { address: nativeAddr, ...restNative } = nativeCurrency;
@@ -132,7 +132,7 @@ export abstract class OnChainConfigBase {
             existedNative.addresses.get(typedChainId) !== nativeAddr
           ) {
             console.error(
-              `Native currency ${existedNative.name} already exists on chain ${typedChainId}`
+              `Native currency ${existedNative.name} already exists on chain ${typedChainId}`,
             );
           }
 
@@ -144,7 +144,7 @@ export abstract class OnChainConfigBase {
         let existedFungible = Object.values(currenciesConfig).find(
           (currency) =>
             currency.name === fungibleCurrency.name &&
-            currency.symbol === fungibleCurrency.symbol
+            currency.symbol === fungibleCurrency.symbol,
         );
 
         const { address: fungbileAddr, ...restFungible } = fungibleCurrency;
@@ -165,7 +165,7 @@ export abstract class OnChainConfigBase {
             existedFungible.addresses.get(typedChainId) !== fungbileAddr
           ) {
             console.error(
-              `Fungible currency ${existedFungible.name} already exists on chain ${typedChainId}`
+              `Fungible currency ${existedFungible.name} already exists on chain ${typedChainId}`,
             );
           }
 
@@ -185,7 +185,7 @@ export abstract class OnChainConfigBase {
           ) {
             console.error(
               `Anchor for currency ${existedFungible.name} already exists on chain ${typedChainId}`,
-              `Current: ${existedAnchor[typedChainId]}, new one: ${anchorAddress}`
+              `Current: ${existedAnchor[typedChainId]}, new one: ${anchorAddress}`,
             );
           }
 
@@ -199,7 +199,7 @@ export abstract class OnChainConfigBase {
             let currentWrappble = Object.values(currenciesConfig).find(
               (currency) =>
                 currency.name === restWrappable.name &&
-                currency.symbol === restWrappable.symbol
+                currency.symbol === restWrappable.symbol,
             );
 
             if (!currentWrappble) {
@@ -218,7 +218,7 @@ export abstract class OnChainConfigBase {
                 currentWrappble.addresses.get(typedChainId) !== wrappableAddr
               ) {
                 console.error(
-                  `Wrappable currency ${currentWrappble.name} already exists on chain ${typedChainId}`
+                  `Wrappable currency ${currentWrappble.name} already exists on chain ${typedChainId}`,
                 );
               }
 
@@ -226,7 +226,7 @@ export abstract class OnChainConfigBase {
             }
 
             wrappableCurrencyConfigs.push(currentWrappble);
-          }
+          },
         );
 
         // Add fungible to wrappable map
@@ -235,12 +235,12 @@ export abstract class OnChainConfigBase {
         if (!wrappableMap) {
           fungibleToWrappableMap.set(
             existedFungible.id,
-            new Map([[typedChainId, wrappableIds]])
+            new Map([[typedChainId, wrappableIds]]),
           );
         } else {
           wrappableMap.set(typedChainId, wrappableIds);
         }
-      }
+      },
     );
 
     return {

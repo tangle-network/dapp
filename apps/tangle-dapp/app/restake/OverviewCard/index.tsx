@@ -1,6 +1,7 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
+import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import {
@@ -11,7 +12,6 @@ import {
   useMemo,
 } from 'react';
 
-import { InfoIconWithTooltip } from '../../../components/InfoIconWithTooltip';
 import TangleCard from '../../../components/TangleCard';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useRestakingAPY from '../../../data/restaking/useRestakingAPY';
@@ -37,7 +37,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
 
     const totalRestaked = useMemo(
       () => getTotalRestakedFromRestakeRoleLedger(ledgerOpt),
-      [ledgerOpt]
+      [ledgerOpt],
     );
 
     const availableForRestake = useMemo(() => {
@@ -98,7 +98,7 @@ const OverviewCard = forwardRef<ElementRef<'div'>, ComponentProps<'div'>>(
         </div>
       </TangleCard>
     );
-  }
+  },
 );
 
 OverviewCard.displayName = 'OverviewCard';

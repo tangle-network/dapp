@@ -11,7 +11,7 @@ export default function PoolTvlChartContainer(props: PoolChartPropsType) {
 
   const { data: { currentPoolTvl, poolTvlData } = {}, isLoading } = useSWR(
     [getPoolTvlChartData.name, poolAddress, startingEpoch, numDatesFromStart],
-    ([, ...args]) => getPoolTvlChartData(...args)
+    ([, ...args]) => getPoolTvlChartData(...args),
   );
 
   if (isLoading || !poolTvlData) {

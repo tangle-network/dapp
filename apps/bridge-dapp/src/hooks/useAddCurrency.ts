@@ -20,7 +20,7 @@ const getCurrencyImageUrl = async (symbol: string): Promise<string> => {
     }
 
     return url;
-  } catch (error) {
+  } catch {
     return '';
   }
 };
@@ -28,7 +28,7 @@ const getCurrencyImageUrl = async (symbol: string): Promise<string> => {
 export const recordAddedToken = (
   accountAddress: string,
   resourceId: ResourceId,
-  tokenAddress: string
+  tokenAddress: string,
 ) => {
   // Retrieve existing token storage
   const storedTokens = JSON.parse(localStorage.getItem('addedTokens') || '{}');
@@ -54,7 +54,7 @@ export const isTokenAddedToMetamask = (
   currency: Currency,
   activeChain?: Chain,
   accountAddress?: string,
-  resourceId?: ResourceId | null
+  resourceId?: ResourceId | null,
 ): boolean => {
   // Validate required parameters.
   if (!currency || !activeChain || !accountAddress || !resourceId) {
@@ -63,7 +63,7 @@ export const isTokenAddedToMetamask = (
 
   const typedChainId = calculateTypedChainId(
     activeChain.chainType,
-    activeChain.id
+    activeChain.id,
   );
 
   const tokenAddress = currency.getAddressOfChain(typedChainId);
@@ -76,7 +76,7 @@ export const isTokenAddedToMetamask = (
 
   // Check if the token is marked as added for the account and resourceId
   return Boolean(
-    storedTokens[accountAddress]?.[resourceId.toString()]?.[tokenAddress]
+    storedTokens[accountAddress]?.[resourceId.toString()]?.[tokenAddress],
   );
 };
 
@@ -103,7 +103,7 @@ export const useAddCurrency = () => {
 
       const typedChainId = calculateTypedChainId(
         activeChain.chainType,
-        activeChain.id
+        activeChain.id,
       );
 
       const address = currency.getAddressOfChain(typedChainId);
@@ -116,7 +116,7 @@ export const useAddCurrency = () => {
       try {
         await activeApi.watchAsset(
           currency,
-          await getCurrencyImageUrl(currency.view.symbol)
+          await getCurrencyImageUrl(currency.view.symbol),
         );
 
         if (accountAddress && currentResourceId && address) {
@@ -129,6 +129,6 @@ export const useAddCurrency = () => {
         return false;
       }
     },
-    [activeApi, activeChain, activeAccount, currentResourceId]
+    [activeApi, activeChain, activeAccount, currentResourceId],
   );
 };

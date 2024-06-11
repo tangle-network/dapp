@@ -1,3 +1,5 @@
+'use client';
+
 import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -55,11 +57,11 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       value: selectedChain,
       ...props
     },
-    ref
+    ref,
   ) => {
     // State for network category
     const [networkCategory, setNetworkCategory] = useState<ChainType['tag']>(
-      () => onlyCategory ?? defaultCategory
+      () => onlyCategory ?? defaultCategory,
     );
 
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
@@ -84,17 +86,17 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         setChain(nextChain);
         onChange?.(nextChain);
       },
-      [onChange]
+      [onChange],
     );
 
     const filteredChains = useMemo(
       () =>
         chains
           .filter((c) =>
-            c.name.toLowerCase().includes(searchText.toLowerCase())
+            c.name.toLowerCase().includes(searchText.toLowerCase()),
           ) // Filter by search text
           .filter((chain) => chain.tag === networkCategory), // Filter by network category
-      [chains, searchText, networkCategory]
+      [chains, searchText, networkCategory],
     );
 
     // Move the current active chain to the top of the list
@@ -104,7 +106,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       }
 
       const currentActiveChainIndex = filteredChains.findIndex(
-        (chain) => chain.name === currentActiveChain
+        (chain) => chain.name === currentActiveChain,
       );
 
       if (currentActiveChainIndex === -1) {
@@ -128,7 +130,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         chains.filter((chain) => chain.tag === 'dev').length,
         chains.filter((chain) => chain.tag === 'test').length,
       ],
-      [chains]
+      [chains],
     );
 
     return (
@@ -157,7 +159,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           {...overrideScrollAreaProps}
           className={twMerge(
             'lg:min-w-[350px] h-[376px]',
-            overrideScrollAreaProps?.className
+            overrideScrollAreaProps?.className,
           )}
         >
           <ul className="py-2">
@@ -270,7 +272,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         </div>
       </ListCardWrapper>
     );
-  }
+  },
 );
 
 export default ChainListCard;

@@ -39,7 +39,7 @@ function useCurrenciesFromRoute(typedChainId?: number) {
 
   const fungibleCurrencies = useMemo(() => {
     const currencyCfgs = Object.values(currencies).filter(
-      (currencyCfg) => currencyCfg.role === CurrencyRole.Governable
+      (currencyCfg) => currencyCfg.role === CurrencyRole.Governable,
     );
 
     const typedChainIdToUse = typedChainId ?? srcTypedChainId;
@@ -48,7 +48,7 @@ function useCurrenciesFromRoute(typedChainId?: number) {
     }
 
     return currencyCfgs.filter((currencyCfg) =>
-      Array.from(currencyCfg.addresses.keys()).includes(typedChainIdToUse)
+      Array.from(currencyCfg.addresses.keys()).includes(typedChainIdToUse),
     );
   }, [currencies, srcTypedChainId, typedChainId]);
 
@@ -76,7 +76,7 @@ function useCurrenciesFromRoute(typedChainId?: number) {
       return Array.from(wrappableSet.values()).map((id) => currencies[id]);
     },
     // prettier-ignore
-    [currencies, fungibleCfg, fungibleToWrappableMap, srcTypedChainId, typedChainId]
+    [currencies, fungibleCfg, fungibleToWrappableMap, srcTypedChainId, typedChainId],
   );
 
   const allCurrencyCfgs = useMemo(() => {

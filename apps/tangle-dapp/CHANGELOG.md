@@ -211,3 +211,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix cursor moves to the end when changing value in input - https://github.com/webb-tools/webb-dapp/pull/2234.
 - UI improvements on Tangle Dapp (Key Stats Item + Fix Footer bottom bound + Static Tangle Icon) - https://github.com/webb-tools/webb-dapp/pull/2256.
 - Fix account explorer link in wallet dropdown - https://github.com/webb-tools/webb-dapp/pull/2261.
+
+## [0.0.9] - 2024-05-27
+
+### Added
+
+- Add # of Active Services and Restake Amount to Validators Table in Nomination - https://github.com/webb-tools/webb-dapp/pull/2283
+- Backend Integration for Service Info Card and Participants table - https://github.com/webb-tools/webb-dapp/pull/2285
+- Added Loading Account Page - https://github.com/webb-tools/webb-dapp/pull/2300
+- Get Permitted Caller for Tangle Dapp - https://github.com/webb-tools/webb-dapp/pull/2303
+- Integrate backend on Active Service table on Overview page - https://github.com/webb-tools/webb-dapp/pull/2304
+- Add new Bridge page to the site with current functionalities of Bridge Container: select and switch Source & Destination Chain - https://github.com/webb-tools/webb-dapp/pull/2307
+- Switch chains in EVM wallets when switching networks - https://github.com/webb-tools/webb-dapp/pull/2311
+- Update Substrate wallet metadata when appropriate - https://github.com/webb-tools/webb-dapp/pull/2314
+- Added payouts loading state - https://github.com/webb-tools/webb-dapp/pull/2315
+- Show longest vesting schedule info - https://github.com/webb-tools/webb-dapp/pull/2324
+- Setup the code logic to handle different scenarios of bridging - https://github.com/webb-tools/webb-dapp/pull/2329
+
+### Changed
+
+- Update Chip for Restaking Service to normal case - https://github.com/webb-tools/webb-dapp/pull/2282
+- Font updated from Breeze Sans to Satoshi - https://github.com/webb-tools/webb-dapp/pull/2299
+- Transaction notification updates and Update HiddenValue to always display \*\*\*\* to increase privacy for users - https://github.com/webb-tools/webb-dapp/pull/2317
+- Update OpenGraph metadata and images - https://github.com/webb-tools/webb-dapp/pull/2323
+- README updated - https://github.com/webb-tools/webb-dapp/pull/2335
+
+### Fixed
+
+- Improve Balance Display - https://github.com/webb-tools/webb-dapp/pull/2289
+- Resolve Maximum Nomination Amount Error - https://github.com/webb-tools/webb-dapp/pull/2290
+- Slow Rendering of Checkboxes When Clicked - https://github.com/webb-tools/webb-dapp/pull/2291
+- Adjusted the dropdown body to be scrollable on webb-ui-kit, fixed the wrong theme icon and updated the background color of the theme switcher to improve the visual on the sidebar, show the correct number of active nominators on the nomination page, show cached stats value (if existed) instead of loading animation on the nomination page and show the correct staked amounts on the validators table - https://github.com/webb-tools/webb-dapp/pull/2294
+- Fixed total unclaimed payouts rewards bug and actual staked percentage bug - https://github.com/webb-tools/webb-dapp/pull/2335

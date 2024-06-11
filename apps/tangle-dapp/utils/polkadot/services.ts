@@ -5,7 +5,7 @@ import { BN } from '@polkadot/util';
 import {
   TANGLE_TO_SERVICE_TYPE_TSS_MAP,
   TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP,
-} from '../../constants';
+} from '../../constants/restaking';
 import { Service } from '../../types';
 
 /**
@@ -16,7 +16,7 @@ import { Service } from '../../types';
  */
 export function extractServiceDetails(
   id: string,
-  jobInfoData: Option<TanglePrimitivesJobsJobInfo>
+  jobInfoData: Option<TanglePrimitivesJobsJobInfo>,
 ): Service | null {
   if (!jobInfoData.isSome) {
     return null;
@@ -38,7 +38,7 @@ export function extractServiceDetails(
   if (jobType.isDkgtssPhaseOne) {
     const jobDetails = jobType.asDkgtssPhaseOne;
     const participants = jobDetails.participants.map((participant) =>
-      participant.toString()
+      participant.toString(),
     );
     const permittedCaller = jobDetails.permittedCaller.isSome
       ? jobDetails.permittedCaller.unwrap().toString()
@@ -60,7 +60,7 @@ export function extractServiceDetails(
   if (jobType.isZkSaaSPhaseOne) {
     const jobDetails = jobType.asZkSaaSPhaseOne;
     const participants = jobDetails.participants.map((participant) =>
-      participant.toString()
+      participant.toString(),
     );
     const permittedCaller = jobDetails.permittedCaller.isSome
       ? jobDetails.permittedCaller.unwrap().toString()

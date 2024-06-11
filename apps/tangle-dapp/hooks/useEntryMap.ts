@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 const useEntryMap = <Key, Value, MappedKey>(
   entries: Array<[Key, Value]> | null,
-  mapKey: (key: Key) => MappedKey
+  mapKey: (key: Key) => MappedKey,
 ): Map<MappedKey, Value> | null =>
   useMemo(() => {
     if (entries === null) {

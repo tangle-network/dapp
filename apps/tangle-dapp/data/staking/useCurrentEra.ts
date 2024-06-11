@@ -11,11 +11,11 @@ const useCurrentEra = () => {
         api.query.staking.currentEra().pipe(
           map((currentEra) =>
             // It's safe to convert `u32` to JavaScript's Number.
-            currentEra.isNone ? null : currentEra.unwrap().toNumber()
-          )
+            currentEra.isNone ? null : currentEra.unwrap().toNumber(),
+          ),
         ),
-      []
-    )
+      [],
+    ),
   );
 };
 

@@ -20,7 +20,7 @@ import { chainsConfig } from '@webb-tools/dapp-config';
 
 export function getProposalsData(
   propType: ProposalType,
-  data: string
+  data: string,
 ): Record<string, string | Record<string, any>> {
   if (!data) return { data: '' };
 
@@ -32,7 +32,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -58,7 +58,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -76,7 +76,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -94,7 +94,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -119,7 +119,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -139,7 +139,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -158,7 +158,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -176,7 +176,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -194,7 +194,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -212,7 +212,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {
@@ -230,7 +230,7 @@ export function getProposalsData(
 
       const chainName = getChainName(
         decoded.header.resourceId.chainType,
-        decoded.header.resourceId.chainId
+        decoded.header.resourceId.chainId,
       );
 
       return {

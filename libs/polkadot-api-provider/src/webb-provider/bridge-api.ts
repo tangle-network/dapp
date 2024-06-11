@@ -56,16 +56,16 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
     const ORMLAssetMetaData: AssetMetadata[] = [];
 
     const wrappableAssetIds = poolshare.tokens!.map((assetId) =>
-      Number(assetId)
+      Number(assetId),
     );
     for (const wrappableAssetId of wrappableAssetIds) {
       if (
         ORMLAssetMetaData.findIndex(
-          (asset) => asset.id === wrappableAssetId
+          (asset) => asset.id === wrappableAssetId,
         ) === -1
       ) {
         const assetMetaData = assets.find(
-          (asset) => asset.id === wrappableAssetId
+          (asset) => asset.id === wrappableAssetId,
         );
         ORMLAssetMetaData.push(assetMetaData!);
       }

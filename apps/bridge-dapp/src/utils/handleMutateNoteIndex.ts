@@ -7,13 +7,13 @@ const handleMutateNoteIndex = async (
   txHash: Hash,
   note: Note,
   indexBeforeInsert: number,
-  anchorId: string
+  anchorId: string,
 ) => {
   const noteIndex = await vanchorApi.getLeafIndex(
     txHash,
     note,
     indexBeforeInsert,
-    anchorId
+    anchorId,
   );
 
   const indexedNote = await Note.deserialize(note.serialize());

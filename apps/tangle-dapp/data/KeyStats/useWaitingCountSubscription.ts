@@ -11,7 +11,7 @@ export default function useWaitingCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
     value1: null,
     value2: null,
-  }
+  },
 ) {
   const [value1, setValue1] = useState(defaultValue.value1);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +39,7 @@ export default function useWaitingCountSubscription(
           setError(
             error instanceof Error
               ? error
-              : WebbError.from(WebbErrorCodes.UnknownError)
+              : WebbError.from(WebbErrorCodes.UnknownError),
           );
           setIsLoading(false);
         }

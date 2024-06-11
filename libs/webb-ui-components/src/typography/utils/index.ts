@@ -33,7 +33,7 @@ export function getTextAlignClassName(textAlign: TypographyAlignValues) {
  */
 export function getFontWeightClassName(
   variant: WebbTypographyVariant,
-  fontWeight: TypographyFontWeightValues
+  fontWeight: TypographyFontWeightValues,
 ) {
   // Monospace variant do not have `semibold` for font weight, so cast it to `bold`
   if (isMonospaceVariant(variant) && fontWeight === 'semibold') {
@@ -64,7 +64,7 @@ export function getFontWeightClassName(
  * @returns Whether the typography variant is heading variant
  */
 export function isHeadingVariant(
-  variant: WebbTypographyVariant
+  variant: WebbTypographyVariant,
 ): variant is HeadingVariant {
   const headingKeys = ['h1', 'h2', 'h3', 'h4', 'h5'];
   return headingKeys.indexOf(variant) !== -1;
@@ -76,7 +76,7 @@ export function isHeadingVariant(
  * @returns Whether the typography variant is monospace variant
  */
 export function isMonospaceVariant(
-  variant: WebbTypographyVariant
+  variant: WebbTypographyVariant,
 ): variant is MonospaceVariant {
   const monoKeys = ['mono1', 'mono2', 'mkt-monospace'];
   return monoKeys.indexOf(variant) !== -1;

@@ -13,11 +13,11 @@ import Optional from '../../utils/Optional';
  */
 export type StakingLedgerFetcher<T extends NonNullable<unknown>> = (
   ledger: StakingLedger,
-  api: ApiRx
+  api: ApiRx,
 ) => T | null;
 
 function useStakingLedger<T extends NonNullable<unknown>>(
-  fetcher: StakingLedgerFetcher<T>
+  fetcher: StakingLedgerFetcher<T>,
 ) {
   const activeSubstrateAddress = useSubstrateAddress();
 
@@ -44,11 +44,11 @@ function useStakingLedger<T extends NonNullable<unknown>>(
             }
 
             return new Optional(result);
-          })
+          }),
         );
       },
-      [fetcher, activeSubstrateAddress]
-    )
+      [fetcher, activeSubstrateAddress],
+    ),
   );
 }
 

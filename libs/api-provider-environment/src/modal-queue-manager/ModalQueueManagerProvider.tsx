@@ -23,7 +23,7 @@ const ModalQueueManagerProvider: FC<PropsWithChildren> = ({ children }) => {
     (modal) => {
       setQueue((prev) => [modal, ...prev]);
     },
-    []
+    [],
   );
   enqueueModal = enqueue;
 

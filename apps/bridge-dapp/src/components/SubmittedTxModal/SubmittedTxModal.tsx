@@ -18,7 +18,7 @@ const SubmittedTxModal: FC<SubmittedTxModalProps> = ({ txType, ...props }) => {
 
   const isWrapperType = useMemo(
     () => txType && txType.includes('wrap'),
-    [txType]
+    [txType],
   );
 
   return (

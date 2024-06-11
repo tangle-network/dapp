@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useIsomorphicEffect from './useIsomorphicEffect';
 
 /**
  * Check if a media query matches the current viewport.
@@ -10,7 +11,7 @@ import { useEffect, useState } from 'react';
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
 
-  useEffect(() => {
+  useIsomorphicEffect(() => {
     const mediaQuery = window.matchMedia(query);
     setMatches(mediaQuery.matches);
 

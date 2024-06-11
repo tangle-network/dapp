@@ -38,14 +38,14 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
       setSaving(true);
 
       await Promise.all(
-        Object.entries(notes).map(([, note]) => addNoteToNoteManager(note))
+        Object.entries(notes).map(([, note]) => addNoteToNoteManager(note)),
       );
 
       notificationApi({
         variant: 'success',
         message: 'Notes saved successfully',
       });
-    } catch (error) {
+    } catch {
       notificationApi({
         variant: 'error',
         message: 'Failed to save notes',

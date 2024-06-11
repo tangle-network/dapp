@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import formatBnToDisplayAmount from '../../utils/formatBnToDisplayAmount';
+import { formatTokenBalance } from '../../utils/polkadot';
 
 export type TokenAmountCellProps = {
   amount: BN;
@@ -12,7 +12,7 @@ export type TokenAmountCellProps = {
 
 const TokenAmountCell: FC<TokenAmountCellProps> = ({ amount, className }) => {
   const { nativeTokenSymbol } = useNetworkStore();
-  const formattedBalance = formatBnToDisplayAmount(amount);
+  const formattedBalance = formatTokenBalance(amount);
 
   const parts = formattedBalance.split('.');
   const integerPart = parts[0];
@@ -22,7 +22,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({ amount, className }) => {
     <span
       className={twMerge(
         'text-mono-140 dark:text-mono-40 whitespace-nowrap block text-center',
-        className
+        className,
       )}
     >
       {integerPart}

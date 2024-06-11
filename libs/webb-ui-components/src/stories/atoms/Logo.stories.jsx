@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { Logo } from '@webb-tools/webb-ui-components/components';
+import { Logo } from '../../components/Logo';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

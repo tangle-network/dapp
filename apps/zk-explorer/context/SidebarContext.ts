@@ -9,7 +9,7 @@ type SidebarContextType = {
 };
 
 export const SidebarContext = createContext<SidebarContextType | undefined>(
-  undefined
+  undefined,
 );
 
 /**
@@ -38,7 +38,7 @@ export const useSidebarContext = () => {
 
   assert(
     context !== undefined,
-    'Sidebar context must be used within a sidebar provider (did you forget to wrap your app in the sidebar provider component?)'
+    'Sidebar context must be used within a sidebar provider (did you forget to wrap your app in the sidebar provider component?)',
   );
 
   return context;

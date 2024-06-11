@@ -50,7 +50,7 @@ const NominatorStatsContainer: FC = () => {
     useState(false);
 
   const { result: bondedAmountOpt } = useStakingLedger(
-    useCallback((ledger) => ledger.active.toBn(), [])
+    useCallback((ledger) => ledger.active.toBn(), []),
   );
 
   const bondedAmountBalance = useMemo(() => {
@@ -60,7 +60,7 @@ const NominatorStatsContainer: FC = () => {
 
     return formatTokenBalance(
       bondedAmountOpt.value ?? BN_ZERO,
-      nativeTokenSymbol
+      nativeTokenSymbol,
     );
   }, [bondedAmountOpt, nativeTokenSymbol]);
 
@@ -71,7 +71,7 @@ const NominatorStatsContainer: FC = () => {
           className={cx(
             'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
             'bg-glass dark:bg-glass_dark',
-            'border-2 border-mono-0 dark:border-mono-160'
+            'border-2 border-mono-0 dark:border-mono-160',
           )}
         >
           <div className="grid grid-cols-2 gap-2">
@@ -82,8 +82,8 @@ const NominatorStatsContainer: FC = () => {
               {activeAccountAddress === null
                 ? EMPTY_VALUE_PLACEHOLDER
                 : freeBalance === null
-                ? null
-                : formatTokenBalance(freeBalance, nativeTokenSymbol)}
+                  ? null
+                  : formatTokenBalance(freeBalance, nativeTokenSymbol)}
             </NominatorStatsItem>
 
             <NominatorStatsItem
@@ -92,12 +92,8 @@ const NominatorStatsContainer: FC = () => {
             >
               {totalPayoutRewards === null
                 ? EMPTY_VALUE_PLACEHOLDER
-                : totalPayoutRewards.value1 === null
-                ? EMPTY_VALUE_PLACEHOLDER
-                : formatTokenBalance(
-                    totalPayoutRewards.value1,
-                    nativeTokenSymbol
-                  )}
+                : formatTokenBalance(totalPayoutRewards) +
+                  ` ${nativeTokenSymbol}`}
             </NominatorStatsItem>
           </div>
 
@@ -141,7 +137,7 @@ const NominatorStatsContainer: FC = () => {
           className={cx(
             'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
             'bg-glass dark:bg-glass_dark',
-            'border-2 border-mono-0 dark:border-mono-160'
+            'border-2 border-mono-0 dark:border-mono-160',
           )}
         >
           <div className="grid grid-cols-2 gap-2">
@@ -153,8 +149,8 @@ const NominatorStatsContainer: FC = () => {
               {activeAccountAddress === null
                 ? EMPTY_VALUE_PLACEHOLDER
                 : bondedAmountBalance === null
-                ? null
-                : bondedAmountBalance}
+                  ? null
+                  : bondedAmountBalance}
             </NominatorStatsItem>
 
             <UnbondingStatsItem />

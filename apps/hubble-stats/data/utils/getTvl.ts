@@ -9,14 +9,14 @@ const getTvl = async (): Promise<number | undefined> => {
     const tvlVAnchorsByChainsData =
       await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains(
         ACTIVE_SUBGRAPH_URLS,
-        VANCHOR_ADDRESSES
+        VANCHOR_ADDRESSES,
       );
 
     tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
       const tvlVAnchorsByChain = vAnchorsByChain.reduce(
         (tvlTotalByChain, vAnchor) =>
           tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
-        0
+        0,
       );
       return tvlTotal + tvlVAnchorsByChain;
     }, 0);

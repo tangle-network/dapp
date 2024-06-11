@@ -1,7 +1,6 @@
 export * from './Breadcrumbs';
 export * from './CopyIconWithTooltip';
 export * from './HeaderChipItem';
-export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';
 export * from './PoolMetadataTable';
 export * from './PoolInfoCardItem';

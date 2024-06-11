@@ -12,5 +12,6 @@
   "css.customData": [".vscode/tailwind.json"],
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "eslint.useFlatConfig": false
 }

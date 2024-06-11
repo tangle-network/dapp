@@ -5,9 +5,10 @@ import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { ensureHex } from '@webb-tools/dapp-config';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { Observable, catchError, of, switchMap } from 'rxjs';
 import { Address, formatEther } from 'viem';
-import { fetchBalance } from 'wagmi/actions';
+import { getBlockNumber, getBalance } from 'wagmi/actions';
 import { WebbWeb3Provider } from '../webb-provider';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
@@ -16,14 +17,16 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   }
 
   currentBlock() {
-    return this.inner.publicClient.getBlockNumber();
+    return getBlockNumber(getWagmiConfig(), {
+      chainId: parseTypedChainId(this.inner.typedChainId).chainId,
+    });
   }
 
   // Returns the balance formatted in ETH units.
   tokenBalanceByCurrencyId(
     typedChainId: number,
     currencyId: number,
-    accountAddressArg?: string
+    accountAddressArg?: string,
   ): Observable<string> {
     return this.inner.newBlock.pipe(
       switchMap(async () => {
@@ -44,18 +47,18 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         const balance = await this.fetchAccountBalance(
           accountAddress,
           typedChainId,
-          tknAddr ? ensureHex(tknAddr) : undefined
+          tknAddr ? ensureHex(tknAddr) : undefined,
         );
 
         return formatEther(balance.value);
       }),
-      catchError(() => of('')) // Return empty string when error
+      catchError(() => of('')), // Return empty string when error
     );
   }
 
   tokenBalanceByAddress(
     address: string,
-    accountAddressArg?: string
+    accountAddressArg?: string,
   ): Observable<string> {
     return this.inner.newBlock.pipe(
       switchMap(async () => {
@@ -71,17 +74,17 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         const balance = await this.fetchAccountBalance(
           accountAddress,
           this.inner.typedChainId,
-          tknAddress
+          tknAddress,
         );
 
         return formatEther(balance.value);
       }),
-      catchError(() => of('')) // Return empty string when error
+      catchError(() => of('')), // Return empty string when error
     );
   }
 
   private async getAccountAddress(
-    accAddr?: string
+    accAddr?: string,
   ): Promise<string | undefined> {
     return accAddr ?? this.inner.accounts.activeOrDefault?.address;
   }
@@ -89,9 +92,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   private fetchAccountBalance(
     accountAddress: Address,
     typedChainId: number,
-    tokenAddress?: Address
+    tokenAddress?: Address,
   ) {
-    return fetchBalance({
+    return getBalance(getWagmiConfig(), {
       address: accountAddress,
       chainId: parseTypedChainId(typedChainId).chainId,
       token:

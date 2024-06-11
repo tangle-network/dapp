@@ -3,7 +3,8 @@ import assert from 'assert';
 import { useCallback, useRef } from 'react';
 import { z } from 'zod';
 
-import { SERVICE_TYPE_TO_TANGLE_MAP, TxName } from '../../constants';
+import { TxName } from '../../constants';
+import { SERVICE_TYPE_TO_TANGLE_MAP } from '../../constants/restaking';
 import { RestakingAllocationMap } from '../../containers/ManageProfileModalContainer/types';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
@@ -28,7 +29,7 @@ type ProfileRecord = {
  */
 const useUpdateRestakingProfileTx = (
   profileType: RestakingProfileType,
-  createIfMissing = false
+  createIfMissing = false,
 ) => {
   const activeSubstrateAccount = useSubstrateAddress();
   const sharedRestakeAmountRef = useRef<BN | null>(null);
@@ -53,12 +54,12 @@ const useUpdateRestakingProfileTx = (
         if (profileType === RestakingProfileType.SHARED) {
           assert(
             sharedRestakeAmountRef.current !== null,
-            'Shared restake amount should be set if the profile type is shared'
+            'Shared restake amount should be set if the profile type is shared',
           );
         }
 
         const records: ProfileRecord[] = Object.entries(
-          context.allocations
+          context.allocations,
         ).map(([serviceString, amount]) => {
           const service = z.nativeEnum(RestakingService).parse(serviceString);
 
@@ -71,12 +72,12 @@ const useUpdateRestakingProfileTx = (
         // Sanity check to help catch possible logic bugs.
         if (profileType === RestakingProfileType.SHARED) {
           const containsRecordWithNonZeroAmount = records.some(
-            (record) => !record.amount.isZero()
+            (record) => !record.amount.isZero(),
           );
 
           if (containsRecordWithNonZeroAmount) {
             console.warn(
-              'Encountered a record with a non-zero amount for shared profile; note that amounts are ignored for shared profile creation/updates'
+              'Encountered a record with a non-zero amount for shared profile; note that amounts are ignored for shared profile creation/updates',
             );
           }
         }
@@ -100,8 +101,8 @@ const useUpdateRestakingProfileTx = (
           ? api.tx.roles.updateProfile(profile)
           : api.tx.roles.createProfile(profile, null);
       },
-      [createIfMissing, hasExistingProfile, profileType]
-    )
+      [createIfMissing, hasExistingProfile, profileType],
+    ),
   );
 
   const executeForIndependentProfile = useCallback(
@@ -112,7 +113,7 @@ const useUpdateRestakingProfileTx = (
 
       return execute({ allocations, maxActiveServices });
     },
-    [execute]
+    [execute],
   );
 
   const executeForSharedProfile = useCallback(
@@ -126,7 +127,7 @@ const useUpdateRestakingProfileTx = (
 
       return execute({ allocations });
     },
-    [execute]
+    [execute],
   );
 
   return { executeForIndependentProfile, executeForSharedProfile, ...other };
