@@ -37,7 +37,7 @@ export default function useBridgeTransfer() {
     () =>
       amount !== null
         ? parseUnits(
-            formatBnToDisplayAmount(amount, {
+            formatBnToDisplayAmount(amount, decimals, {
               includeCommas: false,
               fractionLength: undefined,
             }),

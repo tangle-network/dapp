@@ -77,6 +77,7 @@ const AmountAndTokenInput: FC = () => {
           max={balance ? convertDecimalToBn(balance, decimals) : null}
           maxErrorMessage="Insufficient balance"
           min={minAmount ? convertDecimalToBn(minAmount, decimals) : null}
+          decimals={decimals}
           minErrorMessage="Amount too small"
           setErrorMessage={(error) =>
             setIsAmountInputError(error ? true : false)

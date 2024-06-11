@@ -1,10 +1,9 @@
 import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 
 /**
  * When the user inputs an amount in the UI, say using an Input
  * component, the amount needs to be treated as if it were in chain
- * units (18 decimals).
+ * units.
  *
  * For example, this ensures that when he user inputs `1`, they mean
  * `1` token, and not the smallest unit possible.
@@ -12,9 +11,10 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
  * To have the amount be in proper form, it needs to be multiplied by
  * this factor (input amount * 10^18).
  */
-export const CHAIN_UNIT_CONVERSION_FACTOR = new BN(10).pow(
-  new BN(TANGLE_TOKEN_DECIMALS),
-);
+
+const convertChainUnitFactor = (decimals: number) => {
+  return new BN(10).pow(new BN(decimals));
+};
 
 export type FormatOptions = {
   includeCommas: boolean;
@@ -30,10 +30,11 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
 
 function formatBnToDisplayAmount(
   amount: BN,
+  decimals: number,
   options?: Partial<FormatOptions>,
 ): string {
   const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
-  const divisor = CHAIN_UNIT_CONVERSION_FACTOR;
+  const divisor = convertChainUnitFactor(decimals);
   const divided = amount.div(divisor);
   const remainder = amount.mod(divisor);
 
@@ -58,7 +59,7 @@ function formatBnToDisplayAmount(
   }
 
   if (finalOptions.padZerosInFraction) {
-    remainderString = remainderString.padStart(TANGLE_TOKEN_DECIMALS, '0');
+    remainderString = remainderString.padStart(decimals, '0');
   }
 
   remainderString = remainderString.substring(0, finalOptions.fractionLength);
