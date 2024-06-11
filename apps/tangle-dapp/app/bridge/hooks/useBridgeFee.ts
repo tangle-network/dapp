@@ -36,7 +36,7 @@ export default function useBridgeFee() {
         ? {
             senderAddress: activeAccountAddress,
             recipientAddress: destinationAddress,
-            ethersProvider,
+            provider: ethersProvider,
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
