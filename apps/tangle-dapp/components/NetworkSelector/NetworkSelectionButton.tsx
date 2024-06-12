@@ -1,13 +1,14 @@
 'use client';
 
-import { ChainIcon, ChevronDown } from '@webb-tools/icons';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { type FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkState from '../../hooks/useNetworkState';
@@ -18,6 +19,8 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
+  const { isConnecting, loading } = useWebContext();
+
   const { network, setNetwork, isCustom } = useNetworkState();
 
   // TODO: Handle switching network on EVM wallet here
@@ -29,7 +32,16 @@ const NetworkSelectionButton: FC = () => {
 
   return (
     <Dropdown>
-      <TriggerButton networkName={network?.name ?? 'Loading'} />
+      <TriggerButton
+        isLoading={isConnecting || loading}
+        networkName={
+          isConnecting
+            ? 'Connecting...'
+            : loading
+              ? 'Loading...'
+              : network?.name ?? 'Unknown Network'
+        }
+      />
 
       <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
         <NetworkSelectorDropdown
@@ -43,10 +55,16 @@ const NetworkSelectionButton: FC = () => {
   );
 };
 
-const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
+type TriggerButtonProps = {
+  networkName: string;
+  isLoading: boolean;
+};
+
+const TriggerButton: FC<TriggerButtonProps> = ({ networkName, isLoading }) => {
   return (
     <DropdownBasicButton
       type="button"
+      disabled={isLoading}
       className={twMerge(
         'rounded-lg border-2 p-2',
         'bg-mono-0/10 border-mono-60',
@@ -56,17 +74,21 @@ const TriggerButton: FC<{ networkName: string }> = ({ networkName }) => {
         'flex items-center gap-2',
       )}
     >
-      <ChainIcon
-        size="lg"
-        className="shrink-0 grow-0"
-        name={TANGLE_TESTNET_CHAIN_NAME}
-      />
+      {isLoading ? (
+        <Spinner size="lg" />
+      ) : (
+        <ChainIcon
+          size="lg"
+          className="shrink-0 grow-0"
+          name={TANGLE_TESTNET_CHAIN_NAME}
+        />
+      )}
 
       <div className="flex items-center gap-0">
         <Typography
           variant="body1"
           fw="bold"
-          className="dark:text-mono-0 hidden sm:block"
+          className="hidden dark:text-mono-0 sm:block"
         >
           {networkName}
         </Typography>
