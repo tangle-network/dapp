@@ -14,4 +14,5 @@ export const NETWORK_FEATURE_MAP: Record<NetworkId, NetworkFeature[]> = {
   // version which includes support for the era stakers overview query.
   [NetworkId.TANGLE_LOCAL_DEV]: [NetworkFeature.EraStakersOverview],
   [NetworkId.CUSTOM]: [NetworkFeature.EraStakersOverview],
+  [NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV]: [],
 };

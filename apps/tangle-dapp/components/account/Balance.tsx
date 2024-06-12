@@ -5,6 +5,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import { formatTokenBalance } from '../../utils/polkadot';
@@ -17,7 +18,7 @@ const Balance: FC = () => {
     balance === null ? null : formatTokenBalance(balance, nativeTokenSymbol);
 
   const parts = formattedBalance?.split(' ');
-  const prefix = parts?.[0] ?? '--';
+  const prefix = parts?.[0] ?? EMPTY_VALUE_PLACEHOLDER;
   const suffix = parts?.[1] ?? nativeTokenSymbol;
 
   return (

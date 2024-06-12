@@ -20,6 +20,7 @@ export default function useValidatorInfoCard(
 ) {
   const { notificationApi } = useWebbUI();
   const { result: currentEra } = useCurrentEra();
+
   const { result: ledgerOpt, isLoading: isLoadingLedgerOpt } =
     useRestakingRoleLedger(validatorAddress);
 
@@ -81,6 +82,7 @@ export default function useValidatorInfoCard(
           rpcEndpoint,
           validatorAddress,
         );
+
         if (validatorAccountInfo) {
           setName(validatorAccountInfo.name);
           setEmail(validatorAccountInfo.email);

@@ -16,6 +16,7 @@ import cx from 'classnames';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import type { Service } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
@@ -57,7 +58,7 @@ const staticColumns = [
       return typeof thresholds === 'number' ? (
         <Chip color="dark-grey">{thresholds}</Chip>
       ) : (
-        '--'
+        EMPTY_VALUE_PLACEHOLDER
       );
     },
   }),
@@ -66,7 +67,7 @@ const staticColumns = [
   //   header: () => <HeaderCell title="# of Jobs" className="justify-start" />,
   //   cell: (props) => {
   //     const jobsCount = props.getValue();
-  //     return jobsCount ? <StringCell value={`${jobsCount}`} /> : '--';
+  //     return jobsCount ? <StringCell value={`${jobsCount}`} /> : EMPTY_VALUE_PLACEHOLDER;
   //   },
   // }),
   columnHelper.accessor('expirationBlock', {
@@ -109,10 +110,11 @@ const ServiceTable: FC<ServiceTableProps> = ({ data, pageSize }) => {
         ),
         cell: (props) => {
           const earnings = props.getValue();
+
           return earnings ? (
             <StringCell value={formatNativeTokenAmount(earnings)} />
           ) : (
-            '--'
+            EMPTY_VALUE_PLACEHOLDER
           );
         },
       }),

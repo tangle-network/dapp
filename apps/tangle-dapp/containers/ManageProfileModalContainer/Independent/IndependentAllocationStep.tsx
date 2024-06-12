@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { z } from 'zod';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useApi from '../../../hooks/useApi';
@@ -200,7 +201,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
             Remaining:{' '}
             {amountRemaining !== null
               ? formatTokenBalance(amountRemaining, nativeTokenSymbol)
-              : '--'}
+              : EMPTY_VALUE_PLACEHOLDER}
           </Typography>
 
           <div className="flex items-center gap-2">

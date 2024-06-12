@@ -21,6 +21,7 @@ import { twMerge } from 'tailwind-merge';
 import { SkeletonRow } from '../../../components/skeleton';
 import SocialChip from '../../../components/SocialChip';
 import { HeaderCell } from '../../../components/tableCells';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { useServiceParticipants } from '../../../data/serviceDetails';
 import { ExplorerType, ServiceParticipant } from '../../../types';
@@ -46,7 +47,7 @@ const addressColumn = columnHelper.accessor('address', {
             variant="body1"
             className="text-mono-200 dark:text-mono-0"
           >
-            {'--'}
+            {EMPTY_VALUE_PLACEHOLDER}
           </Typography>
         )}
       </div>

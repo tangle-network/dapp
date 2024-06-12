@@ -14,6 +14,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
@@ -79,7 +80,7 @@ const NominatorStatsContainer: FC = () => {
               isError={balancesError !== null}
             >
               {activeAccountAddress === null
-                ? '--'
+                ? EMPTY_VALUE_PLACEHOLDER
                 : freeBalance === null
                   ? null
                   : formatTokenBalance(freeBalance, nativeTokenSymbol)}
@@ -90,7 +91,7 @@ const NominatorStatsContainer: FC = () => {
               isError={totalPayoutRewardsError !== null}
             >
               {totalPayoutRewards === null
-                ? '--'
+                ? EMPTY_VALUE_PLACEHOLDER
                 : formatTokenBalance(totalPayoutRewards) +
                   ` ${nativeTokenSymbol}`}
             </NominatorStatsItem>
@@ -146,7 +147,7 @@ const NominatorStatsContainer: FC = () => {
               isError={false}
             >
               {activeAccountAddress === null
-                ? '--'
+                ? EMPTY_VALUE_PLACEHOLDER
                 : bondedAmountBalance === null
                   ? null
                   : bondedAmountBalance}

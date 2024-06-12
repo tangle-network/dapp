@@ -4,6 +4,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { type FC, useMemo } from 'react';
 
 import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
@@ -52,7 +53,7 @@ const UnbondingStatsItem: FC = () => {
   const balance =
     // No account is active.
     activeAccountAddress === null
-      ? '--'
+      ? EMPTY_VALUE_PLACEHOLDER
       : // Amount is still loading.
         totalUnbondingAmount === null
         ? null
