@@ -1,6 +1,7 @@
 'use client';
 
 import Decimal from 'decimal.js';
+import { useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
@@ -28,7 +29,7 @@ export default function useBridgeFee() {
   const amountToTransfer = useAmountToTransfer();
   const decimals = useDecimals();
 
-  const { data: evmSygmaFee } = useSWR(
+  const { data: evmSygmaFee, isLoading: isLoadingEvmSygmaFee } = useSWR(
     [
       activeAccountAddress !== null &&
       bridgeType !== null &&
@@ -53,37 +54,55 @@ export default function useBridgeFee() {
     },
   );
 
-  const { data: substrateSygmaFee } = useSWR(
-    [
-      activeAccountAddress !== null && bridgeType !== null && api !== null
-        ? {
-            senderAddress: activeAccountAddress,
-            recipientAddress: destinationAddress,
-            api,
-            sourceChain: selectedSourceChain,
-            destinationChain: selectedDestinationChain,
-            token: selectedToken,
-            amount: amountToTransfer,
-          }
-        : undefined,
-    ],
-    async ([...args]) => {
-      const sygmaSubstrateTransfer = await sygmaSubstrate(...args);
-      if (sygmaSubstrateTransfer === null) return null;
-      return new Decimal(sygmaSubstrateTransfer.fee.fee.toString()).div(
-        Decimal.pow(10, decimals),
-      );
-    },
-  );
+  const { data: substrateSygmaFee, isLoading: isLoadingSubstrateSygmaFee } =
+    useSWR(
+      [
+        activeAccountAddress !== null && bridgeType !== null && api !== null
+          ? {
+              senderAddress: activeAccountAddress,
+              recipientAddress: destinationAddress,
+              api,
+              sourceChain: selectedSourceChain,
+              destinationChain: selectedDestinationChain,
+              token: selectedToken,
+              amount: amountToTransfer,
+            }
+          : undefined,
+      ],
+      async ([...args]) => {
+        const sygmaSubstrateTransfer = await sygmaSubstrate(...args);
+        if (sygmaSubstrateTransfer === null) return null;
+        return new Decimal(sygmaSubstrateTransfer.fee.fee.toString()).div(
+          Decimal.pow(10, decimals),
+        );
+      },
+    );
 
-  switch (bridgeType) {
-    case BridgeType.SYGMA_EVM_TO_EVM:
-    case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-      return evmSygmaFee ?? null;
-    case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
-    case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
-      return substrateSygmaFee ?? null;
-    default:
-      return null;
-  }
+  const fee = useMemo(() => {
+    switch (bridgeType) {
+      case BridgeType.SYGMA_EVM_TO_EVM:
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
+        return evmSygmaFee ?? null;
+      case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+      case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
+        return substrateSygmaFee ?? null;
+      default:
+        return null;
+    }
+  }, [bridgeType, evmSygmaFee, substrateSygmaFee]);
+
+  const isLoading = useMemo(() => {
+    switch (bridgeType) {
+      case BridgeType.SYGMA_EVM_TO_EVM:
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
+        return isLoadingEvmSygmaFee;
+      case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+      case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
+        return isLoadingSubstrateSygmaFee;
+      default:
+        return false;
+    }
+  }, [bridgeType, isLoadingEvmSygmaFee, isLoadingSubstrateSygmaFee]);
+
+  return { fee, isLoading };
 }

@@ -36,8 +36,9 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   } = useBridge();
   const { buttonAction, buttonText, isLoading, isDisabled, errorMessage } =
     useActionButton();
-  const bridgeFee = useBridgeFee();
-  const estimatedGasFee = useEstimatedGasFee();
+  const { fee: bridgeFee, isLoading: isLoadingBridgeFee } = useBridgeFee();
+  const { fee: estimatedGasFee, isLoading: isLoadingEstimatedGasFee } =
+    useEstimatedGasFee();
   const selectedToken = useSelectedToken();
   const { destinationTypedChainId } = useTypedChainId();
 
@@ -107,14 +108,14 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
           <FeeDetails
             title="Total Fees"
             totalFeeCmp={totalFeeCmp}
-            // isTotalLoading
+            isTotalLoading={isLoadingBridgeFee || isLoadingEstimatedGasFee}
             items={
               [
                 bridgeFee !== null
                   ? {
                       name: 'Bridge Fee',
                       value: `${bridgeFee.toString()} ${selectedToken.symbol}`,
-                      // isLoading: isFeeLoading,
+                      isLoading: isLoadingBridgeFee,
                       info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
                     }
                   : undefined,
@@ -129,11 +130,12 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                   ? {
                       name: 'Estimated Gas Fee',
                       value: `${estimatedGasFee.toString()} ${selectedSourceChain.nativeCurrency.symbol}`,
-                      // isLoading: isFeeLoading,
+                      isLoading: isLoadingEstimatedGasFee,
                     }
                   : undefined,
               ].filter((item) => Boolean(item)) as Array<FeeItem>
             }
+            // className="!bg-mono-20 dark:!bg-mono-160"
           />
         </div>
         <div className="flex flex-col items-end gap-2">

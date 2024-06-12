@@ -2,6 +2,7 @@
 
 import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
 import Decimal from 'decimal.js';
+import { useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
@@ -32,14 +33,17 @@ export default function useEstimatedGasFee() {
   const amountToTransfer = useAmountToTransfer();
   const decimals = useDecimals();
 
-  const { data: ethersGasPrice } = useSWR(
+  const { data: ethersGasPrice, isLoading: isLoadingEthersGasPrice } = useSWR(
     [ethersProvider !== null ? { provider: ethersProvider } : undefined],
     async ([...args]) => {
       return await getEthersGasPrice(...args);
     },
   );
 
-  const { data: evmEstimatedGasPrice } = useSWR(
+  const {
+    data: evmEstimatedGasPrice,
+    isLoading: isLoadingEvmEstimatedGasPrice,
+  } = useSWR(
     [
       activeAccountAddress !== null &&
       isEthereumAddress(activeAccountAddress) &&
@@ -65,7 +69,10 @@ export default function useEstimatedGasFee() {
     },
   );
 
-  const { data: substrateSygmaFee } = useSWR(
+  const {
+    data: substrateEstimatedGasFee,
+    isLoading: isLoadingSubstrateEstimatedGasFee,
+  } = useSWR(
     [
       activeAccountAddress !== null &&
       isAddress(activeAccountAddress) &&
@@ -92,17 +99,44 @@ export default function useEstimatedGasFee() {
     },
   );
 
-  switch (bridgeType) {
-    case BridgeType.SYGMA_EVM_TO_EVM:
-    case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE: {
-      if (ethersGasPrice == null || evmEstimatedGasPrice == null) return null;
-      return ethersGasPrice.times(evmEstimatedGasPrice);
+  const fee = useMemo(() => {
+    switch (bridgeType) {
+      case BridgeType.SYGMA_EVM_TO_EVM:
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE: {
+        if (ethersGasPrice == null || evmEstimatedGasPrice == null) return null;
+        return ethersGasPrice.times(evmEstimatedGasPrice);
+      }
+      case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+      case BridgeType.SYGMA_SUBSTRATE_TO_EVM: {
+        return substrateEstimatedGasFee ?? null;
+      }
+      default:
+        return null;
     }
-    case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
-    case BridgeType.SYGMA_SUBSTRATE_TO_EVM: {
-      return substrateSygmaFee ?? null;
+  }, [
+    bridgeType,
+    ethersGasPrice,
+    evmEstimatedGasPrice,
+    substrateEstimatedGasFee,
+  ]);
+
+  const isLoading = useMemo(() => {
+    switch (bridgeType) {
+      case BridgeType.SYGMA_EVM_TO_EVM:
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
+        return isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
+      case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+      case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
+        return isLoadingSubstrateEstimatedGasFee;
+      default:
+        return false;
     }
-    default:
-      return null;
-  }
+  }, [
+    bridgeType,
+    isLoadingEthersGasPrice,
+    isLoadingEvmEstimatedGasPrice,
+    isLoadingSubstrateEstimatedGasFee,
+  ]);
+
+  return { fee, isLoading };
 }
