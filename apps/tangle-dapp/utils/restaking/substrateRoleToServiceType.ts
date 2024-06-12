@@ -1,6 +1,6 @@
 import { TanglePrimitivesRolesRoleType } from '@polkadot/types/lookup';
 
-import { TANGLE_TO_SERVICE_TYPE_TSS_MAP } from '../../constants';
+import { TANGLE_TO_SERVICE_TYPE_TSS_MAP } from '../../constants/restaking';
 import { RestakingService } from '../../types';
 
 function substrateRoleToServiceType(

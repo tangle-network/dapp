@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { parseUnits } from 'viem';
 
 import { useBridge } from '../../../context/BridgeContext';
-import formatBnToDisplayAmount from '../../../utils/formatBnToDisplayAmount';
+import formatBn from '../../../utils/formatBn';
 import useDecimals from './useDecimals';
 
 export default function useAmountToTransfer() {
@@ -16,7 +16,7 @@ export default function useAmountToTransfer() {
     () =>
       amount !== null
         ? parseUnits(
-            formatBnToDisplayAmount(amount, decimals, {
+            formatBn(amount, decimals, {
               includeCommas: false,
               fractionLength: undefined,
             }),

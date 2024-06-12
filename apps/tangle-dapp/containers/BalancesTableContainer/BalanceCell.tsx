@@ -10,6 +10,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { formatTokenBalance } from '../../utils/polkadot/tokens';
@@ -39,7 +40,7 @@ const BalanceCell: FC<{
       ) : (
         // If there is no active account, show a placeholder value.
         <Typography variant="body1" fw="semibold">
-          --
+          {EMPTY_VALUE_PLACEHOLDER}
         </Typography>
       )}
 

@@ -5,7 +5,7 @@ import { BN } from '@polkadot/util';
 import {
   TANGLE_TO_SERVICE_TYPE_TSS_MAP,
   TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP,
-} from '../../constants';
+} from '../../constants/restaking';
 import { Service } from '../../types';
 
 /**

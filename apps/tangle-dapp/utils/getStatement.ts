@@ -48,6 +48,7 @@ function getStatement(
     return getPolkadot(isRegularStatement);
   }
 
+  // TODO: This test is weak, and could be improved.
   if (
     network.toLowerCase().includes('tangle') ||
     network.toLowerCase().includes('local')

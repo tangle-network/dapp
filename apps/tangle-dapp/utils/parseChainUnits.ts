@@ -20,10 +20,7 @@ import { BN } from '@polkadot/util';
  * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
  * ```
  */
-const convertAmountStringToChainUnits = (
-  amountString: string,
-  decimals: number,
-): BN => {
+const parseChainUnits = (amountString: string, decimals: number): BN => {
   // TODO: Use zod for validation, and convert this function to support input amount strings, as it is currently only used with strings & for user inputs.
 
   const [whole, fraction = ''] = amountString.split('.');
@@ -36,4 +33,4 @@ const convertAmountStringToChainUnits = (
   return new BN(fullAmountString);
 };
 
-export default convertAmountStringToChainUnits;
+export default parseChainUnits;

@@ -28,7 +28,7 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   padZerosInFraction: false,
 };
 
-function formatBnToDisplayAmount(
+function formatBn(
   amount: BN,
   decimals: number,
   options?: Partial<FormatOptions>,
@@ -80,4 +80,4 @@ function formatBnToDisplayAmount(
   return remainderString ? `${integerPart}.${remainderString}` : integerPart;
 }
 
-export default formatBnToDisplayAmount;
+export default formatBn;

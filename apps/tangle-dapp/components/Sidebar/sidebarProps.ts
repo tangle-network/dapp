@@ -1,3 +1,5 @@
+'use client';
+
 import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import {
   AppsLine,
@@ -8,6 +10,7 @@ import {
   GlobalLine,
   GridFillIcon,
   UserLineIcon,
+  WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
   SideBarFooterType,
@@ -74,6 +77,15 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
+    name: 'Liquid Staking',
+    href: PagePath.LIQUID_RESTAKING,
+    environments: ['development', 'staging', 'test'],
+    isInternal: true,
+    isNext: true,
+    Icon: WaterDropletIcon,
+    subItems: [],
+  },
+  {
     name: 'Claim Airdrop',
     href: PagePath.CLAIM_AIRDROP,
     isInternal: true,
@@ -125,11 +137,13 @@ export default function getSidebarProps(
       : []),
   ];
 
-  // Filter the sidebar items based on the current environment
+  // Filter the sidebar items based on the current environment.
+  // This is useful to keep development-only items hidden in production.
   const items = sideBarItems.filter((item) => {
-    if (!item.environments) {
+    if (item.environments === undefined) {
       return true;
     }
+
     return item.environments.includes(currentEnv);
   });
 
