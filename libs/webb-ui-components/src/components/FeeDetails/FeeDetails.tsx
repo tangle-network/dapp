@@ -53,6 +53,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
   (
     {
       className,
+      title,
       info,
       totalFee,
       totalFeeToken = '',
@@ -87,7 +88,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
             )}
           >
             <TitleWithInfo
-              title="Fees"
+              title={title ?? 'Fees'}
               className="text-mono-120 dark:text-mono-100"
               titleClassName={cx('!text-inherit')}
               info={info}
