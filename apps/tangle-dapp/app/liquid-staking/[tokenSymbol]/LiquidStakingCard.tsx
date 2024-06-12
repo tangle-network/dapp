@@ -10,13 +10,16 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
+  const [fromAmount, setFromAmount] = useState<BN | null>(null);
+  const [toAmount, setToAmount] = useState<BN | null>(null);
+
   const { execute: executeMintTx } = useMintTx();
 
   const handleStakeClick = useCallback(() => {
@@ -45,6 +48,8 @@ const LiquidStakingCard: FC = () => {
       <LiquidStakingInput
         id="liquid-staking-from"
         selectedToken={LiquidStakingToken.DOT}
+        amount={fromAmount}
+        setAmount={setFromAmount}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -52,6 +57,8 @@ const LiquidStakingCard: FC = () => {
       <LiquidStakingInput
         id="liquid-staking-to"
         selectedToken={LiquidStakingToken.DOT}
+        amount={toAmount}
+        setAmount={setToAmount}
       />
 
       {/* Details */}

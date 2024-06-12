@@ -2,8 +2,8 @@ import { BN } from '@polkadot/util';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
-import formatBn, { FormatOptions } from '../../utils/formatBn';
-import parseChainUnits from '../../utils/parseChainUnits';
+import formatBn, { FormatOptions } from '../utils/formatBn';
+import parseChainUnits from '../utils/parseChainUnits';
 
 /**
  * Regular expression to validate the input amount.
@@ -49,15 +49,25 @@ const INPUT_AMOUNT_FORMAT: Partial<FormatOptions> = {
   fractionLength: undefined,
 };
 
-const useInputAmount = (
-  amount: BN | null,
-  min: BN | null,
-  max: BN | null,
-  errorOnEmptyValue: boolean,
-  setAmount?: (newAmount: BN | null) => void,
-  minErrorMessage?: string,
-  maxErrorMessage?: string,
-) => {
+type Options = {
+  amount: BN | null;
+  min?: BN | null;
+  max?: BN | null;
+  errorOnEmptyValue?: boolean;
+  setAmount?: (newAmount: BN | null) => void;
+  minErrorMessage?: string;
+  maxErrorMessage?: string;
+};
+
+const useInputAmount = ({
+  amount,
+  min = null,
+  max = null,
+  errorOnEmptyValue = false,
+  setAmount,
+  minErrorMessage,
+  maxErrorMessage,
+}: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(

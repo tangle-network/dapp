@@ -1,15 +1,26 @@
+import { BN } from '@polkadot/util';
 import { WalletLineIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
+import useInputAmount from '../../../hooks/useInputAmount';
 
 export type LiquidStakingInputProps = {
   id: string;
+  // TODO: Make use of this.
   selectedToken: LiquidStakingToken;
+  amount: BN | null;
+  setAmount: (newAmount: BN | null) => void;
 };
 
-const LiquidStakingInput: FC<LiquidStakingInputProps> = ({ id }) => {
+const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
+  id,
+  amount,
+  setAmount,
+}) => {
+  const { displayAmount, handleChange } = useInputAmount({ amount, setAmount });
+
   return (
     <div className="flex flex-col gap-3 dark:bg-mono-180 p-3 rounded-lg">
       <div className="flex justify-between">
@@ -33,6 +44,8 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({ id }) => {
           id={id}
           className="w-full bg-transparent border-none text-xl font-bold focus:outline-none"
           placeholder="0"
+          value={displayAmount}
+          onChange={(e) => handleChange(e.target.value)}
         />
 
         <TokenCard token={LiquidStakingToken.DOT} />

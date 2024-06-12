@@ -4,12 +4,12 @@ import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
-import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useInputAmount from '../../../hooks/useInputAmount';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
 import { formatTokenBalance } from '../../../utils/polkadot/tokens';
@@ -98,15 +98,15 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
     displayAmount: amountString,
     errorMessage,
     handleChange,
-  } = useInputAmount(
+  } = useInputAmount({
     amount,
     min,
-    availableBalance,
+    max: availableBalance,
     errorOnEmptyValue,
     setAmount,
     minErrorMessage,
-    ERROR_NOT_ENOUGH_BALANCE,
-  );
+    maxErrorMessage: ERROR_NOT_ENOUGH_BALANCE,
+  });
 
   const handleDelete = useCallback(() => {
     if (onDelete !== undefined && service !== null) {

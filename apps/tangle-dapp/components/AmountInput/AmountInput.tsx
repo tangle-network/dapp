@@ -3,8 +3,8 @@ import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import useInputAmount from '../../hooks/useInputAmount';
 import BaseInput, { BaseInputProps } from './BaseInput';
-import useInputAmount from './useInputAmount';
 
 export type AmountInputProps = {
   id: string;
@@ -51,7 +51,7 @@ const AmountInput: FC<AmountInputProps> = ({
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { displayAmount, refreshDisplayAmount, errorMessage, handleChange } =
-    useInputAmount(
+    useInputAmount({
       amount,
       min,
       max,
@@ -59,7 +59,7 @@ const AmountInput: FC<AmountInputProps> = ({
       setAmount,
       minErrorMessage,
       maxErrorMessage,
-    );
+    });
 
   // Set the error message in the parent component.
   useEffect(() => {
