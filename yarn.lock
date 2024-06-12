@@ -10392,35 +10392,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/typegen@npm:10.12.2":
-  version: 10.12.2
-  resolution: "@polkadot/typegen@npm:10.12.2"
-  dependencies:
-    "@polkadot/api": "npm:10.12.2"
-    "@polkadot/api-augment": "npm:10.12.2"
-    "@polkadot/rpc-augment": "npm:10.12.2"
-    "@polkadot/rpc-provider": "npm:10.12.2"
-    "@polkadot/types": "npm:10.12.2"
-    "@polkadot/types-augment": "npm:10.12.2"
-    "@polkadot/types-codec": "npm:10.12.2"
-    "@polkadot/types-create": "npm:10.12.2"
-    "@polkadot/types-support": "npm:10.12.2"
-    "@polkadot/util": "npm:^12.6.2"
-    "@polkadot/util-crypto": "npm:^12.6.2"
-    "@polkadot/x-ws": "npm:^12.6.2"
-    handlebars: "npm:^4.7.8"
-    tslib: "npm:^2.6.2"
-    yargs: "npm:^17.7.2"
-  bin:
-    polkadot-types-chain-info: scripts/polkadot-types-chain-info.mjs
-    polkadot-types-from-chain: scripts/polkadot-types-from-chain.mjs
-    polkadot-types-from-defs: scripts/polkadot-types-from-defs.mjs
-    polkadot-types-internal-interfaces: scripts/polkadot-types-internal-interfaces.mjs
-    polkadot-types-internal-metadata: scripts/polkadot-types-internal-metadata.mjs
-  checksum: 10c0/2054f97b08f718775220c7fddf0ee9edf51cf70b1b751978b06d20de8be23726d607eecd0b727405a3754b8c7fb6c744a0ffad03bf4726435596704894176f74
-  languageName: node
-  linkType: hard
-
 "@polkadot/typegen@npm:10.3.2":
   version: 10.3.2
   resolution: "@polkadot/typegen@npm:10.3.2"
@@ -10478,6 +10449,35 @@ __metadata:
     polkadot-types-internal-interfaces: scripts/polkadot-types-internal-interfaces.cjs
     polkadot-types-internal-metadata: scripts/polkadot-types-internal-metadata.cjs
   checksum: 10c0/bf3f9d1b06e8b3ba15b6da8d452b18921c57cd5e89d662bbc6cf6b171ac4a98f3fcca91744bbbeef7e7ad1e908c8f85486b55b2f0f29915f07a5aea100b179fd
+  languageName: node
+  linkType: hard
+
+"@polkadot/typegen@npm:^11.0.2":
+  version: 11.2.1
+  resolution: "@polkadot/typegen@npm:11.2.1"
+  dependencies:
+    "@polkadot/api": "npm:11.2.1"
+    "@polkadot/api-augment": "npm:11.2.1"
+    "@polkadot/rpc-augment": "npm:11.2.1"
+    "@polkadot/rpc-provider": "npm:11.2.1"
+    "@polkadot/types": "npm:11.2.1"
+    "@polkadot/types-augment": "npm:11.2.1"
+    "@polkadot/types-codec": "npm:11.2.1"
+    "@polkadot/types-create": "npm:11.2.1"
+    "@polkadot/types-support": "npm:11.2.1"
+    "@polkadot/util": "npm:^12.6.2"
+    "@polkadot/util-crypto": "npm:^12.6.2"
+    "@polkadot/x-ws": "npm:^12.6.2"
+    handlebars: "npm:^4.7.8"
+    tslib: "npm:^2.6.2"
+    yargs: "npm:^17.7.2"
+  bin:
+    polkadot-types-chain-info: scripts/polkadot-types-chain-info.mjs
+    polkadot-types-from-chain: scripts/polkadot-types-from-chain.mjs
+    polkadot-types-from-defs: scripts/polkadot-types-from-defs.mjs
+    polkadot-types-internal-interfaces: scripts/polkadot-types-internal-interfaces.mjs
+    polkadot-types-internal-metadata: scripts/polkadot-types-internal-metadata.mjs
+  checksum: 10c0/8ad2ca72dc72977b00cda09ef6e1288c35b1e86c32a46d435c52a0480872fe711c97589a1928eb638f342e766eb7c654191b7da3c4f986d476a9446fb6183e9a
   languageName: node
   linkType: hard
 
@@ -16918,9 +16918,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/tangle-substrate-types@npm:0.5.5":
-  version: 0.5.5
-  resolution: "@webb-tools/tangle-substrate-types@npm:0.5.5"
+"@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build::locator=webb-monorepo%40workspace%3A.":
+  version: 0.5.7
+  resolution: "@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build#/Volumes/tins_ssd/webb/tangle/types/build::hash=deb56d&locator=webb-monorepo%40workspace%3A."
   dependencies:
     "@babel/cli": "npm:^7.23.9"
     "@babel/core": "npm:^7.24.0"
@@ -16940,10 +16940,10 @@ __metadata:
     "@babel/register": "npm:^7.23.7"
     "@babel/runtime": "npm:^7.24.0"
     "@open-web3/orml-types": "npm:^2.0.1"
-    "@polkadot/api-derive": "npm:10.12.2"
+    "@polkadot/api": "npm:^11.0.2"
     "@polkadot/dev": "npm:^0.78.11"
-    "@polkadot/typegen": "npm:10.12.2"
-    "@polkadot/types": "npm:10.12.2"
+    "@polkadot/typegen": "npm:^11.0.2"
+    "@polkadot/types": "npm:^11.0.2"
     babel-jest: "npm:^29.7.0"
     babel-plugin-module-extension-resolver: "npm:^1.0.0"
     babel-plugin-module-resolver: "npm:^5.0.0"
@@ -16955,7 +16955,7 @@ __metadata:
     minimatch: "npm:^9.0.3"
     mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/ac228097475cd54f009cd8c2243c89532d7cb0e0f235af2076417f7248d417fa21f6619a8f05ef5aefd1d6c1f2ea45097ab9351a6f5666c1782356f857120ac2
+  checksum: 10c0/36c6de02c48a9846885b607cd5da3f7b120ee5366c690a66542e9d5b2e84fbeea83990062caf28c581e4613f17f71a75a8e39d6b28476eba525c530bc0f4a866
   languageName: node
   linkType: hard
 
@@ -44687,7 +44687,7 @@ __metadata:
     "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/proposals": "npm:^1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
-    "@webb-tools/tangle-substrate-types": "npm:0.5.5"
+    "@webb-tools/tangle-substrate-types": "file:/Volumes/tins_ssd/webb/tangle/types/build"
     "@webb-tools/test-utils": "npm:0.1.8"
     "@webb-tools/tokens": "npm:1.0.11"
     "@webb-tools/utils": "npm:1.0.11"
