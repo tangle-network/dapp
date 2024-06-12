@@ -51,10 +51,7 @@ export interface Nominee extends BasicAccountInfo {
   nominatorCount: number;
 }
 
-export interface Validator extends Nominee {
-  restakedAmount: BN;
-  activeServicesCount: number;
-}
+export interface Validator extends Nominee {}
 
 export type NodeSpecification = {
   os: string;
