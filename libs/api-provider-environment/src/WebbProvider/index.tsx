@@ -1,6 +1,5 @@
 'use client';
 
-import useWagmiHydration from '@webb-tools/webb-ui-components/hooks/useWagmiHydration';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   Currency,
@@ -48,6 +47,7 @@ import {
   type Web3RelayerManager,
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
+import useWagmiHydration from '@webb-tools/webb-ui-components/hooks/useWagmiHydration';
 import {
   useCallback,
   useEffect,

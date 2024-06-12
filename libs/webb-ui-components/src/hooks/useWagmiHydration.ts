@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useConfig } from 'wagmi';
-import { Mutate, StoreApi } from 'zustand/vanilla';
+import 'zustand/middleware';
+import type { Mutate, StoreApi } from 'zustand/vanilla';
 
 /**
  * A hook to determine whether the wagmi config has been hydrated
