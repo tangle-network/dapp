@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useConfig } from 'wagmi';
+import 'zustand/middleware';
 import type { Mutate, StoreApi } from 'zustand/vanilla';
 
 /**
