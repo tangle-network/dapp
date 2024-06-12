@@ -37,6 +37,9 @@ const NetworkSelectionButton: FC = () => {
   );
 
   const networkName = network?.name ?? 'Loading';
+
+  // Disable network switching when in Liquid Staking page,
+  // since it would have no effect there.
   const isInLiquidStakingPath = pathname.startsWith(PagePath.LIQUID_STAKING);
 
   return isInLiquidStakingPath ? (

@@ -26,10 +26,7 @@ function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
 
   const { result: api } = usePromise<ApiPromise | null>(
     useCallback(
-      () =>
-        getApiPromise(
-          overrideRpcEndpoint !== undefined ? overrideRpcEndpoint : rpcEndpoint,
-        ),
+      () => getApiPromise(overrideRpcEndpoint ?? rpcEndpoint),
       [overrideRpcEndpoint, rpcEndpoint],
     ),
     null,

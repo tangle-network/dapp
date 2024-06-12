@@ -1,3 +1,6 @@
+'use client';
+
+import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { InformationLine, Search } from '@webb-tools/icons';
 import {
@@ -7,12 +10,26 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
+import useMintTx from '../../../data/liquidStaking/useMintTx';
 import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
+  const { execute: executeMintTx } = useMintTx();
+
+  const handleStakeClick = useCallback(() => {
+    if (executeMintTx === null) {
+      return;
+    }
+
+    executeMintTx({
+      amount: new BN(0),
+      currency: 'Native',
+    });
+  }, [executeMintTx]);
+
   return (
     <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9">
       <div className="flex gap-3">
@@ -58,7 +75,13 @@ const LiquidStakingCard: FC = () => {
         />
       </div>
 
-      <Button isFullWidth>Stake</Button>
+      <Button
+        isDisabled={executeMintTx === null}
+        onClick={handleStakeClick}
+        isFullWidth
+      >
+        Stake
+      </Button>
     </div>
   );
 };

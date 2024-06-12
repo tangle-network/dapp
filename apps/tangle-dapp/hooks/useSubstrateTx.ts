@@ -36,6 +36,7 @@ function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
   getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
   timeoutDelay = 120_000,
+  overrideRpcEndpoint?: string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<HexString | null>(null);
@@ -73,7 +74,7 @@ function useSubstrateTx<Context = void>(
       );
 
       const injector = await findInjectorForAddress(activeSubstrateAddress);
-      const api = await getApiPromise(rpcEndpoint);
+      const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
       let newTxHash: HexString;
 
@@ -151,12 +152,13 @@ function useSubstrateTx<Context = void>(
       }
     },
     [
-      activeSubstrateAddress,
-      factory,
-      isEvmAccount,
-      isMountedRef,
-      rpcEndpoint,
       status,
+      activeSubstrateAddress,
+      isEvmAccount,
+      overrideRpcEndpoint,
+      rpcEndpoint,
+      factory,
+      isMountedRef,
       getSuccessMessageFnc,
     ],
   );

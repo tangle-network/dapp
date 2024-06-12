@@ -4,12 +4,11 @@ import {
   IconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
 import { GlassCard } from '../../../components';
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
-import { PagePath } from '../../../types';
 import LiquidStakingCard from './LiquidStakingCard';
 
 type Props = {
@@ -21,9 +20,9 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     value.toString(),
   );
 
-  // Invalid token on the URL.
+  // Invalid token provided on the URL parameters.
   if (!possibleTokens.includes(tokenSymbol)) {
-    return redirect(PagePath.LIQUID_STAKING);
+    return notFound();
   }
 
   return (
