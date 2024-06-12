@@ -38,7 +38,7 @@ const AmountAndTokenInput: FC = () => {
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
-  const bridgeFee = useBridgeFee();
+  const { fee: bridgeFee } = useBridgeFee();
 
   const minAmount = useMemo(() => {
     const existentialDeposit =
@@ -92,7 +92,10 @@ const AmountAndTokenInput: FC = () => {
             <ChainOrTokenButton
               value={selectedToken.symbol}
               status="success"
-              className="w-[130px] bg-mono-0 dark:bg-mono-140 border-0 px-3"
+              className={twMerge(
+                'w-[130px] border-0 px-3 bg-[#EFF3F6] dark:bg-mono-140',
+                'hover:bg-[#EFF3F6] dark:hover:bg-mono-140',
+              )}
               iconType="token"
             />
           </DropdownTrigger>

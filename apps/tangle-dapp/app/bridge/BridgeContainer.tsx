@@ -114,7 +114,12 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                 bridgeFee !== null
                   ? {
                       name: 'Bridge Fee',
-                      value: `${bridgeFee.toString()} ${selectedToken.symbol}`,
+                      value: (
+                        <FeeValueCmp
+                          fee={bridgeFee}
+                          symbol={selectedToken.symbol}
+                        />
+                      ),
                       isLoading: isLoadingBridgeFee,
                       info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
                     }
@@ -122,20 +127,32 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                 destChainTransactionFee !== null
                   ? {
                       name: 'Bridge Fee',
-                      value: `${destChainTransactionFee.toString()} ${selectedToken.symbol}`,
+                      value: (
+                        <FeeValueCmp
+                          fee={destChainTransactionFee}
+                          symbol={selectedToken.symbol}
+                        />
+                      ),
                       info: 'This fee is used to pay the XCM fee of the destination chain.',
                     }
                   : undefined,
                 estimatedGasFee !== null
                   ? {
                       name: 'Estimated Gas Fee',
-                      value: `${estimatedGasFee.toString()} ${selectedSourceChain.nativeCurrency.symbol}`,
+                      value: (
+                        <FeeValueCmp
+                          fee={estimatedGasFee}
+                          symbol={selectedSourceChain.nativeCurrency.symbol}
+                        />
+                      ),
                       isLoading: isLoadingEstimatedGasFee,
                     }
                   : undefined,
               ].filter((item) => Boolean(item)) as Array<FeeItem>
             }
-            // className="!bg-mono-20 dark:!bg-mono-160"
+            className="!bg-mono-20 dark:!bg-mono-160"
+            titleClassName="!text-mono-100 dark:!text-mono-80"
+            itemTitleClassName="!text-mono-100 dark:!text-mono-80"
           />
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -172,3 +189,12 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
 };
 
 export default BridgeContainer;
+
+const FeeValueCmp: FC<{ fee: Decimal; symbol: string }> = ({ fee, symbol }) => {
+  return (
+    <Typography
+      variant="body1"
+      className="!text-mono-120 dark:!text-mono-100"
+    >{`${fee.toString()} ${symbol}`}</Typography>
+  );
+};
