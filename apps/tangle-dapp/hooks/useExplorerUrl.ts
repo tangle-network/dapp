@@ -17,7 +17,7 @@ const useExplorerUrl = () => {
       hash: string,
       variant: ExplorerVariant,
       type?: (typeof ExplorerType)[keyof typeof ExplorerType],
-      explorerUrl_?: string,
+      explorerUrl_?: string, // Specify the explorer URL case
     ): URL | null => {
       // Explorer type will be default to the current network if not provided
       const explorerType =

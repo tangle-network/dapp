@@ -41,7 +41,7 @@ export default async function sygmaEvm(params?: {
 
   const transfer = await assetTransfer.createFungibleTransfer(
     senderAddress,
-    // TODO: make sure id is match with Sygma SDK doc
+    // NOTE: make sure the chain id is the same with Sygma SDK
     destinationChain.id,
     recipientAddress,
     token.sygmaResourceId,

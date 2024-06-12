@@ -34,7 +34,6 @@ export default function useBridgeTransfer() {
       throw new Error('There must be a bridge type');
     }
 
-    // TODO: all can be transfer to Substrate because of precompile
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE: {

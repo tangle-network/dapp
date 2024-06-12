@@ -48,7 +48,6 @@ const AmountAndTokenInput: FC = () => {
 
     if (!existentialDeposit || !destChainTransactionFee) return null;
 
-    // TODO: add bridge fees
     return (existentialDeposit ?? new Decimal(0))
       .add(destChainTransactionFee ?? new Decimal(0))
       .add(bridgeFee ?? new Decimal(0));
