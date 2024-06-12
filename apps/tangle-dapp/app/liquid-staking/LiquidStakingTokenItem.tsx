@@ -8,7 +8,11 @@ import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
 import { StaticAssetPath } from '../../constants';
-import { LiquidStakingToken, TVS_TOOLTIP } from '../../constants/liquidStaking';
+import {
+  LIQUID_STAKING_TOKEN_PREFIX,
+  LiquidStakingToken,
+  TVS_TOOLTIP,
+} from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import StatItem from './StatItem';
@@ -80,7 +84,8 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         </Typography>
 
         <Chip className="normal-case" color="dark-grey">
-          tg{tokenSymbol.toUpperCase()}
+          {LIQUID_STAKING_TOKEN_PREFIX}
+          {tokenSymbol.toUpperCase()}
         </Chip>
       </div>
 

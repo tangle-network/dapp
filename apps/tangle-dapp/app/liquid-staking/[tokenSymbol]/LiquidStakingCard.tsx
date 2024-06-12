@@ -12,14 +12,19 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import { LiquidStakingToken } from '../../../constants/liquidStaking';
+import {
+  LIQUID_STAKING_TOKEN_PREFIX,
+  LiquidStakingToken,
+} from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-  const [rate, setRate] = useState<number | null>(1.3);
+
+  // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
+  const [rate] = useState<number | null>(1.3);
 
   const [selectedToken, setSelectedToken] = useState<LiquidStakingToken>(
     LiquidStakingToken.DOT,
@@ -38,10 +43,7 @@ const LiquidStakingCard: FC = () => {
     });
   }, [executeMintTx, fromAmount]);
 
-  const toAmount = useMemo(
-    () => fromAmount?.muln(rate ?? 0) ?? null,
-    [fromAmount, rate],
-  );
+  const toAmount = useMemo(() => fromAmount?.muln(2) ?? null, [fromAmount]);
 
   return (
     <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9">
@@ -68,8 +70,10 @@ const LiquidStakingCard: FC = () => {
       <LiquidStakingInput
         id="liquid-staking-to"
         selectedToken={selectedToken}
-        placeholder={`0 tg${selectedToken}`}
+        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedToken}`}
         amount={toAmount}
+        isReadOnly
+        isLST
       />
 
       {/* Details */}
@@ -77,7 +81,7 @@ const LiquidStakingCard: FC = () => {
         <DetailItem
           title="Rate"
           tooltip="This is a test."
-          value={`1 ${selectedToken} = ${rate} tg${selectedToken}`}
+          value={`1 ${selectedToken} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedToken}`}
         />
 
         <DetailItem
@@ -94,7 +98,9 @@ const LiquidStakingCard: FC = () => {
       </div>
 
       <Button
-        isDisabled={executeMintTx === null || fromAmount === null}
+        isDisabled={
+          executeMintTx === null || fromAmount === null || fromAmount.isZero()
+        }
         isLoading={mintTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"
         onClick={handleStakeClick}

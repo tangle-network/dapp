@@ -115,13 +115,19 @@ const useInputAmount = ({
         setAmount(
           newAmountString === '' ? null : parseChainUnits(newAmountString),
         );
+
+        setDisplayAmount(newAmountString);
       }
     },
     [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount],
   );
 
-  const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
-    setDisplayAmount(formatBn(newDisplayAmount, INPUT_AMOUNT_FORMAT));
+  const refreshDisplayAmount = useCallback((newDisplayAmount: BN | null) => {
+    setDisplayAmount(
+      newDisplayAmount === null
+        ? ''
+        : formatBn(newDisplayAmount, INPUT_AMOUNT_FORMAT),
+    );
   }, []);
 
   return {
