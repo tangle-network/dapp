@@ -11,13 +11,17 @@ export type LiquidStakingInputProps = {
   // TODO: Make use of this.
   selectedToken: LiquidStakingToken;
   amount: BN | null;
-  setAmount: (newAmount: BN | null) => void;
+  setAmount?: (newAmount: BN | null) => void;
+  isReadOnly?: boolean;
+  placeholder?: string;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   id,
   amount,
   setAmount,
+  isReadOnly = false,
+  placeholder = '0',
 }) => {
   const { displayAmount, handleChange } = useInputAmount({ amount, setAmount });
 
@@ -42,10 +46,12 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
       <div className="flex gap-1">
         <input
           id={id}
-          className="w-full bg-transparent border-none text-xl font-bold focus:outline-none"
-          placeholder="0"
+          className="w-full bg-transparent border-none text-xl font-bold outline-none focus:ring-0"
+          type="text"
+          placeholder={placeholder}
           value={displayAmount}
           onChange={(e) => handleChange(e.target.value)}
+          readOnly={isReadOnly}
         />
 
         <TokenCard token={LiquidStakingToken.DOT} />

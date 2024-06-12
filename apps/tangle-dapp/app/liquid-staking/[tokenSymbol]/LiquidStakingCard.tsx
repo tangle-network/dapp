@@ -10,28 +10,38 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-  const [toAmount, setToAmount] = useState<BN | null>(null);
+  const [rate, setRate] = useState<number | null>(1.3);
 
-  const { execute: executeMintTx } = useMintTx();
+  const [selectedToken, setSelectedToken] = useState<LiquidStakingToken>(
+    LiquidStakingToken.DOT,
+  );
+
+  const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
 
   const handleStakeClick = useCallback(() => {
-    if (executeMintTx === null) {
+    if (executeMintTx === null || fromAmount === null) {
       return;
     }
 
     executeMintTx({
-      amount: new BN(50000000000),
+      amount: fromAmount,
       currency: 'Bnc',
     });
-  }, [executeMintTx]);
+  }, [executeMintTx, fromAmount]);
+
+  const toAmount = useMemo(
+    () => fromAmount?.muln(rate ?? 0) ?? null,
+    [fromAmount, rate],
+  );
 
   return (
     <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9">
@@ -47,18 +57,19 @@ const LiquidStakingCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-from"
-        selectedToken={LiquidStakingToken.DOT}
+        selectedToken={selectedToken}
         amount={fromAmount}
         setAmount={setFromAmount}
+        placeholder={`0 ${selectedToken}`}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
         id="liquid-staking-to"
-        selectedToken={LiquidStakingToken.DOT}
+        selectedToken={selectedToken}
+        placeholder={`0 tg${selectedToken}`}
         amount={toAmount}
-        setAmount={setToAmount}
       />
 
       {/* Details */}
@@ -66,7 +77,7 @@ const LiquidStakingCard: FC = () => {
         <DetailItem
           title="Rate"
           tooltip="This is a test."
-          value="1 DOT = 0.982007 tgDOT"
+          value={`1 ${selectedToken} = ${rate} tg${selectedToken}`}
         />
 
         <DetailItem
@@ -83,7 +94,9 @@ const LiquidStakingCard: FC = () => {
       </div>
 
       <Button
-        isDisabled={executeMintTx === null}
+        isDisabled={executeMintTx === null || fromAmount === null}
+        isLoading={mintTxStatus === TxStatus.PROCESSING}
+        loadingText="Processing"
         onClick={handleStakeClick}
         isFullWidth
       >
