@@ -2,7 +2,7 @@
 // the `lstMinting` pallet, allowing us to use the `mint` extrinsic.
 import '@webb-tools/tangle-restaking-types';
 
-import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
+import { TanglePrimitivesCurrencyTokenSymbol } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
@@ -10,7 +10,7 @@ import useSubstrateTx from '../../hooks/useSubstrateTx';
 
 export type MintTxContext = {
   amount: BN;
-  currency: TanglePrimitivesCurrencyCurrencyId['type'];
+  currency: TanglePrimitivesCurrencyTokenSymbol['type'];
 };
 
 const useMintTx = () => {
@@ -18,8 +18,13 @@ const useMintTx = () => {
 
   return useSubstrateTx<MintTxContext>(
     (api, _activeSubstrateAddress, context) =>
-      // TODO: Investigate what the `remark` and `channel` parameters are for.
-      api.tx.lstMinting.mint(context.currency, context.amount, '', null),
+      // TODO: Investigate what the `remark` and `channel` parameters are for, and whether they are relevant for us here.
+      api.tx.lstMinting.mint(
+        { Native: context.currency },
+        context.amount,
+        '',
+        null,
+      ),
     undefined,
     undefined,
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,

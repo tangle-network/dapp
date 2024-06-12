@@ -25,8 +25,8 @@ const LiquidStakingCard: FC = () => {
     }
 
     executeMintTx({
-      amount: new BN(0),
-      currency: 'Native',
+      amount: new BN(50000000000),
+      currency: 'Bnc',
     });
   }, [executeMintTx]);
 
