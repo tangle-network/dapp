@@ -11,7 +11,7 @@ export type LiquidStakingInputProps = {
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({ id }) => {
   return (
-    <div className="flex flex-col gap-3 dark:bg-mono-180 p-3 rounded-lg w-full">
+    <div className="flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 rounded-lg w-full border-[1px] border-mono-40 dark:border-none p-3">
       <div className="flex justify-between">
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
           Polkadot Mainnet
