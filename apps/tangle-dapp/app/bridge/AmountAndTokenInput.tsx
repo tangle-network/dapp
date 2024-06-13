@@ -84,7 +84,7 @@ const AmountAndTokenInput: FC = () => {
           setErrorMessage={(error) =>
             setIsAmountInputError(error ? true : false)
           }
-          errorMessageClassName="absolute left-0 bottom-[-28px]"
+          errorMessageClassName="absolute left-0 bottom-[-24px] !text-[14px] !leading-[21px]"
         />
         <Dropdown>
           <DropdownTrigger asChild>
