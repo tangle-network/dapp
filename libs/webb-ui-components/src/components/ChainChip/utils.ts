@@ -44,6 +44,9 @@ const classNames: ChainChipClassNames = {
   'webb-dev': {
     default: 'text-mono-0 dark:text-mono-0 bg-[#D9780F]',
   },
+  phala: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#D1FF51]',
+  },
 };
 
 export function getChainChipClassName(chainType: ChainGroup) {

@@ -17,13 +17,16 @@ function validateInputAmount(
   min: BN | null,
   max: BN | null,
   errorOnEmptyValue: boolean,
+  decimals: number,
   minErrorMessage?: string,
   maxErrorMessage?: string,
 ): string | null {
   const schema = z
     .string()
     .transform((value) => (value === '' ? null : value))
-    .transform((value) => (value === null ? null : parseChainUnits(value)))
+    .transform((value) =>
+      value === null ? null : parseChainUnits(value, decimals),
+    )
     .refine((amount) => !errorOnEmptyValue || amount !== null, {
       message: 'No amount given',
     })
@@ -53,6 +56,7 @@ const useInputAmount = (
   amount: BN | null,
   min: BN | null,
   max: BN | null,
+  decimals: number,
   errorOnEmptyValue: boolean,
   setAmount?: (newAmount: BN | null) => void,
   minErrorMessage?: string,
@@ -61,7 +65,7 @@ const useInputAmount = (
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBn(amount, INPUT_AMOUNT_FORMAT) : '',
+    amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
   );
 
   const handleChange = useCallback(
@@ -87,6 +91,7 @@ const useInputAmount = (
         min,
         max,
         errorOnEmptyValue,
+        decimals,
         minErrorMessage,
         maxErrorMessage,
       );
@@ -103,16 +108,31 @@ const useInputAmount = (
         // Allow the amount string to be removed, by setting its value
         // to null.
         setAmount(
-          newAmountString === '' ? null : parseChainUnits(newAmountString),
+          newAmountString === ''
+            ? null
+            : parseChainUnits(newAmountString, decimals),
         );
       }
     },
-    [errorOnEmptyValue, max, maxErrorMessage, min, minErrorMessage, setAmount],
+    [
+      errorOnEmptyValue,
+      max,
+      maxErrorMessage,
+      min,
+      minErrorMessage,
+      setAmount,
+      decimals,
+    ],
   );
 
-  const refreshDisplayAmount = useCallback((newDisplayAmount: BN) => {
-    setDisplayAmount(formatBn(newDisplayAmount, INPUT_AMOUNT_FORMAT));
-  }, []);
+  const refreshDisplayAmount = useCallback(
+    (newDisplayAmount: BN) => {
+      setDisplayAmount(
+        formatBn(newDisplayAmount, decimals, INPUT_AMOUNT_FORMAT),
+      );
+    },
+    [decimals],
+  );
 
   return {
     displayAmount,

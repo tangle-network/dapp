@@ -1,40 +1,36 @@
 import type { HexString } from '@polkadot/util/types';
 import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
-import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import Decimal from 'decimal.js';
-import { formatEther, formatUnits, getContract } from 'viem';
+import { ethers } from 'ethers';
 
 export const getEvmNativeBalance = async (params?: {
-  client: ReturnType<typeof getViemClient>;
+  provider: ethers.providers.BaseProvider;
   accAddress: HexString;
 }): Promise<Decimal | null> => {
   if (!params) return null;
-  const { client, accAddress } = params;
+  const { accAddress, provider } = params;
 
-  const balance = await client.getBalance({
-    address: accAddress,
-  });
+  const balance = await provider.getBalance(accAddress);
 
-  return new Decimal(formatEther(balance));
+  return new Decimal(ethers.utils.formatEther(balance));
 };
 
 export const getEvmContractBalance = async (params?: {
-  client: ReturnType<typeof getViemClient>;
+  provider: ethers.providers.BaseProvider;
   contractAddress: HexString;
   accAddress: HexString;
   decimals: number;
 }): Promise<Decimal | null> => {
   if (!params) return null;
-  const { client, contractAddress, accAddress, decimals } = params;
+  const { provider, contractAddress, accAddress, decimals } = params;
 
-  const contract = getContract({
-    address: contractAddress,
-    // TODO: replace and test with the ERC20 contract deployed by Sygma team
-    abi: FungibleTokenWrapper__factory.abi,
-    client,
-  });
+  const contract = new ethers.Contract(
+    contractAddress,
+    FungibleTokenWrapper__factory.abi,
+    provider,
+  );
 
-  const balance = await contract.read.balanceOf([accAddress]);
+  const balance = await contract.balanceOf(accAddress);
 
-  return new Decimal(formatUnits(balance, decimals));
+  return new Decimal(ethers.utils.formatUnits(balance, decimals));
 };

@@ -17,7 +17,7 @@ import {
 } from 'react';
 
 import { BRIDGE } from '../constants/bridge';
-import { BridgeTokenId, BridgeWalletError } from '../types/bridge';
+import { BridgeTokenId, BridgeType, BridgeWalletError } from '../types/bridge';
 import { isEVMChain, isSubstrateChain } from '../utils/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = Object.keys(BRIDGE).map(
@@ -42,6 +42,8 @@ interface BridgeContextProps {
 
   destinationAddress: string;
   setDestinationAddress: (address: string) => void;
+
+  bridgeType: BridgeType | null;
 
   amount: BN | null;
   setAmount: (amount: BN | null) => void;
@@ -76,6 +78,8 @@ const BridgeContext = createContext<BridgeContextProps>({
   setDestinationAddress: () => {
     return;
   },
+
+  bridgeType: null,
 
   amount: null,
   setAmount: () => {
@@ -163,6 +167,41 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     tokenIdOptions[0],
   );
 
+  const bridgeType = useMemo(() => {
+    if (
+      isEVMChain(selectedSourceChain) &&
+      isEVMChain(selectedDestinationChain)
+    ) {
+      return BridgeType.SYGMA_EVM_TO_EVM;
+    }
+
+    // EVM to Substrate
+    if (
+      isEVMChain(selectedSourceChain) &&
+      isSubstrateChain(selectedDestinationChain)
+    ) {
+      return BridgeType.SYGMA_EVM_TO_SUBSTRATE;
+    }
+
+    // Substrate to EVM
+    if (
+      isSubstrateChain(selectedSourceChain) &&
+      isEVMChain(selectedDestinationChain)
+    ) {
+      return BridgeType.SYGMA_SUBSTRATE_TO_EVM;
+    }
+
+    // Substrate to Substrate
+    if (
+      isSubstrateChain(selectedSourceChain) &&
+      isSubstrateChain(selectedDestinationChain)
+    ) {
+      return BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE;
+    }
+
+    return null;
+  }, [selectedSourceChain, selectedDestinationChain]);
+
   useEffect(() => {
     // If current destination chain is not in the destination chain options,
     // set the first option as the destination chain.
@@ -224,6 +263,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
 
         destinationAddress,
         setDestinationAddress,
+
+        bridgeType,
 
         amount,
         setAmount,
