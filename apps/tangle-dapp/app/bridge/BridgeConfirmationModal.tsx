@@ -1,14 +1,15 @@
 'use client';
 
 import {
-  // Button,
+  Button,
   Modal,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  // Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
+
+import FeeDetails from './FeeDetails';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -30,10 +31,12 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
           Bridge Confirmation
         </ModalHeader>
 
-        {/* Modal Content */}
+        <div className="p-9">
+          <FeeDetails />
+        </div>
 
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          {/* Confirm Button */}
+          <Button isFullWidth>Confirm</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
