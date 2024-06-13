@@ -50,7 +50,7 @@ export type OperatorDelegatorBond = Readonly<{
   /**
    * The ID of the bonded asset.
    */
-  assetId: bigint;
+  assetId: string;
 }>;
 
 /**

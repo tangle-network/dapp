@@ -1,13 +1,13 @@
 import type { ApiPromise } from '@polkadot/api';
-import type { Option, u128, Vec } from '@polkadot/types';
+import type { Option, u128 } from '@polkadot/types';
 import type {
   PalletAssetsAssetDetails,
   PalletAssetsAssetMetadata,
 } from '@polkadot/types/lookup';
-import { formatBalance } from '@polkadot/util';
+import { formatBalance, hexToString } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { useObservable, useObservableState } from 'observable-hooks';
-import { mergeMap, withLatestFrom } from 'rxjs';
+import { mergeMap } from 'rxjs';
 import type { Chain } from 'viem';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
@@ -20,17 +20,16 @@ export default function useRestakingAssetMap() {
   const { apiPromise } = usePolkadotApi();
   const { activeChain } = useWebContext();
 
-  const { assetIds$ } = useRestakingAssetIds();
+  const { assetIds } = useRestakingAssetIds();
 
   const assetMap$ = useObservable(
     (input$) =>
-      assetIds$.pipe(
-        withLatestFrom(input$),
-        mergeMap(([assetIds, [api, nativeCurrentcy]]) =>
+      input$.pipe(
+        mergeMap(([assetIds, api, nativeCurrentcy]) =>
           mapAssetDetails(assetIds, api, nativeCurrentcy),
         ),
       ),
-    [apiPromise, activeChain?.nativeCurrency],
+    [assetIds, apiPromise, activeChain?.nativeCurrency],
   );
 
   const assetMap = useObservableState(assetMap$, EMPTY_ASSET_MAP);
@@ -42,7 +41,7 @@ export default function useRestakingAssetMap() {
 }
 
 const mapAssetDetails = async (
-  assetIds: Vec<u128>,
+  assetIds: u128[],
   api: ApiPromise,
   nativeCurrentcy: Chain['nativeCurrency'] = {
     name: formatBalance.getDefaults().unit,
@@ -63,13 +62,24 @@ const mapAssetDetails = async (
     return true;
   });
 
+  if (nonNativeAssetIds.length === 0) {
+    return hasNative
+      ? {
+          '0': {
+            ...nativeCurrentcy,
+            id: '0',
+            status: 'Live',
+          } satisfies AssetMetadata,
+        }
+      : EMPTY_ASSET_MAP;
+  }
+
   // Batch queries for asset details
   const assetDetailQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
-        api.query.assets.asset,
-        assetId.toString(),
-      ] as const),
+        [api.query.assets.asset, assetId.toString()] as const,
+      ]),
     [] as [typeof api.query.assets.asset, string][],
   );
 
@@ -77,9 +87,8 @@ const mapAssetDetails = async (
   const assetMetadataQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
-        api.query.assets.metadata,
-        assetId.toString(),
-      ] as const),
+        [api.query.assets.metadata, assetId.toString()] as const,
+      ]),
     [] as [typeof api.query.assets.metadata, string][],
   );
 
@@ -103,8 +112,8 @@ const mapAssetDetails = async (
       return Object.assign(assetMap, {
         [assetId.toString()]: {
           id: assetId.toString(),
-          name: metadata.name.toString(),
-          symbol: metadata.symbol.toString(),
+          name: hexToString(metadata.name.toHex()),
+          symbol: hexToString(metadata.symbol.toHex()),
           decimals: metadata.decimals.toNumber(),
           status: detail.status.type,
         },

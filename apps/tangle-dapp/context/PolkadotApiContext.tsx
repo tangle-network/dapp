@@ -1,16 +1,12 @@
 'use client';
 
-import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
-import {
-  createContext,
-  type FC,
-  type PropsWithChildren,
-  useCallback,
-  useMemo,
-} from 'react';
+import { WsProvider } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api/promise';
+import { ApiRx } from '@polkadot/api/rx';
+import { createContext, type FC, type PropsWithChildren } from 'react';
+import useSWRImmutable from 'swr/immutable';
 import { Prettify } from 'viem/chains';
 
-import usePromise from '../hooks/usePromise';
 import { getApiPromise, getApiRx } from '../utils/polkadot';
 import useNetworkStore from './useNetworkStore';
 
@@ -48,31 +44,19 @@ export const PolkadotApiProvider: FC<PropsWithChildren> = ({ children }) => {
   const { rpcEndpoint } = useNetworkStore();
 
   const {
-    result: apiPromiseOrNull,
+    data: apiPromise = DEFAULT_API_PROMISE,
     isLoading: apiPromiseLoading,
     error: apiPromiseError,
-  } = usePromise(
-    useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
-    null,
+  } = useSWRImmutable([rpcEndpoint, 'apiPromise'], ([endpoint]) =>
+    getApiPromise(endpoint),
   );
 
   const {
-    result: apiRxOrNull,
+    data: apiRx = DEFAULT_API_RX,
     isLoading: apiRxLoading,
     error: apiRxError,
-  } = usePromise(
-    useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
-    null,
-  );
-
-  // Ensure that the default API instances are used if the custom ones are not available yet.
-  const { apiPromise, apiRx } = useMemo(
-    () => ({
-      apiPromise:
-        apiPromiseOrNull === null ? DEFAULT_API_PROMISE : apiPromiseOrNull,
-      apiRx: apiRxOrNull === null ? DEFAULT_API_RX : apiRxOrNull,
-    }),
-    [apiPromiseOrNull, apiRxOrNull],
+  } = useSWRImmutable([rpcEndpoint, 'apiRx'], ([endpoint]) =>
+    getApiRx(endpoint),
   );
 
   return (
