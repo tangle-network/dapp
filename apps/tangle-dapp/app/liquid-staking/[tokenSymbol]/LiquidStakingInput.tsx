@@ -2,6 +2,7 @@
 
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { ChevronDown, TokenIcon } from '@webb-tools/icons';
 import {
   Dropdown,
@@ -46,6 +47,8 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   const { displayAmount, handleChange, refreshDisplayAmount } = useInputAmount({
     amount,
     setAmount,
+    // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
+    decimals: TANGLE_TOKEN_DECIMALS,
   });
 
   // TODO: This is preventing the user from inputting values like `0.001`. May need to use Decimal.js to handle small amounts, then convert into BN in the implementation of the `useInputAmount` hook?
