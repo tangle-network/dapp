@@ -34,4 +34,9 @@ export interface TitleWithInfoProps extends WebbComponentBase {
    * The `info` appears inside the tooltip to describe the title
    */
   info?: string | React.ReactElement;
+
+  /**
+   * Whether center the info
+   */
+  isCenterInfo?: boolean;
 }

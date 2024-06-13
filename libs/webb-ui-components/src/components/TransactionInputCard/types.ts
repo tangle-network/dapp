@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import type { PropsOf } from '../../types';
 import type { AdjustAmount } from '../BridgeInputs';
 import type { TextFieldInput } from '../TextField';
@@ -69,7 +69,19 @@ export interface TransactionMaxAmountButtonProps
     Pick<
       TransactionInputCardContextValue,
       'tokenSymbol' | 'maxAmount' | 'accountType' | 'onAmountChange'
-    > {}
+    > {
+  /**
+   * The tooltip body for the max amount button.
+   * @default "Shielded Balance" | "Wallet Balance" (based on the account type)
+   */
+  tooltipBody?: ReactNode;
+
+  /**
+   * The Icon for the max amount button.
+   * #@default <ShieldKeyhole /> | <Wallet /> (based on the account type)
+   */
+  Icon?: React.ReactElement<IconBase>;
+}
 
 export interface TransactionInputCardHeaderProps extends PropsOf<'div'> {}
 

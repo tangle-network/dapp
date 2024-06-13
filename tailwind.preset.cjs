@@ -190,6 +190,15 @@ const keyframes = {
     from: { transform: 'translate3d(0,0,0)' },
     to: { transform: 'translate3d(100%,0,0)' },
   },
+  // Accordion
+  'accordion-slide-down': {
+    from: { height: 0 },
+    to: { height: 'var(--radix-accordion-content-height)' },
+  },
+  'accordion-slide-up': {
+    from: { height: 'var(--radix-accordion-content-height)' },
+    to: { height: 0 },
+  },
 };
 
 /** @type {import('tailwind/types/config').ThemeConfig['animation']} */
@@ -226,6 +235,9 @@ const animation = {
     'drawer-content-right-slide-in 150ms cubic-bezier(0.22, 1, 0.36, 1)',
   'drawer-content-right-close':
     'drawer-content-right-slide-out 150ms cubic-bezier(0.22, 1, 0.36, 1)',
+  // Accordion
+  'accordion-slide-down': 'accordion-slide-down 300ms ease-out',
+  'accordion-slide-up': 'accordion-slide-up 300ms ease-out',
 };
 
 /** @type {import('tailwind/types/config').Config} */

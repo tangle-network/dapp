@@ -168,6 +168,7 @@ export enum RestakingService {
   TSS_ZCASH_FROST_ED25519 = 'TSS_ZcashFrostEd25519',
   TSS_GENNARO_DKG_BLS381 = 'TSS_GennaroDKGBls381',
   TSS_ZCASH_FROST_ED448 = 'TSS_ZcashFrostEd448',
+  TSS_WSTS_V2 = 'TSS_WSTS_V2',
 }
 
 export enum RestakingProfileType {

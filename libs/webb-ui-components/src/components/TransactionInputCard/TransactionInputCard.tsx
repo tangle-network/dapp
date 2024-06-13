@@ -179,6 +179,8 @@ const TransactionMaxAmountButton = forwardRef<
       accountType: accountTypeProp,
       onAmountChange: onAmountChangeProp,
       disabled: disabledProp,
+      tooltipBody,
+      Icon,
       ...props
     },
     ref,
@@ -218,16 +220,20 @@ const TransactionMaxAmountButton = forwardRef<
                 : undefined
             }
             Icon={
-              accountType === 'note' ? (
-                <>
-                  <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-                  <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-                </>
+              Icon === undefined ? (
+                accountType === 'note' ? (
+                  <>
+                    <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+                    <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                  </>
+                ) : (
+                  <>
+                    <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+                    <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                  </>
+                )
               ) : (
-                <>
-                  <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-                  <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-                </>
+                Icon
               )
             }
             className={disabled ? 'cursor-not-allowed' : ''}
@@ -236,7 +242,11 @@ const TransactionMaxAmountButton = forwardRef<
           </TransactionButton>
         </TooltipTrigger>
         <TooltipBody>
-          {accountType === 'note' ? 'Shielded Balance' : 'Wallet Balance'}
+          {tooltipBody === undefined
+            ? accountType === 'note'
+              ? 'Shielded Balance'
+              : 'Wallet Balance'
+            : tooltipBody}
         </TooltipBody>
       </Tooltip>
     );

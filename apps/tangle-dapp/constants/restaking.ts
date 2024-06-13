@@ -42,6 +42,7 @@ export const SERVICE_TYPE_TO_TANGLE_MAP = {
   [RestakingService.TSS_ZCASH_FROST_ED25519]: { Tss: 'ZcashFrostEd25519' },
   [RestakingService.TSS_GENNARO_DKG_BLS381]: { Tss: 'GennaroDKGBls381' },
   [RestakingService.TSS_ZCASH_FROST_ED448]: { Tss: 'ZcashFrostEd448' },
+  [RestakingService.TSS_WSTS_V2]: { Tss: 'WstsV2' },
 } as const satisfies TangleRoleMapping;
 
 export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
@@ -58,6 +59,7 @@ export const TANGLE_TO_SERVICE_TYPE_TSS_MAP: {
   ZcashFrostRistretto255: RestakingService.TSS_ZCASH_FROST_RISTRETTO255,
   ZcashFrostSecp256k1: RestakingService.TSS_ZCASH_FROST_SECP256K1,
   ZcashFrostEd448: RestakingService.TSS_ZCASH_FROST_ED448,
+  WstsV2: RestakingService.TSS_WSTS_V2,
 };
 
 export const TANGLE_TO_SERVICE_TYPE_ZK_SAAS_MAP: {

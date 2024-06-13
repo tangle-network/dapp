@@ -31,3 +31,9 @@ export type OmitByValue<T, ValueType> = Pick<
   T,
   { [Key in keyof T]-?: T[Key] extends ValueType ? never : Key }[keyof T]
 >;
+
+/**
+ * JS primitive types
+ * @see {@link https://developer.mozilla.org/en-US/docs/Glossary/Primitive}
+ */
+export type Primitive = string | number | boolean | null | undefined;

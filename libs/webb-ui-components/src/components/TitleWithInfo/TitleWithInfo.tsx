@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { TitleWithInfoProps } from './types';
+import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
 
 /**
  * The re-useable title component with small info in a popup tooltip
@@ -24,6 +25,7 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
       titleClassName,
       titleComponent = 'span',
       variant = 'body1',
+      isCenterInfo,
       ...props
     },
     ref,
@@ -53,8 +55,12 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
               </span>
             </TooltipTrigger>
             <TooltipBody className="break-normal max-w-[200px]">
-              {typeof info === 'string' ? (
-                <Typography variant="body3" className="break-normal">
+              {isPrimitive(info) && info !== null && info !== undefined ? (
+                <Typography
+                  ta={isCenterInfo ? 'center' : 'left'}
+                  variant="body3"
+                  className="break-normal"
+                >
                   {info}
                 </Typography>
               ) : (
