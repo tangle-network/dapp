@@ -16,26 +16,30 @@ export enum LiquidStakingToken {
   PHALA = 'PHALA',
 }
 
-export const LiquidStakingChainToTokenMap: Record<
-  LiquidStakingChain,
-  LiquidStakingToken
-> = {
-  [LiquidStakingChain.Polkadot]: LiquidStakingToken.DOT,
-  [LiquidStakingChain.Phala]: LiquidStakingToken.PHALA,
-  [LiquidStakingChain.Moonbeam]: LiquidStakingToken.GLMR,
-  [LiquidStakingChain.Astar]: LiquidStakingToken.ASTAR,
-  [LiquidStakingChain.Manta]: LiquidStakingToken.MANTA,
-};
+export const LS_CHAIN_TO_TOKEN: Record<LiquidStakingChain, LiquidStakingToken> =
+  {
+    [LiquidStakingChain.Polkadot]: LiquidStakingToken.DOT,
+    [LiquidStakingChain.Phala]: LiquidStakingToken.PHALA,
+    [LiquidStakingChain.Moonbeam]: LiquidStakingToken.GLMR,
+    [LiquidStakingChain.Astar]: LiquidStakingToken.ASTAR,
+    [LiquidStakingChain.Manta]: LiquidStakingToken.MANTA,
+  };
 
-export const LiquidStakingChainToLogoMap: Record<
-  LiquidStakingChain,
-  StaticAssetPath
-> = {
+export const LS_CHAIN_TO_LOGO: Record<LiquidStakingChain, StaticAssetPath> = {
   [LiquidStakingChain.Polkadot]: StaticAssetPath.LIQUID_STAKING_TOKEN_POLKADOT,
   [LiquidStakingChain.Phala]: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   [LiquidStakingChain.Moonbeam]: StaticAssetPath.LIQUID_STAKING_TOKEN_GLIMMER,
   [LiquidStakingChain.Astar]: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
   [LiquidStakingChain.Manta]: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
+};
+
+// TODO: Instead of mapping to names, map to network/chain definitions themselves. This avoids redundancy and relies on a centralized definition for the network/chain which is better, since it simplifies future refactoring.
+export const LS_CHAIN_TO_NETWORK_NAME: Record<LiquidStakingChain, string> = {
+  [LiquidStakingChain.Polkadot]: 'Polkadot Mainnet',
+  [LiquidStakingChain.Phala]: 'Phala',
+  [LiquidStakingChain.Moonbeam]: 'Moonbeam',
+  [LiquidStakingChain.Astar]: 'Astar',
+  [LiquidStakingChain.Manta]: 'Manta',
 };
 
 export const TVS_TOOLTIP =

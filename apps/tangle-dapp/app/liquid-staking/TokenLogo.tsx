@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LiquidStakingChain,
-  LiquidStakingChainToLogoMap,
+  LS_CHAIN_TO_LOGO,
 } from '../../constants/liquidStaking';
 
 export type TokenSize = 'sm' | 'md';
@@ -37,6 +37,8 @@ const getBackgroundColor = (chain: LiquidStakingChain) => {
   switch (chain) {
     case LiquidStakingChain.Manta:
       return 'bg-[#13101D] dark:bg-[#13101D]';
+    case LiquidStakingChain.Moonbeam:
+      return 'bg-[#1d1336] dark:bg-[#1d1336]';
     case LiquidStakingChain.Polkadot:
     default:
       return 'bg-mono-0 dark:bg-mono-0';
@@ -57,7 +59,7 @@ const TokenLogo: FC<TokenLogoProps> = ({
         getBackgroundColor(chain),
         isRounded ? 'rounded-full' : 'rounded-md',
       )}
-      src={LiquidStakingChainToLogoMap[chain]}
+      src={LS_CHAIN_TO_LOGO[chain]}
       alt={`Logo of the liquid staking token ${chain}`}
       width={sizeNumber}
       height={sizeNumber}

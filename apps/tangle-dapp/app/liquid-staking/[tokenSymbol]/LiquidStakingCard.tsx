@@ -14,7 +14,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingToken,
+  LiquidStakingChain,
 } from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -28,8 +28,8 @@ const LiquidStakingCard: FC = () => {
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
   const [rate] = useState<number | null>(1.3);
 
-  const [selectedToken, setSelectedToken] = useState<LiquidStakingToken>(
-    LiquidStakingToken.DOT,
+  const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
+    LiquidStakingChain.Polkadot,
   );
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
@@ -61,19 +61,20 @@ const LiquidStakingCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-from"
-        selectedToken={selectedToken}
+        selectedChain={selectedChain}
         amount={fromAmount}
         setAmount={setFromAmount}
-        placeholder={`0 ${selectedToken}`}
+        placeholder={`0 ${selectedChain}`}
         rightElement={<WalletBalance />}
+        setChain={setSelectedChain}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
         id="liquid-staking-to"
-        selectedToken={selectedToken}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedToken}`}
+        selectedChain={selectedChain}
+        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain}`}
         amount={toAmount}
         isReadOnly
         isLiquidVariant
@@ -85,7 +86,7 @@ const LiquidStakingCard: FC = () => {
         <DetailItem
           title="Rate"
           tooltip="This is a test."
-          value={`1 ${selectedToken} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedToken}`}
+          value={`1 ${selectedChain} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain}`}
         />
 
         <DetailItem

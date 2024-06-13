@@ -11,13 +11,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useCallback, useEffect } from 'react';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChain,
-  LiquidStakingChainToTokenMap,
-  LiquidStakingToken,
+  LS_CHAIN_TO_NETWORK_NAME,
+  LS_CHAIN_TO_TOKEN,
 } from '../../../constants/liquidStaking';
 import useInputAmount from '../../../hooks/useInputAmount';
 import HoverButtonStyle from '../HoverButtonStyle';
@@ -26,7 +26,8 @@ import TokenLogo from '../TokenLogo';
 export type LiquidStakingInputProps = {
   id: string;
   // TODO: Make use of this.
-  selectedToken: LiquidStakingToken;
+  selectedChain: LiquidStakingChain;
+  setChain?: (newChain: LiquidStakingChain) => void;
   amount: BN | null;
   setAmount?: (newAmount: BN | null) => void;
   isReadOnly?: boolean;
@@ -43,6 +44,8 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   placeholder = '0',
   isLiquidVariant = false,
   rightElement,
+  selectedChain,
+  setChain,
 }) => {
   const { displayAmount, handleChange, refreshDisplayAmount } = useInputAmount({
     amount,
@@ -57,13 +60,21 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     refreshDisplayAmount(amount);
   }, [amount, refreshDisplayAmount]);
 
+  const handleChainChange = useCallback(
+    (newChain: LiquidStakingChain) => {
+      if (setChain !== undefined) {
+        setChain(newChain);
+      }
+    },
+    [setChain],
+  );
+
   return (
     <div className="flex flex-col gap-3 dark:bg-mono-180 p-3 rounded-lg">
       <div className="flex justify-between">
         <ChainSelector
-          // TODO: Using dummy props.
-          chain={LiquidStakingChain.Polkadot}
-          setChain={() => void 0}
+          selectedChain={selectedChain}
+          setChain={isReadOnly ? undefined : handleChainChange}
         />
 
         {rightElement}
@@ -82,10 +93,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
           readOnly={isReadOnly}
         />
 
-        <TokenChip
-          chain={LiquidStakingChain.Polkadot}
-          isLiquidVariant={isLiquidVariant}
-        />
+        <TokenChip chain={selectedChain} isLiquidVariant={isLiquidVariant} />
       </div>
     </div>
   );
@@ -98,7 +106,7 @@ type TokenChipProps = {
 
 /** @internal */
 const TokenChip: FC<TokenChipProps> = ({ chain, isLiquidVariant }) => {
-  const token = LiquidStakingChainToTokenMap[chain];
+  const token = LS_CHAIN_TO_TOKEN[chain];
 
   return (
     <div className="flex gap-2 justify-center items-center dark:bg-mono-160 px-4 py-2 rounded-lg">
@@ -113,47 +121,61 @@ const TokenChip: FC<TokenChipProps> = ({ chain, isLiquidVariant }) => {
 };
 
 type ChainSelectorProps = {
-  chain: LiquidStakingChain;
-  setChain: (newChain: LiquidStakingChain) => void;
+  selectedChain: LiquidStakingChain;
+
+  /**
+   * If this function is not provided, the selector will be
+   * considered read-only.
+   */
+  setChain?: (newChain: LiquidStakingChain) => void;
 };
 
-const ChainSelector: FC<ChainSelectorProps> = ({ chain, setChain }) => {
-  return (
+const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
+  const isReadOnly = setChain === undefined;
+
+  // TODO: This is missing the padding styling if it's readonly. Need to make it consistent.
+  const base = (
+    <div className="flex gap-2 items-center justify-center">
+      <TokenLogo size="sm" chain={selectedChain} />
+
+      <Typography variant="h5" fw="bold" className="dark:text-mono-40">
+        {LS_CHAIN_TO_NETWORK_NAME[selectedChain]}
+      </Typography>
+
+      {!isReadOnly && <ChevronDown className="dark:fill-mono-120" size="lg" />}
+    </div>
+  );
+
+  return setChain !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>
-        <HoverButtonStyle>
-          <div className="flex gap-2 items-center justify-center">
-            <TokenLogo size="sm" chain={chain} />
-
-            <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-              Polkadot Mainnet
-            </Typography>
-
-            <ChevronDown className="dark:fill-mono-120" size="lg" />
-          </div>
-        </HoverButtonStyle>
+        <HoverButtonStyle>{base}</HoverButtonStyle>
       </DropdownMenuTrigger>
 
       <DropdownBody>
         <ScrollArea className="max-h-[300px] w-[130px]">
           <ul>
-            {['a', 'b', 'c'].map((tokenId) => {
-              return (
-                <li key={tokenId}>
-                  <MenuItem
-                    startIcon={<TokenIcon size="lg" name={tokenId} />}
-                    onSelect={() => void 0}
-                    className="px-3 normal-case"
-                  >
-                    {tokenId}
-                  </MenuItem>
-                </li>
-              );
-            })}
+            {Object.values(LiquidStakingChain)
+              .filter((chain) => chain !== selectedChain)
+              .map((chain) => {
+                return (
+                  <li key={chain}>
+                    <MenuItem
+                      startIcon={<TokenIcon size="lg" name={chain} />}
+                      onSelect={() => setChain(chain)}
+                      className="px-3 normal-case"
+                    >
+                      {chain}
+                    </MenuItem>
+                  </li>
+                );
+              })}
           </ul>
         </ScrollArea>
       </DropdownBody>
     </Dropdown>
+  ) : (
+    base
   );
 };
 

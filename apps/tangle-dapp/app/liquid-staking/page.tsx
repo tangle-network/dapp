@@ -2,10 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { GlassCard } from '../../components';
-import {
-  LiquidStakingChainToTokenMap,
-  TVS_TOOLTIP,
-} from '../../constants/liquidStaking';
+import { LS_CHAIN_TO_TOKEN, TVS_TOOLTIP } from '../../constants/liquidStaking';
 import entriesOf from '../../utils/entriesOf';
 import LiquidStakingTokenItem from './LiquidStakingTokenItem';
 import StatItem from './StatItem';
@@ -45,7 +42,7 @@ const LiquidStakingPage: FC = () => {
 
         <div className="overflow-x-auto">
           <div className="flex flex-col gap-4 min-w-[750px]">
-            {entriesOf(LiquidStakingChainToTokenMap).map(([chain, token]) => {
+            {entriesOf(LS_CHAIN_TO_TOKEN).map(([chain, token]) => {
               return (
                 <LiquidStakingTokenItem
                   key={chain}
