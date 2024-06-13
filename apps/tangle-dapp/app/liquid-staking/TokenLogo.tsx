@@ -39,6 +39,8 @@ const getBackgroundColor = (chain: LiquidStakingChain) => {
       return 'bg-[#13101D] dark:bg-[#13101D]';
     case LiquidStakingChain.Moonbeam:
       return 'bg-[#1d1336] dark:bg-[#1d1336]';
+    case LiquidStakingChain.Phala:
+      return 'bg-black dark:bg-black';
     case LiquidStakingChain.Polkadot:
     default:
       return 'bg-mono-0 dark:bg-mono-0';

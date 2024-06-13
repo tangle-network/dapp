@@ -70,7 +70,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-3 dark:bg-mono-180 p-3 rounded-lg">
+    <div className="flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-3 rounded-lg border border-mono-40 dark:border-mono-160">
       <div className="flex justify-between">
         <ChainSelector
           selectedChain={selectedChain}
@@ -109,7 +109,7 @@ const TokenChip: FC<TokenChipProps> = ({ chain, isLiquidVariant }) => {
   const token = LS_CHAIN_TO_TOKEN[chain];
 
   return (
-    <div className="flex gap-2 justify-center items-center dark:bg-mono-160 px-4 py-2 rounded-lg">
+    <div className="flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg">
       <TokenLogo size="sm" chain={chain} />
 
       <Typography variant="h5" fw="bold">

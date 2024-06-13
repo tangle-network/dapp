@@ -15,6 +15,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChain,
+  LS_CHAIN_TO_TOKEN,
 } from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -32,6 +33,8 @@ const LiquidStakingCard: FC = () => {
     LiquidStakingChain.Polkadot,
   );
 
+  const selectedChainToken = LS_CHAIN_TO_TOKEN[selectedChain];
+
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
 
   const handleStakeClick = useCallback(() => {
@@ -48,13 +51,17 @@ const LiquidStakingCard: FC = () => {
   const toAmount = useMemo(() => fromAmount?.muln(2) ?? null, [fromAmount]);
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9 border dark:border-mono-160">
+    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
       <div className="flex gap-3">
         <Typography className="dark:text-mono-0" variant="h4" fw="bold">
           Stake
         </Typography>
 
-        <Typography className="dark:text-mono-100" variant="h4" fw="bold">
+        <Typography
+          className="text-mono-100 dark:text-mono-100"
+          variant="h4"
+          fw="bold"
+        >
           Unstake
         </Typography>
       </div>
@@ -64,7 +71,7 @@ const LiquidStakingCard: FC = () => {
         selectedChain={selectedChain}
         amount={fromAmount}
         setAmount={setFromAmount}
-        placeholder={`0 ${selectedChain}`}
+        placeholder={`0 ${selectedChainToken}`}
         rightElement={<WalletBalance />}
         setChain={setSelectedChain}
       />
@@ -74,7 +81,7 @@ const LiquidStakingCard: FC = () => {
       <LiquidStakingInput
         id="liquid-staking-to"
         selectedChain={selectedChain}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain}`}
+        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
         amount={toAmount}
         isReadOnly
         isLiquidVariant
@@ -82,7 +89,7 @@ const LiquidStakingCard: FC = () => {
       />
 
       {/* Details */}
-      <div className="flex flex-col gap-2 p-3 dark:bg-mono-180 rounded-lg">
+      <div className="flex flex-col gap-2 p-3 bg-mono-20 dark:bg-mono-180 rounded-lg">
         <DetailItem
           title="Rate"
           tooltip="This is a test."
