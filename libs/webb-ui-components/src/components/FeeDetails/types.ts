@@ -24,7 +24,7 @@ export type FeeItem = {
   /**
    * The formated fee value.
    */
-  value?: number | React.ReactElement;
+  value?: number | React.ReactNode;
 
   /**
    * The fee token symbol.
@@ -46,6 +46,22 @@ export type FeeItem = {
  * The props for the FeeDetails component.
  */
 export type FeeDetailsProps = Omit<AccordionSingleProps, 'type'> & {
+  /**
+   * The override title
+   * @default 'Fees'
+   */
+  title?: string;
+
+  /**
+   * The override className for the title
+   */
+  titleClassName?: string;
+
+  /**
+   * The override className for the title of each fee item
+   */
+  itemTitleClassName?: string;
+
   /**
    * The fee tooltip info.
    */
