@@ -13,7 +13,7 @@ import StatItem from './StatItem';
 
 const LiquidStakingPage: FC = () => {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
       <Typography variant="h4" fw="bold">
         Overview
       </Typography>

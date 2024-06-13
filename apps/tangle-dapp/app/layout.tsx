@@ -3,6 +3,7 @@ import '../styles/globals.css';
 
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import Suspense from '@webb-tools/webb-ui-components/components/Suspense';
+import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import type React from 'react';
@@ -33,12 +34,16 @@ export default function RootLayout({
     headers().get('cookie'),
   );
 
+  const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <Suspense>
           <Providers wagmiInitialState={initialState}>
-            <Layout>{children}</Layout>
+            <Layout isSidebarInitiallyExpanded={isSidebarInitiallyExpanded}>
+              {children}
+            </Layout>
           </Providers>
         </Suspense>
       </body>

@@ -8,9 +8,13 @@ import {
   IconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
-import { LS_TOKEN_SYMBOL } from '../constants';
+import {
+  LiquidStakingToken,
+  TANGLE_LS_PREFIX_TOKEN_SYMBOL,
+} from '../../constants/liquidStaking';
+import useLSTokenSVGs from '../../hooks/useLSTokenSVGs';
 
 type TokenInfoProps = {
   title: string;
@@ -25,6 +29,7 @@ type TokenInfoCardProps = {
   unstakingInfo: TokenInfoProps;
   apyInfo: TokenInfoProps;
   tokenSymbol: string;
+  tokenSVG?: React.FC<React.SVGProps<SVGSVGElement>>;
 };
 
 const TokenInfoCard = ({
@@ -34,59 +39,66 @@ const TokenInfoCard = ({
   apyInfo,
   tokenSymbol,
 }: TokenInfoCardProps) => {
+  const TokenSVG = useLSTokenSVGs(tokenSymbol as LiquidStakingToken);
+
   return (
-    <div className="max-w-[684px] max-h-[295px] p-[20px] flex flex-col gap-[30px] bg-token_info_card dark:bg-token_info_card_dark rounded-2xl border-[1px] border-mono-0 dark:border-mono-160">
-      <div className="grid gap-y-[30px] grid-cols-2 grid-rows-2">
-        <GridItem
-          title={stakingInfo.title}
-          tooltip={stakingInfo.tooltip}
-          value={stakingInfo.value}
-          valueTooltip={stakingInfo.valueTooltip}
-          tokenSymbol={tokenSymbol}
-        />
+    <div className="max-w-[684px] h-fit p-[20px] flex justify-between relative bg-token_info_card dark:bg-token_info_card_dark rounded-2xl border-[1px] border-mono-0 dark:border-mono-160">
+      <div className="flex flex-col gap-[30px] flex-grow z-10">
+        <div className="grid gap-y-[30px] grid-cols-2 grid-rows-2">
+          <GridItem
+            title={stakingInfo.title}
+            tooltip={stakingInfo.tooltip}
+            value={stakingInfo.value}
+            valueTooltip={stakingInfo.valueTooltip}
+            tokenSymbol={tokenSymbol}
+          />
 
-        <GridItem
-          title={availableInfo.title}
-          tooltip={availableInfo.tooltip}
-          value={availableInfo.value}
-          valueTooltip={availableInfo.valueTooltip}
-          tokenSymbol={tokenSymbol}
-        />
+          <GridItem
+            title={availableInfo.title}
+            tooltip={availableInfo.tooltip}
+            value={availableInfo.value}
+            valueTooltip={availableInfo.valueTooltip}
+            tokenSymbol={TANGLE_LS_PREFIX_TOKEN_SYMBOL + tokenSymbol}
+          />
 
-        <GridItem
-          title={unstakingInfo.title}
-          tooltip={unstakingInfo.tooltip}
-          value={unstakingInfo.value}
-          valueTooltip={unstakingInfo.valueTooltip}
-          tokenSymbol={LS_TOKEN_SYMBOL + tokenSymbol}
-          fw="normal"
-        />
+          <GridItem
+            title={unstakingInfo.title}
+            tooltip={unstakingInfo.tooltip}
+            value={unstakingInfo.value}
+            valueTooltip={unstakingInfo.valueTooltip}
+            tokenSymbol={tokenSymbol}
+            fw="normal"
+          />
 
-        <GridItem
-          title={apyInfo.title}
-          tooltip={apyInfo.tooltip}
-          value={apyInfo.value}
-          valueTooltip={apyInfo.valueTooltip}
-          tokenSymbol={LS_TOKEN_SYMBOL + tokenSymbol}
-          fw="normal"
-        />
+          <GridItem
+            title={apyInfo.title}
+            tooltip={apyInfo.tooltip}
+            value={apyInfo.value}
+            valueTooltip={apyInfo.valueTooltip}
+            fw="normal"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            rightIcon={
+              <ArrowRightUp className="fill-mono-0 dark:!fill-mono-180" />
+            }
+          >
+            Restake
+          </Button>
+
+          <Button
+            variant="secondary"
+            rightIcon={<ExternalLinkLine className="" />}
+          >
+            Explorer
+          </Button>
+        </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Button
-          rightIcon={
-            <ArrowRightUp className="fill-mono-0 dark:!fill-mono-180" />
-          }
-        >
-          Restake
-        </Button>
-
-        <Button
-          variant="secondary"
-          rightIcon={<ExternalLinkLine className="" />}
-        >
-          Explorer
-        </Button>
+      <div className="absolute top-3 right-0 z-0">
+        {TokenSVG && <TokenSVG />}
       </div>
     </div>
   );
