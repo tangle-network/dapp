@@ -99,6 +99,8 @@ const LiquidStakingCard: FC = () => {
           tooltip="This is a test."
           value="7 days"
         />
+
+        <DetailItem title="Token address" value="0xbe507...00006" />
       </div>
 
       <Button
@@ -127,7 +129,7 @@ const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
   return (
     <div className="flex gap-2 justify-between w-full">
       <div className="flex items-center gap-1">
-        <Typography variant="body1" fw="bold">
+        <Typography variant="body1" fw="normal">
           {title}
         </Typography>
 

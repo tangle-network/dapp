@@ -1,4 +1,8 @@
-import { ArrowRightUp, InformationLine } from '@webb-tools/icons';
+import {
+  ArrowRightUp,
+  ExternalLinkLine,
+  InformationLine,
+} from '@webb-tools/icons';
 import {
   Button,
   IconWithTooltip,
@@ -42,7 +46,24 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
           <GridItem title="APY" value={tokenSymbol} />
         </div>
 
-        <Button rightIcon={<ArrowRightUp />}>Restake</Button>
+        <div className="flex gap-2 items-center">
+          <Button
+            rightIcon={
+              <ArrowRightUp className="dark:fill-mono-180" size="lg" />
+            }
+          >
+            Restake
+          </Button>
+
+          <Button
+            variant="secondary"
+            rightIcon={
+              <ExternalLinkLine className="dark:fill-mono-0" size="lg" />
+            }
+          >
+            View Token
+          </Button>
+        </div>
       </GlassCard>
 
       <LiquidStakingCard />

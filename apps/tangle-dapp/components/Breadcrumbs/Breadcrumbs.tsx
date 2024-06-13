@@ -15,7 +15,7 @@ import { getBreadcrumbIcon, getBreadcrumbLabel } from './utils';
 export type BreadcrumbType = {
   label: string;
   isLast: boolean;
-  icon?: ReactElement<IconBase> | null;
+  icon?: ReactElement<IconBase>;
   href: string;
   className?: string;
 };
@@ -36,7 +36,10 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
         label,
         isLast: index === pathNames.length - 1,
         href: `/${pathNames.slice(0, index + 1).join('/')}`,
-        icon: <Icon className="w-4 h-4 lg:w-6 lg:h-6" />,
+        icon:
+          Icon !== null ? (
+            <Icon className="w-4 h-4 lg:w-6 lg:h-6" />
+          ) : undefined,
       };
     });
   }, [pathNames]);

@@ -1,7 +1,6 @@
 import { isAddress } from '@polkadot/util-crypto';
 import {
   ArrowLeftRightLineIcon,
-  CheckboxBlankCircleLine,
   CodeFill,
   FundsLine,
   GiftLineIcon,
@@ -16,6 +15,7 @@ import assert from 'assert';
 import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
+import { LIQUID_STAKING_TOKEN_PREFIX } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
@@ -72,8 +72,21 @@ export const getBreadcrumbLabel = (
   pathNames: string[],
 ): string => {
   // Special case for the Service Details page.
-  if (pathNames.length === 2 && index === 1 && pathNames[0] === 'services') {
+  if (
+    pathNames.length === 2 &&
+    index === 1 &&
+    pathNames[0] === PagePath.SERVICES_OVERVIEW.substring(1)
+  ) {
     return `Details: ${pathName}`;
+  }
+  // Special case for Liquid Staking individual token pages.
+  // Show it as something like `tgDOT` instead of `Dot`.
+  else if (
+    pathNames.length === 2 &&
+    index === 1 &&
+    pathNames[0] === PagePath.LIQUID_STAKING.substring(1)
+  ) {
+    return `${LIQUID_STAKING_TOKEN_PREFIX}${pathName.toUpperCase()}`;
   }
 
   const pathNameWithSlash = '/' + pathName;
@@ -103,7 +116,7 @@ export const getBreadcrumbIcon = (
   pathName: string,
   index: number,
   pathNames: string[],
-): ((props: IconBase) => JSX.Element) => {
+): ((props: IconBase) => JSX.Element) | null => {
   // Special case for the Service Details page.
   if (isSubPath(PagePath.SERVICES_OVERVIEW, 1, 2, index, pathNames)) {
     return CodeFill;
@@ -115,9 +128,5 @@ export const getBreadcrumbIcon = (
     ? BREADCRUMB_ICONS[pathNameWithSlash]
     : undefined;
 
-  if (knownIcon !== undefined) {
-    return knownIcon;
-  }
-
-  return CheckboxBlankCircleLine;
+  return knownIcon ?? null;
 };
