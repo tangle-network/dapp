@@ -18,6 +18,8 @@ import {
 } from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import SelectValidators from '../SelectValidators';
+import WalletBalance from '../WalletBalance';
 import LiquidStakingInput from './LiquidStakingInput';
 
 const LiquidStakingCard: FC = () => {
@@ -46,7 +48,7 @@ const LiquidStakingCard: FC = () => {
   const toAmount = useMemo(() => fromAmount?.muln(2) ?? null, [fromAmount]);
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9">
+    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] dark:bg-mono-190 rounded-lg p-9 border dark:border-mono-160">
       <div className="flex gap-3">
         <Typography className="dark:text-mono-0" variant="h4" fw="bold">
           Stake
@@ -63,6 +65,7 @@ const LiquidStakingCard: FC = () => {
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${selectedToken}`}
+        rightElement={<WalletBalance />}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -73,7 +76,8 @@ const LiquidStakingCard: FC = () => {
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedToken}`}
         amount={toAmount}
         isReadOnly
-        isLST
+        isLiquidVariant
+        rightElement={<SelectValidators />}
       />
 
       {/* Details */}

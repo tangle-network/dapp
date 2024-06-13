@@ -3,7 +3,6 @@ import { FC } from 'react';
 
 import { GlassCard } from '../../components';
 import {
-  LiquidStakingChainToLogoMap,
   LiquidStakingChainToTokenMap,
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
@@ -50,7 +49,7 @@ const LiquidStakingPage: FC = () => {
               return (
                 <LiquidStakingTokenItem
                   key={chain}
-                  logoPath={LiquidStakingChainToLogoMap[chain]}
+                  chain={chain}
                   title={`Tangle ${chain}`}
                   tokenSymbol={token}
                   // TODO: Using dummy values.

@@ -1,15 +1,26 @@
 'use client';
 
 import { BN } from '@polkadot/util';
-import { WalletLineIcon } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
-import { FC, useEffect } from 'react';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChevronDown, TokenIcon } from '@webb-tools/icons';
+import {
+  Dropdown,
+  DropdownBody,
+  MenuItem,
+  Typography,
+} from '@webb-tools/webb-ui-components';
+import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import { FC, ReactNode, useEffect } from 'react';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
+  LiquidStakingChain,
+  LiquidStakingChainToTokenMap,
   LiquidStakingToken,
 } from '../../../constants/liquidStaking';
 import useInputAmount from '../../../hooks/useInputAmount';
+import HoverButtonStyle from '../HoverButtonStyle';
+import TokenLogo from '../TokenLogo';
 
 export type LiquidStakingInputProps = {
   id: string;
@@ -19,7 +30,8 @@ export type LiquidStakingInputProps = {
   setAmount?: (newAmount: BN | null) => void;
   isReadOnly?: boolean;
   placeholder?: string;
-  isLST?: boolean;
+  isLiquidVariant?: boolean;
+  rightElement?: ReactNode;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
@@ -28,7 +40,8 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   setAmount,
   isReadOnly = false,
   placeholder = '0',
-  isLST = false,
+  isLiquidVariant = false,
+  rightElement,
 }) => {
   const { displayAmount, handleChange, refreshDisplayAmount } = useInputAmount({
     amount,
@@ -44,17 +57,13 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   return (
     <div className="flex flex-col gap-3 dark:bg-mono-180 p-3 rounded-lg">
       <div className="flex justify-between">
-        <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          Polkadot Mainnet
-        </Typography>
+        <ChainSelector
+          // TODO: Using dummy props.
+          chain={LiquidStakingChain.Polkadot}
+          setChain={() => void 0}
+        />
 
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="flex gap-1 items-center dark:text-mono-80"
-        >
-          <WalletLineIcon /> 0.00
-        </Typography>
+        {rightElement}
       </div>
 
       <hr className="dark:border-mono-160" />
@@ -70,26 +79,78 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
           readOnly={isReadOnly}
         />
 
-        <TokenCard token={LiquidStakingToken.DOT} isLST={isLST} />
+        <TokenChip
+          chain={LiquidStakingChain.Polkadot}
+          isLiquidVariant={isLiquidVariant}
+        />
       </div>
     </div>
   );
 };
 
-type TokenCardProps = {
-  token: LiquidStakingToken;
-  isLST: boolean;
+type TokenChipProps = {
+  chain: LiquidStakingChain;
+  isLiquidVariant: boolean;
 };
 
 /** @internal */
-const TokenCard: FC<TokenCardProps> = ({ token, isLST }) => {
+const TokenChip: FC<TokenChipProps> = ({ chain, isLiquidVariant }) => {
+  const token = LiquidStakingChainToTokenMap[chain];
+
   return (
-    <div className="dark:bg-mono-160 px-4 py-2 rounded-lg">
+    <div className="flex gap-2 justify-center items-center dark:bg-mono-160 px-4 py-2 rounded-lg">
+      <TokenLogo size="sm" chain={chain} />
+
       <Typography variant="h5" fw="bold">
-        {isLST && LIQUID_STAKING_TOKEN_PREFIX}
+        {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
         {token}
       </Typography>
     </div>
+  );
+};
+
+type ChainSelectorProps = {
+  chain: LiquidStakingChain;
+  setChain: (newChain: LiquidStakingChain) => void;
+};
+
+const ChainSelector: FC<ChainSelectorProps> = ({ chain, setChain }) => {
+  return (
+    <Dropdown>
+      <DropdownMenuTrigger>
+        <HoverButtonStyle>
+          <div className="flex gap-2 items-center justify-center">
+            <TokenLogo size="sm" chain={chain} />
+
+            <Typography variant="h5" fw="bold" className="dark:text-mono-40">
+              Polkadot Mainnet
+            </Typography>
+
+            <ChevronDown className="dark:fill-mono-120" size="lg" />
+          </div>
+        </HoverButtonStyle>
+      </DropdownMenuTrigger>
+
+      <DropdownBody>
+        <ScrollArea className="max-h-[300px] w-[130px]">
+          <ul>
+            {['a', 'b', 'c'].map((tokenId) => {
+              return (
+                <li key={tokenId}>
+                  <MenuItem
+                    startIcon={<TokenIcon size="lg" name={tokenId} />}
+                    onSelect={() => void 0}
+                    className="px-3 normal-case"
+                  >
+                    {tokenId}
+                  </MenuItem>
+                </li>
+              );
+            })}
+          </ul>
+        </ScrollArea>
+      </DropdownBody>
+    </Dropdown>
   );
 };
 

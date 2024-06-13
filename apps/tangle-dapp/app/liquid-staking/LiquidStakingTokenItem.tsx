@@ -10,15 +10,17 @@ import { FC, useMemo } from 'react';
 import { StaticAssetPath } from '../../constants';
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
+  LiquidStakingChain,
   LiquidStakingToken,
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
 import { formatTokenBalance } from '../../utils/polkadot';
 import StatItem from './StatItem';
+import TokenLogo from './TokenLogo';
 
 export type LiquidStakingTokenItemProps = {
-  logoPath: StaticAssetPath;
+  chain: LiquidStakingChain;
   title: string;
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;
@@ -32,8 +34,8 @@ export type LiquidStakingTokenItemProps = {
 };
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
-  logoPath,
   title,
+  chain,
   tokenSymbol,
   totalValueStaked,
   annualPercentageYield,
@@ -62,13 +64,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
     <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
       <div className="flex gap-2 items-center">
         <div className="relative rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
-          <Image
-            className="min-w-[40px] min-h-[40px]"
-            src={logoPath}
-            alt="Logo of the liquid staking token"
-            width={40}
-            height={40}
-          />
+          <TokenLogo size="md" chain={chain} isRounded />
 
           <Image
             className="absolute bottom-0 right-0"
