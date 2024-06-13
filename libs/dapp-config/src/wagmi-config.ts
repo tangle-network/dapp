@@ -1,5 +1,5 @@
 import { Transport, createClient, fallback, http, type Chain } from 'viem';
-import { Config, createConfig } from 'wagmi';
+import { Config, cookieStorage, createConfig, createStorage } from 'wagmi';
 import { chainsConfig } from './chains/evm';
 import extractChain from './chains/utils/extractChain';
 
@@ -24,6 +24,13 @@ export default function getWagmiConfig({
   if (config === undefined) {
     config = createConfig({
       ...(typeof isSSR === 'boolean' ? { ssr: isSSR } : {}),
+      ...(isSSR === true
+        ? {
+            storage: createStorage({
+              storage: cookieStorage,
+            }),
+          }
+        : {}),
       chains,
       client: ({ chain }) => {
         return createClient({

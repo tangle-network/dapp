@@ -34,7 +34,8 @@
           "buildTarget": "tangle-dapp:build:production",
           "dev": false
         }
-      }
+      },
+      "dependsOn": ["fetch-on-chain-config"]
     },
     "export": {
       "executor": "@nx/next:export",
@@ -57,6 +58,13 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "ANALYZE=true nx build tangle-dapp --prod"
+      }
+    },
+    "fetch-on-chain-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn run fetch:onChainConfig",
+        "color": true
       }
     }
   },

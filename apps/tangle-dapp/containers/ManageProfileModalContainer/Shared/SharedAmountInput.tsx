@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useRef } from 'react';
@@ -65,6 +66,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
     max: maxRestakingAmount,
     errorOnEmptyValue: true,
     setAmount,
+    decimals: TANGLE_TOKEN_DECIMALS,
     minErrorMessage,
     maxErrorMessage: ERROR_NOT_ENOUGH_BALANCE,
   });

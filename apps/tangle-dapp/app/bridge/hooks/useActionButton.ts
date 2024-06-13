@@ -1,5 +1,7 @@
 'use client';
 
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { Hash } from '@polkadot/types/interfaces';
 import {
   useConnectWallet,
   useWebContext,
@@ -7,10 +9,15 @@ import {
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { useCallback, useMemo } from 'react';
+import { isHex } from 'viem';
 
+import { TxName } from '../../../constants';
 import { useBridge } from '../../../context/BridgeContext';
+import useTxNotification from '../../../hooks/useTxNotification';
 import { BridgeWalletError } from '../../../types/bridge';
 import { isEVMChain } from '../../../utils/bridge';
+import ensureError from '../../../utils/ensureError';
+import useBridgeTransfer from './useBridgeTransfer';
 import useTypedChainId from './useTypedChainId';
 
 type UseActionButtonReturnType = {
@@ -36,6 +43,9 @@ export default function useActionButton() {
     activeChain,
   } = useWebContext();
   const { toggleModal } = useConnectWallet();
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification(
+    TxName.BRIDGE_TRANSFER,
+  );
   const {
     amount,
     destinationAddress,
@@ -45,6 +55,7 @@ export default function useActionButton() {
     walletError,
   } = useBridge();
   const { sourceTypedChainId } = useTypedChainId();
+  const transfer = useBridgeTransfer();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -116,15 +127,45 @@ export default function useActionButton() {
     switchChain(targetChain, activeWallet);
   }, [activeWallet, selectedSourceChain, switchChain]);
 
-  const bridgeTx = useCallback(() => {
-    if (isEVMChain(selectedSourceChain) && isEvmWrongNetwork) {
-      switchNetwork();
+  const bridgeTx = useCallback(async () => {
+    notifyProcessing();
+
+    try {
+      if (isEVMChain(selectedSourceChain) && isEvmWrongNetwork) {
+        switchNetwork();
+      }
+
+      const res = await transfer();
+      if (res !== null) {
+        // EVM
+        if ('hash' in res) {
+          const hash = (res as TransactionResponse).hash;
+          if (!isHex(hash)) {
+            throw new Error('Invalid hash');
+          }
+          notifySuccess(hash);
+        }
+
+        // Substrate
+        else {
+          const hash = res as Hash;
+          notifySuccess(hash.toHex());
+        }
+      }
+    } catch (error) {
+      notifyError(ensureError(error));
     }
 
-    // TODO: Implement bridge tx
-    // TODO: use parseUnits to pass to SygmaSDK tx
-    // TODO: handle calculate real amount to bridge when user choose max amount
-  }, [selectedSourceChain, isEvmWrongNetwork, switchNetwork]);
+    // TODO: switch back to current nvm chain
+  }, [
+    selectedSourceChain,
+    isEvmWrongNetwork,
+    switchNetwork,
+    transfer,
+    notifyProcessing,
+    notifySuccess,
+    notifyError,
+  ]);
 
   const buttonAction = useMemo(() => {
     if (isRequiredToConnectWallet) return openWalletModal;

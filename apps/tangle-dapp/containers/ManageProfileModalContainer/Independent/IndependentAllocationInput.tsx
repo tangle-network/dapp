@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Close, LockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
@@ -102,6 +103,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
     amount,
     min,
     max: availableBalance,
+    decimals: TANGLE_TOKEN_DECIMALS,
     errorOnEmptyValue,
     setAmount,
     minErrorMessage,

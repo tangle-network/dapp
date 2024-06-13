@@ -15,11 +15,12 @@ export type ChainGroup =
   | 'kusama'
   | 'moonbeam'
   | 'optimism'
+  | 'orbit'
+  | 'phala'
   | 'polkadot'
   | 'polygon'
   | 'scroll'
   | 'tangle'
-  | 'orbit'
   | 'webb-dev';
 
 /**

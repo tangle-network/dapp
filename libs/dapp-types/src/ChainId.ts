@@ -74,6 +74,11 @@ export enum PresetTypedChainId {
     SubstrateChainId.Polkadot,
   ),
 
+  RococoPhala = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.RococoPhala,
+  ),
+
   MoonbaseAlpha = calculateTypedChainId(
     ChainType.EVM,
     EVMChainId.MoonbaseAlpha,
