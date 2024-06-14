@@ -113,7 +113,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
       <DropdownTrigger asChild>
         <ChainOrTokenButton
           value={selectedChain.name}
-          className="w-full bg-mono-20 dark:bg-mono-160 border-0 hover:bg-mono-20 dark:hover:bg-mono-160"
+          className="w-full !p-4 bg-mono-20 dark:bg-mono-160 border-0 hover:bg-mono-20 dark:hover:bg-mono-160"
           iconType="chain"
         />
       </DropdownTrigger>
@@ -126,6 +126,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                   <MenuItem
                     startIcon={<ChainIcon size="lg" name={chain.name} />}
                     onSelect={() => onSelectChain(chain)}
+                    className="py-2.5"
                   >
                     {chain.name}
                   </MenuItem>

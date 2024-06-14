@@ -46,8 +46,6 @@ const AmountAndTokenInput: FC = () => {
     const destChainTransactionFee =
       selectedToken.destChainTransactionFee[sourceTypedChainId];
 
-    if (!existentialDeposit || !destChainTransactionFee) return null;
-
     return (existentialDeposit ?? new Decimal(0))
       .add(destChainTransactionFee ?? new Decimal(0))
       .add(bridgeFee ?? new Decimal(0));
@@ -84,7 +82,7 @@ const AmountAndTokenInput: FC = () => {
           setErrorMessage={(error) =>
             setIsAmountInputError(error ? true : false)
           }
-          errorMessageClassName="absolute left-0 bottom-[-28px]"
+          errorMessageClassName="absolute left-0 bottom-[-24px] !text-[14px] !leading-[21px]"
         />
         <Dropdown>
           <DropdownTrigger asChild>
