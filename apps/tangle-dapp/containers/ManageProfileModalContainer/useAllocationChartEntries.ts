@@ -1,9 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../types';
-import calculateBnPercentage from '../../utils/calculateBnPercentage';
 import { AllocationChartVariant } from './AllocationChart';
 import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
@@ -20,56 +18,38 @@ export type AllocationChartEntry = {
 
 const useAllocationChartEntries = (
   allocations: RestakingAllocationMap,
-  allocatedAmount: BN,
+  _allocatedAmount: BN,
   variant: AllocationChartVariant,
-  previewAmount: BN | undefined,
 ) => {
-  const { maxRestakingAmount } = useRestakingLimits();
-
   const previewEntry: AllocationChartEntry = useMemo(() => {
     // Set value to 0 if the preview amount is not provided
     // or if the max restaking amount is still loading.
-    const value =
-      previewAmount === undefined || maxRestakingAmount === null
-        ? 0
-        : calculateBnPercentage(previewAmount, maxRestakingAmount);
+    const value = 0;
 
     return {
       name: 'New Allocation',
       value,
     };
-  }, [maxRestakingAmount, previewAmount]);
+  }, []);
 
   const remainingEntry: AllocationChartEntry = useMemo(() => {
-    if (maxRestakingAmount === null) {
-      return {
-        name: 'Remaining',
-        value: 1,
-      };
-    }
-
     const previewPercentage = previewEntry?.value ?? 0;
 
-    const percentage =
-      calculateBnPercentage(allocatedAmount, maxRestakingAmount) +
-      previewPercentage;
+    const percentage = previewPercentage;
 
     return {
       name: 'Remaining',
       value: 1 - percentage,
     };
-  }, [maxRestakingAmount, allocatedAmount, previewEntry?.value]);
+  }, [previewEntry?.value]);
 
   const allocationEntries: AllocationChartEntry[] = useMemo(
     () =>
-      filterAllocations(allocations).map(([service, amount]) => ({
+      filterAllocations(allocations).map(([service]) => ({
         name: service,
-        value:
-          maxRestakingAmount === null
-            ? 0
-            : calculateBnPercentage(amount, maxRestakingAmount),
+        value: 0,
       })),
-    [allocations, maxRestakingAmount],
+    [allocations],
   );
 
   // For the independent variant, use both the remaining data

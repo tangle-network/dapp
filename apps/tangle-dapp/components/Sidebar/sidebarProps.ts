@@ -47,26 +47,14 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     environments: ['development', 'staging', 'test'],
   },
   {
-    name: 'Services',
-    href: '',
+    name: 'Restake',
+    // The default restake page is the deposit page.
+    href: '/restake/deposit',
     isInternal: true,
     isNext: true,
     Icon: GridFillIcon,
     environments: ['development', 'staging', 'test'],
-    subItems: [
-      {
-        name: 'Overview',
-        href: PagePath.SERVICES_OVERVIEW,
-        isInternal: true,
-        isNext: true,
-      },
-      {
-        name: 'Restake',
-        href: PagePath.SERVICES_RESTAKE,
-        isInternal: true,
-        isNext: true,
-      },
-    ],
+    subItems: [],
   },
   {
     name: 'Nomination',

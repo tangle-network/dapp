@@ -1,8 +1,3 @@
-// Note that this import is necessary to fix a strange type error
-// in Polkadot API's `api.tx.staking.bond` method, which complains
-// about requiring three arguments instead of two.
-import '@webb-tools/tangle-substrate-types';
-
 import type {
   SpStakingExposurePage,
   SpStakingPagedExposureMetadata,
@@ -16,7 +11,8 @@ export enum PagePath {
   ACCOUNT = '/',
   BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
-  SERVICES_RESTAKE = '/restake',
+  DEPOSIT = '/restake/deposit',
+  DELEGATE = '/restake/delegate',
   LIQUID_RESTAKING = '/liquid-staking',
 }
 

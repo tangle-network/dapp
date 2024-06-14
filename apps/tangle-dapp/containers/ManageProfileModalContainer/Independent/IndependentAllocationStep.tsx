@@ -12,11 +12,8 @@ import {
 import { z } from 'zod';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import useNetworkStore from '../../../context/useNetworkStore';
-import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
-import { formatTokenBalance } from '../../../utils/polkadot';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';
@@ -41,9 +38,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,
   setAllocations,
 }) => {
-  const { maxRestakingAmount } = useRestakingLimits();
-  const { nativeTokenSymbol } = useNetworkStore();
-
   const restakedAmount = useMemo(
     () =>
       Object.entries(allocations).reduce(
@@ -119,23 +113,16 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations, setAllocations],
   );
 
-  const amountRemaining = useMemo(
-    () => maxRestakingAmount?.sub(restakedAmount) ?? null,
-    [maxRestakingAmount, restakedAmount],
-  );
-
   const isNewAllocationAmountValid = (() => {
     if (
       newAllocationRole === null ||
       newAllocationAmount === null ||
-      newAllocationAmount.isZero() ||
-      amountRemaining === null ||
-      amountRemaining.isZero()
+      newAllocationAmount.isZero()
     ) {
       return false;
     }
 
-    return newAllocationAmount.lte(amountRemaining);
+    return true;
   })();
 
   const availableRoles = useMemo(
@@ -164,7 +151,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
       previewAmount={newAllocationAmount ?? undefined}
       previewRole={newAllocationRole ?? undefined}
     >
-      <div className="flex flex-col gap-4 items-start justify-start min-w-max">
+      <div className="flex flex-col items-start justify-start gap-4 min-w-max">
         <div className="flex flex-col gap-4">
           {filteredAllocations.map(([service, amount]) => (
             <IndependentAllocationInput
@@ -177,7 +164,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
                 handleAllocationChange(service, newAmount)
               }
               onDelete={handleDeallocation}
-              availableBalance={amountRemaining}
+              availableBalance={null}
               errorOnEmptyValue
             />
           ))}
@@ -190,18 +177,15 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
               setService={setNewAllocationRole}
               amount={newAllocationAmount}
               setAmount={setNewAllocationAmount}
-              availableBalance={amountRemaining}
+              availableBalance={null}
               errorOnEmptyValue={false}
             />
           )}
         </div>
 
-        <div className="w-full flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between w-full gap-2">
           <Typography variant="body1" className="dark:text-mono-0">
-            Remaining:{' '}
-            {amountRemaining !== null
-              ? formatTokenBalance(amountRemaining, nativeTokenSymbol)
-              : EMPTY_VALUE_PLACEHOLDER}
+            Remaining: {EMPTY_VALUE_PLACEHOLDER}
           </Typography>
 
           <div className="flex items-center gap-2">
