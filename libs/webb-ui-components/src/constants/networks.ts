@@ -94,7 +94,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
 export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   id: NetworkId.TANGLE_LOCAL_DEV,
   chainId: SubstrateChainId.TangleTestnetNative,
-  evmChainId: EVMChainId.TangleLocalEVM,
+  evmChainId: EVMChainId.TangleTestnetEVM,
   name: 'Local endpoint',
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',

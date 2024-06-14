@@ -147,7 +147,11 @@ const useNetworkState = () => {
       }
 
       try {
-        const chain = await netWorkToChain(newNetwork, activeWallet);
+        const chain = overrideRpcForLocalnet(
+          newNetwork,
+          await netWorkToChain(newNetwork, activeWallet),
+        );
+
         const switchChainResult = await switchChain(chain, activeWallet);
 
         if (switchChainResult !== null) {
@@ -180,7 +184,7 @@ const useNetworkState = () => {
       }
     },
     // prettier-ignore
-    [network.id, activeWallet, setNetwork, toggleModal, removeCachedNetworkId, setCachedCustomRpcEndpoint, removeCachedCustomRpcEndpoint, setCachedNetworkId, switchChain],
+    [activeWallet, network, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain, toggleModal],
   );
 
   return {
@@ -291,4 +295,26 @@ function defineWebbChain(
     tag: 'test',
     wallets: getWalletsForTypedChainId(typedChainId),
   } satisfies Chain;
+}
+
+// If the network is local network, we need to override the rpc
+// as the local network and test network have the same chain id
+function overrideRpcForLocalnet(network: Network, chain: Chain): Chain {
+  if (network.id !== NetworkId.TANGLE_LOCAL_DEV) {
+    return chain;
+  }
+
+  // Override the rpc for the local network
+  // and remove the block explorer
+  const { blockExplorers: _, ...restChain } = chain;
+
+  return {
+    ...restChain,
+    rpcUrls: {
+      default: {
+        http: network.httpRpcEndpoint ? [network.httpRpcEndpoint] : [],
+        webSocket: [network.wsRpcEndpoint],
+      },
+    },
+  };
 }

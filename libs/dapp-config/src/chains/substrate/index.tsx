@@ -1,13 +1,12 @@
 import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import {
-  TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
-  TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-  TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
+  TANGLE_TESTNET_WS_RPC_ENDPOINT,
   TANGLE_TOKEN_DECIMALS,
 } from '../../constants/tangle';
 import { ChainConfig } from '../chain-config.interface';
@@ -46,7 +45,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.TangleTestnetNative]: {
     chainType: ChainType.Substrate,
     group: 'tangle',
-    tag: process.env['USING_LOCAL_TANGLE'] ? 'dev' : 'test',
+    tag: 'test',
     id: SubstrateChainId.TangleTestnetNative,
     name: 'Tangle Testnet Native',
     nativeCurrency: {
@@ -57,23 +56,13 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Explorer',
-        url: process.env['USING_LOCAL_TANGLE']
-          ? 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/'
-          : TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+        url: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
       },
     },
     rpcUrls: {
       default: {
         http: [],
-        webSocket: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_WS_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_WS_RPC_ENDPOINT],
-      },
-      public: {
-        http: [],
-        webSocket: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_WS_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_WS_RPC_ENDPOINT],
+        webSocket: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
       },
     },
     env: ['development'],
@@ -101,10 +90,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
         http: [],
         webSocket: ['wss://kusama-rpc.polkadot.io'],
       },
-      public: {
-        http: [],
-        webSocket: ['wss://kusama-rpc.polkadot.io'],
-      },
     },
     env: ['development'],
   },
@@ -128,10 +113,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     rpcUrls: {
       default: {
-        http: [],
-        webSocket: ['wss://rpc.polkadot.io'],
-      },
-      public: {
         http: [],
         webSocket: ['wss://rpc.polkadot.io'],
       },

@@ -14,7 +14,6 @@ import {
   sepolia,
 } from 'viem/chains';
 import {
-  TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
   TANGLE_TESTNET_EVM_EXPLORER_URL,
@@ -113,9 +112,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
       default: {
         http: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
       },
-      public: {
-        http: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
-      },
     },
   } satisfies ChainConfig,
 
@@ -130,26 +126,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       symbol: 'tTNT',
       decimals: 18,
     },
-    ...(!process.env['USING_LOCAL_TANGLE']
-      ? {
-          blockExplorers: {
-            default: {
-              name: 'Tangle Testnet EVM Explorer',
-              url: TANGLE_TESTNET_EVM_EXPLORER_URL,
-            },
-          },
-        }
-      : {}),
+    blockExplorers: {
+      default: {
+        name: 'Tangle Testnet EVM Explorer',
+        url: TANGLE_TESTNET_EVM_EXPLORER_URL,
+      },
+    },
     rpcUrls: {
       default: {
-        http: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
-      },
-      public: {
-        http: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
+        http: [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
       },
     },
   } satisfies ChainConfig,
@@ -164,9 +149,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: {
       default: {
-        http: [`http://127.0.0.1:5004`],
-      },
-      public: {
         http: [`http://127.0.0.1:5004`],
       },
     },
@@ -194,9 +176,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
       default: {
         http: [`http://127.0.0.1:5005`],
       },
-      public: {
-        http: [`http://127.0.0.1:5005`],
-      },
     },
     env: ['development'],
     ...(localOrbitMulticall3Address
@@ -220,9 +199,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: {
       default: {
-        http: [`http://127.0.0.1:5006`],
-      },
-      public: {
         http: [`http://127.0.0.1:5006`],
       },
     },
