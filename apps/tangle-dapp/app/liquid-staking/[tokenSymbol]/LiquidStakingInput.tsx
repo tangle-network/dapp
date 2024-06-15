@@ -44,7 +44,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   setAmount,
   isReadOnly = false,
   placeholder = '0',
-  isTokenLiquidVariant: isLiquidVariant = false,
+  isTokenLiquidVariant = false,
   rightElement,
   chain,
   setChain,
@@ -96,7 +96,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
           readOnly={isReadOnly}
         />
 
-        <TokenChip token={token} isLiquidVariant={isLiquidVariant} />
+        <TokenChip token={token} isLiquidVariant={isTokenLiquidVariant} />
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ const LiquidStakingCard: FC = () => {
   const [rate] = useState<number | null>(1.3);
 
   const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
-    LiquidStakingChain.Polkadot,
+    LiquidStakingChain.TangleRestakingParachain,
   );
 
   const selectedChainToken = LS_CHAIN_TO_TOKEN[selectedChain];
