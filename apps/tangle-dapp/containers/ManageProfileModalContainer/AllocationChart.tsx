@@ -18,7 +18,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
-import formatTangleAmount from '../../utils/formatTangleAmount';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 import { RestakingAllocationMap } from './types';
 import useAllocationChartEntries, {
   AllocationChartEntryName,
@@ -164,7 +164,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
           fw="bold"
           className="dark:text-mono-0 text-center"
         >
-          {formatTangleAmount(allocatedAmount)}
+          {formatTangleBalance(allocatedAmount)}
         </Typography>
 
         <Typography variant="body2" className="dark:text-mono-120">

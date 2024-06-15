@@ -4,7 +4,7 @@ import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import useApiRx from '../../../hooks/useApiRx';
-import formatTangleAmount from '../../../utils/formatTangleAmount';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import BalanceCell from '../BalanceCell';
 
 /**
@@ -61,8 +61,9 @@ const VestingScheduleBalances: FC = () => {
         )}.`
       ) : (
         <>
-          <strong>{formatTangleAmount(amountAlreadyVested)}</strong> has vested,
-          with <strong>{formatTangleAmount(remaining)}</strong> remaining.
+          <strong>{formatTangleBalance(amountAlreadyVested)}</strong> has
+          vested, with <strong>{formatTangleBalance(remaining)}</strong>{' '}
+          remaining.
         </>
       );
 

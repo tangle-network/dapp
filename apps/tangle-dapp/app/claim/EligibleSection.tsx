@@ -27,7 +27,7 @@ import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
-import formatTangleAmount from '../../utils/formatTangleAmount';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
 import { getApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
@@ -215,7 +215,7 @@ const EligibleSection: FC<Props> = ({
           </Typography>
 
           <Typography variant="h4" fw="bold" ta="center">
-            {`${formatTangleAmount(totalAmount, nativeTokenSymbol)} `}
+            {`${formatTangleBalance(totalAmount, nativeTokenSymbol)} `}
             {isValidAddress(recipient)
               ? `to ${
                   isHex(recipient)
@@ -230,7 +230,7 @@ const EligibleSection: FC<Props> = ({
             <div>
               {/* Free Balance */}
               <Typography variant="body1" fw="bold" ta="center">
-                {`${formatTangleAmount(
+                {`${formatTangleBalance(
                   totalAmount.sub(vestingAmount),
                   nativeTokenSymbol,
                 )}`}{' '}
@@ -240,8 +240,8 @@ const EligibleSection: FC<Props> = ({
               {/* Vesting: based on Tangle Genesis Allocations */}
               {/* https://docs.tangle.tools/docs/tokenomics/allocation/ */}
               <Typography variant="body1" fw="bold" ta="center">
-                {`${formatTangleAmount(vestingAmount, nativeTokenSymbol)}`} will
-                be vested over 24 months with a 1 month cliff.
+                {`${formatTangleBalance(vestingAmount, nativeTokenSymbol)}`}{' '}
+                will be vested over 24 months with a 1 month cliff.
               </Typography>
             </div>
           )}

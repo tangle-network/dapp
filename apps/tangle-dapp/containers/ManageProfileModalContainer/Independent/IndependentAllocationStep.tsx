@@ -16,7 +16,7 @@ import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
-import formatTangleAmount from '../../../utils/formatTangleAmount';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';
@@ -200,7 +200,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
           <Typography variant="body1" className="dark:text-mono-0">
             Remaining:{' '}
             {amountRemaining !== null
-              ? formatTangleAmount(amountRemaining, nativeTokenSymbol)
+              ? formatTangleBalance(amountRemaining, nativeTokenSymbol)
               : EMPTY_VALUE_PLACEHOLDER}
           </Typography>
 

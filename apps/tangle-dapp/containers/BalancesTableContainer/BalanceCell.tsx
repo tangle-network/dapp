@@ -13,7 +13,7 @@ import { FC, ReactNode } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import formatTangleAmount from '../../utils/formatTangleAmount';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 
 const BalanceCell: FC<{
   amount: BN | null;
@@ -24,7 +24,7 @@ const BalanceCell: FC<{
   const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedBalance =
-    amount !== null ? formatTangleAmount(amount, nativeTokenSymbol) : null;
+    amount !== null ? formatTangleBalance(amount, nativeTokenSymbol) : null;
 
   return (
     <div className="flex flex-row p-3 gap-2">

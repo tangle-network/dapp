@@ -13,7 +13,7 @@ import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import useInputAmount from '../../../hooks/useInputAmount';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
-import formatTangleAmount from '../../../utils/formatTangleAmount';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import InputAction from '../InputAction';
 
 export type IndependentAllocationInputProps = {
@@ -146,7 +146,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
 
             {min !== null ? (
               <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
-                {`≥ ${formatTangleAmount(min)}`}
+                {`≥ ${formatTangleBalance(min)}`}
               </Chip>
             ) : (
               <SkeletonLoader />

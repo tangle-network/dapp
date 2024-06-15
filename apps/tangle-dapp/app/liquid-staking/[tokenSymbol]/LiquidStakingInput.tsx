@@ -22,7 +22,7 @@ import {
   LS_TOKEN_TO_CHAIN,
 } from '../../../constants/liquidStaking';
 import useInputAmount from '../../../hooks/useInputAmount';
-import formatTangleAmount from '../../../utils/formatTangleAmount';
+import formatBn from '../../../utils/formatBn';
 import ChainLogo from '../ChainLogo';
 import HoverButtonStyle from '../HoverButtonStyle';
 
@@ -53,16 +53,17 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   token,
   minAmount,
 }) => {
-  // TODO: Must consider the chain's token decimals, not always the Tangle token decimals.
   const minErrorMessage = ((): string | undefined => {
     if (minAmount === undefined) {
       return undefined;
     }
 
-    const formattedMinAmount = formatTangleAmount(minAmount);
-    const tokenSegment = `${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
+    const unit = `${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
 
-    return `Amount must be at least ${formattedMinAmount} ${tokenSegment}`;
+    // TODO: Must consider the chain's token decimals, not always the Tangle token decimals.
+    const formattedMinAmount = formatBn(minAmount, TANGLE_TOKEN_DECIMALS);
+
+    return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
 
   const { displayAmount, handleChange, refreshDisplayAmount, errorMessage } =

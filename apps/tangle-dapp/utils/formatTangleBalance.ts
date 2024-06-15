@@ -4,7 +4,7 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
 
 import { TangleTokenSymbol } from '../types';
 
-const formatTangleAmount = (
+const formatTangleBalance = (
   balance: BN | bigint | ToBn,
   tokenSymbol?: TangleTokenSymbol,
   options: Partial<Parameters<typeof formatBalance>[1]> = {},
@@ -18,4 +18,4 @@ const formatTangleAmount = (
   });
 };
 
-export default formatTangleAmount;
+export default formatTangleBalance;

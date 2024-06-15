@@ -4,7 +4,7 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
-import formatTangleAmount from '../utils/formatTangleAmount';
+import formatTangleBalance from '../utils/formatTangleBalance';
 
 // TODO: replace this function across files that convert BN
 // to formatted string with the native token symbol
@@ -13,7 +13,7 @@ export default function useFormatNativeTokenAmount() {
 
   const formatNativeTokenAmount = useCallback(
     (amount: BN) => {
-      return formatTangleAmount(amount, nativeTokenSymbol);
+      return formatTangleBalance(amount, nativeTokenSymbol);
     },
     [nativeTokenSymbol],
   );

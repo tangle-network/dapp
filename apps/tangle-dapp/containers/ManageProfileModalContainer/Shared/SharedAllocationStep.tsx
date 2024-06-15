@@ -6,7 +6,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../../types';
-import formatTangleAmount from '../../../utils/formatTangleAmount';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';
@@ -88,7 +88,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
       <Typography variant="body1" fw="normal" className="self-start">
         Remaining:{' '}
         {remainingAmount !== null
-          ? formatTangleAmount(remainingAmount, nativeTokenSymbol)
+          ? formatTangleBalance(remainingAmount, nativeTokenSymbol)
           : EMPTY_VALUE_PLACEHOLDER}
       </Typography>
     </AllocationStepContainer>

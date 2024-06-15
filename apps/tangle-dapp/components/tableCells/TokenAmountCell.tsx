@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import formatTangleAmount from '../../utils/formatTangleAmount';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 
 export type TokenAmountCellProps = {
   amount: BN;
@@ -12,7 +12,7 @@ export type TokenAmountCellProps = {
 
 const TokenAmountCell: FC<TokenAmountCellProps> = ({ amount, className }) => {
   const { nativeTokenSymbol } = useNetworkStore();
-  const formattedBalance = formatTangleAmount(amount);
+  const formattedBalance = formatTangleBalance(amount);
 
   const parts = formattedBalance.split('.');
   const integerPart = parts[0];

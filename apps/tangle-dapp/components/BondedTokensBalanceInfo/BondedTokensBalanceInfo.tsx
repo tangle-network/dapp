@@ -3,7 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { type FC } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import formatTangleAmount from '../../utils/formatTangleAmount';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 import { BondedTokensBalanceInfoProps } from './types';
 
 export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
@@ -23,7 +23,7 @@ export const BondedTokensBalanceInfo: FC<BondedTokensBalanceInfoProps> = ({
       </div>
 
       <Typography variant="body1" fw="normal">
-        {formatTangleAmount(value, nativeTokenSymbol)}
+        {formatTangleBalance(value, nativeTokenSymbol)}
       </Typography>
     </div>
   );

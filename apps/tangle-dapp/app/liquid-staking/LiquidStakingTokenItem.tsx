@@ -15,7 +15,7 @@ import {
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
-import formatTangleAmount from '../../utils/formatTangleAmount';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 import ChainLogo from './ChainLogo';
 import StatItem from './StatItem';
 
@@ -56,7 +56,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   );
 
   const formattedTotalStaked = useMemo(
-    () => formatTangleAmount(new BN(totalStaked)),
+    () => formatTangleBalance(new BN(totalStaked)),
     [totalStaked],
   );
 
