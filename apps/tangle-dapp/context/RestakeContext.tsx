@@ -5,15 +5,9 @@ import { createContext, type FC, type PropsWithChildren } from 'react';
 
 import useRestakingAssetMap from '../data/restaking/useRestakingAssetMap';
 import useRestakingDelegatorInfo from '../data/restaking/useRestakingDelegatorInfo';
-import useRestakingOperatorMap from '../data/restaking/useRestakingOperatorMap';
-import type { AssetMap, DelegatorInfo, OperatorMap } from '../types/restake';
+import type { AssetMap, DelegatorInfo } from '../types/restake';
 
 interface RestakeContextProps {
-  /**
-   * A map of operator metadata keyed by the operator's account ID.
-   */
-  operatorMap: Evaluate<OperatorMap>;
-
   /**
    * A map of multi-asset delegation assets keyed by the asset's asset ID.
    */
@@ -26,15 +20,11 @@ interface RestakeContextProps {
 }
 
 export const RestakeContext = createContext<RestakeContextProps>({
-  operatorMap: {},
   assetMap: {},
   delegatorInfo: null,
 });
 
 const RestakeProvider: FC<PropsWithChildren> = ({ children }) => {
-  // Retrieve the list of operators on the system
-  const { operatorMap } = useRestakingOperatorMap();
-
   // Retrieve the list of multi-asset delegation assets
   const { assetMap } = useRestakingAssetMap();
 
@@ -44,7 +34,6 @@ const RestakeProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <RestakeContext.Provider
       value={{
-        operatorMap,
         assetMap,
         delegatorInfo,
       }}

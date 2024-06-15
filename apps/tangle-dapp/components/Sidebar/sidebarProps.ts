@@ -8,7 +8,7 @@ import {
   FundsLine,
   GiftLineIcon,
   GlobalLine,
-  GridFillIcon,
+  TokenSwapLineIcon,
   UserLineIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
@@ -52,7 +52,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: '/restake/deposit',
     isInternal: true,
     isNext: true,
-    Icon: GridFillIcon,
+    Icon: TokenSwapLineIcon,
     environments: ['development', 'staging', 'test'],
     subItems: [],
   },
