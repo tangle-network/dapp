@@ -15,7 +15,11 @@ import type {
   u256,
   usize,
 } from '@polkadot/types';
-import type { Evaluate, OmitByValue } from '@webb-tools/dapp-types/utils/types';
+import type {
+  Evaluate,
+  MappedObjectType,
+  OmitByValue,
+} from '@webb-tools/dapp-types/utils/types';
 
 /**
  * @description All enums from `@polkadot/types` will have the same convention:
@@ -75,19 +79,21 @@ export type GetEnumAsValues<EnumType extends Enum> = OmitByValue<
  *   // Expect: { Inactive: number }
  *   type Values = GetAsEnumValues<Status>;
  */
-export type AsEnumValuesToPrimitive<EmumType extends Enum> = OmitByValue<
-  {
-    [K in keyof EmumType as K extends `as${infer AsKey}`
-      ? AsKey
-      : K]: K extends `as${string}`
-      ? EmumType[K] extends u8 | u16 | u32 | i8 | i16 | i32 | f32
-        ? number
-        : EmumType[K] extends f64 | u128 | u256 | usize | i128 | i256 | isize
-          ? string
-          : EmumType[K]
-      : never;
-  },
-  never | undefined | null
+export type AsEnumValuesToPrimitive<EmumType extends Enum> = MappedObjectType<
+  OmitByValue<
+    {
+      [K in keyof EmumType as K extends `as${infer AsKey}`
+        ? AsKey
+        : K]: K extends `as${string}`
+        ? EmumType[K] extends u8 | u16 | u32 | i8 | i16 | i32 | f32
+          ? number
+          : EmumType[K] extends f64 | u128 | u256 | usize | i128 | i256 | isize
+            ? string
+            : EmumType[K]
+        : never;
+    },
+    never | undefined | null
+  >
 >;
 
 /**

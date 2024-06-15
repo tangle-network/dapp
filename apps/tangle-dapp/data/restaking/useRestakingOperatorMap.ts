@@ -17,6 +17,12 @@ type UseRestakingOperatorMapReturnType = {
   operatorMap$: Observable<OperatorMap>;
 };
 
+/**
+ * Hook to retrieve the operator map for restaking.
+ * @returns
+ *  - `operatorMap`: The operator map.
+ *  - `operatorMap$`: The observable for the operator map.
+ */
 export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturnType {
   const { apiRx } = usePolkadotApi();
   const { activeChain } = useWebContext();

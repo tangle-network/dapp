@@ -12,6 +12,12 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import type { DelegatorInfo } from '../../types/restake';
 import useRestakingAssetMap from './useRestakingAssetMap';
 
+/**
+ * Hook to retrieve the delegator info for restaking.
+ * @returns
+ *  - `delegatorInfo`: The delegator info.
+ *  - `delegatorInfo$`: The observable for the delegator info.
+ */
 export default function useRestakingDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
 

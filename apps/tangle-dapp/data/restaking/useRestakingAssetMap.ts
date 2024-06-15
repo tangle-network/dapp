@@ -12,10 +12,17 @@ import type { Chain } from 'viem';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { AssetMap, AssetMetadata } from '../../types/restake';
+import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
 import useRestakingAssetIds from './useRestakingAssetIds';
 
 const EMPTY_ASSET_MAP = {} satisfies AssetMap as AssetMap;
 
+/**
+ * Hook to retrieve the asset map for restaking.
+ * @returns
+ *  - `assetMap`: The asset map.
+ *  - `assetMap$`: The observable for the asset map.
+ */
 export default function useRestakingAssetMap() {
   const { apiPromise } = usePolkadotApi();
   const { activeChain } = useWebContext();
@@ -49,18 +56,7 @@ const mapAssetDetails = async (
     decimals: formatBalance.getDefaults().decimals,
   },
 ) => {
-  let hasNative = false;
-
-  // Filter out the native asset ID
-  // as it not exist in the assets module
-  const nonNativeAssetIds = assetIds.filter((assetId) => {
-    if (assetId.isZero()) {
-      hasNative = true;
-      return false;
-    }
-
-    return true;
-  });
+  const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
   if (nonNativeAssetIds.length === 0) {
     return hasNative
