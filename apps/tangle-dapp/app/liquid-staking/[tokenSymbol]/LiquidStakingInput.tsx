@@ -3,7 +3,7 @@
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { ChevronDown, TokenIcon } from '@webb-tools/icons';
+import { ChevronDown } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
@@ -12,6 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { FC, ReactNode, useCallback, useEffect } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
@@ -20,8 +21,8 @@ import {
   LS_CHAIN_TO_TOKEN,
 } from '../../../constants/liquidStaking';
 import useInputAmount from '../../../hooks/useInputAmount';
+import ChainLogo from '../ChainLogo';
 import HoverButtonStyle from '../HoverButtonStyle';
-import TokenLogo from '../TokenLogo';
 
 export type LiquidStakingInputProps = {
   id: string;
@@ -110,7 +111,7 @@ const TokenChip: FC<TokenChipProps> = ({ chain, isLiquidVariant }) => {
 
   return (
     <div className="flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg">
-      <TokenLogo size="sm" chain={chain} />
+      <ChainLogo size="sm" chain={chain} isRounded />
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
@@ -133,10 +134,16 @@ type ChainSelectorProps = {
 const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
   const isReadOnly = setChain === undefined;
 
-  // TODO: This is missing the padding styling if it's readonly. Need to make it consistent.
   const base = (
-    <div className="flex gap-2 items-center justify-center">
-      <TokenLogo size="sm" chain={selectedChain} />
+    <div
+      className={twMerge(
+        'flex gap-2 items-center justify-center',
+        // Provide some padding for consistency with the
+        // non-read-only variant.
+        isReadOnly && 'px-3',
+      )}
+    >
+      <ChainLogo size="sm" chain={selectedChain} />
 
       <Typography variant="h5" fw="bold" className="dark:text-mono-40">
         {LS_CHAIN_TO_NETWORK_NAME[selectedChain]}
@@ -153,19 +160,19 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
       </DropdownMenuTrigger>
 
       <DropdownBody>
-        <ScrollArea className="max-h-[300px] w-[130px]">
+        <ScrollArea className="max-h-[300px]">
           <ul>
             {Object.values(LiquidStakingChain)
               .filter((chain) => chain !== selectedChain)
               .map((chain) => {
                 return (
-                  <li key={chain}>
+                  <li key={chain} className="w-full">
                     <MenuItem
-                      startIcon={<TokenIcon size="lg" name={chain} />}
+                      startIcon={<ChainLogo size="sm" chain={chain} />}
                       onSelect={() => setChain(chain)}
                       className="px-3 normal-case"
                     >
-                      {chain}
+                      {LS_CHAIN_TO_NETWORK_NAME[chain]}
                     </MenuItem>
                   </li>
                 );

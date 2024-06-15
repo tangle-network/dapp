@@ -7,15 +7,15 @@ import {
   LS_CHAIN_TO_LOGO,
 } from '../../constants/liquidStaking';
 
-export type TokenSize = 'sm' | 'md';
+export type ChainLogoSize = 'sm' | 'md';
 
-export type TokenLogoProps = {
+export type ChainLogoProps = {
   chain: LiquidStakingChain;
-  size: TokenSize;
+  size: ChainLogoSize;
   isRounded?: boolean;
 };
 
-const getSizeNumber = (size: TokenSize) => {
+const getSizeNumber = (size: ChainLogoSize) => {
   switch (size) {
     case 'sm':
       return 24;
@@ -24,7 +24,7 @@ const getSizeNumber = (size: TokenSize) => {
   }
 };
 
-const getSizeClass = (size: TokenSize) => {
+const getSizeClass = (size: ChainLogoSize) => {
   switch (size) {
     case 'sm':
       return 'min-w-[24px] min-h-[24px]';
@@ -42,12 +42,15 @@ const getBackgroundColor = (chain: LiquidStakingChain) => {
     case LiquidStakingChain.Phala:
       return 'bg-black dark:bg-black';
     case LiquidStakingChain.Polkadot:
-    default:
       return 'bg-mono-0 dark:bg-mono-0';
+    case LiquidStakingChain.Astar:
+      // No background for Astar, since it looks better without
+      // a background.
+      return '';
   }
 };
 
-const TokenLogo: FC<TokenLogoProps> = ({
+const ChainLogo: FC<ChainLogoProps> = ({
   chain,
   size = 'md',
   isRounded = false,
@@ -69,4 +72,4 @@ const TokenLogo: FC<TokenLogoProps> = ({
   );
 };
 
-export default TokenLogo;
+export default ChainLogo;

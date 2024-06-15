@@ -93,18 +93,18 @@ const LiquidStakingCard: FC = () => {
         <DetailItem
           title="Rate"
           tooltip="This is a test."
-          value={`1 ${selectedChain} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain}`}
+          value={`1 ${selectedChainToken} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
         />
 
         <DetailItem
           title="Cross-chain fee"
           tooltip="This is a test."
-          value="0.19842 TNT"
+          value={`0.001984 ${selectedChainToken}`}
         />
 
         <DetailItem
           title="Unstake period"
-          tooltip="This is a test."
+          tooltip="The period of time you need to wait before you can unstake your tokens."
           value="7 days"
         />
 
