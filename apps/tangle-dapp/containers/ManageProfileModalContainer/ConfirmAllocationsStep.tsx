@@ -9,7 +9,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import {
   RestakingProfileType,
   RestakingService,
-  TokenSymbol,
+  TangleTokenSymbol,
 } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import formatTangleAmount from '../../utils/formatTangleAmount';
@@ -186,7 +186,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 type AllocationItemProps = {
   services: RestakingService[];
   amount?: BN;
-  tokenSymbol: TokenSymbol;
+  tokenSymbol: TangleTokenSymbol;
 };
 
 /** @internal */

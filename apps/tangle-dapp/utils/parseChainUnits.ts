@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 
 /**
  * Converts a numeric amount in string form to blockchain format
- * based on the number of decimal places used in Tangle.
+ * based on the provided number of decimal places.
  *
  * This handles the conversion of a floating-point number into a
  * Big Number (BN), which is required for blockchain transactions.

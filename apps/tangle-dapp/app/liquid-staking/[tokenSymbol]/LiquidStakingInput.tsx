@@ -54,10 +54,16 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   minAmount,
 }) => {
   // TODO: Must consider the chain's token decimals, not always the Tangle token decimals.
-  const minErrorMessage =
-    minAmount === undefined
-      ? undefined
-      : `Amount must be at least ${formatTangleAmount(minAmount)} ${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
+  const minErrorMessage = ((): string | undefined => {
+    if (minAmount === undefined) {
+      return undefined;
+    }
+
+    const formattedMinAmount = formatTangleAmount(minAmount);
+    const tokenSegment = `${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
+
+    return `Amount must be at least ${formattedMinAmount} ${tokenSegment}`;
+  })();
 
   const { displayAmount, handleChange, refreshDisplayAmount, errorMessage } =
     useInputAmount({
@@ -103,7 +109,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
           {rightElement}
         </div>
 
-        <hr className={twMerge('dark:border-mono-160')} />
+        <hr className="dark:border-mono-160" />
 
         <div className="flex gap-1">
           <input

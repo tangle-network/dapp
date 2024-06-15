@@ -4,7 +4,7 @@ import {
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { Chain } from 'viem';
 
-import { TokenSymbol } from '../../types';
+import { TangleTokenSymbol } from '../../types';
 
 const createTangleViemChainFromNetwork = (
   network: Network & { evmChainId: number; httpRpcEndpoint: string },
@@ -14,7 +14,7 @@ const createTangleViemChainFromNetwork = (
       ? 'Tangle Network Token'
       : 'Test Tangle Network Token';
 
-  const tokenSymbol: TokenSymbol =
+  const tokenSymbol: TangleTokenSymbol =
     network.id === NetworkId.TANGLE_MAINNET ? 'TNT' : 'tTNT';
 
   const blockExplorerName =
