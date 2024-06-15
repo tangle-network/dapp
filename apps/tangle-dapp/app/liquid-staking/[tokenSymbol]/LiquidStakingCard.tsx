@@ -1,5 +1,9 @@
 'use client';
 
+// This will override global types and provide type definitions for
+// the `lstMinting` pallet for this file only.
+import '@webb-tools/tangle-restaking-types';
+
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { InformationLine, Search } from '@webb-tools/icons';
@@ -10,14 +14,18 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChain,
   LS_CHAIN_TO_TOKEN,
+  LS_TOKEN_TO_CURRENCY,
 } from '../../../constants/liquidStaking';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
+import useApi from '../../../hooks/useApi';
+import useApiRx from '../../../hooks/useApiRx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import SelectValidators from '../SelectValidators';
 import WalletBalance from '../WalletBalance';
@@ -27,15 +35,39 @@ const LiquidStakingCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
-  const [rate] = useState<number | null>(1.3);
+  const [rate] = useState<number | null>(1.0);
 
   const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
-    LiquidStakingChain.TangleRestakingParachain,
+    LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN,
   );
+
+  const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
 
   const selectedChainToken = LS_CHAIN_TO_TOKEN[selectedChain];
 
-  const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
+  const { result: minimumMintingAmount } = useApiRx(
+    useCallback(
+      (api) =>
+        api.query.lstMinting.minimumMint({
+          Native: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+        }),
+      [selectedChainToken],
+    ),
+    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+  );
+
+  const { result: existentialDepositAmount } = useApi(
+    useCallback((api) => api.consts.balances.existentialDeposit, []),
+    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+  );
+
+  const minimumInputAmount = useMemo(() => {
+    if (minimumMintingAmount === null || existentialDepositAmount === null) {
+      return null;
+    }
+
+    return BN.max(minimumMintingAmount, existentialDepositAmount);
+  }, [existentialDepositAmount, minimumMintingAmount]);
 
   const handleStakeClick = useCallback(() => {
     if (executeMintTx === null || fromAmount === null) {
@@ -44,11 +76,17 @@ const LiquidStakingCard: FC = () => {
 
     executeMintTx({
       amount: fromAmount,
-      currency: 'Bnc',
+      currency: LS_TOKEN_TO_CURRENCY[selectedChainToken],
     });
-  }, [executeMintTx, fromAmount]);
+  }, [executeMintTx, fromAmount, selectedChainToken]);
 
-  const toAmount = useMemo(() => fromAmount?.muln(2) ?? null, [fromAmount]);
+  const toAmount = useMemo(() => {
+    if (fromAmount === null || rate === null) {
+      return null;
+    }
+
+    return fromAmount.muln(rate);
+  }, [fromAmount, rate]);
 
   return (
     <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
@@ -75,13 +113,14 @@ const LiquidStakingCard: FC = () => {
         placeholder={`0 ${selectedChainToken}`}
         rightElement={<WalletBalance />}
         setChain={setSelectedChain}
+        minAmount={minimumInputAmount ?? undefined}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
         id="liquid-staking-to"
-        chain={LiquidStakingChain.TangleRestakingParachain}
+        chain={LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
         amount={toAmount}
         isReadOnly

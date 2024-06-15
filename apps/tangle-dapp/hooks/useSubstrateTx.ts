@@ -207,6 +207,7 @@ export function useSubstrateTxWithNotification<Context = void>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
   getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
+  overrideRpcEndpoint?: string,
 ) {
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -217,7 +218,13 @@ export function useSubstrateTxWithNotification<Context = void>(
     error,
     txHash,
     successMessage,
-  } = useSubstrateTx(factory, getSuccessMessageFnc);
+  } = useSubstrateTx(
+    factory,
+    getSuccessMessageFnc,
+    undefined,
+    overrideRpcEndpoint,
+  );
+
   const { notifyProcessing, notifySuccess, notifyError } =
     useTxNotification(txName);
 
@@ -226,8 +233,8 @@ export function useSubstrateTxWithNotification<Context = void>(
       if (_execute === null) {
         return;
       }
-      notifyProcessing();
 
+      notifyProcessing();
       await _execute(context);
     },
     [_execute, notifyProcessing],
@@ -247,10 +254,10 @@ export function useSubstrateTxWithNotification<Context = void>(
       return;
     }
 
-    if (txHash !== null) {
-      notifySuccess(txHash, successMessage);
-    } else if (error !== null) {
+    if (error !== null) {
       notifyError(error);
+    } else if (txHash !== null) {
+      notifySuccess(txHash, successMessage);
     }
   }, [status, error, txHash, notifyError, notifySuccess, successMessage]);
 

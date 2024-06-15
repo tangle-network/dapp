@@ -6,7 +6,8 @@ import { TanglePrimitivesCurrencyTokenSymbol } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
-import useSubstrateTx from '../../hooks/useSubstrateTx';
+import { TxName } from '../../constants';
+import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type MintTxContext = {
   amount: BN;
@@ -16,7 +17,8 @@ export type MintTxContext = {
 const useMintTx = () => {
   // TODO: Add support for EVM accounts once precompile(s) for the `lstMinting` pallet are implemented on Tangle.
 
-  return useSubstrateTx<MintTxContext>(
+  return useSubstrateTxWithNotification<MintTxContext>(
+    TxName.MINT,
     (api, _activeSubstrateAddress, context) =>
       // TODO: Investigate what the `remark` and `channel` parameters are for, and whether they are relevant for us here.
       api.tx.lstMinting.mint(
@@ -25,7 +27,6 @@ const useMintTx = () => {
         '',
         null,
       ),
-    undefined,
     undefined,
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );

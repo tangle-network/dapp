@@ -2,9 +2,9 @@ import { BN, formatBalance } from '@polkadot/util';
 import { ToBn } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 
-import { TokenSymbol } from '../../types';
+import { TokenSymbol } from '../types';
 
-export const formatTokenBalance = (
+const formatTangleAmount = (
   balance: BN | bigint | ToBn,
   tokenSymbol?: TokenSymbol,
   options: Partial<Parameters<typeof formatBalance>[1]> = {},
@@ -17,3 +17,5 @@ export const formatTokenBalance = (
     ...options,
   });
 };
+
+export default formatTangleAmount;

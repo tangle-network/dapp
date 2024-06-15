@@ -9,7 +9,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
 import { formatBnWithCommas } from '../../utils/formatBnWithCommas';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
 const UnbondingStatsItem: FC = () => {
@@ -37,7 +37,7 @@ const UnbondingStatsItem: FC = () => {
         <div key={index} className="text-center mb-2">
           <p>
             {entry.remainingEras.gtn(0) ? 'Unbonding' : 'Unbonded'}{' '}
-            {formatTokenBalance(entry.amount, nativeTokenSymbol)}
+            {formatTangleAmount(entry.amount, nativeTokenSymbol)}
           </p>
 
           {entry.remainingEras.gtn(0) && (
@@ -58,7 +58,7 @@ const UnbondingStatsItem: FC = () => {
         totalUnbondingAmount === null
         ? null
         : // Amount is loaded and there is an active account.
-          formatTokenBalance(
+          formatTangleAmount(
             totalUnbondingAmount.value ?? BN_ZERO,
             nativeTokenSymbol,
           );

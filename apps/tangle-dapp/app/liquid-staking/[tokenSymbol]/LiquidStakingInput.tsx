@@ -22,6 +22,7 @@ import {
   LS_TOKEN_TO_CHAIN,
 } from '../../../constants/liquidStaking';
 import useInputAmount from '../../../hooks/useInputAmount';
+import formatTangleAmount from '../../../utils/formatTangleAmount';
 import ChainLogo from '../ChainLogo';
 import HoverButtonStyle from '../HoverButtonStyle';
 
@@ -36,6 +37,7 @@ export type LiquidStakingInputProps = {
   rightElement?: ReactNode;
   token: LiquidStakingToken;
   isTokenLiquidVariant?: boolean;
+  minAmount?: BN;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
@@ -49,13 +51,23 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   chain,
   setChain,
   token,
+  minAmount,
 }) => {
-  const { displayAmount, handleChange, refreshDisplayAmount } = useInputAmount({
-    amount,
-    setAmount,
-    // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
-    decimals: TANGLE_TOKEN_DECIMALS,
-  });
+  // TODO: Must consider the chain's token decimals, not always the Tangle token decimals.
+  const minErrorMessage =
+    minAmount === undefined
+      ? undefined
+      : `Amount must be at least ${formatTangleAmount(minAmount)} ${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
+
+  const { displayAmount, handleChange, refreshDisplayAmount, errorMessage } =
+    useInputAmount({
+      amount,
+      setAmount,
+      // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
+      decimals: TANGLE_TOKEN_DECIMALS,
+      min: minAmount,
+      minErrorMessage,
+    });
 
   // TODO: This is preventing the user from inputting values like `0.001`. May need to use Decimal.js to handle small amounts, then convert into BN in the implementation of the `useInputAmount` hook?
   // Refresh the display amount when the amount changes.
@@ -72,33 +84,48 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     [setChain],
   );
 
+  const isError = errorMessage !== null;
+
   return (
-    <div className="flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-3 rounded-lg border border-mono-40 dark:border-mono-160">
-      <div className="flex justify-between">
-        <ChainSelector
-          selectedChain={chain}
-          setChain={isReadOnly ? undefined : handleChainChange}
-        />
+    <>
+      <div
+        className={twMerge(
+          'flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-3 rounded-lg border border-mono-40 dark:border-mono-160',
+          isError && 'border-red-70 dark:border-red-50',
+        )}
+      >
+        <div className="flex justify-between">
+          <ChainSelector
+            selectedChain={chain}
+            setChain={isReadOnly ? undefined : handleChainChange}
+          />
 
-        {rightElement}
+          {rightElement}
+        </div>
+
+        <hr className={twMerge('dark:border-mono-160')} />
+
+        <div className="flex gap-1">
+          <input
+            id={id}
+            className="w-full bg-transparent border-none text-xl font-bold outline-none focus:ring-0"
+            type="text"
+            placeholder={placeholder}
+            value={displayAmount}
+            onChange={(e) => handleChange(e.target.value)}
+            readOnly={isReadOnly}
+          />
+
+          <TokenChip token={token} isLiquidVariant={isTokenLiquidVariant} />
+        </div>
       </div>
 
-      <hr className="dark:border-mono-160" />
-
-      <div className="flex gap-1">
-        <input
-          id={id}
-          className="w-full bg-transparent border-none text-xl font-bold outline-none focus:ring-0"
-          type="text"
-          placeholder={placeholder}
-          value={displayAmount}
-          onChange={(e) => handleChange(e.target.value)}
-          readOnly={isReadOnly}
-        />
-
-        <TokenChip token={token} isLiquidVariant={isTokenLiquidVariant} />
-      </div>
-    </div>
+      {errorMessage && (
+        <Typography variant="body2" className="text-red-70 dark:text-red-50">
+          * {errorMessage}
+        </Typography>
+      )}
+    </>
   );
 };
 

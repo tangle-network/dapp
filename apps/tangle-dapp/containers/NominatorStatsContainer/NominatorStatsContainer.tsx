@@ -23,7 +23,7 @@ import useStakingLedger from '../../data/staking/useStakingLedger';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
+import { formatTangleAmount } from '../../utils/polkadot';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';
@@ -58,7 +58,7 @@ const NominatorStatsContainer: FC = () => {
       return null;
     }
 
-    return formatTokenBalance(
+    return formatTangleAmount(
       bondedAmountOpt.value ?? BN_ZERO,
       nativeTokenSymbol,
     );
@@ -83,7 +83,7 @@ const NominatorStatsContainer: FC = () => {
                 ? EMPTY_VALUE_PLACEHOLDER
                 : freeBalance === null
                   ? null
-                  : formatTokenBalance(freeBalance, nativeTokenSymbol)}
+                  : formatTangleAmount(freeBalance, nativeTokenSymbol)}
             </NominatorStatsItem>
 
             <NominatorStatsItem
@@ -92,7 +92,7 @@ const NominatorStatsContainer: FC = () => {
             >
               {totalPayoutRewards === null
                 ? EMPTY_VALUE_PLACEHOLDER
-                : formatTokenBalance(totalPayoutRewards) +
+                : formatTangleAmount(totalPayoutRewards) +
                   ` ${nativeTokenSymbol}`}
             </NominatorStatsItem>
           </div>

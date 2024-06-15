@@ -35,15 +35,15 @@ const getSizeClass = (size: ChainLogoSize) => {
 
 const getBackgroundColor = (chain: LiquidStakingChain) => {
   switch (chain) {
-    case LiquidStakingChain.Manta:
+    case LiquidStakingChain.MANTA:
       return 'bg-[#13101D] dark:bg-[#13101D]';
-    case LiquidStakingChain.Moonbeam:
+    case LiquidStakingChain.MOONBEAM:
       return 'bg-[#1d1336] dark:bg-[#1d1336]';
-    case LiquidStakingChain.Phala:
+    case LiquidStakingChain.PHALA:
       return 'bg-black dark:bg-black';
-    case LiquidStakingChain.Polkadot:
+    case LiquidStakingChain.POLKADOT:
       return 'bg-mono-0 dark:bg-mono-0';
-    case LiquidStakingChain.Astar:
+    case LiquidStakingChain.ASTAR:
       // No background for Astar, since it looks better without
       // a background.
       return '';

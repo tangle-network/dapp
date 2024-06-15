@@ -8,14 +8,14 @@ import { FC } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 
 const Balance: FC = () => {
   const { transferable: balance } = useBalances();
   const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedBalance =
-    balance === null ? null : formatTokenBalance(balance, nativeTokenSymbol);
+    balance === null ? null : formatTangleAmount(balance, nativeTokenSymbol);
 
   const parts = formattedBalance?.split(' ');
   const prefix = parts?.[0] ?? EMPTY_VALUE_PLACEHOLDER;

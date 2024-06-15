@@ -7,7 +7,7 @@ import { RestakingAllocationMap } from '../containers/ManageProfileModalContaine
 import { AllocationChartEntryName } from '../containers/ManageProfileModalContainer/useAllocationChartEntries';
 import useNetworkStore from '../context/useNetworkStore';
 import { RestakingService } from '../types';
-import { formatTokenBalance } from '../utils/polkadot/tokens';
+import { formatTangleAmount } from '../utils/formatTangleAmount';
 
 const BnChartTooltip = (
   allocations: RestakingAllocationMap,
@@ -56,7 +56,7 @@ const BnChartTooltip = (
           {entryName}
 
           {displayAmount &&
-            `: ${formatTokenBalance(amount, nativeTokenSymbol)}`}
+            `: ${formatTangleAmount(amount, nativeTokenSymbol)}`}
         </Typography>
       </div>
     );

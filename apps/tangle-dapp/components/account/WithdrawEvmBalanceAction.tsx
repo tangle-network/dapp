@@ -10,7 +10,7 @@ import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx
 import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import { toEvmAddress20 } from '../../utils/toEvmAddress20';
 import ActionItem from './ActionItem';
 
@@ -31,7 +31,7 @@ const WithdrawEvmBalanceAction: FC = () => {
   const tokenAmountStr = useMemo(
     () =>
       pendingEvmBalance
-        ? formatTokenBalance(pendingEvmBalance, nativeTokenSymbol)
+        ? formatTangleAmount(pendingEvmBalance, nativeTokenSymbol)
         : null,
     [pendingEvmBalance, nativeTokenSymbol],
   );

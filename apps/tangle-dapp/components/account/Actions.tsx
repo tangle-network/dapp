@@ -19,7 +19,7 @@ import useVestTx from '../../data/vesting/useVestTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PagePath, StaticSearchQueryPath } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
 
@@ -43,7 +43,7 @@ const Actions: FC = () => {
 
   const formattedClaimableTokenAmount =
     claimableTokenAmount !== null
-      ? formatTokenBalance(claimableTokenAmount, nativeTokenSymbol)
+      ? formatTangleAmount(claimableTokenAmount, nativeTokenSymbol)
       : null;
 
   return (

@@ -34,7 +34,7 @@ import useExistentialDeposit from '../../data/balances/useExistentialDeposit';
 import useTransferTx from '../../data/balances/useTransferTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { formatTokenBalance } from '../../utils/polkadot';
+import { formatTangleAmount } from '../../utils/polkadot';
 
 export type TransferTxContainerProps = {
   isModalOpen: boolean;
@@ -161,7 +161,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     <span>
       You have{' '}
       <strong>
-        {formatTokenBalance(transferableBalance, nativeTokenSymbol)}
+        {formatTangleAmount(transferableBalance, nativeTokenSymbol)}
       </strong>{' '}
       available to transfer.
     </span>
@@ -187,7 +187,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           </Typography>
 
           <TxConfirmationRing
-            title={formatTokenBalance(amount ?? BN_ZERO, nativeTokenSymbol)}
+            title={formatTangleAmount(amount ?? BN_ZERO, nativeTokenSymbol)}
             isInNextApp
             source={{
               address: activeAccountAddress,
@@ -217,7 +217,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
                 tooltip: transferableBalanceTooltip,
               }}
               maxErrorMessage="Not enough available balance"
-              minErrorMessage={`Amount must be at least ${formatTokenBalance(
+              minErrorMessage={`Amount must be at least ${formatTangleAmount(
                 existentialDeposit,
                 nativeTokenSymbol,
               )}`}

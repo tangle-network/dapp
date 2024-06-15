@@ -12,7 +12,7 @@ import {
   TokenSymbol,
 } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
-import { formatTokenBalance } from '../../utils/polkadot';
+import { formatTangleAmount } from '../../utils/polkadot';
 import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
@@ -52,7 +52,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   // This is because the shared restake amount is not automatically
   // calculated from the allocations, since shared roles profiles
   // do not allocate amounts per-role, but rather as a whole.
-  const totalRestakedAmount = formatTokenBalance(
+  const totalRestakedAmount = formatTangleAmount(
     isSharedVariant && sharedRestakeAmount !== undefined
       ? sharedRestakeAmount
       : restakedAmount,
@@ -215,7 +215,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
           fw="semibold"
           className="dark:text-mono-0 text-right"
         >
-          {formatTokenBalance(amount, tokenSymbol)}
+          {formatTangleAmount(amount, tokenSymbol)}
         </Typography>
       )}
     </div>
