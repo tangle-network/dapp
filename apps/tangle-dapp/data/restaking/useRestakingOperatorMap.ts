@@ -1,14 +1,9 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable, of, switchMap } from 'rxjs';
-import { formatUnits } from 'viem';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { OperatorMap, OperatorMetadata } from '../../types/restake';
-import useRestakingAssetMap from './useRestakingAssetMap';
 
 const EMPTY_OPERATOR_MAP: OperatorMap = {};
 
@@ -25,9 +20,6 @@ type UseRestakingOperatorMapReturnType = {
  */
 export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturnType {
   const { apiRx } = usePolkadotApi();
-  const { activeChain } = useWebContext();
-
-  const { assetMap } = useRestakingAssetMap();
 
   const entries$ = useMemo(
     () =>
@@ -40,7 +32,7 @@ export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturn
   const operatorMap$ = useObservable(
     (input$) =>
       input$.pipe(
-        switchMap(([entries$, assetMap, nativeDecimals = DEFAULT_DECIMALS]) => {
+        switchMap(([entries$]) => {
           return entries$.pipe(
             map((entries) =>
               entries.reduce(
@@ -58,10 +50,6 @@ export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturn
 
                     return {
                       amount: requestValue.amount.toBigInt(),
-                      amountFormatted: formatUnits(
-                        requestValue.amount.toBigInt(),
-                        nativeDecimals,
-                      ),
                       requestTime: requestValue.requestTime.toNumber(),
                     };
                   }
@@ -69,47 +57,29 @@ export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturn
                   function toPrimitiveStatus(
                     status: typeof operator.status,
                   ): OperatorMetadata['status'] {
-                    if (status.isActive) {
-                      return 'Active';
-                    }
-
-                    if (status.isInactive) {
-                      return 'Inactive';
-                    }
-
-                    if (status.isLeaving) {
+                    if (status.type === 'Leaving') {
                       return {
                         Leaving: status.asLeaving.toNumber(),
                       };
                     }
 
-                    throw WebbError.from(WebbErrorCodes.InvalidEnumValue);
+                    return status.type;
                   }
 
                   function toPrimitiveDelegations(
                     delegations: typeof operator.delegations,
                   ): OperatorMetadata['delegations'] {
-                    return delegations.map(({ amount, assetId, delegator }) => {
-                      const assetIdStr = assetId.toString();
-                      const amountBigInt = amount.toBigInt();
-                      const decimals =
-                        assetMap[assetIdStr]?.decimals ?? DEFAULT_DECIMALS;
-
-                      return {
-                        amount: amountBigInt,
-                        amountFormatted: formatUnits(amountBigInt, decimals),
+                    return delegations.map(
+                      ({ amount, assetId, delegator }) => ({
+                        amount: amount.toBigInt(),
                         delegator: delegator.toString(),
-                        assetId: assetIdStr,
-                      };
-                    });
+                        assetId: assetId.toString(),
+                      }),
+                    );
                   }
 
                   const operatorMetadataPrimitive = {
                     bond: operator.bond.toBigInt(),
-                    bondFormatted: formatUnits(
-                      operator.bond.toBigInt(),
-                      nativeDecimals,
-                    ),
                     delegationCount: operator.delegationCount.toNumber(),
                     request: toPrimitiveRequest(operator.request),
                     delegations: toPrimitiveDelegations(operator.delegations),
@@ -126,7 +96,7 @@ export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturn
           );
         }),
       ),
-    [entries$, assetMap, activeChain?.nativeCurrency?.decimals],
+    [entries$],
   );
 
   const operatorMap = useObservableState(operatorMap$, EMPTY_OPERATOR_MAP);

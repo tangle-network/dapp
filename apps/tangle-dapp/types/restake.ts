@@ -19,11 +19,6 @@ export type OperatorBondLessRequest = {
   readonly amount: bigint;
 
   /**
-   * The amount by which the bond is to be decreased, formatted as a string.
-   */
-  readonly amountFormatted: string;
-
-  /**
    * The round in which the request was made.
    */
   readonly requestTime: number;
@@ -43,11 +38,6 @@ export type OperatorDelegatorBond = {
    * The amount bonded.
    */
   readonly amount: bigint;
-
-  /**
-   * The amount bonded, formatted as a string.
-   */
-  readonly amountFormatted: string;
 
   /**
    * The ID of the bonded asset.
@@ -75,11 +65,6 @@ export type OperatorMetadata = {
    * The operator's self-bond amount.
    */
   readonly bond: bigint;
-
-  /**
-   * The operator's self-bond amount, formatted as a string.
-   */
-  readonly bondFormatted: string;
 
   /**
    * The total number of delegations to this operator.
@@ -167,11 +152,6 @@ export type DelegatorUnstakeRequest = {
   readonly amount: bigint;
 
   /**
-   * The amount of the asset to be unstaked, formatted as a string.
-   */
-  readonly amountFormatted: string;
-
-  /**
    * The round in which the unstake was requested.
    */
   readonly requestedRound: number;
@@ -193,11 +173,6 @@ export type DelegatorBondInfo = {
   readonly amount: bigint;
 
   /**
-   * The amount bonded, formatted as a string.
-   */
-  readonly amountFormatted: string;
-
-  /**
    * The ID of the bonded asset.
    */
   readonly assetId: string;
@@ -217,11 +192,6 @@ export type DelegatorBondLessRequest = {
    * The amount by which to reduce the bond.
    */
   readonly amount: bigint;
-
-  /**
-   * The amount by which to reduce the bond, formatted as a string.
-   */
-  readonly amountFormatted: string;
 
   /**
    * The round in which the bond reduction was requested.
@@ -250,7 +220,6 @@ export type DelegatorInfo = {
   readonly deposits: {
     readonly [assetId: string]: {
       amount: bigint;
-      amountFormatted: string;
     };
   };
 

@@ -1,16 +1,13 @@
 import { Option } from '@polkadot/types';
 import { PalletMultiAssetDelegationDelegatorDelegatorMetadata } from '@polkadot/types/lookup';
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { EMPTY, map, Observable, switchMap } from 'rxjs';
-import { formatUnits } from 'viem';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import type { DelegatorInfo } from '../../types/restake';
-import useRestakingAssetMap from './useRestakingAssetMap';
 
 /**
  * Hook to retrieve the delegator info for restaking.
@@ -22,8 +19,6 @@ export default function useRestakingDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
 
   const { apiRx } = usePolkadotApi();
-
-  const { assetMap } = useRestakingAssetMap();
 
   const delegatorQuery = useMemo(
     (): ((
@@ -43,18 +38,12 @@ export default function useRestakingDelegatorInfo() {
         map((args) => {
           return args;
         }),
-        switchMap(([activeAddress, assetMap, delegatorQuery]) =>
+        switchMap(([activeAddress, delegatorQuery]) =>
           delegatorQuery(activeAddress ?? '').pipe(
             map((delegatorInfo) => {
               if (delegatorInfo.isNone) {
                 return null;
               }
-
-              const formatAmount = (amount: bigint, assetId: string) => {
-                const decimals =
-                  assetMap[assetId]?.decimals ?? DEFAULT_DECIMALS;
-                return formatUnits(amount, decimals);
-              };
 
               const info = delegatorInfo.unwrap();
 
@@ -66,7 +55,6 @@ export default function useRestakingDelegatorInfo() {
                   return Object.assign(depositRecord, {
                     [assetIdStr]: {
                       amount: amountBigInt,
-                      amountFormatted: formatAmount(amountBigInt, assetIdStr),
                     },
                   } satisfies DelegatorInfo['deposits']);
                 },
@@ -82,7 +70,6 @@ export default function useRestakingDelegatorInfo() {
                 return {
                   assetId: assetIdStr,
                   amount: amountBigInt,
-                  amountFormatted: formatAmount(amountBigInt, assetIdStr),
                   operator: delegation.operator.toString(),
                 };
               });
@@ -101,7 +88,6 @@ export default function useRestakingDelegatorInfo() {
                 return {
                   assetId: assetIdStr,
                   amount: amountBigInt,
-                  amountFormatted: formatAmount(amountBigInt, assetIdStr),
                   requestedRound: unstakeRequest.requestedRound.toNumber(),
                 };
               }
@@ -120,7 +106,6 @@ export default function useRestakingDelegatorInfo() {
                 return {
                   assetId: assetIdStr,
                   amount: amountBigInt,
-                  amountFormatted: formatAmount(amountBigInt, assetIdStr),
                   requestedRound: bondLessRequest.requestedRound.toNumber(),
                 };
               }
@@ -154,7 +139,7 @@ export default function useRestakingDelegatorInfo() {
           ),
         ),
       ),
-    [activeAddress, assetMap, delegatorQuery],
+    [activeAddress, delegatorQuery],
   );
 
   const delegatorInfo = useObservableState(delegatorInfo$, null);
