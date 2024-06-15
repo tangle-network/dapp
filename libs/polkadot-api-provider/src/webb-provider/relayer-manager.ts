@@ -149,7 +149,9 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
 
     const abortSignal = tx?.cancelToken?.abortSignal;
 
-    const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+    const chainId = parseInt(
+      api.consts.linkableTreeBn254.chainIdentifier.toHex(),
+    );
     const typedChainId = calculateTypedChainId(chainId, ChainType.Substrate);
 
     // loop through relayers and get leaves

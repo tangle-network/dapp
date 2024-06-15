@@ -30,7 +30,7 @@ const WhatIsRestakingCard: FC<WhatIsRestakingCardProps> = ({ className }) => {
         </Typography>
       </div>
       <div className="flex flex-row flex-wrap items-end justify-end gap-2 md:items-center">
-        <Link href={PagePath.DEPOSIT}>
+        <Link href={PagePath.RESTAKE}>
           <Button>Restake Now</Button>
         </Link>
         {/* TODO: update this after the restaking page on docs available */}

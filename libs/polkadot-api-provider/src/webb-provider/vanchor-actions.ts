@@ -92,7 +92,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const nextIdx = await api.query.merkleTreeBn254.nextLeafIndex(treeId);
 
-    return nextIdx.toBigInt();
+    return BigInt(nextIdx.toHex());
   }
 
   prepareTransaction(
@@ -138,8 +138,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
-    const chainId =
-      this.inner.api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+    const chainId = parseInt(
+      this.inner.api.consts.linkableTreeBn254.chainIdentifier.toHex(),
+    );
 
     const chainInfo: RelayedChainInput = {
       baseOn: 'substrate',
@@ -377,7 +378,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const nextIdx =
       await this.inner.api.query.merkleTreeBn254.nextLeafIndex(treeId);
-    return nextIdx.toBigInt();
+    return BigInt(nextIdx.toHex());
   }
 
   async getResourceId(
@@ -607,7 +608,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const sourceTypedChainId = this.inner.typedChainId;
     const tree = await api.query.merkleTreeBn254.trees(treeId);
-    const root = tree.unwrap().root.toHex();
+    const root = (tree as any).unwrap().root.toHex();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -929,7 +930,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Get the latest root that has been relayed from the source chain to the destination chain
     if (sourceTypedChainId === targetTypedChainId) {
       const destTree = (
-        await destApi.query.merkleTreeBn254.trees(+targetTreeId)
+        (await destApi.query.merkleTreeBn254.trees(+targetTreeId)) as any
       ).unwrapOr(null);
 
       if (!destTree) {
@@ -966,7 +967,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
           ? this.inner.api
           : await WebbPolkadot.getApiPromise(sourceChainEndpoint);
 
-      const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+      const chainId = parseInt(
+        api.consts.linkableTreeBn254.chainIdentifier.toHex(),
+      );
       const palletId = await this.getVAnchorPalletId(api);
 
       const resourceId = createSubstrateResourceId(

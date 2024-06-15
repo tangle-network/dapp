@@ -33,6 +33,12 @@ export type OmitByValue<T, ValueType> = Pick<
 >;
 
 /**
+ * JS primitive types
+ * @see {@link https://developer.mozilla.org/en-US/docs/Glossary/Primitive}
+ */
+export type Primitive = string | number | boolean | null | undefined;
+
+/**
  * `MappedObjectType`: Transforms an object type into a union of objects, each containing a single property from the original object.
  * This type takes an object type `T` and maps each of its properties to a new object type where the key is the same, but the value is wrapped in an object.
  *

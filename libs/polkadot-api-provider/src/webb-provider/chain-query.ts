@@ -4,7 +4,6 @@
 import { ChainQuery } from '@webb-tools/abstract-api-provider';
 
 import { SignedBlock } from '@polkadot/types/interfaces';
-import { OrmlTokensAccountData } from '@polkadot/types/lookup';
 
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { BN } from 'bn.js';
@@ -33,7 +32,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
 
         // If the assetId is not 0, query the orml tokens
         if (assetId !== '0') {
-          let tokenAccountData: OrmlTokensAccountData;
+          let tokenAccountData: any;
 
           try {
             tokenAccountData = await this.inner.api.query.tokens.accounts(
