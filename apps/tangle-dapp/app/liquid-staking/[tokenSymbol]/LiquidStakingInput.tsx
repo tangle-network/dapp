@@ -17,8 +17,9 @@ import { twMerge } from 'tailwind-merge';
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChain,
+  LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
-  LS_CHAIN_TO_TOKEN,
+  LS_TOKEN_TO_CHAIN,
 } from '../../../constants/liquidStaking';
 import useInputAmount from '../../../hooks/useInputAmount';
 import ChainLogo from '../ChainLogo';
@@ -26,15 +27,15 @@ import HoverButtonStyle from '../HoverButtonStyle';
 
 export type LiquidStakingInputProps = {
   id: string;
-  // TODO: Make use of this.
-  selectedChain: LiquidStakingChain;
+  chain: LiquidStakingChain;
   setChain?: (newChain: LiquidStakingChain) => void;
   amount: BN | null;
   setAmount?: (newAmount: BN | null) => void;
   isReadOnly?: boolean;
   placeholder?: string;
-  isLiquidVariant?: boolean;
   rightElement?: ReactNode;
+  token: LiquidStakingToken;
+  isTokenLiquidVariant?: boolean;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
@@ -43,10 +44,11 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   setAmount,
   isReadOnly = false,
   placeholder = '0',
-  isLiquidVariant = false,
+  isTokenLiquidVariant: isLiquidVariant = false,
   rightElement,
-  selectedChain,
+  chain,
   setChain,
+  token,
 }) => {
   const { displayAmount, handleChange, refreshDisplayAmount } = useInputAmount({
     amount,
@@ -74,7 +76,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     <div className="flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-3 rounded-lg border border-mono-40 dark:border-mono-160">
       <div className="flex justify-between">
         <ChainSelector
-          selectedChain={selectedChain}
+          selectedChain={chain}
           setChain={isReadOnly ? undefined : handleChainChange}
         />
 
@@ -94,20 +96,20 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
           readOnly={isReadOnly}
         />
 
-        <TokenChip chain={selectedChain} isLiquidVariant={isLiquidVariant} />
+        <TokenChip token={token} isLiquidVariant={isLiquidVariant} />
       </div>
     </div>
   );
 };
 
 type TokenChipProps = {
-  chain: LiquidStakingChain;
+  token: LiquidStakingToken;
   isLiquidVariant: boolean;
 };
 
 /** @internal */
-const TokenChip: FC<TokenChipProps> = ({ chain, isLiquidVariant }) => {
-  const token = LS_CHAIN_TO_TOKEN[chain];
+const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant }) => {
+  const chain = LS_TOKEN_TO_CHAIN[token];
 
   return (
     <div className="flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg">

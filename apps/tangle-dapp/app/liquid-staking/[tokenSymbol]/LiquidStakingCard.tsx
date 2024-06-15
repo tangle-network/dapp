@@ -68,7 +68,8 @@ const LiquidStakingCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-from"
-        selectedChain={selectedChain}
+        chain={selectedChain}
+        token={LS_CHAIN_TO_TOKEN[selectedChain]}
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${selectedChainToken}`}
@@ -80,11 +81,12 @@ const LiquidStakingCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-to"
-        selectedChain={selectedChain}
+        chain={LiquidStakingChain.TangleRestakingParachain}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
         amount={toAmount}
         isReadOnly
-        isLiquidVariant
+        isTokenLiquidVariant
+        token={LS_CHAIN_TO_TOKEN[selectedChain]}
         rightElement={<SelectValidators />}
       />
 
