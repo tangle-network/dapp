@@ -18,7 +18,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
-import { formatTangleAmount } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import { RestakingAllocationMap } from './types';
 import useAllocationChartEntries, {
   AllocationChartEntryName,

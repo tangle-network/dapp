@@ -34,7 +34,7 @@ import useExistentialDeposit from '../../data/balances/useExistentialDeposit';
 import useTransferTx from '../../data/balances/useTransferTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { formatTangleAmount } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 
 export type TransferTxContainerProps = {
   isModalOpen: boolean;

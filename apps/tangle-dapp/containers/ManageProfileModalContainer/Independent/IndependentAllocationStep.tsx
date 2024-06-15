@@ -16,7 +16,7 @@ import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
-import { formatTangleAmount } from '../../../utils/polkadot';
+import formatTangleAmount from '../../../utils/formatTangleAmount';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';

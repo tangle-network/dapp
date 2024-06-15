@@ -13,7 +13,7 @@ import { FC, ReactNode } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { formatTangleAmount } from '../../utils/formatTangleAmount';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 
 const BalanceCell: FC<{
   amount: BN | null;

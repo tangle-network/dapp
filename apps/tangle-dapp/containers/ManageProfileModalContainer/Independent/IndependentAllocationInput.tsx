@@ -13,7 +13,7 @@ import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import useInputAmount from '../../../hooks/useInputAmount';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
-import { formatTangleAmount } from '../../../utils/formatTangleAmount';
+import formatTangleAmount from '../../../utils/formatTangleAmount';
 import InputAction from '../InputAction';
 
 export type IndependentAllocationInputProps = {

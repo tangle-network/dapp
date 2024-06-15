@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import { formatTangleAmount } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 
 export type TokenAmountCellProps = {
   amount: BN;

@@ -4,7 +4,7 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
-import { formatTangleAmount } from '../utils/formatTangleAmount';
+import formatTangleAmount from '../utils/formatTangleAmount';
 
 // TODO: replace this function across files that convert BN
 // to formatted string with the native token symbol

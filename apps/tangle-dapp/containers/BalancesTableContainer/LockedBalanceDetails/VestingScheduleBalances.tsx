@@ -4,7 +4,7 @@ import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import useApiRx from '../../../hooks/useApiRx';
-import { formatTangleAmount } from '../../../utils/polkadot';
+import formatTangleAmount from '../../../utils/formatTangleAmount';
 import BalanceCell from '../BalanceCell';
 
 /**

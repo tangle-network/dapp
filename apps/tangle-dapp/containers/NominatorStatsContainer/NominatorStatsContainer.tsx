@@ -23,7 +23,7 @@ import useStakingLedger from '../../data/staking/useStakingLedger';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../../types';
-import { formatTangleAmount } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import { BondMoreTxContainer } from '../BondMoreTxContainer';
 import { DelegateTxContainer } from '../DelegateTxContainer';
 import { RebondTxContainer } from '../RebondTxContainer';

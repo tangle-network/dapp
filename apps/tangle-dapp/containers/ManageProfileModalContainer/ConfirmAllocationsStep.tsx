@@ -12,7 +12,7 @@ import {
   TokenSymbol,
 } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
-import { formatTangleAmount } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 

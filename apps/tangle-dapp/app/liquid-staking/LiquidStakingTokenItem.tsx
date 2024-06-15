@@ -15,7 +15,7 @@ import {
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
-import { formatTangleAmount } from '../../utils/polkadot';
+import formatTangleAmount from '../../utils/formatTangleAmount';
 import ChainLogo from './ChainLogo';
 import StatItem from './StatItem';
 
