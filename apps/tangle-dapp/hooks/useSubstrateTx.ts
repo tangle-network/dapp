@@ -212,7 +212,7 @@ export function useSubstrateTxWithNotification<Context = void>(
   const activeAccountAddress = useActiveAccountAddress();
 
   const {
-    execute: _execute,
+    execute: execute_,
     reset,
     status,
     error,
@@ -229,15 +229,16 @@ export function useSubstrateTxWithNotification<Context = void>(
     useTxNotification(txName);
 
   const execute = useCallback(
-    async (context: Context) => {
-      if (_execute === null) {
+    (context: Context) => {
+      if (execute_ === null) {
         return;
       }
 
       notifyProcessing();
-      await _execute(context);
+
+      return execute_(context);
     },
-    [_execute, notifyProcessing],
+    [execute_, notifyProcessing],
   );
 
   useEffect(() => {

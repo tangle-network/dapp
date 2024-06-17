@@ -1,50 +1,40 @@
 import { BN } from '@polkadot/util';
 import { useCallback, useState } from 'react';
-import { z } from 'zod';
 
 import formatBn, { FormatOptions } from '../utils/formatBn';
-import parseChainUnits from '../utils/parseChainUnits';
+import parseChainUnits, {
+  ChainUnitParsingError,
+} from '../utils/parseChainUnits';
 
-/**
- * Regular expression to validate the input amount.
- *
- * It matches any number with at most one decimal point.
- */
-const VALUE_REGEX = /^\d*(\.\d*)?$/;
+type SafeParseInputAmountOptions = {
+  amountString: string;
+  min: BN | null;
+  max: BN | null;
+  errorOnEmptyValue: boolean;
+  decimals: number;
+  minErrorMessage?: string;
+  maxErrorMessage?: string;
+};
 
-function validateInputAmount(
-  amountString: string,
-  min: BN | null,
-  max: BN | null,
-  errorOnEmptyValue: boolean,
-  decimals: number,
-  minErrorMessage?: string,
-  maxErrorMessage?: string,
-): string | null {
-  const schema = z
-    .string()
-    .transform((value) => (value === '' ? null : value))
-    .transform((value) =>
-      value === null ? null : parseChainUnits(value, decimals),
-    )
-    .refine((amount) => !errorOnEmptyValue || amount !== null, {
-      message: 'No amount given',
-    })
+function safeParseInputAmount(
+  options: SafeParseInputAmountOptions,
+): BN | string | null {
+  const result = parseChainUnits(options.amountString, options.decimals);
 
-    .refine((amount) => amount === null || min === null || amount.gte(min), {
-      // TODO: Show what the min value is.
-      message: minErrorMessage ?? 'Amount is below minimum',
-    })
-    .refine((amount) => amount === null || max === null || amount.lte(max), {
-      // TODO: Show what the max value is.
-      message: maxErrorMessage ?? 'Amount is above maximum',
-    });
+  if (!(result instanceof BN)) {
+    switch (result) {
+      case ChainUnitParsingError.EmptyAmount:
+        return options.errorOnEmptyValue ? 'Amount is required' : null;
+      case ChainUnitParsingError.ExceedsDecimals:
+        return 'Amount is too large';
+    }
+  } else if (options.min !== null && result.lt(options.min)) {
+    return options.minErrorMessage ?? `Amount is below the minimum`;
+  } else if (options.max !== null && result.gt(options.max)) {
+    return options.maxErrorMessage ?? `Amount is above the maximum`;
+  }
 
-  const result = schema.safeParse(amountString);
-
-  // Pick the first error message, since the input component does
-  // not support displaying a list of error messages.
-  return !result.success ? result.error.issues[0].message : null;
+  return result;
 }
 
 const INPUT_AMOUNT_FORMAT: Partial<FormatOptions> = {
@@ -81,60 +71,56 @@ const useInputAmount = ({
 
   const handleChange = useCallback(
     (newAmountString: string) => {
-      const digitCount = newAmountString
+      let wasPeriodSeen = false;
+
+      const cleanAmountString = newAmountString
         .split('')
-        .filter((char) => char !== '.').length;
+        .filter((char) => {
+          if (char === '.' && !wasPeriodSeen) {
+            wasPeriodSeen = true;
 
-      // Any amount of 18 decimals can fit in 28 digits.
-      // Anything above that is considered invalid because it would
-      // have higher precision than the chain supports.
-      const MAX_DIGITS = 28;
+            return true;
+          }
 
-      // Ignore invalid input characters.
-      if (!VALUE_REGEX.test(newAmountString) || digitCount > MAX_DIGITS) {
-        return;
-      }
+          // Only consider digits. Ignore any other characters.
+          return char.match(/\d/);
+        })
+        .join('');
 
-      setDisplayAmount(newAmountString);
+      // Set the display amount immediately, without further validation.
+      // An error will be displayed regardless, if the input is invalid.
+      // This is to provide immediate feedback to the user.
+      setDisplayAmount(cleanAmountString);
 
-      const errorMessage = validateInputAmount(
-        newAmountString,
+      const amountOrError = safeParseInputAmount({
+        amountString: newAmountString,
         min,
         max,
         errorOnEmptyValue,
         decimals,
         minErrorMessage,
         maxErrorMessage,
-      );
+      });
 
-      setErrorMessage(errorMessage);
-
+      // There was an error on the validation of the new amount string.
+      if (typeof amountOrError === 'string') {
+        setErrorMessage(amountOrError);
+      }
       // If there was no error on the validation of the new amount string,
       // convert it to chain units and set it as the new amount.
-      if (
-        errorMessage === null &&
-        setAmount !== undefined &&
-        !newAmountString.endsWith('.')
-      ) {
-        // Allow the amount string to be removed, by setting its value
-        // to null.
-        setAmount(
-          newAmountString === ''
-            ? null
-            : parseChainUnits(newAmountString, decimals),
-        );
-
-        setDisplayAmount(newAmountString);
+      else if (setAmount !== undefined && !newAmountString.endsWith('.')) {
+        setErrorMessage(null);
+        setAmount(amountOrError);
       }
     },
     [
+      decimals,
       errorOnEmptyValue,
       max,
       maxErrorMessage,
       min,
       minErrorMessage,
       setAmount,
-      decimals,
     ],
   );
 

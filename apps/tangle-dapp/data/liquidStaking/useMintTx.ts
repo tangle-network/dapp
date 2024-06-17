@@ -2,6 +2,7 @@
 // the `lstMinting` pallet, allowing us to use the `mint` extrinsic.
 import '@webb-tools/tangle-restaking-types';
 
+import { Bytes } from '@polkadot/types';
 import { TanglePrimitivesCurrencyTokenSymbol } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
@@ -24,7 +25,7 @@ const useMintTx = () => {
       api.tx.lstMinting.mint(
         { Native: context.currency },
         context.amount,
-        '',
+        Bytes.from([]),
         null,
       ),
     undefined,

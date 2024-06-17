@@ -76,11 +76,14 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
       minErrorMessage,
     });
 
-  // TODO: This is preventing the user from inputting values like `0.001`. May need to use Decimal.js to handle small amounts, then convert into BN in the implementation of the `useInputAmount` hook?
   // Refresh the display amount when the amount changes.
+  // Only do this when the input is controlled (i.e. read-only mode),
+  // to prevent from modifying the user's input.
   useEffect(() => {
-    refreshDisplayAmount(amount);
-  }, [amount, refreshDisplayAmount]);
+    if (isReadOnly) {
+      refreshDisplayAmount(amount);
+    }
+  }, [amount, isReadOnly, refreshDisplayAmount]);
 
   const handleChainChange = useCallback(
     (newChain: LiquidStakingChain) => {

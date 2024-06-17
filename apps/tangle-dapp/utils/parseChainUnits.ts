@@ -1,5 +1,10 @@
 import { BN } from '@polkadot/util';
 
+export enum ChainUnitParsingError {
+  EmptyAmount,
+  ExceedsDecimals,
+}
+
 /**
  * Converts a numeric amount in string form to blockchain format
  * based on the provided number of decimal places.
@@ -11,26 +16,47 @@ import { BN } from '@polkadot/util';
  * amount to its BN representation.
  *
  * @remarks
- * This function does not support negative inputs.
- *
- * @example
- * ```ts
- * const amount = '123.456';
- * const convertedAmount = convertToChainUnits(amount);
- * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
- * ```
+ * An empty input is not supported, and will return an error.
  */
-const parseChainUnits = (amountString: string, decimals: number): BN => {
-  // TODO: Use zod for validation, and convert this function to support input amount strings, as it is currently only used with strings & for user inputs.
+const parseChainUnits = (
+  amountString: string,
+  decimals: number,
+): BN | ChainUnitParsingError => {
+  let seenPeriod = false;
 
-  const [whole, fraction = ''] = amountString.split('.');
+  const cleanAmount = amountString
+    .split('')
+    .filter((char) => {
+      if (char === '.' && !seenPeriod) {
+        seenPeriod = true;
 
-  // Pad the fractional part with zeros to match the decimals length.
-  const fractionPadded = fraction.padEnd(decimals, '0');
+        return true;
+      }
 
-  const fullAmountString = whole + fractionPadded;
+      // Only allow digits.
+      return char.match(/\d/);
+    })
+    .join('');
 
-  return new BN(fullAmountString);
+  if (cleanAmount.length === 0) {
+    return ChainUnitParsingError.EmptyAmount;
+  }
+
+  const [wholePart, fractionPart = ''] = cleanAmount.split('.');
+
+  // Check if the given amount has more decimal places than expected.
+  if (fractionPart.length > decimals) {
+    return ChainUnitParsingError.ExceedsDecimals;
+  }
+
+  // Pad the fraction part with zeroes to match the expected number
+  // of decimal places. This is equivalent to multiplying the amount
+  // by 10^decimals. For example, if the given decimals is 18, then
+  // the amount 1.23 will be converted to 1.23*10^18.
+  const fractionPartPadded = fractionPart.padEnd(decimals, '0');
+
+  // Unite the whole and fraction parts into a single string.
+  return new BN(`${wholePart}${fractionPartPadded}`);
 };
 
 export default parseChainUnits;
