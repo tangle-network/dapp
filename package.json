@@ -279,7 +279,7 @@
     "netlify-cli": "^17.25.0",
     "null-loader": "^4.0.1",
     "numbro": "^2.5.0",
-    "nx": "19.1.1",
+    "nx": "19.3.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "postcss": "^8.4.38",
