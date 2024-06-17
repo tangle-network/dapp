@@ -26,7 +26,7 @@ function safeParseInputAmount(
       case ChainUnitParsingError.EmptyAmount:
         return options.errorOnEmptyValue ? 'Amount is required' : null;
       case ChainUnitParsingError.ExceedsDecimals:
-        return 'Amount is too large';
+        return `Amount cannot exceed ${options.decimals} decimal places`;
     }
   } else if (options.min !== null && result.lt(options.min)) {
     return options.minErrorMessage ?? `Amount is below the minimum`;
@@ -38,7 +38,7 @@ function safeParseInputAmount(
 }
 
 const INPUT_AMOUNT_FORMAT: Partial<FormatOptions> = {
-  includeCommas: false,
+  includeCommas: true,
   fractionLength: undefined,
 };
 

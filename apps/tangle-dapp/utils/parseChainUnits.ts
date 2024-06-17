@@ -22,6 +22,8 @@ const parseChainUnits = (
   amountString: string,
   decimals: number,
 ): BN | ChainUnitParsingError => {
+  // TODO: Small bug remains for the special case when the whole part is 0. Example: '0.01' gets parsed as '0.1'! However, it works fine for inputs like `1.01`.
+
   let seenPeriod = false;
 
   const cleanAmount = amountString
