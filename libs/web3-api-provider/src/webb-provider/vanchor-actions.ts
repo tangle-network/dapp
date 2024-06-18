@@ -314,7 +314,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       anchorId,
       getPublicClient(getWagmiConfig(), {
         chainId: parseTypedChainId(typedChainId).chainId,
-      }),
+      }) as any,
     );
 
     return vAnchorContract.read.getLatestNeighborEdges();
@@ -559,7 +559,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     const logs = await this.inner.getNewCommitmentLogs(
-      this.inner.publicClient,
+      this.inner.publicClient as any,
       getContract({
         address: ensureHex(addressOrTreeId),
         abi: VAnchor__factory.abi,
@@ -1057,7 +1057,9 @@ export class Web3VAnchorActions extends VAnchorActions<
             },
           );
 
-          approvalHash = await this.inner.walletClient.writeContract(request);
+          approvalHash = await this.inner.walletClient.writeContract(
+            request as any,
+          );
         } else {
           // If we are depositing (without wrapping), we need to approve the
           // VAnchor contract to spend the user's fungible token.
