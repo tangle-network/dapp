@@ -5,15 +5,15 @@ import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
-import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
 import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
+import useInputAmount from '../../../hooks/useInputAmount';
 import { RestakingProfileType, RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
-import { formatTokenBalance } from '../../../utils/polkadot/tokens';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import InputAction from '../InputAction';
 
 export type IndependentAllocationInputProps = {
@@ -99,16 +99,16 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
     displayAmount: amountString,
     errorMessage,
     handleChange,
-  } = useInputAmount(
+  } = useInputAmount({
     amount,
     min,
-    availableBalance,
-    TANGLE_TOKEN_DECIMALS,
+    max: availableBalance,
+    decimals: TANGLE_TOKEN_DECIMALS,
     errorOnEmptyValue,
     setAmount,
     minErrorMessage,
-    ERROR_NOT_ENOUGH_BALANCE,
-  );
+    maxErrorMessage: ERROR_NOT_ENOUGH_BALANCE,
+  });
 
   const handleDelete = useCallback(() => {
     if (onDelete !== undefined && service !== null) {
@@ -146,7 +146,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
 
             {min !== null ? (
               <Chip color="dark-grey" className="text-mono-0 dark:text-mono-0">
-                {`≥ ${formatTokenBalance(min)}`}
+                {`≥ ${formatTangleBalance(min)}`}
               </Chip>
             ) : (
               <SkeletonLoader />

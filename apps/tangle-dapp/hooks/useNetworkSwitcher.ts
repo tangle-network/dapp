@@ -41,7 +41,7 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-const useNetworkState = () => {
+const useNetworkSwitcher = () => {
   const { switchChain, activeWallet, chains } = useWebContext();
 
   const { isEvm } = useAgnosticAccountInfo();
@@ -188,10 +188,9 @@ const useNetworkState = () => {
   );
 
   return {
-    network,
-    setNetwork: switchNetwork,
+    switchNetwork,
     isCustom,
   };
 };
 
-export default useNetworkState;
+export default useNetworkSwitcher;

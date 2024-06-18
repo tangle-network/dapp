@@ -7,7 +7,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunctionType } from '../../types';
+import { GetSuccessMessageFunction } from '../../types';
 
 type UnbondTxContext = {
   amount: BN;
@@ -28,7 +28,7 @@ const useUnbondTx = () => {
     [],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunctionType<UnbondTxContext> =
+  const getSuccessMessageFnc: GetSuccessMessageFunction<UnbondTxContext> =
     useCallback(
       ({ amount }) =>
         `Successfully unstaked ${formatNativeTokenAmount(amount)}.`,
