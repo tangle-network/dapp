@@ -1,18 +1,19 @@
-import { Transport, createClient, fallback, http, type Chain } from 'viem';
+import { createClient, fallback, http } from 'viem';
 import { Config, cookieStorage, createConfig, createStorage } from 'wagmi';
-import { chainsConfig } from './chains/evm';
-import extractChain from './chains/utils/extractChain';
+import { wagmiChains as chains } from './chains/evm';
 
-const chains = Object.values(chainsConfig).map((chainCfg) =>
-  extractChain(chainCfg),
-) as [Chain, ...Chain[]];
+let config: Config<typeof chains>;
 
 /**
- * TODO: Find a better way to improve the typing of the config
- * with supported chains.
- * @see https://wagmi.sh/react/typescript#config-types
+ * Registers the wagmi config
+ *
+ * @see {@link https://wagmi.sh/react/typescript#config-types}
  */
-let config: Config<[Chain, ...Chain[]], Record<number, Transport>>;
+declare module 'wagmi' {
+  interface Register {
+    config: typeof config;
+  }
+}
 
 export type GetWagmiConfigParamsType = {
   isSSR?: boolean;

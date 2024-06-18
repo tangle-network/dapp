@@ -17,8 +17,7 @@ export enum EVMChainId {
   AvalancheFuji = 43113,
   ScrollSepolia = 534351,
 
-  TangleLocalEVM = 3799,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  TangleLocalEVM = 3287,
   TangleTestnetEVM = 3799,
   TangleMainnetEVM = 5845,
 

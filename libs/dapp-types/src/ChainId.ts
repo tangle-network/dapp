@@ -64,6 +64,11 @@ export enum PresetTypedChainId {
     SubstrateChainId.TangleTestnetNative,
   ),
 
+  TangleLocalNative = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.TangleLocalNative,
+  ),
+
   Kusama = calculateTypedChainId(
     ChainType.KusamaRelayChain,
     SubstrateChainId.Kusama,
@@ -108,6 +113,11 @@ export enum PresetTypedChainId {
   DemeterLocalnet = calculateTypedChainId(
     ChainType.EVM,
     EVMChainId.DemeterLocalnet,
+  ),
+
+  TangleLocalEVM = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TangleLocalEVM,
   ),
 
   TangleTestnetEVM = calculateTypedChainId(

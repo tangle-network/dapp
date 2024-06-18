@@ -1,7 +1,7 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   arbitrumGoerli,
@@ -13,229 +13,132 @@ import {
   scrollSepolia,
   sepolia,
 } from 'viem/chains';
-import {
-  TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
-  TANGLE_MAINNET_EVM_EXPLORER_URL,
-  TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
-  TANGLE_TESTNET_EVM_EXPLORER_URL,
-  TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
-} from '../../constants/tangle';
-import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import type { ChainConfig } from '../chain-config.interface';
+import athenaLocalnet from './customChains/athenaLocalnet';
+import demeterLocalnet from './customChains/demeterLocalnet';
+import hermesLocalnet from './customChains/hermesLocalnet';
+import tangleLocalEVM from './customChains/tangleLocalEvm';
+import tangleMainnetEVM from './customChains/tangleMainnetEVM';
+import tangleTestnetEVM from './customChains/tangleTestnetEVM';
 
-const localOrbitMulticall3Address =
-  process.env.BRIDGE_DAPP_LOCAL_ORBIT_MULTICALL3_ADDRESS;
+export const wagmiChains = [
+  goerli,
+  optimismGoerli,
+  arbitrumGoerli,
+  polygonMumbai,
+  moonbaseAlpha,
+  sepolia,
+  avalancheFuji,
+  scrollSepolia,
+  tangleMainnetEVM,
+  tangleTestnetEVM,
+  tangleLocalEVM,
+  hermesLocalnet,
+  athenaLocalnet,
+  demeterLocalnet,
+] as const;
 
-const localAthenaMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
-
-const localHermesMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
-
-const localDemeterMulticall3DeploymentBlock = process.env
-  .BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
-  : 0;
-
-export const chainsConfig: Record<number, ChainConfig> = {
+export const chainsConfig = {
   // Testnet
   [PresetTypedChainId.Goerli]: {
     ...goerli,
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.OptimismTestnet]: {
     ...optimismGoerli,
     chainType: ChainType.EVM,
     group: 'optimism',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.ArbitrumTestnet]: {
     ...arbitrumGoerli,
     chainType: ChainType.EVM,
     group: 'arbitrum',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.PolygonTestnet]: {
     ...polygonMumbai,
     chainType: ChainType.EVM,
     group: 'polygon',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.MoonbaseAlpha]: {
     ...moonbaseAlpha,
     chainType: ChainType.EVM,
     group: 'moonbeam',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.Sepolia]: {
     ...sepolia,
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.AvalancheFuji]: {
     ...avalancheFuji,
     chainType: ChainType.EVM,
     group: 'avalanche',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.ScrollSepolia]: {
     ...scrollSepolia,
     chainType: ChainType.EVM,
     group: 'scroll',
     tag: 'test',
-  },
+  } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleMainnetEVM]: {
+    ...tangleMainnetEVM,
     chainType: ChainType.EVM,
-    id: EVMChainId.TangleMainnetEVM,
-    name: 'Tangle Mainnet EVM',
     group: 'tangle',
     tag: 'live',
-    nativeCurrency: {
-      name: 'Tangle Network Token',
-      symbol: 'TNT',
-      decimals: 18,
-    },
-    blockExplorers: {
-      default: {
-        name: 'Tangle Mainnet EVM Explorer',
-        url: TANGLE_MAINNET_EVM_EXPLORER_URL,
-      },
-    },
-    rpcUrls: {
-      default: {
-        http: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
-      },
-      public: {
-        http: [TANGLE_MAINNET_HTTP_RPC_ENDPOINT],
-      },
-    },
   } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleTestnetEVM]: {
+    ...tangleTestnetEVM,
     chainType: ChainType.EVM,
-    id: EVMChainId.TangleTestnetEVM,
-    name: 'Tangle Testnet EVM',
     group: 'tangle',
     tag: 'test',
-    nativeCurrency: {
-      name: 'Test Tangle Network Token',
-      symbol: 'tTNT',
-      decimals: 18,
-    },
-    ...(!process.env['USING_LOCAL_TANGLE']
-      ? {
-          blockExplorers: {
-            default: {
-              name: 'Tangle Testnet EVM Explorer',
-              url: TANGLE_TESTNET_EVM_EXPLORER_URL,
-            },
-          },
-        }
-      : {}),
-    rpcUrls: {
-      default: {
-        http: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
-      },
-      public: {
-        http: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
-      },
-    },
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.TangleLocalEVM]: {
+    ...tangleLocalEVM,
+    chainType: ChainType.EVM,
+    group: 'tangle',
+    tag: 'dev',
   } satisfies ChainConfig,
 
   // Localnet
   [PresetTypedChainId.HermesLocalnet]: {
+    ...hermesLocalnet,
     chainType: ChainType.EVM,
-    id: EVMChainId.HermesLocalnet,
-    name: 'Hermes',
     group: 'webb-dev',
     tag: 'dev',
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
-    rpcUrls: {
-      default: {
-        http: [`http://127.0.0.1:5004`],
-      },
-      public: {
-        http: [`http://127.0.0.1:5004`],
-      },
-    },
     env: ['development'],
-    ...(localOrbitMulticall3Address
-      ? {
-          contracts: {
-            multicall3: {
-              address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
-              blockCreated: localHermesMulticall3DeploymentBlock,
-            },
-          },
-        }
-      : {}),
   } satisfies ChainConfig,
 
   [PresetTypedChainId.AthenaLocalnet]: {
+    ...athenaLocalnet,
     chainType: ChainType.EVM,
-    id: EVMChainId.AthenaLocalnet,
-    name: 'Athena',
     group: 'webb-dev',
     tag: 'dev',
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
-    rpcUrls: {
-      default: {
-        http: [`http://127.0.0.1:5005`],
-      },
-      public: {
-        http: [`http://127.0.0.1:5005`],
-      },
-    },
     env: ['development'],
-    ...(localOrbitMulticall3Address
-      ? {
-          contracts: {
-            multicall3: {
-              address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
-              blockCreated: localAthenaMulticall3DeploymentBlock,
-            },
-          },
-        }
-      : {}),
   } satisfies ChainConfig,
 
   [PresetTypedChainId.DemeterLocalnet]: {
+    ...demeterLocalnet,
     chainType: ChainType.EVM,
-    id: EVMChainId.DemeterLocalnet,
-    name: 'Demeter',
     group: 'webb-dev',
     tag: 'dev',
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
-    rpcUrls: {
-      default: {
-        http: [`http://127.0.0.1:5006`],
-      },
-      public: {
-        http: [`http://127.0.0.1:5006`],
-      },
-    },
     env: ['development'],
-    ...(localOrbitMulticall3Address
-      ? {
-          contracts: {
-            multicall3: {
-              address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
-              blockCreated: localDemeterMulticall3DeploymentBlock,
-            },
-          },
-        }
-      : {}),
   } satisfies ChainConfig,
-};
+} as const satisfies Record<number, ChainConfig>;
