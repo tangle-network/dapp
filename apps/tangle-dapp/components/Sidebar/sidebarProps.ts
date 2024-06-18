@@ -66,7 +66,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   },
   {
     name: 'Liquid Staking',
-    href: PagePath.LIQUID_RESTAKING,
+    href: PagePath.LIQUID_STAKING,
     environments: ['development', 'staging', 'test'],
     isInternal: true,
     isNext: true,

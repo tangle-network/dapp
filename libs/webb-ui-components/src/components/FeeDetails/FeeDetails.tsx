@@ -16,6 +16,7 @@ import {
   AccordionItem,
 } from '../Accordion';
 import { TitleWithInfo } from '../TitleWithInfo';
+import SkeletonLoader from '../SkeletonLoader';
 import { FeeDetailsProps } from './types';
 
 /**
@@ -54,6 +55,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
   (
     {
       className,
+      title,
       info,
       totalFee,
       totalFeeToken = '',
@@ -90,7 +92,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
             )}
           >
             <TitleWithInfo
-              title="Fees"
+              title={title ?? 'Fees'}
               className="text-mono-120 dark:text-mono-100"
               titleClassName={cx('!text-inherit')}
               info={info}
@@ -98,26 +100,24 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
 
             <div className="flex items-center">
               {isTotalLoading ? (
-                <div className="animate-pulse">
-                  <div className="h-5 rounded-md w-14 bg-slate-200 dark:bg-mono-160" />
-                </div>
-              ) : totalFeeCmp ? (
-                totalFeeCmp
+                <SkeletonLoader className="w-14" />
               ) : (
-                <>
-                  <Typography variant="body1" fw="bold">
-                    {typeof totalFee === 'number'
-                      ? `~${numberToString(totalFee).slice(
-                          0,
-                          10,
-                        )} ${totalFeeToken}`.trim()
-                      : '-'}
-                  </Typography>
+                totalFeeCmp ?? (
+                  <>
+                    <Typography variant="body1" fw="bold">
+                      {typeof totalFee === 'number'
+                        ? `~${numberToString(totalFee).slice(
+                            0,
+                            10,
+                          )} ${totalFeeToken}`.trim()
+                        : '-'}
+                    </Typography>
 
-                  {typeof totalFee === 'number' && totalFeeToken && (
-                    <TokenIcon name={totalFeeToken} className="ml-2" />
-                  )}
-                </>
+                    {typeof totalFee === 'number' && totalFeeToken && (
+                      <TokenIcon name={totalFeeToken} className="ml-2" />
+                    )}
+                  </>
+                )
               )}
 
               <ArrowDropDownFill

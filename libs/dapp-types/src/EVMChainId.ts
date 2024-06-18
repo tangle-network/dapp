@@ -17,6 +17,7 @@ export enum EVMChainId {
   AvalancheFuji = 43113,
   ScrollSepolia = 534351,
 
+  TangleLocalEVM = 3287,
   TangleTestnetEVM = 3799,
   TangleMainnetEVM = 5845,
 

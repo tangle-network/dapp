@@ -38,8 +38,8 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         cx(
           'flex cursor-pointer items-center px-4 py-2 text-base outline-none',
           'text-mono-140 dark:text-mono-80',
-          'hover:bg-blue-0 dark:hover:bg-blue-120',
-          'focus:bg-blue-0 dark:focus:bg-blue-120',
+          'hover:bg-blue-0 dark:hover:bg-mono-180',
+          'focus:bg-blue-0 dark:focus:bg-mono-180',
           'radix-state-checked:text-blue dark:radix-state-checked:text-blue-50',
           'radix-state-active:text-blue dark:radix-state-active:text-blue-50',
         ),

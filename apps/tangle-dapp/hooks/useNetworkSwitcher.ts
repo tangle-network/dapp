@@ -53,7 +53,7 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
   });
 }
 
-const useNetworkState = () => {
+const useNetworkSwitcher = () => {
   const { switchChain, activeWallet } = useWebContext();
   const { toggleModal } = useConnectWallet({ useAllWallets: true });
 
@@ -87,7 +87,8 @@ const useNetworkState = () => {
           .safeParse(cachedNetworkNameOpt.value);
 
         if (parsedNetworkId.success) {
-          const knownNetwork = NETWORK_MAP[parsedNetworkId.data];
+          const id = parsedNetworkId.data as keyof typeof NETWORK_MAP;
+          const knownNetwork = NETWORK_MAP[id];
 
           if (knownNetwork !== undefined) {
             return knownNetwork;
@@ -189,13 +190,10 @@ const useNetworkState = () => {
   );
 
   return {
-    network,
-    setNetwork: switchNetwork,
+    switchNetwork,
     isCustom,
   };
 };
-
-export default useNetworkState;
 
 /**
  * Map a network to a chain
@@ -337,3 +335,5 @@ function overrideRpcForLocalnet(network: Network, chain: Chain): Chain {
     },
   };
 }
+
+export default useNetworkSwitcher;

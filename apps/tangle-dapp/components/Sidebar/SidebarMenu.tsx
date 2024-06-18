@@ -4,12 +4,12 @@ import { SideBarMenu as SideBarMenuCmp } from '@webb-tools/webb-ui-components';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
 
-import useNetworkState from '../../hooks/useNetworkState';
+import useNetworkStore from '../../context/useNetworkStore';
 import getSidebarProps from './sidebarProps';
 
 const SidebarMenu: FC = () => {
   const pathname = usePathname();
-  const { network } = useNetworkState();
+  const { network } = useNetworkStore();
 
   const sidebarProps = useMemo(
     () =>

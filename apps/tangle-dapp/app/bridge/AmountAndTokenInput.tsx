@@ -20,6 +20,7 @@ import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
+import useBridgeFee from './hooks/useBridgeFee';
 import useDecimals from './hooks/useDecimals';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
@@ -37,6 +38,7 @@ const AmountAndTokenInput: FC = () => {
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
+  const { fee: bridgeFee } = useBridgeFee();
 
   const minAmount = useMemo(() => {
     const existentialDeposit =
@@ -44,16 +46,14 @@ const AmountAndTokenInput: FC = () => {
     const destChainTransactionFee =
       selectedToken.destChainTransactionFee[sourceTypedChainId];
 
-    if (!existentialDeposit || !destChainTransactionFee) return null;
-
-    // TODO: add bridge fees
-    return (existentialDeposit ?? new Decimal(0)).add(
-      destChainTransactionFee ?? new Decimal(0),
-    );
+    return (existentialDeposit ?? new Decimal(0))
+      .add(destChainTransactionFee ?? new Decimal(0))
+      .add(bridgeFee ?? new Decimal(0));
   }, [
     selectedToken.existentialDeposit,
     selectedToken.destChainTransactionFee,
     sourceTypedChainId,
+    bridgeFee,
   ]);
 
   return (
@@ -77,18 +77,22 @@ const AmountAndTokenInput: FC = () => {
           max={balance ? convertDecimalToBn(balance, decimals) : null}
           maxErrorMessage="Insufficient balance"
           min={minAmount ? convertDecimalToBn(minAmount, decimals) : null}
+          decimals={decimals}
           minErrorMessage="Amount too small"
           setErrorMessage={(error) =>
             setIsAmountInputError(error ? true : false)
           }
-          errorMessageClassName="absolute left-0 bottom-[-28px]"
+          errorMessageClassName="absolute left-0 bottom-[-24px] !text-[14px] !leading-[21px]"
         />
         <Dropdown>
           <DropdownTrigger asChild>
             <ChainOrTokenButton
               value={selectedToken.symbol}
               status="success"
-              className="w-[130px] bg-mono-0 dark:bg-mono-140 border-0 px-3"
+              className={twMerge(
+                'w-[130px] border-0 px-3 bg-[#EFF3F6] dark:bg-mono-140',
+                'hover:bg-[#EFF3F6] dark:hover:bg-mono-140',
+              )}
               iconType="token"
             />
           </DropdownTrigger>

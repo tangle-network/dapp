@@ -1,9 +1,13 @@
 import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+
+export enum ChainUnitParsingError {
+  EmptyAmount,
+  ExceedsDecimals,
+}
 
 /**
  * Converts a numeric amount in string form to blockchain format
- * based on the number of decimal places used in Tangle.
+ * based on the provided number of decimal places.
  *
  * This handles the conversion of a floating-point number into a
  * Big Number (BN), which is required for blockchain transactions.
@@ -12,26 +16,49 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
  * amount to its BN representation.
  *
  * @remarks
- * This function does not support negative inputs.
- *
- * @example
- * ```ts
- * const amount = '123.456';
- * const convertedAmount = convertToChainUnits(amount);
- * console.log(convertedAmount.toString()); // Output will be a BN representation of 123.456 with 18 decimal places
- * ```
+ * An empty input is not supported, and will return an error.
  */
-const parseChainUnits = (amountString: string): BN => {
-  // TODO: Use zod for validation, and convert this function to support input amount strings, as it is currently only used with strings & for user inputs.
+const parseChainUnits = (
+  amountString: string,
+  decimals: number,
+): BN | ChainUnitParsingError => {
+  // TODO: Small bug remains for the special case when the whole part is 0. Example: '0.01' gets parsed as '0.1'! However, it works fine for inputs like `1.01`.
 
-  const [whole, fraction = ''] = amountString.split('.');
+  let seenPeriod = false;
 
-  // Pad the fractional part with zeros to match the decimals length.
-  const fractionPadded = fraction.padEnd(TANGLE_TOKEN_DECIMALS, '0');
+  const cleanAmount = amountString
+    .split('')
+    .filter((char) => {
+      if (char === '.' && !seenPeriod) {
+        seenPeriod = true;
 
-  const fullAmountString = whole + fractionPadded;
+        return true;
+      }
 
-  return new BN(fullAmountString);
+      // Only allow digits.
+      return char.match(/\d/);
+    })
+    .join('');
+
+  if (cleanAmount.length === 0) {
+    return ChainUnitParsingError.EmptyAmount;
+  }
+
+  const [wholePart, fractionPart = ''] = cleanAmount.split('.');
+
+  // Check if the given amount has more decimal places than expected.
+  if (fractionPart.length > decimals) {
+    return ChainUnitParsingError.ExceedsDecimals;
+  }
+
+  // Pad the fraction part with zeroes to match the expected number
+  // of decimal places. This is equivalent to multiplying the amount
+  // by 10^decimals. For example, if the given decimals is 18, then
+  // the amount 1.23 will be converted to 1.23*10^18.
+  const fractionPartPadded = fractionPart.padEnd(decimals, '0');
+
+  // Unite the whole and fraction parts into a single string.
+  return new BN(`${wholePart}${fractionPartPadded}`);
 };
 
 export default parseChainUnits;

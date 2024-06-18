@@ -1,10 +1,11 @@
 import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import useInputAmount from '../../hooks/useInputAmount';
 import BaseInput, { BaseInputProps } from './BaseInput';
-import useInputAmount from './useInputAmount';
 
 export type AmountInputProps = {
   id: string;
@@ -15,6 +16,7 @@ export type AmountInputProps = {
   maxErrorMessage?: string;
   showMaxAction?: boolean;
   amount: BN | null;
+  decimals?: number;
   isDisabled?: boolean;
   baseInputOverrides?: Partial<BaseInputProps>;
   errorOnEmptyValue?: boolean;
@@ -34,6 +36,7 @@ const AmountInput: FC<AmountInputProps> = ({
   setAmount,
   min = null,
   max = null,
+  decimals = TANGLE_TOKEN_DECIMALS, // Default to the Tangle token decimals.
   minErrorMessage,
   maxErrorMessage,
   showMaxAction = true,
@@ -51,15 +54,16 @@ const AmountInput: FC<AmountInputProps> = ({
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { displayAmount, refreshDisplayAmount, errorMessage, handleChange } =
-    useInputAmount(
+    useInputAmount({
       amount,
       min,
       max,
+      decimals,
       errorOnEmptyValue,
       setAmount,
       minErrorMessage,
       maxErrorMessage,
-    );
+    });
 
   // Set the error message in the parent component.
   useEffect(() => {

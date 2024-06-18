@@ -58,6 +58,9 @@ export enum TxName {
   UPDATE_NOMINATOR = 'update nominator',
   WITHDRAW_EVM_BALANCE = 'withdraw',
   UPDATE_RESTAKE_PROFILE = 'update restake profile',
+  BRIDGE_TRANSFER = 'bridge transfer',
+  MINT = 'mint',
+  REDEEM = 'redeem',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

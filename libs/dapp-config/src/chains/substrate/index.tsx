@@ -13,7 +13,7 @@ import {
 import { ChainConfig } from '../chain-config.interface';
 
 // All substrate chains temporary use in `development` environment now
-export const chainsConfig: Record<number, ChainConfig> = {
+export const chainsConfig = {
   [PresetTypedChainId.TangleMainnetNative]: {
     chainType: ChainType.Substrate,
     group: 'tangle',
@@ -36,10 +36,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
         http: [],
         webSocket: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
       },
-      public: {
-        http: [],
-        webSocket: [TANGLE_MAINNET_WS_RPC_ENDPOINT],
-      },
     },
   },
 
@@ -57,20 +53,41 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Explorer',
-        url: process.env['USING_LOCAL_TANGLE']
-          ? 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/'
-          : TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+        url: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
       },
     },
     rpcUrls: {
       default: {
         http: [],
-        webSocket: process.env['USING_LOCAL_TANGLE']
-          ? [TANGLE_LOCAL_WS_RPC_ENDPOINT]
-          : [TANGLE_TESTNET_WS_RPC_ENDPOINT],
+        webSocket: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
       },
     },
     env: ['development'],
+  },
+
+  [PresetTypedChainId.TangleLocalNative]: {
+    chainType: ChainType.Substrate,
+    group: 'tangle',
+    tag: 'dev',
+    id: SubstrateChainId.TangleLocalNative,
+    name: 'Tangle Local Native',
+    nativeCurrency: {
+      name: 'Local Tangle Token',
+      symbol: 'tTNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Local Tangle Explorer',
+        url: 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: [TANGLE_LOCAL_WS_RPC_ENDPOINT],
+      },
+    },
   },
 
   [PresetTypedChainId.Kusama]: {
@@ -124,4 +141,30 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     env: ['development'],
   },
-};
+
+  [PresetTypedChainId.RococoPhala]: {
+    chainType: ChainType.Substrate,
+    id: SubstrateChainId.RococoPhala,
+    name: 'Rococo Phala',
+    group: 'phala',
+    tag: 'test',
+    nativeCurrency: {
+      name: 'Phala',
+      symbol: 'PHA',
+      decimals: 6,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Phala Explorer',
+        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer/',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rhala-node.phala.network/ws'],
+      },
+    },
+    env: ['development'],
+  },
+} as const satisfies Record<number, ChainConfig>;

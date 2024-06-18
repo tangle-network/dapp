@@ -12,7 +12,7 @@ export enum PagePath {
   BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   RESTAKE = '/restake',
-  LIQUID_RESTAKING = '/liquid-staking',
+  LIQUID_STAKING = '/liquid-staking',
 }
 
 export enum QueryParamKey {
@@ -229,13 +229,11 @@ export type ExposureMap = Record<
   }
 >;
 
-export type TokenSymbol = 'tTNT' | 'TNT';
+export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
 /**
  * Represents a function type that takes a context parameter and returns a success message.
  * @param context The context parameter.
  * @returns The success message.
  */
-export type GetSuccessMessageFunctionType<Context> = (
-  context: Context,
-) => string;
+export type GetSuccessMessageFunction<Context> = (context: Context) => string;

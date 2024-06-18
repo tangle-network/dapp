@@ -1,10 +1,11 @@
 import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useRef } from 'react';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
-import useInputAmount from '../../../components/AmountInput/useInputAmount';
 import useNetworkStore from '../../../context/useNetworkStore';
+import useInputAmount from '../../../hooks/useInputAmount';
 import {
   ERROR_MIN_RESTAKING_BOND,
   ERROR_NOT_ENOUGH_BALANCE,
@@ -37,15 +38,16 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
     displayAmount: amountString,
     errorMessage,
     handleChange,
-  } = useInputAmount(
+  } = useInputAmount({
     amount,
-    null,
-    null,
-    true,
+    min: null,
+    max: null,
+    errorOnEmptyValue: true,
     setAmount,
+    decimals: TANGLE_TOKEN_DECIMALS,
     minErrorMessage,
-    ERROR_NOT_ENOUGH_BALANCE,
-  );
+    maxErrorMessage: ERROR_NOT_ENOUGH_BALANCE,
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
 

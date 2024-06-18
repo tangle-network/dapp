@@ -14,10 +14,11 @@ import { isEvmAddress } from '../../../utils/isEvmAddress';
 import {
   getEvmContractBalance,
   getEvmNativeBalance,
+  getSubstrateAssetBalance,
   getSubstrateNativeTransferable,
 } from '../lib/balance';
 import useDecimals from './useDecimals';
-import useEvmViemClient from './useEvmViemClient';
+import useEthersProvider from './useEthersProvider';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
@@ -33,7 +34,7 @@ export default function useBalance() {
   const { selectedSourceChain, walletError } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceTypedChainId } = useTypedChainId();
-  const evmViemClient = useEvmViemClient();
+  const ethersProvider = useEthersProvider();
   const substrateApi = useSubstrateApi();
   const decimals = useDecimals();
 
@@ -46,18 +47,23 @@ export default function useBalance() {
     return selectedToken.erc20TokenContractAddress?.[sourceTypedChainId];
   }, [selectedToken.erc20TokenContractAddress, sourceTypedChainId]);
 
+  const substrateAssetId = useMemo(
+    () => selectedToken.substrateAssetId?.[sourceTypedChainId],
+    [selectedToken.substrateAssetId, sourceTypedChainId],
+  );
+
   const {
     data: evmNativeBalance,
     isLoading: isLoadingEvmNativeBalance,
-    error: errorLoadingEvmNativeBalance,
+    error: errorEvmNativeBalance,
   } = useSWR(
     [
       walletError === null &&
       activeAccountAddress !== null &&
-      evmViemClient !== null &&
+      ethersProvider !== null &&
       isEvmAddress(activeAccountAddress) &&
       isNativeToken
-        ? { client: evmViemClient, accAddress: activeAccountAddress }
+        ? { provider: ethersProvider, accAddress: activeAccountAddress }
         : undefined,
     ],
     ([...args]) => getEvmNativeBalance(...args),
@@ -66,17 +72,17 @@ export default function useBalance() {
   const {
     data: evmErc20Balance,
     isLoading: isLoadingEvmErc20Balance,
-    error: errorLoadingEvmErc20Balance,
+    error: errorEvmErc20Balance,
   } = useSWR(
     [
       walletError === null &&
       activeAccountAddress !== null &&
-      evmViemClient !== null &&
+      ethersProvider !== null &&
       isEvmAddress(activeAccountAddress) &&
       !isNativeToken &&
       erc20TokenContractAddress !== undefined
         ? {
-            client: evmViemClient,
+            provider: ethersProvider,
             contractAddress: erc20TokenContractAddress,
             accAddress: activeAccountAddress,
             decimals,
@@ -89,7 +95,7 @@ export default function useBalance() {
   const {
     data: substrateNativeBalance,
     isLoading: isLoadingSubstrateNativeBalance,
-    error: errorLoadingSubstrateNativeBalance,
+    error: errorSubstrateNativeBalance,
   } = useSWR(
     [
       walletError === null &&
@@ -106,40 +112,77 @@ export default function useBalance() {
     ([...args]) => getSubstrateNativeTransferable(...args),
   );
 
-  useEffect(() => {
-    if (errorLoadingEvmNativeBalance) {
-      notificationApi({
-        message: ensureError(errorLoadingEvmNativeBalance).message,
-        variant: 'error',
-      });
-    }
-  }, [notificationApi, errorLoadingEvmNativeBalance]);
+  const {
+    data: substrateAssetBalance,
+    isLoading: isLoadingSubstrateAssetBalance,
+    error: errorSubstrateAssetBalance,
+  } = useSWR(
+    [
+      walletError === null &&
+      activeAccountAddress !== null &&
+      substrateApi !== null &&
+      isAddress(activeAccountAddress) &&
+      !isNativeToken &&
+      substrateAssetId !== undefined
+        ? {
+            api: substrateApi,
+            accAddress: activeAccountAddress,
+            assetId: substrateAssetId,
+            decimals,
+          }
+        : undefined,
+    ],
+    ([...args]) => getSubstrateAssetBalance(...args),
+  );
 
   useEffect(() => {
-    if (errorLoadingEvmErc20Balance) {
+    if (errorEvmNativeBalance) {
       notificationApi({
-        message: ensureError(errorLoadingEvmErc20Balance).message,
+        message: ensureError(errorEvmNativeBalance).message,
         variant: 'error',
       });
     }
-  }, [notificationApi, errorLoadingEvmErc20Balance]);
+  }, [notificationApi, errorEvmNativeBalance]);
 
   useEffect(() => {
-    if (errorLoadingSubstrateNativeBalance) {
+    if (errorEvmErc20Balance) {
       notificationApi({
-        message: ensureError(errorLoadingSubstrateNativeBalance).message,
+        message: ensureError(errorEvmErc20Balance).message,
         variant: 'error',
       });
     }
-  }, [notificationApi, errorLoadingSubstrateNativeBalance]);
+  }, [notificationApi, errorEvmErc20Balance]);
+
+  useEffect(() => {
+    if (errorSubstrateNativeBalance) {
+      notificationApi({
+        message: ensureError(errorSubstrateNativeBalance).message,
+        variant: 'error',
+      });
+    }
+  }, [notificationApi, errorSubstrateNativeBalance]);
+
+  useEffect(() => {
+    if (errorSubstrateAssetBalance) {
+      notificationApi({
+        message: ensureError(errorSubstrateAssetBalance).message,
+        variant: 'error',
+      });
+    }
+  }, [notificationApi, errorSubstrateAssetBalance]);
 
   return {
     balance:
-      evmNativeBalance ?? evmErc20Balance ?? substrateNativeBalance ?? null,
+      evmNativeBalance ??
+      evmErc20Balance ??
+      substrateNativeBalance ??
+      substrateAssetBalance ??
+      null,
     isLoading:
       isLoadingEvmNativeBalance ||
       isLoadingEvmErc20Balance ||
-      isLoadingSubstrateNativeBalance,
+      isLoadingSubstrateNativeBalance ||
+      isLoadingSubstrateAssetBalance,
   } satisfies UseBalanceReturnType;
 }
 

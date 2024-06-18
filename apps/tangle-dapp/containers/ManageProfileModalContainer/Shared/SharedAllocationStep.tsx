@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakingService } from '../../../types';
-import { formatTokenBalance } from '../../../utils/polkadot';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
 import { RestakingAllocationMap } from '../types';
@@ -85,7 +85,7 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
       <Typography variant="body1" fw="normal" className="self-start">
         Remaining:{' '}
         {remainingAmount !== null
-          ? formatTokenBalance(remainingAmount, nativeTokenSymbol)
+          ? formatTangleBalance(remainingAmount, nativeTokenSymbol)
           : EMPTY_VALUE_PLACEHOLDER}
       </Typography>
     </AllocationStepContainer>

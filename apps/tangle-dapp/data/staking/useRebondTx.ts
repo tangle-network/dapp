@@ -7,7 +7,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunctionType } from '../../types';
+import { GetSuccessMessageFunction } from '../../types';
 
 type RebondTxContext = {
   amount: BN;
@@ -28,7 +28,7 @@ const useRebondTx = () => {
     [],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunctionType<RebondTxContext> =
+  const getSuccessMessageFnc: GetSuccessMessageFunction<RebondTxContext> =
     useCallback(
       ({ amount }) =>
         `Successfully rebonded ${formatNativeTokenAmount(amount)}.`,
