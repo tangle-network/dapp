@@ -314,6 +314,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       anchorId,
       getPublicClient(getWagmiConfig(), {
         chainId: parseTypedChainId(typedChainId).chainId,
+        // TODO: Fix type casting here
       }) as any,
     );
 
@@ -559,6 +560,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     const logs = await this.inner.getNewCommitmentLogs(
+      // TODO: Fix type casting here
       this.inner.publicClient as any,
       getContract({
         address: ensureHex(addressOrTreeId),
@@ -1058,6 +1060,7 @@ export class Web3VAnchorActions extends VAnchorActions<
           );
 
           approvalHash = await this.inner.walletClient.writeContract(
+            // TODO: Fix type casting here
             request as any,
           );
         } else {

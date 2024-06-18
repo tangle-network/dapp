@@ -65,10 +65,11 @@ import groupBy from 'lodash/groupBy';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';
 import {
-  Client,
   getContract,
   parseAbiItem,
   type Account,
+  type Chain,
+  type Client,
   type GetContractReturnType,
   type GetLogsReturnType,
   type Hash,
@@ -94,16 +95,6 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-
-type NonUndefined<T> = T extends undefined ? never : T;
-
-type WagmiConfig = ReturnType<typeof getWagmiConfig>;
-type Web3PublicClient = NonUndefined<
-  ReturnType<
-    typeof getPublicClient<WagmiConfig, WagmiConfig['chains'][number]['id']>
-  >
->;
-type Chain = WagmiConfig['chains'][number];
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -140,7 +131,7 @@ export class WebbWeb3Provider
   /**
    * The current public client instance of the connected chain.
    */
-  readonly publicClient: Web3PublicClient;
+  readonly publicClient: PublicClient<Transport, Chain>;
 
   get newBlock() {
     return this._newBlock.asObservable();
@@ -166,7 +157,8 @@ export class WebbWeb3Provider
 
     assert(client, WebbError.from(WebbErrorCodes.NoClientAvailable).message);
 
-    this.publicClient = client;
+    // TODO: Fix type casting here
+    this.publicClient = client as PublicClient<Transport, Chain>;
 
     this.unsubscribeFns = new Set();
 
@@ -185,6 +177,7 @@ export class WebbWeb3Provider
     this.methods = {
       claim: {
         enabled: false,
+        // TODO: Fix type casting here
         core: {} as any,
       },
       bridgeApi: new Web3BridgeApi(this),
@@ -418,6 +411,7 @@ export class WebbWeb3Provider
       const leavesFromChain = await this.getDepositLeaves(
         BigInt(lastQueriedBlock + 1),
         ZERO_BIG_INT,
+        // TODO: Fix type casting here
         publicClient as any,
         vAnchorContract,
         (fromBlock, toBlock, currentBlock) => {
@@ -942,6 +936,7 @@ export class WebbWeb3Provider
     const latestBlock = finalBlockArg || (await publicClient.getBlockNumber());
 
     const logs = await this.getNewCommitmentLogs(
+      // TODO: Fix type casting here
       publicClient as any,
       vAnchorContract,
       startingBlock,
@@ -986,6 +981,7 @@ export class WebbWeb3Provider
     const latestBlock = await publicClient.getBlockNumber();
 
     const logs = await this.getNewCommitmentLogs(
+      // TODO: Fix type casting here
       publicClient as any,
       vAnchorContract,
       startingBlock,

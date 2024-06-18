@@ -273,6 +273,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
             { account: account.address },
           );
 
+          // TODO: Fix type casting here
           await this.inner.walletClient.writeContract(request as any);
 
           this.inner.notificationHandler.remove('waiting-approval');
