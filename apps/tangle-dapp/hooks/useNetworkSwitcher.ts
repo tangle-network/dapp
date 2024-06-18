@@ -182,7 +182,7 @@ const useNetworkSwitcher = () => {
       }
     },
     // prettier-ignore
-    [activeWallet, network, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain, toggleModal],
+    [activeWallet, network.id, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain, toggleModal],
   );
 
   return {

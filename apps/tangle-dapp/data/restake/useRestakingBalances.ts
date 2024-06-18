@@ -9,6 +9,7 @@ import { combineLatest, map, of, switchMap } from 'rxjs';
 import { AssetBalance, AssetBalanceMap } from '../..//types/restake';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
 import useRestakingAssetIds from './useRestakingAssetIds';
 
@@ -25,7 +26,7 @@ export default function useRestakingBalances() {
         switchMap(([apiRx, assetIds, activeAccount]) => {
           const emptyObservable = of(EMPTY_BALANCES);
 
-          if (apiRx.query.assets?.account === undefined) {
+          if (!hasAssetsPallet(apiRx, 'query', 'account')) {
             return emptyObservable;
           }
 
@@ -35,19 +36,18 @@ export default function useRestakingBalances() {
 
           const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
-          if (nonNativeAssetIds.length === 0 && !hasNative) {
-            return emptyObservable;
-          } else if (nonNativeAssetIds.length === 0 && hasNative) {
-            return getNativeBalance$(apiRx, activeAccount);
+          if (nonNativeAssetIds.length === 0) {
+            return hasNative
+              ? getNativeBalance$(apiRx, activeAccount)
+              : emptyObservable;
           }
 
           // non-native assets is not empty
           const batchedQueries = nonNativeAssetIds.map<
-            [typeof apiRx.query.assets.account, string, string]
+            [typeof apiRx.query.assets.account, [string, string]]
           >((assetId) => [
             apiRx.query.assets.account,
-            assetId.toString(),
-            activeAccount,
+            [assetId.toString(), activeAccount],
           ]);
 
           const result$ =

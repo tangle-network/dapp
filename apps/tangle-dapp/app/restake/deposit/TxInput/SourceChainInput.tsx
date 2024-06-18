@@ -41,8 +41,6 @@ const SourceChainInput: FC = () => {
   }, [assetMap, depositAssetId]);
 
   const maxAmount = useMemo(() => {
-    console.log('balances', balances);
-    console.log('asset', asset);
     if (asset === null) return;
 
     const balance = balances[asset.id]?.balance;

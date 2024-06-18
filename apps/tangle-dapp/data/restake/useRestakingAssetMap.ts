@@ -12,6 +12,7 @@ import type { Chain } from 'viem';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { AssetMap, AssetMetadata } from '../../types/restake';
+import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
 import useRestakingAssetIds from './useRestakingAssetIds';
 
@@ -58,7 +59,10 @@ const mapAssetDetails = async (
 ) => {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
-  if (nonNativeAssetIds.length === 0) {
+  if (
+    nonNativeAssetIds.length === 0 ||
+    !hasAssetsPallet(api, 'query', ['asset', 'metadata'])
+  ) {
     return hasNative
       ? {
           '0': {
