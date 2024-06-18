@@ -1,7 +1,4 @@
-import {
-  InjectedExtension,
-  MetadataDef,
-} from '@polkadot/extension-inject/types';
+import { MetadataDef } from '@polkadot/extension-inject/types';
 import { HexString } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
@@ -23,24 +20,15 @@ import useLocalStorage, {
   SubstrateWalletsMetadataEntry,
 } from '../hooks/useLocalStorage';
 import usePromise from '../hooks/usePromise';
-import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
+import useSubstrateInjectedExtension from '../hooks/useSubstrateInjectedExtension';
+import { getApiPromise } from '../utils/polkadot';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);
 
   const activeAccountAddress = useActiveAccountAddress();
+  const injector = useSubstrateInjectedExtension();
   const { network } = useNetworkStore();
-
-  const { result: injector } = usePromise<InjectedExtension | null>(
-    useCallback(() => {
-      if (activeAccountAddress === null) {
-        return Promise.resolve(null);
-      }
-
-      return findInjectorForAddress(activeAccountAddress);
-    }, [activeAccountAddress]),
-    null,
-  );
 
   const { result: apiPromise } = usePromise(
     useCallback(
