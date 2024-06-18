@@ -59,7 +59,7 @@ export type Network = {
   ss58Prefix?: number;
 };
 
-export const TANGLE_MAINNET_NETWORK: Network = {
+export const TANGLE_MAINNET_NETWORK = {
   id: NetworkId.TANGLE_MAINNET,
   chainId: SubstrateChainId.TangleMainnetNative,
   evmChainId: EVMChainId.TangleMainnetEVM,
@@ -71,9 +71,9 @@ export const TANGLE_MAINNET_NETWORK: Network = {
   polkadotExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
   ss58Prefix: TANGLE_MAINNET_SS58_PREFIX,
-};
+} as const satisfies Network;
 
-export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
+export const TANGLE_TESTNET_NATIVE_NETWORK = {
   id: NetworkId.TANGLE_TESTNET,
   chainId: SubstrateChainId.TangleTestnetNative,
   evmChainId: EVMChainId.TangleTestnetEVM,
@@ -86,12 +86,12 @@ export const TANGLE_TESTNET_NATIVE_NETWORK: Network = {
   polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
   ss58Prefix: TANGLE_TESTNET_SS58_PREFIX,
-};
+} as const satisfies Network;
 
 /**
  * Mainly used for local development; defined for convenience.
  */
-export const TANGLE_LOCAL_DEV_NETWORK: Network = {
+export const TANGLE_LOCAL_DEV_NETWORK = {
   id: NetworkId.TANGLE_LOCAL_DEV,
   chainId: SubstrateChainId.TangleTestnetNative,
   evmChainId: EVMChainId.TangleTestnetEVM,
@@ -103,21 +103,21 @@ export const TANGLE_LOCAL_DEV_NETWORK: Network = {
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   polkadotExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
   ss58Prefix: TANGLE_LOCAL_SS58_PREFIX,
-};
+} as const satisfies Network;
 
-export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK: Network = {
+export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
   id: NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV,
   name: 'Tangle Restaking Parachain (Local)',
   nodeType: 'parachain',
   tokenSymbol: 'TNT',
   wsRpcEndpoint: 'ws://localhost:41323',
   polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
-};
+} as const satisfies Network;
 
-export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
+export const NETWORK_MAP = {
   [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
   [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
   [NetworkId.TANGLE_LOCAL_DEV]: TANGLE_LOCAL_DEV_NETWORK,
   [NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV]:
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK,
-};
+} as const satisfies Partial<Record<NetworkId, Network>>;

@@ -10,6 +10,7 @@ import {
   type WalletConfig,
 } from '@webb-tools/dapp-config';
 import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -297,11 +298,29 @@ function defineWebbChain(
   } satisfies Chain;
 }
 
-// If the network is local network, we need to override the rpc
-// as the local network and test network have the same chain id
+const OVERRIDDEN_TYPED_CHAIN_IDS = [
+  PresetTypedChainId.TangleTestnetEVM,
+  PresetTypedChainId.TangleTestnetNative,
+];
+
+/**
+ * @internal
+ * If the network is local network, we need to override the rpc
+ * as the local network and test network have the same chain id
+ *
+ * @param network the network to check
+ * @param chain the chain to override the rpc
+ * @returns the orrverriden rpc chain
+ */
 function overrideRpcForLocalnet(network: Network, chain: Chain): Chain {
-  if (network.id !== NetworkId.TANGLE_LOCAL_DEV) {
-    return chain;
+  const needOverrideRpc =
+    network.id === NetworkId.TANGLE_LOCAL_DEV &&
+    OVERRIDDEN_TYPED_CHAIN_IDS.includes(
+      calculateTypedChainId(chain.chainType, chain.id),
+    );
+
+  if (!needOverrideRpc) {
+    return { ...chain };
   }
 
   // Override the rpc for the local network

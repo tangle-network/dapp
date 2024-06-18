@@ -1,6 +1,7 @@
 import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import {
+  TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
@@ -56,13 +57,17 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorers: {
       default: {
         name: 'Tangle Explorer',
-        url: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+        url: process.env['USING_LOCAL_TANGLE']
+          ? 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/'
+          : TANGLE_TESTNET_NATIVE_EXPLORER_URL,
       },
     },
     rpcUrls: {
       default: {
         http: [],
-        webSocket: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
+        webSocket: process.env['USING_LOCAL_TANGLE']
+          ? [TANGLE_LOCAL_WS_RPC_ENDPOINT]
+          : [TANGLE_TESTNET_WS_RPC_ENDPOINT],
       },
     },
     env: ['development'],

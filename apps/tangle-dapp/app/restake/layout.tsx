@@ -1,14 +1,9 @@
 import { FC, PropsWithChildren } from 'react';
 
-import { PolkadotApiProvider } from '../../context/PolkadotApiContext';
-import RestakeProvider from '../../context/RestakeContext';
+import Providers from './providers';
 
 const RestakeLayout: FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <PolkadotApiProvider>
-      <RestakeProvider>{children}</RestakeProvider>
-    </PolkadotApiProvider>
-  );
+  return <Providers>{children}</Providers>;
 };
 
 export default RestakeLayout;

@@ -14,6 +14,7 @@ import {
   sepolia,
 } from 'viem/chains';
 import {
+  TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
   TANGLE_TESTNET_EVM_EXPLORER_URL,
@@ -126,15 +127,21 @@ export const chainsConfig: Record<number, ChainConfig> = {
       symbol: 'tTNT',
       decimals: 18,
     },
-    blockExplorers: {
-      default: {
-        name: 'Tangle Testnet EVM Explorer',
-        url: TANGLE_TESTNET_EVM_EXPLORER_URL,
-      },
-    },
+    ...(!process.env['USING_LOCAL_TANGLE']
+      ? {
+          blockExplorers: {
+            default: {
+              name: 'Tangle Testnet EVM Explorer',
+              url: TANGLE_TESTNET_EVM_EXPLORER_URL,
+            },
+          },
+        }
+      : {}),
     rpcUrls: {
       default: {
-        http: [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
+        http: process.env['USING_LOCAL_TANGLE']
+          ? [TANGLE_LOCAL_HTTP_RPC_ENDPOINT]
+          : [TANGLE_TESTNET_HTTP_RPC_ENDPOINT],
       },
     },
   } satisfies ChainConfig,

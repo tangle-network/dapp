@@ -3,7 +3,7 @@
 import { WsProvider } from '@polkadot/api';
 import { ApiPromise } from '@polkadot/api/promise';
 import { ApiRx } from '@polkadot/api/rx';
-import { createContext, type FC, type PropsWithChildren } from 'react';
+import { createContext, type FC, type PropsWithChildren, useMemo } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { Prettify } from 'viem/chains';
 
@@ -40,8 +40,22 @@ export const PolkadotApiContext = createContext<PolkadotApiContextProps>({
   apiRxError: null,
 });
 
-export const PolkadotApiProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { rpcEndpoint } = useNetworkStore();
+type Props = {
+  rpcEndpoint?: string;
+};
+
+export const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({
+  children,
+  rpcEndpoint: rpcFromProp,
+}) => {
+  const { rpcEndpoint: rpcFromStore } = useNetworkStore();
+
+  const rpcEndpoint = useMemo(() => {
+    if (rpcFromProp === undefined || rpcFromProp.length === 0)
+      return rpcFromStore;
+
+    return rpcFromProp;
+  }, [rpcFromProp, rpcFromStore]);
 
   const {
     data: apiPromise = DEFAULT_API_PROMISE,
