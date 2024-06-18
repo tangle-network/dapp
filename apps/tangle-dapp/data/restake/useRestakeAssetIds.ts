@@ -6,7 +6,7 @@ import { type Observable, of } from 'rxjs';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 
-export type UseRestakingAssetIdsReturnType = {
+export type UseRestakeAssetIdsReturnType = {
   assetIds: u128[];
   assetIds$: Observable<Vec<u128>>;
 };
@@ -15,7 +15,7 @@ export type UseRestakingAssetIdsReturnType = {
  * Retrieves the whitelisted asset IDs for restaking.
  * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
  */
-export default function useRestakingAssetIds(): Evaluate<UseRestakingAssetIdsReturnType> {
+export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnType> {
   const { apiRx } = usePolkadotApi();
 
   /** Default value won't change, so useRef to keep the reference */

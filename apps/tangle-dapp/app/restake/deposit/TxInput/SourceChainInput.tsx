@@ -5,8 +5,8 @@ import { useSubscription } from 'observable-hooks';
 import { type FC, useMemo } from 'react';
 import { formatUnits } from 'viem';
 
-import useRestakingAssetMap from '../../../../data/restake/useRestakingAssetMap';
-import useRestakingBalances from '../../../../data/restake/useRestakingBalances';
+import useRestakeAssetMap from '../../../../data/restake/useRestakeAssetMap';
+import useRestakeBalances from '../../../../data/restake/useRestakeBalances';
 import {
   useActions,
   useDepositAssetId,
@@ -18,9 +18,9 @@ const SourceChainInput: FC = () => {
   const depositAssetId = useDepositAssetId();
   const { updateDepositAssetId } = useActions();
 
-  const { assetMap, assetMap$ } = useRestakingAssetMap();
+  const { assetMap, assetMap$ } = useRestakeAssetMap();
 
-  const { balances } = useRestakingBalances();
+  const { balances } = useRestakeBalances();
 
   // Subscribe to assetMap$ and update depositAssetId to the first assetId
   useSubscription(assetMap$, (assetMap) => {

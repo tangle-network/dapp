@@ -7,7 +7,7 @@ import type { OperatorMap, OperatorMetadata } from '../../types/restake';
 
 const EMPTY_OPERATOR_MAP: OperatorMap = {};
 
-type UseRestakingOperatorMapReturnType = {
+type UseRestakeOperatorMapReturnType = {
   operatorMap: OperatorMap;
   operatorMap$: Observable<OperatorMap>;
 };
@@ -18,7 +18,7 @@ type UseRestakingOperatorMapReturnType = {
  *  - `operatorMap`: The operator map.
  *  - `operatorMap$`: The observable for the operator map.
  */
-export default function useRestakingOperatorMap(): UseRestakingOperatorMapReturnType {
+export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType {
   const { apiRx } = usePolkadotApi();
 
   const entries$ = useMemo(

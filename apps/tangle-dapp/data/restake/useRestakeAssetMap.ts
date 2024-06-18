@@ -14,7 +14,7 @@ import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { AssetMap, AssetMetadata } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
-import useRestakingAssetIds from './useRestakingAssetIds';
+import useRestakeAssetIds from './useRestakeAssetIds';
 
 const EMPTY_ASSET_MAP = {} satisfies AssetMap as AssetMap;
 
@@ -24,11 +24,11 @@ const EMPTY_ASSET_MAP = {} satisfies AssetMap as AssetMap;
  *  - `assetMap`: The asset map.
  *  - `assetMap$`: The observable for the asset map.
  */
-export default function useRestakingAssetMap() {
+export default function useRestakeAssetMap() {
   const { apiPromise } = usePolkadotApi();
   const { activeChain } = useWebContext();
 
-  const { assetIds } = useRestakingAssetIds();
+  const { assetIds } = useRestakeAssetIds();
 
   const assetMap$ = useObservable(
     (input$) =>

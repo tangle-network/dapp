@@ -6,18 +6,18 @@ import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 
-import { AssetBalance, AssetBalanceMap } from '../..//types/restake';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
-import useRestakingAssetIds from './useRestakingAssetIds';
+import useRestakeAssetIds from './useRestakeAssetIds';
 
 const EMPTY_BALANCES = {} as AssetBalanceMap;
 
-export default function useRestakingBalances() {
+export default function useRestakeBalances() {
   const { apiRx } = usePolkadotApi();
-  const { assetIds } = useRestakingAssetIds();
+  const { assetIds } = useRestakeAssetIds();
   const activeAccount = useSubstrateAddress();
 
   const balances$ = useObservable(
