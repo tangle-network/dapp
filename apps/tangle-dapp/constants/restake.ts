@@ -10,5 +10,5 @@ export const BOND_DURATION = 10;
  * The supported restake deposit typed chain ids.
  */
 export const SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS = [
-  PresetTypedChainId.TangleTestnetNative,
+  PresetTypedChainId.TangleLocalEVM,
 ] as const;
