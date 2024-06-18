@@ -9,10 +9,10 @@ import useNetworkStore from '../../context/useNetworkStore';
 import {
   RestakingProfileType,
   RestakingService,
-  TokenSymbol,
+  TangleTokenSymbol,
 } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 import { filterAllocations } from './Independent/IndependentAllocationStep';
 import { RestakingAllocationMap } from './types';
 
@@ -52,7 +52,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   // This is because the shared restake amount is not automatically
   // calculated from the allocations, since shared roles profiles
   // do not allocate amounts per-role, but rather as a whole.
-  const totalRestakedAmount = formatTokenBalance(
+  const totalRestakedAmount = formatTangleBalance(
     isSharedVariant && sharedRestakeAmount !== undefined
       ? sharedRestakeAmount
       : restakedAmount,
@@ -186,7 +186,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
 type AllocationItemProps = {
   services: RestakingService[];
   amount?: BN;
-  tokenSymbol: TokenSymbol;
+  tokenSymbol: TangleTokenSymbol;
 };
 
 /** @internal */
@@ -215,7 +215,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
           fw="semibold"
           className="dark:text-mono-0 text-right"
         >
-          {formatTokenBalance(amount, tokenSymbol)}
+          {formatTangleBalance(amount, tokenSymbol)}
         </Typography>
       )}
     </div>

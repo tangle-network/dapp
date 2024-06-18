@@ -1,15 +1,18 @@
-import { ArrowRightUp, InformationLine } from '@webb-tools/icons';
+import {
+  ArrowRightUp,
+  ExternalLinkLine,
+  InformationLine,
+} from '@webb-tools/icons';
 import {
   Button,
   IconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
 import { GlassCard } from '../../../components';
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
-import { PagePath } from '../../../types';
 import LiquidStakingCard from './LiquidStakingCard';
 
 type Props = {
@@ -21,9 +24,9 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     value.toString(),
   );
 
-  // Invalid token on the URL.
+  // Invalid token provided on the URL parameters.
   if (!possibleTokens.includes(tokenSymbol)) {
-    return redirect(PagePath.LIQUID_RESTAKING);
+    return notFound();
   }
 
   return (
@@ -43,7 +46,24 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
           <GridItem title="APY" value={tokenSymbol} />
         </div>
 
-        <Button rightIcon={<ArrowRightUp />}>Restake</Button>
+        <div className="flex gap-2 items-center">
+          <Button
+            rightIcon={
+              <ArrowRightUp className="dark:fill-mono-180" size="lg" />
+            }
+          >
+            Restake
+          </Button>
+
+          <Button
+            variant="secondary"
+            rightIcon={
+              <ExternalLinkLine className="dark:fill-mono-0" size="lg" />
+            }
+          >
+            View Token
+          </Button>
+        </div>
       </GlassCard>
 
       <LiquidStakingCard />

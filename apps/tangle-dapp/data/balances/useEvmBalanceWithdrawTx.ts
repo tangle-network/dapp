@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunctionType } from '../../types';
+import { GetSuccessMessageFunction } from '../../types';
 
 type EvmBalanceWithdrawContext = {
   pendingEvmBalance: bigint | null;
@@ -12,7 +12,7 @@ type EvmBalanceWithdrawContext = {
 };
 
 const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {
-  const getSuccessMessageFnc: GetSuccessMessageFunctionType<EvmBalanceWithdrawContext> =
+  const getSuccessMessageFnc: GetSuccessMessageFunction<EvmBalanceWithdrawContext> =
     useCallback(
       () =>
         typeof tokenAmountStr === 'string'

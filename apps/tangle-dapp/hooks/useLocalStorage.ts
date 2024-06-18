@@ -3,7 +3,7 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Payout, TokenSymbol } from '../types';
+import { Payout, TangleTokenSymbol } from '../types';
 import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
@@ -27,7 +27,7 @@ export type PayoutsCache = {
 };
 
 export type SubstrateWalletsMetadataEntry = {
-  tokenSymbol: TokenSymbol;
+  tokenSymbol: TangleTokenSymbol;
   tokenDecimals: number;
   ss58Prefix: number;
 };
