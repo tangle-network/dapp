@@ -4,8 +4,8 @@ import { FC } from 'react';
 import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
 import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
 import {
+  LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingToken,
-  TANGLE_LS_PREFIX_TOKEN_SYMBOL,
 } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
 
@@ -20,7 +20,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
 
   // Invalid token on the URL.
   if (!possibleTokens.includes(tokenSymbol)) {
-    return redirect(PagePath.LIQUID_RESTAKING);
+    return redirect(PagePath.LIQUID_STAKING);
   }
 
   return (
@@ -33,9 +33,9 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
         }}
         availableInfo={{
           title: 'Available',
-          tooltip: `Available ${TANGLE_LS_PREFIX_TOKEN_SYMBOL}${tokenSymbol}`,
+          tooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
           value: '98.00',
-          valueTooltip: `Available ${TANGLE_LS_PREFIX_TOKEN_SYMBOL}${tokenSymbol}`,
+          valueTooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
         }}
         unstakingInfo={{
           title: 'Unstaking',
@@ -50,7 +50,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
         tokenSymbol={tokenSymbol}
       />
 
-      <LiquidStakingCard tokenSymbol={tokenSymbol} />
+      <LiquidStakingCard />
     </div>
   );
 };

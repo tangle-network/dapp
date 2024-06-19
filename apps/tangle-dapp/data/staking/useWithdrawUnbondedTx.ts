@@ -7,7 +7,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunctionType } from '../../types';
+import { GetSuccessMessageFunction } from '../../types';
 import useSlashingSpans from './useSlashingSpans';
 
 const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
@@ -45,7 +45,7 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
     [slashingSpans],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunctionType<void> = useCallback(
+  const getSuccessMessageFnc: GetSuccessMessageFunction<void> = useCallback(
     () =>
       withdrawAmount
         ? `Successfully withdrew ${formatNativeTokenAmount(withdrawAmount)}.`

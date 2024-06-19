@@ -11,8 +11,8 @@ import {
 import React, { FC } from 'react';
 
 import {
+  LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingToken,
-  TANGLE_LS_PREFIX_TOKEN_SYMBOL,
 } from '../../constants/liquidStaking';
 import useLSTokenSVGs from '../../hooks/useLSTokenSVGs';
 
@@ -58,7 +58,7 @@ const TokenInfoCard = ({
             tooltip={availableInfo.tooltip}
             value={availableInfo.value}
             valueTooltip={availableInfo.valueTooltip}
-            tokenSymbol={TANGLE_LS_PREFIX_TOKEN_SYMBOL + tokenSymbol}
+            tokenSymbol={LIQUID_STAKING_TOKEN_PREFIX + tokenSymbol}
           />
 
           <GridItem

@@ -65,17 +65,18 @@ import groupBy from 'lodash/groupBy';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';
 import {
-  WalletClient,
   getContract,
   parseAbiItem,
   type Account,
   type Chain,
+  type Client,
   type GetContractReturnType,
   type GetLogsReturnType,
   type Hash,
   type PublicClient,
   type Transport,
   type Client as ViemClient,
+  type WalletClient,
 } from 'viem';
 import type { Connector } from 'wagmi';
 import {
@@ -156,7 +157,8 @@ export class WebbWeb3Provider
 
     assert(client, WebbError.from(WebbErrorCodes.NoClientAvailable).message);
 
-    this.publicClient = client;
+    // TODO: Fix type casting here
+    this.publicClient = client as PublicClient<Transport, Chain>;
 
     this.unsubscribeFns = new Set();
 
@@ -175,6 +177,7 @@ export class WebbWeb3Provider
     this.methods = {
       claim: {
         enabled: false,
+        // TODO: Fix type casting here
         core: {} as any,
       },
       bridgeApi: new Web3BridgeApi(this),
@@ -408,7 +411,8 @@ export class WebbWeb3Provider
       const leavesFromChain = await this.getDepositLeaves(
         BigInt(lastQueriedBlock + 1),
         ZERO_BIG_INT,
-        publicClient,
+        // TODO: Fix type casting here
+        publicClient as any,
         vAnchorContract,
         (fromBlock, toBlock, currentBlock) => {
           tx?.next(TransactionState.FetchingLeaves, {
@@ -812,12 +816,17 @@ export class WebbWeb3Provider
    * @param onCurrentProcessingBlock a callback to call when the current processing block changes
    * @returns the filtered logs
    */
-  async getNewCommitmentLogs(
-    publicClient: PublicClient,
-    vAnchorContract: GetContractReturnType<
+  async getNewCommitmentLogs<
+    transport extends Transport,
+    chain extends Chain,
+    TClient extends PublicClient<transport, chain>,
+    TVAnchorContract extends GetContractReturnType<
       typeof VAnchor__factory.abi,
-      ViemClient
+      Client
     >,
+  >(
+    publicClient: TClient,
+    vAnchorContract: TVAnchorContract,
     fromBlock: bigint,
     toBlock: bigint,
     onCurrentProcessingBlock?: (block: bigint) => void,
@@ -905,14 +914,19 @@ export class WebbWeb3Provider
    * Refactor from https://github.com/webb-tools/protocol-solidity/blob/main/packages/anchors/src/VAnchor.ts#L663
    * when migrating to wagmi and viem
    */
-  private async getDepositLeaves(
+  private async getDepositLeaves<
+    transport extends Transport,
+    chain extends Chain,
+    TClient extends PublicClient<transport, chain>,
+    TVAnchorContract extends GetContractReturnType<
+      typeof VAnchor__factory.abi,
+      Client
+    >,
+  >(
     startingBlock: bigint,
     finalBlockArg: bigint,
-    publicClient: PublicClient<Transport, Chain>,
-    vAnchorContract: GetContractReturnType<
-      typeof VAnchor__factory.abi,
-      ViemClient
-    >,
+    publicClient: TClient,
+    vAnchorContract: TVAnchorContract,
     onBlockProcessed?: (
       fromBlock: bigint,
       toBlock: bigint,
@@ -922,7 +936,8 @@ export class WebbWeb3Provider
     const latestBlock = finalBlockArg || (await publicClient.getBlockNumber());
 
     const logs = await this.getNewCommitmentLogs(
-      publicClient,
+      // TODO: Fix type casting here
+      publicClient as any,
       vAnchorContract,
       startingBlock,
       latestBlock,
@@ -966,7 +981,8 @@ export class WebbWeb3Provider
     const latestBlock = await publicClient.getBlockNumber();
 
     const logs = await this.getNewCommitmentLogs(
-      publicClient,
+      // TODO: Fix type casting here
+      publicClient as any,
       vAnchorContract,
       startingBlock,
       latestBlock,

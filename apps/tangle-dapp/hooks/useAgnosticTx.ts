@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
 import { Precompile } from '../constants/evmPrecompiles';
-import { GetSuccessMessageFunctionType } from '../types';
+import { GetSuccessMessageFunction } from '../types';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileAbiCall, {
@@ -34,7 +34,7 @@ export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
    * @param context The context object passed to the `execute` function.
    * @returns The success message to display.
    */
-  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>;
+  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>;
 };
 
 /**
