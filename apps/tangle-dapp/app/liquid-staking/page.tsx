@@ -2,14 +2,14 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { GlassCard } from '../../components';
+import LiquidStakingTokenItem from '../../components/LiquidStaking/LiquidStakingTokenItem';
+import StatItem from '../../components/LiquidStaking/StatItem';
 import { LS_CHAIN_TO_TOKEN, TVS_TOOLTIP } from '../../constants/liquidStaking';
 import entriesOf from '../../utils/entriesOf';
-import LiquidStakingTokenItem from './LiquidStakingTokenItem';
-import StatItem from './StatItem';
 
 const LiquidStakingPage: FC = () => {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
       <Typography variant="h4" fw="bold">
         Overview
       </Typography>

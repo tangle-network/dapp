@@ -47,3 +47,13 @@
   @apply bg-body-base;
   background-image: url(./assets/body-bg-dark.jpeg);
 }
+
+.ls-bg-body {
+  @apply bg-body-base;
+  background-image: url(./assets/ls-bg.jpeg);
+}
+
+.dark .ls-bg-body {
+  @apply bg-body-base;
+  background-image: url(./assets/ls-bg-dark.jpeg);
+}
