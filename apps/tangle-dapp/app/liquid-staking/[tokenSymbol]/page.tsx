@@ -14,18 +14,23 @@ import { FC } from 'react';
 import { GlassCard } from '../../../components';
 import { LiquidStakingToken } from '../../../constants/liquidStaking';
 import LiquidStakingCard from './LiquidStakingCard';
+import ParachainBalancesInfo from './ParachainBalancesInfo';
 
 type Props = {
   params: { tokenSymbol: string };
 };
 
-const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  const possibleTokens = Object.values(LiquidStakingToken).map((value) =>
-    value.toString(),
+export function isLiquidStakingToken(
+  tokenSymbol: string,
+): tokenSymbol is LiquidStakingToken {
+  return Object.values(LiquidStakingToken).includes(
+    tokenSymbol as LiquidStakingToken,
   );
+}
 
+const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   // Invalid token provided on the URL parameters.
-  if (!possibleTokens.includes(tokenSymbol)) {
+  if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();
   }
 
@@ -33,7 +38,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     <div className="flex flex-wrap gap-12 items-start">
       <GlassCard className="space-y-6 w-auto">
         <div className="grid grid-cols-2 grid-rows-2 gap-6">
-          <GridItem title="Staking" value={tokenSymbol} />
+          <GridItem title="Staked" value={tokenSymbol} />
 
           <GridItem title="Available" value={tokenSymbol} />
 
@@ -63,6 +68,8 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
           >
             View Token
           </Button>
+
+          <ParachainBalancesInfo tokenSymbol={tokenSymbol} />
         </div>
       </GlassCard>
 
