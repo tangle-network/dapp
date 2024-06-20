@@ -56,7 +56,7 @@ export interface TxProgressorHeaderProps extends PropsOf<'div'> {
   /**
    * The name of the transaction
    */
-  name: TxName;
+  name: string;
 
   /**
    * Created time of the transaction

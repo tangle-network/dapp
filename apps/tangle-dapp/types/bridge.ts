@@ -59,3 +59,16 @@ export enum BridgeWalletError {
   MismatchEvm = 'WALLET_MISMATCH_EVM',
   MismatchSubstrate = 'WALLET_MISMATCH_SUBSTRATE',
 }
+
+export enum BridgeTxState {
+  Ready, // Initial state where the instance is ready for a bridge tx
+
+  SigningTx, // The user is signing the tx
+  SendingTx, // The user done signing, the tx is being sent to the source chain
+
+  Indexing, // The tx is being indexed by Sygma
+
+  Pending, // The tx is done being indexed but not yet executed
+  Executed, // The tx is executed successfully
+  Failed, // The tx is failed
+}

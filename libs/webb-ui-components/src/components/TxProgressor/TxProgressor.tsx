@@ -47,12 +47,19 @@ const TxProgressorRoot = forwardRef<
 });
 TxProgressorRoot.displayName = 'TxProgressorRoot';
 
-const chipColor: {
-  [key in TxProgressorHeaderProps['name']]: ChipProps['color'];
-} = {
-  Deposit: 'green',
-  Transfer: 'purple',
-  Withdraw: 'yellow',
+const getChipColor = (
+  name: TxProgressorHeaderProps['name'],
+): ChipProps['color'] => {
+  switch (name) {
+    case 'Deposit':
+      return 'green';
+    case 'Transfer':
+      return 'purple';
+    case 'Withdraw':
+      return 'yellow';
+    default:
+      return 'green';
+  }
 };
 
 const TxProgressorHeader = forwardRef<
@@ -67,7 +74,7 @@ const TxProgressorHeader = forwardRef<
       ref={ref}
       className={twMerge('flex items-center justify-between', className)}
     >
-      <Chip color={chipColor[name]}>{name}</Chip>
+      <Chip color={getChipColor(name)}>{name}</Chip>
 
       <Typography variant="body2" className="text-mono-120 dark:text-mono-100">
         {timeAgo}
