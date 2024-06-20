@@ -42,7 +42,7 @@ export type Primitive = string | number | boolean | null | undefined;
  * `MappedObjectType`: Transforms an object type into a union of objects, each containing a single property from the original object.
  * This type takes an object type `T` and maps each of its properties to a new object type where the key is the same, but the value is wrapped in an object.
  *
- * Example:
+ * @example
  * If you have an object type `Person`:
  * ```
  * type Person = {
@@ -58,3 +58,28 @@ export type Primitive = string | number | boolean | null | undefined;
 export type MappedObjectType<T extends Record<string, unknown>> = {
   [K in keyof T]: { [P in K]: T[K] };
 }[keyof T];
+
+/**
+ * The `MapKnownKeys` type is a utility type that takes an object type `Obj` and returns a new type.
+ * This new type consists of all properties of `Obj` except those whose keys are of type `string` or `number`.
+ * Essentially, it filters out properties with keys that are not known at compile time (e.g., index signatures).
+ *
+ * @example
+ *  type ExampleObject = {
+ *    knownKey1: string;
+ *    knownKey2: number;
+ *    [key: string]: unknown; // String index signature
+ *    [key: number]: unknown; // Number index signature
+ *  };
+ *
+ *  // Expect: { knownKey1: string; knownKey2: number; }
+ *  type KnownKeys = MapKnownKeys<ExampleObject>;
+};
+ */
+export type MapKnownKeys<Obj extends Record<string, unknown>> = {
+  [K in keyof Obj as string extends K
+    ? never
+    : number extends K
+      ? never
+      : K]: Obj[K];
+};
