@@ -47,7 +47,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     {
       chains,
       chainType,
-      currentActiveChain,
+      activeTypedChainId,
       defaultCategory = 'test',
       onChange,
       onClose,
@@ -101,12 +101,12 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
     // Move the current active chain to the top of the list
     const sortedChains = useMemo(() => {
-      if (!currentActiveChain) {
+      if (!activeTypedChainId) {
         return filteredChains.sort((a, b) => a.name.localeCompare(b.name));
       }
 
       const currentActiveChainIndex = filteredChains.findIndex(
-        (chain) => chain.name === currentActiveChain,
+        (chain) => chain.typedChainId === activeTypedChainId,
       );
 
       if (currentActiveChainIndex === -1) {
@@ -121,7 +121,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           .filter((chain) => chain.name !== activeChain.name)
           .sort((a, b) => a.name.localeCompare(b.name)),
       ];
-    }, [currentActiveChain, filteredChains]);
+    }, [activeTypedChainId, filteredChains]);
 
     // Count the number of chains in each category
     const [liveCount, devCount, testCount] = useMemo(
@@ -166,7 +166,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
             {sortedChains.map((currentChain, idx) => {
               const isConnected =
                 chainType === 'source' &&
-                currentChain.name === currentActiveChain;
+                currentChain.typedChainId === activeTypedChainId;
 
               const isSelectedToConnect = chain?.name === currentChain.name;
 

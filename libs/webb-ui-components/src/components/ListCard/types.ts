@@ -6,6 +6,11 @@ import { InputProps } from '../Input';
 
 export type ChainType = {
   /**
+   * The typed chain id
+   */
+  typedChainId: number;
+
+  /**
    * The chain name
    */
   name: string;
@@ -224,7 +229,7 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   /**
    * The current active/connected chain
    */
-  currentActiveChain?: string;
+  activeTypedChainId?: number;
 
   /**
    * If `true`, wallet is connecting to chain

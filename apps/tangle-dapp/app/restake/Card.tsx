@@ -1,27 +1,25 @@
-'use client';
-
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-import TabsContainer from '../../components/TabsContainer/TabsContainer';
-
-export default function Card({ children, ...props }: PropsOf<'div'>) {
-  const pathname = usePathname();
-
-  const lastRoute = useMemo(() => {
-    const paths = pathname.split('/');
-
-    return paths.length ? paths[paths.length - 1] : '/';
-  }, [pathname]);
-
+export default function Card({
+  children,
+  className,
+  ...props
+}: PropsOf<'div'>) {
   return (
-    <TabsContainer
+    <div
       {...props}
-      activeTab={lastRoute}
-      tabs={['deposit', 'delegate']}
+      className={twMerge(
+        'w-full max-w-xl min-h-[var(--restake-card-min-height)]',
+        'h-full bg-mono-0 dark:bg-[#1F1D2B]/90',
+        'mx-auto rounded-xl space-y-4 grow',
+        'border border-mono-40 dark:border-mono-190 p-5 md:p-9',
+        'flex flex-col',
+        'shadow-webb-lg dark:shadow-webb-lg-dark',
+        className,
+      )}
     >
       {children}
-    </TabsContainer>
+    </div>
   );
 }

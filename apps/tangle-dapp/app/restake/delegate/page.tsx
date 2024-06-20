@@ -1,11 +1,14 @@
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { Fragment } from 'react';
 
-import Card from '../Card';
+import TabsList from '../TabsList';
 import DepositButton from './DepositButton';
 
 export default function DelegatePage() {
   return (
-    <Card>
+    <Fragment>
+      <TabsList />
+
       <div className="flex flex-col items-center justify-center space-y-3 grow">
         <Typography variant="h5" ta="center" fw="semibold">
           🚧 The delegation feature is under development 🚧
@@ -16,6 +19,6 @@ export default function DelegatePage() {
 
         <DepositButton />
       </div>
-    </Card>
+    </Fragment>
   );
 }

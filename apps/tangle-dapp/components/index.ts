@@ -12,7 +12,6 @@ export * from './Sidebar';
 export * from './skeleton';
 export { default as SocialChip } from './SocialChip';
 export * from './TableStatus';
-export * from './TabsContainer';
 export { default as TangleBigLogo } from './TangleBigLogo';
 export { default as TangleCard } from './TangleCard';
 export * from './UnbondingStatsItem';
