@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, ComponentPropsWithRef, ReactNode } from 'react';
 import type { PropsOf } from '../../types';
 import type { AdjustAmount } from '../BridgeInputs';
 import type { TextFieldInput } from '../TextField';
@@ -21,7 +21,7 @@ export type TransactionInputCardContextValue = {
   /**
    * The max amount of the transaction input card.
    */
-  maxAmount?: number;
+  maxAmount?: number | null;
 
   /**
    * The token symbol of the transaction input card.
@@ -47,6 +47,11 @@ export type TransactionInputCardContextValue = {
    * The callback function to handle the fixed amount change.
    */
   onIsFixedAmountChange?: (isFixedAmount: boolean) => void;
+
+  /**
+   * The error message of the transaction input card.
+   */
+  errorMessage?: string | null;
 };
 
 export interface TransactionInputCardRootProps
@@ -94,7 +99,7 @@ export interface TransactionInputCardBodyProps
   /**
    * The props of the custom amount input.
    */
-  customAmountProps?: ComponentProps<typeof TextFieldInput>;
+  customAmountProps?: ComponentPropsWithRef<typeof TextFieldInput>;
 
   /**
    * The props of the fixed amount input.
