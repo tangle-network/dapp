@@ -3,9 +3,8 @@
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import type { FC } from 'react';
 
-const DestChainInput: FC = () => {
+const DestChainInput = () => {
   return (
     <div className="relative">
       <TransactionInputCard.Root>

@@ -1,31 +1,25 @@
-import FeeDetails from '@webb-tools/webb-ui-components/components/FeeDetails';
+import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 
-import { BOND_DURATION } from '../../../constants/restake';
 import Card from '../Card';
 import ActionButton from './ActionButton';
-import TxInput from './TxInput';
+import DestChainInput from './DestChainInput';
+import SourceChainInput from './SourceChainInput';
+import TxDetails from './TxDetails';
 
 export default function DepositPage() {
   return (
     <Card>
       <div className="flex flex-col space-y-4 grow">
-        <TxInput />
+        <div className="space-y-2">
+          <SourceChainInput />
+
+          <ArrowRight size="lg" className="mx-auto rotate-90" />
+
+          <DestChainInput />
+        </div>
 
         <div className="flex flex-col justify-between gap-4 grow">
-          <FeeDetails
-            isDefaultOpen
-            items={[
-              {
-                name: 'APY',
-                info: 'Restaking Rewards',
-              },
-              {
-                name: 'Withdraw Period',
-                info: 'The duration for which the deposited asset is locked.',
-                value: `${BOND_DURATION} eras`,
-              },
-            ]}
-          />
+          <TxDetails />
 
           <ActionButton />
         </div>

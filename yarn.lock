@@ -17623,7 +17623,7 @@ __metadata:
 
 "@webb-tools/protocol-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build::locator=webb-monorepo%40workspace%3A.":
   version: 0.5.7
-  resolution: "@webb-tools/protocol-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build#/Volumes/tins_ssd/webb/tangle/types/build::hash=ecd675&locator=webb-monorepo%40workspace%3A."
+  resolution: "@webb-tools/protocol-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build#/Volumes/tins_ssd/webb/tangle/types/build::hash=f3acd5&locator=webb-monorepo%40workspace%3A."
   dependencies:
     "@babel/cli": "npm:^7.23.9"
     "@babel/core": "npm:^7.24.0"
@@ -17658,7 +17658,7 @@ __metadata:
     minimatch: "npm:^9.0.3"
     mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/6ddf43bc9cd25d7c021f1661ea23d06db465b7720a6fa8aba4600c737d37e75a408ed6cb76f406f9dc05c2a58e2c9792277f386560e4be7d665da93534a63cf7
+  checksum: 10c0/30d0a644670cb349e8bfcd7de61e094f62235cfbf13fa21ffbc1e1305aac616a25052086de6a82ebf218e8bbfa78b936941e2b2ff6b7e64a24bfcba37a4e3b31
   languageName: node
   linkType: hard
 
@@ -17723,7 +17723,7 @@ __metadata:
 
 "@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build::locator=webb-monorepo%40workspace%3A.":
   version: 0.5.7
-  resolution: "@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build#/Volumes/tins_ssd/webb/tangle/types/build::hash=deb56d&locator=webb-monorepo%40workspace%3A."
+  resolution: "@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types/build#/Volumes/tins_ssd/webb/tangle/types/build::hash=a5894f&locator=webb-monorepo%40workspace%3A."
   dependencies:
     "@babel/cli": "npm:^7.23.9"
     "@babel/core": "npm:^7.24.0"
@@ -17758,7 +17758,7 @@ __metadata:
     minimatch: "npm:^9.0.3"
     mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/36c6de02c48a9846885b607cd5da3f7b120ee5366c690a66542e9d5b2e84fbeea83990062caf28c581e4613f17f71a75a8e39d6b28476eba525c530bc0f4a866
+  checksum: 10c0/b7627fa8f4a7e94ab33362c90963df2a38bf7ee7ca1cdb5954269f1a7adf2617413fc528510926b5d5f8068bed9c5f9f202825c57b2570cdde76967342b66619
   languageName: node
   linkType: hard
 
