@@ -3,6 +3,7 @@ import DOT from '@webb-tools/icons/LiquidStakingTokens/DOT.svg';
 import GLMR from '@webb-tools/icons/LiquidStakingTokens/GLMR.svg';
 import MANTA from '@webb-tools/icons/LiquidStakingTokens/MANTA.svg';
 import PHALA from '@webb-tools/icons/LiquidStakingTokens/PHALA.svg';
+import TNT from '@webb-tools/icons/LiquidStakingTokens/TNT.svg';
 import React, { useMemo } from 'react';
 
 import { LiquidStakingToken } from '../constants/liquidStaking';
@@ -15,6 +16,7 @@ const tokenSVGs: {
   GLMR,
   MANTA,
   PHALA,
+  TNT,
 };
 
 const useLSTokenSVGs = (

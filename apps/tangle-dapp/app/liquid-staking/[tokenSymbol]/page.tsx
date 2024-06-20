@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
 import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
@@ -7,7 +7,6 @@ import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingToken,
 } from '../../../constants/liquidStaking';
-import { PagePath } from '../../../types';
 
 type Props = {
   params: { tokenSymbol: string };
@@ -18,9 +17,9 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     value.toString(),
   );
 
-  // Invalid token on the URL.
+  // Invalid token provided on the URL parameters.
   if (!possibleTokens.includes(tokenSymbol)) {
-    return redirect(PagePath.LIQUID_STAKING);
+    return notFound();
   }
 
   return (
