@@ -2,13 +2,16 @@
 
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import Decimal from 'decimal.js';
+import isNumber from 'lodash/isNumber';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import {
+  useActions,
   useDepositAssetId,
   useSourceTypedChainId,
 } from '../../../stores/deposit';
@@ -22,10 +25,9 @@ const SourceChainInput = () => {
 
   const { minDelegateAmount } = useRestakeConsts();
 
-  const router = useRouter();
+  const { updateAmount } = useActions();
 
-  // TODO: Add error message
-  const errorMessage = '';
+  const router = useRouter();
 
   const asset = useMemo(() => {
     if (depositAssetId === null) {
@@ -51,10 +53,32 @@ const SourceChainInput = () => {
     return +formatUnits(minDelegateAmount, asset.decimals);
   }, [asset, minDelegateAmount]);
 
-  // TODO: Add max amount handler
-  const handleMaxAmount = useCallback((amount: string) => {
-    console.log('Max amount:', amount);
-  }, []);
+  const [value, setValue] = useState('');
+  const [error, setError] = useState('');
+
+  const handleAmountChange = useCallback(
+    (amount: string) => {
+      setValue(amount);
+
+      if (amount === '') return;
+
+      // Convertion here is safe because the input is type="number"
+      const amountNum = +amount;
+      if (isNumber(min) && amountNum < min) {
+        setError(
+          `Minimum amount is ${new Decimal(min).toString()} ${asset?.symbol ?? ''}`.trim(),
+        );
+        return;
+      } else if (isNumber(max) && amountNum > max) {
+        setError(`Insufficient balance`);
+        return;
+      }
+
+      setError('');
+      updateAmount(amountNum);
+    },
+    [min, max, updateAmount, asset?.symbol],
+  );
 
   const handleChainSelectorClick = useCallback(() => {
     router.push('/restake/deposit/select-source-chain');
@@ -64,7 +88,9 @@ const SourceChainInput = () => {
     // Pass token symbol to root here to share between max amount & token selection button
     <TransactionInputCard.Root
       tokenSymbol={asset?.symbol}
-      errorMessage={errorMessage}
+      errorMessage={error}
+      amount={value}
+      onAmountChange={handleAmountChange}
     >
       <TransactionInputCard.Header>
         <TransactionInputCard.ChainSelector
@@ -73,7 +99,7 @@ const SourceChainInput = () => {
         />
         <TransactionInputCard.MaxAmountButton
           maxAmount={max}
-          onAmountChange={handleMaxAmount}
+          onAmountChange={handleAmountChange}
         />
       </TransactionInputCard.Header>
 
@@ -83,16 +109,14 @@ const SourceChainInput = () => {
         }}
       />
 
-      {errorMessage && (
-        <Typography
-          component="p"
-          variant="body4"
-          fw="bold"
-          className="mt-2 text-red-70 dark:text-red-50"
-        >
-          {errorMessage}
-        </Typography>
-      )}
+      <Typography
+        component="p"
+        variant="body4"
+        fw="bold"
+        className="h-4 mt-2 text-red-70 dark:text-red-50"
+      >
+        {error}
+      </Typography>
     </TransactionInputCard.Root>
   );
 };
