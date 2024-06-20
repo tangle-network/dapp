@@ -58,7 +58,7 @@ const getChipColor = (
     case 'Withdraw':
       return 'yellow';
     default:
-      return 'green';
+      return 'dark-grey';
   }
 };
 
@@ -107,9 +107,6 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
       <TitleWithInfo
         title={isSource ? 'Source Chain' : 'Destination Chain'}
         variant="utility"
-        info={
-          tooltipContent ?? (isSource ? 'Source Chain' : 'Destination Chain')
-        }
         titleClassName="text-mono-120 dark:text-mono-80"
         className="text-mono-120 dark:text-mono-80"
       />

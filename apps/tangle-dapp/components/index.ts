@@ -1,5 +1,6 @@
 export * from './BondedTokensBalanceInfo';
 export * from './Breadcrumbs';
+export { default as BridgeTxQueueDropdown } from './BridgeTxQueueDropdown';
 export { default as GlassCard } from './GlassCard';
 export * from './HeaderChip';
 export * from './KeyStatsItem';
