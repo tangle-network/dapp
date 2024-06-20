@@ -4,6 +4,7 @@ import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { type PropsWithChildren, useMemo } from 'react';
 
 import { PolkadotApiProvider } from '../../context/PolkadotApiContext';
+import { RestakeContextProvider } from '../../context/RestakeContext';
 import { useSourceTypedChainId } from '../../stores/deposit';
 
 export default function Providers({ children }: PropsWithChildren) {
@@ -16,6 +17,8 @@ export default function Providers({ children }: PropsWithChildren) {
   }, [sourceTypedChainId]);
 
   return (
-    <PolkadotApiProvider rpcEndpoint={rpc}>{children}</PolkadotApiProvider>
+    <PolkadotApiProvider rpcEndpoint={rpc}>
+      <RestakeContextProvider>{children}</RestakeContextProvider>
+    </PolkadotApiProvider>
   );
 }

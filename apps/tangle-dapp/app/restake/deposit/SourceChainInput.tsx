@@ -3,15 +3,12 @@
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useRouter } from 'next/navigation';
-import { useSubscription } from 'observable-hooks';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { formatUnits } from 'viem';
 
-import useRestakeAssetMap from '../../../data/restake/useRestakeAssetMap';
-import useRestakeBalances from '../../../data/restake/useRestakeBalances';
+import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import {
-  useActions,
   useDepositAssetId,
   useSourceTypedChainId,
 } from '../../../stores/deposit';
@@ -21,29 +18,14 @@ const SourceChainInput = () => {
   const sourceTypedChainId = useSourceTypedChainId();
   const depositAssetId = useDepositAssetId();
 
-  const { updateDepositAssetId } = useActions();
-
-  const { assetMap, assetMap$ } = useRestakeAssetMap();
-
-  const { balances } = useRestakeBalances();
+  const { assetMap, balances } = useRestakeContext();
 
   const { minDelegateAmount } = useRestakeConsts();
 
   const router = useRouter();
 
-  // Subscribe to assetMap$ and update depositAssetId to the first assetId
-  useSubscription(assetMap$, (assetMap) => {
-    if (Object.keys(assetMap).length === 0) {
-      return;
-    }
-
-    const defaultAssetId = Object.keys(assetMap)[0];
-    updateDepositAssetId(defaultAssetId);
-  });
-
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const amountInputRef = useRef<HTMLInputElement | null>(null);
+  // TODO: Add error message
+  const errorMessage = '';
 
   const asset = useMemo(() => {
     if (depositAssetId === null) {
@@ -53,22 +35,25 @@ const SourceChainInput = () => {
     return assetMap[depositAssetId] ?? null;
   }, [assetMap, depositAssetId]);
 
-  const { max, maxAmount } = useMemo(() => {
-    if (asset === null) return {};
+  const max = useMemo(() => {
+    if (asset === null) return;
 
     const balance = balances[asset.id]?.balance;
 
-    if (balance === undefined) return {};
+    if (balance === undefined) return;
 
-    return { max: balance, maxAmount: +formatUnits(balance, asset.decimals) };
+    return +formatUnits(balance, asset.decimals);
   }, [asset, balances]);
 
-  const handleMaxAmount = useCallback((amount: string) => {
-    amountInputRef.current?.focus();
+  const min = useMemo(() => {
+    if (asset === null || typeof minDelegateAmount !== 'bigint') return;
 
-    if (amountInputRef.current !== null) {
-      amountInputRef.current.value = amount;
-    }
+    return +formatUnits(minDelegateAmount, asset.decimals);
+  }, [asset, minDelegateAmount]);
+
+  // TODO: Add max amount handler
+  const handleMaxAmount = useCallback((amount: string) => {
+    console.log('Max amount:', amount);
   }, []);
 
   const handleChainSelectorClick = useCallback(() => {
@@ -87,15 +72,13 @@ const SourceChainInput = () => {
           onClick={handleChainSelectorClick}
         />
         <TransactionInputCard.MaxAmountButton
-          maxAmount={maxAmount}
+          maxAmount={max}
           onAmountChange={handleMaxAmount}
         />
       </TransactionInputCard.Header>
 
       <TransactionInputCard.Body
         customAmountProps={{
-          ref: amountInputRef,
-          required: true,
           type: 'number',
         }}
       />
