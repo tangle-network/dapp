@@ -106,6 +106,7 @@ const TransactionChainSelector = forwardRef<
 
   return (
     <button
+      type="button"
       {...props}
       disabled={disabled}
       ref={ref}
@@ -141,6 +142,7 @@ const TransactionButton = forwardRef<
 >(({ className, children, Icon, ...props }, ref) => {
   return (
     <button
+      type="button"
       {...props}
       className={twMerge(
         'group flex items-center gap-1',
