@@ -10,7 +10,7 @@ import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunctionType } from '../../types';
+import { GetSuccessMessageFunction } from '../../types';
 import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
@@ -99,7 +99,7 @@ const useTransferTx = () => {
     [],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunctionType<TransferTxContext> =
+  const getSuccessMessageFnc: GetSuccessMessageFunction<TransferTxContext> =
     useCallback(
       ({ receiverAddress, amount }) =>
         `Successfully transferred ${formatNativeTokenAmount(

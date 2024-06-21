@@ -8,7 +8,7 @@ import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import {
-  GetSuccessMessageFunctionType,
+  GetSuccessMessageFunction,
   StakingRewardsDestination,
 } from '../../types';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
@@ -70,7 +70,7 @@ const useSetupNominatorTx = () => {
       ]);
     }, []);
 
-  const getSuccessMessageFnc: GetSuccessMessageFunctionType<NominationOptionsContext> =
+  const getSuccessMessageFnc: GetSuccessMessageFunction<NominationOptionsContext> =
     useCallback(
       ({ bondAmount, nominees }) =>
         `Successfully nominated ${formatNativeTokenAmount(bondAmount)} to ${

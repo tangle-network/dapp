@@ -8,13 +8,19 @@ import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
 import { StaticAssetPath } from '../../constants';
-import { LiquidStakingToken, TVS_TOOLTIP } from '../../constants/liquidStaking';
+import {
+  LIQUID_STAKING_TOKEN_PREFIX,
+  LiquidStakingChain,
+  LiquidStakingToken,
+  TVS_TOOLTIP,
+} from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
-import { formatTokenBalance } from '../../utils/polkadot';
+import formatTangleBalance from '../../utils/formatTangleBalance';
+import ChainLogo from './ChainLogo';
 import StatItem from './StatItem';
 
 export type LiquidStakingTokenItemProps = {
-  logoPath: StaticAssetPath;
+  chain: LiquidStakingChain;
   title: string;
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;
@@ -28,8 +34,8 @@ export type LiquidStakingTokenItemProps = {
 };
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
-  logoPath,
   title,
+  chain,
   tokenSymbol,
   totalValueStaked,
   annualPercentageYield,
@@ -50,7 +56,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   );
 
   const formattedTotalStaked = useMemo(
-    () => formatTokenBalance(new BN(totalStaked)),
+    () => formatTangleBalance(new BN(totalStaked)),
     [totalStaked],
   );
 
@@ -58,13 +64,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
     <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
       <div className="flex gap-2 items-center">
         <div className="relative rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
-          <Image
-            className="min-w-[40px] min-h-[40px]"
-            src={logoPath}
-            alt="Logo of the liquid staking token"
-            width={40}
-            height={40}
-          />
+          <ChainLogo size="md" chain={chain} />
 
           <Image
             className="absolute bottom-0 right-0"
@@ -80,7 +80,8 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         </Typography>
 
         <Chip className="normal-case" color="dark-grey">
-          tg{tokenSymbol.toUpperCase()}
+          {LIQUID_STAKING_TOKEN_PREFIX}
+          {tokenSymbol.toUpperCase()}
         </Chip>
       </div>
 
@@ -100,7 +101,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
           variant="utility"
           className="uppercase"
           rightIcon={<ArrowRight className="dark:fill-blue-50" />}
-          href={`${PagePath.LIQUID_RESTAKING}/${tokenSymbol}`}
+          href={`${PagePath.LIQUID_STAKING}/${tokenSymbol}`}
         >
           Stake
         </Button>

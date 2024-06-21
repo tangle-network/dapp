@@ -30,14 +30,20 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  * );
  * ```
  */
-function useApiRx<T>(factory: ObservableFactory<T>) {
+function useApiRx<T>(
+  factory: ObservableFactory<T>,
+  overrideRpcEndpoint?: string,
+) {
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
 
   const { result: apiRx } = usePromise(
-    useCallback(() => getApiRx(rpcEndpoint), [rpcEndpoint]),
+    useCallback(
+      () => getApiRx(overrideRpcEndpoint ?? rpcEndpoint),
+      [overrideRpcEndpoint, rpcEndpoint],
+    ),
     null,
   );
 

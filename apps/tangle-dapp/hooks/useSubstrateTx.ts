@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
 import useNetworkStore from '../context/useNetworkStore';
-import { GetSuccessMessageFunctionType } from '../types';
+import { GetSuccessMessageFunction } from '../types';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { getApiPromise } from '../utils/polkadot';
@@ -35,8 +35,9 @@ export type SubstrateTxFactory<Context = void> = (
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
+  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
   timeoutDelay = 120_000,
+  overrideRpcEndpoint?: string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<HexString | null>(null);
@@ -79,7 +80,7 @@ function useSubstrateTx<Context = void>(
         'Should not be able to execute a Substrate transaction without an injector',
       );
 
-      const api = await getApiPromise(rpcEndpoint);
+      const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
       let newTxHash: HexString;
 
@@ -157,12 +158,13 @@ function useSubstrateTx<Context = void>(
       }
     },
     [
-      activeSubstrateAddress,
-      factory,
-      isEvmAccount,
-      isMountedRef,
-      rpcEndpoint,
       status,
+      activeSubstrateAddress,
+      isEvmAccount,
+      overrideRpcEndpoint,
+      rpcEndpoint,
+      factory,
+      isMountedRef,
       getSuccessMessageFnc,
       injector,
     ],
@@ -211,31 +213,39 @@ export default useSubstrateTx;
 export function useSubstrateTxWithNotification<Context = void>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunctionType<Context>,
+  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
+  overrideRpcEndpoint?: string,
 ) {
   const activeAccountAddress = useActiveAccountAddress();
 
   const {
-    execute: _execute,
+    execute: execute_,
     reset,
     status,
     error,
     txHash,
     successMessage,
-  } = useSubstrateTx(factory, getSuccessMessageFnc);
+  } = useSubstrateTx(
+    factory,
+    getSuccessMessageFnc,
+    undefined,
+    overrideRpcEndpoint,
+  );
+
   const { notifyProcessing, notifySuccess, notifyError } =
     useTxNotification(txName);
 
   const execute = useCallback(
-    async (context: Context) => {
-      if (_execute === null) {
+    (context: Context) => {
+      if (execute_ === null) {
         return;
       }
+
       notifyProcessing();
 
-      await _execute(context);
+      return execute_(context);
     },
-    [_execute, notifyProcessing],
+    [execute_, notifyProcessing],
   );
 
   useEffect(() => {
@@ -252,10 +262,10 @@ export function useSubstrateTxWithNotification<Context = void>(
       return;
     }
 
-    if (txHash !== null) {
-      notifySuccess(txHash, successMessage);
-    } else if (error !== null) {
+    if (error !== null) {
       notifyError(error);
+    } else if (txHash !== null) {
+      notifySuccess(txHash, successMessage);
     }
   }, [status, error, txHash, notifyError, notifySuccess, successMessage]);
 
