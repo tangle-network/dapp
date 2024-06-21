@@ -28,6 +28,7 @@ export enum NetworkId {
   TANGLE_LOCAL_DEV,
   CUSTOM,
   TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV,
+  TANGLE_RESTAKING_PARACHAIN_TESTNET
 }
 
 export type Network = {
@@ -114,10 +115,21 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK: Network = {
   polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
 };
 
+export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK: Network = {
+  id: NetworkId.TANGLE_RESTAKING_PARACHAIN_TESTNET,
+  name: 'Tangle Restaking Parachain (Testnet)',
+  nodeType: 'parachain',
+  tokenSymbol: 'tTNT',
+  wsRpcEndpoint: 'wss://testnet-parachain.tangle.tools',
+  polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
+};
+
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
   [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
   [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
   [NetworkId.TANGLE_LOCAL_DEV]: TANGLE_LOCAL_DEV_NETWORK,
   [NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV]:
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK,
+  [NetworkId.TANGLE_RESTAKING_PARACHAIN_TESTNET]:
+    TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK,
 };
