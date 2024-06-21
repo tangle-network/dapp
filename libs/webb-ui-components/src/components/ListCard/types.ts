@@ -1,8 +1,9 @@
-import { ComponentProps } from 'react';
-import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
-import { AvatarProps } from '../Avatar';
-import { ScrollArea } from '../ScrollArea';
-import { InputProps } from '../Input';
+import type { ComponentProps } from 'react';
+import type { IWebbComponentBase, PropsOf, TokenType } from '../../types';
+import type { AvatarProps } from '../Avatar';
+import type { ScrollArea } from '../ScrollArea';
+import type { InputProps } from '../Input';
+import type { Typography } from '../../typography/Typography';
 
 export type ChainType = {
   /**
@@ -173,6 +174,11 @@ export interface ListCardWrapperProps
   title: string;
 
   /**
+   * Override the title props
+   */
+  overrideTitleProps?: ComponentProps<typeof Typography>;
+
+  /**
    * The callback involke when pressing the close button
    */
   onClose?: () => void;
@@ -225,6 +231,11 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * The override ScrollArea component props
    */
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
+
+  /**
+   * Override the title props
+   */
+  overrideTitleProps?: ComponentProps<typeof Typography>;
 
   /**
    * The current active/connected chain

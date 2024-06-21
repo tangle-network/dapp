@@ -62,7 +62,10 @@ const Page = () => {
   return (
     <ChainListCard
       chainType="source"
-      className="p-0"
+      className="p-0 dark:bg-transparent"
+      overrideTitleProps={{
+        variant: 'h4',
+      }}
       chains={chains}
       activeTypedChainId={
         activeChain

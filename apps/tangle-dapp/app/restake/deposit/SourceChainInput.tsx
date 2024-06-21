@@ -1,17 +1,18 @@
 'use client';
 
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Decimal from 'decimal.js';
-import isNumber from 'lodash/isNumber';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
-import { formatUnits } from 'viem';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { formatUnits, parseUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
+import useIsMountedRef from '../../../hooks/useIsMountedRef';
 import {
   useActions,
+  useAmount,
   useDepositAssetId,
   useSourceTypedChainId,
 } from '../../../stores/deposit';
@@ -20,6 +21,7 @@ const SourceChainInput = () => {
   // Selectors
   const sourceTypedChainId = useSourceTypedChainId();
   const depositAssetId = useDepositAssetId();
+  const amount = useAmount();
 
   const { assetMap, balances } = useRestakeContext();
 
@@ -37,20 +39,26 @@ const SourceChainInput = () => {
     return assetMap[depositAssetId] ?? null;
   }, [assetMap, depositAssetId]);
 
-  const max = useMemo(() => {
-    if (asset === null) return;
+  const { max, maxFormatted } = useMemo(() => {
+    if (asset === null) return {};
 
     const balance = balances[asset.id]?.balance;
 
-    if (balance === undefined) return;
+    if (balance === undefined) return {};
 
-    return +formatUnits(balance, asset.decimals);
+    return {
+      max: balance,
+      maxFormatted: formatUnits(balance, asset.decimals),
+    };
   }, [asset, balances]);
 
-  const min = useMemo(() => {
-    if (asset === null || typeof minDelegateAmount !== 'bigint') return;
+  const { min, minFormatted } = useMemo(() => {
+    if (asset === null || typeof minDelegateAmount !== 'bigint') return {};
 
-    return +formatUnits(minDelegateAmount, asset.decimals);
+    return {
+      min: minDelegateAmount,
+      minFormatted: formatUnits(minDelegateAmount, asset.decimals),
+    };
   }, [asset, minDelegateAmount]);
 
   const [value, setValue] = useState('');
@@ -60,50 +68,71 @@ const SourceChainInput = () => {
     (amount: string) => {
       setValue(amount);
 
-      if (amount === '') return;
+      if (amount === '') {
+        updateAmount(ZERO_BIG_INT);
+        setError('Amount is required');
+        return;
+      }
+
+      if (asset === null) {
+        return;
+      }
 
       // Convertion here is safe because the input is type="number"
-      const amountNum = +amount;
-      if (isNumber(min) && amountNum < min) {
+      const parsedAmount = parseUnits(amount, asset.decimals);
+      if (typeof min === 'bigint' && parsedAmount < min) {
+        updateAmount(ZERO_BIG_INT);
         setError(
-          `Minimum amount is ${new Decimal(min).toString()} ${asset?.symbol ?? ''}`.trim(),
+          `Minimum amount is ${minFormatted ?? ''} ${asset.symbol}`.trim(),
         );
         return;
-      } else if (isNumber(max) && amountNum > max) {
+      } else if (typeof max === 'bigint' && parsedAmount > max) {
+        updateAmount(ZERO_BIG_INT);
         setError(`Insufficient balance`);
         return;
       }
 
       setError('');
-      updateAmount(amountNum);
+      updateAmount(parsedAmount);
     },
-    [min, max, updateAmount, asset?.symbol],
+    [asset, min, max, updateAmount, minFormatted],
   );
 
   const handleChainSelectorClick = useCallback(() => {
     router.push('/restake/deposit/select-source-chain');
   }, [router]);
 
+  const isMountedRef = useIsMountedRef();
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (!isMountedRef.current || typeof asset?.decimals !== 'number') return;
+
+    if (initialized.current) return;
+
+    setValue(formatUnits(amount, asset.decimals));
+    initialized.current = true;
+  }, [amount, asset?.decimals, isMountedRef]);
+
   return (
     // Pass token symbol to root here to share between max amount & token selection button
-    <TransactionInputCard.Root
-      tokenSymbol={asset?.symbol}
-      errorMessage={error}
-      amount={value}
-      onAmountChange={handleAmountChange}
-    >
+    <TransactionInputCard.Root tokenSymbol={asset?.symbol} errorMessage={error}>
       <TransactionInputCard.Header>
         <TransactionInputCard.ChainSelector
           typedChainId={sourceTypedChainId}
           onClick={handleChainSelectorClick}
         />
         <TransactionInputCard.MaxAmountButton
-          maxAmount={max}
+          maxAmount={
+            typeof maxFormatted === 'string' ? +maxFormatted : undefined
+          }
           onAmountChange={handleAmountChange}
         />
       </TransactionInputCard.Header>
 
       <TransactionInputCard.Body
+        amount={value}
+        onAmountChange={handleAmountChange}
         customAmountProps={{
           type: 'number',
         }}

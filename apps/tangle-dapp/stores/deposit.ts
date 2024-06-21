@@ -1,31 +1,35 @@
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../constants/restake';
 
 type Actions = {
   updateSourceTypedChainId: (chainId: number) => void;
   updateDepositAssetId: (assetId: string) => void;
-  updateAmount: (amount: number) => void;
+  updateAmount: (amount: bigint) => void;
 };
 
 type State = {
   sourceTypedChainId: number;
   depositAssetId: string | null;
-  amount: number;
+  amount: bigint;
   actions: Actions;
 };
 
-const useRestakeDepositStore = create<State>((set) => ({
-  sourceTypedChainId: SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0],
-  depositAssetId: null,
-  amount: 0,
-  actions: {
-    updateSourceTypedChainId: (sourceTypedChainId: number) =>
-      set({ sourceTypedChainId }),
-    updateDepositAssetId: (depositAssetId: string) => set({ depositAssetId }),
-    updateAmount: (amount: number) => set({ amount }),
-  },
-}));
+const useRestakeDepositStore = create<State>()(
+  subscribeWithSelector((set) => ({
+    sourceTypedChainId: SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0],
+    depositAssetId: null,
+    amount: ZERO_BIG_INT,
+    actions: {
+      updateSourceTypedChainId: (sourceTypedChainId: number) =>
+        set({ sourceTypedChainId }),
+      updateDepositAssetId: (depositAssetId: string) => set({ depositAssetId }),
+      updateAmount: (amount: bigint) => set({ amount }),
+    },
+  })),
+);
 
 const useDepositAssetId = () =>
   useRestakeDepositStore((state) => state.depositAssetId);

@@ -45,15 +45,16 @@ import { ChainListCardProps, ChainType } from './types';
 const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   (
     {
+      activeTypedChainId,
       chains,
       chainType,
-      activeTypedChainId,
       defaultCategory = 'test',
+      isConnectingToChain,
       onChange,
       onClose,
       onlyCategory,
       overrideScrollAreaProps,
-      isConnectingToChain,
+      overrideTitleProps,
       value: selectedChain,
       ...props
     },
@@ -136,6 +137,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     return (
       <ListCardWrapper
         {...props}
+        overrideTitleProps={overrideTitleProps}
         className={twMerge('flex flex-col', props.className)}
         title={`Select ${
           chainType === 'source' ? 'Source' : 'Destination'
