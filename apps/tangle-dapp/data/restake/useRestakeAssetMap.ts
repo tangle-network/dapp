@@ -109,11 +109,22 @@ const mapAssetDetails = async (
       const detail = assetDetails[idx].unwrap();
       const metadata = assetMetadatas[idx];
 
+      let name = hexToString(metadata.name.toHex());
+      // If the name is empty, we set it to the asset id by default
+      if (name.length === 0) {
+        name = `Asset ${assetId.toString()}`;
+      }
+
+      let symbol = hexToString(metadata.symbol.toHex());
+      if (symbol.length === 0) {
+        symbol = `${assetId.toString()}`;
+      }
+
       return Object.assign(assetMap, {
         [assetId.toString()]: {
           id: assetId.toString(),
-          name: hexToString(metadata.name.toHex()),
-          symbol: hexToString(metadata.symbol.toHex()),
+          name,
+          symbol,
           decimals: metadata.decimals.toNumber(),
           status: detail.status.type,
         },
