@@ -9,9 +9,9 @@ import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
-import useAmountToTransfer from './useAmountToTransfer';
 import useDecimals from './useDecimals';
 import useEthersProvider from './useEthersProvider';
+import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
@@ -26,7 +26,7 @@ export default function useBridgeFee() {
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
   const api = useSubstrateApi();
-  const amountToTransfer = useAmountToTransfer();
+  const formattedAmount = useFormattedAmountForSygmaTx();
   const decimals = useDecimals();
 
   const { data: evmSygmaFee, isLoading: isLoadingEvmSygmaFee } = useSWR(
@@ -41,7 +41,7 @@ export default function useBridgeFee() {
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
-            amount: amountToTransfer,
+            amount: formattedAmount,
           }
         : undefined,
     ],
@@ -65,7 +65,7 @@ export default function useBridgeFee() {
               sourceChain: selectedSourceChain,
               destinationChain: selectedDestinationChain,
               token: selectedToken,
-              amount: amountToTransfer,
+              amount: formattedAmount,
             }
           : undefined,
       ],

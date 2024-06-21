@@ -1,57 +1,52 @@
 'use client';
 
-import { createContext, FC, PropsWithChildren, useContext } from 'react';
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 
+import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
+import useLocalStorage, {
+  LocalStorageKey,
+  TxQueueByAccount,
+} from '../hooks/useLocalStorage';
 import { BridgeQueueTxItem, BridgeTxState } from '../types/bridge';
+import Optional from '../utils/Optional';
 
 interface BridgeTxQueueContextProps {
   txQueue: BridgeQueueTxItem[];
+  addTxToQueue: (tx: BridgeQueueTxItem) => void;
+  deleteTxFromQueue: (txHash: string) => void;
+  addSygmaTxId: (txHash: string, sygmaTxId: string) => void;
+  addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
+  updateTxState: (txHash: string, state: BridgeTxState) => void;
+  updateTxHash: (txHash: string, newTxHash: string) => void;
 }
-
-const dummyData: BridgeQueueTxItem[] = [
-  {
-    id: '4',
-    sourceTypedChainId: 1099511627781,
-    destinationTypedChainId: 1099511629063,
-    sourceAddress: '0xb607A500574fE29afb0d0681f1dC3E82f79f4877',
-    recipientAddress: '0xb607A500574fE29afb0d0681f1dC3E82f79f4877',
-    sourceAmount: '100',
-    destinationAmount: '98',
-    tokenSymbol: 'ETH',
-    createdAt: new Date(),
-    state: BridgeTxState.Indexing,
-    explorerUrl: 'https://etherscan.io/tx/0x123456789abcdef0',
-  },
-  {
-    id: '3',
-    sourceTypedChainId: 1099511670889,
-    destinationTypedChainId: 1099511707777,
-    sourceAddress: '0xb607A500574fE29afb0d0681f1dC3E82f79f4877',
-    recipientAddress: '0xb607A500574fE29afb0d0681f1dC3E82f79f4877',
-    sourceAmount: '100',
-    destinationAmount: '98',
-    tokenSymbol: 'ETH',
-    createdAt: new Date(),
-    state: BridgeTxState.Executed,
-    explorerUrl: 'https://etherscan.io/tx/0x123456789abcdef0',
-  },
-  {
-    id: '2',
-    sourceTypedChainId: 1099511670889,
-    destinationTypedChainId: 1099511707777,
-    sourceAddress: '0xb607A500574fE29afb0d0681f1dC3E82f79f4877',
-    recipientAddress: '0xb607A500574fE29afb0d0681f1dC3E82f79f4877',
-    sourceAmount: '100',
-    destinationAmount: '98',
-    tokenSymbol: 'ETH',
-    createdAt: new Date(),
-    state: BridgeTxState.Failed,
-    explorerUrl: 'https://etherscan.io/tx/0x123456789abcdef0',
-  },
-];
 
 const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
   txQueue: [],
+  addTxToQueue: () => {
+    return;
+  },
+  deleteTxFromQueue: () => {
+    return;
+  },
+  updateTxState: () => {
+    return;
+  },
+  addSygmaTxId: () => {
+    return;
+  },
+  addTxExplorerUrl: () => {
+    return;
+  },
+  updateTxHash: () => {
+    return;
+  },
 });
 
 export const useBridgeTxQueue = () => {
@@ -59,11 +54,183 @@ export const useBridgeTxQueue = () => {
 };
 
 const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
+  const activeAccountAddress = useActiveAccountAddress();
+  const {
+    setWithPreviousValue: setCachedBridgeTxQueueByAcc,
+    valueOpt: cachedBridgeTxQueueByAcc,
+  } = useLocalStorage(LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC);
+
+  const txQueue = useMemo(
+    () =>
+      activeAccountAddress === null
+        ? []
+        : getTxQueueFromLocalStorage(
+            activeAccountAddress,
+            cachedBridgeTxQueueByAcc,
+          ),
+    [activeAccountAddress, cachedBridgeTxQueueByAcc],
+  );
+
+  const addTxToQueue = useCallback(
+    (tx: BridgeQueueTxItem) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = [tx, ...currTxQueue];
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
+  const deleteTxFromQueue = useCallback(
+    (txHash: string) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.filter(
+          (txItem) => txItem.hash !== txHash,
+        );
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
+  const addSygmaTxId = useCallback(
+    (txHash: string, sygmaTxId: string) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.map((txItem) => {
+          if (txItem.hash === txHash) {
+            console.log('Found the one to change');
+            return { ...txItem, sygmaTxId };
+          }
+          return txItem;
+        });
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
+  const addTxExplorerUrl = useCallback(
+    (txHash: string, explorerUrl: string) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.map((txItem) => {
+          if (txItem.hash === txHash) {
+            return { ...txItem, explorerUrl };
+          }
+          return txItem;
+        });
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
+  const updateTxState = useCallback(
+    (txHash: string, state: BridgeTxState) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.map((txItem) => {
+          if (txItem.hash === txHash) {
+            return { ...txItem, state };
+          }
+          return txItem;
+        });
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
+  const updateTxHash = useCallback(
+    (txHash: string, newTxHash: string) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.map((txItem) => {
+          if (txItem.hash === txHash) {
+            return { ...txItem, hash: newTxHash };
+          }
+          return txItem;
+        });
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
   return (
-    <BridgeTxQueueContext.Provider value={{ txQueue: dummyData }}>
+    <BridgeTxQueueContext.Provider
+      value={{
+        txQueue,
+        addTxToQueue,
+        deleteTxFromQueue,
+        addSygmaTxId,
+        updateTxState,
+        addTxExplorerUrl,
+        updateTxHash,
+      }}
+    >
       {children}
     </BridgeTxQueueContext.Provider>
   );
 };
 
 export default BridgeTxQueueProvider;
+
+const getTxQueueFromLocalStorage = (
+  activeAccountAddress: string,
+  txQueueByAccFromLocalStorage: Optional<TxQueueByAccount> | null,
+) => {
+  const bridgeTxQueueByAcc = txQueueByAccFromLocalStorage
+    ? txQueueByAccFromLocalStorage.value ?? null
+    : null;
+
+  const cachedTxQueue = bridgeTxQueueByAcc?.[activeAccountAddress] ?? [];
+
+  if (cachedTxQueue.length === 0) return [];
+  return cachedTxQueue;
+};

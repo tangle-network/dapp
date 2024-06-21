@@ -1,10 +1,5 @@
 'use client';
 
-import {
-  Environment,
-  getTransferStatusData,
-  TransferStatusResponse,
-} from '@buildwithsygma/sygma-sdk-core';
 import { ArrowRight, ChainIcon, TokenIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -14,18 +9,15 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
-import { TxName } from '../../constants';
 import { useBridge } from '../../context/BridgeContext';
+import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import useTxNotification from '../../hooks/useTxNotification';
-import convertBnToDecimal from '../../utils/convertBnToDecimal';
-import ensureError from '../../utils/ensureError';
+import { BridgeTxState } from '../../types/bridge';
 import FeeDetails from './FeeDetails';
-import useBridgeFee from './hooks/useBridgeFee';
+import useAmountInDecimals from './hooks/useAmountInDecimals';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
-import useDecimals from './hooks/useDecimals';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -33,104 +25,60 @@ interface BridgeConfirmationModalProps {
   handleClose: () => void;
 }
 
-const getStatus = async (
-  txHash: string,
-  env: Environment,
-): Promise<TransferStatusResponse[]> => {
-  const data = await getTransferStatusData(env, txHash);
-  return data as TransferStatusResponse[];
-};
-
 const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   isOpen,
   handleClose,
 }) => {
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification(
-    TxName.BRIDGE_TRANSFER,
-  );
+  const activeAccountAddress = useActiveAccountAddress();
+
   const {
     selectedSourceChain,
     selectedDestinationChain,
-    amount,
     destinationAddress,
+    setAmount,
+    setDestinationAddress,
   } = useBridge();
   const selectedToken = useSelectedToken();
-  const activeAccountAddress = useActiveAccountAddress();
-  const { fee: bridgeFee } = useBridgeFee();
-  const decimals = useDecimals();
+  const { sourceAmountInDecimals, destinationAmountInDecimals } =
+    useAmountInDecimals();
   const transfer = useBridgeTransfer();
+
+  const { addSygmaTxId, updateTxState } = useBridgeTxQueue();
 
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isTransferring, setIsTransferring] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const amountInDecimals = useMemo(() => {
-    if (!amount) return null;
-    return convertBnToDecimal(amount, decimals);
-  }, [amount, decimals]);
-
-  const destinationAmountInDecimals = useMemo(() => {
-    if (!amountInDecimals) return null;
-    return amountInDecimals.sub(bridgeFee ?? 0);
-  }, [amountInDecimals, bridgeFee]);
+  const cleanUpWhenSubmit = useCallback(async () => {
+    handleClose();
+    setAmount(null);
+    setDestinationAddress('');
+  }, [handleClose, setAmount, setDestinationAddress]);
 
   const bridgeTx = useCallback(async () => {
-    notifyProcessing();
-
     try {
       // TODO: for EVM case, switch chain if the user's is on the wrong network
 
+      cleanUpWhenSubmit();
       setIsTransferring(true);
-      const txId = await transfer();
-      if (txId !== null) {
-        setTxHash(txId);
-      }
+      const { txHash, sygmaTxId } = await transfer();
+      addSygmaTxId(txHash, sygmaTxId);
+      // updateTxState(txHash, BridgeTxState.Indexing);
+      setTxHash(txHash);
+    } catch {
+      setIsError(true);
+    } finally {
       setIsTransferring(false);
-    } catch (error) {
-      notifyError(ensureError(error));
     }
 
     // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
-  }, [transfer, notifyProcessing, notifyError]);
+  }, [transfer, addSygmaTxId, cleanUpWhenSubmit]);
 
   useEffect(() => {
-    if (!txHash) return;
-    const checkTxStatus = setInterval(() => {
-      getStatus(
-        txHash,
-        selectedSourceChain.tag === 'live'
-          ? Environment.MAINNET
-          : selectedSourceChain.tag === 'test'
-            ? Environment.TESTNET
-            : Environment.DEVNET,
-      )
-        .then((data) => {
-          if (data && data[0]) {
-            const status = data[0].status;
-            if (status === 'executed') {
-              notifySuccess('0x0'); // TODO: the tx explorer link should be the one from Sygma Explorer
-              clearInterval(checkTxStatus);
-            }
-            // Pending
-            else if (status === 'pending') {
-              //
-            }
-
-            // Failed
-            else if (status === 'failed') {
-              //
-            }
-            // TODO: handle other case
-          } else {
-            // TODO: handle tx get indexing
-          }
-        })
-        .catch((error) => {
-          notifyError(ensureError(error));
-        });
-    }, 5000);
-
-    return () => clearInterval(checkTxStatus);
-  }, [txHash, selectedSourceChain, notifySuccess, notifyError]);
+    if (isError && txHash) {
+      updateTxState(txHash, BridgeTxState.Failed);
+    }
+  }, [isError, txHash, updateTxState]);
 
   return (
     <Modal open>
@@ -149,7 +97,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               type="source"
               chainName={selectedSourceChain.name}
               accAddress={activeAccountAddress ?? ''}
-              amount={amountInDecimals?.toString() ?? ''}
+              amount={sourceAmountInDecimals?.toString() ?? ''}
               tokenName={selectedToken.symbol}
             />
 

@@ -20,7 +20,7 @@ const BridgeTxQueueDropdown: FC = () => {
   // Sort the latest tx to the top
   const sortedTxQueue = txQueue
     .slice()
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    .sort((a, b) => b.creationTimestamp - a.creationTimestamp);
 
   if (!txQueue.length) {
     return null;
@@ -51,14 +51,14 @@ const BridgeTxQueueDropdown: FC = () => {
         </Button>
       </DropdownTrigger>
 
-      <DropdownBody // TODO: Might need to add styling for smaller screens later
+      <DropdownBody
         align="start"
         className="mt-4 mr-12 max-h-80 w-[30rem] overflow-scroll overflow-x-hidden dark:bg-mono-180"
       >
         {sortedTxQueue.map((tx) => {
           return (
             <BridgeTxQueueItem
-              key={tx.id}
+              key={tx.hash}
               tx={tx}
               className="rounded-none border-b last:!border-b-0 border-mono-60 dark:border-mono-140"
             />

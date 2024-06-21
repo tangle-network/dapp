@@ -63,11 +63,11 @@ const useTransferTx = () => {
       }
 
       const txFee = new BN((gas * maxFeePerGas).toString());
-      const amountToTransfer = amount.sub(txFee);
+      const formattedAmount = amount.sub(txFee);
 
       return {
         ...sharedAbiCallData,
-        arguments: [recipientEvmAddress20, amountToTransfer],
+        arguments: [recipientEvmAddress20, formattedAmount],
       };
     },
     [fetchEvmPrecompileFees],

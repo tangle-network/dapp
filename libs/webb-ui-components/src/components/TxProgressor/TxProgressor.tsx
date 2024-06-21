@@ -16,7 +16,6 @@ import { Typography } from '../../typography';
 import { ChainChip } from '../ChainChip/ChainChip';
 import { Chip, ChipProps } from '../Chip';
 import SteppedProgress from '../Progress/SteppedProgress';
-import { Button } from '../buttons';
 import { TitleWithInfo } from '../TitleWithInfo';
 import AddressChip from '../AddressChip';
 import {
@@ -184,7 +183,7 @@ const TxProgressorFooter = forwardRef<
       steppedProgressProps,
       statusMessage,
       externalUrl,
-      actionProps,
+      actionCmp,
       ...props
     },
     ref,
@@ -222,7 +221,7 @@ const TxProgressorFooter = forwardRef<
             )}
           </p>
 
-          {actionProps && <Button {...actionProps} variant="link" size="sm" />}
+          {actionCmp ?? null}
         </div>
       </div>
     );
@@ -268,7 +267,7 @@ TxProgressorFooter.displayName = 'TxProgressorFooter';
  *        activeStep: 3,
  *      }}
  *      externalUrl={new URL('https://webb.tools')}
- *      actionProps={{ children: 'Open explorer' }}
+ *      actionCmp={'Open explorer'}
  *    />
  *  </TxProgressor.Root>
  * ```

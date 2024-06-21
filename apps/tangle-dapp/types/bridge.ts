@@ -61,17 +61,20 @@ export enum BridgeWalletError {
 }
 
 export enum BridgeTxState {
-  SigningTx = 'Signing Transaction', // The user is signing the tx
-  SendingTx = 'Sending Transaction', // The user done signing, the tx is being sent to the source chain
+  SigningAndSending = 'Signing and Sending', // The user is signing the tx
 
   Indexing = 'Indexing', // The tx is being indexed by Sygma
+
+  Pending = 'Pending', // The tx is done indexing but still pending
 
   Executed = 'Executed', // The tx is executed successfully
   Failed = 'Failed', // The tx is failed
 }
 
 export type BridgeQueueTxItem = {
-  id: string;
+  hash: string;
+  sygmaTxId?: string;
+  env: 'live' | 'test' | 'dev';
   sourceTypedChainId: number;
   destinationTypedChainId: number;
   sourceAddress: string;
@@ -79,7 +82,7 @@ export type BridgeQueueTxItem = {
   sourceAmount: string;
   destinationAmount: string;
   tokenSymbol: string;
-  createdAt: Date;
+  creationTimestamp: number;
   state: BridgeTxState;
   explorerUrl?: string;
 };

@@ -1,18 +1,24 @@
 'use client';
 
 import { useBridge } from '../../../context/BridgeContext';
+import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSubstrateInjectedExtension from '../../../hooks/useSubstrateInjectedExtension';
-import { BridgeType } from '../../../types/bridge';
+import { BridgeTxState, BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
-import useAmountToTransfer from './useAmountToTransfer';
+import useAmountInDecimals from './useAmountInDecimals';
 import useEthersProvider from './useEthersProvider';
 import useEthersSigner from './useEthersSigner';
+import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
+import useTypedChainId from './useTypedChainId';
 
-export default function useBridgeTransfer(): () => Promise<string> {
+export default function useBridgeTransfer(): () => Promise<{
+  txHash: string;
+  sygmaTxId: string;
+}> {
   const activeAccountAddress = useActiveAccountAddress();
   const injector = useSubstrateInjectedExtension();
   const {
@@ -25,7 +31,12 @@ export default function useBridgeTransfer(): () => Promise<string> {
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const api = useSubstrateApi();
-  const amountToTransfer = useAmountToTransfer();
+  const formattedAmount = useFormattedAmountForSygmaTx();
+  const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
+  const { sourceAmountInDecimals, destinationAmountInDecimals } =
+    useAmountInDecimals();
+
+  const { addTxToQueue, updateTxHash } = useBridgeTxQueue();
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -53,7 +64,7 @@ export default function useBridgeTransfer(): () => Promise<string> {
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,
-          amount: amountToTransfer,
+          amount: formattedAmount,
         });
 
         if (!sygmaEvmTransfer) {
@@ -62,7 +73,10 @@ export default function useBridgeTransfer(): () => Promise<string> {
 
         const { tx } = sygmaEvmTransfer;
         const response = await ethersSigner.sendTransaction(tx);
-        return response.hash;
+        return {
+          txHash: response.hash,
+          sygmaTxId: response.hash,
+        };
       }
 
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
@@ -75,6 +89,13 @@ export default function useBridgeTransfer(): () => Promise<string> {
           throw new Error('No wallet injector found');
         }
 
+        if (
+          sourceAmountInDecimals === null ||
+          destinationAmountInDecimals === null
+        ) {
+          throw new Error('Amounts must be defined');
+        }
+
         const sygmaSubstrateTransfer = await sygmaSubstrate({
           senderAddress: activeAccountAddress,
           recipientAddress: destinationAddress,
@@ -82,7 +103,7 @@ export default function useBridgeTransfer(): () => Promise<string> {
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,
-          amount: amountToTransfer,
+          amount: formattedAmount,
         });
 
         if (!sygmaSubstrateTransfer) {
@@ -91,6 +112,28 @@ export default function useBridgeTransfer(): () => Promise<string> {
 
         const { tx } = sygmaSubstrateTransfer;
 
+        // Add the transaction to the queue
+        const initialTxHash = tx.hash.toHex();
+        addTxToQueue({
+          hash: initialTxHash,
+          env:
+            selectedSourceChain.tag === 'live'
+              ? 'live'
+              : selectedSourceChain.tag === 'test'
+                ? 'test'
+                : 'dev',
+          sourceTypedChainId,
+          destinationTypedChainId,
+          sourceAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          sourceAmount: sourceAmountInDecimals.toString(),
+          destinationAmount: destinationAmountInDecimals.toString(),
+          tokenSymbol: selectedToken.symbol,
+          creationTimestamp: new Date().getTime(),
+          state: BridgeTxState.SigningAndSending,
+        });
+
+        // Returning a new promise to handle sign and send
         return new Promise((resolve, reject) => {
           tx.signAndSend(
             activeAccountAddress,
@@ -98,55 +141,55 @@ export default function useBridgeTransfer(): () => Promise<string> {
               signer: injector.signer,
               nonce: -1,
             },
-            ({ status, dispatchError, events }) => {
-              if (status.isInBlock || status.isFinalized) {
-                for (const event of events) {
-                  const {
-                    event: { method },
-                  } = event;
-
-                  if (dispatchError && method === 'ExtrinsicFailed') {
-                    let message: string = dispatchError.type;
-
-                    if (dispatchError.isModule) {
-                      try {
-                        const mod = dispatchError.asModule;
-                        const error = dispatchError.registry.findMetaError(mod);
-
-                        message = `${error.section}.${error.name}`;
-                      } catch (error) {
-                        console.error(error);
-                        reject(message);
-                      }
-                    } else if (dispatchError.isToken) {
-                      message = `${dispatchError.type}.${dispatchError.asToken.type}`;
-                    }
-                    reject(message);
-                  } else if (
-                    method === 'ExtrinsicSuccess' &&
-                    status.isFinalized
-                  ) {
-                    const blockHash = status.asFinalized;
-                    api.rpc.chain.getBlock(blockHash).then((block) => {
-                      const blockNumber = block.block.header.number.toNumber();
-                      const extrinsics = block.block.extrinsics;
-                      extrinsics.forEach(({ hash }, index) => {
-                        if (hash.toHex() === tx.hash.toHex()) {
-                          const txId = `${blockNumber}-${index}`;
-                          resolve(txId);
-                        }
-                      });
-                    });
+            async ({ status, dispatchError }) => {
+              if (dispatchError) {
+                let message = `${dispatchError.type}`;
+                if (dispatchError.isModule) {
+                  try {
+                    const mod = dispatchError.asModule;
+                    const error = dispatchError.registry.findMetaError(mod);
+                    message = `${error.section}.${error.name}`;
+                  } catch (error) {
+                    console.error(error);
                   }
+                } else if (dispatchError.isToken) {
+                  message = `${dispatchError.type}.${dispatchError.asToken.type}`;
+                }
+                return reject(message);
+              }
+
+              if (status.isFinalized) {
+                const blockHash = status.asFinalized;
+                try {
+                  const block = await api.rpc.chain.getBlock(blockHash);
+                  const blockNumber = block.block.header.number.toNumber();
+                  const extrinsics = block.block.extrinsics;
+
+                  for (const [index, { hash }] of extrinsics.entries()) {
+                    const finalizedTxHash = tx.hash.toHex();
+                    if (hash.toHex() === finalizedTxHash) {
+                      const txId = `${blockNumber}-${index}`;
+                      // somehow the tx hash for Substrate ts ix different when the tx is created and when it is finalized
+                      updateTxHash(initialTxHash, finalizedTxHash);
+                      return resolve({
+                        txHash: finalizedTxHash,
+                        sygmaTxId: txId,
+                      });
+                    }
+                  }
+
+                  return reject("Can't find the transaction");
+                } catch {
+                  return reject('Cannot get the block');
                 }
               } else if (status.isDropped) {
-                reject('Transaction dropped');
+                return reject('Transaction dropped');
               } else if (status.isRetracted) {
-                reject('Transaction retracted');
+                return reject('Transaction retracted');
               } else if (status.isInvalid) {
-                reject('Transaction is invalid');
+                return reject('Transaction is invalid');
               } else if (status.isUsurped) {
-                reject('Transaction is usurped');
+                return reject('Transaction is usurped');
               }
             },
           );
