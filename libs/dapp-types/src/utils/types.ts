@@ -83,3 +83,8 @@ export type MapKnownKeys<Obj extends Record<string, unknown>> = {
       ? never
       : K]: Obj[K];
 };
+
+/**
+ * `Noop`: A function that does nothing.
+ */
+export type Noop = () => void;

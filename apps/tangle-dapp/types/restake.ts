@@ -290,3 +290,7 @@ export type AssetBalance = {
 export type AssetBalanceMap = {
   readonly [assetId: string]: AssetBalance;
 };
+
+export type DepositFormFields = {
+  amount: string;
+};

@@ -346,17 +346,18 @@ const TransactionInputCardBody = forwardRef<
               <TextField.Input
                 placeholder="0.0"
                 min={0}
-                {...customAmountProps}
                 inputMode="decimal"
                 pattern="[0-9]*\.?[0-9]*"
                 value={amount}
                 onChange={handleTextFieldChange}
+                {...customAmountProps}
               />
             </TextField.Root>
           )}
         </div>
 
         <TokenSelector
+          type="button"
           {...tokenSelectorProps}
           className={twMerge('max-w-[210px]', tokenSelectorProps?.className)}
         >

@@ -38777,6 +38777,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hook-form@npm:^7.52.0":
+  version: 7.52.0
+  resolution: "react-hook-form@npm:7.52.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: 10c0/058bf5596f314c071863bb133979deb56d0a7817d5bf1908a569c003fe03a15736402b040d3e18aeb259723c6e15c243fe75d2d887ea47ff4be87fc472f31ad5
+  languageName: node
+  linkType: hard
+
 "react-inspector@npm:6.0.2":
   version: 6.0.2
   resolution: "react-inspector@npm:6.0.2"
@@ -45399,6 +45408,7 @@ __metadata:
     react-complex-tree: "npm:^2.4.4"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.2.3"
+    react-hook-form: "npm:^7.52.0"
     react-intersection-observer: "npm:^9.10.2"
     react-is: "npm:^18.3.1"
     react-markdown: "npm:^9.0.1"

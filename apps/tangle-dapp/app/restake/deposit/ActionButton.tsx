@@ -26,5 +26,9 @@ export default function ActionButton() {
     );
   }
 
-  return <Button isFullWidth>Deposit</Button>;
+  return (
+    <Button type="submit" isFullWidth>
+      Deposit
+    </Button>
+  );
 }
