@@ -1,20 +1,21 @@
 'use client';
 
+import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useMemo } from 'react';
-import type { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import type {
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from 'react-hook-form';
 import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import {
-  useDepositAssetId,
-  useSourceTypedChainId,
-} from '../../../stores/deposit';
 import { DepositFormFields } from '../../../types/restake';
 import safeParseUnits from '../../../utils/safeParseUnits';
 
@@ -24,6 +25,7 @@ type Props = {
   openTokenModal: Noop;
   register: UseFormRegister<DepositFormFields>;
   setValue: UseFormSetValue<DepositFormFields>;
+  watch: UseFormWatch<DepositFormFields>;
 };
 
 const SourceChainInput = ({
@@ -32,10 +34,11 @@ const SourceChainInput = ({
   openTokenModal,
   register,
   setValue,
+  watch,
 }: Props) => {
   // Selectors
-  const sourceTypedChainId = useSourceTypedChainId();
-  const depositAssetId = useDepositAssetId();
+  const sourceTypedChainId = watch('sourceTypedChainId');
+  const depositAssetId = watch('depositAssetId');
 
   const { assetMap, balances } = useRestakeContext();
 
@@ -89,6 +92,7 @@ const SourceChainInput = ({
   const customAmountProsp = useMemo<TextFieldInputProps>(
     () => ({
       type: 'number',
+      step: decimalsToStep(asset?.decimals),
       ...register('amount', {
         required: 'Amount is required',
         validate: {
@@ -161,3 +165,12 @@ const SourceChainInput = ({
 };
 
 export default SourceChainInput;
+
+/**
+ * @internal
+ * Convert decimals to input step
+ * 18 decimals -> 0.000000000000000001
+ */
+function decimalsToStep(decimals = DEFAULT_DECIMALS) {
+  return `0.${'0'.repeat(decimals - 1)}1`;
+}

@@ -3,7 +3,17 @@
 import { WsProvider } from '@polkadot/api';
 import { ApiPromise } from '@polkadot/api/promise';
 import { ApiRx } from '@polkadot/api/rx';
-import { createContext, type FC, type PropsWithChildren, useMemo } from 'react';
+import type { Maybe } from '@webb-tools/dapp-types/utils/types';
+import noop from 'lodash/noop';
+import {
+  createContext,
+  type Dispatch,
+  type FC,
+  type PropsWithChildren,
+  type SetStateAction,
+  useMemo,
+  useState,
+} from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { Prettify } from 'viem/chains';
 
@@ -17,6 +27,8 @@ export type PolkadotApiContextProps = Prettify<{
   apiRx: ApiRx;
   apiRxLoading: boolean;
   apiRxError: Error | null;
+  customRpc?: Maybe<string>;
+  setCustomRpc: Dispatch<SetStateAction<Maybe<string>>>;
 }>;
 
 const DEFAULT_ENDPOINT = useNetworkStore.getState().rpcEndpoint;
@@ -38,6 +50,7 @@ export const PolkadotApiContext = createContext<PolkadotApiContextProps>({
   apiPromiseError: null,
   apiRxLoading: false,
   apiRxError: null,
+  setCustomRpc: noop,
 });
 
 type Props = {
@@ -46,16 +59,16 @@ type Props = {
 
 export const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({
   children,
-  rpcEndpoint: rpcFromProp,
 }) => {
+  const [customRpc, setCustomRpc] = useState<Maybe<string>>();
+
   const { rpcEndpoint: rpcFromStore } = useNetworkStore();
 
   const rpcEndpoint = useMemo(() => {
-    if (rpcFromProp === undefined || rpcFromProp.length === 0)
-      return rpcFromStore;
+    if (customRpc === undefined || customRpc.length === 0) return rpcFromStore;
 
-    return rpcFromProp;
-  }, [rpcFromProp, rpcFromStore]);
+    return customRpc;
+  }, [customRpc, rpcFromStore]);
 
   const {
     data: apiPromise = DEFAULT_API_PROMISE,
@@ -82,6 +95,8 @@ export const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({
         apiRx,
         apiRxLoading,
         apiRxError,
+        customRpc,
+        setCustomRpc,
       }}
     >
       {children}

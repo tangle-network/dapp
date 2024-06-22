@@ -5,18 +5,27 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import ChainListCard from '@webb-tools/webb-ui-components/components/ListCard/ChainListCard';
 import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { type ComponentProps, useCallback, useMemo } from 'react';
+import type { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { useActions, useSourceTypedChainId } from '../../../stores/deposit';
+import type { DepositFormFields } from '../../../types/restake';
 
-type Props = Partial<ComponentProps<typeof ChainListCard>>;
+type Props = Partial<ComponentProps<typeof ChainListCard>> & {
+  setValue: UseFormSetValue<DepositFormFields>;
+  watch: UseFormWatch<DepositFormFields>;
+};
 
-const ChainList = ({ className, onClose, ...props }: Props) => {
+const ChainList = ({
+  className,
+  onClose,
+  setValue,
+  watch,
+  ...props
+}: Props) => {
   const { activeChain, loading, apiConfig } = useWebContext();
 
-  const selectTypedChainId = useSourceTypedChainId();
-  const { updateSourceTypedChainId } = useActions();
+  const selectTypedChainId = watch('sourceTypedChainId');
 
   const selectedChain = useMemo(
     () => apiConfig.chains[selectTypedChainId],
@@ -49,10 +58,10 @@ const ChainList = ({ className, onClose, ...props }: Props) => {
 
   const handleChainChange = useCallback(
     ({ typedChainId }: ChainType) => {
-      updateSourceTypedChainId(typedChainId);
+      setValue('sourceTypedChainId', typedChainId);
       onClose?.();
     },
-    [onClose, updateSourceTypedChainId],
+    [onClose, setValue],
   );
 
   return (

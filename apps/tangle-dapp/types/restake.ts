@@ -293,4 +293,6 @@ export type AssetBalanceMap = {
 
 export type DepositFormFields = {
   amount: string;
+  sourceTypedChainId: number;
+  depositAssetId: string | null;
 };

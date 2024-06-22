@@ -1,18 +1,24 @@
 import { TokenListCard } from '@webb-tools/webb-ui-components/components/ListCard/TokenListCard';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { useCallback, useMemo } from 'react';
+import type { UseFormSetValue } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
-import { useActions } from '../../../stores/deposit';
+import type { DepositFormFields } from '../../../types/restake';
 
-type Props = Partial<TokenListCardProps>;
+type Props = Partial<TokenListCardProps> & {
+  setValue: UseFormSetValue<DepositFormFields>;
+};
 
-export default function TokenList({ className, onClose, ...props }: Props) {
+export default function TokenList({
+  className,
+  onClose,
+  setValue,
+  ...props
+}: Props) {
   const { assetMap, balances } = useRestakeContext();
-
-  const { updateDepositAssetId } = useActions();
 
   const selectableTokens = useMemo(
     () =>
@@ -37,10 +43,10 @@ export default function TokenList({ className, onClose, ...props }: Props) {
 
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
-      updateDepositAssetId(token.id);
+      setValue('depositAssetId', token.id);
       onClose?.();
     },
-    [onClose, updateDepositAssetId],
+    [onClose, setValue],
   );
 
   return (
