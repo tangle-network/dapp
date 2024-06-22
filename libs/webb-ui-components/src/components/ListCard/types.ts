@@ -97,6 +97,11 @@ export type AssetBadgeInfoType = {
 
 export type AssetType = {
   /**
+   * The asset id
+   */
+  id: string;
+
+  /**
    * The asset name
    */
   name: string;

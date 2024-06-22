@@ -1,6 +1,8 @@
 'use client';
 
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
+import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useMemo } from 'react';
@@ -17,17 +19,19 @@ import { DepositFormFields } from '../../../types/restake';
 import safeParseUnits from '../../../utils/safeParseUnits';
 
 type Props = {
-  openChainModal: Noop;
-  setValue: UseFormSetValue<DepositFormFields>;
-  register: UseFormRegister<DepositFormFields>;
   amountError?: string;
+  openChainModal: Noop;
+  openTokenModal: Noop;
+  register: UseFormRegister<DepositFormFields>;
+  setValue: UseFormSetValue<DepositFormFields>;
 };
 
 const SourceChainInput = ({
+  amountError,
   openChainModal,
+  openTokenModal,
   register,
   setValue,
-  amountError,
 }: Props) => {
   // Selectors
   const sourceTypedChainId = useSourceTypedChainId();
@@ -82,6 +86,44 @@ const SourceChainInput = ({
     [openChainModal],
   );
 
+  const customAmountProsp = useMemo<TextFieldInputProps>(
+    () => ({
+      type: 'number',
+      ...register('amount', {
+        required: 'Amount is required',
+        validate: {
+          shouldNotLessThanMin: (value) => {
+            if (typeof min !== 'bigint') return true;
+
+            const parsed = safeParseUnits(value, asset?.decimals);
+            if (!parsed.sucess) return true;
+
+            return (
+              parsed.value >= min ||
+              `Amount must be at least ${minFormatted} ${asset?.symbol ?? ''}`.trim()
+            );
+          },
+          shouldNotExceedMax: (value) => {
+            if (typeof max !== 'bigint') return true;
+
+            const parsed = safeParseUnits(value, asset?.decimals);
+            if (!parsed.sucess) return true;
+
+            return parsed.value <= max || 'Amount exceeds balance';
+          },
+        },
+      }),
+    }),
+    [asset?.decimals, asset?.symbol, max, min, minFormatted, register],
+  );
+
+  const tokenSelectorProps = useMemo<TokenSelectorProps>(
+    () => ({
+      onClick: () => openTokenModal(),
+    }),
+    [openTokenModal],
+  );
+
   return (
     // Pass token symbol to root here to share between max amount & token selection button
     <TransactionInputCard.Root
@@ -102,33 +144,8 @@ const SourceChainInput = ({
       </TransactionInputCard.Header>
 
       <TransactionInputCard.Body
-        customAmountProps={{
-          type: 'number',
-          ...register('amount', {
-            required: 'Amount is required',
-            validate: {
-              shouldNotLessThanMin: (value) => {
-                if (typeof min !== 'bigint') return true;
-
-                const parsed = safeParseUnits(value, asset?.decimals);
-                if (!parsed.sucess) return true;
-
-                return (
-                  parsed.value >= min ||
-                  `Amount must be at least ${minFormatted} ${asset?.symbol ?? ''}`.trim()
-                );
-              },
-              shouldNotExceedMax: (value) => {
-                if (typeof max !== 'bigint') return true;
-
-                const parsed = safeParseUnits(value, asset?.decimals);
-                if (!parsed.sucess) return true;
-
-                return parsed.value <= max || 'Amount exceeds balance';
-              },
-            },
-          }),
-        }}
+        tokenSelectorProps={tokenSelectorProps}
+        customAmountProps={customAmountProsp}
       />
 
       <Typography
