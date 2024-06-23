@@ -3,7 +3,7 @@
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import { useSubscription } from 'observable-hooks';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
@@ -24,12 +24,14 @@ const onSubmit: SubmitHandler<DepositFormFields> = (data) => {
 };
 
 export default function DepositPage() {
+  const formRef = useRef<HTMLFormElement>(null);
+
   const {
     register,
     setValue,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<DepositFormFields>({
     mode: 'onBlur',
     defaultValues: {
@@ -78,6 +80,7 @@ export default function DepositPage() {
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit(onSubmit)}
       className="relative overflow-hidden"
     >
@@ -102,7 +105,12 @@ export default function DepositPage() {
         <div className="flex flex-col justify-between gap-4 grow">
           <TxDetails watch={watch} />
 
-          <ActionButton />
+          <ActionButton
+            errors={errors}
+            isValid={isValid}
+            watch={watch}
+            formRef={formRef}
+          />
         </div>
       </div>
 

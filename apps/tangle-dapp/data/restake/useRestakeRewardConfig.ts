@@ -23,7 +23,7 @@ export default function useRestakeRewardConfig() {
         : of(
             apiRx.createType<
               Option<PalletMultiAssetDelegationRewardsRewardConfig>
-            >('Option<PalletMultiAssetDelegationRewardsRewardConfig>'),
+            >('Option<Null>'),
           ),
     [apiRx],
   );

@@ -1,4 +1,3 @@
-import { defaults as addressDefaults } from '@polkadot/util-crypto/address/defaults';
 import {
   useConnectWallet,
   useWebContext,
@@ -9,6 +8,7 @@ import {
   DEFAULT_DECIMALS,
   type WalletConfig,
 } from '@webb-tools/dapp-config';
+import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
 import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
@@ -208,7 +208,7 @@ async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
       network.chainId =
         typeof api.registry.chainSS58 === 'number'
           ? api.registry.chainSS58
-          : api.registry.createType('u32', addressDefaults.prefix).toNumber();
+          : DEFAULT_SS58.toNumber();
     }
 
     const deciamls =

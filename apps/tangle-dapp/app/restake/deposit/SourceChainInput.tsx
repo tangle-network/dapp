@@ -172,5 +172,7 @@ export default SourceChainInput;
  * 18 decimals -> 0.000000000000000001
  */
 function decimalsToStep(decimals = DEFAULT_DECIMALS) {
+  if (decimals === 0) return '1';
+
   return `0.${'0'.repeat(decimals - 1)}1`;
 }
