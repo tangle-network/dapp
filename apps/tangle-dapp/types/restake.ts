@@ -291,6 +291,38 @@ export type AssetBalanceMap = {
   readonly [assetId: string]: AssetBalance;
 };
 
+/**
+ * Configuration for rewards associated with a specific asset.
+ */
+export type RewardConfigForAsset = {
+  /**
+   * The annual percentage yield (APY) for the asset, represented as a fixed point number.
+   */
+  readonly apy: bigint;
+
+  /**
+   * The minimum amount required before the asset can be rewarded.
+   */
+  readonly cap: bigint;
+};
+
+/**
+ * Configuration for rewards in the system.
+ */
+export type RewardConfig = {
+  /**
+   * A map of asset IDs to their respective reward configurations.
+   */
+  configs: {
+    [assetId: string]: RewardConfigForAsset;
+  };
+
+  /**
+   * A list of blueprint IDs that are whitelisted for rewards.
+   */
+  whitelistedBlueprintIds: number[];
+};
+
 export type DepositFormFields = {
   amount: string;
   sourceTypedChainId: number;

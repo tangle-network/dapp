@@ -100,7 +100,7 @@ export default function DepositPage() {
         </div>
 
         <div className="flex flex-col justify-between gap-4 grow">
-          <TxDetails />
+          <TxDetails watch={watch} />
 
           <ActionButton />
         </div>
