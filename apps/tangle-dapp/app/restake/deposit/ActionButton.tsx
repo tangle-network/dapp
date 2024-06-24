@@ -12,26 +12,30 @@ import { type RefObject, useCallback, useMemo } from 'react';
 import type { FieldErrors, UseFormWatch } from 'react-hook-form';
 
 import useNetworkStore from '../../../context/useNetworkStore';
+import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { DepositFormFields } from '../../../types/restake';
 import chainToNetwork from '../../../utils/chainToNetwork';
 
 type Props = {
-  watch: UseFormWatch<DepositFormFields>;
   errors: FieldErrors<DepositFormFields>;
-  isValid: boolean;
   formRef: RefObject<HTMLFormElement>;
+  isSubmitting: boolean;
+  isValid: boolean;
+  watch: UseFormWatch<DepositFormFields>;
 };
 
 export default function ActionButton({
-  watch,
   errors,
-  isValid,
   formRef,
+  isSubmitting,
+  isValid,
+  watch,
 }: Props) {
   const sourceTypedChainId = watch('sourceTypedChainId');
 
   const { isMobile } = useCheckMobile();
-  const { loading, isConnecting, activeWallet, activeApi } = useWebContext();
+  const { loading, isConnecting, activeWallet } = useWebContext();
+  const activeTypedChainId = useActiveTypedChainId();
   const { toggleModal } = useConnectWallet();
   const switchChain = useSwitchChain();
 
@@ -48,8 +52,15 @@ export default function ActionButton({
         loadingText: 'Loading...',
       };
 
+    if (isSubmitting) {
+      return {
+        isLoading: true,
+        loadingText: 'Depositing...',
+      };
+    }
+
     return {};
-  }, [isConnecting, loading]);
+  }, [isConnecting, isSubmitting, loading]);
 
   if (isMobile) {
     return (
@@ -69,7 +80,7 @@ export default function ActionButton({
   }
 
   // If the user is not connected to a wallet, show the connect wallet button
-  if (activeWallet === undefined || activeApi === undefined) {
+  if (activeWallet === undefined) {
     return (
       <Button
         type="button"
@@ -90,7 +101,7 @@ export default function ActionButton({
           ? `Enter an amount`
           : undefined;
 
-  if (activeApi.typedChainidSubject.getValue() !== sourceTypedChainId) {
+  if (activeTypedChainId !== sourceTypedChainId) {
     const handleClick = async () => {
       const result = await switchChain(sourceTypedChainId);
       const isSuccessful = result !== null && result !== undefined;

@@ -19,6 +19,6 @@ code span {
 
   /** Tailwind md breakpoint */
   @media (min-width: 768px) {
-    --restake-card-min-height: 640px;
+    --restake-card-min-height: 648px;
   }
 }

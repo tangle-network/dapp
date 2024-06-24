@@ -1,11 +1,15 @@
 'use client';
 
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
+import {
+  DEFAULT_DECIMALS,
+  ZERO_BIG_INT,
+} from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import Decimal from 'decimal.js';
 import { useCallback, useMemo } from 'react';
 import type {
   UseFormRegister,
@@ -55,9 +59,7 @@ const SourceChainInput = ({
   const { max, maxFormatted } = useMemo(() => {
     if (asset === null) return {};
 
-    const balance = balances[asset.id]?.balance;
-
-    if (balance === undefined) return {};
+    const balance = balances[asset.id]?.balance ?? ZERO_BIG_INT;
 
     return {
       max: balance,
@@ -66,11 +68,14 @@ const SourceChainInput = ({
   }, [asset, balances]);
 
   const { min, minFormatted } = useMemo(() => {
-    if (asset === null || typeof minDelegateAmount !== 'bigint') return {};
+    if (asset === null) return {};
 
     return {
-      min: minDelegateAmount,
-      minFormatted: formatUnits(minDelegateAmount, asset.decimals),
+      min: minDelegateAmount ?? ZERO_BIG_INT,
+      minFormatted: formatUnits(
+        minDelegateAmount ?? ZERO_BIG_INT,
+        asset.decimals,
+      ),
     };
   }, [asset, minDelegateAmount]);
 
@@ -89,13 +94,31 @@ const SourceChainInput = ({
     [openChainModal],
   );
 
-  const customAmountProsp = useMemo<TextFieldInputProps>(
-    () => ({
+  const customAmountProsp = useMemo<TextFieldInputProps>(() => {
+    const step = decimalsToStep(asset?.decimals);
+
+    return {
       type: 'number',
-      step: decimalsToStep(asset?.decimals),
+      step,
       ...register('amount', {
         required: 'Amount is required',
         validate: {
+          // Check amount with asset denomination
+          shouldDivisibleWithDecimals: (value) => {
+            return (
+              Decimal.mod(value, step).isZero() ||
+              `Amount must be divisible by ${step} ${asset !== null ? `, as ${asset?.symbol} has ${asset?.decimals} decimals` : ''}`.trim()
+            );
+          },
+          shouldNotBeZero: (value) => {
+            const parsed = safeParseUnits(value, asset?.decimals);
+            if (!parsed.sucess) return true;
+
+            return (
+              parsed.value !== ZERO_BIG_INT ||
+              'Amount must be greater than zero'
+            );
+          },
           shouldNotLessThanMin: (value) => {
             if (typeof min !== 'bigint') return true;
 
@@ -117,9 +140,8 @@ const SourceChainInput = ({
           },
         },
       }),
-    }),
-    [asset?.decimals, asset?.symbol, max, min, minFormatted, register],
-  );
+    };
+  }, [asset?.decimals, asset?.symbol, max, min, minFormatted, register]);
 
   const tokenSelectorProps = useMemo<TokenSelectorProps>(
     () => ({

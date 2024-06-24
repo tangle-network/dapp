@@ -24,9 +24,11 @@ const useExplorerUrl = () => {
         type ?? (isEvm ? ExplorerType.EVM : ExplorerType.Substrate);
 
       const explorerUrl =
-        explorerUrl_ ?? isEvm
-          ? network.evmExplorerUrl
-          : network.polkadotExplorerUrl;
+        typeof explorerUrl_ === 'string'
+          ? explorerUrl_
+          : isEvm
+            ? network.evmExplorerUrl
+            : network.polkadotExplorerUrl;
 
       if (explorerUrl === undefined) {
         return null;

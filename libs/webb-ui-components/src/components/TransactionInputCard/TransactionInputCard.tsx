@@ -210,7 +210,7 @@ const TransactionMaxAmountButton = forwardRef<
     }, [maxAmount, tokenSymbol]);
 
     const disabled = useMemo(
-      () => disabledProp ?? typeof maxAmount !== 'number',
+      () => disabledProp ?? (typeof maxAmount !== 'number' || maxAmount <= 0),
       [disabledProp, maxAmount],
     );
 

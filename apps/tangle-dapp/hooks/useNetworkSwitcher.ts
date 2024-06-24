@@ -60,12 +60,22 @@ const useNetworkSwitcher = () => {
 
   const { network, setNetwork } = useNetworkStore();
 
+  // TODO: Should utilize the zustand middleware to cache this
+  // in instead of manually handling it here.
+  // if we set the network by calling `setNetwork`,
+  // the new network won't be cached in local storage.
+  // @see https://docs.pmnd.rs/zustand/integrations/persisting-store-data
   const {
     refresh: getCachedCustomRpcEndpoint,
     set: setCachedCustomRpcEndpoint,
     remove: removeCachedCustomRpcEndpoint,
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
+  // TODO: Should utilize the zustand middleware to cache this
+  // in instead of manually handling it here.
+  // if we set the network by calling `setNetwork`,
+  // the new network won't be cached in local storage.
+  // @see https://docs.pmnd.rs/zustand/integrations/persisting-store-data
   const {
     set: setCachedNetworkId,
     refresh: getCachedNetworkId,
