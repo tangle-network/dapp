@@ -39,13 +39,13 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
           { nonce: -1 },
           ({ dispatchError, events, status, txHash }) => {
             if (status.isInBlock) {
-              const hash = status.asInBlock;
-              eventHandlers?.onTxInBlock?.(hash.toHex());
+              const blockHash = status.asInBlock;
+              eventHandlers?.onTxInBlock?.(txHash.toHex(), blockHash.toHex());
             }
 
             if (status.isFinalized) {
-              const hash = status.asFinalized;
-              eventHandlers?.onTxFinalized?.(hash.toHex());
+              const blockHash = status.asFinalized;
+              eventHandlers?.onTxFinalized?.(txHash.toHex(), blockHash.toHex());
             }
 
             if (!status.isFinalized) {
@@ -83,10 +83,13 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
                 resolve(null);
                 unsub();
               } else if (method === 'ExtrinsicSuccess' && status.isFinalized) {
-                const hash = txHash.toHex();
-                eventHandlers?.onTxSuccess?.(hash);
+                const txHashHex = txHash.toHex();
+                eventHandlers?.onTxSuccess?.(
+                  txHashHex,
+                  status.asFinalized.toHex(),
+                );
                 // Resolve with the block hash
-                resolve(hash);
+                resolve(txHashHex);
                 unsub();
               }
             }

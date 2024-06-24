@@ -79,7 +79,7 @@ export const chainsConfig = {
     blockExplorers: {
       default: {
         name: 'Local Tangle Explorer',
-        url: 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/',
+        url: 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
       },
     },
     rpcUrls: {
@@ -156,7 +156,7 @@ export const chainsConfig = {
     blockExplorers: {
       default: {
         name: 'Phala Explorer',
-        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer/',
+        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer',
       },
     },
     rpcUrls: {

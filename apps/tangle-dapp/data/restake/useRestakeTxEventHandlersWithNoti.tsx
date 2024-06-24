@@ -1,9 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { isPolkadotPortal } from '@webb-tools/api-provider-environment/transaction/utils';
 import Spinner from '@webb-tools/icons/Spinner';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import type { Hash } from 'viem';
 
 import useExplorerUrl from '../../hooks/useExplorerUrl';
 import { TxEvent, type TxEventHandlers } from './RestakeTx/base';
@@ -20,6 +22,27 @@ export default function useRestakeTxEventHandlersWithNoti(
     [activeChain?.blockExplorers?.default.url],
   );
 
+  const getTxUrl = useCallback(
+    (txHash: Hash, blockHash: Hash, blockExplorer?: string) => {
+      // if the block explorer is the Polkadot Portal
+      // we use block hash instead of the tx hash.
+      // @see https://polkadot.js.org/docs/api/FAQ/#which-api-can-i-use-to-query-by-transaction-hash
+      if (isPolkadotPortal(blockExplorer)) {
+        const url = getExplorerUrl(
+          blockHash,
+          'block',
+          undefined,
+          blockExplorer,
+          true,
+        );
+        return url;
+      }
+
+      return getExplorerUrl(txHash, 'tx', undefined, blockExplorer);
+    },
+    [getExplorerUrl],
+  );
+
   return useMemo<TxEventHandlers>(
     () => ({
       onTxSending: () => {
@@ -32,8 +55,8 @@ export default function useRestakeTxEventHandlersWithNoti(
         });
         props?.onTxSending?.();
       },
-      onTxInBlock: (txHash) => {
-        const url = getExplorerUrl(txHash, 'tx', undefined, blockExplorer);
+      onTxInBlock: (txHash, blockHash) => {
+        const url = getTxUrl(txHash, blockHash, blockExplorer);
 
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.addToQueue({
@@ -45,10 +68,10 @@ export default function useRestakeTxEventHandlersWithNoti(
           persist: true,
         });
 
-        props?.onTxInBlock?.(txHash);
+        props?.onTxInBlock?.(txHash, blockHash);
       },
-      onTxSuccess: (txHash) => {
-        const url = getExplorerUrl(txHash, 'tx', undefined, blockExplorer);
+      onTxSuccess: (txHash, blockHash) => {
+        const url = getTxUrl(txHash, blockHash, blockExplorer);
 
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.remove(TxEvent.IN_BLOCK);
@@ -61,7 +84,7 @@ export default function useRestakeTxEventHandlersWithNoti(
           variant: 'success',
         });
 
-        props?.onTxSuccess?.(txHash);
+        props?.onTxSuccess?.(txHash, blockHash);
       },
       onTxFailed: (error) => {
         notificationApi.remove(TxEvent.SENDING);
@@ -85,7 +108,7 @@ export default function useRestakeTxEventHandlersWithNoti(
         props?.onTxFailed?.(error);
       },
     }),
-    [blockExplorer, getExplorerUrl, notificationApi, props],
+    [blockExplorer, getTxUrl, notificationApi, props],
   );
 }
 
@@ -109,3 +132,7 @@ function ViewTxOnExplorer({ url }: { url?: string } = {}) {
     </Typography>
   );
 }
+
+/**
+ * @internal
+ */

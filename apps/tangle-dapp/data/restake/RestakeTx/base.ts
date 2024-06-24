@@ -1,4 +1,4 @@
-import type { Hash, Hex } from 'viem';
+import type { Hash } from 'viem';
 
 export enum TxEvent {
   SENDING = 'SENDING',
@@ -10,9 +10,9 @@ export enum TxEvent {
 
 export type TxEventHandlers = {
   onTxSending?: () => void | Promise<void>;
-  onTxInBlock?: (txHash: Hex) => void | Promise<void>;
-  onTxFinalized?: (txHash: Hex) => void | Promise<void>;
-  onTxSuccess?: (txHash: Hex) => void | Promise<void>;
+  onTxInBlock?: (txHash: Hash, blockHash: Hash) => void | Promise<void>;
+  onTxFinalized?: (txHash: Hash, blockHash: Hash) => void | Promise<void>;
+  onTxSuccess?: (txHash: Hash, blockHash: Hash) => void | Promise<void>;
   onTxFailed?: (error: string) => void | Promise<void>;
 };
 
