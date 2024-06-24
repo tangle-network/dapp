@@ -97,7 +97,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
         )
         .then((unsubFn) => (unsub = unsubFn))
         .catch((error) => {
+          resolve(null);
           eventHandlers?.onTxFailed?.(error.message);
+          unsub();
         });
     });
   }
