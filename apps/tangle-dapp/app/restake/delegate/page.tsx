@@ -1,13 +1,13 @@
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { Fragment } from 'react';
 
-import TabsList from '../TabsList';
+import RestakeTabs from '../RestakeTabs';
 import DepositButton from './DepositButton';
 
 export default function DelegatePage() {
   return (
     <Fragment>
-      <TabsList />
+      <RestakeTabs />
 
       <div className="flex flex-col items-center justify-center space-y-3 grow">
         <Typography variant="h5" ta="center" fw="semibold">

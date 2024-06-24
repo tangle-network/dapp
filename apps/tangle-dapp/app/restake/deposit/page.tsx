@@ -4,7 +4,7 @@ import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import { useSubscription } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type SubmitHandler,useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { parseUnits } from 'viem';
 
 import useRestakeTxEventHandlersWithNoti from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
@@ -14,7 +14,7 @@ import type { TxEventHandlers } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
-import TabsList from '../TabsList';
+import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import ChainList from './ChainList';
 import DestChainInput from './DestChainInput';
@@ -111,7 +111,7 @@ export default function DepositPage() {
       className="relative h-full overflow-hidden"
     >
       <div className="flex flex-col h-full space-y-4 grow">
-        <TabsList />
+        <RestakeTabs />
 
         <div className="space-y-2">
           <SourceChainInput
