@@ -13430,14 +13430,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-mdx-gfm@npm:8.1.5":
-  version: 8.1.5
-  resolution: "@storybook/addon-mdx-gfm@npm:8.1.5"
+"@storybook/addon-mdx-gfm@npm:8.1.10":
+  version: 8.1.10
+  resolution: "@storybook/addon-mdx-gfm@npm:8.1.10"
   dependencies:
-    "@storybook/node-logger": "npm:8.1.5"
+    "@storybook/node-logger": "npm:8.1.10"
     remark-gfm: "npm:^4.0.0"
     ts-dedent: "npm:^2.0.0"
-  checksum: 10c0/3e2d90138c83572380510a88a8deda36fc3873a7049f55b03d47416c3c173026775c28db49a48200178ea5f22206a0e9cfaf16226a94d93619e5d0f07331c913
+  checksum: 10c0/916f520ec3028291fb0877799a9f623ebc5993b8f59ff0507ad51516aff88431d661b33663f87538d5500e1ab6faa2d86d7cfb169323aac79c19e0b5a4f18171
   languageName: node
   linkType: hard
 
@@ -45884,7 +45884,7 @@ __metadata:
     "@storybook/addon-essentials": "npm:8.1.10"
     "@storybook/addon-interactions": "npm:8.1.5"
     "@storybook/addon-links": "npm:8.1.5"
-    "@storybook/addon-mdx-gfm": "npm:8.1.5"
+    "@storybook/addon-mdx-gfm": "npm:8.1.10"
     "@storybook/addon-themes": "npm:^8.1.5"
     "@storybook/addon-webpack5-compiler-babel": "npm:^3.0.3"
     "@storybook/blocks": "npm:8.1.5"
