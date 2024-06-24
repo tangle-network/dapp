@@ -8,10 +8,10 @@ import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
-import { isLiquidStakingToken } from '../../app/liquid-staking/[tokenSymbol]/page';
 import { LiquidStakingToken } from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import isLiquidStakingToken from '../../utils/liquidStaking/isLiquidStakingToken';
 
 const useParachainBalances = () => {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -54,7 +54,7 @@ const useParachainBalances = () => {
       }
 
       const isLiquid = entry.lst !== undefined;
-      const balance = encodedBalance[1].free.toBn()
+      const balance = encodedBalance[1].free.toBn();
 
       if (isLiquid) {
         liquidBalances.set(entryValue, balance);
