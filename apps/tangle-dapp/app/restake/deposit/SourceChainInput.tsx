@@ -141,7 +141,7 @@ const SourceChainInput = ({
         },
       }),
     };
-  }, [asset?.decimals, asset?.symbol, max, min, minFormatted, register]);
+  }, [asset, max, min, minFormatted, register]);
 
   const tokenSelectorProps = useMemo<TokenSelectorProps>(
     () => ({

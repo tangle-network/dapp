@@ -1,5 +1,13 @@
 import type { Hash, Hex } from 'viem';
 
+export enum TxEvent {
+  SENDING = 'SENDING',
+  IN_BLOCK = 'IN_BLOCK',
+  FINALIZED = 'FINALIZED',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+}
+
 export type TxEventHandlers = {
   onTxSending?: () => void | Promise<void>;
   onTxInBlock?: (txHash: Hex) => void | Promise<void>;

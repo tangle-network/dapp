@@ -15,7 +15,11 @@ export default function useRestakeTx() {
   const { activeAccount, activeWallet, activeApi } = useWebContext();
 
   return useMemo(() => {
-    if (activeWallet === undefined || activeAccount === null) {
+    if (
+      activeWallet === undefined ||
+      activeAccount === null ||
+      activeApi === undefined
+    ) {
       return {
         deposit: () => {
           throw WebbError.from(WebbErrorCodes.ApiNotReady);

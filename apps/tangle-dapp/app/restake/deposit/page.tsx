@@ -1,21 +1,17 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
-import Spinner from '@webb-tools/icons/Spinner';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useSubscription } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { type SubmitHandler,useForm } from 'react-hook-form';
 import { parseUnits } from 'viem';
 
+import useRestakeTxEventHandlersWithNoti from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
+import type { TxEventHandlers } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
-import useExplorerUrl from '../../../hooks/useExplorerUrl';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
 import TabsList from '../TabsList';
@@ -26,13 +22,6 @@ import SlideAnimation from './SlideAnimation';
 import SourceChainInput from './SourceChainInput';
 import TokenList from './TokenList';
 import TxDetails from './TxDetails';
-
-enum NotificationKeys {
-  TX_SENDING = 'tx-sending',
-  TX_IN_BLOCK = 'tx-in-block',
-  TX_SUCCESS = 'tx-success',
-  TX_FAILED = 'tx-failed',
-}
 
 export default function DepositPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -50,10 +39,6 @@ export default function DepositPage() {
       sourceTypedChainId: SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0],
     },
   });
-
-  const { activeChain } = useWebContext();
-  const { notificationApi } = useWebbUI();
-  const getExplorerUrl = useExplorerUrl();
 
   const { setCustomRpc } = usePolkadotApi();
   const { assetMap, assetMap$ } = useRestakeContext();
@@ -95,6 +80,12 @@ export default function DepositPage() {
   const openTokenModal = useCallback(() => setTokenModalOpen(true), []);
   const closeTokenModal = useCallback(() => setTokenModalOpen(false), []);
 
+  const txEventHandlers = useRestakeTxEventHandlersWithNoti(
+    useRef<TxEventHandlers>({
+      onTxSuccess: () => resetField('amount'),
+    }).current,
+  );
+
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
       const { amount, depositAssetId } = data;
@@ -104,96 +95,13 @@ export default function DepositPage() {
 
       const asset = assetMap[depositAssetId];
 
-      await deposit(depositAssetId, parseUnits(amount, asset.decimals), {
-        onTxSending: () => {
-          notificationApi.addToQueue({
-            key: NotificationKeys.TX_SENDING,
-            Icon: <Spinner size="lg" />,
-            message: 'Sending transaction...',
-            variant: 'info',
-            persist: true,
-          });
-        },
-        onTxInBlock: (txHash) => {
-          const url = getExplorerUrl(
-            txHash,
-            'tx',
-            undefined,
-            activeChain?.blockExplorers?.default.url,
-          );
-
-          notificationApi.remove(NotificationKeys.TX_SENDING);
-          notificationApi.addToQueue({
-            key: NotificationKeys.TX_IN_BLOCK,
-            Icon: <Spinner size="lg" />,
-            message: 'Transaction is included in a block',
-            secondaryMessage: (
-              <Typography variant="body1">
-                View the transaction{' '}
-                <Button
-                  className="inline-block"
-                  variant="link"
-                  href={url?.toString()}
-                  target="_blank"
-                >
-                  on the explorer
-                </Button>
-              </Typography>
-            ),
-            variant: 'info',
-            persist: true,
-          });
-        },
-        onTxSuccess: (txHash) => {
-          const url = getExplorerUrl(
-            txHash,
-            'tx',
-            undefined,
-            activeChain?.blockExplorers?.default.url,
-          );
-
-          notificationApi.remove(NotificationKeys.TX_SENDING);
-          notificationApi.remove(NotificationKeys.TX_IN_BLOCK);
-          notificationApi.addToQueue({
-            key: NotificationKeys.TX_SUCCESS,
-            message: 'Transaction finalized!',
-            secondaryMessage: (
-              <Typography variant="body1">
-                View the transaction{' '}
-                <Button
-                  className="inline-block"
-                  variant="link"
-                  href={url?.toString()}
-                  target="_blank"
-                >
-                  on the explorer
-                </Button>
-              </Typography>
-            ),
-            variant: 'success',
-          });
-
-          resetField('amount');
-        },
-        onTxFailed(error) {
-          notificationApi.remove(NotificationKeys.TX_SENDING);
-          notificationApi.remove(NotificationKeys.TX_IN_BLOCK);
-          notificationApi.addToQueue({
-            key: NotificationKeys.TX_FAILED,
-            message: 'Transaction failed!',
-            secondaryMessage: (
-              <Typography variant="body1" className="text-red-70">
-                {error}
-              </Typography>
-            ),
-            variant: 'error',
-            persist: true,
-          });
-        },
-      });
+      await deposit(
+        depositAssetId,
+        parseUnits(amount, asset.decimals),
+        txEventHandlers,
+      );
     },
-    // prettier-ignore
-    [activeChain?.blockExplorers?.default.url, assetMap, deposit, getExplorerUrl, notificationApi, resetField],
+    [assetMap, deposit, txEventHandlers],
   );
 
   return (
