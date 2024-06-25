@@ -1,7 +1,4 @@
-import {
-  useConnectWallet,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   type Chain,
   chainsPopulated,
@@ -54,7 +51,6 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
 
 const useNetworkSwitcher = () => {
   const { switchChain, activeWallet } = useWebContext();
-  const { toggleModal } = useConnectWallet({ useAllWallets: true });
 
   const [isCustom, setIsCustom] = useState(false);
 
@@ -151,48 +147,44 @@ const useNetworkSwitcher = () => {
         return;
       }
 
-      // If no active wallet, show the wallet modal and return.
-      if (activeWallet === undefined) {
-        toggleModal(true);
-        return;
-      }
+      if (activeWallet !== undefined) {
+        try {
+          const chain = await netWorkToChain(newNetwork, activeWallet);
 
-      try {
-        const chain = await netWorkToChain(newNetwork, activeWallet);
+          const switchChainResult = await switchChain(chain, activeWallet);
 
-        const switchChainResult = await switchChain(chain, activeWallet);
-
-        if (switchChainResult !== null) {
-          console.debug(
-            `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
-              newNetwork.name
-            } (${newNetwork.nodeType}) with RPC endpoint: ${
-              newNetwork.wsRpcEndpoint
-            }`,
-          );
-
-          // Update local storage cache with the new network.
-          if (isCustom) {
-            removeCachedNetworkId();
-            setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
-          } else {
-            removeCachedCustomRpcEndpoint();
-            setCachedNetworkId(newNetwork.id);
+          if (switchChainResult !== null) {
+            console.debug(
+              `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
+                newNetwork.name
+              } (${newNetwork.nodeType}) with RPC endpoint: ${
+                newNetwork.wsRpcEndpoint
+              }`,
+            );
           }
-
-          setIsCustom(isCustom);
-          setNetwork(newNetwork);
+        } catch (error) {
+          notificationApi({
+            variant: 'error',
+            message: 'Switching network failed',
+            secondaryMessage: `Error: ${ensureError(error).message}`,
+          });
         }
-      } catch (error) {
-        notificationApi({
-          variant: 'error',
-          message: 'Switching network failed',
-          secondaryMessage: `Error: ${ensureError(error).message}`,
-        });
       }
+
+      // Update local storage cache with the new network.
+      if (isCustom) {
+        removeCachedNetworkId();
+        setCachedCustomRpcEndpoint(newNetwork.wsRpcEndpoint);
+      } else {
+        removeCachedCustomRpcEndpoint();
+        setCachedNetworkId(newNetwork.id);
+      }
+
+      setIsCustom(isCustom);
+      setNetwork(newNetwork);
     },
     // prettier-ignore
-    [activeWallet, network.id, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain, toggleModal],
+    [activeWallet, network.id, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain],
   );
 
   return {
