@@ -1,7 +1,13 @@
 'use client';
 
-import { createContext, type PropsWithChildren, useContext } from 'react';
-import { type Observable, of } from 'rxjs';
+import { useObservableState } from 'observable-hooks';
+import {
+  createContext,
+  type PropsWithChildren,
+  useContext,
+  useMemo,
+} from 'react';
+import { combineLatest, map, type Observable, of } from 'rxjs';
 
 import useRestakeAssetMap from '../data/restake/useRestakeAssetMap';
 import useRestakeBalances from '../data/restake/useRestakeBalances';
@@ -37,9 +43,37 @@ const Context = createContext<RestakeContextType>({
 });
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const { assetMap, assetMap$ } = useRestakeAssetMap();
+  const { assetMap: assetMapRaw, assetMap$: assetMapRaw$ } =
+    useRestakeAssetMap();
 
   const { balances, balances$ } = useRestakeBalances();
+
+  const assetMap$ = useMemo(
+    () =>
+      combineLatest([assetMapRaw$, balances$]).pipe(
+        map(([assetMap, balances]) => {
+          const sortedEntries = Object.entries(assetMap)
+            .slice()
+            .sort((assetA, assetB) => {
+              const balanceA = balances[assetA[0]]?.balance ?? 0;
+              const balanceB = balances[assetB[0]]?.balance ?? 0;
+
+              if (balanceA === balanceB) {
+                return 0;
+              }
+
+              return balanceA > balanceB ? -1 : 1;
+            });
+
+          return Object.fromEntries(
+            sortedEntries,
+          ) satisfies AssetMap as AssetMap;
+        }),
+      ),
+    [assetMapRaw$, balances$],
+  );
+
+  const assetMap = useObservableState(assetMap$, assetMapRaw);
 
   return (
     <Context.Provider

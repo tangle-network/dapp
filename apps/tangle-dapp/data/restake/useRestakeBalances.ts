@@ -97,7 +97,23 @@ function assetBalancesReducer(
   initialValue: typeof EMPTY_BALANCES,
   nonNativeAssetIds: u128[],
 ) {
-  return assetBalances.reduce(
+  const sorted = assetBalances.slice().sort((a, b) => {
+    if (a.isSome && b.isNone) {
+      return -1;
+    }
+
+    if (a.isNone && b.isSome) {
+      return 1;
+    }
+
+    if (a.isSome && b.isSome) {
+      return a.unwrap().balance.cmp(b.unwrap().balance);
+    }
+
+    return 0;
+  });
+
+  return sorted.reduce(
     (assetBalanceMap, accountBalance, idx) => {
       if (accountBalance.isNone) {
         return assetBalanceMap;
