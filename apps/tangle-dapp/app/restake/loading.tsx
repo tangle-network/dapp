@@ -3,8 +3,8 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import FeeDetails from '@webb-tools/webb-ui-components/components/FeeDetails';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 
-import TabListItem from '../TabListItem';
-import TabsList from '../TabsList';
+import TabListItem from './TabListItem';
+import TabsList from './TabsList';
 
 const loading = () => {
   return (
