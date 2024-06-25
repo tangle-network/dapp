@@ -325,36 +325,34 @@ const TransactionInputCardBody = forwardRef<
           className,
         )}
       >
-        <div className="grow min-h-[52px] flex items-center">
-          {isFixedAmount ? (
-            <AdjustAmount
+        {isFixedAmount ? (
+          <AdjustAmount
+            min={0}
+            {...fixedAmountProps}
+            className={twMerge(
+              'max-w-[var(--adjust-amount-width)] h-full grow',
+              fixedAmountProps?.className,
+            )}
+            value={typeof amount === 'string' ? Number(amount) : undefined}
+            onChange={
+              typeof onAmountChange === 'function'
+                ? (nextVal) => onAmountChange(`${nextVal}`)
+                : undefined
+            }
+          />
+        ) : (
+          <TextField.Root isDisabledHoverStyle className="!bg-transparent grow">
+            <TextField.Input
+              placeholder="0.0"
               min={0}
-              {...fixedAmountProps}
-              className={twMerge(
-                'max-w-[var(--adjust-amount-width)] h-full',
-                fixedAmountProps?.className,
-              )}
-              value={typeof amount === 'string' ? Number(amount) : undefined}
-              onChange={
-                typeof onAmountChange === 'function'
-                  ? (nextVal) => onAmountChange(`${nextVal}`)
-                  : undefined
-              }
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
+              value={amount}
+              onChange={handleTextFieldChange}
+              {...customAmountProps}
             />
-          ) : (
-            <TextField.Root isDisabledHoverStyle className="!bg-transparent">
-              <TextField.Input
-                placeholder="0.0"
-                min={0}
-                inputMode="decimal"
-                pattern="[0-9]*\.?[0-9]*"
-                value={amount}
-                onChange={handleTextFieldChange}
-                {...customAmountProps}
-              />
-            </TextField.Root>
-          )}
-        </div>
+          </TextField.Root>
+        )}
 
         <TokenSelector
           type="button"
