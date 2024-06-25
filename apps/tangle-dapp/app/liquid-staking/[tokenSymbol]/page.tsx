@@ -1,19 +1,12 @@
-import {
-  ArrowRightUp,
-  ExternalLinkLine,
-  InformationLine,
-} from '@webb-tools/icons';
-import {
-  Button,
-  IconWithTooltip,
-  Typography,
-} from '@webb-tools/webb-ui-components';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-import { GlassCard } from '../../../components';
-import { LiquidStakingToken } from '../../../constants/liquidStaking';
-import LiquidStakingCard from './LiquidStakingCard';
+import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
+import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
+import {
+  LIQUID_STAKING_TOKEN_PREFIX,
+  LiquidStakingToken,
+} from '../../../constants/liquidStaking';
 
 type Props = {
   params: { tokenSymbol: string };
@@ -30,78 +23,33 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   }
 
   return (
-    <div className="flex flex-wrap gap-12 items-start">
-      <GlassCard className="space-y-6 w-auto">
-        <div className="grid grid-cols-2 grid-rows-2 gap-6">
-          <GridItem title="Staking" value={tokenSymbol} />
-
-          <GridItem title="Available" value={tokenSymbol} />
-
-          <GridItem
-            title="Unstaking"
-            value={tokenSymbol}
-            tooltip="This is a test."
-          />
-
-          <GridItem title="APY" value={tokenSymbol} />
-        </div>
-
-        <div className="flex gap-2 items-center">
-          <Button
-            rightIcon={
-              <ArrowRightUp className="dark:fill-mono-180" size="lg" />
-            }
-          >
-            Restake
-          </Button>
-
-          <Button
-            variant="secondary"
-            rightIcon={
-              <ExternalLinkLine className="dark:fill-mono-0" size="lg" />
-            }
-          >
-            View Token
-          </Button>
-        </div>
-      </GlassCard>
+    <div className="grid grid-cols-2 gap-12">
+      <TokenInfoCard
+        stakingInfo={{
+          title: 'Staking',
+          tooltip: `Total staked ${tokenSymbol}`,
+          value: '-',
+        }}
+        availableInfo={{
+          title: 'Available',
+          tooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
+          value: '98.00',
+          valueTooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
+        }}
+        unstakingInfo={{
+          title: 'Unstaking',
+          tooltip: `Total unstaking ${tokenSymbol} in progress`,
+          value: '-',
+        }}
+        apyInfo={{
+          title: 'APY',
+          tooltip: 'APY (Annual Percentage Yield) %',
+          value: '-',
+        }}
+        tokenSymbol={tokenSymbol}
+      />
 
       <LiquidStakingCard />
-    </div>
-  );
-};
-
-type GridItemProps = {
-  title: string;
-  tooltip?: string;
-  value: string;
-};
-
-/** @internal */
-const GridItem: FC<GridItemProps> = ({ title, tooltip, value }) => {
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-1">
-        <Typography className="dark:text-mono-100" variant="h5" fw="bold">
-          {title}
-        </Typography>
-
-        {tooltip !== undefined && (
-          <IconWithTooltip
-            icon={
-              <InformationLine className="fill-mono-140 dark:fill-mono-100" />
-            }
-            content={tooltip}
-            overrideTooltipBodyProps={{
-              className: 'max-w-[350px]',
-            }}
-          />
-        )}
-      </div>
-
-      <Typography variant="h4" fw="normal">
-        {value}
-      </Typography>
     </div>
   );
 };

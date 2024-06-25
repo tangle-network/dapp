@@ -20,11 +20,11 @@ import {
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
   LS_TOKEN_TO_CHAIN,
-} from '../../../constants/liquidStaking';
-import useInputAmount from '../../../hooks/useInputAmount';
-import formatBn from '../../../utils/formatBn';
-import ChainLogo from '../ChainLogo';
-import HoverButtonStyle from '../HoverButtonStyle';
+} from '../../constants/liquidStaking';
+import useInputAmount from '../../hooks/useInputAmount';
+import formatBn from '../../utils/formatBn';
+import ChainLogo from './ChainLogo';
+import HoverButtonStyle from './HoverButtonStyle';
 
 export type LiquidStakingInputProps = {
   id: string;

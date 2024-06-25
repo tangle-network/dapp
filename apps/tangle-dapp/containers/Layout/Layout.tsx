@@ -1,3 +1,5 @@
+'use client';
+
 import { Footer } from '@webb-tools/webb-ui-components';
 import {
   bottomLinks,
@@ -6,7 +8,7 @@ import {
   TANGLE_TERMS_OF_SERVICE_URL,
   WEBB_AVAILABLE_SOCIALS,
 } from '@webb-tools/webb-ui-components/constants';
-import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
+import { useLayoutBgClassname } from '@webb-tools/webb-ui-components/next-utils';
 import { type FC, type PropsWithChildren } from 'react';
 
 import { Breadcrumbs, Sidebar, SidebarMenu } from '../../components';
@@ -29,11 +31,18 @@ const BOTTOM_LINK_OVERRIDES: Partial<
   'Privacy Policy': TANGLE_PRIVACY_POLICY_URL,
 };
 
-const Layout: FC<PropsWithChildren> = ({ children }) => {
-  const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
+interface LayoutProps {
+  isSidebarInitiallyExpanded: boolean | undefined;
+}
+
+const Layout: FC<PropsWithChildren<LayoutProps>> = ({
+  isSidebarInitiallyExpanded,
+  children,
+}) => {
+  const layoutBgClassname = useLayoutBgClassname();
 
   return (
-    <div className="flex h-screen bg-body">
+    <div className={`flex h-screen ${layoutBgClassname}`}>
       <Sidebar isExpandedAtDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">

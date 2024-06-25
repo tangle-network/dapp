@@ -22,14 +22,14 @@ import {
   LiquidStakingChain,
   LS_CHAIN_TO_TOKEN,
   LS_TOKEN_TO_CURRENCY,
-} from '../../../constants/liquidStaking';
-import useMintTx from '../../../data/liquidStaking/useMintTx';
-import useApi from '../../../hooks/useApi';
-import useApiRx from '../../../hooks/useApiRx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
-import SelectValidators from '../SelectValidators';
-import WalletBalance from '../WalletBalance';
+} from '../../constants/liquidStaking';
+import useMintTx from '../../data/liquidStaking/useMintTx';
+import useApi from '../../hooks/useApi';
+import useApiRx from '../../hooks/useApiRx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import LiquidStakingInput from './LiquidStakingInput';
+import SelectValidators from './SelectValidators';
+import WalletBalance from './WalletBalance';
 
 const LiquidStakingCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
