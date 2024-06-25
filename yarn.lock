@@ -13430,14 +13430,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-mdx-gfm@npm:8.1.5":
-  version: 8.1.5
-  resolution: "@storybook/addon-mdx-gfm@npm:8.1.5"
+"@storybook/addon-mdx-gfm@npm:8.1.10":
+  version: 8.1.10
+  resolution: "@storybook/addon-mdx-gfm@npm:8.1.10"
   dependencies:
-    "@storybook/node-logger": "npm:8.1.5"
+    "@storybook/node-logger": "npm:8.1.10"
     remark-gfm: "npm:^4.0.0"
     ts-dedent: "npm:^2.0.0"
-  checksum: 10c0/3e2d90138c83572380510a88a8deda36fc3873a7049f55b03d47416c3c173026775c28db49a48200178ea5f22206a0e9cfaf16226a94d93619e5d0f07331c913
+  checksum: 10c0/916f520ec3028291fb0877799a9f623ebc5993b8f59ff0507ad51516aff88431d661b33663f87538d5500e1ab6faa2d86d7cfb169323aac79c19e0b5a4f18171
   languageName: node
   linkType: hard
 
@@ -43853,8 +43853,8 @@ __metadata:
   linkType: hard
 
 "tsx@npm:^4.11.0":
-  version: 4.15.6
-  resolution: "tsx@npm:4.15.6"
+  version: 4.15.7
+  resolution: "tsx@npm:4.15.7"
   dependencies:
     esbuild: "npm:~0.21.4"
     fsevents: "npm:~2.3.3"
@@ -43864,7 +43864,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/c44e489d35b8b4795d68164572eb9e322a707290aa0786c2aac0f5c7782a884dfec38d557d74471b981a8314b2c7f6612078451d0429db028a23cb54a37e83a0
+  checksum: 10c0/e960f4ee084b48cd3183e65946725fd9b0de4afae32a0fd9cd47416a41259fb2c72838b7aeba26adaecc2d89d70e976add9722e72ea5c876b3b493f137cbbf12
   languageName: node
   linkType: hard
 
@@ -45884,7 +45884,7 @@ __metadata:
     "@storybook/addon-essentials": "npm:8.1.10"
     "@storybook/addon-interactions": "npm:8.1.5"
     "@storybook/addon-links": "npm:8.1.5"
-    "@storybook/addon-mdx-gfm": "npm:8.1.5"
+    "@storybook/addon-mdx-gfm": "npm:8.1.10"
     "@storybook/addon-themes": "npm:^8.1.5"
     "@storybook/addon-webpack5-compiler-babel": "npm:^3.0.3"
     "@storybook/blocks": "npm:8.1.5"
