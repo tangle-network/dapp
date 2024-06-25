@@ -175,7 +175,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
               return (
                 <ListItem
                   key={`${currentChain.name}-${idx}`}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between bg-transparent dark:bg-transparent"
                   onClick={() => onChainChange(currentChain)}
                 >
                   <div className="flex items-center space-x-2">

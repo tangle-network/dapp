@@ -61,7 +61,10 @@ export default function TokenList({
       onChange={handleTokenChange}
       {...props}
       onClose={onClose}
-      className={twMerge('p-0 dark:bg-transparent', className)}
+      className={twMerge(
+        'dark:bg-[var(--restake-card-bg-dark)] p-0',
+        className,
+      )}
     />
   );
 }

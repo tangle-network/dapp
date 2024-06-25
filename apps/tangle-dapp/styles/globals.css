@@ -16,6 +16,7 @@ code span {
 :root {
   /** Define variables */
   --restake-card-min-height: 502px;
+  --restake-card-bg-dark: #1f1d2b;
 
   /** Tailwind md breakpoint */
   @media (min-width: 768px) {

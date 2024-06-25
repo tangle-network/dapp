@@ -84,7 +84,10 @@ const ChainList = ({
       }}
       {...props}
       onClose={onClose}
-      className={twMerge('p-0 dark:bg-transparent', className)}
+      className={twMerge(
+        'p-0 dark:bg-[var(--restake-card-bg-dark)]',
+        className,
+      )}
     />
   );
 };
