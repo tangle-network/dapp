@@ -89,17 +89,15 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
         }}
         externalUrl={tx.explorerUrl ? new URL(tx.explorerUrl) : undefined}
         actionCmp={
-          tx.explorerUrl ? (
-            <Typography
-              variant="body3"
-              onClick={() => {
-                deleteTxFromQueue(tx.hash);
-              }}
-              className="text-red-70 dark:text-red-50 cursor-pointer"
-            >
-              Close
-            </Typography>
-          ) : undefined
+          <Typography
+            variant="body2"
+            onClick={() => {
+              deleteTxFromQueue(tx.hash);
+            }}
+            className="text-red-70 dark:text-red-50 cursor-pointer"
+          >
+            Close
+          </Typography>
         }
       />
     </TxProgressor.Root>
