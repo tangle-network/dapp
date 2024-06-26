@@ -291,6 +291,12 @@ export type AssetBalanceMap = {
   readonly [assetId: string]: AssetBalance;
 };
 
+export type AssetWithBalance = {
+  assetId: string;
+  metadata: AssetMetadata;
+  balance: AssetBalance | null;
+};
+
 /**
  * Configuration for rewards associated with a specific asset.
  */

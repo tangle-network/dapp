@@ -1,5 +1,8 @@
 'use client';
 
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import orderBy from 'lodash/orderBy';
+import toPairs from 'lodash/toPairs';
 import { useObservableState } from 'observable-hooks';
 import {
   createContext,
@@ -11,7 +14,11 @@ import { combineLatest, map, type Observable, of } from 'rxjs';
 
 import useRestakeAssetMap from '../data/restake/useRestakeAssetMap';
 import useRestakeBalances from '../data/restake/useRestakeBalances';
-import type { AssetBalanceMap, AssetMap } from '../types/restake';
+import type {
+  AssetBalanceMap,
+  AssetMap,
+  AssetWithBalance,
+} from '../types/restake';
 
 type RestakeContextType = {
   /**
@@ -33,6 +40,16 @@ type RestakeContextType = {
    * An observable of the balances of the current active account
    */
   balances$: Observable<AssetBalanceMap>;
+
+  /**
+   * An observable of assets with balances of the current active account
+   */
+  assetWithBalances$: Observable<Array<AssetWithBalance>>;
+
+  /**
+   * The assets with balances of the current active account
+   */
+  assetWithBalances: Array<AssetWithBalance>;
 };
 
 const Context = createContext<RestakeContextType>({
@@ -40,44 +57,52 @@ const Context = createContext<RestakeContextType>({
   assetMap$: of<AssetMap>({}),
   balances: {},
   balances$: of<AssetBalanceMap>({}),
+  assetWithBalances: [],
+  assetWithBalances$: of([]),
 });
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const { assetMap: assetMapRaw, assetMap$: assetMapRaw$ } =
-    useRestakeAssetMap();
+  const { assetMap, assetMap$ } = useRestakeAssetMap();
 
   const { balances, balances$ } = useRestakeBalances();
 
-  const assetMap$ = useMemo(
+  const assetWithBalances$ = useMemo(
     () =>
-      combineLatest([assetMapRaw$, balances$]).pipe(
+      combineLatest([assetMap$, balances$]).pipe(
         map(([assetMap, balances]) => {
-          const sortedEntries = Object.entries(assetMap)
-            .slice()
-            .sort((assetA, assetB) => {
-              const balanceA = balances[assetA[0]]?.balance ?? 0;
-              const balanceB = balances[assetB[0]]?.balance ?? 0;
+          return orderBy(
+            toPairs(assetMap).reduce(
+              (assetWithBalances, [assetId, assetMetadata]) => {
+                const balance = balances[assetId] ?? null;
 
-              if (balanceA === balanceB) {
-                return 0;
-              }
-
-              return balanceA > balanceB ? -1 : 1;
-            });
-
-          return Object.fromEntries(
-            sortedEntries,
-          ) satisfies AssetMap as AssetMap;
+                return assetWithBalances.concat({
+                  assetId,
+                  metadata: assetMetadata,
+                  balance,
+                });
+              },
+              [] as Array<AssetWithBalance>,
+            ),
+            ({ balance }) => balance?.balance ?? ZERO_BIG_INT,
+            'desc',
+          );
         }),
       ),
-    [assetMapRaw$, balances$],
+    [assetMap$, balances$],
   );
 
-  const assetMap = useObservableState(assetMap$, assetMapRaw);
+  const assetWithBalances = useObservableState(assetWithBalances$, []);
 
   return (
     <Context.Provider
-      value={{ assetMap, assetMap$, balances, balances$ }}
+      value={{
+        assetWithBalances,
+        assetWithBalances$,
+        assetMap,
+        assetMap$,
+        balances,
+        balances$,
+      }}
       {...props}
     />
   );

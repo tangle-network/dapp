@@ -41,16 +41,16 @@ export default function DepositPage() {
   });
 
   const { setCustomRpc } = usePolkadotApi();
-  const { assetMap, assetMap$ } = useRestakeContext();
+  const { assetMap, assetWithBalances$ } = useRestakeContext();
   const { deposit } = useRestakeTx();
 
   // Subscribe to assetMap$ and update depositAssetId to the first assetId
-  useSubscription(assetMap$, (assetMap) => {
-    if (Object.keys(assetMap).length === 0) {
+  useSubscription(assetWithBalances$, (assets) => {
+    if (assets.length === 0) {
       return;
     }
 
-    const defaultAssetId = Object.keys(assetMap)[0];
+    const defaultAssetId = assets[0].assetId;
     setValue('depositAssetId', defaultAssetId, {
       shouldDirty: true,
       shouldValidate: true,

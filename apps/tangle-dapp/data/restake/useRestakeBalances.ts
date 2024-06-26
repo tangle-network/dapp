@@ -35,7 +35,6 @@ export default function useRestakeBalances() {
           }
 
           const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
-
           if (nonNativeAssetIds.length === 0) {
             return hasNative
               ? getNativeBalance$(apiRx, activeAccount)
@@ -97,23 +96,7 @@ function assetBalancesReducer(
   initialValue: typeof EMPTY_BALANCES,
   nonNativeAssetIds: u128[],
 ) {
-  const sorted = assetBalances.slice().sort((a, b) => {
-    if (a.isSome && b.isNone) {
-      return -1;
-    }
-
-    if (a.isNone && b.isSome) {
-      return 1;
-    }
-
-    if (a.isSome && b.isSome) {
-      return a.unwrap().balance.cmp(b.unwrap().balance);
-    }
-
-    return 0;
-  });
-
-  return sorted.reduce(
+  return assetBalances.reduce(
     (assetBalanceMap, accountBalance, idx) => {
       if (accountBalance.isNone) {
         return assetBalanceMap;

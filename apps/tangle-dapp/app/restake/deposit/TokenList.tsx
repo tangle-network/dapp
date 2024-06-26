@@ -18,27 +18,30 @@ export default function TokenList({
   setValue,
   ...props
 }: Props) {
-  const { assetMap, balances } = useRestakeContext();
+  const { assetWithBalances } = useRestakeContext();
 
   const selectableTokens = useMemo(
     () =>
-      Object.values(assetMap).map((asset) => {
-        const balance = balances[asset.id];
+      assetWithBalances.map((asset) => {
+        const balance = asset.balance;
 
         return {
-          id: asset.id,
-          name: asset.name,
-          symbol: asset.symbol,
-          ...(balance !== undefined
+          id: asset.assetId,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          ...(balance !== null
             ? {
                 assetBalanceProps: {
-                  balance: +formatUnits(balance.balance, asset.decimals),
+                  balance: +formatUnits(
+                    balance.balance,
+                    asset.metadata.decimals,
+                  ),
                 },
               }
             : {}),
         } satisfies TokenListCardProps['selectTokens'][number];
       }),
-    [assetMap, balances],
+    [assetWithBalances],
   );
 
   const handleTokenChange = useCallback(
