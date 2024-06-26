@@ -12,6 +12,9 @@ const formatTangleBalance = (
   return formatBalance(balance, {
     decimals: TANGLE_TOKEN_DECIMALS,
     withZero: false,
+    // This ensures that the balance is always displayed in the
+    // base unit, preventing the conversion to larger or smaller
+    // units (e.g. kilo, milli, etc.).
     forceUnit: '-',
     withUnit: tokenSymbol ?? false,
     ...options,

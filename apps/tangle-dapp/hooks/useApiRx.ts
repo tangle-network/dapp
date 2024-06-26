@@ -37,6 +37,8 @@ function useApiRx<T>(
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const { rpcEndpoint } = useNetworkStore();
+
+  // TODO: Consider integrating the error right into the result: `result: T | Error | null`. This will force the consumer to handle the error case, which is what they should be doing anyway.
   const [error, setError] = useState<Error | null>(null);
 
   const { result: apiRx } = usePromise(

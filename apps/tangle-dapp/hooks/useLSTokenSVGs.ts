@@ -16,7 +16,8 @@ const tokenSVGs: {
   GLMR,
   MANTA,
   PHALA,
-  TNT,
+  // TODO: Awaiting internal renaming of BNC -> TNT in the Tangle Restaking Parachain.
+  BNC: TNT,
 };
 
 const useLSTokenSVGs = (
