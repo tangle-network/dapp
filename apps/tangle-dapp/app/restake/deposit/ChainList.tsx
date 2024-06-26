@@ -58,7 +58,10 @@ const ChainList = ({
 
   const handleChainChange = useCallback(
     ({ typedChainId }: ChainType) => {
-      setValue('sourceTypedChainId', typedChainId);
+      setValue('sourceTypedChainId', typedChainId, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       onClose?.();
     },
     [onClose, setValue],

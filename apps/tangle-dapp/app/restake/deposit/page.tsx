@@ -51,7 +51,10 @@ export default function DepositPage() {
     }
 
     const defaultAssetId = Object.keys(assetMap)[0];
-    setValue('depositAssetId', defaultAssetId, { shouldDirty: true });
+    setValue('depositAssetId', defaultAssetId, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   });
 
   // Register fields render on modal on mount

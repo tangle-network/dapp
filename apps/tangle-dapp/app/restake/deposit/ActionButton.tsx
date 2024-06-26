@@ -85,6 +85,8 @@ export default function ActionButton({
       <Button
         type="button"
         isFullWidth
+        isLoading={isLoading}
+        loadingText={loadingText}
         onClick={() => toggleModal(true, sourceTypedChainId)}
       >
         Connect Wallet

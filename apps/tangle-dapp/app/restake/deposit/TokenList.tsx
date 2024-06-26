@@ -43,7 +43,10 @@ export default function TokenList({
 
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
-      setValue('depositAssetId', token.id);
+      setValue('depositAssetId', token.id, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       onClose?.();
     },
     [onClose, setValue],
