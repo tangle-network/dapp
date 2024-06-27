@@ -10,7 +10,6 @@ import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingToken,
 } from '../../../constants/liquidStaking';
-import useValidators from '../../../data/liquidStaking/useValidators';
 
 type Props = {
   params: { tokenSymbol: string };
@@ -23,6 +22,8 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   const [selectedValidators, setSelectedValidators] = useState<Set<string>>(
     new Set(),
   );
+
+  console.debug('Selected Validators:', selectedValidators);
 
   const possibleTokens = Object.values(LiquidStakingToken).map((value) =>
     value.toString(),

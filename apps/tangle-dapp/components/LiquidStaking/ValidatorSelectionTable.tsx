@@ -22,28 +22,20 @@ import {
   InformationLineFill,
 } from '@webb-tools/icons';
 import {
-  Alert,
   Avatar,
   CheckBox,
-  Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
   fuzzyFilter,
-  InfoItem,
   Pagination,
   shortenString,
-  Table,
-  TData,
-  THeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
 import {
   Dispatch,
   FC,
   SetStateAction,
   startTransition,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -52,7 +44,6 @@ import {
 import { twMerge } from 'tailwind-merge';
 
 import { Validator } from '../../types/liquidStaking';
-import { HeaderCell } from '../tableCells';
 
 type ValidatorSelectionTableProps = {
   validators: Validator[];
@@ -77,9 +68,8 @@ const ValidatorSelectionTable = ({
   validators,
   defaultSelectedValidators,
   setSelectedValidators,
-  isLoading,
 }: ValidatorSelectionTableProps) => {
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+  const [rowSelection] = useState<RowSelectionState>(
     defaultSelectedValidators.reduce((acc, address) => {
       acc[address] = true;
       return acc;
