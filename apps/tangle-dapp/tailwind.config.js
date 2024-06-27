@@ -29,6 +29,9 @@ module.exports = {
           'linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.5) 100%)',
         token_info_card_dark:
           'linear-gradient(180deg, #2B2F40 0%, rgba(43, 47, 64, 0.5) 100%)',
+        validator_table: 'linear-gradient(180deg, #C0C5D800 0%, #FFFFFF66 40%)',
+        validator_table_dark:
+          'linear-gradient(180deg, #707AA600 0%, #2B2F4066 40%)',
       },
     },
   },

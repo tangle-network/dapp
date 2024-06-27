@@ -23,6 +23,7 @@ import {
   LS_CHAIN_TO_TOKEN,
   LS_TOKEN_TO_CURRENCY,
 } from '../../constants/liquidStaking';
+import { useLiquidStakingStore } from '../../data/liquidStaking/store';
 import useMintTx from '../../data/liquidStaking/useMintTx';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
@@ -37,9 +38,7 @@ const LiquidStakingCard: FC = () => {
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
   const [rate] = useState<number | null>(1.0);
 
-  const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
-    LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN,
-  );
+  const { selectedChain, setSelectedChain } = useLiquidStakingStore();
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
 

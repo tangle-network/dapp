@@ -80,3 +80,15 @@ export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
 export const LIQUID_STAKING_TOKEN_PREFIX = 'tg';
+
+export const LS_CHAIN_TO_LOCAL_RPC_ENDPOINT: Record<
+  LiquidStakingChain,
+  string
+> = {
+  [LiquidStakingChain.POLKADOT]: 'ws://127.0.0.1:30334',
+  [LiquidStakingChain.PHALA]: '',
+  [LiquidStakingChain.MOONBEAM]: '',
+  [LiquidStakingChain.ASTAR]: '',
+  [LiquidStakingChain.MANTA]: '',
+  [LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN]: 'ws://127.0.0.1:59408',
+};
