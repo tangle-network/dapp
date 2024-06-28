@@ -53,7 +53,11 @@ const BridgeTxQueueDropdown: FC = () => {
 
       <DropdownBody
         align="start"
-        className="mt-4 mr-12 max-h-80 w-[30rem] overflow-scroll overflow-x-hidden dark:bg-mono-180"
+        className={twMerge(
+          'max-h-80 w-[calc(100vw-32px)] md:w-[30rem]',
+          'overflow-scroll overflow-x-hidden dark:bg-mono-180',
+          'mt-4 mr-4 md:mr-8 lg:mr-12',
+        )}
       >
         {sortedTxQueue.map((tx) => {
           return (
