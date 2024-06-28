@@ -1,6 +1,7 @@
-import { AccordionSingleProps } from '@radix-ui/react-accordion';
-import { IconBase } from '@webb-tools/icons/types';
-import { TitleWithInfoProps } from '../TitleWithInfo/types';
+import type { AccordionSingleProps } from '@radix-ui/react-accordion';
+import type { IconBase } from '@webb-tools/icons/types';
+import type React from 'react';
+import type { TitleWithInfoProps } from '../TitleWithInfo/types';
 
 /**
  * The fee item to display in the FeeDetails component.
@@ -24,7 +25,7 @@ export type FeeItem = {
   /**
    * The formated fee value.
    */
-  value?: number | React.ReactNode;
+  value?: React.ReactNode;
 
   /**
    * The fee token symbol.
@@ -91,4 +92,9 @@ export type FeeDetailsProps = Omit<AccordionSingleProps, 'type'> & {
    * Fee fee items to display.
    */
   items?: Array<FeeItem>;
+
+  /**
+   * Indicates if the accordion is open by default.
+   */
+  isDefaultOpen?: boolean;
 };

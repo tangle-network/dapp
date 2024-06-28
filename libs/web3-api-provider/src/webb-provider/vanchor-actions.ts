@@ -957,7 +957,6 @@ export class Web3VAnchorActions extends VAnchorActions<
         client: this.inner.publicClient,
       });
       const balance = await erc20Contract.read.balanceOf([account.address]);
-      console.log('Balance: ', balance);
       hasBalance = balance >= BigInt(payload.note.amount);
     }
 

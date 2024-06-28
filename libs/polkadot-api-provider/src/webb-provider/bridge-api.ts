@@ -33,17 +33,16 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
 
     const tokens = await this.inner.api.query.assetRegistry.assets.entries();
     const assets = tokens
-      .filter(([, metadata]) => metadata.isSome)
-
+      .filter(([, metadata]) => !metadata.isEmpty)
       .map(([key, token]) => {
-        const details = token.unwrap();
+        const details = (token as any).unwrap();
         const id = Number(key.args[0].toString());
         return {
           id,
           name: details.name.toHuman(),
           isPoolShare: details.assetType.isPoolShare,
           tokens: details.assetType.isPoolShare
-            ? details.assetType.asPoolShare.map((i) => i.toString())
+            ? details.assetType.asPoolShare.map((i: any) => i.toString())
             : null,
           existentialDeposit: details.existentialDeposit.toString(),
           locked: details.locked.isTrue,

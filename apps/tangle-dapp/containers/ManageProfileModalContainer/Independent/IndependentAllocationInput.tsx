@@ -6,12 +6,8 @@ import { FC, useCallback, useMemo, useState } from 'react';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
 import useNetworkStore from '../../../context/useNetworkStore';
-import useRestakingAllocations from '../../../data/restaking/useRestakingAllocations';
-import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
-import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
-import useRestakingProfile from '../../../data/restaking/useRestakingProfile';
 import useInputAmount from '../../../hooks/useInputAmount';
-import { RestakingProfileType, RestakingService } from '../../../types';
+import { RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import InputAction from '../InputAction';
@@ -50,44 +46,16 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
   onDelete,
   errorOnEmptyValue = true,
 }) => {
-  const { servicesWithJobs } = useRestakingJobs();
-  const { profileTypeOpt } = useRestakingProfile();
-  const { minRestakingBond } = useRestakingLimits();
   const { nativeTokenSymbol } = useNetworkStore();
 
   // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading. It needs to default to `null` and have its loading state handled appropriately.
-  const hasActiveJob = (() => {
-    if (
-      service === null ||
-      profileTypeOpt === null ||
-      servicesWithJobs === null
-    ) {
-      return false;
-    }
-
-    return (
-      servicesWithJobs.includes(service) &&
-      profileTypeOpt.value === RestakingProfileType.INDEPENDENT
-    );
-  })();
-
-  const { value: substrateAllocationsOpt } = useRestakingAllocations();
+  const hasActiveJob = false;
 
   const substrateAllocationAmount = useMemo(() => {
-    if (
-      service === null ||
-      substrateAllocationsOpt === null ||
-      substrateAllocationsOpt.value === null
-    ) {
-      return null;
-    }
+    return null;
+  }, []);
 
-    return substrateAllocationsOpt.value[service] ?? null;
-  }, [service, substrateAllocationsOpt]);
-
-  const min = hasActiveJob
-    ? substrateAllocationAmount ?? minRestakingBond
-    : minRestakingBond;
+  const min = substrateAllocationAmount;
 
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -140,7 +108,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
           <div
             key={service}
             onClick={() => handleSetService(service)}
-            className="flex justify-between rounded-lg p-2 cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
+            className="flex justify-between p-2 rounded-lg cursor-pointer hover:bg-mono-20 dark:hover:bg-mono-160"
           >
             <Chip color={getChipColorOfServiceType(service)}>{service}</Chip>
 

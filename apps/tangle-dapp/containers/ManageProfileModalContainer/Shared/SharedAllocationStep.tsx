@@ -4,7 +4,6 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
-import useRestakingLimits from '../../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import { AllocationChartVariant } from '../AllocationChart';
@@ -26,11 +25,9 @@ const SharedAllocationStep: FC<SharedAllocationStepProps> = ({
   restakeAmount,
   setRestakeAmount,
 }) => {
-  const { maxRestakingAmount } = useRestakingLimits();
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const remainingAmount =
-    maxRestakingAmount?.sub(restakeAmount ?? BN_ZERO) ?? null;
+  const remainingAmount = null;
 
   const [selectedRoles, setSelectedRoles] = useState<RestakingService[]>(
     Object.keys(allocations) as RestakingService[],

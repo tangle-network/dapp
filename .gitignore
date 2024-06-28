@@ -101,4 +101,5 @@ apps/stats-dapp/graphql.schema.json
 # Next.js telemetry cache folder
 /cache/
 
-tsconfig.tsbuildinfo
+# TypeScript build info
+/**/tsconfig.tsbuildinfo

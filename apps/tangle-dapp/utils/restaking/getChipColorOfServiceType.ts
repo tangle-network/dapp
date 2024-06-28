@@ -22,6 +22,8 @@ function getChipColorOfServiceType(serviceType: RestakingService): ChipColors {
     case RestakingService.TSS_ZCASH_FROST_P384:
     case RestakingService.TSS_ZCASH_FROST_ED448:
       return 'purple';
+    default:
+      return 'grey';
   }
 }
 

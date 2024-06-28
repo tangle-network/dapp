@@ -203,7 +203,7 @@ export class WebbPolkadot
     const chainIdentifier =
       this.provider.api.consts.linkableTreeBn254.chainIdentifier;
     if (!chainIdentifier.isEmpty) {
-      return chainIdentifier.toNumber();
+      return parseInt(chainIdentifier.toHex());
     }
 
     // If the chainId is not set, fallback to the typedChainId
@@ -357,7 +357,9 @@ export class WebbPolkadot
       throw WebbError.from(WebbErrorCodes.InvalidArguments);
     }
 
-    const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+    const chainId = parseInt(
+      api.consts.linkableTreeBn254.chainIdentifier.toHex(),
+    );
     const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId);
     const chain = this.config.chains[typedChainId];
 
@@ -523,8 +525,8 @@ export class WebbPolkadot
       return 0;
     }
 
-    this.vAnchorMaxEdges.set(treeId, maxEdges.toNumber());
-    return maxEdges.toNumber();
+    this.vAnchorMaxEdges.set(treeId, parseInt(maxEdges.toHex()));
+    return parseInt(maxEdges.toHex());
   }
 
   async getVAnchorLevels(
@@ -545,11 +547,11 @@ export class WebbPolkadot
 
     const api = provider || this.api;
     const treeData = await api.query.merkleTreeBn254.trees(treeId);
-    if (treeData.isNone) {
+    if (treeData.isEmpty) {
       throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
     }
 
-    const treeMedata = treeData.unwrap();
+    const treeMedata = (treeData as any).unwrap();
     const levels = treeMedata.depth.toNumber();
 
     this.vAnchorLevels.set(treeId, levels);

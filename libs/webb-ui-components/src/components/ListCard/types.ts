@@ -1,10 +1,16 @@
-import { ComponentProps } from 'react';
-import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
-import { AvatarProps } from '../Avatar';
-import { ScrollArea } from '../ScrollArea';
-import { InputProps } from '../Input';
+import type { ComponentProps } from 'react';
+import type { IWebbComponentBase, PropsOf, TokenType } from '../../types';
+import type { AvatarProps } from '../Avatar';
+import type { ScrollArea } from '../ScrollArea';
+import type { InputProps } from '../Input';
+import type { Typography } from '../../typography/Typography';
 
 export type ChainType = {
+  /**
+   * The typed chain id
+   */
+  typedChainId: number;
+
   /**
    * The chain name
    */
@@ -91,6 +97,11 @@ export type AssetBadgeInfoType = {
 
 export type AssetType = {
   /**
+   * The asset id
+   */
+  id: string;
+
+  /**
    * The asset name
    */
   name: string;
@@ -168,6 +179,11 @@ export interface ListCardWrapperProps
   title: string;
 
   /**
+   * Override the title props
+   */
+  overrideTitleProps?: ComponentProps<typeof Typography>;
+
+  /**
    * The callback involke when pressing the close button
    */
   onClose?: () => void;
@@ -222,9 +238,14 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
 
   /**
+   * Override the title props
+   */
+  overrideTitleProps?: ComponentProps<typeof Typography>;
+
+  /**
    * The current active/connected chain
    */
-  currentActiveChain?: string;
+  activeTypedChainId?: number;
 
   /**
    * If `true`, wallet is connecting to chain
