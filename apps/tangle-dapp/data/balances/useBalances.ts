@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import useApiRx, { ObservableFactory } from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { getTransferable } from '../../utils/polkadot/balance';
+import { calculateTransferrableBalance } from '../../utils/polkadot/balance';
 
 export type AccountBalances = {
   /**
@@ -44,7 +44,7 @@ const useBalances = () => {
           // Note that without the null/undefined check, an error
           // reports that `num` is undefined for some reason. Might be
           // a gap in the type definitions of PolkadotJS.
-          const transferable = getTransferable(data);
+          const transferable = calculateTransferrableBalance(data);
 
           return {
             free: data.free.toBn(),
