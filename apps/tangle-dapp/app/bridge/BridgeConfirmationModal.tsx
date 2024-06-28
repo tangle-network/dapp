@@ -13,6 +13,7 @@ import {
 import { FC, useCallback, useState } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
+import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import ensureError from '../../utils/ensureError';
 import FeeDetails from './FeeDetails';
@@ -31,7 +32,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
 }) => {
   const { notificationApi } = useWebbUI();
   const activeAccountAddress = useActiveAccountAddress();
-
+  const { setIsOpenQueueDropdown } = useBridgeTxQueue();
   const {
     selectedSourceChain,
     selectedDestinationChain,
@@ -59,6 +60,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
       setIsTransferring(true);
       await transfer();
       cleanUpWhenSubmit();
+      setIsOpenQueueDropdown(true);
     } catch (error) {
       notificationApi({
         variant: 'error',
@@ -69,7 +71,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     }
 
     // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
-  }, [transfer, cleanUpWhenSubmit, notificationApi]);
+  }, [transfer, cleanUpWhenSubmit, notificationApi, setIsOpenQueueDropdown]);
 
   return (
     <Modal open>

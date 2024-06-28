@@ -15,7 +15,8 @@ import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import BridgeTxQueueItem from './BridgeTxQueueItem';
 
 const BridgeTxQueueDropdown: FC = () => {
-  const { txQueue } = useBridgeTxQueue();
+  const { txQueue, isOpenQueueDropdown, setIsOpenQueueDropdown } =
+    useBridgeTxQueue();
 
   // Sort the latest tx to the top
   const sortedTxQueue = txQueue
@@ -27,7 +28,12 @@ const BridgeTxQueueDropdown: FC = () => {
   }
 
   return (
-    <Dropdown>
+    <Dropdown
+      radixRootProps={{
+        open: isOpenQueueDropdown,
+        onOpenChange: setIsOpenQueueDropdown,
+      }}
+    >
       <DropdownTrigger asChild>
         <Button
           variant="secondary"

@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
 } from 'react';
 
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
@@ -24,6 +25,8 @@ interface BridgeTxQueueContextProps {
   addSygmaTxId: (txHash: string, sygmaTxId: string) => void;
   addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
   updateTxState: (txHash: string, state: BridgeTxState) => void;
+  isOpenQueueDropdown: boolean;
+  setIsOpenQueueDropdown: (isOpen: boolean) => void;
 }
 
 const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
@@ -43,6 +46,10 @@ const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
   addTxExplorerUrl: () => {
     return;
   },
+  isOpenQueueDropdown: false,
+  setIsOpenQueueDropdown: () => {
+    return;
+  },
 });
 
 export const useBridgeTxQueue = () => {
@@ -55,6 +62,8 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
     setWithPreviousValue: setCachedBridgeTxQueueByAcc,
     valueOpt: cachedBridgeTxQueueByAcc,
   } = useLocalStorage(LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC);
+
+  const [isOpenQueueDropdown, setIsOpenQueueDropdown] = useState(false);
 
   const txQueue = useMemo(
     () =>
@@ -200,6 +209,8 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
         addSygmaTxId,
         updateTxState,
         addTxExplorerUrl,
+        isOpenQueueDropdown,
+        setIsOpenQueueDropdown,
       }}
     >
       {children}
