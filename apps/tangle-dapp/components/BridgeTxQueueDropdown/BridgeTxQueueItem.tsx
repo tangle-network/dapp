@@ -25,7 +25,10 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
   useEffect(() => {
     const sygmaTxId = tx.sygmaTxId;
     if (sygmaTxId === undefined) return;
-    const interval = setInterval(() => {
+
+    let interval: ReturnType<typeof setTimeout> | undefined = undefined;
+
+    const getTxStatus = () => {
       getSygmaTxStatus(
         sygmaTxId,
         tx.env === 'live'
@@ -48,13 +51,20 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
               clearInterval(interval);
             }
             addTxExplorerUrl(tx.hash, data[0].explorerUrl);
-          } else {
-            updateTxState(tx.hash, BridgeTxState.Indexing);
           }
         })
         .catch(() => {
           updateTxState(tx.hash, BridgeTxState.Failed);
+          clearInterval(interval); // Clear interval on error to avoid repeated failures.
         });
+    };
+
+    // Run for the first time when the component is mounted
+    getTxStatus();
+
+    // Set interval to run getTxStatus every 5 seconds
+    interval = setInterval(() => {
+      getTxStatus();
     }, 5000);
 
     return () => {
@@ -84,7 +94,7 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
         status={getStatus(tx.state)}
         statusMessage={tx.state}
         steppedProgressProps={{
-          steps: 4, // 1. Signing and Sending, 2. Indexing, 3.Pending, 4.Executed or Failed
+          steps: 4, // 1.Sending, 2.Indexing, 3.Pending, 4.Executed or Failed
           activeStep: getActiveStep(tx.state),
         }}
         externalUrl={tx.explorerUrl ? new URL(tx.explorerUrl) : undefined}
@@ -108,7 +118,7 @@ export default BridgeTxQueueItem;
 
 const getActiveStep = (state: BridgeTxState) => {
   switch (state) {
-    case BridgeTxState.SigningAndSending:
+    case BridgeTxState.Sending:
       return 1;
     case BridgeTxState.Indexing:
       return 2;
@@ -125,7 +135,7 @@ const getActiveStep = (state: BridgeTxState) => {
 
 const getStatus = (state: BridgeTxState): StatusVariant => {
   switch (state) {
-    case BridgeTxState.SigningAndSending:
+    case BridgeTxState.Sending:
     case BridgeTxState.Indexing:
     case BridgeTxState.Pending:
       return 'info';

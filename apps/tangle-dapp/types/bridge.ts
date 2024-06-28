@@ -61,7 +61,7 @@ export enum BridgeWalletError {
 }
 
 export enum BridgeTxState {
-  SigningAndSending = 'Signing and Sending', // The user is signing the tx
+  Sending = 'Sending', // The user is signing the tx
 
   Indexing = 'Indexing', // The tx is being indexed by Sygma
 

@@ -24,7 +24,6 @@ interface BridgeTxQueueContextProps {
   addSygmaTxId: (txHash: string, sygmaTxId: string) => void;
   addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
   updateTxState: (txHash: string, state: BridgeTxState) => void;
-  updateTxHash: (txHash: string, newTxHash: string) => void;
 }
 
 const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
@@ -42,9 +41,6 @@ const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
     return;
   },
   addTxExplorerUrl: () => {
-    return;
-  },
-  updateTxHash: () => {
     return;
   },
 });
@@ -74,12 +70,28 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
   const addTxToQueue = useCallback(
     (tx: BridgeQueueTxItem) => {
       if (!activeAccountAddress) return;
+
       setCachedBridgeTxQueueByAcc((cache) => {
         const currTxQueue = getTxQueueFromLocalStorage(
           activeAccountAddress,
           cache,
         );
-        const updatedTxQueue = [tx, ...currTxQueue];
+
+        // Check if the transaction already exists in the queue
+        const txIndex = currTxQueue.findIndex(
+          (txItem) => txItem.hash === tx.hash,
+        );
+
+        let updatedTxQueue: BridgeQueueTxItem[];
+        if (txIndex !== -1) {
+          // Replace existing transaction
+          updatedTxQueue = [...currTxQueue];
+          updatedTxQueue[txIndex] = tx;
+        } else {
+          // Add new transaction to the beginning of the queue
+          updatedTxQueue = [tx, ...currTxQueue];
+        }
+
         return {
           ...(cache?.value ?? {}),
           [activeAccountAddress]: updatedTxQueue,
@@ -179,29 +191,6 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
     [activeAccountAddress, setCachedBridgeTxQueueByAcc],
   );
 
-  const updateTxHash = useCallback(
-    (txHash: string, newTxHash: string) => {
-      if (!activeAccountAddress) return;
-      setCachedBridgeTxQueueByAcc((cache) => {
-        const currTxQueue = getTxQueueFromLocalStorage(
-          activeAccountAddress,
-          cache,
-        );
-        const updatedTxQueue = currTxQueue.map((txItem) => {
-          if (txItem.hash === txHash) {
-            return { ...txItem, hash: newTxHash };
-          }
-          return txItem;
-        });
-        return {
-          ...(cache?.value ?? {}),
-          [activeAccountAddress]: updatedTxQueue,
-        };
-      });
-    },
-    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
-  );
-
   return (
     <BridgeTxQueueContext.Provider
       value={{
@@ -211,7 +200,6 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
         addSygmaTxId,
         updateTxState,
         addTxExplorerUrl,
-        updateTxHash,
       }}
     >
       {children}

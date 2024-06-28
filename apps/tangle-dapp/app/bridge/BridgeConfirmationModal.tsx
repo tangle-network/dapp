@@ -8,13 +8,13 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
-import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { BridgeTxState } from '../../types/bridge';
+import ensureError from '../../utils/ensureError';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
@@ -29,6 +29,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   isOpen,
   handleClose,
 }) => {
+  const { notificationApi } = useWebbUI();
   const activeAccountAddress = useActiveAccountAddress();
 
   const {
@@ -43,11 +44,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     useAmountInDecimals();
   const transfer = useBridgeTransfer();
 
-  const { addSygmaTxId, updateTxState } = useBridgeTxQueue();
-
-  const [txHash, setTxHash] = useState<string | null>(null);
   const [isTransferring, setIsTransferring] = useState(false);
-  const [isError, setIsError] = useState(false);
 
   const cleanUpWhenSubmit = useCallback(async () => {
     handleClose();
@@ -59,26 +56,20 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     try {
       // TODO: for EVM case, switch chain if the user's is on the wrong network
 
-      cleanUpWhenSubmit();
       setIsTransferring(true);
-      const { txHash, sygmaTxId } = await transfer();
-      addSygmaTxId(txHash, sygmaTxId);
-      // updateTxState(txHash, BridgeTxState.Indexing);
-      setTxHash(txHash);
-    } catch {
-      setIsError(true);
+      await transfer();
+      cleanUpWhenSubmit();
+    } catch (error) {
+      notificationApi({
+        variant: 'error',
+        message: ensureError(error).message,
+      });
     } finally {
       setIsTransferring(false);
     }
 
     // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
-  }, [transfer, addSygmaTxId, cleanUpWhenSubmit]);
-
-  useEffect(() => {
-    if (isError && txHash) {
-      updateTxState(txHash, BridgeTxState.Failed);
-    }
-  }, [isError, txHash, updateTxState]);
+  }, [transfer, cleanUpWhenSubmit, notificationApi]);
 
   return (
     <Modal open>
