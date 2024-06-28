@@ -12,6 +12,8 @@ export enum PagePath {
   BRIDGE = '/bridge',
   SERVICES_OVERVIEW = '/services',
   RESTAKE = '/restake',
+  RESTAKE_DEPOSIT = '/restake/deposit',
+  RESTAKE_DELEGATE = '/restake/delegate',
   LIQUID_STAKING = '/liquid-staking',
 }
 

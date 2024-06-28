@@ -49,7 +49,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
     name: 'Restake',
     // The default restake page is the deposit page.
-    href: '/restake/deposit',
+    href: PagePath.RESTAKE_DEPOSIT,
     isInternal: true,
     isNext: true,
     Icon: TokenSwapLineIcon,
