@@ -13,14 +13,7 @@ import { TransformEnum } from './utils';
  * @name PalletMultiAssetDelegationOperatorOperatorBondLessRequest (737)
  */
 export type OperatorBondLessRequest = {
-  /**
-   * The amount by which the bond is to be decreased.
-   */
   readonly amount: bigint;
-
-  /**
-   * The round in which the request was made.
-   */
   readonly requestTime: number;
 };
 
@@ -29,19 +22,8 @@ export type OperatorBondLessRequest = {
  * @name PalletMultiAssetDelegationOperatorDelegatorBond (739)
  */
 export type OperatorDelegatorBond = {
-  /**
-   * The account ID of the delegator.
-   */
-  readonly delegator: string;
-
-  /**
-   * The amount bonded.
-   */
+  readonly delegatorAccountId: string;
   readonly amount: bigint;
-
-  /**
-   * The ID of the bonded asset.
-   */
   readonly assetId: string;
 };
 
@@ -61,30 +43,15 @@ export type OperatorStatus =
  * @name PalletMultiAssetDelegationOperatorOperatorMetadata (735)
  */
 export type OperatorMetadata = {
-  /**
-   * The operator's self-bond amount.
-   */
   readonly bond: bigint;
-
-  /**
-   * The total number of delegations to this operator.
-   */
   readonly delegationCount: number;
 
   /**
    * An optional pending request to decrease the operator's self-bond,
    * with only one allowed at any given time.
    */
-  readonly request: OperatorBondLessRequest | null;
-
-  /**
-   * A list of all current delegations.
-   */
+  readonly bondLessRequest: OperatorBondLessRequest | null;
   readonly delegations: Array<OperatorDelegatorBond>;
-
-  /**
-   * The current status of the operator.
-   */
   readonly status: OperatorStatus;
 };
 
@@ -99,24 +66,9 @@ export type OperatorMap = {
  * Metadata of an asset, including ID, name, symbol, denomination, and status.
  */
 export type AssetMetadata = {
-  /**
-   * The ID of the asset.
-   */
   readonly id: string;
-
-  /**
-   * The name of the asset.
-   */
   readonly name: string;
-
-  /**
-   * The symbol of the asset.
-   */
   readonly symbol: string;
-
-  /**
-   * The denomination of the asset.
-   */
   readonly decimals: number;
 
   /**
@@ -141,19 +93,8 @@ export type AssetMap = {
  * @name PalletMultiAssetDelegationDelegatorUnstakeRequest (747)
  */
 export type DelegatorUnstakeRequest = {
-  /**
-   * The ID of the asset to be unstaked.
-   */
   readonly assetId: string;
-
-  /**
-   * The amount of the asset to be unstaked.
-   */
   readonly amount: bigint;
-
-  /**
-   * The round in which the unstake was requested.
-   */
   readonly requestedRound: number;
 };
 
@@ -162,19 +103,8 @@ export type DelegatorUnstakeRequest = {
  * @name PalletMultiAssetDelegationDelegatorBondInfoDelegator (749)
  */
 export type DelegatorBondInfo = {
-  /**
-   * The account ID of the operator.
-   */
-  readonly operator: string;
-
-  /**
-   * The amount bonded.
-   */
-  readonly amount: bigint;
-
-  /**
-   * The ID of the bonded asset.
-   */
+  readonly operatorAccountId: string;
+  readonly amountBonded: bigint;
   readonly assetId: string;
 };
 
@@ -183,19 +113,8 @@ export type DelegatorBondInfo = {
  * @name PalletMultiAssetDelegationDelegatorBondLessRequest (751)
  */
 export type DelegatorBondLessRequest = {
-  /**
-   * The ID of the asset to reduce the bond of.
-   */
   readonly assetId: string;
-
-  /**
-   * The amount by which to reduce the bond.
-   */
-  readonly amount: bigint;
-
-  /**
-   * The round in which the bond reduction was requested.
-   */
+  readonly bondLessAmount: bigint;
   readonly requestedRound: number;
 };
 
@@ -238,9 +157,6 @@ export type DelegatorInfo = {
    */
   readonly delegatorBondLessRequest: DelegatorBondLessRequest | null;
 
-  /**
-   * The current status of the delegator.
-   */
   readonly status: DelegatorStatus;
 };
 
@@ -262,14 +178,7 @@ export type AssetAccountExistenceReason =
  * @name PalletAssetsAssetAccount
  */
 export type AssetBalance = {
-  /**
-   * The ID of the asset.
-   */
   readonly assetId: string;
-
-  /**
-   * The balance of the asset.
-   */
   readonly balance: bigint;
 
   /**
@@ -281,10 +190,7 @@ export type AssetBalance = {
    */
   readonly status: TransformEnum<PalletAssetsAccountStatus>;
 
-  /**
-   * The reason for the existence of the account.
-   */
-  readonly reason: AssetAccountExistenceReason;
+  readonly existenceReason: AssetAccountExistenceReason;
 };
 
 export type AssetBalanceMap = {

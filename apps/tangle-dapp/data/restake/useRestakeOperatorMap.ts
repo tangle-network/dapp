@@ -1,3 +1,9 @@
+import { Option, Vec } from '@polkadot/types';
+import {
+  PalletMultiAssetDelegationOperatorDelegatorBond,
+  PalletMultiAssetDelegationOperatorOperatorBondLessRequest,
+  PalletMultiAssetDelegationOperatorOperatorStatus,
+} from '@polkadot/types/lookup';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable, of, switchMap } from 'rxjs';
@@ -41,47 +47,10 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
 
                   const operator = operatorMetadata.unwrap();
 
-                  function toPrimitiveRequest(
-                    request: typeof operator.request,
-                  ): OperatorMetadata['request'] {
-                    if (request.isNone) return null;
-
-                    const requestValue = request.unwrap();
-
-                    return {
-                      amount: requestValue.amount.toBigInt(),
-                      requestTime: requestValue.requestTime.toNumber(),
-                    };
-                  }
-
-                  function toPrimitiveStatus(
-                    status: typeof operator.status,
-                  ): OperatorMetadata['status'] {
-                    if (status.type === 'Leaving') {
-                      return {
-                        Leaving: status.asLeaving.toNumber(),
-                      };
-                    }
-
-                    return status.type;
-                  }
-
-                  function toPrimitiveDelegations(
-                    delegations: typeof operator.delegations,
-                  ): OperatorMetadata['delegations'] {
-                    return delegations.map(
-                      ({ amount, assetId, delegator }) => ({
-                        amount: amount.toBigInt(),
-                        delegator: delegator.toString(),
-                        assetId: assetId.toString(),
-                      }),
-                    );
-                  }
-
                   const operatorMetadataPrimitive = {
                     bond: operator.bond.toBigInt(),
                     delegationCount: operator.delegationCount.toNumber(),
-                    request: toPrimitiveRequest(operator.request),
+                    bondLessRequest: toPrimitiveRequest(operator.request),
                     delegations: toPrimitiveDelegations(operator.delegations),
                     status: toPrimitiveStatus(operator.status),
                   } satisfies OperatorMetadata;
@@ -105,4 +74,48 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
     operatorMap,
     operatorMap$,
   };
+}
+
+/**
+ * @internal
+ */
+function toPrimitiveRequest(
+  request: Option<PalletMultiAssetDelegationOperatorOperatorBondLessRequest>,
+): OperatorMetadata['bondLessRequest'] {
+  if (request.isNone) return null;
+
+  const requestValue = request.unwrap();
+
+  return {
+    amount: requestValue.amount.toBigInt(),
+    requestTime: requestValue.requestTime.toNumber(),
+  };
+}
+
+/**
+ * @internal
+ */
+function toPrimitiveStatus(
+  status: PalletMultiAssetDelegationOperatorOperatorStatus,
+): OperatorMetadata['status'] {
+  if (status.type === 'Leaving') {
+    return {
+      Leaving: status.asLeaving.toNumber(),
+    };
+  }
+
+  return status.type;
+}
+
+/**
+ * @internal
+ */
+function toPrimitiveDelegations(
+  delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>,
+): OperatorMetadata['delegations'] {
+  return delegations.map(({ amount, assetId, delegator }) => ({
+    amount: amount.toBigInt(),
+    delegatorAccountId: delegator.toString(),
+    assetId: assetId.toString(),
+  }));
 }

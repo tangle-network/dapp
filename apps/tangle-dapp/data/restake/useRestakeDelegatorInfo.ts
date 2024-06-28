@@ -69,8 +69,8 @@ export default function useRestakeDelegatorInfo() {
 
                 return {
                   assetId: assetIdStr,
-                  amount: amountBigInt,
-                  operator: delegation.operator.toString(),
+                  amountBonded: amountBigInt,
+                  operatorAccountId: delegation.operator.toString(),
                 };
               });
 
@@ -105,7 +105,7 @@ export default function useRestakeDelegatorInfo() {
 
                 return {
                   assetId: assetIdStr,
-                  amount: amountBigInt,
+                  bondLessAmount: amountBigInt,
                   requestedRound: bondLessRequest.requestedRound.toNumber(),
                 };
               }

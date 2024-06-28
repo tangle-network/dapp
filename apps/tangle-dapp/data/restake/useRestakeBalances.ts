@@ -108,7 +108,7 @@ function assetBalancesReducer(
 
       function toPrimitiveReason(
         reasonArg: typeof reason,
-      ): AssetBalance['reason'] {
+      ): AssetBalance['existenceReason'] {
         if (reasonArg.type === 'DepositHeld') {
           return {
             DepositHeld: reasonArg.asDepositHeld.toString(),
@@ -129,7 +129,7 @@ function assetBalancesReducer(
           assetId: assetIdStr,
           balance: balance.toBigInt(),
           status: status.type,
-          reason: toPrimitiveReason(reason),
+          existenceReason: toPrimitiveReason(reason),
         },
       } satisfies typeof EMPTY_BALANCES);
     },
@@ -151,7 +151,7 @@ function getNativeBalance$(apiRx: ApiRx, activeAccount: string) {
             assetId: '0',
             balance: data.free.toBigInt(),
             status: 'Liquid',
-            reason: 'Sufficient',
+            existenceReason: 'Sufficient',
           },
         }) as typeof EMPTY_BALANCES,
     ),
