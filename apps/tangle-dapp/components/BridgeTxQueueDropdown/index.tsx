@@ -8,7 +8,7 @@ import {
   DropdownBody,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
@@ -19,9 +19,11 @@ const BridgeTxQueueDropdown: FC = () => {
     useBridgeTxQueue();
 
   // Sort the latest tx to the top
-  const sortedTxQueue = txQueue
-    .slice()
-    .sort((a, b) => b.creationTimestamp - a.creationTimestamp);
+  const sortedTxQueue = useMemo(() => {
+    return txQueue
+      .slice()
+      .sort((a, b) => b.creationTimestamp - a.creationTimestamp);
+  }, [txQueue]);
 
   if (!txQueue.length) {
     return null;
