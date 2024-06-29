@@ -259,7 +259,8 @@ export interface ContractListCardProps
   isLoading?: boolean;
 }
 
-export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
+export interface RelayerListCardProps
+  extends Partial<Omit<ListCardWrapperProps, 'onChange'>> {
   /**
    * If `true`, the component will display in connected view
    */

@@ -2,6 +2,7 @@
 
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { RelayerListCard } from '@webb-tools/webb-ui-components/components/ListCard';
 import keys from 'lodash/keys';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -58,9 +59,16 @@ export default function DelegatePage() {
   }, [defaultAssetId, setValue]);
 
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
+  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
 
   const openAssetModal = useCallback(() => setIsAssetModalOpen(true), []);
   const closeAssetModal = useCallback(() => setIsAssetModalOpen(false), []);
+
+  const openOperatorModal = useCallback(() => setIsOperatorModalOpen(true), []);
+  const closeOperatorModal = useCallback(
+    () => setIsOperatorModalOpen(false),
+    [],
+  );
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>((data) => {
     console.log(data);
@@ -77,10 +85,11 @@ export default function DelegatePage() {
         <DelegationInput
           amountError={errors.amount?.message}
           delegatorInfo={delegatorInfo}
+          openAssetModal={openAssetModal}
+          openOperatorModal={openOperatorModal}
           register={register}
           setValue={setValue}
           watch={watch}
-          openAssetModal={openAssetModal}
         />
 
         <div className="flex flex-col justify-between gap-4 grow">
@@ -94,10 +103,19 @@ export default function DelegatePage() {
 
       <SlideAnimation show={isAssetModalOpen} className="absolute">
         <AssetList
-          delegatorInfo={delegatorInfo}
-          setValue={setValue}
           className="h-full"
+          delegatorInfo={delegatorInfo}
           onClose={closeAssetModal}
+          setValue={setValue}
+        />
+      </SlideAnimation>
+
+      <SlideAnimation show={isOperatorModalOpen} className="absolute">
+        <RelayerListCard
+          overrideTitleProps={{ variant: 'h4' }}
+          className="h-full dark:bg-[var(--restake-card-bg-dark)] p-0"
+          relayers={[]}
+          onClose={closeOperatorModal}
         />
       </SlideAnimation>
     </form>

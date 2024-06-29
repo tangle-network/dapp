@@ -24,6 +24,7 @@ type Props = {
   amountError: string | undefined;
   delegatorInfo: DelegatorInfo | null;
   openAssetModal: Noop;
+  openOperatorModal: Noop;
   register: UseFormRegister<DelegationFormFields>;
   setValue: UseFormSetValue<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
@@ -33,6 +34,7 @@ export default function DelegationInput({
   amountError,
   delegatorInfo,
   openAssetModal,
+  openOperatorModal,
   register,
   setValue,
   watch,
@@ -114,7 +116,10 @@ export default function DelegationInput({
       onAmountChange={handleAmountChange}
     >
       <TransactionInputCard.Header>
-        <TransactionInputCard.ChainSelector placeholder="Select Operator" />
+        <TransactionInputCard.ChainSelector
+          onClick={openOperatorModal}
+          placeholder="Select Operator"
+        />
         <TransactionInputCard.MaxAmountButton
           accountType="note"
           tooltipBody="Deposited Asset"
