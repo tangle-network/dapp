@@ -19,19 +19,18 @@ export default function ErrorMessage({
   } = {},
   ...props
 }: Props) {
-  if (!isDefined(children)) {
-    return null;
-  }
-
   return (
     <p
       {...props}
       className={twMerge(
-        'flex items-center gap-2 text-red-70 dark:text-red-50 h-4 mt-2',
+        'flex items-center gap-1 text-red-70 dark:text-red-50 h-4 mt-2',
         className,
       )}
     >
-      <InformationLine size="md" className="!fill-current" />
+      {isDefined(children) ? (
+        <InformationLine size="md" className="!fill-current" />
+      ) : null}
+
       <Typography
         component="span"
         fw="bold"
