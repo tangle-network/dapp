@@ -1,13 +1,13 @@
 import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import {
-  TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
-  TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
-  TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
+  TANGLE_TESTNET_WS_RPC_ENDPOINT,
   TANGLE_TOKEN_DECIMALS,
 } from '../../constants/tangle';
 import { ChainConfig } from '../chain-config.interface';
@@ -79,7 +79,7 @@ export const chainsConfig = {
     blockExplorers: {
       default: {
         name: 'Local Tangle Explorer',
-        url: 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer/',
+        url: 'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
       },
     },
     rpcUrls: {
@@ -156,7 +156,7 @@ export const chainsConfig = {
     blockExplorers: {
       default: {
         name: 'Phala Explorer',
-        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer/',
+        url: 'https://polkadot.js.org/apps/?rpc=wss://rococo.phala.network#/explorer',
       },
     },
     rpcUrls: {

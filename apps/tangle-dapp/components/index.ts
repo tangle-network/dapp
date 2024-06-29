@@ -5,7 +5,6 @@ export { default as GlassCard } from './GlassCard';
 export * from './HeaderChip';
 export * from './KeyStatsItem';
 export * from './NominationsTable';
-export * from './NominationsTable';
 export * from './NominatorStatsItem';
 export * from './PayoutTable';
 export * from './ServicesKeyMetricItem';

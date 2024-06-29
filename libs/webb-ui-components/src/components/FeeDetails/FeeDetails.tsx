@@ -1,3 +1,4 @@
+import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
 import {
   ArrowDropDownFill,
   CornerDownRightLine,
@@ -61,6 +62,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       totalFeeCmp,
       items,
       isTotalLoading,
+      isDefaultOpen,
       ...props
     },
     ref,
@@ -76,6 +78,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         ref={ref}
         collapsible
         type="single"
+        defaultValue={isDefaultOpen ? 'fee-details' : undefined}
       >
         <AccordionItem
           value="fee-details"
@@ -170,6 +173,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                       <TitleWithInfo
                         title={name}
                         info={info}
+                        isCenterInfo
                         variant="body1"
                         titleClassName={cx('!text-inherit')}
                         className="!text-inherit space-x-[2px]"
@@ -183,17 +187,19 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                         </div>
                       ) : (
                         <>
-                          {!value || typeof value == 'number' ? (
+                          {isPrimitive(value) ? (
                             <Typography
                               variant="body1"
                               fw="bold"
                               className="text-mono-200 dark:text-mono-40"
                             >
-                              {typeof value === 'number'
-                                ? `~${numberToString(value).slice(
-                                    0,
-                                    10,
-                                  )} ${tokenSymbol}`.trim()
+                              {value !== null && value !== undefined
+                                ? typeof value === 'number'
+                                  ? `~${numberToString(value).slice(
+                                      0,
+                                      10,
+                                    )} ${tokenSymbol}`.trim()
+                                  : value
                                 : '-'}
                             </Typography>
                           ) : (

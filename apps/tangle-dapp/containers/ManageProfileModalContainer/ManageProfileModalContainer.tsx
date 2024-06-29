@@ -10,9 +10,7 @@ import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { useErrorCountContext } from '../../context/ErrorsContext';
-import useUpdateRestakingProfileTx from '../../data/restaking/useUpdateRestakingProfileTx';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
-import { TxStatus } from '../../hooks/useSubstrateTx';
 import { RestakingProfileType } from '../../types';
 import AllocationStep from './AllocationStep';
 import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';
@@ -139,12 +137,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     reset: resetAllocations,
   } = useAllocationsState(profileType);
 
-  const {
-    executeForIndependentProfile: executeUpdateIndependentProfileTx,
-    executeForSharedProfile: executeUpdateSharedProfileTx,
-    status: updateProfileTxStatus,
-  } = useUpdateRestakingProfileTx(profileType, true);
-
   const handlePreviousStep = useCallback(() => {
     const diff = getStepDiff(step, false);
     const previousStep = diff ?? ManageProfileStep.CHOOSE_METHOD;
@@ -167,23 +159,14 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
     // Have reached the end; submit the transaction.
     if (profileType === RestakingProfileType.INDEPENDENT) {
-      executeUpdateIndependentProfileTx(allocations);
+      return;
     } else {
       assert(
         sharedRestakeAmount !== null,
         'Shared restake amount should be set if updating shared profile',
       );
-
-      executeUpdateSharedProfileTx(allocations, sharedRestakeAmount);
     }
-  }, [
-    allocations,
-    executeUpdateIndependentProfileTx,
-    executeUpdateSharedProfileTx,
-    profileType,
-    sharedRestakeAmount,
-    step,
-  ]);
+  }, [profileType, sharedRestakeAmount, step]);
 
   const resetAllocationState = useCallback(() => {
     resetAllocations();
@@ -200,13 +183,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   useEffect(() => {
     resetAllocationState();
   }, [profileType, resetAllocationState]);
-
-  // Close modal when the transaction is complete.
-  useEffect(() => {
-    if (updateProfileTxStatus === TxStatus.COMPLETE) {
-      setIsModalOpen(false);
-    }
-  }, [updateProfileTxStatus, setIsModalOpen]);
 
   // Clear errors when the user changes the step
   // to the "choose method" step, which essentially
@@ -250,7 +226,6 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   const isLoading =
     isLoadingSharedRestakeAmount ||
     isLoadingAllocations ||
-    updateProfileTxStatus === TxStatus.PROCESSING ||
     hasExistingProfile === null;
 
   const canContinue =

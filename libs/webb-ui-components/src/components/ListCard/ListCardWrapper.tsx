@@ -7,7 +7,15 @@ import { ListCardWrapperProps } from './types';
 
 export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
   (
-    { children, className, onClose, title, hideCloseButton = false, ...props },
+    {
+      children,
+      className,
+      hideCloseButton = false,
+      onClose,
+      overrideTitleProps,
+      title,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -22,7 +30,7 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
       >
         {/** The title */}
         <div className="flex items-center justify-between">
-          <Typography variant="h5" fw="bold">
+          <Typography variant="h5" fw="bold" {...overrideTitleProps}>
             {title}
           </Typography>
 

@@ -103,7 +103,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 {filteredSelect.map((current, idx) => (
                   <TokenListItem
                     key={`${current.name}-${idx}`}
-                    className="cursor-pointer"
+                    className="bg-transparent cursor-pointer dark:bg-transparent"
                     {...current}
                     onClick={() => onChange?.(current)}
                   />
@@ -128,6 +128,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                   {unavailableTokens.map((current, idx) => (
                     <TokenListItem
                       isDisabled
+                      className="bg-transparent dark:bg-transparent"
                       key={`${current.name}-${idx}`}
                       {...current}
                     />

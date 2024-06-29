@@ -17,7 +17,7 @@ export enum LiquidStakingToken {
   MANTA = 'MANTA',
   ASTAR = 'ASTAR',
   PHALA = 'PHALA',
-  TNT = 'TNT',
+  TNT = 'BNC',
 }
 
 export const LS_CHAIN_TO_TOKEN: Record<LiquidStakingChain, LiquidStakingToken> =

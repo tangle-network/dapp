@@ -81,7 +81,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
           component="span"
           className="block truncate text-mono-200 dark:text-mono-40"
         >
-          {children ?? placeHolder}
+          {children || placeHolder}
         </Typography>
 
         {isDropdown && (

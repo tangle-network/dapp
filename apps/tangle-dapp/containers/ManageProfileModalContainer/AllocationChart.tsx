@@ -15,7 +15,6 @@ import {
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
-import useRestakingLimits from '../../data/restaking/useRestakingLimits';
 import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import formatTangleBalance from '../../utils/formatTangleBalance';
@@ -58,14 +57,12 @@ const AllocationChart: FC<AllocationChartProps> = ({
   previewRole,
 }) => {
   const [isDarkMode] = useNextDarkMode();
-  const { maxRestakingAmount } = useRestakingLimits();
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { allocationEntries, entries } = useAllocationChartEntries(
     allocations,
     allocatedAmount,
     variant,
-    previewAmount,
   );
 
   const themeCellColor: ChartColor = isDarkMode
@@ -76,7 +73,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
     <RechartsTooltip
       content={BnChartTooltip(
         allocations,
-        maxRestakingAmount ?? BN_ZERO,
+        BN_ZERO,
         allocatedAmount,
         previewAmount ?? BN_ZERO,
         variant === AllocationChartVariant.INDEPENDENT,
@@ -162,7 +159,7 @@ const AllocationChart: FC<AllocationChartProps> = ({
         <Typography
           variant="h5"
           fw="bold"
-          className="dark:text-mono-0 text-center"
+          className="text-center dark:text-mono-0"
         >
           {formatTangleBalance(allocatedAmount)}
         </Typography>

@@ -70,6 +70,7 @@ import onChainDataJson from '../generated/on-chain-config.json';
 import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
 import { StoreProvider } from '../store';
 import { useTxApiQueue } from '../transaction';
+import waitForConfigReady from '../utils/waitForConfigReady';
 import { WebbContext } from '../webb-context';
 import {
   notificationHandler,
@@ -451,7 +452,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
               abortSignal?.throwIfAborted();
 
-              if (getWagmiConfig().state.current !== connector.uid) {
+              const config = getWagmiConfig();
+
+              await waitForConfigReady(config);
+
+              if (config.state.current !== connector.uid) {
                 await connectAsync({
                   chainId: chain.id,
                   connector: connector,
@@ -668,7 +673,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, applicationName, catchWebbError, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet, connectAsync, connectors],
+    [activeApi, appEvent, applicationName, catchWebbError, connectAsync, connectors, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
   );
 
   /**

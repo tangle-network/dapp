@@ -29,8 +29,8 @@ const WhatIsRestakingCard: FC<WhatIsRestakingCardProps> = ({ className }) => {
           multi-party computation (MPC) service roles.
         </Typography>
       </div>
-      <div className="flex flex-wrap flex-row justify-end items-end md:items-center gap-2">
-        <Link href={PagePath.SERVICES_RESTAKE}>
+      <div className="flex flex-row flex-wrap items-end justify-end gap-2 md:items-center">
+        <Link href={PagePath.RESTAKE}>
           <Button>Restake Now</Button>
         </Link>
         {/* TODO: update this after the restaking page on docs available */}

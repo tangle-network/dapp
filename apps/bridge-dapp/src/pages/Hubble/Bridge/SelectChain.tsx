@@ -41,8 +41,9 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   const chains = useMemo<Array<ChainType>>(
     () =>
       chainsCfg.map(
-        (c) =>
+        ([typedChainId, c]) =>
           ({
+            typedChainId,
             name: c.name,
             tag: c.tag,
           }) satisfies ChainType,
@@ -90,7 +91,11 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         className="h-[var(--card-height)]"
         chainType={chainType}
         chains={chains}
-        currentActiveChain={activeChain?.name}
+        activeTypedChainId={
+          activeChain
+            ? calculateTypedChainId(activeChain.chainType, activeChain.id)
+            : undefined
+        }
         defaultCategory={defaultCategory}
         onlyCategory={onlyCategory}
         isConnectingToChain={loading}
@@ -110,13 +115,18 @@ export default SelectChain;
  */
 const useChains = (
   chainType: ChainListCardProps['chainType'] = 'source',
-): ReadonlyArray<ChainConfig> => {
+): ReadonlyArray<[number, ChainConfig]> => {
   const { apiConfig } = useWebContext();
 
   const { fungibleCfg } = useCurrenciesFromRoute();
 
   if (chainType === 'source') {
-    return apiConfig.getSupportedChains({ withEnv: true });
+    return apiConfig
+      .getSupportedChains({ withEnv: true })
+      .map(
+        (chain) =>
+          [calculateTypedChainId(chain.chainType, chain.id), chain] as const,
+      );
   }
 
   if (!fungibleCfg) {
@@ -129,10 +139,10 @@ const useChains = (
   }
 
   return Object.keys(anchorRec)
-    .map((typedChainId) => {
-      return apiConfig.chains[parseInt(typedChainId)];
+    .map<[number, ChainConfig]>((typedChainId) => {
+      return [+typedChainId, apiConfig.chains[parseInt(typedChainId)]];
     })
-    .filter(Boolean);
+    .filter(([, chain]) => chain !== undefined);
 };
 
 /**

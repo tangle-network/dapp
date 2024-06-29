@@ -18,21 +18,30 @@ const useExplorerUrl = () => {
       variant: ExplorerVariant,
       type?: (typeof ExplorerType)[keyof typeof ExplorerType],
       explorerUrl_?: string, // Specify the explorer URL case
+      isPolkadotPortal?: boolean,
     ): URL | null => {
       // Explorer type will be default to the current network if not provided
       const explorerType =
         type ?? (isEvm ? ExplorerType.EVM : ExplorerType.Substrate);
 
       const explorerUrl =
-        explorerUrl_ ?? isEvm
-          ? network.evmExplorerUrl
-          : network.polkadotExplorerUrl;
+        typeof explorerUrl_ === 'string'
+          ? explorerUrl_
+          : isEvm
+            ? network.evmExplorerUrl
+            : network.polkadotExplorerUrl;
 
       if (explorerUrl === undefined) {
         return null;
       }
 
-      return getExplorerURI(explorerUrl, hash, variant, explorerType);
+      return getExplorerURI(
+        explorerUrl,
+        hash,
+        variant,
+        explorerType,
+        isPolkadotPortal,
+      );
     },
     [network.evmExplorerUrl, network.polkadotExplorerUrl, isEvm],
   );
