@@ -123,9 +123,9 @@ export default function useEstimatedGasFee() {
   const isLoading = useMemo(() => {
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
-      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-        return isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+        return isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return isLoadingSubstrateEstimatedGasFee;
       default:

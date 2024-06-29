@@ -94,9 +94,9 @@ export default function useBridgeFee() {
   const isLoading = useMemo(() => {
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
-      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-        return isLoadingEvmSygmaFee;
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+        return isLoadingEvmSygmaFee;
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return isLoadingSubstrateSygmaFee;
       default:

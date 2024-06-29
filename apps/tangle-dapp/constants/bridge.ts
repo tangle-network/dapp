@@ -22,7 +22,7 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     symbol: 'sygUSD',
     existentialDeposit: {},
     destChainTransactionFee: {},
-    decimals: { default: 6 },
+    decimals: { default: 6, [PresetTypedChainId.Sepolia]: 18 },
     substrateAssetId: {
       [PresetTypedChainId.RococoPhala]: 1984,
       [PresetTypedChainId.TangleTestnetNative]: 2000,

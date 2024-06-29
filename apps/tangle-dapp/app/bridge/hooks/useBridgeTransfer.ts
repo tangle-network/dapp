@@ -44,6 +44,13 @@ export default function useBridgeTransfer(): () => Promise<void> {
       throw new Error('There must be a bridge type');
     }
 
+    if (
+      sourceAmountInDecimals === null ||
+      destinationAmountInDecimals === null
+    ) {
+      throw new Error('Amounts must be defined');
+    }
+
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE: {
@@ -81,13 +88,6 @@ export default function useBridgeTransfer(): () => Promise<void> {
 
         if (injector === null) {
           throw new Error('No wallet injector found');
-        }
-
-        if (
-          sourceAmountInDecimals === null ||
-          destinationAmountInDecimals === null
-        ) {
-          throw new Error('Amounts must be defined');
         }
 
         const sygmaSubstrateTransfer = await sygmaSubstrate({
