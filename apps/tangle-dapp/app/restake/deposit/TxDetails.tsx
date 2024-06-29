@@ -43,6 +43,7 @@ export default function TxDetails({ watch }: Props) {
 
   return (
     <FeeDetails
+      disabled
       isDefaultOpen
       items={[
         {
