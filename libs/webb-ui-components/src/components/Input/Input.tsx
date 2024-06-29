@@ -46,7 +46,7 @@ import { Typography } from '../../typography/Typography';
 export const Input: React.FC<InputProps> = (props) => {
   const {
     className,
-    debounceTime = 300,
+    debounceTime,
     errorMessage,
     htmlSize,
     id,
@@ -59,30 +59,32 @@ export const Input: React.FC<InputProps> = (props) => {
     rightIcon: rightIconProp,
     size = 'md',
     type = 'text',
-    value: initialValue = '',
+    value: propValue = '',
     inputRef,
     inputClassName,
     isControlled = false,
     ...restProps
   } = props;
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState('');
   const [cursor, setCursor] = useState<number | null>(null);
 
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+  const controlledValue = useMemo(
+    () => (isControlled ? propValue : value),
+    [isControlled, propValue, value],
+  );
 
   useEffect(() => {
+    if (!debounceTime) return;
     const timeout = setTimeout(() => {
-      onChange?.(value ?? '');
+      onChange?.(controlledValue ?? '');
     }, debounceTime);
 
     return () => clearTimeout(timeout);
-  }, [debounceTime, onChange, value]);
+  }, [debounceTime, onChange, controlledValue]);
 
   useEffect(() => {
     inputRef?.current?.setSelectionRange(cursor, cursor);
-  }, [inputRef, cursor, value]);
+  }, [inputRef, cursor, controlledValue]);
 
   // Override the size of left icon prop to 'md'
   const leftIcon = useMemo(() => {
@@ -206,7 +208,7 @@ export const Input: React.FC<InputProps> = (props) => {
           readOnly={isReadOnly}
           required={isRequired}
           className={mergedInputClsx}
-          value={value}
+          value={controlledValue}
           onChange={(e) => {
             setCursor(e.target.selectionStart);
             isControlled && onChange !== undefined

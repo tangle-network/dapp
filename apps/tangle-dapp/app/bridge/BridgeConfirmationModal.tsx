@@ -47,7 +47,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
 
   const [isTransferring, setIsTransferring] = useState(false);
 
-  const cleanUpWhenSubmit = useCallback(async () => {
+  const cleanUpWhenSubmit = useCallback(() => {
     handleClose();
     setAmount(null);
     setDestinationAddress('');
