@@ -1,4 +1,5 @@
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useCallback, useMemo } from 'react';
@@ -22,6 +23,7 @@ import ErrorMessage from '../ErrorMessage';
 type Props = {
   amountError: string | undefined;
   delegatorInfo: DelegatorInfo | null;
+  openAssetModal: Noop;
   register: UseFormRegister<DelegationFormFields>;
   setValue: UseFormSetValue<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
@@ -30,6 +32,7 @@ type Props = {
 export default function DelegationInput({
   amountError,
   delegatorInfo,
+  openAssetModal,
   register,
   setValue,
   watch,
@@ -121,6 +124,7 @@ export default function DelegationInput({
       <TransactionInputCard.Body
         tokenSelectorProps={{
           placeHolder: 'Select Asset',
+          onClick: openAssetModal,
         }}
         customAmountProps={customAmountProps}
       />

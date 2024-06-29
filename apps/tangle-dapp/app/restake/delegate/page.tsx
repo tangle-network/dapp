@@ -2,15 +2,17 @@
 
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import FeeDetails from '@webb-tools/webb-ui-components/components/FeeDetails';
 import keys from 'lodash/keys';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import type { DelegationFormFields } from '../../../types/restake';
 import RestakeTabs from '../RestakeTabs';
+import SlideAnimation from '../SlideAnimation';
+import AssetList from './AssetList';
 import DelegationInput from './DelegationInput';
+import Info from './Info';
 
 export default function DelegatePage() {
   const {
@@ -55,6 +57,11 @@ export default function DelegatePage() {
     }
   }, [defaultAssetId, setValue]);
 
+  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
+
+  const openAssetModal = useCallback(() => setIsAssetModalOpen(true), []);
+  const closeAssetModal = useCallback(() => setIsAssetModalOpen(false), []);
+
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>((data) => {
     console.log(data);
   }, []);
@@ -67,32 +74,32 @@ export default function DelegatePage() {
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
 
-        <div className="space-y-2">
-          <DelegationInput
-            amountError={errors.amount?.message}
-            delegatorInfo={delegatorInfo}
-            register={register}
-            setValue={setValue}
-            watch={watch}
-          />
-        </div>
+        <DelegationInput
+          amountError={errors.amount?.message}
+          delegatorInfo={delegatorInfo}
+          register={register}
+          setValue={setValue}
+          watch={watch}
+          openAssetModal={openAssetModal}
+        />
 
         <div className="flex flex-col justify-between gap-4 grow">
-          <FeeDetails
-            isDefaultOpen
-            items={[
-              {
-                name: 'Unstake period',
-                info: 'Number of rounds that delegators remain bonded before the exit request is executable.',
-              },
-            ]}
-          />
+          <Info />
 
           <Button isFullWidth type="submit">
             Delegate
           </Button>
         </div>
       </div>
+
+      <SlideAnimation show={isAssetModalOpen} className="absolute">
+        <AssetList
+          delegatorInfo={delegatorInfo}
+          setValue={setValue}
+          className="h-full"
+          onClose={closeAssetModal}
+        />
+      </SlideAnimation>
     </form>
   );
 }
