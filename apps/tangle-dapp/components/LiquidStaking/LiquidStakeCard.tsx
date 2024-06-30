@@ -31,7 +31,7 @@ import LiquidStakingInput from './LiquidStakingInput';
 import SelectValidators from './SelectValidators';
 import WalletBalance from './WalletBalance';
 
-const LiquidStakingCard: FC = () => {
+const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
@@ -89,23 +89,9 @@ const LiquidStakingCard: FC = () => {
   }, [fromAmount, rate]);
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
-      <div className="flex gap-3">
-        <Typography className="dark:text-mono-0" variant="h4" fw="bold">
-          Stake
-        </Typography>
-
-        <Typography
-          className="text-mono-100 dark:text-mono-100"
-          variant="h4"
-          fw="bold"
-        >
-          Unstake
-        </Typography>
-      </div>
-
+    <>
       <LiquidStakingInput
-        id="liquid-staking-from"
+        id="liquid-staking-stake-from"
         chain={selectedChain}
         token={LS_CHAIN_TO_TOKEN[selectedChain]}
         amount={fromAmount}
@@ -119,7 +105,7 @@ const LiquidStakingCard: FC = () => {
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
-        id="liquid-staking-to"
+        id="liquid-staking-stake-to"
         chain={LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
         amount={toAmount}
@@ -163,7 +149,7 @@ const LiquidStakingCard: FC = () => {
       >
         Stake
       </Button>
-    </div>
+    </>
   );
 };
 
@@ -250,4 +236,4 @@ export const SelectParachainContent: FC<SelectParachainContentProps> = ({
   );
 };
 
-export default LiquidStakingCard;
+export default LiquidStakeCard;
