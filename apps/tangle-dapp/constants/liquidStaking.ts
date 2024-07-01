@@ -88,10 +88,7 @@ type Network = {
   tokenSymbol: LiquidStakingToken;
 };
 
-export const LS_NETWORK_CONFIG: Record<
-  LiquidStakingChain,
-  Network
-> = {
+export const LS_NETWORK_CONFIG: Record<LiquidStakingChain, Network> = {
   [LiquidStakingChain.POLKADOT]: {
     name: 'Polkadot',
     endpoint: 'ws://127.0.0.1:30334',
