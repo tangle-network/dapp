@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import formatBn, { FormatOptions } from '../utils/formatBn';
 import parseChainUnits, {
@@ -64,9 +64,12 @@ const useInputAmount = ({
   decimals,
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasPeriodAtTheEnd, setHasPeriodAtTheEnd] = useState(false);
 
-  const [displayAmount, setDisplayAmount] = useState(
-    amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
+  const displayAmount = useMemo(
+    () =>
+      `${amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : ''}${amount !== null && hasPeriodAtTheEnd ? '.' : ''}`,
+    [amount, decimals, hasPeriodAtTheEnd],
   );
 
   const handleChange = useCallback(
@@ -87,10 +90,15 @@ const useInputAmount = ({
         })
         .join('');
 
-      // Set the display amount immediately, without further validation.
-      // An error will be displayed regardless, if the input is invalid.
-      // This is to provide immediate feedback to the user.
-      setDisplayAmount(cleanAmountString);
+      if (cleanAmountString !== newAmountString) {
+        return;
+      }
+
+      if (newAmountString.endsWith('.')) {
+        setHasPeriodAtTheEnd(true);
+      } else {
+        setHasPeriodAtTheEnd(false);
+      }
 
       const amountOrError = safeParseInputAmount({
         amountString: newAmountString,
@@ -124,20 +132,8 @@ const useInputAmount = ({
     ],
   );
 
-  const refreshDisplayAmount = useCallback(
-    (newDisplayAmount: BN | null) => {
-      setDisplayAmount(
-        newDisplayAmount === null
-          ? ''
-          : formatBn(newDisplayAmount, decimals, INPUT_AMOUNT_FORMAT),
-      );
-    },
-    [decimals],
-  );
-
   return {
     displayAmount,
-    refreshDisplayAmount,
     errorMessage,
     handleChange,
   };

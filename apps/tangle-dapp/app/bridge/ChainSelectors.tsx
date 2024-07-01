@@ -33,11 +33,14 @@ const ChainSelectors: FC = () => {
     setSelectedDestinationChain,
     sourceChainOptions,
     destinationChainOptions,
+    setAmount,
   } = useBridge();
 
   const onSwitchChains = useCallback(() => {
     const newSelectedDestinationChain = selectedSourceChain;
     const newSelectedSourceChain = selectedDestinationChain;
+
+    setAmount(null);
 
     assert(
       sourceChainOptions.find(
@@ -74,6 +77,7 @@ const ChainSelectors: FC = () => {
     selectedDestinationChain,
     selectedSourceChain,
     sourceChainOptions,
+    setAmount,
   ]);
 
   return (

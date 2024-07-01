@@ -8,15 +8,17 @@ import {
   ModalFooter,
   ModalHeader,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
+import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import convertBnToDecimal from '../../utils/convertBnToDecimal';
+import ensureError from '../../utils/ensureError';
 import FeeDetails from './FeeDetails';
-import useBridgeFee from './hooks/useBridgeFee';
-import useDecimals from './hooks/useDecimals';
+import useAmountInDecimals from './hooks/useAmountInDecimals';
+import useBridgeTransfer from './hooks/useBridgeTransfer';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -28,26 +30,48 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   isOpen,
   handleClose,
 }) => {
+  const { notificationApi } = useWebbUI();
+  const activeAccountAddress = useActiveAccountAddress();
+  const { setIsOpenQueueDropdown } = useBridgeTxQueue();
   const {
     selectedSourceChain,
     selectedDestinationChain,
-    amount,
     destinationAddress,
+    setAmount,
+    setDestinationAddress,
   } = useBridge();
   const selectedToken = useSelectedToken();
-  const activeAccountAddress = useActiveAccountAddress();
-  const { fee: bridgeFee } = useBridgeFee();
-  const decimals = useDecimals();
+  const { sourceAmountInDecimals, destinationAmountInDecimals } =
+    useAmountInDecimals();
+  const transfer = useBridgeTransfer();
 
-  const amountInDecimals = useMemo(() => {
-    if (!amount) return null;
-    return convertBnToDecimal(amount, decimals);
-  }, [amount, decimals]);
+  const [isTransferring, setIsTransferring] = useState(false);
 
-  const destinationAmountInDecimals = useMemo(() => {
-    if (!amountInDecimals) return null;
-    return amountInDecimals.sub(bridgeFee ?? 0);
-  }, [amountInDecimals, bridgeFee]);
+  const cleanUpWhenSubmit = useCallback(() => {
+    handleClose();
+    setAmount(null);
+    setDestinationAddress('');
+  }, [handleClose, setAmount, setDestinationAddress]);
+
+  const bridgeTx = useCallback(async () => {
+    try {
+      // TODO: for EVM case, switch chain if the user's is on the wrong network
+
+      setIsTransferring(true);
+      await transfer();
+      cleanUpWhenSubmit();
+      setIsOpenQueueDropdown(true);
+    } catch (error) {
+      notificationApi({
+        variant: 'error',
+        message: ensureError(error).message,
+      });
+    } finally {
+      setIsTransferring(false);
+    }
+
+    // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
+  }, [transfer, cleanUpWhenSubmit, notificationApi, setIsOpenQueueDropdown]);
 
   return (
     <Modal open>
@@ -66,7 +90,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               type="source"
               chainName={selectedSourceChain.name}
               accAddress={activeAccountAddress ?? ''}
-              amount={amountInDecimals?.toString() ?? ''}
+              amount={sourceAmountInDecimals?.toString() ?? ''}
               tokenName={selectedToken.symbol}
             />
 
@@ -85,7 +109,16 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
         </div>
 
         <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          <Button isFullWidth>Confirm</Button>
+          <Button
+            isFullWidth
+            isLoading={isTransferring}
+            onClick={() => {
+              bridgeTx();
+              handleClose(); // TODO: handle clear form
+            }}
+          >
+            Confirm
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -11,7 +11,12 @@ import {
 import { useLayoutBgClassname } from '@webb-tools/webb-ui-components/next-utils';
 import { type FC, type PropsWithChildren } from 'react';
 
-import { Breadcrumbs, Sidebar, SidebarMenu } from '../../components';
+import {
+  Breadcrumbs,
+  BridgeTxQueueDropdown,
+  Sidebar,
+  SidebarMenu,
+} from '../../components';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../ApiDevStatsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
@@ -57,7 +62,10 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
                 <Breadcrumbs className="hidden md:block" />
               </div>
 
-              <WalletAndChainContainer />
+              <div className="flex items-center gap-2">
+                <WalletAndChainContainer />
+                <BridgeTxQueueDropdown />
+              </div>
             </div>
 
             <Breadcrumbs className="md:hidden !mt-0" />

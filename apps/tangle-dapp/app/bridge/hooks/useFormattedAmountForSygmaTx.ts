@@ -11,8 +11,6 @@ export default function useAmountToTransfer() {
   const { amount } = useBridge();
   const decimals = useDecimals();
 
-  // TODO: handle calculate real amount to bridge when user choose max amount,
-  // most likely we need to create a modal to show the real amount will be bridged to the user
   const amountToString = useMemo(
     () =>
       amount !== null

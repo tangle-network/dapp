@@ -22,9 +22,10 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     symbol: 'sygUSD',
     existentialDeposit: {},
     destChainTransactionFee: {},
-    decimals: { default: 18, [PresetTypedChainId.RococoPhala]: 6 },
+    decimals: { default: 6, [PresetTypedChainId.Sepolia]: 18 },
     substrateAssetId: {
       [PresetTypedChainId.RococoPhala]: 1984,
+      [PresetTypedChainId.TangleTestnetNative]: 2000,
     },
     sygmaResourceId:
       '0x0000000000000000000000000000000000000000000000000000000000001100',
@@ -47,65 +48,28 @@ type BridgeType = Record<
   >
 >;
 
-// TODO: This is a dummy data for now
-// export const BRIDGE: BridgeType = {
-//   [PresetTypedChainId.TangleMainnetEVM]: {
-//     [PresetTypedChainId.TangleTestnetEVM]: {
-//       supportedTokens: ['TNT'],
-//     },
-//     [PresetTypedChainId.TangleTestnetNative]: {
-//       supportedTokens: ['TNT'],
-//     },
-//     [PresetTypedChainId.TangleMainnetNative]: {
-//       supportedTokens: ['TNT'],
-//     },
-//   },
-
-//   [PresetTypedChainId.TangleTestnetEVM]: {
-//     [PresetTypedChainId.TangleMainnetEVM]: {
-//       supportedTokens: ['tTNT'],
-//     },
-//     [PresetTypedChainId.TangleTestnetNative]: {
-//       supportedTokens: ['tTNT'],
-//     },
-//     [PresetTypedChainId.TangleMainnetNative]: {
-//       supportedTokens: ['tTNT'],
-//     },
-//   },
-
-//   [PresetTypedChainId.TangleMainnetNative]: {
-//     [PresetTypedChainId.TangleTestnetEVM]: {
-//       supportedTokens: ['TNT'],
-//     },
-//     [PresetTypedChainId.TangleMainnetEVM]: {
-//       supportedTokens: ['TNT'],
-//     },
-//     [PresetTypedChainId.TangleTestnetNative]: {
-//       supportedTokens: ['TNT'],
-//     },
-//   },
-
-//   [PresetTypedChainId.TangleTestnetNative]: {
-//     [PresetTypedChainId.TangleMainnetEVM]: {
-//       supportedTokens: ['tTNT'],
-//     },
-//     [PresetTypedChainId.TangleTestnetEVM]: {
-//       supportedTokens: ['tTNT'],
-//     },
-//     [PresetTypedChainId.TangleMainnetNative]: {
-//       supportedTokens: ['tTNT'],
-//     },
-//   },
-// };
-
 export const BRIDGE: BridgeType = {
+  [PresetTypedChainId.TangleTestnetNative]: {
+    [PresetTypedChainId.Sepolia]: {
+      supportedTokens: ['sygUSD'],
+    },
+    [PresetTypedChainId.RococoPhala]: {
+      supportedTokens: ['sygUSD'],
+    },
+  },
   [PresetTypedChainId.RococoPhala]: {
     [PresetTypedChainId.Sepolia]: {
+      supportedTokens: ['sygUSD'],
+    },
+    [PresetTypedChainId.TangleTestnetNative]: {
       supportedTokens: ['sygUSD'],
     },
   },
   [PresetTypedChainId.Sepolia]: {
     [PresetTypedChainId.RococoPhala]: {
+      supportedTokens: ['sygUSD'],
+    },
+    [PresetTypedChainId.TangleTestnetNative]: {
       supportedTokens: ['sygUSD'],
     },
   },

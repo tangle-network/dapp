@@ -80,8 +80,16 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
-  } satisfies ChainConfig,
-
+    // NOTE: override the default rpcUrls provided by viem.sh to prevent being blocked by CORS policy
+    rpcUrls: {
+      default: {
+        http: ['https://ethereum-sepolia-rpc.publicnode.com'],
+      },
+      public: {
+        http: ['https://ethereum-sepolia-rpc.publicnode.com'],
+      },
+    },
+  },
   [PresetTypedChainId.AvalancheFuji]: {
     ...avalancheFuji,
     chainType: ChainType.EVM,
