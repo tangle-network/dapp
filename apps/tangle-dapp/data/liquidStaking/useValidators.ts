@@ -1,73 +1,71 @@
-// import { useEffect, useState } from 'react';
+import { BN_ZERO } from '@polkadot/util';
+import { useEffect, useState } from 'react';
 
-// import {
-//   LiquidStakingChain,
-//   LS_CHAIN_TO_LOCAL_RPC_ENDPOINT,
-// } from '../../constants/liquidStaking';
-// import { Validator } from '../../types/liquidStaking';
-// import { getAccountInfo, getApiPromise } from '../../utils/polkadot';
-// import { useLiquidStakingStore } from './store';
+import {
+  LiquidStakingChain,
+  LS_NETWORK_CONFIG,
+} from '../../constants/liquidStaking';
+import { Validator } from '../../types/liquidStaking';
+import { getApiPromise } from '../../utils/polkadot';
+import useCurrentEra from '../staking/useCurrentEra';
+import { useLiquidStakingStore } from './store';
 
-// const useValidators = (): {
-//   isLoading: boolean;
-//   data: Validator[];
-// } => {
-//   const { selectedChain } = useLiquidStakingStore();
-//   const [isLoading] = useState(false);
-//   const [Validators, setValidators] = useState<Validator[]>([]);
+const useValidators = (): {
+  isLoading: boolean;
+  data: Validator[];
+} => {
+  const { result: currentEra } = useCurrentEra();
+  const { selectedChain } = useLiquidStakingStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [Validators, setValidators] = useState<Validator[]>([]);
 
-//   useEffect(() => {
-//     console.debug('Fetching Validators for chain:', selectedChain);
+  useEffect(() => {
+    console.debug('Fetching Validators for chain:', selectedChain);
+    setIsLoading(true);
 
-//     fetchValidators(selectedChain).then((validators) => {
-//       console.debug('Validators:', validators);
-//       setValidators(validators);
-//     });
-//   }, [selectedChain]);
+    if (!currentEra) return;
 
-//   return {
-//     isLoading,
-//     data: Validators,
-//   };
-// };
+    fetchValidators(selectedChain).then((validators) => {
+      setValidators(validators);
+      setIsLoading(false);
+    });
+  }, [currentEra, selectedChain]);
 
-// export default useValidators;
+  return {
+    isLoading,
+    data: Validators,
+  };
+};
 
-// async function fetchValidators(
-//   chain: LiquidStakingChain,
-// ): Promise<Validator[]> {
-//   const rpcEndpoint = LS_CHAIN_TO_LOCAL_RPC_ENDPOINT[chain];
+export default useValidators;
 
-//   if (!rpcEndpoint) {
-//     return [];
-//   }
+async function fetchValidators(
+  chain: LiquidStakingChain,
+): Promise<Validator[]> {
+  const network = LS_NETWORK_CONFIG[chain];
 
-//   const api = await getApiPromise(rpcEndpoint);
+  if (!network.endpoint) {
+    return [];
+  }
 
-//   const validators = await api.query.session.validators();
+  const api = await getApiPromise(network.endpoint);
+  const validators = await api.query.session.validators();
 
-//   const mappedIdentity = new Map<string, string>();
+  const validatorData = await Promise.all(
+    validators.map(async (val) => {
+      const validatorId = val.toString();
+      const validatorTotalStake = BN_ZERO;
 
-//   validators.map(async (val) => {
-//     const valAddress = val.toString();
-//     const accountInfo = await getAccountInfo(rpcEndpoint, valAddress);
+      return {
+        address: validatorId,
+        identity: validatorId,
+        totalValueStaked: validatorTotalStake,
+        annualPercentageYield: 0,
+        commission: 0,
+        tokenSymbol: network.tokenSymbol,
+      };
+    }),
+  );
 
-//     if (accountInfo?.name) {
-//       mappedIdentity.set(valAddress, accountInfo.name);
-//     } else {
-//       mappedIdentity.set(valAddress, valAddress);
-//     }
-//   });
-
-//   return validators.map((val, _) => {
-//     const validatorId = val.toString();
-//     const identity = mappedIdentity.get(validatorId) || validatorId;
-
-//     return {
-//       address: validatorId,
-//       identity: identity.toString(),
-//       totalValueStaked: 0,
-//       annualPercentageYield: 0,
-//     };
-//   });
-// }
+  return validatorData;
+}

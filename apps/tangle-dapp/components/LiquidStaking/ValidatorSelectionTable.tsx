@@ -19,10 +19,13 @@ import {
 import {
   ArrowDropDownFill,
   ArrowDropUpFill,
-  InformationLineFill,
+  InformationLine,
+  LineChartIcon,
+  Spinner,
 } from '@webb-tools/icons';
 import {
   Avatar,
+  Button,
   CheckBox,
   CopyWithTooltip,
   ExternalLinkIcon,
@@ -47,7 +50,6 @@ import { Validator } from '../../types/liquidStaking';
 
 type ValidatorSelectionTableProps = {
   validators: Validator[];
-  defaultSelectedValidators: string[];
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
   isLoading: boolean;
 };
@@ -66,15 +68,10 @@ const columnHelper = createColumnHelper<Validator>();
 
 const ValidatorSelectionTable = ({
   validators,
-  defaultSelectedValidators,
   setSelectedValidators,
+  isLoading,
 }: ValidatorSelectionTableProps) => {
-  const [rowSelection] = useState<RowSelectionState>(
-    defaultSelectedValidators.reduce((acc, address) => {
-      acc[address] = true;
-      return acc;
-    }, {} as RowSelectionState),
-  );
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const [sorting, setSorting] = useState<SortingState>([
     SELECTED_VALIDATORS_COLUMN_SORT,
@@ -189,7 +186,8 @@ const ValidatorSelectionTable = ({
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {props.getValue() + ' DOT'}
+              {props.getValue().toNumber() +
+                ` ${props.row.original.tokenSymbol}`}
             </Typography>
           </div>
         ),
@@ -226,6 +224,13 @@ const ValidatorSelectionTable = ({
         ),
         sortingFn,
       }),
+      columnHelper.accessor('annualPercentageYield', {
+        header: () => <span></span>,
+        cell: () => {
+          return <ValidatorStatsButton href="" />;
+        },
+        sortingFn,
+      }),
     ],
     [],
   );
@@ -239,6 +244,7 @@ const ValidatorSelectionTable = ({
           identityName: false,
         },
         sorting,
+        rowSelection,
         pagination,
       },
       enableRowSelection: true,
@@ -246,8 +252,9 @@ const ValidatorSelectionTable = ({
       onGlobalFilterChange: () => {
         setPagination(DEFAULT_PAGINATION);
       },
-      onRowSelectionChange: () => {
+      onRowSelectionChange: (props) => {
         toggleSortSelectionHandlerRef.current?.(false);
+        setRowSelection(props);
       },
       onSortingChange: (updaterOrValue) => {
         if (typeof updaterOrValue === 'function') {
@@ -278,7 +285,7 @@ const ValidatorSelectionTable = ({
       getRowId: (row) => row.address,
       autoResetPageIndex: false,
     }),
-    [validators, columns, sorting, pagination],
+    [validators, columns, sorting, rowSelection, pagination],
   );
 
   const table = useReactTable(tableProps);
@@ -286,73 +293,94 @@ const ValidatorSelectionTable = ({
   return (
     <div className="flex flex-col">
       <div className="w-full overflow-x-auto bg-validator_table dark:bg-validator_table_dark rounded-2xl border-[1px] border-mono-0 dark:border-mono-160 px-8 py-6 flex flex-col justify-between min-h-[528px]">
-        <div>
-          <table className="w-full table-auto">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className={twMerge(
-                        'border-b border-b-mono-40 dark:border-b-mono-140 pb-2 sticky top-0 ',
-                      )}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
+        {!isLoading ? (
+          <>
+            <div>
+              <table className="w-full table-auto">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className={twMerge(
+                            'border-b border-b-mono-40 dark:border-b-mono-140 pb-2 sticky top-0 ',
                           )}
-                    </th>
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </th>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className={twMerge('group/tr', '')}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="h-[44px]">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
+                </thead>
+                <tbody>
+                  {table.getRowModel().rows.map((row) => (
+                    <tr key={row.id} className={twMerge('group/tr', '')}>
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id} className="h-[44px]">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                </tbody>
+              </table>
 
-          {validators.length > 10 && (
-            <Pagination
-              itemsPerPage={table.getState().pagination.pageSize}
-              totalItems={Math.max(
-                table.getPrePaginationRowModel().rows.length,
-                validators.length,
+              {validators.length > 10 && (
+                <Pagination
+                  itemsPerPage={table.getState().pagination.pageSize}
+                  totalItems={Math.max(
+                    table.getPrePaginationRowModel().rows.length,
+                    validators.length,
+                  )}
+                  page={table.getState().pagination.pageIndex + 1}
+                  totalPages={table.getPageCount()}
+                  canPreviousPage={table.getCanPreviousPage()}
+                  previousPage={table.previousPage}
+                  canNextPage={table.getCanNextPage()}
+                  nextPage={table.nextPage}
+                  setPageIndex={table.setPageIndex}
+                  title="Validators"
+                  className="!px-0 !py-2"
+                />
               )}
-              page={table.getState().pagination.pageIndex + 1}
-              totalPages={table.getPageCount()}
-              canPreviousPage={table.getCanPreviousPage()}
-              previousPage={table.previousPage}
-              canNextPage={table.getCanNextPage()}
-              nextPage={table.nextPage}
-              setPageIndex={table.setPageIndex}
-              title="Validators"
-              className="!px-0 !py-2"
-            />
-          )}
-        </div>
+            </div>
 
-        <div className="flex items-start gap-2">
-          <InformationLineFill width={16} height={16} />
-          <Typography variant="body2">
-            The validator(s) you select determine the unique liquid staking
-            token (tgDOT) received & the share of pool liquidity and rewards.
-            (Learn More)
-          </Typography>
-        </div>
+            <div className="flex items-start gap-2">
+              <InformationLine width={16} height={16} />
+              <Typography
+                variant="body3"
+                fw="normal"
+                className="text-mono-120 dark:text-mono-80"
+              >
+                The validator(s) you select determine the unique liquid staking
+                token (tgDOT) received & the share of pool liquidity and
+                rewards. (Learn More)
+              </Typography>
+            </div>
+          </>
+        ) : (
+          <div className="flex justify-center items-center min-h-[528px]">
+            <div className="flex items-center justify-center gap-1">
+              <Spinner size="md" />
+              <Typography
+                variant="body2"
+                fw="normal"
+                className="text-mono-200 dark:text-mono-0"
+              >
+                Loading on-chain data...
+              </Typography>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -403,5 +431,22 @@ const SortArrow: FC<{ column: Column<Validator, BN | number> }> = ({
     <ArrowDropUpFill className="cursor-pointer" size="lg" />
   ) : (
     <ArrowDropDownFill className="cursor-pointer" size="lg" />
+  );
+};
+
+/** @internal */
+const ValidatorStatsButton = ({ href }: { href: string }) => {
+  return (
+    <Button
+      variant="utility"
+      className="bg-blue-0 dark:bg-blue-120"
+      onClick={() => window.open(href, '_blank')}
+    >
+      <LineChartIcon
+        width={16}
+        height={16}
+        className="fill-blue-60 dark:fill-blue-40"
+      />
+    </Button>
   );
 };
