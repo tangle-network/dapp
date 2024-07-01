@@ -17857,10 +17857,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/app-util@npm:0.1.4-127":
-  version: 0.1.4-127
-  resolution: "@webb-tools/app-util@npm:0.1.4-127"
-  checksum: 10c0/6ece534be43091ad4cc1bf8483b23a778d70a90c84df84905c375c335a2fbe81c0e6b11adb62c9a094114ffd816549c877fb8b7768d930a0dbb5e355fe0734a2
+"@webb-tools/app-util@npm:0.1.8":
+  version: 0.1.8
+  resolution: "@webb-tools/app-util@npm:0.1.8"
+  dependencies:
+    "@babel/runtime": "npm:^7.10.2"
+    bignumber.js: "npm:^9.0.0"
+  checksum: 10c0/43a9ec415db07099f74027048d4c768d1e0cc7080a24167494c130349352d2c0981bfb1c1b391710732d9e0fa1f4c1dbcd84dd455e4b6d3b5ecfcde1dd8d94ea
   languageName: node
   linkType: hard
 
@@ -45644,7 +45647,7 @@ __metadata:
     "@webb-tools/anchors": "npm:1.0.11"
     "@webb-tools/api": "npm:0.1.4-127"
     "@webb-tools/api-derive": "npm:0.1.4-127"
-    "@webb-tools/app-util": "npm:0.1.4-127"
+    "@webb-tools/app-util": "npm:0.1.8"
     "@webb-tools/contracts": "npm:1.0.11"
     "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/proposals": "npm:^1.0.11"
