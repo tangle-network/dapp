@@ -267,7 +267,7 @@ TxProgressorFooter.displayName = 'TxProgressorFooter';
  *        activeStep: 3,
  *      }}
  *      externalUrl={new URL('https://webb.tools')}
- *      actionCmp={'Open explorer'}
+ *      actionCmp='Open explorer'
  *    />
  *  </TxProgressor.Root>
  * ```

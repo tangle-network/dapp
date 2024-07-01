@@ -128,8 +128,6 @@ const getActiveStep = (state: BridgeTxState) => {
       return 4;
     case BridgeTxState.Failed:
       return 4;
-    default:
-      throw new Error(`Invalid state: ${state}`);
   }
 };
 
@@ -143,8 +141,6 @@ const getStatus = (state: BridgeTxState): StatusVariant => {
       return 'success';
     case BridgeTxState.Failed:
       return 'error';
-    default:
-      throw new Error(`Invalid state: ${state}`);
   }
 };
 
