@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import formatBn, { FormatOptions } from '../utils/formatBn';
 import parseChainUnits, {
@@ -64,12 +64,8 @@ const useInputAmount = ({
   decimals,
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [hasPeriodAtTheEnd, setHasPeriodAtTheEnd] = useState(false);
-
-  const displayAmount = useMemo(
-    () =>
-      `${amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : ''}${amount !== null && hasPeriodAtTheEnd ? '.' : ''}`,
-    [amount, decimals, hasPeriodAtTheEnd],
+  const [displayAmount, setDisplayAmount] = useState(
+    amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
   );
 
   const handleChange = useCallback(
@@ -90,15 +86,7 @@ const useInputAmount = ({
         })
         .join('');
 
-      if (cleanAmountString !== newAmountString) {
-        return;
-      }
-
-      if (newAmountString.endsWith('.')) {
-        setHasPeriodAtTheEnd(true);
-      } else {
-        setHasPeriodAtTheEnd(false);
-      }
+      setDisplayAmount(cleanAmountString);
 
       const amountOrError = safeParseInputAmount({
         amountString: newAmountString,
@@ -131,6 +119,15 @@ const useInputAmount = ({
       setAmount,
     ],
   );
+
+  useEffect(() => {
+    // If the amount is null, then the display amount should always be empty.
+    // This handle the case where the amount is set to null after submitting a tx
+    // but the display amount is not updated
+    if (!amount) {
+      setDisplayAmount('');
+    }
+  }, [amount]);
 
   return {
     displayAmount,
