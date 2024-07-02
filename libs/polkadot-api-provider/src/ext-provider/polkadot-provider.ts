@@ -85,7 +85,10 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   static async getApiPromise(
     endPoints: string[],
     onError: ApiInitHandler['onError'],
-    options?: { ignoreLog?: boolean },
+    options?: {
+      ignoreLog?: boolean;
+      maxTries?: number;
+    },
   ) {
     const wsProvider = await new Promise<WsProvider>(
       // eslint-disable-next-line no-async-promise-executor
@@ -162,9 +165,21 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
             break;
           } catch (_) {
+            // If the maxTries is reached then exit the loop
+            if (
+              typeof options?.maxTries === 'number' &&
+              tryNumber >= options.maxTries
+            ) {
+              await wsProvider.disconnect();
+              keepRetrying = false;
+              reject(new Error('Max tries reached'));
+              break;
+            }
+
             tryNumber++;
 
             if (!reportNewInteractiveError) {
+              await wsProvider.disconnect();
               continue;
             }
 
@@ -195,7 +210,8 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             interactiveFeedback = new InteractiveFeedback(
               'error',
               actions,
-              () => {
+              async () => {
+                await wsProvider.disconnect();
                 keepRetrying = false;
                 reject(new Error('Disconnected'));
               },
@@ -240,7 +256,11 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     }
 
     // Initialize an ApiPromise
-    const apiPromise = await PolkadotProvider.getApiPromise(endPoints, onError);
+    const apiPromise = await PolkadotProvider.getApiPromise(
+      endPoints,
+      onError,
+      { maxTries: 3 },
+    );
 
     return [apiPromise, currentExtension];
   }

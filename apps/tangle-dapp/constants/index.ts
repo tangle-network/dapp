@@ -98,3 +98,8 @@ export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
 };
 
 export const EMPTY_VALUE_PLACEHOLDER = '—';
+
+/**
+ * The default debounce delay in milliseconds.
+ */
+export const DEFAULT_DEBOUNCE_DELAY = 500;

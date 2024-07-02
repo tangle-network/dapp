@@ -16,7 +16,6 @@ import { Typography } from '../../typography';
 import { ChainChip } from '../ChainChip/ChainChip';
 import { Chip, ChipProps } from '../Chip';
 import SteppedProgress from '../Progress/SteppedProgress';
-import { Button } from '../buttons';
 import { TitleWithInfo } from '../TitleWithInfo';
 import AddressChip from '../AddressChip';
 import {
@@ -47,12 +46,19 @@ const TxProgressorRoot = forwardRef<
 });
 TxProgressorRoot.displayName = 'TxProgressorRoot';
 
-const chipColor: {
-  [key in TxProgressorHeaderProps['name']]: ChipProps['color'];
-} = {
-  Deposit: 'green',
-  Transfer: 'purple',
-  Withdraw: 'yellow',
+const getChipColor = (
+  name: TxProgressorHeaderProps['name'],
+): ChipProps['color'] => {
+  switch (name) {
+    case 'Deposit':
+      return 'green';
+    case 'Transfer':
+      return 'purple';
+    case 'Withdraw':
+      return 'yellow';
+    default:
+      return 'dark-grey';
+  }
 };
 
 const TxProgressorHeader = forwardRef<
@@ -67,7 +73,7 @@ const TxProgressorHeader = forwardRef<
       ref={ref}
       className={twMerge('flex items-center justify-between', className)}
     >
-      <Chip color={chipColor[name]}>{name}</Chip>
+      <Chip color={getChipColor(name)}>{name}</Chip>
 
       <Typography variant="body2" className="text-mono-120 dark:text-mono-100">
         {timeAgo}
@@ -100,9 +106,6 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
       <TitleWithInfo
         title={isSource ? 'Source Chain' : 'Destination Chain'}
         variant="utility"
-        info={
-          tooltipContent ?? (isSource ? 'Source Chain' : 'Destination Chain')
-        }
         titleClassName="text-mono-120 dark:text-mono-80"
         className="text-mono-120 dark:text-mono-80"
       />
@@ -180,7 +183,7 @@ const TxProgressorFooter = forwardRef<
       steppedProgressProps,
       statusMessage,
       externalUrl,
-      actionProps,
+      actionCmp,
       ...props
     },
     ref,
@@ -218,7 +221,7 @@ const TxProgressorFooter = forwardRef<
             )}
           </p>
 
-          {actionProps && <Button {...actionProps} variant="link" size="sm" />}
+          {actionCmp ?? null}
         </div>
       </div>
     );
@@ -264,7 +267,7 @@ TxProgressorFooter.displayName = 'TxProgressorFooter';
  *        activeStep: 3,
  *      }}
  *      externalUrl={new URL('https://webb.tools')}
- *      actionProps={{ children: 'Open explorer' }}
+ *      actionCmp='Open explorer'
  *    />
  *  </TxProgressor.Root>
  * ```

@@ -11,6 +11,8 @@ import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import z from 'zod';
 
+import BridgeTxQueueProvider from '../context/BridgeTxQueueContext';
+
 const appEvent = new AppEvent();
 
 const envSchema = z.object({
@@ -49,7 +51,7 @@ const Providers = ({
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >
-            {children}
+            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
           </OFACFilterProvider>
         </WebbProvider>
       </WebbUIProvider>

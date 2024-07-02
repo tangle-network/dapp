@@ -45,7 +45,7 @@ const classNames: ChainChipClassNames = {
     default: 'text-mono-0 dark:text-mono-0 bg-[#D9780F]',
   },
   phala: {
-    default: 'text-mono-0 dark:text-mono-0 bg-[#D1FF51]',
+    default: 'text-mono-200 dark:text-mono-200 bg-[#D1FF51]',
   },
 };
 

@@ -55,6 +55,7 @@ const TransactionInputCardRoot = forwardRef<
       onIsFixedAmountChange,
       tokenSymbol,
       typedChainId,
+      errorMessage,
       ...props
     },
     ref,
@@ -64,7 +65,10 @@ const TransactionInputCardRoot = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'w-full rounded-lg px-3 py-1.5 space-y-2',
+          'w-full rounded-lg px-3 py-1.5 space-y-2 border',
+          errorMessage
+            ? 'border-red-70 dark:border-red-50'
+            : 'border-mono-40 dark:border-mono-160',
           'bg-mono-20 dark:bg-mono-180',
           'hover:bg-[#E2E5EB]/30 dark:hover:bg-mono-170',
           className,
@@ -80,6 +84,7 @@ const TransactionInputCardRoot = forwardRef<
             onIsFixedAmountChange,
             tokenSymbol,
             typedChainId,
+            errorMessage,
           }}
         >
           {children}
@@ -101,6 +106,7 @@ const TransactionChainSelector = forwardRef<
 
   return (
     <button
+      type="button"
       {...props}
       disabled={disabled}
       ref={ref}
@@ -136,6 +142,7 @@ const TransactionButton = forwardRef<
 >(({ className, children, Icon, ...props }, ref) => {
   return (
     <button
+      type="button"
       {...props}
       className={twMerge(
         'group flex items-center gap-1',
@@ -179,6 +186,8 @@ const TransactionMaxAmountButton = forwardRef<
       accountType: accountTypeProp,
       onAmountChange: onAmountChangeProp,
       disabled: disabledProp,
+      tooltipBody,
+      Icon,
       ...props
     },
     ref,
@@ -201,7 +210,7 @@ const TransactionMaxAmountButton = forwardRef<
     }, [maxAmount, tokenSymbol]);
 
     const disabled = useMemo(
-      () => disabledProp ?? typeof maxAmount !== 'number',
+      () => disabledProp ?? (typeof maxAmount !== 'number' || maxAmount <= 0),
       [disabledProp, maxAmount],
     );
 
@@ -218,16 +227,20 @@ const TransactionMaxAmountButton = forwardRef<
                 : undefined
             }
             Icon={
-              accountType === 'note' ? (
-                <>
-                  <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-                  <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-                </>
+              Icon === undefined ? (
+                accountType === 'note' ? (
+                  <>
+                    <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+                    <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                  </>
+                ) : (
+                  <>
+                    <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+                    <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                  </>
+                )
               ) : (
-                <>
-                  <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-                  <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-                </>
+                Icon
               )
             }
             className={disabled ? 'cursor-not-allowed' : ''}
@@ -236,7 +249,11 @@ const TransactionMaxAmountButton = forwardRef<
           </TransactionButton>
         </TooltipTrigger>
         <TooltipBody>
-          {accountType === 'note' ? 'Shielded Balance' : 'Wallet Balance'}
+          {tooltipBody === undefined
+            ? accountType === 'note'
+              ? 'Shielded Balance'
+              : 'Wallet Balance'
+            : tooltipBody}
         </TooltipBody>
       </Tooltip>
     );
@@ -308,38 +325,37 @@ const TransactionInputCardBody = forwardRef<
           className,
         )}
       >
-        <div className="grow min-h-[52px] flex items-center">
-          {isFixedAmount ? (
-            <AdjustAmount
+        {isFixedAmount ? (
+          <AdjustAmount
+            min={0}
+            {...fixedAmountProps}
+            className={twMerge(
+              'max-w-[var(--adjust-amount-width)] h-full grow',
+              fixedAmountProps?.className,
+            )}
+            value={typeof amount === 'string' ? Number(amount) : undefined}
+            onChange={
+              typeof onAmountChange === 'function'
+                ? (nextVal) => onAmountChange(`${nextVal}`)
+                : undefined
+            }
+          />
+        ) : (
+          <TextField.Root isDisabledHoverStyle className="!bg-transparent grow">
+            <TextField.Input
+              placeholder="0.0"
               min={0}
-              {...fixedAmountProps}
-              className={twMerge(
-                'max-w-[var(--adjust-amount-width)] h-full',
-                fixedAmountProps?.className,
-              )}
-              value={typeof amount === 'string' ? Number(amount) : undefined}
-              onChange={
-                typeof onAmountChange === 'function'
-                  ? (nextVal) => onAmountChange(`${nextVal}`)
-                  : undefined
-              }
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
+              value={amount}
+              onChange={handleTextFieldChange}
+              {...customAmountProps}
             />
-          ) : (
-            <TextField.Root isDisabledHoverStyle className="!bg-transparent">
-              <TextField.Input
-                placeholder="0.0"
-                min={0}
-                {...customAmountProps}
-                inputMode="decimal"
-                pattern="[0-9]*\.?[0-9]*"
-                value={amount}
-                onChange={handleTextFieldChange}
-              />
-            </TextField.Root>
-          )}
-        </div>
+          </TextField.Root>
+        )}
 
         <TokenSelector
+          type="button"
           {...tokenSelectorProps}
           className={twMerge('max-w-[210px]', tokenSelectorProps?.className)}
         >

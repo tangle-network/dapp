@@ -93,6 +93,8 @@ export enum WebbErrorCodes {
   NotesNotReady,
   /* Invalid amount */
   InvalidAmount,
+  /** Invalid or unhandled enum value */
+  InvalidEnumValue,
   /* Unknown error */
   UnknownError,
 }
@@ -400,6 +402,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to disconnect',
+        };
+
+      case WebbErrorCodes.InvalidEnumValue:
+        return {
+          code,
+          message: 'Invalid or unhandled enum value',
         };
 
       default:

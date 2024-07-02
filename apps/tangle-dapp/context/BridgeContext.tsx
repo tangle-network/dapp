@@ -20,8 +20,10 @@ import { BRIDGE } from '../constants/bridge';
 import { BridgeTokenId, BridgeType, BridgeWalletError } from '../types/bridge';
 import { isEVMChain, isSubstrateChain } from '../utils/bridge';
 
-const BRIDGE_SOURCE_CHAIN_OPTIONS = Object.keys(BRIDGE).map(
-  (presetTypedChainId) => chainsConfig[+presetTypedChainId],
+const BRIDGE_SOURCE_CHAIN_OPTIONS = sortChainOptions(
+  Object.keys(BRIDGE).map(
+    (presetTypedChainId) => chainsConfig[+presetTypedChainId],
+  ),
 );
 
 const DEFAULT_DESTINATION_CHAIN_OPTIONS = Object.keys(
@@ -127,8 +129,10 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const destinationChainOptions = useMemo(
     () =>
-      Object.keys(BRIDGE[selectedSourceTypedChainId]).map(
-        (presetTypedChainId) => chainsConfig[+presetTypedChainId],
+      sortChainOptions(
+        Object.keys(BRIDGE[selectedSourceTypedChainId]).map(
+          (presetTypedChainId) => chainsConfig[+presetTypedChainId],
+        ),
       ),
     [selectedSourceTypedChainId],
   );
@@ -288,3 +292,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
 };
 
 export default BridgeProvider;
+
+function sortChainOptions(chainOptions: ChainConfig[]) {
+  return chainOptions.sort((a, b) => a.name.localeCompare(b.name));
+}

@@ -47,10 +47,10 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
     const poolShare =
       await this.inner.api.query.assetRegistry.assets(fungibleTokenId);
-    const poolShareExistentialBalance = poolShare
+    const poolShareExistentialBalance = (poolShare as any)
       .unwrap()
       .existentialDeposit.toString();
-    const isLocked = poolShare.unwrap().locked.isTrue;
+    const isLocked = (poolShare as any).unwrap().locked.isTrue;
     if (isLocked) {
       return false;
     }
@@ -175,17 +175,17 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const poolShare =
       await this.inner.api.query.assetRegistry.assets(+fungibleTokenId);
 
-    if (poolShare.isNone) {
+    if (poolShare.isEmpty) {
       return false;
     }
 
     const asset =
       await this.inner.api.query.assetRegistry.assets(wrappableTokenId);
-    const assetExistentialBalance = asset
+    const assetExistentialBalance = (asset as any)
       .unwrap()
       .existentialDeposit.toString();
 
-    const isLocked = poolShare.unwrap().locked.isTrue;
+    const isLocked = (poolShare as any).unwrap().locked.isTrue;
     if (isLocked) {
       return false;
     }

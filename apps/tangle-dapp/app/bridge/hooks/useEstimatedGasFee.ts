@@ -11,10 +11,10 @@ import { BridgeType } from '../../../types/bridge';
 import { getEthersGasPrice } from '../lib/fee';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
-import useAmountToTransfer from './useAmountToTransfer';
 import useDecimals from './useDecimals';
 import useEthersProvider from './useEthersProvider';
 import useEthersSigner from './useEthersSigner';
+import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
@@ -30,7 +30,7 @@ export default function useEstimatedGasFee() {
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const api = useSubstrateApi();
-  const amountToTransfer = useAmountToTransfer();
+  const formattedAmount = useFormattedAmountForSygmaTx();
   const decimals = useDecimals();
 
   const { data: ethersGasPrice, isLoading: isLoadingEthersGasPrice } = useSWR(
@@ -57,7 +57,7 @@ export default function useEstimatedGasFee() {
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
-            amount: amountToTransfer,
+            amount: formattedAmount,
           }
         : undefined,
     ],
@@ -85,7 +85,7 @@ export default function useEstimatedGasFee() {
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
-            amount: amountToTransfer,
+            amount: formattedAmount,
           }
         : undefined,
     ],
@@ -102,11 +102,11 @@ export default function useEstimatedGasFee() {
   const fee = useMemo(() => {
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
-      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE: {
+      case BridgeType.SYGMA_EVM_TO_SUBSTRATE: {
         if (ethersGasPrice == null || evmEstimatedGasPrice == null) return null;
         return ethersGasPrice.times(evmEstimatedGasPrice);
       }
-      case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM: {
         return substrateEstimatedGasFee ?? null;
       }
@@ -123,9 +123,9 @@ export default function useEstimatedGasFee() {
   const isLoading = useMemo(() => {
     switch (bridgeType) {
       case BridgeType.SYGMA_EVM_TO_EVM:
-      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-        return isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+        return isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
+      case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return isLoadingSubstrateEstimatedGasFee;
       default:

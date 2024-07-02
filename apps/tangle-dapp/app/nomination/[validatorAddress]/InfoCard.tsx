@@ -16,7 +16,6 @@ import { SocialChip, TangleCard } from '../../../components';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
-import useFormatNativeTokenAmount from '../../../hooks/useFormatNativeTokenAmount';
 import { ExplorerType } from '../../../types';
 import ValueSkeleton from './ValueSkeleton';
 
@@ -30,19 +29,9 @@ const InfoCard: FC<InfoCardProps> = ({
   className,
 }: InfoCardProps) => {
   const { network, rpcEndpoint } = useNetworkStore();
-  const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
-  const {
-    name,
-    isActive,
-    totalRestaked,
-    restakingMethod,
-    nominations,
-    twitter,
-    email,
-    web,
-    isLoading,
-  } = useValidatorInfoCard(rpcEndpoint, validatorAddress);
+  const { name, isActive, nominations, twitter, email, web, isLoading } =
+    useValidatorInfoCard(rpcEndpoint, validatorAddress);
 
   return (
     <TangleCard className={twMerge('min-h-[300px]', className)}>
@@ -99,32 +88,7 @@ const InfoCard: FC<InfoCardProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3 md:gap-2">
-          {/* Restaked */}
-          <div className="flex-1 space-y-3">
-            <Typography variant="h5" fw="bold" className="!text-mono-100">
-              Total Restaked
-            </Typography>
-            <div className="flex gap-3 items-center">
-              {isLoading ? (
-                <ValueSkeleton />
-              ) : (
-                <Typography
-                  variant="h4"
-                  fw="bold"
-                  className="whitespace-nowrap"
-                >
-                  {totalRestaked
-                    ? formatNativeTokenAmount(totalRestaked)
-                    : EMPTY_VALUE_PLACEHOLDER}
-                </Typography>
-              )}
-              {!isLoading && (
-                <Chip color="dark-grey">{restakingMethod?.value ?? 'N/A'}</Chip>
-              )}
-            </div>
-          </div>
-
+        <div className="flex flex-col gap-3 md:flex-row md:gap-2">
           {/* Nominations */}
           <div className="flex-1 space-y-3">
             <Typography variant="h5" fw="bold" className="!text-mono-100">
@@ -142,7 +106,7 @@ const InfoCard: FC<InfoCardProps> = ({
 
         {/* Socials & Location */}
         <div className="flex gap-2 min-h-[30px]">
-          <div className="flex-1 flex gap-2 items-center">
+          <div className="flex items-center flex-1 gap-2">
             {twitter && <SocialChip type="twitter" href={twitter} />}
             {email && <SocialChip type="email" href={`mailto:${email}`} />}
             {web && <SocialChip type="web" href={web} />}

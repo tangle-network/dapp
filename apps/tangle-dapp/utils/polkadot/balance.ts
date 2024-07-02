@@ -7,8 +7,12 @@ export function calculateTransferrableBalance(
 ) {
   const maxFrozen = bnMax(
     accInfo.frozen ?? BN_ZERO,
-    accInfo.miscFrozen ?? BN_ZERO,
-    accInfo.feeFrozen ?? BN_ZERO,
+    'miscFrozen' in accInfo && BN.isBN(accInfo.miscFrozen)
+      ? accInfo.miscFrozen
+      : BN_ZERO,
+    'feeFrozen' in accInfo && BN.isBN(accInfo.feeFrozen)
+      ? accInfo.feeFrozen
+      : BN_ZERO,
   );
 
   const transferable = BN.max(

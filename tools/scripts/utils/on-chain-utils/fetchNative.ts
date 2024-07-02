@@ -1,16 +1,15 @@
 import { ApiPromise } from '@polkadot/api';
-import { ICurrency } from '@webb-tools/dapp-config/src/on-chain-config/on-chain-config-base';
+import type { ICurrency } from '@webb-tools/dapp-config/types';
 import { zeroAddress } from '@webb-tools/dapp-types';
 import { parseTypedChainId } from '@webb-tools/sdk-core';
-import { ethers } from 'ethers';
 
 import chainData from './fixtures/native.json';
 import {
   DEFAULT_EVM_CURRENCY,
+  DEFAULT_NATIVE_INDEX,
   LOCALNET_CHAIN_IDS,
   SELF_HOSTED_CHAIN_IDS,
 } from './shared';
-import { DEFAULT_NATIVE_INDEX } from './shared';
 
 /// Private Methods
 

@@ -45,15 +45,16 @@ import { ChainListCardProps, ChainType } from './types';
 const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   (
     {
+      activeTypedChainId,
       chains,
       chainType,
-      currentActiveChain,
       defaultCategory = 'test',
+      isConnectingToChain,
       onChange,
       onClose,
       onlyCategory,
       overrideScrollAreaProps,
-      isConnectingToChain,
+      overrideTitleProps,
       value: selectedChain,
       ...props
     },
@@ -101,12 +102,12 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
     // Move the current active chain to the top of the list
     const sortedChains = useMemo(() => {
-      if (!currentActiveChain) {
+      if (!activeTypedChainId) {
         return filteredChains.sort((a, b) => a.name.localeCompare(b.name));
       }
 
       const currentActiveChainIndex = filteredChains.findIndex(
-        (chain) => chain.name === currentActiveChain,
+        (chain) => chain.typedChainId === activeTypedChainId,
       );
 
       if (currentActiveChainIndex === -1) {
@@ -121,7 +122,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           .filter((chain) => chain.name !== activeChain.name)
           .sort((a, b) => a.name.localeCompare(b.name)),
       ];
-    }, [currentActiveChain, filteredChains]);
+    }, [activeTypedChainId, filteredChains]);
 
     // Count the number of chains in each category
     const [liveCount, devCount, testCount] = useMemo(
@@ -136,6 +137,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     return (
       <ListCardWrapper
         {...props}
+        overrideTitleProps={overrideTitleProps}
         className={twMerge('flex flex-col', props.className)}
         title={`Select ${
           chainType === 'source' ? 'Source' : 'Destination'
@@ -166,14 +168,14 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
             {sortedChains.map((currentChain, idx) => {
               const isConnected =
                 chainType === 'source' &&
-                currentChain.name === currentActiveChain;
+                currentChain.typedChainId === activeTypedChainId;
 
               const isSelectedToConnect = chain?.name === currentChain.name;
 
               return (
                 <ListItem
                   key={`${currentChain.name}-${idx}`}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between bg-transparent dark:bg-transparent"
                   onClick={() => onChainChange(currentChain)}
                 >
                   <div className="flex items-center space-x-2">

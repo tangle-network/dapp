@@ -27,7 +27,8 @@ export class ORMLCurrency {
     return assets
       .map(([storageKey, i]) => {
         if (i) {
-          const assetRegistryValues = i.unwrap();
+          // TODO: Remove the type casting here
+          const assetRegistryValues = (i as any).unwrap();
           return {
             name: assetRegistryValues.name.toString(),
             existentialDeposit:
