@@ -13,7 +13,7 @@ const LiquidStakeAndUnstakeCards: FC = () => {
   const unselectedClass = 'text-mono-100 dark:text-mono-100';
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
+    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 shadow-sm">
       <div className="flex gap-3">
         <Typography
           onClick={() => setIsStaking(true)}

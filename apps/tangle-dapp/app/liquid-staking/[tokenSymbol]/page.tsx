@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
+import AvailableWithdrawCard from '../../../components/LiquidStaking/AvailableWithdrawCard';
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
 import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
 import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
@@ -17,8 +18,10 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-12">
+    <div className="grid grid-cols-2 gap-12 items-start">
       <LiquidStakeAndUnstakeCards />
+
+      <AvailableWithdrawCard />
 
       <TokenInfoCard
         stakingInfo={{

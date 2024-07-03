@@ -96,6 +96,7 @@ const LiquidUnstakeCard: FC = () => {
         placeholder={`0 ${selectedChainToken}`}
         rightElement={<WalletBalance />}
         isReadOnly
+        isTokenLiquidVariant
         setChain={setSelectedChain}
         minAmount={minimumInputAmount ?? undefined}
       />
@@ -107,7 +108,6 @@ const LiquidUnstakeCard: FC = () => {
         chain={LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
         amount={fromAmount}
-        isTokenLiquidVariant
         token={LS_CHAIN_TO_TOKEN[selectedChain]}
       />
 
