@@ -135,7 +135,7 @@ const LiquidStakeCard: FC = () => {
           value="7 days"
         />
 
-        <DetailItem title="Token address" value="0xbe507...00006" />
+        <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>
 
       <Button

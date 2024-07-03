@@ -3,8 +3,6 @@ import { FC } from 'react';
 
 import AvailableWithdrawCard from '../../../components/LiquidStaking/AvailableWithdrawCard';
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
-import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
-import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
 type Props = {
@@ -22,31 +20,6 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
       <LiquidStakeAndUnstakeCards />
 
       <AvailableWithdrawCard />
-
-      <TokenInfoCard
-        stakingInfo={{
-          title: 'Staking',
-          tooltip: `Total staked ${tokenSymbol}`,
-          value: '-',
-        }}
-        availableInfo={{
-          title: 'Available',
-          tooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
-          value: '98.00',
-          valueTooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
-        }}
-        unstakingInfo={{
-          title: 'Unstaking',
-          tooltip: `Total unstaking ${tokenSymbol} in progress`,
-          value: '-',
-        }}
-        apyInfo={{
-          title: 'APY',
-          tooltip: 'APY (Annual Percentage Yield) %',
-          value: '-',
-        }}
-        tokenSymbol={tokenSymbol}
-      />
     </div>
   );
 };
