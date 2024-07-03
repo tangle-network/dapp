@@ -3,22 +3,16 @@ import { FC } from 'react';
 
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
 import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
-import {
-  LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingToken,
-} from '../../../constants/liquidStaking';
+import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
+import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
 type Props = {
   params: { tokenSymbol: string };
 };
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  const possibleTokens = Object.values(LiquidStakingToken).map((value) =>
-    value.toString(),
-  );
-
   // Invalid token provided on the URL parameters.
-  if (!possibleTokens.includes(tokenSymbol)) {
+  if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();
   }
 

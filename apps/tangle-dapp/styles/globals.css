@@ -12,3 +12,14 @@ code span {
   font-family: 'Cousine' !important;
   font-weight: 400 !important;
 }
+
+:root {
+  /** Define variables */
+  --restake-card-min-height: 502px;
+  --restake-card-bg-dark: #1f1d2b;
+
+  /** Tailwind md breakpoint */
+  @media (min-width: 768px) {
+    --restake-card-min-height: 648px;
+  }
+}

@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { FC, ReactNode, useCallback, useEffect } from 'react';
+import { FC, ReactNode, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -66,24 +66,14 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
 
-  const { displayAmount, handleChange, refreshDisplayAmount, errorMessage } =
-    useInputAmount({
-      amount,
-      setAmount,
-      // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
-      decimals: TANGLE_TOKEN_DECIMALS,
-      min: minAmount,
-      minErrorMessage,
-    });
-
-  // Refresh the display amount when the amount changes.
-  // Only do this when the input is controlled (i.e. read-only mode),
-  // to prevent from modifying the user's input.
-  useEffect(() => {
-    if (isReadOnly) {
-      refreshDisplayAmount(amount);
-    }
-  }, [amount, isReadOnly, refreshDisplayAmount]);
+  const { displayAmount, handleChange, errorMessage } = useInputAmount({
+    amount,
+    setAmount,
+    // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
+    decimals: TANGLE_TOKEN_DECIMALS,
+    min: minAmount,
+    minErrorMessage,
+  });
 
   const handleChainChange = useCallback(
     (newChain: LiquidStakingChain) => {

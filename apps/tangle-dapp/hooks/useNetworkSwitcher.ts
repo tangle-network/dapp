@@ -1,5 +1,12 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain } from '@webb-tools/dapp-config';
+import {
+  type Chain,
+  chainsPopulated,
+  DEFAULT_DECIMALS,
+  type WalletConfig,
+} from '@webb-tools/dapp-config';
+import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
+import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -7,14 +14,15 @@ import {
   NETWORK_MAP,
   NetworkId,
 } from '@webb-tools/webb-ui-components/constants/networks';
-import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
+import { createPublicClient, fallback, http, webSocket } from 'viem';
 import z from 'zod';
 
 import { DEFAULT_NETWORK } from '../constants/networks';
 import useNetworkStore from '../context/useNetworkStore';
 import createCustomNetwork from '../utils/createCustomNetwork';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import ensureError from '../utils/ensureError';
+import { getApiPromise } from '../utils/polkadot';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
@@ -42,19 +50,28 @@ function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
 }
 
 const useNetworkSwitcher = () => {
-  const { switchChain, activeWallet, chains } = useWebContext();
+  const { switchChain, activeWallet } = useWebContext();
 
-  const { isEvm } = useAgnosticAccountInfo();
   const [isCustom, setIsCustom] = useState(false);
 
   const { network, setNetwork } = useNetworkStore();
 
+  // TODO: Should utilize the zustand middleware to cache this
+  // in instead of manually handling it here.
+  // if we set the network by calling `setNetwork`,
+  // the new network won't be cached in local storage.
+  // @see https://docs.pmnd.rs/zustand/integrations/persisting-store-data
   const {
     refresh: getCachedCustomRpcEndpoint,
     set: setCachedCustomRpcEndpoint,
     remove: removeCachedCustomRpcEndpoint,
   } = useLocalStorage(LocalStorageKey.CUSTOM_RPC_ENDPOINT);
 
+  // TODO: Should utilize the zustand middleware to cache this
+  // in instead of manually handling it here.
+  // if we set the network by calling `setNetwork`,
+  // the new network won't be cached in local storage.
+  // @see https://docs.pmnd.rs/zustand/integrations/persisting-store-data
   const {
     set: setCachedNetworkId,
     refresh: getCachedNetworkId,
@@ -75,7 +92,8 @@ const useNetworkSwitcher = () => {
           .safeParse(cachedNetworkNameOpt.value);
 
         if (parsedNetworkId.success) {
-          const knownNetwork = NETWORK_MAP[parsedNetworkId.data];
+          const id = parsedNetworkId.data as keyof typeof NETWORK_MAP;
+          const knownNetwork = NETWORK_MAP[id];
 
           if (knownNetwork !== undefined) {
             return knownNetwork;
@@ -129,13 +147,29 @@ const useNetworkSwitcher = () => {
         return;
       }
 
-      console.debug(
-        `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
-          newNetwork.name
-        } (${newNetwork.nodeType}) with RPC endpoint: ${
-          newNetwork.wsRpcEndpoint
-        }`,
-      );
+      if (activeWallet !== undefined) {
+        try {
+          const chain = await netWorkToChain(newNetwork, activeWallet);
+
+          const switchChainResult = await switchChain(chain, activeWallet);
+
+          if (switchChainResult !== null) {
+            console.debug(
+              `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
+                newNetwork.name
+              } (${newNetwork.nodeType}) with RPC endpoint: ${
+                newNetwork.wsRpcEndpoint
+              }`,
+            );
+          }
+        } catch (error) {
+          notificationApi({
+            variant: 'error',
+            message: 'Switching network failed',
+            secondaryMessage: `Error: ${ensureError(error).message}`,
+          });
+        }
+      }
 
       // Update local storage cache with the new network.
       if (isCustom) {
@@ -148,43 +182,9 @@ const useNetworkSwitcher = () => {
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);
-
-      // In case that the new network is an EVM network, either add it
-      // to the list of chains on the EVM wallet (ie. MetaMask), or switch
-      // to it if it's already added.
-      if (
-        isEvm !== null &&
-        isEvm &&
-        newNetwork.evmChainId !== undefined &&
-        newNetwork.httpRpcEndpoint !== undefined &&
-        activeWallet !== undefined
-      ) {
-        // TODO: For local dev, the chain id is set to the testnet's chain id. Which then attempts to switch to the testnet chain, and its RPC url. Changing the way that the provider API works requires extensive changes, so leaving this for later since local dev is not a priority.
-        const typedChainId = calculateTypedChainId(
-          ChainType.EVM,
-          newNetwork.evmChainId,
-        );
-
-        const webbChain: Chain | undefined = chains[typedChainId];
-
-        if (webbChain !== undefined) {
-          // This call will automatically switch the chain if it's already added.
-          switchChain(webbChain, activeWallet);
-        }
-      }
     },
-    [
-      network.id,
-      setNetwork,
-      isEvm,
-      activeWallet,
-      removeCachedNetworkId,
-      setCachedCustomRpcEndpoint,
-      removeCachedCustomRpcEndpoint,
-      setCachedNetworkId,
-      chains,
-      switchChain,
-    ],
+    // prettier-ignore
+    [activeWallet, network.id, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain],
   );
 
   return {
@@ -192,5 +192,106 @@ const useNetworkSwitcher = () => {
     isCustom,
   };
 };
+
+/**
+ * Map a network to a chain
+ * @param network the network to map to a chain
+ * @param chainsConfig the chains configuration
+ * @param activeWallet the active wallet
+ *
+ * @returns the chain
+ */
+async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
+  if (activeWallet.platform === 'Substrate') {
+    const api = await getApiPromise(network.wsRpcEndpoint);
+
+    // if the chain id is not defined, fetch the chain id from the api
+    if (network.chainId === undefined) {
+      network.chainId =
+        typeof api.registry.chainSS58 === 'number'
+          ? api.registry.chainSS58
+          : DEFAULT_SS58.toNumber();
+    }
+
+    const deciamls =
+      api.registry.chainDecimals.length > 0
+        ? api.registry.chainDecimals[0]
+        : DEFAULT_DECIMALS;
+
+    const typedChainId = calculateTypedChainId(
+      ChainType.Substrate,
+      network.chainId,
+    );
+
+    const chain =
+      chainsPopulated[typedChainId] !== undefined
+        ? chainsPopulated[typedChainId]
+        : defineWebbChain(
+            network,
+            network.chainId,
+            ChainType.Substrate,
+            typedChainId,
+            deciamls,
+          );
+
+    return chain;
+  }
+
+  const viemClient = createPublicClient({
+    transport: fallback(
+      network.httpRpcEndpoint
+        ? [http(network.httpRpcEndpoint, { timeout: 60_000 })]
+        : [webSocket(network.wsRpcEndpoint, { timeout: 60_000 })],
+    ),
+  });
+
+  network.evmChainId = await viemClient.getChainId();
+
+  const typedChainId = calculateTypedChainId(ChainType.EVM, network.evmChainId);
+
+  const chain = chainsPopulated[typedChainId]
+    ? chainsPopulated[typedChainId]
+    : defineWebbChain(
+        network,
+        network.evmChainId,
+        ChainType.EVM,
+        typedChainId,
+        DEFAULT_DECIMALS,
+      );
+
+  return chain;
+}
+
+function defineWebbChain(
+  network: Network,
+  chainId: number,
+  chainType: ChainType,
+  typedChainId: number,
+  decimals: number,
+): Chain {
+  return {
+    id: chainId,
+    name: network.name,
+    nativeCurrency: {
+      name: network.tokenSymbol,
+      symbol: network.tokenSymbol,
+      decimals,
+    },
+    rpcUrls: {
+      default: {
+        http: [
+          network.httpRpcEndpoint
+            ? network.httpRpcEndpoint
+            : network.wsRpcEndpoint,
+        ],
+        webSocket: [network.wsRpcEndpoint],
+      },
+    },
+    chainType,
+    group: 'tangle',
+    tag: 'test',
+    wallets: getWalletsForTypedChainId(typedChainId),
+  } satisfies Chain;
+}
 
 export default useNetworkSwitcher;

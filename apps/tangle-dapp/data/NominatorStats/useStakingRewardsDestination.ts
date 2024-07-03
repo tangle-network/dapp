@@ -38,7 +38,7 @@ const useStakingRewardsDestination = () => {
 
             return new Optional(
               STAKING_SUBSTRATE_PAYEE_TO_LOCAL_PAYEE_MAP[
-                substrateRewardsDestinationOpt.type
+                substrateRewardsDestinationOpt.unwrap().type
               ],
             );
           }),

@@ -1,18 +1,8 @@
-import JobsCard from './JobsCard';
-import OverviewCard from './OverviewCard';
-import RoleDistributionCard from './RoleDistributionCard';
-import RolesEarningsCard from './RolesEarningsCard';
+import { redirect } from 'next/navigation';
+
+import { PagePath } from '../..//types';
 
 export default function RestakePage() {
-  return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 justify-items-stretch">
-      <OverviewCard />
-
-      <RoleDistributionCard />
-
-      <RolesEarningsCard />
-
-      <JobsCard />
-    </div>
-  );
+  // Default redirect to deposit page
+  return redirect(PagePath.RESTAKE_DEPOSIT);
 }

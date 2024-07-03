@@ -12,7 +12,6 @@ import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction
 import {
   Avatar,
   Button,
-  Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
   fuzzyFilter,
@@ -34,23 +33,6 @@ import { ValidatorTableProps } from './types';
 const columnHelper = createColumnHelper<Validator>();
 
 const getStaticColumns = (isWaiting?: boolean) => [
-  // TODO: Hide this for live app for now
-  ...(IS_PRODUCTION_ENV
-    ? []
-    : [
-        columnHelper.accessor('activeServicesCount', {
-          header: () => <HeaderCell title="Active Services" />,
-          cell: (props) => (
-            <div className="flex justify-center items-center">
-              <Chip color="dark-grey">{props.getValue()}</Chip>
-            </div>
-          ),
-        }),
-        columnHelper.accessor('restakedAmount', {
-          header: () => <HeaderCell title="Restaked" />,
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-        }),
-      ]),
   // Hide the effective amount staked and self-staked columns on waiting validators tab
   // as they don't have values for these columns
   ...(isWaiting

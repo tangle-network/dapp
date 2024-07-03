@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Button, Input } from '@webb-tools/webb-ui-components';
-import { FC, ReactNode, useCallback, useEffect, useRef } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useInputAmount from '../../hooks/useInputAmount';
@@ -53,17 +53,16 @@ const AmountInput: FC<AmountInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const { displayAmount, refreshDisplayAmount, errorMessage, handleChange } =
-    useInputAmount({
-      amount,
-      min,
-      max,
-      decimals,
-      errorOnEmptyValue,
-      setAmount,
-      minErrorMessage,
-      maxErrorMessage,
-    });
+  const { displayAmount, errorMessage, handleChange } = useInputAmount({
+    amount,
+    min,
+    max,
+    decimals,
+    errorOnEmptyValue,
+    setAmount,
+    minErrorMessage,
+    maxErrorMessage,
+  });
 
   // Set the error message in the parent component.
   useEffect(() => {
@@ -75,27 +74,29 @@ const AmountInput: FC<AmountInputProps> = ({
   const setMaxAmount = useCallback(() => {
     if (max !== null) {
       setAmount(max);
-      refreshDisplayAmount(max);
     }
-  }, [max, refreshDisplayAmount, setAmount]);
+  }, [max, setAmount]);
 
-  const actions: ReactNode = (
-    <>
-      {max !== null && showMaxAction && (
-        <Button
-          isDisabled={(amount !== null && amount.eq(max)) || isDisabled}
-          key="max"
-          size="sm"
-          variant="utility"
-          onClick={setMaxAmount}
-          className="uppercase"
-        >
-          Max
-        </Button>
-      )}
+  const actions: ReactNode = useMemo(
+    () => (
+      <>
+        {max !== null && showMaxAction && (
+          <Button
+            isDisabled={(amount !== null && amount.eq(max)) || isDisabled}
+            key="max"
+            size="sm"
+            variant="utility"
+            onClick={() => setMaxAmount()}
+            className="uppercase"
+          >
+            Max
+          </Button>
+        )}
 
-      {baseInputOverrides?.actions}
-    </>
+        {baseInputOverrides?.actions}
+      </>
+    ),
+    [max, showMaxAction, amount, isDisabled, setMaxAmount, baseInputOverrides],
   );
 
   return (

@@ -5,16 +5,13 @@ import {
   useWebContext,
 } from '@webb-tools/api-provider-environment';
 import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import { PresetTypedChainId, WalletId } from '@webb-tools/dapp-types';
+import { WalletId } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { useWebbUI, WalletModal } from '@webb-tools/webb-ui-components';
-import {
-  Network,
-  NetworkId,
-} from '@webb-tools/webb-ui-components/constants/networks';
+import { Network } from '@webb-tools/webb-ui-components/constants/networks';
 import { useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -71,30 +68,15 @@ export const WalletModalContainer = () => {
 };
 
 const networkToTypedChainIds = (network: Network) => {
-  switch (network.id) {
-    case NetworkId.TANGLE_MAINNET:
-      return {
-        evm: PresetTypedChainId.TangleMainnetEVM,
-        substrate: PresetTypedChainId.TangleMainnetNative,
-      };
-    case NetworkId.TANGLE_TESTNET:
-    case NetworkId.TANGLE_LOCAL_DEV:
-      return {
-        evm: PresetTypedChainId.TangleTestnetEVM,
-        substrate: PresetTypedChainId.TangleTestnetNative,
-      };
-    case NetworkId.CUSTOM: {
-      if (typeof network.evmChainId !== 'number') {
-        return;
-      }
+  const evm =
+    typeof network.evmChainId !== 'undefined'
+      ? calculateTypedChainId(ChainType.EVM, network.evmChainId)
+      : undefined;
 
-      return {
-        evm: calculateTypedChainId(ChainType.EVM, network.evmChainId),
-        substrate: calculateTypedChainId(
-          ChainType.Substrate,
-          network.evmChainId,
-        ),
-      };
-    }
-  }
+  const substrate =
+    typeof network.chainId !== 'undefined'
+      ? calculateTypedChainId(ChainType.Substrate, network.chainId)
+      : undefined;
+
+  return { evm, substrate };
 };

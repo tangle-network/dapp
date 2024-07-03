@@ -4,6 +4,7 @@ import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Payout, TangleTokenSymbol } from '../types';
+import { BridgeQueueTxItem } from '../types/bridge';
 import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
@@ -18,6 +19,7 @@ export enum LocalStorageKey {
   WAS_BANNER_DISMISSED = 'wasBannerDismissed',
   SERVICES_CACHE = 'servicesCache',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
+  BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
 }
 
 export type PayoutsCache = {
@@ -35,6 +37,8 @@ export type SubstrateWalletsMetadataEntry = {
 export type SubstrateWalletsMetadataCache = Partial<
   Record<HexString, SubstrateWalletsMetadataEntry>
 >;
+
+export type TxQueueByAccount = Record<string, BridgeQueueTxItem[]>;
 
 /**
  * Type definition associating local storage keys with their
@@ -61,7 +65,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                     ? boolean
                     : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
                       ? SubstrateWalletsMetadataCache
-                      : never;
+                      : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
+                        ? TxQueueByAccount
+                        : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

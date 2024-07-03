@@ -1,17 +1,15 @@
-import { Close, LockLineIcon } from '@webb-tools/icons';
+import { Close } from '@webb-tools/icons';
 import { CheckBox, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
-import useRestakingJobs from '../../../data/restaking/useRestakingJobs';
 import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
 import {
   getChartDataAreaColorByServiceType,
   getChipColorOfServiceType,
 } from '../../../utils';
-import InputAction from '../InputAction';
 
 export type SharedRolesInputProps = {
   title: string;
@@ -29,7 +27,6 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
   onToggleRole,
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const { servicesWithJobs } = useRestakingJobs();
 
   const { result: maxRolesPerAccount } = useApi(
     useCallback(
@@ -44,16 +41,9 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
 
   const handleDeselectService = useCallback(
     (service: RestakingService) => {
-      // Ignore the request if it is not known which services
-      // have active jobs, or if the requested service has an
-      // active job.
-      if (servicesWithJobs === null || servicesWithJobs.includes(service)) {
-        return;
-      }
-
       onToggleRole(service);
     },
-    [onToggleRole, servicesWithJobs],
+    [onToggleRole],
   );
 
   const handleSelectService = useCallback(
@@ -69,14 +59,8 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
 
   const determineIfLocked = useCallback(
     (service: RestakingService): boolean =>
-      (!canSelectMoreRoles && !selectedServices.includes(service)) ||
-      // Mark all services as locked by default, until the services
-      // with active jobs array loads to prevent the user from somehow
-      // modifying them.
-      servicesWithJobs === null ||
-      // Cannot remove roles with active jobs.
-      servicesWithJobs.includes(service),
-    [canSelectMoreRoles, selectedServices, servicesWithJobs],
+      !canSelectMoreRoles && !selectedServices.includes(service),
+    [canSelectMoreRoles, selectedServices],
   );
 
   const dropdownBody = useMemo(
@@ -114,7 +98,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
                   }}
                 />
 
-                <div className="flex gap-1 items-center justify-center">
+                <div className="flex items-center justify-center gap-1">
                   <Dot role={service} />
 
                   <Typography
@@ -138,22 +122,10 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
     ],
   );
 
-  // Display a notice if there are services with active
-  // jobs, that cannot be removed.
-  const lockedServicesNoticeInputAction =
-    servicesWithJobs !== null && servicesWithJobs.length > 0 ? (
-      <InputAction
-        tooltip="Some roles cannot be removed because there are active jobs for them."
-        Icon={LockLineIcon}
-        iconSize="md"
-      />
-    ) : undefined;
-
   return (
     <BaseInput
       title={title}
       id={id}
-      actions={lockedServicesNoticeInputAction}
       dropdownBody={dropdownBody}
       isDropdownVisible={isDropdownVisible}
       setIsDropdownVisible={setIsDropdownVisible}

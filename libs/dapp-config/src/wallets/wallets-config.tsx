@@ -31,6 +31,7 @@ const ANY_EVM = [
   PresetTypedChainId.TangleTestnetEVM,
 
   // Localnet
+  PresetTypedChainId.TangleLocalEVM,
   PresetTypedChainId.HermesLocalnet,
   PresetTypedChainId.AthenaLocalnet,
   PresetTypedChainId.DemeterLocalnet,
@@ -39,6 +40,7 @@ const ANY_EVM = [
 const ANY_SUBSTRATE = [
   PresetTypedChainId.TangleMainnetNative,
   PresetTypedChainId.TangleTestnetNative,
+  PresetTypedChainId.TangleLocalNative,
   PresetTypedChainId.Kusama,
   PresetTypedChainId.Polkadot,
 ];

@@ -1,46 +1,115 @@
 'use client';
 
-import { Option } from '@polkadot/types';
-import { PalletRolesRestakingLedger } from '@polkadot/types/lookup';
-import { createContext, FC, PropsWithChildren } from 'react';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import orderBy from 'lodash/orderBy';
+import toPairs from 'lodash/toPairs';
+import { useObservableState } from 'observable-hooks';
+import {
+  createContext,
+  type PropsWithChildren,
+  useContext,
+  useMemo,
+} from 'react';
+import { combineLatest, map, type Observable, of } from 'rxjs';
 
-import type { EarningRecord } from '../data/restaking/types';
-import useRestakingEarnings from '../data/restaking/useRestakingEarnings';
-import useRestakingRoleLedger from '../data/restaking/useRestakingRoleLedger';
-import useSubstrateAddress from '../hooks/useSubstrateAddress';
+import useRestakeAssetMap from '../data/restake/useRestakeAssetMap';
+import useRestakeBalances from '../data/restake/useRestakeBalances';
+import type {
+  AssetBalanceMap,
+  AssetMap,
+  AssetWithBalance,
+} from '../types/restake';
 
-interface RestakeContextProps {
-  ledger: Option<PalletRolesRestakingLedger> | null;
-  earningsRecord: EarningRecord | null;
-  isLoading: boolean;
-}
+type RestakeContextType = {
+  /**
+   * The asset map for the current selected chain
+   */
+  assetMap: AssetMap;
 
-export const RestakeContext = createContext<RestakeContextProps>({
-  ledger: null,
-  earningsRecord: null,
-  isLoading: true,
+  /**
+   * An observable of the asset map for the current selected chain
+   */
+  assetMap$: Observable<AssetMap>;
+
+  /**
+   * The balances of the current active account
+   */
+  balances: AssetBalanceMap;
+
+  /**
+   * An observable of the balances of the current active account
+   */
+  balances$: Observable<AssetBalanceMap>;
+
+  /**
+   * An observable of assets with balances of the current active account
+   */
+  assetWithBalances$: Observable<Array<AssetWithBalance>>;
+
+  /**
+   * The assets with balances of the current active account
+   */
+  assetWithBalances: Array<AssetWithBalance>;
+};
+
+const Context = createContext<RestakeContextType>({
+  assetMap: {},
+  assetMap$: of<AssetMap>({}),
+  balances: {},
+  balances$: of<AssetBalanceMap>({}),
+  assetWithBalances: [],
+  assetWithBalances$: of([]),
 });
 
-const RestakeProvider: FC<PropsWithChildren> = ({ children }) => {
-  const substrateAddress = useSubstrateAddress();
+const RestakeContextProvider = (props: PropsWithChildren) => {
+  const { assetMap, assetMap$ } = useRestakeAssetMap();
 
-  const { result: ledger, isLoading: isLedgerLoading } =
-    useRestakingRoleLedger(substrateAddress);
+  const { balances, balances$ } = useRestakeBalances();
 
-  const { data: earningsRecord, isLoading: isEarningsLoading } =
-    useRestakingEarnings(substrateAddress);
+  const assetWithBalances$ = useMemo(
+    () =>
+      combineLatest([assetMap$, balances$]).pipe(
+        map(([assetMap, balances]) => {
+          return orderBy(
+            toPairs(assetMap).reduce(
+              (assetWithBalances, [assetId, assetMetadata]) => {
+                const balance = balances[assetId] ?? null;
+
+                return assetWithBalances.concat({
+                  assetId,
+                  metadata: assetMetadata,
+                  balance,
+                });
+              },
+              [] as Array<AssetWithBalance>,
+            ),
+            ({ balance }) => balance?.balance ?? ZERO_BIG_INT,
+            'desc',
+          );
+        }),
+      ),
+    [assetMap$, balances$],
+  );
+
+  const assetWithBalances = useObservableState(assetWithBalances$, []);
 
   return (
-    <RestakeContext.Provider
+    <Context.Provider
       value={{
-        ledger,
-        earningsRecord,
-        isLoading: isLedgerLoading || isEarningsLoading,
+        assetWithBalances,
+        assetWithBalances$,
+        assetMap,
+        assetMap$,
+        balances,
+        balances$,
       }}
-    >
-      {children}
-    </RestakeContext.Provider>
+      {...props}
+    />
   );
 };
 
-export default RestakeProvider;
+const useRestakeContext = () => useContext(Context);
+
+export type { RestakeContextType };
+
+export { RestakeContextProvider, useRestakeContext };

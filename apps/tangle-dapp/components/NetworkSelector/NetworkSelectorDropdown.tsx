@@ -24,7 +24,6 @@ export type NetworkSelectorDropdownProps = {
   onNetworkChange: (network: Network) => void;
 };
 
-// TODO: Ideally, consider merging this with the `stats-dapp`'s usage, into a single component from the Webb UI library, and then re-use it in both places.
 export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
   selectedNetwork,
   isCustomEndpointSelected,

@@ -1,7 +1,6 @@
 import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 import { PropsOf, TokenType } from '../../types';
 import { SteppedProgressProps } from '../Progress/types';
-import { ButtonProps } from '../buttons/types';
 
 export type TxName = 'Deposit' | 'Withdraw' | 'Transfer';
 
@@ -56,7 +55,7 @@ export interface TxProgressorHeaderProps extends PropsOf<'div'> {
   /**
    * The name of the transaction
    */
-  name: TxName;
+  name: string;
 
   /**
    * Created time of the transaction
@@ -105,5 +104,5 @@ export interface TxProgressorFooterProps extends PropsOf<'div'> {
   /**
    * The action props to display the action button
    */
-  actionProps?: ButtonProps;
+  actionCmp?: React.ReactNode;
 }

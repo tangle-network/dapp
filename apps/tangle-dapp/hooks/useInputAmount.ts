@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import formatBn, { FormatOptions } from '../utils/formatBn';
 import parseChainUnits, {
@@ -64,7 +64,6 @@ const useInputAmount = ({
   decimals,
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const [displayAmount, setDisplayAmount] = useState(
     amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
   );
@@ -87,9 +86,6 @@ const useInputAmount = ({
         })
         .join('');
 
-      // Set the display amount immediately, without further validation.
-      // An error will be displayed regardless, if the input is invalid.
-      // This is to provide immediate feedback to the user.
       setDisplayAmount(cleanAmountString);
 
       const amountOrError = safeParseInputAmount({
@@ -124,20 +120,17 @@ const useInputAmount = ({
     ],
   );
 
-  const refreshDisplayAmount = useCallback(
-    (newDisplayAmount: BN | null) => {
-      setDisplayAmount(
-        newDisplayAmount === null
-          ? ''
-          : formatBn(newDisplayAmount, decimals, INPUT_AMOUNT_FORMAT),
-      );
-    },
-    [decimals],
-  );
+  useEffect(() => {
+    // If the amount is null, then the display amount should always be empty.
+    // This handle the case where the amount is set to null after submitting a tx
+    // but the display amount is not updated
+    if (!amount) {
+      setDisplayAmount('');
+    }
+  }, [amount]);
 
   return {
     displayAmount,
-    refreshDisplayAmount,
     errorMessage,
     handleChange,
   };

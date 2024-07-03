@@ -1,5 +1,5 @@
 import { ApiRx } from '@polkadot/api';
-import { StakingLedger } from '@polkadot/types/interfaces';
+import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
@@ -12,7 +12,7 @@ import Optional from '../../utils/Optional';
  * hook to select which data to fetch from the ledger.
  */
 export type StakingLedgerFetcher<T extends NonNullable<unknown>> = (
-  ledger: StakingLedger,
+  ledger: PalletStakingStakingLedger,
   api: ApiRx,
 ) => T | null;
 

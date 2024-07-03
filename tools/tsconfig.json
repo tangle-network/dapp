@@ -3,7 +3,9 @@
   "compilerOptions": {
     "types": ["node"],
     "importHelpers": false,
-    "allowJs": true
+    "allowJs": true,
+    "module": "esnext",
+    "target": "es2020"
   },
   "include": ["**/*.ts"]
 }

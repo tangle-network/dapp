@@ -13,6 +13,7 @@ export type SnackBarOpts = {
   transparent?: boolean;
   autoHideDuration?: number;
   extras?: Partial<OptionsObject>;
+  persist?: boolean;
 };
 
 export type NotificationContextProps = {

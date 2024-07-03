@@ -46,11 +46,6 @@ export type WebbExtendedChain = {
    * The supported environments for this chain (defaults to all)
    */
   env?: AppEnvironment[];
-
-  /**
-   * The contracts for this chain
-   */
-  contracts?: Chain['contracts'];
 };
 
 export type ChainConfig = Chain & WebbExtendedChain;

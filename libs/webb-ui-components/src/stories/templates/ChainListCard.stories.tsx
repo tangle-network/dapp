@@ -17,9 +17,10 @@ type Story = StoryObj<typeof ChainListCard>;
 export const Default: Story = {
   render: () => (
     <ChainListCard
-      currentActiveChain={Object.values(chainsConfig)[0].name}
+      activeTypedChainId={+Object.keys(chainsConfig)[0]}
       chainType="source"
-      chains={Object.values(chainsConfig).map((chain) => ({
+      chains={Object.entries(chainsConfig).map(([typedChainId, chain]) => ({
+        typedChainId: +typedChainId,
         name: chain.name,
         tag: chain.tag,
         needSwitchWallet: chain.chainType !== ChainType.EVM,

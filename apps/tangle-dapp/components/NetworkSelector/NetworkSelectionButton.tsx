@@ -1,6 +1,7 @@
 'use client';
 
-import { ChainIcon, ChevronDown } from '@webb-tools/icons';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -12,7 +13,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { usePathname } from 'next/navigation';
-import { FC, useCallback } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -25,6 +26,8 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
+  const { isConnecting, loading } = useWebContext();
+
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
   const pathname = usePathname();
@@ -36,7 +39,13 @@ const NetworkSelectionButton: FC = () => {
     [switchNetwork],
   );
 
-  const networkName = network?.name ?? 'Loading';
+  const networkName = useMemo(() => {
+    if (isConnecting) return 'Connecting...';
+
+    if (loading) return 'Loading...';
+
+    return network?.name ?? 'Unknown Network';
+  }, [isConnecting, loading, network?.name]);
 
   // Disable network switching when in Liquid Staking page,
   // since it would have no effect there.
@@ -59,7 +68,10 @@ const NetworkSelectionButton: FC = () => {
     </Tooltip>
   ) : (
     <Dropdown>
-      <TriggerButton networkName={networkName} />
+      <TriggerButton
+        isLoading={isConnecting || loading}
+        networkName={networkName}
+      />
 
       <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
         <NetworkSelectorDropdown
@@ -73,13 +85,21 @@ const NetworkSelectionButton: FC = () => {
   );
 };
 
-const TriggerButton: FC<{ networkName: string; className?: string }> = ({
+type TriggerButtonProps = {
+  className?: string;
+  networkName: string;
+  isLoading?: boolean;
+};
+
+const TriggerButton: FC<TriggerButtonProps> = ({
+  isLoading,
   networkName,
   className,
 }) => {
   return (
     <DropdownBasicButton
       type="button"
+      disabled={isLoading}
       className={twMerge(
         'rounded-lg border-2 p-2',
         'bg-mono-0/10 border-mono-60',
@@ -90,17 +110,21 @@ const TriggerButton: FC<{ networkName: string; className?: string }> = ({
         className,
       )}
     >
-      <ChainIcon
-        size="lg"
-        className="shrink-0 grow-0"
-        name={TANGLE_TESTNET_CHAIN_NAME}
-      />
+      {isLoading ? (
+        <Spinner size="lg" />
+      ) : (
+        <ChainIcon
+          size="lg"
+          className="shrink-0 grow-0"
+          name={TANGLE_TESTNET_CHAIN_NAME}
+        />
+      )}
 
       <div className="flex items-center gap-0">
         <Typography
           variant="body1"
           fw="bold"
-          className="dark:text-mono-0 hidden sm:block"
+          className="hidden dark:text-mono-0 sm:block"
         >
           {networkName}
         </Typography>

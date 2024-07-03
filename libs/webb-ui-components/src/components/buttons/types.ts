@@ -1,6 +1,7 @@
 import type { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
 import type { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 import type { IconBase } from '@webb-tools/icons/types';
+import type { JSXElementConstructor } from 'react';
 import type {
   IWebbComponentBase,
   PropsOf,
@@ -36,7 +37,7 @@ export interface UseButtonPropsOptions extends AnchorOptions {
   isDisabled?: boolean;
   onClick?: React.EventHandler<React.MouseEvent | React.KeyboardEvent>;
   tabIndex?: number;
-  tagName?: keyof JSX.IntrinsicElements;
+  tagName?: keyof JSX.IntrinsicElements | JSXElementConstructor<any>;
   role?: string;
 }
 
@@ -69,7 +70,7 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
    * Control the underlying rendered element directly by passing in a valid
    * component type
    */
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof JSX.IntrinsicElements | JSXElementConstructor<any>;
 
   /** Optionally specify an href to render a `<a>` tag styled as a button */
   href?: string | undefined;
