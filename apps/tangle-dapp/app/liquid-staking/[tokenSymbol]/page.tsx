@@ -1,13 +1,18 @@
 'use client';
 
 import { notFound } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
 import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
 import ValidatorSelectionTable from '../../../components/LiquidStaking/ValidatorSelectionTable';
-import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
-import useValidators from '../../../data/liquidStaking/useValidators';
+import {
+  LIQUID_STAKING_TOKEN_PREFIX,
+  LS_NETWORK_CONFIG,
+  NetworkType,
+} from '../../../constants/liquidStaking';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
+import useValidatorsAndCollators from '../../../data/liquidStaking/useValidatorsAndCollators';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
 type Props = {
@@ -15,14 +20,21 @@ type Props = {
 };
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  const { isLoading, data: validators } = useValidators();
-  console.debug('Validators:', validators);
+  const { selectedChain } = useLiquidStakingStore();
 
-  const [selectedValidators, setSelectedValidators] = useState<Set<string>>(
-    new Set(),
-  );
+  const selectedNetwork = useMemo(() => {
+    return LS_NETWORK_CONFIG[selectedChain];
+  }, [selectedChain]);
 
-  console.debug('Selected Validators:', selectedValidators);
+  const {
+    isLoading,
+    data: { validators, collators },
+  } = useValidatorsAndCollators();
+
+  const [selectedValidatorsOrCollators, setSelectedvalidatorsOrCollators] =
+    useState<Set<string>>(new Set());
+
+  console.debug('Selected Validators:', selectedValidatorsOrCollators);
 
   // Invalid token provided on the URL parameters.
   if (!isLiquidStakingToken(tokenSymbol)) {
@@ -59,8 +71,18 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
 
         {/* Validator Selection Component */}
         <ValidatorSelectionTable
-          validators={validators}
-          setSelectedValidators={setSelectedValidators}
+          data={
+            selectedNetwork.chainType === NetworkType.RELAY_CHAIN
+              ? validators
+              : collators
+          }
+          // data={[]}
+          setSelectedvalidatorsOrCollators={setSelectedvalidatorsOrCollators}
+          tableType={
+            selectedNetwork.chainType === NetworkType.RELAY_CHAIN
+              ? 'validators'
+              : 'collators'
+          }
           isLoading={isLoading}
         />
       </div>

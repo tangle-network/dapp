@@ -81,42 +81,55 @@ export const TVS_TOOLTIP =
 
 export const LIQUID_STAKING_TOKEN_PREFIX = 'tg';
 
-// These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
-type Network = {
+// TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
+export type Network = {
   name: string;
   endpoint: string;
   tokenSymbol: LiquidStakingToken;
+  chainType: NetworkType;
 };
+
+export enum NetworkType {
+  RELAY_CHAIN = 'Relay Chain',
+  PARACHAIN = 'Parachain',
+}
 
 export const LS_NETWORK_CONFIG: Record<LiquidStakingChain, Network> = {
   [LiquidStakingChain.POLKADOT]: {
     name: 'Polkadot',
-    endpoint: 'ws://127.0.0.1:30334',
+    // TODO: This should be updated to the correct endpoint. Using the public OnFinality endpoint for now as the Rococco does not include staking pallet.
+    endpoint: 'wss://polkadot.api.onfinality.io/public-ws',
     tokenSymbol: LiquidStakingToken.DOT,
+    chainType: NetworkType.RELAY_CHAIN,
   },
   [LiquidStakingChain.PHALA]: {
     name: 'Phala',
-    endpoint: '',
+    endpoint: 'wss://api.phala.network/ws',
     tokenSymbol: LiquidStakingToken.PHALA,
+    chainType: NetworkType.PARACHAIN,
   },
   [LiquidStakingChain.MOONBEAM]: {
     name: 'Moonbeam',
     endpoint: '',
     tokenSymbol: LiquidStakingToken.GLMR,
+    chainType: NetworkType.PARACHAIN,
   },
   [LiquidStakingChain.ASTAR]: {
     name: 'Astar',
-    endpoint: '',
+    endpoint: 'wss://astar.api.onfinality.io/public-ws',
     tokenSymbol: LiquidStakingToken.ASTAR,
+    chainType: NetworkType.PARACHAIN,
   },
   [LiquidStakingChain.MANTA]: {
     name: 'Manta',
     endpoint: '',
     tokenSymbol: LiquidStakingToken.MANTA,
+    chainType: NetworkType.PARACHAIN,
   },
   [LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN]: {
     name: 'Tangle Parachain',
     endpoint: 'ws://127.0.0.1:59408',
     tokenSymbol: LiquidStakingToken.TNT,
+    chainType: NetworkType.PARACHAIN,
   },
 };

@@ -46,17 +46,20 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Validator } from '../../types/liquidStaking';
+import { Collator, Validator } from '../../types/liquidStaking';
+import calculateCommission from '../../utils/calculateCommission';
+import formatBn from '../../utils/formatBn';
 
-type ValidatorSelectionTableProps = {
-  validators: Validator[];
-  setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+type ValidatorAndCollatorSelectionTableProps = {
+  data: Validator[] | Collator[];
+  setSelectedvalidatorsOrCollators: Dispatch<SetStateAction<Set<string>>>;
+  tableType: 'validators' | 'collators';
   isLoading: boolean;
 };
 
 const DEFAULT_PAGINATION: PaginationState = {
   pageIndex: 0,
-  pageSize: 10,
+  pageSize: 8,
 };
 
 const SELECTED_VALIDATORS_COLUMN_SORT = {
@@ -64,13 +67,15 @@ const SELECTED_VALIDATORS_COLUMN_SORT = {
   desc: false,
 } as const satisfies ColumnSort;
 
-const columnHelper = createColumnHelper<Validator>();
+const validatorColumnHelper = createColumnHelper<Validator>();
+const collatorColumnHelper = createColumnHelper<Collator>();
 
 const ValidatorSelectionTable = ({
-  validators,
-  setSelectedValidators,
+  data,
+  setSelectedvalidatorsOrCollators,
+  tableType,
   isLoading,
-}: ValidatorSelectionTableProps) => {
+}: ValidatorAndCollatorSelectionTableProps) => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -86,13 +91,13 @@ const ValidatorSelectionTable = ({
 
   useEffect(() => {
     startTransition(() => {
-      setSelectedValidators(new Set(Object.keys(rowSelection)));
+      setSelectedvalidatorsOrCollators(new Set(Object.keys(rowSelection)));
     });
-  }, [rowSelection, setSelectedValidators]);
+  }, [rowSelection, setSelectedvalidatorsOrCollators]);
 
-  const columns = useMemo(
+  const validatorColumns = useMemo(
     () => [
-      columnHelper.accessor('address', {
+      validatorColumnHelper.accessor('address', {
         header: ({ header }) => {
           toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
           return (
@@ -161,7 +166,7 @@ const ValidatorSelectionTable = ({
           return 0;
         },
       }),
-      columnHelper.accessor('totalValueStaked', {
+      validatorColumnHelper.accessor('totalValueStaked', {
         header: ({ header }) => (
           <div
             className="flex items-center justify-center cursor-pointer"
@@ -186,14 +191,14 @@ const ValidatorSelectionTable = ({
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {props.getValue().toNumber() +
+              {formatBn(props.getValue(), props.row.original.chainDecimals) +
                 ` ${props.row.original.tokenSymbol}`}
             </Typography>
           </div>
         ),
         sortingFn,
       }),
-      columnHelper.accessor('commission', {
+      validatorColumnHelper.accessor('commission', {
         header: ({ header }) => (
           <div
             className="flex items-center justify-center cursor-pointer"
@@ -218,13 +223,13 @@ const ValidatorSelectionTable = ({
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {props.getValue() + '%'}
+              {calculateCommission(props.getValue()).toFixed(2) + '%'}
             </Typography>
           </div>
         ),
         sortingFn,
       }),
-      columnHelper.accessor('annualPercentageYield', {
+      validatorColumnHelper.accessor('annualPercentageYield', {
         header: () => <span></span>,
         cell: () => {
           return <ValidatorStatsButton href="" />;
@@ -235,10 +240,85 @@ const ValidatorSelectionTable = ({
     [],
   );
 
-  const tableProps = useMemo<TableOptions<Validator>>(
+  const collatorColumns = useMemo(
+    () => [
+      collatorColumnHelper.accessor('address', {
+        header: ({ header }) => {
+          toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
+          return (
+            <Typography
+              variant="body2"
+              fw="semibold"
+              className="text-mono-120 dark:text-mono-120"
+            >
+              {' '}
+              Validator
+            </Typography>
+          );
+        },
+        cell: (props) => {
+          const address = props.getValue();
+          const identity = props.row.original.identity ?? address;
+
+          return (
+            <div className="flex items-center gap-2">
+              <CheckBox
+                wrapperClassName="!block !min-h-auto cursor-pointer"
+                className="cursor-pointer"
+                isChecked={props.row.getIsSelected()}
+                onChange={props.row.getToggleSelectedHandler()}
+              />
+
+              <div className="flex items-center space-x-1">
+                <Avatar
+                  sourceVariant="address"
+                  value={address}
+                  theme="substrate"
+                />
+
+                <Typography
+                  variant="body2"
+                  fw="normal"
+                  className="truncate text-mono-200 dark:text-mono-0"
+                >
+                  {identity === address ? shortenString(address, 6) : identity}
+                </Typography>
+
+                <CopyWithTooltip
+                  textToCopy={address}
+                  isButton={false}
+                  className="cursor-pointer"
+                />
+
+                <ExternalLinkIcon href="" />
+              </div>
+            </div>
+          );
+        },
+        // Sort the selected validators first
+        sortingFn: (rowA, rowB) => {
+          const rowASelected = rowA.getIsSelected();
+          const rowBSelected = rowB.getIsSelected();
+
+          if (rowASelected && !rowBSelected) {
+            return -1;
+          }
+
+          if (!rowASelected && rowBSelected) {
+            return 1;
+          }
+
+          return 0;
+        },
+      }),
+    ],
+    [],
+  );
+
+  const validatorTableProps = useMemo<TableOptions<Validator>>(
     () => ({
-      data: validators,
-      columns,
+      data: data as Validator[],
+      columns: validatorColumns,
       state: {
         columnVisibility: {
           identityName: false,
@@ -285,17 +365,76 @@ const ValidatorSelectionTable = ({
       getRowId: (row) => row.address,
       autoResetPageIndex: false,
     }),
-    [validators, columns, sorting, rowSelection, pagination],
+    [data, validatorColumns, sorting, rowSelection, pagination],
   );
+
+  const collatorTableProps = useMemo<TableOptions<Collator>>(
+    () => ({
+      data: data as Collator[],
+      columns: collatorColumns,
+      state: {
+        columnVisibility: {
+          identityName: false,
+        },
+        sorting,
+        rowSelection,
+        pagination,
+      },
+      enableRowSelection: true,
+      onPaginationChange: setPagination,
+      onGlobalFilterChange: () => {
+        setPagination(DEFAULT_PAGINATION);
+      },
+      onRowSelectionChange: (props) => {
+        toggleSortSelectionHandlerRef.current?.(false);
+        setRowSelection(props);
+      },
+      onSortingChange: (updaterOrValue) => {
+        if (typeof updaterOrValue === 'function') {
+          setSorting((prev) => {
+            const newSorting = updaterOrValue(prev);
+
+            // Modify the sorting state to always sort by the selected validators first
+            if (newSorting.length === 0) {
+              return [SELECTED_VALIDATORS_COLUMN_SORT];
+            } else if (newSorting[0].id === 'address') {
+              return newSorting;
+            } else {
+              return [SELECTED_VALIDATORS_COLUMN_SORT, ...newSorting];
+            }
+          });
+        } else {
+          setSorting(updaterOrValue);
+        }
+      },
+      filterFns: {
+        fuzzy: fuzzyFilter,
+      },
+      globalFilterFn: fuzzyFilter,
+      getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getRowId: (row) => row.address,
+      autoResetPageIndex: false,
+    }),
+    [data, collatorColumns, sorting, rowSelection, pagination],
+  );
+
+  const tableProps = useMemo(() => {
+    return tableType === 'validators'
+      ? validatorTableProps
+      : collatorTableProps;
+  }, [tableType, validatorTableProps, collatorTableProps]);
 
   const table = useReactTable(tableProps);
 
   return (
     <div className="flex flex-col">
-      <div className="w-full overflow-x-auto bg-validator_table dark:bg-validator_table_dark rounded-2xl border-[1px] border-mono-0 dark:border-mono-160 px-8 py-6 flex flex-col justify-between min-h-[528px]">
+      <div className="w-full overflow-x-auto bg-validator_table dark:bg-validator_table_dark rounded-2xl border-[1px] border-mono-0 dark:border-mono-160 px-8 py-6 flex flex-col justify-between min-h-[600px]">
         {!isLoading ? (
           <>
-            <div>
+            <div className="flex flex-col gap-4">
               <table className="w-full table-auto">
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -334,12 +473,12 @@ const ValidatorSelectionTable = ({
                 </tbody>
               </table>
 
-              {validators.length > 10 && (
+              {data.length > 10 && (
                 <Pagination
                   itemsPerPage={table.getState().pagination.pageSize}
                   totalItems={Math.max(
                     table.getPrePaginationRowModel().rows.length,
-                    validators.length,
+                    data.length,
                   )}
                   page={table.getState().pagination.pageIndex + 1}
                   totalPages={table.getPageCount()}
@@ -348,7 +487,9 @@ const ValidatorSelectionTable = ({
                   canNextPage={table.getCanNextPage()}
                   nextPage={table.nextPage}
                   setPageIndex={table.setPageIndex}
-                  title="Validators"
+                  title={
+                    tableType === 'validators' ? 'Validators' : 'Collators'
+                  }
                   className="!px-0 !py-2"
                 />
               )}
@@ -368,7 +509,7 @@ const ValidatorSelectionTable = ({
             </div>
           </>
         ) : (
-          <div className="flex justify-center items-center min-h-[528px]">
+          <div className="flex justify-center items-center min-h-[600px]">
             <div className="flex items-center justify-center gap-1">
               <Spinner size="md" />
               <Typography
