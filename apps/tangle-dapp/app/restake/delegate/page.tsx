@@ -1,16 +1,23 @@
 'use client';
 
+import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { RelayerListCard } from '@webb-tools/webb-ui-components/components/ListCard';
+import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import keys from 'lodash/keys';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
+import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
+import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { DelegationFormFields } from '../../../types/restake';
+import ChainList from '../ChainList';
 import RestakeTabs from '../RestakeTabs';
 import SlideAnimation from '../SlideAnimation';
+import useSwitchChain from '../useSwitchChain';
+import ActionButton from './ActionButton';
 import AssetList from './AssetList';
 import DelegationInput from './DelegationInput';
 import Info from './Info';
@@ -33,6 +40,8 @@ export default function DelegatePage() {
   }, [register]);
 
   const { delegatorInfo } = useRestakeDelegatorInfo();
+  const switchChain = useSwitchChain();
+  const activeTypedChainId = useActiveTypedChainId();
 
   // Set the default assetId to the first assetId in the depositedAssets
   const defaultAssetId = useMemo(() => {
@@ -58,16 +67,30 @@ export default function DelegatePage() {
     }
   }, [defaultAssetId, setValue]);
 
-  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
-  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
+  const {
+    status: isChainModalOpen,
+    open: openChainModal,
+    close: closeChainModal,
+  } = useModal(false);
 
-  const openAssetModal = useCallback(() => setIsAssetModalOpen(true), []);
-  const closeAssetModal = useCallback(() => setIsAssetModalOpen(false), []);
+  const {
+    status: isAssetModalOpen,
+    open: openAssetModal,
+    close: closeAssetModal,
+  } = useModal(false);
 
-  const openOperatorModal = useCallback(() => setIsOperatorModalOpen(true), []);
-  const closeOperatorModal = useCallback(
-    () => setIsOperatorModalOpen(false),
-    [],
+  const {
+    status: isOperatorModalOpen,
+    open: openOperatorModal,
+    close: closeOperatorModal,
+  } = useModal(false);
+
+  const handleChainChange = useCallback(
+    async ({ typedChainId }: ChainType) => {
+      await switchChain(typedChainId);
+      closeChainModal();
+    },
+    [closeChainModal, switchChain],
   );
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>((data) => {
@@ -95,9 +118,7 @@ export default function DelegatePage() {
         <div className="flex flex-col justify-between gap-4 grow">
           <Info />
 
-          <Button isFullWidth type="submit">
-            Delegate
-          </Button>
+          <ActionButton openChainModal={openChainModal} />
         </div>
       </div>
 
@@ -116,6 +137,18 @@ export default function DelegatePage() {
           className="h-full dark:bg-[var(--restake-card-bg-dark)] p-0"
           relayers={[]}
           onClose={closeOperatorModal}
+        />
+      </SlideAnimation>
+
+      <SlideAnimation show={isChainModalOpen} className="absolute">
+        <ChainList
+          selectedTypedChainId={activeTypedChainId}
+          className="h-full"
+          onClose={closeChainModal}
+          onChange={handleChainChange}
+          defaultCategory={
+            chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
+          }
         />
       </SlideAnimation>
     </form>

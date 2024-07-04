@@ -1,7 +1,6 @@
 'use client';
 
-import { noop } from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface ReturnData {
   close: () => void;
@@ -11,20 +10,14 @@ interface ReturnData {
   update: (status: boolean) => void;
 }
 
-export const useModal = (
-  defaultStatus = false,
-  callback?: () => void,
-): ReturnData => {
+export const useModal = (defaultStatus = false): ReturnData => {
   const [status, setStatus] = useState<boolean>(defaultStatus);
+
   const open = useCallback((): void => setStatus(true), []);
   const close = useCallback((): void => setStatus(false), []);
-  const toggle = useCallback((): void => setStatus(!status), [status]);
-  const _callback = useRef<() => void>(callback || noop);
-  const update = useCallback((status: boolean): void => setStatus(status), []);
 
-  useEffect(() => {
-    _callback.current();
-  }, [status, _callback]);
+  const toggle = useCallback((): void => setStatus((prev) => !prev), []);
+  const update = useCallback((status: boolean): void => setStatus(status), []);
 
   return { close, open, status, toggle, update };
 };

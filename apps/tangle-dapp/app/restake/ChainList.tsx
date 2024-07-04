@@ -3,33 +3,29 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import ChainListCard from '@webb-tools/webb-ui-components/components/ListCard/ChainListCard';
-import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { type ComponentProps, useCallback, useMemo } from 'react';
-import type { UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { type ComponentProps, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import type { DepositFormFields } from '../../../types/restake';
+import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
 
 type Props = Partial<ComponentProps<typeof ChainListCard>> & {
-  setValue: UseFormSetValue<DepositFormFields>;
-  watch: UseFormWatch<DepositFormFields>;
+  selectedTypedChainId?: number | null;
 };
 
 const ChainList = ({
   className,
   onClose,
-  setValue,
-  watch,
+  selectedTypedChainId,
   ...props
 }: Props) => {
   const { activeChain, loading, apiConfig } = useWebContext();
 
-  const selectTypedChainId = watch('sourceTypedChainId');
-
   const selectedChain = useMemo(
-    () => apiConfig.chains[selectTypedChainId],
-    [apiConfig.chains, selectTypedChainId],
+    () =>
+      typeof selectedTypedChainId === 'number'
+        ? apiConfig.chains[selectedTypedChainId]
+        : null,
+    [apiConfig.chains, selectedTypedChainId],
   );
 
   const chains = useMemo(
@@ -56,17 +52,6 @@ const ChainList = ({
     return selectedChain?.tag ?? activeChain?.tag ?? 'test';
   }, [activeChain?.tag, selectedChain?.tag]);
 
-  const handleChainChange = useCallback(
-    ({ typedChainId }: ChainType) => {
-      setValue('sourceTypedChainId', typedChainId, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-      onClose?.();
-    },
-    [onClose, setValue],
-  );
-
   return (
     <ChainListCard
       chainType="source"
@@ -81,7 +66,6 @@ const ChainList = ({
       }
       defaultCategory={defaultCategory}
       isConnectingToChain={loading}
-      onChange={handleChainChange}
       overrideScrollAreaProps={{
         className: 'h-[320px]',
       }}

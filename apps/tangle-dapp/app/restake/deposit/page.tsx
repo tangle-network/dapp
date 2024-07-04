@@ -2,6 +2,7 @@
 
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
+import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { useSubscription } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -14,10 +15,10 @@ import type { TxEventHandlers } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import usePolkadotApi from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
+import ChainList from '../ChainList';
 import RestakeTabs from '../RestakeTabs';
 import SlideAnimation from '../SlideAnimation';
 import ActionButton from './ActionButton';
-import ChainList from './ChainList';
 import DestChainInput from './DestChainInput';
 import SourceChainInput from './SourceChainInput';
 import TokenList from './TokenList';
@@ -89,6 +90,17 @@ export default function DepositPage() {
     }).current,
   );
 
+  const handleChainChange = useCallback(
+    ({ typedChainId }: ChainType) => {
+      setValue('sourceTypedChainId', typedChainId, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      setChainModalOpen(false);
+    },
+    [setValue],
+  );
+
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
       const { amount, depositAssetId } = data;
@@ -146,10 +158,10 @@ export default function DepositPage() {
 
       <SlideAnimation show={chainModalOpen} className="absolute">
         <ChainList
-          setValue={setValue}
-          watch={watch}
+          selectedTypedChainId={watch('sourceTypedChainId')}
           className="h-full"
           onClose={closeChainModal}
+          onChange={handleChainChange}
         />
       </SlideAnimation>
 
