@@ -311,7 +311,7 @@ export interface TokenListCardProps
    * The type of token list card
    * @default "token"
    */
-  type?: 'token' | 'pool';
+  type?: 'token' | 'pool' | 'asset';
 
   /**
    * The popular token list
@@ -342,4 +342,14 @@ export interface TokenListCardProps
    * The text for the alert component at the bottom
    */
   alertTitle?: string;
+
+  /**
+   * Override the input props
+   */
+  overrideInputProps?: Partial<InputProps>;
+
+  /**
+   * Function to render body when the list is empty
+   */
+  renderEmpty?: () => React.ReactNode;
 }

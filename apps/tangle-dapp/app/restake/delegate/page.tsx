@@ -2,16 +2,20 @@
 
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { RelayerListCard } from '@webb-tools/webb-ui-components/components/ListCard';
 import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import keys from 'lodash/keys';
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import ChainList from '../ChainList';
 import RestakeTabs from '../RestakeTabs';
@@ -128,6 +132,22 @@ export default function DelegatePage() {
           delegatorInfo={delegatorInfo}
           onClose={closeAssetModal}
           setValue={setValue}
+          renderEmpty={() => (
+            <div className="space-y-4">
+              <Typography variant="h5" fw="bold" ta="center">
+                No assets available
+              </Typography>
+
+              <Button
+                as={Link}
+                href={PagePath.RESTAKE_DEPOSIT}
+                variant="link"
+                className="block mx-auto text-center"
+              >
+                Deposit now
+              </Button>
+            </div>
+          )}
         />
       </SlideAnimation>
 
