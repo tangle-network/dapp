@@ -9,6 +9,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { BridgeWalletError } from '../../../types/bridge';
+import useEvmWrongChain from './useEvmWrongChain';
 
 type UseActionButtonReturnType = {
   isLoading: boolean;
@@ -38,6 +39,7 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     isBridgeFeeLoading,
     isEstimatedGasFeeLoading,
   } = useBridge();
+  const { isEvmWrongChain, switchToCorrectEvmChain } = useEvmWrongChain();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -93,25 +95,34 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
 
   const buttonAction = useMemo(() => {
     if (isRequiredToConnectWallet) return openWalletModal;
+    if (isEvmWrongChain) return switchToCorrectEvmChain;
     return handleOpenConfirmModal;
-  }, [isRequiredToConnectWallet, openWalletModal, handleOpenConfirmModal]);
+  }, [
+    isRequiredToConnectWallet,
+    openWalletModal,
+    handleOpenConfirmModal,
+    isEvmWrongChain,
+    switchToCorrectEvmChain,
+  ]);
 
   const buttonText = useMemo(() => {
     if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
+    if (isEvmWrongChain) return 'Switch Chain';
     if (isRequiredToConnectWallet) return 'Connect';
     return 'Transfer';
-  }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet]);
+  }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet, isEvmWrongChain]);
 
   return {
     isLoading: loading || isConnecting,
-    isDisabled: isRequiredToConnectWallet
-      ? false
-      : isInputInsufficient ||
-        isAmountInputError ||
-        isAddressInputError ||
-        isBridgeFeeLoading ||
-        isEstimatedGasFeeLoading ||
-        bridgeFee === null,
+    isDisabled:
+      isRequiredToConnectWallet || isEvmWrongChain
+        ? false
+        : isInputInsufficient ||
+          isAmountInputError ||
+          isAddressInputError ||
+          isBridgeFeeLoading ||
+          isEstimatedGasFeeLoading ||
+          bridgeFee === null,
     buttonAction,
     buttonText,
     errorMessage,
