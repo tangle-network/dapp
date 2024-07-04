@@ -18,6 +18,7 @@ import type {
 } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
+import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 
 type Props = {
@@ -40,6 +41,7 @@ export default function DelegationInput({
   watch,
 }: Props) {
   const selectedAssetId = watch('assetId');
+  const selectedOperatorAccountId = watch('operatorAccountId');
 
   const { assetMap } = useRestakeContext();
   const { minDelegateAmount } = useRestakeConsts();
@@ -119,6 +121,16 @@ export default function DelegationInput({
         <TransactionInputCard.ChainSelector
           onClick={openOperatorModal}
           placeholder="Select Operator"
+          {...(selectedOperatorAccountId
+            ? {
+                renderBody: () => (
+                  <AvatarWithText
+                    accountAddress={selectedOperatorAccountId}
+                    overrideTypographyProps={{ variant: 'h5' }}
+                  />
+                ),
+              }
+            : {})}
         />
         <TransactionInputCard.MaxAmountButton
           accountType="note"

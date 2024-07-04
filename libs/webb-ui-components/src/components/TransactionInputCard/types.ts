@@ -65,6 +65,8 @@ export interface TransactionChainSelectorProps
    * @default 'Select Chain'
    */
   placeholder?: string;
+
+  renderBody?: () => ReactNode;
 }
 
 export interface TransactionButtonProps extends PropsOf<'button'> {

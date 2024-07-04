@@ -13,8 +13,6 @@ import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ArrowDropDownFill } from '@webb-tools/icons/ArrowDropDownFill';
 import { ArrowDropUpFill } from '@webb-tools/icons/ArrowDropUpFill';
-import { getFlexBasic } from '@webb-tools/icons/utils';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ListCardWrapper } from '@webb-tools/webb-ui-components/components/ListCard/ListCardWrapper';
@@ -29,7 +27,6 @@ import {
   TooltipTrigger,
 } from '@webb-tools/webb-ui-components/components/Tooltip';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import cx from 'classnames';
 import {
   type ComponentProps,
@@ -48,6 +45,7 @@ import type {
   OperatorMetadata,
   OperatorStatus,
 } from '../../../types/restake';
+import AvatarWithText from '../AvatarWithText';
 
 type TableData = OperatorMetadata & { accountId: string };
 
@@ -136,18 +134,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
                 className="flex items-center justify-between grow"
                 htmlFor={accountId}
               >
-                <div className="flex items-center max-w-xs space-x-2 grow">
-                  <Avatar
-                    // TODO: Determine the theme instead of hardcoding it
-                    theme="substrate"
-                    value={accountId}
-                    className={`${getFlexBasic()} shrink-0`}
-                  />
-
-                  <Typography variant="body2" className="truncate">
-                    {shortenString(accountId)}
-                  </Typography>
-                </div>
+                <AvatarWithText accountAddress={accountId} />
               </label>
             </RadioItem>
           ),

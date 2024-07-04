@@ -105,6 +105,7 @@ const TransactionChainSelector = forwardRef<
       className,
       disabled,
       placeholder = 'Select Chain',
+      renderBody,
       ...props
     },
     ref,
@@ -122,18 +123,22 @@ const TransactionChainSelector = forwardRef<
         ref={ref}
         className={twMerge('flex items-center gap-1 p-2 group', className)}
       >
-        <p className="flex items-center gap-2">
-          {chain && <ChainIcon name={chain.name} size="lg" />}
+        {typeof renderBody === 'function' ? (
+          renderBody()
+        ) : (
+          <p className="flex items-center gap-2">
+            {chain && <ChainIcon name={chain.name} size="lg" />}
 
-          <Typography
-            variant="h5"
-            fw="bold"
-            component="span"
-            className="inline-block text-mono-200 dark:text-mono-40"
-          >
-            {chain?.name ?? placeholder}
-          </Typography>
-        </p>
+            <Typography
+              variant="h5"
+              fw="bold"
+              component="span"
+              className="inline-block text-mono-200 dark:text-mono-40"
+            >
+              {chain?.name ?? placeholder}
+            </Typography>
+          </p>
+        )}
 
         {!disabled && (
           <ChevronDown
