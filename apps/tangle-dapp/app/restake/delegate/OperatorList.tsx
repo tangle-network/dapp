@@ -1,12 +1,18 @@
 import {
+  type Column,
   type ColumnDef,
-  flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  type Row,
+  type SortingState,
+  type Updater,
   useReactTable,
 } from '@tanstack/react-table';
 import { useActiveChain } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { ArrowDropDownFill } from '@webb-tools/icons/ArrowDropDownFill';
+import { ArrowDropUpFill } from '@webb-tools/icons/ArrowDropUpFill';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
@@ -16,6 +22,7 @@ import {
   RadioGroup,
   RadioItem,
 } from '@webb-tools/webb-ui-components/components/Radio';
+import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import {
   Tooltip,
   TooltipBody,
@@ -23,26 +30,66 @@ import {
 } from '@webb-tools/webb-ui-components/components/Tooltip';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import cx from 'classnames';
 import {
   type ComponentProps,
   forwardRef,
   PropsWithChildren,
+  useCallback,
   useMemo,
   useState,
 } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
 
 import useNetworkStore from '../../../context/useNetworkStore';
-import type { OperatorMap, OperatorMetadata } from '../../../types/restake';
+import type {
+  OperatorMap,
+  OperatorMetadata,
+  OperatorStatus,
+} from '../../../types/restake';
+
+type TableData = OperatorMetadata & { accountId: string };
 
 type Props = Partial<ComponentProps<typeof ListCardWrapper>> & {
   operatorMap: OperatorMap;
+  selectedOperatorAccountId: string;
+  onOperatorAccountIdChange?: (accountId: string) => void;
 };
 
+const defaultSorting: SortingState = [{ id: 'status', desc: false }];
+
+function getStatusIndex(status: OperatorStatus) {
+  if (status === 'Active') {
+    return 0;
+  }
+
+  if (typeof status === 'object') {
+    return 1;
+  }
+
+  return 2;
+}
+
+function sortStatus(rowA: Row<TableData>, rowB: Row<TableData>) {
+  const statusA = rowA.original.status;
+  const statusB = rowB.original.status;
+  return getStatusIndex(statusA) - getStatusIndex(statusB);
+}
+
 const OperatorList = forwardRef<HTMLDivElement, Props>(
-  ({ onClose, overrideTitleProps, operatorMap, ...props }, ref) => {
+  (
+    {
+      onClose,
+      overrideTitleProps,
+      operatorMap,
+      selectedOperatorAccountId,
+      onOperatorAccountIdChange,
+      ...props
+    },
+    ref,
+  ) => {
     const isEmpty = Object.keys(operatorMap).length === 0;
-    const size = Object.keys(operatorMap).length;
 
     const { nativeTokenSymbol } = useNetworkStore();
     const [activeChain] = useActiveChain();
@@ -55,7 +102,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
       [activeChain],
     );
 
-    const data = useMemo<(OperatorMetadata & { accountId: string })[]>(
+    const data = useMemo<TableData[]>(
       () =>
         Object.entries(operatorMap).map(([accountId, metadata]) => ({
           ...metadata,
@@ -64,22 +111,26 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
       [operatorMap],
     );
 
-    const columns = useMemo<
-      ColumnDef<OperatorMetadata & { accountId: string }>[]
-    >(
+    const columns = useMemo<ColumnDef<TableData>[]>(
       () => [
         {
           id: 'select-row',
+          enableSorting: false,
           header: () => <Header>Operator</Header>,
           cell: ({
             row: {
-              original: { accountId },
+              original: { accountId, status },
             },
           }) => (
             <RadioItem
               id={accountId}
               value={accountId}
-              className="w-full overflow-hidden"
+              className="w-full overflow-hidden px-0.5"
+              {...(status === 'Inactive'
+                ? {
+                    overrideRadixRadioItemProps: { disabled: true },
+                  }
+                : {})}
             >
               <label
                 className="flex items-center justify-between grow"
@@ -93,7 +144,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
                     className={`${getFlexBasic()} shrink-0`}
                   />
 
-                  <Typography variant="h5" fw="bold" className="truncate">
+                  <Typography variant="body2" className="truncate">
                     {shortenString(accountId)}
                   </Typography>
                 </div>
@@ -103,106 +154,121 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
         },
         {
           accessorKey: 'bond',
-          header: () => <Header>Total Staked</Header>,
-          cell: (info) => (
-            <ChipCell>
-              {formatUnits(info.getValue<bigint>(), nativeDecimals)}{' '}
+          enableSorting: true,
+          enableMultiSort: true,
+          header: ({ column }) => (
+            <Header isCenter column={column}>
+              Total Staked
+            </Header>
+          ),
+          cell: ({
+            getValue,
+            row: {
+              original: { status },
+            },
+          }) => (
+            <ChipCell isCenter isDisabled={status === 'Inactive'}>
+              {formatUnits(getValue<bigint>(), nativeDecimals)}{' '}
               {nativeTokenSymbol}
             </ChipCell>
           ),
         },
         {
           accessorKey: 'delegationCount',
-          header: () => <Header>Delegations</Header>,
-          cell: (info) => <ChipCell>{info.getValue<number>()}</ChipCell>,
+          enableSorting: true,
+          enableMultiSort: true,
+          header: ({ column }) => (
+            <Header isCenter column={column}>
+              Delegations
+            </Header>
+          ),
+          cell: ({
+            getValue,
+            row: {
+              original: { status },
+            },
+          }) => (
+            <ChipCell isCenter isDisabled={status === 'Inactive'}>
+              {getValue<number>()}
+            </ChipCell>
+          ),
         },
         {
           accessorKey: 'status',
-          header: () => <Header>Status</Header>,
+          enableSorting: true,
+          enableMultiSort: true,
+          header: () => <Header isCenter>Status</Header>,
           cell: (info) => (
-            <StatusCell status={info.getValue<OperatorMetadata['status']>()} />
+            <StatusCell status={info.getValue<OperatorStatus>()} />
           ),
+          sortingFn: sortStatus,
         },
       ],
       [nativeDecimals, nativeTokenSymbol],
     );
 
-    const [rowSelection, setRowSelection] = useState({});
+    const [sorting, setSorting] = useState<SortingState>(defaultSorting);
+
+    const handleSortingChange = useCallback(
+      (updaterOrValue: Updater<SortingState>) => {
+        if (typeof updaterOrValue === 'function') {
+          setSorting((prev) => {
+            console.log('prev', prev);
+            const next = updaterOrValue(prev);
+            console.log('next', next);
+            return next.length === 0
+              ? defaultSorting
+              : defaultSorting.concat(next);
+          });
+        } else {
+          if (updaterOrValue.length === 0) {
+            setSorting(defaultSorting);
+          } else {
+            setSorting(defaultSorting.concat(updaterOrValue));
+          }
+        }
+      },
+      [],
+    );
 
     const table = useReactTable({
       data,
       columns,
-      state: {
-        rowSelection,
-      },
-      enableRowSelection: (row) => row.original.status !== 'Inactive',
-      onRowSelectionChange: setRowSelection,
       getCoreRowModel: getCoreRowModel(),
+      getSortedRowModel: getSortedRowModel(),
       filterFns: {
         fuzzy: fuzzyFilter,
       },
+      state: {
+        sorting,
+      },
+      onSortingChange: handleSortingChange,
     });
 
     return (
       <ListCardWrapper
         {...props}
-        title="Select a Relayer"
+        title="Select Operator"
         onClose={onClose}
         ref={ref}
       >
         {!isEmpty && (
-          <div className="flex flex-col p-2 space-y-2 grow">
-            <Typography
-              variant="body4"
-              className="uppercase text-mono-200 dark:text-mono-0"
-              fw="bold"
-            >
-              Available Operators ({size})
-            </Typography>
-
-            <RadioGroup>
-              <table>
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <th key={header.id} colSpan={header.colSpan}>
-                            {header.isPlaceholder ? null : (
-                              <>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                              </>
-                            )}
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {table.getRowModel().rows.map((row) => {
-                    return (
-                      <tr key={row.id}>
-                        {row.getVisibleCells().map((cell) => {
-                          return (
-                            <td key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </RadioGroup>
-          </div>
+          <RadioGroup
+            defaultValue={selectedOperatorAccountId}
+            onValueChange={onOperatorAccountIdChange}
+          >
+            <Table
+              className="pt-4"
+              tableProps={table}
+              thClassName={cx(
+                'bg-transparent dark:bg-transparent border-t-0 px-3 py-2',
+              )}
+              tdClassName={cx(
+                'bg-transparent dark:bg-transparent px-4 py-2.5 border-none',
+              )}
+              isDisabledRowHoverStyle
+            />
+          </RadioGroup>
         )}
 
         {isEmpty && (
@@ -230,28 +296,91 @@ OperatorList.displayName = 'OperatorList';
 
 export default OperatorList;
 
-const Header = ({ children }: PropsWithChildren) => (
-  <Typography variant="body3" fw="semibold">
-    {children}
-  </Typography>
-);
+const Header = <TData,>({
+  children,
+  isCenter,
+  column,
+}: PropsWithChildren<{ isCenter?: boolean; column?: Column<TData> }>) =>
+  isDefined(column) ? (
+    <div
+      className={twMerge(
+        'flex items-center',
+        column.getCanSort() && 'cursor-pointer select-none',
+      )}
+      onClick={column.getToggleSortingHandler()}
+      title={
+        column.getCanSort()
+          ? column.getNextSortingOrder() === 'asc'
+            ? 'Sort ascending'
+            : column.getNextSortingOrder() === 'desc'
+              ? 'Sort descending'
+              : 'Clear sort'
+          : undefined
+      }
+    >
+      <Typography
+        variant="body3"
+        fw="semibold"
+        ta={isCenter ? 'center' : 'left'}
+      >
+        {children}
+      </Typography>
 
-const ChipCell = ({ children }: PropsWithChildren) => (
-  <Chip color="grey">{children}</Chip>
-);
-
-const StatusCell = ({ status }: { status: OperatorMetadata['status'] }) =>
-  status === 'Active' ? (
-    <Chip color="green">Active</Chip>
-  ) : status === 'Inactive' ? (
-    <Chip color="red">Inactive</Chip>
+      {{
+        asc: <ArrowDropDownFill />,
+        desc: <ArrowDropUpFill />,
+      }[column.getIsSorted() as string] ?? null}
+    </div>
   ) : (
-    <Tooltip>
-      <TooltipTrigger>
-        <Chip color="yellow">Leaving</Chip>
-      </TooltipTrigger>
-      <TooltipBody className="max-w-[185px] w-auto">
-        <span>Operator will leaving at {status.Leaving} round.</span>
-      </TooltipBody>
-    </Tooltip>
+    <Typography variant="body3" fw="semibold" ta={isCenter ? 'center' : 'left'}>
+      {children}
+    </Typography>
   );
+
+type CellProps = {
+  isCenter?: boolean;
+  isDisabled?: boolean;
+};
+
+const ChipCell = ({
+  children,
+  isCenter,
+  isDisabled,
+}: PropsWithChildren<CellProps>) => (
+  <div
+    className={cx(
+      isCenter && 'flex justify-center',
+      isDisabled && 'opacity-50',
+    )}
+  >
+    <Chip color="dark-grey">{children}</Chip>
+  </div>
+);
+
+const StatusCell = ({
+  status,
+  isDisabled,
+  isCenter,
+}: CellProps & { status: OperatorStatus }) => (
+  <div
+    className={cx(
+      isCenter && 'flex justify-center',
+      isDisabled && 'opacity-50',
+    )}
+  >
+    {status === 'Active' ? (
+      <Chip color="green">Active</Chip>
+    ) : status === 'Inactive' ? (
+      <Chip color="red">Inactive</Chip>
+    ) : (
+      <Tooltip>
+        <TooltipTrigger>
+          <Chip color="yellow">Leaving</Chip>
+        </TooltipTrigger>
+        <TooltipBody className="max-w-[185px] w-auto">
+          <span>Operator will leaving at {status.Leaving} round.</span>
+        </TooltipBody>
+      </Tooltip>
+    )}
+  </div>
+);

@@ -42,9 +42,10 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
           return entries$.pipe(
             map((entries) =>
               entries.reduce(
-                (operatorsMap, [accountId, operatorMetadata]) => {
+                (operatorsMap, [accountStorage, operatorMetadata]) => {
                   if (operatorMetadata.isNone) return operatorsMap;
 
+                  const accountId = accountStorage.args[0];
                   const operator = operatorMetadata.unwrap();
 
                   const operatorMetadataPrimitive = {

@@ -8,18 +8,19 @@ import { THeaderMemo as THeader } from './THeader';
 import { TableProps } from './types';
 
 export const Table = <T extends RowData>({
+  isDisabledRowHoverStyle,
   isDisplayFooter,
   isPaginated,
-  tableProps: table,
-  totalRecords = 0,
-  tableClassName,
-  tableWrapperClassName,
-  thClassName,
-  trClassName,
-  tdClassName,
-  paginationClassName,
-  title,
   onRowClick,
+  paginationClassName,
+  tableClassName,
+  tableProps: table,
+  tableWrapperClassName,
+  tdClassName,
+  thClassName,
+  title,
+  totalRecords = 0,
+  trClassName,
   ref,
   ...props
 }: TableProps<T, HTMLDivElement>) => {
@@ -70,7 +71,11 @@ export const Table = <T extends RowData>({
                 onClick={getRowClickHandler(row)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TData className={tdClassName} key={cell.id}>
+                  <TData
+                    isDisabledHoverStyle={isDisabledRowHoverStyle}
+                    className={tdClassName}
+                    key={cell.id}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TData>
                 ))}

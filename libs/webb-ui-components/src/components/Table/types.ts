@@ -76,6 +76,8 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
    * The optional ref to forward to the table component
    */
   ref?: React.Ref<E>;
+
+  isDisabledRowHoverStyle?: boolean;
 }
 
 /**
@@ -86,4 +88,6 @@ export interface THeaderProps extends PropsOf<'th'>, IWebbComponentBase {}
 /**
  * The `TData` props
  */
-export interface TDataProps extends PropsOf<'td'>, IWebbComponentBase {}
+export interface TDataProps extends PropsOf<'td'>, IWebbComponentBase {
+  isDisabledHoverStyle?: boolean;
+}

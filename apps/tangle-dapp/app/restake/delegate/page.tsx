@@ -100,6 +100,14 @@ export default function DelegatePage() {
     [closeChainModal, switchChain],
   );
 
+  const handleOperatorAccountIdChange = useCallback(
+    (operatorAccountId: string) => {
+      setValue('operatorAccountId', operatorAccountId);
+      closeOperatorModal();
+    },
+    [closeOperatorModal, setValue],
+  );
+
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>((data) => {
     console.log(data);
   }, []);
@@ -156,6 +164,8 @@ export default function DelegatePage() {
 
       <SlideAnimation show={isOperatorModalOpen} className="absolute">
         <OperatorList
+          selectedOperatorAccountId={watch('operatorAccountId')}
+          onOperatorAccountIdChange={handleOperatorAccountIdChange}
           operatorMap={operatorMap}
           overrideTitleProps={{ variant: 'h4' }}
           className="h-full dark:bg-[var(--restake-card-bg-dark)] p-0"
