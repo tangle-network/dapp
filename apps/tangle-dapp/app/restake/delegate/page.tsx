@@ -33,7 +33,7 @@ export default function DelegatePage() {
     setValue,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
   });
@@ -133,7 +133,12 @@ export default function DelegatePage() {
         <div className="flex flex-col justify-between gap-4 grow">
           <Info />
 
-          <ActionButton openChainModal={openChainModal} />
+          <ActionButton
+            errors={errors}
+            isValid={isValid}
+            openChainModal={openChainModal}
+            watch={watch}
+          />
         </div>
       </div>
 
